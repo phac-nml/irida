@@ -41,11 +41,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
@@ -68,6 +63,15 @@
 					<scanIntervalSeconds>3</scanIntervalSeconds>
 				</configuration>
 			</plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-compiler-plugin</artifactId>
+                            <version>${maven.compiler.plugin.version}</version>
+                            <configuration>
+                                <source>1.7</source>
+                                <target>1.7</target>
+                            </configuration>                            
+                        </plugin>
 		</plugins>
 	</build>
 	<properties>
@@ -76,6 +80,7 @@
 		<slf4j.version>1.7.2</slf4j.version>
 		<jetty.version>8.1.5.v20120716</jetty.version>
 		<json.version>20090211</json.version>
+                <maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
