@@ -22,6 +22,10 @@
             <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
             <param-value>ca.corefacility.bioinformatics.irida.webservices.filters.AngularXSRFResponseFilter</param-value>
         </init-param>
+        <init-param>
+            <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
+            <param-value>ca.corefacility.bioinformatics.irida.webservices.filters.AngularXSRFRequestFilter</param-value>
+        </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
