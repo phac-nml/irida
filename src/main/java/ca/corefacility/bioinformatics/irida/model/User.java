@@ -7,8 +7,9 @@ import java.util.Objects;
  *
  * @author Franklin Bristow
  */
-public class User {
+public class User implements Comparable<User> {
 
+    private Long id;
     private String username;
     private String email;
     private String password;
@@ -19,7 +20,8 @@ public class User {
     public User() {
     }
 
-    public User(String username, String email, String password, String firstName, String lastName, String phoneNumber) {
+    public User(Long id, String username, String email, String password, String firstName, String lastName, String phoneNumber) {
+        this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
@@ -104,5 +106,18 @@ public class User {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Override
+    public int compareTo(User o) {
+        return id.compareTo(o.id);
     }
 }
