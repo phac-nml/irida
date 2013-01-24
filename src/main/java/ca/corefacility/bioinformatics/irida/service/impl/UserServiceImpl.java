@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
 
     static {
         users.put(0l, new User(0l, "fbristow", "fbristow@gmail.com", "password", "Franklin", "Bristow", "204-789-7029"));
-        users.add(1l, new User(1l, "jsadam", "josh.s.adam@gmail.com", "123456789", "Josh", "Adam", "204-789-4518"));
+        users.put(1l, new User(1l, "jsadam", "josh.s.adam@gmail.com", "123456789", "Josh", "Adam", "204-789-4518"));
     }
     
     public UserServiceImpl() {}
