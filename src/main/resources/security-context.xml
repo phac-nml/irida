@@ -8,13 +8,14 @@
         http://www.springframework.org/schema/beans    http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
     <!-- Enable method-level security -->
-    <security:global-method-security pre-post-annotations="enabled" />
+    <security:global-method-security jsr250-annotations="enabled" secured-annotations="enabled" />
     
     <!-- Web authentication configuration -->
     <security:http use-expressions="true">
         <security:intercept-url pattern="/api/login" access="permitAll" />
         <security:intercept-url pattern="/api/logout" access="isAuthenticated()" />
         <security:intercept-url pattern="/api/**" access="isAuthenticated()" />
+        
         <security:form-login login-processing-url="/api/login" 
                              username-parameter="username"
                              password-parameter="password" />
@@ -31,6 +32,7 @@
             <security:user-service>
                 <!-- password is "password1", encoded by BCrypt. -->
                 <security:user name="fbristow" password="$2a$10$vMzhJFdyM72NnnWIoMSbUecHRxZDtCE1fdiPfjfjT1WD0fISDXOX2" authorities="ROLE_USER" />
+                <security:user name="josh" password="$2a$10$vMzhJFdyM72NnnWIoMSbUecHRxZDtCE1fdiPfjfjT1WD0fISDXOX2" authorities="ROLE_USER" />
                 <security:user name="admin" password="$2a$10$vMzhJFdyM72NnnWIoMSbUecHRxZDtCE1fdiPfjfjT1WD0fISDXOX2" authorities="ROLE_ADMIN" />
             </security:user-service>
         </security:authentication-provider>
