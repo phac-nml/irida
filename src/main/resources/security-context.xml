@@ -12,16 +12,21 @@
     
     <!-- Web authentication configuration -->
     <security:http use-expressions="true">
-        <security:intercept-url pattern="/api/login" access="permitAll" />
-        <security:intercept-url pattern="/api/logout" access="isAuthenticated()" />
+        <!--<security:intercept-url pattern="/api/login" access="permitAll" />-->
         <security:intercept-url pattern="/api/**" access="isAuthenticated()" />
         
-        <security:form-login login-processing-url="/api/login" 
+        <security:http-basic entry-point-ref="authenticationEntryPoint"/>
+        
+        <!--<security:form-login login-processing-url="/api/login" 
                              username-parameter="username"
                              password-parameter="password" />
-        <security:logout logout-url="/api/logout" />
+        <security:logout logout-url="/api/logout" /> -->
     </security:http>
     
+    <beans:bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
+        <beans:property name="realmName" value="IRIDA User Management" />
+    </beans:bean>
+        
     <!-- Passwords should be encoded using the BCrypt algorithm -->
     <beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
     
