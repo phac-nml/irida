@@ -7,7 +7,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>irida</name>
     <url></url>
-    
+
     <repositories>
         <repository>
             <id>public-alfresco</id>
@@ -169,9 +169,7 @@
             <artifactId>cors-filter</artifactId>
             <version>${cors.filter.version}</version>
         </dependency>
-        
-        
-    </dependencies>
+   </dependencies>
     <build>
         <finalName>irida</finalName>
         <plugins>
