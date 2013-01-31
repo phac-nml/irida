@@ -21,16 +21,6 @@
             <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
             <param-value>true</param-value>
         </init-param>
-        
-        <!--Response filters to add expected headers and cookies for AngularJS -->
-        <init-param>
-            <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
-            <param-value>ca.corefacility.bioinformatics.irida.webservices.filters.AngularXSRFResponseFilter</param-value>
-        </init-param>
-        <init-param>
-            <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
-            <param-value>ca.corefacility.bioinformatics.irida.webservices.filters.AngularXSRFRequestFilter</param-value>
-        </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
@@ -43,6 +33,17 @@
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+    
+    <!-- Cross Origin Resource Sharing Filters -->
+    <filter>
+        <filter-name>corsHeaderFilter</filter-name>
+        <filter-class>ca.corefacility.bioinformatics.irida.filters.cors.CorsHeadersFilter</filter-class>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>corsHeaderFilter</filter-name>
+        <url-pattern>/api/*</url-pattern>
+    </filter-mapping>
     
     <!-- Filters for Spring Security -->
     <filter>
