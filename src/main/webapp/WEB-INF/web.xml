@@ -37,7 +37,28 @@
     <!-- Cross Origin Resource Sharing Filters -->
     <filter>
         <filter-name>corsHeaderFilter</filter-name>
-        <filter-class>ca.corefacility.bioinformatics.irida.filters.cors.CorsHeadersFilter</filter-class>
+        <filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class>
+        
+        <!-- What HTTP verbs is the client allowed to tell the server? -->
+        <init-param>
+            <param-name>cors.supportedMethods</param-name>
+            <param-value>GET, POST, HEAD, PUT, DELETE, OPTIONS</param-value>
+        </init-param>
+        
+        <!-- 
+            What HTTP headers is the client allowed to pass to the server? 
+            We need to specifically allow the Authorization header so that the
+            client can authorize itself with Spring Security.
+        -->
+        <init-param>
+            <param-name>cors.supportedHeaders</param-name>
+            <param-value>X-Requested-with, Authorization</param-value>
+        </init-param>
+        <!-- How long should the browser cache the preflight request? -->
+        <init-param>
+            <param-name>cors.maxAge</param-name>
+            <param-value>3600</param-value>
+        </init-param>
     </filter>
     
     <filter-mapping>

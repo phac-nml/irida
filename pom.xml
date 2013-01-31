@@ -7,13 +7,35 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>irida</name>
     <url></url>
+    
+    <repositories>
+        <repository>
+            <id>public-alfresco</id>
+            <name>Public Alfresco Repository</name>
+            <url>https://artifacts.alfresco.com/nexus/content/repositories/public/</url>
+        </repository>
+    </repositories>
+    
     <dependencies>
         <!-- JUnit -->
         <dependency>
             <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <artifactId>junit-dep</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
+        </dependency>
+        
+        <!-- REST-assured -->
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${rest.assured.version}</version>
+        </dependency>
+        <!-- Hamcrest Matcher framework (used in REST-assured) -->
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version>${hamcrest.core.version}</version>
         </dependency>
 
         <!-- Jersey -->
@@ -140,10 +162,42 @@
             <artifactId>javax.servlet-api</artifactId>
             <version>${javax.servlet.version}</version>
         </dependency>
+        
+        <!-- CORS filter -->
+        <dependency>
+            <groupId>com.thetransactioncompany</groupId>
+            <artifactId>cors-filter</artifactId>
+            <version>${cors.filter.version}</version>
+        </dependency>
+        
+        
     </dependencies>
     <build>
         <finalName>irida</finalName>
         <plugins>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven.failsafe.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surefire.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
@@ -151,6 +205,26 @@
                 <configuration>
                     <scanIntervalSeconds>3</scanIntervalSeconds>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>start-jetty</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <scanIntervalSeconds>0</scanIntervalSeconds>
+                            <daemon>true</daemon>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-jetty</id>
+                        <phase>post-integration-phase</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -165,7 +239,7 @@
     </build>
     <properties>
         <junit.version>4.10</junit.version>
-        <jersey.version>1.16</jersey.version>
+        <jersey.version>1.17</jersey.version>
         <slf4j.version>1.7.2</slf4j.version>
         <jetty.version>8.1.5.v20120716</jetty.version>
         <json.version>20090211</json.version>
@@ -175,6 +249,11 @@
         <javax.inject.version>1</javax.inject.version>
         <jackson.version>2.1.2</jackson.version>
         <javax.servlet.version>3.0.1</javax.servlet.version>
+        <cors.filter.version>1.5</cors.filter.version>
+        <rest.assured.version>1.7.2</rest.assured.version>
+        <hamcrest.core.version>1.3</hamcrest.core.version>
+        <maven.failsafe.plugin.version>2.13</maven.failsafe.plugin.version>
+        <maven.surefire.plugin.version>2.13</maven.surefire.plugin.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
