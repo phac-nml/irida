@@ -39,6 +39,21 @@
         <filter-name>corsHeaderFilter</filter-name>
         <filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class>
         
+        <init-param>
+            <param-name>cors.allowGenericHttpRequests</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        
+        <init-param>
+            <param-name>cors.allowOrigin</param-name>
+            <param-value>*</param-value>
+        </init-param>
+        
+        <init-param>
+            <param-name>cors.supportsCredentials</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        
         <!-- What HTTP verbs is the client allowed to tell the server? -->
         <init-param>
             <param-name>cors.supportedMethods</param-name>
@@ -54,6 +69,7 @@
             <param-name>cors.supportedHeaders</param-name>
             <param-value>X-Requested-with, Authorization</param-value>
         </init-param>
+        
         <!-- How long should the browser cache the preflight request? -->
         <init-param>
             <param-name>cors.maxAge</param-name>
