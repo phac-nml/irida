@@ -67,7 +67,7 @@
         -->
         <init-param>
             <param-name>cors.supportedHeaders</param-name>
-            <param-value>X-Requested-with, Authorization</param-value>
+            <param-value>X-Requested-with, Authorization, Accept, Origin</param-value>
         </init-param>
         
         <!-- How long should the browser cache the preflight request? -->
