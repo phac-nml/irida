@@ -11,7 +11,7 @@
     <security:global-method-security jsr250-annotations="enabled" secured-annotations="enabled" />
     
     <!-- Web authentication configuration -->
-    <security:http use-expressions="true">
+    <security:http use-expressions="true" create-session="never">
         <security:intercept-url pattern="/api/**" access="isAuthenticated()" />
 
         <security:http-basic entry-point-ref="authenticationEntryPoint" />
