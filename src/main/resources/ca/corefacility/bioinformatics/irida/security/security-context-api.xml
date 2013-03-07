@@ -9,18 +9,6 @@
         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
     <!-- Enable method-level security -->
     <security:global-method-security jsr250-annotations="enabled" secured-annotations="enabled" />
-    
-    <!-- Web authentication configuration -->
-    <security:http use-expressions="true" create-session="never">
-        <security:intercept-url pattern="/api/**" access="isAuthenticated()" />
-
-        <security:http-basic entry-point-ref="authenticationEntryPoint" />
-        <security:logout logout-url="/api/logout" />
-    </security:http>
-    
-    <beans:bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
-        <beans:property name="realmName" value="IRIDA User Management" />
-    </beans:bean>
         
     <!-- Passwords should be encoded using the BCrypt algorithm -->
     <beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
