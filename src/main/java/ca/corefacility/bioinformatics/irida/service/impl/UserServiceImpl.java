@@ -5,70 +5,52 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.service.UserService;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import java.util.List;
-import java.util.Map;
-import javax.inject.Named;
 
 /**
  * Implementation of the <ref>UserService</ref>.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-@Named
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements CRUDService<Long, User> {
 
-    private static final Map<Long, User> users = new HashMap<>();
-    private static Long currentId = 2l;
+    private CRUDRepository<Long, User> repository;
 
-    static {
-        users.put(0l, new User(0l, "fbristow", "fbristow@gmail.com", "password", "Franklin", "Bristow", "204-789-7029"));
-        users.put(1l, new User(1l, "jsadam", "josh.s.adam@gmail.com", "123456789", "Josh", "Adam", "204-789-4518"));
+    public UserServiceImpl(CRUDRepository<Long, User> repository) {
+        this.repository = repository;
     }
-    
-    public UserServiceImpl() {}
 
     @Override
     public User create(User user) throws IllegalArgumentException {
-        user.setId(currentId++);
-        users.put(user.getId(), user);
-        return user;
+        //TODO: validate users before creating
+        return repository.create(user);
     }
 
     @Override
     public User read(Long id) throws IllegalArgumentException {
-        if (!users.containsKey(id)) {
-            throw new IllegalArgumentException("The specified identifier does not exist in the database.");
-        }
-        return users.get(id);
+        return repository.read(id);
     }
 
     @Override
     public User update(User user) throws IllegalArgumentException {
-        users.put(user.getId(), user);
-        return user;
+        //TODO: validate user before updating
+        return repository.update(user);
     }
 
     @Override
     public void delete(Long id) throws IllegalArgumentException {
-        if (!users.containsKey(id)) {
-            throw new IllegalArgumentException("The specified identifier does not exist in the database.");
-        }
-        users.remove(id);
+        repository.delete(id);
     }
 
     @Override
     public List<User> list() {
-        List<User> usersList = new ArrayList<>(users.values());
-        Collections.sort(usersList);
-        return usersList;
+        return repository.list();
     }
 
     @Override
     public Boolean exists(Long id) {
-        return users.containsKey(id);
+        return repository.exists(id);
     }
 }

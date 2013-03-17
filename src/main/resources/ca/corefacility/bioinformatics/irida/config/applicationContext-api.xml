@@ -5,6 +5,10 @@
        xsi:schemaLocation="
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
-    <context:annotation-config />
-    <context:component-scan base-package="ca.corefacility.bioinformatics.irida" />
+    
+    <bean id="userService" class="ca.corefacility.bioinformatics.irida.service.impl.UserServiceImpl">
+        <constructor-arg ref="userRepository" />
+    </bean>
+    
+    <bean id="userRepository" class="ca.corefacility.bioinformatics.irida.repositories.memory.UserMemoryRepository" />
 </beans>
