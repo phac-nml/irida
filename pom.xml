@@ -8,7 +8,7 @@
     <name>irida-api</name>
     <url>http://gitlab.corefacility.ca/irida/irida-api</url>
 
-   <dependencies>
+    <dependencies>
         <!-- JUnit -->
         <dependency>
             <groupId>junit</groupId>
@@ -42,9 +42,19 @@
             <artifactId>spring-core</artifactId>
             <version>${spring.version}</version>
         </dependency>
-       <dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-expression</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
             <version>${spring.version}</version>
         </dependency>
         
@@ -94,7 +104,7 @@
                     </execution>
                 </executions>
             </plugin>
-           <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.plugin.version}</version>
