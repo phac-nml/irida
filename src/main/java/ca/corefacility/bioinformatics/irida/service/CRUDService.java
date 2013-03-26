@@ -9,7 +9,6 @@ import java.util.List;
  */
 public interface CRUDService<IdentifierType, Type> {
     /**
-     * /**
      * Create a new object in the persistence store.
      * @param object The object to persist.
      * @return The object as it was persisted in the database. May modify the 
