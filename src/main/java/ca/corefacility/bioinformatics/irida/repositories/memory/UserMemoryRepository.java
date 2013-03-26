@@ -20,6 +20,12 @@ public class UserMemoryRepository implements CRUDRepository<Long, User> {
 
     private static Long id = 1l;
     private static final Map<Long, User> store = new HashMap<>();
+    
+    static {
+        store.put(id, new User(id++, "jsadam", "j@me.com", "pass1234", "Jake", "Penner", "787-9998"));
+        store.put(id, new User(id++, "hjadam", "h@me.com", "pass5678", "Hammy", "Penner", "787-1234"));
+        store.put(id, new User(id++, "njadam", "n@me.com", "1234pass", "Ninja", "Penner", "787-5678"));
+    }
 
     @Override
     public User create(User u) throws IllegalArgumentException {
