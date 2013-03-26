@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.controller;
 
 import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.service.impl.UserServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.UserResource;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.LinkBuilder;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -26,10 +25,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class UsersController {
 
     private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
-    private final UserServiceImpl userCRUD;
+    private final CRUDService<String, User> userCRUD;
 
     @Autowired
-    public UsersController(UserServiceImpl userCRUD) {
+    public UsersController(CRUDService<String, User> userCRUD) {
         this.userCRUD = userCRUD;
     }
 
