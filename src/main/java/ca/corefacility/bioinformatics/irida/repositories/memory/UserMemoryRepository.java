@@ -17,6 +17,12 @@ public class UserMemoryRepository implements CRUDRepository<String, User> {
 
     private static final String BASE_URI = "http://api.irida.ca/User/";
     private static final Map<String, User> store = new HashMap<>();
+    
+    static {
+        store.put(BASE_URI + "jsadam", new User(BASE_URI + "jsadam", "jsadam", "j@me.com", "pass1234", "Jake", "Penner", "787-9998"));
+        store.put(BASE_URI + "hjadam", new User(BASE_URI + "hjadam", "hjadam", "h@me.com", "pass5678", "Hammy", "Penner", "787-1234"));
+        store.put(BASE_URI + "njadam", new User(BASE_URI + "njadam", "njadam", "n@me.com", "1234pass", "Ninja", "Penner", "787-5678"));
+    }
 
     @Override
     public User create(User u) throws IllegalArgumentException {
