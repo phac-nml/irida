@@ -1,26 +1,30 @@
 package ca.corefacility.bioinformatics.irida.model;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
  * A user object.
  *
- * @author Franklin Bristow
+ * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class User implements Comparable<User> {
-
-    private Long id;
+    private String id;
     private String username;
     private String email;
     private String password;
     private String firstName;
     private String lastName;
     private String phoneNumber;
+    
+    private Map<Project, Role> projects;
 
     public User() {
+        projects = new HashMap<>();
     }
 
-    public User(Long id, String username, String email, String password, String firstName, String lastName, String phoneNumber) {
+    public User(String id, String username, String email, String password, String firstName, String lastName, String phoneNumber) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -108,12 +112,28 @@ public class User implements Comparable<User> {
         this.phoneNumber = phoneNumber;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
+    }
+    
+    public void addProject(Project project, Role role) {
+        this.projects.put(project, role);
+    }
+    
+    public void removeProject(Project project) {
+        this.projects.remove(project);
+    }
+    
+    public Map<Project, Role> getProjects() {
+        return this.projects;
+    }
+    
+    public void setProjects(Map<Project, Role> projects) {
+        this.projects = projects;
     }
 
     @Override
