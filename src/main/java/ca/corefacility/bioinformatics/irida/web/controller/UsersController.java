@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.Link;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,11 +26,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class UsersController {
 
     private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
-    private final CRUDService<String, User> userCRUD;
+    private final CRUDService<String, User> userService;
 
     @Autowired
-    public UsersController(CRUDService<String, User> userCRUD) {
-        this.userCRUD = userCRUD;
+    public UsersController(@Qualifier("userService") CRUDService<String, User> userService) {
+        this.userService = userService;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -46,7 +47,7 @@ public class UsersController {
     @RequestMapping(produces = "application/json")
     public List<UserResource> getJsonAllUsers() {
         logger.info("JSON /users called");
-        List<User> users = userCRUD.list();
+        List<User> users = userService.list();
         List<UserResource> resources = new ArrayList<>(users.size());
         logger.info("The size is: ", users.size());
         for (User u : users) {
