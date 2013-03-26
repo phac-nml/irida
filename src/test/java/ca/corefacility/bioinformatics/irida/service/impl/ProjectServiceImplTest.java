@@ -48,7 +48,7 @@ public class ProjectServiceImplTest {
         
         // get the new versions of the files out of the database
         p = projectService.read(p.getId());
-        u = userRepository.read("http://api.irida.ca/User/super-user");
+        u = userRepository.read(u.getId());
 
         // assert that the changes were correctly made
         assertEquals(1, p.getUsersByRole(r).size());

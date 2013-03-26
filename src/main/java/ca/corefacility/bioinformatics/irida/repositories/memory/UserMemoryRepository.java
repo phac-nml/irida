@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * An in-memory implementation of a user repository, for testing purposes only.
@@ -15,18 +16,22 @@ import java.util.Map;
  */
 public class UserMemoryRepository implements CRUDRepository<String, User> {
 
-    private static final String BASE_URI = "http://api.irida.ca/User/";
     private static final Map<String, User> store = new HashMap<>();
-    
+
     static {
-        store.put(BASE_URI + "jsadam", new User(BASE_URI + "jsadam", "jsadam", "j@me.com", "pass1234", "Jake", "Penner", "787-9998"));
-        store.put(BASE_URI + "hjadam", new User(BASE_URI + "hjadam", "hjadam", "h@me.com", "pass5678", "Hammy", "Penner", "787-1234"));
-        store.put(BASE_URI + "njadam", new User(BASE_URI + "njadam", "njadam", "n@me.com", "1234pass", "Ninja", "Penner", "787-5678"));
+        UUID uuid = UUID.randomUUID();
+        String id = uuid.toString();
+        store.put(id, new User(id, "jsadam", "j@me.com", "pass1234", "Jake", "Penner", "787-9998"));
+        id = UUID.randomUUID().toString();
+        store.put(id, new User(id, "hjadam", "h@me.com", "pass5678", "Hammy", "Penner", "787-1234"));
+        id = UUID.randomUUID().toString();
+        store.put(id, new User(id, "njadam", "n@me.com", "1234pass", "Ninja", "Penner", "787-5678"));
     }
 
     @Override
     public User create(User u) throws IllegalArgumentException {
-        String id = BASE_URI + u.getUsername();
+        UUID uuid = UUID.randomUUID();
+        String id = uuid.toString();
         u.setId(id);
         store.put(id, u);
         return u;

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * An in-memory implementation of a user repository, for testing purposes only.
@@ -14,12 +15,12 @@ import java.util.Map;
  */
 public class ProjectMemoryRepository implements CRUDRepository<String, Project> {
 
-    private static final String BASE_URI = "http://api.irida.ca/Project/";
     Map<String, Project> store = new HashMap<>();
 
     @Override
     public Project create(Project p) throws IllegalArgumentException {
-        String id = BASE_URI + p.getName();
+        UUID uuid = UUID.randomUUID();
+        String id = uuid.toString();
         p.setId(id);
         store.put(id, p);
         return p;
