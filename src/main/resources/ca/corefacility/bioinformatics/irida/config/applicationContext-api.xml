@@ -6,9 +6,15 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
     
-    <bean id="userService" class="ca.corefacility.bioinformatics.irida.service.impl.UserServiceImpl">
+    <bean id="userService" class="ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl">
+        <constructor-arg ref="userRepository" />
+    </bean>
+    
+    <bean id="projectService" class="ca.corefacility.bioinformatics.irida.service.impl.ProjectServiceImpl">
+        <constructor-arg ref="projectRepository" />
         <constructor-arg ref="userRepository" />
     </bean>
     
     <bean id="userRepository" class="ca.corefacility.bioinformatics.irida.repositories.memory.UserMemoryRepository" />
+    <bean id="projectRepository" class="ca.corefacility.bioinformatics.irida.repositories.memory.ProjectMemoryRepository" />
 </beans>
