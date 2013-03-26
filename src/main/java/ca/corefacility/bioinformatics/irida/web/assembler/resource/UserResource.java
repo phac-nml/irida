@@ -1,12 +1,13 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package ca.corefacility.bioinformatics.irida.web.assembler.resource;
 
 import ca.corefacility.bioinformatics.irida.model.User;
 import org.springframework.hateoas.ResourceSupport;
 
+/**
+ * Wrapper for exposing User resources to the web with linking support.
+ * 
+ * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
+ */
 public class UserResource extends ResourceSupport {
     private User user;
     
