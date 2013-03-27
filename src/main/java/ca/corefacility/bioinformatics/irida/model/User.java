@@ -1,10 +1,15 @@
 package ca.corefacility.bioinformatics.irida.model;
 
+import ca.corefacility.bioinformatics.irida.validators.Patterns;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+import org.hibernate.validator.constraints.Email;
 
 /**
  * A user object.
@@ -15,13 +20,25 @@ public class User implements Comparable<User> {
 
     private UUID id;
     private URI uri;
+    @NotNull
+    @Size(min = 3)
     private String username;
+    @Email
+    @NotNull
     private String email;
+    @NotNull
+    @Size(min = 6) // passwords must be at least six characters long
+    @Patterns({
+        @Pattern(regexp = "^.*[A-Z].*$"), // passwords must contain an upper-case letter
+        @Pattern(regexp = "^.*[0-9].*$") // passwords must contain a number
+    })
     private String password;
+    @NotNull
     private String firstName;
+    @NotNull
     private String lastName;
+    @NotNull
     private String phoneNumber;
-    
     private Map<Project, Role> projects;
 
     public User() {

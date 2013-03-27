@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.model;
 
+import java.net.URI;
+import java.util.UUID;
+import javax.validation.constraints.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 
 /**
@@ -9,19 +12,30 @@ import org.springframework.security.core.GrantedAuthority;
  */
 public class Role implements Comparable<Role>, GrantedAuthority {
 
-    private String id;
+    private UUID id;
+    private URI uri;
+    @NotNull
     private String name;
+    @NotNull
     private String description;
 
     public Role() {
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
+    }
+
+    public URI getUri() {
+        return uri;
+    }
+
+    public void setUri(URI uri) {
+        this.uri = uri;
     }
 
     public String getName() {

@@ -3,6 +3,9 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import java.util.List;
+import java.util.Set;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 
 /**
  * A universal CRUD service for all types. Specialized services should extend
@@ -13,14 +16,15 @@ import java.util.List;
 public class CRUDServiceImpl<KeyType, Type> implements CRUDService<KeyType, Type> {
 
     protected CRUDRepository<KeyType, Type> repository;
+    protected Validator validator;
 
-    public CRUDServiceImpl(CRUDRepository<KeyType, Type> repository) {
+    public CRUDServiceImpl(CRUDRepository<KeyType, Type> repository, Validator validator) {
         this.repository = repository;
+        this.validator = validator;
     }
 
     @Override
     public Type create(Type object) throws IllegalArgumentException {
-        //TODO: validate users before creating
         return repository.create(object);
     }
 

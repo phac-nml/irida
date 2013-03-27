@@ -10,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import java.util.UUID;
+import javax.validation.Validator;
 
 /**
  * A specialized service layer for projects.
@@ -20,8 +21,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<UUID, Project> implement
 
     private CRUDRepository<UUID, User> userRepository;
 
-    public ProjectServiceImpl(CRUDRepository<UUID, Project> projectRepository, CRUDRepository<UUID, User> userRepository) {
-        super(projectRepository);
+    public ProjectServiceImpl(CRUDRepository<UUID, Project> projectRepository, CRUDRepository<UUID, User> userRepository, Validator validator) {
+        super(projectRepository, validator);
         this.userRepository = userRepository;
     }
 

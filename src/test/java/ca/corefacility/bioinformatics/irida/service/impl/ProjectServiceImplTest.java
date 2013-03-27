@@ -8,6 +8,9 @@ import ca.corefacility.bioinformatics.irida.repositories.memory.ProjectMemoryRep
 import ca.corefacility.bioinformatics.irida.repositories.memory.UserMemoryRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import java.util.UUID;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -22,12 +25,15 @@ public class ProjectServiceImplTest {
     private ProjectService projectService;
     private CRUDRepository<UUID, User> userRepository;
     private CRUDRepository<UUID, Project> projectRepository;
+    private Validator validator;
 
     @Before
     public void setUp() {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
         userRepository = new UserMemoryRepository();
         projectRepository = new ProjectMemoryRepository();
-        projectService = new ProjectServiceImpl(projectRepository, userRepository);
+        projectService = new ProjectServiceImpl(projectRepository, userRepository, validator);
     }
 
     /**
@@ -42,14 +48,14 @@ public class ProjectServiceImplTest {
 
         u.setUsername("super-user");
         r.setName("ROLE_MANAGER");
-        
+
         // create the user and project
         p = projectRepository.create(p);
         u = userRepository.create(u);
 
         // add the user to the project
         projectService.addUserToProject(p, u, r);
-        
+
         // get the new versions of the files out of the database
         p = projectRepository.read(p.getId());
         u = userRepository.read(u.getId());

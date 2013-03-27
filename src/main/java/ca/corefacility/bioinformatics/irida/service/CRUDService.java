@@ -1,12 +1,15 @@
 package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.List;
+import javax.validation.Valid;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * All Service interfaces should extend this interface to inherit common methods
  * relating to creating, reading, updating and deleting objects from persistence.
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
+@Validated
 public interface CRUDService<IdentifierType, Type> {
     /**
      * Create a new object in the persistence store.
@@ -16,7 +19,7 @@ public interface CRUDService<IdentifierType, Type> {
      * @throws IllegalArgumentException If the object to persist does not pass
      * validation, then an argument will be thrown with a reason for failure.
      */
-    public Type create(Type object) throws IllegalArgumentException;
+    public Type create(@Valid Type object) throws IllegalArgumentException;
     
     /**
      * Read the object type by unique identifier.

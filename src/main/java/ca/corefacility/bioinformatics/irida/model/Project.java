@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * A project object.
@@ -17,7 +19,9 @@ public class Project implements Comparable<Project> {
 
     private UUID id;
     private URI uri;
+    @NotNull
     private String name;
+    @NotEmpty // projects must have at least 1 user (a manager)
     private Map<User, Role> users;
 
     public Project() {
@@ -57,7 +61,7 @@ public class Project implements Comparable<Project> {
         }
         return filtered;
     }
-    
+
     public void addUserToProject(User u, Role r) {
         users.put(u, r);
     }
