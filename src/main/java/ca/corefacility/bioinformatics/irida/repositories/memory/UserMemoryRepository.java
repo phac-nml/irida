@@ -14,31 +14,29 @@ import java.util.UUID;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class UserMemoryRepository implements CRUDRepository<String, User> {
+public class UserMemoryRepository implements CRUDRepository<UUID, User> {
 
-    private static final Map<String, User> store = new HashMap<>();
+    private static final Map<UUID, User> store = new HashMap<>();
 
     static {
         UUID uuid = UUID.randomUUID();
-        String id = uuid.toString();
-        store.put(id, new User(id, "jsadam", "j@me.com", "pass1234", "Jake", "Penner", "787-9998"));
-        id = UUID.randomUUID().toString();
-        store.put(id, new User(id, "hjadam", "h@me.com", "pass5678", "Hammy", "Penner", "787-1234"));
-        id = UUID.randomUUID().toString();
-        store.put(id, new User(id, "njadam", "n@me.com", "1234pass", "Ninja", "Penner", "787-5678"));
+        store.put(uuid, new User(uuid, "jsadam", "j@me.com", "pass1234", "Jake", "Penner", "787-9998"));
+        uuid = UUID.randomUUID();
+        store.put(uuid, new User(uuid, "hjadam", "h@me.com", "pass5678", "Hammy", "Penner", "787-1234"));
+        uuid = UUID.randomUUID();
+        store.put(uuid, new User(uuid, "njadam", "n@me.com", "1234pass", "Ninja", "Penner", "787-5678"));
     }
 
     @Override
     public User create(User u) throws IllegalArgumentException {
         UUID uuid = UUID.randomUUID();
-        String id = uuid.toString();
-        u.setId(id);
-        store.put(id, u);
+        u.setId(uuid);
+        store.put(uuid, u);
         return u;
     }
 
     @Override
-    public User read(String id) throws IllegalArgumentException {
+    public User read(UUID id) throws IllegalArgumentException {
         if (store.containsKey(id)) {
             return store.get(id);
         }
@@ -47,7 +45,7 @@ public class UserMemoryRepository implements CRUDRepository<String, User> {
 
     @Override
     public User update(User u) throws IllegalArgumentException {
-        String id = u.getId();
+        UUID id = u.getId();
         if (store.containsKey(u.getId())) {
 
             return store.put(id, u);
@@ -56,7 +54,7 @@ public class UserMemoryRepository implements CRUDRepository<String, User> {
     }
 
     @Override
-    public void delete(String id) throws IllegalArgumentException {
+    public void delete(UUID id) throws IllegalArgumentException {
         if (!store.containsKey(id)) {
             throw new IllegalArgumentException("No such user exists with id [" + id + ".");
         }
@@ -71,7 +69,7 @@ public class UserMemoryRepository implements CRUDRepository<String, User> {
     }
 
     @Override
-    public Boolean exists(String id) {
+    public Boolean exists(UUID id) {
         return store.containsKey(id);
     }
 }

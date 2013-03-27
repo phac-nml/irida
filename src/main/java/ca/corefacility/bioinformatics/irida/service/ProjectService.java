@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
+import java.util.UUID;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -11,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Transactional
-public interface ProjectService extends CRUDService<String, Project> {
+public interface ProjectService extends CRUDService<UUID, Project> {
 
     /**
      * Add the specified user to the project with a role. If the user is a

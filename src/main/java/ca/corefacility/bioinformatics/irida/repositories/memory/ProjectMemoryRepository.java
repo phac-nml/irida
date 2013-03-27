@@ -13,21 +13,20 @@ import java.util.UUID;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class ProjectMemoryRepository implements CRUDRepository<String, Project> {
+public class ProjectMemoryRepository implements CRUDRepository<UUID, Project> {
 
-    Map<String, Project> store = new HashMap<>();
+    Map<UUID, Project> store = new HashMap<>();
 
     @Override
     public Project create(Project p) throws IllegalArgumentException {
-        UUID uuid = UUID.randomUUID();
-        String id = uuid.toString();
+        UUID id = UUID.randomUUID();
         p.setId(id);
         store.put(id, p);
         return p;
     }
 
     @Override
-    public Project read(String id) throws IllegalArgumentException {
+    public Project read(UUID id) throws IllegalArgumentException {
         return store.get(id);
     }
 
@@ -37,7 +36,7 @@ public class ProjectMemoryRepository implements CRUDRepository<String, Project> 
     }
 
     @Override
-    public void delete(String id) throws IllegalArgumentException {
+    public void delete(UUID id) throws IllegalArgumentException {
         store.remove(id);
     }
 
@@ -47,7 +46,7 @@ public class ProjectMemoryRepository implements CRUDRepository<String, Project> 
     }
 
     @Override
-    public Boolean exists(String id) {
+    public Boolean exists(UUID id) {
         return store.containsKey(id);
     }
 }

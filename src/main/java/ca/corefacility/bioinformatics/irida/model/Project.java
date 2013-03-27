@@ -1,10 +1,12 @@
 package ca.corefacility.bioinformatics.irida.model;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * A project object.
@@ -13,7 +15,8 @@ import java.util.Set;
  */
 public class Project implements Comparable<Project> {
 
-    private String id;
+    private UUID id;
+    private URI uri;
     private String name;
     private Map<User, Role> users;
 
@@ -21,11 +24,19 @@ public class Project implements Comparable<Project> {
         users = new HashMap<>();
     }
 
-    public String getId() {
+    public URI getUri() {
+        return uri;
+    }
+
+    public void setUri(URI uri) {
+        this.uri = uri;
+    }
+
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

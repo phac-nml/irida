@@ -9,17 +9,18 @@ import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import java.util.UUID;
 
 /**
  * A specialized service layer for projects.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class ProjectServiceImpl extends CRUDServiceImpl<String, Project> implements ProjectService {
+public class ProjectServiceImpl extends CRUDServiceImpl<UUID, Project> implements ProjectService {
 
-    private CRUDRepository<String, User> userRepository;
+    private CRUDRepository<UUID, User> userRepository;
 
-    public ProjectServiceImpl(CRUDRepository<String, Project> projectRepository, CRUDRepository<String, User> userRepository) {
+    public ProjectServiceImpl(CRUDRepository<UUID, Project> projectRepository, CRUDRepository<UUID, User> userRepository) {
         super(projectRepository);
         this.userRepository = userRepository;
     }
@@ -32,7 +33,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<String, Project> impleme
         // first, add the user to the project:
         project.addUserToProject(user, role);
         repository.update(project);
-        
+
         // then add the project to the user:
         user.addProject(project, role);
         userRepository.update(user);

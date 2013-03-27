@@ -7,6 +7,7 @@ import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.memory.ProjectMemoryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.memory.UserMemoryRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -19,8 +20,8 @@ import static org.junit.Assert.*;
 public class ProjectServiceImplTest {
 
     private ProjectService projectService;
-    private CRUDRepository<String, User> userRepository;
-    private CRUDRepository<String, Project> projectRepository;
+    private CRUDRepository<UUID, User> userRepository;
+    private CRUDRepository<UUID, Project> projectRepository;
 
     @Before
     public void setUp() {
