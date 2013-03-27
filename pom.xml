@@ -7,6 +7,58 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>irida-api</name>
     <url>http://gitlab.corefacility.ca/irida/irida-api</url>
+    
+    <issueManagement>
+        <system>GitLab</system>
+        <url>http://gitlab.corefacility.ca/irida/irida-api/issues</url>
+    </issueManagement>
+    
+    <scm>
+        <connection>scm:git:http://gitlab.corefacility.ca/irida/irida-api.git</connection>
+        <developerConnection>scm:git:ssh://git@gitlab.corefacility.ca/irida/irida-api.git</developerConnection>
+        <url>http://gitlab.corefacility.ca/irida/irida-api</url>
+    </scm>
+    
+    <inceptionYear>2013</inceptionYear>
+    
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>manual</distribution>
+        </license>    
+    </licenses>
+    
+    <developers>
+        <developer>
+            <id>aaron</id>
+            <name>Aaron Petkau</name>
+            <email>aaron.petkau@phac-aspc.gc.ca</email>
+            <organization>Public Health Agency of Canada</organization>
+            <organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
+        </developer>
+        <developer>
+            <id>josh</id>
+            <name>Josh Adam</name>
+            <email>josh.adam@phac-aspc.gc.ca</email>
+            <organization>Public Health Agency of Canada</organization>
+            <organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
+        </developer>
+        <developer>
+            <id>tom</id>
+            <name>Thomas Matthews</name>
+            <email>thomas.matthews@phac-aspc.gc.ca</email>
+            <organization>Public Health Agency of Canada</organization>
+            <organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
+        </developer>
+        <developer>
+            <id>franklin</id>
+            <name>Franklin Bristow</name>
+            <email>franklin.bristow@phac-aspc.gc.ca</email>
+            <organization>Public Health Agency of Canada</organization>
+            <organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
+        </developer>
+    </developers>
 
     <dependencies>
         <!-- JUnit -->
@@ -44,6 +96,11 @@
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-expression</artifactId>
             <version>${spring.version}</version>
         </dependency>
@@ -74,14 +131,6 @@
             <artifactId>spring-security-config</artifactId>
             <version>${spring.security.version}</version>
         </dependency>
-        
-        <!-- jsr-330 (dependency injection for java) -->
-        <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
-            <version>${javax.inject.version}</version>
-        </dependency>
-        
     </dependencies>
     <build>
         <finalName>irida-api</finalName>
@@ -118,11 +167,11 @@
                     <target>1.7</target>
                 </configuration>                            
             </plugin>
-	    <plugin>
-		<groupId>org.apache.maven.plugins</groupId>
-		<artifactId>maven-javadoc-plugin</artifactId>
-		<version>${maven.javadoc.plugin.version}</version>
-	    </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven.javadoc.plugin.version}</version>
+            </plugin>
         </plugins>
     </build>
     <properties>
@@ -130,13 +179,14 @@
         <slf4j.version>1.7.2</slf4j.version>
         <maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
         <guava.version>14.0-rc2</guava.version>
-        <spring.version>3.2.1.RELEASE</spring.version>
+        <spring.version>3.2.2.RELEASE</spring.version>
         <spring.security.version>3.1.3.RELEASE</spring.security.version>
         <javax.inject.version>1</javax.inject.version>
         <maven.failsafe.plugin.version>2.13</maven.failsafe.plugin.version>
-	<maven.surefire.plugin.version>2.13</maven.surefire.plugin.version>
-	<maven.javadoc.plugin.version>2.9</maven.javadoc.plugin.version>
+        <maven.surefire.plugin.version>2.13</maven.surefire.plugin.version>
+        <maven.javadoc.plugin.version>2.9</maven.javadoc.plugin.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 </project>
