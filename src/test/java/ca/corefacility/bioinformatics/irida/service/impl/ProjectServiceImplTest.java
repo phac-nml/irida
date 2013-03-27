@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.memory.ProjectMemoryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.memory.UserMemoryRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -18,12 +19,14 @@ import static org.junit.Assert.*;
 public class ProjectServiceImplTest {
 
     private ProjectService projectService;
-    private UserMemoryRepository userRepository;
+    private CRUDRepository<String, User> userRepository;
+    private CRUDRepository<String, Project> projectRepository;
 
     @Before
     public void setUp() {
         userRepository = new UserMemoryRepository();
-        projectService = new ProjectServiceImpl(new ProjectMemoryRepository(), userRepository);
+        projectRepository = new ProjectMemoryRepository();
+        projectService = new ProjectServiceImpl(projectRepository, userRepository);
     }
 
     /**
@@ -40,14 +43,14 @@ public class ProjectServiceImplTest {
         r.setName("ROLE_MANAGER");
         
         // create the user and project
-        p = projectService.create(p);
+        p = projectRepository.create(p);
         u = userRepository.create(u);
 
         // add the user to the project
         projectService.addUserToProject(p, u, r);
         
         // get the new versions of the files out of the database
-        p = projectService.read(p.getId());
+        p = projectRepository.read(p.getId());
         u = userRepository.read(u.getId());
 
         // assert that the changes were correctly made
