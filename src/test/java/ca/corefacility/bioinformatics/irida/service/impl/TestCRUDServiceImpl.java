@@ -19,13 +19,12 @@ import ca.corefacility.bioinformatics.irida.model.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.memory.CRUDMemoryRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
+import java.util.List;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import javax.validation.constraints.NotNull;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -107,5 +106,63 @@ public class TestCRUDServiceImpl {
 
         i = crudRepository.read(i.getId());
         assertEquals("Also definitely not null.", i.getNonNull());
+    }
+
+    @Test
+    public void testRead() {
+        Identifiable i = new Identifiable();
+        i.setNonNull("Definitely not null");
+        i = crudRepository.create(i);
+
+        try {
+            i = crudService.read(i.getId());
+        } catch (IllegalArgumentException e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testList() {
+        int itemCount = 10;
+        for (int i = 0; i < itemCount; i++) {
+            crudRepository.create(new Identifiable());
+        }
+
+        List<Identifiable> items = crudService.list();
+
+        assertEquals(itemCount, items.size());
+    }
+
+    @Test
+    public void testExists() {
+        Identifiable i = new Identifiable();
+        i = crudRepository.create(i);
+
+        assertTrue(crudService.exists(i.getId()));
+    }
+
+    @Test
+    public void testValidDelete() {
+        Identifiable i = new Identifiable();
+        i = crudRepository.create(i);
+
+        try {
+            crudService.delete(i.getId());
+        } catch (IllegalArgumentException e) {
+            fail();
+        }
+
+        assertFalse(crudRepository.exists(i.getId()));
+    }
+
+    @Test
+    public void testInvalidDelete() {
+        try {
+            crudService.delete(new Identifier());
+            fail();
+        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
+            fail();
+        }
     }
 }
