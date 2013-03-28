@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -23,6 +24,7 @@ public class Project implements Comparable<Project> {
     private Map<User, Role> users;
     @NotNull
     private Audit audit;
+    private Collection<Sample> samples;
 
     public Project() {
         users = new HashMap<>();
@@ -39,7 +41,8 @@ public class Project implements Comparable<Project> {
         if (other instanceof Project) {
             Project p = (Project) other;
             return Objects.equals(id, p.id)
-                    && Objects.equals(name, p.name);
+                    && Objects.equals(name, p.name)
+                    && Objects.equals(samples, p.samples);
         }
 
         return false;
@@ -47,7 +50,7 @@ public class Project implements Comparable<Project> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(id, name, samples);
     }
 
     public Identifier getId() {
@@ -94,6 +97,14 @@ public class Project implements Comparable<Project> {
 
     public void setAudit(Audit auditInformation) {
         this.audit = auditInformation;
+    }
+
+    public Collection<Sample> getSamples() {
+        return samples;
+    }
+
+    public void setSamples(Collection<Sample> samples) {
+        this.samples = samples;
     }
 
     @Override
