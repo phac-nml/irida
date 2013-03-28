@@ -198,6 +198,12 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <excludes>
+                        <!-- memory-backed repositories are only used in tests, should not be intrumented. -->
+                        <exclude>**/repositories/memory/*</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
