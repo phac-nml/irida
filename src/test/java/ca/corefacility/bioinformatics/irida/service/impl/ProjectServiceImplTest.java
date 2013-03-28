@@ -8,7 +8,8 @@ import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.memory.ProjectMemoryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.memory.UserMemoryRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import java.util.UUID;
+import java.util.HashMap;
+import java.util.Map;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -65,17 +66,5 @@ public class ProjectServiceImplTest {
         // assert that the changes were correctly made
         assertEquals(1, p.getUsersByRole(r).size());
         assertTrue(u.getProjects().containsKey(p));
-    }
-
-    @Test
-    public void testAddInvalidProject() {
-        Project p = new Project(); // nothing is set, this should be invalid
-
-        try {
-            projectService.create(p);
-            fail();
-        } catch (ConstraintViolationException constraintViolations) {
-            assertEquals(2, constraintViolations.getConstraintViolations().size());
-        }
     }
 }

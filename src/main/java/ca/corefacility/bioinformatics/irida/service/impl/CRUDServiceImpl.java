@@ -53,6 +53,10 @@ public class CRUDServiceImpl<KeyType, Type> implements CRUDService<KeyType, Type
 
     @Override
     public void delete(KeyType id) throws IllegalArgumentException {
+        if (!exists(id)) {
+            throw new IllegalArgumentException("No such identifier exists in the database.");
+        }
+
         repository.delete(id);
     }
 

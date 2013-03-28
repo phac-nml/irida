@@ -15,6 +15,12 @@
  */
 package ca.corefacility.bioinformatics.irida.model;
 
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -23,14 +29,17 @@ import javax.validation.ValidatorFactory;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Testing the validation for user objects.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class UserValidatorTest {
+public class UserTest {
 
+    private Logger logger = LoggerFactory.getLogger(UserTest.class);
     private Validator validator;
 
     @Before
@@ -103,7 +112,7 @@ public class UserValidatorTest {
 
         assertEquals(3, constraintViolations.size());
     }
-    
+
     @Test
     public void testValidUser() {
         User u = new User();
@@ -113,9 +122,74 @@ public class UserValidatorTest {
         u.setFirstName("Franklin");
         u.setLastName("Bristow");
         u.setPhoneNumber("7029");
-        
+
         Set<ConstraintViolation<User>> constraintViolations = validator.validate(u);
-        
+
         assertTrue(constraintViolations.isEmpty());
+    }
+
+    @Test
+    public void testCompareTo() {
+        // should be able to sort users in ascending order of their creation date
+        List<User> users = new ArrayList<>();
+
+        User u1 = new User();
+        User u2 = new User();
+        User u3 = new User();
+
+        u1.setCreated(Date.valueOf("2011-1-1"));
+        u2.setCreated(Date.valueOf("2012-1-1"));
+        u3.setCreated(Date.valueOf("2013-1-1"));
+
+        // users are in the wrong order
+        users.add(u3);
+        users.add(u1);
+        users.add(u2);
+
+        Collections.sort(users);
+
+        User curr = users.get(0);
+        for (int i = 1; i < users.size(); i++) {
+            assertTrue(curr.getCreated().compareTo(users.get(i).getCreated()) < 0);
+        }
+    }
+
+    @Test
+    public void testRemoveProject() {
+        User u = new User();
+        Map<Project, Role> projects = new HashMap<>();
+        Identifier id = new Identifier();
+        Project p = new Project();
+        p.setId(id);
+        projects.put(p, new Role());
+        u.setProjects(projects);
+
+        // now remove the project
+        u.removeProject(p);
+
+        assertTrue(projects.isEmpty());
+    }
+
+    @Test
+    public void testAddProject() {
+        User u = new User();
+        Identifier id = new Identifier();
+        Project p = new Project();
+        p.setId(id);
+        u.addProject(p, new Role());
+
+        assertTrue(u.getProjects().containsKey(p));
+    }
+
+    @Test
+    public void testEquals() {
+        User u1 = new User(new Identifier(), "username", "email", "password", "firstName", "lastName", "phoneNumber");
+        User u2 = new User(new Identifier(), "username", "email", "password", "firstName", "lastName", "phoneNumber");
+        // the two users DO NOT share the same identifier, and should therefore be different
+        assertTrue(!u1.equals(u2));
+
+        u2.setId(u1.getId());
+        // now the two users share the same identifier, and should therefore be the same
+        assertTrue(u1.equals(u2));
     }
 }

@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class ProjectValidatorTest {
+public class ProjectTest {
 
     private Validator validator;
 

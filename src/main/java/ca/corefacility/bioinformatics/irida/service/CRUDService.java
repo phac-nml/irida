@@ -53,8 +53,8 @@ public interface CRUDService<IdentifierType, Type> {
      * Delete the object with the specified identifier from the database.
      *
      * @param id The identifier of the object to delete.
-     * @throws IllegalArgumentException If the identifier does not exist in the
-     * database.
+     * @throws IllegalArgumentException If no object with the specified
+     * identifier exists in the database.
      */
     public void delete(IdentifierType id) throws IllegalArgumentException;
 
