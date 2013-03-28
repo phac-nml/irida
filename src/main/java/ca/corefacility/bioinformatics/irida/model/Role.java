@@ -24,6 +24,11 @@ public class Role implements Comparable<Role>, GrantedAuthority {
         created = new Date();
     }
 
+    public Role(Identifier id) {
+        this();
+        this.id = id;
+    }
+
     @Override
     public int compareTo(Role r) {
         return created.compareTo(r.created);

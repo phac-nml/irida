@@ -30,6 +30,11 @@ public class Project implements Comparable<Project> {
         created = new Date();
     }
 
+    public Project(Identifier id) {
+        this();
+        this.id = id;
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other instanceof Project) {
