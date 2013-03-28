@@ -137,9 +137,17 @@ public class UserTest {
         User u2 = new User();
         User u3 = new User();
 
-        u1.setCreated(Date.valueOf("2011-1-1"));
-        u2.setCreated(Date.valueOf("2012-1-1"));
-        u3.setCreated(Date.valueOf("2013-1-1"));
+        Audit a1 = new Audit();
+        Audit a2 = new Audit();
+        Audit a3 = new Audit();
+
+        a1.setCreated(Date.valueOf("2011-1-1"));
+        a2.setCreated(Date.valueOf("2012-1-1"));
+        a3.setCreated(Date.valueOf("2013-1-1"));
+
+        u1.setAudit(a1);
+        u2.setAudit(a2);
+        u3.setAudit(a3);
 
         // users are in the wrong order
         users.add(u3);
@@ -150,7 +158,7 @@ public class UserTest {
 
         User curr = users.get(0);
         for (int i = 1; i < users.size(); i++) {
-            assertTrue(curr.getCreated().compareTo(users.get(i).getCreated()) < 0);
+            assertTrue(curr.getAudit().getCreated().compareTo(users.get(i).getAudit().getCreated()) < 0);
         }
     }
 

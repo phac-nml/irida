@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -23,11 +22,11 @@ public class Project implements Comparable<Project> {
     @NotEmpty // projects must have at least 1 user (a manager)
     private Map<User, Role> users;
     @NotNull
-    private Date created;
+    private Audit audit;
 
     public Project() {
         users = new HashMap<>();
-        created = new Date();
+        audit = new Audit();
     }
 
     public Project(Identifier id) {
@@ -40,8 +39,7 @@ public class Project implements Comparable<Project> {
         if (other instanceof Project) {
             Project p = (Project) other;
             return Objects.equals(id, p.id)
-                    && Objects.equals(name, p.name)
-                    && Objects.equals(created, p.created);
+                    && Objects.equals(name, p.name);
         }
 
         return false;
@@ -49,7 +47,7 @@ public class Project implements Comparable<Project> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, created);
+        return Objects.hash(id, name);
     }
 
     public Identifier getId() {
@@ -90,16 +88,16 @@ public class Project implements Comparable<Project> {
         this.users = members;
     }
 
-    public Date getCreated() {
-        return created;
+    public Audit getAudit() {
+        return this.audit;
     }
 
-    public void setCreated(Date created) {
-        this.created = created;
+    public void setAudit(Audit auditInformation) {
+        this.audit = auditInformation;
     }
 
     @Override
     public int compareTo(Project p) {
-        return created.compareTo(p.created);
+        return audit.getCreated().compareTo(p.audit.getCreated());
     }
 }

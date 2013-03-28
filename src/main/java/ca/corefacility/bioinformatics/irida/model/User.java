@@ -39,21 +39,21 @@ public class User implements Comparable<User> {
     private String phoneNumber;
     private Map<Project, Role> projects;
     @NotNull
-    private Date created;
+    private Audit audit;
 
     public User() {
         projects = new HashMap<>();
-        created = new Date();
+        audit = new Audit();
     }
 
     public User(String username, String email, String password, String firstName, String lastName, String phoneNumber) {
+        this();
         this.username = username;
         this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
-        this.created = new Date();
     }
 
     public User(Identifier id, String username, String email, String password, String firstName, String lastName, String phoneNumber) {
@@ -63,7 +63,7 @@ public class User implements Comparable<User> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, email, password, firstName, lastName, phoneNumber, created);
+        return Objects.hash(id, username, email, password, firstName, lastName, phoneNumber);
     }
 
     @Override
@@ -75,8 +75,7 @@ public class User implements Comparable<User> {
                     && Objects.equals(email, u.email)
                     && Objects.equals(password, u.password)
                     && Objects.equals(firstName, u.firstName)
-                    && Objects.equals(phoneNumber, u.phoneNumber)
-                    && Objects.equals(created, u.created);
+                    && Objects.equals(phoneNumber, u.phoneNumber);
         }
 
         return false;
@@ -84,7 +83,7 @@ public class User implements Comparable<User> {
 
     @Override
     public int compareTo(User u) {
-        return created.compareTo(u.created);
+        return audit.compareTo(u.audit);
     }
 
     public Identifier getId() {
@@ -95,12 +94,12 @@ public class User implements Comparable<User> {
         this.id = id;
     }
 
-    public Date getCreated() {
-        return created;
+    public Audit getAudit() {
+        return audit;
     }
 
-    public void setCreated(Date created) {
-        this.created = created;
+    public void setAudit(Audit audit) {
+        this.audit = audit;
     }
 
     public String getUsername() {

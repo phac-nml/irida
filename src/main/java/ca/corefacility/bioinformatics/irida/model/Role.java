@@ -18,10 +18,10 @@ public class Role implements Comparable<Role>, GrantedAuthority {
     @NotNull
     private String description;
     @NotNull
-    private Date created;
+    private Audit audit;
 
     public Role() {
-        created = new Date();
+        audit = new Audit();
     }
 
     public Role(Identifier id) {
@@ -31,7 +31,7 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 
     @Override
     public int compareTo(Role r) {
-        return created.compareTo(r.created);
+        return audit.compareTo(r.audit);
     }
 
     @Override
@@ -40,8 +40,7 @@ public class Role implements Comparable<Role>, GrantedAuthority {
             Role r = (Role) other;
             return Objects.equals(id, r.id)
                     && Objects.equals(name, r.name)
-                    && Objects.equals(description, r.description)
-                    && Objects.equals(created, r.created);
+                    && Objects.equals(description, r.description);
         }
 
         return false;
@@ -49,7 +48,7 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, created);
+        return Objects.hash(id, name, description);
     }
 
     public Identifier getId() {
@@ -60,12 +59,12 @@ public class Role implements Comparable<Role>, GrantedAuthority {
         this.id = id;
     }
 
-    public Date getCreated() {
-        return created;
+    public Audit getAudit() {
+        return audit;
     }
 
-    public void setCreated(Date created) {
-        this.created = created;
+    public void setAudit(Audit audit) {
+        this.audit = audit;
     }
 
     public String getName() {
