@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.memory;
 
+import ca.corefacility.bioinformatics.irida.model.Identifier;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import java.util.ArrayList;
@@ -14,29 +15,29 @@ import java.util.UUID;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class UserMemoryRepository implements CRUDRepository<UUID, User> {
+public class UserMemoryRepository implements CRUDRepository<Identifier, User> {
 
-    private static final Map<UUID, User> store = new HashMap<>();
+    private static final Map<Identifier, User> store = new HashMap<>();
 
     static {
-        UUID uuid = UUID.randomUUID();
-        store.put(uuid, new User(uuid, "jsadam", "j@me.com", "pass1234", "Jake", "Penner", "787-9998"));
-        uuid = UUID.randomUUID();
-        store.put(uuid, new User(uuid, "hjadam", "h@me.com", "pass5678", "Hammy", "Penner", "787-1234"));
-        uuid = UUID.randomUUID();
-        store.put(uuid, new User(uuid, "njadam", "n@me.com", "1234pass", "Ninja", "Penner", "787-5678"));
+        Identifier id = new Identifier();
+        store.put(id, new User(id, "jsadam", "j@me.com", "pass1234", "Jake", "Penner", "787-9998"));
+        id = new Identifier();
+        store.put(id, new User(id, "hjadam", "h@me.com", "pass5678", "Hammy", "Penner", "787-1234"));
+        id = new Identifier();
+        store.put(id, new User(id, "njadam", "n@me.com", "1234pass", "Ninja", "Penner", "787-5678"));
     }
 
     @Override
     public User create(User u) throws IllegalArgumentException {
-        UUID uuid = UUID.randomUUID();
-        u.setId(uuid);
-        store.put(uuid, u);
+        Identifier id = new Identifier();
+        u.setId(id);
+        store.put(id, u);
         return u;
     }
 
     @Override
-    public User read(UUID id) throws IllegalArgumentException {
+    public User read(Identifier id) throws IllegalArgumentException {
         if (store.containsKey(id)) {
             return store.get(id);
         }
@@ -45,7 +46,7 @@ public class UserMemoryRepository implements CRUDRepository<UUID, User> {
 
     @Override
     public User update(User u) throws IllegalArgumentException {
-        UUID id = u.getId();
+        Identifier id = u.getId();
         if (store.containsKey(u.getId())) {
 
             return store.put(id, u);
@@ -54,7 +55,7 @@ public class UserMemoryRepository implements CRUDRepository<UUID, User> {
     }
 
     @Override
-    public void delete(UUID id) throws IllegalArgumentException {
+    public void delete(Identifier id) throws IllegalArgumentException {
         if (!store.containsKey(id)) {
             throw new IllegalArgumentException("No such user exists with id [" + id + ".");
         }
@@ -69,7 +70,7 @@ public class UserMemoryRepository implements CRUDRepository<UUID, User> {
     }
 
     @Override
-    public Boolean exists(UUID id) {
+    public Boolean exists(Identifier id) {
         return store.containsKey(id);
     }
 }

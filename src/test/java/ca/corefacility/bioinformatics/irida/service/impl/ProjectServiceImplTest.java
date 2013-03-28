@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import ca.corefacility.bioinformatics.irida.model.Identifier;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
@@ -23,8 +24,8 @@ import static org.junit.Assert.*;
 public class ProjectServiceImplTest {
 
     private ProjectService projectService;
-    private CRUDRepository<UUID, User> userRepository;
-    private CRUDRepository<UUID, Project> projectRepository;
+    private CRUDRepository<Identifier, User> userRepository;
+    private CRUDRepository<Identifier, Project> projectRepository;
     private Validator validator;
 
     @Before

@@ -4,12 +4,12 @@
  */
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import ca.corefacility.bioinformatics.irida.model.Identifier;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import java.util.UUID;
 import javax.validation.Validator;
 
 /**
@@ -17,11 +17,11 @@ import javax.validation.Validator;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class ProjectServiceImpl extends CRUDServiceImpl<UUID, Project> implements ProjectService {
+public class ProjectServiceImpl extends CRUDServiceImpl<Identifier, Project> implements ProjectService {
 
-    private CRUDRepository<UUID, User> userRepository;
+    private CRUDRepository<Identifier, User> userRepository;
 
-    public ProjectServiceImpl(CRUDRepository<UUID, Project> projectRepository, CRUDRepository<UUID, User> userRepository, Validator validator) {
+    public ProjectServiceImpl(CRUDRepository<Identifier, Project> projectRepository, CRUDRepository<Identifier, User> userRepository, Validator validator) {
         super(projectRepository, validator);
         this.userRepository = userRepository;
     }

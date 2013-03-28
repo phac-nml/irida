@@ -1,12 +1,12 @@
 package ca.corefacility.bioinformatics.irida.model;
 
-import java.net.URI;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -17,30 +17,41 @@ import org.hibernate.validator.constraints.NotEmpty;
  */
 public class Project implements Comparable<Project> {
 
-    private UUID id;
-    private URI uri;
+    private Identifier id;
     @NotNull
     private String name;
     @NotEmpty // projects must have at least 1 user (a manager)
     private Map<User, Role> users;
+    @NotNull
+    private Date created;
 
     public Project() {
         users = new HashMap<>();
+        created = new Date();
     }
 
-    public URI getUri() {
-        return uri;
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof Project) {
+            Project p = (Project) other;
+            return Objects.equals(id, p.id)
+                    && Objects.equals(name, p.name)
+                    && Objects.equals(created, p.created);
+        }
+
+        return false;
     }
 
-    public void setUri(URI uri) {
-        this.uri = uri;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, created);
     }
 
-    public UUID getId() {
-        return id;
+    public Identifier getId() {
+        return this.id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Identifier id) {
         this.id = id;
     }
 
@@ -74,8 +85,16 @@ public class Project implements Comparable<Project> {
         this.users = members;
     }
 
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
     @Override
-    public int compareTo(Project o) {
-        return id.compareTo(o.id);
+    public int compareTo(Project p) {
+        return created.compareTo(p.created);
     }
 }

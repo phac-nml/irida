@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model;
 
-import java.net.URI;
-import java.util.UUID;
+import java.util.Date;
+import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -12,30 +12,55 @@ import org.springframework.security.core.GrantedAuthority;
  */
 public class Role implements Comparable<Role>, GrantedAuthority {
 
-    private UUID id;
-    private URI uri;
+    private Identifier id;
     @NotNull
     private String name;
     @NotNull
     private String description;
+    @NotNull
+    private Date created;
 
     public Role() {
+        created = new Date();
     }
 
-    public UUID getId() {
+    @Override
+    public int compareTo(Role r) {
+        return created.compareTo(r.created);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof Role) {
+            Role r = (Role) other;
+            return Objects.equals(id, r.id)
+                    && Objects.equals(name, r.name)
+                    && Objects.equals(description, r.description)
+                    && Objects.equals(created, r.created);
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, created);
+    }
+
+    public Identifier getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Identifier id) {
         this.id = id;
     }
 
-    public URI getUri() {
-        return uri;
+    public Date getCreated() {
+        return created;
     }
 
-    public void setUri(URI uri) {
-        this.uri = uri;
+    public void setCreated(Date created) {
+        this.created = created;
     }
 
     public String getName() {
@@ -52,11 +77,6 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    @Override
-    public int compareTo(Role o) {
-        return id.compareTo(o.id);
     }
 
     @Override

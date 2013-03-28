@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model;
 
 import ca.corefacility.bioinformatics.irida.validators.Patterns;
 import java.net.URI;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -18,8 +19,7 @@ import org.hibernate.validator.constraints.Email;
  */
 public class User implements Comparable<User> {
 
-    private UUID id;
-    private URI uri;
+    private Identifier id;
     @NotNull
     @Size(min = 3)
     private String username;
@@ -40,49 +40,69 @@ public class User implements Comparable<User> {
     @NotNull
     private String phoneNumber;
     private Map<Project, Role> projects;
+    @NotNull
+    private Date created;
 
     public User() {
         projects = new HashMap<>();
+        created = new Date();
     }
 
-    public User(UUID id, String username, String email, String password, String firstName, String lastName, String phoneNumber) {
-        this.id = id;
+    public User(String username, String email, String password, String firstName, String lastName, String phoneNumber) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
+        this.created = new Date();
+    }
+
+    public User(Identifier id, String username, String email, String password, String firstName, String lastName, String phoneNumber) {
+        this(username, email, password, firstName, lastName, phoneNumber);
+        this.id = id;
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 59 * hash + Objects.hashCode(this.username);
-        hash = 59 * hash + Objects.hashCode(this.email);
-        hash = 59 * hash + Objects.hashCode(this.password);
-        hash = 59 * hash + Objects.hashCode(this.firstName);
-        hash = 59 * hash + Objects.hashCode(this.lastName);
-        hash = 59 * hash + Objects.hashCode(this.phoneNumber);
-        return hash;
+        return Objects.hash(id, username, email, password, firstName, lastName, phoneNumber, created);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
+    public boolean equals(Object other) {
+        if (other instanceof User) {
+            User u = (User) other;
+            return Objects.equals(id, u.id)
+                    && Objects.equals(username, u.username)
+                    && Objects.equals(email, u.email)
+                    && Objects.equals(password, u.password)
+                    && Objects.equals(firstName, u.firstName)
+                    && Objects.equals(phoneNumber, u.phoneNumber)
+                    && Objects.equals(created, u.created);
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final User other = (User) obj;
-        if (!Objects.equals(this.username, other.username)) {
-            return false;
-        }
-        if (!Objects.equals(this.email, other.email)) {
-            return false;
-        }
-        return true;
+
+        return false;
+    }
+
+    @Override
+    public int compareTo(User u) {
+        return created.compareTo(u.created);
+    }
+
+    public Identifier getId() {
+        return id;
+    }
+
+    public void setId(Identifier id) {
+        this.id = id;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
     }
 
     public String getUsername() {
@@ -133,14 +153,6 @@ public class User implements Comparable<User> {
         this.phoneNumber = phoneNumber;
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
     public void addProject(Project project, Role role) {
         this.projects.put(project, role);
     }
@@ -155,18 +167,5 @@ public class User implements Comparable<User> {
 
     public void setProjects(Map<Project, Role> projects) {
         this.projects = projects;
-    }
-
-    public URI getUri() {
-        return this.uri;
-    }
-
-    public void setUri(URI uri) {
-        this.uri = uri;
-    }
-
-    @Override
-    public int compareTo(User o) {
-        return id.compareTo(o.id);
     }
 }

@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.memory;
 
+import ca.corefacility.bioinformatics.irida.model.Identifier;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import java.util.ArrayList;
@@ -13,20 +14,20 @@ import java.util.UUID;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class ProjectMemoryRepository implements CRUDRepository<UUID, Project> {
+public class ProjectMemoryRepository implements CRUDRepository<Identifier, Project> {
 
-    Map<UUID, Project> store = new HashMap<>();
+    Map<Identifier, Project> store = new HashMap<>();
 
     @Override
     public Project create(Project p) throws IllegalArgumentException {
-        UUID id = UUID.randomUUID();
+        Identifier id = new Identifier();
         p.setId(id);
         store.put(id, p);
         return p;
     }
 
     @Override
-    public Project read(UUID id) throws IllegalArgumentException {
+    public Project read(Identifier id) throws IllegalArgumentException {
         return store.get(id);
     }
 
@@ -36,7 +37,7 @@ public class ProjectMemoryRepository implements CRUDRepository<UUID, Project> {
     }
 
     @Override
-    public void delete(UUID id) throws IllegalArgumentException {
+    public void delete(Identifier id) throws IllegalArgumentException {
         store.remove(id);
     }
 
@@ -46,7 +47,7 @@ public class ProjectMemoryRepository implements CRUDRepository<UUID, Project> {
     }
 
     @Override
-    public Boolean exists(UUID id) {
+    public Boolean exists(Identifier id) {
         return store.containsKey(id);
     }
 }
