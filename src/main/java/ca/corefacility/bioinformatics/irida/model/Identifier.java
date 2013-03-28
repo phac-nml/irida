@@ -18,6 +18,7 @@ package ca.corefacility.bioinformatics.irida.model;
 import java.net.URI;
 import java.util.Objects;
 import java.util.UUID;
+import javax.validation.constraints.NotNull;
 
 /**
  * Any object that wishes to be uniquely identifiable in the database should
@@ -28,7 +29,9 @@ import java.util.UUID;
  */
 public class Identifier {
 
+    @NotNull
     private UUID uuid;
+    @NotNull
     private URI uri;
     // alternative URI:
     //@URL
@@ -47,7 +50,8 @@ public class Identifier {
     public boolean equals(Object other) {
         if (other instanceof Identifier) {
             Identifier id = (Identifier) other;
-            return Objects.equals(this.uuid, id.uuid) && Objects.equals(uri, id.uri);
+            return Objects.equals(this.uuid, id.uuid)
+                    && Objects.equals(uri, id.uri);
         }
 
         return false;
