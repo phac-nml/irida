@@ -15,6 +15,8 @@
  */
 package ca.corefacility.bioinformatics.irida.model;
 
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,81 +40,81 @@ import org.slf4j.LoggerFactory;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class UserTest {
-
+    
     private Logger logger = LoggerFactory.getLogger(UserTest.class);
     private Validator validator;
-
+    
     @Before
     public void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
     }
-
+    
     @Test
     public void testNullUsername() {
         User u = new User();
         u.setUsername(null);
-
+        
         Set<ConstraintViolation<User>> constraintViolations = validator.validateProperty(u, "username");
-
+        
         assertEquals(1, constraintViolations.size());
     }
-
+    
     @Test
     public void testEmptyUsername() {
         User u = new User();
         u.setUsername("");
         Set<ConstraintViolation<User>> constraintViolations = validator.validateProperty(u, "username");
-
+        
         assertEquals(1, constraintViolations.size());
     }
-
+    
     @Test
     public void testValidUsername() {
         User u = new User();
         u.setUsername("fbristow");
         Set<ConstraintViolation<User>> constraintViolations = validator.validateProperty(u, "username");
-
+        
         assertEquals(0, constraintViolations.size());
     }
-
+    
     @Test
     public void testShortPassword() {
         User u = new User();
         u.setPassword("Sma11");
         Set<ConstraintViolation<User>> constraintViolations = validator.validateProperty(u, "password");
-
+        
         assertEquals(1, constraintViolations.size());
     }
-
+    
     @Test
     public void testWeakLowercasePassword() {
         User u = new User();
         u.setPassword("a11-1owercase");
-
+        
         Set<ConstraintViolation<User>> constraintViolations = validator.validateProperty(u, "password");
-
+        
         assertEquals(1, constraintViolations.size());
     }
-
+    
     @Test
     public void testWeakNoNumbersPassword() {
         User u = new User();
         u.setPassword("NoNumbers");
         Set<ConstraintViolation<User>> constraintViolations = validator.validateProperty(u, "password");
-
+        
         assertEquals(1, constraintViolations.size());
     }
-
+    
     @Test
     public void testWeakPassword() {
         User u = new User();
         u.setPassword("weak");
         Set<ConstraintViolation<User>> constraintViolations = validator.validateProperty(u, "password");
-
+        
         assertEquals(3, constraintViolations.size());
     }
-
+    
     @Test
     public void testValidUser() {
         User u = new User();
@@ -122,81 +124,81 @@ public class UserTest {
         u.setFirstName("Franklin");
         u.setLastName("Bristow");
         u.setPhoneNumber("7029");
-
+        
         Set<ConstraintViolation<User>> constraintViolations = validator.validate(u);
-
+        
         assertTrue(constraintViolations.isEmpty());
     }
-
+    
     @Test
     public void testCompareTo() {
         // should be able to sort users in ascending order of their creation date
         List<User> users = new ArrayList<>();
-
+        
         User u1 = new User();
         User u2 = new User();
         User u3 = new User();
-
+        
         Audit a1 = new Audit();
         Audit a2 = new Audit();
         Audit a3 = new Audit();
-
+        
         a1.setCreated(Date.valueOf("2011-1-1"));
         a2.setCreated(Date.valueOf("2012-1-1"));
         a3.setCreated(Date.valueOf("2013-1-1"));
-
-        u1.setAudit(a1);
-        u2.setAudit(a2);
-        u3.setAudit(a3);
+        
+        u2.setAuditInformation(a1);
+        u1.setAuditInformation(a2);
+        u3.setAuditInformation(a3);
 
         // users are in the wrong order
         users.add(u3);
         users.add(u1);
         users.add(u2);
-
+        
         Collections.sort(users);
-
+        
         User curr = users.get(0);
         for (int i = 1; i < users.size(); i++) {
-            assertTrue(curr.getAudit().getCreated().compareTo(users.get(i).getAudit().getCreated()) < 0);
+            assertTrue(curr.getAuditInformation().getCreated().compareTo(users.get(i).getAuditInformation().getCreated()) < 0);
         }
     }
-
+    
     @Test
     public void testRemoveProject() {
         User u = new User();
         Map<Project, Role> projects = new HashMap<>();
         Identifier id = new Identifier();
         Project p = new Project();
-        p.setId(id);
+        p.setIdentifier(id);
         projects.put(p, new Role());
         u.setProjects(projects);
 
         // now remove the project
         u.removeProject(p);
-
+        
         assertTrue(projects.isEmpty());
     }
-
+    
     @Test
     public void testAddProject() {
         User u = new User();
         Identifier id = new Identifier();
         Project p = new Project();
-        p.setId(id);
+        p.setIdentifier(id);
         u.addProject(p, new Role());
-
+        
         assertTrue(u.getProjects().containsKey(p));
     }
-
+    
     @Test
     public void testEquals() {
         User u1 = new User(new Identifier(), "username", "email", "password", "firstName", "lastName", "phoneNumber");
         User u2 = new User(new Identifier(), "username", "email", "password", "firstName", "lastName", "phoneNumber");
         // the two users DO NOT share the same identifier, and should therefore be different
         assertTrue(!u1.equals(u2));
-
-        u2.setId(u1.getId());
+        
+        u2.setIdentifier(u1.getIdentifier());
         // now the two users share the same identifier, and should therefore be the same
         assertTrue(u1.equals(u2));
     }

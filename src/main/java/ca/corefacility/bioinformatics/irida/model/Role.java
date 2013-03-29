@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.model;
 
-import java.util.Date;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
+import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import org.springframework.security.core.GrantedAuthority;
@@ -10,7 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class Role implements Comparable<Role>, GrantedAuthority {
+public class Role implements Comparable<Role>, GrantedAuthority, Auditable<Audit>, Identifiable<Identifier> {
 
     private Identifier id;
     @NotNull
@@ -51,22 +54,6 @@ public class Role implements Comparable<Role>, GrantedAuthority {
         return Objects.hash(id, name, description);
     }
 
-    public Identifier getId() {
-        return id;
-    }
-
-    public void setId(Identifier id) {
-        this.id = id;
-    }
-
-    public Audit getAudit() {
-        return audit;
-    }
-
-    public void setAudit(Audit audit) {
-        this.audit = audit;
-    }
-
     public String getName() {
         return name;
     }
@@ -86,5 +73,25 @@ public class Role implements Comparable<Role>, GrantedAuthority {
     @Override
     public String getAuthority() {
         return name;
+    }
+
+    @Override
+    public Audit getAuditInformation() {
+        return audit;
+    }
+
+    @Override
+    public Identifier getIdentifier() {
+        return id;
+    }
+
+    @Override
+    public void setIdentifier(Identifier identifier) {
+        this.id = identifier;
+    }
+
+    @Override
+    public void setAuditInformation(Audit audit) {
+        this.audit = audit;
     }
 }

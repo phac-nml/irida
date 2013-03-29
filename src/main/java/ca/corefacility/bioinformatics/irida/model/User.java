@@ -1,7 +1,10 @@
 package ca.corefacility.bioinformatics.irida.model;
 
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
+import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import ca.corefacility.bioinformatics.irida.validators.Patterns;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -15,7 +18,7 @@ import org.hibernate.validator.constraints.Email;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class User implements Comparable<User> {
+public class User implements Comparable<User>, Auditable<Audit>, Identifiable<Identifier> {
 
     private Identifier id;
     @NotNull
@@ -86,22 +89,6 @@ public class User implements Comparable<User> {
         return audit.compareTo(u.audit);
     }
 
-    public Identifier getId() {
-        return id;
-    }
-
-    public void setId(Identifier id) {
-        this.id = id;
-    }
-
-    public Audit getAudit() {
-        return audit;
-    }
-
-    public void setAudit(Audit audit) {
-        this.audit = audit;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -164,5 +151,25 @@ public class User implements Comparable<User> {
 
     public void setProjects(Map<Project, Role> projects) {
         this.projects = projects;
+    }
+
+    @Override
+    public Audit getAuditInformation() {
+        return audit;
+    }
+
+    @Override
+    public Identifier getIdentifier() {
+        return id;
+    }
+
+    @Override
+    public void setIdentifier(Identifier identifier) {
+        this.id = identifier;
+    }
+
+    @Override
+    public void setAuditInformation(Audit audit) {
+        this.audit = audit;
     }
 }

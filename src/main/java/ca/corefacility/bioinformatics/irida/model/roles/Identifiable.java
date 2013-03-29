@@ -13,38 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ca.corefacility.bioinformatics.irida.service.impl;
-
-import ca.corefacility.bioinformatics.irida.model.Identifier;
-import javax.validation.constraints.NotNull;
+package ca.corefacility.bioinformatics.irida.model.roles;
 
 /**
+ * An entity object may implement the {@link Identifiable} interface if it
+ * intends to be persisted to the database.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class Identifiable {
+public interface Identifiable<IdentifierType> {
 
-    private Identifier id;
-    @NotNull
-    private String nonNull;
+    /**
+     * Get the identifier for this entity.
+     *
+     * @return the identifier for this entity.
+     */
+    public IdentifierType getIdentifier();
 
-    public Identifiable() {
-        this.id = new Identifier();
-    }
-
-    public Identifier getId() {
-        return this.id;
-    }
-
-    public void setId(Identifier id) {
-        this.id = id;
-    }
-
-    public String getNonNull() {
-        return nonNull;
-    }
-
-    public void setNonNull(String nonNull) {
-        this.nonNull = nonNull;
-    }
+    /**
+     * Set a new identifier for this entity.
+     *
+     * @param identifier the new identifier.
+     */
+    public void setIdentifier(IdentifierType identifier);
 }

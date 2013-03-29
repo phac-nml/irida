@@ -1,16 +1,13 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import ca.corefacility.bioinformatics.irida.model.Identifier;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
-import ca.corefacility.bioinformatics.irida.repositories.memory.ProjectMemoryRepository;
+import ca.corefacility.bioinformatics.irida.repositories.memory.CRUDMemoryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.memory.UserMemoryRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import java.util.HashMap;
-import java.util.Map;
-import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
@@ -35,7 +32,7 @@ public class ProjectServiceImplTest {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
         userRepository = new UserMemoryRepository();
-        projectRepository = new ProjectMemoryRepository();
+        projectRepository = new CRUDMemoryRepository<>();
         projectService = new ProjectServiceImpl(projectRepository, userRepository, validator);
     }
 
@@ -60,8 +57,8 @@ public class ProjectServiceImplTest {
         projectService.addUserToProject(p, u, r);
 
         // get the new versions of the files out of the database
-        p = projectRepository.read(p.getId());
-        u = userRepository.read(u.getId());
+        p = projectRepository.read(p.getIdentifier());
+        u = userRepository.read(u.getIdentifier());
 
         // assert that the changes were correctly made
         assertEquals(1, p.getUsersByRole(r).size());

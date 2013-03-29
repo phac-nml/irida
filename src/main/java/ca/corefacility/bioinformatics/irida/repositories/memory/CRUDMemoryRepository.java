@@ -15,10 +15,9 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.memory;
 
-import ca.corefacility.bioinformatics.irida.model.Identifier;
+import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,22 +29,15 @@ import java.util.Map;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class CRUDMemoryRepository<Type> implements CRUDRepository<Identifier, Type> {
+public class CRUDMemoryRepository<Type extends Identifiable<Identifier>> implements CRUDRepository<Identifier, Type> {
 
-    Map<Identifier, Type> store = new HashMap<>();
+    protected Map<Identifier, Type> store = new HashMap<>();
 
     @Override
     public Type create(Type object) throws IllegalArgumentException {
-        try {
-            Identifier id = new Identifier();
-            Method identifierSetter = object.getClass().getMethod("setId", Identifier.class);
-            identifierSetter.invoke(object, id);
-            store.put(id, object);
-        } catch (NoSuchMethodException | IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
-            throw new IllegalArgumentException("This type does not have an identifier method: " + e);
-        } catch (ClassCastException e) {
-            throw new IllegalArgumentException("The key type does not match the identifier method signature.");
-        }
+        Identifier id = new Identifier();
+        object.setIdentifier(id);
+        store.put(id, object);
         return object;
     }
 
@@ -60,15 +52,8 @@ public class CRUDMemoryRepository<Type> implements CRUDRepository<Identifier, Ty
 
     @Override
     public Type update(Type object) throws IllegalArgumentException {
-        Identifier id = null;
-        try {
-            Method identifierMethod = object.getClass().getMethod("getId");
-            id = (Identifier) identifierMethod.invoke(object);
-        } catch (NoSuchMethodException | IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
-            throw new IllegalArgumentException("This type does not have an identifier method.");
-        } catch (ClassCastException e) {
-            throw new IllegalArgumentException("The key type does not match the identifier method signature.");
-        }
+        Identifier id = object.getIdentifier();
+
         if (exists(id)) {
             return store.put(id, object);
         }

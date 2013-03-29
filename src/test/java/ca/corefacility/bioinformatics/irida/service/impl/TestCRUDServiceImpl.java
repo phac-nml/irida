@@ -15,7 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import ca.corefacility.bioinformatics.irida.model.Identifier;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.memory.CRUDMemoryRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
@@ -35,8 +35,8 @@ import org.junit.Test;
  */
 public class TestCRUDServiceImpl {
 
-    private CRUDService<Identifier, Identifiable> crudService;
-    private CRUDRepository<Identifier, Identifiable> crudRepository;
+    private CRUDService<Identifier, IdentifiableTestEntity> crudService;
+    private CRUDRepository<Identifier, IdentifiableTestEntity> crudRepository;
     private Validator validator;
 
     @Before
@@ -49,7 +49,7 @@ public class TestCRUDServiceImpl {
 
     @Test
     public void testAddInvalidObject() {
-        Identifiable i = new Identifiable(); // nothing is set, this should be invalid
+        IdentifiableTestEntity i = new IdentifiableTestEntity(); // nothing is set, this should be invalid
 
         try {
             crudService.create(i);
@@ -61,7 +61,7 @@ public class TestCRUDServiceImpl {
 
     @Test
     public void testAddValidObject() {
-        Identifiable i = new Identifiable();
+        IdentifiableTestEntity i = new IdentifiableTestEntity();
         i.setNonNull("Definitely not null.");
 
         try {
@@ -73,7 +73,7 @@ public class TestCRUDServiceImpl {
 
     @Test
     public void testUpdateInvalidProject() {
-        Identifiable i = new Identifiable();
+        IdentifiableTestEntity i = new IdentifiableTestEntity();
         i.setNonNull("Definitely not null");
 
         crudRepository.create(i);
@@ -90,7 +90,7 @@ public class TestCRUDServiceImpl {
 
     @Test
     public void testUpdateValidProject() {
-        Identifiable i = new Identifiable();
+        IdentifiableTestEntity i = new IdentifiableTestEntity();
         i.setNonNull("Definitely not null.");
 
         i = crudRepository.create(i);
@@ -104,18 +104,19 @@ public class TestCRUDServiceImpl {
             fail();
         }
 
-        i = crudRepository.read(i.getId());
+        i = crudRepository.read(i.getIdentifier());
         assertEquals("Also definitely not null.", i.getNonNull());
     }
 
     @Test
     public void testRead() {
-        Identifiable i = new Identifiable();
+        IdentifiableTestEntity i = new IdentifiableTestEntity();
         i.setNonNull("Definitely not null");
         i = crudRepository.create(i);
 
         try {
-            i = crudService.read(i.getId());
+            i = crudService.read(i.getIdentifier());
+            assertNotNull(i);
         } catch (IllegalArgumentException e) {
             fail();
         }
@@ -125,34 +126,34 @@ public class TestCRUDServiceImpl {
     public void testList() {
         int itemCount = 10;
         for (int i = 0; i < itemCount; i++) {
-            crudRepository.create(new Identifiable());
+            crudRepository.create(new IdentifiableTestEntity());
         }
 
-        List<Identifiable> items = crudService.list();
+        List<IdentifiableTestEntity> items = crudService.list();
 
         assertEquals(itemCount, items.size());
     }
 
     @Test
     public void testExists() {
-        Identifiable i = new Identifiable();
+        IdentifiableTestEntity i = new IdentifiableTestEntity();
         i = crudRepository.create(i);
 
-        assertTrue(crudService.exists(i.getId()));
+        assertTrue(crudService.exists(i.getIdentifier()));
     }
 
     @Test
     public void testValidDelete() {
-        Identifiable i = new Identifiable();
+        IdentifiableTestEntity i = new IdentifiableTestEntity();
         i = crudRepository.create(i);
 
         try {
-            crudService.delete(i.getId());
+            crudService.delete(i.getIdentifier());
         } catch (IllegalArgumentException e) {
             fail();
         }
 
-        assertFalse(crudRepository.exists(i.getId()));
+        assertFalse(crudRepository.exists(i.getIdentifier()));
     }
 
     @Test

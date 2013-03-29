@@ -1,5 +1,9 @@
 package ca.corefacility.bioinformatics.irida.model;
 
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
+import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,7 +19,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class Project implements Comparable<Project> {
+public class Project implements Comparable<Project>, Auditable<Audit>, Identifiable<Identifier> {
 
     private Identifier id;
     @NotNull
@@ -53,14 +57,6 @@ public class Project implements Comparable<Project> {
         return Objects.hash(id, name, samples);
     }
 
-    public Identifier getId() {
-        return this.id;
-    }
-
-    public void setId(Identifier id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
@@ -91,14 +87,6 @@ public class Project implements Comparable<Project> {
         this.users = members;
     }
 
-    public Audit getAudit() {
-        return this.audit;
-    }
-
-    public void setAudit(Audit auditInformation) {
-        this.audit = auditInformation;
-    }
-
     public Collection<Sample> getSamples() {
         return samples;
     }
@@ -110,5 +98,25 @@ public class Project implements Comparable<Project> {
     @Override
     public int compareTo(Project p) {
         return audit.getCreated().compareTo(p.audit.getCreated());
+    }
+
+    @Override
+    public Audit getAuditInformation() {
+        return audit;
+    }
+
+    @Override
+    public Identifier getIdentifier() {
+        return id;
+    }
+
+    @Override
+    public void setIdentifier(Identifier identifier) {
+        this.id = identifier;
+    }
+
+    @Override
+    public void setAuditInformation(Audit audit) {
+        this.audit = audit;
     }
 }

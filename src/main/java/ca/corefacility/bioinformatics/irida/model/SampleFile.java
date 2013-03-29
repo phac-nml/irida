@@ -15,6 +15,10 @@
  */
 package ca.corefacility.bioinformatics.irida.model;
 
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
+import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import java.io.File;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
@@ -25,7 +29,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class SampleFile {
+public class SampleFile implements Auditable<Audit>, Identifiable<Identifier> {
 
     private Identifier id;
     @NotNull
@@ -58,27 +62,31 @@ public class SampleFile {
         return Objects.hash(file);
     }
 
-    public Identifier getId() {
-        return id;
-    }
-
-    public void setId(Identifier id) {
-        this.id = id;
-    }
-
-    public Audit getAudit() {
-        return audit;
-    }
-
-    public void setAudit(Audit audit) {
-        this.audit = audit;
-    }
-
     public File getFile() {
         return file;
     }
 
     public void setFile(File file) {
         this.file = file;
+    }
+
+    @Override
+    public Audit getAuditInformation() {
+        return audit;
+    }
+
+    @Override
+    public Identifier getIdentifier() {
+        return id;
+    }
+
+    @Override
+    public void setIdentifier(Identifier identifier) {
+        this.id = identifier;
+    }
+
+    @Override
+    public void setAuditInformation(Audit audit) {
+        this.audit = audit;
     }
 }

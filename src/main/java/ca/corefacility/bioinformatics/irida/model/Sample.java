@@ -15,6 +15,10 @@
  */
 package ca.corefacility.bioinformatics.irida.model;
 
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
+import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import java.util.Collection;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
@@ -25,7 +29,7 @@ import javax.validation.constraints.Size;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class Sample {
+public class Sample implements Auditable<Audit>, Identifiable<Identifier> {
 
     private Identifier id;
     @NotNull
@@ -63,22 +67,6 @@ public class Sample {
         return Objects.hash(sampleName, project, files);
     }
 
-    public Identifier getId() {
-        return id;
-    }
-
-    public void setId(Identifier id) {
-        this.id = id;
-    }
-
-    public Audit getAudit() {
-        return audit;
-    }
-
-    public void setAudit(Audit audit) {
-        this.audit = audit;
-    }
-
     public String getSampleName() {
         return sampleName;
     }
@@ -101,5 +89,25 @@ public class Sample {
 
     public void setFiles(Collection<SampleFile> files) {
         this.files = files;
+    }
+
+    @Override
+    public Audit getAuditInformation() {
+        return audit;
+    }
+
+    @Override
+    public Identifier getIdentifier() {
+        return id;
+    }
+
+    @Override
+    public void setIdentifier(Identifier identifier) {
+        this.id = identifier;
+    }
+
+    @Override
+    public void setAuditInformation(Audit audit) {
+        this.audit = audit;
     }
 }
