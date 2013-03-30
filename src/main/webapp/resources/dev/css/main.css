@@ -200,7 +200,7 @@ figure {
  * Define consistent border, margin, and padding.
  */
 fieldset {
-  border: 1px solid silver;
+  border: 1px solid #c0c0c0;
   margin: 0 2px;
   padding: 0.35em 0.625em 0.75em; }
 
@@ -1498,7 +1498,7 @@ blockquote p {
 @media print {
   * {
     background: transparent !important;
-    color: black !important;
+    color: #000 !important;
     /* Black prints faster: h5bp.com/s */
     box-shadow: none !important;
     text-shadow: none !important; }
@@ -1520,7 +1520,7 @@ blockquote p {
 
   pre,
   blockquote {
-    border: 1px solid #999999;
+    border: 1px solid #999;
     page-break-inside: avoid; }
 
   thead {
@@ -2984,7 +2984,7 @@ form.custom {
       right: 0px;
       width: 11px;
       height: 14px;
-      border: solid 4px black;
+      border: solid 4px #000;
       border-top: none;
       border-bottom: none; }
     .orbit-container .orbit-timer.paused > span {
@@ -2993,7 +2993,7 @@ form.custom {
       width: 11px;
       height: 14px;
       border: solid 8px;
-      border-color: transparent transparent transparent black; }
+      border-color: transparent transparent transparent #000; }
   .orbit-container:hover .orbit-timer > span {
     display: block; }
   .orbit-container .orbit-prev,
@@ -3020,17 +3020,17 @@ form.custom {
   .orbit-container .orbit-prev {
     left: 0; }
     .orbit-container .orbit-prev > span {
-      border-color: transparent white transparent transparent; }
+      border-color: transparent #fff transparent transparent; }
     .orbit-container .orbit-prev:hover > span {
-      border-color: transparent #cccccc transparent transparent; }
+      border-color: transparent #ccc transparent transparent; }
   .orbit-container .orbit-next {
     right: 0; }
     .orbit-container .orbit-next > span {
-      border-color: transparent transparent transparent white;
+      border-color: transparent transparent transparent #fff;
       left: 50%;
       margin-left: -8px; }
     .orbit-container .orbit-next:hover > span {
-      border-color: transparent transparent transparent #cccccc; }
+      border-color: transparent transparent transparent #ccc; }
 
 .orbit-bullets {
   margin: 0 auto 30px auto;
@@ -3044,7 +3044,7 @@ form.custom {
     background: #fff;
     float: left;
     margin-right: 6px;
-    border: solid 2px black;
+    border: solid 2px #000;
     -webkit-border-radius: 1000px;
     border-radius: 1000px; }
     .orbit-bullets li.active {
@@ -3224,9 +3224,9 @@ form.custom {
   text-decoration: none;
   font-size: 30px;
   font-weight: normal;
-  line-height: 0.5 !important; }
+  line-height: .5 !important; }
   .joyride-close-tip:hover, .joyride-close-tip:focus {
-    color: #eeeeee !important; }
+    color: #eee !important; }
 
 .joyride-modal-bg {
   position: fixed;
