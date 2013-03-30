@@ -8,8 +8,21 @@ and open the template in the editor.
         <title></title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <link rel="stylesheet" type="text/css" href="/css/main.css" th:href="@{/css/main.css}" />
+        <link rel="stylesheet" type="text/css" href="/css/users.css" th:href="@{/css/users.css}" />
     </head>
     <body>
-        <div><h1><span th:text="#{welcome}">MAIN</span> USERS PAGE</h1></div>
+    <h1>Users List Page</h1>
+        <table>
+            <tbody data-bind="foreach: users">
+                <tr data-bind="click: getUser">
+                    <td data-bind="text: firstName"></td>
+                    <td data-bind="text: lastName"></td>
+                    <td data-bind="text: email"></td>
+                </tr>
+            </tbody>
+        </table>
+        <script src="/js/vendor/jquery-1.9.1.min.js" th:src="@{/js/vendor/jquery-1.9.1.min.js}"></script>
+        <script src="/js/vendor/knockout-2.2.1.js" th:src="@{/js/vendor/knockout-2.2.1.js}" ></script>
+        <script src="/js/pages/users.js" th:src="@{/js/pages/users.js}"></script>
     </body>
 </html>

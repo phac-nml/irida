@@ -22,6 +22,7 @@
     
     <mvc:resources mapping="/css/**" location="/resources/dev/css/"/>
     <mvc:resources mapping="/js/**" location="/resources/dev/js/"/>
+    <mvc:resources mapping="/templates/**" location="resources/templates/"/>
 
     <!--
         - Message source for this context, loaded from localized "messages_xx" files.
