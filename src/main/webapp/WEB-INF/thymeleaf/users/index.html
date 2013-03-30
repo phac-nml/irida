@@ -15,9 +15,11 @@ and open the template in the editor.
         <table>
             <tbody data-bind="foreach: users">
                 <tr data-bind="click: getUser">
+                    <td data-bind="text: username"></td>
                     <td data-bind="text: firstName"></td>
                     <td data-bind="text: lastName"></td>
                     <td data-bind="text: email"></td>
+                    <td data-bind="text: phoneNumber"></td>
                 </tr>
             </tbody>
         </table>
