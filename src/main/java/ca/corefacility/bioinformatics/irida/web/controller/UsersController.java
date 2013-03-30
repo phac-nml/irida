@@ -49,7 +49,7 @@ public class UsersController {
         logger.debug("JSON /users called");
         List<User> users = userService.list();
         List<UserResource> resources = new ArrayList<>(users.size());
-        logger.debug("The size is: ", users.size());
+        logger.debug("The size is: {}", users.size());
         for (User u : users) {
             UserResource resource = new UserResource(u);
             Link link = linkTo(UsersController.class).slash(u.getId()).withSelfRel();
