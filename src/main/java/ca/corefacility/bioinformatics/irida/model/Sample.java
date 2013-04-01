@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * A biological sample. Each sample may correspond to many files.
@@ -38,13 +39,14 @@ public class Sample implements Auditable<Audit>, Identifiable<Identifier> {
     @NotNull
     @Size(min = 3)
     private String sampleName;
-    @NotNull
+    @NotEmpty // samples must belong to at least one project
     private Collection<Project> projects;
     private Collection<SampleFile> files;
 
     public Sample() {
         audit = new Audit();
         projects = new HashSet<>();
+        files = new HashSet<>();
     }
 
     public Sample(Identifier id) {

@@ -18,6 +18,11 @@
         <constructor-arg ref="validator" />
     </bean>
     
+    <bean id="sampleService" class="ca.corefacility.bioinformatics.irida.service.impl.SampleServiceImpl">
+        <constructor-arg ref="sampleRepository" />
+        <constructor-arg ref="validator" />
+    </bean>
+    
     <bean id="userRepository" class="ca.corefacility.bioinformatics.irida.repositories.memory.UserMemoryRepository" />
     <bean id="projectRepository" class="ca.corefacility.bioinformatics.irida.repositories.memory.CRUDMemoryRepository" />
     <bean id="sampleRepository" class="ca.corefacility.bioinformatics.irida.repositories.memory.CRUDMemoryRepository" />
