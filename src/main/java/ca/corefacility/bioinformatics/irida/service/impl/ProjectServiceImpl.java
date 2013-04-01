@@ -19,10 +19,10 @@ import javax.validation.Validator;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class ProjectServiceImpl extends CRUDServiceImpl<Identifier, Project> implements ProjectService {
-
+    
     private CRUDRepository<Identifier, User> userRepository;
     private CRUDRepository<Identifier, Sample> sampleRepository;
-
+    
     public ProjectServiceImpl(CRUDRepository<Identifier, Project> projectRepository, CRUDRepository<Identifier, User> userRepository, CRUDRepository<Identifier, Sample> sampleRepository, Validator validator) {
         super(projectRepository, validator);
         this.sampleRepository = sampleRepository;
@@ -48,7 +48,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Identifier, Project> imp
      */
     @Override
     public void addSampleToProject(Project project, Sample sample) {
-        sample.setProject(project);
+        sample.getProjects().add(project);
         project.getSamples().add(sample);
         
         repository.update(project);

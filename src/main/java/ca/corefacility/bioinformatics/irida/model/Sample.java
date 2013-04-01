@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -38,11 +39,12 @@ public class Sample implements Auditable<Audit>, Identifiable<Identifier> {
     @Size(min = 3)
     private String sampleName;
     @NotNull
-    private Project project;
+    private Collection<Project> projects;
     private Collection<SampleFile> files;
 
     public Sample() {
         audit = new Audit();
+        projects = new HashSet<>();
     }
 
     public Sample(Identifier id) {
@@ -74,12 +76,12 @@ public class Sample implements Auditable<Audit>, Identifiable<Identifier> {
         this.sampleName = sampleName;
     }
 
-    public Project getProject() {
-        return project;
+    public Collection<Project> getProjects() {
+        return projects;
     }
 
-    public void setProject(Project project) {
-        this.project = project;
+    public void setProject(Collection<Project> projects) {
+        this.projects = projects;
     }
 
     public Collection<SampleFile> getFiles() {

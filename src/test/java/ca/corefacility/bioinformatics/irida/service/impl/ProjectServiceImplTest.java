@@ -83,6 +83,6 @@ public class ProjectServiceImplTest {
         
         assertEquals(1, p.getSamples().size());
         assertTrue(p.getSamples().contains(s));
-        assertEquals(p, s.getProject());
+        assertTrue(s.getProjects().contains(p));
     }
 }
