@@ -32,6 +32,7 @@ public class Project implements Comparable<Project>, Auditable<Audit>, Identifia
 
     public Project() {
         users = new HashMap<>();
+        samples = new HashSet<>();
         audit = new Audit();
     }
 
@@ -54,7 +55,7 @@ public class Project implements Comparable<Project>, Auditable<Audit>, Identifia
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, samples);
+        return Objects.hash(id, name);
     }
 
     public String getName() {

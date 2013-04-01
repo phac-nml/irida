@@ -55,7 +55,6 @@ public class Sample implements Auditable<Audit>, Identifiable<Identifier> {
         if (other instanceof Sample) {
             Sample sample = (Sample) other;
             return Objects.equals(sampleName, sample.sampleName)
-                    && Objects.equals(project, sample.project)
                     && Objects.equals(files, sample.files);
         }
 
@@ -64,7 +63,7 @@ public class Sample implements Auditable<Audit>, Identifiable<Identifier> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(sampleName, project, files);
+        return Objects.hash(sampleName, files);
     }
 
     public String getSampleName() {

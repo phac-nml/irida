@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
+import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.memory.CRUDMemoryRepository;
@@ -25,6 +26,7 @@ public class ProjectServiceImplTest {
     private ProjectService projectService;
     private CRUDRepository<Identifier, User> userRepository;
     private CRUDRepository<Identifier, Project> projectRepository;
+    private CRUDRepository<Identifier, Sample> sampleRepository;
     private Validator validator;
 
     @Before
@@ -33,7 +35,8 @@ public class ProjectServiceImplTest {
         validator = factory.getValidator();
         userRepository = new UserMemoryRepository();
         projectRepository = new CRUDMemoryRepository<>();
-        projectService = new ProjectServiceImpl(projectRepository, userRepository, validator);
+        sampleRepository = new CRUDMemoryRepository<>();
+        projectService = new ProjectServiceImpl(projectRepository, userRepository, sampleRepository, validator);
     }
 
     /**
@@ -63,5 +66,23 @@ public class ProjectServiceImplTest {
         // assert that the changes were correctly made
         assertEquals(1, p.getUsersByRole(r).size());
         assertTrue(u.getProjects().containsKey(p));
+    }
+
+    @Test
+    public void testAddSampleToProject() {
+        Project p = new Project();
+        Sample s = new Sample();
+        
+        p = projectRepository.create(p);
+        s = sampleRepository.create(s);
+        
+        projectService.addSampleToProject(p, s);
+        
+        p = projectRepository.read(p.getIdentifier());
+        s = sampleRepository.read(s.getIdentifier());
+        
+        assertEquals(1, p.getSamples().size());
+        assertTrue(p.getSamples().contains(s));
+        assertEquals(p, s.getProject());
     }
 }
