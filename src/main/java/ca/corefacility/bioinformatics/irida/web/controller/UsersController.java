@@ -52,7 +52,7 @@ public class UsersController {
         logger.debug("The size is: {}", users.size());
         for (User u : users) {
             UserResource resource = new UserResource(u);
-            Link link = linkTo(UsersController.class).slash(u.getIdentifier()).withSelfRel();
+            Link link = linkTo(UsersController.class).slash(resource.getUUID()).withSelfRel();
             resource.add(link);
             resources.add(resource);
         }

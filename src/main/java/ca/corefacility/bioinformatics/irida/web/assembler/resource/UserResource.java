@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.assembler.resource;
 
 import ca.corefacility.bioinformatics.irida.model.User;
+import java.util.UUID;
 import org.springframework.hateoas.ResourceSupport;
 
 /**
@@ -13,6 +14,10 @@ public class UserResource extends ResourceSupport {
     
     public UserResource(User user) {
         this.user = user;
+    }
+    
+    public UUID getUUID() {
+        return user.getIdentifier().getUUID();
     }
     
     public String getUsername() {
