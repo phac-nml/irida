@@ -4,27 +4,39 @@ and open the template in the editor.
 -->
 <!DOCTYPE html>
 <html>
-    <head>
-        <title></title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-        <link rel="stylesheet" type="text/css" href="/css/main.css" th:href="@{/css/main.css}" />
-        <link rel="stylesheet" type="text/css" href="/css/users.css" th:href="@{/css/users.css}" />
-    </head>
-    <body>
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="/css/main.css" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" type="text/css" href="/css/users.css" th:href="@{/css/users.css}"/>
+</head>
+<body>
+<div class="row">
     <h1>Users List Page</h1>
-        <table>
-            <tbody data-bind="foreach: users">
-                <tr data-bind="click: $parent.getUser">
-                    <td data-bind="text: username"></td>
-                    <td data-bind="text: firstName"></td>
-                    <td data-bind="text: lastName"></td>
-                    <td data-bind="text: email"></td>
-                    <td data-bind="text: phoneNumber"></td>
-                </tr>
-            </tbody>
-        </table>
-        <script src="/js/vendor/jquery-1.9.1.min.js" th:src="@{/js/vendor/jquery-1.9.1.min.js}"></script>
-        <script src="/js/vendor/knockout-2.2.1.js" th:src="@{/js/vendor/knockout-2.2.1.js}" ></script>
-        <script src="/js/pages/users.js" th:src="@{/js/pages/users.js}"></script>
-    </body>
+    <button class="button round right"><i class="icon-plus"></i>&nbsp;<i class="icon-user"></i></button>
+    <table class="large-12 columns">
+        <thead>
+            <th th:text="#{users.th.username}"></th>
+            <th th:text="#{users.th.firstName}"></th>
+            <th th:text="#{users.th.lastName}"></th>
+            <th th:text="#{users.th.email}"></th>
+            <th th:text="#{users.th.phoneNumber}"></th>
+        </thead>
+        <tbody data-bind="foreach: users">
+        <tr th:each="user : ${usersResourceList}">
+            <td th:text="${username}"></td>
+            <td th:text="${firstName}"></td>
+            <td th:text="${lastName}"></td>
+            <td th:text="${email}"></td>
+            <td th:text="${phoneNumber}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script src="/js/vendor/jquery-1.9.1.min.js" th:src="@{/js/vendor/jquery-1.9.1.min.js}"></script>
+<script src="/js/vendor/foundation/foundation.js" th:src="@{/js/vendor/foundation/foundation.js}"></script>
+<script src="/js/vendor/foundation/foundation.reveal.js" th:src="@{/js/vendor/foundation/foundation.reveal.js}"></script>
+<script src="/js/vendor/knockout-2.2.1.js" th:src="@{/js/vendor/knockout-2.2.1.js}"></script>
+<script src="/js/pages/users.js" th:src="@{/js/pages/users.js}"></script>
+</body>
 </html>
