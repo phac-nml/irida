@@ -26,6 +26,7 @@ import javax.validation.constraints.NotNull;
  * inheritance, see http://en.wikipedia.org/wiki/Liskov_substitution_principle
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class Identifier {
 
