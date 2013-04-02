@@ -23,17 +23,19 @@ and open the template in the editor.
             <th th:text="#{users.th.phoneNumber}"></th>
         </thead>
         <tbody data-bind="foreach: users">
-        <tr data-bind="click: $parent.getUser">
-            <td data-bind="text: username"></td>
-            <td data-bind="text: firstName"></td>
-            <td data-bind="text: lastName"></td>
-            <td data-bind="text: email"></td>
-            <td data-bind="text: phoneNumber"></td>
+        <tr th:each="user : ${usersResourceList}">
+            <td th:text="${username}"></td>
+            <td th:text="${firstName}"></td>
+            <td th:text="${lastName"}></td>
+            <td th:text="${email}"></td>
+            <td th:text="${phoneNumber}"></td>
         </tr>
         </tbody>
     </table>
 </div>
 <script src="/js/vendor/jquery-1.9.1.min.js" th:src="@{/js/vendor/jquery-1.9.1.min.js}"></script>
+<script src="/js/vendor/foundation/foundation.js" th:src="@{/js/vendor/foundation/foundation.js}"></script>
+<script src="/js/vendor/foundation/foundation.reveal.js" th:src="@{/js/vendor/foundation/foundation.reveal.js}"></script>
 <script src="/js/vendor/knockout-2.2.1.js" th:src="@{/js/vendor/knockout-2.2.1.js}"></script>
 <script src="/js/pages/users.js" th:src="@{/js/pages/users.js}"></script>
 </body>
