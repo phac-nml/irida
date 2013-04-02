@@ -14,7 +14,7 @@ and open the template in the editor.
     <h1>Users List Page</h1>
         <table>
             <tbody data-bind="foreach: users">
-                <tr data-bind="click: getUser">
+                <tr data-bind="click: $parent.getUser">
                     <td data-bind="text: username"></td>
                     <td data-bind="text: firstName"></td>
                     <td data-bind="text: lastName"></td>
