@@ -28,7 +28,7 @@
     };
 
     $.getJSON('/users', function (d) {
-      var mappedUsers = $.map(d.userResourceList, function(i) {return new UserModel(i);});
+      var mappedUsers = $.map(d.users, function(i) {return new UserModel(i);});
       self.users(mappedUsers);
     });
   }
