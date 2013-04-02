@@ -34,9 +34,11 @@ public class TripleStore {
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-    protected Repository repo;
+    private Repository repo;
     private RepositoryFactory orf;
-    public String URI = "http://bobloblaw/IRIDA/";
+    
+    public final String URI = "http://bobloblaw/IRIDA/";
+    
     String serverUrl;
     String repoName;
 
@@ -47,9 +49,13 @@ public class TripleStore {
         this.setServer(serverUrl, repoName);
     }
     
+    public TripleStore(Repository repo){
+        this.repo = repo;
+    }
+    
     public String getURI(){
         return URI;
-    }    
+    }
 
     public void setServer(String serverUrl, String repoName) {
         this.serverUrl = serverUrl;
@@ -58,7 +64,6 @@ public class TripleStore {
         repo = new HTTPRepository(serverUrl,repoName);
         try {
             repo.initialize();
-            RepositoryConnection con = repo.getConnection();
 
         } catch (RepositoryException ex) {
             Logger.getLogger(TripleStore.class.getName()).log(Level.SEVERE, null, ex);

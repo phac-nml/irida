@@ -29,8 +29,8 @@ import javax.validation.constraints.NotNull;
  */
 public class Identifier {
 
-    @NotNull
-    private UUID uuid;
+    //@NotNull
+    //private UUID uuid;
     @NotNull
     private URI uri;
     // alternative URI:
@@ -38,20 +38,24 @@ public class Identifier {
     //private String url;
 
     public Identifier() {
-        uuid = UUID.randomUUID();
+        UUID uuid = UUID.randomUUID();
+        
+        String struri = "http://nowhere/"+uuid.toString();
+        uri = URI.create(struri);
     }
 
-    public Identifier(URI uri, UUID uuid) {
+    public Identifier(URI uri) {
         this.uri = uri;
-        this.uuid = uuid;
+        //this.uuid = uuid;
     }
 
     @Override
     public boolean equals(Object other) {
         if (other instanceof Identifier) {
             Identifier id = (Identifier) other;
-            return Objects.equals(this.uuid, id.uuid)
-                    && Objects.equals(uri, id.uri);
+            //return Objects.equals(this.uuid, id.uuid)
+            //        && Objects.equals(uri, id.uri);
+            return Objects.equals(uri, id.uri);
         }
 
         return false;
@@ -59,7 +63,7 @@ public class Identifier {
 
     @Override
     public int hashCode() {
-        return Objects.hash(uri, uuid);
+        return Objects.hash(uri);
     }
 
     public URI getUri() {
@@ -70,11 +74,11 @@ public class Identifier {
         this.uri = uri;
     }
 
-    public UUID getUUID() {
+    /*public UUID getUUID() {
         return uuid;
     }
 
     public void setUUID(UUID uuid) {
         this.uuid = uuid;
-    }
+    }*/
 }
