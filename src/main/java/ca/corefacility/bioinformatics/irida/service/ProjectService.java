@@ -5,6 +5,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.User;
+import java.util.Collection;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -33,4 +34,12 @@ public interface ProjectService extends CRUDService<Identifier, Project> {
      * @param sample the sample to add to the project.
      */
     public void addSampleToProject(Project project, Sample sample);
+
+    /**
+     * Get all users associated with a particular project.
+     *
+     * @param project the project to get users for.
+     * @return the users associated with the project.
+     */
+    public Collection<User> getUsersForProject(Project project);
 }
