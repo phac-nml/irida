@@ -13,7 +13,7 @@ and open the template in the editor.
 <body>
 <div class="row">
     <h1>Users List Page</h1>
-    <button class="button round right"><i class="icon-plus"></i>&nbsp;<i class="icon-user"></i></button>
+    <a href="#" data-reveal-id="myModal" class="button round right"><i class="icon-plus"></i>&nbsp;<i class="icon-user"></i></a>
     <table class="large-12 columns">
         <thead>
             <th th:text="#{users.th.username}"></th>
@@ -33,10 +33,17 @@ and open the template in the editor.
         </tbody>
     </table>
 </div>
+<div id="myModal" class="reveal-modal">
+    <h2>Add New User</h2>
+    
+</div>
 <script src="/js/vendor/jquery-1.9.1.min.js" th:src="@{/js/vendor/jquery-1.9.1.min.js}"></script>
 <script src="/js/vendor/foundation/foundation.js" th:src="@{/js/vendor/foundation/foundation.js}"></script>
 <script src="/js/vendor/foundation/foundation.reveal.js" th:src="@{/js/vendor/foundation/foundation.reveal.js}"></script>
 <script src="/js/vendor/knockout-2.2.1.js" th:src="@{/js/vendor/knockout-2.2.1.js}"></script>
 <script src="/js/pages/users.js" th:src="@{/js/pages/users.js}"></script>
+<script>
+    $(document).foundation();
+</script>
 </body>
 </html>
