@@ -20,8 +20,8 @@
 
     <mvc:annotation-driven />
     
-    <mvc:resources mapping="/css/**" location="/resources/dev/css/"/>
-    <mvc:resources mapping="/js/**" location="/resources/dev/js/"/>
+    <mvc:resources mapping="/css/**" location="/resources/css/"/>
+    <mvc:resources mapping="/js/**" location="/resources/js/"/>
 
     <!--
         - Message source for this context, loaded from localized "messages_xx" files.
