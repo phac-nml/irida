@@ -47,10 +47,8 @@ public class UsersController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String showUsersPage(Model model) {
-        logger.debug("JSON /users called");
         List<User> users = userService.list();
         List<UserResource> resources = new ArrayList<>(users.size());
-        logger.debug("The size is: {}", users.size());
         for (User u : users) {
             UserResource resource = new UserResource(u);
             Link link = linkTo(UsersController.class).slash(resource.getUUID()).withSelfRel();
@@ -89,7 +87,6 @@ public class UsersController {
     private String validationMessages(Set<ConstraintViolation<?>> failures) {
         String failureMessages = "{";
         for (ConstraintViolation<?> failure : failures) {
-            logger.debug("Failure: {}", failure);
             failureMessages += "{" + failure.getPropertyPath().toString() + ":" + failure.getMessage() + "}";
         }
         failureMessages += "}";
