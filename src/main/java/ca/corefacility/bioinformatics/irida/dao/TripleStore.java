@@ -22,7 +22,6 @@ import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
-import org.openrdf.repository.config.RepositoryFactory;
 import org.openrdf.repository.http.HTTPRepository;
 
 /**
@@ -35,9 +34,8 @@ public class TripleStore {
  * and open the template in the editor.
  */
     private Repository repo;
-    private RepositoryFactory orf;
     
-    public final String URI = "http://bobloblaw/IRIDA/";
+    public String URI;
     
     String serverUrl;
     String repoName;
@@ -45,8 +43,8 @@ public class TripleStore {
     public TripleStore(){
     }
     
-    public TripleStore(String serverUrl, String repoName){
-        this.setServer(serverUrl, repoName);
+    public TripleStore(String serverUrl, String repoName, String uri){
+        this.setServer(serverUrl, repoName,uri);
     }
     
     public TripleStore(Repository repo){
@@ -57,9 +55,10 @@ public class TripleStore {
         return URI;
     }
 
-    public void setServer(String serverUrl, String repoName) {
+    public void setServer(String serverUrl, String repoName, String uri) {
         this.serverUrl = serverUrl;
         this.repoName = repoName;
+        this.URI = uri;
         
         repo = new HTTPRepository(serverUrl,repoName);
         try {

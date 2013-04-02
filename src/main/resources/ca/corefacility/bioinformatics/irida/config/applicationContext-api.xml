@@ -11,6 +11,7 @@
     <bean id="tripleStore" class="ca.corefacility.bioinformatics.irida.dao.TripleStore">
         <constructor-arg value="${db.uri}"/>
         <constructor-arg value="${db.instance}"/>
+        <constructor-arg value="${db.base_uri}"/>
     </bean>
     
     <bean id="userSesameRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.UserSesameRepository">

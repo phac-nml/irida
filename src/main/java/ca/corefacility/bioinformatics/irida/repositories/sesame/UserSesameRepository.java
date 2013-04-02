@@ -58,17 +58,13 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
     public User create(User object) throws IllegalArgumentException {        
         RepositoryConnection con = store.getRepoConnection();
 
-        String id;
+        String id = URI + object.getUsername();
+        java.net.URI objuri = java.net.URI.create(id);
+            
+        Identifier objid = new Identifier(objuri);        
         
-        if(!checkUsernameExists(object.getUsername())){            
-            id = URI + object.getUsername();
-            java.net.URI uri = java.net.URI.create(id);
-            
-            Identifier objid = new Identifier(uri);
-                        
-            object.setIdentifier(objid);
-            
-
+        if(!exists(objid)){            
+            object.setIdentifier(objid);            
         }
         else{
             throw new IllegalArgumentException("User with this username already exists.");
