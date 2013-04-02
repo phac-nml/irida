@@ -5,22 +5,45 @@
  * Time: 11:25 AM
  * To change this template use File | Settings | File Templates.
  */
-(function Users ($) {
+(function Users($) {
   'use strict';
   var viewModel;
 
+  $('#addUserBtn').on('click', function () {
+    $.ajax({
+      type: 'POST',
+      data: viewModel.currUser,
+      success: function (d) {
+        console.log(d);
+      },
+      error: function (XMLHttpRequest, textStatus, errorThrown) {
+        console.log(XMLHttpRequest.responseText);
+      }
+    })
+  });
+
   var UserModel = function (data) {
-    this.firstName = ko.observable(data.firstName);
-    this.lastName = ko.observable(data.lastName);
-    this.email = ko.observable(data.email);
-    this.phoneNumber = ko.observable(data.phoneNumber);
-    this.username = ko.observable(data.username);
-    this.link = ko.observable(data.links[0].href);
+    if (data.length) {
+      this.firstName = ko.observable(data.firstName);
+      this.lastName = ko.observable(data.lastName);
+      this.email = ko.observable(data.email);
+      this.phoneNumber = ko.observable(data.phoneNumber);
+      this.username = ko.observable(data.username);
+      this.link = ko.observable(data.links[0].href);
+    }
   };
 
-  function ViewModel () {
+  function ViewModel() {
     var self = this;
 
+    self.currUser = {
+      firstName: "",
+      lastName: "",
+      username: "",
+      password: "",
+      email: "",
+      phoneNumber: ""
+    };
     self.users = ko.observableArray();
 
     self.getUser = function (user) {
@@ -28,29 +51,13 @@
     };
 
     $.getJSON('/users', function (d) {
-      var mappedUsers = $.map(d.users, function(i) {return new UserModel(i);});
+      var mappedUsers = $.map(d.users, function (i) {
+        return new UserModel(i);
+      });
       self.users(mappedUsers);
     });
   }
 
   viewModel = new ViewModel();
   ko.applyBindings(viewModel);
-
-//  var ViewModel = function (users) {
-//    var self = this;
-//    self.users = ko.observableArray(users);
-//
-//
-//    self.getUser = function (user) {
-//      alert('Asking for ' + user.firstName() + ' at ' + user.link());
-//    };
-//  };
-//
-//  $.getJSON('/users', function (d) {
-//    var mappedUsers = $.map(d.userResourceList, function(i) {return new User(i);});
-//    viewModel = new ViewModel(mappedUsers);
-//    ko.applyBindings(viewModel);
-//  });
-
-
 })(jQuery);

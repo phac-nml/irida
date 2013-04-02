@@ -16,14 +16,14 @@ and open the template in the editor.
     <a href="#" data-reveal-id="myModal" class="button round right"><i class="icon-plus"></i>&nbsp;<i class="icon-user"></i></a>
     <table class="large-12 columns">
         <thead>
-            <th th:text="#{users.th.username}"></th>
-            <th th:text="#{users.th.firstName}"></th>
-            <th th:text="#{users.th.lastName}"></th>
-            <th th:text="#{users.th.email}"></th>
-            <th th:text="#{users.th.phoneNumber}"></th>
+            <th th:text="#{user.username}"></th>
+            <th th:text="#{user.firstName}"></th>
+            <th th:text="#{user.lastName}"></th>
+            <th th:text="#{user.email}"></th>
+            <th th:text="#{user.phoneNumber}"></th>
         </thead>
         <tbody>
-        <tr th:each="user : ${users}">
+        <tr data-bind="click: getUser" th:each="user : ${users}">
             <td th:text="${user.username}"></td>
             <td th:text="${user.firstName}"></td>
             <td th:text="${user.lastName}"></td>
@@ -34,8 +34,43 @@ and open the template in the editor.
     </table>
 </div>
 <div id="myModal" class="reveal-modal">
+    <a class="close-reveal-modal">&#215;</a>
     <h2>Add New User</h2>
-    
+    <div>
+        <div class="row">
+            <div class="large-6 columns">
+                <label th:text="#{user.username}"></label>
+                <input type="text" data-bind="value: currUser.username" />
+            </div>
+            <div class="large-6 columns">
+                <label th:text="#{user.password}"></label>
+                <input type="password" data-bind="value: currUser.password" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="large-6 columns">
+                <label th:text="#{user.firstName}"></label>
+                <input type="text" data-bind="value: currUser.firstName"/>
+            </div>
+            <div class="large-6 columns">
+                <label th:text="#{user.lastName}"></label>
+                <input type="text" data-bind="value: currUser.lastName"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="large-6 columns">
+                <label th:text="#{user.email}"></label>
+                <input type="text" data-bind="value: currUser.email"/>
+            </div>
+            <div class="large-6 columns">
+                <label th:text="#{user.phoneNumber}"></label>
+                <input type="text" data-bind="value: currUser.phoneNumber"/>
+            </div>
+        </div>
+        <div class="row">
+            <button id="addUserBtn">Add User</button>
+        </div>
+    </div>
 </div>
 <script src="/js/vendor/jquery-1.9.1.min.js" th:src="@{/js/vendor/jquery-1.9.1.min.js}"></script>
 <script src="/js/vendor/foundation/foundation.js" th:src="@{/js/vendor/foundation/foundation.js}"></script>
