@@ -22,13 +22,13 @@ and open the template in the editor.
             <th th:text="#{users.th.email}"></th>
             <th th:text="#{users.th.phoneNumber}"></th>
         </thead>
-        <tbody data-bind="foreach: users">
-        <tr th:each="user : ${usersResourceList}">
-            <td th:text="${username}"></td>
-            <td th:text="${firstName}"></td>
-            <td th:text="${lastName}"></td>
-            <td th:text="${email}"></td>
-            <td th:text="${phoneNumber}"></td>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.username}"></td>
+            <td th:text="${user.firstName}"></td>
+            <td th:text="${user.lastName}"></td>
+            <td th:text="${user.email}"></td>
+            <td th:text="${user.phoneNumber}"></td>
         </tr>
         </tbody>
     </table>

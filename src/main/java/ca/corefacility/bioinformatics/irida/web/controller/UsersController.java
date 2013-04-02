@@ -18,8 +18,10 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
 import org.springframework.web.bind.annotation.PathVariable;
 
 /**
+ * Controller for managing users.
  *
- * @author josh
+ * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
+ * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Controller
 @RequestMapping(value = "/users")
@@ -35,17 +37,6 @@ public class UsersController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String showUsersPage(Model model) {
-        return "users/index";
-    }
-    
-    @RequestMapping(value="/{id}", method = RequestMethod.GET)
-    public String getUser(@PathVariable int id, Model model) {
-        model.addAttribute("userId", id);
-        return "users/user";
-    }
-
-    @RequestMapping(produces = "application/json")
-    public List<UserResource> getJsonAllUsers() {
         logger.debug("JSON /users called");
         List<User> users = userService.list();
         List<UserResource> resources = new ArrayList<>(users.size());
@@ -56,6 +47,13 @@ public class UsersController {
             resource.add(link);
             resources.add(resource);
         }
-        return resources;
+        model.addAttribute("users", resources);
+        return "users/index";
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public String getUser(@PathVariable int id, Model model) {
+        model.addAttribute("userId", id);
+        return "users/user";
     }
 }
