@@ -30,8 +30,6 @@ import javax.validation.constraints.NotNull;
  */
 public class Identifier {
 
-    //@NotNull
-    //private UUID uuid;
     @NotNull
     private URI uri;
     // alternative URI:
@@ -47,15 +45,12 @@ public class Identifier {
 
     public Identifier(URI uri) {
         this.uri = uri;
-        //this.uuid = uuid;
     }
 
     @Override
     public boolean equals(Object other) {
         if (other instanceof Identifier) {
             Identifier id = (Identifier) other;
-            //return Objects.equals(this.uuid, id.uuid)
-            //        && Objects.equals(uri, id.uri);
             return Objects.equals(uri, id.uri);
         }
 
@@ -75,11 +70,4 @@ public class Identifier {
         this.uri = uri;
     }
 
-    /*public UUID getUUID() {
-        return uuid;
-    }
-
-    public void setUUID(UUID uuid) {
-        this.uuid = uuid;
-    }*/
 }

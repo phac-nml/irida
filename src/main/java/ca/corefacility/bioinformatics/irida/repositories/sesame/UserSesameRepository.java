@@ -21,7 +21,6 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openrdf.model.Literal;
@@ -56,9 +55,7 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
     } 
     
     @Override
-    public User create(User object) throws IllegalArgumentException {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        
+    public User create(User object) throws IllegalArgumentException {        
         RepositoryConnection con = store.getRepoConnection();
 
         String id;
@@ -103,9 +100,7 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
     }
 
     @Override
-    public User read(Identifier id) throws IllegalArgumentException {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        
+    public User read(Identifier id) throws IllegalArgumentException {        
         User ret = null;
 
         String uri = id.getUri().toString();
@@ -146,7 +141,6 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
 
     @Override
     public User update(User object) throws IllegalArgumentException {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         delete(object.getIdentifier());
         object = create(object);
         
@@ -154,9 +148,7 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
     }
 
     @Override
-    public void delete(Identifier id) throws IllegalArgumentException {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        
+    public void delete(Identifier id) throws IllegalArgumentException {        
         if(exists(id)){
             RepositoryConnection con = store.getRepoConnection();
             
@@ -178,9 +170,7 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
     }
 
     @Override
-    public List<User> list() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        
+    public List<User> list() {        
         List<User> users = new ArrayList<>();
         
         RepositoryConnection con = store.getRepoConnection();
@@ -217,9 +207,7 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
     }
 
     @Override
-    public Boolean exists(Identifier id) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        
+    public Boolean exists(Identifier id) {        
         boolean exists = false;
 
         try {
