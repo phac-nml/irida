@@ -16,14 +16,14 @@
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
-import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
@@ -42,33 +42,31 @@ import org.openrdf.repository.RepositoryException;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class UserSesameRepository implements CRUDRepository<Identifier, User> {
-    
+public class ProjectSesameRepository implements CRUDRepository<Identifier, Project>{
     TripleStore store;
     String URI;
     
-    public UserSesameRepository(){}
+    public ProjectSesameRepository(){}
     
-    public UserSesameRepository(TripleStore store){
+    public ProjectSesameRepository(TripleStore store){
         this.store = store;
-        URI = store.getURI() + "User/";
+        URI = store.getURI() + "Project/";
     } 
     
     @Override
-    public User create(User object) throws IllegalArgumentException {        
+    public Project create(Project object) throws IllegalArgumentException {        
         RepositoryConnection con = store.getRepoConnection();
 
-        String id = URI + object.getUsername();
-        java.net.URI objuri = java.net.URI.create(id);
-            
-        Identifier objid = new Identifier(objuri);        
+        String id;
+        Identifier objid;
+        do{
+            id = URI + UUID.randomUUID().toString();
+            java.net.URI objuri = java.net.URI.create(id);
+
+            objid = new Identifier(objuri);
+        }while(exists(objid)); //I know it's a UUID.  Just being safe
         
-        if(!exists(objid)){            
-            object.setIdentifier(objid);            
-        }
-        else{
-            throw new IllegalArgumentException("User with this username already exists.");
-        }        
+        object.setIdentifier(objid); 
         
         try {
             con.begin();
@@ -78,11 +76,11 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
             
             //add type
             URI pred = fac.createURI(con.getNamespace("rdf"), "type");
-            Value name = fac.createURI(con.getNamespace("foaf"),"Person");
+            Value name = fac.createURI(con.getNamespace("irida"),"Project");
             Statement st = fac.createStatement(uri, pred, name);
             con.add(st);            
             
-            addUserProperties(object,uri,con);
+            addProjectProperties(object,uri,con);
 
             con.commit();
             
@@ -96,8 +94,8 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
     }
 
     @Override
-    public User read(Identifier id) throws IllegalArgumentException {        
-        User ret = null;
+    public Project read(Identifier id) throws IllegalArgumentException {        
+        Project ret = null;
 
         String uri = id.getUri().toString();
         
@@ -105,8 +103,8 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
         try {
             String qs = store.getPrefixes()
                     + "SELECT * "
-                    + "WHERE{ ?s a foaf:Person . \n"
-                    + UserSesameRepository.getUserParameters("s")
+                    + "WHERE{ ?s a irida:Project . \n"
+                    + ProjectSesameRepository.getProjectParameters("s")
                     + "}";
             
             TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
@@ -119,13 +117,13 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
 
             Value s = bindingSet.getValue("s");
 
-            ret = new User();
+            ret = new Project();
             
             Identifier objid = new Identifier(java.net.URI.create(s.stringValue()));
             
             ret.setIdentifier(objid);
             
-            UserSesameRepository.buildUserProperties(bindingSet, ret);
+            ProjectSesameRepository.buildProjectProperties(bindingSet, ret);
                 
     
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
@@ -136,7 +134,7 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
     }
 
     @Override
-    public User update(User object) throws IllegalArgumentException {
+    public Project update(Project object) throws IllegalArgumentException {
         delete(object.getIdentifier());
         object = create(object);
         
@@ -166,15 +164,15 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
     }
 
     @Override
-    public List<User> list() {        
-        List<User> users = new ArrayList<>();
+    public List<Project> list() {        
+        List<Project> users = new ArrayList<>();
         
         RepositoryConnection con = store.getRepoConnection();
         try {
             String qs = store.getPrefixes()
                     + "SELECT * "
-                    + "WHERE{ ?s a foaf:Person . \n"
-                    + UserSesameRepository.getUserParameters("s")
+                    + "WHERE{ ?s a irida:Project . \n"
+                    + ProjectSesameRepository.getProjectParameters("s")
                     + "}\n"
                     + "ORDER BY ?nick";
             TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
@@ -184,12 +182,12 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
                 BindingSet bindingSet = result.next();
                 Value s = bindingSet.getValue("s");
                 
-                User ret = new User();
+                Project ret = new Project();
 
                 Identifier objid = new Identifier(java.net.URI.create(s.stringValue()));
 
                 ret.setIdentifier(objid);                
-                UserSesameRepository.buildUserProperties(bindingSet, ret);
+                ProjectSesameRepository.buildProjectProperties(bindingSet, ret);
                 
                 users.add(ret);
             }
@@ -221,7 +219,7 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
             URI objecturi = vf.createURI(uri);
             existsQuery.setBinding("uri", objecturi);
 
-            URI typeuri = vf.createURI(con.getNamespace("foaf"),"Person");
+            URI typeuri = vf.createURI(con.getNamespace("irida"),"Project");
             existsQuery.setBinding("type", typeuri);
 
             exists = existsQuery.evaluate();
@@ -234,99 +232,32 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
         return exists;        
     }
 
-    private void addUserProperties(User user, URI uri, RepositoryConnection con) throws RepositoryException{
+    private void addProjectProperties(Project proj, URI uri, RepositoryConnection con) throws RepositoryException{
         ValueFactory fac = con.getValueFactory(); 
 
-        //add username foaf:nick
-        URI pred = fac.createURI(con.getNamespace("foaf"),"nick");
-        Value name = fac.createLiteral(user.getUsername());
+        //add project name rdfs:label
+        URI pred = fac.createURI(con.getNamespace("rdfs"),"label");
+        Value name = fac.createLiteral(proj.getName());
         Statement st = fac.createStatement(uri, pred, name);
         con.add(st);
-
-        //add foaf:mbox
-        pred = fac.createURI(con.getNamespace("foaf"),"mbox");
-        name = fac.createLiteral(user.getEmail());
-        st = fac.createStatement(uri, pred, name);
-        con.add(st);
-
-        //add foaf:firstName
-        pred = fac.createURI(con.getNamespace("foaf"),"firstName");
-        name = fac.createLiteral(user.getFirstName());
-        st = fac.createStatement(uri, pred, name);
-        con.add(st);
-
-        //add foaf:lastName
-        pred = fac.createURI(con.getNamespace("foaf"),"lastName");
-        name = fac.createLiteral(user.getLastName());
-        st = fac.createStatement(uri, pred, name);
-        con.add(st);
-            
-        //add foaf:phone
-        pred = fac.createURI(con.getNamespace("foaf"),"phone");
-        name = fac.createLiteral(user.getPhoneNumber());
-        st = fac.createStatement(uri, pred, name);
-        con.add(st);            
     }
 
-    /**
-     * Check if a user with the given username exists in the database
-     * @param username Username to check
-     * @return boolean for existence
-     */
-    public boolean checkUsernameExists(String username){
-        boolean exists = false;
-
-        try {            
-            RepositoryConnection con = store.getRepoConnection();
-            
-            String querystring = store.getPrefixes()
-                    + "ASK\n"
-                    + "{?s a ?type ."
-                    + "?s foaf:nick ?nick}";
-            
-            BooleanQuery existsQuery = con.prepareBooleanQuery(QueryLanguage.SPARQL, querystring);
-
-            ValueFactory vf = con.getValueFactory();
-
-            URI typeuri = vf.createURI(con.getNamespace("foaf"),"Person");
-            existsQuery.setBinding("type", typeuri);
-            
-            Literal nick = vf.createLiteral(username);
-            existsQuery.setBinding("nick", nick);
-
-            exists = existsQuery.evaluate();
-            
-            return exists;
-        } catch (RepositoryException |MalformedQueryException | QueryEvaluationException ex) {
-            System.err.println(ex.getMessage());
-        }
-        
-        return exists;
-    }
     
-    public static void buildUserProperties(BindingSet bs, User usr){      
-        usr.setUsername(bs.getValue("nick").stringValue());
-        usr.setEmail(bs.getValue("mbox").stringValue());
-        usr.setFirstName(bs.getValue("firstName").stringValue());
-        usr.setLastName(bs.getValue("lastName").stringValue());
-        usr.setPhoneNumber(bs.getValue("phone").stringValue());
+    public static void buildProjectProperties(BindingSet bs, Project proj){      
+        proj.setName(bs.getValue("label").stringValue());
+
     }
     
     
-    public static String getUserParameters(String subject){
+    public static String getProjectParameters(String subject){
         subject = "?" + subject;
         
-        String params = subject + " foaf:nick ?nick .\n"
-                + subject + " foaf:mbox ?mbox .\n"
-                + subject + " foaf:firstName ?firstName .\n"
-                + subject + " foaf:lastName ?lastName .\n"
-                + subject + " foaf:phone ?phone .\n";
+        String params = subject + " rdfs:label ?label .\n";
         
         return params;
     }    
     
     public void close() {
         store.close();
-    }
-    
+    }    
 }

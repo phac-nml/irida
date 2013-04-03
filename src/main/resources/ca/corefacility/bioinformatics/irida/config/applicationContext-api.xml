@@ -16,6 +16,10 @@
     
     <bean id="userSesameRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.UserSesameRepository">
         <constructor-arg ref="tripleStore" />        
+    </bean>
+    
+    <bean id="projectSesameRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.ProjectSesameRepository">
+        <constructor-arg ref="tripleStore" />        
     </bean> 
     
     <bean id="userService" class="ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl">
