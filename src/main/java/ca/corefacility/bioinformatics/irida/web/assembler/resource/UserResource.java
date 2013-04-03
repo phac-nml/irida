@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.assembler.resource;
 
 import ca.corefacility.bioinformatics.irida.model.User;
+import java.net.URI;
 import java.util.UUID;
 import org.springframework.hateoas.ResourceSupport;
 
@@ -8,6 +9,7 @@ import org.springframework.hateoas.ResourceSupport;
  * Wrapper for exposing User resources to the web with linking support.
  * 
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class UserResource extends ResourceSupport {
     private User user;
@@ -16,8 +18,8 @@ public class UserResource extends ResourceSupport {
         this.user = user;
     }
     
-    public UUID getUUID() {
-        return user.getIdentifier().getUUID();
+    public URI getURI() {
+        return user.getIdentifier().getUri();
     }
     
     public String getUsername() {

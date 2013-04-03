@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Controller
 @RequestMapping(value = "/users")
@@ -51,7 +52,7 @@ public class UsersController {
         List<UserResource> resources = new ArrayList<>(users.size());
         for (User u : users) {
             UserResource resource = new UserResource(u);
-            Link link = linkTo(UsersController.class).slash(resource.getUUID()).withSelfRel();
+            Link link = linkTo(UsersController.class).slash(resource.getUsername()).withSelfRel();
             resource.add(link);
             resources.add(resource);
         }
