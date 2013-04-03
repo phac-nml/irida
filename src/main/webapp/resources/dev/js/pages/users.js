@@ -1,9 +1,7 @@
 /**
- * Created with JetBrains WebStorm.
- * User: josh
+ * User: Josh Adam <josh.adam@phac-aspc.gc.ca>
  * Date: 2013-03-28
  * Time: 11:25 AM
- * To change this template use File | Settings | File Templates.
  */
 (function Users($) {
   'use strict';
@@ -17,7 +15,10 @@
         console.log(d);
       },
       error: function (XMLHttpRequest, textStatus, errorThrown) {
-        console.log(XMLHttpRequest.responseText);
+        $.each($.parseJSON(XMLHttpRequest.responseText), function (key, value) {
+          viewModel.newUserErrors[key](true);
+        });
+                    var fred = 1;
       }
     })
   });
@@ -52,18 +53,38 @@
       email: "",
       phoneNumber: ""
     };
+    self.newUserErrors = {
+      username: ko.observable(false),
+      password: ko.observable(false)
+    };
     self.users = ko.observableArray();
 
     self.getUser = function (user) {
       alert('Asking for ' + user.firstName() + ' at ' + user.link());
     };
 
-    $.getJSON('/users', function (d) {
-      var mappedUsers = $.map(d.users, function (i) {
-        return new UserModel(i);
+    self.checkError = function (field) {
+      return ko.computed({
+         read: function () {
+           return self.newUserErrors.username() === true ? "error" : "";
+         },
+        write: function (value) {
+          this.newUserErrors[field](value);
+        }
       });
-      self.users(mappedUsers);
-    });
+    }
+
+//      ko.computed(function () {
+//      console.log("HELP " + self.newUserErrors.username());
+//      return self.newUserErrors.username() === true ? "error" : "";
+//    }, self);
+
+//    $.getJSON('/users', function (d) {
+//      var mappedUsers = $.map(d.users, function (i) {
+//        return new UserModel(i);
+//      });
+//      self.users(mappedUsers);
+//    });
   }
 
   viewModel = new ViewModel();
