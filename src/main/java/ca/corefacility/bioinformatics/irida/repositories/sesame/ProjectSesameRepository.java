@@ -15,8 +15,10 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
+import ca.corefacility.bioinformatics.irida.dao.SparqlQuery;
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
 import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import java.util.ArrayList;
@@ -164,7 +166,12 @@ public class ProjectSesameRepository implements CRUDRepository<Identifier, Proje
     }
 
     @Override
-    public List<Project> list() {        
+    public List<Project> list() {
+        return list(0,0,null,null);        
+    }
+
+    @Override
+    public List<Project> list(int page, int size, String sortProperty, Order order) {
         List<Project> users = new ArrayList<>();
         
         RepositoryConnection con = store.getRepoConnection();
@@ -173,8 +180,12 @@ public class ProjectSesameRepository implements CRUDRepository<Identifier, Proje
                     + "SELECT * "
                     + "WHERE{ ?s a irida:Project . \n"
                     + ProjectSesameRepository.getProjectParameters("s")
-                    + "}\n"
-                    + "ORDER BY ?nick";
+                    + "}\n";
+
+            qs += SparqlQuery.setOrderBy(sortProperty, order);
+            qs += SparqlQuery.setLimitOffset(page, size);
+            
+            
             TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
 
             TupleQueryResult result = tupleQuery.evaluate();
@@ -197,8 +208,8 @@ public class ProjectSesameRepository implements CRUDRepository<Identifier, Proje
             System.out.println(ex.getMessage());
         }         
         
-        return users;        
-    }
+        return users;           
+    }    
 
     @Override
     public Boolean exists(Identifier id) {        
@@ -244,7 +255,7 @@ public class ProjectSesameRepository implements CRUDRepository<Identifier, Proje
 
     
     public static void buildProjectProperties(BindingSet bs, Project proj){      
-        proj.setName(bs.getValue("label").stringValue());
+        proj.setName(bs.getValue("name").stringValue());
 
     }
     
@@ -252,7 +263,7 @@ public class ProjectSesameRepository implements CRUDRepository<Identifier, Proje
     public static String getProjectParameters(String subject){
         subject = "?" + subject;
         
-        String params = subject + " rdfs:label ?label .\n";
+        String params = subject + " rdfs:label ?name .\n";
         
         return params;
     }    

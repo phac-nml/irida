@@ -15,8 +15,10 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
+import ca.corefacility.bioinformatics.irida.dao.SparqlQuery;
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import java.util.ArrayList;
@@ -166,7 +168,12 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
     }
 
     @Override
-    public List<User> list() {        
+    public List<User> list() {
+        return list(0,0,null,null);
+    }
+    
+    @Override
+    public List<User> list(int page, int size, String sortProperty, Order order) {
         List<User> users = new ArrayList<>();
         
         RepositoryConnection con = store.getRepoConnection();
@@ -175,8 +182,11 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
                     + "SELECT * "
                     + "WHERE{ ?s a foaf:Person . \n"
                     + UserSesameRepository.getUserParameters("s")
-                    + "}\n"
-                    + "ORDER BY ?nick";
+                    + "}\n";
+            
+            qs += SparqlQuery.setOrderBy(sortProperty, order);
+            qs += SparqlQuery.setLimitOffset(page, size);
+            
             TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
 
             TupleQueryResult result = tupleQuery.evaluate();
@@ -199,8 +209,7 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
             System.out.println(ex.getMessage());
         }         
         
-        return users;        
-    }
+        return users;    }    
 
     @Override
     public Boolean exists(Identifier id) {        
@@ -305,22 +314,22 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
     }
     
     public static void buildUserProperties(BindingSet bs, User usr){      
-        usr.setUsername(bs.getValue("nick").stringValue());
-        usr.setEmail(bs.getValue("mbox").stringValue());
+        usr.setUsername(bs.getValue("username").stringValue());
+        usr.setEmail(bs.getValue("email").stringValue());
         usr.setFirstName(bs.getValue("firstName").stringValue());
         usr.setLastName(bs.getValue("lastName").stringValue());
-        usr.setPhoneNumber(bs.getValue("phone").stringValue());
+        usr.setPhoneNumber(bs.getValue("phoneNumber").stringValue());
     }
     
     
     public static String getUserParameters(String subject){
         subject = "?" + subject;
         
-        String params = subject + " foaf:nick ?nick .\n"
-                + subject + " foaf:mbox ?mbox .\n"
+        String params = subject + " foaf:nick ?username .\n"
+                + subject + " foaf:mbox ?email .\n"
                 + subject + " foaf:firstName ?firstName .\n"
                 + subject + " foaf:lastName ?lastName .\n"
-                + subject + " foaf:phone ?phone .\n";
+                + subject + " foaf:phone ?phoneNumber .\n";
         
         return params;
     }    
@@ -328,5 +337,5 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
     public void close() {
         store.close();
     }
-    
+ 
 }
