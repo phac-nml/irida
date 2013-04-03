@@ -23,6 +23,27 @@ package ca.corefacility.bioinformatics.irida.model.enums;
  */
 public enum Order {
 
-    ASCENDING,
-    DESCENDING
+    ASCENDING("ASCENDING"),
+    DESCENDING("DESCENDING");
+    private String code;
+
+    private Order(String code) {
+        this.code = code;
+    }
+
+    @Override
+    public String toString() {
+        return code;
+    }
+
+    public static Order fromString(String code) {
+        switch (code) {
+            case "ASCENDING":
+                return ASCENDING;
+            case "DESCENDING":
+                return DESCENDING;
+            default:
+                throw new IllegalArgumentException("[" + code + "] is not a valid type of Order.");
+        }
+    }
 }

@@ -89,6 +89,9 @@ public class CRUDMemoryRepository<Type extends Identifiable<Identifier>> impleme
     @Override
     public List<Type> list(int page, int size, final String sortProperty, final Order order) {
         List<Type> values = list();
+        int start = size * (page - 1);
+        int end = start + size > values.size() ? values.size() : start + size;
+
         Collections.sort(values, new Comparator<Type>() {
             @Override
             public int compare(Type o1, Type o2) {
@@ -99,8 +102,7 @@ public class CRUDMemoryRepository<Type extends Identifiable<Identifier>> impleme
                 }
             }
         });
-        int start = size * (page - 1);
-        return values.subList(start, start + size);
+        return values.subList(start, end);
     }
 
     /**
