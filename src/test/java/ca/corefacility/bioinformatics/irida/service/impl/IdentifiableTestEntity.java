@@ -15,7 +15,9 @@
  */
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import javax.validation.constraints.NotNull;
 
@@ -23,14 +25,17 @@ import javax.validation.constraints.NotNull;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class IdentifiableTestEntity implements Identifiable<Identifier> {
+public class IdentifiableTestEntity implements Identifiable<Identifier>, Auditable<Audit> {
 
     private Identifier id;
     @NotNull
     private String nonNull;
+    @NotNull
+    private Audit audit;
 
     public IdentifiableTestEntity() {
         this.id = new Identifier();
+        this.audit = new Audit();
     }
 
     public String getNonNull() {
@@ -49,5 +54,15 @@ public class IdentifiableTestEntity implements Identifiable<Identifier> {
     @Override
     public void setIdentifier(Identifier identifier) {
         this.id = identifier;
+    }
+
+    @Override
+    public Audit getAuditInformation() {
+        return audit;
+    }
+
+    @Override
+    public void setAuditInformation(Audit audit) {
+        this.audit = audit;
     }
 }

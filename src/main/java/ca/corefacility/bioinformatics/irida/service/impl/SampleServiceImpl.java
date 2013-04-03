@@ -30,7 +30,7 @@ import javax.validation.Validator;
 public class SampleServiceImpl extends CRUDServiceImpl<Identifier, Sample> implements SampleService {
 
     public SampleServiceImpl(CRUDRepository<Identifier, Sample> sampleRepository, Validator validator) {
-        super(sampleRepository, validator);
+        super(sampleRepository, validator, Sample.class);
     }
 
     /**

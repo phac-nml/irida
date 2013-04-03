@@ -46,8 +46,8 @@ public class SampleServiceImplTest {
     public void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
-        sampleRepository = new CRUDMemoryRepository<>();
-        sampleFileRepository = new CRUDMemoryRepository<>();
+        sampleRepository = new CRUDMemoryRepository<>(Sample.class);
+        sampleFileRepository = new CRUDMemoryRepository<>(SampleFile.class);
         this.sampleService = new SampleServiceImpl(sampleRepository, validator);
     }
     
