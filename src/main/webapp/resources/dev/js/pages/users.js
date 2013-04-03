@@ -7,7 +7,7 @@
  */
 (function Users($) {
   'use strict';
-  var viewModel;
+  var viewModel, prevRow;
 
   $('#addUserBtn').on('click', function () {
     $.ajax({
@@ -20,6 +20,14 @@
         console.log(XMLHttpRequest.responseText);
       }
     })
+  });
+
+  $(".listTable>.row").on('click', function () {
+      if(prevRow){
+          $(prevRow).removeClass('active');
+      }
+      $(this).addClass('active');
+      prevRow = this;
   });
 
   var UserModel = function (data) {

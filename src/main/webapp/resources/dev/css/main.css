@@ -5153,3 +5153,28 @@ ul.icons {
 
 .icon-folder-open-alt:before {
   content: "\f115"; }
+
+.listTable > .row {
+  padding: 8px;
+  margin: 2px 0;
+  cursor: pointer;
+  border: 1px solid rgba(0, 0, 0, 0);
+  border-radius: 3px; }
+  .listTable > .row:hover {
+    border: 1px solid red; }
+  @media screen and (max-width: 48em) {
+    .listTable > .row > div {
+      margin: 5px 2px; } }
+.listTable > .row.active {
+  background-color: #e2e8e4;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#e2e8e4), to(#c1d1e1));
+  background-image: -webkit-linear-gradient(top, #e2e8e4, #c1d1e1);
+  background-image: -moz-linear-gradient(top, #e2e8e4, #c1d1e1);
+  background-image: -o-linear-gradient(top, #e2e8e4, #c1d1e1);
+  background-image: -ms-linear-gradient(top, #e2e8e4, #c1d1e1);
+  background-image: linear-gradient(top, #e2e8e4, #c1d1e1);
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#e2e8e4', EndColorStr='#c1d1e1'); }
+
+@media screen and (max-width: 48em) {
+  .small-screen-expand {
+    width: 100%; } }

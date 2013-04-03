@@ -1,3 +1,45 @@
 @import "normalize";
 @import "foundation";
 @import "font-awesome";
+
+
+// This is to be used to make a table out of div tags
+// Allows for a hover state and active row state
+.listTable {
+  &>.row {
+    padding: 8px;
+    margin: 2px 0;
+    cursor: pointer;
+    border: 1px solid rgba(0,0,0,0);
+    border-radius: $global-radius;
+    &:hover {
+      border: 1px solid red;
+    }
+
+    &>div {
+
+      @media screen and (max-width: $small-screen) {
+        margin: 5px 2px;
+      }
+    }
+  }
+  &>.row.active {
+    background-color: #e2e8e4;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(226, 232, 228)), to(rgb(193, 209, 225)));
+    background-image: -webkit-linear-gradient(top, rgb(226, 232, 228), rgb(193, 209, 225));
+    background-image: -moz-linear-gradient(top, rgb(226, 232, 228), rgb(193, 209, 225));
+    background-image: -o-linear-gradient(top, rgb(226, 232, 228), rgb(193, 209, 225));
+    background-image: -ms-linear-gradient(top, rgb(226, 232, 228), rgb(193, 209, 225));
+    background-image: linear-gradient(top, rgb(226, 232, 228), rgb(193, 209, 225));
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#e2e8e4', EndColorStr='#c1d1e1');
+
+  }
+}
+
+// Allows for buttons to be expanded to full width for
+// use on mobile devices.
+.small-screen-expand {
+  @media screen and (max-width: $small-screen) {
+    width: 100%;
+  }
+}

@@ -8,43 +8,60 @@ and open the template in the editor.
     <title></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" type="text/css" href="/css/main.css" th:href="@{/css/main.css}"/>
-    <link rel="stylesheet" type="text/css" href="/css/users.css" th:href="@{/css/users.css}"/>
 </head>
 <body>
 <div class="row">
     <h1>Users List Page</h1>
-    <a href="#" data-reveal-id="myModal" class="button round right"><i class="icon-plus"></i>&nbsp;<i class="icon-user"></i></a>
-    <table class="large-12 columns">
-        <thead>
-            <th th:text="#{user.username}"></th>
-            <th th:text="#{user.firstName}"></th>
-            <th th:text="#{user.lastName}"></th>
-            <th th:text="#{user.email}"></th>
-            <th th:text="#{user.phoneNumber}"></th>
-        </thead>
-        <tbody>
-        <tr data-bind="click: getUser" th:each="user : ${users}">
-            <td th:text="${user.username}"></td>
-            <td th:text="${user.firstName}"></td>
-            <td th:text="${user.lastName}"></td>
-            <td th:text="${user.email}"></td>
-            <td th:text="${user.phoneNumber}"></td>
-        </tr>
-        </tbody>
-    </table>
+
+    <div class="row">
+        <div class="large-12 columns">
+            <a href="#" data-reveal-id="myModal" class="button right small-screen-expand"><i class="icon-plus"></i>&nbsp;<i
+                    class="icon-user"></i></a>
+        </div>
+    </div>
+    <div class="listTable">
+        <div class="row" th:each="user : ${users}">
+            <div class="large-1 small-2 columns"><input type="checkbox"/></div>
+            <div class="large-2 small-10 columns" th:text="${user.username}"></div>
+            <div class="large-2 small-6 columns" th:text="${user.firstName}"></div>
+            <div class="large-2 small-6 columns" th:text="${user.lastName}"></div>
+            <div class="large-3 columns" th:text="${user.email}"></div>
+            <div class="large-2 columns" th:text="${user.phoneNumber}"></div>
+        </div>
+    </div>
+    <!--<table class="large-12 columns">-->
+    <!--<thead>-->
+    <!--<th th:text="#{user.username}"></th>-->
+    <!--<th th:text="#{user.firstName}"></th>-->
+    <!--<th th:text="#{user.lastName}"></th>-->
+    <!--<th th:text="#{user.email}"></th>-->
+    <!--<th th:text="#{user.phoneNumber}"></th>-->
+    <!--</thead>-->
+    <!--<tbody>-->
+    <!--<tr data-bind="click: getUser" th:each="user : ${users}">-->
+    <!--<td th:text="${user.username}"></td>-->
+    <!--<td th:text="${user.firstName}"></td>-->
+    <!--<td th:text="${user.lastName}"></td>-->
+    <!--<td th:text="${user.email}"></td>-->
+    <!--<td th:text="${user.phoneNumber}"></td>-->
+    <!--</tr>-->
+    <!--</tbody>-->
+    <!--</table>-->
 </div>
 <div id="myModal" class="reveal-modal">
     <a class="close-reveal-modal">&#215;</a>
+
     <h2>Add New User</h2>
+
     <div>
         <div class="row">
             <div class="large-6 columns">
                 <label th:text="#{user.username}"></label>
-                <input type="text" data-bind="value: currUser.username" />
+                <input type="text" data-bind="value: currUser.username"/>
             </div>
             <div class="large-6 columns">
                 <label th:text="#{user.password}"></label>
-                <input type="password" data-bind="value: currUser.password" />
+                <input type="password" data-bind="value: currUser.password"/>
             </div>
         </div>
         <div class="row">
@@ -68,13 +85,16 @@ and open the template in the editor.
             </div>
         </div>
         <div class="row">
-            <button id="addUserBtn">Add User</button>
+            <div class="large-12 columns">
+                <button class="right" id="addUserBtn">Add User</button>
+            </div>
         </div>
     </div>
 </div>
 <script src="/js/vendor/jquery-1.9.1.min.js" th:src="@{/js/vendor/jquery-1.9.1.min.js}"></script>
 <script src="/js/vendor/foundation/foundation.js" th:src="@{/js/vendor/foundation/foundation.js}"></script>
-<script src="/js/vendor/foundation/foundation.reveal.js" th:src="@{/js/vendor/foundation/foundation.reveal.js}"></script>
+<script src="/js/vendor/foundation/foundation.reveal.js"
+        th:src="@{/js/vendor/foundation/foundation.reveal.js}"></script>
 <script src="/js/vendor/knockout-2.2.1.js" th:src="@{/js/vendor/knockout-2.2.1.js}"></script>
 <script src="/js/pages/users.js" th:src="@{/js/pages/users.js}"></script>
 <script>
