@@ -26,7 +26,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Identifier, Project> imp
     private CRUDRepository<Identifier, Sample> sampleRepository;
 
     public ProjectServiceImpl(CRUDRepository<Identifier, Project> projectRepository, CRUDRepository<Identifier, User> userRepository, CRUDRepository<Identifier, Sample> sampleRepository, Validator validator) {
-        super(projectRepository, validator);
+        super(projectRepository, validator, Project.class);
         this.sampleRepository = sampleRepository;
         this.userRepository = userRepository;
     }

@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories;
 
+import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import java.util.List;
 
 /**
@@ -62,6 +63,20 @@ public interface CRUDRepository<IdentifierType, Type> {
      * @return All objects of the specified <code>Type</code> in the database.
      */
     public List<Type> list();
+
+    /**
+     * List objects of
+     * <code>Type</code> in the database, limited to some specific page.
+     *
+     * @param page the specific page to use.
+     * @param size the size of the pages used to compute the number of pages.
+     * @param sortProperty the property that should be used to sort the objects.
+     * @param order the order of the sort.
+     * @return the list of users within the specified range.
+     * @throws IllegalArgumentException If the <code>Type</code> has no public
+     * property <code>sortProperty</code>.
+     */
+    public List<Type> list(int page, int size, String sortProperty, Order order);
 
     /**
      * Check to see if an identifier for

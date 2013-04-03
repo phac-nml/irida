@@ -15,10 +15,14 @@
  */
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import ca.corefacility.bioinformatics.irida.model.enums.Order;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.memory.CRUDMemoryRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
+import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
@@ -43,8 +47,8 @@ public class TestCRUDServiceImpl {
     public void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
-        crudRepository = new CRUDMemoryRepository<>();
-        crudService = new CRUDServiceImpl<>(crudRepository, validator);
+        crudRepository = new CRUDMemoryRepository<>(IdentifiableTestEntity.class);
+        crudService = new CRUDServiceImpl<>(crudRepository, validator, IdentifiableTestEntity.class);
     }
 
     @Test
@@ -164,6 +168,48 @@ public class TestCRUDServiceImpl {
         } catch (IllegalArgumentException e) {
         } catch (Exception e) {
             fail();
+        }
+    }
+
+    @Test
+    public void testPagedResultsBadProperty() {
+        try {
+            crudService.list(2, 20, "somePropertyThatDefinitelyDoesntExist", Order.ASCENDING);
+            fail();
+        } catch (IllegalArgumentException e) {
+        }
+    }
+
+    @Test
+    public void testPagedResults() {
+        final int LIST_SIZE = 30;
+        List<IdentifiableTestEntity> created = new ArrayList<>(LIST_SIZE);
+        for (int i = 1; i < LIST_SIZE + 1; i++) {
+            Audit audit = new Audit();
+            IdentifiableTestEntity entity = new IdentifiableTestEntity();
+            StringBuilder date = new StringBuilder("2013-04-");
+            if (i < 10) {
+                date.append("0");
+            }
+            date.append(i);
+            audit.setCreated(Date.valueOf(date.toString()));
+            entity.setAuditInformation(audit);
+            created.add(crudRepository.create(entity));
+        }
+
+        // page 2 with 15 items should return a list of size 15
+        List<IdentifiableTestEntity> list = crudService.list(2, 15, "auditInformation", Order.ASCENDING);
+
+        assertEquals(15, list.size());
+
+        // the first 15 items in the list should not be there
+        for (int i = 0; i < 15; i++) {
+            assertFalse(list.contains(created.get(i)));
+        }
+
+        // the second 15 items in the list should be there
+        for (int i = 15; i < LIST_SIZE; i++) {
+            assertTrue(list.contains(created.get(i)));
         }
     }
 }

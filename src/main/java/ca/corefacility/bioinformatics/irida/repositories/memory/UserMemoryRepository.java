@@ -9,8 +9,9 @@ import ca.corefacility.bioinformatics.irida.model.User;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class UserMemoryRepository extends CRUDMemoryRepository<User> {
+
     public UserMemoryRepository() {
-        super();
+        super(User.class);
         Identifier id = new Identifier();
         store.put(id, new User(id, "jsadam", "j@me.com", "pass1234", "Jake", "Penner", "787-9998"));
         id = new Identifier();

@@ -40,7 +40,7 @@ public class ProjectServiceImplTest {
         validator = factory.getValidator();
         userRepository = new UserMemoryRepository();
         projectRepository = new ProjectMemoryRepository();
-        sampleRepository = new CRUDMemoryRepository<>();
+        sampleRepository = new CRUDMemoryRepository<>(Sample.class);
         projectService = new ProjectServiceImpl(projectRepository, userRepository, sampleRepository, validator);
     }
 

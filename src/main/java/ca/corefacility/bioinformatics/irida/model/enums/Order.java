@@ -13,27 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ca.corefacility.bioinformatics.irida.repositories.memory;
-
-import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
-import java.util.Collection;
-import java.util.HashSet;
+package ca.corefacility.bioinformatics.irida.model.enums;
 
 /**
- * A memory-based implementation of project storage.
+ * When sorting a collection of generic objects you should be able to specify
+ * the order of the sort.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class ProjectMemoryRepository extends CRUDMemoryRepository<Project> implements ProjectRepository {
-    
-    public ProjectMemoryRepository() {
-        super(Project.class);
-    }
-    
-    @Override
-    public Collection<User> getUsersForProject(Project project) {
-        return new HashSet<>(project.getUsers().keySet());
-    }
+public enum Order {
+
+    ASCENDING,
+    DESCENDING
 }
