@@ -3,6 +3,8 @@ package ca.corefacility.bioinformatics.irida.web.controller;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.UserResource;
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -86,11 +88,11 @@ public class UsersController {
     }    
 
     private String validationMessages(Set<ConstraintViolation<?>> failures) {
-        String failureMessages = "{";
+        Map mp = new HashMap();
         for (ConstraintViolation<?> failure : failures) {
-            failureMessages += "{" + failure.getPropertyPath().toString() + ":" + failure.getMessage() + "}";
+            mp.put(failure.getPropertyPath().toString(), "true");
         }
-        failureMessages += "}";
-        return failureMessages;
+        Gson g = new Gson();
+        return g.toJson(mp);
     }
 }

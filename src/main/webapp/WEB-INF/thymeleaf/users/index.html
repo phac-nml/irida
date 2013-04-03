@@ -55,11 +55,11 @@ and open the template in the editor.
 
     <div>
         <div class="row">
-            <div class="large-6 columns">
+            <div data-bind="css: checkError('username')" class="large-6 columns">
                 <label th:text="#{user.username}"></label>
                 <input type="text" data-bind="value: currUser.username"/>
             </div>
-            <div class="large-6 columns">
+            <div data-bind="css: checkError('password')" class="large-6 columns">
                 <label th:text="#{user.password}"></label>
                 <input type="password" data-bind="value: currUser.password"/>
             </div>
