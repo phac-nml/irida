@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.web.controller;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.UserResource;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +12,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.Link;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -81,9 +78,10 @@ public class UsersController {
         return "success";
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public String getUser(@PathVariable int id, Model model) {
-        model.addAttribute("userId", id);
+    @RequestMapping(value = "/{username}", method = RequestMethod.GET)
+    public String getUser(@PathVariable String username, Model model) {
+        logger.debug("HEY, {}, we made it this far!", username);
+        model.addAttribute("username", username);
         return "users/user";
     }    
 
