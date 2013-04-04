@@ -19,16 +19,30 @@ and open the template in the editor.
                     class="icon-user"></i></a>
         </div>
     </div>
-    <div class="listTable" data-ng-controller="usersListCtrl">
-        <div class="row" th:each="user : ${users}">
-            <div class="large-1 small-2 columns"><input type="checkbox"/></div>
-            <div class="large-2 small-10 columns" th:text="${user.username}"></div>
-            <div class="large-2 small-6 columns" th:text="${user.firstName}"></div>
-            <div class="large-2 small-6 columns" th:text="${user.lastName}"></div>
-            <div class="large-3 columns" th:text="${user.email}"></div>
-            <div class="large-2 columns" th:text="${user.phoneNumber}"></div>
+    <div class="row">
+    <table class="large-12 columns" data-ng-controller="usersListCtrl">
+        <thead>
+            <tr>
+                <th style="display:none"></th>
+                <th th:text="#{user.username}"></th>
+                <th th:text="#{user.firstName}"></th>
+                <th th:text="#{user.lastName}"></th>
+                <th th:text="#{user.email}"></th>
+                <th th:text="#{user.phoneNumber}"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="user : ${users}" data-ng-click="goToUser($event)">
+                <td style="display: none" th:text="${user.id.href}"></td>
+                <td th:text="${user.username}"></td>
+                <td th:text="${user.firstName}"></td>
+                <td th:text="${user.lastName}"></td>
+                <td th:text="${user.email}"></td>
+                <td th:text="${user.phoneNumber}"></td>
+            </tr>
+        </tbody>
+    </table>
         </div>
-    </div>
 </div>
 <div id="myModal" class="reveal-modal" data-ng-controller="newUserModalCtrl">
     <a class="close-reveal-modal">&#215;</a>
@@ -37,35 +51,39 @@ and open the template in the editor.
 
     <div>
         <div class="row">
-            <div data-bind="css: checkError('username')" class="large-6 columns">
+            <div data-ng-class="{true:'error', false:''}[errors.username.doesExist]" class="large-6 columns">
                 <label th:text="#{user.username}"></label>
                 <input type="text" data-ng-model="currUser.username" data-ng-change="focusedInput('username')"/>
                 <small class="error" data-ng-show="errors.username.doesExist" data-ng-bind-html-unsafe="errors.username.message"></small>
             </div>
-            <div data-bind="css: checkError('password')" class="large-6 columns">
+            <div data-ng-class="{true:'error', false:''}[errors.password.doesExist]" class="large-6 columns">
                 <label th:text="#{user.password}"></label>
                 <input type="password" data-ng-model="currUser.password" data-ng-change="focusedInput('password')"/>
                 <small class="error" data-ng-show="errors.password.doesExist" ng-bind-html-unsafe="errors.password.message"></small>
             </div>
         </div>
         <div class="row">
-            <div class="large-6 columns">
+            <div data-ng-class="{true:'error', false:''}[errors.firstName.doesExist]" class="large-6 columns">
                 <label th:text="#{user.firstName}"></label>
-                <input type="text" data-bind="value: currUser.firstName"/>
+                <input type="text" data-ng-model="currUser.firstName" data-ng-change="focusedInput('firstName')"/>
+                <small class="error" data-ng-show="errors.firstName.doesExist" ng-bind-html-unsafe="errors.firstName.message"></small>
             </div>
-            <div class="large-6 columns">
+            <div data-ng-class="{true:'error', false:''}[errors.lastName.doesExist]" class="large-6 columns">
                 <label th:text="#{user.lastName}"></label>
-                <input type="text" data-bind="value: currUser.lastName"/>
+                <input type="text" data-ng-model="currUser.lastName" data-ng-change="focusedInput('lastName')"/>
+                <small class="error" data-ng-show="errors.lastName.doesExist" ng-bind-html-unsafe="errors.lastName.message"></small>
             </div>
         </div>
         <div class="row">
-            <div class="large-6 columns">
+            <div data-ng-class="{true:'error', false:''}[errors.email.doesExist]" class="large-6 columns">
                 <label th:text="#{user.email}"></label>
-                <input type="text" data-bind="value: currUser.email"/>
+                <input type="text" data-ng-model="currUser.email" data-ng-change="focusedInput('email')"/>
+                <small class="error" data-ng-show="errors.email.doesExist" ng-bind-html-unsafe="errors.email.message"></small>
             </div>
-            <div class="large-6 columns">
+            <div data-ng-class="{true:'error', false:''}[errors.phoneNumber.doesExist]" class="large-6 columns">
                 <label th:text="#{user.phoneNumber}"></label>
-                <input type="text" data-bind="value: currUser.phoneNumber"/>
+                <input type="text" data-ng-model="currUser.phoneNumber" data-ng-change="focusedInput('phoneNumber')"/>
+                <small class="error" data-ng-show="errors.phoneNumber.doesExist" ng-bind-html-unsafe="errors.phoneNumber.message"></small>
             </div>
         </div>
         <div class="row">
@@ -76,13 +94,12 @@ and open the template in the editor.
     </div>
 </div>
 
-<script src="/js/vendor/jquery-1.9.1.min.js" th:src="@{/js/vendor/jquery-1.9.1.min.js}"></script>
-<script src="/js/vendor/foundation/foundation.js" th:src="@{/js/vendor/foundation/foundation.js}"></script>
-<script src="/js/vendor/foundation/foundation.reveal.js"
-        th:src="@{/js/vendor/foundation/foundation.reveal.js}"></script>
-<script src="/js/vendor/angular/angular.js" th:src="@{/js/vendor/angular/angular.js}"></script>
-<script src="/js/vendor/angular/angular-sanitize.min.js" th:src="@{/js/vendor/angular/angular-sanitize.min.js}"></script>
-<script src="/js/controllers/usersCtrl.js" th:src="@{/js/controllers/usersCtrl.js}"></script>
+<script th:src="@{/js/vendor/jquery-1.9.1.min.js}"></script>
+<script th:src="@{/js/vendor/foundation/foundation.js}"></script>
+<script th:src="@{/js/vendor/foundation/foundation.reveal.js}"></script>
+<script th:src="@{/js/vendor/angular/angular.js}"></script>
+<script th:src="@{/js/vendor/angular/angular-sanitize.min.js}"></script>
+<script th:src="@{/js/controllers/usersCtrl.js}"></script>
 <script>
     $(document).foundation();
 </script>

@@ -2,11 +2,14 @@
 
 var app = angular.module('irida', ['ngSanitize']);
 
-function usersListCtrl($scope) {
+app.controller('usersListCtrl', ['$scope', '$window', function ($scope, $window) {
+  $scope.goToUser = function (e) {
+    var url = e.currentTarget.childNodes[1].innerHTML;
+    $window.location = url;
+  }
+}]);
 
-}
-
-app.controller('newUserModalCtrl', ['$scope', function ($scope) {
+app.controller('newUserModalCtrl', ['$scope', '$http', function ($scope, $http) {
     $scope.currUser = {
       username: '',
       password: '',
@@ -40,7 +43,7 @@ app.controller('newUserModalCtrl', ['$scope', function ($scope) {
       lastName: {
         message: '',
         doesExist: false
-      },
+      }
     };
 
     $scope.postNewUser = function () {
