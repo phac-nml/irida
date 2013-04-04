@@ -63,12 +63,12 @@ public class UsersController {
 
     @RequestMapping(method = RequestMethod.POST)
     public @ResponseBody String create(HttpServletResponse response,
-        @RequestParam("username") String username,
-        @RequestParam("firstName") String firstName,
-        @RequestParam("lastName") String lastName,
-        @RequestParam("email") String email,
-        @RequestParam("phoneNumber") String phoneNumber,
-        @RequestParam("password") String password) {
+        @RequestParam(value = "username", required = false) String username,
+        @RequestParam(value = "firstName", required = false) String firstName,
+        @RequestParam(value = "lastName", required = false) String lastName,
+        @RequestParam(value = "email", required = false) String email,
+        @RequestParam(value = "phoneNumber", required = false) String phoneNumber,
+        @RequestParam(value = "password", required = false) String password) {
         User user = new User(username, email, password, firstName, lastName, phoneNumber);
         try {
             userService.create(user);
@@ -87,9 +87,18 @@ public class UsersController {
     }    
 
     private String validationMessages(Set<ConstraintViolation<?>> failures) {
-        Map mp = new HashMap();
+        Map<String, List<String>> mp = new HashMap();
         for (ConstraintViolation<?> failure : failures) {
-            mp.put(failure.getPropertyPath().toString(), "true");
+            logger.debug(failure.getPropertyPath().toString() + ": " + failure.getMessage());
+            String property = failure.getPropertyPath().toString();
+            if(mp.containsKey(property)){
+                mp.get(failure.getPropertyPath().toString()).add(failure.getMessage());
+            }
+            else {
+                List<String> list= new ArrayList<String>();
+                list.add(failure.getMessage());
+                mp.put(property, list);
+            }
         }
         Gson g = new Gson();
         return g.toJson(mp);
