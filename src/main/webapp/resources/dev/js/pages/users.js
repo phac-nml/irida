@@ -16,19 +16,23 @@
       },
       error: function (XMLHttpRequest, textStatus, errorThrown) {
         $.each($.parseJSON(XMLHttpRequest.responseText), function (key, value) {
-          viewModel.newUserErrors[key](true);
+          var message = "";
+          $.each(value, function (i, v) {
+            message += v;
+          });
+          viewModel.newUserErrors[key].message(message);
+          viewModel.newUserErrors[key].doesExist(true);
         });
-                    var fred = 1;
       }
     })
   });
 
   $(".listTable>.row").on('click', function () {
-      if(prevRow){
-          $(prevRow).removeClass('active');
-      }
-      $(this).addClass('active');
-      prevRow = this;
+    if (prevRow) {
+      $(prevRow).removeClass('active');
+    }
+    $(this).addClass('active');
+    prevRow = this;
   });
 
   var UserModel = function (data) {
@@ -48,15 +52,22 @@
     self.currUser = {
       firstName: "",
       lastName: "",
-      username: "",
-      password: "",
+      username: ko.observable(""),
+      password: ko.observable(""),
       email: "",
       phoneNumber: ""
     };
     self.newUserErrors = {
-      username: ko.observable(false),
-      password: ko.observable(false)
-    };
+      username: {
+        message: ko.observable(""),
+        doesExist: ko.observable(false)
+      },
+      password: {
+        message: ko.observable(""),
+        doesExist: ko.observable(false)
+      }
+    }
+
     self.users = ko.observableArray();
 
     self.getUser = function (user) {
@@ -65,26 +76,22 @@
 
     self.checkError = function (field) {
       return ko.computed({
-         read: function () {
-           return self.newUserErrors.username() === true ? "error" : "";
-         },
+        read: function () {
+          return self.newUserErrors[field].length > 0 ? "error" : "";
+        },
         write: function (value) {
-          this.newUserErrors[field](value);
+          self.newUserErrors[field](value);
         }
       });
-    }
+    };
 
-//      ko.computed(function () {
-//      console.log("HELP " + self.newUserErrors.username());
-//      return self.newUserErrors.username() === true ? "error" : "";
-//    }, self);
+    self.currUser.username.subscribe(function(){
+      self.newUserErrors.username(false);
+    });
 
-//    $.getJSON('/users', function (d) {
-//      var mappedUsers = $.map(d.users, function (i) {
-//        return new UserModel(i);
-//      });
-//      self.users(mappedUsers);
-//    });
+    self.currUser.password.subscribe(function(){
+      self.newUserErrors.password(false);
+    });
   }
 
   viewModel = new ViewModel();

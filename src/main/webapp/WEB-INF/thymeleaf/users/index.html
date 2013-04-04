@@ -57,11 +57,13 @@ and open the template in the editor.
         <div class="row">
             <div data-bind="css: checkError('username')" class="large-6 columns">
                 <label th:text="#{user.username}"></label>
-                <input type="text" data-bind="value: currUser.username"/>
+                <input type="text" data-bind="value: currUser.username, valueUpdate: 'afterkeydown'"/>
+                <small class="error" data-bind="visible: newUserErrors.username.doesExist, text: newUserErrors.username.message"></small>
             </div>
             <div data-bind="css: checkError('password')" class="large-6 columns">
                 <label th:text="#{user.password}"></label>
-                <input type="password" data-bind="value: currUser.password"/>
+                <input type="password" data-bind="value: currUser.password, valueUpdate: 'afterkeydown'"/>
+                <small class="error" data-bind="visible: newUserErrors.password.doesExist, text: newUserErrors.password.message"></small>
             </div>
         </div>
         <div class="row">
@@ -91,6 +93,11 @@ and open the template in the editor.
         </div>
     </div>
 </div>
+
+<script type="text/html" id="error-template">
+    <p></p>
+</script>
+
 <script src="/js/vendor/jquery-1.9.1.min.js" th:src="@{/js/vendor/jquery-1.9.1.min.js}"></script>
 <script src="/js/vendor/foundation/foundation.js" th:src="@{/js/vendor/foundation/foundation.js}"></script>
 <script src="/js/vendor/foundation/foundation.reveal.js"
