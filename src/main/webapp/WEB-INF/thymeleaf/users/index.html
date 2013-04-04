@@ -9,7 +9,7 @@ and open the template in the editor.
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" type="text/css" href="/css/main.css" th:href="@{/css/main.css}"/>
 </head>
-<body>
+<body data-ng-app="irida">
 <div class="row">
     <h1>Users List Page</h1>
 
@@ -19,7 +19,7 @@ and open the template in the editor.
                     class="icon-user"></i></a>
         </div>
     </div>
-    <div class="listTable">
+    <div class="listTable" data-ng-controller="usersListCtrl">
         <div class="row" th:each="user : ${users}">
             <div class="large-1 small-2 columns"><input type="checkbox"/></div>
             <div class="large-2 small-10 columns" th:text="${user.username}"></div>
@@ -29,26 +29,8 @@ and open the template in the editor.
             <div class="large-2 columns" th:text="${user.phoneNumber}"></div>
         </div>
     </div>
-    <!--<table class="large-12 columns">-->
-    <!--<thead>-->
-    <!--<th th:text="#{user.username}"></th>-->
-    <!--<th th:text="#{user.firstName}"></th>-->
-    <!--<th th:text="#{user.lastName}"></th>-->
-    <!--<th th:text="#{user.email}"></th>-->
-    <!--<th th:text="#{user.phoneNumber}"></th>-->
-    <!--</thead>-->
-    <!--<tbody>-->
-    <!--<tr data-bind="click: getUser" th:each="user : ${users}">-->
-    <!--<td th:text="${user.username}"></td>-->
-    <!--<td th:text="${user.firstName}"></td>-->
-    <!--<td th:text="${user.lastName}"></td>-->
-    <!--<td th:text="${user.email}"></td>-->
-    <!--<td th:text="${user.phoneNumber}"></td>-->
-    <!--</tr>-->
-    <!--</tbody>-->
-    <!--</table>-->
 </div>
-<div id="myModal" class="reveal-modal">
+<div id="myModal" class="reveal-modal" data-ng-controller="newUserModalCtrl">
     <a class="close-reveal-modal">&#215;</a>
 
     <h2>Add New User</h2>
@@ -57,13 +39,13 @@ and open the template in the editor.
         <div class="row">
             <div data-bind="css: checkError('username')" class="large-6 columns">
                 <label th:text="#{user.username}"></label>
-                <input type="text" data-bind="value: currUser.username, valueUpdate: 'afterkeydown'"/>
-                <small class="error" data-bind="visible: newUserErrors.username.doesExist, text: newUserErrors.username.message"></small>
+                <input type="text" data-ng-model="currUser.username" data-ng-change="focusedInput('username')"/>
+                <small class="error" data-ng-show="errors.username.doesExist" data-ng-bind-html-unsafe="errors.username.message"></small>
             </div>
             <div data-bind="css: checkError('password')" class="large-6 columns">
                 <label th:text="#{user.password}"></label>
-                <input type="password" data-bind="value: currUser.password, valueUpdate: 'afterkeydown'"/>
-                <small class="error" data-bind="visible: newUserErrors.password.doesExist, text: newUserErrors.password.message"></small>
+                <input type="password" data-ng-model="currUser.password" data-ng-change="focusedInput('password')"/>
+                <small class="error" data-ng-show="errors.password.doesExist" ng-bind-html-unsafe="errors.password.message"></small>
             </div>
         </div>
         <div class="row">
@@ -88,22 +70,19 @@ and open the template in the editor.
         </div>
         <div class="row">
             <div class="large-12 columns">
-                <button class="right" id="addUserBtn">Add User</button>
+                <button class="right" data-ng-click="postNewUser()">Add User</button>
             </div>
         </div>
     </div>
 </div>
 
-<script type="text/html" id="error-template">
-    <p></p>
-</script>
-
 <script src="/js/vendor/jquery-1.9.1.min.js" th:src="@{/js/vendor/jquery-1.9.1.min.js}"></script>
 <script src="/js/vendor/foundation/foundation.js" th:src="@{/js/vendor/foundation/foundation.js}"></script>
 <script src="/js/vendor/foundation/foundation.reveal.js"
         th:src="@{/js/vendor/foundation/foundation.reveal.js}"></script>
-<script src="/js/vendor/knockout-2.2.1.js" th:src="@{/js/vendor/knockout-2.2.1.js}"></script>
-<script src="/js/pages/users.js" th:src="@{/js/pages/users.js}"></script>
+<script src="/js/vendor/angular/angular.js" th:src="@{/js/vendor/angular/angular.js}"></script>
+<script src="/js/vendor/angular/angular-sanitize.min.js" th:src="@{/js/vendor/angular/angular-sanitize.min.js}"></script>
+<script src="/js/controllers/usersCtrl.js" th:src="@{/js/controllers/usersCtrl.js}"></script>
 <script>
     $(document).foundation();
 </script>
