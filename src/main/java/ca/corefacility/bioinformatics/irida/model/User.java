@@ -21,12 +21,16 @@ import org.hibernate.validator.constraints.Email;
 public class User implements Comparable<User>, Auditable<Audit>, Identifiable<Identifier> {
 
     private Identifier id;
+    
     @NotNull
-    @Size(min = 3)
+    @Size(min = 3, message="{username.length}")
     private String username;
-    @Email
+    
     @NotNull
+    @Size(min = 5)
+    @Email
     private String email;
+    
     @NotNull
     @Size(min = 6) // passwords must be at least six characters long
     @Patterns({
@@ -34,13 +38,21 @@ public class User implements Comparable<User>, Auditable<Audit>, Identifiable<Id
         @Pattern(regexp = "^.*[0-9].*$") // passwords must contain a number
     })
     private String password;
+    
     @NotNull
+    @Size(min = 2)
     private String firstName;
+    
     @NotNull
+    @Size(min = 2)
     private String lastName;
+    
     @NotNull
+    @Size(min = 4)
     private String phoneNumber;
+    
     private Map<Project, Role> projects;
+    
     @NotNull
     private Audit audit;
 
