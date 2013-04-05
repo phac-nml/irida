@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.controller;
 
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.UserResource;
 import com.google.gson.Gson;
@@ -46,8 +47,10 @@ public class UsersController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String showUsersPage(Model model) {
-        List<User> users = userService.list();
+    public String showUsersPage(Model model, 
+        @RequestParam(value = "start", defaultValue = "1") int start,
+        @RequestParam(value = "offset", defaultValue = "20") int offset) {
+        List<User> users = userService.list(start, offset, "username", Order.ASCENDING);
         List<UserResource> resources = new ArrayList<>(users.size());
         for (User u : users) {
             UserResource resource = new UserResource(u);

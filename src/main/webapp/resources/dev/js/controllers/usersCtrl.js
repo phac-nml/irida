@@ -10,60 +10,82 @@ app.controller('usersListCtrl', ['$scope', '$window', function ($scope, $window)
 }]);
 
 app.controller('newUserModalCtrl', ['$scope', '$http', function ($scope, $http) {
-    $scope.currUser = {
-      username: '',
-      password: '',
-      email: '',
-      phoneNumber: '',
-      firstName: '',
-      lastName: ''
-    };
+  var userListPosn = {
+    start: 1,
+    offset: 20
+  };
 
-    $scope.errors = {
-      username: {
-        message: '',
-        doesExist: false
+  $scope.currUser = {
+    username: '',
+    password: '',
+    email: '',
+    phoneNumber: '',
+    firstName: '',
+    lastName: ''
+  };
+
+  $scope.errors = {
+    username: {
+      message: '',
+      doesExist: false
+    },
+    password: {
+      message: '',
+      doesExist: false
+    },
+    email: {
+      message: '',
+      doesExist: false
+    },
+    phoneNumber: {
+      message: '',
+      doesExist: false
+    },
+    firstName: {
+      message: '',
+      doesExist: false
+    },
+    lastName: {
+      message: '',
+      doesExist: false
+    }
+  };
+
+  $scope.postNewUser = function () {
+    $.ajax({
+      type: 'POST',
+      data: $scope.currUser,
+      success: function () {
+        updateUserList();
       },
-      password: {
-        message: '',
-        doesExist: false
-      },
-      email: {
-        message: '',
-        doesExist: false
-      },
-      phoneNumber: {
-        message: '',
-        doesExist: false
-      },
-      firstName: {
-        message: '',
-        doesExist: false
-      },
-      lastName: {
-        message: '',
-        doesExist: false
+      error: function (XMLHttpRequest, textStatus, errorThrown) {
+        $scope.$apply($.each($.parseJSON(XMLHttpRequest.responseText), function (key, value) {
+          var message = value.join('<br/>');
+          $scope.errors[key].message = message;
+          $scope.errors[key].doesExist = true;
+        }));
       }
-    };
+    });
+  }
 
-    $scope.postNewUser = function () {
-      $.ajax({
-        type: 'POST',
-        data: $scope.currUser,
-        success: function (d) {
-          console.log(d);
-        },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-          $scope.$apply($.each($.parseJSON(XMLHttpRequest.responseText), function (key, value) {
-            var message = value.join('<br/>');
-            $scope.errors[key].message = message;
-            $scope.errors[key].doesExist = true;
-          }));
-        }
-      });
-    }
+  $scope.focusedInput = function (field) {
+    $scope.errors[field].doesExist = false;
+  }
 
-    $scope.focusedInput = function(field) {
-      $scope.errors[field].doesExist = false;
-    }
-  }]);
+  var updateUserList = function () {
+    $.ajax({
+      type: 'GET',
+      url: '/users',
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      data: userListPosn,
+      success: function (d) {
+        console.log(d);
+        // TODO(josh): Clear the users table and plug d.users into it.  Need to compile the template.
+      },
+      error: function (d) {
+        console.log(d);
+      }
+    })
+  }
+}]);
