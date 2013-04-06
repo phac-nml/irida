@@ -23,18 +23,20 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import javax.validation.Configuration;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.context.support.ResourceBundleMessageSource;
 
 /**
  * Testing the validation for user objects.
@@ -43,15 +45,20 @@ import org.slf4j.LoggerFactory;
  */
 public class UserTest {
 
-    private Logger logger = LoggerFactory.getLogger(UserTest.class);
+    private static final String MESSAGES_BASENAME = "ca.corefacility.bioinformatics.irida.validation.ValidationMessages";
     private Validator validator;
     private ResourceBundle b;
 
     @Before
     public void setUp() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        b = ResourceBundle.getBundle(MESSAGES_BASENAME);
+        Configuration<?> configuration = Validation.byDefaultProvider().configure();
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setBasename(MESSAGES_BASENAME);
+        configuration.messageInterpolator(new ResourceBundleMessageInterpolator(new MessageSourceResourceBundleLocator(messageSource)));
+        ValidatorFactory factory = configuration.buildValidatorFactory();
         validator = factory.getValidator();
-        b = ResourceBundle.getBundle("ValidationMessages");
+
     }
 
     @Test
