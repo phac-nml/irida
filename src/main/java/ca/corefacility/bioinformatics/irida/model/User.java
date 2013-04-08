@@ -21,24 +21,28 @@ import org.hibernate.validator.constraints.Email;
 public class User implements Comparable<User>, Auditable<Audit>, Identifiable<Identifier> {
 
     private Identifier id;
-    @NotNull
-    @Size(min = 3)
+    @NotNull(message = "{user.username.notnull}")
+    @Size(min = 3, message = "{user.username.size}")
     private String username;
-    @Email
-    @NotNull
+    @NotNull(message = "{user.email.notnull}")
+    @Size(min = 5, message = "{user.email.size}")
+    @Email(message = "{user.email.invalid}")
     private String email;
-    @NotNull
-    @Size(min = 6) // passwords must be at least six characters long
+    @NotNull(message = "{user.password.notnull}")
+    @Size(min = 6, message = "{user.password.size}") // passwords must be at least six characters long
     @Patterns({
-        @Pattern(regexp = "^.*[A-Z].*$"), // passwords must contain an upper-case letter
-        @Pattern(regexp = "^.*[0-9].*$") // passwords must contain a number
+        @Pattern(regexp = "^.*[A-Z].*$", message = "{user.password.uppercase}"), // passwords must contain an upper-case letter
+        @Pattern(regexp = "^.*[0-9].*$", message = "{user.password.number}") // passwords must contain a number
     })
     private String password;
-    @NotNull
+    @NotNull(message = "{user.firstName.notnull}")
+    @Size(min = 2, message = "{user.firstName.size}")
     private String firstName;
-    @NotNull
+    @NotNull(message = "{user.lastName.notnull}")
+    @Size(min = 2, message = "{user.lastName.size}")
     private String lastName;
-    @NotNull
+    @NotNull(message = "{user.phoneNumber.notnull}")
+    @Size(min = 4, message = "{user.phoneNumber.size}")
     private String phoneNumber;
     private Map<Project, Role> projects;
     @NotNull
