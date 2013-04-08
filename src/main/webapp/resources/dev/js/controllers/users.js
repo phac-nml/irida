@@ -11,7 +11,7 @@ app.controller('usersListCtrl', ['$scope', '$window', function ($scope, $window)
 
 app.controller('newUserModalCtrl', ['$scope', '$http', function ($scope, $http) {
   var userListPosn = {
-    start: 1,
+    start: 21,
     offset: 20
   };
 
