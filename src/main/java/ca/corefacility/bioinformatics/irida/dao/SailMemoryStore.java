@@ -15,6 +15,10 @@
  */
 package ca.corefacility.bioinformatics.irida.dao;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.openrdf.repository.RepositoryConnection;
+import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.sail.memory.MemoryStore;
 
@@ -25,6 +29,16 @@ import org.openrdf.sail.memory.MemoryStore;
 public class SailMemoryStore extends TripleStore{
     
     public SailMemoryStore(){
-        super(new SailRepository(new MemoryStore()));
+        super(new SailRepository(new MemoryStore()),"http://nowhere/");
+        RepositoryConnection con = super.getRepoConnection();
+        try {
+            con.setNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+            con.setNamespace("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+            con.setNamespace("irida", "http://corefacility.ca/irida/");
+            con.setNamespace("foaf", "http://xmlns.com/foaf/0.1/");
+        } catch (RepositoryException ex) {
+            Logger.getLogger(SailMemoryStore.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
+    
 }
