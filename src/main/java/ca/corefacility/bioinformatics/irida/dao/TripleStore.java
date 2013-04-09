@@ -44,29 +44,32 @@ public class TripleStore {
     }
     
     public TripleStore(String serverUrl, String repoName, String uri){
-        this.setServer(serverUrl, repoName,uri);
-    }
-    
-    public TripleStore(Repository repo){
-        this.repo = repo;
-    }
-    
-    public String getURI(){
-        return URI;
-    }
-
-    public void setServer(String serverUrl, String repoName, String uri) {
         this.serverUrl = serverUrl;
         this.repoName = repoName;
         this.URI = uri;
         
         repo = new HTTPRepository(serverUrl,repoName);
+        initialize();
+    }
+    
+    public TripleStore(Repository repo,String uri){
+        this.URI = uri;
+        this.repo = repo;
+        
+        initialize();
+    }
+    
+    public String getURI(){
+        return URI;
+    }
+    
+    public void initialize(){
         try {
             repo.initialize();
 
         } catch (RepositoryException ex) {
             Logger.getLogger(TripleStore.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }        
     }
 
     public RepositoryConnection getRepoConnection() {
@@ -95,7 +98,7 @@ public class TripleStore {
         } catch (RepositoryException ex) {
             Logger.getLogger(TripleStore.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+                
         return prefixes;
     }
 
