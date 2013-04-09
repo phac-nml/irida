@@ -1,17 +1,17 @@
 'use strict';
 
-var app = angular.module('irida', ['ngSanitize']);
+var app = angular.module('sraApp', ['ngSanitize']);
 
 app.controller('usersListCtrl', ['$scope', '$window', function ($scope, $window) {
   $scope.goToUser = function (e) {
     var url = e.currentTarget.childNodes[1].innerHTML;
     $window.location = url;
-  }
+  };
 }]);
 
-app.controller('newUserModalCtrl', ['$scope', '$http', function ($scope, $http) {
+app.controller('newUserModalCtrl', ['$scope', function ($scope) {
   var userListPosn = {
-    start: 1,
+    start: 21,
     offset: 20
   };
 
@@ -59,6 +59,9 @@ app.controller('newUserModalCtrl', ['$scope', '$http', function ($scope, $http) 
         updateUserList();
       },
       error: function (XMLHttpRequest, textStatus, errorThrown) {
+        if(errorThrown){
+          // TODO(josh): handle the error
+        }
         $scope.$apply($.each($.parseJSON(XMLHttpRequest.responseText), function (key, value) {
           var message = value.join('<br/>');
           $scope.errors[key].message = message;
@@ -66,11 +69,11 @@ app.controller('newUserModalCtrl', ['$scope', '$http', function ($scope, $http) 
         }));
       }
     });
-  }
+  };
 
   $scope.focusedInput = function (field) {
     $scope.errors[field].doesExist = false;
-  }
+  };
 
   var updateUserList = function () {
     $.ajax({
@@ -86,6 +89,6 @@ app.controller('newUserModalCtrl', ['$scope', '$http', function ($scope, $http) 
       error: function (d) {
         console.log(d);
       }
-    })
-  }
+    });
+  };
 }]);

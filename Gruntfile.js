@@ -11,12 +11,11 @@ module.exports = function (grunt) {
 
   grunt.initConfig({
     irida: iridaConfig,
-    watch: {
-      sass: {
-        dev: {
-          files: {
-            '<%= irida.app %>/scss/users.scss': '<%= irida.app %>/css/users.css'
-          }
+
+    connect: {
+      test: {
+        options: {
+          port: 9000
         }
       }
     },
@@ -30,10 +29,21 @@ module.exports = function (grunt) {
         '!src/main/webapp/resources/dev/js/vendor/*',
         'test/javascript/spec/{,*/}*.js'
       ]
+    },
+    karma: {
+      unit: {
+        configFile: 'karma.conf.js',
+        singleRun: true
+      }
     }
   });
 
   grunt.renameTask('regarde', 'watch');
+
+  grunt.registerTask('test', [
+    'connect:test',
+    'karma:unit'
+  ]);
 
   grunt.registerTask('default', [
     'jshint'

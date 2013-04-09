@@ -77,7 +77,7 @@ and open the template in the editor.
         <div class="row">
             <div data-ng-class="{true:'error', false:''}[errors.email.doesExist]" class="large-6 columns">
                 <label th:text="#{user.email}"></label>
-                <input type="text" data-ng-model="currUser.email" data-ng-change="focusedInput('email')"/>
+                <input type="email" data-ng-model="currUser.email" data-ng-change="focusedInput('email')"/>
                 <small class="error" data-ng-show="errors.email.doesExist" ng-bind-html-unsafe="errors.email.message"></small>
             </div>
             <div data-ng-class="{true:'error', false:''}[errors.phoneNumber.doesExist]" class="large-6 columns">
@@ -99,7 +99,7 @@ and open the template in the editor.
 <script th:src="@{/js/vendor/foundation/foundation.reveal.js}"></script>
 <script th:src="@{/js/vendor/angular/angular.js}"></script>
 <script th:src="@{/js/vendor/angular/angular-sanitize.min.js}"></script>
-<script th:src="@{/js/controllers/usersCtrl.js}"></script>
+<script th:src="@{/js/controllers/users.js}"></script>
 <script>
     $(document).foundation();
 </script>

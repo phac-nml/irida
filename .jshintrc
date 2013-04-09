@@ -20,6 +20,9 @@
   "trailing": true,
   "smarttabs": true,
   "globals": {
+    "$": true,
+    "$http": true,
+    "angular": true,
     "jQuery": true,
     "ko": true,
     "alert": true
