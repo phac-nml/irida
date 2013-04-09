@@ -57,6 +57,10 @@ public class ProjectSesameRepository implements CRUDRepository<Identifier, Proje
     
     @Override
     public Project create(Project object) throws IllegalArgumentException {        
+        if(object == null){
+            throw new IllegalArgumentException("Project is null");
+        }
+        
         RepositoryConnection con = store.getRepoConnection();
 
         String id;
@@ -99,38 +103,48 @@ public class ProjectSesameRepository implements CRUDRepository<Identifier, Proje
     public Project read(Identifier id) throws IllegalArgumentException {        
         Project ret = null;
 
-        String uri = id.getUri().toString();
+        if(id.getUri() == null){
+            throw new IllegalArgumentException("URI for object is null");
+        }
         
-        RepositoryConnection con = store.getRepoConnection();
-        try {
-            String qs = store.getPrefixes()
-                    + "SELECT * "
-                    + "WHERE{ ?s a irida:Project . \n"
-                    + ProjectSesameRepository.getProjectParameters("s")
-                    + "}";
-            
-            TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
-            ValueFactory fac = con.getValueFactory();
-            URI u = fac.createURI(uri);
-            tupleQuery.setBinding("s", u);
-            
-            TupleQueryResult result = tupleQuery.evaluate();
-            BindingSet bindingSet = result.singleResult();
+        if(exists(id)){
+            String uri = id.getUri().toString();
 
-            Value s = bindingSet.getValue("s");
+            RepositoryConnection con = store.getRepoConnection();
+            try {
+                String qs = store.getPrefixes()
+                        + "SELECT * "
+                        + "WHERE{ ?s a irida:Project . \n"
+                        + ProjectSesameRepository.getProjectParameters("s")
+                        + "}";
 
-            ret = new Project();
-            
-            Identifier objid = new Identifier(java.net.URI.create(s.stringValue()));
-            
-            ret.setIdentifier(objid);
-            
-            ProjectSesameRepository.buildProjectProperties(bindingSet, ret);
+                TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
+                ValueFactory fac = con.getValueFactory();
+                URI u = fac.createURI(uri);
+                tupleQuery.setBinding("s", u);
+
+                TupleQueryResult result = tupleQuery.evaluate();
+                BindingSet bindingSet = result.singleResult();
+
+                Value s = bindingSet.getValue("s");
+
+                ret = new Project();
+
+                Identifier objid = new Identifier(java.net.URI.create(s.stringValue()));
+
+                ret.setIdentifier(objid);
+
+                ProjectSesameRepository.buildProjectProperties(bindingSet, ret);
                 
-    
-        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
-            System.out.println(ex.getMessage());
-        }                 
+                con.close();
+
+            } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+        else{
+            throw new IllegalArgumentException("No such object with the given URI exists.");
+        }
         
         return ret;
     }
@@ -155,6 +169,7 @@ public class ProjectSesameRepository implements CRUDRepository<Identifier, Proje
             
             try {
                 con.remove(objecturi, null, null);
+                con.close();
                 
             } catch (RepositoryException ex) {
                 Logger.getLogger(UserSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
@@ -203,6 +218,7 @@ public class ProjectSesameRepository implements CRUDRepository<Identifier, Proje
                 users.add(ret);
             }
             result.close();
+            con.close();
     
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
             System.out.println(ex.getMessage());
@@ -235,7 +251,7 @@ public class ProjectSesameRepository implements CRUDRepository<Identifier, Proje
 
             exists = existsQuery.evaluate();
             
-            return exists;
+            con.close();
         } catch (RepositoryException |MalformedQueryException | QueryEvaluationException ex) {
             Logger.getLogger(UserSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
         }

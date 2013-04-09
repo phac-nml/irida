@@ -128,7 +128,8 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
             ret.setIdentifier(objid);
             
             UserSesameRepository.buildUserProperties(bindingSet, ret);
-                
+            
+            con.close();    
     
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
             System.out.println(ex.getMessage());
@@ -157,6 +158,7 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
             
             try {
                 con.remove(objecturi, null, null);
+                con.close();
                 
             } catch (RepositoryException ex) {
                 Logger.getLogger(UserSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
@@ -204,6 +206,7 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
                 users.add(ret);
             }
             result.close();
+            con.close();
     
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
             System.out.println(ex.getMessage());
@@ -235,7 +238,8 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
 
             exists = existsQuery.evaluate();
             
-            return exists;
+            con.close();
+            
         } catch (RepositoryException |MalformedQueryException | QueryEvaluationException ex) {
             Logger.getLogger(UserSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -305,7 +309,7 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
 
             exists = existsQuery.evaluate();
             
-            return exists;
+            con.close();
         } catch (RepositoryException |MalformedQueryException | QueryEvaluationException ex) {
             System.err.println(ex.getMessage());
         }
