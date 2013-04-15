@@ -1,0 +1,51 @@
+<!--
+Copyright 2013 Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" type="text/css" href="/css/main.css" th:href="@{/css/main.css}"/>
+
+    </head>
+    <body data-ng-app="irida">
+            <h1 th:text="#{welcome}">Welcome</h1>
+
+        <table class="large-12 columns">
+            <thead>
+                <tr>
+                    <th th:text="#{welcome.rel}">Link rel</th>
+                    <th th:text="#{welcome.href}">Link href</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="link : ${rootResource.links}">
+                    <td th:text="${link.rel}"></td>
+                    <td><a th:href="${link.href}"><span th:text="${link.href}" /></a></td>
+                </tr>
+            </tbody>
+        </table>
+        <script th:src="@{/js/vendor/jquery-1.9.1.min.js}"></script>
+        <script th:src="@{/js/vendor/foundation/foundation.js}"></script>
+        <script th:src="@{/js/vendor/foundation/foundation.reveal.js}"></script>
+        <script th:src="@{/js/vendor/angular/angular.js}"></script>
+        <script th:src="@{/js/vendor/angular/angular-sanitize.min.js}"></script>
+        <script th:src="@{/js/controllers/users.js}"></script>
+        <script>
+            $(document).foundation();
+        </script>
+    </body>
+</html>
