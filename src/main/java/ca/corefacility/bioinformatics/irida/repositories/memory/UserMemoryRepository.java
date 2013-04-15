@@ -2,13 +2,14 @@ package ca.corefacility.bioinformatics.irida.repositories.memory;
 
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 
 /**
  * An in-memory implementation of a user repository, for testing purposes only.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class UserMemoryRepository extends CRUDMemoryRepository<User> {
+public class UserMemoryRepository extends CRUDMemoryRepository<User> implements UserRepository {
 
     public UserMemoryRepository() {
         super(User.class);
@@ -64,5 +65,19 @@ public class UserMemoryRepository extends CRUDMemoryRepository<User> {
         store.put(id, new User(id, "jkhkjh", "n@me.com", "1234pass", "Ninja", "Penner", "787-5678"));
         id = new Identifier();
         store.put(id, new User(id, "kljlkj", "n@me.com", "1234pass", "Ninja", "Penner", "787-5678"));
+    }
+
+    @Override
+    public User getUserByUsername(String username) {
+        User u = null;
+        
+        for (User entry : store.values()) {
+            if (entry.getUsername().equals(username)) {
+                u = entry;
+                break;
+            }
+        }
+        
+        return u;
     }
 }
