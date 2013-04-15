@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openrdf.model.Literal;
@@ -66,6 +67,10 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
     
     @Override
     public User create(User object) throws IllegalArgumentException {        
+        if(object == null){
+            throw new IllegalArgumentException("User is null");
+        }
+        
         RepositoryConnection con = store.getRepoConnection();
 
         String id = URI + object.getUsername();
@@ -111,6 +116,10 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
 
         String uri = id.getUri().toString();
         
+        if(!exists(id)){
+            throw new IllegalArgumentException("No such user with the given URI exists.");
+        }
+        
         RepositoryConnection con = store.getRepoConnection();
         try {
             String qs = store.getPrefixes()
@@ -152,7 +161,7 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
         
         RepositoryConnection con = store.getRepoConnection();
         try {
-            HashMap<String,String> mySet = userParams;
+            HashMap<String,String> mySet = new HashMap<>(userParams);
             mySet.remove("foaf:nick");
             
             String qs = store.getPrefixes()
@@ -170,6 +179,10 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
             
             TupleQueryResult result = tupleQuery.evaluate();
             BindingSet bindingSet = result.singleResult();
+            
+            if(bindingSet == null){
+                throw new IllegalArgumentException("No such user with the given id exists.");
+            }
 
             Value s = bindingSet.getValue("s");
 
