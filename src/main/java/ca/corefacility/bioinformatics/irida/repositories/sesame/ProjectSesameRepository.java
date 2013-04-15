@@ -18,10 +18,13 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 import ca.corefacility.bioinformatics.irida.dao.SparqlQuery;
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
 import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -45,9 +48,9 @@ import org.openrdf.repository.RepositoryException;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class ProjectSesameRepository extends SesameRepository implements CRUDRepository<Identifier, Project>{
+public class ProjectSesameRepository extends SesameRepository implements ProjectRepository{
     
-    private final static HashMap<String,String> projectParams = new HashMap<>();
+    public final static HashMap<String,String> projectParams = new HashMap<>();
     
     static{
         projectParams.put("rdfs:label", "?name");
@@ -56,7 +59,7 @@ public class ProjectSesameRepository extends SesameRepository implements CRUDRep
     public ProjectSesameRepository(){}
     
     public ProjectSesameRepository(TripleStore store){
-        super(store,"Project/");
+        super(store,"Project");
     } 
     
     @Override
@@ -191,7 +194,7 @@ public class ProjectSesameRepository extends SesameRepository implements CRUDRep
 
     @Override
     public List<Project> list(int page, int size, String sortProperty, Order order) {
-        List<Project> users = new ArrayList<>();
+        List<Project> projects = new ArrayList<>();
         
         RepositoryConnection con = store.getRepoConnection();
         try {
@@ -219,7 +222,7 @@ public class ProjectSesameRepository extends SesameRepository implements CRUDRep
                 ret.setIdentifier(objid);                
                 ProjectSesameRepository.buildProjectProperties(bindingSet, ret);
                 
-                users.add(ret);
+                projects.add(ret);
             }
             result.close();
             con.close();
@@ -228,7 +231,7 @@ public class ProjectSesameRepository extends SesameRepository implements CRUDRep
             System.out.println(ex.getMessage());
         }         
         
-        return users;           
+        return projects;           
     }    
 
     @Override
@@ -278,4 +281,48 @@ public class ProjectSesameRepository extends SesameRepository implements CRUDRep
         proj.setName(bs.getValue("name").stringValue());
 
     }   
+
+    @Override
+    public Collection<User> getUsersForProject(Project project) {
+        List<User> users = new ArrayList<>();
+        
+        String uri = project.getIdentifier().getUri().toString();
+        
+        RepositoryConnection con = store.getRepoConnection();
+        try {
+            String qs = store.getPrefixes()
+                    + "SELECT * "
+                    + "WHERE{ ?p a irida:Project . \n"
+                    + "?p irida:hasUser ?s . \n"
+                    + UserSesameRepository.getParameters("s",UserSesameRepository.userParams)
+                    + "}\n";
+            
+            
+            TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
+            URI puri = con.getValueFactory().createURI(uri);
+            tupleQuery.setBinding("p", puri);
+
+            TupleQueryResult result = tupleQuery.evaluate();
+            while(result.hasNext()){
+                BindingSet bindingSet = result.next();
+                Value s = bindingSet.getValue("s");
+                
+                User ret = new User();
+
+                Identifier objid = new Identifier(java.net.URI.create(s.stringValue()));
+
+                ret.setIdentifier(objid);                
+                UserSesameRepository.buildUserProperties(bindingSet, ret);
+                
+                users.add(ret);
+            }
+            result.close();
+            con.close();
+    
+        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
+            System.out.println(ex.getMessage());
+        }         
+        
+        return users;        
+    }
 }

@@ -24,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openrdf.model.Literal;
@@ -35,7 +34,6 @@ import org.openrdf.model.ValueFactory;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.Query;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.TupleQuery;
@@ -49,7 +47,7 @@ import org.openrdf.repository.RepositoryException;
  */
 public class UserSesameRepository extends SesameRepository implements UserRepository{
     
-    private final static HashMap<String,String> userParams = new HashMap<>();
+    public final static HashMap<String,String> userParams = new HashMap<>();
     
     public UserSesameRepository(){}
     
