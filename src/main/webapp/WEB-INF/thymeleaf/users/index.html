@@ -1,15 +1,12 @@
-<!--
-To change this template, choose Tools | Templates
-and open the template in the editor.
--->
 <!DOCTYPE html>
 <html>
 <head>
     <title></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" type="text/css" href="/css/main.css" th:href="@{/css/main.css}"/>
+
 </head>
-<body data-ng-app="irida">
+<body data-ng-app="fwsApp">
 <div class="row">
     <h1>Users List Page</h1>
 
@@ -19,89 +16,106 @@ and open the template in the editor.
                     class="icon-user"></i></a>
         </div>
     </div>
-    <div class="row">
-    <table class="large-12 columns" data-ng-controller="usersListCtrl">
-        <thead>
-            <tr>
-                <th style="display:none"></th>
-                <th th:text="#{user.username}"></th>
-                <th th:text="#{user.firstName}"></th>
-                <th th:text="#{user.lastName}"></th>
-                <th th:text="#{user.email}"></th>
-                <th th:text="#{user.phoneNumber}"></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="user : ${users}" data-ng-click="goToUser($event)">
-                <td style="display: none" th:text="${user.id.href}"></td>
-                <td th:text="${user.username}"></td>
-                <td th:text="${user.firstName}"></td>
-                <td th:text="${user.lastName}"></td>
-                <td th:text="${user.email}"></td>
-                <td th:text="${user.phoneNumber}"></td>
-            </tr>
-        </tbody>
-    </table>
-        </div>
-</div>
-<div id="myModal" class="reveal-modal" data-ng-controller="newUserModalCtrl">
-    <a class="close-reveal-modal">&#215;</a>
-
-    <h2>Add New User</h2>
-
-    <div>
+    <div class="dataTable" data-ng-controller="usersListCtrl">
         <div class="row">
-            <div data-ng-class="{true:'error', false:''}[errors.username.doesExist]" class="large-6 columns">
-                <label th:text="#{user.username}"></label>
-                <input type="text" data-ng-model="currUser.username" data-ng-change="focusedInput('username')"/>
-                <small class="error" data-ng-show="errors.username.doesExist" data-ng-bind-html-unsafe="errors.username.message"></small>
-            </div>
-            <div data-ng-class="{true:'error', false:''}[errors.password.doesExist]" class="large-6 columns">
-                <label th:text="#{user.password}"></label>
-                <input type="password" data-ng-model="currUser.password" data-ng-change="focusedInput('password')"/>
-                <small class="error" data-ng-show="errors.password.doesExist" ng-bind-html-unsafe="errors.password.message"></small>
-            </div>
+            <div class="large-2 hide-for-small columns" th:text="#{user.username}"></div>
+            <div class="large-2 small-6 columns" th:text="#{user.firstName}"></div>
+            <div class="large-2 small-6 columns" th:text="#{user.lastName}"></div>
+            <div class="large-4 hide-for-small columns" th:text="#{user.email}"></div>
+            <div class="large-2 hide-for-small columns" th:text="#{user.phoneNumber}"></div>
         </div>
-        <div class="row">
-            <div data-ng-class="{true:'error', false:''}[errors.firstName.doesExist]" class="large-6 columns">
-                <label th:text="#{user.firstName}"></label>
-                <input type="text" data-ng-model="currUser.firstName" data-ng-change="focusedInput('firstName')"/>
-                <small class="error" data-ng-show="errors.firstName.doesExist" ng-bind-html-unsafe="errors.firstName.message"></small>
-            </div>
-            <div data-ng-class="{true:'error', false:''}[errors.lastName.doesExist]" class="large-6 columns">
-                <label th:text="#{user.lastName}"></label>
-                <input type="text" data-ng-model="currUser.lastName" data-ng-change="focusedInput('lastName')"/>
-                <small class="error" data-ng-show="errors.lastName.doesExist" ng-bind-html-unsafe="errors.lastName.message"></small>
-            </div>
+        <div class="row" data-ng-repeat="user in users.users" data-ng-click="viewUser(user)">
+            <div class="large-2 hide-for-small columns">{{user.username}}</div>
+            <div class="large-2 small-6 columns">{{user.firstName}}</div>
+            <div class="large-2 small-6 columns">{{user.lastName}}</div>
+            <div class="large-2 hide-for-small columns">{{user.email}}</div>
+            <div class="large-2 hide-for-small columns">{{user.phoneNumber}}</div>
         </div>
-        <div class="row">
-            <div data-ng-class="{true:'error', false:''}[errors.email.doesExist]" class="large-6 columns">
-                <label th:text="#{user.email}"></label>
-                <input type="email" data-ng-model="currUser.email" data-ng-change="focusedInput('email')"/>
-                <small class="error" data-ng-show="errors.email.doesExist" ng-bind-html-unsafe="errors.email.message"></small>
-            </div>
-            <div data-ng-class="{true:'error', false:''}[errors.phoneNumber.doesExist]" class="large-6 columns">
-                <label th:text="#{user.phoneNumber}"></label>
-                <input type="text" data-ng-model="currUser.phoneNumber" data-ng-change="focusedInput('phoneNumber')"/>
-                <small class="error" data-ng-show="errors.phoneNumber.doesExist" ng-bind-html-unsafe="errors.phoneNumber.message"></small>
-            </div>
-        </div>
-        <div class="row">
-            <div class="large-12 columns">
-                <button class="right" data-ng-click="postNewUser()">Add User</button>
-            </div>
-        </div>
+        <ul class="pagination">
+            <li class="arrow unavailable"><a href="">&laquo;</a></li>
+        </ul>
     </div>
-</div>
+    </div>
+    <form name="newUserForm" id="myModal" class="reveal-modal" data-ng-controller="newUserModalCtrl"
+          novalidate="novalidate">
+        <a class="close-reveal-modal"><i class="icon-double-angle-left"></i></a>
 
-<script th:src="@{/js/vendor/jquery-1.9.1.min.js}"></script>
-<script th:src="@{/js/vendor/foundation/foundation.js}"></script>
-<script th:src="@{/js/vendor/foundation/foundation.reveal.js}"></script>
-<script th:src="@{/js/vendor/angular/angular.js}"></script>
-<script th:src="@{/js/vendor/angular/angular-sanitize.min.js}"></script>
-<script th:src="@{/js/controllers/users.js}"></script>
-<script>
-    $(document).foundation();
-</script>
+        <h2>Add New User</h2>
+
+        <div>
+            <div class="row">
+                <div data-ng-class="{'error': newUserForm.username.$invalid &amp;&amp; newUserForm.username.$dirty}"
+                     class="large-6 columns">
+                    <label th:text="#{user.username}"></label>
+                    <input name="username" type="text" data-ng-model="currUser.username" required="required"/>
+                    <small class="error"
+                           data-ng-show="newUserForm.username.$invalid &amp;&amp; newUserForm.username.$dirty"
+                           ng-bind-html-unsafe="error.username"></small>
+                </div>
+                <div data-ng-class="{'error': newUserForm.password.$invalid &amp;&amp; newUserForm.password.$dirty}"
+                     class="large-6 columns">
+                    <label th:text="#{user.password}"></label>
+                    <input name="password" type="password" data-ng-model="currUser.password" required="required"/>
+                    <small class="error"
+                           data-ng-show="newUserForm.password.$invalid &amp;&amp; newUserForm.password.$dirty"
+                           ng-bind-html-unsafe="error.password"></small>
+                </div>
+            </div>
+            <div class="row">
+                <div data-ng-class="{'error': newUserForm.firstName.$invalid  &amp;&amp; newUserForm.firstName.$dirty}"
+                     class="large-6 columns">
+                    <label th:text="#{user.firstName}"></label>
+                    <input name="firstName" type="text" data-ng-model="currUser.firstName" required="required"/>
+                    <small class="error"
+                           data-ng-show="newUserForm.firstName.$invalid &amp;&amp; newUserForm.firstName.$dirty"
+                           ng-bind-html-unsafe="error.firstName"></small>
+                </div>
+                <div data-ng-class="{'error': newUserForm.lastName.$invalid &amp;&amp; newUserForm.lastName.$dirty}"
+                     class="large-6 columns">
+                    <label th:text="#{user.lastName}"></label>
+                    <input name="lastName" type="text" data-ng-model="currUser.lastName" required="required"/>
+                    <small class="error"
+                           data-ng-show="newUserForm.lastName.$invalid &amp;&amp; newUserForm.lastName.$dirty"
+                           ng-bind-html-unsafe="error.lastName"></small>
+                </div>
+            </div>
+            <div class="row">
+                <div data-ng-class="{'error': newUserForm.email.$invalid &amp;&amp; newUserForm.email.$dirty}"
+                     class="large-6 columns">
+                    <label th:text="#{user.email}"></label>
+                    <input name="email" type="email" data-ng-model="currUser.email" required="required"/>
+                    <small class="error" data-ng-show="newUserForm.email.$invalid &amp;&amp; newUserForm.email.$dirty"
+                           ng-bind-html-unsafe="error.email"></small>
+                </div>
+                <!-- TODO: (Josh) Need to set up proper email format checking -->
+                <div data-ng-class="{'error': newUserForm.phoneNumber.$invalid &amp;&amp; newUserForm.phoneNumber.$dirty}"
+                     class="large-6 columns">
+                    <label th:text="#{user.phoneNumber}"></label>
+                    <input name="phoneNumber" type="text" data-ng-model="currUser.phoneNumber" required="required"/>
+                    <small class="error"
+                           data-ng-show="newUserForm.phoneNumber.$invalid &amp;&amp; newUserForm.phoneNumber.$dirty"
+                           ng-bind-html-unsafe="error.phoneNumber"></small>
+                </div>
+            </div>
+            <div class="row">
+                <div class="large-12 columns">
+                    <button class="right" data-ng-click="postNewUser()">Add User</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <script th:src="@{/js/vendor/jquery-1.9.1.min.js}"></script>
+    <script th:src="@{/js/vendor/foundation/foundation.js}"></script>
+    <script th:src="@{/js/vendor/foundation/foundation.reveal.js}"></script>
+    <script th:src="@{/js/vendor/angular/angular.js}"></script>
+    <script th:src="@{/js/vendor/angular/angular-resource.min.js}"></script>
+    <script th:src="@{/js/vendor/angular/angular-sanitize.min.js}"></script>
+    <script th:src="@{/js/app.js}"></script>
+    <script th:src="@{/js/services.js}"></script>
+    <script th:src="@{/js/controllers/users.js}"></script>
+    <script>
+        $(document).foundation();
+    </script>
 </body>
 </html>

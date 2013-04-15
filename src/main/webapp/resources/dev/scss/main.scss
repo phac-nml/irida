@@ -2,10 +2,53 @@
 @import "foundation";
 @import "font-awesome";
 
+/* Positioning */
+/* Display & Box Model */
+/* Other */
+
+.ng-cloak {
+    display: none;
+}
+
 // Allows for buttons to be expanded to full width for
 // use on mobile devices.
 .small-screen-expand {
   @media screen and (max-width: $small-screen) {
     width: 100%;
   }
+}
+
+/* ==========================================================================
+   PAGES
+   ========================================================================== */
+
+/* Modules
+   ========================================================================== */
+
+/**
+ * .dataTable
+ *
+ * Use instead of a table.  In combination with Zurb Foundation grid's
+ * this will allow for a more flexible table.
+ */
+.dataTable {
+    &>.row {
+        border-bottom: 1px solid lightgrey;
+        padding: 1em 0;
+
+        cursor: pointer;
+
+        &:hover {
+            background-color: lightgrey;
+        }
+    }
+    &>.row:first-child {
+        font-weight: 800;
+        background-color: #000000;
+        text-transform: uppercase;
+        border-bottom: none;
+        div {
+            color: white;
+        }
+    }
 }
