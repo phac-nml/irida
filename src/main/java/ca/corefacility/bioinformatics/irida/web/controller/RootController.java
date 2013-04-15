@@ -59,6 +59,7 @@ public class RootController {
             links.add(link);
         }
 
+        resource.add(linkTo(RootController.class).withSelfRel());
         resource.add(links);
         model.addAttribute(resource);
         return "index";
