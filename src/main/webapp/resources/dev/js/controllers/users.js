@@ -1,52 +1,53 @@
-function usersListCtrl ($scope) {
+function usersListCtrl($scope, Users) {
   'use strict';
-  
+
+  $scope.users = Users.get();
+
+  $scope.viewUser = function (user) {
+    window.location = user.links[0].href;
+  }
+
 }
 
-function newUserModalCtrl ($scope, $http) {
+function newUserModalCtrl($scope) {
   'use strict';
 
   $scope.currUser = {};
 
   $scope.error = {
-    username :"required",
-    password: "required",
-    firstName: "required",
-    lastName: "required",
-    email: 'required',
-    phoneNumber: 'required'
+    username   : 'Required',
+    password   : 'Required',
+    firstName  : 'Required',
+    lastName   : 'Required',
+    email      : 'Required',
+    phoneNumber: 'Required'
   };
 
   $scope.postNewUser = function () {
-   $.ajax({
-     type: 'POST',
-     data: $scope.currUser,
-     success: function () {
-       updateUserList();
-     },
-     error: function (XMLHttpRequest, textStatus, errorThrown) {
-       if(errorThrown){
-         // TODO(josh): handle the error
-       }
-       $scope.$apply($.each($.parseJSON(XMLHttpRequest.responseText), function (key, value) {
-         var message = value.join('<br/>');
-         $scope.error[key] = message;
-         $scope.newUserForm.$setValidity(key, false);
-       }));
-     }
-   });
- }
-
-
- $scope.focusedInput = function (field) {
-   $scope.errors[field].doesExist = false;
- };
+    $.ajax({
+      type   : 'POST',
+      data   : $scope.currUser,
+      success: function () {
+        updateUserList();
+      },
+      error  : function (XMLHttpRequest, textStatus, errorThrown) {
+        if (errorThrown) {
+          // TODO(josh): handle the error
+        }
+        $scope.$apply($.each($.parseJSON(XMLHttpRequest$scop.responseText), function (key, value) {
+          var message = value.join('<br/>');
+          $scope.error[key] = message;
+          $scope.newUserForm.$setValidity(key, false);
+        }));
+      }
+    });
+  };
 }
 
-function updateUserList () {
+function updateUserList($scope) {
   'use strict';
 
-  console.log("This needs to be implemented with a link from Franklin.")
+  console.log("This needs to be implemented with a link from Franklin.");
 //   $.ajax({
 //     type: 'GET',
 //     url: '/users',
@@ -61,7 +62,21 @@ function updateUserList () {
 //       console.log(d);
 //     }
 //   });
- }
+}
+//  factory('usersService', ['$http', function ($http) {
+//    "use strict";
+//    var usersService = {
+//      async: function () {
+//        var promise = $http.get('/users').then(function (response) {
+//          return response.data;
+//        });
+//        return promise;
+//      }
+//    };
+//    return usersService;
+//  }]);
+
+
 //'use strict';
 //
 //var app = angular.module('sraApp', ['ngSanitize']);

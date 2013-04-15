@@ -5154,6 +5154,37 @@ ul.icons {
 .icon-folder-open-alt:before {
   content: "\f115"; }
 
+/* Positioning */
+/* Display & Box Model */
+/* Other */
+.ng-cloak {
+  display: none; }
+
 @media screen and (max-width: 48em) {
   .small-screen-expand {
     width: 100%; } }
+
+/* ==========================================================================
+   PAGES
+   ========================================================================== */
+/* Modules
+   ========================================================================== */
+/**
+ * .dataTable
+ *
+ * Use instead of a table.  In combination with Zurb Foundation grid's
+ * this will allow for a more flexible table.
+ */
+.dataTable > .row {
+  border-bottom: 1px solid lightgrey;
+  padding: 1em 0;
+  cursor: pointer; }
+  .dataTable > .row:hover {
+    background-color: lightgrey; }
+.dataTable > .row:first-child {
+  font-weight: 800;
+  background-color: #000000;
+  text-transform: uppercase;
+  border-bottom: none; }
+  .dataTable > .row:first-child div {
+    color: white; }

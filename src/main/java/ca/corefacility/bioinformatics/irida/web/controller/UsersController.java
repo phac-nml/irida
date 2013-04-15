@@ -83,7 +83,6 @@ public class UsersController {
 
     @RequestMapping(value = "/{username}", method = RequestMethod.GET)
     public String getUser(@PathVariable String username, Model model) {
-        logger.debug("HEY, {}, we made it this far!", username);
         model.addAttribute("username", username);
         return "users/user";
     }    

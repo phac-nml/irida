@@ -133,13 +133,13 @@ angular.mock.$Browser = function() {
 };
 angular.mock.$Browser.prototype = {
 
-  /**
-   * @name ngMock.$browser#poll
-   * @methodOf ngMock.$browser
-   *
-   * @description
-   * run all fns in pollFns
-   */
+/**
+  * @name ngMock.$browser#poll
+  * @methodOf ngMock.$browser
+  *
+  * @description
+  * run all fns in pollFns
+  */
   poll: function poll() {
     angular.forEach(this.pollFns, function(pollFn){
       pollFn();
@@ -166,7 +166,7 @@ angular.mock.$Browser.prototype = {
         delete this.cookieHash[name];
       } else {
         if (angular.isString(value) &&       //strings only
-          value.length <= 4096) {          //strict cookie storage limits
+            value.length <= 4096) {          //strict cookie storage limits
           this.cookieHash[name] = value;
         }
       }
@@ -392,8 +392,8 @@ angular.mock.$LogProvider = function() {
     var match;
     if (match = string.match(R_ISO8061_STR)) {
       var date = new Date(0),
-        tzHour = 0,
-        tzMin  = 0;
+          tzHour = 0,
+          tzMin  = 0;
       if (match[9]) {
         tzHour = int(match[9] + match[10]);
         tzMin = int(match[9] + match[11]);
@@ -552,22 +552,22 @@ angular.mock.$LogProvider = function() {
     if (self.toISOString) {
       self.toISOString = function() {
         return padNumber(self.origDate.getUTCFullYear(), 4) + '-' +
-          padNumber(self.origDate.getUTCMonth() + 1, 2) + '-' +
-          padNumber(self.origDate.getUTCDate(), 2) + 'T' +
-          padNumber(self.origDate.getUTCHours(), 2) + ':' +
-          padNumber(self.origDate.getUTCMinutes(), 2) + ':' +
-          padNumber(self.origDate.getUTCSeconds(), 2) + '.' +
-          padNumber(self.origDate.getUTCMilliseconds(), 3) + 'Z'
+              padNumber(self.origDate.getUTCMonth() + 1, 2) + '-' +
+              padNumber(self.origDate.getUTCDate(), 2) + 'T' +
+              padNumber(self.origDate.getUTCHours(), 2) + ':' +
+              padNumber(self.origDate.getUTCMinutes(), 2) + ':' +
+              padNumber(self.origDate.getUTCSeconds(), 2) + '.' +
+              padNumber(self.origDate.getUTCMilliseconds(), 3) + 'Z'
       }
     }
 
     //hide all methods not implemented in this mock that the Date prototype exposes
     var unimplementedMethods = ['getMilliseconds', 'getUTCDay',
-      'getYear', 'setDate', 'setFullYear', 'setHours', 'setMilliseconds',
-      'setMinutes', 'setMonth', 'setSeconds', 'setTime', 'setUTCDate', 'setUTCFullYear',
-      'setUTCHours', 'setUTCMilliseconds', 'setUTCMinutes', 'setUTCMonth', 'setUTCSeconds',
-      'setYear', 'toDateString', 'toGMTString', 'toJSON', 'toLocaleFormat', 'toLocaleString',
-      'toLocaleTimeString', 'toSource', 'toString', 'toTimeString', 'toUTCString', 'valueOf'];
+        'getYear', 'setDate', 'setFullYear', 'setHours', 'setMilliseconds',
+        'setMinutes', 'setMonth', 'setSeconds', 'setTime', 'setUTCDate', 'setUTCFullYear',
+        'setUTCHours', 'setUTCMilliseconds', 'setUTCMinutes', 'setUTCMonth', 'setUTCSeconds',
+        'setYear', 'toDateString', 'toGMTString', 'toJSON', 'toLocaleFormat', 'toLocaleString',
+        'toLocaleTimeString', 'toSource', 'toString', 'toTimeString', 'toUTCString', 'valueOf'];
 
     angular.forEach(unimplementedMethods, function(methodName) {
       self[methodName] = function() {
@@ -660,7 +660,7 @@ angular.mock.dump = function(object) {
  * development please see {@link ngMockE2E.$httpBackend e2e $httpBackend mock}.
  *
  * During unit testing, we want our unit tests to run quickly and have no external dependencies so
- * we donâ€™t want to send {@link https://developer.mozilla.org/en/xmlhttprequest XHR} or
+ * we don’t want to send {@link https://developer.mozilla.org/en/xmlhttprequest XHR} or
  * {@link http://en.wikipedia.org/wiki/JSONP JSONP} requests to a real server. All we really need is
  * to verify whether a certain request has been sent or not, or alternatively just let the
  * application make requests, respond with pre-trained responses and assert that the end result is
@@ -751,8 +751,8 @@ angular.mock.dump = function(object) {
  * # Unit testing with mock $httpBackend
  *
  * <pre>
- // controller
- function MyController($scope, $http) {
+   // controller
+   function MyController($scope, $http) {
      $http.get('/auth.py').success(function(data) {
        $scope.user = data;
      });
@@ -767,10 +767,10 @@ angular.mock.dump = function(object) {
      };
    }
 
- // testing controller
- var $httpBackend;
+   // testing controller
+   var $httpBackend;
 
- beforeEach(inject(function($injector) {
+   beforeEach(inject(function($injector) {
      $httpBackend = $injector.get('$httpBackend');
 
      // backend definition common for all tests
@@ -778,21 +778,21 @@ angular.mock.dump = function(object) {
    }));
 
 
- afterEach(function() {
+   afterEach(function() {
      $httpBackend.verifyNoOutstandingExpectation();
      $httpBackend.verifyNoOutstandingRequest();
    });
 
 
- it('should fetch authentication token', function() {
+   it('should fetch authentication token', function() {
      $httpBackend.expectGET('/auth.py');
      var controller = scope.$new(MyController);
      $httpBackend.flush();
    });
 
 
- it('should send msg to server', function() {
-     // now you donâ€™t care about the authentication, but
+   it('should send msg to server', function() {
+     // now you don’t care about the authentication, but
      // the controller will still send the request and
      // $httpBackend will respond without you having to
      // specify the expectation and response for this request
@@ -807,7 +807,7 @@ angular.mock.dump = function(object) {
    });
 
 
- it('should send auth header', function() {
+   it('should send auth header', function() {
      $httpBackend.expectPOST('/add-msg.py', undefined, function(headers) {
        // check if the header was send, if it wasn't the expectation won't
        // match the request and the test will fail
@@ -818,7 +818,7 @@ angular.mock.dump = function(object) {
      controller.saveMessage('whatever');
      $httpBackend.flush();
    });
- </pre>
+   </pre>
  */
 angular.mock.$HttpBackendProvider = function() {
   this.$get = [createHttpBackendMock];
@@ -840,41 +840,41 @@ angular.mock.$HttpBackendProvider = function() {
  */
 function createHttpBackendMock($delegate, $browser) {
   var definitions = [],
-    expectations = [],
-    responses = [],
-    responsesPush = angular.bind(responses, responses.push);
+      expectations = [],
+      responses = [],
+      responsesPush = angular.bind(responses, responses.push);
 
   function createResponse(status, data, headers) {
     if (angular.isFunction(status)) return status;
 
     return function() {
       return angular.isNumber(status)
-        ? [status, data, headers]
-        : [200, status, data];
+          ? [status, data, headers]
+          : [200, status, data];
     };
   }
 
   // TODO(vojta): change params to: method, url, data, headers, callback
   function $httpBackend(method, url, data, callback, headers) {
     var xhr = new MockXhr(),
-      expectation = expectations[0],
-      wasExpected = false;
+        expectation = expectations[0],
+        wasExpected = false;
 
     function prettyPrint(data) {
       return (angular.isString(data) || angular.isFunction(data) || data instanceof RegExp)
-        ? data
-        : angular.toJson(data);
+          ? data
+          : angular.toJson(data);
     }
 
     if (expectation && expectation.match(method, url)) {
       if (!expectation.matchData(data))
         throw Error('Expected ' + expectation + ' with different data\n' +
-          'EXPECTED: ' + prettyPrint(expectation.data) + '\nGOT:      ' + data);
+            'EXPECTED: ' + prettyPrint(expectation.data) + '\nGOT:      ' + data);
 
       if (!expectation.matchHeaders(headers))
         throw Error('Expected ' + expectation + ' with different headers\n' +
-          'EXPECTED: ' + prettyPrint(expectation.headers) + '\nGOT:      ' +
-          prettyPrint(headers));
+            'EXPECTED: ' + prettyPrint(expectation.headers) + '\nGOT:      ' +
+            prettyPrint(headers));
 
       expectations.shift();
 
@@ -906,9 +906,9 @@ function createHttpBackendMock($delegate, $browser) {
       }
     }
     throw wasExpected ?
-      Error('No response defined !') :
-      Error('Unexpected request: ' + method + ' ' + url + '\n' +
-        (expectation ? 'Expected ' + expectation : 'No more request expected'));
+        Error('No response defined !') :
+        Error('Unexpected request: ' + method + ' ' + url + '\n' +
+              (expectation ? 'Expected ' + expectation : 'No more request expected'));
   }
 
   /**
@@ -926,18 +926,18 @@ function createHttpBackendMock($delegate, $browser) {
    * @returns {requestHandler} Returns an object with `respond` method that control how a matched
    *   request is handled.
    *
-   *  - respond â€“ `{function([status,] data[, headers])|function(function(method, url, data, headers)}`
-   *    â€“ The respond method takes a set of static data to be returned or a function that can return
+   *  - respond – `{function([status,] data[, headers])|function(function(method, url, data, headers)}`
+   *    – The respond method takes a set of static data to be returned or a function that can return
    *    an array containing response status (number), response data (string) and response headers
    *    (Object).
    */
   $httpBackend.when = function(method, url, data, headers) {
     var definition = new MockHttpExpectation(method, url, data, headers),
-      chain = {
-        respond: function(status, data, headers) {
-          definition.response = createResponse(status, data, headers);
-        }
-      };
+        chain = {
+          respond: function(status, data, headers) {
+            definition.response = createResponse(status, data, headers);
+          }
+        };
 
     if ($browser) {
       chain.passThrough = function() {
@@ -1045,8 +1045,8 @@ function createHttpBackendMock($delegate, $browser) {
    * @returns {requestHandler} Returns an object with `respond` method that control how a matched
    *  request is handled.
    *
-   *  - respond â€“ `{function([status,] data[, headers])|function(function(method, url, data, headers)}`
-   *    â€“ The respond method takes a set of static data to be returned or a function that can return
+   *  - respond – `{function([status,] data[, headers])|function(function(method, url, data, headers)}`
+   *    – The respond method takes a set of static data to be returned or a function that can return
    *    an array containing response status (number), response data (string) and response headers
    *    (Object).
    */
@@ -1246,9 +1246,9 @@ function createHttpBackendMock($delegate, $browser) {
 
   function createShortMethods(prefix) {
     angular.forEach(['GET', 'DELETE', 'JSONP'], function(method) {
-      $httpBackend[prefix + method] = function(url, headers) {
-        return $httpBackend[prefix](method, url, undefined, headers)
-      }
+     $httpBackend[prefix + method] = function(url, headers) {
+       return $httpBackend[prefix](method, url, undefined, headers)
+     }
     });
 
     angular.forEach(['PUT', 'POST', 'PATCH'], function(method) {
@@ -1388,13 +1388,13 @@ angular.module('ngMock', ['ng']).provider({
   $httpBackend: angular.mock.$HttpBackendProvider,
   $rootElement: angular.mock.$RootElementProvider
 }).config(function($provide) {
-    $provide.decorator('$timeout', function($delegate, $browser) {
-      $delegate.flush = function() {
-        $browser.defer.flush();
-      };
-      return $delegate;
-    });
+  $provide.decorator('$timeout', function($delegate, $browser) {
+    $delegate.flush = function() {
+      $browser.defer.flush();
+    };
+    return $delegate;
   });
+});
 
 
 /**
@@ -1473,11 +1473,11 @@ angular.module('ngMockE2E', ['ng']).config(function($provide) {
  * @returns {requestHandler} Returns an object with `respond` and `passThrough` methods that
  *   control how a matched request is handled.
  *
- *  - respond â€“ `{function([status,] data[, headers])|function(function(method, url, data, headers)}`
- *    â€“ The respond method takes a set of static data to be returned or a function that can return
+ *  - respond – `{function([status,] data[, headers])|function(function(method, url, data, headers)}`
+ *    – The respond method takes a set of static data to be returned or a function that can return
  *    an array containing response status (number), response data (string) and response headers
  *    (Object).
- *  - passThrough â€“ `{function()}` â€“ Any request matching a backend definition with `passThrough`
+ *  - passThrough – `{function()}` – Any request matching a backend definition with `passThrough`
  *    handler, will be pass through to the real backend (an XHR request will be made to the
  *    server.
  */
@@ -1580,7 +1580,7 @@ angular.mock.e2e.$httpBackendDecorator = ['$delegate', '$browser', createHttpBac
 
 angular.mock.clearDataCache = function() {
   var key,
-    cache = angular.element.cache;
+      cache = angular.element.cache;
 
   for(key in cache) {
     if (cache.hasOwnProperty(key)) {
@@ -1687,12 +1687,12 @@ window.jasmine && (function(window) {
    * @name angular.mock.inject
    * @description
    *
-   <<<<<<< HEAD
+<<<<<<< HEAD
    * *NOTE*: This is function is also published on window for easy access.<br>
    * *NOTE*: Only available with {@link http://pivotal.github.com/jasmine/ jasmine}.
-   =======
+=======
    * *NOTE*: This function is also published on window for easy access.<br>
-   >>>>>>> 8dca056... docs(mocks): fix typos
+>>>>>>> 8dca056... docs(mocks): fix typos
    *
    * The inject function wraps a function into an injectable function. The inject() creates new
    * instance of {@link AUTO.$injector $injector} per test, which is then used for

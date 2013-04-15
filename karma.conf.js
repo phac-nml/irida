@@ -14,9 +14,9 @@ frameworks = ['jasmine'];
 files = [
   'src/main/webapp/resources/dev/js/vendor/angular/angular.js',
   'src/main/webapp/resources/dev/js/vendor/angular/angular-sanitize.min.js',
-  'src/main/webapp/resources/dev/js/vendor/angular/angular-mocks.js',
   'src/main/webapp/resources/dev/js/controllers/*.js',
-  'src/test/javascript/spec/controllers/*.js'
+  'src/test/javascript/lib/angular/angular-mocks.js',
+  'src/test/javascript/unit/controllers/*.js'
 ];
 
 
