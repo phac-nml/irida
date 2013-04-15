@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -44,15 +45,18 @@ import org.openrdf.repository.RepositoryException;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class ProjectSesameRepository implements CRUDRepository<Identifier, Project>{
-    TripleStore store;
-    String URI;
+public class ProjectSesameRepository extends SesameRepository implements CRUDRepository<Identifier, Project>{
+    
+    private final static HashMap<String,String> projectParams = new HashMap<>();
+    
+    static{
+        projectParams.put("rdfs:label", "?name");
+    }
     
     public ProjectSesameRepository(){}
     
     public ProjectSesameRepository(TripleStore store){
-        this.store = store;
-        URI = store.getURI() + "Project/";
+        super(store,"Project/");
     } 
     
     @Override
@@ -115,7 +119,7 @@ public class ProjectSesameRepository implements CRUDRepository<Identifier, Proje
                 String qs = store.getPrefixes()
                         + "SELECT * "
                         + "WHERE{ ?s a irida:Project . \n"
-                        + ProjectSesameRepository.getProjectParameters("s")
+                        + ProjectSesameRepository.getParameters("s",projectParams)
                         + "}";
 
                 TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
@@ -194,7 +198,7 @@ public class ProjectSesameRepository implements CRUDRepository<Identifier, Proje
             String qs = store.getPrefixes()
                     + "SELECT * "
                     + "WHERE{ ?s a irida:Project . \n"
-                    + ProjectSesameRepository.getProjectParameters("s")
+                    + ProjectSesameRepository.getParameters("s",projectParams)
                     + "}\n";
 
             qs += SparqlQuery.setOrderBy(sortProperty, order);
@@ -273,18 +277,5 @@ public class ProjectSesameRepository implements CRUDRepository<Identifier, Proje
     public static void buildProjectProperties(BindingSet bs, Project proj){      
         proj.setName(bs.getValue("name").stringValue());
 
-    }
-    
-    
-    public static String getProjectParameters(String subject){
-        subject = "?" + subject;
-        
-        String params = subject + " rdfs:label ?name .\n";
-        
-        return params;
-    }    
-    
-    public void close() {
-        store.close();
-    }    
+    }   
 }

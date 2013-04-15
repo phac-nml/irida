@@ -20,8 +20,9 @@ import ca.corefacility.bioinformatics.irida.dao.TripleStore;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,6 +34,7 @@ import org.openrdf.model.ValueFactory;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.Query;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.TupleQuery;
@@ -44,16 +46,22 @@ import org.openrdf.repository.RepositoryException;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class UserSesameRepository implements CRUDRepository<Identifier, User> {
+public class UserSesameRepository extends SesameRepository implements UserRepository{
     
-    TripleStore store;
-    String URI;
+    private final static HashMap<String,String> userParams = new HashMap<>();
     
     public UserSesameRepository(){}
     
+    static{
+        userParams.put("foaf:nick", "?username");
+        userParams.put("foaf:mbox","?email");
+        userParams.put("foaf:firstName","?firstName");
+        userParams.put("foaf:lastName","?lastName");
+        userParams.put("foaf:phone","?phoneNumber");
+    }
+    
     public UserSesameRepository(TripleStore store){
-        this.store = store;
-        URI = store.getURI() + "User/";
+        super(store,"User");
     } 
     
     @Override
@@ -108,9 +116,9 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
             String qs = store.getPrefixes()
                     + "SELECT * "
                     + "WHERE{ ?s a foaf:Person . \n"
-                    + UserSesameRepository.getUserParameters("s")
+                    + UserSesameRepository.getParameters("s",userParams)
                     + "}";
-            
+
             TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
             ValueFactory fac = con.getValueFactory();
             URI u = fac.createURI(uri);
@@ -137,6 +145,50 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
         
         return ret;
     }
+    
+    @Override
+    public User getUserByUsername(String username) {
+        User ret = null;
+        
+        RepositoryConnection con = store.getRepoConnection();
+        try {
+            HashMap<String,String> mySet = userParams;
+            mySet.remove("foaf:nick");
+            
+            String qs = store.getPrefixes()
+                    + "SELECT * "
+                    + "WHERE{ ?s a foaf:Person . \n"
+                    + "?s foaf:nick ?username . \n"
+                    + UserSesameRepository.getParameters("s",mySet)
+                    + "}";
+            
+            TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
+            ValueFactory fac = con.getValueFactory();
+            
+            Literal u = fac.createLiteral(username);
+            tupleQuery.setBinding("username", u);
+            
+            TupleQueryResult result = tupleQuery.evaluate();
+            BindingSet bindingSet = result.singleResult();
+
+            Value s = bindingSet.getValue("s");
+
+            ret = new User();
+            
+            Identifier objid = new Identifier(java.net.URI.create(s.stringValue()));
+            
+            ret.setIdentifier(objid);
+            
+            UserSesameRepository.buildUserProperties(bindingSet, ret);
+            
+            con.close();    
+    
+        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
+            System.out.println(ex.getMessage());
+        }                 
+        
+        return ret;        
+    }    
 
     @Override
     public User update(User object) throws IllegalArgumentException {
@@ -183,7 +235,7 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
             String qs = store.getPrefixes()
                     + "SELECT * "
                     + "WHERE{ ?s a foaf:Person . \n"
-                    + UserSesameRepository.getUserParameters("s")
+                    + UserSesameRepository.getParameters("s",userParams)
                     + "}\n";
             
             qs += SparqlQuery.setOrderBy(sortProperty, order);
@@ -323,23 +375,6 @@ public class UserSesameRepository implements CRUDRepository<Identifier, User> {
         usr.setFirstName(bs.getValue("firstName").stringValue());
         usr.setLastName(bs.getValue("lastName").stringValue());
         usr.setPhoneNumber(bs.getValue("phoneNumber").stringValue());
-    }
-    
-    
-    public static String getUserParameters(String subject){
-        subject = "?" + subject;
-        
-        String params = subject + " foaf:nick ?username .\n"
-                + subject + " foaf:mbox ?email .\n"
-                + subject + " foaf:firstName ?firstName .\n"
-                + subject + " foaf:lastName ?lastName .\n"
-                + subject + " foaf:phone ?phoneNumber .\n";
-        
-        return params;
-    }    
-    
-    public void close() {
-        store.close();
     }
  
 }
