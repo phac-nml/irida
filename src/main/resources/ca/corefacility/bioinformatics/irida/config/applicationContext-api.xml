@@ -52,6 +52,12 @@
     
     <!-- validator beans -->
     <bean id="validator"
-          class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
+          class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+        <property name="validationMessageSource" ref="validationBundleLocator"/>
+    </bean>
     <bean class="org.springframework.validation.beanvalidation.MethodValidationPostProcessor"/>
+    
+    <bean id="validationBundleLocator" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename" value="ca.corefacility.bioinformatics.irida.validation.ValidationMessages" />
+    </bean>
 </beans>
