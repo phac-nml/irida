@@ -30,10 +30,8 @@ function UsersViewModel() {
   });
 
   self.paging = {
-    first: ko.observable(""),
-    previous: ko.observable(""),
-    next: ko.observable(""),
-    last: ko.observable("")
+    prev: ko.observable(""),
+    next: ko.observable("")
   };
 
   self.users = ko.observableArray([]);
@@ -56,15 +54,7 @@ function UsersViewModel() {
     phoneNumber: ko.observable("")
   };
 
-  $.getJSON("/users", function (allData) {
-    var mappedUsers = $.map(allData.userResources.users, function (item) {
-      return new User(item)
-    });
-    $.map(allData.userResources.links, function (item) {
-      self.paging[item.rel](item.href);
-    });
-    self.users(mappedUsers);
-  });
+  getUsers("/users");
 
   self.viewUser = function (data, event) {
     "use strict";
@@ -74,20 +64,42 @@ function UsersViewModel() {
   self.postNewUser = function () {
     "use strict";
     $.ajax({
-      type: 'POST',
-      data: $("#myModal").serialize(),
-      url: '/users',
+      type   : 'POST',
+      data   : $("#myModal").serialize(),
+      url    : '/users',
       success: function () {
         // TODO: Reload current page view
         $("#myModal").foundation('reveal', 'close');
       },
-      error: function (request, status, error) {
-        $.map($.parseJSON(request.responseText), function(value, key) {
-          self.errors[key](value);
+      error  : function (request, status, error) {
+        $.map($.parseJSON(request.responseText), function (value, key) {
+          if (self.erorrs[key]) {
+            self.errors[key](value);
+          }
         });
       }
     })
   };
+
+  self.updateTable = function (data, event, stuff) {
+    getUsers(self.paging[data]());
+  };
+
+  function getUsers(url) {
+    $.getJSON(url, function (allData) {
+      self.paging.next("");
+      self.paging.prev("");
+      var mappedUsers = $.map(allData.userResources.users, function (item) {
+        return new User(item)
+      });
+      $.map(allData.userResources.links, function (item) {
+        if (self.paging[item.rel]) {
+          self.paging[item.rel](item.href);
+        }
+      });
+      self.users(mappedUsers);
+    });
+  }
 }
 
 $.ajaxSetup({ cache: false });
