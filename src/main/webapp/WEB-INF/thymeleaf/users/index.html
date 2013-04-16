@@ -27,7 +27,7 @@
         </tr>
         </thead>
         <tbody data-bind="foreach: users">
-        <tr data-bind="click: $parent.viewUser.bind($data, event)">
+        <tr data-bind="click: $parent.viewUser">
             <td data-bind="text: username"></td>
             <td data-bind="text: firstName"></td>
             <td data-bind="text:lastName"></td>
