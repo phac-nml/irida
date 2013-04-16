@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.web.assembler.resource;
 
 import ca.corefacility.bioinformatics.irida.model.User;
 import java.net.URI;
-import java.util.UUID;
 import org.springframework.hateoas.ResourceSupport;
 
 /**

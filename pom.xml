@@ -6,8 +6,61 @@
     <artifactId>irida-web</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
-
+    
     <name>irida-web</name>
+    <url>http://gitlab.corefacility.ca/irida/irida-web</url>
+    
+    <issueManagement>
+        <system>GitLab</system>
+        <url>http://gitlab.corefacility.ca/irida/irida-web/issues</url>
+    </issueManagement>
+    
+    <scm>
+        <connection>scm:git:http://gitlab.corefacility.ca/irida/irida-web.git</connection>
+        <developerConnection>scm:git:ssh://git@gitlab.corefacility.ca/irida/irida-web.git</developerConnection>
+        <url>http://gitlab.corefacility.ca/irida/irida-web</url>
+    </scm>
+    
+    <inceptionYear>2013</inceptionYear>
+    
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>manual</distribution>
+        </license>    
+    </licenses>
+    
+    <developers>
+        <developer>
+            <id>aaron</id>
+            <name>Aaron Petkau</name>
+            <email>aaron.petkau@phac-aspc.gc.ca</email>
+            <organization>Public Health Agency of Canada</organization>
+            <organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
+        </developer>
+        <developer>
+            <id>josh</id>
+            <name>Josh Adam</name>
+            <email>josh.adam@phac-aspc.gc.ca</email>
+            <organization>Public Health Agency of Canada</organization>
+            <organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
+        </developer>
+        <developer>
+            <id>tom</id>
+            <name>Thomas Matthews</name>
+            <email>thomas.matthews@phac-aspc.gc.ca</email>
+            <organization>Public Health Agency of Canada</organization>
+            <organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
+        </developer>
+        <developer>
+            <id>franklin</id>
+            <name>Franklin Bristow</name>
+            <email>franklin.bristow@phac-aspc.gc.ca</email>
+            <organization>Public Health Agency of Canada</organization>
+            <organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
+        </developer>
+    </developers>
 
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>

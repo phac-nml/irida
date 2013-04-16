@@ -45,17 +45,36 @@
         <property name="defaultViews">
             <list>
                 <bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" />
+                
+                <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
+                    <constructor-arg>
+                        <bean class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+                            <property name="packagesToScan">
+                                <list>
+                                    <value>ca.corefacility.bioinformatics.irida.web.assembler.resource</value>
+                                </list>
+                            </property>
+                        </bean>
+                    </constructor-arg>
+                </bean>
             </list>
         </property>
     </bean>
 
     <!-- convenience factory for creating a ContentNegotiationManager -->
     <bean id="cnManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
-        <!-- Do not use path suffixes to determine which type of response to send -->
-        <property name="favorPathExtension" value="false"/>
         <!-- DO NOT ignore the 'Accept' header when determining which type of response to send -->
         <property name="ignoreAcceptHeader" value="false"/>
         <!-- If we can't figure out what the client is asking for, send them HTML -->
         <property name="defaultContentType" value="text/html"/>
+        <!-- Allow the content negotiator to infer response types using path extension -->
+        <property name="favorPathExtension" value="true"/>
+        <!-- specify extension to media type mappings -->
+        <property name="mediaTypes">
+            <map>
+                <entry key="json" value="application/json" />
+                <entry key="xml" value="application/xml" />
+            </map>
+        </property>
     </bean>
 </beans>
