@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.memory;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -52,12 +53,12 @@ public class CRUDMemoryRepository<Type extends Identifiable<Identifier>> impleme
     }
 
     @Override
-    public Type read(Identifier id) throws IllegalArgumentException {
+    public Type read(Identifier id) throws EntityNotFoundException {
         if (exists(id)) {
             return store.get(id);
         }
 
-        throw new IllegalArgumentException("No such object with the given identifier exists.");
+        throw new EntityNotFoundException("No such object with the given identifier exists.");
     }
 
     @Override
@@ -72,8 +73,12 @@ public class CRUDMemoryRepository<Type extends Identifiable<Identifier>> impleme
     }
 
     @Override
-    public void delete(Identifier id) {
-        store.remove(id);
+    public void delete(Identifier id) throws EntityNotFoundException {
+        if (exists(id)) {
+            store.remove(id);
+        } else {
+            throw new EntityNotFoundException("No such object with the given identifier exists.");
+        }
     }
 
     @Override
@@ -125,23 +130,6 @@ public class CRUDMemoryRepository<Type extends Identifiable<Identifier>> impleme
         } catch (ClassCastException e) {
             throw new IllegalArgumentException("Property [" + property + "] is not comparable.");
         }
-    }
-
-    /**
-     * Tests whether or not the supplied property actually applies to the type
-     * of object that we're persisting with this class.
-     *
-     * @param property the name of the property to test
-     * @return true if a getter exists for the property, false otherwise
-     */
-    private boolean methodAvailable(String property) {
-        String methodName = getMethodName(property);
-        try {
-            Method m = valueType.getDeclaredMethod(methodName);
-        } catch (NoSuchMethodException e) {
-            return false;
-        }
-        return true;
     }
 
     /**

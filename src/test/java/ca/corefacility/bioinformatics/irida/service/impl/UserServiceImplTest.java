@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.repositories.memory.UserMemoryRepository;
@@ -51,5 +52,18 @@ public class UserServiceImplTest {
         User u = userService.getUserByUsername(username);
         assertNotNull(u);
         assertEquals(username, u.getUsername());
+    }
+    
+    @Test
+    public void testBadUsername() {
+        String username = "superwrongusername";
+        try {
+            userService.getUserByUsername(username);
+            fail();
+        } catch (UserNotFoundException e) {
+            
+        } catch (Throwable e) {
+            fail();
+        }
     }
 }

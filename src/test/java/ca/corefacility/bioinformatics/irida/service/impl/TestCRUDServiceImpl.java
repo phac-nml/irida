@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -153,7 +154,7 @@ public class TestCRUDServiceImpl {
 
         try {
             crudService.delete(i.getIdentifier());
-        } catch (IllegalArgumentException e) {
+        } catch (EntityNotFoundException e) {
             fail();
         }
 
@@ -165,7 +166,7 @@ public class TestCRUDServiceImpl {
         try {
             crudService.delete(new Identifier());
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (EntityNotFoundException e) {
         } catch (Exception e) {
             fail();
         }
@@ -210,6 +211,20 @@ public class TestCRUDServiceImpl {
         // the second 15 items in the list should be there
         for (int i = 15; i < LIST_SIZE; i++) {
             assertTrue(list.contains(created.get(i)));
+        }
+    }
+    
+    @Test
+    public void testGetMissingEntity() {
+        try {
+            Identifier id = new Identifier();
+            crudService.read(id);
+            fail();
+        } catch (EntityNotFoundException e) {
+            
+        } catch (Throwable e) {
+            e.printStackTrace();
+            fail();
         }
     }
 }

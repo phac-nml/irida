@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
@@ -35,6 +36,11 @@ public class UserServiceImpl extends CRUDServiceImpl<Identifier, User> implement
     @Override
     public User getUserByUsername(String username) {
         UserRepository userRepository = (UserRepository) repository;
-        return userRepository.getUserByUsername(username);
+        User u = userRepository.getUserByUsername(username);
+        if (u == null) {
+            throw new UserNotFoundException("No user with username [" + username
+                    + "] exists.");
+        }
+        return u;
     }
 }

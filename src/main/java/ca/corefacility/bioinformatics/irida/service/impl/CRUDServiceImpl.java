@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
@@ -32,6 +33,9 @@ public class CRUDServiceImpl<KeyType, ValueType> implements CRUDService<KeyType,
         this.valueType = valueType;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ValueType create(ValueType object) throws ConstraintViolationException, IllegalArgumentException {
         Set<ConstraintViolation<ValueType>> constraintViolations = validator.validate(object);
@@ -43,11 +47,17 @@ public class CRUDServiceImpl<KeyType, ValueType> implements CRUDService<KeyType,
         throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(constraintViolations));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public ValueType read(KeyType id) throws IllegalArgumentException {
+    public ValueType read(KeyType id) throws EntityNotFoundException {
         return repository.read(id);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ValueType update(ValueType object) throws ConstraintViolationException, IllegalArgumentException {
         Set<ConstraintViolation<ValueType>> constraintViolations = validator.validate(object);
@@ -58,25 +68,37 @@ public class CRUDServiceImpl<KeyType, ValueType> implements CRUDService<KeyType,
         throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(constraintViolations));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void delete(KeyType id) throws IllegalArgumentException {
+    public void delete(KeyType id) throws EntityNotFoundException {
         if (!exists(id)) {
-            throw new IllegalArgumentException("No such identifier exists in the database.");
+            throw new EntityNotFoundException("No such identifier exists in the database.");
         }
 
         repository.delete(id);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<ValueType> list() {
         return repository.list();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Boolean exists(KeyType id) {
         return repository.exists(id);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<ValueType> list(int page, int size, final String sortProperty, final Order order) throws IllegalArgumentException {
         if (!methodAvailable(sortProperty)) {
