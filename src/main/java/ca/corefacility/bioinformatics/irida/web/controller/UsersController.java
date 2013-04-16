@@ -69,6 +69,7 @@ public class UsersController {
         }
 
         resources.add(getPageLinks(linkBuilder.withSelfRel().getHref(), page, size, sortColumn, sortOrder));
+        resources.setTotalUsers(userService.count());
 
         model.addAttribute("userResources", resources);
         return "users/index";
