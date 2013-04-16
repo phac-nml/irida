@@ -46,6 +46,7 @@ public class UsersController {
     private static final String SIZE_PARAM = "size";
     private static final String SORT_COLUMN_PARAM = "sortColumn";
     private static final String SORT_ORDER_PARAM = "sortOrder";
+    private static final String USER_PROJECTS_REL = "user/projects";
 
     @Autowired
     public UsersController(UserService userService) {
@@ -63,8 +64,7 @@ public class UsersController {
         ControllerLinkBuilder linkBuilder = linkTo(UsersController.class);
         for (User u : users) {
             UserResource resource = new UserResource(u);
-            Link link = linkBuilder.slash(resource.getUsername()).withSelfRel();
-            resource.add(link);
+            resource.add(linkBuilder.slash(resource.getUsername()).withSelfRel());
             resources.add(resource);
         }
 
@@ -147,12 +147,18 @@ public class UsersController {
     @RequestMapping(value = "/{username}", method = RequestMethod.GET)
     public String getUser(HttpServletResponse response, @PathVariable String username, Model model) {
         try {
-            User u = userService.getUserByUsername(username);
+            UserResource u = new UserResource(userService.getUserByUsername(username));
+            u.add(linkTo(UsersController.class).slash(username).slash("projects").withRel(USER_PROJECTS_REL));
             model.addAttribute("user", u);
         } catch (UserNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return "exceptions/404";
         }
+        return "users/user";
+    }
+
+    @RequestMapping(value = "/{username}/projects", method = RequestMethod.GET)
+    public String getUserProjects(@PathVariable String username, Model model) {
         return "users/user";
     }
 
