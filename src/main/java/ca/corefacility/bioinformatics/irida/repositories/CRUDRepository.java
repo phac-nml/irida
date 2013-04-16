@@ -14,7 +14,6 @@ import java.util.List;
 public interface CRUDRepository<IdentifierType, Type> {
 
     /**
-     * /**
      * Create a new object in the persistence store.
      *
      * @param object The object to persist.
@@ -88,4 +87,12 @@ public interface CRUDRepository<IdentifierType, Type> {
      * otherwise.
      */
     public Boolean exists(IdentifierType id);
+
+    /**
+     * How many entities of
+     * <code>Type</code> exist in the database?
+     *
+     * @return the number of entities in the database.
+     */
+    public Integer count();
 }

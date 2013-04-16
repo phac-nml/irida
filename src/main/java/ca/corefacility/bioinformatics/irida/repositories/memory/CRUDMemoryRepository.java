@@ -110,6 +110,18 @@ public class CRUDMemoryRepository<Type extends Identifiable<Identifier>> impleme
         return values.subList(start, end);
     }
 
+    @Override
+    public Integer count() {
+        return store.size();
+    }
+
+    /**
+     * Delete all entries in the database.
+     */
+    public void clear() {
+        store.clear();
+    }
+
     /**
      * Get the value of property from the instance of
      * <code>ValueType</code>.

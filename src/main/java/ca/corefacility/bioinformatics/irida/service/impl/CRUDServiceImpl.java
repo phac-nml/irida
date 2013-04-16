@@ -122,6 +122,14 @@ public class CRUDServiceImpl<KeyType, ValueType> implements CRUDService<KeyType,
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Integer count() {
+        return repository.count();
+    }
+
+    /**
      * Get the value of property from the instance of
      * <code>ValueType</code>.
      *

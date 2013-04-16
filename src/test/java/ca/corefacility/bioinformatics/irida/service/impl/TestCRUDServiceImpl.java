@@ -213,7 +213,7 @@ public class TestCRUDServiceImpl {
             assertTrue(list.contains(created.get(i)));
         }
     }
-    
+
     @Test
     public void testGetMissingEntity() {
         try {
@@ -221,10 +221,22 @@ public class TestCRUDServiceImpl {
             crudService.read(id);
             fail();
         } catch (EntityNotFoundException e) {
-            
         } catch (Throwable e) {
-            e.printStackTrace();
             fail();
         }
+    }
+
+    @Test
+    public void testCount() {
+        CRUDMemoryRepository<IdentifiableTestEntity> repo = (CRUDMemoryRepository<IdentifiableTestEntity>) crudRepository;
+        repo.clear();
+
+        int count = 30;
+
+        for (int i = 0; i < count; i++) {
+            repo.create(new IdentifiableTestEntity());
+        }
+
+        assertEquals(count, crudService.count().intValue());
     }
 }
