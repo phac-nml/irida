@@ -74,7 +74,6 @@ public class UsersController {
 
         resources.add(getPageLinks(linkBuilder.withSelfRel().getHref(), page, size, sortColumn, sortOrder));
         resources.setTotalUsers(userService.count());
-        resources.setCurrentPage(page);
 
         model.addAttribute("userResources", resources);
         return "users/index";
@@ -111,6 +110,7 @@ public class UsersController {
             links.add(new Link(baseUrl + pageParams(nextPage, size, sortColumn, sortOrder), NEXT_REL));
         }
         links.add(new Link(baseUrl + pageParams(lastPage, size, sortColumn, sortOrder), LAST_REL));
+        links.add(new Link(baseUrl + pageParams(page, size, sortColumn, sortOrder), Link.REL_SELF));
 
         return links;
     }

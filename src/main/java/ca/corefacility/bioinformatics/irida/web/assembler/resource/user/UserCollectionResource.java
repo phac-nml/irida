@@ -32,7 +32,6 @@ public class UserCollectionResource extends ResourceSupport {
     @XmlElement(name = "user")
     private List<UserResource> users;
     private int totalUsers;
-    private int currentPage;
 
     public UserCollectionResource() {
         this.users = new ArrayList<>();
@@ -62,13 +61,5 @@ public class UserCollectionResource extends ResourceSupport {
 
     public void setTotalUsers(int totalUsers) {
         this.totalUsers = totalUsers;
-    }
-
-    public int getCurrentPage() {
-        return currentPage;
-    }
-
-    public void setCurrentPage(int currentPage) {
-        this.currentPage = currentPage;
     }
 }
