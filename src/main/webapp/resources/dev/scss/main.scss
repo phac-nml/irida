@@ -1,7 +1,4 @@
-@import "normalize";
-@import "foundation";
-@import "font-awesome";
-
+@import "foundation/foundation-global";
 /* Positioning */
 /* Display & Box Model */
 /* Other */
@@ -37,13 +34,22 @@
         background-color: #000000;
         text-transform: uppercase;
         border-bottom: none;
-        th {
-            color: white;
-            padding: 15px 0;
+        tr {
+            padding: 20px;
         }
+        th {
+            color: white;}
     }
     tbody tr:hover {
         cursor: pointer;
         background-color: #c2ccd1;
+    }
+}
+
+.paging {
+    font-weight: 800;
+    font-size: 30px;
+    button.small {
+        padding: 0;
     }
 }
