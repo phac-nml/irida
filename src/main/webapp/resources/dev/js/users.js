@@ -12,6 +12,23 @@ function UsersViewModel() {
   'use strict';
   var self = this;
 
+  $('#myModal').foundation('reveal', {
+    close: function () {
+      self.errors.username('');
+      self.newUser.username('');
+      self.errors.password('');
+      self.newUser.password('');
+      self.errors.firstName('');
+      self.newUser.firstName('');
+      self.errors.lastName('');
+      self.newUser.lastName('');
+      self.errors.email('');
+      self.newUser.email('');
+      self.errors.phoneNumber('');
+      self.newUser.phoneNumber('');
+    }
+  });
+
   self.users = ko.observableArray([]);
   self.newUser = {
     username   : ko.observable(""),
@@ -51,6 +68,7 @@ function UsersViewModel() {
       url: '/users',
       success: function () {
         // TODO: Reload current page view
+        $("#myModal").foundation('reveal', 'close');
       },
       error: function (request, status, error) {
         $.map($.parseJSON(request.responseText), function(value, key) {
