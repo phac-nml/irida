@@ -57,7 +57,7 @@ function UsersViewModel() {
   };
 
   $.getJSON("/users", function (allData) {
-    var mappedUsers = $.map(allData.users, function (item) {
+    var mappedUsers = $.map(allData.userResources.users, function (item) {
       return new User(item)
     });
     self.users(mappedUsers);
