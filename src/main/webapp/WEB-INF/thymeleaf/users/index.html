@@ -12,20 +12,24 @@
     <h1>Users List Page</h1>
 
     <div class="row">
-        <div class="large-12 columns">
-            <a href="#" data-reveal-id="myModal" class="button small small-screen-expand">New User</a>
-            <ul class="button-group right paging">
+        <button data-reveal-id="myModal" class="button large-2 small-12 columns">New User</button>
+        <div class=" large-6 large-offset-4 small-12 columns">
+            <ul class="button-group right">
                 <li>
-                    <button data-bind="attr: {disabled: !paging.first()}" class="small button"><i class="icon-double-angle-left"></i></button>
+                    <button data-bind="attr: {disabled: !paging.first()}" class="button"><i
+                            class="icon-double-angle-left"></i></button>
                 </li>
                 <li>
-                    <button data-bind="attr: {disabled: !paging.prev()}" class="small button"><i class="icon-angle-left"></i></button>
+                    <button data-bind="attr: {disabled: !paging.prev()}" class="button"><i
+                            class="icon-angle-left"></i></button>
                 </li>
                 <li>
-                    <button data-bind="attr: {disabled: !paging.next()}" class="small button"><i class="icon-angle-right"></i></button>
+                    <button data-bind="attr: {disabled: !paging.next()}" class="button"><i
+                            class="icon-angle-right"></i></button>
                 </li>
                 <li>
-                    <button data-bind="attr: {disabled: !paging.last()}" class="small button"><i class="icon-double-angle-right"></i></button>
+                    <button data-bind="attr: {disabled: !paging.last()}" class="button"><i
+                            class="icon-double-angle-right"></i></button>
                 </li>
             </ul>
         </div>

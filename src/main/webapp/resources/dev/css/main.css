@@ -36,5 +36,5 @@
 .paging {
   font-weight: 800;
   font-size: 30px; }
-  .paging button {
+  .paging button.small {
     padding: 0; }
