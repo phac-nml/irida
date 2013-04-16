@@ -91,7 +91,7 @@ function UsersViewModel() {
       self.links.next("");
       self.links.prev("");
 
-      self.links.currentPage(allData.links.currentPage);
+      self.links.currentPage(allData.userResources.links.self);
 
       var mappedUsers = $.map(allData.userResources.users, function (item) {
         return new User(item)
