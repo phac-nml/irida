@@ -28,8 +28,7 @@
 /**
  * .dataTable
  *
- * Use instead of a table.  In combination with Zurb Foundation grid's
- * this will allow for a more flexible table.
+ * Used when a table has selectable rows.
  */
 .dataTable {
     width: 100%;
@@ -40,6 +39,10 @@
         border-bottom: none;
         th {
             color: white;
+            padding: 15px 0;
         }
+    }
+    td:hover {
+        cursor: pointer;
     }
 }

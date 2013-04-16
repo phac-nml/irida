@@ -5172,8 +5172,7 @@ ul.icons {
 /**
  * .dataTable
  *
- * Use instead of a table.  In combination with Zurb Foundation grid's
- * this will allow for a more flexible table.
+ * Used when a table has selectable rows.
  */
 .dataTable {
   width: 100%; }
@@ -5183,4 +5182,7 @@ ul.icons {
     text-transform: uppercase;
     border-bottom: none; }
     .dataTable thead th {
-      color: white; }
+      color: white;
+      padding: 15px px; }
+  .dataTable td:hover {
+    cursor: pointer; }
