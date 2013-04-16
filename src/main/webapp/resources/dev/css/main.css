@@ -5183,6 +5183,7 @@ ul.icons {
     border-bottom: none; }
     .dataTable thead th {
       color: white;
-      padding: 15px px; }
-  .dataTable td:hover {
-    cursor: pointer; }
+      padding: 15px 0; }
+  .dataTable tbody tr:hover {
+    cursor: pointer;
+    background-color: #c2ccd1; }

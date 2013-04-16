@@ -18,7 +18,7 @@
     </div>
     <table class="dataTable">
         <thead>
-        <tr>
+        <tr class="header">
             <th th:text="#{user.username}"></th>
             <th th:text="#{user.firstName}"></th>
             <th th:text="#{user.lastName}"></th>
@@ -27,7 +27,7 @@
         </tr>
         </thead>
         <tbody data-bind="foreach: users">
-        <tr data-bind="click: viewUser.bind($data, event)">
+        <tr data-bind="click: $parent.viewUser.bind($data, event)">
             <td data-bind="text: username"></td>
             <td data-bind="text: firstName"></td>
             <td data-bind="text:lastName"></td>
@@ -42,68 +42,56 @@
 </div>
 <form name="newUserForm" id="myModal" class="reveal-modal" data-ng-controller="newUserModalCtrl"
       novalidate="novalidate">
-    <a class="close-reveal-modal"><i class="icon-double-angle-left"></i></a>
+    <a class="close-reveal-modal">&#215;</a>
 
     <h2>Add New User</h2>
 
     <div>
         <div class="row">
-            <div data-ng-class="{'error': newUserForm.username.$invalid &amp;&amp; newUserForm.username.$dirty}"
-                 class="large-6 columns">
+            <div data-bind="css: {error: errors.username()}" class="large-6 columns">
                 <label th:text="#{user.username}"></label>
-                <input name="username" type="text" data-ng-model="currUser.username" required="required"/>
-                <small class="error"
-                       data-ng-show="newUserForm.username.$invalid &amp;&amp; newUserForm.username.$dirty"
-                       ng-bind-html-unsafe="error.username"></small>
+                <input name="username" type="text" data-bind="value: newUser.username, hasFocus: errors.username('')"
+                       required="required"/>
+                <small class="error" data-bind="visible: errors.username(), text: errors.username"></small>
             </div>
-            <div data-ng-class="{'error': newUserForm.password.$invalid &amp;&amp; newUserForm.password.$dirty}"
-                 class="large-6 columns">
+            <div data-bind="css: {error: errors.password()}" class="large-6 columns">
                 <label th:text="#{user.password}"></label>
-                <input name="password" type="password" data-ng-model="currUser.password" required="required"/>
-                <small class="error"
-                       data-ng-show="newUserForm.password.$invalid &amp;&amp; newUserForm.password.$dirty"
-                       ng-bind-html-unsafe="error.password"></small>
+                <input name="password" type="password"
+                       data-bind="value: newUser.password, hasFocus: errors.password('')" required="required"/>
+                <small class="error" data-bind="visible: errors.password(), text: errors.password"></small>
             </div>
         </div>
         <div class="row">
-            <div data-ng-class="{'error': newUserForm.firstName.$invalid  &amp;&amp; newUserForm.firstName.$dirty}"
-                 class="large-6 columns">
+            <div data-bind="css: {error: errors.firstName()}" class="large-6 columns">
                 <label th:text="#{user.firstName}"></label>
-                <input name="firstName" type="text" data-ng-model="currUser.firstName" required="required"/>
-                <small class="error"
-                       data-ng-show="newUserForm.firstName.$invalid &amp;&amp; newUserForm.firstName.$dirty"
-                       ng-bind-html-unsafe="error.firstName"></small>
+                <input name="firstName" type="text" data-bind="value: newUser.firstName, hasFocus: errors.firstName('')"
+                       required="required"/>
+                <small class="error" data-bind="visible: errors.firstName(), text: errors.firstName"></small>
             </div>
-            <div data-ng-class="{'error': newUserForm.lastName.$invalid &amp;&amp; newUserForm.lastName.$dirty}"
-                 class="large-6 columns">
+            <div data-bind="css: {error: errors.lastName()}" class="large-6 columns">
                 <label th:text="#{user.lastName}"></label>
-                <input name="lastName" type="text" data-ng-model="currUser.lastName" required="required"/>
-                <small class="error"
-                       data-ng-show="newUserForm.lastName.$invalid &amp;&amp; newUserForm.lastName.$dirty"
-                       ng-bind-html-unsafe="error.lastName"></small>
+                <input name="lastName" type="text" data-bind="value: newUser.lastName, hasFocus: errors.lastName('')"
+                       required="required"/>
+                <small class="error" data-bind="visible: errors.lastName(), text: errors.lastName"></small>
             </div>
         </div>
         <div class="row">
-            <div data-ng-class="{'error': newUserForm.email.$invalid &amp;&amp; newUserForm.email.$dirty}"
-                 class="large-6 columns">
+            <div data-bind="css: {error: errors.email()}" class="large-6 columns">
                 <label th:text="#{user.email}"></label>
-                <input name="email" type="email" data-ng-model="currUser.email" required="required"/>
-                <small class="error" data-ng-show="newUserForm.email.$invalid &amp;&amp; newUserForm.email.$dirty"
-                       ng-bind-html-unsafe="error.email"></small>
+                <input name="email" type="email" data-bind="value: newUser.email, hasFocus: errors.email('')"
+                       required="required"/>
+                <small class="error" data-bind="visible: errors.email(), text: errors.email"></small>
             </div>
-            <!-- TODO: (Josh) Need to set up proper email format checking -->
-            <div data-ng-class="{'error': newUserForm.phoneNumber.$invalid &amp;&amp; newUserForm.phoneNumber.$dirty}"
-                 class="large-6 columns">
+            <div data-bind="css: {error: errors.phoneNumber()}" class="large-6 columns">
                 <label th:text="#{user.phoneNumber}"></label>
-                <input name="phoneNumber" type="text" data-ng-model="currUser.phoneNumber" required="required"/>
-                <small class="error"
-                       data-ng-show="newUserForm.phoneNumber.$invalid &amp;&amp; newUserForm.phoneNumber.$dirty"
-                       ng-bind-html-unsafe="error.phoneNumber"></small>
+                <input name="phoneNumber" type="text"
+                       data-bind="value: newUser.phoneNumber, hasFocus: errors.phoneNumber('')" required="required"/>
+                <small class="error" data-bind="visible: errors.phoneNumber(), text: errors.phoneNumber"></small>
             </div>
         </div>
         <div class="row">
             <div class="large-12 columns">
-                <button class="right" data-ng-click="postNewUser()">Add User</button>
+                <button type="submit" class="right" data-bind="click: postNewUser">Add User</button>
             </div>
         </div>
     </div>

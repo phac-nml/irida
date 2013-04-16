@@ -1,5 +1,5 @@
 function User(data) {
-  "use strict";
+  'use strict';
   this.href = data.links[0].href;
   this.username = data.username;
   this.firstName = data.firstName;
@@ -9,10 +9,27 @@ function User(data) {
 }
 
 function UsersViewModel() {
-  "use strict";
+  'use strict';
   var self = this;
 
   self.users = ko.observableArray([]);
+  self.newUser = {
+    username   : ko.observable(""),
+    password   : ko.observable(""),
+    firstName  : ko.observable(""),
+    lastName   : ko.observable(""),
+    email      : ko.observable(""),
+    phoneNumber: ko.observable("")
+  };
+
+  self.errors = {
+    username   : ko.observable(""),
+    password   : ko.observable(""),
+    firstName  : ko.observable(""),
+    lastName   : ko.observable(""),
+    email      : ko.observable(""),
+    phoneNumber: ko.observable("")
+  };
 
   $.getJSON("/users", function (allData) {
     var mappedUsers = $.map(allData.users, function (item) {
@@ -20,11 +37,29 @@ function UsersViewModel() {
     });
     self.users(mappedUsers);
   });
+
+  self.viewUser = function (event, data) {
+    "use strict";
+    window.location = data.href;
+  };
+
+  self.postNewUser = function () {
+    "use strict";
+    $.ajax({
+      type: 'POST',
+      data: $("#myModal").serialize(),
+      url: '/users',
+      success: function () {
+        // TODO: Reload current page view
+      },
+      error: function (request, status, error) {
+        $.map($.parseJSON(request.responseText), function(value, key) {
+          self.errors[key](value);
+        });
+      }
+    })
+  };
 }
 
-function viewUser (event, data) {
-  "use strict";
-  window.location = data.href;
-}
 $.ajaxSetup({ cache: false });
 ko.applyBindings(new UsersViewModel());
