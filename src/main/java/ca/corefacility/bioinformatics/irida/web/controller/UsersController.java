@@ -62,7 +62,7 @@ public class UsersController {
             @RequestParam(value = PAGE_PARAM, defaultValue = "1") int page,
             @RequestParam(value = SIZE_PARAM, defaultValue = "20") int size,
             @RequestParam(value = SORT_COLUMN_PARAM, defaultValue = "username") String sortColumn,
-            @RequestParam(value = SORT_ORDER_PARAM, defaultValue = "DESCENDING") Order sortOrder) {
+            @RequestParam(value = SORT_ORDER_PARAM, defaultValue = "ASCENDING") Order sortOrder) {
         List<User> users = userService.list(page, size, sortColumn, sortOrder);
         UserCollectionResource resources = new UserCollectionResource();
         ControllerLinkBuilder linkBuilder = linkTo(UsersController.class);
