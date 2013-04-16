@@ -2002,7 +2002,7 @@
    * Released under the MIT license.
    *
    * More Info:
-   *  http://ejohn.org/projects/javascript-diff-algorithm/
+   *  http://ejohn.org/projects/js-diff-algorithm/
    *
    * Usage: QUnit.diff(expected, actual)
    *
