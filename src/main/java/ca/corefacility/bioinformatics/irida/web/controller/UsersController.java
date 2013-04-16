@@ -149,6 +149,7 @@ public class UsersController {
         try {
             UserResource u = new UserResource(userService.getUserByUsername(username));
             u.add(linkTo(UsersController.class).slash(username).slash("projects").withRel(USER_PROJECTS_REL));
+            u.add(linkTo(UsersController.class).slash(username).withSelfRel());
             model.addAttribute("user", u);
         } catch (UserNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
