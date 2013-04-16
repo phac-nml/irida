@@ -6,12 +6,9 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
     
-    <bean id="userService" class="ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl">
+    <bean id="userService" class="ca.corefacility.bioinformatics.irida.service.impl.UserServiceImpl">
         <constructor-arg ref="userRepository" />
         <constructor-arg ref="validator" />
-        <constructor-arg>
-            <value type="java.lang.Class">ca.corefacility.bioinformatics.irida.model.User</value>
-        </constructor-arg>
     </bean>
     
     <bean id="projectService" class="ca.corefacility.bioinformatics.irida.service.impl.ProjectServiceImpl">
