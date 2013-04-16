@@ -4,7 +4,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundExceptio
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.service.UserService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.UserResource;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserCollectionResource;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,7 +52,7 @@ public class UsersController {
             @RequestParam(value = "start", defaultValue = "1") int start,
             @RequestParam(value = "offset", defaultValue = "20") int offset) {
         List<User> users = userService.list(start, offset, "username", Order.ASCENDING);
-        List<UserResource> resources = new ArrayList<>(users.size());
+        UserCollectionResource resources = new UserCollectionResource();
         for (User u : users) {
             UserResource resource = new UserResource(u);
             Link link = linkTo(UsersController.class).slash(resource.getUsername()).withSelfRel();
