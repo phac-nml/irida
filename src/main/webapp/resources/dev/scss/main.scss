@@ -13,9 +13,9 @@
 // Allows for buttons to be expanded to full width for
 // use on mobile devices.
 .small-screen-expand {
-  @media screen and (max-width: $small-screen) {
-    width: 100%;
-  }
+    @media screen and (max-width: $small-screen) {
+        width: 100%;
+    }
 }
 
 /* ==========================================================================
@@ -32,22 +32,13 @@
  * this will allow for a more flexible table.
  */
 .dataTable {
-    &>.row {
-        border-bottom: 1px solid lightgrey;
-        padding: 1em 0;
-
-        cursor: pointer;
-
-        &:hover {
-            background-color: lightgrey;
-        }
-    }
-    &>.row:first-child {
+    width: 100%;
+    thead {
         font-weight: 800;
         background-color: #000000;
         text-transform: uppercase;
         border-bottom: none;
-        div {
+        th {
             color: white;
         }
     }

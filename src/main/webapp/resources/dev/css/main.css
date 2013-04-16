@@ -5175,16 +5175,12 @@ ul.icons {
  * Use instead of a table.  In combination with Zurb Foundation grid's
  * this will allow for a more flexible table.
  */
-.dataTable > .row {
-  border-bottom: 1px solid lightgrey;
-  padding: 1em 0;
-  cursor: pointer; }
-  .dataTable > .row:hover {
-    background-color: lightgrey; }
-.dataTable > .row:first-child {
-  font-weight: 800;
-  background-color: #000000;
-  text-transform: uppercase;
-  border-bottom: none; }
-  .dataTable > .row:first-child div {
-    color: white; }
+.dataTable {
+  width: 100%; }
+  .dataTable thead {
+    font-weight: 800;
+    background-color: #000000;
+    text-transform: uppercase;
+    border-bottom: none; }
+    .dataTable thead th {
+      color: white; }
