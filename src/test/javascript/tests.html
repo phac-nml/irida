@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>QUnit basic example</title>
+    <link rel="stylesheet" href="lib/qunit/qunit-v1.11.0.css">
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+<script src="lib/qunit/qunit-v1.11.0.js"></script>
+<script>
+    test( "a basic test example", function() {
+        var value = "hello";
+        equal( value, "hello", "We expect value to be hello" );
+    });
+</script>
+</body>
+</html>

@@ -17,7 +17,8 @@
     "karma-requirejs": "0.0.1",
     "karma-coffee-preprocessor": "0.0.1",
     "karma": "~0.9.1",
-    "karma-jasmine": "0.0.1",
-    "karma-junit-reporter": "0.0.1"
+    "grunt-contrib-qunit": "~0.2.1",
+    "karma-qunit": "0.0.1",
+    "karma-jasmine": "0.0.1"
   }
 }

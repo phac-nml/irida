@@ -7,16 +7,18 @@ basePath = '';
 
 
 // frameworks to use
-frameworks = ['jasmine'];
+frameworks = ['qunit'];
 
 
 // list of files / patterns to load in the browser
 files = [
-  'src/main/webapp/resources/dev/js/vendor/angular/angular.js',
-  'src/main/webapp/resources/dev/js/vendor/angular/angular-sanitize.min.js',
-  'src/main/webapp/resources/dev/js/controllers/*.js',
-  'src/test/javascript/lib/angular/angular-mocks.js',
-  'src/test/javascript/unit/controllers/*.js'
+  'src/main/webapp/resources/dev/js/vendor/knockout/knockout-v2.2.1.min.js',
+  'src/main/webapp/resources/dev/js/vendor/jquery/jquery-1.9.1.min.js',
+  'src/main/webapp/resources/dev/js/users.js',
+  'src/test/javascript/lib/qunit/qunit-v1.11.0.js',
+  'src/test/javascript/lib/sinon/sinon-v1.6.0.js',
+  'src/test/javascript/lib/sinon/sinon-qunit-v0.8.0.js',
+  'src/test/javascript/spec/_users.js'
 ];
 
 
@@ -28,7 +30,7 @@ exclude = [
 
 // test results reporter to use
 // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-reporters = ['progress'];
+reporters = ['dots'];
 
 
 // web server port
@@ -60,7 +62,7 @@ autoWatch = true;
 // - Safari (only Mac)
 // - PhantomJS
 // - IE (only Windows)
-browsers = [];
+browsers = ['Chrome', 'Firefox'];
 
 
 // If browser does not capture in given timeout [ms], kill it
@@ -74,5 +76,7 @@ singleRun = false;
 
 // plugins to load
 plugins = [
-  'karma-jasmine'
+  'karma-qunit',
+  'karma-chrome-launcher',
+  'karma-firefox-launcher'
 ];
