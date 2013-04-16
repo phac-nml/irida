@@ -38,7 +38,7 @@ function UsersViewModel() {
     self.users(mappedUsers);
   });
 
-  self.viewUser = function (event, data) {
+  self.viewUser = function (data, event) {
     "use strict";
     window.location = data.href;
   };
