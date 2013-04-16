@@ -47,6 +47,10 @@ public class UsersController {
     private static final String SORT_COLUMN_PARAM = "sortColumn";
     private static final String SORT_ORDER_PARAM = "sortOrder";
     private static final String USER_PROJECTS_REL = "user/projects";
+    private static final String NEXT_REL = "next";
+    private static final String PREV_REL = "prev";
+    private static final String FIRST_REL = "first";
+    private static final String LAST_REL = "last";
 
     @Autowired
     public UsersController(UserService userService) {
@@ -98,10 +102,14 @@ public class UsersController {
             baseUrl = baseUrl + "?";
         }
 
-        links.add(new Link(baseUrl + pageParams(firstPage, size, sortColumn, sortOrder), Link.REL_FIRST));
-        links.add(new Link(baseUrl + pageParams(prevPage, size, sortColumn, sortOrder), Link.REL_PREVIOUS));
-        links.add(new Link(baseUrl + pageParams(nextPage, size, sortColumn, sortOrder), Link.REL_NEXT));
-        links.add(new Link(baseUrl + pageParams(lastPage, size, sortColumn, sortOrder), Link.REL_LAST));
+        links.add(new Link(baseUrl + pageParams(firstPage, size, sortColumn, sortOrder), FIRST_REL));
+        if (page > 1) {
+            links.add(new Link(baseUrl + pageParams(prevPage, size, sortColumn, sortOrder), PREV_REL));
+        }
+        if (page < lastPage) {
+            links.add(new Link(baseUrl + pageParams(nextPage, size, sortColumn, sortOrder), NEXT_REL));
+        }
+        links.add(new Link(baseUrl + pageParams(lastPage, size, sortColumn, sortOrder), LAST_REL));
 
         return links;
     }
