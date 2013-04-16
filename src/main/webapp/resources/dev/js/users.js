@@ -31,7 +31,7 @@ function UsersViewModel() {
 
   self.paging = {
     first: ko.observable(""),
-    prev: ko.observable(""),
+    previous: ko.observable(""),
     next: ko.observable(""),
     last: ko.observable("")
   };
@@ -59,6 +59,9 @@ function UsersViewModel() {
   $.getJSON("/users", function (allData) {
     var mappedUsers = $.map(allData.userResources.users, function (item) {
       return new User(item)
+    });
+    $.map(allData.userResources.links, function (item) {
+      self.paging[item.rel](item.href);
     });
     self.users(mappedUsers);
   });
