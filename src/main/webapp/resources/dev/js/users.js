@@ -29,9 +29,10 @@ function UsersViewModel() {
     }
   });
 
-  self.paging = {
+  self.links = {
     prev: ko.observable(""),
-    next: ko.observable("")
+    next: ko.observable(""),
+    currentPage: ko.observable("")
   };
 
   self.users = ko.observableArray([]);
@@ -68,7 +69,7 @@ function UsersViewModel() {
       data   : $("#myModal").serialize(),
       url    : '/users',
       success: function () {
-        // TODO: Reload current page view
+        getUsers(self.links.currentPage());
         $("#myModal").foundation('reveal', 'close');
       },
       error  : function (request, status, error) {
@@ -82,19 +83,22 @@ function UsersViewModel() {
   };
 
   self.updateTable = function (data, event, stuff) {
-    getUsers(self.paging[data]());
+    getUsers(self.links[data]());
   };
 
   function getUsers(url) {
     $.getJSON(url, function (allData) {
-      self.paging.next("");
-      self.paging.prev("");
+      self.links.next("");
+      self.links.prev("");
+
+      self.links.currentPage(allData.links.currentPage);
+
       var mappedUsers = $.map(allData.userResources.users, function (item) {
         return new User(item)
       });
       $.map(allData.userResources.links, function (item) {
-        if (self.paging[item.rel]) {
-          self.paging[item.rel](item.href);
+        if (self.links[item.rel]) {
+          self.links[item.rel](item.href);
         }
       });
       self.users(mappedUsers);
