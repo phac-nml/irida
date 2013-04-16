@@ -29,7 +29,15 @@ function UsersViewModel() {
     }
   });
 
+  self.paging = {
+    first: ko.observable(""),
+    prev: ko.observable(""),
+    next: ko.observable(""),
+    last: ko.observable("")
+  };
+
   self.users = ko.observableArray([]);
+
   self.newUser = {
     username   : ko.observable(""),
     password   : ko.observable(""),
