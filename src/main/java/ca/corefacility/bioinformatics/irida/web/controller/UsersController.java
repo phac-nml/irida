@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.controller;
 
 import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.service.UserService;
@@ -172,6 +173,17 @@ public class UsersController {
 
     @RequestMapping(value = "/{username}/projects", method = RequestMethod.GET)
     public String getUserProjects(@PathVariable String username, Model model) {
+        List<Project> projects = new ArrayList<>();
+        Project p1 = new Project();
+        p1.setName("Milleri");
+        projects.add(p1);
+        Project p2 = new Project();
+        p2.setName("E. coli");
+        projects.add(p2);
+        Project p3 = new Project();
+        p3.setName("My Really Cool Project");
+        projects.add(p3);
+        model.addAttribute(projects);
         return "users/user";
     }
 

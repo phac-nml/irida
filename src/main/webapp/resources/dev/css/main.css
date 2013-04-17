@@ -21,7 +21,8 @@
 .dataTable {
   width: 100%; }
   .dataTable thead {
-    font-weight: 800;
+    font-weight: 700;
+    font-size: 1.2em;
     background-color: #000000;
     text-transform: uppercase;
     border-bottom: none; }
@@ -34,7 +35,4 @@
     background-color: #c2ccd1; }
 
 .paging {
-  font-weight: 800;
-  font-size: 30px; }
-  .paging button.small {
-    padding: 0; }
+  font-weight: 700; }
