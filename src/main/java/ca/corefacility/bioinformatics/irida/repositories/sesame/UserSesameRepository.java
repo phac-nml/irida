@@ -17,6 +17,7 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.dao.SparqlQuery;
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
+import ca.corefacility.bioinformatics.irida.dao.UserResultExtractor;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.User;
@@ -144,12 +145,9 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
             BindingSet bindingSet = result.next();
 
             Value s = bindingSet.getValue("s");
-
-            ret = new User();
             
             Identifier objid = new Identifier(java.net.URI.create(s.stringValue()));
-            
-            ret.setIdentifier(objid);
+            ret = UserResultExtractor.extractData(objid, bindingSet);
             
             UserSesameRepository.buildUserProperties(bindingSet, ret);
                 
@@ -198,12 +196,9 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
             BindingSet bindingSet = result.next();
 
             Value s = bindingSet.getValue("s");
-
-            ret = new User();
             
             Identifier objid = new Identifier(java.net.URI.create(s.stringValue()));
-            
-            ret.setIdentifier(objid);
+            ret = UserResultExtractor.extractData(objid, bindingSet);
             
             UserSesameRepository.buildUserProperties(bindingSet, ret);
                 
@@ -289,13 +284,9 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
             while(result.hasNext()){
                 BindingSet bindingSet = result.next();
                 Value s = bindingSet.getValue("s");
-                
-                User ret = new User();
 
                 Identifier objid = new Identifier(java.net.URI.create(s.stringValue()));
-
-                ret.setIdentifier(objid);                
-                UserSesameRepository.buildUserProperties(bindingSet, ret);
+                User ret = UserResultExtractor.extractData(objid, bindingSet);
                 
                 users.add(ret);
             }

@@ -15,8 +15,10 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
+import ca.corefacility.bioinformatics.irida.dao.ProjectResultExtractor;
 import ca.corefacility.bioinformatics.irida.dao.SparqlQuery;
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
+import ca.corefacility.bioinformatics.irida.dao.UserResultExtractor;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
@@ -149,13 +151,9 @@ public class ProjectSesameRepository extends SesameRepository implements Project
 
             Value s = bindingSet.getValue("s");
 
-            ret = new Project();
-
             Identifier objid = new Identifier(java.net.URI.create(s.stringValue()));
+            ret = ProjectResultExtractor.extractData(objid, bindingSet);
 
-            ret.setIdentifier(objid);
-
-            ProjectSesameRepository.buildProjectProperties(bindingSet, ret);
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
             logger.error(ex.getMessage());
             throw new StorageException("Couldn't retrive object with id " +id);            
@@ -168,8 +166,6 @@ public class ProjectSesameRepository extends SesameRepository implements Project
                 throw new StorageException("Couldn't close connection");                
             }
         }
-        
-
         
         return ret;
     }
@@ -241,12 +237,8 @@ public class ProjectSesameRepository extends SesameRepository implements Project
                 BindingSet bindingSet = result.next();
                 Value s = bindingSet.getValue("s");
                 
-                Project ret = new Project();
-
                 Identifier objid = new Identifier(java.net.URI.create(s.stringValue()));
-
-                ret.setIdentifier(objid);                
-                ProjectSesameRepository.buildProjectProperties(bindingSet, ret);
+                Project ret = ProjectResultExtractor.extractData(objid, bindingSet);
                 
                 projects.add(ret);
             }
@@ -283,11 +275,6 @@ public class ProjectSesameRepository extends SesameRepository implements Project
         con.add(st);
     }
 
-    
-    public static void buildProjectProperties(BindingSet bs, Project proj){      
-        proj.setName(bs.getValue("name").stringValue());
-
-    }   
 
     @Override
     public Collection<User> getUsersForProject(Project project) {
@@ -314,12 +301,9 @@ public class ProjectSesameRepository extends SesameRepository implements Project
                 BindingSet bindingSet = result.next();
                 Value s = bindingSet.getValue("s");
                 
-                User ret = new User();
 
                 Identifier objid = new Identifier(java.net.URI.create(s.stringValue()));
-
-                ret.setIdentifier(objid);                
-                UserSesameRepository.buildUserProperties(bindingSet, ret);
+                User ret = UserResultExtractor.extractData(objid, bindingSet);
                 
                 users.add(ret);
             }
