@@ -7,7 +7,6 @@ import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserCollectionResource;
-import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
 import ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder;
 import com.google.gson.Gson;
 import java.util.ArrayList;
