@@ -1,28 +1,25 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title></title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <link rel="stylesheet" type="text/css" href="/css/main.css" th:href="@{/css/foundation.css}"/>
-    <link rel="stylesheet" type="text/css" href="/css/main.css" th:href="@{/css/main.css}"/>
-
-</head>
-<body data-ng-app="fwsApp">
+<head th:include="fragments/header" th:remove="tag"></head>
+<body>
+<div th:include="fragments/bodyHeader" th:remove="tag"></div>
 <div class="row">
     <h1>Users List Page</h1>
 
     <div class="row">
         <div class="large-2 small-6 columns">
-            <a class="button" data-reveal-id="myModal" >New User</a>
+            <a class="button" data-reveal-id="myModal">New User</a>
         </div>
         <div class=" large-6 large-offset-4 small-6 columns">
             <ul class="button-group right">
                 <li>
-                    <button data-bind="attr: {disabled: !links.prev()}, click: updateTable.bind($data, 'prev')" class="button"><i
+                    <button data-bind="attr: {disabled: !links.prev()}, click: updateTable.bind($data, 'prev')"
+                            class="button"><i
                             class="icon-angle-left"></i></button>
                 </li>
                 <li>
-                    <button data-bind="attr: {disabled: !links.next()}, click: updateTable.bind($data, 'next')" class="button"><i
+                    <button data-bind="attr: {disabled: !links.next()}, click: updateTable.bind($data, 'next')"
+                            class="button"><i
                             class="icon-angle-right"></i></button>
                 </li>
             </ul>

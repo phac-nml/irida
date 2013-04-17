@@ -1,9 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title></title>
-</head>
-<body>
-
-</body>
-</html>
+<nav class="top-bar" th:fragment="bodyHeader">
+    <ul class="title-area">
+        <li class="name"><h1><a href="/">FWS</a></h1></li>
+    </ul>
+    <section class="top-bar-section">
+        <ul class="right">
+            <li th:class="${projects} ? 'active'"><a href="">Projects</a></li>
+            <li th:class="${users} ? 'active'"><a href="">Users</a></li>
+            <li><a href="">Logout</a></li>
+        </ul>
+    </section>
+</nav>
