@@ -64,7 +64,7 @@ public class ProjectSesameRepository extends SesameRepository implements Project
     public ProjectSesameRepository(){}
     
     public ProjectSesameRepository(TripleStore store){
-        super(store,"Project");
+        super(store,Project.class);
     } 
     
     @Override

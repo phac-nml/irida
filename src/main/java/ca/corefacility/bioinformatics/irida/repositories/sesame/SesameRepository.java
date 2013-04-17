@@ -50,10 +50,10 @@ public abstract class SesameRepository {
 
     public SesameRepository(){};
     
-    public SesameRepository(TripleStore store,String type){
+    public SesameRepository(TripleStore store,Class type){
         this.store = store;
-        URI = store.getURI() + type + "/";
-    }     
+        URI = store.getURI() + type.getSimpleName() + "/";
+    }      
     
     public static String getParameters(String subject,Map<String,String> pmap){
         subject = "?" + subject;

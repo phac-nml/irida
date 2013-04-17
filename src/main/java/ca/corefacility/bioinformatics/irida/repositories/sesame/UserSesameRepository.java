@@ -63,7 +63,7 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
     }
     
     public UserSesameRepository(TripleStore store){
-        super(store,"User");
+        super(store,User.class);
     } 
     
     @Override
