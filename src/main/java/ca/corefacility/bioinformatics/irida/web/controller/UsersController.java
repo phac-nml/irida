@@ -4,7 +4,10 @@ import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundExceptio
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectCollectionResource;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserCollectionResource;
 import ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder;
@@ -27,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder.pageLinksFor;
+import java.util.Collection;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -44,11 +48,13 @@ public class UsersController {
 
     private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
     private final UserService userService;
+    private final ProjectService projectService;
     private static final String USER_PROJECTS_REL = "user/projects";
 
     @Autowired
-    public UsersController(UserService userService) {
+    public UsersController(UserService userService, ProjectService projectService) {
         this.userService = userService;
+        this.projectService = projectService;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -113,18 +119,23 @@ public class UsersController {
     }
 
     @RequestMapping(value = "/{username}/projects", method = RequestMethod.GET)
-    public String getUserProjects(@PathVariable String username, Model model) {
-        List<Project> projects = new ArrayList<>();
-        Project p1 = new Project();
-        p1.setName("Milleri");
-        projects.add(p1);
-        Project p2 = new Project();
-        p2.setName("E. coli");
-        projects.add(p2);
-        Project p3 = new Project();
-        p3.setName("My Really Cool Project");
-        projects.add(p3);
-        model.addAttribute(projects);
+    public String getUserProjects(HttpServletResponse response, @PathVariable String username, Model model) {
+        try {
+            User u = userService.getUserByUsername(username);
+            ProjectCollectionResource resources = new ProjectCollectionResource();
+            Collection<Project> projects = projectService.getProjectsForUser(u);
+            ControllerLinkBuilder linkBuilder = linkTo(UsersController.class);
+            for (Project project : projects) {
+                ProjectResource resource = new ProjectResource(project);
+                resource.add(linkBuilder.slash("project").slash(project.getIdentifier().getUUID()).withSelfRel());
+                resources.add(resource);
+            }
+
+            model.addAttribute("projectResources", resources);
+        } catch (UserNotFoundException e) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return "exceptions/404";
+        }
         return "users/user";
     }
 
