@@ -6,6 +6,8 @@ import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserCollectionResource;
+import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
+import ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,9 +24,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder.pageLinksFor;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -42,15 +44,7 @@ public class UsersController {
 
     private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
     private final UserService userService;
-    private static final String PAGE_PARAM = "page";
-    private static final String SIZE_PARAM = "size";
-    private static final String SORT_COLUMN_PARAM = "sortColumn";
-    private static final String SORT_ORDER_PARAM = "sortOrder";
     private static final String USER_PROJECTS_REL = "user/projects";
-    private static final String NEXT_REL = "next";
-    private static final String PREV_REL = "prev";
-    private static final String FIRST_REL = "first";
-    private static final String LAST_REL = "last";
 
     @Autowired
     public UsersController(UserService userService) {
@@ -59,78 +53,26 @@ public class UsersController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String showUsersPage(Model model,
-            @RequestParam(value = PAGE_PARAM, defaultValue = "1") int page,
-            @RequestParam(value = SIZE_PARAM, defaultValue = "20") int size,
-            @RequestParam(value = SORT_COLUMN_PARAM, defaultValue = "username") String sortColumn,
-            @RequestParam(value = SORT_ORDER_PARAM, defaultValue = "ASCENDING") Order sortOrder) {
+            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_PAGE, defaultValue = "1") int page,
+            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SIZE, defaultValue = "20") int size,
+            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_COLUMN, defaultValue = "username") String sortColumn,
+            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER, defaultValue = "ASCENDING") Order sortOrder) {
         List<User> users = userService.list(page, size, sortColumn, sortOrder);
-        UserCollectionResource resources = new UserCollectionResource();
         ControllerLinkBuilder linkBuilder = linkTo(UsersController.class);
+        int totalUsers = userService.count();
+        UserCollectionResource resources = new UserCollectionResource();
+
         for (User u : users) {
             UserResource resource = new UserResource(u);
             resource.add(linkBuilder.slash(resource.getUsername()).withSelfRel());
             resources.add(resource);
         }
 
-        resources.add(getPageLinks(linkBuilder.withSelfRel().getHref(), page, size, sortColumn, sortOrder));
-        resources.setTotalUsers(userService.count());
+        resources.add(pageLinksFor(UsersController.class, page, size, totalUsers, sortColumn, sortOrder));
+        resources.setTotalUsers(totalUsers);
 
         model.addAttribute("userResources", resources);
         return "users/index";
-    }
-
-    /**
-     * Get a collection of page {@link Link} objects to add to a collection of
-     * resources.
-     *
-     * @param baseUrl the URL used as the base for all of the links.
-     * @param page the current page.
-     * @param size the current size of requested resources.
-     * @param sortColumn the column that should be used to sort the resources.
-     * @param sortOrder the order that the column should be sorted on.
-     * @return A collection of links to assist with page navigation.
-     */
-    private Iterable<Link> getPageLinks(String baseUrl, int page, int size, String sortColumn, Order sortOrder) {
-        List<Link> links = new ArrayList<>();
-        int totalEntities = userService.count();
-        int lastPage = (totalEntities / size) + 1;
-        int nextPage = page == lastPage ? lastPage : page + 1;
-        int prevPage = page > 2 ? page - 1 : 1;
-        int firstPage = 1;
-
-        if (!baseUrl.endsWith("?")) {
-            baseUrl = baseUrl + "?";
-        }
-
-        links.add(new Link(baseUrl + pageParams(firstPage, size, sortColumn, sortOrder), FIRST_REL));
-        if (page > 1) {
-            links.add(new Link(baseUrl + pageParams(prevPage, size, sortColumn, sortOrder), PREV_REL));
-        }
-        if (page < lastPage) {
-            links.add(new Link(baseUrl + pageParams(nextPage, size, sortColumn, sortOrder), NEXT_REL));
-        }
-        links.add(new Link(baseUrl + pageParams(lastPage, size, sortColumn, sortOrder), LAST_REL));
-        links.add(new Link(baseUrl + pageParams(page, size, sortColumn, sortOrder), Link.REL_SELF));
-
-        return links;
-    }
-
-    /**
-     * Construct the paging parameter lists for appending to a URL.
-     *
-     * @param page the page that the link should point to.
-     * @param size the size of the result set in the page.
-     * @param sortColumn the column that the result set should be sorted by.
-     * @param sortOrder the order of the sort.
-     * @return the parameter section of the URL.
-     */
-    private String pageParams(int page, int size, String sortColumn, Order sortOrder) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(PAGE_PARAM).append("=").append(page).append("&");
-        sb.append(SIZE_PARAM).append("=").append(size).append("&");
-        sb.append(SORT_COLUMN_PARAM).append("=").append(sortColumn).append("&");
-        sb.append(SORT_ORDER_PARAM).append("=").append(sortOrder);
-        return sb.toString();
     }
 
     @RequestMapping(method = RequestMethod.POST)
