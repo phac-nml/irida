@@ -15,10 +15,10 @@ files = [
   'src/main/webapp/resources/dev/js/vendor/knockout/knockout-v2.2.1.min.js',
   'src/main/webapp/resources/dev/js/vendor/jquery/jquery-1.9.1.min.js',
   'src/main/webapp/resources/dev/js/users.js',
-  'src/test/javascript/lib/qunit/qunit-v1.11.0.js',
-  'src/test/javascript/lib/sinon/sinon-v1.6.0.js',
-  'src/test/javascript/lib/sinon/sinon-qunit-v0.8.0.js',
-  'src/test/javascript/spec/_users.js'
+  'src/test/js/lib/qunit/qunit-v1.11.0.js',
+  'src/test/js/lib/sinon/sinon-v1.6.0.js',
+  'src/test/js/lib/sinon/sinon-qunit-v0.8.0.js',
+  'src/test/js/spec/_users.js'
 ];
 
 

@@ -27,7 +27,7 @@ module.exports = function (grunt) {
         'Gruntfile.js',
         'src/main/webapp/resources/dev/js/{,*/}*.js',
         '!src/main/webapp/resources/dev/js/vendor/*',
-        'test/javascript/spec/{,*/}*.js'
+        'test/js/spec/{,*/}*.js'
       ]
     },
     karma: {
