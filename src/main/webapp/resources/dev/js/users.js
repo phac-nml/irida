@@ -13,7 +13,7 @@ function UsersViewModel() {
   var self = this;
 
   $('#myModal').foundation('reveal', {
-    close: function () {
+    closed: function () {
       self.errors.username('');
       self.newUser.username('');
       self.errors.password('');
@@ -30,8 +30,8 @@ function UsersViewModel() {
   });
 
   self.links = {
-    prev: ko.observable(""),
-    next: ko.observable(""),
+    prev       : ko.observable(""),
+    next       : ko.observable(""),
     currentPage: ko.observable("")
   };
 
@@ -65,26 +65,24 @@ function UsersViewModel() {
   self.postNewUser = function () {
     "use strict";
     $.ajax({
-      type   : 'POST',
-      data   : $("#myModal").serialize(),
-      url    : '/users',
+      type      : 'POST',
+      data      : $("#myModal").serialize(),
+      url       : '/users',
       statusCode: {
-        400: function() {
-          console.log("400")
+        401: function () {
+           alert("Authorization required");
         }
       },
-      success: function () {
+      success   : function () {
         getUsers(self.links.currentPage());
         $("#myModal").foundation('reveal', 'close');
       },
-      error  : function (request, status, error) {
+      error     : function (request, status, error) {
         console.log(request);
         $.map($.parseJSON(request.responseText), function (value, key) {
           if (self.errors[key]) {
             self.errors[key](value);
           }
-        }, function (d) {
-          console.log(d);
         });
       }
     })
@@ -115,4 +113,6 @@ function UsersViewModel() {
 }
 
 $.ajaxSetup({ cache: false });
-ko.applyBindings(new UsersViewModel());
+$(function () {
+  ko.applyBindings(new UsersViewModel());
+});
