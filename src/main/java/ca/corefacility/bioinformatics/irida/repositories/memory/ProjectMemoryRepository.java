@@ -27,13 +27,18 @@ import java.util.HashSet;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class ProjectMemoryRepository extends CRUDMemoryRepository<Project> implements ProjectRepository {
-    
+
     public ProjectMemoryRepository() {
         super(Project.class);
     }
-    
+
     @Override
     public Collection<User> getUsersForProject(Project project) {
         return new HashSet<>(project.getUsers().keySet());
+    }
+
+    @Override
+    public Collection<Project> getProjectsForUser(User user) {
+        return new HashSet<>(user.getProjects().keySet());
     }
 }

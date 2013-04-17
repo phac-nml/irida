@@ -34,4 +34,12 @@ public interface ProjectRepository extends CRUDRepository<Identifier, Project> {
      * @return the set of users belonging to a project.
      */
     public Collection<User> getUsersForProject(Project project);
+
+    /**
+     * Get all {@link Project}s associated with a particular {@link User}.
+     *
+     * @param user the user to get projects for.
+     * @return the projects associated with the user.
+     */
+    public Collection<Project> getProjectsForUser(User user);
 }
