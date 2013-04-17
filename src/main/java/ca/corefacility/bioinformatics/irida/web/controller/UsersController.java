@@ -77,6 +77,7 @@ public class UsersController {
 
         model.addAttribute("userResources", resources);
         model.addAttribute("users", true);
+        model.addAttribute("pageTitle", "Users");
         return "users/index";
     }
 
