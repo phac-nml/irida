@@ -30,18 +30,23 @@ module.exports = function (grunt) {
         'test/js/spec/{,*/}*.js'
       ]
     },
-    karma: {
-      unit: {
-        configFile: 'karma.conf.js',
-        singleRun: true
-      }
+    jstestdriver: {
+      files: [
+        'test/js/unit/jsTestDriver.conf'
+      ]
     }
+//    karma: {
+//      unit: {
+//        configFile: 'karma.conf.js',
+//        singleRun: true
+//      }
+//    }
   });
 
   grunt.renameTask('regarde', 'watch');
 
   grunt.registerTask('test', [
-    'connect:test',
+//    'connect:test',
     'karma:unit'
   ]);
 
