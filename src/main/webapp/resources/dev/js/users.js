@@ -68,15 +68,23 @@ function UsersViewModel() {
       type   : 'POST',
       data   : $("#myModal").serialize(),
       url    : '/users',
+      statusCode: {
+        400: function() {
+          console.log("400")
+        }
+      },
       success: function () {
         getUsers(self.links.currentPage());
         $("#myModal").foundation('reveal', 'close');
       },
       error  : function (request, status, error) {
+        console.log(request);
         $.map($.parseJSON(request.responseText), function (value, key) {
-          if (self.erorrs[key]) {
+          if (self.errors[key]) {
             self.errors[key](value);
           }
+        }, function (d) {
+          console.log(d);
         });
       }
     })
