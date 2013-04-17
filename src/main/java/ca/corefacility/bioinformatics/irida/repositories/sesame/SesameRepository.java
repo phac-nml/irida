@@ -16,8 +16,10 @@
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,16 +36,18 @@ import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class SesameRepository {
+public abstract class SesameRepository {
     
     TripleStore store;
     String URI;
-    
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SesameRepository.class);
+
     public SesameRepository(){};
     
     public SesameRepository(TripleStore store,String type){
@@ -51,18 +55,19 @@ public class SesameRepository {
         URI = store.getURI() + type + "/";
     }     
     
-    public static String getParameters(String subject,HashMap<String,String> pmap){
+    public static String getParameters(String subject,Map<String,String> pmap){
         subject = "?" + subject;
         
-        String params = "";
+        StringBuilder params = new StringBuilder();
         
         Set<String> keys = pmap.keySet();
         for(String key : keys){
             String val = pmap.get(key);
-            params += subject + " " + key + " " + val + ". \n";
+            params.append(subject).append(" ").append(key).append(" ").append(val).append(". \n");
+            //params += subject + " " + key + " " + val + ". \n";
         }
         
-        return params;
+        return params.toString();
     }
     
     public int count(String ns, String type){
@@ -82,29 +87,36 @@ public class SesameRepository {
             tupleQuery.setBinding("type", vtype);
             
             TupleQueryResult result = tupleQuery.evaluate();
-            BindingSet bindingSet = result.singleResult();
             
+            BindingSet bindingSet = result.next();
             Value countval = bindingSet.getValue("c");
-            
             count = Integer.parseInt(countval.stringValue());
-            
+                      
             result.close();
-            con.close();
     
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
-            System.out.println(ex.getMessage());
-        }         
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't run count query");
+        }
+        finally{
+            try {
+                con.close();
+            } catch (RepositoryException ex) {
+                logger.error(ex.getMessage());
+                throw new StorageException("Couldn't close connection");
+            }
+        }
             
         return count;
     }
     
     public Boolean exists(Identifier id,String ns, String type) {        
         boolean exists = false;
+        RepositoryConnection con = store.getRepoConnection();
 
         try {
             String uri = id.getUri().toString();
             
-            RepositoryConnection con = store.getRepoConnection();
             
             String querystring = store.getPrefixes()
                     + "ASK\n"
@@ -121,9 +133,18 @@ public class SesameRepository {
 
             exists = existsQuery.evaluate();
             
-            con.close();
+            
         } catch (RepositoryException |MalformedQueryException | QueryEvaluationException ex) {
-            Logger.getLogger(UserSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't run exists query"); 
+        }
+        finally{
+            try {
+                con.close();
+            } catch (RepositoryException ex) {
+                logger.error(ex.getMessage());
+                throw new StorageException("Couldn't close connection");
+            }
         }
         
         return exists;        

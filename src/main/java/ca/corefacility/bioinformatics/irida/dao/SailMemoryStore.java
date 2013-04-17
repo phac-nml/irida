@@ -15,12 +15,14 @@
  */
 package ca.corefacility.bioinformatics.irida.dao;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import javax.annotation.PostConstruct;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.sail.memory.MemoryStore;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -28,8 +30,17 @@ import org.openrdf.sail.memory.MemoryStore;
  */
 public class SailMemoryStore extends TripleStore{
     
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SailMemoryStore.class);
+
     public SailMemoryStore(){
         super(new SailRepository(new MemoryStore()),"http://nowhere/");
+
+    }
+    
+    @PostConstruct
+    @Override
+    public void initialize(){
+        super.initialize();
         RepositoryConnection con = super.getRepoConnection();
         try {
             con.setNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
@@ -37,8 +48,9 @@ public class SailMemoryStore extends TripleStore{
             con.setNamespace("irida", "http://corefacility.ca/irida/");
             con.setNamespace("foaf", "http://xmlns.com/foaf/0.1/");
         } catch (RepositoryException ex) {
-            Logger.getLogger(SailMemoryStore.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            logger.error(ex.getMessage());
+            throw new StorageException("Could not initialize connection");
+        }        
     }
     
 }

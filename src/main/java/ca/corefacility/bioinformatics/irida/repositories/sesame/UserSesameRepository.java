@@ -17,6 +17,8 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.dao.SparqlQuery;
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -24,8 +26,6 @@ import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
@@ -40,6 +40,7 @@ import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -48,6 +49,7 @@ import org.openrdf.repository.RepositoryException;
 public class UserSesameRepository extends SesameRepository implements UserRepository{
     
     public final static HashMap<String,String> userParams = new HashMap<>();
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(UserSesameRepository.class);
     
     public UserSesameRepository(){}
     
@@ -99,23 +101,30 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
 
             con.commit();
             
-            con.close();
-
         } catch (RepositoryException ex) {
-            System.out.println(ex.getMessage());
+            logger.error(ex.getMessage());
+            throw new StorageException("Failed to create resource");
+        }
+        finally{
+            try {
+                con.close();
+            } catch (RepositoryException ex) {
+                logger.error(ex.getMessage());
+                throw new StorageException("Couldn't close connection");
+            }
         }
         
         return object;     
     }
 
     @Override
-    public User read(Identifier id) throws IllegalArgumentException {        
+    public User read(Identifier id) throws UserNotFoundException {        
         User ret = null;
 
         String uri = id.getUri().toString();
         
         if(!exists(id)){
-            throw new IllegalArgumentException("No such user with the given URI exists.");
+            throw new UserNotFoundException("No such user with the given URI exists.");
         }
         
         RepositoryConnection con = store.getRepoConnection();
@@ -132,7 +141,7 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
             tupleQuery.setBinding("s", u);
             
             TupleQueryResult result = tupleQuery.evaluate();
-            BindingSet bindingSet = result.singleResult();
+            BindingSet bindingSet = result.next();
 
             Value s = bindingSet.getValue("s");
 
@@ -143,19 +152,29 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
             ret.setIdentifier(objid);
             
             UserSesameRepository.buildUserProperties(bindingSet, ret);
-            
-            con.close();    
-    
+                
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
-            System.out.println(ex.getMessage());
-        }                 
+            logger.error(ex.getMessage());
+            throw new StorageException("Failed to read resource");        
+        }
+        finally{
+            try {
+                con.close();
+            } catch (RepositoryException ex) {
+                logger.error(ex.getMessage());
+                throw new StorageException("Failed to close connection");            
+            }
+        }
         
         return ret;
     }
     
     @Override
-    public User getUserByUsername(String username) {
+    public User getUserByUsername(String username) throws UserNotFoundException{
         User ret = null;
+        if(!checkUsernameExists(username)){
+            throw new UserNotFoundException("No user with username [" + username + "] exists.");
+        }
         
         RepositoryConnection con = store.getRepoConnection();
         try {
@@ -176,11 +195,7 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
             tupleQuery.setBinding("username", u);
             
             TupleQueryResult result = tupleQuery.evaluate();
-            BindingSet bindingSet = result.singleResult();
-            
-            if(bindingSet == null){
-                throw new IllegalArgumentException("No such user with the given id exists.");
-            }
+            BindingSet bindingSet = result.next();
 
             Value s = bindingSet.getValue("s");
 
@@ -191,12 +206,19 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
             ret.setIdentifier(objid);
             
             UserSesameRepository.buildUserProperties(bindingSet, ret);
-            
-            con.close();    
-    
+                
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
-            System.out.println(ex.getMessage());
-        }                 
+                logger.error(ex.getMessage());
+                throw new StorageException("Failed to get user " + username);          
+        }
+        finally{
+            try {
+                con.close();
+            } catch (RepositoryException ex) {
+                logger.error(ex.getMessage());
+                throw new StorageException("Failed to close connection");              
+            }
+        }
         
         return ret;        
     }    
@@ -224,7 +246,16 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
                 con.close();
                 
             } catch (RepositoryException ex) {
-                Logger.getLogger(UserSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
+                logger.error(ex.getMessage());
+                throw new StorageException("Failed to remove object" + id);             
+            }
+            finally{
+                try {
+                    con.close();
+                } catch (RepositoryException ex) {
+                    logger.error(ex.getMessage());
+                    throw new StorageException("Failed to close connection");                 
+                }
             }
         }
         else{
@@ -268,12 +299,19 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
                 
                 users.add(ret);
             }
-            result.close();
-            con.close();
-    
+            result.close();    
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
-            System.out.println(ex.getMessage());
-        }         
+                logger.error(ex.getMessage());
+                throw new StorageException("Failed to list users");         
+        }
+        finally{
+            try {
+                con.close();
+            } catch (RepositoryException ex) {
+                logger.error(ex.getMessage());
+                throw new StorageException("Failed to close connection");             
+            }
+        }
         
         return users;    }    
 
@@ -323,9 +361,9 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
      */
     public boolean checkUsernameExists(String username){
         boolean exists = false;
+        RepositoryConnection con = store.getRepoConnection();
 
         try {            
-            RepositoryConnection con = store.getRepoConnection();
             
             String querystring = store.getPrefixes()
                     + "ASK\n"
@@ -344,9 +382,17 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
 
             exists = existsQuery.evaluate();
             
-            con.close();
         } catch (RepositoryException |MalformedQueryException | QueryEvaluationException ex) {
-            System.err.println(ex.getMessage());
+            logger.error(ex.getMessage());
+            throw new StorageException("Failed execute ASK query");          
+        }
+        finally{
+            try {
+                con.close();
+            } catch (RepositoryException ex) {
+                logger.error(ex.getMessage());
+                throw new StorageException("Failed to close connection");              
+            }
         }
         
         return exists;

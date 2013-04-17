@@ -36,6 +36,8 @@ public class ProjectSesameRepositoryTest {
     @Before
     public void setUp() {
         SailMemoryStore store = new SailMemoryStore();
+        store.initialize();
+        
         repo = new ProjectSesameRepository(store);
         Project p = new Project();
         p.setName("p1");

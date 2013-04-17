@@ -15,14 +15,16 @@
  */
 package ca.corefacility.bioinformatics.irida.dao;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import javax.annotation.PostConstruct;
 import org.openrdf.model.Namespace;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.http.HTTPRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -39,6 +41,8 @@ public class TripleStore {
     
     String serverUrl;
     String repoName;
+    
+    private static final Logger logger = LoggerFactory.getLogger(TripleStore.class);
 
     public TripleStore(){
     }
@@ -49,36 +53,35 @@ public class TripleStore {
         this.URI = uri;
         
         repo = new HTTPRepository(serverUrl,repoName);
-        initialize();
     }
     
     public TripleStore(Repository repo,String uri){
         this.URI = uri;
-        this.repo = repo;
-        
-        initialize();
+        this.repo = repo;        
     }
     
     public String getURI(){
         return URI;
     }
     
+    @PostConstruct
     public void initialize(){
         try {
             repo.initialize();
 
         } catch (RepositoryException ex) {
-            Logger.getLogger(TripleStore.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex.getMessage());
         }        
     }
 
-    public RepositoryConnection getRepoConnection() {
+    public RepositoryConnection getRepoConnection() throws StorageException{
         RepositoryConnection con = null;
         
         try {
             con = repo.getConnection();
         } catch (RepositoryException ex) {
-            Logger.getLogger(TripleStore.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex.getMessage());
+            throw new StorageException("Could not retrieve repository connection");
         }
         
         return con;
@@ -96,7 +99,8 @@ public class TripleStore {
                 prefixes += cur;
             }
         } catch (RepositoryException ex) {
-            Logger.getLogger(TripleStore.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex.getMessage());
+            throw new StorageException("Could not retrieve namespace prefixes");
         }
                 
         return prefixes;
@@ -106,7 +110,8 @@ public class TripleStore {
         try {
             repo.shutDown();
         } catch (RepositoryException ex) {
-            Logger.getLogger(TripleStore.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex.getMessage());
+            throw new StorageException("Could not shut down repository");
         }
     }
     

@@ -16,6 +16,7 @@
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.dao.SailMemoryStore;
+import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -36,6 +37,8 @@ public class UserSesameRepositoryTest {
     @Before
     public void setUp() {
         SailMemoryStore store = new SailMemoryStore();
+        store.initialize();
+        
         repo = new UserSesameRepository(store);
         
         User u = new User("user1", "user1@there", "abc123", "user", "one", "111-111-1111");
@@ -99,7 +102,7 @@ public class UserSesameRepositoryTest {
             User u = repo.read(i);
             fail();
         }
-        catch(IllegalArgumentException e){
+        catch(UserNotFoundException e){
             assertNotNull(e);
         }
     }    
@@ -127,7 +130,7 @@ public class UserSesameRepositoryTest {
             User u = repo.getUserByUsername("fake");
             fail();
         }
-        catch(IllegalArgumentException e){}
+        catch(UserNotFoundException e){}
     }
     /**
      * Test of update method, of class UserSesameRepository.

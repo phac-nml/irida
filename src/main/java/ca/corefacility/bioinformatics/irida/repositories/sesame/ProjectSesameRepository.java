@@ -17,6 +17,7 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.dao.SparqlQuery;
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
@@ -43,6 +44,7 @@ import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -51,6 +53,7 @@ import org.openrdf.repository.RepositoryException;
 public class ProjectSesameRepository extends SesameRepository implements ProjectRepository{
     
     public final static HashMap<String,String> projectParams = new HashMap<>();
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProjectSesameRepository.class);
     
     static{
         projectParams.put("rdfs:label", "?name");
@@ -97,10 +100,18 @@ public class ProjectSesameRepository extends SesameRepository implements Project
 
             con.commit();
             
-            con.close();
 
         } catch (RepositoryException ex) {
-            System.out.println(ex.getMessage());
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't create object");        
+        }
+        finally{
+            try {
+                con.close();
+            } catch (RepositoryException ex) {
+                logger.error(ex.getMessage());
+                throw new StorageException("Couldn't close connection");            
+            }
         }
         
         return object;     
@@ -114,44 +125,51 @@ public class ProjectSesameRepository extends SesameRepository implements Project
             throw new IllegalArgumentException("URI for object is null");
         }
         
-        if(exists(id)){
-            String uri = id.getUri().toString();
-
-            RepositoryConnection con = store.getRepoConnection();
-            try {
-                String qs = store.getPrefixes()
-                        + "SELECT * "
-                        + "WHERE{ ?s a irida:Project . \n"
-                        + ProjectSesameRepository.getParameters("s",projectParams)
-                        + "}";
-
-                TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
-                ValueFactory fac = con.getValueFactory();
-                URI u = fac.createURI(uri);
-                tupleQuery.setBinding("s", u);
-
-                TupleQueryResult result = tupleQuery.evaluate();
-                BindingSet bindingSet = result.singleResult();
-
-                Value s = bindingSet.getValue("s");
-
-                ret = new Project();
-
-                Identifier objid = new Identifier(java.net.URI.create(s.stringValue()));
-
-                ret.setIdentifier(objid);
-
-                ProjectSesameRepository.buildProjectProperties(bindingSet, ret);
-                
-                con.close();
-
-            } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
-                System.out.println(ex.getMessage());
-            }
-        }
-        else{
+        if(!exists(id)){
             throw new IllegalArgumentException("No such object with the given URI exists.");
         }
+        
+        String uri = id.getUri().toString();
+
+        RepositoryConnection con = store.getRepoConnection();
+        try {
+            String qs = store.getPrefixes()
+                    + "SELECT * "
+                    + "WHERE{ ?s a irida:Project . \n"
+                    + ProjectSesameRepository.getParameters("s",projectParams)
+                    + "}";
+
+            TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
+            ValueFactory fac = con.getValueFactory();
+            URI u = fac.createURI(uri);
+            tupleQuery.setBinding("s", u);
+
+            TupleQueryResult result = tupleQuery.evaluate();
+            BindingSet bindingSet = result.next();
+
+            Value s = bindingSet.getValue("s");
+
+            ret = new Project();
+
+            Identifier objid = new Identifier(java.net.URI.create(s.stringValue()));
+
+            ret.setIdentifier(objid);
+
+            ProjectSesameRepository.buildProjectProperties(bindingSet, ret);
+        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't retrive object with id " +id);            
+        }
+        finally{
+            try {
+                con.close();
+            } catch (RepositoryException ex) {
+                logger.error(ex.getMessage());
+                throw new StorageException("Couldn't close connection");                
+            }
+        }
+        
+
         
         return ret;
     }
@@ -176,10 +194,18 @@ public class ProjectSesameRepository extends SesameRepository implements Project
             
             try {
                 con.remove(objecturi, null, null);
-                con.close();
                 
             } catch (RepositoryException ex) {
-                Logger.getLogger(UserSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
+                logger.error(ex.getMessage());
+                throw new StorageException("Couldn't remove object with id " + id); 
+            }
+            finally{
+                try {
+                    con.close();
+                } catch (RepositoryException ex) {
+                    logger.error(ex.getMessage());
+                    throw new StorageException("Couldn't close connection"); 
+                }
             }
         }
         else{
@@ -225,11 +251,19 @@ public class ProjectSesameRepository extends SesameRepository implements Project
                 projects.add(ret);
             }
             result.close();
-            con.close();
     
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
-            System.out.println(ex.getMessage());
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't list project objects"); 
         }         
+        finally{
+            try {
+                con.close();
+            } catch (RepositoryException ex) {
+                logger.error(ex.getMessage());
+                throw new StorageException("Couldn't close connection"); 
+            }
+        }
         
         return projects;           
     }    
@@ -290,11 +324,19 @@ public class ProjectSesameRepository extends SesameRepository implements Project
                 users.add(ret);
             }
             result.close();
-            con.close();
     
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
-            System.out.println(ex.getMessage());
-        }         
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't list project users"); 
+        }       
+        finally{
+            try {
+                con.close();
+            } catch (RepositoryException ex) {
+                logger.error(ex.getMessage());
+                throw new StorageException("Couldn't close connection"); 
+            }
+        }
         
         return users;        
     }
