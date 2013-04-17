@@ -279,35 +279,7 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
 
     @Override
     public Boolean exists(Identifier id) {        
-        boolean exists = false;
-
-        try {
-            String uri = id.getUri().toString();
-            
-            RepositoryConnection con = store.getRepoConnection();
-            
-            String querystring = store.getPrefixes()
-                    + "ASK\n"
-                    + "{?uri a ?type}";
-            
-            BooleanQuery existsQuery = con.prepareBooleanQuery(QueryLanguage.SPARQL, querystring);
-
-            ValueFactory vf = con.getValueFactory();
-            URI objecturi = vf.createURI(uri);
-            existsQuery.setBinding("uri", objecturi);
-
-            URI typeuri = vf.createURI(con.getNamespace("foaf"),"Person");
-            existsQuery.setBinding("type", typeuri);
-
-            exists = existsQuery.evaluate();
-            
-            con.close();
-            
-        } catch (RepositoryException |MalformedQueryException | QueryEvaluationException ex) {
-            Logger.getLogger(UserSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        return exists;        
+        return super.exists(id, "foaf", "Person");        
     }
 
     private void addUserProperties(User user, URI uri, RepositoryConnection con) throws RepositoryException{
@@ -386,6 +358,11 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
         usr.setFirstName(bs.getValue("firstName").stringValue());
         usr.setLastName(bs.getValue("lastName").stringValue());
         usr.setPhoneNumber(bs.getValue("phoneNumber").stringValue());
+    }
+
+    @Override
+    public Integer count() {
+        return super.count("foaf","Person");
     }
  
 }

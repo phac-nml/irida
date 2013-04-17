@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import java.util.List;
 import javax.validation.ConstraintViolationException;
@@ -31,10 +32,10 @@ public interface CRUDService<IdentifierType, Type> {
      *
      * @param id The unique identifier for this object.
      * @return The object corresponding to the unique identifier.
-     * @throws IllegalArgumentException If the identifier does not exist in the
+     * @throws EntityNotFoundException If the identifier does not exist in the
      * database.
      */
-    public Type read(IdentifierType id) throws IllegalArgumentException;
+    public Type read(IdentifierType id) throws EntityNotFoundException;
 
     /**
      * Update the specified object in the database. The object <b>must</b> have
@@ -54,10 +55,10 @@ public interface CRUDService<IdentifierType, Type> {
      * Delete the object with the specified identifier from the database.
      *
      * @param id The identifier of the object to delete.
-     * @throws IllegalArgumentException If no object with the specified
+     * @throws EntityNotFoundException If no object with the specified
      * identifier exists in the database.
      */
-    public void delete(IdentifierType id) throws IllegalArgumentException;
+    public void delete(IdentifierType id) throws EntityNotFoundException;
 
     /**
      * List all objects of
@@ -90,4 +91,12 @@ public interface CRUDService<IdentifierType, Type> {
      * otherwise.
      */
     public Boolean exists(IdentifierType id);
+
+    /**
+     * How many entities of
+     * <code>Type</code> exist in the database?
+     *
+     * @return the number of entities in the database.
+     */
+    public Integer count();
 }

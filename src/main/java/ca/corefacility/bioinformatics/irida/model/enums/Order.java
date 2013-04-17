@@ -37,7 +37,7 @@ public enum Order {
     }
 
     public static Order fromString(String code) {
-        switch (code) {
+        switch (code.toUpperCase()) {
             case "ASCENDING":
                 return ASCENDING;
             case "DESCENDING":

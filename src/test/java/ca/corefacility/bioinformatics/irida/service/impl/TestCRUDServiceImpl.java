@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -153,7 +154,7 @@ public class TestCRUDServiceImpl {
 
         try {
             crudService.delete(i.getIdentifier());
-        } catch (IllegalArgumentException e) {
+        } catch (EntityNotFoundException e) {
             fail();
         }
 
@@ -165,7 +166,7 @@ public class TestCRUDServiceImpl {
         try {
             crudService.delete(new Identifier());
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (EntityNotFoundException e) {
         } catch (Exception e) {
             fail();
         }
@@ -211,5 +212,31 @@ public class TestCRUDServiceImpl {
         for (int i = 15; i < LIST_SIZE; i++) {
             assertTrue(list.contains(created.get(i)));
         }
+    }
+
+    @Test
+    public void testGetMissingEntity() {
+        try {
+            Identifier id = new Identifier();
+            crudService.read(id);
+            fail();
+        } catch (EntityNotFoundException e) {
+        } catch (Throwable e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testCount() {
+        CRUDMemoryRepository<IdentifiableTestEntity> repo = (CRUDMemoryRepository<IdentifiableTestEntity>) crudRepository;
+        repo.clear();
+
+        int count = 30;
+
+        for (int i = 0; i < count; i++) {
+            repo.create(new IdentifiableTestEntity());
+        }
+
+        assertEquals(count, crudService.count().intValue());
     }
 }

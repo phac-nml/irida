@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.memory;
 
+import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
@@ -68,16 +69,20 @@ public class UserMemoryRepository extends CRUDMemoryRepository<User> implements 
     }
 
     @Override
-    public User getUserByUsername(String username) {
+    public User getUserByUsername(String username) throws UserNotFoundException {
         User u = null;
-        
+
         for (User entry : store.values()) {
             if (entry.getUsername().equals(username)) {
                 u = entry;
                 break;
             }
         }
-        
+
+        if (u == null) {
+            throw new UserNotFoundException("No user with username [" + username + "] exists.");
+        }
+
         return u;
     }
 }

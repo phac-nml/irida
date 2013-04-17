@@ -235,35 +235,8 @@ public class ProjectSesameRepository extends SesameRepository implements Project
     }    
 
     @Override
-    public Boolean exists(Identifier id) {        
-        boolean exists = false;
-
-        try {
-            String uri = id.getUri().toString();
-            
-            RepositoryConnection con = store.getRepoConnection();
-            
-            String querystring = store.getPrefixes()
-                    + "ASK\n"
-                    + "{?uri a ?type}";
-            
-            BooleanQuery existsQuery = con.prepareBooleanQuery(QueryLanguage.SPARQL, querystring);
-
-            ValueFactory vf = con.getValueFactory();
-            URI objecturi = vf.createURI(uri);
-            existsQuery.setBinding("uri", objecturi);
-
-            URI typeuri = vf.createURI(con.getNamespace("irida"),"Project");
-            existsQuery.setBinding("type", typeuri);
-
-            exists = existsQuery.evaluate();
-            
-            con.close();
-        } catch (RepositoryException |MalformedQueryException | QueryEvaluationException ex) {
-            Logger.getLogger(UserSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        return exists;        
+    public Boolean exists(Identifier id) {       
+        return super.exists(id, "irida", "Project");
     }
 
     private void addProjectProperties(Project proj, URI uri, RepositoryConnection con) throws RepositoryException{
@@ -324,5 +297,10 @@ public class ProjectSesameRepository extends SesameRepository implements Project
         }         
         
         return users;        
+    }
+
+    @Override
+    public Integer count() {
+        return super.count("irida","Project");
     }
 }

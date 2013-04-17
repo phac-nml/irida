@@ -13,26 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ca.corefacility.bioinformatics.irida.repositories;
-
-import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+package ca.corefacility.bioinformatics.irida.exceptions;
 
 /**
- * Specialized repository for {@link User}.
+ * When an {@link Identifiable} entity cannot be found in the database.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public interface UserRepository extends CRUDRepository<Identifier, User> {
+public class EntityNotFoundException extends RuntimeException {
 
     /**
-     * Get a user from the database with the supplied username.
+     * Construct a new {@link EntityNotFoundException} with the specified
+     * message.
      *
-     * @param username the user's username.
-     * @return the user corresponding to the username.
-     * @throws UserNotFoundException If no user can be found with the supplied
-     * username.
+     * @param message the message explaining the exception.
      */
-    public User getUserByUsername(String username) throws UserNotFoundException;
+    public EntityNotFoundException(String message) {
+        super(message);
+    }
 }

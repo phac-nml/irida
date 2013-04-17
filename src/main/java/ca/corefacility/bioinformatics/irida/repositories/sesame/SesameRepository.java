@@ -16,8 +16,24 @@
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.openrdf.model.Literal;
+import org.openrdf.model.URI;
+import org.openrdf.model.Value;
+import org.openrdf.model.ValueFactory;
+import org.openrdf.query.BindingSet;
+import org.openrdf.query.BooleanQuery;
+import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.QueryEvaluationException;
+import org.openrdf.query.QueryLanguage;
+import org.openrdf.query.TupleQuery;
+import org.openrdf.query.TupleQueryResult;
+import org.openrdf.repository.RepositoryConnection;
+import org.openrdf.repository.RepositoryException;
 
 /**
  *
@@ -48,6 +64,70 @@ public class SesameRepository {
         
         return params;
     }
+    
+    public int count(String ns, String type){
+        int count = 0;
+        
+        RepositoryConnection con = store.getRepoConnection();
+        
+        try {
+            String qs = store.getPrefixes()
+                    + "SELECT (count(?s) as ?c) \n"
+                    + "WHERE{ ?s a ?type . \n"
+                    + "}\n";
+            
+            TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
+            
+            URI vtype = con.getValueFactory().createURI(con.getNamespace(ns), type);
+            tupleQuery.setBinding("type", vtype);
+            
+            TupleQueryResult result = tupleQuery.evaluate();
+            BindingSet bindingSet = result.singleResult();
+            
+            Value countval = bindingSet.getValue("c");
+            
+            count = Integer.parseInt(countval.stringValue());
+            
+            result.close();
+            con.close();
+    
+        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
+            System.out.println(ex.getMessage());
+        }         
+            
+        return count;
+    }
+    
+    public Boolean exists(Identifier id,String ns, String type) {        
+        boolean exists = false;
+
+        try {
+            String uri = id.getUri().toString();
+            
+            RepositoryConnection con = store.getRepoConnection();
+            
+            String querystring = store.getPrefixes()
+                    + "ASK\n"
+                    + "{?uri a ?type}";
+            
+            BooleanQuery existsQuery = con.prepareBooleanQuery(QueryLanguage.SPARQL, querystring);
+
+            ValueFactory vf = con.getValueFactory();
+            URI objecturi = vf.createURI(uri);
+            existsQuery.setBinding("uri", objecturi);
+
+            URI typeuri = vf.createURI(con.getNamespace(ns),type);
+            existsQuery.setBinding("type", typeuri);
+
+            exists = existsQuery.evaluate();
+            
+            con.close();
+        } catch (RepositoryException |MalformedQueryException | QueryEvaluationException ex) {
+            Logger.getLogger(UserSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return exists;        
+    }    
     
     public void close() {
         store.close();
