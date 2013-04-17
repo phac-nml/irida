@@ -76,6 +76,7 @@ public class UsersController {
         resources.setTotalUsers(userService.count());
 
         model.addAttribute("userResources", resources);
+        model.addAttribute("users", true);
         return "users/index";
     }
 
