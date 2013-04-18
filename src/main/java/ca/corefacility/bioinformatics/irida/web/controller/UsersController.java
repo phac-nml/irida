@@ -124,10 +124,10 @@ public class UsersController {
             User u = userService.getUserByUsername(username);
             ProjectCollectionResource resources = new ProjectCollectionResource();
             Collection<Project> projects = projectService.getProjectsForUser(u);
-            ControllerLinkBuilder linkBuilder = linkTo(UsersController.class);
+            ControllerLinkBuilder linkBuilder = linkTo(ProjectsController.class);
             for (Project project : projects) {
                 ProjectResource resource = new ProjectResource(project);
-                resource.add(linkBuilder.slash("project").slash(project.getIdentifier().getUUID()).withSelfRel());
+                resource.add(linkBuilder.slash(project.getIdentifier().getUUID()).withSelfRel());
                 resources.add(resource);
             }
 
