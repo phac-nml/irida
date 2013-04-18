@@ -46,6 +46,7 @@ public class RootController {
     @PostConstruct
     public void initLinks() {
         CONTROLLERS.put("users", UsersController.class);
+        CONTROLLERS.put("projects", ProjectsController.class);
     }
 
     @RequestMapping(method = RequestMethod.GET)
