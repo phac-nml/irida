@@ -19,7 +19,7 @@ function UserViewModel () {
     "use strict";
 
     $.getJSON('/users/' + username + '/projects', function (allData) {
-      var mappedProjects = $.map(allData.projectList, function (item) {
+      var mappedProjects = $.map(allData.projectResources.projects, function (item) {
         return new Project(item)
       });
       self.projects(mappedProjects);
