@@ -57,7 +57,7 @@ function UsersViewModel() {
     phoneNumber: ko.observable("")
   };
 
-  getUsers("/users");
+  getUsers("http://0.0.0.0:8080/users");
 
   self.viewUser = function (data, event) {
     "use strict";
@@ -97,7 +97,7 @@ function UsersViewModel() {
   function getUsers(url) {
     console.log("about to getJSON at: " + url);
     $.getJSON(url, function (allData) {
-      console.log("RETURNING FROM SERVER WITH" + allData);
+      console.log("RETURNING FROM SERVER");
       self.links.next("");
       self.links.prev("");
 

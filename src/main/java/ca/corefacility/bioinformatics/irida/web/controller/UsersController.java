@@ -63,6 +63,7 @@ public class UsersController {
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SIZE, defaultValue = "20") int size,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_COLUMN, defaultValue = "username") String sortColumn,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER, defaultValue = "ASCENDING") Order sortOrder) {
+        logger.debug("KEHLKLSD");
         List<User> users = userService.list(page, size, sortColumn, sortOrder);
         ControllerLinkBuilder linkBuilder = linkTo(UsersController.class);
         int totalUsers = userService.count();

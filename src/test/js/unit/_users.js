@@ -325,9 +325,11 @@ asyncTest("Async setup", function () {
 //  ko.applyBindings(uvm);
 
   expect( 1 );
-  var uvm = new UsersViewModel();
+  uvm = new UsersViewModel();
+  ko.applyBindings(uvm);
   setTimeout(function() {
     ok( true, "Passed and ready to resume!" );
+    console.log(uvm.users());
     start();
   }, 5000);
 });
