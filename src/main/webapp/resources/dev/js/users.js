@@ -1,3 +1,5 @@
+var uvm = null;
+
 function User(data) {
   'use strict';
   this.href = data.links[0].href;
@@ -70,7 +72,7 @@ function UsersViewModel() {
       url       : '/users',
       statusCode: {
         401: function () {
-           alert("Authorization required");
+          alert("Authorization required");
         }
       },
       success   : function () {
@@ -93,7 +95,9 @@ function UsersViewModel() {
   };
 
   function getUsers(url) {
+    console.log("about to getJSON at: " + url);
     $.getJSON(url, function (allData) {
+      console.log("RETURNING FROM SERVER WITH" + allData);
       self.links.next("");
       self.links.prev("");
 
@@ -113,6 +117,8 @@ function UsersViewModel() {
 }
 
 $.ajaxSetup({ cache: false });
-$(function () {
-  ko.applyBindings(new UsersViewModel());
-});
+
+window.onload = function () {
+  uvm = new UsersViewModel();
+  ko.applyBindings(uvm);
+};
