@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.repositories.memory;
 
 import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
@@ -15,7 +17,12 @@ public class UserMemoryRepository extends CRUDMemoryRepository<User> implements 
     public UserMemoryRepository() {
         super(User.class);
         Identifier id = new Identifier();
-        store.put(id, new User(id, "jsadam", "j@me.com", "pass1234", "Jake", "Penner", "787-9998"));
+        User u = new User(id, "jsadam", "j@me.com", "pass1234", "Jake", "Penner", "787-9998");
+        Project p = new Project();
+        p.setIdentifier(new Identifier());
+        p.setName("The super project.");
+        u.addProject(p, new Role());
+        store.put(id, u);
         id = new Identifier();
         store.put(id, new User(id, "hjadam", "h@me.com", "pass5678", "Hammy", "Penner", "787-1234"));
         id = new Identifier();

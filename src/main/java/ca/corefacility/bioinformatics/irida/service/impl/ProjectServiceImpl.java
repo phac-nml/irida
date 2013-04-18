@@ -62,7 +62,21 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Identifier, Project> imp
      */
     @Override
     public Collection<User> getUsersForProject(Project project) {
-        ProjectRepository repo = (ProjectRepository) repository;
-        return repo.getUsersForProject(project);
+        return projectRepository().getUsersForProject(project);
+    }
+
+    @Override
+    public Collection<Project> getProjectsForUser(User user) {
+        return projectRepository().getProjectsForUser(user);
+    }
+
+    /**
+     * Convenience method to get the repository for this class as a
+     * {@link ProjectRepository}.
+     *
+     * @return the repository as a {@link ProjectRepository}
+     */
+    private ProjectRepository projectRepository() {
+        return (ProjectRepository) repository;
     }
 }

@@ -42,4 +42,12 @@ public interface ProjectService extends CRUDService<Identifier, Project> {
      * @return the users associated with the project.
      */
     public Collection<User> getUsersForProject(Project project);
+
+    /**
+     * Get all {@link Project}s associated with a particular {@link User}.
+     *
+     * @param user the user to get projects for.
+     * @return the projects associated with the user.
+     */
+    public Collection<Project> getProjectsForUser(User user);
 }
