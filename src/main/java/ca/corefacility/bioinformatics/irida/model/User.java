@@ -82,6 +82,7 @@ public class User implements Comparable<User>, Auditable<Audit>, Identifiable<Id
                     && Objects.equals(email, u.email)
                     && Objects.equals(password, u.password)
                     && Objects.equals(firstName, u.firstName)
+                    && Objects.equals(lastName, u.lastName)
                     && Objects.equals(phoneNumber, u.phoneNumber);
         }
 
@@ -91,6 +92,18 @@ public class User implements Comparable<User>, Auditable<Audit>, Identifiable<Id
     @Override
     public int compareTo(User u) {
         return audit.compareTo(u.audit);
+    }
+
+    @Override
+    public String toString() {
+        return com.google.common.base.Objects.toStringHelper(User.class)
+                .add("username", username)
+                .add("email", email)
+                .add("firstName", firstName)
+                .add("lastName", lastName)
+                .add("phoneNumber", phoneNumber)
+                .add("projects", projects.size())
+                .toString();
     }
 
     public String getUsername() {

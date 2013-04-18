@@ -251,10 +251,18 @@ public class UserTest {
         User u1 = new User(new Identifier(), "username", "email", "password", "firstName", "lastName", "phoneNumber");
         User u2 = new User(new Identifier(), "username", "email", "password", "firstName", "lastName", "phoneNumber");
         // the two users DO NOT share the same identifier, and should therefore be different
-        assertTrue(!u1.equals(u2));
+        assertFalse(u1.equals(u2));
 
         u2.setIdentifier(u1.getIdentifier());
         // now the two users share the same identifier, and should therefore be the same
         assertTrue(u1.equals(u2));
+    }
+
+    @Test
+    public void testEqualsFields() {
+        User u1 = new User(new Identifier(), "username", "email", "password", "firstName", "lastName", "phoneNumber");
+        User u2 = new User(u1.getIdentifier(), "username", "email", "password", "firstName", "notequal", "phoneNumber");
+
+        assertFalse(u1.equals(u2));
     }
 }
