@@ -4,7 +4,7 @@
 
     <groupId>ca.corefacility.bioinformatics.irida</groupId>
     <artifactId>irida-web</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
     
     <name>irida-web</name>
@@ -66,12 +66,18 @@
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         
+        <!-- Java -->
+        <java.version>1.7</java.version>
+        
         <!-- irida-api -->
         <irida.api.version>0.0.1-SNAPSHOT</irida.api.version>
         
         <!-- jaxb -->
         <jaxb-api.version>2.2.7</jaxb-api.version>
         <jaxb-impl.version>2.2.7-b53</jaxb-impl.version>
+        
+        <!-- Jackson -->
+        <jackson.version>2.1.4</jackson.version>
         
         <!-- Jetty -->
         <jetty.version>8.1.5.v20120716</jetty.version>
@@ -85,14 +91,25 @@
         
         <!-- Test -->
         <junit.version>4.11</junit.version>
-        <hamcrest.version>1.3</hamcrest.version>
  
         <!-- Logging -->
         <slf4j.version>1.7.2</slf4j.version>
         
         <!-- Gson -->
         <gson.version>2.2.2</gson.version>
+        
+        <!-- JavaEE web API version -->
+        <javaee.web.api.version>6.0</javaee.web.api.version>
        
+        <!-- REST-assured -->
+        <rest.assured.version>1.7.2</rest.assured.version>
+       
+        <!-- plugins -->
+        <plugin.maven.compiler.version>2.3.2</plugin.maven.compiler.version>
+        <plugin.maven.war.version>2.1.1</plugin.maven.war.version>
+        <plugin.maven.dependency.version>2.1</plugin.maven.dependency.version>
+        <plugin.maven.failsafe.version>2.13</plugin.maven.failsafe.version>
+        <plugin.maven.surefire.version>2.13</plugin.maven.surefire.version>
     </properties>
 
     <dependencies>
@@ -106,7 +123,7 @@
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
-            <version>6.0</version>
+            <version>${javaee.web.api.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -170,30 +187,13 @@
             
         <!-- Test Artifacts -->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>${spring-framework.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- used by Spring MVC Test framework -->
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-            <version>${hamcrest.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <version>${hamcrest.version}</version>
-            <scope>test</scope>
-        </dependency>
+
 
         <!-- logging -->
         <dependency>
@@ -211,7 +211,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.1.4</version>
+            <version>${jackson.version}</version>
         </dependency>
             
         <!-- Gson -->
@@ -221,34 +221,46 @@
             <version>${gson.version}</version>
         </dependency>
             
+        <!-- REST-assured -->
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${rest.assured.version}</version>
+            <scope>test</scope>
+        </dependency>
+                 
     </dependencies>
 
     <build>
         <plugins>
+            <!-- Maven compiler plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>${plugin.maven.compiler.version}</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                     <compilerArguments>
                         <endorseddirs>${endorsed.dir}</endorseddirs>
                     </compilerArguments>
                 </configuration>
             </plugin>
+            <!-- Maven WAR plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.1.1</version>
+                <version>${plugin.maven.war.version}</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
+            
+            <!-- Maven dependency plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.1</version>
+                <version>${plugin.maven.dependency.version}</version>
                 <executions>
                     <execution>
                         <phase>validate</phase>
@@ -262,7 +274,7 @@
                                 <artifactItem>
                                     <groupId>javax</groupId>
                                     <artifactId>javaee-endorsed-api</artifactId>
-                                    <version>6.0</version>
+                                    <version>${javaee.web.api.version}</version>
                                     <type>jar</type>
                                 </artifactItem>
                             </artifactItems>
@@ -270,6 +282,8 @@
                     </execution>
                 </executions>
             </plugin>
+            
+            <!-- Jetty plugin -->
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
@@ -294,6 +308,33 @@
                         <phase>post-integration-phase</phase>
                         <goals>
                             <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <!-- maven failsafe plugin (integration testing) -->
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${plugin.maven.failsafe.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <!-- maven surefire plugin (unit testing) -->
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${plugin.maven.surefire.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test</goal>
                         </goals>
                     </execution>
                 </executions>
