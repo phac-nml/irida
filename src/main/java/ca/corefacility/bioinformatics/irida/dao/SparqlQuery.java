@@ -22,6 +22,12 @@ import ca.corefacility.bioinformatics.irida.model.enums.Order;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public abstract class SparqlQuery {
+    /**
+     * Generate the SPARQL code to set the limit and offset of a query for paging
+     * @param page The page to return
+     * @param size The size of the page
+     * @return A string of the SPARQL code to perform the paged query
+     */
     public static String setLimitOffset(int page, int size){
         String qs = "";
         
@@ -38,6 +44,12 @@ public abstract class SparqlQuery {
         return qs;
     }
     
+    /**
+     * Generate the SPARQL code to set the order of a query's results
+     * @param sortProperty The property to sort on
+     * @param order The order to sort in
+     * @return A String of the SPARQL code to perform the ordering
+     */
     public static String setOrderBy(String sortProperty, Order order){
         String qs = "";
         

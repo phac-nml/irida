@@ -25,6 +25,12 @@ import org.openrdf.query.BindingSet;
  */
 public class UserResultExtractor {
     
+    /**
+     * Extract the data from a BiningSet to build a User object
+     * @param id The ID object of the user
+     * @param bindingSet The binding set to build by
+     * @return A newly constructed User
+     */
     public static User extractData(Identifier id, BindingSet bindingSet){
         User usr = new User();
         usr.setIdentifier(id);
@@ -42,5 +48,5 @@ public class UserResultExtractor {
         usr.setPhoneNumber(bs.getValue("phoneNumber").stringValue());
         
         return usr;
-    }    
+    }
 }

@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,11 +67,16 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
         super(store,User.class);
     } 
     
+    /**
+     * {@inheritDoc}
+     */    
     @Override
     public User create(User object) throws IllegalArgumentException {        
         if(object == null){
             throw new IllegalArgumentException("User is null");
         }
+
+           
         
         RepositoryConnection con = store.getRepoConnection();
 
@@ -116,8 +122,11 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
         }
         
         return object;     
-    }
-
+    }   
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public User read(Identifier id) throws UserNotFoundException {        
         User ret = null;
@@ -148,9 +157,7 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
             
             Identifier objid = new Identifier(java.net.URI.create(s.stringValue()));
             ret = UserResultExtractor.extractData(objid, bindingSet);
-            
-            UserSesameRepository.buildUserProperties(bindingSet, ret);
-                
+                            
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
             logger.error(ex.getMessage());
             throw new StorageException("Failed to read resource");        
@@ -166,7 +173,10 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
         
         return ret;
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public User getUserByUsername(String username) throws UserNotFoundException{
         User ret = null;
@@ -199,9 +209,7 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
             
             Identifier objid = new Identifier(java.net.URI.create(s.stringValue()));
             ret = UserResultExtractor.extractData(objid, bindingSet);
-            
-            UserSesameRepository.buildUserProperties(bindingSet, ret);
-                
+                            
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
                 logger.error(ex.getMessage());
                 throw new StorageException("Failed to get user " + username);          
@@ -217,15 +225,25 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
         
         return ret;        
     }    
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public User update(User object) throws IllegalArgumentException {
+        //User u = read(object.getIdentifier());
+        //backupUser(u);
+        
         delete(object.getIdentifier());
+        
         object = create(object);
         
         return object;
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void delete(Identifier id) throws IllegalArgumentException {        
         if(exists(id)){
@@ -257,12 +275,18 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
             throw new IllegalArgumentException("User does not exist in the database.");
         }        
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<User> list() {
         return list(0,0,null,null);
     }
     
+    /**
+     * {@inheritDoc}
+     */    
     @Override
     public List<User> list(int page, int size, String sortProperty, Order order) {
         List<User> users = new ArrayList<>();
@@ -305,12 +329,23 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
         }
         
         return users;    }    
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Boolean exists(Identifier id) {        
         return super.exists(id, "foaf", "Person");        
     }
-
+    
+    /**
+     * Add the properties of a project to the database
+     * 
+     * @param user The user whose properties we want to add
+     * @param uri The URI of the user resource to add to
+     * @param con The repository connection to use
+     * @throws RepositoryException 
+     */
     private void addUserProperties(User user, URI uri, RepositoryConnection con) throws RepositoryException{
         ValueFactory fac = con.getValueFactory(); 
 
@@ -389,14 +424,9 @@ public class UserSesameRepository extends SesameRepository implements UserReposi
         return exists;
     }
     
-    public static void buildUserProperties(BindingSet bs, User usr){      
-        usr.setUsername(bs.getValue("username").stringValue());
-        usr.setEmail(bs.getValue("email").stringValue());
-        usr.setFirstName(bs.getValue("firstName").stringValue());
-        usr.setLastName(bs.getValue("lastName").stringValue());
-        usr.setPhoneNumber(bs.getValue("phoneNumber").stringValue());
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Integer count() {
         return super.count("foaf","Person");

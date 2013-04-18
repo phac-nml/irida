@@ -24,21 +24,17 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.query.BindingSet;
-import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
@@ -67,6 +63,9 @@ public class ProjectSesameRepository extends SesameRepository implements Project
         super(store,Project.class);
     } 
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Project create(Project object) throws IllegalArgumentException {        
         if(object == null){
@@ -119,6 +118,9 @@ public class ProjectSesameRepository extends SesameRepository implements Project
         return object;     
     }
 
+    /**
+     * {@inheritDoc}
+     */    
     @Override
     public Project read(Identifier id) throws IllegalArgumentException {        
         Project ret = null;
@@ -169,7 +171,10 @@ public class ProjectSesameRepository extends SesameRepository implements Project
         
         return ret;
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Project update(Project object) throws IllegalArgumentException {
         delete(object.getIdentifier());
@@ -178,6 +183,9 @@ public class ProjectSesameRepository extends SesameRepository implements Project
         return object;
     }
 
+    /**
+     * {@inheritDoc}
+     */    
     @Override
     public void delete(Identifier id) throws IllegalArgumentException {        
         if(exists(id)){
@@ -208,12 +216,18 @@ public class ProjectSesameRepository extends SesameRepository implements Project
             throw new IllegalArgumentException("User does not exist in the database.");
         }        
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Project> list() {
         return list(0,0,null,null);        
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Project> list(int page, int size, String sortProperty, Order order) {
         List<Project> projects = new ArrayList<>();
@@ -259,23 +273,36 @@ public class ProjectSesameRepository extends SesameRepository implements Project
         
         return projects;           
     }    
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Boolean exists(Identifier id) {       
         return super.exists(id, "irida", "Project");
     }
-
-    private void addProjectProperties(Project proj, URI uri, RepositoryConnection con) throws RepositoryException{
+    
+    /**
+     * Add the properties of a project to the database
+     * 
+     * @param project The project whose properties we want to add
+     * @param uri The URI of the project resource to add to
+     * @param con The repository connection to use
+     * @throws RepositoryException 
+     */
+    private void addProjectProperties(Project project, URI uri, RepositoryConnection con) throws RepositoryException{
         ValueFactory fac = con.getValueFactory(); 
 
         //add project name rdfs:label
         URI pred = fac.createURI(con.getNamespace("rdfs"),"label");
-        Value name = fac.createLiteral(proj.getName());
+        Value name = fac.createLiteral(project.getName());
         Statement st = fac.createStatement(uri, pred, name);
         con.add(st);
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Collection<User> getUsersForProject(Project project) {
         List<User> users = new ArrayList<>();
@@ -324,9 +351,62 @@ public class ProjectSesameRepository extends SesameRepository implements Project
         
         return users;        
     }
+    
+    @Override
+    public Collection<Project> getProjectsForUser(User user) {
+        List<Project> projects = new ArrayList<>();
+        
+        String uri = user.getIdentifier().getUri().toString();
+        
+        RepositoryConnection con = store.getRepoConnection();
+        try {
+            String qs = store.getPrefixes()
+                    + "SELECT * "
+                    + "WHERE{ ?u a foaf:Person . \n"
+                    + "?s irida:hasUser ?u . \n"
+                    + ProjectSesameRepository.getParameters("s",ProjectSesameRepository.projectParams)
+                    + "}\n";
+            
+            
+            TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
+            URI puri = con.getValueFactory().createURI(uri);
+            tupleQuery.setBinding("u", puri);
 
+            TupleQueryResult result = tupleQuery.evaluate();
+            while(result.hasNext()){
+                BindingSet bindingSet = result.next();
+                Value s = bindingSet.getValue("s");
+                
+
+                Identifier objid = new Identifier(java.net.URI.create(s.stringValue()));
+                Project ret = ProjectResultExtractor.extractData(objid, bindingSet);
+                
+                projects.add(ret);
+            }
+            result.close();
+    
+        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't list project users"); 
+        }       
+        finally{
+            try {
+                con.close();
+            } catch (RepositoryException ex) {
+                logger.error(ex.getMessage());
+                throw new StorageException("Couldn't close connection"); 
+            }
+        }
+        
+        return projects;
+    }    
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Integer count() {
         return super.count("irida","Project");
     }
+
 }

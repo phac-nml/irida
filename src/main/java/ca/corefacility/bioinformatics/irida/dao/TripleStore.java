@@ -44,8 +44,7 @@ public class TripleStore {
     
     private static final Logger logger = LoggerFactory.getLogger(TripleStore.class);
 
-    public TripleStore(){
-    }
+    public TripleStore(){}
     
     public TripleStore(String serverUrl, String repoName, String uri){
         this.serverUrl = serverUrl;
@@ -60,10 +59,17 @@ public class TripleStore {
         this.repo = repo;        
     }
     
+    /**
+     * Return the base URI for this TripleStore
+     * @return The base URI for this TripleStore instance
+     */
     public String getURI(){
         return URI;
     }
     
+    /**
+     * Initialize the connection to the triplestore
+     */
     @PostConstruct
     public void initialize(){
         try {
@@ -74,6 +80,11 @@ public class TripleStore {
         }        
     }
 
+    /**
+     * Get the repository connection for this triplestore
+     * @return The repository connection
+     * @throws StorageException
+     */
     public RepositoryConnection getRepoConnection() throws StorageException{
         RepositoryConnection con = null;
         
@@ -87,6 +98,10 @@ public class TripleStore {
         return con;
     }
 
+    /**
+     * Get the prefixes defined by this repository for use in queries
+     * @return A String of the prefixes used
+     */
     public String getPrefixes() {
         String prefixes = "";
                 
@@ -106,6 +121,9 @@ public class TripleStore {
         return prefixes;
     }
 
+    /**
+     * Close the connection to the triplestore
+     */
     public void close() {
         try {
             repo.shutDown();
