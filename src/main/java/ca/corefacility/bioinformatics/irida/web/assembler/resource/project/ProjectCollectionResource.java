@@ -15,7 +15,6 @@
  */
 package ca.corefacility.bioinformatics.irida.web.assembler.resource.project;
 
-import ca.corefacility.bioinformatics.irida.model.Project;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
@@ -38,6 +37,10 @@ public class ProjectCollectionResource extends ResourceSupport {
     }
 
     public void add(ProjectResource project) {
-        this.projects.add(project);
+        projects.add(project);
+    }
+    
+    public List<ProjectResource> getProjects() {
+        return this.projects;
     }
 }
