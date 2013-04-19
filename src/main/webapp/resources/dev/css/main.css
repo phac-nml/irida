@@ -7,3 +7,14 @@ input.ng-invalid.ng-dirty {
 input.ng-valid.ng-dirty {
   background-color: #78FA89;
 }
+.listTable th {
+  background-color: #000000;
+  color: #ffffff;
+  border: 1px solid #000000;
+}
+.listTable tbody tr:hover {
+  cursor: pointer;
+}
+.listTable tbody tr:hover td {
+  background-color: #e8e8e8;
+}
