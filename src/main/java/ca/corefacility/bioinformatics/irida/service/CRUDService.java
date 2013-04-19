@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import java.util.List;
@@ -20,12 +21,12 @@ public interface CRUDService<IdentifierType, Type> {
      * @param object The object to persist.
      * @return The object as it was persisted in the database. May modify the
      * identifier of the object when returned.
-     * @throws IllegalArgumentException If the object being persisted violates
+     * @throws EntityExistsException If the object being persisted violates
      * uniqueness constraints in the database.
      * @throws ConstraintViolationException If the object being persisted cannot
      * be validated by validation rules associated with the object.
      */
-    public Type create(Type object) throws IllegalArgumentException, ConstraintViolationException;
+    public Type create(Type object) throws EntityExistsException, ConstraintViolationException;
 
     /**
      * Read the object type by unique identifier.
@@ -49,7 +50,7 @@ public interface CRUDService<IdentifierType, Type> {
      * @throws ConstraintViolationException If the object being persisted cannot
      * be validated by validation rules associated with the object.
      */
-    public Type update(Type object) throws IllegalArgumentException, ConstraintViolationException;
+    public Type update(Type object) throws EntityExistsException, ConstraintViolationException;
 
     /**
      * Delete the object with the specified identifier from the database.
