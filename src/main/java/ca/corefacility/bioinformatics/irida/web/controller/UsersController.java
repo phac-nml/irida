@@ -30,10 +30,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder.pageLinksFor;
+import ca.corefacility.bioinformatics.irida.web.exceptions.EntityNotFoundException;
 import java.util.Collection;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Controller for managing users.
@@ -125,7 +127,8 @@ public class UsersController {
     }
 
     @RequestMapping(value = "/{username}/projects", method = RequestMethod.GET)
-    public String getUserProjects(HttpServletResponse response, @PathVariable String username, Model model) {
+    public ModelAndView getUserProjects(@PathVariable String username) {
+        ModelAndView mav = new ModelAndView("users/user");
         try {
             User u = userService.getUserByUsername(username);
             ProjectCollectionResource resources = new ProjectCollectionResource();
@@ -137,12 +140,11 @@ public class UsersController {
                 resources.add(resource);
             }
 
-            model.addAttribute("projectResources", resources);
+            mav.addObject("projectResources", resources);
         } catch (UserNotFoundException e) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return "exceptions/404";
+            throw new EntityNotFoundException();
         }
-        return "users/user";
+        return mav;
     }
 
     private String validationMessages(Set<ConstraintViolation<?>> failures) {
