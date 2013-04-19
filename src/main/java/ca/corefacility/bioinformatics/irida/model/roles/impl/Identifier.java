@@ -26,10 +26,11 @@ import javax.validation.constraints.NotNull;
  * inheritance, see http://en.wikipedia.org/wiki/Liskov_substitution_principle
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class Identifier {
 
+    @NotNull
+    private UUID uuid;
     @NotNull
     private URI uri;
     // alternative URI:
@@ -37,21 +38,20 @@ public class Identifier {
     //private String url;
 
     public Identifier() {
-        UUID uuid = UUID.randomUUID();
-        
-        String struri = "http://nowhere/"+uuid.toString();
-        uri = URI.create(struri);
+        uuid = UUID.randomUUID();
     }
 
-    public Identifier(URI uri) {
+    public Identifier(URI uri, UUID uuid) {
         this.uri = uri;
+        this.uuid = uuid;
     }
 
     @Override
     public boolean equals(Object other) {
         if (other instanceof Identifier) {
             Identifier id = (Identifier) other;
-            return Objects.equals(uri, id.uri);
+            return Objects.equals(this.uuid, id.uuid)
+                    && Objects.equals(uri, id.uri);
         }
 
         return false;
@@ -59,7 +59,7 @@ public class Identifier {
 
     @Override
     public int hashCode() {
-        return Objects.hash(uri);
+        return Objects.hash(uri, uuid);
     }
 
     public URI getUri() {
@@ -70,4 +70,11 @@ public class Identifier {
         this.uri = uri;
     }
 
+    public UUID getUUID() {
+        return uuid;
+    }
+
+    public void setUUID(UUID uuid) {
+        this.uuid = uuid;
+    }
 }
