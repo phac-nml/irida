@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.controller;
 
-import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
@@ -17,12 +18,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.slf4j.Logger;
@@ -30,14 +29,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder.pageLinksFor;
-import ca.corefacility.bioinformatics.irida.web.exceptions.EntityNotFoundException;
+import com.google.common.net.HttpHeaders;
 import java.util.Collection;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.util.MultiValueMap;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -62,14 +63,24 @@ public class UsersController {
         this.projectService = projectService;
     }
 
+    /**
+     * Retrieve and construct a response with a collection of user resources.
+     *
+     * @param page the current page of the list of resources that the client
+     * wants.
+     * @param size the size of the page that the client wants to see.
+     * @param sortProperty the property that the resources should be sorted by.
+     * @param sortOrder the order of the sort.
+     * @return a model and view containing the collection of user resources.
+     */
     @RequestMapping(method = RequestMethod.GET)
-    public String showUsersPage(Model model,
+    public ModelAndView showUsersPage(
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_PAGE, defaultValue = "1") int page,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SIZE, defaultValue = "20") int size,
-            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_COLUMN, defaultValue = "username") String sortColumn,
+            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_COLUMN, defaultValue = "username") String sortProperty,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER, defaultValue = "ASCENDING") Order sortOrder) {
-
-        List<User> users = userService.list(page, size, sortColumn, sortOrder);
+        ModelAndView mav = new ModelAndView("users/index");
+        List<User> users = userService.list(page, size, sortProperty, sortOrder);
         ControllerLinkBuilder linkBuilder = linkTo(UsersController.class);
         int totalUsers = userService.count();
         UserCollectionResource resources = new UserCollectionResource();
@@ -80,79 +91,116 @@ public class UsersController {
             resources.add(resource);
         }
 
-        resources.add(pageLinksFor(UsersController.class, page, size, totalUsers, sortColumn, sortOrder));
+        resources.add(pageLinksFor(UsersController.class, page, size, totalUsers, sortProperty, sortOrder));
         resources.setTotalUsers(totalUsers);
 
-        model.addAttribute("userResources", resources);
-        model.addAttribute("users", true);
-        model.addAttribute("pageTitle", "Users");
-        return "users/index";
-    }
-
-    /**
-     *
-     * @param response
-     * @param body
-     * @return
-     */
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String create(HttpServletResponse response, @RequestBody UserResource ur){
-           
-        User user = new User(ur.getUsername(), ur.getEmail(), ur.getEmail(), ur.getFirstName(),ur.getLastName(), ur.getPhoneNumber());
-        logger.debug(user.toString());
-        try {
-            userService.create(user);
-        } catch (ConstraintViolationException e) {
-            Set<ConstraintViolation<?>> constraintViolations = e.getConstraintViolations();
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return validationMessages(constraintViolations);
-        } catch (IllegalArgumentException e) {
-            return "{error: {username: 'username already exists'}}";
-        }
-        response.setStatus(HttpServletResponse.SC_CREATED);
-        return "success";
-    }
-    
-    @RequestMapping(value = "/partials/{name}", method = RequestMethod.GET)
-    public String getHTMLPartials(@PathVariable String name, Model model){
-        return "users/partials/" + name;
-    }
-
-    @RequestMapping(value = "/{username}", method = RequestMethod.GET)
-    public String getUser(HttpServletResponse response, @PathVariable String username, Model model) {
-        try {
-            UserResource u = new UserResource(userService.getUserByUsername(username));
-            u.add(linkTo(UsersController.class).slash(username).slash("projects").withRel(USER_PROJECTS_REL));
-            u.add(linkTo(UsersController.class).slash(username).withSelfRel());
-            model.addAttribute("user", u);
-        } catch (UserNotFoundException e) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return "exceptions/404";
-        }
-        return "users/user";
-    }
-
-    @RequestMapping(value = "/{username}/projects", method = RequestMethod.GET)
-    public ModelAndView getUserProjects(@PathVariable String username) {
-        ModelAndView mav = new ModelAndView("users/user");
-        try {
-            User u = userService.getUserByUsername(username);
-            ProjectCollectionResource resources = new ProjectCollectionResource();
-            Collection<Project> projects = projectService.getProjectsForUser(u);
-            ControllerLinkBuilder linkBuilder = linkTo(ProjectsController.class);
-            for (Project project : projects) {
-                ProjectResource resource = new ProjectResource(project);
-                resource.add(linkBuilder.slash(project.getIdentifier().getUUID()).withSelfRel());
-                resources.add(resource);
-            }
-
-            mav.addObject("projectResources", resources);
-        } catch (UserNotFoundException e) {
-            throw new EntityNotFoundException();
-        }
+        mav.addObject("userResources", resources);
+        mav.addObject("users", true);
+        mav.addObject("pageTitle", "Users");
         return mav;
     }
 
+    /**
+     * Create a new user resource in the database.
+     *
+     * @param ur the user resource template to be used.
+     * @return the status of the creation request.
+     */
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> create(@RequestBody UserResource ur) {
+        ResponseEntity<String> response = new ResponseEntity<>("success", HttpStatus.CREATED);
+        User user = new User(ur.getUsername(), ur.getEmail(), ur.getEmail(), ur.getFirstName(), ur.getLastName(), ur.getPhoneNumber());
+        logger.debug(user.toString());
+        user = userService.create(user);
+        String location = linkTo(UsersController.class).slash(user.getUsername()).withSelfRel().getHref();
+        response.getHeaders().add(HttpHeaders.LOCATION, location);
+        return response;
+    }
+
+    @RequestMapping(value = "/partials/{name}", method = RequestMethod.GET)
+    public String getHTMLPartials(@PathVariable String name) {
+        return "users/partials/" + name;
+    }
+
+    /**
+     * Get an individual user from the database.
+     *
+     * @param username the username for the desired user.
+     * @return a model containing the appropriate resource.
+     */
+    @RequestMapping(value = "/{username}", method = RequestMethod.GET)
+    public ModelAndView getUser(@PathVariable String username) {
+        ModelAndView mav = new ModelAndView("users/user");
+        UserResource u = new UserResource(userService.getUserByUsername(username));
+        u.add(linkTo(UsersController.class).slash(username).slash("projects").withRel(USER_PROJECTS_REL));
+        u.add(linkTo(UsersController.class).slash(username).withSelfRel());
+        mav.addObject("user", u);
+        return mav;
+    }
+
+    /**
+     * Get the collection of projects for a specific user.
+     *
+     * @param username the username for the desired user.
+     * @return a model containing the collection of projects for that user.
+     */
+    @RequestMapping(value = "/{username}/projects", method = RequestMethod.GET)
+    public ModelAndView getUserProjects(@PathVariable String username) {
+        ModelAndView mav = new ModelAndView("users/user");
+        User u = userService.getUserByUsername(username);
+        ProjectCollectionResource resources = new ProjectCollectionResource();
+        Collection<Project> projects = projectService.getProjectsForUser(u);
+        ControllerLinkBuilder linkBuilder = linkTo(ProjectsController.class);
+        for (Project project : projects) {
+            ProjectResource resource = new ProjectResource(project);
+            resource.add(linkBuilder.slash(project.getIdentifier().getUUID()).withSelfRel());
+            resources.add(resource);
+        }
+
+        mav.addObject("projectResources", resources);
+        return mav;
+    }
+
+    /**
+     * Handle {@link EntityNotFoundException}.
+     *
+     * @param e the exception as thrown by the service.
+     * @return an appropriate HTTP response.
+     */
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<String> handleNotFoundException(EntityNotFoundException e) {
+        return new ResponseEntity<>("No such user found.", HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Handle {@link ConstraintViolationException}.
+     *
+     * @param e the exception as thrown by the service.
+     * @return an appropriate HTTP response.
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<String> handleConstraintViolations(ConstraintViolationException e) {
+        Set<ConstraintViolation<?>> constraintViolations = e.getConstraintViolations();
+        return new ResponseEntity<>(validationMessages(constraintViolations), HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Handle {@link EntityExistsException}.
+     *
+     * @param e the exception as thrown by the service.
+     * @return an appropriate HTTP response.
+     */
+    @ExceptionHandler(EntityExistsException.class)
+    public ResponseEntity<String> handleExistsException(EntityExistsException e) {
+        return new ResponseEntity<>("An entity already exists with that identifier.", HttpStatus.CONFLICT);
+    }
+
+    /**
+     * Render a collection of constraint violations as a JSON object.
+     *
+     * @param failures the set of constraint violations.
+     * @return the constraint violations as a JSON object.
+     */
     private String validationMessages(Set<ConstraintViolation<?>> failures) {
         Map<String, List<String>> mp = new HashMap();
         for (ConstraintViolation<?> failure : failures) {

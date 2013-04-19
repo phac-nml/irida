@@ -15,7 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit;
 
-import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -25,7 +25,6 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.Proje
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
 import ca.corefacility.bioinformatics.irida.web.controller.UsersController;
 import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
-import ca.corefacility.bioinformatics.irida.web.exceptions.EntityNotFoundException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -94,7 +93,7 @@ public class UserControllerTest {
     public void testGetUserProjectsBadUser() {
         String username = "superbad";
         when(userService.getUserByUsername(username)).thenThrow(
-                new UserNotFoundException(username));
+                new EntityNotFoundException(username));
         try {
             controller.getUserProjects(username);
             fail();
