@@ -34,6 +34,8 @@ import java.util.Collection;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import org.springframework.web.bind.annotation.PathVariable;
@@ -108,13 +110,12 @@ public class UsersController {
      */
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> create(@RequestBody UserResource ur) {
-        ResponseEntity<String> response = new ResponseEntity<>("success", HttpStatus.CREATED);
         User user = new User(ur.getUsername(), ur.getEmail(), ur.getPassword(), ur.getFirstName(), ur.getLastName(), ur.getPhoneNumber());
-        logger.debug(user.toString());
-        logger.debug(user.getPassword());
         user = userService.create(user);
         String location = linkTo(UsersController.class).slash(user.getUsername()).withSelfRel().getHref();
-        response.getHeaders().add(HttpHeaders.LOCATION, location);
+        MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap();
+        responseHeaders.add(HttpHeaders.LOCATION, location);
+        ResponseEntity<String> response = new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
         return response;
     }
 
