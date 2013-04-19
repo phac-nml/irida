@@ -109,8 +109,9 @@ public class UsersController {
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> create(@RequestBody UserResource ur) {
         ResponseEntity<String> response = new ResponseEntity<>("success", HttpStatus.CREATED);
-        User user = new User(ur.getUsername(), ur.getEmail(), ur.getEmail(), ur.getFirstName(), ur.getLastName(), ur.getPhoneNumber());
+        User user = new User(ur.getUsername(), ur.getEmail(), ur.getPassword(), ur.getFirstName(), ur.getLastName(), ur.getPhoneNumber());
         logger.debug(user.toString());
+        logger.debug(user.getPassword());
         user = userService.create(user);
         String location = linkTo(UsersController.class).slash(user.getUsername()).withSelfRel().getHref();
         response.getHeaders().add(HttpHeaders.LOCATION, location);
