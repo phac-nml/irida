@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.assembler.resource.user;
 
 import ca.corefacility.bioinformatics.irida.model.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.net.URI;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -19,6 +20,7 @@ public class UserResource extends ResourceSupport {
     private User user;
 
     public UserResource() {
+        user = new User();
     }
 
     public UserResource(User user) {
@@ -35,9 +37,17 @@ public class UserResource extends ResourceSupport {
         return user.getUsername();
     }
 
+    public void setUsername(String username) {
+        user.setUsername(username);
+    }
+
     @XmlElement
     public String getEmail() {
         return user.getEmail();
+    }
+
+    public void setEmail(String email) {
+        user.setEmail(email);
     }
 
     @XmlElement
@@ -45,13 +55,34 @@ public class UserResource extends ResourceSupport {
         return user.getFirstName();
     }
 
+    public void setFirstName(String firstName) {
+        user.setFirstName(firstName);
+    }
+
     @XmlElement
     public String getLastName() {
         return user.getLastName();
     }
 
+    public void setLastName(String lastName) {
+        user.setLastName(lastName);
+    }
+
     @XmlElement
     public String getPhoneNumber() {
         return user.getPhoneNumber();
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        user.setPhoneNumber(phoneNumber);
+    }
+
+    public void setPassword(String password) {
+        user.setPassword(password);
+    }
+
+    @JsonIgnore
+    public User getUser() {
+        return user;
     }
 }
