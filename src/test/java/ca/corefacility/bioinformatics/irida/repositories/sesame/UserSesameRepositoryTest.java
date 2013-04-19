@@ -102,7 +102,7 @@ public class UserSesameRepositoryTest {
             User u = repo.read(i);
             fail();
         }
-        catch(UserNotFoundException e){
+        catch(IllegalArgumentException e){
             assertNotNull(e);
         }
     }    
