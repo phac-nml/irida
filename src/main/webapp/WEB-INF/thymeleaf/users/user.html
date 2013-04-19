@@ -14,10 +14,13 @@
             <div class="clearfix"></div>
             <span>{{user.firstName}}</span>
             <span>{{user.lastName}}</span>
-            <h3>Projects</h3>
-            <ul data-ng-repeat="project in projects">
-                <li><a data-ng-href="{{project.links[0].href}}">{{project.name}}</a></li>
-            </ul>
+
+            <div class="projects">
+                <h3>Projects</h3>
+                <ul data-ng-repeat="project in projects">
+                    <li><a data-ng-href="{{project.links[0].href}}">{{project.name}}</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>

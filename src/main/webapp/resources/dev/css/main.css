@@ -18,3 +18,6 @@ input.ng-valid.ng-dirty {
 .listTable tbody tr:hover td {
   background-color: #e8e8e8;
 }
+.projects ul {
+  list-style: url("img/projects_folder.png") inside;
+}
