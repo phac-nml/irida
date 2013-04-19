@@ -1,10 +1,22 @@
 /* global angular */
 
 angular.module('irida')
-  .controller('UsersListCtrl', function ($scope, $window, usersData) {
+  .controller('UsersListCtrl', function ($scope, $window, $dialog, $tooltip, usersData) {
     $scope.usersUrl = '/users' + '?_' + Math.random();
     $scope.users = [];
     $scope.newUser = {};
+
+    $scope.openNewUsersModal = function () {
+      var d = $dialog.dialog($scope.opts);
+      d.open('/users/partials/newUserModal.html');
+    };
+
+    $scope.opts = {
+      backdropFade: true,
+      dialogFade:true,
+      keyboard: true,
+      controller: 'DialogCtrl'
+    };
 
     $scope.loadUsers = function (url) {
       'use strict';
@@ -37,6 +49,46 @@ angular.module('irida')
       });
       $scope.users = data.userResources.users;
     }
+  })
+  .controller('DialogCtrl', function($scope, dialog, createUser) {
+    "use strict";
+
+    $scope.errors = {};
+    $scope.newUser = {};
+
+    $scope.closeNewUsersModal = function() {
+      dialog.close();
+    };
+
+    $scope.submitNewUser = function () {
+      if($scope.newUserForm.$valid) {
+        createUser.create($scope.newUser);
+      }
+      else {
+        console.log("NOT VALID");
+      }
+    };
+  }).
+  factory('createUser', function ($http) {
+    "use strict";
+    var addUser = {};
+
+    addUser.create = function (data) {
+      $http({
+        method: 'POST',
+        url: '/users',
+        data: data,
+        headers: {'Content-Type': 'application/json'}
+      })
+        .success(function (data, status) {
+          console.log("SUCCESS");
+        })
+        .error(function(data, status) {
+          console.log(data);
+        });
+    };
+
+    return addUser;
   });
 
 angular.module('irida')
