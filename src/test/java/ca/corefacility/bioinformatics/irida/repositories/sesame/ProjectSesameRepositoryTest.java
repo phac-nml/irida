@@ -16,6 +16,7 @@
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.dao.SailMemoryStore;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -101,7 +102,7 @@ public class ProjectSesameRepositoryTest {
             Project p = repo.read(i);
             fail();
         }
-        catch(IllegalArgumentException e){
+        catch(EntityNotFoundException e){
             assertNotNull(e);
         }
     }

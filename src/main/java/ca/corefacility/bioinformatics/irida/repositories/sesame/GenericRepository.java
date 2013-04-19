@@ -18,6 +18,7 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 import ca.corefacility.bioinformatics.irida.dao.PropertyMapper;
 import ca.corefacility.bioinformatics.irida.dao.SparqlQuery;
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
@@ -151,7 +152,6 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
             throw new IllegalArgumentException("Object " + objid.getUri().toString() + " already exists in the database");
         }
 
-        //Identifier objid = new Identifier(objuri, stringID);
         object.setIdentifier(objid);
 
 
@@ -222,7 +222,7 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
         String uri = netURI.toString();
 
         if (!exists(id)) {
-            throw new IllegalArgumentException("No such object with the given URI exists.");
+            throw new EntityNotFoundException("No such object with the given URI exists.");
         }
 
         RepositoryConnection con = store.getRepoConnection();
