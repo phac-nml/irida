@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.dao.SparqlQuery;
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -62,17 +63,32 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
 
     public GenericRepository() {
     }
-
+    
+    public GenericRepository(TripleStore store, Class type) {
+        super(store, type);
+        this.objectType = type;
+    }
     public GenericRepository(TripleStore store, Class type, PropertyMapper propertyMap) {
         super(store, type);
-        this.propertyMap = propertyMap;
         this.objectType = type;
-        stringType = propertyMap.prefix + ":" + propertyMap.type;
+        
+        setPropertyMap(propertyMap);
     }
 
-    public String generateId() {
-        String id = UUID.randomUUID().toString();
+    public UUID generateId(Type t) {
+        UUID id = UUID.randomUUID();
+        
         return id;
+    }
+    
+    public java.net.URI buildURI(String id){
+        java.net.URI uri = java.net.URI.create(URI + id);
+        
+        return uri;
+    }    
+    public void setPropertyMap(PropertyMapper propertyMap){
+        this.propertyMap = propertyMap;
+        stringType = propertyMap.prefix + ":" + propertyMap.type;
     }
 
     @Override
@@ -83,11 +99,18 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
 
         RepositoryConnection con = store.getRepoConnection();
 
-        String stringID = generateId();
-        String stringURI = URI + stringID;
-        java.net.URI objuri = java.net.URI.create(stringURI);
+        UUID id = generateId(object);
+        java.net.URI objuri = buildURI(id.toString());
+        Identifier objid = new Identifier(objuri,id);
+        objid.setUri(objuri);
+        
+        String stringURI = objuri.toString();
+        
+        if(exists(objid)){
+            throw new IllegalArgumentException("Object " + objid.getUri().toString() + " already exists in the database");
+        }
 
-        Identifier objid = new Identifier(objuri, stringID);
+        //Identifier objid = new Identifier(objuri, stringID);
         object.setIdentifier(objid);
 
 
@@ -101,6 +124,11 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
             URI oPred = fac.createURI(con.getNamespace("rdf"), "type");
             Value oName = fac.createURI(con.getNamespace(propertyMap.prefix), propertyMap.type);
             Statement oSt = fac.createStatement(uri, oPred, oName);
+            con.add(oSt);
+            
+            oPred = fac.createURI(con.getNamespace("irida"), "identifier");
+            Literal litId = fac.createLiteral(id.toString());
+            oSt = fac.createStatement(uri, oPred, litId);
             con.add(oSt);
 
             List<PropertyMapper.Property> properties = propertyMap.getProperties();
@@ -145,7 +173,8 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
 
         Type ret = null;
 
-        String uri = id.getUri().toString();
+        java.net.URI netURI = buildURI(id.getUUID().toString());
+        String uri = netURI.toString();
 
         if (!exists(id)) {
             throw new UserNotFoundException("No such user with the given URI exists.");
@@ -168,8 +197,10 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
             BindingSet bindingSet = result.next();
 
             Value s = bindingSet.getValue("s");
+            Value resid = bindingSet.getValue("resid");
 
-            Identifier objid = new Identifier(java.net.URI.create(s.stringValue()));
+            UUID uuid = UUID.fromString(resid.stringValue());
+            Identifier objid = new Identifier(java.net.URI.create(s.stringValue()),uuid);
 
             ret = extractData(objid, bindingSet);
 
@@ -214,8 +245,10 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
             while (result.hasNext()) {
                 BindingSet bindingSet = result.next();
                 Value s = bindingSet.getValue("s");
+                Value resid = bindingSet.getValue("resid");
 
-                Identifier objid = new Identifier(java.net.URI.create(s.stringValue()));
+                UUID uuid = UUID.fromString(resid.stringValue());
+                Identifier objid = new Identifier(java.net.URI.create(s.stringValue()),uuid);
                 Type ret = extractData(objid, bindingSet);
 
                 users.add(ret);
@@ -273,7 +306,7 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
 
     public String buildParams(String subject) {
         List<PropertyMapper.Property> properties = propertyMap.getProperties();
-        StringBuilder params = new StringBuilder();
+        StringBuilder params = new StringBuilder("?").append(subject).append(" irida:identifier ?resid . \n");
 
         for (PropertyMapper.Property prop : properties) {
             params.append("?").append(subject).append(" "); //subject
@@ -291,7 +324,7 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
         try {
             usr = objectType.newInstance();
             usr.setIdentifier(id);
-            usr = buildUserProperties(bindingSet, usr);
+            usr = buildProperties(bindingSet, usr);
         } catch (InstantiationException | IllegalAccessException ex) {
             Logger.getLogger(GenericRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -299,7 +332,7 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
         return usr;
     }
 
-    private Type buildUserProperties(BindingSet bs, Type usr) {
+    private Type buildProperties(BindingSet bs, Type usr) {
         List<PropertyMapper.Property> properties = propertyMap.getProperties();
         for (PropertyMapper.Property prop : properties) {
 
