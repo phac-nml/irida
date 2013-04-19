@@ -1,124 +1,89 @@
-var uvm = null;
+/* global angular */
 
-function User(data) {
-  'use strict';
-  this.href = data.links[0].href;
-  this.username = data.username;
-  this.firstName = data.firstName;
-  this.lastName = data.lastName;
-  this.email = data.email;
-  this.phoneNumber = data.phoneNumber;
-}
+angular.module('irida', ['ngResource', 'ui.bootstrap']);
 
-function UsersViewModel() {
-  'use strict';
-  var self = this;
+angular.module('irida')
+  .controller('NavCtrl', function ($scope, $dialog) {
+    'use strict';
 
-  $('#myModal').foundation('reveal', {
-    closed: function () {
-      self.errors.username('');
-      self.newUser.username('');
-      self.errors.password('');
-      self.newUser.password('');
-      self.errors.firstName('');
-      self.newUser.firstName('');
-      self.errors.lastName('');
-      self.newUser.lastName('');
-      self.errors.email('');
-      self.newUser.email('');
-      self.errors.phoneNumber('');
-      self.newUser.phoneNumber('');
+    $scope.errors = {
+      username: "FUCK IT IS WRONG",
+      password: "FUCK THIS IS WRONG TOO"
+    };
+
+    $scope.openNewUsersModal = function ($event) {
+      $event.preventDefault();
+      var d = $dialog.dialog($scope.opts);
+      d.open('/users/partials/newUserModal.html');
+    };
+
+    $scope.opts = {
+      backdropFade: true,
+      dialogFade:true,
+      keyboard: true,
+      controller: 'DialogCtrl'
+    };
+  })
+  .controller('DialogCtrl', function($scope, dialog) {
+    "use strict";
+    $scope.closeNewUsersModal = function() {
+      dialog.close();
+    };
+  })
+  .controller('UsersListCtrl', function ($scope, $window, usersData) {
+    $scope.usersUrl = '/users' + '?_' + Math.random();
+    $scope.users = [];
+    $scope.newUser = {};
+
+    $scope.loadUsers = function (url) {
+      'use strict';
+      usersData.getAllUsers(url).then(
+        function (data) {
+          ajaxSuccessCallback(data);
+
+        },
+        function (errorMessage) {
+          // TODO: handle error message
+        });
+    };
+
+    $scope.gotoUser = function (url) {
+      $window.location = url;
+    };
+
+    $scope.init = function () {
+      'use strict';
+         // TODO: EXTRACT THIS
+
+      $scope.loadUsers($scope.usersUrl);
+    };
+
+    function ajaxSuccessCallback(data) {
+      "use strict";
+      $scope.links = {};
+      angular.forEach(data.userResources.links, function (val) {
+        $scope.links[val.rel] = val.href;
+      });
+      $scope.users = data.userResources.users;
     }
   });
 
-  self.links = {
-    prev       : ko.observable(""),
-    next       : ko.observable(""),
-    currentPage: ko.observable("")
-  };
-
-  self.users = ko.observableArray([]);
-
-  self.newUser = {
-    username   : ko.observable(""),
-    password   : ko.observable(""),
-    firstName  : ko.observable(""),
-    lastName   : ko.observable(""),
-    email      : ko.observable(""),
-    phoneNumber: ko.observable("")
-  };
-
-  self.errors = {
-    username   : ko.observable(""),
-    password   : ko.observable(""),
-    firstName  : ko.observable(""),
-    lastName   : ko.observable(""),
-    email      : ko.observable(""),
-    phoneNumber: ko.observable("")
-  };
-
-  getUsers("http://0.0.0.0:8080/users");
-
-  self.viewUser = function (data, event) {
+angular.module('irida')
+  .factory('usersData', function ($http, $q) {
     "use strict";
-    window.location = data.href;
-  };
+    return {
+      getAllUsers: function (url) {
+        var deferred = $q.defer();
 
-  self.postNewUser = function () {
-    "use strict";
-    $.ajax({
-      type      : 'POST',
-      data      : $("#myModal").serialize(),
-      url       : '/users',
-      statusCode: {
-        401: function () {
-          alert("Authorization required");
-        }
-      },
-      success   : function () {
-        getUsers(self.links.currentPage());
-        $("#myModal").foundation('reveal', 'close');
-      },
-      error     : function (request, status, error) {
-        console.log(request);
-        $.map($.parseJSON(request.responseText), function (value, key) {
-          if (self.errors[key]) {
-            self.errors[key](value);
-          }
-        });
+        $http.get(url)
+          .success(function (data) {
+            deferred.resolve(data);
+          })
+          .error(function () {
+            deferred.reject("An error occured while getting users");
+          });
+
+        return deferred.promise;
       }
-    })
-  };
-
-  self.updateTable = function (data, event, stuff) {
-    getUsers(self.links[data]());
-  };
-
-  function getUsers(url) {
-    console.log("about to getJSON at: " + url);
-    $.getJSON(url, function (allData) {
-      console.log("RETURNING FROM SERVER");
-      self.links.next("");
-      self.links.prev("");
-
-      self.links.currentPage(allData.userResources.links.self);
-
-      var mappedUsers = $.map(allData.userResources.users, function (item) {
-        return new User(item)
-      });
-      $.map(allData.userResources.links, function (item) {
-        if (self.links[item.rel]) {
-          self.links[item.rel](item.href);
-        }
-      });
-      self.users(mappedUsers);
-    });
-  }
-}
-
-$.ajaxSetup({ cache: false });
-
-window.onload = function () {
-  uvm = new UsersViewModel();
-  ko.applyBindings(uvm);
-};
+    };
+  });

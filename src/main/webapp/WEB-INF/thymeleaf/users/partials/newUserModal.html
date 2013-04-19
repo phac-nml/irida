@@ -1,0 +1,40 @@
+<div class="modal-header">
+    <h1>Create New User</h1>
+</div>
+<div class="modal-body">
+    <form name="newUserForm">
+        <div class="controls controls-row">
+            <div class="span4">
+                <label th:text="#{user.username}">Username</label>
+                <input name="username" data-ng-model="newUser.username" type="text" required="required"/>
+            </div>
+
+            <div class="span4">
+                <label th:text="#{user.password}">Passowrd</label>
+                <input name="password" data-ng-model="newUser.password" type="password"/>
+            </div>
+            <div class="span4">
+                <label th:text="#{user.firstName}">First Name</label>
+                <input name="firstName" data-ng-model="newUser.firstName" type="text"/>
+            </div>
+
+            <div class="span4">
+                <label th:text="#{user.lastName}">Last Name</label>
+                <input name="lastName" data-ng-model="newUser.lastName" type="password"/>
+            </div>
+            <div class="span4">
+                <label th:text="#{user.email}">Email</label>
+                <input name="email" data-ng-model="newUser.email" type="email"/>
+            </div>
+
+            <div class="span4">
+                <label th:text="#{user.phoneNumber}">Phone Number</label>
+                <input name="password" data-ng-model="newUser.phoneNumber" type="tel"/>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn" data-ng-click="closeNewUsersModal()">Cancel</button>
+    <button class="btn btn-primary" data-ng-click="closeNewUsersModal(btn.result)">Create User</button>
+</div>

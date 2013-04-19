@@ -1,22 +1,21 @@
 // Karma configuration
-// Generated on Mon Apr 08 2013 22:16:54 GMT-0500 (CDT)
+// Generated on Thu Apr 18 2013 11:02:23 GMT-0500 (CDT)
 
 
 // base path, that will be used to resolve files and exclude
 basePath = '';
 
-
-// frameworks to use
 frameworks = ['jasmine'];
 
 
 // list of files / patterns to load in the browser
 files = [
-  'src/main/webapp/resources/dev/js/vendor/knockout/knockout-v2.2.1.min.js',
-  'src/main/webapp/resources/dev/js/vendor/jquery/jquery-1.9.1.min.js',
+//  'src/test/js/lib/jasmine/jasmine.js',
+  'src/main/webapp/resources/dev/js/vendor/angular/angular.min.js',
+  'src/main/webapp/resources/dev/js/vendor/angular/angular-resource.min.js',
+  'src/test/js/lib/angular/angular-mocks.js',
   'src/main/webapp/resources/dev/js/users.js',
-  'src/test/js/lib/jasmine-1.3.1/jasmine.js',
-  'src/test/js/spec/_users.js'
+  'src/test/js/unit/_users.js'
 ];
 
 
@@ -27,8 +26,8 @@ exclude = [
 
 
 // test results reporter to use
-// possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-reporters = ['dots'];
+// possible values: 'dots', 'progress', 'junit'
+reporters = ['progress'];
 
 
 // web server port
@@ -60,7 +59,7 @@ autoWatch = true;
 // - Safari (only Mac)
 // - PhantomJS
 // - IE (only Windows)
-browsers = ['Chrome', 'Firefox'];
+browsers = ['Chrome'];
 
 
 // If browser does not capture in given timeout [ms], kill it
@@ -71,10 +70,9 @@ captureTimeout = 60000;
 // if true, it capture browsers, run tests and exit
 singleRun = false;
 
-
-// plugins to load
 plugins = [
   'karma-jasmine',
   'karma-chrome-launcher',
-  'karma-firefox-launcher'
+  'karma-firefox-launcher',
+  'karma-junit-reporter'
 ];

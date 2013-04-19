@@ -1,14 +1,77 @@
-<nav class="top-bar" th:fragment="bodyHeader">
-    <ul class="title-area">
-        <li class="name"><h1><a href="/">FWS</a></h1></li>
-    </ul>
-    <section class="top-bar-section">
-        <ul class="right">
-            <li class="divider"></li>
+<div class="navbar" data-ng-controller="NavCtrl">
+    <div class="navbar-inner">
+        <a class="brand" href="#">IRIDA</a>
+        <ul class="nav pull-right">
             <li th:class="${projects} ? 'active'"><a th:href="@{/projects}">Projects</a></li>
-            <li class="divider"></li>
-            <li th:class="${users} ? 'active'"><a th:href="@{/users}">Users</a></li>
+            <li class="dropdown">
+                <a class="dropdown-toggle" href="#" data-toggle="dropdown">Users <i class="caret"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a th:href="@{/users}">List Users</a></li>
+                    <li><a href="#" data-ng-click="openNewUsersModal($event)">New User</a></li>
+                </ul>
+            </li>
             <li><a th:href="@{/logout}">Logout</a></li>
         </ul>
-    </section>
-</nav>
+    </div>
+    <!--<div model="shouldBeOpen" close="closeNewUsersModal()" options="opts">-->
+        <!--<form name="newUserForm" novalidate="novalidate">-->
+            <!--<div class="modal-header">-->
+                <!--<button type="button" class="close" data-ng-click="closeNewUserModal()" aria-hidden="true">&times;</button>-->
+                <!--<h3>Add New User</h3>-->
+            <!--</div>-->
+
+            <!--<div class="modal-body">-->
+                <!--&lt;!&ndash;<div data-ng-class="{error: newUserForm.username.$dirty &amp;&amp; newUserForm.username.$invalid}"&ndash;&gt;-->
+                     <!--&lt;!&ndash;class="large-6 columns">&ndash;&gt;-->
+                    <!--&lt;!&ndash;<label th:text="#{user.username}"></label>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<input name="username" type="text" data-ng-model="newUser.username" required="required"/>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<small class="error"&ndash;&gt;-->
+                           <!--&lt;!&ndash;data-ng-show="newUserForm.username.$dirty &amp;&amp; newUserForm.username.$invalid">&ndash;&gt;-->
+                        <!--&lt;!&ndash;{{errors.username}}&ndash;&gt;-->
+                    <!--&lt;!&ndash;</small>&ndash;&gt;-->
+                <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                <!--&lt;!&ndash;<div data-ng-class="{error: newUserForm.password.$dirty &amp;&amp; newUserForm.password.$invalid}"&ndash;&gt;-->
+                     <!--&lt;!&ndash;class="large-6 columns">&ndash;&gt;-->
+                    <!--&lt;!&ndash;<label th:text="#{user.password}"></label>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<input name="password" type="password" data-ng-model="newUser.password" required="required"/>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<small class="error"&ndash;&gt;-->
+                           <!--&lt;!&ndash;data-ng-show="newUserForm.password.$dirty &amp;&amp; newUserForm.password.$invalid">&ndash;&gt;-->
+                        <!--&lt;!&ndash;{{errors.password}}&ndash;&gt;-->
+                    <!--&lt;!&ndash;</small>&ndash;&gt;-->
+                <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                <!--&lt;!&ndash;<div data-bind="css: {error: errors.firstName()}" class="large-6 columns">&ndash;&gt;-->
+                    <!--&lt;!&ndash;<label th:text="#{user.firstName}"></label>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<input name="firstName" type="text"&ndash;&gt;-->
+                           <!--&lt;!&ndash;data-bind="value: newUser.firstName, hasFocus: errors.firstName('')"&ndash;&gt;-->
+                           <!--&lt;!&ndash;required="required"/>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<small class="error" data-bind="visible: errors.firstName(), text: errors.firstName"></small>&ndash;&gt;-->
+                <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                <!--&lt;!&ndash;<div data-bind="css: {error: errors.lastName()}" class="large-6 columns">&ndash;&gt;-->
+                    <!--&lt;!&ndash;<label th:text="#{user.lastName}"></label>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<input name="lastName" type="text"&ndash;&gt;-->
+                           <!--&lt;!&ndash;data-bind="value: newUser.lastName, hasFocus: errors.lastName('')"&ndash;&gt;-->
+                           <!--&lt;!&ndash;required="required"/>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<small class="error" data-bind="visible: errors.lastName(), text: errors.lastName"></small>&ndash;&gt;-->
+                <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                <!--&lt;!&ndash;<div data-bind="css: {error: errors.email()}" class="large-6 columns">&ndash;&gt;-->
+                    <!--&lt;!&ndash;<label th:text="#{user.email}"></label>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<input name="email" type="email" data-bind="value: newUser.email, hasFocus: errors.email('')"&ndash;&gt;-->
+                           <!--&lt;!&ndash;required="required"/>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<small class="error" data-bind="visible: errors.email(), text: errors.email"></small>&ndash;&gt;-->
+                <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                <!--&lt;!&ndash;<div data-bind="css: {error: errors.phoneNumber()}" class="large-6 columns">&ndash;&gt;-->
+                    <!--&lt;!&ndash;<label th:text="#{user.phoneNumber}"></label>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<input name="phoneNumber" type="text"&ndash;&gt;-->
+                           <!--&lt;!&ndash;data-bind="value: newUser.phoneNumber, hasFocus: errors.phoneNumber('')"&ndash;&gt;-->
+                           <!--&lt;!&ndash;required="required"/>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<small class="error"&ndash;&gt;-->
+                           <!--&lt;!&ndash;data-bind="visible: errors.phoneNumber(), text: errors.phoneNumber"></small>&ndash;&gt;-->
+                <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--</div>-->
+
+            <!--<div class="modal-footer">-->
+                <!--<button class="btn btn-primary">Add User</button>-->
+            <!--</div>-->
+        <!--</form>-->
+    <!--</div>-->
+</div>

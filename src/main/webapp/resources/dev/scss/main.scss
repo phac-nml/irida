@@ -1,10 +1,17 @@
-@import "foundation/foundation-global";
+@import "compass_twitter_bootstrap_awesome";
 /* Positioning */
 /* Display & Box Model */
 /* Other */
 
 .ng-cloak {
     display: none;
+}
+
+input.ng-invalid.ng-dirty {
+    background-color: #FA787E;
+}
+input.ng-valid.ng-dirty {
+    background-color: #78FA89;
 }
 
 // Allows for buttons to be expanded to full width for
