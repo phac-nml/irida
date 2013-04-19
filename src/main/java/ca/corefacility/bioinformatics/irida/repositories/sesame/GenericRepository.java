@@ -20,7 +20,6 @@ import ca.corefacility.bioinformatics.irida.dao.SparqlQuery;
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -32,8 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
@@ -79,6 +76,20 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
         UUID id = UUID.randomUUID();
         
         return id;
+    }
+    
+    public Identifier buildIdentifier(BindingSet bs,String subject){
+        Value s = bs.getValue(subject);
+        Value resid = bs.getValue("resid");
+
+        UUID uuid = UUID.fromString(resid.stringValue());
+        Identifier objid = new Identifier(java.net.URI.create(s.stringValue()),uuid);
+        
+        return objid;
+    }
+    
+    public PropertyMapper getPropertyMap(){
+        return propertyMap;
     }
     
     public java.net.URI buildURI(String id){
@@ -144,7 +155,8 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
                     l = (Literal) m.invoke(fac, type.cast(prop.getter.invoke(object)));
 
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
-                    Logger.getLogger(GenericRepository.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.error(ex.getMessage());
+                    throw new StorageException("Couldn't invoke accessor methods to persist " + stringURI); 
                 }
 
                 Statement st = fac.createStatement(uri, pred, l);
@@ -177,7 +189,7 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
         String uri = netURI.toString();
 
         if (!exists(id)) {
-            throw new UserNotFoundException("No such user with the given URI exists.");
+            throw new IllegalArgumentException("No such object with the given URI exists.");
         }
 
         RepositoryConnection con = store.getRepoConnection();
@@ -185,7 +197,7 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
             String qs = store.getPrefixes()
                     + "SELECT * "
                     + "WHERE{ ?s a "+stringType+" . \n"
-                    + buildParams("s")
+                    + buildParams("s",propertyMap)
                     + "}";
 
             TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
@@ -196,11 +208,7 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
             TupleQueryResult result = tupleQuery.evaluate();
             BindingSet bindingSet = result.next();
 
-            Value s = bindingSet.getValue("s");
-            Value resid = bindingSet.getValue("resid");
-
-            UUID uuid = UUID.fromString(resid.stringValue());
-            Identifier objid = new Identifier(java.net.URI.create(s.stringValue()),uuid);
+            Identifier objid = buildIdentifier(bindingSet,"s");
 
             ret = extractData(objid, bindingSet);
 
@@ -233,7 +241,7 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
             String qs = store.getPrefixes()
                     + "SELECT * "
                     + "WHERE{ ?s a "+stringType+" . \n"
-                    + buildParams("s")
+                    + buildParams("s",propertyMap)
                     + "}\n";
 
             qs += SparqlQuery.setOrderBy(sortProperty, order);
@@ -244,11 +252,8 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
             TupleQueryResult result = tupleQuery.evaluate();
             while (result.hasNext()) {
                 BindingSet bindingSet = result.next();
-                Value s = bindingSet.getValue("s");
-                Value resid = bindingSet.getValue("resid");
 
-                UUID uuid = UUID.fromString(resid.stringValue());
-                Identifier objid = new Identifier(java.net.URI.create(s.stringValue()),uuid);
+                Identifier objid = buildIdentifier(bindingSet,"s");
                 Type ret = extractData(objid, bindingSet);
 
                 users.add(ret);
@@ -304,8 +309,8 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
         return super.exists(id, propertyMap.prefix, propertyMap.type);
     }
 
-    public String buildParams(String subject) {
-        List<PropertyMapper.Property> properties = propertyMap.getProperties();
+    public String buildParams(String subject, PropertyMapper map) {
+        List<PropertyMapper.Property> properties = map.getProperties();
         StringBuilder params = new StringBuilder("?").append(subject).append(" irida:identifier ?resid . \n");
 
         for (PropertyMapper.Property prop : properties) {
@@ -319,17 +324,18 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
 
     public Type extractData(Identifier id, BindingSet bindingSet) {
 
-        Type usr = null;
+        Type obj = null;
         
         try {
-            usr = objectType.newInstance();
-            usr.setIdentifier(id);
-            usr = buildProperties(bindingSet, usr);
+            obj = objectType.newInstance();
+            obj.setIdentifier(id);
+            obj = buildProperties(bindingSet, obj);
         } catch (InstantiationException | IllegalAccessException ex) {
-            Logger.getLogger(GenericRepository.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't instantiate object "+id); 
         }
 
-        return usr;
+        return obj;
     }
 
     private Type buildProperties(BindingSet bs, Type usr) {
@@ -340,7 +346,8 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
                 String var = prop.variable;
                 prop.setter.invoke(usr, bs.getValue(var).stringValue());
             } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-                Logger.getLogger(GenericRepository.class.getName()).log(Level.SEVERE, null, ex);
+                logger.error(ex.getMessage());
+                throw new StorageException("Couldn't invoke methods to build object"); 
             }
         }
 
