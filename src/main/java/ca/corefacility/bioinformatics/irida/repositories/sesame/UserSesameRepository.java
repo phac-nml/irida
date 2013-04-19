@@ -19,17 +19,17 @@ import ca.corefacility.bioinformatics.irida.dao.PropertyMapper;
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import static ca.corefacility.bioinformatics.irida.repositories.sesame.GenericRepository.userParams;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
 import org.openrdf.model.Literal;
 import org.openrdf.model.URI;
-import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.BooleanQuery;
@@ -64,7 +64,8 @@ public class UserSesameRepository extends GenericRepository<User> implements Use
             map.addProperty("foaf","lastName","lastName", User.class.getMethod("getLastName"), User.class.getMethod("setLastName",String.class), String.class);
             map.addProperty("foaf","phone","phoneNumber", User.class.getMethod("getPhoneNumber"), User.class.getMethod("setPhoneNumber",String.class), String.class);
         } catch (NoSuchMethodException | SecurityException ex) {
-            Logger.getLogger(GenericRepository.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't build parameters for \"User\""); 
         }
         
         setPropertyMap(map);
@@ -101,7 +102,7 @@ public class UserSesameRepository extends GenericRepository<User> implements Use
                     + "SELECT * "
                     + "WHERE{ ?s a foaf:Person . \n"
                     + "?s foaf:nick ?username . \n"
-                    + buildParams("s")
+                    + buildParams("s",propertyMap)
                     + "}";
             
             TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
@@ -113,11 +114,8 @@ public class UserSesameRepository extends GenericRepository<User> implements Use
             TupleQueryResult result = tupleQuery.evaluate();
             BindingSet bindingSet = result.next();
 
-            Value s = bindingSet.getValue("s");
-            Value resid = bindingSet.getValue("resid");
-
-            UUID uuid = UUID.fromString(resid.stringValue());            
-            Identifier objid = new Identifier(java.net.URI.create(s.stringValue()),uuid);
+            Identifier objid = buildIdentifier(bindingSet,"s");
+            
             ret = extractData(objid, bindingSet);
                             
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
@@ -173,6 +171,56 @@ public class UserSesameRepository extends GenericRepository<User> implements Use
         }
         
         return exists;
+    }
+
+/**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<User> getUsersForProject(Project project) {
+        List<User> users = new ArrayList<>();
+        
+        String uri = project.getIdentifier().getUri().toString();
+        
+        RepositoryConnection con = store.getRepoConnection();
+        try {
+            String qs = store.getPrefixes()
+                    + "SELECT * "
+                    + "WHERE{ ?p a irida:Project . \n"
+                    + "?p irida:hasUser ?s . \n"
+                    + buildParams("s",propertyMap)
+                    + "}\n";
+            
+            TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
+            URI puri = con.getValueFactory().createURI(uri);
+            tupleQuery.setBinding("p", puri);
+
+            TupleQueryResult result = tupleQuery.evaluate();
+            while(result.hasNext()){
+                BindingSet bindingSet = result.next();
+                
+                Identifier objid = buildIdentifier(bindingSet,"s");
+                
+                User ret = extractData(objid, bindingSet);
+                
+                users.add(ret);
+            }
+            result.close();
+    
+        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't list project users"); 
+        }       
+        finally{
+            try {
+                con.close();
+            } catch (RepositoryException ex) {
+                logger.error(ex.getMessage());
+                throw new StorageException("Couldn't close connection"); 
+            }
+        }
+        
+        return users;        
     }
     
 }
