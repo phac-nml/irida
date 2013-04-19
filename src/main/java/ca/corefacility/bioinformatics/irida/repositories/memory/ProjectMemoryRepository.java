@@ -33,11 +33,6 @@ public class ProjectMemoryRepository extends CRUDMemoryRepository<Project> imple
     }
 
     @Override
-    public Collection<User> getUsersForProject(Project project) {
-        return new HashSet<>(project.getUsers().keySet());
-    }
-
-    @Override
     public Collection<Project> getProjectsForUser(User user) {
         return new HashSet<>(user.getProjects().keySet());
     }

@@ -16,8 +16,10 @@
 package ca.corefacility.bioinformatics.irida.repositories;
 
 import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import java.util.Collection;
 
 /**
  * Specialized repository for {@link User}.
@@ -35,4 +37,12 @@ public interface UserRepository extends CRUDRepository<Identifier, User> {
      * username.
      */
     public User getUserByUsername(String username) throws UserNotFoundException;
+
+    /**
+     * Get all users associated with a project.
+     *
+     * @param project the project to get the users for.
+     * @return the set of users belonging to a project.
+     */
+    public Collection<User> getUsersForProject(Project project);
 }

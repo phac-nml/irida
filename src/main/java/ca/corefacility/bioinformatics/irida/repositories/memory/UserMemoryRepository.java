@@ -6,6 +6,8 @@ import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * An in-memory implementation of a user repository, for testing purposes only.
@@ -91,5 +93,10 @@ public class UserMemoryRepository extends CRUDMemoryRepository<User> implements 
         }
 
         return u;
+    }
+
+    @Override
+    public Collection<User> getUsersForProject(Project project) {
+        return new HashSet<>(project.getUsers().keySet());
     }
 }

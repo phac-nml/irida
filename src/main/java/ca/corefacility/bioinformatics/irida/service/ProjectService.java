@@ -36,14 +36,6 @@ public interface ProjectService extends CRUDService<Identifier, Project> {
     public void addSampleToProject(Project project, Sample sample);
 
     /**
-     * Get all users associated with a particular project.
-     *
-     * @param project the project to get users for.
-     * @return the users associated with the project.
-     */
-    public Collection<User> getUsersForProject(Project project);
-
-    /**
      * Get all {@link Project}s associated with a particular {@link User}.
      *
      * @param user the user to get projects for.

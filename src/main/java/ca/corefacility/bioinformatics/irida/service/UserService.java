@@ -16,8 +16,10 @@
 package ca.corefacility.bioinformatics.irida.service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import java.util.Collection;
 
 /**
  * Customized service for accessing user objects.
@@ -33,4 +35,12 @@ public interface UserService extends CRUDService<Identifier, User> {
      * @return the user corresponding to the username.
      */
     public User getUserByUsername(String username) throws UserNotFoundException;
+
+    /**
+     * Get all users associated with a particular project.
+     *
+     * @param project the project to get users for.
+     * @return the users associated with the project.
+     */
+    public Collection<User> getUsersForProject(Project project);
 }

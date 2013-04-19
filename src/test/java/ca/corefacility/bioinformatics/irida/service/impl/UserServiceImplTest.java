@@ -16,10 +16,15 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.repositories.memory.ProjectMemoryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.memory.UserMemoryRepository;
 import ca.corefacility.bioinformatics.irida.service.UserService;
+import java.util.Collection;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
@@ -35,6 +40,7 @@ import static org.junit.Assert.*;
 public class UserServiceImplTest {
 
     private UserService userService;
+    private ProjectRepository projectRepository;
     private UserRepository userRepository;
     private Validator validator;
 
@@ -43,6 +49,7 @@ public class UserServiceImplTest {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
         userRepository = new UserMemoryRepository();
+        projectRepository = new ProjectMemoryRepository();
         userService = new UserServiceImpl(userRepository, validator);
     }
 
@@ -53,7 +60,7 @@ public class UserServiceImplTest {
         assertNotNull(u);
         assertEquals(username, u.getUsername());
     }
-    
+
     @Test
     public void testBadUsername() {
         String username = "superwrongusername";
@@ -61,9 +68,26 @@ public class UserServiceImplTest {
             userService.getUserByUsername(username);
             fail();
         } catch (UserNotFoundException e) {
-            
         } catch (Throwable e) {
             fail();
         }
+    }
+
+    @Test
+    public void testGetUsersForProject() {
+        Project p = new Project();
+        User u = new User();
+        Role r = new Role();
+
+        p.addUserToProject(u, r);
+        u.addProject(p, r);
+
+        u = userRepository.create(u);
+        p = projectRepository.create(p);
+
+        Collection<User> users = userService.getUsersForProject(p);
+
+        assertEquals(1, users.size());
+        assertTrue(users.contains(u));
     }
 }
