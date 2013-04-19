@@ -33,8 +33,7 @@ public class SailMemoryStore extends TripleStore{
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SailMemoryStore.class);
 
     public SailMemoryStore(){
-        super(new SailRepository(new MemoryStore()),"http://nowhere/");
-
+        super(new SailRepository(new MemoryStore()),"http://localhost/");
     }
     
     @PostConstruct
