@@ -1,7 +1,7 @@
 /* global angular */
 
 angular.module('irida')
-  .controller('UsersListCtrl', function ($scope, $window, $dialog, $tooltip, usersData) {
+  .controller('UsersListCtrl', function ($scope, $window, $dialog, usersData) {
     $scope.usersUrl = '/users' + '?_' + Math.random();
     $scope.users = [];
     $scope.newUser = {};
