@@ -71,7 +71,9 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProjectSe
         setPropertyMap(map);
     }    
 
-    
+    /**
+     * {@inheritDoc}
+     */    
     @Override
     public Collection<Project> getProjectsForUser(User user) {
         List<Project> projects = new ArrayList<>();

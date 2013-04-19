@@ -72,12 +72,25 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
         setPropertyMap(propertyMap);
     }
 
+    /**
+     * Generate a UUID
+     * 
+     * @param t The object to build an ID for
+     * @return A UUID for the object
+     */
     public UUID generateId(Type t) {
         UUID id = UUID.randomUUID();
         
         return id;
     }
     
+    /**
+     * Build an identifier from the given binding set
+     * 
+     * @param bs The binding set to build from
+     * @param subject The subject of the SPARQL query to build from
+     * @return An Identifier object built form the given binding set
+     */
     public Identifier buildIdentifier(BindingSet bs,String subject){
         Value s = bs.getValue(subject);
         Value resid = bs.getValue("resid");
@@ -88,20 +101,37 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
         return objid;
     }
     
+    /**
+     * Get the property mapper for the current repository
+     * @return A property map
+     */
     public PropertyMapper getPropertyMap(){
         return propertyMap;
     }
     
+    /**
+     * Build a URI from a given String ID
+     * @param id The ID to build a URI for
+     * @return The constructed URI
+     */
     public java.net.URI buildURI(String id){
         java.net.URI uri = java.net.URI.create(URI + id);
         
         return uri;
     }    
+    
+    /**
+     * Set the property mapper for this repository
+     * @param propertyMap A property map that describes how to deconstruct and reconstruct the objects that will be stored in this repository
+     */
     public void setPropertyMap(PropertyMapper propertyMap){
         this.propertyMap = propertyMap;
         stringType = propertyMap.prefix + ":" + propertyMap.type;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Type create(Type object) throws IllegalArgumentException {
         if (object == null) {
@@ -179,7 +209,10 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
 
         return object;
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Type read(Identifier id) throws UserNotFoundException {
 
@@ -226,12 +259,18 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
 
         return ret;
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Type> list() {
         return list(0, 0, null, null);
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Type> list(int page, int size, String sortProperty, Order order) {
         List<Type> users = new ArrayList<>();
@@ -274,6 +313,9 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
         return users;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void delete(Identifier id) throws IllegalArgumentException {
         if (exists(id)) {
@@ -303,12 +345,21 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
             throw new IllegalArgumentException("User does not exist in the database.");
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Boolean exists(Identifier id) {
         return super.exists(id, propertyMap.prefix, propertyMap.type);
     }
 
+    /**
+     * Build the SPARQL parameters for a given property type
+     * @param subject The subject to use for this object
+     * @param map The property map to construct from
+     * @return A String of the parameters to construct an object
+     */
     public String buildParams(String subject, PropertyMapper map) {
         List<PropertyMapper.Property> properties = map.getProperties();
         StringBuilder params = new StringBuilder("?").append(subject).append(" irida:identifier ?resid . \n");
@@ -322,6 +373,12 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
         return params.toString();
     }
 
+    /**
+     * Build an object of <code>Type</code> based on the given binding set
+     * @param id The identifier for the object to construct
+     * @param bindingSet The binding set to construct from
+     * @return A constructed object of the given type
+     */
     public Type extractData(Identifier id, BindingSet bindingSet) {
 
         Type obj = null;
@@ -338,22 +395,31 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
         return obj;
     }
 
-    private Type buildProperties(BindingSet bs, Type usr) {
+    /**
+     * Add the properties of an object of <code>Type</code> to the object based on the given binding set
+     * @param bs The binding set to use for construction
+     * @param obj The object to add the properties to
+     * @return The object after adding all the properties
+     */
+    private Type buildProperties(BindingSet bs, Type obj) {
         List<PropertyMapper.Property> properties = propertyMap.getProperties();
         for (PropertyMapper.Property prop : properties) {
 
             try {
                 String var = prop.variable;
-                prop.setter.invoke(usr, bs.getValue(var).stringValue());
+                prop.setter.invoke(obj, bs.getValue(var).stringValue());
             } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
                 logger.error(ex.getMessage());
                 throw new StorageException("Couldn't invoke methods to build object"); 
             }
         }
 
-        return usr;
+        return obj;
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Type update(Type object) throws IllegalArgumentException {
         delete(object.getIdentifier());
@@ -362,7 +428,10 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
         
         return object;    
     }
-
+        
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Integer count() {
         return super.count(propertyMap.prefix,propertyMap.type);

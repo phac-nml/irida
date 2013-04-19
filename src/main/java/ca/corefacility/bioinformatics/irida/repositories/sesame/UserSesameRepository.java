@@ -71,6 +71,9 @@ public class UserSesameRepository extends GenericRepository<User> implements Use
         setPropertyMap(map);
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public User create(User u){
         if(u == null){
@@ -85,6 +88,9 @@ public class UserSesameRepository extends GenericRepository<User> implements Use
         
     }
     
+    /**
+     * {@inheritDoc}
+     */    
     @Override
     public User getUserByUsername(String username) throws UserNotFoundException {
         
@@ -134,6 +140,11 @@ public class UserSesameRepository extends GenericRepository<User> implements Use
         return ret;    
     }
 
+    /**
+     * Check whether a username has been used in the system
+     * @param username The username to look up
+     * @return Whether the username has been used in the system
+     */
     public boolean checkUsernameExists(String username) {
         boolean exists = false;
         RepositoryConnection con = store.getRepoConnection();
@@ -173,7 +184,7 @@ public class UserSesameRepository extends GenericRepository<User> implements Use
         return exists;
     }
 
-/**
+    /**
      * {@inheritDoc}
      */
     @Override
