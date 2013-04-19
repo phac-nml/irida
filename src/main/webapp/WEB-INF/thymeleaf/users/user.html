@@ -1,16 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head th:include="fragments/header" th:remove="tag"></head>
-<body>
+<body data-ng-app="irida">
 <div class="container">
     <div th:include="fragments/bodyHeader" th:remove="tag"></div>
     <div class="row-fluid" data-ng-controller="UserCtrl" data-ng-init="init()">
         <div class="span12">
-            <h1 id="username" th:text="${username}"></h1>
-
-            <h2>Projects</h2>
+            <ul class="breadcrumb pull-left">
+                <li><a href="/">Landing</a><span class="divider">&nbsp;/</span></li>
+                <li><a href="/users">All Users</a><span class="divider">&nbsp;/</span></li>
+                <li class="active" id="username" th:text="${username}"></li>
+            </ul>
+            <div class="clearfix"></div>
+            <span>{{user.firstName}}</span>
+            <span>{{user.lastName}}</span>
+            <h3>Projects</h3>
             <ul data-ng-repeat="project in projects">
-                <li>{{project.name}}</li>
+                <li><a data-ng-href="{{project.links[0].href}}">{{project.name}}</a></li>
             </ul>
         </div>
     </div>

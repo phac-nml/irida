@@ -5,13 +5,49 @@
  */
 
 angular.module('irida')
-  .controller('UserCtrl', function ($scope, $window, userData) {
+  .controller('UserCtrl', function ($scope, $window, dataStore) {
     "use strict";
-    var username = angular.element();
+    var username = document.getElementById('username').innerText;
+
+    $scope.user = {};
+    $scope.links = {};
+    $scope.projects = [];
+
+    $scope.init = function () {
+      dataStore.getData('/users/' + username).then(
+        function (data) {
+          initialAjaxCallback(data);
+
+        },
+        function (errorMessage) {
+          // TODO: handle error message
+        });
+    };
+
+    function initialAjaxCallback(data) {
+      "use strict";
+      angular.forEach(data.user.links, function (val) {
+        $scope.links[val.rel] = val.href;
+      });
+      delete data.user.links;
+      $scope.user = data.user;
+      getUserProjects();
+    }
+
+    function getUserProjects () {
+      dataStore.getData($scope.links['user/projects']).then(
+        function (data) {
+          $scope.projects = data.projectResources.projects;
+
+        },
+        function (errorMessage) {
+          // TODO: handle error message
+        });
+    }
   });
 
 angular.module('irida')
-  .factory('userData', function ($http, $q) {
+  .factory('dataStore', function ($http, $q) {
     "use strict";
     return {
       getData: function (url) {
