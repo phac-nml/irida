@@ -17,8 +17,8 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.dao.PropertyMapper;
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
-import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -92,11 +92,11 @@ public class UserSesameRepository extends GenericRepository<User> implements Use
      * {@inheritDoc}
      */    
     @Override
-    public User getUserByUsername(String username) throws UserNotFoundException {
+    public User getUserByUsername(String username) throws EntityNotFoundException {
         
         User ret = null;
         if(!checkUsernameExists(username)){
-            throw new UserNotFoundException("No user with username [" + username + "] exists.");
+            throw new EntityNotFoundException("No user with username [" + username + "] exists.");
         }
         
         RepositoryConnection con = store.getRepoConnection();

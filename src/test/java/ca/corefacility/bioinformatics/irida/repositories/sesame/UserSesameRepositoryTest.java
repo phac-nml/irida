@@ -17,7 +17,6 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.dao.SailMemoryStore;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -131,7 +130,7 @@ public class UserSesameRepositoryTest {
             User u = repo.getUserByUsername("fake");
             fail();
         }
-        catch(UserNotFoundException e){}
+        catch(EntityNotFoundException e){}
     }
     /**
      * Test of update method, of class UserSesameRepository.

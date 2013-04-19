@@ -20,7 +20,6 @@ import ca.corefacility.bioinformatics.irida.dao.SparqlQuery;
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
-import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -214,7 +213,7 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
      * {@inheritDoc}
      */
     @Override
-    public Type read(Identifier id) throws UserNotFoundException {
+    public Type read(Identifier id) throws EntityNotFoundException {
 
         Type ret = null;
 
