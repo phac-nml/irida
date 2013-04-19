@@ -31,7 +31,10 @@ import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder.pageLinksFor;
 import java.util.Collection;
+import org.springframework.http.MediaType;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -84,22 +87,25 @@ public class UsersController {
         return "users/index";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody
-    String create(HttpServletResponse response,
-            @RequestParam(value = "username", required = false) String username,
-            @RequestParam(value = "firstName", required = false) String firstName,
-            @RequestParam(value = "lastName", required = false) String lastName,
-            @RequestParam(value = "email", required = false) String email,
-            @RequestParam(value = "phoneNumber", required = false) String phoneNumber,
-            @RequestParam(value = "password", required = false) String password) {
-        User user = new User(username, email, password, firstName, lastName, phoneNumber);
+    /**
+     *
+     * @param response
+     * @param body
+     * @return
+     */
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String create(HttpServletResponse response, @RequestBody UserResource ur){
+           
+        User user = new User(ur.getUsername(), ur.getEmail(), ur.getEmail(), ur.getFirstName(),ur.getLastName(), ur.getPhoneNumber());
+        logger.debug(user.toString());
         try {
             userService.create(user);
         } catch (ConstraintViolationException e) {
             Set<ConstraintViolation<?>> constraintViolations = e.getConstraintViolations();
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return validationMessages(constraintViolations);
+        } catch (IllegalArgumentException e) {
+            return "{error: {username: 'username already exists'}}";
         }
         response.setStatus(HttpServletResponse.SC_CREATED);
         return "success";

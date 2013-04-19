@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <html>
-<div th:include="fragments/bodyHeader" th:remove="tag"></div>
 <head th:include="fragments/header" th:remove="tag"></head>
 <body>
-<div class="row">
-<h1 id="username" th:text="${username}"></h1>
-<h2>Projects</h2>
-<ul data-bind="foreach: projects">
-    <li data-bind="text: name"></li>
-</ul>
+<div class="container">
+    <div th:include="fragments/bodyHeader" th:remove="tag"></div>
+    <div class="row-fluid" data-ng-controller="UserCtrl" data-ng-init="init()">
+        <div class="span12">
+            <h1 id="username" th:text="${username}"></h1>
+
+            <h2>Projects</h2>
+            <ul data-ng-repeat="project in projects">
+                <li>{{project.name}}</li>
+            </ul>
+        </div>
+    </div>
 </div>
-<script th:src="@{/js/vendor/jquery/jquery-1.9.1.min.js}"></script>
-<script th:src="@{/js/vendor/foundation/foundation.js}"></script>
-<script th:src="@{/js/vendor/foundation/foundation.reveal.js}"></script>
-<script th:src="@{/js/vendor/knockout/knockout-v2.2.1.min.js}"></script>
-<script th:src="@{/js/singleUser.js}"></script>
+<script th:src="@{/js/vendor/angular/angular.min.js}"></script>
+<script th:src="@{/js/vendor/angular/ui-bootstrap-0.2.0.js}"></script>
+<script th:src="@{/js/vendor/angular/angular-resource.min.js}"></script>
+<script th:src="@{/js/app.js}"></script>
+<script th:src="@{/js/singleUserCtrl.js}"></script>
 </body>
 </html>

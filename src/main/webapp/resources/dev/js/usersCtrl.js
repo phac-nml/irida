@@ -1,35 +1,6 @@
 /* global angular */
 
-angular.module('irida', ['ngResource', 'ui.bootstrap']);
-
 angular.module('irida')
-  .controller('NavCtrl', function ($scope, $dialog) {
-    'use strict';
-
-    $scope.errors = {
-      username: "FUCK IT IS WRONG",
-      password: "FUCK THIS IS WRONG TOO"
-    };
-
-    $scope.openNewUsersModal = function ($event) {
-      $event.preventDefault();
-      var d = $dialog.dialog($scope.opts);
-      d.open('/users/partials/newUserModal.html');
-    };
-
-    $scope.opts = {
-      backdropFade: true,
-      dialogFade:true,
-      keyboard: true,
-      controller: 'DialogCtrl'
-    };
-  })
-  .controller('DialogCtrl', function($scope, dialog) {
-    "use strict";
-    $scope.closeNewUsersModal = function() {
-      dialog.close();
-    };
-  })
   .controller('UsersListCtrl', function ($scope, $window, usersData) {
     $scope.usersUrl = '/users' + '?_' + Math.random();
     $scope.users = [];

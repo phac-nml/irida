@@ -14,7 +14,7 @@ files = [
   'src/main/webapp/resources/dev/js/vendor/angular/angular.min.js',
   'src/main/webapp/resources/dev/js/vendor/angular/angular-resource.min.js',
   'src/test/js/lib/angular/angular-mocks.js',
-  'src/main/webapp/resources/dev/js/users.js',
+  'src/main/webapp/resources/dev/js/usersCtrl.js',
   'src/test/js/unit/_users.js'
 ];
 
