@@ -6,7 +6,7 @@
 
 <div class="container">
     <div th:include="fragments/bodyHeader" th:remove="tag"></div>
-    <div class="row-fluid" data-ng-controller="UsersListCtrl" data-ng-init="init()">
+    <div class="row-fluid" data-ng-controller="UsersListCtrl" data-ng-init="loadUsers(usersUrl)">
         <div class="span12">
 
             <ul class="breadcrumb pull-left">

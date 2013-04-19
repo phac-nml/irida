@@ -1,10 +1,14 @@
 /* global angular */
 
 angular.module('irida')
-  .controller('UsersListCtrl', function ($scope, $window, $dialog, usersData) {
+  .controller('UsersListCtrl', function ($scope, $window, $dialog, usersData, newUserListener) {
     $scope.usersUrl = '/users' + '?_' + Math.random();
     $scope.users = [];
     $scope.newUser = {};
+
+    $scope.$on('updateUserList', function () {
+      $scope.loadUsers($scope.links.self);
+    });
 
     $scope.openNewUsersModal = function () {
       var d = $dialog.dialog($scope.opts);
@@ -13,9 +17,9 @@ angular.module('irida')
 
     $scope.opts = {
       backdropFade: true,
-      dialogFade:true,
-      keyboard: true,
-      controller: 'DialogCtrl'
+      dialogFade  : true,
+      keyboard    : true,
+      controller  : 'DialogCtrl'
     };
 
     $scope.loadUsers = function (url) {
@@ -34,13 +38,6 @@ angular.module('irida')
       $window.location = url;
     };
 
-    $scope.init = function () {
-      'use strict';
-         // TODO: EXTRACT THIS
-
-      $scope.loadUsers($scope.usersUrl);
-    };
-
     function ajaxSuccessCallback(data) {
       "use strict";
       $scope.links = {};
@@ -50,45 +47,62 @@ angular.module('irida')
       $scope.users = data.userResources.users;
     }
   })
-  .controller('DialogCtrl', function($scope, dialog, createUser) {
+  .controller('DialogCtrl',function ($scope, dialog, createUser, newUserListener) {
     "use strict";
 
     $scope.errors = {};
     $scope.newUser = {};
 
-    $scope.closeNewUsersModal = function() {
+
+    $scope.closeNewUsersModal = function () {
       dialog.close();
     };
 
     $scope.submitNewUser = function () {
-      if($scope.newUserForm.$valid) {
-        createUser.create($scope.newUser);
+      if ($scope.newUserForm.$valid) {
+        createUser.create($scope.newUser).then(
+          function () {
+            newUserListener.broadcast('updateUserList');
+            dialog.close();
+          },
+          function (data) {
+            $scope.errors = data;
+          }
+        );
       }
       else {
         console.log("NOT VALID");
       }
     };
   }).
-  factory('createUser', function ($http) {
+  factory('createUser',function ($http, $q) {
     "use strict";
-    var addUser = {};
-
-    addUser.create = function (data) {
-      $http({
-        method: 'POST',
-        url: '/users',
-        data: data,
-        headers: {'Content-Type': 'application/json'}
-      })
-        .success(function (data, status) {
-          console.log("SUCCESS");
+    return {
+      create: function (data) {
+        var deferred = $q.defer();
+        $http({
+          method : 'POST',
+          url    : '/users',
+          data   : data,
+          headers: {'Content-Type': 'application/json'}
         })
-        .error(function(data, status) {
-          console.log(data);
-        });
+          .success(function (data) {
+            deferred.resolve(data);
+          })
+          .error(function (data) {
+            deferred.reject(data);
+          });
+        return deferred.promise;
+      }
     };
-
-    return addUser;
+  }).
+  factory('newUserListener', function ($rootScope) {
+    "use strict";
+    var sharedService = {};
+    sharedService.broadcast = function (message, data) {
+      $rootScope.$broadcast(message, data);
+    };
+    return sharedService;
   });
 
 angular.module('irida')
