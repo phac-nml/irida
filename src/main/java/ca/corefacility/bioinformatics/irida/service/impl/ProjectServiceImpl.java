@@ -57,14 +57,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Identifier, Project> imp
         sampleRepository.update(sample);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection<User> getUsersForProject(Project project) {
-        return projectRepository().getUsersForProject(project);
-    }
-
     @Override
     public Collection<Project> getProjectsForUser(User user) {
         return projectRepository().getProjectsForUser(user);

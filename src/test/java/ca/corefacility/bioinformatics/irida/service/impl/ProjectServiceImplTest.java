@@ -92,24 +92,6 @@ public class ProjectServiceImplTest {
     }
 
     @Test
-    public void testGetUsersForProject() {
-        Project p = new Project();
-        User u = new User();
-        Role r = new Role();
-
-        p.addUserToProject(u, r);
-        u.addProject(p, r);
-
-        u = userRepository.create(u);
-        p = projectRepository.create(p);
-
-        Collection<User> users = projectService.getUsersForProject(p);
-
-        assertEquals(1, users.size());
-        assertTrue(users.contains(u));
-    }
-
-    @Test
     public void testGetProjectsForUser() {
         Project p = new Project();
         User u = new User();

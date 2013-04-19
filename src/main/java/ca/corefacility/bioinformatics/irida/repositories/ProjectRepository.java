@@ -28,14 +28,6 @@ import java.util.Collection;
 public interface ProjectRepository extends CRUDRepository<Identifier, Project> {
 
     /**
-     * Get all users associated with a project.
-     *
-     * @param project the project to get the users for.
-     * @return the set of users belonging to a project.
-     */
-    public Collection<User> getUsersForProject(Project project);
-
-    /**
      * Get all {@link Project}s associated with a particular {@link User}.
      *
      * @param user the user to get projects for.
