@@ -13,24 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ca.corefacility.bioinformatics.irida.exceptions.user;
-
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+package ca.corefacility.bioinformatics.irida.exceptions;
 
 /**
- * Thrown when a {@link User} cannot be found in the database by any type of
- * identifier.
+ * When an {@link Identifiable} entity to be created in the database shares an
+ * identifier with an existing entity.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class UserNotFoundException extends EntityNotFoundException {
+public class EntityExistsException extends RuntimeException {
 
     /**
-     * Creates a new {@link UserNotFoundException} with a message.
+     * Construct a new {@link EntityExistsException} with the specified message.
      *
      * @param message the message explaining the exception.
      */
-    public UserNotFoundException(String message) {
+    public EntityExistsException(String message) {
         super(message);
     }
 }

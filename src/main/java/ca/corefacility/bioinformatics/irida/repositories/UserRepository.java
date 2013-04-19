@@ -15,7 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories;
 
-import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -33,10 +33,10 @@ public interface UserRepository extends CRUDRepository<Identifier, User> {
      *
      * @param username the user's username.
      * @return the user corresponding to the username.
-     * @throws UserNotFoundException If no user can be found with the supplied
+     * @throws EntityNotFoundException If no user can be found with the supplied
      * username.
      */
-    public User getUserByUsername(String username) throws UserNotFoundException;
+    public User getUserByUsername(String username) throws EntityNotFoundException;
 
     /**
      * Get all users associated with a project.

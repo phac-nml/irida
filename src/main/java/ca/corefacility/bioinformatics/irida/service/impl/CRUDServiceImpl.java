@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
@@ -37,7 +38,7 @@ public class CRUDServiceImpl<KeyType, ValueType> implements CRUDService<KeyType,
      * {@inheritDoc}
      */
     @Override
-    public ValueType create(ValueType object) throws ConstraintViolationException, IllegalArgumentException {
+    public ValueType create(ValueType object) throws ConstraintViolationException, EntityExistsException {
         Set<ConstraintViolation<ValueType>> constraintViolations = validator.validate(object);
         if (constraintViolations.isEmpty()) {
             return repository.create(object);
@@ -59,7 +60,7 @@ public class CRUDServiceImpl<KeyType, ValueType> implements CRUDService<KeyType,
      * {@inheritDoc}
      */
     @Override
-    public ValueType update(ValueType object) throws ConstraintViolationException, IllegalArgumentException {
+    public ValueType update(ValueType object) throws ConstraintViolationException, EntityExistsException {
         Set<ConstraintViolation<ValueType>> constraintViolations = validator.validate(object);
         if (constraintViolations.isEmpty()) {
             return repository.update(object);

@@ -15,7 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import ca.corefacility.bioinformatics.irida.exceptions.user.UserNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
@@ -67,7 +67,7 @@ public class UserServiceImplTest {
         try {
             userService.getUserByUsername(username);
             fail();
-        } catch (UserNotFoundException e) {
+        } catch (EntityNotFoundException e) {
         } catch (Throwable e) {
             fail();
         }
