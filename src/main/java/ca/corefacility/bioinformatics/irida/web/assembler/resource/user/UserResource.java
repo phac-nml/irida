@@ -18,6 +18,7 @@ import org.springframework.hateoas.ResourceSupport;
 public class UserResource extends ResourceSupport {
 
     private User user;
+    private String password;
 
     public UserResource() {
         user = new User();
@@ -78,7 +79,11 @@ public class UserResource extends ResourceSupport {
     }
 
     public void setPassword(String password) {
-        user.setPassword(password);
+        this.password = password;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     @JsonIgnore
