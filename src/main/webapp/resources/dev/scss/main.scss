@@ -34,7 +34,7 @@ input.ng-valid.ng-dirty {
  *
  * Used when a table has selectable rows.
  */
-.dataTable {
+.listTable {
     width: 100%;
     thead {
         font-weight: 700;
@@ -52,6 +52,10 @@ input.ng-valid.ng-dirty {
         cursor: pointer;
         background-color: #c2ccd1;
     }
+}
+
+.button-group.right {
+    margin-left: 2em;
 }
 
 .paging {

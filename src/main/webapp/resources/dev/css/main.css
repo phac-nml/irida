@@ -24,21 +24,24 @@ input.ng-valid.ng-dirty {
  *
  * Used when a table has selectable rows.
  */
-.dataTable {
+.listTable {
   width: 100%; }
-  .dataTable thead {
+  .listTable thead {
     font-weight: 700;
     font-size: 1.2em;
     background-color: #000000;
     text-transform: uppercase;
     border-bottom: none; }
-    .dataTable thead tr {
+    .listTable thead tr {
       padding: 20px; }
-    .dataTable thead th {
+    .listTable thead th {
       color: white; }
-  .dataTable tbody tr:hover {
+  .listTable tbody tr:hover {
     cursor: pointer;
     background-color: #c2ccd1; }
+
+.button-group.right {
+  margin-left: 2em; }
 
 .paging {
   font-weight: 700; }

@@ -4,6 +4,8 @@
  * Time:   9:41 AM
  */
 
+angular.module('irida', ['ngResource']);
+
 angular.module('irida')
   .controller('UserCtrl', function ($scope, dataStore) {
     'use strict';

@@ -1,7 +1,7 @@
 /* global angular */
+var irida = angular.module('irida', ['ngResource']);
 
-angular.module('irida')
-  .controller('UsersListCtrl', function ($scope, $window, usersData, createUser) {
+irida.controller('UsersListCtrl', function ($scope, $window, usersData, createUser) {
     var modal =  $('#newUserModal');
 
     $scope.usersUrl = '/users' + '?_' + Math.random();
@@ -14,7 +14,17 @@ angular.module('irida')
           $scope.newUser = {};
           $scope.errors = {};
 
+          // Need to reset all the fields in the form.
           $('form[name=newUserForm] .ng-dirty').removeClass('ng-dirty').addClass('ng-pristine');
+          var form = $scope.newUserForm;
+          for(var field in form) {
+            if(form[field].$pristine === false) {
+              form[field].$pristine = true;
+            }
+            if(form[field].$dirty === true) {
+              form[field].$dirty = false;
+            }
+          }
           $scope.newUserForm.$pristine = true;
         });
       }
@@ -107,3 +117,5 @@ angular.module('irida')
       }
     };
   });
+
+
