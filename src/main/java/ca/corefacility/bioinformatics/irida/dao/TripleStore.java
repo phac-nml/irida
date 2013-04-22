@@ -70,7 +70,6 @@ public class TripleStore {
     /**
      * Initialize the connection to the triplestore
      */
-    @PostConstruct
     public void initialize(){
         try {
             repo.initialize();

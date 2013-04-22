@@ -36,8 +36,8 @@ public class SailMemoryStore extends TripleStore{
         super(new SailRepository(new MemoryStore()),"http://localhost/");
     }
     
-    @PostConstruct
     @Override
+    @PostConstruct
     public void initialize(){
         super.initialize();
         RepositoryConnection con = super.getRepoConnection();
@@ -48,7 +48,7 @@ public class SailMemoryStore extends TripleStore{
             con.setNamespace("foaf", "http://xmlns.com/foaf/0.1/");
         } catch (RepositoryException ex) {
             logger.error(ex.getMessage());
-            throw new StorageException("Could not initialize connection");
+            throw new StorageException("Could not set namespaces for memory store");
         }        
     }
     
