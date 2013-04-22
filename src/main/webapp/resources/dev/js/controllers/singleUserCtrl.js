@@ -5,15 +5,16 @@
  */
 
 angular.module('irida')
-  .controller('UserCtrl', function ($scope, $window, dataStore) {
-    "use strict";
-    var username = document.getElementById('username').innerText;
+  .controller('UserCtrl', function ($scope, dataStore) {
+    'use strict';
 
+    $scope.username = "";
     $scope.user = {};
     $scope.links = {};
     $scope.projects = [];
 
     $scope.init = function () {
+      var username = document.getElementById('username').innerText;
       dataStore.getData('/users/' + username).then(
         function (data) {
           initialAjaxCallback(data);
@@ -65,31 +66,3 @@ angular.module('irida')
       }
     };
   });
-
-//var username = $('#username').text();
-//
-//function Project (data) {
-//  "use strict";
-//   this.name = data.name;
-//}
-//
-//function UserViewModel () {
-//  "use strict";
-//  self.projects = ko.observableArray([]);
-//
-//  function getUserProjects () {
-//    "use strict";
-//
-//    $.getJSON('/users/' + username + '/projects', function (allData) {
-//      var mappedProjects = $.map(allData.projectResources.projects, function (item) {
-//        return new Project(item)
-//      });
-//      self.projects(mappedProjects);
-//    });
-//  }
-//
-//  getUserProjects();
-//}
-//
-//$.ajaxSetup({ cache: false });
-//ko.applyBindings(new UserViewModel());

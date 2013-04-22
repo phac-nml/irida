@@ -1,37 +1,58 @@
 /* global angular */
 
 angular.module('irida')
-  .controller('UsersListCtrl', function ($scope, $window, $dialog, usersData, newUserListener) {
+  .controller('UsersListCtrl', function ($scope, $window, usersData, createUser) {
+    var modal =  $('#newUserModal');
+
     $scope.usersUrl = '/users' + '?_' + Math.random();
     $scope.users = [];
     $scope.newUser = {};
 
+    modal.foundation('reveal', {
+      closed: function () {
+        $scope.$apply( function () {
+          $scope.newUser = {};
+          $scope.errors = {};
+
+          $('form[name=newUserForm] .ng-dirty').removeClass('ng-dirty').addClass('ng-pristine');
+          $scope.newUserForm.$pristine = true;
+        });
+      }
+    });
+
     $scope.$on('updateUserList', function () {
       $scope.loadUsers($scope.links.self);
     });
-
-    $scope.openNewUsersModal = function () {
-      var d = $dialog.dialog($scope.opts);
-      d.open('/users/partials/newUserModal.html');
-    };
-
-    $scope.opts = {
-      backdropFade: true,
-      dialogFade  : true,
-      keyboard    : true,
-      controller  : 'DialogCtrl'
-    };
 
     $scope.loadUsers = function (url) {
       'use strict';
       usersData.getAllUsers(url).then(
         function (data) {
           ajaxSuccessCallback(data);
-
         },
         function (errorMessage) {
           // TODO: handle error message
         });
+    };
+
+    $scope.submitNewUser = function () {
+      if ($scope.newUserForm.$valid) {
+        createUser.create($scope.newUser).then(
+          function () {
+            modal.foundation('reveal', 'close');
+          },
+          function (data) {
+            $scope.errors = {};
+            angular.forEach(data, function(error, key) {
+              "use strict";
+              $scope.errors[key] =  data[key].join("</br>");
+            });
+          }
+        );
+      }
+      else {
+        console.log("NOT VALID");
+      }
     };
 
     $scope.gotoUser = function (url) {
@@ -47,35 +68,7 @@ angular.module('irida')
       $scope.users = data.userResources.users;
     }
   })
-  .controller('DialogCtrl',function ($scope, dialog, createUser, newUserListener) {
-    "use strict";
-
-    $scope.errors = {};
-    $scope.newUser = {};
-
-
-    $scope.closeNewUsersModal = function () {
-      dialog.close();
-    };
-
-    $scope.submitNewUser = function () {
-      if ($scope.newUserForm.$valid) {
-        createUser.create($scope.newUser).then(
-          function () {
-            newUserListener.broadcast('updateUserList');
-            dialog.close();
-          },
-          function (data) {
-            $scope.errors = data;
-          }
-        );
-      }
-      else {
-        console.log("NOT VALID");
-      }
-    };
-  }).
-  factory('createUser',function ($http, $q) {
+  .factory('createUser',function ($http, $q) {
     "use strict";
     return {
       create: function (data) {
@@ -95,17 +88,7 @@ angular.module('irida')
         return deferred.promise;
       }
     };
-  }).
-  factory('newUserListener', function ($rootScope) {
-    "use strict";
-    var sharedService = {};
-    sharedService.broadcast = function (message, data) {
-      $rootScope.$broadcast(message, data);
-    };
-    return sharedService;
-  });
-
-angular.module('irida')
+  })
   .factory('usersData', function ($http, $q) {
     "use strict";
     return {
@@ -117,7 +100,7 @@ angular.module('irida')
             deferred.resolve(data);
           })
           .error(function () {
-            deferred.reject("An error occured while getting users");
+            deferred.reject("An error occurred while getting users");
           });
 
         return deferred.promise;

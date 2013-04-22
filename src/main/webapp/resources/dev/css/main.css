@@ -1,23 +1,44 @@
-body {
-  padding-top: 1.5em;
-}
+/* Positioning */
+/* Display & Box Model */
+/* Other */
+.ng-cloak {
+  display: none; }
+
 input.ng-invalid.ng-dirty {
-  background-color: #FA787E;
-}
+  background-color: #FA787E; }
+
 input.ng-valid.ng-dirty {
-  background-color: #78FA89;
-}
-.listTable th {
-  background-color: #000000;
-  color: #ffffff;
-  border: 1px solid #000000;
-}
-.listTable tbody tr:hover {
-  cursor: pointer;
-}
-.listTable tbody tr:hover td {
-  background-color: #e8e8e8;
-}
-.projects ul {
-  list-style: url("img/projects_folder.png") inside;
-}
+  background-color: #78FA89; }
+
+@media screen and (max-width: 48em) {
+  .small-screen-expand {
+    width: 100%; } }
+
+/* ==========================================================================
+   PAGES
+   ========================================================================== */
+/* Modules
+   ========================================================================== */
+/**
+ * .dataTable
+ *
+ * Used when a table has selectable rows.
+ */
+.dataTable {
+  width: 100%; }
+  .dataTable thead {
+    font-weight: 700;
+    font-size: 1.2em;
+    background-color: #000000;
+    text-transform: uppercase;
+    border-bottom: none; }
+    .dataTable thead tr {
+      padding: 20px; }
+    .dataTable thead th {
+      color: white; }
+  .dataTable tbody tr:hover {
+    cursor: pointer;
+    background-color: #c2ccd1; }
+
+.paging {
+  font-weight: 700; }
