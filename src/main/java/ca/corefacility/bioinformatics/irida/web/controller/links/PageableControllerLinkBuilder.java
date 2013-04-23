@@ -30,7 +30,7 @@ public abstract class PageableControllerLinkBuilder {
 
     public static final String REQUEST_PARAM_PAGE = "page";
     public static final String REQUEST_PARAM_SIZE = "size";
-    public static final String REQUEST_PARAM_SORT_PROPERTY = "sortColumn";
+    public static final String REQUEST_PARAM_SORT_PROPERTY = "sortProperty";
     public static final String REQUEST_PARAM_SORT_ORDER = "sortOrder";
 
     /**
