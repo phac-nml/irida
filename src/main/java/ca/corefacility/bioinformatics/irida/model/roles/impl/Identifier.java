@@ -58,6 +58,14 @@ public class Identifier {
     }
 
     @Override
+    public String toString() {
+        return com.google.common.base.Objects.toStringHelper(Identifier.class)
+                .add("uuid", uuid)
+                .add("uri", uri)
+                .toString();
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(uri, uuid);
     }

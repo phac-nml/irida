@@ -41,6 +41,11 @@ public class Project implements Comparable<Project>, Auditable<Audit>, Identifia
         this.id = id;
     }
 
+    public Project(String name) {
+        this();
+        this.name = name;
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other instanceof Project) {
