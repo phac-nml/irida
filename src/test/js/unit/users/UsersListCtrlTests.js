@@ -23,6 +23,10 @@ describe("UsersListController", function () {
     expect(newScope.users.length).toBe(0);
   });
 
+  it("Should have a users url", function () {
+    expect(newScope.usersUrl).toContain('/users?');
+  });
+
   it("Should make a server call", function () {
     runs(function () {
       $httpBackend.expectGET('/users');
