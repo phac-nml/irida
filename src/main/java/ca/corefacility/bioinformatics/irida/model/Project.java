@@ -103,7 +103,7 @@ public class Project implements Comparable<Project>, Auditable<Audit>, Identifia
 
     @Override
     public int compareTo(Project p) {
-        return audit.getCreated().compareTo(p.audit.getCreated());
+        return audit.compareTo(p.audit);
     }
 
     @Override

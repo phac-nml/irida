@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import com.google.common.base.Strings;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ import java.util.Map;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class CRUDMemoryRepository<Type extends Identifiable<Identifier>> implements CRUDRepository<Identifier, Type> {
+public class CRUDMemoryRepository<Type extends Identifiable<Identifier> & Comparable<Type>> implements CRUDRepository<Identifier, Type> {
 
     protected Map<Identifier, Type> store = new HashMap<>();
     protected Class<Type> valueType;
@@ -97,16 +98,23 @@ public class CRUDMemoryRepository<Type extends Identifiable<Identifier>> impleme
         int start = size * (page - 1);
         int end = start + size > values.size() ? values.size() : start + size;
 
-        Collections.sort(values, new Comparator<Type>() {
-            @Override
-            public int compare(Type o1, Type o2) {
-                if (order.equals(Order.ASCENDING)) {
-                    return getValue(o1, sortProperty).compareTo(getValue(o2, sortProperty));
-                } else {
-                    return getValue(o2, sortProperty).compareTo(getValue(o1, sortProperty));
-                }
+        if (Strings.isNullOrEmpty(sortProperty)) {
+            Collections.sort(values);
+            if (order == Order.DESCENDING) {
+                Collections.reverse(values);
             }
-        });
+        } else {
+            Collections.sort(values, new Comparator<Type>() {
+                @Override
+                public int compare(Type o1, Type o2) {
+                    if (order.equals(Order.ASCENDING)) {
+                        return getValue(o1, sortProperty).compareTo(getValue(o2, sortProperty));
+                    } else {
+                        return getValue(o2, sortProperty).compareTo(getValue(o1, sortProperty));
+                    }
+                }
+            });
+        }
         return values.subList(start, end);
     }
 

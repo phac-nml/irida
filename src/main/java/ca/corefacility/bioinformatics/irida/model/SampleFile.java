@@ -29,7 +29,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class SampleFile implements Auditable<Audit>, Identifiable<Identifier> {
+public class SampleFile implements Auditable<Audit>, Identifiable<Identifier>, Comparable<SampleFile> {
 
     private Identifier id;
     @NotNull
@@ -60,6 +60,11 @@ public class SampleFile implements Auditable<Audit>, Identifiable<Identifier> {
     @Override
     public int hashCode() {
         return Objects.hash(file);
+    }
+    
+    @Override
+    public int compareTo(SampleFile other) {
+        return audit.compareTo(other.audit);
     }
 
     public File getFile() {

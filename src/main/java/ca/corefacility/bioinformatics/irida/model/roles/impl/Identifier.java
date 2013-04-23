@@ -27,7 +27,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class Identifier {
+public class Identifier implements Comparable<Identifier> {
 
     @NotNull
     private UUID uuid;
@@ -63,6 +63,11 @@ public class Identifier {
                 .add("uuid", uuid)
                 .add("uri", uri)
                 .toString();
+    }
+
+    @Override
+    public int compareTo(Identifier o) {
+        return uuid.compareTo(o.uuid);
     }
 
     @Override
