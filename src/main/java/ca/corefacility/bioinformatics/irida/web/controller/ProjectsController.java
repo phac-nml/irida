@@ -93,7 +93,7 @@ public class ProjectsController {
         resources.add(pageLinksFor(ProjectsController.class, page, size, totalProjects, sortColumn, sortOrder));
 
         model.addAttribute("projectResources", resources);
-        return "projects/index";
+        return "projects/projects";
     }
 
     @RequestMapping(value = "/{projectId}", method = RequestMethod.GET)
