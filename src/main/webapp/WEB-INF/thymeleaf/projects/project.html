@@ -1,36 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head th:include="fragments/header" th:remove="tag"></head>
-<body data-ng-app="irida">
-<div class="container" data-ng-controller="ProjectCtrl" data-ng-init="init()">
-    <div th:include="fragments/bodyHeader" th:remove="tag"></div>
-    <div class="row">
-        <div class="large-12 columns">
-            <ul class="breadcrumbs left ng-cloak">
-                <li><a href="/">Landing</a></li>
-                <li><a href="/projects">All Projects</a></li>
-                <li class="current"><a href="" ng-bind="name"></a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="row">
-        <div class="large-12 columns">
-            <div class="section-container tabs" data-section="tabs">
-                <section>
-                    <p class="title" data-section-title=""><a href="#">Profile</a></p>
-
-                    <div class="content" data-section-content="">
-                        <h1>{{name}}</h1>
-                    </div>
-                </section>
-                <section>
-                    <p class="title" data-section-title=""><a href="#">Edit</a></p>
-                    <div class="content" data-section-content="">
-                        <h1>What to edit?</h1>
-                    </div>
-                </section>
-            </div>
-        </div>
+<body data-ng-app="irida" class="ng-cloak">
+<div th:include="fragments/bodyHeader" th:remove="tag"></div>
+<div class="row">
+    <div class="large-12 columns" data-ng-controller="ProjectCtrl" data-ng-init="init()">
+        <div th:include="fragments/project/top-project" th:remove="tag"></div>
+        <div th:include="fragments/project/project-main" th:remove="tag"></div>
     </div>
 </div>
 

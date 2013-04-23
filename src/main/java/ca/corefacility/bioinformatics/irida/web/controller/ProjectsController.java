@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.web.controller;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
@@ -144,6 +145,17 @@ public class ProjectsController {
     public ResponseEntity<String> handleConstraintViolations(ConstraintViolationException e) {
         Set<ConstraintViolation<?>> constraintViolations = e.getConstraintViolations();
         return new ResponseEntity<>(validationMessages(constraintViolations), HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Handle {@link EntityExistsException}.
+     *
+     * @param e the exception as thrown by the service.
+     * @return an appropriate HTTP response.
+     */
+    @ExceptionHandler(EntityExistsException.class)
+    public ResponseEntity<String> handleExistsException(EntityExistsException e) {
+        return new ResponseEntity<>("An entity already exists with that identifier.", HttpStatus.CONFLICT);
     }
 
     /**

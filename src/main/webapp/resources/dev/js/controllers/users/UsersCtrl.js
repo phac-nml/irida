@@ -3,10 +3,8 @@ var irida = angular.module('irida', ['ngResource']);
 irida.controller(UsersListCtrl);
 
 var UsersListCtrl = function ($scope, $window, Users) {
-  var modal = $('#newUserModal');
-  $scope.users = [];
 
-  $scope.usersUrl = '/users' + '?_' + Math.random();
+  var modal = $('#newUserModal');
 
   modal.foundation('reveal', {
     closed: function () {
@@ -33,6 +31,11 @@ var UsersListCtrl = function ($scope, $window, Users) {
     }
   });
 
+  $scope.users = [];
+
+  $scope.usersUrl = '/users' + '?_' + Math.random();
+
+
   $scope.loadUsers = function (url) {
     'use strict';
     Users.getAllUsers(url).then(
@@ -42,6 +45,10 @@ var UsersListCtrl = function ($scope, $window, Users) {
       function (errorMessage) {
         // TODO: handle error message
       });
+  };
+
+  $scope.gotoUser = function (url) {
+    $window.location = url;
   };
 
   $scope.submitNewUser = function () {
@@ -64,10 +71,6 @@ var UsersListCtrl = function ($scope, $window, Users) {
     }
   };
 
-  $scope.gotoUser = function (url) {
-    $window.location = url;
-  };
-
   function ajaxSuccessCallback(data) {
     "use strict";
     $scope.links = {};
@@ -76,6 +79,11 @@ var UsersListCtrl = function ($scope, $window, Users) {
     });
     $scope.users = data.userResources.users;
   }
+};
+
+var NewUserCtrl = function ($scope, Users) {
+
+
 };
 
 irida.factory('Users', function ($http, $q) {

@@ -1,10 +1,13 @@
 /* global angular */
 var irida = angular.module('irida', ['ngResource']);
 irida.controller(ProjectsListCtrl);
+irida.controller(NewProjectCtrl);
 
 var ProjectsListCtrl = function ($scope, $window, Projects) {
   "use strict";
   $scope.projects = [];
+  $scope.newProject = {};
+  $scope.errors = {};
   $scope.projectsUrl = '/projects' + '?_' + Math.random();
 
   $scope.loadProjects = function (url) {
@@ -19,9 +22,9 @@ var ProjectsListCtrl = function ($scope, $window, Projects) {
       });
   };
 
-  $scope.gotoProject = function(url){
+  $scope.gotoProject = function (url) {
     $window.location = url;
-  }
+  };
 
   function ajaxSuccessCallback(data) {
     "use strict";
@@ -33,11 +36,59 @@ var ProjectsListCtrl = function ($scope, $window, Projects) {
   }
 };
 
+var NewProjectCtrl = function ($scope) {
+  "use strict";
+  var modal = $('#newProjectModal');
+
+  modal.foundation('reveal', {
+    closed: function () {
+      // Update the current list of users
+      $scope.loadProjects($scope.links.self);
+
+      $scope.$apply(function () {
+        $scope.newProject = {};
+        $scope.errors = {};
+
+        // Need to reset all the fields in the form.
+        $('form[name=newProjectForm] .ng-dirty').removeClass('ng-dirty').addClass('ng-pristine');
+        var form = $scope.newUserForm;
+        for (var field in form) {
+          if (form[field].$pristine === false) {
+            form[field].$pristine = true;
+          }
+          if (form[field].$dirty === true) {
+            form[field].$dirty = false;
+          }
+        }
+        $scope.newProjectForm.$pristine = true;
+      });
+    }
+  });
+
+  $scope.submitNewProject = function () {
+    if ($scope.newProjectForm.$valid) {
+      Projects.create($scope.newProject).then(
+        function () {
+          modal.foundation('reveal', 'close');
+        },
+        function (data) {
+          $scope.errors = {};
+          angular.forEach(data, function (error, key) {
+            "use strict";
+            $scope.errors[key] = data[key].join("</br>");
+          });
+        }
+      );
+    }
+  };
+
+}
+
 
 irida.factory('Projects', function ($http, $q) {
   "use strict";
   return {
-    create     : function (data) {
+    create        : function (data) {
       var deferred = $q.defer();
       $http({
         method : 'POST',

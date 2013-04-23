@@ -31,6 +31,7 @@ public class ProjectResource extends ResourceSupport {
     private Project project;
 
     public ProjectResource() {
+        this.project = new Project();
     }
 
     public ProjectResource(Project project) {
@@ -40,5 +41,9 @@ public class ProjectResource extends ResourceSupport {
     @XmlElement
     public String getName() {
         return project.getName();
+    }
+    
+    public void setName(String name) {
+        this.project.setName(name);
     }
 }

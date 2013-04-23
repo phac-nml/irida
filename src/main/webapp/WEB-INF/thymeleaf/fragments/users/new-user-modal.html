@@ -1,0 +1,59 @@
+<div class="reveal-modal large" id="newUserModal">
+    <div class="modal-header">
+        <h1>Create New User</h1>
+    </div>
+    <div class="modal-body">
+        <form name="newUserForm">
+            <div class="row" novalidated="true">
+                <div class="large-6 columns"
+                     data-ng-class="{error: errors.username || newUserForm.username.$dirty &amp;&amp; newUserForm.username.$invalid}">
+                    <label class="control-label" for="username" th:text="#{user.username}">Username</label>
+                    <input name="username" data-ng-model="newUser.username" type="text" required="required"/>
+                    <small data-ng-show="errors.username" data-ng-bind-html-unsafe="errors.username"></small>
+                </div>
+
+                <div class="large-6 columns"
+                     data-ng-class="{error: errors.password || newUserForm.password.$dirty &amp;&amp; newUserForm.password.$invalid}">
+                    <label class="control-label" for="password" th:text="#{user.password}">Passowrd</label>
+                    <input name="password" data-ng-model="newUser.password" type="password" required="required"/>
+                    <small data-ng-show="errors.password" data-ng-bind-html-unsafe="errors.password"></small>
+                </div>
+            </div>
+            <div class="row">
+                <div class="large-6 columns"
+                     data-ng-class="{error: errors.firstName || newUserForm.firstName.$dirty &amp;&amp; newUserForm.firstName.$invalid}">
+                    <label class="control-label" for="firstName" th:text="#{user.firstName}">First Name</label>
+                    <input name="firstName" data-ng-model="newUser.firstName" type="text" required="required"/>
+                    <small data-ng-show="errors.firstName" data-ng-bind-html-unsafe="errors.firstName"></small>
+                </div>
+
+                <div class="large-6 columns"
+                     data-ng-class="{error: errors.lastName || newUserForm.lastName.$dirty &amp;&amp; newUserForm.lastName.$invalid}">
+                    <label class="control-label" for="lastName" th:text="#{user.lastName}">Last Name</label>
+                    <input name="lastName" data-ng-model="newUser.lastName" type="text" required="required"/>
+                    <small data-ng-show="errors.lastName" data-ng-bind-html-unsafe="errors.lastName"></small>
+                </div>
+            </div>
+            <div class="row">
+                <div class="large-6 columns"
+                     data-ng-class="{error: errors.email || newUserForm.email.$dirty &amp;&amp; newUserForm.email.$invalid}">
+                    <label class="control-label" for="email" th:text="#{user.email}">Email</label>
+                    <input name="email" data-ng-model="newUser.email" type="email" required="required"/>
+                    <small data-ng-show="errors.email" data-ng-bind-html-unsafe="errors.email"></small>
+                </div>
+
+                <div class="large-6 columns"
+                     data-ng-class="{error: errors.phoneNumber || newUserForm.phoneNumber.$dirty &amp;&amp; newUserForm.phoneNumber.$invalid}">
+                    <label class="control-label" for="phoneNumber" th:text="#{user.phoneNumber}">Phone
+                        Number</label>
+                    <input name="password" data-ng-model="newUser.phoneNumber" type="tel" required="required"/>
+                    <small data-ng-show="errors.phoneNumber" data-ng-bind-html-unsafe="errors.phoneNumber"></small>
+                </div>
+            </div>
+        </form>
+    </div>
+    <a class="close-reveal-modal">&#215;</a>
+    <a type="submit" data-ng-class="{disabled: !newUserForm.$valid}" class="button small radius right"
+       data-ng-click="submitNewUser()">Create User</a>
+
+</div>

@@ -1,0 +1,16 @@
+<div class="row">
+    <div class="large-12 columns page-info">
+        <ul class="breadcrumbs left hide-for-small">
+            <li><a href="/">Landing</a></li>
+            <li class="current"><a ng-href="{{links.self}}">All Users</a></li>
+        </ul>
+
+        <ul class="button-group radius right">
+            <li><a class="button" data-ng-disabled="!links.prev"
+                   data-ng-click="loadUsers(links.prev)"><i class="icon-angle-left"></i></a></li>
+            <li><a class="button" data-ng-disabled="!links.next"
+                   data-ng-click="loadUsers(links.next)"><i class="icon-angle-right"></i></a></li>
+        </ul>
+        <a class="button radius" data-reveal-id="newUserModal"><i class="icon-plus"></i>&nbsp;User</a>
+    </div>
+</div>

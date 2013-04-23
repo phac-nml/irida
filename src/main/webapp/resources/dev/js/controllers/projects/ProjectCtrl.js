@@ -3,6 +3,7 @@ angular.module('irida', ['ngResource']);
 angular.module('irida')
   .controller('ProjectCtrl', function ($scope, $window, dataStore) {
     'use strict';
+    $scope.name = "                ";
     $scope.links = [];
 
     $scope.init = function () {

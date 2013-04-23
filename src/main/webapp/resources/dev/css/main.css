@@ -264,6 +264,13 @@ input.ng-valid.ng-dirty {
    ========================================================================== */
 /* Modules
    ========================================================================== */
+.page-info > .button {
+  float: right;
+  margin-right: 2em; }
+  @media screen and (max-width: 48em) {
+    .page-info > .button {
+      float: left; } }
+
 /**
  * .dataTable
  *
@@ -286,19 +293,20 @@ input.ng-valid.ng-dirty {
     .listTable tbody tr:hover {
       cursor: pointer;
       background-color: #c2ccd1; }
-  @media screen and (max-width: 48em) {
-    .listTable tr {
-      height: 2em;
-      font-size: 1.5em; } }
+    @media screen and (max-width: 48em) {
+      .listTable tbody tr {
+        height: 2em;
+        font-size: 1.5em; } }
 
 .grid-list li {
-  min-height: 100px;
-  padding: 1em; }
+  height: 100px;
+  margin-bottom: 1em; }
   .grid-list li > div {
+    border: 1px solid gainsboro;
     -webkit-border-radius: 3px;
     border-radius: 3px;
     cursor: pointer;
-    padding: 1em;
+    padding: 0.8em;
     background-color: #e9e9e9;
     width: 100%;
     height: 100%;
@@ -307,9 +315,3 @@ input.ng-valid.ng-dirty {
     box-shadow: 0px 1px 3px rgba(50, 50, 50, 0.5); }
     .grid-list li > div:hover {
       background-color: #d0d0d0; }
-
-.button-group.right {
-  margin-left: 2em; }
-
-.paging {
-  font-weight: 700; }
