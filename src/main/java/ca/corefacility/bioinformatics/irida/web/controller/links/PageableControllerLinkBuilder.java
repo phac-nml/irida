@@ -30,7 +30,7 @@ public abstract class PageableControllerLinkBuilder {
 
     public static final String REQUEST_PARAM_PAGE = "page";
     public static final String REQUEST_PARAM_SIZE = "size";
-    public static final String REQUEST_PARAM_SORT_COLUMN = "sortColumn";
+    public static final String REQUEST_PARAM_SORT_PROPERTY = "sortColumn";
     public static final String REQUEST_PARAM_SORT_ORDER = "sortOrder";
 
     /**
@@ -83,7 +83,7 @@ public abstract class PageableControllerLinkBuilder {
         StringBuilder sb = new StringBuilder();
         sb.append(REQUEST_PARAM_PAGE).append("=").append(page).append("&");
         sb.append(REQUEST_PARAM_SIZE).append("=").append(size).append("&");
-        sb.append(REQUEST_PARAM_SORT_COLUMN).append("=").append(sortColumn).append("&");
+        sb.append(REQUEST_PARAM_SORT_PROPERTY).append("=").append(sortColumn).append("&");
         sb.append(REQUEST_PARAM_SORT_ORDER).append("=").append(sortOrder);
         return sb.toString();
     }
