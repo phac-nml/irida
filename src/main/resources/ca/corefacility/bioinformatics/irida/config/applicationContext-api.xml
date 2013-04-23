@@ -46,14 +46,6 @@
         <constructor-arg ref="validator" />
     </bean>
     
-    <bean id="userMemoryRepository" class="ca.corefacility.bioinformatics.irida.repositories.memory.UserMemoryRepository" />
-    <bean id="projectMemoryRepository" class="ca.corefacility.bioinformatics.irida.repositories.memory.ProjectMemoryRepository" />
-    <bean id="sampleRepository" class="ca.corefacility.bioinformatics.irida.repositories.memory.CRUDMemoryRepository">
-        <constructor-arg>
-            <value type="java.lang.Class">ca.corefacility.bioinformatics.irida.model.Sample</value>
-        </constructor-arg>
-    </bean>
-    
     <!-- validator beans -->
     <bean id="validator"
           class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
