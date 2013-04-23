@@ -28,11 +28,6 @@ public class UserResource extends Resource<User> {
     }
 
     @XmlElement
-    public URI getURI() {
-        return resource.getIdentifier().getUri();
-    }
-
-    @XmlElement
     public String getUsername() {
         return resource.getUsername();
     }
@@ -81,6 +76,7 @@ public class UserResource extends Resource<User> {
         this.password = password;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
