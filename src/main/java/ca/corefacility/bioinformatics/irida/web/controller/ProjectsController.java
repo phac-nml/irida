@@ -17,25 +17,18 @@ package ca.corefacility.bioinformatics.irida.web.controller;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectCollectionResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
-import ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder.pageLinksFor;
 import com.google.common.net.HttpHeaders;
 import com.google.gson.Gson;
 import java.util.ArrayList;
@@ -61,7 +54,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 @RequestMapping(value = "/projects")
-public class ProjectsController extends GenericController<Project, ProjectResource>{
+public class ProjectsController extends GenericController<Identifier, Project, ProjectResource>{
 
     private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
     private final ProjectService projectService;
