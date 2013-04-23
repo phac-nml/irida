@@ -143,6 +143,12 @@
             <artifactId>hibernate-validator</artifactId>
             <version>${hibernate.validator.version}</version>
         </dependency>
+        <!-- Sesame -->
+        <dependency>
+          <groupId>org.openrdf.sesame</groupId>
+          <artifactId>sesame-runtime</artifactId>
+          <version>${openrdf.sesame.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>irida-api</finalName>
@@ -222,7 +228,7 @@
         <spring.security.version>3.1.3.RELEASE</spring.security.version>
         <validation.api.version>1.0.0.GA</validation.api.version>
         <hibernate.validator.version>4.3.1.Final</hibernate.validator.version>
-        
+        <openrdf.sesame.version>2.7.0</openrdf.sesame.version>
         <!-- plugins -->
         <maven.failsafe.plugin.version>2.13</maven.failsafe.plugin.version>
         <maven.surefire.plugin.version>2.13</maven.surefire.plugin.version>

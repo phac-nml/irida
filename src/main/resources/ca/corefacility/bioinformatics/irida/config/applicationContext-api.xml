@@ -6,6 +6,29 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
     
+    <context:property-placeholder location="classpath:ca/corefacility/bioinformatics/irida/config/sesame.properties"/>
+        
+    <bean id="remoteTripleStore" init-method="initialize" class="ca.corefacility.bioinformatics.irida.dao.TripleStore">
+        <constructor-arg value="${db.uri}"/>
+        <constructor-arg value="${db.instance}"/>
+        <constructor-arg value="${db.base_uri}"/>
+    </bean>
+    
+    <bean id="exampleData" init-method="addSampleData" class="ca.corefacility.bioinformatics.irida.dao.ExampleDataLoader">
+        <constructor-arg ref="userRepository" />
+        <constructor-arg ref="projectRepository" />
+    </bean>
+    
+    <bean id="tripleStore" init-method="initialize" destroy-method="close" class="ca.corefacility.bioinformatics.irida.dao.SailMemoryStore"/>
+    
+    <bean id="userRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.UserSesameRepository">
+        <constructor-arg ref="tripleStore" />        
+    </bean>
+        
+    <bean id="projectRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.ProjectSesameRepository">
+        <constructor-arg ref="tripleStore" />        
+    </bean> 
+    
     <bean id="userService" class="ca.corefacility.bioinformatics.irida.service.impl.UserServiceImpl">
         <constructor-arg ref="userRepository" />
         <constructor-arg ref="validator" />
@@ -21,14 +44,6 @@
     <bean id="sampleService" class="ca.corefacility.bioinformatics.irida.service.impl.SampleServiceImpl">
         <constructor-arg ref="sampleRepository" />
         <constructor-arg ref="validator" />
-    </bean>
-    
-    <bean id="userRepository" class="ca.corefacility.bioinformatics.irida.repositories.memory.UserMemoryRepository" />
-    <bean id="projectRepository" class="ca.corefacility.bioinformatics.irida.repositories.memory.ProjectMemoryRepository" />
-    <bean id="sampleRepository" class="ca.corefacility.bioinformatics.irida.repositories.memory.CRUDMemoryRepository">
-        <constructor-arg>
-            <value type="java.lang.Class">ca.corefacility.bioinformatics.irida.model.Sample</value>
-        </constructor-arg>
     </bean>
     
     <!-- validator beans -->
