@@ -359,7 +359,7 @@ public class GenericRepository<IDType extends Identifier, Type extends Identifia
         RepositoryConnection con = store.getRepoConnection();
 
         try {
-            java.net.URI netURI = buildURI(id.getUUID().toString());
+            java.net.URI netURI = buildURI(id.getIdentifier());
             String uri = netURI.toString();
             
             String querystring = store.getPrefixes()
