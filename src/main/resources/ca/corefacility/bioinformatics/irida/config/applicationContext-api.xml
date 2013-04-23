@@ -29,6 +29,10 @@
         <constructor-arg ref="tripleStore" />        
     </bean> 
     
+    <bean id="sampleRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.SampleSesameRepository">
+        <constructor-arg ref="tripleStore" />        
+    </bean>     
+    
     <bean id="userService" class="ca.corefacility.bioinformatics.irida.service.impl.UserServiceImpl">
         <constructor-arg ref="userRepository" />
         <constructor-arg ref="validator" />
