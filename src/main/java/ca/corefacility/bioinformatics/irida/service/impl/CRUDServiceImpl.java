@@ -184,7 +184,7 @@ public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType>> i
 
     @Override
     public List<ValueType> list(int page, int size, Order order) {
-        List<ValueType> values = repository.list(page, size, "auditInformation", order);
+        List<ValueType> values = repository.list(page, size, null, order);
 
         Collections.sort(values);
         
