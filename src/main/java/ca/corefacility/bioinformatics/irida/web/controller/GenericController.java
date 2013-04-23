@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder;
 import static ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder.pageLinksFor;
 import com.google.common.base.Strings;
+import com.google.common.net.HttpHeaders;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,9 +43,13 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -94,6 +99,15 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @return a collection of links.
      */
     public abstract Collection<Link> constructCustomResourceLinks(Type resource);
+
+    /**
+     * Map a representation of a resource to a concrete version of the resource
+     * so that we can store it in the database.
+     *
+     * @param resourceType the representation to map.
+     * @return the concrete version of the representation.
+     */
+    public abstract Type mapResourceToType(ResourceType representation);
 
     /**
      * Retrieve and construct a response with a collection of user resources.
@@ -150,6 +164,19 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         resource.add(linkTo(getClass()).withSelfRel());
         mav.addObject("resource", resource);
         return mav;
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> create(@RequestBody ResourceType representation) {
+        Type resource = mapResourceToType(representation);
+        resource = crudService.create(resource);
+        String id = resource.getIdentifier().getIdentifier();
+        logger.debug("Created resource with ID [" + resource.getIdentifier().getIdentifier() + "]");
+        String location = linkTo(getClass()).slash(id).withSelfRel().getHref();
+        MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap();
+        responseHeaders.add(HttpHeaders.LOCATION, location);
+        ResponseEntity<String> response = new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
+        return response;
     }
 
     /**

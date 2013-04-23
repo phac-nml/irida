@@ -54,28 +54,6 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
     }
 
     /**
-     * Create a new user resource in the database.
-     *
-     * @param ur the user resource template to be used.
-     * @return the status of the creation request.
-     */
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> create(@RequestBody UserResource ur) {
-        User user = new User(ur.getUsername(), ur.getEmail(), ur.getPassword(), ur.getFirstName(), ur.getLastName(), ur.getPhoneNumber());
-        user = crudService.create(user);
-        String location = linkTo(UsersController.class).slash(user.getUsername()).withSelfRel().getHref();
-        MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap();
-        responseHeaders.add(HttpHeaders.LOCATION, location);
-        ResponseEntity<String> response = new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
-        return response;
-    }
-
-    @RequestMapping(value = "/partials/{name}", method = RequestMethod.GET)
-    public String getHTMLPartials(@PathVariable String name) {
-        return "users/partials/" + name;
-    }
-
-    /**
      * Get the collection of projects for a specific user.
      *
      * @param username the username for the desired user.
@@ -96,6 +74,12 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
 
         mav.addObject("projectResources", resources);
         return mav;
+    }
+
+    @Override
+    public User mapResourceToType(UserResource ur) {
+        return new User(ur.getUsername(), ur.getEmail(), ur.getPassword(),
+                ur.getFirstName(), ur.getLastName(), ur.getPhoneNumber());
     }
 
     @Override
