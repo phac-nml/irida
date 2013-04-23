@@ -24,11 +24,9 @@ import java.net.URI;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
-import org.openrdf.query.BindingSet;
 
 /**
  *
@@ -42,17 +40,14 @@ public class GenericRepositoryTest {
     }
     
     @Before
-    public void setUp() {
+    public void setUp() throws NoSuchMethodException {
         SailMemoryStore store = new SailMemoryStore();
         store.initialize();
         
         repo = new GenericRepository<>(store, Identified.class);
         PropertyMapper map = new PropertyMapper("irida", "Identified");
-        try {
-            map.addProperty("irida", "data", "data", Identified.class.getMethod("getData"), Identified.class.getMethod("setData", String.class), String.class);
-        } catch (NoSuchMethodException | SecurityException ex) {
-            Logger.getLogger(GenericRepositoryTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
+        map.addProperty("irida", "data", "data", Identified.class.getMethod("getData"), Identified.class.getMethod("setData", String.class), String.class);
         
         repo.setPropertyMap(map);
         
@@ -63,18 +58,13 @@ public class GenericRepositoryTest {
     
     /**
      * Test of generateIdentifier method, of class GenericRepository.
-     
+     */
     @Test
     public void testGenerateIdentifier() {
-        System.out.println("generateIdentifier");
-        Object t = null;
-        GenericRepository instance = new GenericRepository();
-        Identifier expResult = null;
-        Identifier result = instance.generateIdentifier(t);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }*/
+        Identified i = new Identified("blah");
+        Identifier id = repo.generateIdentifier(i);
+        assertNotNull(id.getIdentifier());
+    }
 
     /**
      * Test of buildIdentifier method, of class GenericRepository.
@@ -88,48 +78,6 @@ public class GenericRepositoryTest {
         Identifier expResult = null;
         Identifier result = instance.buildIdentifier(bs, subject);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }*/
-
-    /**
-     * Test of getPropertyMap method, of class GenericRepository.
-     
-    @Test
-    public void testGetPropertyMap() {
-        System.out.println("getPropertyMap");
-        GenericRepository instance = new GenericRepository();
-        PropertyMapper expResult = null;
-        PropertyMapper result = instance.getPropertyMap();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }*/
-
-    /**
-     * Test of buildURI method, of class GenericRepository.
-     
-    @Test
-    public void testBuildURI() {
-        System.out.println("buildURI");
-        String id = "";
-        GenericRepository instance = new GenericRepository();
-        URI expResult = null;
-        URI result = instance.buildURI(id);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }*/
-
-    /**
-     * Test of setPropertyMap method, of class GenericRepository.
-     
-    @Test
-    public void testSetPropertyMap() {
-        System.out.println("setPropertyMap");
-        PropertyMapper propertyMap = null;
-        GenericRepository instance = new GenericRepository();
-        instance.setPropertyMap(propertyMap);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }*/
@@ -259,38 +207,6 @@ public class GenericRepositoryTest {
             fail();
         } 
     }
-
-    /**
-     * Test of buildParams method, of class GenericRepository.
-     
-    @Test
-    public void testBuildParams() {
-        System.out.println("buildParams");
-        String subject = "";
-        PropertyMapper map = null;
-        GenericRepository instance = new GenericRepository();
-        String expResult = "";
-        String result = instance.buildParams(subject, map);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }*/
-
-    /**
-     * Test of extractData method, of class GenericRepository.
-     
-    @Test
-    public void testExtractData() {
-        System.out.println("extractData");
-        Identifier id = null;
-        BindingSet bindingSet = null;
-        GenericRepository instance = new GenericRepository();
-        Object expResult = null;
-        Object result = instance.extractData(id, bindingSet);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }*/
 
     /**
      * Test of update method, of class GenericRepository.
