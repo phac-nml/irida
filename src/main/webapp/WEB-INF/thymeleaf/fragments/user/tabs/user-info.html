@@ -1,0 +1,16 @@
+<section>
+    <p class="title" data-section-title=""><a href="#">Profile</a></p>
+
+    <div class="content" data-section-content="">
+        <h1 id="username" th:text="${username}"></h1>
+        <span>{{user.firstName}}</span>
+        <span>{{user.lastName}}</span>
+
+        <div class="projects">
+            <h3>Projects</h3>
+            <ul data-ng-repeat="project in projects">
+                <li><a data-ng-href="{{project.links[0].href}}">{{project.name}}</a></li>
+            </ul>
+        </div>
+    </div>
+</section>

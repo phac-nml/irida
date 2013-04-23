@@ -1,0 +1,19 @@
+<div class="reveal-modal large" id="newProjectModal" data-ng-controller="NewProjectCtrl">
+    <div class="modal-header">
+        <h1>Create New Project</h1>
+    </div>
+    <div class="modal-body">
+        <form name="newProjectForm" novalidated="true">
+            <div class="row">
+                <div class="large-12 columns" data-ng-class="{error: errors.name || newProjectForm.name.$dirty &amp;&amp; newProjectForm.name.$invalid}">
+                    <label class="control-label" for="name" th:text="#{project.name}">Project Name</label>
+                    <input name="username" data-ng-model="newProject.name" type="text" required="required"/>
+                    <small data-ng-show="errors.name" data-ng-bind-html-unsafe="errors.name"></small>
+                </div>
+            </div>
+        </form>
+    </div>
+    <a class="close-reveal-modal">&#215;</a>
+    <a type="submit" data-ng-class="{disabled: !newProjectForm.$valid}" class="button small radius right" data-ng-click="submitNewProject()">Create Project</a>
+
+</div>

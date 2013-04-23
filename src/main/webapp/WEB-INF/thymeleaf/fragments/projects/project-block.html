@@ -1,0 +1,7 @@
+<div class="large-12 columns">
+    <ul class="small-block-grid-2 large-block-grid-4 grid-list">
+        <li data-ng-repeat="project in projects">
+            <div data-ng-click="gotoProject(project.links[0].href)"><span ng-bind="project.name"></span></div>
+        </li>
+    </ul>
+</div>

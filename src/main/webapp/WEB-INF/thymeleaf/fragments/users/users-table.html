@@ -1,0 +1,24 @@
+<div class="row" data-ng-init="loadUsers(usersUrl)">
+    <div class="large-12 columns">
+        <table class="listTable table table-striped table-bordered large-12">
+            <thead>
+            <tr class="header">
+                <th class="hide-for-small" th:text="#{user.username}"></th>
+                <th th:text="#{user.firstName}"></th>
+                <th th:text="#{user.lastName}"></th>
+                <th class="hide-for-small" th:text="#{user.email}"></th>
+                <th class="hide-for-small" th:text="#{user.phoneNumber}"></th>
+            </tr>
+            </thead>
+            <tbody data-ng-repeat="user in users">
+            <tr data-ng-click="gotoUser(user.links[0].href)">
+                <td class="hide-for-small">{{user.username}}</td>
+                <td>{{user.firstName}}</td>
+                <td>{{user.lastName}}</td>
+                <td class="hide-for-small"><a href="mailto:{{user.email}}">{{user.email}}</a></td>
+                <td class="hide-for-small">{{user.phoneNumber}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -49,7 +49,7 @@ public class ProjectsController extends GenericController<Identifier, Project, P
         p.setName(pr.getName());
         return p;
     }
-
+    
     @Override
     public Collection<Link> constructCustomResourceLinks(Project p) {
         Collection<Link> links = new HashSet<>();
