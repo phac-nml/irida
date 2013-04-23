@@ -10,12 +10,16 @@ frameworks = ['jasmine'];
 
 // list of files / patterns to load in the browser
 files = [
-//  'src/test/js/lib/jasmine/jasmine.js',
+  'src/main/webapp/resources/dev/js/vendor/jquery.js',
+  'src/main/webapp/resources/dev/js/vendor/foundation/foundation.js',
+  'src/main/webapp/resources/dev/js/vendor/foundation/foundation.reveal.js',
   'src/main/webapp/resources/dev/js/vendor/angular/angular.min.js',
   'src/main/webapp/resources/dev/js/vendor/angular/angular-resource.min.js',
   'src/test/js/lib/angular/angular-mocks.js',
-  'src/main/webapp/resources/dev/js/usersCtrl.js',
-  'src/test/js/unit/_users.js'
+  'src/main/webapp/resources/dev/js/app.js',
+  'src/main/webapp/resources/dev/js/controllers/**/*.js',
+  'src/test/js/unit/**/*.js',
+
 ];
 
 

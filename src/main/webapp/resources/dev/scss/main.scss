@@ -1,4 +1,4 @@
-@import "compass_twitter_bootstrap_awesome";
+@import "foundation/foundation-global";
 /* Positioning */
 /* Display & Box Model */
 /* Other */
@@ -34,7 +34,7 @@ input.ng-valid.ng-dirty {
  *
  * Used when a table has selectable rows.
  */
-.dataTable {
+.listTable {
     width: 100%;
     thead {
         font-weight: 700;
@@ -48,10 +48,23 @@ input.ng-valid.ng-dirty {
         th {
             color: white;}
     }
-    tbody tr:hover {
-        cursor: pointer;
-        background-color: #c2ccd1;
+    tbody tr {
+        border-bottom: 1px solid #efefef;
+        &:hover {
+            cursor: pointer;
+            background-color: #c2ccd1;
+        }
     }
+    tr {
+        @media screen and (max-width: $small-screen) {
+            height: 2em;
+            font-size: 1.5em;
+        }
+    }
+}
+
+.button-group.right {
+    margin-left: 2em;
 }
 
 .paging {

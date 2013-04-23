@@ -1,10 +1,16 @@
-<div class="navbar" data-ng-controller="NavCtrl">
-    <div class="navbar-inner">
-        <a class="brand" href="#">IRIDA</a>
-        <ul class="nav pull-right">
-            <li th:class="${projects} ? 'active'"><a th:href="@{/projects}">Projects</a></li>
-            <li class="active"><a th:href="@{/users}">Users</a></li>
-            <li><a th:href="@{/logout}"><i class="icon-off"></i></a></li>
+<div class="top-bar">
+    <ul class="title-area">
+        <li class="name"><h1><a href="/">IRIDA</a></h1></li>
+        <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+    </ul>
+    <section class="top-bar-section">
+        <ul class="right">
+            <li class="divider"></li>
+            <li><a th:href="@{/projects}">Projects</a></li>
+            <li class="divider"></li>
+            <li><a th:href="@{/users}">All Users</a></li>
+            <li class="divider"></li>
+            <li><a th:href="@{/logout}">Logout</a></li>
         </ul>
-    </div>
+    </section>
 </div>

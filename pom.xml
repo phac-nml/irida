@@ -253,6 +253,11 @@
             <scope>provided</scope>
         </dependency>
                  
+        <dependency>
+            <groupId>com.kelveden</groupId>
+            <artifactId>maven-karma-plugin</artifactId>
+            <version>1.0</version>
+        </dependency>         
     </dependencies>
 
     <build>
@@ -362,6 +367,21 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.kelveden</groupId>
+                <artifactId>maven-karma-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <browsers>Chrome</browsers>
+                </configuration>
             </plugin>
         </plugins>
     </build>
