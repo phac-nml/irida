@@ -18,10 +18,10 @@ describe("ProjectsCtrl", function () {
     $httpBackend.verifyNoOutstandingRequest();
   });
 
-//  it("Should have an empty users array", function () {
-//    "use strict";
-//    expect(newScope.users.length).toBe(0);
-//  });
+  it("Should have an empty projects array", function () {
+    "use strict";
+    expect(newScope.projects.length).toBe(0);
+  });
 //
 //  it("Should make a server call", function () {
 //    runs(function () {
