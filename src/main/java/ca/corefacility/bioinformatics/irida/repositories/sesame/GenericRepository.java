@@ -51,25 +51,31 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class GenericRepository<IDType extends Identifier, Type extends Identifiable<IDType>> extends SesameRepository implements CRUDRepository<IDType, Type> {
+public class GenericRepository<IDType extends Identifier, Type extends Identifiable<IDType>> implements CRUDRepository<IDType, Type> {
 
+    TripleStore store;
+    String URI; //The base URI for objects of this type 
+    
     public final static Map<String, String> userParams = new HashMap<>();
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(UserSesameRepository.class);
-    Class<Type> objectType;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(GenericRepository.class);
+    
+    Class<Type> objectType; //The class object type being stored by this repo
+    String stringType; //String representation of that type
     PropertyMapper propertyMap;
-    String stringType;
+    
 
     public GenericRepository() {
     }
 
     public GenericRepository(TripleStore store, Class type) {
-        super(store, type);
+        this.store = store;
+        URI = store.getURI() + type.getSimpleName() + "/";
+        
         this.objectType = type;
     }
 
     public GenericRepository(TripleStore store, Class type, PropertyMapper propertyMap) {
-        super(store, type);
-        this.objectType = type;
+        this(store, type);
 
         setPropertyMap(propertyMap);
     }
@@ -350,9 +356,7 @@ public class GenericRepository<IDType extends Identifier, Type extends Identifia
      * {@inheritDoc}
      */
     @Override
-    public Boolean exists(Identifier id) {
-        //return super.exists(id, propertyMap.prefix, propertyMap.type);
-      
+    public Boolean exists(Identifier id) {      
         boolean exists = false;
         RepositoryConnection con = store.getRepoConnection();
 
@@ -478,6 +482,48 @@ public class GenericRepository<IDType extends Identifier, Type extends Identifia
      */
     @Override
     public Integer count() {
-        return super.count(propertyMap.prefix, propertyMap.type);
+
+        int count = 0;
+        
+        RepositoryConnection con = store.getRepoConnection();
+        
+        try {
+            String qs = store.getPrefixes()
+                    + "SELECT (count(?s) as ?c) \n"
+                    + "WHERE{ ?s a ?type . \n"
+                    + "}\n";
+            
+            TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
+            
+            URI vtype = con.getValueFactory().createURI(con.getNamespace(propertyMap.prefix), propertyMap.type);
+            tupleQuery.setBinding("type", vtype);
+            
+            TupleQueryResult result = tupleQuery.evaluate();
+            
+            BindingSet bindingSet = result.next();
+            Value countval = bindingSet.getValue("c");
+            count = Integer.parseInt(countval.stringValue());
+                      
+            result.close();
+    
+        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't run count query");
+        }
+        finally{
+            try {
+                con.close();
+            } catch (RepositoryException ex) {
+                logger.error(ex.getMessage());
+                throw new StorageException("Couldn't close connection");
+            }
+        }
+            
+        return count;
+            
+    }
+    
+    public void close(){
+        //maybe eventually
     }
 }
