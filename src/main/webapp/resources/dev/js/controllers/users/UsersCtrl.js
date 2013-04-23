@@ -3,34 +3,6 @@ var irida = angular.module('irida', ['ngResource']);
 irida.controller(UsersListCtrl);
 
 var UsersListCtrl = function ($scope, $window, Users) {
-
-  var modal = $('#newUserModal');
-
-  modal.foundation('reveal', {
-    closed: function () {
-      // Update the current list of users
-      $scope.loadUsers($scope.links.self);
-
-      $scope.$apply(function () {
-        $scope.newUser = {};
-        $scope.errors = {};
-
-        // Need to reset all the fields in the form.
-        $('form[name=newUserForm] .ng-dirty').removeClass('ng-dirty').addClass('ng-pristine');
-        var form = $scope.newUserForm;
-        for (var field in form) {
-          if (form[field].$pristine === false) {
-            form[field].$pristine = true;
-          }
-          if (form[field].$dirty === true) {
-            form[field].$dirty = false;
-          }
-        }
-        $scope.newUserForm.$pristine = true;
-      });
-    }
-  });
-
   $scope.users = [];
 
   $scope.usersUrl = '/users' + '?_' + Math.random();
@@ -51,11 +23,31 @@ var UsersListCtrl = function ($scope, $window, Users) {
     $window.location = url;
   };
 
+  $scope.clearForm = function () {
+    $scope.newUser = {};
+    $scope.errors = {};
+
+    // Need to reset all the fields in the form.
+    $('form[name=newUserForm] .ng-dirty').removeClass('ng-dirty').addClass('ng-pristine');
+    var form = $scope.newUserForm;
+    for (var field in form) {
+      if (form[field].$pristine === false) {
+        form[field].$pristine = true;
+      }
+      if (form[field].$dirty === true) {
+        form[field].$dirty = false;
+      }
+    }
+    $scope.newUserForm.$pristine = true;
+  };
+
   $scope.submitNewUser = function () {
     if ($scope.newUserForm.$valid) {
       Users.create($scope.newUser).then(
         function () {
-          modal.foundation('reveal', 'close');
+          $scope.loadUsers($scope.usersUrl);
+          $scope.clearForm();
+          $('#newUserModal').foundation('reveal', 'close');
         },
         function (data) {
           $scope.errors = {};
