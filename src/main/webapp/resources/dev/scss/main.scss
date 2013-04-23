@@ -48,9 +48,18 @@ input.ng-valid.ng-dirty {
         th {
             color: white;}
     }
-    tbody tr:hover {
-        cursor: pointer;
-        background-color: #c2ccd1;
+    tbody tr {
+        border-bottom: 1px solid #efefef;
+        &:hover {
+            cursor: pointer;
+            background-color: #c2ccd1;
+        }
+    }
+    tr {
+        @media screen and (max-width: $small-screen) {
+            height: 2em;
+            font-size: 1.5em;
+        }
     }
 }
 
