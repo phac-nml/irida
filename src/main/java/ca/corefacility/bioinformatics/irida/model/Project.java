@@ -24,7 +24,7 @@ public class Project implements Comparable<Project>, Auditable<Audit>, Identifia
     private Identifier id;
     @NotNull
     private String name;
-    @NotEmpty // projects must have at least 1 user (a manager)
+    
     private Map<User, Role> users;
     @NotNull
     private Audit audit;
@@ -103,7 +103,7 @@ public class Project implements Comparable<Project>, Auditable<Audit>, Identifia
 
     @Override
     public int compareTo(Project p) {
-        return audit.getCreated().compareTo(p.audit.getCreated());
+        return audit.compareTo(p.audit);
     }
 
     @Override
