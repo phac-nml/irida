@@ -17,6 +17,7 @@ package ca.corefacility.bioinformatics.irida.repositories.memory;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import java.util.Collection;
 import java.util.HashSet;
@@ -30,6 +31,13 @@ public class ProjectMemoryRepository extends CRUDMemoryRepository<Project> imple
 
     public ProjectMemoryRepository() {
         super(Project.class);
+
+        for (int i = 1; i <= 50; i++) {
+            Identifier id = new Identifier();
+            Project p = new Project("Project " + i);
+            p.setIdentifier(id);
+            store.put(id, p);
+        }
     }
 
     @Override
