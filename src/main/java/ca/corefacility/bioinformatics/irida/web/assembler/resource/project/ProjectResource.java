@@ -16,9 +16,9 @@
 package ca.corefacility.bioinformatics.irida.web.assembler.resource.project;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.springframework.hateoas.ResourceSupport;
 
 /**
  * A resource for {@link Project}s.
@@ -26,19 +26,22 @@ import org.springframework.hateoas.ResourceSupport;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @XmlRootElement(name = "project")
-public class ProjectResource extends ResourceSupport {
-
-    private Project project;
+public class ProjectResource extends Resource<Project> {
 
     public ProjectResource() {
+        super(new Project());
     }
 
     public ProjectResource(Project project) {
-        this.project = project;
+        super(project);
     }
 
     @XmlElement
     public String getName() {
-        return project.getName();
+        return resource.getName();
+    }
+    
+    public void setName(String name) {
+        this.resource.setName(name);
     }
 }
