@@ -58,7 +58,7 @@ public class ProjectsController {
     public String showProjectsPage(Model model,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_PAGE, defaultValue = "1") int page,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SIZE, defaultValue = "20") int size,
-            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_COLUMN, defaultValue = "name") String sortColumn,
+            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_PROPERTY, defaultValue = "name") String sortColumn,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER, defaultValue = "ASCENDING") Order sortOrder) {
         List<Project> projects = projectService.list(page, size, sortColumn, sortOrder);
         int totalProjects = projectService.count();

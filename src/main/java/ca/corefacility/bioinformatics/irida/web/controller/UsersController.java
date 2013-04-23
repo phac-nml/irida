@@ -4,14 +4,11 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectCollectionResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserCollectionResource;
-import ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder.pageLinksFor;
 import com.google.common.net.HttpHeaders;
 import java.util.Collection;
 import org.springframework.http.HttpStatus;
@@ -40,7 +36,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -52,54 +47,16 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 @RequestMapping(value = "/users")
-public class UsersController {
+public class UsersController extends GenericController<User, UserResource> {
 
     private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
-    private final UserService userService;
     private final ProjectService projectService;
     private static final String USER_PROJECTS_REL = "user/projects";
 
     @Autowired
     public UsersController(UserService userService, ProjectService projectService) {
-        this.userService = userService;
+        super(userService, User.class, UserResource.class);
         this.projectService = projectService;
-    }
-
-    /**
-     * Retrieve and construct a response with a collection of user resources.
-     *
-     * @param page the current page of the list of resources that the client
-     * wants.
-     * @param size the size of the page that the client wants to see.
-     * @param sortProperty the property that the resources should be sorted by.
-     * @param sortOrder the order of the sort.
-     * @return a model and view containing the collection of user resources.
-     */
-    @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView showUsersPage(
-            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_PAGE, defaultValue = "1") int page,
-            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SIZE, defaultValue = "20") int size,
-            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_COLUMN, defaultValue = "username") String sortProperty,
-            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER, defaultValue = "ASCENDING") Order sortOrder) {
-        ModelAndView mav = new ModelAndView("users/index");
-        List<User> users = userService.list(page, size, sortProperty, sortOrder);
-        ControllerLinkBuilder linkBuilder = linkTo(UsersController.class);
-        int totalUsers = userService.count();
-        UserCollectionResource resources = new UserCollectionResource();
-
-        for (User u : users) {
-            UserResource resource = new UserResource(u);
-            resource.add(linkBuilder.slash(resource.getUsername()).withSelfRel());
-            resources.add(resource);
-        }
-
-        resources.add(pageLinksFor(UsersController.class, page, size, totalUsers, sortProperty, sortOrder));
-        resources.setTotalUsers(totalUsers);
-
-        mav.addObject("userResources", resources);
-        mav.addObject("users", true);
-        mav.addObject("pageTitle", "Users");
-        return mav;
     }
 
     /**
@@ -111,7 +68,7 @@ public class UsersController {
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> create(@RequestBody UserResource ur) {
         User user = new User(ur.getUsername(), ur.getEmail(), ur.getPassword(), ur.getFirstName(), ur.getLastName(), ur.getPhoneNumber());
-        user = userService.create(user);
+        user = crudService.create(user);
         String location = linkTo(UsersController.class).slash(user.getUsername()).withSelfRel().getHref();
         MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap();
         responseHeaders.add(HttpHeaders.LOCATION, location);
@@ -133,7 +90,7 @@ public class UsersController {
     @RequestMapping(value = "/{username}", method = RequestMethod.GET)
     public ModelAndView getUser(@PathVariable String username) {
         ModelAndView mav = new ModelAndView("users/user");
-        UserResource u = new UserResource(userService.getUserByUsername(username));
+        UserResource u = new UserResource(userService().getUserByUsername(username));
         u.add(linkTo(UsersController.class).slash(username).slash("projects").withRel(USER_PROJECTS_REL));
         u.add(linkTo(UsersController.class).slash(username).withSelfRel());
         mav.addObject("user", u);
@@ -149,7 +106,7 @@ public class UsersController {
     @RequestMapping(value = "/{username}/projects", method = RequestMethod.GET)
     public ModelAndView getUserProjects(@PathVariable String username) {
         ModelAndView mav = new ModelAndView("users/user");
-        User u = userService.getUserByUsername(username);
+        User u = userService().getUserByUsername(username);
         ProjectCollectionResource resources = new ProjectCollectionResource();
         Collection<Project> projects = projectService.getProjectsForUser(u);
         ControllerLinkBuilder linkBuilder = linkTo(ProjectsController.class);
@@ -218,5 +175,9 @@ public class UsersController {
         }
         Gson g = new Gson();
         return g.toJson(mp);
+    }
+
+    private UserService userService() {
+        return (UserService) crudService;
     }
 }

@@ -1,11 +1,11 @@
 package ca.corefacility.bioinformatics.irida.web.assembler.resource.user;
 
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.net.URI;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.springframework.hateoas.ResourceSupport;
 
 /**
  * Wrapper for exposing User resources to the web with linking support.
@@ -15,67 +15,66 @@ import org.springframework.hateoas.ResourceSupport;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @XmlRootElement(name = "user")
-public class UserResource extends ResourceSupport {
+public class UserResource extends Resource<User> {
 
-    private User user;
     private String password;
 
     public UserResource() {
-        user = new User();
+        super(new User());
     }
 
     public UserResource(User user) {
-        this.user = user;
+        super(user);
     }
 
     @XmlElement
     public URI getURI() {
-        return user.getIdentifier().getUri();
+        return resource.getIdentifier().getUri();
     }
 
     @XmlElement
     public String getUsername() {
-        return user.getUsername();
+        return resource.getUsername();
     }
 
     public void setUsername(String username) {
-        user.setUsername(username);
+        resource.setUsername(username);
     }
 
     @XmlElement
     public String getEmail() {
-        return user.getEmail();
+        return resource.getEmail();
     }
 
     public void setEmail(String email) {
-        user.setEmail(email);
+        resource.setEmail(email);
     }
 
     @XmlElement
     public String getFirstName() {
-        return user.getFirstName();
+        return resource.getFirstName();
     }
 
     public void setFirstName(String firstName) {
-        user.setFirstName(firstName);
+        resource.setFirstName(firstName);
     }
 
     @XmlElement
     public String getLastName() {
-        return user.getLastName();
+        return resource.getLastName();
     }
 
     public void setLastName(String lastName) {
-        user.setLastName(lastName);
+        resource.setLastName(lastName);
     }
 
     @XmlElement
     public String getPhoneNumber() {
-        return user.getPhoneNumber();
+        return resource.getPhoneNumber();
     }
 
     public void setPhoneNumber(String phoneNumber) {
-        user.setPhoneNumber(phoneNumber);
+        resource.setPhoneNumber(phoneNumber);
     }
 
     public void setPassword(String password) {
@@ -88,6 +87,6 @@ public class UserResource extends ResourceSupport {
 
     @JsonIgnore
     public User getUser() {
-        return user;
+        return resource;
     }
 }
