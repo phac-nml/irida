@@ -22,6 +22,10 @@ package ca.corefacility.bioinformatics.irida.model.roles.impl;
 public class UserIdentifier extends Identifier{
     private String username;
     
+    public UserIdentifier() {
+        
+    }
+    
     public UserIdentifier(String username) {
         super();
         this.username = username;
@@ -30,5 +34,10 @@ public class UserIdentifier extends Identifier{
     @Override
     public String getIdentifier() {
         return this.username;
+    }
+    
+    @Override
+    public void setIdentifier(String username) {
+        this.username = username;
     }
 }
