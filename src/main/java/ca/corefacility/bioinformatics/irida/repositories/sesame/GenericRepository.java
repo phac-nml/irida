@@ -124,7 +124,7 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
      * Set the property mapper for this repository
      * @param propertyMap A property map that describes how to deconstruct and reconstruct the objects that will be stored in this repository
      */
-    public void setPropertyMap(PropertyMapper propertyMap){
+    public final void setPropertyMap(PropertyMapper propertyMap){
         this.propertyMap = propertyMap;
         stringType = propertyMap.prefix + ":" + propertyMap.type;
     }
