@@ -31,7 +31,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class Sample implements Auditable<Audit>, Identifiable<Identifier> {
+public class Sample implements Auditable<Audit>, Identifiable<Identifier>, Comparable<Sample> {
 
     private Identifier id;
     @NotNull
@@ -63,6 +63,11 @@ public class Sample implements Auditable<Audit>, Identifiable<Identifier> {
         }
 
         return false;
+    }
+
+    @Override
+    public int compareTo(Sample other) {
+        return audit.compareTo(other.audit);
     }
 
     @Override

@@ -13,7 +13,7 @@ import javax.validation.ConstraintViolationException;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public interface CRUDService<IdentifierType, Type> {
+public interface CRUDService<IdentifierType, Type extends Comparable<Type>> {
 
     /**
      * Create a new object in the persistence store.
@@ -82,6 +82,19 @@ public interface CRUDService<IdentifierType, Type> {
      * property <code>sortProperty</code>.
      */
     public List<Type> list(int page, int size, String sortProperty, Order order);
+
+    /**
+     * List objects of
+     * <code>Type</code> in the database, limited to some specific page, ordered
+     * by calling the
+     * <code>compareTo</code> method on the class.
+     *
+     * @param page the specific page to use.
+     * @param size the size of the pages used to compute the number of pages.
+     * @param order the order of the sort.
+     * @return the list of users within the specified range.
+     */
+    public List<Type> list(int page, int size, Order order);
 
     /**
      * Check to see if an identifier for

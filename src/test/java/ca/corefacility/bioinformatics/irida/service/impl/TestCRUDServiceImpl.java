@@ -239,4 +239,37 @@ public class TestCRUDServiceImpl {
 
         assertEquals(count, crudService.count().intValue());
     }
+    
+    @Test
+    public void testPagedResultsDefaultOrderBy() {
+        final int LIST_SIZE = 30;
+        List<IdentifiableTestEntity> created = new ArrayList<>(LIST_SIZE);
+        for (int i = 1; i < LIST_SIZE + 1; i++) {
+            Audit audit = new Audit();
+            IdentifiableTestEntity entity = new IdentifiableTestEntity();
+            StringBuilder date = new StringBuilder("2013-04-");
+            if (i < 10) {
+                date.append("0");
+            }
+            date.append(i);
+            audit.setCreated(Date.valueOf(date.toString()));
+            entity.setAuditInformation(audit);
+            created.add(crudRepository.create(entity));
+        }
+
+        // page 2 with 15 items should return a list of size 15
+        List<IdentifiableTestEntity> list = crudService.list(2, 15, Order.ASCENDING);
+
+        assertEquals(15, list.size());
+
+        // the first 15 items in the list should not be there
+        for (int i = 0; i < 15; i++) {
+            assertFalse(list.contains(created.get(i)));
+        }
+
+        // the second 15 items in the list should be there
+        for (int i = 15; i < LIST_SIZE; i++) {
+            assertTrue(list.contains(created.get(i)));
+        }
+    }
 }

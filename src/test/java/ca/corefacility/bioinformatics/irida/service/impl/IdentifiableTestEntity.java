@@ -25,7 +25,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class IdentifiableTestEntity implements Identifiable<Identifier>, Auditable<Audit> {
+public class IdentifiableTestEntity implements Identifiable<Identifier>, Auditable<Audit>, Comparable<IdentifiableTestEntity> {
 
     private Identifier id;
     @NotNull
@@ -64,5 +64,10 @@ public class IdentifiableTestEntity implements Identifiable<Identifier>, Auditab
     @Override
     public void setAuditInformation(Audit audit) {
         this.audit = audit;
+    }
+
+    @Override
+    public int compareTo(IdentifiableTestEntity o) {
+        return audit.compareTo(o.audit);
     }
 }

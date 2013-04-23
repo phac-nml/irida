@@ -22,7 +22,7 @@ import javax.validation.Validator;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class CRUDServiceImpl<KeyType, ValueType> implements CRUDService<KeyType, ValueType> {
+public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType>> implements CRUDService<KeyType, ValueType> {
 
     protected CRUDRepository<KeyType, ValueType> repository;
     protected Validator validator;
@@ -180,5 +180,18 @@ public class CRUDServiceImpl<KeyType, ValueType> implements CRUDService<KeyType,
         builder.append(property.substring(0, 1).toUpperCase());
         builder.append(property.substring(1));
         return builder.toString();
+    }
+
+    @Override
+    public List<ValueType> list(int page, int size, Order order) {
+        List<ValueType> values = repository.list(page, size, "auditInformation", order);
+
+        Collections.sort(values);
+        
+        if (order == Order.DESCENDING) {
+            Collections.reverse(values);
+        }
+
+        return values;
     }
 }
