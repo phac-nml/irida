@@ -2,10 +2,26 @@
 var irida = angular.module('irida', ['ngResource']);
 irida.controller(ProjectsListCtrl);
 
-var ProjectsListCtrl = function ($scope) {
+var ProjectsListCtrl = function ($scope, $window, Projects) {
   "use strict";
   $scope.projects = [];
   $scope.projectsUrl = '/projects' + '?_' + Math.random();
+
+  $scope.loadProjects = function (url) {
+    'use strict';
+    Projects.getAllProjects(url).then(
+      function (data) {
+        ajaxSuccessCallback(data);
+      },
+      function (errorMessage) {
+        // TODO: handle error message
+        console.log("An error occurred");
+      });
+  };
+
+  $scope.gotoProject = function(url){
+    $window.location = url;
+  }
 
   function ajaxSuccessCallback(data) {
     "use strict";
@@ -13,7 +29,7 @@ var ProjectsListCtrl = function ($scope) {
     angular.forEach(data.projectResources.links, function (val) {
       $scope.links[val.rel] = val.href;
     });
-    $scope.users = data.userResources.users;
+    $scope.projects = data.projectResources.projects;
   }
 };
 
