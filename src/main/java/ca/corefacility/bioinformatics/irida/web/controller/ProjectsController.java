@@ -61,7 +61,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 @RequestMapping(value = "/projects")
-public class ProjectsController {
+public class ProjectsController extends GenericController<Project, ProjectResource>{
 
     private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
     private final ProjectService projectService;
@@ -69,31 +69,8 @@ public class ProjectsController {
 
     @Autowired
     public ProjectsController(ProjectService projectService) {
+        super(projectService, Project.class, ProjectResource.class);
         this.projectService = projectService;
-    }
-
-    @RequestMapping(method = RequestMethod.GET)
-    public String showProjectsPage(Model model,
-            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_PAGE, defaultValue = "1") int page,
-            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SIZE, defaultValue = "20") int size,
-            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_PROPERTY, defaultValue = "name") String sortColumn,
-            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER, defaultValue = "ASCENDING") Order sortOrder) {
-        List<Project> projects = projectService.list(page, size, sortColumn, sortOrder);
-        int totalProjects = projectService.count();
-        ControllerLinkBuilder linkBuilder = linkTo(ProjectsController.class);
-
-        ProjectCollectionResource resources = new ProjectCollectionResource();
-
-        for (Project p : projects) {
-            ProjectResource resource = new ProjectResource(p);
-            resource.add(linkBuilder.slash(p.getIdentifier().getUUID()).withSelfRel());
-            resources.add(resource);
-        }
-
-        resources.add(pageLinksFor(ProjectsController.class, page, size, totalProjects, sortColumn, sortOrder));
-
-        model.addAttribute("projectResources", resources);
-        return "projects/index";
     }
 
     @RequestMapping(value = "/{projectId}", method = RequestMethod.GET)

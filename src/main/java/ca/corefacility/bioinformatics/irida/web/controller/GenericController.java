@@ -23,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder;
 import static ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder.pageLinksFor;
+import com.google.common.base.Strings;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ import org.springframework.web.servlet.ModelAndView;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public abstract class GenericController<Type extends Identifiable, ResourceType extends Resource> {
+public abstract class GenericController<Type extends Identifiable<Identifier> & Comparable<Type>, ResourceType extends Resource> {
 
     private static final Logger logger = LoggerFactory.getLogger(GenericController.class);
     protected CRUDService<Identifier, Type> crudService;
@@ -68,7 +69,13 @@ public abstract class GenericController<Type extends Identifiable, ResourceType 
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_PROPERTY, required = false) String sortProperty,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER, defaultValue = "ASCENDING") Order sortOrder) throws InstantiationException, IllegalAccessException {
         ModelAndView mav = new ModelAndView(prefix + "/index");
-        List<Type> entities = crudService.list(page, size, sortProperty, sortOrder);
+        List<Type> entities;
+        
+        if (Strings.isNullOrEmpty(sortProperty)) {
+            entities = crudService.list(page, size, sortOrder);
+        } else {
+            entities = crudService.list(page, size, sortProperty, sortOrder);
+        }
         ControllerLinkBuilder linkBuilder = linkTo(getClass());
         int totalEntities = crudService.count();
         ResourceCollection<ResourceType> resources = new ResourceCollection<>();
@@ -76,7 +83,7 @@ public abstract class GenericController<Type extends Identifiable, ResourceType 
         for (Type entity : entities) {
             ResourceType resource = resourceType.newInstance();
             resource.setResource(entity);
-            resource.add(linkBuilder.slash(entity.getIdentifier()).withSelfRel());
+            resource.add(linkBuilder.slash(entity.getIdentifier().getUUID()).withSelfRel());
             resources.add(resource);
         }
 
