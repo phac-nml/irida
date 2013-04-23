@@ -36,9 +36,15 @@ input.ng-valid.ng-dirty {
       padding: 20px; }
     .listTable thead th {
       color: white; }
-  .listTable tbody tr:hover {
-    cursor: pointer;
-    background-color: #c2ccd1; }
+  .listTable tbody tr {
+    border-bottom: 1px solid #efefef; }
+    .listTable tbody tr:hover {
+      cursor: pointer;
+      background-color: #c2ccd1; }
+  @media screen and (max-width: 48em) {
+    .listTable tr {
+      height: 2em;
+      font-size: 1.5em; } }
 
 .button-group.right {
   margin-left: 2em; }
