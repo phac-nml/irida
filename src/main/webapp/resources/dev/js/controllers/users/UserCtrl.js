@@ -7,7 +7,7 @@
 angular.module('irida', ['ngResource']);
 
 angular.module('irida')
-  .controller('UserCtrl', function ($scope, dataStore) {
+  .controller('UserCtrl', function ($scope, $window, dataStore) {
     'use strict';
 
     $scope.username = "";
@@ -16,7 +16,7 @@ angular.module('irida')
     $scope.projects = [];
 
     $scope.init = function () {
-      var username = document.getElementById('username').innerText;
+      var username = /\/users\/(.*)$/.exec($window.location.pathname)[1];
       dataStore.getData('/users/' + username).then(
         function (data) {
           initialAjaxCallback(data);
