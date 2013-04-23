@@ -39,14 +39,14 @@ import org.springframework.web.servlet.ModelAndView;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public abstract class GenericController<Type extends Identifiable<Identifier> & Comparable<Type>, ResourceType extends Resource> {
+public abstract class GenericController<IDType extends Identifier, Type extends Identifiable<IDType> & Comparable<Type>, ResourceType extends Resource> {
 
     private static final Logger logger = LoggerFactory.getLogger(GenericController.class);
-    protected CRUDService<Identifier, Type> crudService;
+    protected CRUDService<IDType, Type> crudService;
     private Class<ResourceType> resourceType;
     private String prefix;
 
-    protected GenericController(CRUDService<Identifier, Type> crudService, Class<Type> type, Class<ResourceType> resourceType) {
+    protected GenericController(CRUDService<IDType, Type> crudService, Class<Type> type, Class<ResourceType> resourceType) {
         this.crudService = crudService;
         this.resourceType = resourceType;
         this.prefix = type.getName().toLowerCase() + "s";
@@ -63,7 +63,7 @@ public abstract class GenericController<Type extends Identifiable<Identifier> & 
      * @return a model and view containing the collection of user resources.
      */
     @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView listEntities(
+    public ModelAndView listResources(
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_PAGE, defaultValue = "1") int page,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SIZE, defaultValue = "20") int size,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_PROPERTY, required = false) String sortProperty,

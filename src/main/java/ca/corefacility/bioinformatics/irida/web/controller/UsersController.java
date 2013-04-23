@@ -4,6 +4,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectCollectionResource;
@@ -47,7 +48,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 @RequestMapping(value = "/users")
-public class UsersController extends GenericController<User, UserResource> {
+public class UsersController extends GenericController<UserIdentifier, User, UserResource> {
 
     private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
     private final ProjectService projectService;
