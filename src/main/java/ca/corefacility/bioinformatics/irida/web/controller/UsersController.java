@@ -56,7 +56,7 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
 
     @Autowired
     public UsersController(UserService userService, ProjectService projectService) {
-        super(userService, User.class, UserResource.class);
+        super(userService, User.class, UserResource.class, UserIdentifier.class);
         this.projectService = projectService;
     }
 
@@ -80,22 +80,6 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
     @RequestMapping(value = "/partials/{name}", method = RequestMethod.GET)
     public String getHTMLPartials(@PathVariable String name) {
         return "users/partials/" + name;
-    }
-
-    /**
-     * Get an individual user from the database.
-     *
-     * @param username the username for the desired user.
-     * @return a model containing the appropriate resource.
-     */
-    @RequestMapping(value = "/{username}", method = RequestMethod.GET)
-    public ModelAndView getUser(@PathVariable String username) {
-        ModelAndView mav = new ModelAndView("users/user");
-        UserResource u = new UserResource(userService().getUserByUsername(username));
-        u.add(linkTo(UsersController.class).slash(username).slash("projects").withRel(USER_PROJECTS_REL));
-        u.add(linkTo(UsersController.class).slash(username).withSelfRel());
-        mav.addObject("user", u);
-        return mav;
     }
 
     /**

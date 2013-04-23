@@ -62,22 +62,8 @@ public class ProjectsController extends GenericController<Identifier, Project, P
 
     @Autowired
     public ProjectsController(ProjectService projectService) {
-        super(projectService, Project.class, ProjectResource.class);
+        super(projectService, Project.class, ProjectResource.class, Identifier.class);
         this.projectService = projectService;
-    }
-
-    @RequestMapping(value = "/{projectId}", method = RequestMethod.GET)
-    public ModelAndView getProject(@PathVariable String projectId) {
-        ModelAndView mav = new ModelAndView("projects/project");
-        logger.debug("Getting project with id [" + projectId + "]");
-        Identifier id = new Identifier();
-        id.setUUID(UUID.fromString(projectId));
-        Project p = projectService.read(id);
-        ProjectResource pr = new ProjectResource(p);
-        pr.add(linkTo(ProjectsController.class).slash(id.getUUID().toString()).slash("users").withRel(PROJECT_USERS_REL));
-        pr.add(linkTo(ProjectsController.class).withSelfRel());
-        mav.addObject("project", pr);
-        return mav;
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)

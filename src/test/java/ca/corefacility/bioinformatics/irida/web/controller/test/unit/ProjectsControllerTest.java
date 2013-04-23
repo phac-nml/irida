@@ -72,20 +72,6 @@ public class ProjectsControllerTest {
         }
     }
 
-    @Test
-    public void findMissingProject() {
-        Identifier id = new Identifier();
-        when(projectService.read(id)).thenThrow(new EntityNotFoundException("no such project"));
-
-        try {
-            controller.getProject(id.getUUID().toString());
-            fail();
-        } catch (EntityNotFoundException e) {
-        } catch (Exception e) {
-            fail();
-        }
-    }
-
     //@Test
     public void createGoodProject() {
         Identifier id = new Identifier();

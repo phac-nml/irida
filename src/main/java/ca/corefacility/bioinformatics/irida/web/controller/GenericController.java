@@ -25,10 +25,12 @@ import ca.corefacility.bioinformatics.irida.web.controller.links.PageableControl
 import static ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder.pageLinksFor;
 import com.google.common.base.Strings;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,17 +41,33 @@ import org.springframework.web.servlet.ModelAndView;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public abstract class GenericController<IDType extends Identifier, Type extends Identifiable<IDType> & Comparable<Type>, ResourceType extends Resource> {
+public abstract class GenericController<IdentifierType extends Identifier, Type extends Identifiable<IdentifierType> & Comparable<Type>, ResourceType extends Resource> {
 
     private static final Logger logger = LoggerFactory.getLogger(GenericController.class);
-    protected CRUDService<IDType, Type> crudService;
+    protected CRUDService<IdentifierType, Type> crudService;
     private Class<ResourceType> resourceType;
+    private Class<IdentifierType> identifierType;
+    private Class<Type> type;
     private String prefix;
+    private String resourceCollectionIndex;
+    private String resourceIndividualIndex;
 
-    protected GenericController(CRUDService<IDType, Type> crudService, Class<Type> type, Class<ResourceType> resourceType) {
+    protected GenericController(CRUDService<IdentifierType, Type> crudService,
+            Class<Type> type, Class<ResourceType> resourceType,
+            Class<IdentifierType> identifierType) {
         this.crudService = crudService;
         this.resourceType = resourceType;
-        this.prefix = type.getName().toLowerCase() + "s";
+        this.identifierType = identifierType;
+        this.type = type;
+    }
+    
+    @PostConstruct
+    public void initializePages() {
+        // initialize the names of the pages
+        String typeName = type.getSimpleName().toLowerCase();
+        this.prefix = typeName + "s/";
+        this.resourceCollectionIndex = prefix + typeName + "s";
+        this.resourceIndividualIndex = prefix + typeName;
     }
 
     /**
@@ -68,9 +86,9 @@ public abstract class GenericController<IDType extends Identifier, Type extends 
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SIZE, defaultValue = "20") int size,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_PROPERTY, required = false) String sortProperty,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER, defaultValue = "ASCENDING") Order sortOrder) throws InstantiationException, IllegalAccessException {
-        ModelAndView mav = new ModelAndView(prefix + "/index");
+        ModelAndView mav = new ModelAndView(resourceCollectionIndex);
         List<Type> entities;
-        
+
         if (Strings.isNullOrEmpty(sortProperty)) {
             entities = crudService.list(page, size, sortOrder);
         } else {
@@ -91,6 +109,21 @@ public abstract class GenericController<IDType extends Identifier, Type extends 
         resources.setTotalResources(totalEntities);
 
         mav.addObject("resources", resources);
+        return mav;
+    }
+
+    @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
+    public ModelAndView getResource(@PathVariable String resourceId) throws InstantiationException, IllegalAccessException {
+        ModelAndView mav = new ModelAndView(resourceIndividualIndex);
+        logger.debug("Getting resource with id [" + resourceId + "]");
+        IdentifierType id = identifierType.newInstance();
+        id.setIdentifier(resourceId);
+        Type t = crudService.read(id);
+        ResourceType resource = resourceType.newInstance();
+        resource.setResource(t);
+        //resource.add(linkTo(ProjectsController.class).slash(id.getIdentifier()).slash("users").withRel(PROJECT_USERS_REL));
+        resource.add(linkTo(getClass()).withSelfRel());
+        mav.addObject("resource", resource);
         return mav;
     }
 }
