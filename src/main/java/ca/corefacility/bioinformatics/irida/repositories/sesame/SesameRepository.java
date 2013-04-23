@@ -18,12 +18,8 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.openrdf.model.Literal;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
@@ -151,6 +147,6 @@ public abstract class SesameRepository {
     }    
     
     public void close() {
-        store.close();
+        //maybe eventually do stuff
     }    
 }

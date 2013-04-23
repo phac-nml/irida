@@ -19,7 +19,7 @@
         <constructor-arg ref="projectRepository" />
     </bean>
     
-    <bean id="tripleStore" init-method="initialize" class="ca.corefacility.bioinformatics.irida.dao.SailMemoryStore"/>
+    <bean id="tripleStore" init-method="initialize" destroy-method="close" class="ca.corefacility.bioinformatics.irida.dao.SailMemoryStore"/>
     
     <bean id="userRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.UserSesameRepository">
         <constructor-arg ref="tripleStore" />        
