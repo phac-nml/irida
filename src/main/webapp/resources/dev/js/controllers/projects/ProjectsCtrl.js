@@ -1,7 +1,6 @@
 /* global angular */
 var irida = angular.module('irida', ['ngResource']);
 irida.controller(ProjectsListCtrl);
-irida.controller(NewProjectCtrl);
 
 var ProjectsListCtrl = function ($scope, $window, Projects) {
   "use strict";
@@ -22,54 +21,35 @@ var ProjectsListCtrl = function ($scope, $window, Projects) {
       });
   };
 
+  $scope.clearForm = function () {
+    $scope.newProject = {};
+    $scope.errors = {};
+
+    // Need to reset all the fields in the form.
+    $('form[name=newProjectForm] .ng-dirty').removeClass('ng-dirty').addClass('ng-pristine');
+    var form = $scope.newProjectForm;
+    for (var field in form) {
+      if (form[field].$pristine === false) {
+        form[field].$pristine = true;
+      }
+      if (form[field].$dirty === true) {
+        form[field].$dirty = false;
+      }
+    }
+    $scope.newUserForm.$pristine = true;
+  };
+
   $scope.gotoProject = function (url) {
     $window.location = url;
   };
-
-  function ajaxSuccessCallback(data) {
-    "use strict";
-    $scope.links = {};
-    angular.forEach(data.projectResources.links, function (val) {
-      $scope.links[val.rel] = val.href;
-    });
-    $scope.projects = data.projectResources.projects;
-  }
-};
-
-var NewProjectCtrl = function ($scope) {
-  "use strict";
-  var modal = $('#newProjectModal');
-
-  modal.foundation('reveal', {
-    closed: function () {
-      // Update the current list of users
-      $scope.loadProjects($scope.links.self);
-
-      $scope.$apply(function () {
-        $scope.newProject = {};
-        $scope.errors = {};
-
-        // Need to reset all the fields in the form.
-        $('form[name=newProjectForm] .ng-dirty').removeClass('ng-dirty').addClass('ng-pristine');
-        var form = $scope.newUserForm;
-        for (var field in form) {
-          if (form[field].$pristine === false) {
-            form[field].$pristine = true;
-          }
-          if (form[field].$dirty === true) {
-            form[field].$dirty = false;
-          }
-        }
-        $scope.newProjectForm.$pristine = true;
-      });
-    }
-  });
 
   $scope.submitNewProject = function () {
     if ($scope.newProjectForm.$valid) {
       Projects.create($scope.newProject).then(
         function () {
-          modal.foundation('reveal', 'close');
+          $scope.loadProjects($scope.projectsUrl);
+          $scope.clearForm();
+          $('#newProjectModal').foundation('reveal', 'close');
         },
         function (data) {
           $scope.errors = {};
@@ -82,8 +62,15 @@ var NewProjectCtrl = function ($scope) {
     }
   };
 
-}
-
+  function ajaxSuccessCallback(data) {
+    "use strict";
+    $scope.links = {};
+    angular.forEach(data.projectResources.links, function (val) {
+      $scope.links[val.rel] = val.href;
+    });
+    $scope.projects = data.projectResources.projects;
+  }
+};
 
 irida.factory('Projects', function ($http, $q) {
   "use strict";
