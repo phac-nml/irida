@@ -1,7 +1,6 @@
 /* global angular */
 var irida = angular.module('irida', ['ngResource']);
 irida.controller(ProjectsListCtrl);
-irida.controller(NewProjectCtrl);
 
 var ProjectsListCtrl = function ($scope, $window, Projects) {
   "use strict";
@@ -20,6 +19,24 @@ var ProjectsListCtrl = function ($scope, $window, Projects) {
         // TODO: handle error message
         console.log("An error occurred");
       });
+  };
+
+  $scope.clearForm = function () {
+    $scope.newProject = {};
+    $scope.errors = {};
+
+    // Need to reset all the fields in the form.
+    $('form[name=newProjectForm] .ng-dirty').removeClass('ng-dirty').addClass('ng-pristine');
+    var form = $scope.newProjectForm;
+    for (var field in form) {
+      if (form[field].$pristine === false) {
+        form[field].$pristine = true;
+      }
+      if (form[field].$dirty === true) {
+        form[field].$dirty = false;
+      }
+    }
+    $scope.newUserForm.$pristine = true;
   };
 
   $scope.gotoProject = function (url) {
@@ -69,7 +86,9 @@ var NewProjectCtrl = function ($scope) {
     if ($scope.newProjectForm.$valid) {
       Projects.create($scope.newProject).then(
         function () {
-          modal.foundation('reveal', 'close');
+          $scope.loadProjects($scope.projectsUrl);
+          $scope.clearForm();
+          $('#newProjectModal').foundation('reveal', 'close');
         },
         function (data) {
           $scope.errors = {};
@@ -82,8 +101,15 @@ var NewProjectCtrl = function ($scope) {
     }
   };
 
-}
-
+  function ajaxSuccessCallback(data) {
+    "use strict";
+    $scope.links = {};
+    angular.forEach(data.projectResources.links, function (val) {
+      $scope.links[val.rel] = val.href;
+    });
+    $scope.projects = data.projectResources.projects;
+  }
+};
 
 irida.factory('Projects', function ($http, $q) {
   "use strict";
