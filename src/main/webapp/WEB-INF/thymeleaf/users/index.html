@@ -5,13 +5,12 @@
 <div th:include="fragments/bodyHeader" th:remove="tag"></div>
 <div class="row" data-ng-controller="UsersListCtrl" data-ng-init="loadUsers(usersUrl)">
     <div class="large-12 columns">
-
         <ul class="breadcrumbs left">
             <li><a href="/">Landing</a></li>
             <li class="current"><a ng-href="{{links.self}}">All Users</a></li>
         </ul>
         <div class="right">
-            <ul class="button-group round right">
+            <ul class="button-group radius right">
                 <li><a class="button small" data-ng-disabled="!links.prev"
                        data-ng-click="loadUsers(links.prev)"><i class="icon-angle-left"></i></a></li>
                 <li><a class="button small" data-ng-disabled="!links.next"
@@ -27,25 +26,24 @@
         <table class="listTable table table-striped table-bordered large-12">
             <thead>
             <tr class="header">
-                <th th:text="#{user.username}"></th>
+                <th class="hide-for-small" th:text="#{user.username}"></th>
                 <th th:text="#{user.firstName}"></th>
                 <th th:text="#{user.lastName}"></th>
-                <th th:text="#{user.email}"></th>
-                <th th:text="#{user.phoneNumber}"></th>
+                <th class="hide-for-small" th:text="#{user.email}"></th>
+                <th class="hide-for-small" th:text="#{user.phoneNumber}"></th>
             </tr>
             </thead>
             <tbody data-ng-repeat="user in users">
             <tr data-ng-click="gotoUser(user.links[0].href)">
-                <td>{{user.username}}</td>
+                <td class="hide-for-small">{{user.username}}</td>
                 <td>{{user.firstName}}</td>
                 <td>{{user.lastName}}</td>
-                <td><a href="mailto:{{user.email}}">{{user.email}}</a></td>
-                <td>{{user.phoneNumber}}</td>
+                <td class="hide-for-small"><a href="mailto:{{user.email}}">{{user.email}}</a></td>
+                <td class="hide-for-small">{{user.phoneNumber}}</td>
             </tr>
             </tbody>
         </table>
     </div>
-
     <div class="reveal-modal large" id="newUserModal">
         <div class="modal-header">
             <h1>Create New User</h1>
@@ -95,18 +93,19 @@
             </form>
         </div>
         <a class="close-reveal-modal">&#215;</a>
-        <button type="submit" class="button small radius right" data-ng-click="submitNewUser()">Create User</button>
+        <a type="submit" data-ng-class="{disabled: !newUserForm.$valid}" class="button small radius right" data-ng-click="submitNewUser()">Create User</a>
 
     </div>
 </div>
 
+<script th:src="@{/js/vendor/jquery.js}"></script>
 <script th:src="@{/js/vendor/angular/angular.min.js}"></script>
 <script th:src="@{/js/vendor/angular/angular-resource.min.js}"></script>
 <script th:src="@{/js/app.js}"></script>
 <script th:src="@{/js/controllers/usersCtrl.js}"></script>
-<script th:src="@{/js/vendor/zepto.js}"></script>
 <script th:src="@{/js/vendor/foundation/foundation.js}"></script>
 <script th:src="@{/js/vendor/foundation/foundation.reveal.js}"></script>
+<script th:src="@{/js/vendor/foundation/foundation.topbar.js}"></script>
 <script>
     $(document).foundation();
 </script>
