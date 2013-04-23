@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="irida">
-<head th:include="fragments/header" th:remove="tag"></head>
+<head th:substituteby="fragments/header"></head>
 <body>
-<div th:include="fragments/bodyHeader" th:remove="tag"></div>
+<div th:substituteby="fragments/bodyHeader"></div>
 <div class="row" data-ng-controller="UsersListCtrl" data-ng-init="loadUsers(usersUrl)">
     <div class="large-12 columns">
         <ul class="breadcrumbs left">
