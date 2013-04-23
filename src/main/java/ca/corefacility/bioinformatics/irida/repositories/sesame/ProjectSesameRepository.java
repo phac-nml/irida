@@ -15,28 +15,19 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
-import ca.corefacility.bioinformatics.irida.dao.ProjectResultExtractor;
 import ca.corefacility.bioinformatics.irida.dao.PropertyMapper;
-import ca.corefacility.bioinformatics.irida.dao.SparqlQuery;
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
-import ca.corefacility.bioinformatics.irida.dao.UserResultExtractor;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
