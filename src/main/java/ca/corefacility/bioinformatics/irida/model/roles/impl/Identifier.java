@@ -38,7 +38,7 @@ public class Identifier implements Comparable<Identifier> {
     //private String url;
 
     public Identifier() {
-        uuid = UUID.randomUUID();
+        this.uuid = UUID.randomUUID();
     }
 
     public Identifier(URI uri, UUID uuid) {
@@ -77,6 +77,10 @@ public class Identifier implements Comparable<Identifier> {
 
     public String getIdentifier() {
         return uuid.toString();
+    }
+    
+    public void setIdentifier(String identifier) {
+        this.uuid = UUID.fromString(identifier);
     }
 
     public String getId() {
