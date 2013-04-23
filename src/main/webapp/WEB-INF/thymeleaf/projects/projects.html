@@ -3,48 +3,31 @@
 <head th:substituteby="fragments/header"></head>
 <body>
 <div th:substituteby="fragments/bodyHeader"></div>
-<div class="row" data-ng-controller="UsersListCtrl" data-ng-init="loadUsers(usersUrl)">
+<div class="row" data-ng-controller="ProjectsListCtrl" data-ng-init="loadProjects(usersUrl)">
     <div class="large-12 columns">
         <ul class="breadcrumbs left">
             <li><a href="/">Landing</a></li>
-            <li class="current"><a ng-href="{{links.self}}">All Users</a></li>
+            <li class="current"><a ng-href="{{links.self}}">All Projects</a></li>
         </ul>
         <div class="right">
             <ul class="button-group radius right">
                 <li><a class="button small" data-ng-disabled="!links.prev"
-                       data-ng-click="loadUsers(links.prev)"><i class="icon-angle-left"></i></a></li>
+                       data-ng-click="loadProjects(links.prev)"><i class="icon-angle-left"></i></a></li>
                 <li><a class="button small" data-ng-disabled="!links.next"
-                       data-ng-click="loadUsers(links.next)"><i class="icon-angle-right"></i></a></li>
+                       data-ng-click="loadProjects(links.next)"><i class="icon-angle-right"></i></a></li>
 
             </ul>
-            <a class="button small radius right" data-reveal-id="newUserModal"><i class="icon-plus"></i>&nbsp; Add
-                User
+            <a class="button small radius right" data-reveal-id="newProjectModal"><i class="icon-plus"></i>&nbsp; Add
+                Project
             </a>
         </div>
     </div>
     <div class="large-12 columns">
-        <table class="listTable table table-striped table-bordered large-12">
-            <thead>
-            <tr class="header">
-                <th class="hide-for-small" th:text="#{user.username}"></th>
-                <th th:text="#{user.firstName}"></th>
-                <th th:text="#{user.lastName}"></th>
-                <th class="hide-for-small" th:text="#{user.email}"></th>
-                <th class="hide-for-small" th:text="#{user.phoneNumber}"></th>
-            </tr>
-            </thead>
-            <tbody data-ng-repeat="user in users">
-            <tr data-ng-click="gotoUser(user.links[0].href)">
-                <td class="hide-for-small">{{user.username}}</td>
-                <td>{{user.firstName}}</td>
-                <td>{{user.lastName}}</td>
-                <td class="hide-for-small"><a href="mailto:{{user.email}}">{{user.email}}</a></td>
-                <td class="hide-for-small">{{user.phoneNumber}}</td>
-            </tr>
-            </tbody>
-        </table>
+        <ul class="small-block-grid-2 large-block-grid-4 grid-list">
+            <li data-ng-repeat="project in projects"><div data-ng-click="gotoProject(project.links[0].href)"><span>{{project.name}}</span></div></li>
+        </ul>
     </div>
-    <div class="reveal-modal large" id="newUserModal">
+    <div class="reveal-modal large" id="newProjectModal">
         <div class="modal-header">
             <h1>Create New User</h1>
         </div>
