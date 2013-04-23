@@ -17,6 +17,7 @@ angular.module('irida')
 
     $scope.init = function () {
       var username = /\/users\/(.*)$/.exec($window.location.pathname)[1];
+
       dataStore.getData('/users/' + username).then(
         function (data) {
           initialAjaxCallback(data);
