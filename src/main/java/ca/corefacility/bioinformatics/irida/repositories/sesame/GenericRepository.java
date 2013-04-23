@@ -97,7 +97,6 @@ public class GenericRepository<IDType extends Identifier, Type extends Identifia
     public Identifier buildIdentifier(BindingSet bs, String subject) {
         Value s = bs.getValue(subject);
         Value resid = bs.getValue("resid");
-        logger.debug(resid.stringValue());
         UUID uuid = UUID.fromString(resid.stringValue());
         Identifier objid = new Identifier(java.net.URI.create(s.stringValue()), uuid);
 
@@ -220,7 +219,6 @@ public class GenericRepository<IDType extends Identifier, Type extends Identifia
         Type ret = null;
 
         java.net.URI netURI = buildURI(id.getIdentifier());
-        logger.debug(netURI.toString());
         String uri = netURI.toString();
 
         if (!exists(id)) {
