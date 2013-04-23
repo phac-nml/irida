@@ -65,6 +65,7 @@ public class ProjectsController {
 
     private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
     private final ProjectService projectService;
+    private static final String PROJECT_USERS_REL = "project/users";
 
     @Autowired
     public ProjectsController(ProjectService projectService) {
@@ -104,10 +105,13 @@ public class ProjectsController {
         Identifier id = new Identifier();
         id.setUUID(UUID.fromString(projectId));
         Project p = projectService.read(id);
-        mav.addObject("project", p);
+        ProjectResource pr = new ProjectResource(p);
+        pr.add(linkTo(ProjectsController.class).slash(id.getUUID().toString()).slash("users").withRel(PROJECT_USERS_REL));
+        pr.add(linkTo(ProjectsController.class).withSelfRel());
+        mav.addObject("project", pr);
         return mav;
     }
-    
+
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> create(@RequestBody ProjectResource pr) {
         Project p = new Project();
@@ -131,8 +135,8 @@ public class ProjectsController {
     public ResponseEntity<String> handleNotFoundException(EntityNotFoundException e) {
         return new ResponseEntity<>("No such project found.", HttpStatus.NOT_FOUND);
     }
-    
-        /**
+
+    /**
      * Handle {@link ConstraintViolationException}.
      *
      * @param e the exception as thrown by the service.
@@ -143,8 +147,7 @@ public class ProjectsController {
         Set<ConstraintViolation<?>> constraintViolations = e.getConstraintViolations();
         return new ResponseEntity<>(validationMessages(constraintViolations), HttpStatus.BAD_REQUEST);
     }
-    
-    
+
     /**
      * Render a collection of constraint violations as a JSON object.
      *
