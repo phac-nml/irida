@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.web.controller;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -23,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.Proje
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
 import ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder;
 import java.util.List;
-import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +36,23 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder.pageLinksFor;
+import com.google.common.net.HttpHeaders;
+import com.google.gson.Gson;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Controller for managing {@link Project}s in the database.
@@ -81,11 +98,73 @@ public class ProjectsController {
     }
 
     @RequestMapping(value = "/{projectId}", method = RequestMethod.GET)
-    public String getProject(HttpServletResponse response, @PathVariable String projectId, Model model) {
+    public ModelAndView getProject(@PathVariable String projectId) {
+        ModelAndView mav = new ModelAndView("projects/project");
         logger.debug("Getting project with id [" + projectId + "]");
+        Identifier id = new Identifier();
+        id.setUUID(UUID.fromString(projectId));
+        Project p = projectService.read(id);
+        mav.addObject("project", p);
+        return mav;
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> create(@RequestBody ProjectResource pr) {
         Project p = new Project();
-        p.setIdentifier(new Identifier());
-        model.addAttribute("project", p);
-        return "projects/project";
+        p.setName(pr.getName());
+        p = projectService.create(p);
+        logger.debug("Created project with ID [" + p.getIdentifier() + "]");
+        String location = linkTo(ProjectsController.class).slash(p.getIdentifier().getUUID().toString()).withSelfRel().getHref();
+        MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap();
+        responseHeaders.add(HttpHeaders.LOCATION, location);
+        ResponseEntity<String> response = new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
+        return response;
+    }
+
+    /**
+     * Handle {@link EntityNotFoundException}.
+     *
+     * @param e the exception as thrown by the service.
+     * @return an appropriate HTTP response.
+     */
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<String> handleNotFoundException(EntityNotFoundException e) {
+        return new ResponseEntity<>("No such project found.", HttpStatus.NOT_FOUND);
+    }
+    
+        /**
+     * Handle {@link ConstraintViolationException}.
+     *
+     * @param e the exception as thrown by the service.
+     * @return an appropriate HTTP response.
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<String> handleConstraintViolations(ConstraintViolationException e) {
+        Set<ConstraintViolation<?>> constraintViolations = e.getConstraintViolations();
+        return new ResponseEntity<>(validationMessages(constraintViolations), HttpStatus.BAD_REQUEST);
+    }
+    
+    
+    /**
+     * Render a collection of constraint violations as a JSON object.
+     *
+     * @param failures the set of constraint violations.
+     * @return the constraint violations as a JSON object.
+     */
+    private String validationMessages(Set<ConstraintViolation<?>> failures) {
+        Map<String, List<String>> mp = new HashMap();
+        for (ConstraintViolation<?> failure : failures) {
+            logger.debug(failure.getPropertyPath().toString() + ": " + failure.getMessage());
+            String property = failure.getPropertyPath().toString();
+            if (mp.containsKey(property)) {
+                mp.get(failure.getPropertyPath().toString()).add(failure.getMessage());
+            } else {
+                List<String> list = new ArrayList<>();
+                list.add(failure.getMessage());
+                mp.put(property, list);
+            }
+        }
+        Gson g = new Gson();
+        return g.toJson(mp);
     }
 }
