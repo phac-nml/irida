@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head th:include="fragments/header" th:remove="tag"></head>
+<body data-ng-app="irida">
+<div class="container" data-ng-controller="ProjectCtrl" data-ng-init="init()">
+    <div th:include="fragments/bodyHeader" th:remove="tag"></div>
+    <div class="row">
+        <div class="large-12 columns">
+            <ul class="breadcrumbs left ng-cloak">
+                <li><a href="/">Landing</a></li>
+                <li><a href="/projects">All Projects</a></li>
+                <li class="current"><a href="" ng-bind="name"></a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="large-12 columns">
+            <div class="section-container tabs" data-section="tabs">
+                <section>
+                    <p class="title" data-section-title=""><a href="#">Profile</a></p>
+
+                    <div class="content" data-section-content="">
+                        <h1>{{name}}</h1>
+                    </div>
+                </section>
+                <section>
+                    <p class="title" data-section-title=""><a href="#">Edit</a></p>
+                    <div class="content" data-section-content="">
+                        <h1>What to edit?</h1>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/vendor/jquery.js}"></script>
+<script th:src="@{/js/vendor/angular/angular.min.js}"></script>
+<script th:src="@{/js/vendor/angular/angular-resource.min.js}"></script>
+<script th:src="@{/js/vendor/foundation/foundation.js}"></script>
+<script th:src="@{/js/vendor/foundation/foundation.section.js}"></script>
+<script th:src="@{/js/vendor/foundation/foundation.topbar.js}"></script>
+<script th:src="@{/js/app.js}"></script>
+<script th:src="@{/js/controllers/projects/ProjectCtrl.js}"></script>
+<script>
+    $(document).foundation();
+</script>
+</body>
+</html>
