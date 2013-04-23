@@ -83,7 +83,7 @@ public abstract class GenericController<IDType extends Identifier, Type extends 
         for (Type entity : entities) {
             ResourceType resource = resourceType.newInstance();
             resource.setResource(entity);
-            resource.add(linkBuilder.slash(entity.getIdentifier().getUUID()).withSelfRel());
+            resource.add(linkBuilder.slash(entity.getIdentifier().getIdentifier()).withSelfRel());
             resources.add(resource);
         }
 
