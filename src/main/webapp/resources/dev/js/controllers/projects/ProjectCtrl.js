@@ -20,11 +20,11 @@ angular.module('irida')
 
     function initialAjaxCallback(data) {
       "use strict";
-      angular.forEach(data.project.links, function (val) {
+      angular.forEach(data.resource.links, function (val) {
         $scope.links[val.rel] = val.href;
       });
-      delete data.project.links;
-      $scope.name = data.project.name;
+      delete data.resource.links;
+      $scope.name = data.resource.name;
     }
 
   });
