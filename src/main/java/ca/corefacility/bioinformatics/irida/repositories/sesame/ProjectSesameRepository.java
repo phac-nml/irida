@@ -112,12 +112,5 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProjectSe
         return projects;
     }    
     
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Integer count() {
-        return super.count("irida","Project");
-    }
 
 }

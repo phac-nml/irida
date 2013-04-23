@@ -103,7 +103,6 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
     public Identifier buildIdentifier(BindingSet bs, String subject) {
         Value s = bs.getValue(subject);
         Value resid = bs.getValue("resid");
-        logger.debug(resid.stringValue());
         String id = resid.stringValue();
         Identifier objid = new UserIdentifier(id);
         objid.setUri(java.net.URI.create(s.stringValue()));
