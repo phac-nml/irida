@@ -37,6 +37,7 @@ import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.query.BindingSet;
+import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
@@ -352,8 +353,47 @@ public class GenericRepository<IDType extends Identifier, Type extends Identifia
      */
     @Override
     public Boolean exists(Identifier id) {
-        return super.exists(id, propertyMap.prefix, propertyMap.type);
-    }
+        //return super.exists(id, propertyMap.prefix, propertyMap.type);
+      
+        boolean exists = false;
+        RepositoryConnection con = store.getRepoConnection();
+
+        try {
+            java.net.URI netURI = buildURI(id.getUUID().toString());
+            String uri = netURI.toString();
+            
+            String querystring = store.getPrefixes()
+                    + "ASK\n"
+                    + "{?uri a ?type}";
+            
+            BooleanQuery existsQuery = con.prepareBooleanQuery(QueryLanguage.SPARQL, querystring);
+
+            ValueFactory vf = con.getValueFactory();
+            URI objecturi = vf.createURI(uri);
+            existsQuery.setBinding("uri", objecturi);
+
+            URI typeuri = vf.createURI(con.getNamespace(propertyMap.prefix),propertyMap.type);
+            existsQuery.setBinding("type", typeuri);
+
+            exists = existsQuery.evaluate();
+            
+            
+        } catch (RepositoryException |MalformedQueryException | QueryEvaluationException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't run exists query"); 
+        }
+        finally{
+            try {
+                con.close();
+            } catch (RepositoryException ex) {
+                logger.error(ex.getMessage());
+                throw new StorageException("Couldn't close connection");
+            }
+        }
+        
+        return exists;        
+    }        
+    
 
     /**
      * Build the SPARQL parameters for a given property type

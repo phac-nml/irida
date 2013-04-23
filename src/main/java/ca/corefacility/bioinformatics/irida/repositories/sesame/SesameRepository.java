@@ -105,46 +105,7 @@ public abstract class SesameRepository {
             
         return count;
     }
-    
-    public Boolean exists(Identifier id,String ns, String type) {        
-        boolean exists = false;
-        RepositoryConnection con = store.getRepoConnection();
-
-        try {
-            String uri = id.getUri().toString();
-            
-            
-            String querystring = store.getPrefixes()
-                    + "ASK\n"
-                    + "{?uri a ?type}";
-            
-            BooleanQuery existsQuery = con.prepareBooleanQuery(QueryLanguage.SPARQL, querystring);
-
-            ValueFactory vf = con.getValueFactory();
-            URI objecturi = vf.createURI(uri);
-            existsQuery.setBinding("uri", objecturi);
-
-            URI typeuri = vf.createURI(con.getNamespace(ns),type);
-            existsQuery.setBinding("type", typeuri);
-
-            exists = existsQuery.evaluate();
-            
-            
-        } catch (RepositoryException |MalformedQueryException | QueryEvaluationException ex) {
-            logger.error(ex.getMessage());
-            throw new StorageException("Couldn't run exists query"); 
-        }
-        finally{
-            try {
-                con.close();
-            } catch (RepositoryException ex) {
-                logger.error(ex.getMessage());
-                throw new StorageException("Couldn't close connection");
-            }
-        }
-        
-        return exists;        
-    }    
+      
     
     public void close() {
         //maybe eventually do stuff
