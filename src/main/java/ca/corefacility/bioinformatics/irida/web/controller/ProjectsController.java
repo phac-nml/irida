@@ -92,9 +92,7 @@ public class ProjectsController {
 
         resources.add(pageLinksFor(ProjectsController.class, page, size, totalProjects, sortColumn, sortOrder));
 
-        model.addAttribute("userResources", resources);
-        model.addAttribute("users", true);
-        model.addAttribute("pageTitle", "Users");
+        model.addAttribute("projectResources", resources);
         return "projects/index";
     }
 
