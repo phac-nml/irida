@@ -7,7 +7,7 @@
 angular.module('irida', ['ngResource']);
 
 angular.module('irida')
-  .controller('UserCtrl', function ($scope, dataStore) {
+  .controller('UserCtrl', function ($scope, $window, dataStore) {
     'use strict';
 
     $scope.username = "";

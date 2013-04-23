@@ -52,7 +52,7 @@
             </div>
         </form>
     </div>
-    <a class="close-reveal-modal">&#215;</a>
+    <a ng-click="clearForm()" class="close-reveal-modal">&#215;</a>
     <a type="submit" data-ng-class="{disabled: !newUserForm.$valid}" class="button small radius right"
        data-ng-click="submitNewUser()">Create User</a>
 
