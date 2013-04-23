@@ -15,6 +15,8 @@
  */
 package ca.corefacility.bioinformatics.irida.web.controller;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -24,12 +26,24 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder;
 import static ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder.pageLinksFor;
 import com.google.common.base.Strings;
+import com.google.gson.Gson;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.annotation.PostConstruct;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -60,7 +74,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         this.identifierType = identifierType;
         this.type = type;
     }
-    
+
     @PostConstruct
     public void initializePages() {
         // initialize the names of the pages
@@ -69,6 +83,17 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         this.resourceCollectionIndex = prefix + typeName + "s";
         this.resourceIndividualIndex = prefix + typeName;
     }
+
+    /**
+     * Construct a collection of {@link Link}s for a specific resource. Each
+     * resource may have custom links that refer to other controllers, but not
+     * all will. This method is called by
+     * {@link GenericController.getResource()}.
+     *
+     * @param resource the resource to generate the links for.
+     * @return a collection of links.
+     */
+    public abstract Collection<Link> constructCustomResourceLinks(Type resource);
 
     /**
      * Retrieve and construct a response with a collection of user resources.
@@ -121,9 +146,66 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         Type t = crudService.read(id);
         ResourceType resource = resourceType.newInstance();
         resource.setResource(t);
-        //resource.add(linkTo(ProjectsController.class).slash(id.getIdentifier()).slash("users").withRel(PROJECT_USERS_REL));
+        resource.add(constructCustomResourceLinks(t));
         resource.add(linkTo(getClass()).withSelfRel());
         mav.addObject("resource", resource);
         return mav;
+    }
+
+    /**
+     * Handle {@link EntityNotFoundException}.
+     *
+     * @param e the exception as thrown by the service.
+     * @return an appropriate HTTP response.
+     */
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<String> handleNotFoundException(EntityNotFoundException e) {
+        return new ResponseEntity<>("No such resource found.", HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Handle {@link ConstraintViolationException}.
+     *
+     * @param e the exception as thrown by the service.
+     * @return an appropriate HTTP response.
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<String> handleConstraintViolations(ConstraintViolationException e) {
+        Set<ConstraintViolation<?>> constraintViolations = e.getConstraintViolations();
+        return new ResponseEntity<>(validationMessages(constraintViolations), HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Handle {@link EntityExistsException}.
+     *
+     * @param e the exception as thrown by the service.
+     * @return an appropriate HTTP response.
+     */
+    @ExceptionHandler(EntityExistsException.class)
+    public ResponseEntity<String> handleExistsException(EntityExistsException e) {
+        return new ResponseEntity<>("An entity already exists with that identifier.", HttpStatus.CONFLICT);
+    }
+
+    /**
+     * Render a collection of constraint violations as a JSON object.
+     *
+     * @param failures the set of constraint violations.
+     * @return the constraint violations as a JSON object.
+     */
+    private String validationMessages(Set<ConstraintViolation<?>> failures) {
+        Map<String, List<String>> mp = new HashMap();
+        for (ConstraintViolation<?> failure : failures) {
+            logger.debug(failure.getPropertyPath().toString() + ": " + failure.getMessage());
+            String property = failure.getPropertyPath().toString();
+            if (mp.containsKey(property)) {
+                mp.get(failure.getPropertyPath().toString()).add(failure.getMessage());
+            } else {
+                List<String> list = new ArrayList<>();
+                list.add(failure.getMessage());
+                mp.put(property, list);
+            }
+        }
+        Gson g = new Gson();
+        return g.toJson(mp);
     }
 }

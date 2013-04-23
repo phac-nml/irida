@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.web.controller;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
@@ -10,14 +8,6 @@ import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectCollectionResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
-import com.google.gson.Gson;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,12 +18,13 @@ import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import com.google.common.net.HttpHeaders;
 import java.util.Collection;
+import java.util.HashSet;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,11 +43,13 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
 
     private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
     private final ProjectService projectService;
+    private final UserService userService;
     private static final String USER_PROJECTS_REL = "user/projects";
 
     @Autowired
     public UsersController(UserService userService, ProjectService projectService) {
         super(userService, User.class, UserResource.class, UserIdentifier.class);
+        this.userService = userService;
         this.projectService = projectService;
     }
 
@@ -91,7 +84,7 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
     @RequestMapping(value = "/{username}/projects", method = RequestMethod.GET)
     public ModelAndView getUserProjects(@PathVariable String username) {
         ModelAndView mav = new ModelAndView("users/user");
-        User u = userService().getUserByUsername(username);
+        User u = userService.getUserByUsername(username);
         ProjectCollectionResource resources = new ProjectCollectionResource();
         Collection<Project> projects = projectService.getProjectsForUser(u);
         ControllerLinkBuilder linkBuilder = linkTo(ProjectsController.class);
@@ -105,64 +98,11 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
         return mav;
     }
 
-    /**
-     * Handle {@link EntityNotFoundException}.
-     *
-     * @param e the exception as thrown by the service.
-     * @return an appropriate HTTP response.
-     */
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<String> handleNotFoundException(EntityNotFoundException e) {
-        return new ResponseEntity<>("No such user found.", HttpStatus.NOT_FOUND);
-    }
-
-    /**
-     * Handle {@link ConstraintViolationException}.
-     *
-     * @param e the exception as thrown by the service.
-     * @return an appropriate HTTP response.
-     */
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<String> handleConstraintViolations(ConstraintViolationException e) {
-        Set<ConstraintViolation<?>> constraintViolations = e.getConstraintViolations();
-        return new ResponseEntity<>(validationMessages(constraintViolations), HttpStatus.BAD_REQUEST);
-    }
-
-    /**
-     * Handle {@link EntityExistsException}.
-     *
-     * @param e the exception as thrown by the service.
-     * @return an appropriate HTTP response.
-     */
-    @ExceptionHandler(EntityExistsException.class)
-    public ResponseEntity<String> handleExistsException(EntityExistsException e) {
-        return new ResponseEntity<>("An entity already exists with that identifier.", HttpStatus.CONFLICT);
-    }
-
-    /**
-     * Render a collection of constraint violations as a JSON object.
-     *
-     * @param failures the set of constraint violations.
-     * @return the constraint violations as a JSON object.
-     */
-    private String validationMessages(Set<ConstraintViolation<?>> failures) {
-        Map<String, List<String>> mp = new HashMap();
-        for (ConstraintViolation<?> failure : failures) {
-            logger.debug(failure.getPropertyPath().toString() + ": " + failure.getMessage());
-            String property = failure.getPropertyPath().toString();
-            if (mp.containsKey(property)) {
-                mp.get(failure.getPropertyPath().toString()).add(failure.getMessage());
-            } else {
-                List<String> list = new ArrayList<>();
-                list.add(failure.getMessage());
-                mp.put(property, list);
-            }
-        }
-        Gson g = new Gson();
-        return g.toJson(mp);
-    }
-
-    private UserService userService() {
-        return (UserService) crudService;
+    @Override
+    public Collection<Link> constructCustomResourceLinks(User u) {
+        Collection<Link> links = new HashSet<>();
+        links.add(linkTo(UsersController.class).slash(u.getUsername()).
+                slash("projects").withRel(USER_PROJECTS_REL));
+        return links;
     }
 }
