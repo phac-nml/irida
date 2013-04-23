@@ -75,6 +75,14 @@ public class Identifier implements Comparable<Identifier> {
         return Objects.hash(uri, uuid);
     }
 
+    public String getIdentifier() {
+        return uuid.toString();
+    }
+
+    public String getId() {
+        return uuid.toString();
+    }
+
     public URI getUri() {
         return uri;
     }

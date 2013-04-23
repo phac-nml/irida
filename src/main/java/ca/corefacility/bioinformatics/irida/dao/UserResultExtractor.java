@@ -16,7 +16,7 @@
 package ca.corefacility.bioinformatics.irida.dao;
 
 import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import org.openrdf.query.BindingSet;
 
 /**
@@ -31,7 +31,7 @@ public class UserResultExtractor {
      * @param bindingSet The binding set to build by
      * @return A newly constructed User
      */
-    public static User extractData(Identifier id, BindingSet bindingSet){
+    public static User extractData(UserIdentifier id, BindingSet bindingSet){
         User usr = new User();
         usr.setIdentifier(id);
         

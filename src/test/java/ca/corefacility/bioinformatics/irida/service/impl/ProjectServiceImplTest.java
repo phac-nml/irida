@@ -5,6 +5,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.memory.CRUDMemoryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.memory.ProjectMemoryRepository;
@@ -28,7 +29,7 @@ import org.slf4j.LoggerFactory;
 public class ProjectServiceImplTest {
 
     private ProjectService projectService;
-    private CRUDRepository<Identifier, User> userRepository;
+    private CRUDRepository<UserIdentifier, User> userRepository;
     private CRUDRepository<Identifier, Project> projectRepository;
     private CRUDRepository<Identifier, Sample> sampleRepository;
     private Validator validator;

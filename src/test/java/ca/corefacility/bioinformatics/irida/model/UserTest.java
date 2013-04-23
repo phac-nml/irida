@@ -17,6 +17,7 @@ package ca.corefacility.bioinformatics.irida.model;
 
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -248,8 +249,8 @@ public class UserTest {
 
     @Test
     public void testEquals() {
-        User u1 = new User(new Identifier(), "username", "email", "password", "firstName", "lastName", "phoneNumber");
-        User u2 = new User(new Identifier(), "username", "email", "password", "firstName", "lastName", "phoneNumber");
+        User u1 = new User(new UserIdentifier("username"), "username", "email", "password", "firstName", "lastName", "phoneNumber");
+        User u2 = new User(new UserIdentifier("username"), "username", "email", "password", "firstName", "lastName", "phoneNumber");
         // the two users DO NOT share the same identifier, and should therefore be different
         assertFalse(u1.equals(u2));
 
@@ -260,7 +261,7 @@ public class UserTest {
 
     @Test
     public void testEqualsFields() {
-        User u1 = new User(new Identifier(), "username", "email", "password", "firstName", "lastName", "phoneNumber");
+        User u1 = new User(new UserIdentifier("username"), "username", "email", "password", "firstName", "lastName", "phoneNumber");
         User u2 = new User(u1.getIdentifier(), "username", "email", "password", "firstName", "notequal", "phoneNumber");
 
         assertFalse(u1.equals(u2));

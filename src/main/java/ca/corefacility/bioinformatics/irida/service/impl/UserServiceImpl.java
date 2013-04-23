@@ -18,7 +18,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.UserService;
@@ -29,9 +29,9 @@ import javax.validation.Validator;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class UserServiceImpl extends CRUDServiceImpl<Identifier, User> implements UserService {
+public class UserServiceImpl extends CRUDServiceImpl<UserIdentifier, User> implements UserService {
 
-    public UserServiceImpl(CRUDRepository<Identifier, User> userRepository, Validator validator) {
+    public UserServiceImpl(CRUDRepository<UserIdentifier, User> userRepository, Validator validator) {
         super(userRepository, validator, User.class);
     }
 

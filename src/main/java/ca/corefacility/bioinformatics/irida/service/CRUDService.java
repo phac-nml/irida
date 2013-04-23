@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import java.util.List;
 import javax.validation.ConstraintViolationException;
 
@@ -13,7 +14,7 @@ import javax.validation.ConstraintViolationException;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public interface CRUDService<IdentifierType, Type extends Comparable<Type>> {
+public interface CRUDService<IdentifierType extends Identifier, Type extends Comparable<Type>> {
 
     /**
      * Create a new object in the persistence store.

@@ -90,6 +90,7 @@ public class UserSesameRepositoryTest {
             assertNotNull(u);
         }
         catch(IllegalArgumentException e){
+            e.printStackTrace();
             fail();
         }
     }

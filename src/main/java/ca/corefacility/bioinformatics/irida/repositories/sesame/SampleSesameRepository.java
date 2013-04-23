@@ -19,14 +19,14 @@ import ca.corefacility.bioinformatics.irida.dao.PropertyMapper;
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.Sample;
-import java.util.HashMap;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class SampleSesameRepository extends GenericRepository<Sample>{
+public class SampleSesameRepository extends GenericRepository<Identifier, Sample>{
     
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SampleSesameRepository.class);
     

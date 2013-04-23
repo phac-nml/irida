@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import java.lang.reflect.InvocationTargetException;
@@ -22,7 +23,7 @@ import javax.validation.Validator;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType>> implements CRUDService<KeyType, ValueType> {
+public class CRUDServiceImpl<KeyType extends Identifier, ValueType extends Comparable<ValueType>> implements CRUDService<KeyType, ValueType> {
 
     protected CRUDRepository<KeyType, ValueType> repository;
     protected Validator validator;
@@ -182,12 +183,15 @@ public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType>> i
         return builder.toString();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<ValueType> list(int page, int size, Order order) {
         List<ValueType> values = repository.list(page, size, null, order);
 
         Collections.sort(values);
-        
+
         if (order == Order.DESCENDING) {
             Collections.reverse(values);
         }

@@ -27,7 +27,7 @@ import java.util.HashSet;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class ProjectMemoryRepository extends CRUDMemoryRepository<Project> implements ProjectRepository {
+public class ProjectMemoryRepository extends CRUDMemoryRepository<Identifier, Project> implements ProjectRepository {
 
     public ProjectMemoryRepository() {
         super(Project.class);

@@ -9,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -22,10 +23,10 @@ import javax.validation.Validator;
  */
 public class ProjectServiceImpl extends CRUDServiceImpl<Identifier, Project> implements ProjectService {
 
-    private CRUDRepository<Identifier, User> userRepository;
+    private CRUDRepository<UserIdentifier, User> userRepository;
     private CRUDRepository<Identifier, Sample> sampleRepository;
 
-    public ProjectServiceImpl(CRUDRepository<Identifier, Project> projectRepository, CRUDRepository<Identifier, User> userRepository, CRUDRepository<Identifier, Sample> sampleRepository, Validator validator) {
+    public ProjectServiceImpl(CRUDRepository<Identifier, Project> projectRepository, CRUDRepository<UserIdentifier, User> userRepository, CRUDRepository<Identifier, Sample> sampleRepository, Validator validator) {
         super(projectRepository, validator, Project.class);
         this.sampleRepository = sampleRepository;
         this.userRepository = userRepository;

@@ -23,12 +23,14 @@ import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import com.google.common.base.Strings;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * A base class for CRUD memory repositories. DO NOT USE THIS CLASS IN
@@ -36,7 +38,8 @@ import java.util.Map;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class CRUDMemoryRepository<Type extends Identifiable<Identifier> & Comparable<Type>> implements CRUDRepository<Identifier, Type> {
+public class CRUDMemoryRepository<IDType extends Identifier, Type extends Identifiable<IDType> & Comparable<Type>>
+        implements CRUDRepository<IDType, Type> {
 
     protected Map<Identifier, Type> store = new HashMap<>();
     protected Class<Type> valueType;
@@ -45,10 +48,20 @@ public class CRUDMemoryRepository<Type extends Identifiable<Identifier> & Compar
         this.valueType = valueType;
     }
 
+    protected Identifier generateIdentifier(Type object) {
+        UUID id = UUID.randomUUID();
+        URI uri = null;
+        try {
+            uri = new URI("http://example.com/" + id.toString());
+        } catch (Exception e) {
+        }
+        return new Identifier(uri, id);
+    }
+
     @Override
     public Type create(Type object) throws IllegalArgumentException {
-        Identifier id = new Identifier();
-        object.setIdentifier(id);
+        Identifier id = generateIdentifier(object);
+        object.setIdentifier((IDType) id);
         store.put(id, object);
         return object;
     }

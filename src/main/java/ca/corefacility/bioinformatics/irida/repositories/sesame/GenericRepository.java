@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class GenericRepository<Type extends Identifiable<Identifier>> extends SesameRepository implements CRUDRepository<Identifier, Type>  {
+public class GenericRepository<IDType extends Identifier, Type extends Identifiable<IDType>> extends SesameRepository implements CRUDRepository<IDType, Type> {
 
     public final static Map<String, String> userParams = new HashMap<>();
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(UserSesameRepository.class);
@@ -60,71 +60,77 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
 
     public GenericRepository() {
     }
-    
+
     public GenericRepository(TripleStore store, Class type) {
         super(store, type);
         this.objectType = type;
     }
+
     public GenericRepository(TripleStore store, Class type, PropertyMapper propertyMap) {
         super(store, type);
         this.objectType = type;
-        
+
         setPropertyMap(propertyMap);
     }
 
     /**
-     * Generate a UUID
-     * 
-     * @param t The object to build an ID for
-     * @return A UUID for the object
+     * Generate an identifier for an object of type
+     * <code>Type</code>.
+     *
+     * @param t the object to generate the identifier for.
+     * @return and identifier for the object.
      */
-    public UUID generateId(Type t) {
-        UUID id = UUID.randomUUID();
-        
-        return id;
+    public Identifier generateIdentifier(Type t) {
+        UUID uuid = UUID.randomUUID();
+        java.net.URI objuri = buildURI(uuid.toString());
+        return new Identifier(objuri, uuid);
     }
-    
+
     /**
      * Build an identifier from the given binding set
-     * 
+     *
      * @param bs The binding set to build from
      * @param subject The subject of the SPARQL query to build from
      * @return An Identifier object built form the given binding set
      */
-    public Identifier buildIdentifier(BindingSet bs,String subject){
+    public Identifier buildIdentifier(BindingSet bs, String subject) {
         Value s = bs.getValue(subject);
         Value resid = bs.getValue("resid");
-
+        logger.debug(resid.stringValue());
         UUID uuid = UUID.fromString(resid.stringValue());
-        Identifier objid = new Identifier(java.net.URI.create(s.stringValue()),uuid);
-        
+        Identifier objid = new Identifier(java.net.URI.create(s.stringValue()), uuid);
+
         return objid;
     }
-    
+
     /**
      * Get the property mapper for the current repository
+     *
      * @return A property map
      */
-    public PropertyMapper getPropertyMap(){
+    public PropertyMapper getPropertyMap() {
         return propertyMap;
     }
-    
+
     /**
      * Build a URI from a given String ID
+     *
      * @param id The ID to build a URI for
      * @return The constructed URI
      */
-    public java.net.URI buildURI(String id){
+    public java.net.URI buildURI(String id) {
         java.net.URI uri = java.net.URI.create(URI + id);
-        
+
         return uri;
-    }    
-    
+    }
+
     /**
      * Set the property mapper for this repository
-     * @param propertyMap A property map that describes how to deconstruct and reconstruct the objects that will be stored in this repository
+     *
+     * @param propertyMap A property map that describes how to deconstruct and
+     * reconstruct the objects that will be stored in this repository
      */
-    public final void setPropertyMap(PropertyMapper propertyMap){
+    public final void setPropertyMap(PropertyMapper propertyMap) {
         this.propertyMap = propertyMap;
         stringType = propertyMap.prefix + ":" + propertyMap.type;
     }
@@ -140,18 +146,13 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
 
         RepositoryConnection con = store.getRepoConnection();
 
-        UUID id = generateId(object);
-        java.net.URI objuri = buildURI(id.toString());
-        Identifier objid = new Identifier(objuri,id);
-        objid.setUri(objuri);
-        
-        String stringURI = objuri.toString();
-        
-        if(exists(objid)){
+        Identifier objid = generateIdentifier(object);
+
+        if (exists(objid)) {
             throw new IllegalArgumentException("Object " + objid.getUri().toString() + " already exists in the database");
         }
 
-        object.setIdentifier(objid);
+        object.setIdentifier((IDType) objid);
 
 
         try {
@@ -159,15 +160,15 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
 
             ValueFactory fac = con.getValueFactory();
 
-            URI uri = fac.createURI(stringURI);
+            URI uri = fac.createURI(objid.getUri().toString());
             //add type
             URI oPred = fac.createURI(con.getNamespace("rdf"), "type");
             Value oName = fac.createURI(con.getNamespace(propertyMap.prefix), propertyMap.type);
             Statement oSt = fac.createStatement(uri, oPred, oName);
             con.add(oSt);
-            
+
             oPred = fac.createURI(con.getNamespace("irida"), "identifier");
-            Literal litId = fac.createLiteral(id.toString());
+            Literal litId = fac.createLiteral(objid.getIdentifier());
             oSt = fac.createStatement(uri, oPred, litId);
             con.add(oSt);
 
@@ -185,7 +186,7 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
 
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
                     logger.error(ex.getMessage());
-                    throw new StorageException("Couldn't invoke accessor methods to persist " + stringURI); 
+                    throw new StorageException("Couldn't invoke accessor methods to persist " + objid.getUri().toString());
                 }
 
                 Statement st = fac.createStatement(uri, pred, l);
@@ -208,7 +209,7 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
 
         return object;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -217,7 +218,8 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
 
         Type ret = null;
 
-        java.net.URI netURI = buildURI(id.getUUID().toString());
+        java.net.URI netURI = buildURI(id.getIdentifier());
+        logger.debug(netURI.toString());
         String uri = netURI.toString();
 
         if (!exists(id)) {
@@ -228,8 +230,8 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
         try {
             String qs = store.getPrefixes()
                     + "SELECT * "
-                    + "WHERE{ ?s a "+stringType+" . \n"
-                    + buildParams("s",propertyMap)
+                    + "WHERE{ ?s a " + stringType + " . \n"
+                    + buildParams("s", propertyMap)
                     + "}";
 
             TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
@@ -240,7 +242,7 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
             TupleQueryResult result = tupleQuery.evaluate();
             BindingSet bindingSet = result.next();
 
-            Identifier objid = buildIdentifier(bindingSet,"s");
+            Identifier objid = buildIdentifier(bindingSet, "s");
 
             ret = extractData(objid, bindingSet);
 
@@ -258,7 +260,7 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
 
         return ret;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -266,7 +268,7 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
     public List<Type> list() {
         return list(0, 0, null, null);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -278,8 +280,8 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
         try {
             String qs = store.getPrefixes()
                     + "SELECT * "
-                    + "WHERE{ ?s a "+stringType+" . \n"
-                    + buildParams("s",propertyMap)
+                    + "WHERE{ ?s a " + stringType + " . \n"
+                    + buildParams("s", propertyMap)
                     + "}\n";
 
             qs += SparqlQuery.setOrderBy(sortProperty, order);
@@ -291,7 +293,7 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
             while (result.hasNext()) {
                 BindingSet bindingSet = result.next();
 
-                Identifier objid = buildIdentifier(bindingSet,"s");
+                Identifier objid = buildIdentifier(bindingSet, "s");
                 Type ret = extractData(objid, bindingSet);
 
                 users.add(ret);
@@ -344,7 +346,7 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
             throw new IllegalArgumentException("User does not exist in the database.");
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -355,6 +357,7 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
 
     /**
      * Build the SPARQL parameters for a given property type
+     *
      * @param subject The subject to use for this object
      * @param map The property map to construct from
      * @return A String of the parameters to construct an object
@@ -373,7 +376,9 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
     }
 
     /**
-     * Build an object of <code>Type</code> based on the given binding set
+     * Build an object of
+     * <code>Type</code> based on the given binding set
+     *
      * @param id The identifier for the object to construct
      * @param bindingSet The binding set to construct from
      * @return A constructed object of the given type
@@ -381,21 +386,23 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
     public Type extractData(Identifier id, BindingSet bindingSet) {
 
         Type obj = null;
-        
+
         try {
             obj = objectType.newInstance();
-            obj.setIdentifier(id);
+            obj.setIdentifier((IDType) id);
             obj = buildProperties(bindingSet, obj);
         } catch (InstantiationException | IllegalAccessException ex) {
             logger.error(ex.getMessage());
-            throw new StorageException("Couldn't instantiate object "+id); 
+            throw new StorageException("Couldn't instantiate object " + id);
         }
 
         return obj;
     }
 
     /**
-     * Add the properties of an object of <code>Type</code> to the object based on the given binding set
+     * Add the properties of an object of
+     * <code>Type</code> to the object based on the given binding set
+     *
      * @param bs The binding set to use for construction
      * @param obj The object to add the properties to
      * @return The object after adding all the properties
@@ -409,30 +416,30 @@ public class GenericRepository<Type extends Identifiable<Identifier>> extends Se
                 prop.setter.invoke(obj, bs.getValue(var).stringValue());
             } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
                 logger.error(ex.getMessage());
-                throw new StorageException("Couldn't invoke methods to build object"); 
+                throw new StorageException("Couldn't invoke methods to build object");
             }
         }
 
         return obj;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public Type update(Type object) throws IllegalArgumentException {
         delete(object.getIdentifier());
-        
+
         object = create(object);
-        
-        return object;    
+
+        return object;
     }
-        
+
     /**
      * {@inheritDoc}
      */
     @Override
     public Integer count() {
-        return super.count(propertyMap.prefix,propertyMap.type);
+        return super.count(propertyMap.prefix, propertyMap.type);
     }
 }

@@ -228,7 +228,7 @@ public class TestCRUDServiceImpl {
 
     @Test
     public void testCount() {
-        CRUDMemoryRepository<IdentifiableTestEntity> repo = (CRUDMemoryRepository<IdentifiableTestEntity>) crudRepository;
+        CRUDMemoryRepository<Identifier, IdentifiableTestEntity> repo = (CRUDMemoryRepository<Identifier, IdentifiableTestEntity>) crudRepository;
         repo.clear();
 
         int count = 30;

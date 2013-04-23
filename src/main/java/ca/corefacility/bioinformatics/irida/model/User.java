@@ -4,6 +4,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.validators.Patterns;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,9 +19,9 @@ import org.hibernate.validator.constraints.Email;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class User implements Comparable<User>, Auditable<Audit>, Identifiable<Identifier> {
+public class User implements Comparable<User>, Auditable<Audit>, Identifiable<UserIdentifier> {
 
-    private Identifier id;
+    private UserIdentifier id;
     @NotNull(message = "{user.username.notnull}")
     @Size(min = 3, message = "{user.username.size}")
     private String username;
@@ -63,7 +64,7 @@ public class User implements Comparable<User>, Auditable<Audit>, Identifiable<Id
         this.phoneNumber = phoneNumber;
     }
 
-    public User(Identifier id, String username, String email, String password, String firstName, String lastName, String phoneNumber) {
+    public User(UserIdentifier id, String username, String email, String password, String firstName, String lastName, String phoneNumber) {
         this(username, email, password, firstName, lastName, phoneNumber);
         this.id = id;
     }
@@ -176,12 +177,12 @@ public class User implements Comparable<User>, Auditable<Audit>, Identifiable<Id
     }
 
     @Override
-    public Identifier getIdentifier() {
+    public UserIdentifier getIdentifier() {
         return id;
     }
 
     @Override
-    public void setIdentifier(Identifier identifier) {
+    public void setIdentifier(UserIdentifier identifier) {
         this.id = identifier;
     }
 
