@@ -36,13 +36,8 @@ public class UserServiceImpl extends CRUDServiceImpl<UserIdentifier, User> imple
     }
 
     @Override
-    public User getUserByUsername(String username) {
-        User u = userRepository().getUserByUsername(username);
-        if (u == null) {
-            throw new EntityNotFoundException("No user with username [" + username
-                    + "] exists.");
-        }
-        return u;
+    public User getUserByUsername(String username) throws EntityNotFoundException {
+        return userRepository().getUserByUsername(username);
     }
 
     /**
