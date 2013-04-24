@@ -31,11 +31,11 @@ function UserCtrl($scope, $window, dataStore) {
 
     function initialAjaxCallback(data) {
         "use strict";
-        angular.forEach(data.user.links, function(val) {
+        angular.forEach(data.resource.links, function(val) {
             $scope.links[val.rel] = val.href;
         });
-        delete data.user.links;
-        $scope.user = data.user;
+        delete data.resource.links;
+        $scope.user = data.resource;
         getUserProjects();
     }
 
