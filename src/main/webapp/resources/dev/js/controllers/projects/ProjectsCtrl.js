@@ -36,7 +36,7 @@ var ProjectsListCtrl = function ($scope, $window, Projects) {
         form[field].$dirty = false;
       }
     }
-    $scope.newUserForm.$pristine = true;
+    $scope.newProjectForm.$pristine = true;
   };
 
   $scope.gotoProject = function (url) {
