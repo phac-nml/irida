@@ -16,6 +16,7 @@
 package ca.corefacility.bioinformatics.irida.web.assembler.resource;
 
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.hateoas.ResourceSupport;
 
 /**
@@ -24,6 +25,8 @@ import org.springframework.hateoas.ResourceSupport;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public abstract class Resource<Type extends Identifiable> extends ResourceSupport {
+    
+    @JsonIgnore
     protected Type resource;
     
     public Resource(Type resource) {
