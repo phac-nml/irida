@@ -16,7 +16,7 @@
         - POJOs labeled with the @Controller and @Service annotations are auto-detected.
     -->
     <context:component-scan
-        base-package="ca.corefacility.bioinformatics.irida.web"/>
+        base-package="ca.corefacility.bioinformatics.irida.web.controller"/>
 
     <mvc:annotation-driven />
     
