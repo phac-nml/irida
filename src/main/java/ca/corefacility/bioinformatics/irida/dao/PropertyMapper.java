@@ -27,15 +27,17 @@ public class PropertyMapper {
     public List<Property> props;
     public String prefix;
     public String type;
+    private Class classType;
         
-    public PropertyMapper(String prefix, String type){
+    public PropertyMapper(Class classType,String prefix, String type){
         props = new ArrayList<>();
+        this.classType = classType;
         this.prefix = prefix;
         this.type = type;
     }
     
-    public void addProperty(String prefix, String predicate, String variable, Method getter, Method setter, Class type){
-        Property p = new Property(prefix, predicate, variable, getter, setter,  type);
+    public void addProperty(String prefix, String predicate, String variable, String getter, String setter, Class type) throws NoSuchMethodException{
+        Property p = new Property(prefix, predicate, variable, classType.getMethod(getter), classType.getMethod(setter,type),  type);
         props.add(p);
     }
     

@@ -22,8 +22,6 @@ import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import java.net.URI;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -45,9 +43,9 @@ public class GenericRepositoryTest {
         store.initialize();
         
         repo = new GenericRepository<>(store, Identified.class);
-        PropertyMapper map = new PropertyMapper("irida", "Identified");
+        PropertyMapper map = new PropertyMapper(Identified.class,"irida", "Identified");
 
-        map.addProperty("irida", "data", "data", Identified.class.getMethod("getData"), Identified.class.getMethod("setData", String.class), String.class);
+        map.addProperty("irida", "data", "data", "getData", "setData", String.class);
         
         repo.setPropertyMap(map);
         

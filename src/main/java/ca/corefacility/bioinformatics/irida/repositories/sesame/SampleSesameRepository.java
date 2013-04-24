@@ -35,10 +35,10 @@ public class SampleSesameRepository extends GenericRepository<Identifier, Sample
     public SampleSesameRepository(TripleStore store) {
         super(store,Sample.class);
 
-        PropertyMapper map = new PropertyMapper("irida", "Sample");
+        PropertyMapper map = new PropertyMapper(Sample.class,"irida", "Sample");
         
         try{
-            map.addProperty("rdfs","label","sampleName", Sample.class.getMethod("getSampleName"), Sample.class.getMethod("setSampleName",String.class), String.class);
+            map.addProperty("rdfs","label","sampleName", "getSampleName", "setSampleName", String.class);
         } catch (NoSuchMethodException | SecurityException ex) {
             logger.error(ex.getMessage());
             throw new StorageException("Couldn't build parameters for \"Sample\""); 

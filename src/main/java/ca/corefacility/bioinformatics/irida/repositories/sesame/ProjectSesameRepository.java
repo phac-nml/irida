@@ -51,10 +51,10 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProjectSe
     public ProjectSesameRepository(TripleStore store) {
         super(store,Project.class);
 
-        PropertyMapper map = new PropertyMapper("irida", "Project");
+        PropertyMapper map = new PropertyMapper(Project.class,"irida", "Project");
         
         try{
-            map.addProperty("rdfs","label","projectName", Project.class.getMethod("getName"), Project.class.getMethod("setName",String.class), String.class);
+            map.addProperty("rdfs","label","projectName", "getName", "setName", String.class);
         } catch (NoSuchMethodException | SecurityException ex) {
             Logger.getLogger(GenericRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -77,7 +77,7 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProjectSe
                     + "SELECT * "
                     + "WHERE{ ?u a foaf:Person . \n"
                     + "?s irida:hasUser ?u . \n"
-                    + buildParams("s",propertyMap)
+                    + buildSparqlParams("s",propertyMap)
                     + "}\n";
             
             

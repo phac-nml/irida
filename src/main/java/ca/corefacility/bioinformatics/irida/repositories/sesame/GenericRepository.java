@@ -236,7 +236,7 @@ public class GenericRepository<IDType extends Identifier, Type extends Identifia
             String qs = store.getPrefixes()
                     + "SELECT * "
                     + "WHERE{ ?s a " + stringType + " . \n"
-                    + buildParams("s", propertyMap)
+                    + buildSparqlParams("s", propertyMap)
                     + "}";
 
             TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
@@ -286,7 +286,7 @@ public class GenericRepository<IDType extends Identifier, Type extends Identifia
             String qs = store.getPrefixes()
                     + "SELECT * "
                     + "WHERE{ ?s a " + stringType + " . \n"
-                    + buildParams("s", propertyMap)
+                    + buildSparqlParams("s", propertyMap)
                     + "}\n";
 
             qs += SparqlQuery.setOrderBy(sortProperty, order);
@@ -404,7 +404,7 @@ public class GenericRepository<IDType extends Identifier, Type extends Identifia
      * @param map The property map to construct from
      * @return A String of the parameters to construct an object
      */
-    public String buildParams(String subject, PropertyMapper map) {
+    public String buildSparqlParams(String subject, PropertyMapper map) {
         List<PropertyMapper.Property> properties = map.getProperties();
         StringBuilder params = new StringBuilder("?").append(subject).append(" irida:identifier ?resid . \n");
 
@@ -418,8 +418,7 @@ public class GenericRepository<IDType extends Identifier, Type extends Identifia
     }
 
     /**
-     * Build an object of
-     * <code>Type</code> based on the given binding set
+     * Build an object of <code>Type</code> based on the given binding set
      *
      * @param id The identifier for the object to construct
      * @param bindingSet The binding set to construct from

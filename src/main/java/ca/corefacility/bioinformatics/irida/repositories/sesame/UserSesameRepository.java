@@ -17,6 +17,7 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.dao.PropertyMapper;
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.Project;
@@ -59,14 +60,14 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
     public UserSesameRepository(TripleStore store) {
         super(store, User.class);
 
-        PropertyMapper map = new PropertyMapper("foaf", "Person");
+        PropertyMapper map = new PropertyMapper(User.class,"foaf", "Person");
 
         try {
-            map.addProperty("foaf", "nick", "username", User.class.getMethod("getUsername"), User.class.getMethod("setUsername", String.class), String.class);
-            map.addProperty("foaf", "mbox", "mbox", User.class.getMethod("getEmail"), User.class.getMethod("setEmail", String.class), String.class);
-            map.addProperty("foaf", "firstName", "firstName", User.class.getMethod("getFirstName"), User.class.getMethod("setFirstName", String.class), String.class);
-            map.addProperty("foaf", "lastName", "lastName", User.class.getMethod("getLastName"), User.class.getMethod("setLastName", String.class), String.class);
-            map.addProperty("foaf", "phone", "phoneNumber", User.class.getMethod("getPhoneNumber"), User.class.getMethod("setPhoneNumber", String.class), String.class);
+            map.addProperty("foaf", "nick", "username", "getUsername", "setUsername", String.class);
+            map.addProperty("foaf", "mbox", "mbox", "getEmail", "setEmail", String.class);
+            map.addProperty("foaf", "firstName", "firstName", "getFirstName", "setFirstName", String.class);
+            map.addProperty("foaf", "lastName", "lastName", "getLastName", "setLastName", String.class);
+            map.addProperty("foaf", "phone", "phoneNumber", "getPhoneNumber", "setPhoneNumber", String.class);
         } catch (NoSuchMethodException | SecurityException ex) {
             logger.error(ex.getMessage());
             throw new StorageException("Couldn't build parameters for \"User\"");
@@ -119,7 +120,7 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
         }
 
         if (checkUsernameExists(u.getUsername())) {
-            throw new IllegalArgumentException("Username " + u.getUsername() + " already exists");
+            throw new EntityExistsException("Username " + u.getUsername() + " already exists");
         }
 
         return super.create(u);
@@ -145,7 +146,7 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
                     + "SELECT * "
                     + "WHERE{ ?s a foaf:Person . \n"
                     + "?s foaf:nick ?username . \n"
-                    + buildParams("s", propertyMap)
+                    + buildSparqlParams("s", propertyMap)
                     + "}";
 
             TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
@@ -235,7 +236,7 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
                     + "SELECT * "
                     + "WHERE{ ?p a irida:Project . \n"
                     + "?p irida:hasUser ?s . \n"
-                    + buildParams("s", propertyMap)
+                    + buildSparqlParams("s", propertyMap)
                     + "}\n";
 
             TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
