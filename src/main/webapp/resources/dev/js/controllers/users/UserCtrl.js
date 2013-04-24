@@ -4,16 +4,12 @@
  * Time:   9:41 AM
  */
 
-angular.module('irida', ['ngResource']);
+var irida = angular.module('irida', ['ngResource']);
 
-angular.module('irida')
-  .controller('UserCtrl', function ($scope, $window, dataStore) {
-    'use strict';
+irida.controller(UserCtrl);
 
-    $scope.username = "";
-    $scope.user = {};
-    $scope.links = {};
-    $scope.projects = [];
+function UserCtrl($scope, $window, dataStore) {
+  'use strict';
 
     $scope.init = function () {
       var username = /\/users\/(.*)$/.exec($window.location.pathname)[1];
@@ -21,11 +17,9 @@ angular.module('irida')
         function (data) {
           initialAjaxCallback(data);
 
-        },
-        function (errorMessage) {
-          // TODO: handle error message
-        });
-    };
+    dataStore.getData('/users/' + username).then(
+      function (data) {
+        initialAjaxCallback(data);
 
     function initialAjaxCallback(data) {
       "use strict";
@@ -37,17 +31,27 @@ angular.module('irida')
       getUserProjects();
     }
 
-    function getUserProjects () {
-      dataStore.getData($scope.links['user/projects']).then(
-        function (data) {
-          $scope.projects = data.projectResources.projects;
+  function initialAjaxCallback(data) {
+    "use strict";
+    angular.forEach(data.user.links, function (val) {
+      $scope.links[val.rel] = val.href;
+    });
+    delete data.user.links;
+    $scope.user = data.user;
+    getUserProjects();
+  }
 
-        },
-        function (errorMessage) {
-          // TODO: handle error message
-        });
-    }
-  });
+  function getUserProjects() {
+    dataStore.getData($scope.links['user/projects']).then(
+      function (data) {
+        $scope.projects = data.projectResources.projects;
+
+      },
+      function (errorMessage) {
+        // TODO: handle error message
+      });
+  }
+}
 
 angular.module('irida')
   .factory('dataStore', function ($http, $q) {

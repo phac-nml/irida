@@ -27,7 +27,16 @@ angular.module('irida')
       $scope.name = data.resource.name;
     }
 
-  });
+  function initialAjaxCallback(data) {
+    "use strict";
+    angular.forEach(data.project.links, function (val) {
+      $scope.links[val.rel] = val.href;
+    });
+    delete data.project.links;
+    $scope.name = data.project.name;
+  }
+
+}
 
 angular.module('irida')
   .factory('dataStore', function ($http, $q) {

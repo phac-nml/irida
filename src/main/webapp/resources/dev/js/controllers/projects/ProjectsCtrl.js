@@ -1,27 +1,27 @@
 /* global angular */
-var irida = angular.module('irida', ['ngResource']);
-irida.controller(ProjectsListCtrl);
+var irida = angular.module('irida');
 
-var ProjectsListCtrl = function ($scope, $window, Projects) {
-  "use strict";
+function ProjectsListCtrl($scope, $window, AjaxService) {
+  'use strict';
   $scope.projects = [];
   $scope.newProject = {};
   $scope.errors = {};
   $scope.projectsUrl = '/projects' + '?_' + Math.random();
 
-  $scope.loadProjects = function (url) {
-    'use strict';
-    Projects.getAllProjects(url).then(
-      function (data) {
-        ajaxSuccessCallback(data);
-      },
-      function (errorMessage) {
-        // TODO: handle error message
-        console.log("An error occurred");
-      });
+  $scope.loadProjects = function(url) {
+    AjaxService.getAll(url).then(
+
+    function(data) {
+      ajaxSuccessCallback(data);
+    },
+
+    function(errorMessage) {
+      // TODO: handle error message
+      console.log(errorMessage);
+    });
   };
 
-  $scope.clearForm = function () {
+  $scope.clearForm = function() {
     $scope.newProject = {};
     $scope.errors = {};
 
@@ -39,31 +39,30 @@ var ProjectsListCtrl = function ($scope, $window, Projects) {
     $scope.newProjectForm.$pristine = true;
   };
 
-  $scope.gotoProject = function (url) {
+  $scope.gotoProject = function(url) {
     $window.location = url;
   };
 
-  $scope.submitNewProject = function () {
+  $scope.submitNewProject = function() {
     if ($scope.newProjectForm.$valid) {
-      Projects.create($scope.newProject).then(
-        function () {
-          $scope.loadProjects($scope.projectsUrl);
-          $scope.clearForm();
-          $('#newProjectModal').foundation('reveal', 'close');
-        },
-        function (data) {
-          $scope.errors = {};
-          angular.forEach(data, function (error, key) {
-            "use strict";
-            $scope.errors[key] = data[key].join("</br>");
-          });
-        }
-      );
+      AjaxService.create('/projects', $scope.newProject).then(
+
+      function() {
+        $scope.loadProjects($scope.projectsUrl);
+        $scope.clearForm();
+        $('#newProjectModal').foundation('reveal', 'close');
+      },
+
+      function(data) {
+        $scope.errors = {};
+        angular.forEach(data, function(error, key) {
+          $scope.errors[key] = data[key].join('</br>');
+        });
+      });
     }
   };
 
   function ajaxSuccessCallback(data) {
-    "use strict";
     $scope.links = {};
     angular.forEach(data.resources.links, function (val) {
       $scope.links[val.rel] = val.href;
