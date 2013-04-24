@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import java.util.Collection;
 import java.util.HashSet;
 import org.springframework.hateoas.Link;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.ModelAndView;
@@ -41,7 +41,7 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
 
     @Autowired
     public UsersController(UserService userService, ProjectService projectService) {
-        super(userService, User.class, UserResource.class, UserIdentifier.class);
+        super(userService, UserIdentifier.class, User.class, UserResource.class);
         this.userService = userService;
         this.projectService = projectService;
     }

@@ -13,35 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ca.corefacility.bioinformatics.irida.web.assembler.resource.project;
+package ca.corefacility.bioinformatics.irida.web.assembler.resource.sample;
 
-import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * A resource for {@link Project}s.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-@XmlRootElement(name = "project")
-public class ProjectResource extends Resource<Project> {
+@XmlRootElement(name = "sample")
+public class SampleResource extends Resource<Sample> {
 
-    public ProjectResource() {
-        super(new Project());
-    }
-
-    public ProjectResource(Project project) {
-        super(project);
+    public SampleResource() {
+        super(new Sample());
     }
 
     @XmlElement
-    public String getName() {
-        return resource.getName();
+    public String getSampleName() {
+        return resource.getSampleName();
     }
 
-    public void setName(String name) {
-        this.resource.setName(name);
+    @JsonProperty
+    public void setSampleName(String sampleName) {
+        resource.setSampleName(sampleName);
     }
 }

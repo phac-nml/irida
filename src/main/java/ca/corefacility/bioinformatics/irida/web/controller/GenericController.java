@@ -45,6 +45,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -72,8 +73,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     private String resourceIndividualIndex;
 
     protected GenericController(CRUDService<IdentifierType, Type> crudService,
-            Class<Type> type, Class<ResourceType> resourceType,
-            Class<IdentifierType> identifierType) {
+            Class<IdentifierType> identifierType, Class<Type> type, Class<ResourceType> resourceType) {
         this.crudService = crudService;
         this.resourceType = resourceType;
         this.identifierType = identifierType;
@@ -110,14 +110,14 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     public abstract Type mapResourceToType(ResourceType representation);
 
     /**
-     * Retrieve and construct a response with a collection of user resources.
+     * Retrieve and construct a response with a collection of resources.
      *
      * @param page the current page of the list of resources that the client
      * wants.
      * @param size the size of the page that the client wants to see.
      * @param sortProperty the property that the resources should be sorted by.
      * @param sortOrder the order of the sort.
-     * @return a model and view containing the collection of user resources.
+     * @return a model and view containing the collection of resources.
      */
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView listResources(
@@ -165,7 +165,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         mav.addObject("resource", resource);
         return mav;
     }
-    
+
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> create(@RequestBody ResourceType representation) {
         Type resource = mapResourceToType(representation);

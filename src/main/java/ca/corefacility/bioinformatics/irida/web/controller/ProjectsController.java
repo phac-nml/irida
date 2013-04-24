@@ -22,10 +22,12 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.Proje
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import java.util.Collection;
 import java.util.HashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.Link;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 /**
  * Controller for managing {@link Project}s in the database.
@@ -37,10 +39,11 @@ import org.springframework.hateoas.Link;
 public class ProjectsController extends GenericController<Identifier, Project, ProjectResource> {
 
     private static final String PROJECT_USERS_REL = "project/users";
+    private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
     @Autowired
     public ProjectsController(ProjectService projectService) {
-        super(projectService, Project.class, ProjectResource.class, Identifier.class);
+        super(projectService, Identifier.class, Project.class, ProjectResource.class);
     }
 
     @Override
@@ -49,7 +52,7 @@ public class ProjectsController extends GenericController<Identifier, Project, P
         p.setName(pr.getName());
         return p;
     }
-    
+
     @Override
     public Collection<Link> constructCustomResourceLinks(Project p) {
         Collection<Link> links = new HashSet<>();
