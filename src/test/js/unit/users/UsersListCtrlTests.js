@@ -1,38 +1,43 @@
-describe("UsersListController", function () {
+describe('UsersListController', function() {
+  'use strict';
   var newScope, controller, $httpBackend;
 
-  beforeEach(module('irida'));
-  beforeEach(inject(function ($rootScope, $controller, $injector) {
+  beforeEach(module('irida.services'));
+  beforeEach(inject(function($rootScope, $controller, $injector) {
     newScope = $rootScope.$new();
-    controller = $controller("UsersListCtrl", {$scope: newScope});
+    controller = $controller('UsersListCtrl', {
+      $scope: newScope
+    });
 
     $httpBackend = $injector.get('$httpBackend');
-    $httpBackend.when('GET', '/users').respond({userResources: {users: [
-      {firstName: 'josh'}
-    ]}});
+    $httpBackend.when('GET', '/users').respond({
+      userResources: {
+        users: [{
+          firstName: 'josh'
+        }]
+      }
+    });
   }));
 
-  afterEach(function () {
-    "use strict";
+  afterEach(function() {
     $httpBackend.verifyNoOutstandingExpectation();
     $httpBackend.verifyNoOutstandingRequest();
   });
 
-  it("Should have an empty users array", function () {
-    "use strict";
+  it('Should have an empty users array', function() {
     expect(newScope.users.length).toBe(0);
   });
 
-  it("Should have a users url", function () {
+  it('Should have a users url', function() {
     expect(newScope.usersUrl).toContain('/users?');
   });
 
-  it("Should make a server call", function () {
-    runs(function () {
+  it('Should make a server call', function() {
+    runs(function() {
       $httpBackend.expectGET('/users');
       newScope.loadUsers('/users');
       waits(1000);
-      runs(function () {
+      runs(function() {
         expect(newScope.users.length).toBe(1);
       });
       $httpBackend.flush();

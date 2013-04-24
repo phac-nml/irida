@@ -1,29 +1,29 @@
 /* global angular */
-var irida = angular.module('irida', ['ngResource']);
-irida.controller(UsersListCtrl);
+var irida = angular.module('irida');
 
-var UsersListCtrl = function ($scope, $window, Users) {
+function UsersListCtrl($scope, $window, AjaxService) {
+  'use strict';
   $scope.users = [];
-
   $scope.usersUrl = '/users' + '?_' + Math.random();
 
+  $scope.loadUsers = function(url) {
+    AjaxService.getAll(url).then(
 
-  $scope.loadUsers = function (url) {
-    'use strict';
-    Users.getAllUsers(url).then(
-      function (data) {
-        ajaxSuccessCallback(data);
-      },
-      function (errorMessage) {
-        // TODO: handle error message
-      });
+    function(data) {
+      ajaxSuccessCallback(data);
+    },
+
+    function(errorMessage) {
+      // TODO: handle error message
+      console.log(errorMessage);
+    });
   };
 
-  $scope.gotoUser = function (url) {
+  $scope.gotoUser = function(url) {
     $window.location = url;
   };
 
-  $scope.clearForm = function () {
+  $scope.clearForm = function() {
     $scope.newUser = {};
     $scope.errors = {};
 
@@ -41,76 +41,33 @@ var UsersListCtrl = function ($scope, $window, Users) {
     $scope.newUserForm.$pristine = true;
   };
 
-  $scope.submitNewUser = function () {
+  $scope.submitNewUser = function() {
     if ($scope.newUserForm.$valid) {
-      Users.create($scope.newUser).then(
-        function () {
-          $scope.loadUsers($scope.usersUrl);
-          $scope.clearForm();
-          $('#newUserModal').foundation('reveal', 'close');
-        },
-        function (data) {
-          $scope.errors = {};
-          angular.forEach(data, function (error, key) {
-            "use strict";
-            $scope.errors[key] = data[key].join("</br>");
-          });
-        }
-      );
-    }
-    else {
-      console.log("NOT VALID");
+      AjaxService.create('/users', $scope.newUser).then(
+
+      function() {
+        $scope.loadUsers($scope.usersUrl);
+        $scope.clearForm();
+        $('#newUserModal').foundation('reveal', 'close');
+      },
+
+      function(data) {
+        $scope.errors = {};
+        angular.forEach(data, function(error, key) {
+          $scope.errors[key] = data[key].join('</br>');
+        });
+      });
+    } else {
+      console.log('NOT VALID');
     }
   };
 
   function ajaxSuccessCallback(data) {
-    "use strict";
     $scope.links = {};
-    angular.forEach(data.userResources.links, function (val) {
+    angular.forEach(data.userResources.links, function(val) {
       $scope.links[val.rel] = val.href;
     });
     $scope.users = data.userResources.users;
   }
-};
-
-var NewUserCtrl = function ($scope, Users) {
-
-
-};
-
-irida.factory('Users', function ($http, $q) {
-  "use strict";
-  return {
-    create     : function (data) {
-      var deferred = $q.defer();
-      $http({
-        method : 'POST',
-        url    : '/users',
-        data   : data,
-        headers: {'Content-Type': 'application/json'}
-      })
-        .success(function (data) {
-          deferred.resolve(data);
-        })
-        .error(function (data) {
-          deferred.reject(data);
-        });
-      return deferred.promise;
-    },
-    getAllUsers: function (url) {
-      var deferred = $q.defer();
-
-      $http.get(url)
-        .success(function (data) {
-          deferred.resolve(data);
-        })
-        .error(function () {
-          deferred.reject("An error occurred while getting users");
-        });
-
-      return deferred.promise;
-    }
-  };
-});
-
-
+}
+irida.controller(UsersListCtrl);

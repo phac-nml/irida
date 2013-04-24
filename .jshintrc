@@ -25,6 +25,14 @@
     "angular": true,
     "jQuery": true,
     "ko": true,
-    "alert": true
+    "alert": true,
+    "it": true,
+    "beforeEach": true,
+    "afterEach": true,
+    "expect": true,
+    "runs": true,
+    "waits": true,
+    "inject": true,
+    "describe": true
   }
 }
