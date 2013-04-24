@@ -108,17 +108,16 @@ public class CRUDServiceImpl<KeyType extends Identifier, ValueType extends Compa
         }
 
         List<ValueType> values = repository.list(page, size, sortProperty, order);
-
         Collections.sort(values, new Comparator<ValueType>() {
             @Override
             public int compare(ValueType o1, ValueType o2) throws IllegalArgumentException {
-                if (order.equals(Order.ASCENDING)) {
-                    return getValue(o1, sortProperty).compareTo(getValue(o2, sortProperty));
-                } else {
-                    return getValue(o2, sortProperty).compareTo(getValue(o1, sortProperty));
-                }
+                return getValue(o1, sortProperty).compareTo(getValue(o2, sortProperty));
             }
         });
+
+        if (order.equals(Order.DESCENDING)) {
+            Collections.reverse(values);
+        }
 
         return values;
     }
