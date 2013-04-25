@@ -306,7 +306,7 @@ public class GenericRepository<IDType extends Identifier, Type extends Identifia
             result.close();
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
             logger.error(ex.getMessage());
-            throw new StorageException("Failed to list users");
+            throw new StorageException("Failed to list objects");
         } finally {
             try {
                 con.close();
