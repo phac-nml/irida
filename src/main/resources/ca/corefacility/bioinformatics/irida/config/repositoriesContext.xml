@@ -20,11 +20,11 @@
         <constructor-arg ref="tripleStore" />        
     </bean>
     
-    <!--<beans profile="dev">
+    <beans profile="dev">
         <bean id="exampleData" init-method="addSampleData" class="ca.corefacility.bioinformatics.irida.dao.ExampleDataLoader">
             <constructor-arg ref="userRepository" />
             <constructor-arg ref="projectRepository" />
         </bean>
-    </beans>-->
+    </beans>
     
 </beans>
