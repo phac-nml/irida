@@ -69,10 +69,10 @@ function ProjectsListCtrl($scope, $window, AjaxService) {
     });
     $scope.projects = data.resources.resources;
   }
-};
+}
 
 irida.factory('Projects', function ($http, $q) {
-  "use strict";
+  'use strict';
   return {
     create        : function (data) {
       var deferred = $q.defer();

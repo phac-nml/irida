@@ -7,8 +7,8 @@ describe('IRIDA e2e tests', function() {
 	});
 
 	it('Should be able to navigate to the projects page by clicking the link.', function() {
-		element('#projectsLink', 'Click on projects link').click();
-		// expect(browser().location().url()).toBe("/projects");
+		element('a#projectsLink', 'Click on projects link').click();
+		expect(browser().window().href()).toBe("http://localhost:9000/projects");
 	});
 
 });
