@@ -37,6 +37,9 @@ function UsersListCtrl($scope, $window, AjaxService) {
       if (form[field].$dirty === true) {
         form[field].$dirty = false;
       }
+      if (form[field].$invalid) {
+        form[field].$invalid = false;
+      }
     }
     $scope.newUserForm.$pristine = true;
   };

@@ -76,8 +76,6 @@ singleRun = false;
 
 plugins = [
   'karma-jasmine',
-  'karma-chrome-launcher',
-  'karma-firefox-launcher',
   'karma-phantomjs-launcher',
   'karma-junit-reporter'
 ];
