@@ -25,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder;
 import static ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder.pageLinksFor;
+import ca.corefacility.bioinformatics.irida.web.controller.support.SortProperty;
 import com.google.common.base.Strings;
 import com.google.common.net.HttpHeaders;
 import com.google.gson.Gson;
@@ -61,7 +62,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public abstract class GenericController<IdentifierType extends Identifier, Type extends Identifiable<IdentifierType> & Comparable<Type>, ResourceType extends Resource> {
-
+    
     private static final Logger logger = LoggerFactory.getLogger(GenericController.class);
     protected CRUDService<IdentifierType, Type> crudService;
     private Class<ResourceType> resourceType;
@@ -70,7 +71,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     private String prefix;
     private String resourceCollectionIndex;
     private String resourceIndividualIndex;
-
+    
     protected GenericController(CRUDService<IdentifierType, Type> crudService,
             Class<IdentifierType> identifierType, Class<Type> type, Class<ResourceType> resourceType) {
         this.crudService = crudService;
@@ -78,7 +79,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         this.identifierType = identifierType;
         this.type = type;
     }
-
+    
     @PostConstruct
     public void initializePages() {
         // initialize the names of the pages
@@ -109,6 +110,19 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     public abstract Type mapResourceToType(ResourceType representation);
 
     /**
+     * Get the default sort property, {@link SortProperty.NONE} by default.
+     *
+     * @return the default sort property for this class.
+     */
+    protected SortProperty getDefaultSortProperty() {
+        return SortProperty.NONE;
+    }
+    
+    protected Order getDefaultSortOrder() {
+        return Order.ASCENDING;
+    }
+
+    /**
      * Retrieve and construct a response with a collection of resources.
      *
      * @param page the current page of the list of resources that the client
@@ -123,10 +137,20 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_PAGE, defaultValue = "1") int page,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SIZE, defaultValue = "20") int size,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_PROPERTY, required = false) String sortProperty,
-            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER, defaultValue = "ASCENDING") Order sortOrder) throws InstantiationException, IllegalAccessException {
+            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER, required = false) Order sortOrder) throws InstantiationException, IllegalAccessException {
         ModelAndView mav = new ModelAndView(resourceCollectionIndex);
         List<Type> entities;
 
+        // if the client did not specify a sort property, try to get a default sort property from the subclass.
+        if (Strings.isNullOrEmpty(sortProperty) && !SortProperty.NONE.equals(getDefaultSortProperty())) {
+            sortProperty = getDefaultSortProperty().getSortProperty();
+        }
+
+        // if the client did not specify a sort order, try to get the default sort order from the subclass.
+        if (sortOrder == null && !Order.NONE.equals(getDefaultSortOrder())) {
+            sortOrder = getDefaultSortOrder();
+        }
+        
         if (Strings.isNullOrEmpty(sortProperty)) {
             entities = crudService.list(page, size, sortOrder);
         } else {
@@ -135,21 +159,21 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         ControllerLinkBuilder linkBuilder = linkTo(getClass());
         int totalEntities = crudService.count();
         ResourceCollection<ResourceType> resources = new ResourceCollection<>();
-
+        
         for (Type entity : entities) {
             ResourceType resource = resourceType.newInstance();
             resource.setResource(entity);
             resource.add(linkBuilder.slash(entity.getIdentifier().getIdentifier()).withSelfRel());
             resources.add(resource);
         }
-
+        
         resources.add(pageLinksFor(getClass(), page, size, totalEntities, sortProperty, sortOrder));
         resources.setTotalResources(totalEntities);
-
+        
         mav.addObject("resources", resources);
         return mav;
     }
-
+    
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
     public ModelAndView getResource(@PathVariable String resourceId) throws InstantiationException, IllegalAccessException {
         ModelAndView mav = new ModelAndView(resourceIndividualIndex);
@@ -164,7 +188,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         mav.addObject("resource", resource);
         return mav;
     }
-
+    
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> create(@RequestBody ResourceType representation) {
         Type resource = mapResourceToType(representation);
