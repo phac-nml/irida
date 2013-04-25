@@ -24,7 +24,8 @@ package ca.corefacility.bioinformatics.irida.model.enums;
 public enum Order {
 
     ASCENDING("ASCENDING"),
-    DESCENDING("DESCENDING");
+    DESCENDING("DESCENDING"),
+    NONE("NONE");
     private String code;
 
     private Order(String code) {
@@ -43,7 +44,7 @@ public enum Order {
             case "DESCENDING":
                 return DESCENDING;
             default:
-                throw new IllegalArgumentException("[" + code + "] is not a valid type of Order.");
+                return NONE;
         }
     }
 }
