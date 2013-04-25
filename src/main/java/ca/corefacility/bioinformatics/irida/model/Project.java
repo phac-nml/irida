@@ -12,7 +12,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import javax.validation.constraints.NotNull;
-import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * A project object.
@@ -22,9 +21,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class Project implements Comparable<Project>, Auditable<Audit>, Identifiable<Identifier> {
 
     private Identifier id;
-    @NotNull
+    @NotNull(message = "{project.name.notnull}")
     private String name;
-    
     private Map<User, Role> users;
     @NotNull
     private Audit audit;
