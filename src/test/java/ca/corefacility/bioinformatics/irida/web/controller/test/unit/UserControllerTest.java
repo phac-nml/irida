@@ -21,7 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectCollectionResource;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
 import ca.corefacility.bioinformatics.irida.web.controller.UsersController;
 import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
@@ -78,8 +78,8 @@ public class UserControllerTest {
         when(projectService.getProjectsForUser(u)).thenReturn(projects);
         // run the test
         ModelAndView output = controller.getUserProjects(username);
-        ProjectCollectionResource pulledProjects = (ProjectCollectionResource) output.getModel().get("projectResources");
-        List<ProjectResource> projectResources = pulledProjects.getProjects();
+        ResourceCollection<ProjectResource> pulledProjects = (ResourceCollection<ProjectResource>) output.getModel().get("projectResources");
+        List<ProjectResource> projectResources = pulledProjects.getResources();
         assertEquals(1, projectResources.size());
         ProjectResource resource = projectResources.get(0);
         assertEquals(projectName, resource.getName());

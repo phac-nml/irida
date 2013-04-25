@@ -5,7 +5,7 @@ import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectCollectionResource;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,9 +54,10 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
      */
     @RequestMapping(value = "/{username}/projects", method = RequestMethod.GET)
     public ModelAndView getUserProjects(@PathVariable String username) {
+        logger.debug("Loading projects for user [" + username + "]");
         ModelAndView mav = new ModelAndView("users/user");
         User u = userService.getUserByUsername(username);
-        ProjectCollectionResource resources = new ProjectCollectionResource();
+        ResourceCollection<ProjectResource> resources = new ResourceCollection<>();
         Collection<Project> projects = projectService.getProjectsForUser(u);
         ControllerLinkBuilder linkBuilder = linkTo(ProjectsController.class);
         for (Project project : projects) {
