@@ -62,7 +62,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public abstract class GenericController<IdentifierType extends Identifier, Type extends Identifiable<IdentifierType> & Comparable<Type>, ResourceType extends Resource> {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(GenericController.class);
     protected CRUDService<IdentifierType, Type> crudService;
     private Class<ResourceType> resourceType;
@@ -71,7 +71,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     private String prefix;
     private String resourceCollectionIndex;
     private String resourceIndividualIndex;
-    
+
     protected GenericController(CRUDService<IdentifierType, Type> crudService,
             Class<IdentifierType> identifierType, Class<Type> type, Class<ResourceType> resourceType) {
         this.crudService = crudService;
@@ -79,7 +79,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         this.identifierType = identifierType;
         this.type = type;
     }
-    
+
     @PostConstruct
     public void initializePages() {
         // initialize the names of the pages
@@ -117,7 +117,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     protected SortProperty getDefaultSortProperty() {
         return SortProperty.NONE;
     }
-    
+
     protected Order getDefaultSortOrder() {
         return Order.ASCENDING;
     }
@@ -150,7 +150,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         if (sortOrder == null && !Order.NONE.equals(getDefaultSortOrder())) {
             sortOrder = getDefaultSortOrder();
         }
-        
+
         if (Strings.isNullOrEmpty(sortProperty)) {
             entities = crudService.list(page, size, sortOrder);
         } else {
@@ -159,21 +159,21 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         ControllerLinkBuilder linkBuilder = linkTo(getClass());
         int totalEntities = crudService.count();
         ResourceCollection<ResourceType> resources = new ResourceCollection<>();
-        
+
         for (Type entity : entities) {
             ResourceType resource = resourceType.newInstance();
             resource.setResource(entity);
             resource.add(linkBuilder.slash(entity.getIdentifier().getIdentifier()).withSelfRel());
             resources.add(resource);
         }
-        
+
         resources.add(pageLinksFor(getClass(), page, size, totalEntities, sortProperty, sortOrder));
         resources.setTotalResources(totalEntities);
-        
+
         mav.addObject("resources", resources);
         return mav;
     }
-    
+
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
     public ModelAndView getResource(@PathVariable String resourceId) throws InstantiationException, IllegalAccessException {
         ModelAndView mav = new ModelAndView(resourceIndividualIndex);
@@ -188,7 +188,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         mav.addObject("resource", resource);
         return mav;
     }
-    
+
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> create(@RequestBody ResourceType representation) {
         Type resource = mapResourceToType(representation);
@@ -200,6 +200,14 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         responseHeaders.add(HttpHeaders.LOCATION, location);
         ResponseEntity<String> response = new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
         return response;
+    }
+
+    @RequestMapping(value = "/{resourceId}", method = RequestMethod.DELETE)
+    public ResponseEntity<String> delete(@PathVariable String resourceId) throws InstantiationException, IllegalAccessException {
+        IdentifierType id = identifierType.newInstance();
+        id.setIdentifier(resourceId);
+        crudService.delete(id);
+        return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
     /**
