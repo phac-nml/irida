@@ -11,7 +11,6 @@ irida.controller(UserCtrl);
 function UserCtrl($scope, $window, dataStore) {
     'use strict';
 
-    $scope.username = "";
     $scope.user = {};
     $scope.links = {};
     $scope.projects = [];

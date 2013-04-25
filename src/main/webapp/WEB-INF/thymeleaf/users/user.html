@@ -4,7 +4,7 @@
 <body data-ng-app="irida">
 <div th:include="fragments/bodyHeader" th:remove="tag"></div>
 <div class="row">
-    <div class="large-12 columns">
+    <div class="large-12 columns" data-ng-controller="UserCtrl">
         <div th:include="fragments/user/top-user" th:remove="tag"></div>
         <div th:include="fragments/user/user-main" th:remove="tag"></div>
     </div>
