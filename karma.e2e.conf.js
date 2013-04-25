@@ -16,7 +16,7 @@ proxies = {
 // list of files to exclude
 exclude = [];
 
-browsers = ['PhantomJS', 'Chrome'];
+browsers = ['PhantomJS'];
 
 // test results reporter to use
 // possible values: dots || progress || growl
@@ -33,6 +33,5 @@ runnerPort = 9100;
 plugins = [
   'karma-ng-scenario',
   'karma-phantomjs-launcher',
-  'karma-chrome-launcher',
   'karma-junit-reporter'
 ];
