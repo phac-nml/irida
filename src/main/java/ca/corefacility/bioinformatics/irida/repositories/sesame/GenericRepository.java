@@ -327,7 +327,8 @@ public class GenericRepository<IDType extends Identifier, Type extends Identifia
         if (exists(id)) {
             RepositoryConnection con = store.getRepoConnection();
 
-            String uri = id.getUri().toString();
+            java.net.URI netURI = buildURI(id.getIdentifier());
+            String uri = netURI.toString();
 
             ValueFactory vf = con.getValueFactory();
             URI objecturi = vf.createURI(uri);
