@@ -379,9 +379,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <browsers>Chrome</browsers>
-                </configuration>
             </plugin>
         </plugins>
     </build>
