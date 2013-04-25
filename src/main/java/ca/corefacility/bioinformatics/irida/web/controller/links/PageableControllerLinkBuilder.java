@@ -16,6 +16,7 @@
 package ca.corefacility.bioinformatics.irida.web.controller.links;
 
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
+import com.google.common.base.Strings;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.hateoas.Link;
@@ -83,8 +84,12 @@ public abstract class PageableControllerLinkBuilder {
         StringBuilder sb = new StringBuilder();
         sb.append(REQUEST_PARAM_PAGE).append("=").append(page).append("&");
         sb.append(REQUEST_PARAM_SIZE).append("=").append(size).append("&");
-        sb.append(REQUEST_PARAM_SORT_PROPERTY).append("=").append(sortColumn).append("&");
-        sb.append(REQUEST_PARAM_SORT_ORDER).append("=").append(sortOrder);
+        if (!Strings.isNullOrEmpty(sortColumn)) {
+            sb.append(REQUEST_PARAM_SORT_PROPERTY).append("=").append(sortColumn).append("&");
+        }
+        if (sortOrder != null) {
+            sb.append(REQUEST_PARAM_SORT_ORDER).append("=").append(sortOrder);
+        }
         return sb.toString();
     }
 }
