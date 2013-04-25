@@ -123,7 +123,6 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
         }
 
         return super.create(u);
-
     }
 
     /**

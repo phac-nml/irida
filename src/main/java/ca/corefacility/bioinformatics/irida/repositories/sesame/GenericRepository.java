@@ -435,7 +435,7 @@ public class GenericRepository<IDType extends Identifier, Type extends Identifia
             obj = buildProperties(bindingSet, obj);
         } catch (InstantiationException | IllegalAccessException ex) {
             logger.error(ex.getMessage());
-            throw new StorageException("Couldn't instantiate object " + id);
+            throw new StorageException("Couldn't instantiate object of type "+objectType.getName() + " : " + id);
         }
 
         return obj;

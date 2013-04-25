@@ -42,10 +42,11 @@ public class ExampleDataLoader {
         userRepo.create(new User("matt", "matt@nowhere.com", "PASSWOD!4", "Matthew", "Stuart-Edwards", "4567"));
         userRepo.create(new User("aaron", "aaron@nowhere.com", "PASSWOD!5", "Aaron", "Petkau", "5678"));
         
-        projRepo.create(new Project("Project 1"));
-        projRepo.create(new Project("Project 2"));
-        projRepo.create(new Project("Project 3"));
-        projRepo.create(new Project("Project 4"));
-        projRepo.create(new Project("Project 5"));
+        
+        for(int i=1;i<=100;i++){
+            projRepo.create(new Project("Project "+i));
+            userRepo.create(new User("user"+i, "user"+i+"@nowhere.com", "PASSWOD!"+i, "User", "Number"+i, i+"04-123-4567"));
+        }
+        
     }
 }

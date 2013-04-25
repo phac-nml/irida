@@ -67,45 +67,18 @@ public class UserSesameRepositoryTest {
     }
     
     @Test
-    public void testAddInvalidObject() {
-        User u = null;
+    public void testAddExistingUser() {
+        User u = new User("test", "testuser@test", "123456", "a", "test", "123-456-7890");
+        User v = new User("test", "testuser@test", "123456", "a", "test", "123-456-7890");
         
         try {
             repo.create(u);
+            repo.create(v);
             fail();
         } catch (IllegalArgumentException e) {
         }
     }
-    
-    /**
-     * Test of read method, of class UserSesameRepository.
-     */
-    @Test
-    public void testRead() {
-        User u = new User("test", "testuser@test", "123456", "a", "test", "123-456-7890");
-
-        u = repo.create(u);
-        try{
-            u = repo.read(u.getIdentifier());
-            assertNotNull(u);
-        }
-        catch(IllegalArgumentException e){
-            fail();
-        }
-    }
-    
-    @Test
-    public void testReadInvalid() {
-        try{
-            Identifier i = new Identifier();
-            i.setUri(URI.create("http://nowhere/fake"));
-            User u = repo.read(i);
-            fail();
-        }
-        catch(EntityNotFoundException e){
-            assertNotNull(e);
-        }
-    }    
+       
 
     /**
      * Test of getUserByUsername method, of class UserSesameRepository.
@@ -132,98 +105,7 @@ public class UserSesameRepositoryTest {
         }
         catch(EntityNotFoundException e){}
     }
-    /**
-     * Test of update method, of class UserSesameRepository.
-     */
-    @Test
-    public void testUpdate() {
-        User u = new User("test", "testuser@test", "123456", "a", "test", "123-456-7890");
-        u = repo.create(u);
-        
-        try{
-            u.setFirstName("different");
-            u = repo.update(u);
-            
-            User j = repo.read(u.getIdentifier());
-            assertNotNull(j);
-            assertTrue(j.getFirstName().compareTo(u.getFirstName())==0);
-        }
-        catch(IllegalArgumentException e){
-            fail();
-        }
-    }
 
-    /**
-     * Test of delete method, of class UserSesameRepository.
-     */
-    @Test
-    public void testDelete() {
-        User u = new User("test", "testuser@test", "123456", "a", "test", "123-456-7890");
-        u = repo.create(u);
-        
-        try{
-            repo.delete(u.getIdentifier());
-            if(repo.exists(u.getIdentifier())){
-                fail();
-            }
-        }
-        catch(IllegalArgumentException e){
-            fail();
-        }
-    }
-    
-    @Test
-    public void testDeleteInvalid() {
-        Identifier i = new Identifier();
-        i.setUri(URI.create("http://nowhere/fake"));
-        
-        try{
-            repo.delete(i);
-            fail();
-        }
-        catch(IllegalArgumentException e){}
-    }    
-
-    /**
-     * Test of list method, of class UserSesameRepository.
-     */
-    @Test
-    public void testList_0args() {
-        List<User> users = repo.list();
-        if(users.isEmpty()){
-            fail();
-        }
-    }
-
-    /**
-     * Test of list method, of class UserSesameRepository.
-     */
-    @Test
-    public void testList_4args() {
-        List<User> users = repo.list(0, 1, null, Order.ASCENDING);
-        
-        if(users.size() != 1){
-            fail();
-        }
-    }
-
-    /**
-     * Test of exists method, of class UserSesameRepository.
-     */
-    @Test
-    public void testExists() {
-        User u = new User("test", "testuser@test", "123456", "a", "test", "123-456-7890");
-        u = repo.create(u);
-        
-        try{
-            if(! repo.exists(u.getIdentifier())){
-                fail();
-            }
-        }
-        catch(IllegalArgumentException e){
-            fail();
-        } 
-    }
 
     /**
      * Test of checkUsernameExists method, of class UserSesameRepository.
