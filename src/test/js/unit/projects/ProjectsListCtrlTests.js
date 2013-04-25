@@ -11,8 +11,8 @@ describe('ProjectsListCtrl', function() {
 
     $httpBackend = $injector.get('$httpBackend');
     $httpBackend.when('GET', '/projects').respond({
-      projectResources: {
-        projects: [{
+      resources: {
+        resources: [{
           name: 'E. coli',
           links: [{
             rel: 'self',

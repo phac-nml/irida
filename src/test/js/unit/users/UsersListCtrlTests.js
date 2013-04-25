@@ -11,8 +11,8 @@ describe('UsersListController', function() {
 
     $httpBackend = $injector.get('$httpBackend');
     $httpBackend.when('GET', '/users').respond({
-      userResources: {
-        users: [{
+      resources: {
+        resources: [{
           firstName: 'josh'
         }]
       }
