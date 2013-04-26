@@ -166,6 +166,40 @@ public class GenericControllerTest {
     }
 
     @Test
+    public void testUpdate() throws InstantiationException, IllegalAccessException {
+        when(crudService.update(entity)).thenReturn(entity);
+        IdentifiableTestResource resource = new IdentifiableTestResource(entity);
+        ResponseEntity<String> response = controller.update(id.getIdentifier(), resource);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void testUpdateBadResource() throws InstantiationException, IllegalAccessException {
+        when(crudService.update(entity)).thenThrow(new EntityNotFoundException("not found"));
+        IdentifiableTestResource resource = new IdentifiableTestResource(entity);
+        try {
+            ResponseEntity<String> response = controller.update(id.getIdentifier(), resource);
+            fail();
+        } catch (EntityNotFoundException e) {
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testUpdateFailsConstraints() throws InstantiationException, IllegalAccessException {
+        when(crudService.update(entity)).thenThrow(new ConstraintViolationException(new HashSet<ConstraintViolation<?>>()));
+        IdentifiableTestResource resource = new IdentifiableTestResource(entity);
+        try {
+            ResponseEntity<String> response = controller.update(id.getIdentifier(), resource);
+            fail();
+        } catch (ConstraintViolationException e) {
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
     public void testListResources() throws InstantiationException, IllegalAccessException {
         String resourceKey = "resources";
         int totalResources = 400;
@@ -193,7 +227,11 @@ public class GenericControllerTest {
     public void testHandleConstraintViolations() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
-        Set<ConstraintViolation<IdentifiableTestEntity>> constraintViolations = validator.validate(new IdentifiableTestEntity());
+        Set<ConstraintViolation<?>> constraintViolations = new HashSet<>();
+        Set<ConstraintViolation<IdentifiableTestEntity>> violations = validator.validate(new IdentifiableTestEntity());
+        for (ConstraintViolation<IdentifiableTestEntity> v : violations) {
+            constraintViolations.add(v);
+        }
         ResponseEntity<String> response = controller.handleConstraintViolations(new ConstraintViolationException(constraintViolations));
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("{\"nonNull\":[\"may not be null\"]}", response.getBody());
