@@ -16,6 +16,7 @@
 package ca.corefacility.bioinformatics.irida.web.assembler.resource;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -27,7 +28,7 @@ import org.springframework.hateoas.ResourceSupport;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @XmlRootElement
-public class ResourceCollection<Type extends Resource> extends ResourceSupport {
+public class ResourceCollection<Type extends Resource> extends ResourceSupport implements Iterable<Type> {
 
     @XmlElement
     private List<Type> resources;
@@ -61,5 +62,10 @@ public class ResourceCollection<Type extends Resource> extends ResourceSupport {
 
     public void setTotalResources(int totalResources) {
         this.totalResources = totalResources;
+    }
+
+    @Override
+    public Iterator<Type> iterator() {
+        return resources.iterator();
     }
 }
