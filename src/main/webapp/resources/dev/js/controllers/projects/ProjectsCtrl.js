@@ -9,16 +9,18 @@ function ProjectsListCtrl($scope, $window, AjaxService) {
   $scope.projectsUrl = '/projects' + '?_' + Math.random();
 
   $scope.loadProjects = function(url) {
-    AjaxService.getAll(url).then(
+    if (url) {
+      AjaxService.getAll(url).then(
 
-    function(data) {
-      ajaxSuccessCallback(data);
-    },
+      function(data) {
+        ajaxSuccessCallback(data);
+      },
 
-    function(errorMessage) {
-      // TODO: handle error message
-      console.log(errorMessage);
-    });
+      function(errorMessage) {
+        // TODO: handle error message
+        console.log(errorMessage);
+      });
+    }
   };
 
   $scope.clearForm = function() {
@@ -64,42 +66,44 @@ function ProjectsListCtrl($scope, $window, AjaxService) {
 
   function ajaxSuccessCallback(data) {
     $scope.links = {};
-    angular.forEach(data.resources.links, function (val) {
+    angular.forEach(data.resources.links, function(val) {
       $scope.links[val.rel] = val.href;
     });
     $scope.projects = data.resources.resources;
   }
 }
 
-irida.factory('Projects', function ($http, $q) {
+irida.factory('Projects', function($http, $q) {
   'use strict';
   return {
-    create        : function (data) {
+    create: function(data) {
       var deferred = $q.defer();
       $http({
-        method : 'POST',
-        url    : '/projects',
-        data   : data,
-        headers: {'Content-Type': 'application/json'}
+        method: 'POST',
+        url: '/projects',
+        data: data,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       })
-        .success(function (data) {
-          deferred.resolve(data);
-        })
-        .error(function (data) {
-          deferred.reject(data);
-        });
+        .success(function(data) {
+        deferred.resolve(data);
+      })
+        .error(function(data) {
+        deferred.reject(data);
+      });
       return deferred.promise;
     },
-    getAllProjects: function (url) {
+    getAllProjects: function(url) {
       var deferred = $q.defer();
 
       $http.get(url)
-        .success(function (data) {
-          deferred.resolve(data);
-        })
-        .error(function () {
-          deferred.reject("An error occurred while getting users");
-        });
+        .success(function(data) {
+        deferred.resolve(data);
+      })
+        .error(function() {
+        deferred.reject("An error occurred while getting users");
+      });
 
       return deferred.promise;
     }
