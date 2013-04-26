@@ -32,6 +32,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,6 +47,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -61,6 +63,8 @@ import org.springframework.web.servlet.ModelAndView;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
+@Controller
+@RequestMapping("/generic")
 public abstract class GenericController<IdentifierType extends Identifier, Type extends Identifiable<IdentifierType> & Comparable<Type>, ResourceType extends Resource> {
 
     private static final Logger logger = LoggerFactory.getLogger(GenericController.class);
@@ -184,7 +188,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         ResourceType resource = resourceType.newInstance();
         resource.setResource(t);
         resource.add(constructCustomResourceLinks(t));
-        resource.add(linkTo(getClass()).withSelfRel());
+        resource.add(linkTo(getClass()).slash(resourceId).withSelfRel());
         mav.addObject("resource", resource);
         return mav;
     }
@@ -210,6 +214,16 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/{resourceId}", method = RequestMethod.PATCH)
+    public ResponseEntity<String> update(@PathVariable String resourceId, @RequestBody ResourceType representation) throws InstantiationException, IllegalAccessException {
+        IdentifierType id = identifierType.newInstance();
+        id.setIdentifier(resourceId);
+        Type resource = mapResourceToType(representation);
+        resource.setIdentifier(id);
+        crudService.update(resource);
+        return new ResponseEntity<>("success", HttpStatus.OK);
+    }
+
     /**
      * Handle {@link EntityNotFoundException}.
      *
@@ -229,7 +243,10 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      */
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<String> handleConstraintViolations(ConstraintViolationException e) {
-        Set<ConstraintViolation<?>> constraintViolations = e.getConstraintViolations();
+        Set<ConstraintViolation<Type>> constraintViolations = new HashSet<>();
+        for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
+            constraintViolations.add((ConstraintViolation<Type>) violation);
+        }
         return new ResponseEntity<>(validationMessages(constraintViolations), HttpStatus.BAD_REQUEST);
     }
 
@@ -250,9 +267,9 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @param failures the set of constraint violations.
      * @return the constraint violations as a JSON object.
      */
-    private String validationMessages(Set<ConstraintViolation<?>> failures) {
+    private <T> String validationMessages(Set<ConstraintViolation<T>> failures) {
         Map<String, List<String>> mp = new HashMap();
-        for (ConstraintViolation<?> failure : failures) {
+        for (ConstraintViolation<T> failure : failures) {
             logger.debug(failure.getPropertyPath().toString() + ": " + failure.getMessage());
             String property = failure.getPropertyPath().toString();
             if (mp.containsKey(property)) {
