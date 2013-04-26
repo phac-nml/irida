@@ -17,16 +17,20 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.unit;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.controller.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.support.IdentifiableTestEntity;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.support.IdentifiableTestResource;
 import com.google.common.net.HttpHeaders;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -112,13 +116,9 @@ public class GenericControllerTest {
     }
 
     @Test
-    public void testDeleteEntity() {
+    public void testDeleteEntity() throws InstantiationException, IllegalAccessException {
         ResponseEntity<String> response = null;
-        try {
-            response = controller.delete(UUID.randomUUID().toString());
-        } catch (InstantiationException | IllegalAccessException e) {
-            fail();
-        }
+        response = controller.delete(UUID.randomUUID().toString());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
@@ -166,12 +166,37 @@ public class GenericControllerTest {
     }
 
     @Test
+    public void testListResources() throws InstantiationException, IllegalAccessException {
+        String resourceKey = "resources";
+        int totalResources = 400;
+        List<IdentifiableTestEntity> entities = new ArrayList<>();
+        entities.add(entity);
+        when(crudService.list(2, 20, "nonNull", Order.DESCENDING)).thenReturn(entities);
+        when(crudService.count()).thenReturn(totalResources);
+        ModelAndView mav = controller.listResources(2, 20, "nonNull", Order.DESCENDING);
+        Map<String, Object> model = mav.getModel();
+        assertNotNull(model.get(resourceKey));
+        Object o = model.get(resourceKey);
+        assertTrue(o instanceof ResourceCollection);
+        ResourceCollection<IdentifiableTestResource> collection = (ResourceCollection<IdentifiableTestResource>) o;
+        assertEquals(5, collection.getLinks().size());
+        assertEquals(totalResources, collection.getTotalResources());
+
+        for (IdentifiableTestResource r : collection) {
+            assertEquals(1, r.getLinks().size());
+            Link link = r.getLink(PageLink.REL_SELF);
+            assertTrue(link.getHref().endsWith(entity.getIdentifier().getIdentifier()));
+        }
+    }
+
+    @Test
     public void testHandleConstraintViolations() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
         Set<ConstraintViolation<IdentifiableTestEntity>> constraintViolations = validator.validate(new IdentifiableTestEntity());
         ResponseEntity<String> response = controller.handleConstraintViolations(new ConstraintViolationException(constraintViolations));
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("{\"nonNull\":[\"may not be null\"]}", response.getBody());
     }
 
     @Test
