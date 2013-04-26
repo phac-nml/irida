@@ -46,6 +46,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -61,6 +62,8 @@ import org.springframework.web.servlet.ModelAndView;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
+@Controller
+@RequestMapping("/generic")
 public abstract class GenericController<IdentifierType extends Identifier, Type extends Identifiable<IdentifierType> & Comparable<Type>, ResourceType extends Resource> {
 
     private static final Logger logger = LoggerFactory.getLogger(GenericController.class);
