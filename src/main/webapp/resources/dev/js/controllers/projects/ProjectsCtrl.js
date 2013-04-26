@@ -11,7 +11,7 @@ function ProjectsListCtrl($scope, $window, AjaxService) {
 
   $scope.loadProjects = function(url) {
     if (url) {
-      AjaxService.getAll(url).then(
+      AjaxService.get(url).then(
 
       function(data) {
         ajaxSuccessCallback(data);
@@ -95,7 +95,7 @@ irida.factory('Projects', function($http, $q) {
       });
       return deferred.promise;
     },
-    getAllProjects: function(url) {
+    getProjects: function(url) {
       var deferred = $q.defer();
 
       $http.get(url)
