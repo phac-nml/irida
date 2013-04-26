@@ -41,7 +41,7 @@ angular.module('irida.services', ['ngResource'])
 		},
 		patch: function(url, data) {
 			if (url && data) {
-				var deferred = $q.defere();
+				var deferred = $q.defer();
 
 				$http({
 					method: 'PATCH',
@@ -59,6 +59,26 @@ angular.module('irida.services', ['ngResource'])
 				});
 				return deferred.promise;
 			}
-		}
+		},
+    delete: function(url) {
+      if (url) {
+        var deferred = $q.defer();
+
+        $http({
+          method: 'DELETE',
+          url: url,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+          .success(function(data) {
+            deferred.resolve(data);
+          })
+          .error(function(data) {
+            deferred.reject(data);
+          });
+        return deferred.promise;
+      }
+    }
 	};
 });

@@ -8,47 +8,73 @@ var irida = angular.module('irida');
 
 
 function UserCtrl($scope, $window, AjaxService) {
-    'use strict';
+  'use strict';
 
-    $scope.user = {};
-    $scope.links = {};
-    $scope.projects = [];
+  $scope.user = {};
+  $scope.links = {};
+  $scope.projects = [];
 
-    $scope.init = function() {
-        var username = /\/users\/(.*)$/.exec($window.location.pathname)[1];
+  $scope.init = function () {
+    var username = /\/users\/(.*)$/.exec($window.location.pathname)[1];
 
-        AjaxService.get('/users/' + username).then(
+    AjaxService.get('/users/' + username).then(initialSuccessCallback, errorHandler);
+  };
 
-        function(data) {
-            initialAjaxCallback(data);
-        },
+  $scope.deleteUser = function () {
+    console.log("Deleting user");
+    AjaxService.delete($scope.links.self).then(
+      function () {
+        console.log("Success delete");
+      },errorHandler);
+  };
 
-        function(errorMessage) {
-            // TODO: handle error message
-        });
-    };
-
-    function initialAjaxCallback(data) {
-        "use strict";
-        angular.forEach(data.resource.links, function(val) {
-            $scope.links[val.rel] = val.href;
-        });
-        delete data.resource.links;
-        $scope.user = data.resource;
-        getUserProjects();
+  /**
+   * Checks the editUserForm to see if any of the fields have been
+   * modified.  if they have, it adds them to an associative array
+   * and performs a PATCH for the current user.
+   */
+  $scope.patchUser = function () {
+    console.log("Patching users");
+    var data = {};
+    var form = $scope.editUserForm;
+    for (var field in form) {
+      if (form[field].$dirty === true) {
+        data[form[field].$name] = form[field].$modelValue;
+      }
     }
-
-    function getUserProjects() {
-        AjaxService.get($scope.links['user/projects']).then(
-
-        function(data) {
-            $scope.projects = data.projectResources.projects;
-
-        },
-
-        function(errorMessage) {
-            // TODO: handle error message
-        });
+    if (data) {
+      AjaxService.patch($window.location.pathname, data);
     }
+  };
+
+  /**
+   * Initial callback to setup the interface
+   * @param {object} data
+   */
+  function initialSuccessCallback(data) {
+    angular.forEach(data.resource.links, function (val) {
+      $scope.links[val.rel] = val.href;
+    });
+    delete data.resource.links;
+    $scope.user = data.resource;
+    getUserProjects();
+  }
+
+  function errorHandler (data){
+    console.log(data);
+  }
+
+  function getUserProjects() {
+    AjaxService.get($scope.links['user/projects']).then(
+
+      function (data) {
+        $scope.projects = data.projectResources.projects;
+
+      },
+
+      function (errorMessage) {
+        // TODO: handle error message
+      });
+  }
 }
 irida.controller(UserCtrl);
