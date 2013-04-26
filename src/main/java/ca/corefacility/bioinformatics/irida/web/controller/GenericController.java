@@ -187,7 +187,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         ResourceType resource = resourceType.newInstance();
         resource.setResource(t);
         resource.add(constructCustomResourceLinks(t));
-        resource.add(linkTo(getClass()).withSelfRel());
+        resource.add(linkTo(getClass()).slash(resourceId).withSelfRel());
         mav.addObject("resource", resource);
         return mav;
     }
