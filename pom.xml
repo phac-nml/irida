@@ -5,7 +5,7 @@
     <artifactId>irida-api</artifactId>
     <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
-    <name>irida-api</name>
+    <name>irida-api-sesame</name>
     <url>http://gitlab.corefacility.ca/irida/irida-api</url>
     
     <issueManagement>
@@ -149,6 +149,18 @@
           <artifactId>sesame-runtime</artifactId>
           <version>${openrdf.sesame.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.openrdf.alibaba</groupId>
+            <artifactId>alibaba</artifactId>
+            <version>2.0-rc7</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>jboss</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.7.ga</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
     <build>
         <finalName>irida-api</finalName>
@@ -228,7 +240,8 @@
         <spring.security.version>3.1.3.RELEASE</spring.security.version>
         <validation.api.version>1.0.0.GA</validation.api.version>
         <hibernate.validator.version>4.3.1.Final</hibernate.validator.version>
-        <openrdf.sesame.version>2.7.0</openrdf.sesame.version>
+        <openrdf.sesame.version>2.7.0-beta1</openrdf.sesame.version>
+        <openrdf.alibaba.version>2.0-rc7</openrdf.alibaba.version>
         <!-- plugins -->
         <maven.failsafe.plugin.version>2.13</maven.failsafe.plugin.version>
         <maven.surefire.plugin.version>2.13</maven.surefire.plugin.version>

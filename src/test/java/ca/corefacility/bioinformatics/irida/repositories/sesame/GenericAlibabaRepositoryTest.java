@@ -30,11 +30,11 @@ import org.junit.Before;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class GenericRepositoryTest {
+public class GenericAlibabaRepositoryTest {
     
-    GenericRepository<Identifier,Identified> repo;
+    GenericAlibabaRepository<Identifier,IdentifiedIF,Identified> repo;
     
-    public GenericRepositoryTest() {
+    public GenericAlibabaRepositoryTest() {
     }
     
     @Before
@@ -42,12 +42,8 @@ public class GenericRepositoryTest {
         SailMemoryStore store = new SailMemoryStore();
         store.initialize();
         
-        repo = new GenericRepository<>(store, Identified.class);
+        repo = new IdentifiedRepo(store);
         PropertyMapper map = new PropertyMapper(Identified.class,"irida", "Identified");
-
-        map.addProperty("irida", "data", "data", "getData", "setData", String.class);
-        
-        repo.setPropertyMap(map);
         
         repo.create(new Identified("data1"));
         repo.create(new Identified("data2"));
@@ -154,6 +150,11 @@ public class GenericRepositoryTest {
         List<Identified> users = repo.list(0, 1, null, Order.ASCENDING);
         
         if(users.size() != 1){
+            fail();
+        }
+        
+        users = repo.list(0, 2, null, Order.ASCENDING);
+        if(users.size() != 2){
             fail();
         }
     }

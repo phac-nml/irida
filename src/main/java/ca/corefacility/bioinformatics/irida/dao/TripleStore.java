@@ -16,13 +16,16 @@
 package ca.corefacility.bioinformatics.irida.dao;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
-import javax.annotation.PostConstruct;
 import org.openrdf.model.Namespace;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
+import org.openrdf.repository.config.RepositoryConfigException;
 import org.openrdf.repository.http.HTTPRepository;
+import org.openrdf.repository.object.ObjectConnection;
+import org.openrdf.repository.object.ObjectRepository;
+import org.openrdf.repository.object.config.ObjectRepositoryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +39,8 @@ public class TripleStore {
  * and open the template in the editor.
  */
     private Repository repo;
+    private ObjectRepositoryFactory orf;
+    private ObjectRepository objectRepo; 
     
     public String URI;
     
@@ -52,6 +57,7 @@ public class TripleStore {
         this.URI = uri;
         
         repo = new HTTPRepository(serverUrl,repoName);
+
     }
     
     public TripleStore(Repository repo,String uri){
@@ -73,10 +79,12 @@ public class TripleStore {
     public void initialize(){
         try {
             repo.initialize();
+            orf = new ObjectRepositoryFactory();
+            objectRepo = orf.createRepository(repo);            
 
-        } catch (RepositoryException ex) {
+        } catch (RepositoryException | RepositoryConfigException ex) {
             logger.error(ex.getMessage());
-        }        
+        }      
     }
 
     /**
@@ -84,11 +92,11 @@ public class TripleStore {
      * @return The repository connection
      * @throws StorageException
      */
-    public RepositoryConnection getRepoConnection() throws StorageException{
-        RepositoryConnection con = null;
+    public ObjectConnection getRepoConnection() throws StorageException{
+        ObjectConnection con = null;
         
         try {
-            con = repo.getConnection();
+            con = objectRepo.getConnection();
         } catch (RepositoryException ex) {
             logger.error(ex.getMessage());
             throw new StorageException("Could not retrieve repository connection");
@@ -125,6 +133,7 @@ public class TripleStore {
      */
     public void close() {
         try {
+            objectRepo.shutDown();
             repo.shutDown();
         } catch (RepositoryException ex) {
             logger.error(ex.getMessage());

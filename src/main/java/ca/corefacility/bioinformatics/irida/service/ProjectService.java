@@ -5,6 +5,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.alibaba.ProjectIF;
 import java.util.Collection;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -17,6 +17,7 @@ package ca.corefacility.bioinformatics.irida.repositories.memory;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.alibaba.ProjectIF;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import java.util.Collection;

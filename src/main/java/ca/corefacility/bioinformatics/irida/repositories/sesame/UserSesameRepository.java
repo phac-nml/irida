@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.alibaba.UserIF;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
@@ -44,13 +45,16 @@ import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
+import org.openrdf.repository.object.ObjectConnection;
+import org.openrdf.repository.object.ObjectQuery;
+import org.openrdf.result.Result;
 import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class UserSesameRepository extends GenericRepository<UserIdentifier, User> implements UserRepository {
+public class UserSesameRepository extends GenericAlibabaRepository<UserIdentifier,UserIF, User> implements UserRepository {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(UserSesameRepository.class);
 
@@ -58,22 +62,8 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
     }
 
     public UserSesameRepository(TripleStore store) {
-        super(store, User.class);
+        super(store, UserIF.class,User.PREFIX,User.TYPE);
 
-        PropertyMapper map = new PropertyMapper(User.class,"foaf", "Person");
-
-        try {
-            map.addProperty("foaf", "nick", "username", "getUsername", "setUsername", String.class);
-            map.addProperty("foaf", "mbox", "mbox", "getEmail", "setEmail", String.class);
-            map.addProperty("foaf", "firstName", "firstName", "getFirstName", "setFirstName", String.class);
-            map.addProperty("foaf", "lastName", "lastName", "getLastName", "setLastName", String.class);
-            map.addProperty("foaf", "phone", "phoneNumber", "getPhoneNumber", "setPhoneNumber", String.class);
-        } catch (NoSuchMethodException | SecurityException ex) {
-            logger.error(ex.getMessage());
-            throw new StorageException("Couldn't build parameters for \"User\"");
-        }
-
-        setPropertyMap(map);
     }
 
     /**
@@ -101,15 +91,15 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
      * @return An Identifier object built form the given binding set
      */
     @Override
-    public Identifier buildIdentifier(BindingSet bs, String subject) {
-        Value s = bs.getValue(subject);
-        Value resid = bs.getValue("resid");
-        String id = resid.stringValue();
-        Identifier objid = new UserIdentifier(id);
-        objid.setUri(java.net.URI.create(s.stringValue()));
-
+    public Identifier buildIdentifier(UserIF obj, String identifiedBy) {
+        UserIdentifier objid = new UserIdentifier();
+        
+        objid.setUri(java.net.URI.create(obj.toString()));
+        objid.setIdentifier(obj.getUsername());
+        
         return objid;
-    }    
+    }   
+    
     /**
      * {@inheritDoc}
      */
@@ -131,13 +121,14 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
      */
     @Override
     public User getUserByUsername(String username) throws EntityNotFoundException {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 
         User ret = null;
         if (!checkUsernameExists(username)) {
             throw new EntityNotFoundException("No user with username [" + username + "] exists.");
         }
 
-        RepositoryConnection con = store.getRepoConnection();
+        ObjectConnection con = store.getRepoConnection();
         try {
             HashMap<String, String> mySet = new HashMap<>(userParams);
             mySet.remove("foaf:nick");
@@ -146,21 +137,23 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
                     + "SELECT * "
                     + "WHERE{ ?s a foaf:Person . \n"
                     + "?s foaf:nick ?username . \n"
-                    + buildSparqlParams("s", propertyMap)
                     + "}";
+            
 
-            TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
+            ObjectQuery tupleQuery = con.prepareObjectQuery(QueryLanguage.SPARQL, qs);
             ValueFactory fac = con.getValueFactory();
 
             Literal u = fac.createLiteral(username);
             tupleQuery.setBinding("username", u);
-
-            TupleQueryResult result = tupleQuery.evaluate();
-            BindingSet bindingSet = result.next();
-
-            Identifier objid = buildIdentifier(bindingSet, "s");
-
-            ret = extractData(objid, bindingSet);
+            
+            Result<UserIF> result = tupleQuery.evaluate(UserIF.class);
+            UserIF o = result.next();
+            
+            URI uri = fac.createURI(o.toString());
+                        
+            String identifiedBy = getIdentifiedBy(con,uri);
+            Identifier objid = buildIdentifier(o,identifiedBy);
+            ret = buildObject(o,(UserIdentifier)objid);
 
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
             logger.error(ex.getMessage());
@@ -221,12 +214,28 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
         return exists;
     }
 
+    @Override
+    public User buildObject(UserIF base, UserIdentifier i) {
+        User u = new User();
+        u.setIdentifier(i);
+        u.setEmail(base.getEmail());
+        u.setFirstName(base.getFirstName());
+        u.setLastName(base.getLastName());
+        u.setPassword(base.getPassword());
+        u.setPhoneNumber(base.getPhoneNumber());
+        u.setUsername(base.getUsername());
+        
+        return u;
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public Collection<User> getUsersForProject(Project project) {
-        List<User> users = new ArrayList<>();
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        /*List<User> users = new ArrayList<>();
 
         String uri = project.getIdentifier().getUri().toString();
 
@@ -267,6 +276,6 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
             }
         }
 
-        return users;
+        return users;*/
     }
 }

@@ -15,39 +15,27 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
-import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
+import ca.corefacility.bioinformatics.irida.dao.TripleStore;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 
 /**
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class Identified implements Identifiable<Identifier>, IdentifiedIF{
-    private Identifier id;
-    private String data;
+public class IdentifiedRepo extends GenericAlibabaRepository<Identifier,IdentifiedIF, Identified> {
     
-    public Identified(){}
+    public IdentifiedRepo(){}
     
-    public Identified(String data){
-        this.data = data;
-    }
-    
-    public String getData(){
-        return data;
-    }
-    
-    public void setData(String data){
-        this.data = data;
-    }
-    
+    public IdentifiedRepo(TripleStore store) {
+        super(store,IdentifiedIF.class,IdentifiedIF.PREFIX,IdentifiedIF.TYPE);
 
-    @Override
-    public Identifier getIdentifier() {
-        return id;
     }
-
     @Override
-    public void setIdentifier(Identifier identifier) {
-        this.id = identifier;
-    }   
+    public Identified buildObject(IdentifiedIF base, Identifier i) {
+        Identified idd = new Identified(base.getData());
+        idd.setIdentifier(i);
+        
+        return idd;
+    }
+    
 }

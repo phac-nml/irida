@@ -15,39 +15,18 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
-import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import ca.corefacility.bioinformatics.irida.model.alibaba.Thing;
+import org.openrdf.annotations.Iri;
 
 /**
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class Identified implements Identifiable<Identifier>, IdentifiedIF{
-    private Identifier id;
-    private String data;
+@Iri(IdentifiedIF.PREFIX + IdentifiedIF.TYPE)
+public interface IdentifiedIF extends Thing{
+    public static final String PREFIX = "http://nowhere/";
+    public static final String TYPE = "Identified";  
     
-    public Identified(){}
-    
-    public Identified(String data){
-        this.data = data;
-    }
-    
-    public String getData(){
-        return data;
-    }
-    
-    public void setData(String data){
-        this.data = data;
-    }
-    
-
-    @Override
-    public Identifier getIdentifier() {
-        return id;
-    }
-
-    @Override
-    public void setIdentifier(Identifier identifier) {
-        this.id = identifier;
-    }   
+    @Iri(PREFIX + "data")
+    public String getData();    
 }

@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model;
 
+import ca.corefacility.bioinformatics.irida.model.alibaba.ProjectIF;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
@@ -18,7 +19,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class Project implements Comparable<Project>, Auditable<Audit>, Identifiable<Identifier> {
+public class Project implements ProjectIF, Comparable<Project>, Auditable<Audit>, Identifiable<Identifier>{
 
     private Identifier id;
     @NotNull(message = "{project.name.notnull}")
@@ -61,6 +62,7 @@ public class Project implements Comparable<Project>, Auditable<Audit>, Identifia
         return Objects.hash(id, name);
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -101,7 +103,7 @@ public class Project implements Comparable<Project>, Auditable<Audit>, Identifia
 
     @Override
     public int compareTo(Project p) {
-        return audit.compareTo(p.audit);
+        return audit.compareTo(p.audit);    
     }
 
     @Override

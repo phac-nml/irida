@@ -9,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.alibaba.ProjectIF;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
@@ -38,12 +39,13 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Identifier, Project> imp
     @Override
     public void addUserToProject(Project project, User user, Role role) {
         // first, add the user to the project:
-        project.addUserToProject(user, role);
+        /*project.addUserToProject(user, role);
         repository.update(project);
 
         // then add the project to the user:
         user.addProject(project, role);
-        userRepository.update(user);
+        userRepository.update(user);*/
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     /**
@@ -51,11 +53,12 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Identifier, Project> imp
      */
     @Override
     public void addSampleToProject(Project project, Sample sample) {
-        sample.getProjects().add(project);
+        /*sample.getProjects().add(project);
         project.getSamples().add(sample);
 
         repository.update(project);
-        sampleRepository.update(sample);
+        sampleRepository.update(sample);*/
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override

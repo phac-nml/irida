@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model;
 
+import ca.corefacility.bioinformatics.irida.model.alibaba.UserIF;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
@@ -18,7 +19,7 @@ import org.hibernate.validator.constraints.Email;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class User implements Comparable<User>, Auditable<Audit>, Identifiable<UserIdentifier> {
+public class User implements UserIF, Comparable<User>, Auditable<Audit>, Identifiable<UserIdentifier> {
 
     private UserIdentifier id;
     @NotNull(message = "{user.username.notnull}")
