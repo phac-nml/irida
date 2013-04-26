@@ -4,7 +4,7 @@
             <div data-ng-click="gotoProject(project.links[0].href)">
             	<span class="delete">&#215;</span>
             	<div ng-bind="project.name"></div>
-            	<span ng-bind="project.date"></span>
+            	<span ng-bind="project.dateCreated | date: 'MM/dd/yyyy @ h:mma'"></span>
             </div>
         </li>
     </ul>
