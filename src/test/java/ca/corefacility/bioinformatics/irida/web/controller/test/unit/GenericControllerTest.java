@@ -19,12 +19,14 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.web.controller.GenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.support.IdentifiableTestEntity;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.support.IdentifiableTestResource;
 import com.google.common.net.HttpHeaders;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.UUID;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -39,6 +41,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Unit tests for the {@link GenericController}.
@@ -49,15 +52,15 @@ public class GenericControllerTest {
 
     private GenericController<Identifier, IdentifiableTestEntity, IdentifiableTestResource> controller;
     private CRUDService<Identifier, IdentifiableTestEntity> crudService;
-    private IdentifiableTestEntity e;
+    private IdentifiableTestEntity entity;
     private Identifier id;
 
     @Before
     public void setUp() {
         crudService = mock(CRUDService.class);
         id = new Identifier();
-        e = new IdentifiableTestEntity();
-        e.setIdentifier(id);
+        entity = new IdentifiableTestEntity();
+        entity.setIdentifier(id);
         controller = new GenericController<Identifier, IdentifiableTestEntity, IdentifiableTestResource>(crudService, Identifier.class, IdentifiableTestEntity.class, IdentifiableTestResource.class) {
             @Override
             public Collection<Link> constructCustomResourceLinks(IdentifiableTestEntity resource) {
@@ -66,7 +69,7 @@ public class GenericControllerTest {
 
             @Override
             public IdentifiableTestEntity mapResourceToType(IdentifiableTestResource representation) {
-                return e;
+                return entity;
             }
         };
 
@@ -79,9 +82,9 @@ public class GenericControllerTest {
 
     @Test
     public void testCreateBadEntity() {
-        IdentifiableTestResource r = new IdentifiableTestResource(e);
+        IdentifiableTestResource r = new IdentifiableTestResource(entity);
 
-        when(crudService.create(e)).thenThrow(new ConstraintViolationException(new HashSet<ConstraintViolation<?>>()));
+        when(crudService.create(entity)).thenThrow(new ConstraintViolationException(new HashSet<ConstraintViolation<?>>()));
 
         try {
             controller.create(r);
@@ -94,8 +97,8 @@ public class GenericControllerTest {
 
     @Test
     public void testCreateGoodEntity() {
-        IdentifiableTestResource resource = new IdentifiableTestResource(e);
-        when(crudService.create(e)).thenReturn(e);
+        IdentifiableTestResource resource = new IdentifiableTestResource(entity);
+        when(crudService.create(entity)).thenReturn(entity);
 
         ResponseEntity<String> mav = controller.create(resource);
         assertEquals(HttpStatus.CREATED, mav.getStatusCode());
@@ -116,16 +119,33 @@ public class GenericControllerTest {
 
     @Test
     public void testDeleteInvalidEntity() {
-        String id = UUID.randomUUID().toString();
+        String uuid = UUID.randomUUID().toString();
         Identifier identifier = new Identifier();
-        identifier.setIdentifier(id);
+        identifier.setIdentifier(uuid);
         doThrow(new EntityNotFoundException("not found")).when(crudService).delete(identifier);
 
         try {
-            controller.delete(id);
+            controller.delete(uuid);
         } catch (EntityNotFoundException e) {
         } catch (Exception e) {
             fail();
         }
+    }
+
+    @Test
+    public void testGetResource() {
+        when(crudService.read(id)).thenReturn(entity);
+        ModelAndView mav = null;
+
+        try {
+            mav = controller.getResource(id.getIdentifier());
+        } catch (InstantiationException | IllegalAccessException e) {
+            fail();
+        }
+
+        Map<String, Object> model = mav.getModel();
+        assertTrue(model.containsKey("resource"));
+        IdentifiableTestResource resource = (IdentifiableTestResource) model.get("resource");
+        assertTrue(resource.getLink(PageLink.REL_SELF).getHref().endsWith(id.getIdentifier()));
     }
 }
