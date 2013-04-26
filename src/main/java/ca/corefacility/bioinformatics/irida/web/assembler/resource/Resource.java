@@ -15,8 +15,12 @@
  */
 package ca.corefacility.bioinformatics.irida.web.assembler.resource;
 
+import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.Date;
+import javax.xml.bind.annotation.XmlElement;
 import org.springframework.hateoas.ResourceSupport;
 
 /**
@@ -24,16 +28,21 @@ import org.springframework.hateoas.ResourceSupport;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public abstract class Resource<Type extends Identifiable> extends ResourceSupport {
-    
+public abstract class Resource<Type extends Identifiable & Auditable<Audit>> extends ResourceSupport {
+
     @JsonIgnore
     protected Type resource;
-    
+
     public Resource(Type resource) {
         this.resource = resource;
     }
-    
+
     public void setResource(Type resource) {
         this.resource = resource;
+    }
+
+    @XmlElement
+    public Date getDateCreated() {
+        return resource.getAuditInformation().getCreated();
     }
 }
