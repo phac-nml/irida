@@ -17,6 +17,7 @@ package ca.corefacility.bioinformatics.irida.web.controller;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -215,13 +216,22 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     }
 
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.PATCH)
-    public ResponseEntity<String> update(@PathVariable String resourceId, @RequestBody ResourceType representation) throws InstantiationException, IllegalAccessException {
+    public ResponseEntity<String> update(@PathVariable String resourceId, @RequestBody Map<String, Object> representation) throws InstantiationException, IllegalAccessException {
         IdentifierType id = identifierType.newInstance();
         id.setIdentifier(resourceId);
-        Type resource = mapResourceToType(representation);
-        resource.setIdentifier(id);
-        crudService.update(resource);
+        crudService.update(id, representation);
         return new ResponseEntity<>("success", HttpStatus.OK);
+    }
+
+    /**
+     * Handle {@link InvalidPropertyException}.
+     *
+     * @param e the exception as thrown by the service.
+     * @return an appropriate HTTP response.
+     */
+    @ExceptionHandler(InvalidPropertyException.class)
+    public ResponseEntity<String> handleInvalidPropertyException(InvalidPropertyException e) {
+        return new ResponseEntity<>("Cannot update resource with supplied properties.", HttpStatus.BAD_REQUEST);
     }
 
     /**

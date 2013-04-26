@@ -17,6 +17,7 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.unit;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
@@ -29,6 +30,7 @@ import com.google.common.net.HttpHeaders;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +65,7 @@ public class GenericControllerTest {
     private CRUDService<Identifier, IdentifiableTestEntity> crudService;
     private IdentifiableTestEntity entity;
     private Identifier id;
+    private Map<String, Object> updatedFields;
 
     @Before
     public void setUp() {
@@ -81,6 +84,7 @@ public class GenericControllerTest {
                 return entity;
             }
         };
+        updatedFields = new HashMap<>();
 
         controller.initializePages();
 
@@ -167,18 +171,16 @@ public class GenericControllerTest {
 
     @Test
     public void testUpdate() throws InstantiationException, IllegalAccessException {
-        when(crudService.update(entity)).thenReturn(entity);
-        IdentifiableTestResource resource = new IdentifiableTestResource(entity);
-        ResponseEntity<String> response = controller.update(id.getIdentifier(), resource);
+        when(crudService.update(id, updatedFields)).thenReturn(entity);
+        ResponseEntity<String> response = controller.update(id.getIdentifier(), updatedFields);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     public void testUpdateBadResource() throws InstantiationException, IllegalAccessException {
-        when(crudService.update(entity)).thenThrow(new EntityNotFoundException("not found"));
-        IdentifiableTestResource resource = new IdentifiableTestResource(entity);
+        when(crudService.update(id, updatedFields)).thenThrow(new EntityNotFoundException("not found"));
         try {
-            ResponseEntity<String> response = controller.update(id.getIdentifier(), resource);
+            controller.update(id.getIdentifier(), updatedFields);
             fail();
         } catch (EntityNotFoundException e) {
         } catch (Exception e) {
@@ -188,10 +190,9 @@ public class GenericControllerTest {
 
     @Test
     public void testUpdateFailsConstraints() throws InstantiationException, IllegalAccessException {
-        when(crudService.update(entity)).thenThrow(new ConstraintViolationException(new HashSet<ConstraintViolation<?>>()));
-        IdentifiableTestResource resource = new IdentifiableTestResource(entity);
+        when(crudService.update(id, updatedFields)).thenThrow(new ConstraintViolationException(new HashSet<ConstraintViolation<?>>()));
         try {
-            ResponseEntity<String> response = controller.update(id.getIdentifier(), resource);
+            controller.update(id.getIdentifier(), updatedFields);
             fail();
         } catch (ConstraintViolationException e) {
         } catch (Exception e) {
@@ -247,5 +248,11 @@ public class GenericControllerTest {
     public void testHandleExistsException() {
         ResponseEntity<String> response = controller.handleExistsException(new EntityExistsException("exists"));
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+    }
+    
+    @Test
+    public void testHandleInvalidPropertyException() {
+        ResponseEntity<String> response = controller.handleInvalidPropertyException(new InvalidPropertyException("invalid property"));
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }
