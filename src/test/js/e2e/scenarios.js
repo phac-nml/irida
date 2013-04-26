@@ -21,22 +21,20 @@ describe('IRIDA e2e tests', function() {
 			browser().navigateTo('/projects');
 		});
 
-		it('Should have the proper url', function () {
-		    expect(browser().window().href()).toBe("http://localhost:9000/projects");
+		it('Should have the proper url', function() {
+			expect(browser().window().href()).toBe("http://localhost:9000/projects");
 		});
 
-		it('Should not be allowed to create a project with no name', function () {
-			element('button[data-reveal-id="newProjectModal"]').click();
-			// element('a[type="submit"]').query(function () {
-
-			// });
-		});
+		// it('Should not be allowed to create a project with no name', function() {
+		// 	element('button[data-reveal-id="newProjectModal"]').click();
+		// 	expect(element('a').css('disabled')).toBe(false);
+		// });
 
 		it('Should be able to create a new project', function() {
 			element('button[data-reveal-id="newProjectModal"]').click();
 			expect(element('.modal-header h1').text()).toBe('Create New Project');
 			input('newProject.name').enter('Test Project');
-			element('a[type="submit"]').click();
+			element('a').click();
 		});
 	});
 

@@ -25,17 +25,19 @@ angular.module('irida.services', ['ngResource'])
 			return deferred.promise;
 		},
 		getAll: function(url) {
-			var deferred = $q.defer();
+			if (url) {
+				var deferred = $q.defer();
 
-			$http.get(url)
-				.success(function(data) {
-				deferred.resolve(data);
-			})
-				.error(function() {
-				deferred.reject('An error occurred while getting projects');
-			});
+				$http.get(url)
+					.success(function(data) {
+					deferred.resolve(data);
+				})
+					.error(function() {
+					deferred.reject('An error occurred while getting projects');
+				});
 
-			return deferred.promise;
+				return deferred.promise;
+			}
 		}
 	};
 });

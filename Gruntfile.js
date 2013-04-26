@@ -1,12 +1,13 @@
 'use strict';
 
-module.exports = function (grunt) {
+module.exports = function(grunt) {
   // Load all grunt tasks
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
   // Configure paths
   var iridaConfig = {
-    dev: 'src/main/webapp/resources/dev'
+    dev: 'src/main/webapp/resources/dev',
+    test: 'src/test'
   };
 
   grunt.initConfig({
@@ -25,32 +26,21 @@ module.exports = function (grunt) {
       },
       all: [
         'Gruntfile.js',
-        'src/main/webapp/resources/dev/js/{,*/}*.js',
-        '!src/main/webapp/resources/dev/js/vendor/*',
-        'test/js/spec/{,*/}*.js'
+        '<%= irida.dev %>/js/{,*/}*.js',
+        '!<%= irida.dev %>/js/vendor/{,*/}*.js',
       ]
     },
-    jstestdriver: {
-      files: [
-        'test/js/unit/jsTestDriver.conf'
-      ]
+    karma: {
+      unit: {
+        configFile: 'karma.conf.js',
+        singleRun: true
+      }
     }
-//    karma: {
-//      unit: {
-//        configFile: 'karma.conf.js',
-//        singleRun: true
-//      }
-//    }
   });
 
   grunt.renameTask('regarde', 'watch');
 
-  grunt.registerTask('test', [
-//    'connect:test',
-    'karma:unit'
-  ]);
+  grunt.registerTask('test', ['karma:unit']);
 
-  grunt.registerTask('default', [
-    'jshint'
-  ]);
+  grunt.registerTask('default', ['jshint']);
 };
