@@ -143,11 +143,20 @@
             <artifactId>hibernate-validator</artifactId>
             <version>${hibernate.validator.version}</version>
         </dependency>
+        
         <!-- Sesame -->
         <dependency>
-          <groupId>org.openrdf.sesame</groupId>
-          <artifactId>sesame-runtime</artifactId>
-          <version>${openrdf.sesame.version}</version>
+            <groupId>org.openrdf.sesame</groupId>
+            <artifactId>sesame-runtime</artifactId>
+            <version>${openrdf.sesame.version}</version>
+        </dependency>
+        
+        <!-- mockito -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
@@ -229,6 +238,8 @@
         <validation.api.version>1.0.0.GA</validation.api.version>
         <hibernate.validator.version>4.3.1.Final</hibernate.validator.version>
         <openrdf.sesame.version>2.7.0</openrdf.sesame.version>
+        <mockito.version>1.9.5</mockito.version>
+        
         <!-- plugins -->
         <maven.failsafe.plugin.version>2.13</maven.failsafe.plugin.version>
         <maven.surefire.plugin.version>2.13</maven.surefire.plugin.version>

@@ -60,7 +60,7 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
     public UserSesameRepository(TripleStore store) {
         super(store, User.class);
 
-        PropertyMapper map = new PropertyMapper(User.class,"foaf", "Person");
+        PropertyMapper map = new PropertyMapper(User.class, "foaf", "Person");
 
         try {
             map.addProperty("foaf", "nick", "username", "getUsername", "setUsername", String.class);
@@ -68,6 +68,8 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
             map.addProperty("foaf", "firstName", "firstName", "getFirstName", "setFirstName", String.class);
             map.addProperty("foaf", "lastName", "lastName", "getLastName", "setLastName", String.class);
             map.addProperty("foaf", "phone", "phoneNumber", "getPhoneNumber", "setPhoneNumber", String.class);
+            map.addProperty("foaf", "password", "password", "getPassword", "setPassword", String.class);
+
         } catch (NoSuchMethodException | SecurityException ex) {
             logger.error(ex.getMessage());
             throw new StorageException("Couldn't build parameters for \"User\"");
@@ -109,7 +111,8 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
         objid.setUri(java.net.URI.create(s.stringValue()));
 
         return objid;
-    }    
+    }
+
     /**
      * {@inheritDoc}
      */
