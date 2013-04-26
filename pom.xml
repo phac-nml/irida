@@ -114,14 +114,8 @@
         <plugin.maven.dependency.version>2.1</plugin.maven.dependency.version>
         <plugin.maven.failsafe.version>2.13</plugin.maven.failsafe.version>
         <plugin.maven.surefire.version>2.13</plugin.maven.surefire.version>
+        <plugin.maven.jacoco.version>0.6.2.201302030002</plugin.maven.jacoco.version>
     </properties>
-    
-    <repositories>
-        <repository>
-            <id>glassfish-repository</id>
-            <url>http://download.java.net/maven/glassfish</url>
-        </repository>
-    </repositories>
 
     <dependencies>
         <!-- IRIDA-API -->
@@ -382,6 +376,26 @@
                 <configuration>
                     <browsers>PhantomJS</browsers>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${plugin.maven.jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>jacoco-initialize</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-site</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
