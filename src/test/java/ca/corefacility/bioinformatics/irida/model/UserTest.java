@@ -33,11 +33,11 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
+import org.hibernate.validator.resourceloading.PlatformResourceBundleLocator;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.validation.beanvalidation.MessageSourceResourceBundleLocator;
 
 /**
  * Testing the validation for user objects.
@@ -56,7 +56,7 @@ public class UserTest {
         Configuration<?> configuration = Validation.byDefaultProvider().configure();
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setBasename(MESSAGES_BASENAME);
-        configuration.messageInterpolator(new ResourceBundleMessageInterpolator(new MessageSourceResourceBundleLocator(messageSource)));
+        configuration.messageInterpolator(new ResourceBundleMessageInterpolator(new PlatformResourceBundleLocator(MESSAGES_BASENAME)));
         ValidatorFactory factory = configuration.buildValidatorFactory();
         validator = factory.getValidator();
 
