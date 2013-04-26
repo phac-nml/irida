@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
@@ -27,9 +28,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -147,5 +152,37 @@ public class GenericControllerTest {
         assertTrue(model.containsKey("resource"));
         IdentifiableTestResource resource = (IdentifiableTestResource) model.get("resource");
         assertTrue(resource.getLink(PageLink.REL_SELF).getHref().endsWith(id.getIdentifier()));
+    }
+
+    @Test
+    public void testGetBadResource() {
+        when(crudService.read(id)).thenThrow(new EntityNotFoundException("not found"));
+        try {
+            controller.getResource(id.getIdentifier());
+        } catch (EntityNotFoundException e) {
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testHandleConstraintViolations() {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+        Set<ConstraintViolation<IdentifiableTestEntity>> constraintViolations = validator.validate(new IdentifiableTestEntity());
+        ResponseEntity<String> response = controller.handleConstraintViolations(new ConstraintViolationException(constraintViolations));
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    public void testHandleNotFoundException() {
+        ResponseEntity<String> response = controller.handleNotFoundException(new EntityNotFoundException("not found"));
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    public void testHandleExistsException() {
+        ResponseEntity<String> response = controller.handleExistsException(new EntityExistsException("exists"));
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
     }
 }
