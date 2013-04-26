@@ -302,11 +302,11 @@ input.ng-valid.ng-dirty {
   height: 100px;
   margin-bottom: 1em; }
   .grid-list li > div {
-    border: 1px solid gainsboro;
+    border: 1px solid #ededed;
     -webkit-border-radius: 3px;
     border-radius: 3px;
     cursor: pointer;
-    padding: 0.8em;
+    padding: 0;
     background-color: #e9e9e9;
     width: 100%;
     height: 100%;
@@ -315,3 +315,16 @@ input.ng-valid.ng-dirty {
     box-shadow: 0px 1px 3px rgba(50, 50, 50, 0.5); }
     .grid-list li > div:hover {
       background-color: #d0d0d0; }
+.grid-list span.delete {
+  background: #cccccc;
+  border-radius: 0.8em;
+  -moz-border-radius: 0.8em;
+  -webkit-border-radius: 0.8em;
+  color: #ffffff;
+  display: inline-block;
+  font-weight: bold;
+  line-height: 1.6em;
+  margin-right: -50%;
+  text-align: center;
+  width: 1.6em;
+  float: right; }

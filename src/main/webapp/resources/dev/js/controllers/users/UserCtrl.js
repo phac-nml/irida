@@ -4,11 +4,10 @@
  * Time: 9:41 AM
  */
 
-var irida = angular.module('irida', ['ngResource']);
+var irida = angular.module('irida');
 
-irida.controller(UserCtrl);
 
-function UserCtrl($scope, $window, dataStore) {
+function UserCtrl($scope, $window, AjaxService) {
     'use strict';
 
     $scope.user = {};
@@ -18,14 +17,15 @@ function UserCtrl($scope, $window, dataStore) {
     $scope.init = function() {
         var username = /\/users\/(.*)$/.exec($window.location.pathname)[1];
 
-        dataStore.getData('/users/' + username).then(
-                function(data) {
-                    initialAjaxCallback(data);
+        AjaxService.get('/users/' + username).then(
 
-                },
-                function(errorMessage) {
-// TODO: handle error message
-                });
+        function(data) {
+            initialAjaxCallback(data);
+        },
+
+        function(errorMessage) {
+            // TODO: handle error message
+        });
     };
 
     function initialAjaxCallback(data) {
@@ -39,33 +39,16 @@ function UserCtrl($scope, $window, dataStore) {
     }
 
     function getUserProjects() {
-        dataStore.getData($scope.links['user/projects']).then(
-                function(data) {
-                    $scope.projects = data.projectResources.projects;
+        AjaxService.get($scope.links['user/projects']).then(
 
-                },
-                function(errorMessage) {
-// TODO: handle error message
-                });
+        function(data) {
+            $scope.projects = data.projectResources.projects;
+
+        },
+
+        function(errorMessage) {
+            // TODO: handle error message
+        });
     }
 }
-
-angular.module('irida')
-        .factory('dataStore', function($http, $q) {
-    "use strict";
-    return {
-        getData: function(url) {
-            var deferred = $q.defer();
-
-            $http.get(url)
-                    .success(function(data) {
-                deferred.resolve(data);
-            })
-                    .error(function() {
-                deferred.reject("An error occured while getting user data");
-            });
-
-            return deferred.promise;
-        }
-    };
-});
+irida.controller(UserCtrl);

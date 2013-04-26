@@ -12,6 +12,19 @@ describe('ProjectsListCtrl', function() {
     $httpBackend = $injector.get('$httpBackend');
     $httpBackend.when('GET', '/projects').respond({
       resources: {
+        'links': [{
+          'rel': 'first',
+          'href': 'http://0.0.0.0:8080/projects?page=1&size=20&sortOrder=DESCENDING'
+        }, {
+          'rel': 'next',
+          'href': 'http://0.0.0.0:8080/projects?page=2&size=20&sortOrder=DESCENDING'
+        }, {
+          'rel': 'last',
+          'href': 'http://0.0.0.0:8080/projects?page=7&size=20&sortOrder=DESCENDING'
+        }, {
+          'rel': 'self',
+          'href': 'http://0.0.0.0:8080/projects?page=1&size=20&sortOrder=DESCENDING'
+        }],
         resources: [{
           name: 'E. coli',
           links: [{
@@ -44,6 +57,17 @@ describe('ProjectsListCtrl', function() {
       runs(function() {
         expect(newScope.projects.length).toBe(1);
         expect(newScope.projects[0].name).toBe('E. coli');
+      });
+      $httpBackend.flush();
+    });
+  });
+
+  it('Should make a server call and set the page links', function() {
+    runs(function() {
+      $httpBackend.expectGET('/projects');
+      newScope.loadProjects('/projects');
+      runs(function() {
+        expect(newScope.links.first).toBe('http://0.0.0.0:8080/projects?page=1&size=20&sortOrder=DESCENDING');
       });
       $httpBackend.flush();
     });

@@ -4,6 +4,7 @@ var irida = angular.module('irida');
 function ProjectsListCtrl($scope, $window, AjaxService) {
   'use strict';
   $scope.projects = [];
+  $scope.links = {};
   $scope.newProject = {};
   $scope.errors = {};
   $scope.projectsUrl = '/projects' + '?_' + Math.random();

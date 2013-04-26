@@ -7,7 +7,7 @@ function UsersListCtrl($scope, $window, AjaxService) {
   $scope.usersUrl = '/users' + '?_' + Math.random();
 
   $scope.loadUsers = function(url) {
-    AjaxService.getAll(url).then(
+    AjaxService.get(url).then(
 
     function(data) {
       ajaxSuccessCallback(data);

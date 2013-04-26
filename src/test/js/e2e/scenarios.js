@@ -34,17 +34,21 @@ describe('IRIDA e2e tests', function() {
 			expect(element('a#btnCreateProject').attr('class')).toContain('disabled');
 		});
 
+		it('Should not be allowed to create a project if they have deleted the name', function() {
+			element('button[data-reveal-id="newProjectModal"]').click();
+			expect(element('a#btnCreateProject').attr('class')).toContain('disabled');
+			input('newProject.name').enter('fred');
+			input('newProject.name').enter('');
+			expect(element('a#btnCreateProject').attr('class')).toContain('disabled');
+
+		});
+
 		it('Should be able to create a new project', function() {
 			element('button[data-reveal-id="newProjectModal"]').click();
 			expect(element('.modal-header h1').text()).toBe('Create New Project');
 			input('newProject.name').enter('Test Project');
 			element('a#btnCreateProject').click();
 		});
-
-		// it('Should be able to navigate to a specific projects page', function () {
-		// 	element('.grid-list li div').click();
-		// 	expect(browser().window().href()).toBe("http://localhost:9000/projects/\d*");
-		// });
 	});
 
 });

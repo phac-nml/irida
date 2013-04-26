@@ -24,7 +24,7 @@ angular.module('irida.services', ['ngResource'])
 			});
 			return deferred.promise;
 		},
-		getAll: function(url) {
+		get: function(url) {
 			if (url) {
 				var deferred = $q.defer();
 
@@ -36,6 +36,27 @@ angular.module('irida.services', ['ngResource'])
 					deferred.reject('An error occurred while getting projects');
 				});
 
+				return deferred.promise;
+			}
+		},
+		patch: function(url, data) {
+			if (url && data) {
+				var deferred = $q.defere();
+
+				$http({
+					method: 'PATCH',
+					url: url,
+					data: data,
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				})
+					.success(function(data) {
+					deferred.resolve(data);
+				})
+					.error(function(data) {
+					deferred.reject(data);
+				});
 				return deferred.promise;
 			}
 		}
