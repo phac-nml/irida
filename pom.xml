@@ -226,8 +226,8 @@
         <guava.version>14.0.1</guava.version>
         <spring.version>3.2.2.RELEASE</spring.version>
         <spring.security.version>3.1.3.RELEASE</spring.security.version>
-        <validation.api.version>1.1.0.CR3</validation.api.version>
-        <hibernate.validator.version>5.0.0.Final</hibernate.validator.version>
+        <validation.api.version>1.0.0.GA</validation.api.version>
+        <hibernate.validator.version>4.3.1.Final</hibernate.validator.version>
         <openrdf.sesame.version>2.7.0</openrdf.sesame.version>
         <!-- plugins -->
         <maven.failsafe.plugin.version>2.13</maven.failsafe.plugin.version>
