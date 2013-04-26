@@ -16,11 +16,13 @@ input.ng-valid.ng-dirty {
     background-color: #78FA89;
 }
 
-// Allows for buttons to be expanded to full width for
-// use on mobile devices.
-.small-screen-expand {
-    @media screen and (max-width: $small-screen) {
-        width: 100%;
+div[contentEditable] {
+    cursor: pointer;
+    border: 1px dashed #eeeeee;
+    margin-bottom: 1em;
+    padding: 0.2em;
+    &:hover {
+        border: 1px dashed darken(#eeeeee, 20);
     }
 }
 

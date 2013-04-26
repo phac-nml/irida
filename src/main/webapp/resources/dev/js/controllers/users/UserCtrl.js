@@ -11,6 +11,7 @@ function UserCtrl($scope, $window, AjaxService) {
   'use strict';
 
   $scope.user = {};
+  $scope.original = {};
   $scope.links = {};
   $scope.projects = [];
 
@@ -22,7 +23,7 @@ function UserCtrl($scope, $window, AjaxService) {
 
   $scope.deleteUser = function () {
     console.log("Deleting user");
-    AjaxService.delete($scope.links.self).then(
+    AjaxService.delete($scope.links.self + 'fred').then(
       function () {
         console.log("Success delete");
       },errorHandler);
@@ -57,11 +58,12 @@ function UserCtrl($scope, $window, AjaxService) {
     });
     delete data.resource.links;
     $scope.user = data.resource;
+    $scope.original = angular.copy($scope.user);
     getUserProjects();
   }
 
-  function errorHandler (data){
-    console.log(data);
+  function errorHandler (status){
+    console.log(status);
   }
 
   function getUserProjects() {

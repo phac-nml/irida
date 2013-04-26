@@ -255,9 +255,13 @@ input.ng-invalid.ng-dirty {
 input.ng-valid.ng-dirty {
   background-color: #78FA89; }
 
-@media screen and (max-width: 48em) {
-  .small-screen-expand {
-    width: 100%; } }
+div[contentEditable] {
+  cursor: pointer;
+  border: 1px dashed #eeeeee;
+  margin-bottom: 1em;
+  padding: 0.2em; }
+  div[contentEditable]:hover {
+    border: 1px dashed #bbbbbb; }
 
 /* ==========================================================================
    PAGES
