@@ -19,6 +19,8 @@ import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import com.google.common.base.Strings;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 
@@ -33,6 +35,7 @@ public abstract class PageableControllerLinkBuilder {
     public static final String REQUEST_PARAM_SIZE = "size";
     public static final String REQUEST_PARAM_SORT_PROPERTY = "sortProperty";
     public static final String REQUEST_PARAM_SORT_ORDER = "sortOrder";
+    private static final Logger logger = LoggerFactory.getLogger(PageableControllerLinkBuilder.class);
 
     /**
      * Get a collection of page {@link Link} objects to add to a collection of
@@ -49,10 +52,12 @@ public abstract class PageableControllerLinkBuilder {
     public static Iterable<Link> pageLinksFor(Class<?> controller, int page, int size, int totalElements, String sortColumn, Order sortOrder) {
         List<Link> links = new ArrayList<>(5);
         String baseUrl = ControllerLinkBuilder.linkTo(controller).withSelfRel().getHref();
-        int lastPage = (totalElements / size) + 1;
+        int lastPage = (int) Math.ceil(totalElements / (size * 1.));
         int nextPage = page == lastPage ? lastPage : page + 1;
         int prevPage = page > 2 ? page - 1 : 1;
         int firstPage = 1;
+        logger.debug("page: [" + page + "], size: [" + size + "], totalElements [" + totalElements + "]");
+        logger.debug("firstPage: [" + firstPage + "], prevPage [" + prevPage + "], nextPage [" + nextPage + "], lastPage: [" + lastPage + "]");
 
         if (!baseUrl.endsWith("?")) {
             baseUrl = baseUrl + "?";

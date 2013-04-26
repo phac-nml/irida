@@ -25,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder;
 import static ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder.pageLinksFor;
+import ca.corefacility.bioinformatics.irida.web.controller.support.SortProperty;
 import com.google.common.base.Strings;
 import com.google.common.net.HttpHeaders;
 import com.google.gson.Gson;
@@ -109,6 +110,19 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     public abstract Type mapResourceToType(ResourceType representation);
 
     /**
+     * Get the default sort property, {@link SortProperty.NONE} by default.
+     *
+     * @return the default sort property for this class.
+     */
+    protected SortProperty getDefaultSortProperty() {
+        return SortProperty.NONE;
+    }
+
+    protected Order getDefaultSortOrder() {
+        return Order.ASCENDING;
+    }
+
+    /**
      * Retrieve and construct a response with a collection of resources.
      *
      * @param page the current page of the list of resources that the client
@@ -123,9 +137,19 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_PAGE, defaultValue = "1") int page,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SIZE, defaultValue = "20") int size,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_PROPERTY, required = false) String sortProperty,
-            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER, defaultValue = "ASCENDING") Order sortOrder) throws InstantiationException, IllegalAccessException {
+            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER, required = false) Order sortOrder) throws InstantiationException, IllegalAccessException {
         ModelAndView mav = new ModelAndView(resourceCollectionIndex);
         List<Type> entities;
+
+        // if the client did not specify a sort property, try to get a default sort property from the subclass.
+        if (Strings.isNullOrEmpty(sortProperty) && !SortProperty.NONE.equals(getDefaultSortProperty())) {
+            sortProperty = getDefaultSortProperty().getSortProperty();
+        }
+
+        // if the client did not specify a sort order, try to get the default sort order from the subclass.
+        if (sortOrder == null && !Order.NONE.equals(getDefaultSortOrder())) {
+            sortOrder = getDefaultSortOrder();
+        }
 
         if (Strings.isNullOrEmpty(sortProperty)) {
             entities = crudService.list(page, size, sortOrder);
@@ -176,6 +200,14 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         responseHeaders.add(HttpHeaders.LOCATION, location);
         ResponseEntity<String> response = new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
         return response;
+    }
+
+    @RequestMapping(value = "/{resourceId}", method = RequestMethod.DELETE)
+    public ResponseEntity<String> delete(@PathVariable String resourceId) throws InstantiationException, IllegalAccessException {
+        IdentifierType id = identifierType.newInstance();
+        id.setIdentifier(resourceId);
+        crudService.delete(id);
+        return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
     /**

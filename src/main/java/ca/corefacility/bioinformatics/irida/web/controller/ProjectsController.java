@@ -16,9 +16,11 @@
 package ca.corefacility.bioinformatics.irida.web.controller;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
+import ca.corefacility.bioinformatics.irida.web.controller.support.SortProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,7 +47,12 @@ public class ProjectsController extends GenericController<Identifier, Project, P
     public ProjectsController(ProjectService projectService) {
         super(projectService, Identifier.class, Project.class, ProjectResource.class);
     }
-
+    
+    @Override
+    protected Order getDefaultSortOrder() {
+        return Order.DESCENDING;
+    }
+            
     @Override
     public Project mapResourceToType(ProjectResource pr) {
         Project p = new Project();

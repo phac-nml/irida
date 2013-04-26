@@ -379,6 +379,9 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <browsers>PhantomJS</browsers>
+                </configuration>
             </plugin>
         </plugins>
     </build>
