@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.web.controller.GenericController;
@@ -24,6 +25,7 @@ import com.google.common.net.HttpHeaders;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.UUID;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import org.junit.Before;
@@ -99,5 +101,31 @@ public class GenericControllerTest {
         assertEquals(HttpStatus.CREATED, mav.getStatusCode());
         assertTrue(mav.getHeaders().getFirst(HttpHeaders.LOCATION).
                 endsWith(id.getIdentifier()));
+    }
+
+    @Test
+    public void testDeleteEntity() {
+        ResponseEntity<String> response = null;
+        try {
+            response = controller.delete(UUID.randomUUID().toString());
+        } catch (InstantiationException | IllegalAccessException e) {
+            fail();
+        }
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void testDeleteInvalidEntity() {
+        String id = UUID.randomUUID().toString();
+        Identifier identifier = new Identifier();
+        identifier.setIdentifier(id);
+        doThrow(new EntityNotFoundException("not found")).when(crudService).delete(identifier);
+
+        try {
+            controller.delete(id);
+        } catch (EntityNotFoundException e) {
+        } catch (Exception e) {
+            fail();
+        }
     }
 }
