@@ -16,7 +16,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import ca.corefacility.bioinformatics.irida.model.Sample;
-import ca.corefacility.bioinformatics.irida.model.SampleFile;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.memory.CRUDMemoryRepository;
@@ -39,7 +39,7 @@ public class SampleServiceImplTest {
 
     private SampleService sampleService;
     private CRUDRepository<Identifier, Sample> sampleRepository;
-    private CRUDRepository<Identifier, SampleFile> sampleFileRepository;
+    private CRUDRepository<Identifier, SequenceFile> sampleFileRepository;
     private Validator validator;
 
     @Before
@@ -47,7 +47,7 @@ public class SampleServiceImplTest {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
         sampleRepository = new CRUDMemoryRepository<>(Sample.class);
-        sampleFileRepository = new CRUDMemoryRepository<>(SampleFile.class);
+        sampleFileRepository = new CRUDMemoryRepository<>(SequenceFile.class);
         this.sampleService = new SampleServiceImpl(sampleRepository, validator);
     }
     
@@ -55,7 +55,7 @@ public class SampleServiceImplTest {
     public void testAddSampleFileToSample() throws IOException {
         File temp = File.createTempFile("sampleServiceTestImpl", "test");
         Sample sample = new Sample();
-        SampleFile sampleFile = new SampleFile(temp);
+        SequenceFile sampleFile = new SequenceFile(temp);
         
         sample = sampleRepository.create(sample);
         sampleFile = sampleFileRepository.create(sampleFile);

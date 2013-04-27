@@ -29,7 +29,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class SampleFile implements Auditable<Audit>, Identifiable<Identifier>, Comparable<SampleFile> {
+public class SequenceFile implements Auditable<Audit>, Identifiable<Identifier>, Comparable<SequenceFile> {
 
     private Identifier id;
     @NotNull
@@ -37,20 +37,20 @@ public class SampleFile implements Auditable<Audit>, Identifiable<Identifier>, C
     @NotNull
     private File file;
 
-    public SampleFile(File sampleFile) {
+    public SequenceFile(File sampleFile) {
         this.audit = new Audit();
         this.file = sampleFile;
     }
 
-    public SampleFile(Identifier id, File sampleFile) {
+    public SequenceFile(Identifier id, File sampleFile) {
         this(sampleFile);
         this.id = id;
     }
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof SampleFile) {
-            SampleFile sampleFile = (SampleFile) other;
+        if (other instanceof SequenceFile) {
+            SequenceFile sampleFile = (SequenceFile) other;
             return Objects.equals(file, sampleFile.file);
         }
 
@@ -63,7 +63,7 @@ public class SampleFile implements Auditable<Audit>, Identifiable<Identifier>, C
     }
     
     @Override
-    public int compareTo(SampleFile other) {
+    public int compareTo(SequenceFile other) {
         return audit.compareTo(other.audit);
     }
 

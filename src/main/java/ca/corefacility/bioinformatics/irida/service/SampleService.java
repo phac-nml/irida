@@ -16,7 +16,7 @@
 package ca.corefacility.bioinformatics.irida.service;
 
 import ca.corefacility.bioinformatics.irida.model.Sample;
-import ca.corefacility.bioinformatics.irida.model.SampleFile;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -33,5 +33,5 @@ public interface SampleService {
      * @param sample the sample that the file belongs to.
      * @param sampleFile the file that we're adding.
      */
-    public void addSampleFileToSample(Sample sample, SampleFile sampleFile);
+    public void addSampleFileToSample(Sample sample, SequenceFile sampleFile);
 }

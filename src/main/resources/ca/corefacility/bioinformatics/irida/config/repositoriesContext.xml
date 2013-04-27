@@ -20,6 +20,10 @@
         <constructor-arg ref="tripleStore" />        
     </bean>
     
+    <bean id="sequenceFileRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.GenericRepository">
+        <constructor-arg ref="tripleStore" />
+    </bean>
+    
     <beans profile="dev">
         <bean id="exampleData" init-method="addSampleData" class="ca.corefacility.bioinformatics.irida.dao.ExampleDataLoader">
             <constructor-arg ref="userRepository" />

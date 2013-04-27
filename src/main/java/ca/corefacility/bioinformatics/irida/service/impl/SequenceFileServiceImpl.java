@@ -15,30 +15,36 @@
  */
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
-import ca.corefacility.bioinformatics.irida.service.SampleService;
 import javax.validation.Validator;
 
 /**
- * A specialized service layer for {@link Sample}s.
+ * Implementation for managing {@link SequenceFile}.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class SampleServiceImpl extends CRUDServiceImpl<Identifier, Sample> implements SampleService {
+public class SequenceFileServiceImpl extends CRUDServiceImpl<Identifier, SequenceFile> {
+    
+    private final String BASE_DIRECTORY;
 
-    public SampleServiceImpl(CRUDRepository<Identifier, Sample> sampleRepository, Validator validator) {
-        super(sampleRepository, validator, Sample.class);
+    /**
+     * Constructor.
+     *
+     * @param sequenceFileRepository the sequence file repository.
+     * @param validator validator.
+     */
+    public SequenceFileServiceImpl(CRUDRepository<Identifier, SequenceFile> sequenceFileRepository, Validator validator, String baseDirectory) {
+        super(sequenceFileRepository, validator, SequenceFile.class);
+        this.BASE_DIRECTORY = baseDirectory;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void addSampleFileToSample(Sample sample, SequenceFile sampleFile) {
-        sample.getFiles().add(sampleFile);
-        repository.update(sample);
+    public SequenceFile create(SequenceFile sequenceFile) {
+        throw new UnsupportedOperationException();
     }
 }
