@@ -18,34 +18,37 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import ca.corefacility.bioinformatics.irida.service.CRUDService;
+import java.io.File;
+import java.io.IOException;
+import javax.validation.Validation;
 import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import org.junit.Before;
+import org.junit.Test;
+import static org.mockito.Mockito.*;
 
 /**
- * Implementation for managing {@link SequenceFile}.
+ * Tests for {@link SequenceFileServiceImpl}.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class SequenceFileServiceImpl extends CRUDServiceImpl<Identifier, SequenceFile> {
-
-    /**
-     * Constructor.
-     *
-     * @param sequenceFileRepository the sequence file repository.
-     * @param validator validator.
-     */
-    public SequenceFileServiceImpl(CRUDRepository<Identifier, SequenceFile> sequenceFileRepository, Validator validator) {
-        super(sequenceFileRepository, validator, SequenceFile.class);
+public class SequenceFileServiceImplTest {
+    
+    private CRUDService<Identifier, SequenceFile> sequenceFileService;
+    private CRUDRepository<Identifier, SequenceFile> crudRepository;
+    private Validator validator;
+    
+    @Before
+    public void setUp() {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
+        crudRepository = mock(CRUDRepository.class);
+        sequenceFileService = new SequenceFileServiceImpl(crudRepository, validator);
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SequenceFile create(SequenceFile sequenceFile) {
-        // Send the file to the database repository to be stored (in super)
-        
-        // Then store the file in an appropriate directory
-        
-        throw new UnsupportedOperationException();
+    
+    @Test
+    public void testCreateSequenceFileMissingIdentifier() throws IOException {
+        //SequenceFile s = new SequenceFile(File.createTempFile(null, null));
     }
 }
