@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import com.google.common.base.Strings;
 import com.google.common.io.Files;
@@ -26,6 +27,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Date;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +53,16 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<File, Se
     }
 
     /**
+     * Get the appropriate directory for the {@link SequenceFile}.
+     *
+     * @param id the {@link Identifier} of the {@link SequenceFile}.
+     * @return the {@link Path} for the {@link SequenceFile}.
+     */
+    private Path getSequenceFileDir(Identifier id) {
+        return BASE_DIRECTORY.resolve(id.getIdentifier());
+    }
+
+    /**
      * The {@link SequenceFile} *must* have an identifier before being passed to
      * this method, because the identifier is used as an internal directory
      * name.
@@ -65,7 +78,7 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<File, Se
                 || Strings.isNullOrEmpty(object.getIdentifier().getIdentifier())) {
             throw new IllegalArgumentException("Identifier is required.");
         }
-        Path sequenceFileDir = BASE_DIRECTORY.resolve(object.getIdentifier().getIdentifier());
+        Path sequenceFileDir = getSequenceFileDir(object.getIdentifier());
         File target = sequenceFileDir.resolve(object.getFile().getName()).toFile();
         try {
             sequenceFileDir.toFile().mkdir();
@@ -78,38 +91,91 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<File, Se
         return object;
     }
 
+    /**
+     * This method is not supported by {@link SequenceFileFilesystemRepository}
+     * and will throw an {@link UnsupportedOperationException}.
+     *
+     * @see SequenceFileSesameRepository
+     *
+     * @param id the file to load.
+     * @return the {@link SequenceFile} with a reference to the file.
+     * @throws EntityNotFoundException if the file cannot be found.
+     */
     @Override
     public SequenceFile read(File id) throws EntityNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("SequenceFile file reference "
+                + "should be populated by SequenceFileSesameRepository.");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SequenceFile update(SequenceFile object) throws IllegalArgumentException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (object.getIdentifier() == null
+                || Strings.isNullOrEmpty(object.getIdentifier().getIdentifier())) {
+            throw new IllegalArgumentException("Identifier is required.");
+        }
+
+        // the sequence file directory must previously exist, if not, then
+        // we're doing something very weird.
+        Path sequenceFileDir = getSequenceFileDir(object.getIdentifier());
+        if (!sequenceFileDir.toFile().exists()) {
+            throw new IllegalArgumentException("The directory for this "
+                    + "SequenceFile does not exist, has it been persisted "
+                    + "before?");
+        }
+
+        // the directory exists. does the target file exist? if so, we don't
+        // want to overwrite the file. We'll rename the existing file with the
+        // current date appended to the end so that we're retaining existing
+        // file names.
+        File target = sequenceFileDir.resolve(object.getFile().getName()).toFile();
+        if (target.exists()) {
+            File renamedTarget = new File(target.getAbsoluteFile() + "-" + new Date().getTime());
+
+            // rename the existing file
+            try {
+                Files.move(target, renamedTarget);
+            } catch (IOException e) {
+                throw new StorageException("Couldn't rename existing file.");
+            }
+        }
+
+        // now handle storing the file as before:
+        try {
+            Files.move(object.getFile(), target);
+        } catch (IOException e) {
+            throw new StorageException("Couldn't move updated file to existing directory.");
+        }
+
+        object.setFile(target);
+
+        return object;
     }
 
     @Override
     public void delete(File id) throws EntityNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Files cannot be deleted.");
     }
 
     @Override
     public List<SequenceFile> list() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Files cannot be listed independently.");
     }
 
     @Override
     public List<SequenceFile> list(int page, int size, String sortProperty, Order order) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Files cannot be listed independently.");
     }
 
     @Override
     public Boolean exists(File id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return id.exists();
     }
 
     @Override
     public Integer count() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Files cannot be counted");
     }
 }
