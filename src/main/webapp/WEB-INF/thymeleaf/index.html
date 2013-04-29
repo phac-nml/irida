@@ -19,28 +19,17 @@ limitations under the License.
 <body data-ng-app="irida">
 <div th:include="fragments/bodyHeader" th:remove="tag"></div>
 <div class="row">
-    <div class="large-12 columns">
-        <h1 th:text="#{welcome}">Welcome</h1>
-
-        <table class="large-12 columns">
-            <thead>
-            <tr>
-                <th th:text="#{welcome.rel}">Link rel</th>
-                <th th:text="#{welcome.href}">Link href</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="link : ${rootResource.links}">
-                <td th:text="${link.rel}"></td>
-                <td><a th:href="${link.href}"><span th:text="${link.href}"/></a></td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+        <ng-view></ng-view>
 </div>
 <script th:src="@{/js/vendor/jquery.js}"></script>
 <script th:src="@{/js/vendor/foundation/foundation.js}"></script>
 <script th:src="@{/js/vendor/foundation/foundation.topbar.js}"></script>
+<script th:src="@{/js/vendor/angular/angular.min.js}"></script>
+<script th:src="@{/js/vendor/angular/angular-resource.min.js}"></script>
+<script th:src="@{/js/app.js}"></script>
+<script th:src="@{/js/controllers/LandingCtrl.js}"></script>
+<script th:src="@{/js/controllers/projects/ProjectsCtrl.js}"></script>
+<script th:src="@{/js/controllers/users/UsersCtrl.js}"></script>
 <script>
     $(document).foundation();
 </script>

@@ -1,0 +1,7 @@
+<div class="row" data-ng-controller="ProjectsListCtrl" data-ng-init="loadProjects(projectsUrl)">
+    <div class="large-12 columns">
+        <div th:substituteby="fragments/projects/top-projects"></div>
+        <div th:substituteby="fragments/projects/project-block"></div>
+        <div th:substituteby="fragments/projects/new-project-modal"></div>
+    </div>
+</div>

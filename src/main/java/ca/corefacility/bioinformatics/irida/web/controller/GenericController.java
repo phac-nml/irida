@@ -90,7 +90,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         // initialize the names of the pages
         String typeName = type.getSimpleName().toLowerCase();
         this.prefix = typeName + "s/";
-        this.resourceCollectionIndex = prefix + typeName + "s";
+        this.resourceCollectionIndex = "index";//prefix + typeName + "s";
         this.resourceIndividualIndex = prefix + typeName;
     }
 

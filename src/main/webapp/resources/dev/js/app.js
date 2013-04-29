@@ -1,9 +1,41 @@
 /* global angular */
 
-angular.module('irida', ['irida.services', 'irida.directive']);
+angular.module('irida', ['irida.services', 'irida.directive'])
+  .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
+    "use strict";
+
+    $locationProvider.html5Mode(true);
+
+    $routeProvider
+      .when(
+      '/',
+      {
+        templateUrl: 'partials/landing.html',
+        controller : LandingCtrl
+      })
+      .when(
+      '/projects',
+      {
+        templateUrl: 'partials/projects.html',
+        controller : ProjectsListCtrl
+      })
+      .when(
+      '/users',
+      {
+        templateUrl: 'partials/users.html',
+        controller : UsersListCtrl
+      })
+      .when(
+      '/logout',
+      {
+        templateUrl: 'partials/landing.html',
+        controller : LandingCtrl
+      })
+      .otherwise({redirectTo: '/'});
+  }]);
 
 angular.module('irida.directive', [])
-  .directive('contenteditable', function () {
+  .directive('contenteditable',function () {
     return {
       restrict: 'A', // only activate on element attribute
       require : '?ngModel', // get a hold of NgModelController
@@ -28,13 +60,14 @@ angular.module('irida.directive', [])
         }
       }
     };
-  }).directive('ngBlur', function() {
-    return function( scope, elem, attrs ) {
-      elem.bind('blur', function() {
+  }).directive('ngBlur', function () {
+    return function (scope, elem, attrs) {
+      elem.bind('blur', function () {
         scope.$apply(attrs.ngBlur);
       });
     };
-  });;
+  });
+;
 
 angular.module('irida.services', ['ngResource'])
   .service('AjaxService', function ($http, $q) {
