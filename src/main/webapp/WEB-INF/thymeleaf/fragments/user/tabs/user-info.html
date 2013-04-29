@@ -7,7 +7,7 @@
                 <div class="large-12 columns" data-ng-class="{error: errors.username || userForm.username.$dirty &amp;&amp; userForm.username.$invalid}">
                     <label class="control-label" for="username" th:text="#{user.username}">Username</label>
                     <!--<input name="username" data-ng-model="user.username" type="text" required="required"/>-->
-                    <div contenteditable="true" ng-model="user.username"></div>
+                    <div contenteditable="true" ng-blur="blur('username')" ng-model="user.username"></div>
                     <small data-ng-show="errors.username" data-ng-bind-html-unsafe="errors.username"></small>
                 </div>
             </div>

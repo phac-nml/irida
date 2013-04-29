@@ -19,6 +19,7 @@ angular.module('irida.directive', [])
         element.bind('blur keyup change', function () {
           scope.$apply(read);
         });
+
         read(); // initialize
 
         // Write data to the model
@@ -27,7 +28,13 @@ angular.module('irida.directive', [])
         }
       }
     };
-  });
+  }).directive('ngBlur', function() {
+    return function( scope, elem, attrs ) {
+      elem.bind('blur', function() {
+        scope.$apply(attrs.ngBlur);
+      });
+    };
+  });;
 
 angular.module('irida.services', ['ngResource'])
   .service('AjaxService', function ($http, $q) {

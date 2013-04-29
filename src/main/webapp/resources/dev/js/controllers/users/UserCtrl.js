@@ -48,6 +48,10 @@ function UserCtrl($scope, $window, AjaxService) {
     }
   };
 
+  $scope.blur = function (name) {
+    console.log('BLUR: ' + name);
+  };
+
   /**
    * Initial callback to setup the interface
    * @param {object} data
