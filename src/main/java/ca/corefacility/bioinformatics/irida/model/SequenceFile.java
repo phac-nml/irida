@@ -37,6 +37,9 @@ public class SequenceFile implements Auditable<Audit>, Identifiable<Identifier>,
     @NotNull
     private File file;
 
+    public SequenceFile() {
+    }
+
     public SequenceFile(File sampleFile) {
         this.audit = new Audit();
         this.file = sampleFile;
@@ -61,7 +64,7 @@ public class SequenceFile implements Auditable<Audit>, Identifiable<Identifier>,
     public int hashCode() {
         return Objects.hash(file);
     }
-    
+
     @Override
     public int compareTo(SequenceFile other) {
         return audit.compareTo(other.audit);
