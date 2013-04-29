@@ -16,26 +16,19 @@
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.alibaba.ProjectIF;
-import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.openrdf.model.URI;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.query.BindingSet;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
-import org.openrdf.query.TupleQuery;
-import org.openrdf.query.TupleQueryResult;
-import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.object.ObjectConnection;
 import org.openrdf.repository.object.ObjectQuery;
@@ -73,33 +66,32 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProjectSe
      */    
     @Override
     public Collection<Project> getProjectsForUser(User user) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        /*List<Project> projects = new ArrayList<>();
+        List<Project> projects = new ArrayList<>();
         
         String uri = user.getIdentifier().getUri().toString();
         
-        RepositoryConnection con = store.getRepoConnection();
+        ObjectConnection con = store.getRepoConnection();
         try {
             String qs = store.getPrefixes()
                     + "SELECT * "
                     + "WHERE{ ?u a foaf:Person . \n"
                     + "?s irida:hasUser ?u . \n"
-                    + buildSparqlParams("s",propertyMap)
                     + "}\n";
             
-            
-            TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
+            ObjectQuery query = con.prepareObjectQuery(QueryLanguage.SPARQL, qs);
             URI puri = con.getValueFactory().createURI(uri);
-            tupleQuery.setBinding("u", puri);
-
-            TupleQueryResult result = tupleQuery.evaluate();
+            query.setBinding("u", puri);
+            
+            Result<ProjectIF> result = query.evaluate(ProjectIF.class);
+            
             while(result.hasNext()){
-                BindingSet bindingSet = result.next();
-                Identifier objid = buildIdentifier(bindingSet,"s");
+                ProjectIF o = result.next();
+            
+                URI u = con.getValueFactory().createURI(o.toString());
                 
-                Project ret = extractData(objid, bindingSet);
+                Project ret = buildObjectFromResult(o, u, con);
                 
-                projects.add(ret);
+                projects.add(ret);               
             }
             result.close();
     
@@ -114,9 +106,10 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProjectSe
                 logger.error(ex.getMessage());
                 throw new StorageException("Couldn't close connection"); 
             }
-        } 
+        }        
         
-        return projects;*/
+        
+        return projects;
     }
     
 

@@ -26,8 +26,10 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import static ca.corefacility.bioinformatics.irida.repositories.sesame.GenericRepository.userParams;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 import org.openrdf.model.Literal;
 import org.openrdf.model.URI;
@@ -226,33 +228,28 @@ public class UserSesameRepository extends GenericAlibabaRepository<UserIdentifie
      */
     @Override
     public Collection<User> getUsersForProject(Project project) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-
-        /*List<User> users = new ArrayList<>();
+        List<User> users = new ArrayList<>();
 
         String uri = project.getIdentifier().getUri().toString();
 
-        RepositoryConnection con = store.getRepoConnection();
+        ObjectConnection con = store.getRepoConnection();
         try {
             String qs = store.getPrefixes()
-                    + "SELECT * "
+                    + "SELECT ?s "
                     + "WHERE{ ?p a irida:Project . \n"
                     + "?p irida:hasUser ?s . \n"
-                    + buildSparqlParams("s", propertyMap)
                     + "}\n";
 
-            TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
+            ObjectQuery query = con.prepareObjectQuery(QueryLanguage.SPARQL, qs);
             URI puri = con.getValueFactory().createURI(uri);
-            tupleQuery.setBinding("p", puri);
+            query.setBinding("p", puri);
 
-            TupleQueryResult result = tupleQuery.evaluate();
+            Result<UserIF> result = query.evaluate(UserIF.class);
             while (result.hasNext()) {
-                BindingSet bindingSet = result.next();
+                UserIF o = result.next();
+                URI u = con.getValueFactory().createURI(o.toString());
 
-                Identifier objid = buildIdentifier(bindingSet, "s");
-
-                User ret = extractData(objid, bindingSet);
-
+                User ret = buildObjectFromResult(o, u, con);
                 users.add(ret);
             }
             result.close();
@@ -269,6 +266,6 @@ public class UserSesameRepository extends GenericAlibabaRepository<UserIdentifie
             }
         }
 
-        return users;*/
+        return users;
     }
 }
