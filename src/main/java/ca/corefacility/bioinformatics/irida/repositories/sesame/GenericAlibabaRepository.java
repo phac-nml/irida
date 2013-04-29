@@ -26,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -44,8 +43,6 @@ import org.openrdf.model.ValueFactory;
 import org.openrdf.query.Binding;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.BooleanQuery;
-import org.openrdf.query.GraphQuery;
-import org.openrdf.query.GraphQueryResult;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
@@ -127,6 +124,14 @@ public abstract class GenericAlibabaRepository<IDType extends Identifier, TypeIF
         return uri;
     }
     
+    /**
+     * Add the auditing information to the database for the given object
+     * 
+     * @param uri The URI of the subject of the audit
+     * @param audit The auditing object for this subject
+     * @param con The ObjectConnection currently being used
+     * @throws RepositoryException
+     */
     protected void createAudit(URI uri, Audit audit, ObjectConnection con) throws RepositoryException{
         ValueFactory fac = con.getValueFactory();
         Literal date = fac.createLiteral(audit.getCreated());
@@ -135,6 +140,15 @@ public abstract class GenericAlibabaRepository<IDType extends Identifier, TypeIF
         con.add(st);
     }
     
+    /**
+     * Get the auditing information for the given subject from the database
+     * @param uri The subject to retrieve auditing information for
+     * @param con The ObjectConnection being used
+     * @return An <code>Audit</code> object with the data from the database
+     * @throws MalformedQueryException
+     * @throws RepositoryException
+     * @throws QueryEvaluationException
+     */
     protected Audit getAudit(URI uri, ObjectConnection con) throws MalformedQueryException, RepositoryException, QueryEvaluationException{
         String qs = store.getPrefixes()
                 + "SELECT ?created WHERE{"
@@ -167,6 +181,12 @@ public abstract class GenericAlibabaRepository<IDType extends Identifier, TypeIF
         return a;
     }
     
+    /**
+     * Build a basic object from the given interface type
+     * @param base The base object to construct from
+     * @param i The identifier to add to that object
+     * @return A reconstructed object of <code>Type</code>
+     */
     public abstract Type buildObject(TypeIF base,IDType i);
     
     @Override
@@ -206,6 +226,15 @@ public abstract class GenericAlibabaRepository<IDType extends Identifier, TypeIF
         return object;
     }
     
+    /**
+     * Retrieve the String that uniquely identifies this object
+     * @param con The object connection to retrieve with
+     * @param uri The subject whose identifier to retrieve
+     * @return The string that uniqely identifies this object in the database
+     * @throws MalformedQueryException
+     * @throws RepositoryException
+     * @throws QueryEvaluationException
+     */
     public String getIdentifiedBy(ObjectConnection con, URI uri) throws MalformedQueryException, RepositoryException, QueryEvaluationException{
         String id;
         
@@ -224,12 +253,41 @@ public abstract class GenericAlibabaRepository<IDType extends Identifier, TypeIF
         return id;
     }
     
+    /**
+     * Set a unique identifier for this object in the database
+     * @param con The <code>ObjectConnection</code> to use to add
+     * @param uri The URI to add this identifier to
+     * @param id The string identifier to add to the object
+     * @throws RepositoryException
+     */
     public void setIdentifiedBy(ObjectConnection con, URI uri, String id) throws RepositoryException{
         ValueFactory vf = con.getValueFactory();
         Literal litId = vf.createLiteral(id);
         URI pred = vf.createURI(con.getNamespace("irida"), "identifier");
         Statement stmt = vf.createStatement(uri, pred, litId);
         con.add(stmt);     
+    }
+    
+    /**
+     * Build an object of <code>Type</code> from the interface of that type.
+     * Will also add the identifier and audit information to the object.
+     * Calls the abstract method <code>buildObject(TypeIF o, IDType objid)</code> of the implementing database to instantiate the object
+     * 
+     * @param o The Alibaba interface to construct the object from
+     * @param u The URI of the object to construct
+     * @param con An active objectconnection
+     * @return A reconstructed object of <code>Type</code>
+     * @throws MalformedQueryException
+     * @throws RepositoryException
+     * @throws QueryEvaluationException
+     */
+    public Type buildObjectFromResult(TypeIF o,URI u,ObjectConnection con) throws MalformedQueryException, RepositoryException, QueryEvaluationException{
+        String identifiedBy = getIdentifiedBy(con,u);
+        Identifier objid = buildIdentifier(o,identifiedBy);
+        Type ret = buildObject(o,(IDType)objid);
+        ret.setAuditInformation(getAudit(u, con));                
+        
+        return ret;
     }
 
     @Override
@@ -262,10 +320,7 @@ public abstract class GenericAlibabaRepository<IDType extends Identifier, TypeIF
             //TypeIF o = result.next();
             TypeIF o = (TypeIF) con.getObject(objectType, u);
             
-            String identifiedBy = getIdentifiedBy(con,u);
-            Identifier objid = buildIdentifier(o,identifiedBy);
-            ret = buildObject(o,(IDType)objid);
-            ret.setAuditInformation(getAudit(u, con));
+            ret = buildObjectFromResult(o, u, con);
 
         } catch (RepositoryException | QueryEvaluationException | MalformedQueryException ex) {
             logger.error(ex.getMessage());
@@ -355,10 +410,7 @@ public abstract class GenericAlibabaRepository<IDType extends Identifier, TypeIF
             
                 URI u = con.getValueFactory().createURI(o.toString());
                         
-                String identifiedBy = getIdentifiedBy(con,u);
-                Identifier objid = buildIdentifier(o,identifiedBy);
-                Type ret = buildObject(o,(IDType)objid);
-                ret.setAuditInformation(getAudit(u, con));                
+                Type ret = buildObjectFromResult(o, u, con);
                 users.add(ret);                
             }
             
