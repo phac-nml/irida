@@ -70,12 +70,11 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
 
     private static final Logger logger = LoggerFactory.getLogger(GenericController.class);
     private static final String INDEX_PAGE = "index";
+    private static final String PARTIALS_PREFIX = "partials/";
     protected CRUDService<IdentifierType, Type> crudService;
     private Class<ResourceType> resourceType;
     private Class<IdentifierType> identifierType;
     private Class<Type> type;
-    private String prefix;
-    private String resourceCollectionIndex;
     private String resourceIndividualIndex;
 
     protected GenericController(CRUDService<IdentifierType, Type> crudService,
@@ -90,9 +89,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     public void initializePages() {
         // initialize the names of the pages
         String typeName = type.getSimpleName().toLowerCase();
-        this.prefix = "partials/";//typeName + "s/";
-        this.resourceCollectionIndex = INDEX_PAGE;
-        this.resourceIndividualIndex = prefix + typeName;
+        this.resourceIndividualIndex = PARTIALS_PREFIX + typeName;
     }
 
     /**
@@ -144,7 +141,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SIZE, defaultValue = "20") int size,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_PROPERTY, required = false) String sortProperty,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER, required = false) Order sortOrder) throws InstantiationException, IllegalAccessException {
-        ModelAndView mav = new ModelAndView(resourceCollectionIndex);
+        ModelAndView mav = new ModelAndView(INDEX_PAGE);
         List<Type> entities;
 
         // if the client did not specify a sort property, try to get a default sort property from the subclass.
