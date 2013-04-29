@@ -194,7 +194,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         return mav;
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<String> create(@RequestBody ResourceType representation) {
         Type resource = mapResourceToType(representation);
         resource = crudService.create(resource);
