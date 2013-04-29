@@ -46,6 +46,10 @@ public class CRUDServiceImpl<KeyType extends Identifier, ValueType extends Compa
      */
     @Override
     public ValueType create(ValueType object) throws ConstraintViolationException, EntityExistsException {
+        // the audit information must be initialized by the crud service:
+        Audit audit = new Audit();        
+        object.setAuditInformation(audit);
+        
         Set<ConstraintViolation<ValueType>> constraintViolations = validator.validate(object);
         if (constraintViolations.isEmpty()) {
             return repository.create(object);
