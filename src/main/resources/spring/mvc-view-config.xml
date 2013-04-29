@@ -62,6 +62,13 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+
+        <!-- one of the properties available; the maximum file size in bytes -->
+        <property name="maxUploadSize" value="10737418240"/>
+    </bean>
 
     <!-- convenience factory for creating a ContentNegotiationManager -->
     <bean id="cnManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
