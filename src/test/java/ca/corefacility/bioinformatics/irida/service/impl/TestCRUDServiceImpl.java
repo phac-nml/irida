@@ -22,8 +22,10 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
-import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,19 +46,21 @@ import org.junit.Test;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class TestCRUDServiceImpl {
-    
+
     private CRUDService<Identifier, IdentifiableTestEntity> crudService;
     private CRUDRepository<Identifier, IdentifiableTestEntity> crudRepository;
     private Validator validator;
-    
+    private SimpleDateFormat dateFormatter;
+
     @Before
     public void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
         crudRepository = mock(CRUDRepository.class);
         crudService = new CRUDServiceImpl<>(crudRepository, validator, IdentifiableTestEntity.class);
+        dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
     }
-    
+
     @Test
     public void testAddInvalidObject() {
         IdentifiableTestEntity i = new IdentifiableTestEntity(); // nothing is set, this should be invalid
@@ -68,19 +72,19 @@ public class TestCRUDServiceImpl {
             assertEquals(1, constraintViolations.getConstraintViolations().size());
         }
     }
-    
+
     @Test
     public void testAddValidObject() {
         IdentifiableTestEntity i = new IdentifiableTestEntity();
         i.setNonNull("Definitely not null.");
-        
+
         try {
             crudService.create(i);
         } catch (ConstraintViolationException constraintViolations) {
             fail();
         }
     }
-    
+
     @Test
     public void testUpdateMissingEntity() {
         Identifier id = new Identifier();
@@ -94,7 +98,7 @@ public class TestCRUDServiceImpl {
             fail();
         }
     }
-    
+
     @Test
     public void testUpdateWithBadPropertyName() {
         IdentifiableTestEntity entity = new IdentifiableTestEntity();
@@ -108,7 +112,7 @@ public class TestCRUDServiceImpl {
             fail();
         }
     }
-    
+
     @Test
     public void testUpdateWithBadPropertyType() {
         IdentifiableTestEntity entity = new IdentifiableTestEntity();
@@ -122,7 +126,7 @@ public class TestCRUDServiceImpl {
             fail();
         }
     }
-    
+
     @Test
     public void testUpdatedValidEntity() {
         String oldField = "Absolutely not null";
@@ -137,7 +141,7 @@ public class TestCRUDServiceImpl {
         when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
         when(crudRepository.read(id)).thenReturn(i);
         when(crudRepository.update(i)).thenReturn(i);
-        
+
         Map<String, Object> updatedFields = new HashMap<>();
         updatedFields.put("nonNull", newField);
         updatedFields.put("integerValue", newIntegerValue);
@@ -150,7 +154,7 @@ public class TestCRUDServiceImpl {
         assertEquals(newIntegerValue, i.getIntegerValue());
         assertNotNull(i.getAuditInformation().getUpdated());
     }
-    
+
     @Test
     public void testUpdateInvalidEntry() {
         IdentifiableTestEntity i = new IdentifiableTestEntity();
@@ -160,7 +164,7 @@ public class TestCRUDServiceImpl {
         i.setIdentifier(id);
         when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
         when(crudRepository.read(id)).thenReturn(i);
-        
+
         Map<String, Object> updatedFields = new HashMap<>();
         updatedFields.put("nonNull", null);
         try {
@@ -173,14 +177,14 @@ public class TestCRUDServiceImpl {
             assertEquals("nonNull", v.getPropertyPath().toString());
         }
     }
-    
+
     @Test
     public void testRead() {
         IdentifiableTestEntity i = new IdentifiableTestEntity();
         i.setNonNull("Definitely not null");
-        
+
         when(crudRepository.read(i.getIdentifier())).thenReturn(i);
-        
+
         try {
             i = crudService.read(i.getIdentifier());
             assertNotNull(i);
@@ -188,7 +192,7 @@ public class TestCRUDServiceImpl {
             fail();
         }
     }
-    
+
     @Test
     public void testList() {
         int itemCount = 10;
@@ -197,32 +201,32 @@ public class TestCRUDServiceImpl {
             entities.add(new IdentifiableTestEntity());
         }
         when(crudRepository.list()).thenReturn(entities);
-        
+
         List<IdentifiableTestEntity> items = crudService.list();
-        
+
         assertEquals(itemCount, items.size());
     }
-    
+
     @Test
     public void testExists() {
         IdentifiableTestEntity i = new IdentifiableTestEntity();
         when(crudRepository.exists(i.getIdentifier())).thenReturn(Boolean.TRUE);
         assertTrue(crudService.exists(i.getIdentifier()));
     }
-    
+
     @Test
     public void testValidDelete() {
         IdentifiableTestEntity i = new IdentifiableTestEntity();
-        
+
         when(crudService.exists(i.getIdentifier())).thenReturn(Boolean.TRUE);
-        
+
         try {
             crudService.delete(i.getIdentifier());
         } catch (EntityNotFoundException e) {
             fail();
         }
     }
-    
+
     @Test
     public void testInvalidDelete() {
         Identifier id = new Identifier();
@@ -235,7 +239,7 @@ public class TestCRUDServiceImpl {
             fail();
         }
     }
-    
+
     @Test
     public void testPagedResultsBadProperty() {
         try {
@@ -244,9 +248,9 @@ public class TestCRUDServiceImpl {
         } catch (IllegalArgumentException e) {
         }
     }
-    
+
     @Test
-    public void testPagedResults() {
+    public void testPagedResults() throws ParseException {
         final int LIST_SIZE = 15;
         List<IdentifiableTestEntity> created = new ArrayList<>(LIST_SIZE);
         for (int i = 1; i < LIST_SIZE + 1; i++) {
@@ -257,16 +261,16 @@ public class TestCRUDServiceImpl {
                 date.append("0");
             }
             date.append(i);
-            audit.setCreated(Date.valueOf(date.toString()));
+            audit.setCreated(dateFormatter.parse(date.toString()));
             entity.setAuditInformation(audit);
             created.add(entity);
         }
-        
+
         when(crudRepository.list(2, 15, "auditInformation", Order.ASCENDING)).thenReturn(created);
 
         // page 2 with 15 items should return a list of size 15
         List<IdentifiableTestEntity> list = crudService.list(2, 15, "auditInformation", Order.ASCENDING);
-        
+
         assertEquals(15, list.size());
 
         // the second 15 items in the list should be there
@@ -274,7 +278,7 @@ public class TestCRUDServiceImpl {
             assertEquals(created.get(i), list.get(i));
         }
     }
-    
+
     @Test
     public void testGetMissingEntity() {
         Identifier id = new Identifier();
@@ -287,16 +291,16 @@ public class TestCRUDServiceImpl {
             fail();
         }
     }
-    
+
     @Test
     public void testCount() {
         int count = 30;
         when(crudRepository.count()).thenReturn(count);
         assertEquals(count, crudService.count().intValue());
     }
-    
+
     @Test
-    public void testPagedResultsDefaultOrderBy() {
+    public void testPagedResultsDefaultOrderBy() throws ParseException {
         final int LIST_SIZE = 15;
         List<IdentifiableTestEntity> created = new ArrayList<>(LIST_SIZE);
         for (int i = 1; i < LIST_SIZE + 1; i++) {
@@ -307,16 +311,16 @@ public class TestCRUDServiceImpl {
                 date.append("0");
             }
             date.append(i);
-            audit.setCreated(Date.valueOf(date.toString()));
+            audit.setCreated(dateFormatter.parse(date.toString()));
             entity.setAuditInformation(audit);
             created.add(entity);
         }
-        
+
         when(crudRepository.list(2, 15, null, Order.ASCENDING)).thenReturn(created);
 
         // page 2 with 15 items should return a list of size 15
         List<IdentifiableTestEntity> list = crudService.list(2, 15, Order.ASCENDING);
-        
+
         assertEquals(15, list.size());
 
         // the second 15 items in the list should be there
@@ -324,9 +328,9 @@ public class TestCRUDServiceImpl {
             assertEquals(created.get(i), list.get(i));
         }
     }
-    
+
     @Test
-    public void testPagedResultsDescending() {
+    public void testPagedResultsDescending() throws ParseException {
         final int LIST_SIZE = 15;
         List<IdentifiableTestEntity> created = new ArrayList<>(LIST_SIZE);
         for (int i = 1; i < LIST_SIZE + 1; i++) {
@@ -337,16 +341,16 @@ public class TestCRUDServiceImpl {
                 date.append("0");
             }
             date.append(i);
-            audit.setCreated(Date.valueOf(date.toString()));
+            audit.setCreated(dateFormatter.parse(date.toString()));
             entity.setAuditInformation(audit);
             created.add(entity);
         }
-        
+
         when(crudRepository.list(2, 15, "auditInformation", Order.DESCENDING)).thenReturn(created);
 
         // page 2 with 15 items should return a list of size 15
         List<IdentifiableTestEntity> list = crudService.list(2, 15, "auditInformation", Order.DESCENDING);
-        
+
         assertEquals(LIST_SIZE, list.size());
 
         // the first 15 items in the list should be there
@@ -354,9 +358,9 @@ public class TestCRUDServiceImpl {
             assertEquals(created.get(i), list.get(i));
         }
     }
-    
+
     @Test
-    public void testPagedResultsDefaultOrderByDescending() {
+    public void testPagedResultsDefaultOrderByDescending() throws ParseException {
         final int LIST_SIZE = 15;
         List<IdentifiableTestEntity> created = new ArrayList<>(LIST_SIZE);
         for (int i = 1; i < LIST_SIZE + 1; i++) {
@@ -367,21 +371,41 @@ public class TestCRUDServiceImpl {
                 date.append("0");
             }
             date.append(i);
-            audit.setCreated(Date.valueOf(date.toString()));
+            audit.setCreated(dateFormatter.parse(date.toString()));
             entity.setAuditInformation(audit);
             created.add(entity);
         }
-        
+
         when(crudRepository.list(2, 15, null, Order.DESCENDING)).thenReturn(created);
 
         // page 2 with 15 items should return a list of size 15
         List<IdentifiableTestEntity> list = crudService.list(2, 15, Order.DESCENDING);
-        
+
         assertEquals(15, list.size());
 
         // the first 15 items in the list should be there
         for (int i = 0; i < 15; i++) {
             assertEquals(created.get(i), list.get(i));
         }
+    }
+
+    /**
+     * Audit information must be created by the service class just before being
+     * inserted into the database. We cannot rely on the class to manage that
+     * information itself.
+     */
+    @Test
+    public void testSetAuditInformation() {
+        IdentifiableTestEntity e = new IdentifiableTestEntity();
+        e.setNonNull("Not null");
+        e.setAuditInformation(null);
+        when(crudRepository.create(e)).thenReturn(e);
+
+        e = crudService.create(e);
+
+        assertNotNull(e.getAuditInformation());
+        assertTrue(e.getAuditInformation().getCreated().compareTo(new Date()) < 0);
+
+        verify(crudRepository).create(e);
     }
 }
