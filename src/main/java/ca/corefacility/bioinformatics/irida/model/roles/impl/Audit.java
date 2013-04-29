@@ -31,6 +31,7 @@ public class Audit implements Comparable<Audit> {
     private Date created;
     @NotNull
     private User createdBy;
+    private Date updated;
 
     public Audit() {
         this.created = new Date();
@@ -76,5 +77,13 @@ public class Audit implements Comparable<Audit> {
 
     public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
+    }
+    
+    public Date getUpdated() {
+        return this.updated;
+    }
+    
+    public void setUpdated(Date updated) {
+        this.updated = updated;
     }
 }

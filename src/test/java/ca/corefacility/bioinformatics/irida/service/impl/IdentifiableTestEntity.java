@@ -30,12 +30,20 @@ public class IdentifiableTestEntity implements Identifiable<Identifier>, Auditab
     private Identifier id;
     @NotNull
     private String nonNull;
+    private Integer integerValue;
     @NotNull
     private Audit audit;
 
     public IdentifiableTestEntity() {
         this.id = new Identifier();
         this.audit = new Audit();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("created: ").append(audit.getCreated());
+        return builder.toString();
     }
 
     public String getNonNull() {
@@ -69,5 +77,13 @@ public class IdentifiableTestEntity implements Identifiable<Identifier>, Auditab
     @Override
     public int compareTo(IdentifiableTestEntity o) {
         return audit.compareTo(o.audit);
+    }
+
+    public Integer getIntegerValue() {
+        return integerValue;
+    }
+
+    public void setIntegerValue(Integer integerValue) {
+        this.integerValue = integerValue;
     }
 }

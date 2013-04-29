@@ -13,38 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ca.corefacility.bioinformatics.irida.model.enums;
+package ca.corefacility.bioinformatics.irida.exceptions;
 
 /**
- * When sorting a collection of generic objects you should be able to specify
- * the order of the sort.
+ * Thrown when a property cannot be set or retrieved by a service class.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public enum Order {
+public class InvalidPropertyException extends RuntimeException {
 
-    ASCENDING("ASCENDING"),
-    DESCENDING("DESCENDING"),
-    NONE("NONE");
-    private String code;
-
-    private Order(String code) {
-        this.code = code;
-    }
-
-    @Override
-    public String toString() {
-        return code;
-    }
-
-    public static Order fromString(String code) {
-        switch (code.toUpperCase()) {
-            case "ASCENDING":
-                return ASCENDING;
-            case "DESCENDING":
-                return DESCENDING;
-            default:
-                return NONE;
-        }
+    public InvalidPropertyException(String message) {
+        super(message);
     }
 }

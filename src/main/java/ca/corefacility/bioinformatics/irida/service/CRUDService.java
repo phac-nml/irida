@@ -2,9 +2,11 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import java.util.List;
+import java.util.Map;
 import javax.validation.ConstraintViolationException;
 
 /**
@@ -43,15 +45,22 @@ public interface CRUDService<IdentifierType extends Identifier, Type extends Com
      * Update the specified object in the database. The object <b>must</b> have
      * a valid identifier prior to being passed to this method.
      *
-     * @param object The object to update.
+     * @param id The identifier of the object to update.
+     * @param updatedProperties the object properties that should be updated.
      * @return The object as it was persisted in the database. May modify the
      * identifier of the object when returned.
-     * @throws IllegalArgumentException If the object being persisted violates
+     * @throws EntityExistsException If the object being persisted violates
      * uniqueness constraints in the database.
+     * @throws EntityNotFoundException If no object with the supplied identifier
+     * exists in the database.
      * @throws ConstraintViolationException If the object being persisted cannot
      * be validated by validation rules associated with the object.
+     * @throws InvalidPropertyException If the updated properties map contains a
+     * property name that does not exist on the domain model.
      */
-    public Type update(Type object) throws EntityExistsException, ConstraintViolationException;
+    public Type update(IdentifierType id, Map<String, Object> updatedProperties)
+            throws EntityExistsException, EntityNotFoundException,
+            ConstraintViolationException, InvalidPropertyException;
 
     /**
      * Delete the object with the specified identifier from the database.

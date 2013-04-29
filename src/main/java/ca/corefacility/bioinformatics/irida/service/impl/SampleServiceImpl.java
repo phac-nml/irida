@@ -16,7 +16,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import ca.corefacility.bioinformatics.irida.model.Sample;
-import ca.corefacility.bioinformatics.irida.model.SampleFile;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
@@ -37,7 +37,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Identifier, Sample> imple
      * {@inheritDoc}
      */
     @Override
-    public void addSampleFileToSample(Sample sample, SampleFile sampleFile) {
+    public void addSampleFileToSample(Sample sample, SequenceFile sampleFile) {
         sample.getFiles().add(sampleFile);
         repository.update(sample);
     }

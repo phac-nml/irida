@@ -8,6 +8,8 @@
     
     <import resource="tripleStoreContext.xml"/>    
     
+    <context:property-placeholder location="classpath:ca/corefacility/bioinformatics/irida/config/filesystem.properties"/>
+    
     <bean id="userRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.UserSesameRepository">
         <constructor-arg ref="tripleStore" />        
     </bean>  
@@ -18,6 +20,17 @@
     
     <bean id="sampleRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.SampleSesameRepository">
         <constructor-arg ref="tripleStore" />        
+    </bean>
+    
+    <bean id="sequenceFileRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.GenericRepository">
+        <constructor-arg ref="tripleStore" />
+        <constructor-arg>
+            <value type="java.lang.Class">ca.corefacility.bioinformatics.irida.model.SequenceFile</value>
+        </constructor-arg>
+    </bean>
+    
+    <bean id="sequenceFileFilesystemRepository" class="ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileFilesystemRepository">
+        <constructor-arg value="${sequence.file.base.directory}" />
     </bean>
     
     <beans profile="dev">

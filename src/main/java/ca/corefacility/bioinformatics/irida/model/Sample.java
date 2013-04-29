@@ -42,7 +42,7 @@ public class Sample implements SampleIF, Auditable<Audit>, Identifiable<Identifi
     private String sampleName;
     @NotEmpty // samples must belong to at least one project
     private Collection<Project> projects;
-    private Collection<SampleFile> files;
+    private Collection<SequenceFile> files;
 
     public Sample() {
         audit = new Audit();
@@ -92,11 +92,11 @@ public class Sample implements SampleIF, Auditable<Audit>, Identifiable<Identifi
         this.projects = projects;
     }
 
-    public Collection<SampleFile> getFiles() {
+    public Collection<SequenceFile> getFiles() {
         return files;
     }
 
-    public void setFiles(Collection<SampleFile> files) {
+    public void setFiles(Collection<SequenceFile> files) {
         this.files = files;
     }
 

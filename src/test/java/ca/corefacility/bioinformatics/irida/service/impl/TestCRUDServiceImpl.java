@@ -16,20 +16,25 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
-import ca.corefacility.bioinformatics.irida.repositories.memory.CRUDMemoryRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,19 +44,19 @@ import org.junit.Test;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class TestCRUDServiceImpl {
-
+    
     private CRUDService<Identifier, IdentifiableTestEntity> crudService;
     private CRUDRepository<Identifier, IdentifiableTestEntity> crudRepository;
     private Validator validator;
-
+    
     @Before
     public void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
-        crudRepository = new CRUDMemoryRepository<>(IdentifiableTestEntity.class);
+        crudRepository = mock(CRUDRepository.class);
         crudService = new CRUDServiceImpl<>(crudRepository, validator, IdentifiableTestEntity.class);
     }
-
+    
     @Test
     public void testAddInvalidObject() {
         IdentifiableTestEntity i = new IdentifiableTestEntity(); // nothing is set, this should be invalid
@@ -63,62 +68,119 @@ public class TestCRUDServiceImpl {
             assertEquals(1, constraintViolations.getConstraintViolations().size());
         }
     }
-
+    
     @Test
     public void testAddValidObject() {
         IdentifiableTestEntity i = new IdentifiableTestEntity();
         i.setNonNull("Definitely not null.");
-
+        
         try {
             crudService.create(i);
         } catch (ConstraintViolationException constraintViolations) {
             fail();
         }
     }
-
+    
     @Test
-    public void testUpdateInvalidProject() {
-        IdentifiableTestEntity i = new IdentifiableTestEntity();
-        i.setNonNull("Definitely not null");
-
-        crudRepository.create(i);
-
-        // make the project invalid
-        i.setNonNull(null);
+    public void testUpdateMissingEntity() {
+        Identifier id = new Identifier();
+        Map<String, Object> updatedProperties = new HashMap<>();
+        when(crudRepository.exists(id)).thenReturn(Boolean.FALSE);
         try {
-            crudService.update(i);
+            crudService.update(id, updatedProperties);
             fail();
-        } catch (ConstraintViolationException constraintViolations) {
-            assertEquals(1, constraintViolations.getConstraintViolations().size());
+        } catch (EntityNotFoundException e) {
+        } catch (Exception e) {
+            fail();
         }
     }
-
+    
     @Test
-    public void testUpdateValidProject() {
+    public void testUpdateWithBadPropertyName() {
+        IdentifiableTestEntity entity = new IdentifiableTestEntity();
+        Map<String, Object> updatedProperties = new HashMap<>();
+        updatedProperties.put("noSuchField", new Object());
+        try {
+            crudService.update(entity.getIdentifier(), updatedProperties);
+            fail();
+        } catch (InvalidPropertyException e) {
+        } catch (Exception e) {
+            fail();
+        }
+    }
+    
+    @Test
+    public void testUpdateWithBadPropertyType() {
+        IdentifiableTestEntity entity = new IdentifiableTestEntity();
+        Map<String, Object> updatedProperties = new HashMap<>();
+        updatedProperties.put("integerValue", new Object());
+        try {
+            crudService.update(entity.getIdentifier(), updatedProperties);
+            fail();
+        } catch (InvalidPropertyException e) {
+        } catch (Exception e) {
+            fail();
+        }
+    }
+    
+    @Test
+    public void testUpdatedValidEntity() {
+        String oldField = "Absolutely not null";
+        String newField = "super not null.";
+        Integer oldIntegerValue = 30;
+        Integer newIntegerValue = 50;
+        IdentifiableTestEntity i = new IdentifiableTestEntity();
+        i.setNonNull(oldField);
+        i.setIntegerValue(oldIntegerValue);
+        Identifier id = new Identifier();
+        i.setIdentifier(id);
+        when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
+        when(crudRepository.read(id)).thenReturn(i);
+        when(crudRepository.update(i)).thenReturn(i);
+        
+        Map<String, Object> updatedFields = new HashMap<>();
+        updatedFields.put("nonNull", newField);
+        updatedFields.put("integerValue", newIntegerValue);
+        try {
+            i = crudService.update(id, updatedFields);
+        } catch (ConstraintViolationException e) {
+            fail();
+        }
+        assertEquals(newField, i.getNonNull());
+        assertEquals(newIntegerValue, i.getIntegerValue());
+        assertNotNull(i.getAuditInformation().getUpdated());
+    }
+    
+    @Test
+    public void testUpdateInvalidEntry() {
         IdentifiableTestEntity i = new IdentifiableTestEntity();
         i.setNonNull("Definitely not null.");
-
-        i = crudRepository.create(i);
-
-        // change the non-null, but keep it non-null
-        i.setNonNull("Also definitely not null.");
-
+        i.setIntegerValue(Integer.MIN_VALUE);
+        Identifier id = new Identifier();
+        i.setIdentifier(id);
+        when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
+        when(crudRepository.read(id)).thenReturn(i);
+        
+        Map<String, Object> updatedFields = new HashMap<>();
+        updatedFields.put("nonNull", null);
         try {
-            crudService.update(i);
-        } catch (ConstraintViolationException constraintViolations) {
+            crudService.update(id, updatedFields);
             fail();
+        } catch (ConstraintViolationException e) {
+            Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
+            assertEquals(1, violations.size());
+            ConstraintViolation<?> v = violations.iterator().next();
+            assertEquals("nonNull", v.getPropertyPath().toString());
         }
-
-        i = crudRepository.read(i.getIdentifier());
-        assertEquals("Also definitely not null.", i.getNonNull());
     }
-
+    
     @Test
     public void testRead() {
         IdentifiableTestEntity i = new IdentifiableTestEntity();
         i.setNonNull("Definitely not null");
-        i = crudRepository.create(i);
-
+        
+        when(crudRepository.read(i.getIdentifier())).thenReturn(i);
+        
         try {
             i = crudService.read(i.getIdentifier());
             assertNotNull(i);
@@ -126,52 +188,54 @@ public class TestCRUDServiceImpl {
             fail();
         }
     }
-
+    
     @Test
     public void testList() {
         int itemCount = 10;
+        List<IdentifiableTestEntity> entities = new ArrayList<>();
         for (int i = 0; i < itemCount; i++) {
-            crudRepository.create(new IdentifiableTestEntity());
+            entities.add(new IdentifiableTestEntity());
         }
-
+        when(crudRepository.list()).thenReturn(entities);
+        
         List<IdentifiableTestEntity> items = crudService.list();
-
+        
         assertEquals(itemCount, items.size());
     }
-
+    
     @Test
     public void testExists() {
         IdentifiableTestEntity i = new IdentifiableTestEntity();
-        i = crudRepository.create(i);
-
+        when(crudRepository.exists(i.getIdentifier())).thenReturn(Boolean.TRUE);
         assertTrue(crudService.exists(i.getIdentifier()));
     }
-
+    
     @Test
     public void testValidDelete() {
         IdentifiableTestEntity i = new IdentifiableTestEntity();
-        i = crudRepository.create(i);
-
+        
+        when(crudService.exists(i.getIdentifier())).thenReturn(Boolean.TRUE);
+        
         try {
             crudService.delete(i.getIdentifier());
         } catch (EntityNotFoundException e) {
             fail();
         }
-
-        assertFalse(crudRepository.exists(i.getIdentifier()));
     }
-
+    
     @Test
     public void testInvalidDelete() {
+        Identifier id = new Identifier();
+        when(crudRepository.exists(id)).thenReturn(Boolean.FALSE);
         try {
-            crudService.delete(new Identifier());
+            crudService.delete(id);
             fail();
         } catch (EntityNotFoundException e) {
         } catch (Exception e) {
             fail();
         }
     }
-
+    
     @Test
     public void testPagedResultsBadProperty() {
         try {
@@ -180,10 +244,10 @@ public class TestCRUDServiceImpl {
         } catch (IllegalArgumentException e) {
         }
     }
-
+    
     @Test
     public void testPagedResults() {
-        final int LIST_SIZE = 30;
+        final int LIST_SIZE = 15;
         List<IdentifiableTestEntity> created = new ArrayList<>(LIST_SIZE);
         for (int i = 1; i < LIST_SIZE + 1; i++) {
             Audit audit = new Audit();
@@ -195,29 +259,27 @@ public class TestCRUDServiceImpl {
             date.append(i);
             audit.setCreated(Date.valueOf(date.toString()));
             entity.setAuditInformation(audit);
-            created.add(crudRepository.create(entity));
+            created.add(entity);
         }
+        
+        when(crudRepository.list(2, 15, "auditInformation", Order.ASCENDING)).thenReturn(created);
 
         // page 2 with 15 items should return a list of size 15
         List<IdentifiableTestEntity> list = crudService.list(2, 15, "auditInformation", Order.ASCENDING);
-
+        
         assertEquals(15, list.size());
 
-        // the first 15 items in the list should not be there
-        for (int i = 0; i < 15; i++) {
-            assertFalse(list.contains(created.get(i)));
-        }
-
         // the second 15 items in the list should be there
-        for (int i = 15; i < LIST_SIZE; i++) {
-            assertTrue(list.contains(created.get(i)));
+        for (int i = 0; i < LIST_SIZE; i++) {
+            assertEquals(created.get(i), list.get(i));
         }
     }
-
+    
     @Test
     public void testGetMissingEntity() {
+        Identifier id = new Identifier();
+        when(crudRepository.read(id)).thenThrow(new EntityNotFoundException("not found"));
         try {
-            Identifier id = new Identifier();
             crudService.read(id);
             fail();
         } catch (EntityNotFoundException e) {
@@ -225,24 +287,17 @@ public class TestCRUDServiceImpl {
             fail();
         }
     }
-
+    
     @Test
     public void testCount() {
-        CRUDMemoryRepository<Identifier, IdentifiableTestEntity> repo = (CRUDMemoryRepository<Identifier, IdentifiableTestEntity>) crudRepository;
-        repo.clear();
-
         int count = 30;
-
-        for (int i = 0; i < count; i++) {
-            repo.create(new IdentifiableTestEntity());
-        }
-
+        when(crudRepository.count()).thenReturn(count);
         assertEquals(count, crudService.count().intValue());
     }
     
     @Test
     public void testPagedResultsDefaultOrderBy() {
-        final int LIST_SIZE = 30;
+        final int LIST_SIZE = 15;
         List<IdentifiableTestEntity> created = new ArrayList<>(LIST_SIZE);
         for (int i = 1; i < LIST_SIZE + 1; i++) {
             Audit audit = new Audit();
@@ -254,28 +309,25 @@ public class TestCRUDServiceImpl {
             date.append(i);
             audit.setCreated(Date.valueOf(date.toString()));
             entity.setAuditInformation(audit);
-            created.add(crudRepository.create(entity));
+            created.add(entity);
         }
+        
+        when(crudRepository.list(2, 15, null, Order.ASCENDING)).thenReturn(created);
 
         // page 2 with 15 items should return a list of size 15
         List<IdentifiableTestEntity> list = crudService.list(2, 15, Order.ASCENDING);
-
+        
         assertEquals(15, list.size());
 
-        // the first 15 items in the list should not be there
-        for (int i = 0; i < 15; i++) {
-            assertFalse(list.contains(created.get(i)));
-        }
-
         // the second 15 items in the list should be there
-        for (int i = 15; i < LIST_SIZE; i++) {
-            assertTrue(list.contains(created.get(i)));
+        for (int i = 0; i < LIST_SIZE; i++) {
+            assertEquals(created.get(i), list.get(i));
         }
     }
     
     @Test
     public void testPagedResultsDescending() {
-        final int LIST_SIZE = 30;
+        final int LIST_SIZE = 15;
         List<IdentifiableTestEntity> created = new ArrayList<>(LIST_SIZE);
         for (int i = 1; i < LIST_SIZE + 1; i++) {
             Audit audit = new Audit();
@@ -287,28 +339,25 @@ public class TestCRUDServiceImpl {
             date.append(i);
             audit.setCreated(Date.valueOf(date.toString()));
             entity.setAuditInformation(audit);
-            created.add(crudRepository.create(entity));
+            created.add(entity);
         }
+        
+        when(crudRepository.list(2, 15, "auditInformation", Order.DESCENDING)).thenReturn(created);
 
         // page 2 with 15 items should return a list of size 15
         List<IdentifiableTestEntity> list = crudService.list(2, 15, "auditInformation", Order.DESCENDING);
-
-        assertEquals(15, list.size());
+        
+        assertEquals(LIST_SIZE, list.size());
 
         // the first 15 items in the list should be there
-        for (int i = 0; i < 15; i++) {
-            assertTrue(list.contains(created.get(i)));
-        }
-
-        // the second 15 items in the list should not be there
-        for (int i = 15; i < LIST_SIZE; i++) {
-            assertFalse(list.contains(created.get(i)));
+        for (int i = 0; i < LIST_SIZE; i++) {
+            assertEquals(created.get(i), list.get(i));
         }
     }
     
     @Test
     public void testPagedResultsDefaultOrderByDescending() {
-        final int LIST_SIZE = 30;
+        final int LIST_SIZE = 15;
         List<IdentifiableTestEntity> created = new ArrayList<>(LIST_SIZE);
         for (int i = 1; i < LIST_SIZE + 1; i++) {
             Audit audit = new Audit();
@@ -320,22 +369,19 @@ public class TestCRUDServiceImpl {
             date.append(i);
             audit.setCreated(Date.valueOf(date.toString()));
             entity.setAuditInformation(audit);
-            created.add(crudRepository.create(entity));
+            created.add(entity);
         }
+        
+        when(crudRepository.list(2, 15, null, Order.DESCENDING)).thenReturn(created);
 
         // page 2 with 15 items should return a list of size 15
         List<IdentifiableTestEntity> list = crudService.list(2, 15, Order.DESCENDING);
-
+        
         assertEquals(15, list.size());
 
         // the first 15 items in the list should be there
         for (int i = 0; i < 15; i++) {
-            assertTrue(list.contains(created.get(i)));
-        }
-
-        // the second 15 items in the list should not be there
-        for (int i = 15; i < LIST_SIZE; i++) {
-            assertFalse(list.contains(created.get(i)));
+            assertEquals(created.get(i), list.get(i));
         }
     }
 }
