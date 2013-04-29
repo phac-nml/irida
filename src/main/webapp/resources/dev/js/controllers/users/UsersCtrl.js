@@ -1,7 +1,7 @@
 /* global angular */
 var irida = angular.module('irida');
 
-function UsersListCtrl($scope, $window, AjaxService) {
+function UsersListCtrl($scope, $location, AjaxService) {
   'use strict';
   $scope.users = [];
   $scope.usersUrl = '/users' + '?_' + Math.random();
@@ -20,7 +20,7 @@ function UsersListCtrl($scope, $window, AjaxService) {
   };
 
   $scope.gotoUser = function(url) {
-    $window.location = url;
+    $location.path( url.match(/\/users\/.*$/)[0]);
   };
 
   $scope.clearForm = function() {

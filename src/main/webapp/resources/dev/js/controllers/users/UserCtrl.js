@@ -7,19 +7,13 @@
 var irida = angular.module('irida');
 
 
-function UserCtrl($scope, $window, AjaxService) {
+function UserCtrl($scope, $route, $location, AjaxService) {
   'use strict';
 
   $scope.user = {};
   $scope.original = {};
   $scope.links = {};
   $scope.projects = [];
-
-  $scope.init = function () {
-    var username = /\/users\/(.*)$/.exec($window.location.pathname)[1];
-
-    AjaxService.get('/users/' + username).then(initialSuccessCallback, errorHandler);
-  };
 
   $scope.deleteUser = function () {
     console.log("Deleting user");
@@ -56,31 +50,38 @@ function UserCtrl($scope, $window, AjaxService) {
    * Initial callback to setup the interface
    * @param {object} data
    */
-  function initialSuccessCallback(data) {
-    angular.forEach(data.resource.links, function (val) {
-      $scope.links[val.rel] = val.href;
-    });
-    delete data.resource.links;
-    $scope.user = data.resource;
-    $scope.original = angular.copy($scope.user);
-    getUserProjects();
-  }
-
-  function errorHandler (status){
-    console.log(status);
-  }
-
-  function getUserProjects() {
-    AjaxService.get($scope.links['user/projects']).then(
-
+  var render = function () {
+    var username = $route.current.params.username;
+    AjaxService.get('/users/' + username).then(
       function (data) {
-        $scope.projects = data.projectResources.projects;
+        angular.forEach(data.resource.links, function (val) {
+          $scope.links[val.rel] = val.href;
+        });
+        delete data.resource.links;
+        $scope.user = data.resource;
+        $scope.original = angular.copy($scope.user);
 
+        AjaxService.get($scope.links['user/projects']).then(
+
+          function (data) {
+            $scope.projects = data.projectResources.projects;
+
+          },
+
+          function (errorMessage) {
+            // TODO: handle error message
+          });
       },
+      function () {
+        alert("NEED TO SET UP AJAX ERROR NOTIFIERS");
+      }
+    );
 
-      function (errorMessage) {
-        // TODO: handle error message
-      });
-  }
+
+  };
+
+  $scope.$on('$routeChangeSuccess', function () {
+     render();
+  });
 }
 irida.controller(UserCtrl);

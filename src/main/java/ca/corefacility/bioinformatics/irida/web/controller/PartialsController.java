@@ -37,4 +37,10 @@ public class PartialsController {
         logger.debug(pageName);
         return "partials/" + pageName;
     }
+    
+    @RequestMapping(value = "/{singlePage}/*", method = RequestMethod.GET)
+    public String getUserPartial (@PathVariable String singlePage) {
+        logger.debug(singlePage);
+        return "partials/" + singlePage;
+    }
 }

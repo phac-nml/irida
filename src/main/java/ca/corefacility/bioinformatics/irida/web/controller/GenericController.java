@@ -69,6 +69,7 @@ import org.springframework.web.servlet.ModelAndView;
 public abstract class GenericController<IdentifierType extends Identifier, Type extends Identifiable<IdentifierType> & Comparable<Type>, ResourceType extends Resource> {
 
     private static final Logger logger = LoggerFactory.getLogger(GenericController.class);
+    private static final String INDEX_PAGE = "index";
     protected CRUDService<IdentifierType, Type> crudService;
     private Class<ResourceType> resourceType;
     private Class<IdentifierType> identifierType;
@@ -89,8 +90,8 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     public void initializePages() {
         // initialize the names of the pages
         String typeName = type.getSimpleName().toLowerCase();
-        this.prefix = typeName + "s/";
-        this.resourceCollectionIndex = "index";//prefix + typeName + "s";
+        this.prefix = "partials/";//typeName + "s/";
+        this.resourceCollectionIndex = INDEX_PAGE;
         this.resourceIndividualIndex = prefix + typeName;
     }
 
@@ -181,6 +182,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
 
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
     public ModelAndView getResource(@PathVariable String resourceId) throws InstantiationException, IllegalAccessException {
+        logger.debug(resourceIndividualIndex);
         ModelAndView mav = new ModelAndView(resourceIndividualIndex);
         logger.debug("Getting resource with id [" + resourceId + "]");
         IdentifierType id = identifierType.newInstance();

@@ -4,7 +4,8 @@ angular.module('irida', ['irida.services', 'irida.directive'])
   .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
     "use strict";
 
-    $locationProvider.html5Mode(true);
+//    $locationProvider.html5Mode(true);
+    $locationProvider.hashPrefix('!');
 
     $routeProvider
       .when(
@@ -16,14 +17,26 @@ angular.module('irida', ['irida.services', 'irida.directive'])
       .when(
       '/projects',
       {
-        templateUrl: 'partials/projects.html',
+        templateUrl: './partials/projects.html',
         controller : ProjectsListCtrl
+      })
+      .when(
+      '/projects/:projectId',
+      {
+        templateUrl: './partials/project.html',
+        controller : ProjectCtrl
       })
       .when(
       '/users',
       {
         templateUrl: 'partials/users.html',
         controller : UsersListCtrl
+      })
+      .when(
+      '/users/:username',
+      {
+        templateUrl: '/partials/user.html',
+        controller : UserCtrl
       })
       .when(
       '/logout',
@@ -67,7 +80,6 @@ angular.module('irida.directive', [])
       });
     };
   });
-;
 
 angular.module('irida.services', ['ngResource'])
   .service('AjaxService', function ($http, $q) {
