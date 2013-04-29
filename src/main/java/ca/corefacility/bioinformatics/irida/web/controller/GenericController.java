@@ -216,10 +216,16 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
 
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.PATCH)
     public ResponseEntity<String> update(@PathVariable String resourceId, @RequestBody Map<String, Object> representation) throws InstantiationException, IllegalAccessException {
-        IdentifierType id = identifierType.newInstance();
-        id.setIdentifier(resourceId);
-        crudService.update(id, representation);
-        return new ResponseEntity<>("success", HttpStatus.OK);
+        IdentifierType identifier = identifierType.newInstance();
+        identifier.setIdentifier(resourceId);
+        Type resource = crudService.update(identifier, representation);
+        String id = resource.getIdentifier().getIdentifier();
+        logger.debug("Updated resource with ID [" + resource.getIdentifier().getIdentifier() + "]");
+        String location = linkTo(getClass()).slash(id).withSelfRel().getHref();
+        MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap();
+        responseHeaders.add(HttpHeaders.LOCATION, location);
+        ResponseEntity<String> response = new ResponseEntity<>("success", responseHeaders, HttpStatus.OK);
+        return response;
     }
 
     /**
