@@ -22,12 +22,17 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.UUID;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -42,16 +47,62 @@ public class SequenceFileFilesystemRepositoryTest {
     private SequenceFileFilesystemRepository repository;
     private Path baseDirectory;
     private static final String MISSING_FILE_NAME = "This file definitely doesn't exist.";
+    private static final String TEMP_FILE_PREFIX = UUID.randomUUID().toString().replaceAll("-", "");
 
     @Before
     public void setUp() throws IOException {
-        baseDirectory = Files.createTempDirectory(null);
+        baseDirectory = Files.createTempDirectory(TEMP_FILE_PREFIX);
         repository = new SequenceFileFilesystemRepository(baseDirectory);
+    }
+
+    @After
+    public void tearDown() throws IOException {
+        File f = new File(System.getProperty("java.io.tmpdir"));
+        for (File child : f.listFiles()) {
+            if (child.getName().startsWith(TEMP_FILE_PREFIX)) {
+                delete(Paths.get(child.getAbsolutePath()));
+            }
+        }
+    }
+
+    /**
+     * Completely removes given file tree starting at and including the given
+     * path.
+     *
+     * @param path
+     * @throws IOException
+     */
+    public static void delete(Path path) throws IOException {
+        Files.walkFileTree(path, new DeleteDirVisitor());
+    }
+
+    private static class DeleteDirVisitor extends SimpleFileVisitor<Path> {
+
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+            Files.delete(file);
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+            if (exc == null) {
+                Files.delete(dir);
+                return FileVisitResult.CONTINUE;
+            }
+            throw exc;
+        }
+    }
+
+    private File getTempFile() throws IOException {
+        File f = Files.createTempFile(TEMP_FILE_PREFIX, null).toFile();
+        f.deleteOnExit();
+        return f;
     }
 
     @Test
     public void testCreateFileMissingIdentifier() throws IOException {
-        SequenceFile s = new SequenceFile(Files.createTempFile(null, null).toFile());
+        SequenceFile s = new SequenceFile(getTempFile());
         try {
             repository.create(s);
             fail();
@@ -64,8 +115,7 @@ public class SequenceFileFilesystemRepositoryTest {
     @Test
     public void testCreateFile() throws IOException {
         Identifier id = new Identifier();
-        File f = Files.createTempFile(null, null).toFile();
-        f.deleteOnExit();
+        File f = getTempFile();
         String filename = f.getName();
         SequenceFile s = new SequenceFile(id, f);
 
@@ -92,7 +142,7 @@ public class SequenceFileFilesystemRepositoryTest {
 
     @Test
     public void testUpdateFileMissingIdentifier() throws IOException {
-        SequenceFile s = new SequenceFile(Files.createTempFile(null, null).toFile());
+        SequenceFile s = new SequenceFile(getTempFile());
         try {
             repository.update(s);
             fail();
@@ -105,8 +155,7 @@ public class SequenceFileFilesystemRepositoryTest {
     @Test
     public void testUpdateMissingDirectory() throws IOException {
         Identifier id = new Identifier();
-        File f = Files.createTempFile(null, null).toFile();
-        f.deleteOnExit();
+        File f = getTempFile();
         SequenceFile s = new SequenceFile(id, f);
 
         try {
@@ -123,8 +172,7 @@ public class SequenceFileFilesystemRepositoryTest {
         String originalText = "old text.";
         String updatedText = "new text.";
         Identifier id = new Identifier();
-        File oldFile = Files.createTempFile(null, null).toFile();
-        oldFile.deleteOnExit();
+        File oldFile = getTempFile();
         FileWriter fw = new FileWriter(oldFile);
         fw.write(originalText);
         fw.close();
@@ -134,13 +182,14 @@ public class SequenceFileFilesystemRepositoryTest {
         sf = repository.create(sf);
 
         // now create a new temp file with the same name
-        Path newFile = Files.createTempFile(null, null);
+        Path newFile = Paths.get(getTempFile().getAbsolutePath());
         Path target = Paths.get(newFile.getParent().toString(), oldFile.getName());
         newFile = Files.move(newFile, target);
 
         // write something new into it so that we can make sure that the files
         // are actually updated correctly:
         File newFileF = newFile.toFile();
+        newFileF.deleteOnExit();
         fw = new FileWriter(newFileF);
         fw.write(updatedText);
         fw.close();
@@ -174,10 +223,10 @@ public class SequenceFileFilesystemRepositoryTest {
     @Test
     public void testUpdate() throws IOException {
         Identifier id = new Identifier();
-        File originalFile = Files.createTempFile(null, null).toFile();
+        File originalFile = getTempFile();
         SequenceFile sf = new SequenceFile(id, originalFile);
         sf = repository.create(sf);
-        File updatedFile = Files.createTempFile(null, null).toFile();
+        File updatedFile = getTempFile();
         sf.setFile(updatedFile);
         sf = repository.update(sf);
         assertEquals(updatedFile.getName(), sf.getFile().getName());
