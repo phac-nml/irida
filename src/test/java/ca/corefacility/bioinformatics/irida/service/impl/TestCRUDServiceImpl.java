@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
+import com.google.common.collect.ImmutableMap;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -407,5 +408,26 @@ public class TestCRUDServiceImpl {
         assertTrue(e.getAuditInformation().getCreated().compareTo(new Date()) < 0);
 
         verify(crudRepository).create(e);
+    }
+
+    @Test
+    public void testUpdateSetAuditInformation() {
+        Identifier id = new Identifier();
+        IdentifiableTestEntity e = new IdentifiableTestEntity();
+        e.setIdentifier(id);
+        e.setNonNull("Not null");
+        e.setAuditInformation(new Audit());
+        when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
+        when(crudRepository.read(id)).thenReturn(e);
+        when(crudRepository.update(e)).thenReturn(e);
+
+        e = crudService.update(id, ImmutableMap.of("nonNull", (Object) "another not null"));
+        
+        assertNotNull(e.getAuditInformation().getUpdated());
+        assertTrue(e.getAuditInformation().getUpdated().compareTo(new Date()) < 0);
+        
+        verify(crudRepository).exists(id);
+        verify(crudRepository).read(id);
+        verify(crudRepository).update(e);
     }
 }
