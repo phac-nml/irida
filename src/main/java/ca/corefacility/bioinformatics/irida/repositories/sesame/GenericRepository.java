@@ -67,14 +67,14 @@ public class GenericRepository<IDType extends Identifier, Type extends Identifia
     public GenericRepository() {
     }
 
-    public GenericRepository(TripleStore store, Class type) {
+    public GenericRepository(TripleStore store, Class<Type> type) {
         this.store = store;
         URI = store.getURI() + type.getSimpleName() + "/";
         
         this.objectType = type;
     }
 
-    public GenericRepository(TripleStore store, Class type, PropertyMapper propertyMap) {
+    public GenericRepository(TripleStore store, Class<Type> type, PropertyMapper propertyMap) {
         this(store, type);
 
         setPropertyMap(propertyMap);
