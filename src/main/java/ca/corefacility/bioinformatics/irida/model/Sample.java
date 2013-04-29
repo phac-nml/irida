@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.model;
 
+import ca.corefacility.bioinformatics.irida.model.alibaba.SampleIF;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
@@ -31,7 +32,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class Sample implements Auditable<Audit>, Identifiable<Identifier>, Comparable<Sample> {
+public class Sample implements SampleIF, Auditable<Audit>, Identifiable<Identifier>, Comparable<Sample> {
 
     private Identifier id;
     @NotNull

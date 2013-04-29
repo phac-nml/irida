@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.dao.PropertyMapper;
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.Sample;
+import ca.corefacility.bioinformatics.irida.model.alibaba.SampleIF;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import org.slf4j.LoggerFactory;
 
@@ -26,24 +27,22 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class SampleSesameRepository extends GenericRepository<Identifier, Sample>{
+public class SampleSesameRepository extends GenericAlibabaRepository<Identifier, SampleIF, Sample>{
     
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SampleSesameRepository.class);
     
     public SampleSesameRepository(){}
     
     public SampleSesameRepository(TripleStore store) {
-        super(store,Sample.class);
-
-        PropertyMapper map = new PropertyMapper(Sample.class,"irida", "Sample");
-        
-        try{
-            map.addProperty("rdfs","label","sampleName", "getSampleName", "setSampleName", String.class);
-        } catch (NoSuchMethodException | SecurityException ex) {
-            logger.error(ex.getMessage());
-            throw new StorageException("Couldn't build parameters for \"Sample\""); 
-        }
-        
-        setPropertyMap(map);
+        super(store,SampleIF.class,Sample.PREFIX,Sample.TYPE);
     }      
+
+    @Override
+    public Sample buildObject(SampleIF base, Identifier i) {
+        Sample s = new Sample();
+        s.setIdentifier(i);
+        s.setSampleName(base.getSampleName());
+        
+        return s;
+    }
 }
