@@ -251,6 +251,7 @@
         <hibernate.validator.version>4.3.1.Final</hibernate.validator.version>
         <openrdf.sesame.version>2.7.0-beta1</openrdf.sesame.version>
         <openrdf.alibaba.version>2.0-rc7</openrdf.alibaba.version>
+        <mockito.version>1.9.5</mockito.version>        
         <!-- plugins -->
         <maven.failsafe.plugin.version>2.13</maven.failsafe.plugin.version>
         <maven.surefire.plugin.version>2.13</maven.surefire.plugin.version>

@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.model;
 
+import ca.corefacility.bioinformatics.irida.model.alibaba.SequenceFileIF;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
@@ -29,7 +30,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class SequenceFile implements Auditable<Audit>, Identifiable<Identifier>, Comparable<SequenceFile> {
+public class SequenceFile implements SequenceFileIF, Auditable<Audit>, Identifiable<Identifier>, Comparable<SequenceFile> {
 
     private Identifier id;
     @NotNull

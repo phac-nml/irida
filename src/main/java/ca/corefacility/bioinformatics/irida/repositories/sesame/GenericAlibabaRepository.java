@@ -21,21 +21,31 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.alibaba.Thing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
+import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
+import org.openrdf.query.Binding;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.BooleanQuery;
+import org.openrdf.query.GraphQuery;
+import org.openrdf.query.GraphQueryResult;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
@@ -52,7 +62,7 @@ import org.slf4j.LoggerFactory;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 //public abstract class GenericAlibabaRepository<TypeIF extends Thing, Type extends Identifiable<Identifier>> implements CRUDRepository<Identifier, Type> {
-public abstract class GenericAlibabaRepository<IDType extends Identifier, TypeIF extends Thing, Type extends Identifiable<IDType>> implements CRUDRepository<IDType, Type> {
+public abstract class GenericAlibabaRepository<IDType extends Identifier, TypeIF extends Thing, Type extends Identifiable<IDType> & Auditable<Audit>> implements CRUDRepository<IDType, Type> {
     
     TripleStore store;
     String URI; //The base URI for objects of this type 
@@ -98,9 +108,6 @@ public abstract class GenericAlibabaRepository<IDType extends Identifier, TypeIF
      * @return An Identifier object built form the given binding set
      */
     public Identifier buildIdentifier(TypeIF obj, String identifiedBy) {
-        
-        //UUID uuid = UUID.fromString(resURI);
-        //Identifier objid = new Identifier(java.net.URI.create(s.stringValue()), uuid);
         Identifier objid = new Identifier();
         objid.setUri(java.net.URI.create(obj.toString()));
         objid.setUUID(UUID.fromString(identifiedBy));
@@ -120,13 +127,55 @@ public abstract class GenericAlibabaRepository<IDType extends Identifier, TypeIF
         return uri;
     }
     
+    protected void createAudit(URI uri, Audit audit, ObjectConnection con) throws RepositoryException{
+        ValueFactory fac = con.getValueFactory();
+        Literal date = fac.createLiteral(audit.getCreated());
+        URI pred = fac.createURI(con.getNamespace("irida"), "created");
+        Statement st = fac.createStatement(uri, pred, date);
+        con.add(st);
+    }
+    
+    protected Audit getAudit(URI uri, ObjectConnection con) throws MalformedQueryException, RepositoryException, QueryEvaluationException{
+        String qs = store.getPrefixes()
+                + "SELECT ?created WHERE{"
+                + "?s irida:created ?created .\n"
+                + "}";
+        
+        TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
+        query.setBinding("s", uri);
+        TupleQueryResult result = query.evaluate();
+        BindingSet bs = result.next();
+        Audit a = new Audit();
+        
+        Binding binding = bs.getBinding("created");
+        Value value = binding.getValue();
+        
+        Date d = null;
+        try{
+            XMLGregorianCalendar calendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(value.stringValue());
+            d = calendar.toGregorianCalendar().getTime();
+        }
+        catch (DatatypeConfigurationException ex) {
+                logger.error(ex.getMessage());
+                throw new StorageException("Failed to parse auditing date");        
+        }
+        
+        a.setCreated(d);
+                
+        result.close();
+        
+        return a;
+    }
+    
     public abstract Type buildObject(TypeIF base,IDType i);
     
     @Override
     public Type create(Type object) throws IllegalArgumentException {
-       if (object == null) {
+        if (object == null) {
             throw new IllegalArgumentException("Object is null");
         }
+        
+        Audit audit = object.getAuditInformation();
          
         ObjectConnection con = store.getRepoConnection();
         
@@ -146,6 +195,7 @@ public abstract class GenericAlibabaRepository<IDType extends Identifier, TypeIF
             con.addObject(uri, object);
             
             setIdentifiedBy(con,uri, objid.getIdentifier());
+            createAudit(uri, audit, con);
             
             con.commit();
         }            
@@ -215,6 +265,7 @@ public abstract class GenericAlibabaRepository<IDType extends Identifier, TypeIF
             String identifiedBy = getIdentifiedBy(con,u);
             Identifier objid = buildIdentifier(o,identifiedBy);
             ret = buildObject(o,(IDType)objid);
+            ret.setAuditInformation(getAudit(u, con));
 
         } catch (RepositoryException | QueryEvaluationException | MalformedQueryException ex) {
             logger.error(ex.getMessage());
@@ -307,7 +358,7 @@ public abstract class GenericAlibabaRepository<IDType extends Identifier, TypeIF
                 String identifiedBy = getIdentifiedBy(con,u);
                 Identifier objid = buildIdentifier(o,identifiedBy);
                 Type ret = buildObject(o,(IDType)objid);
-
+                ret.setAuditInformation(getAudit(u, con));                
                 users.add(ret);                
             }
             

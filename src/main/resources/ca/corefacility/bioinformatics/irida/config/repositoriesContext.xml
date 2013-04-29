@@ -22,11 +22,8 @@
         <constructor-arg ref="tripleStore" />        
     </bean>
     
-    <bean id="sequenceFileRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.GenericRepository">
+    <bean id="sequenceFileRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.SequenceFileSesameRepository">
         <constructor-arg ref="tripleStore" />
-        <constructor-arg>
-            <value type="java.lang.Class">ca.corefacility.bioinformatics.irida.model.SequenceFile</value>
-        </constructor-arg>
     </bean>
     
     <bean id="sequenceFileFilesystemRepository" class="ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileFilesystemRepository">

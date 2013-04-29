@@ -15,21 +15,25 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
+import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 
 /**
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class Identified implements Identifiable<Identifier>, IdentifiedIF{
+public class Identified implements Identifiable<Identifier>, Auditable<Audit>, IdentifiedIF{
     private Identifier id;
     private String data;
+    private Audit audit;
     
     public Identified(){}
     
     public Identified(String data){
         this.data = data;
+        this.audit = new Audit();
     }
     
     public String getData(){
@@ -50,4 +54,14 @@ public class Identified implements Identifiable<Identifier>, IdentifiedIF{
     public void setIdentifier(Identifier identifier) {
         this.id = identifier;
     }   
+
+    @Override
+    public Audit getAuditInformation() {
+        return audit;
+    }
+
+    @Override
+    public void setAuditInformation(Audit audit) {
+        this.audit = audit;
+    }
 }

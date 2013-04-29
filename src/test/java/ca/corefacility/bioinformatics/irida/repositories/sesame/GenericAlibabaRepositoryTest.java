@@ -114,6 +114,7 @@ public class GenericAlibabaRepositoryTest {
             assertNotNull(i);
         }
         catch(IllegalArgumentException e){
+            System.err.println(e.getMessage());
             fail();
         }
     }
