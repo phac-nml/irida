@@ -8,8 +8,6 @@
     
     <import resource="repositoriesContext.xml"/>
     
-    <context:property-placeholder location="classpath:ca/corefacility/bioinformatics/irida/config/filesystem.properties"/>
-    
     <bean id="userService" class="ca.corefacility.bioinformatics.irida.service.impl.UserServiceImpl">
         <constructor-arg ref="userRepository" />
         <constructor-arg ref="validator" />
@@ -29,8 +27,8 @@
     
     <bean id="sequenceFileService" class="ca.corefacility.bioinformatics.irida.service.impl.SequenceFileServiceImpl">
         <constructor-arg ref="sequenceFileRepository" />
+        <constructor-arg ref="sequenceFileFilesystemRepository" />
         <constructor-arg ref="validator" />
-        <constructor-arg value="${sequence.file.base.directory}" />
     </bean>
     
     <!-- validator beans -->
