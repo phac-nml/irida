@@ -1,50 +1,46 @@
-var irida = angular.module('irida', ['ngResource']);
-irida.controller(ProjectCtrl);
+var irida = angular.module('irida');
 
-function ProjectCtrl($scope, $window, dataStore) {
+function ProjectCtrl($scope, $route, $location, AjaxService) {
     'use strict';
-    $scope.name = " ";
-    $scope.links = [];
+    $scope.links = []
+    $scope.project = {};
 
-    $scope.init = function() {
-        var projectID = /\/projects\/(.*)$/.exec($window.location.pathname)[1];
-        dataStore.getData('/projects/' + projectID).then(
-                function(data) {
-                    initialAjaxCallback(data);
+//    $scope.init = function() {
+//        var projectID = /\/projects\/(.*)$/.exec($window.location.pathname)[1];
+//        dataStore.getData('/projects/' + projectID).then(
+//                function(data) {
+//                    initialAjaxCallback(data);
+//
+//                },
+//                function(errorMessage) {
+//// TODO: handle error message
+//                });
+//    };
+//
+//    function initialAjaxCallback(data) {
+//        "use strict";
+//        angular.forEach(data.resource.links, function(val) {
+//            $scope.links[val.rel] = val.href;
+//        });
+//        delete data.resource.links;
+//        $scope.name = data.resource.name;
+//    }
 
-                },
-                function(errorMessage) {
-// TODO: handle error message
-                });
-    };
+  var render = function () {
+    var id = $route.current.params.projectId;
+    AjaxService.get('/projects/' + id).then(
+      function(data) {
+        $scope.project = data.resource;
+      },
 
-    function initialAjaxCallback(data) {
-        "use strict";
-        angular.forEach(data.resource.links, function(val) {
-            $scope.links[val.rel] = val.href;
-        });
-        delete data.resource.links;
-        $scope.name = data.resource.name;
-    }
+      function(errorMessage) {
+        // TODO: handle error message
+        console.log(errorMessage);
+      });
+  };
 
+  $scope.$on('$routeChangeSuccess', function () {
+    render();
+  });
 }
-
-angular.module('irida')
-        .factory('dataStore', function($http, $q) {
-    "use strict";
-    return {
-        getData: function(url) {
-            var deferred = $q.defer();
-
-            $http.get(url)
-                    .success(function(data) {
-                deferred.resolve(data);
-            })
-                    .error(function() {
-                deferred.reject("An error occured while getting user data");
-            });
-
-            return deferred.promise;
-        }
-    };
-});
+irida.controller(ProjectCtrl);

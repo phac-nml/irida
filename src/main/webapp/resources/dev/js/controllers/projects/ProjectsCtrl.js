@@ -1,7 +1,7 @@
 /* global angular */
 var irida = angular.module('irida');
 
-function ProjectsListCtrl($scope, $window, AjaxService) {
+function ProjectsListCtrl($scope, $location, AjaxService) {
   'use strict';
   $scope.projects = [];
   $scope.links = {};
@@ -43,7 +43,7 @@ function ProjectsListCtrl($scope, $window, AjaxService) {
   };
 
   $scope.gotoProject = function(url) {
-    $window.location = url;
+    $location.path(url.match(/\/projects\/.*$/)[0]);
   };
 
   $scope.submitNewProject = function() {
@@ -72,7 +72,16 @@ function ProjectsListCtrl($scope, $window, AjaxService) {
     });
     $scope.projects = data.resources.resources;
   }
+
+  var render = function () {
+    $scope.loadProjects($scope.projectsUrl);
+  };
+
+  $scope.$on('$routeChangeSuccess', function () {
+    render();
+  });
 }
+irida.controller(ProjectsListCtrl);
 
 irida.factory('Projects', function($http, $q) {
   'use strict';

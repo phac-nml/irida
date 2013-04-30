@@ -247,7 +247,7 @@ select {
 /* Display & Box Model */
 /* Other */
 .ng-cloak {
-  display: none; }
+  display: none !important; }
 
 input.ng-invalid.ng-dirty {
   background-color: #FA787E; }
@@ -255,9 +255,43 @@ input.ng-invalid.ng-dirty {
 input.ng-valid.ng-dirty {
   background-color: #78FA89; }
 
-@media screen and (max-width: 48em) {
-  .small-screen-expand {
-    width: 100%; } }
+.nofifier-hide-setup, .notifier-show-setup {
+  -webkit-transition: all cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s;
+  -moz-transition: all cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s;
+  -o-transition: all cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s;
+  transition: all cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s; }
+
+.notifier-hide-setup {
+  opacity: 1; }
+
+.notifier-hide-setup.notifier-hide-start {
+  opacity: 0; }
+
+.notifier-show-setup {
+  opacity: 0; }
+
+.notifier-show-setup.notifier-show-start {
+  opacity: 1; }
+
+.notifier {
+  width: 150px;
+  padding: 1em;
+  position: absolute;
+  left: 50%;
+  top: 0;
+  margin-left: -75px;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-bottom: 2px solid #dddddd;
+  border-radius: 0 0 10px 10px;
+  color: #dddddd;
+  text-align: center;
+  z-index: 1000; }
+  .notifier i {
+    display: block;
+    font-size: 5em;
+    margin-bottom: 10px; }
+  .notifier span {
+    display: block; }
 
 /* ==========================================================================
    PAGES
@@ -328,3 +362,9 @@ input.ng-valid.ng-dirty {
   text-align: center;
   width: 1.6em;
   float: right; }
+
+.editForm input {
+  border: none;
+  box-shadow: none; }
+  .editForm input:hover {
+    background-color: palegoldenrod; }
