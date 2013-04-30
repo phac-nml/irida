@@ -361,8 +361,10 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
         ObjectConnection con = store.getRepoConnection();
         try{
             String qs = store.getPrefixes()
-                    + "SELECT * "
+                    + "SELECT ?s "
                     + "WHERE{ ?s a ?type . \n"
+                    + "?a irida:forResource ?s \n."
+                    + "?a irida:createdDate ?createdDate .\n"
                     + "}";
             
             qs += SparqlQuery.setOrderBy(sortProperty, order);
