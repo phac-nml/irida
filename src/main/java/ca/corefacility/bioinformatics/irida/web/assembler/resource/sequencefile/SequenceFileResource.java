@@ -17,11 +17,9 @@ package ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.File;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Resource wrapper for {@link SequenceFile}.
@@ -30,9 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @XmlRootElement(name = "sequenceFile")
 public class SequenceFileResource extends Resource<SequenceFile> {
-
-    @JsonIgnore
-    private MultipartFile file;
 
     public SequenceFileResource() {
         super(new SequenceFile());
@@ -45,9 +40,5 @@ public class SequenceFileResource extends Resource<SequenceFile> {
     @XmlElement
     public File getFile() {
         return resource.getFile();
-    }
-
-    public void setFile(MultipartFile file) {
-        this.file = file;
     }
 }
