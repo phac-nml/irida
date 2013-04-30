@@ -23,6 +23,7 @@ import com.google.common.net.HttpHeaders;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import org.slf4j.Logger;
@@ -76,7 +77,9 @@ public class SequenceFileController extends GenericController<Identifier, Sequen
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> create(@RequestParam("file") MultipartFile file) throws IOException {
         Path temp = Files.createTempFile(null, null);
+        Path target = Paths.get(temp.getParent().toString(), file.getOriginalFilename());
         Files.write(temp, file.getBytes());
+        temp = Files.move(temp, target);
         SequenceFile sf = new SequenceFile(temp.toFile());
         sf = crudService.create(sf);
         String identifier = sf.getIdentifier().getIdentifier();
