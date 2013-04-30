@@ -17,12 +17,11 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.dao.SparqlQuery;
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
-import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
-import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
@@ -189,7 +188,7 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
     public abstract Type buildObject(TypeIF base,IDType i);
     
     @Override
-    public Type create(Type object) throws IllegalArgumentException {
+    public Type create(Type object) throws IllegalArgumentException, EntityExistsException {
         if (object == null) {
             throw new IllegalArgumentException("Object is null");
         }
@@ -201,7 +200,7 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
         Identifier objid = generateIdentifier(object);
         
         if (exists(objid)) {
-            throw new IllegalArgumentException("Object " + objid.getUri().toString() + " already exists in the database");
+            throw new EntityExistsException("Object " + objid.getUri().toString() + " already exists in the database");
         }
 
         object.setIdentifier((IDType) objid);
@@ -220,6 +219,14 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
         }            
         catch (RepositoryException ex) {
             Logger.getLogger(GenericRepository.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        finally{
+            try {
+                con.close();
+            } catch (RepositoryException ex) {
+                logger.error(ex.getMessage());
+                throw new StorageException("Failed to close connection");
+            }            
         }
         
         return object;
@@ -248,6 +255,7 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
         BindingSet bs = result.next();
         
         id = bs.getBinding("id").getValue().stringValue();
+        result.close();
         
         return id;
     }
@@ -298,7 +306,7 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
         
         if (!exists(id)) {
             throw new EntityNotFoundException("No such object with the given URI exists.");
-        }        
+        }
         
         ObjectConnection con = store.getRepoConnection();
         
@@ -348,7 +356,7 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
     @Override
     public void delete(Identifier id) throws EntityNotFoundException {
         if (!exists(id)) {
-            throw new IllegalArgumentException("Object does not exist in the database.");            
+            throw new EntityNotFoundException("Object does not exist in the database.");            
         }
         
         ObjectConnection con = store.getRepoConnection();

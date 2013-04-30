@@ -186,7 +186,7 @@ public class GenericAlibabaRepositoryTest {
             repo.delete(i);
             fail();
         }
-        catch(IllegalArgumentException e){}
+        catch(EntityNotFoundException e){}
     }    
     /**
      * Test of exists method, of class GenericRepository.
