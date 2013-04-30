@@ -78,10 +78,9 @@ public class TripleStore {
      */
     public void initialize(){
         try {
-            repo.initialize();
             orf = new ObjectRepositoryFactory();
-            objectRepo = orf.createRepository(repo);            
-
+            objectRepo = orf.createRepository(repo);
+            objectRepo.initialize();
         } catch (RepositoryException | RepositoryConfigException ex) {
             logger.error(ex.getMessage());
         }      
@@ -134,7 +133,6 @@ public class TripleStore {
     public void close() {
         try {
             objectRepo.shutDown();
-            repo.shutDown();
         } catch (RepositoryException ex) {
             logger.error(ex.getMessage());
             throw new StorageException("Could not shut down repository");
