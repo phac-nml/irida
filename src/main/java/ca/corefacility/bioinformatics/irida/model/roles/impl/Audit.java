@@ -16,6 +16,7 @@
 package ca.corefacility.bioinformatics.irida.model.roles.impl;
 
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.alibaba.AuditIF;
 import java.util.Date;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
@@ -25,7 +26,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class Audit implements Comparable<Audit> {
+public class Audit implements AuditIF,Comparable<Audit> {
 
     @NotNull
     private Date created;
