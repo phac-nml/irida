@@ -78,9 +78,7 @@ public class SequenceFileController extends GenericController<Identifier, Sequen
         Path temp = Files.createTempFile(null, null);
         Files.write(temp, file.getBytes());
         SequenceFile sf = new SequenceFile(temp.toFile());
-        // sf = crudService.create(sf);
-        Identifier id = new Identifier();
-        sf.setIdentifier(id);
+        sf = crudService.create(sf);
         String identifier = sf.getIdentifier().getIdentifier();
         String location = linkTo(SequenceFileController.class).slash(identifier).withSelfRel().getHref();
         MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap();
