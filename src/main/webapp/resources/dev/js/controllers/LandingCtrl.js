@@ -1,7 +1,7 @@
 /* global angular */
 var irida = angular.module('irida');
 
-function LandingCtrl ($scope) {
+function LandingCtrl ($scope, MessagingService) {
   "use strict";
 
 }

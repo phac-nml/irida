@@ -1,29 +1,31 @@
 /* global angular */
 var irida = angular.module('irida');
 
-function UsersListCtrl($scope, $location, AjaxService) {
+function UsersListCtrl($scope, $route, $location, AjaxService) {
   'use strict';
   $scope.users = [];
   $scope.usersUrl = '/users' + '?_' + Math.random();
 
-  $scope.loadUsers = function(url) {
-    AjaxService.get(url).then(
+  $scope.loadUsers = function (url) {
+    if (url) {
+      AjaxService.get(url).then(
 
-    function(data) {
-      ajaxSuccessCallback(data);
-    },
+        function (data) {
+          ajaxSuccessCallback(data);
+        },
 
-    function(errorMessage) {
-      // TODO: handle error message
-      console.log(errorMessage);
-    });
+        function (errorMessage) {
+          // TODO: handle error message
+          console.log(errorMessage);
+        });
+    }
   };
 
-  $scope.gotoUser = function(url) {
-    $location.path( url.match(/\/users\/.*$/)[0]);
+  $scope.gotoUser = function (url) {
+    $location.path(url.match(/\/users\/.*$/)[0]);
   };
 
-  $scope.clearForm = function() {
+  $scope.clearForm = function () {
     $scope.newUser = {};
     $scope.errors = {};
 
@@ -44,22 +46,22 @@ function UsersListCtrl($scope, $location, AjaxService) {
     $scope.newUserForm.$pristine = true;
   };
 
-  $scope.submitNewUser = function() {
+  $scope.submitNewUser = function () {
     if ($scope.newUserForm.$valid) {
       AjaxService.create('/users', $scope.newUser).then(
 
-      function() {
-        $scope.loadUsers($scope.usersUrl);
-        $scope.clearForm();
-        $('#newUserModal').foundation('reveal', 'close');
-      },
+        function () {
+          $scope.loadUsers($scope.usersUrl);
+          $scope.clearForm();
+          $('#newUserModal').foundation('reveal', 'close');
+        },
 
-      function(data) {
-        $scope.errors = {};
-        angular.forEach(data, function(error, key) {
-          $scope.errors[key] = data[key].join('</br>');
+        function (data) {
+          $scope.errors = {};
+          angular.forEach(data, function (error, key) {
+            $scope.errors[key] = data[key].join('</br>');
+          });
         });
-      });
     } else {
       console.log('NOT VALID');
     }
@@ -72,5 +74,9 @@ function UsersListCtrl($scope, $location, AjaxService) {
     });
     $scope.users = data.resources.resources;
   }
+
+  $scope.$on('$routeChangeSuccess', function () {
+    $(document).foundation('reveal', {});
+  });
 }
 irida.controller(UsersListCtrl);
