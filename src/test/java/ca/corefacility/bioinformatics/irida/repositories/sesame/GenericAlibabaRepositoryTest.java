@@ -15,7 +15,6 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
-import ca.corefacility.bioinformatics.irida.dao.PropertyMapper;
 import ca.corefacility.bioinformatics.irida.dao.SailMemoryStore;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
@@ -43,7 +42,6 @@ public class GenericAlibabaRepositoryTest {
         store.initialize();
         
         repo = new IdentifiedRepo(store);
-        PropertyMapper map = new PropertyMapper(Identified.class,"irida", "Identified");
         
         repo.create(new Identified("data1"));
         repo.create(new Identified("data2"));

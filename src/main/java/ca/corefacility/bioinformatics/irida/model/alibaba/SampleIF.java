@@ -15,6 +15,8 @@
  */
 package ca.corefacility.bioinformatics.irida.model.alibaba;
 
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import org.openrdf.annotations.Iri;
 
 /**
@@ -22,7 +24,7 @@ import org.openrdf.annotations.Iri;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Iri(SampleIF.PREFIX + SampleIF.TYPE)
-public interface SampleIF extends Thing{
+public interface SampleIF extends Thing<Audit,Identifier>{
     
     public static final String PREFIX = "http://corefacility.ca/irida/";
     public static final String TYPE = "Sample";

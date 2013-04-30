@@ -15,6 +15,10 @@
  */
 package ca.corefacility.bioinformatics.irida.model.alibaba;
 
+import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
+import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import org.openrdf.annotations.Iri;
 
 /**
@@ -22,5 +26,5 @@ import org.openrdf.annotations.Iri;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 
-public interface Thing {
+public interface Thing<AuditType extends Audit,IDType extends Identifier> extends Auditable<AuditType>, Identifiable<IDType>{
 }

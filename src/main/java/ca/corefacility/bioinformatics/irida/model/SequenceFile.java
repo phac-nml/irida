@@ -30,7 +30,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class SequenceFile implements SequenceFileIF, Auditable<Audit>, Identifiable<Identifier>, Comparable<SequenceFile> {
+public class SequenceFile implements SequenceFileIF, Comparable<SequenceFile> {
 
     private Identifier id;
     @NotNull

@@ -24,7 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class Identified implements Identifiable<Identifier>, Auditable<Audit>, IdentifiedIF{
+public class Identified implements IdentifiedIF{
     private Identifier id;
     private String data;
     private Audit audit;

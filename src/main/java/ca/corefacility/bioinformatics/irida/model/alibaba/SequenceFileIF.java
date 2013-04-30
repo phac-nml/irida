@@ -15,6 +15,8 @@
  */
 package ca.corefacility.bioinformatics.irida.model.alibaba;
 
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import java.io.File;
 import org.openrdf.annotations.Iri;
 
@@ -23,7 +25,7 @@ import org.openrdf.annotations.Iri;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Iri(SequenceFileIF.PREFIX + SequenceFileIF.TYPE)
-public interface SequenceFileIF extends Thing{
+public interface SequenceFileIF extends Thing<Audit,Identifier>{
     public static final String PREFIX = "http://corefacility.ca/irida/";
     public static final String TYPE = "SequenceFile";
     

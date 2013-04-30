@@ -19,7 +19,7 @@ import org.hibernate.validator.constraints.Email;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class User implements UserIF, Comparable<User>, Auditable<Audit>, Identifiable<UserIdentifier> {
+public class User implements UserIF, Comparable<User>{
 
     private UserIdentifier id;
     @NotNull(message = "{user.username.notnull}")

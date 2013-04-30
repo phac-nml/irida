@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class Project implements ProjectIF, Comparable<Project>, Auditable<Audit>, Identifiable<Identifier>{
+public class Project implements ProjectIF, Comparable<Project>{
 
     private Identifier id;
     @NotNull(message = "{project.name.notnull}")

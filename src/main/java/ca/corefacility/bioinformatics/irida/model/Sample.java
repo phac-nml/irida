@@ -32,7 +32,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class Sample implements SampleIF, Auditable<Audit>, Identifiable<Identifier>, Comparable<Sample> {
+public class Sample implements SampleIF, Comparable<Sample>{
 
     private Identifier id;
     @NotNull
