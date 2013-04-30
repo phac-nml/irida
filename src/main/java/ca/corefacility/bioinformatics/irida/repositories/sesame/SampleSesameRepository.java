@@ -15,9 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
-import ca.corefacility.bioinformatics.irida.dao.PropertyMapper;
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
-import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.alibaba.SampleIF;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;

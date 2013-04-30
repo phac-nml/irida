@@ -25,10 +25,8 @@ import ca.corefacility.bioinformatics.irida.model.alibaba.UserIF;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
-import static ca.corefacility.bioinformatics.irida.repositories.sesame.GenericRepository.userParams;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import org.openrdf.model.Literal;
@@ -116,7 +114,6 @@ public class UserSesameRepository extends GenericAlibabaRepository<UserIdentifie
      */
     @Override
     public User getUserByUsername(String username) throws EntityNotFoundException {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 
         User ret = null;
         if (!checkUsernameExists(username)) {
@@ -125,8 +122,6 @@ public class UserSesameRepository extends GenericAlibabaRepository<UserIdentifie
 
         ObjectConnection con = store.getRepoConnection();
         try {
-            HashMap<String, String> mySet = new HashMap<>(userParams);
-            mySet.remove("foaf:nick");
 
             String qs = store.getPrefixes()
                     + "SELECT * "

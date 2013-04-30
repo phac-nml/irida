@@ -397,12 +397,13 @@ public abstract class GenericAlibabaRepository<IDType extends Identifier, TypeIF
                     + "}";
             
             qs += SparqlQuery.setOrderBy(sortProperty, order);
-            qs += SparqlQuery.setLimitOffset(page, size);            
-
-            ObjectQuery tupleQuery = con.prepareObjectQuery(QueryLanguage.SPARQL, qs);
-            tupleQuery.setType("type", objectType);
+            qs += SparqlQuery.setLimitOffset(page, size);
             
-            Result<TypeIF> result = (Result<TypeIF>) tupleQuery.evaluate(objectType);
+            
+            ObjectQuery query = con.prepareObjectQuery(QueryLanguage.SPARQL, qs);
+            query.setType("type", objectType);
+            
+            Result<TypeIF> result = (Result<TypeIF>) query.evaluate(objectType);
             //Set<TypeIF> resSet = result.asSet();
             //for(TypeIF o : resSet){
             while(result.hasNext()){
