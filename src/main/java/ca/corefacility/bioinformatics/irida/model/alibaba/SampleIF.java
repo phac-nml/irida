@@ -24,7 +24,7 @@ import org.openrdf.annotations.Iri;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Iri(SampleIF.PREFIX + SampleIF.TYPE)
-public interface SampleIF extends Thing<Audit,Identifier>{
+public interface SampleIF extends IridaThing<Audit,Identifier>{
     
     public static final String PREFIX = "http://corefacility.ca/irida/";
     public static final String TYPE = "Sample";

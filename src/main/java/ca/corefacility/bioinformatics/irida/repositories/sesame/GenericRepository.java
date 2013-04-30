@@ -19,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.dao.SparqlQuery;
 import ca.corefacility.bioinformatics.irida.dao.TripleStore;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
-import ca.corefacility.bioinformatics.irida.model.alibaba.Thing;
+import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
@@ -58,22 +58,21 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-//public abstract class GenericAlibabaRepository<TypeIF extends Thing, Type extends Identifiable<Identifier>> implements CRUDRepository<Identifier, Type> {
-public abstract class GenericAlibabaRepository<IDType extends Identifier, TypeIF extends Thing, Type extends Identifiable<IDType> & Auditable<Audit>> implements CRUDRepository<IDType, Type> {
+public abstract class GenericRepository<IDType extends Identifier, TypeIF extends IridaThing, Type extends IridaThing> implements CRUDRepository<IDType, Type> {
     
     TripleStore store;
     String URI; //The base URI for objects of this type 
     
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(GenericAlibabaRepository.class);
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(GenericRepository.class);
     
     Class<Type> objectType; //The class object type being stored by this repo
     private String prefix; //String representation of that type
     private String sType;
 
-    public GenericAlibabaRepository() {
+    public GenericRepository() {
     }
 
-    public GenericAlibabaRepository(TripleStore store, Class type,String prefix, String sType) {
+    public GenericRepository(TripleStore store, Class type,String prefix, String sType) {
         this.store = store;
         this.prefix = prefix;
         this.sType = sType;        
@@ -195,7 +194,7 @@ public abstract class GenericAlibabaRepository<IDType extends Identifier, TypeIF
             throw new IllegalArgumentException("Object is null");
         }
         
-        Audit audit = object.getAuditInformation();
+        Audit audit = (Audit) object.getAuditInformation();
          
         ObjectConnection con = store.getRepoConnection();
         
@@ -220,7 +219,7 @@ public abstract class GenericAlibabaRepository<IDType extends Identifier, TypeIF
             con.commit();
         }            
         catch (RepositoryException ex) {
-            Logger.getLogger(GenericAlibabaRepository.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GenericRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         return object;
@@ -339,7 +338,7 @@ public abstract class GenericAlibabaRepository<IDType extends Identifier, TypeIF
 
     @Override
     public Type update(Type object) throws IllegalArgumentException {
-        delete(object.getIdentifier());
+        delete((Identifier) object.getIdentifier());
 
         object = create(object);
 

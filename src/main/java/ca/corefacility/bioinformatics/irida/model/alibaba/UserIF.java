@@ -24,7 +24,7 @@ import org.openrdf.annotations.Iri;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Iri(UserIF.PREFIX + UserIF.TYPE)
-public interface UserIF extends Thing<Audit,UserIdentifier>{
+public interface UserIF extends IridaThing<Audit,UserIdentifier>{
     public static final String PREFIX = "http://xmlns.com/foaf/0.1/";
     public static final String TYPE = "Person";
     

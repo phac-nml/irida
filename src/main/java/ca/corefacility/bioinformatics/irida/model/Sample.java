@@ -31,6 +31,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  * A biological sample. Each sample may correspond to many files.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class Sample implements SampleIF, Comparable<Sample>{
 

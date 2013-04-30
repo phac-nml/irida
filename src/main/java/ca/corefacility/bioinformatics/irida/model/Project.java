@@ -18,6 +18,7 @@ import javax.validation.constraints.NotNull;
  * A project object.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca> 
  */
 public class Project implements ProjectIF, Comparable<Project>{
 

@@ -15,7 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
-import ca.corefacility.bioinformatics.irida.model.alibaba.Thing;
+import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import org.openrdf.annotations.Iri;
@@ -25,7 +25,7 @@ import org.openrdf.annotations.Iri;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Iri(IdentifiedIF.PREFIX + IdentifiedIF.TYPE)
-public interface IdentifiedIF extends Thing<Audit,Identifier>{
+public interface IdentifiedIF extends IridaThing<Audit,Identifier>{
     public static final String PREFIX = "http://nowhere/";
     public static final String TYPE = "Identified";  
     

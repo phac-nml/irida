@@ -31,7 +31,7 @@ import org.junit.Before;
  */
 public class GenericAlibabaRepositoryTest {
     
-    GenericAlibabaRepository<Identifier,IdentifiedIF,Identified> repo;
+    GenericRepository<Identifier,IdentifiedIF,Identified> repo;
     
     public GenericAlibabaRepositoryTest() {
     }

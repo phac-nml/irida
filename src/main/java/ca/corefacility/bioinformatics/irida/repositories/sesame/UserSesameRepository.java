@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class UserSesameRepository extends GenericAlibabaRepository<UserIdentifier,UserIF, User> implements UserRepository {
+public class UserSesameRepository extends GenericRepository<UserIdentifier,UserIF, User> implements UserRepository {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(UserSesameRepository.class);
 

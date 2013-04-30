@@ -29,6 +29,7 @@ import javax.validation.constraints.NotNull;
  * particular {@link Sample}.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class SequenceFile implements SequenceFileIF, Comparable<SequenceFile> {
 

@@ -18,6 +18,7 @@ import org.hibernate.validator.constraints.Email;
  * A user object.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class User implements UserIF, Comparable<User>{
 

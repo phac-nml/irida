@@ -26,5 +26,5 @@ import org.openrdf.annotations.Iri;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 
-public interface Thing<AuditType extends Audit,IDType extends Identifier> extends Auditable<AuditType>, Identifiable<IDType>{
+public interface IridaThing<AuditType extends Audit,IDType extends Identifier> extends Auditable<AuditType>, Identifiable<IDType>{
 }

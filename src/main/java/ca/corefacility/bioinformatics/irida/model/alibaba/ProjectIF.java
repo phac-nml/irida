@@ -24,7 +24,7 @@ import org.openrdf.annotations.Iri;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Iri(ProjectIF.PREFIX + ProjectIF.TYPE)
-public interface ProjectIF extends Thing<Audit,Identifier>{
+public interface ProjectIF extends IridaThing<Audit,Identifier>{
     
     public static final String PREFIX = "http://corefacility.ca/irida/";
     public static final String TYPE = "Project";

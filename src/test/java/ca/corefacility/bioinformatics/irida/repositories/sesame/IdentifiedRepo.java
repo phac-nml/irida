@@ -22,7 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class IdentifiedRepo extends GenericAlibabaRepository<Identifier,IdentifiedIF, Identified> {
+public class IdentifiedRepo extends GenericRepository<Identifier,IdentifiedIF, Identified> {
     
     public IdentifiedRepo(){}
     

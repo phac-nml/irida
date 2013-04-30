@@ -24,7 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class SequenceFileSesameRepository extends GenericAlibabaRepository<Identifier, SequenceFileIF, SequenceFile>{
+public class SequenceFileSesameRepository extends GenericRepository<Identifier, SequenceFileIF, SequenceFile>{
 
     public SequenceFileSesameRepository(){}
     
