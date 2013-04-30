@@ -229,6 +229,18 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     }
 
     /**
+     * Handle {@link Exception}.
+     *
+     * @param e the exception as thrown by the service.
+     * @return an appropriate HTTP response.
+     */
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleAllOtherExceptions(Exception e) {
+        e.printStackTrace();
+        return new ResponseEntity<>("Server error.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
      * Handle {@link InvalidPropertyException}.
      *
      * @param e the exception as thrown by the service.

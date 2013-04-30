@@ -1,22 +1,4 @@
-<form ng-upload="" action="/upload-full-form">
-    <p>
-        <label>Fullname:</label>
-        <input type="text" name="fullname" ng-model="fullname" />
-    </p>
-    <p>
-        <label>Gender:</label>
-        <input type="text" name="gender" ng-model="gender" />
-    </p>
-    <p>
-        <label>Favourite Color:</label>
-        <input type="text" name="color" ng-model="color"/>
-    </p>
-    <p>
-        <label>Your picture (file will not be saved on the server):</label>
-        <input type="file" name="file" />
-    </p>
-    <p>
-        <input type="submit" class="btn" value="Submit"
-               upload-submit="uploadComplete(contents, completed)" />
-    </p>
+<form method="POST" action="/sequenceFiles">
+    <input name="file" type="file" fileuploader=""/>
+    <button class="button round" type="submit" >Submit</button>
 </form>
