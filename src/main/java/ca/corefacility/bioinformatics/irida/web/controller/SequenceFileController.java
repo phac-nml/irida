@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
 import com.google.common.net.HttpHeaders;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -76,12 +77,14 @@ public class SequenceFileController extends GenericController<Identifier, Sequen
      */
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> create(@RequestParam("file") MultipartFile file) throws IOException {
-        Path temp = Files.createTempFile(null, null);
-        Path target = Paths.get(temp.getParent().toString(), file.getOriginalFilename());
-        Files.write(temp, file.getBytes());
-        temp = Files.move(temp, target);
-        SequenceFile sf = new SequenceFile(temp.toFile());
+        Path temp = Files.createTempDirectory(null);
+        Path target = temp.resolve(file.getOriginalFilename());
+        target = Files.write(target, file.getBytes());
+        File f = target.toFile();
+        SequenceFile sf = new SequenceFile(f);
         sf = crudService.create(sf);
+        f.delete();
+        temp.toFile().delete();
         String identifier = sf.getIdentifier().getIdentifier();
         String location = linkTo(SequenceFileController.class).slash(identifier).withSelfRel().getHref();
         MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap();
