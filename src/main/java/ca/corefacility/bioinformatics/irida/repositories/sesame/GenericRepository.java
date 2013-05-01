@@ -31,15 +31,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
-import org.openrdf.query.Binding;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.MalformedQueryException;
@@ -73,15 +69,14 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
     public GenericRepository() {
     }
 
-    public GenericRepository(TripleStore store, Class type,String prefix, String sType) {
+    public GenericRepository(TripleStore store, Class type,String prefix, String sType,AuditRepository auditRepo) {
         this.store = store;
         this.prefix = prefix;
-        this.sType = sType;        
+        this.sType = sType;
+        this.auditRepo = auditRepo;
         
         URI = store.getURI() + sType + "/";
-        
-        auditRepo = new AuditRepository(store,store.getURI());
-        
+                
         this.objectType = type;
     }
 

@@ -26,8 +26,8 @@ public class IdentifiedRepo extends GenericRepository<Identifier,IdentifiedIF, I
     
     public IdentifiedRepo(){}
     
-    public IdentifiedRepo(TripleStore store) {
-        super(store,IdentifiedIF.class,IdentifiedIF.PREFIX,IdentifiedIF.TYPE);
+    public IdentifiedRepo(TripleStore store,AuditRepository auditRepo) {
+        super(store,IdentifiedIF.class,IdentifiedIF.PREFIX,IdentifiedIF.TYPE,auditRepo);
 
     }
     @Override

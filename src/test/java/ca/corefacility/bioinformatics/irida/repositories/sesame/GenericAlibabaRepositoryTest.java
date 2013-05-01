@@ -40,8 +40,9 @@ public class GenericAlibabaRepositoryTest {
     public void setUp() throws NoSuchMethodException {
         SailMemoryStore store = new SailMemoryStore();
         store.initialize();
+        AuditRepository auditRepo = new AuditRepository(store);
         
-        repo = new IdentifiedRepo(store);
+        repo = new IdentifiedRepo(store,auditRepo);
         
         repo.create(new Identified("data1"));
         repo.create(new Identified("data2"));

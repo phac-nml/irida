@@ -53,9 +53,9 @@ public class AuditRepository {
     
     public AuditRepository(){}
     
-    public AuditRepository(TripleStore store,String URI){
+    public AuditRepository(TripleStore store){
         this.store = store;
-        this.URI = URI + "Audit/";
+        this.URI = store.getURI() + "Audit/";
     }
     
     public String getAuditURI(String uri) throws RepositoryException{

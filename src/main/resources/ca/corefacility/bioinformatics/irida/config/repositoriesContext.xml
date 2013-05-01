@@ -27,6 +27,10 @@
         <constructor-arg ref="tripleStore" />
     </bean>
     
+    <bean id="auditRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.AuditRepository">
+        <constructor-arg ref="tripleStore" />
+    </bean>
+    
     <bean id="sequenceFileFilesystemRepository" class="ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileFilesystemRepository">
         <constructor-arg value="${sequence.file.base.directory}" />
     </bean>

@@ -46,8 +46,8 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProjectSe
 
     public ProjectSesameRepository(){}
     
-    public ProjectSesameRepository(TripleStore store) {
-        super(store,ProjectIF.class,ProjectIF.PREFIX,ProjectIF.TYPE);
+    public ProjectSesameRepository(TripleStore store,AuditRepository auditRepo) {
+        super(store,ProjectIF.class,ProjectIF.PREFIX,ProjectIF.TYPE,auditRepo);
 
     }
     

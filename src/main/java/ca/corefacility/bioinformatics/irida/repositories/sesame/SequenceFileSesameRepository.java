@@ -28,8 +28,8 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
 
     public SequenceFileSesameRepository(){}
     
-    public SequenceFileSesameRepository(TripleStore store) {
-        super(store,SequenceFileIF.class,SequenceFile.PREFIX,SequenceFile.TYPE);
+    public SequenceFileSesameRepository(TripleStore store,AuditRepository auditRepo) {
+        super(store,SequenceFileIF.class,SequenceFile.PREFIX,SequenceFile.TYPE,auditRepo);
     }
     
     @Override
