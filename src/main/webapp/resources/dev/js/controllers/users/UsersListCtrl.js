@@ -10,14 +10,14 @@ function UsersListCtrl($scope, $route, $location, AjaxService) {
     if (url) {
       AjaxService.get(url).then(
 
-        function (data) {
-          ajaxSuccessCallback(data);
-        },
+      function (data) {
+        ajaxSuccessCallback(data);
+      },
 
-        function (errorMessage) {
-          // TODO: handle error message
-          console.log(errorMessage);
-        });
+      function (errorMessage) {
+        // TODO: handle error message
+        console.log(errorMessage);
+      });
     }
   };
 
@@ -50,18 +50,18 @@ function UsersListCtrl($scope, $route, $location, AjaxService) {
     if ($scope.newUserForm.$valid) {
       AjaxService.create('/users', $scope.newUser).then(
 
-        function () {
-          $scope.loadUsers($scope.usersUrl);
-          $scope.clearForm();
-          $('#newUserModal').foundation('reveal', 'close');
-        },
+      function () {
+        $scope.loadUsers($scope.usersUrl);
+        $scope.clearForm();
+        $('#newUserModal').foundation('reveal', 'close');
+      },
 
-        function (data) {
-          $scope.errors = {};
-          angular.forEach(data, function (error, key) {
-            $scope.errors[key] = data[key].join('</br>');
-          });
+      function (data) {
+        $scope.errors = {};
+        angular.forEach(data, function (error, key) {
+          $scope.errors[key] = data[key].join('</br>');
         });
+      });
     } else {
       console.log('NOT VALID');
     }

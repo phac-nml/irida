@@ -1,4 +1,4 @@
-/* global angular, console, LandingCtrl, ProjectCtrl, ProjectsListCtrl, UsersListCtrl, UserCtrl, FileUploaderCtrl */
+/* global angular, console, LandingCtrl, ProjectCtrl, ProjectsListCtrl, UsersListCtrl, UserCtrl */
 
 angular.module('irida', ['irida.services', 'irida.directives', 'ui'])
     .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
@@ -30,11 +30,6 @@ angular.module('irida', ['irida.services', 'irida.directives', 'ui'])
         '/users/:username', {
         templateUrl: './partials/user.html',
         controller: UserCtrl
-    })
-        .when(
-        '/uploader', {
-        templateUrl: './partials/fileTest.html',
-        controller: FileUploaderCtrl
     })
         .when(
         '/logout', {
