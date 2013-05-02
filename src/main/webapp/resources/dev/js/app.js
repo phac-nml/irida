@@ -1,6 +1,6 @@
 /* global angular, console, LandingCtrl, ProjectCtrl, ProjectsListCtrl, UsersListCtrl, UserCtrl, FileUploaderCtrl */
 
-angular.module('irida', ['irida.services', 'irida.directives', 'ui', 'ngUpload'])
+angular.module('irida', ['irida.services', 'irida.directives', 'ui'])
     .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
     "use strict";
 
