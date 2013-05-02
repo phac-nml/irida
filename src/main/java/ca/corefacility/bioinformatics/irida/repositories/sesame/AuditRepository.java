@@ -15,7 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
-import ca.corefacility.bioinformatics.irida.dao.TripleStore;
+import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.alibaba.AuditIF;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
@@ -93,7 +93,7 @@ public class AuditRepository {
                 URI aURIo = fac.createURI(aURI);
                 Statement st = fac.createStatement(aURIo, pred, ouri);
 
-                con.add(st);                 
+                con.add(st);
             }
             
             result.close();

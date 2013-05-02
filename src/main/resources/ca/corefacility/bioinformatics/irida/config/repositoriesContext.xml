@@ -40,7 +40,7 @@
     </bean>
     
     <beans profile="dev">
-        <bean id="exampleData" init-method="addSampleData" class="ca.corefacility.bioinformatics.irida.dao.ExampleDataLoader">
+        <bean id="exampleData" init-method="addSampleData" class="ca.corefacility.bioinformatics.irida.repositories.sesame.dao.ExampleDataLoader">
             <constructor-arg ref="userRepository" />
             <constructor-arg ref="projectRepository" />
         </bean>

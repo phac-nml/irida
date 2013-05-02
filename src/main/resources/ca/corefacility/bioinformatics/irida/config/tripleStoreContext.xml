@@ -8,7 +8,7 @@
     
     <beans profile="production">
         
-        <bean id="tripleStore" init-method="initialize" destroy-method="close" class="ca.corefacility.bioinformatics.irida.dao.TripleStore">
+        <bean id="tripleStore" init-method="initialize" destroy-method="close" class="ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore">
             <constructor-arg value="${db.uri}"/>
             <constructor-arg value="${db.instance}"/>
             <constructor-arg value="${db.base_uri}"/>
@@ -16,7 +16,7 @@
     </beans>
     
     <beans profile="dev">
-        <bean id="tripleStore" init-method="initialize" destroy-method="close" class="ca.corefacility.bioinformatics.irida.dao.SailMemoryStore"/>
+        <bean id="tripleStore" init-method="initialize" destroy-method="close" class="ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SailMemoryStore"/>
     </beans>
     
 </beans>
