@@ -1,1 +1,0 @@
-function FileUploaderCtrl(e){"use strict";}var irida=angular.module("irida");irida.controller(FileUploaderCtrl);

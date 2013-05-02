@@ -9,22 +9,22 @@ function ProjectsListCtrl($scope, $location, AjaxService) {
   $scope.errors = {};
   $scope.projectsUrl = '/projects' + '?_' + Math.random();
 
-  $scope.loadProjects = function(url) {
+  $scope.loadProjects = function (url) {
     if (url) {
       AjaxService.get(url).then(
 
-      function(data) {
+      function (data) {
         ajaxSuccessCallback(data);
       },
 
-      function(errorMessage) {
+      function (errorMessage) {
         // TODO: handle error message
         console.log(errorMessage);
       });
     }
   };
 
-  $scope.clearForm = function() {
+  $scope.clearForm = function () {
     $scope.newProject = {};
     $scope.errors = {};
 
@@ -42,23 +42,23 @@ function ProjectsListCtrl($scope, $location, AjaxService) {
     $scope.newProjectForm.$pristine = true;
   };
 
-  $scope.gotoProject = function(url) {
+  $scope.gotoProject = function (url) {
     $location.path(url.match(/\/projects\/.*$/)[0]);
   };
 
-  $scope.submitNewProject = function() {
+  $scope.submitNewProject = function () {
     if ($scope.newProjectForm.$valid) {
       AjaxService.create('/projects', $scope.newProject).then(
 
-      function() {
+      function () {
         $scope.loadProjects($scope.projectsUrl);
         $scope.clearForm();
         $('#newProjectModal').foundation('reveal', 'close');
       },
 
-      function(data) {
+      function (data) {
         $scope.errors = {};
-        angular.forEach(data, function(error, key) {
+        angular.forEach(data, function (error, key) {
           $scope.errors[key] = data[key].join('</br>');
         });
       });
@@ -67,7 +67,7 @@ function ProjectsListCtrl($scope, $location, AjaxService) {
 
   function ajaxSuccessCallback(data) {
     $scope.links = {};
-    angular.forEach(data.resources.links, function(val) {
+    angular.forEach(data.resources.links, function (val) {
       $scope.links[val.rel] = val.href;
     });
     $scope.projects = data.resources.resources;
@@ -83,10 +83,10 @@ function ProjectsListCtrl($scope, $location, AjaxService) {
 }
 irida.controller(ProjectsListCtrl);
 
-irida.factory('Projects', function($http, $q) {
+irida.factory('Projects', function ($http, $q) {
   'use strict';
   return {
-    create: function(data) {
+    create: function (data) {
       var deferred = $q.defer();
       $http({
         method: 'POST',
@@ -96,22 +96,22 @@ irida.factory('Projects', function($http, $q) {
           'Content-Type': 'application/json'
         }
       })
-        .success(function(data) {
+        .success(function (data) {
         deferred.resolve(data);
       })
-        .error(function(data) {
+        .error(function (data) {
         deferred.reject(data);
       });
       return deferred.promise;
     },
-    getProjects: function(url) {
+    getProjects: function (url) {
       var deferred = $q.defer();
 
       $http.get(url)
-        .success(function(data) {
+        .success(function (data) {
         deferred.resolve(data);
       })
-        .error(function() {
+        .error(function () {
         deferred.reject("An error occurred while getting users");
       });
 
