@@ -39,7 +39,6 @@ public class TripleStore {
  * and open the template in the editor.
  */
     private Repository repo;
-    private ObjectRepositoryFactory orf;
     private ObjectRepository objectRepo; 
     
     public String URI;
@@ -78,7 +77,7 @@ public class TripleStore {
      */
     public void initialize(){
         try {
-            orf = new ObjectRepositoryFactory();
+            ObjectRepositoryFactory orf = new ObjectRepositoryFactory();
             objectRepo = orf.createRepository(repo);
             objectRepo.initialize();
         } catch (RepositoryException | RepositoryConfigException ex) {
@@ -108,11 +107,12 @@ public class TripleStore {
      * Get the prefixes defined by this repository for use in queries
      * @return A String of the prefixes used
      */
-    public String getPrefixes() {
+    public String getPrefixes() throws RepositoryException {
         String prefixes = "";
-                
+        
+        ObjectConnection con = getRepoConnection();
+
         try {
-            RepositoryConnection con = repo.getConnection();
             RepositoryResult<Namespace> namespaces = con.getNamespaces();
             while(namespaces.hasNext()){
                 Namespace ns = namespaces.next();
@@ -123,8 +123,20 @@ public class TripleStore {
             logger.error(ex.getMessage());
             throw new StorageException("Could not retrieve namespace prefixes");
         }
+        finally{
+            closeRepoConnection(con);
+        }
                 
         return prefixes;
+    }
+    
+    public void closeRepoConnection(ObjectConnection con) throws StorageException{
+        try {
+            con.close();
+        } catch (RepositoryException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't close connection");
+        }        
     }
 
     /**

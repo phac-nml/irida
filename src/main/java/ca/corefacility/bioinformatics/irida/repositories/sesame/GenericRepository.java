@@ -64,7 +64,7 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
     private String prefix; //String representation of that type
     private String sType;
     
-    private AuditRepository auditRepo;
+    protected AuditRepository auditRepo;
 
     public GenericRepository() {
     }

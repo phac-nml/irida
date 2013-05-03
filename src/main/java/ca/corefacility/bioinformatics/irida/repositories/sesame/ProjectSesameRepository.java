@@ -59,7 +59,7 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProjectSe
         p.setIdentifier(i);
         
         return p;
-    } 
+    }
     
     /**
      * {@inheritDoc}

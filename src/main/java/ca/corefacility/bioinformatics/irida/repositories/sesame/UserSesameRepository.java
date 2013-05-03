@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import org.openrdf.annotations.Bind;
+import org.openrdf.annotations.Sparql;
 import org.openrdf.model.Literal;
 import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
@@ -158,6 +160,15 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier,UserI
         }
 
         return ret;
+    }
+    
+    @Sparql("PREFIX foaf:<http://xmlns.com/foaf/0.1/> \n"
+            + "SELECT ?s "
+            + "WHERE{ ?s a foaf:Person . \n"
+            + "?s foaf:nick ?un . \n"
+            + "}")
+    public UserIF getUserForUsername(@Bind("un") String username){
+        return null;
     }
 
     /**

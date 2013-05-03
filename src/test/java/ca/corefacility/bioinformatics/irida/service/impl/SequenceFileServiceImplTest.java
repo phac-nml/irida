@@ -18,6 +18,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import com.google.common.collect.ImmutableMap;
 import java.io.File;
@@ -41,7 +42,7 @@ import org.slf4j.LoggerFactory;
 public class SequenceFileServiceImplTest {
 
     private CRUDService<Identifier, SequenceFile> sequenceFileService;
-    private CRUDRepository<Identifier, SequenceFile> crudRepository;
+    private SequenceFileRepository crudRepository;
     private CRUDRepository<File, SequenceFile> fileRepository;
     private Validator validator;
     private static final Logger logger = LoggerFactory.getLogger(SequenceFileServiceImplTest.class);
@@ -50,7 +51,7 @@ public class SequenceFileServiceImplTest {
     public void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
-        crudRepository = mock(CRUDRepository.class);
+        crudRepository = mock(SequenceFileRepository.class);
         fileRepository = mock(CRUDRepository.class);
         sequenceFileService = new SequenceFileServiceImpl(crudRepository, fileRepository, validator);
     }

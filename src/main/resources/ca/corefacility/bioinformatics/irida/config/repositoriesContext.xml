@@ -29,6 +29,8 @@
     <bean id="sequenceFileRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.SequenceFileSesameRepository">
         <constructor-arg ref="tripleStore" />
         <constructor-arg ref="auditRepository" /> 
+        <property name="projectRepository" ref="projectRepository"/>
+        <property name="sampleRepository" ref="sampleRepository"/>
     </bean>
     
     <bean id="auditRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.AuditRepository">
