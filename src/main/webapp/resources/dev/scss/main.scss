@@ -1,9 +1,12 @@
-@import "foundation/foundation-global", "foundation/components/global", "foundation/components/block-grid";
+@import "foundation/foundation-global";
 
 /* Positioning */
 /* Display & Box Model */
 /* Other */
 
+/* ==========================================================================
+   Angular Specific
+   ========================================================================== */
 .ng-cloak {
   display: none !important;
 }
@@ -16,27 +19,34 @@ input.ng-valid.ng-dirty {
   background-color: #78FA89;
 }
 
-// NOTIFIER
+/* ==========================================================================
+   Modules
+   ========================================================================== */
+
+/* Notifier
+   ========================================================================== */
 
 .nofifier-hide-setup, .notifier-show-setup {
-  -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
-  -moz-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
-  -o-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
-  transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+  -webkit-transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+  -moz-transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+  -o-transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+  transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
 }
 
 .notifier-hide-setup {
-  opacity:1;
+  opacity: 1;
 }
+
 .notifier-hide-setup.notifier-hide-start {
-  opacity:0;
+  opacity: 0;
 }
 
 .notifier-show-setup {
-  opacity:0;
+  opacity: 0;
 }
+
 .notifier-show-setup.notifier-show-start {
-  opacity:1;
+  opacity: 1;
 }
 
 .notifier {
@@ -63,9 +73,93 @@ input.ng-valid.ng-dirty {
   }
 }
 
-/* ==========================================================================
-   PAGES
+/* Card List - used to display info as cards
    ========================================================================== */
+
+.card {
+
+  li>div {
+    // Box (display, float, position, left, top, height, width)
+
+    // Border
+    border: 1px solid rgba(120, 120, 120, 1.0);
+
+    // Background
+    background-color: rgba(229, 229, 229, 1.0);
+
+    // Text (font-family, font-size, text-transform, letter-spacing)
+
+    // Other
+    cursor: pointer;
+    margin-bottom: 0.5em;
+    padding-bottom: 0.2em;
+
+    &:hover {
+      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.35);
+    }
+
+    h2 {
+      // Box (display, float, position, left, top, height, width)
+      position: relative;
+
+      // Border
+      border-bottom: 1px solid rgb(120, 120, 120);
+
+      // Background
+      background-color: $primary-color;
+
+      // Text (font-family, font-size, text-transform, letter-spacing)
+      color: #fff;
+      font-size: 1em;
+      font-weight: normal;
+      -webkit-font-smoothing: antialiased !important;
+      text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
+
+      // Other
+      margin: 0;
+      padding: 0.1em 0.2em;
+
+      @media screen and (max-width: $small-screen) {
+        border-bottom: none;
+
+        padding: 0.4em;
+      }
+
+      span {
+        // Box (display, float, position, left, top, height, width)
+        position: absolute;
+        top: 5px;
+        right: 5px;
+
+        // Border
+
+        // Background
+
+        // Text (font-family, font-size, text-transform, letter-spacing)
+        font-size: 0.6em;
+        color: lighten($body-font-color, 40);
+        -webkit-font-smoothing: antialiased !important;
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
+
+        // Other
+      }
+    }
+    p {
+      // Box (display, float, position, left, top, height, width)
+
+      // Border
+
+      // Background
+
+      // Text (font-family, font-size, text-transform, letter-spacing)
+      font-size: 0.7em;
+
+      // Other
+      margin: 0.2em;
+    }
+  }
+}
+
 
 /* Modules
    ========================================================================== */
@@ -96,7 +190,7 @@ input.ng-valid.ng-dirty {
       padding: 20px;
     }
     th {
-      color: white;
+      color: #ffffff;
     }
   }
   tbody tr {
@@ -109,42 +203,6 @@ input.ng-valid.ng-dirty {
       height: 2em;
       font-size: 1.5em;
     }
-  }
-}
-
-.grid-list {
-  li {
-    height: 100px;
-    margin-bottom: 1em;
-    &>div {
-      border: 1px solid #ededed;
-      @include radius();
-      cursor: pointer;
-      padding: 0;
-      background-color: $secondary-color;
-      width: 100%;
-      height: 100%;
-      -webkit-box-shadow: 0px 1px 3px rgba(50, 50, 50, 0.5);
-      -moz-box-shadow: 0px 1px 3px rgba(50, 50, 50, 0.5);
-      box-shadow: 0px 1px 3px rgba(50, 50, 50, 0.5);
-      &:hover {
-        background-color: darken($secondary-color, 10);
-      }
-    }
-  }
-  span.delete {
-    background: #cccccc;
-    border-radius: 0.8em;
-    -moz-border-radius: 0.8em;
-    -webkit-border-radius: 0.8em;
-    color: #ffffff;
-    display: inline-block;
-    font-weight: bold;
-    line-height: 1.6em;
-    margin-right: -50%;
-    text-align: center;
-    width: 1.6em;
-    float: right;
   }
 }
 

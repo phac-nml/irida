@@ -1,251 +1,9 @@
-*,
-*:before,
-*:after {
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box; }
-
-html,
-body {
-  font-size: 100%; }
-
-body {
-  background: white;
-  color: #222222;
-  padding: 0;
-  margin: 0;
-  font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
-  font-weight: normal;
-  font-style: normal;
-  line-height: 1;
-  position: relative; }
-
-a:focus {
-  outline: none; }
-
-img,
-object,
-embed {
-  max-width: 100%;
-  height: auto; }
-
-object,
-embed {
-  height: 100%; }
-
-img {
-  -ms-interpolation-mode: bicubic; }
-
-#map_canvas img,
-#map_canvas embed,
-#map_canvas object,
-.map_canvas img,
-.map_canvas embed,
-.map_canvas object {
-  max-width: none !important; }
-
-.left {
-  float: left !important; }
-
-.right {
-  float: right !important; }
-
-.text-left {
-  text-align: left !important; }
-
-.text-right {
-  text-align: right !important; }
-
-.text-center {
-  text-align: center !important; }
-
-.text-justify {
-  text-align: justify !important; }
-
-.hide {
-  display: none; }
-
-.antialiased {
-  -webkit-font-smoothing: antialiased; }
-
-img {
-  display: inline-block; }
-
-textarea {
-  height: auto;
-  min-height: 50px; }
-
-select {
-  width: 100%; }
-
-/* Foundation Block Grids for below small breakpoint */
-@media only screen {
-  [class*="block-grid-"] {
-    display: block;
-    padding: 0;
-    margin: 0 -10px;
-    *zoom: 1; }
-    [class*="block-grid-"]:before, [class*="block-grid-"]:after {
-      content: " ";
-      display: table; }
-    [class*="block-grid-"]:after {
-      clear: both; }
-    [class*="block-grid-"] > li {
-      display: block;
-      height: auto;
-      float: left;
-      padding: 0 10px 10px; }
-
-  .small-block-grid-1 > li {
-    width: 100%;
-    padding: 0 10px 10px; }
-    .small-block-grid-1 > li:nth-of-type(1n+1) {
-      clear: both; }
-
-  .small-block-grid-2 > li {
-    width: 50%;
-    padding: 0 10px 10px; }
-    .small-block-grid-2 > li:nth-of-type(2n+1) {
-      clear: both; }
-
-  .small-block-grid-3 > li {
-    width: 33.33333%;
-    padding: 0 10px 10px; }
-    .small-block-grid-3 > li:nth-of-type(3n+1) {
-      clear: both; }
-
-  .small-block-grid-4 > li {
-    width: 25%;
-    padding: 0 10px 10px; }
-    .small-block-grid-4 > li:nth-of-type(4n+1) {
-      clear: both; }
-
-  .small-block-grid-5 > li {
-    width: 20%;
-    padding: 0 10px 10px; }
-    .small-block-grid-5 > li:nth-of-type(5n+1) {
-      clear: both; }
-
-  .small-block-grid-6 > li {
-    width: 16.66667%;
-    padding: 0 10px 10px; }
-    .small-block-grid-6 > li:nth-of-type(6n+1) {
-      clear: both; }
-
-  .small-block-grid-7 > li {
-    width: 14.28571%;
-    padding: 0 10px 10px; }
-    .small-block-grid-7 > li:nth-of-type(7n+1) {
-      clear: both; }
-
-  .small-block-grid-8 > li {
-    width: 12.5%;
-    padding: 0 10px 10px; }
-    .small-block-grid-8 > li:nth-of-type(8n+1) {
-      clear: both; }
-
-  .small-block-grid-9 > li {
-    width: 11.11111%;
-    padding: 0 10px 10px; }
-    .small-block-grid-9 > li:nth-of-type(9n+1) {
-      clear: both; }
-
-  .small-block-grid-10 > li {
-    width: 10%;
-    padding: 0 10px 10px; }
-    .small-block-grid-10 > li:nth-of-type(10n+1) {
-      clear: both; }
-
-  .small-block-grid-11 > li {
-    width: 9.09091%;
-    padding: 0 10px 10px; }
-    .small-block-grid-11 > li:nth-of-type(11n+1) {
-      clear: both; }
-
-  .small-block-grid-12 > li {
-    width: 8.33333%;
-    padding: 0 10px 10px; }
-    .small-block-grid-12 > li:nth-of-type(12n+1) {
-      clear: both; } }
-/* Foundation Block Grids for above small breakpoint */
-@media only screen and (min-width: 48em) {
-  .large-block-grid-1 > li {
-    width: 100%;
-    padding: 0 10px 10px; }
-    .large-block-grid-1 > li:nth-of-type(1n+1) {
-      clear: both; }
-
-  .large-block-grid-2 > li {
-    width: 50%;
-    padding: 0 10px 10px; }
-    .large-block-grid-2 > li:nth-of-type(2n+1) {
-      clear: both; }
-
-  .large-block-grid-3 > li {
-    width: 33.33333%;
-    padding: 0 10px 10px; }
-    .large-block-grid-3 > li:nth-of-type(3n+1) {
-      clear: both; }
-
-  .large-block-grid-4 > li {
-    width: 25%;
-    padding: 0 10px 10px; }
-    .large-block-grid-4 > li:nth-of-type(4n+1) {
-      clear: both; }
-
-  .large-block-grid-5 > li {
-    width: 20%;
-    padding: 0 10px 10px; }
-    .large-block-grid-5 > li:nth-of-type(5n+1) {
-      clear: both; }
-
-  .large-block-grid-6 > li {
-    width: 16.66667%;
-    padding: 0 10px 10px; }
-    .large-block-grid-6 > li:nth-of-type(6n+1) {
-      clear: both; }
-
-  .large-block-grid-7 > li {
-    width: 14.28571%;
-    padding: 0 10px 10px; }
-    .large-block-grid-7 > li:nth-of-type(7n+1) {
-      clear: both; }
-
-  .large-block-grid-8 > li {
-    width: 12.5%;
-    padding: 0 10px 10px; }
-    .large-block-grid-8 > li:nth-of-type(8n+1) {
-      clear: both; }
-
-  .large-block-grid-9 > li {
-    width: 11.11111%;
-    padding: 0 10px 10px; }
-    .large-block-grid-9 > li:nth-of-type(9n+1) {
-      clear: both; }
-
-  .large-block-grid-10 > li {
-    width: 10%;
-    padding: 0 10px 10px; }
-    .large-block-grid-10 > li:nth-of-type(10n+1) {
-      clear: both; }
-
-  .large-block-grid-11 > li {
-    width: 9.09091%;
-    padding: 0 10px 10px; }
-    .large-block-grid-11 > li:nth-of-type(11n+1) {
-      clear: both; }
-
-  .large-block-grid-12 > li {
-    width: 8.33333%;
-    padding: 0 10px 10px; }
-    .large-block-grid-12 > li:nth-of-type(12n+1) {
-      clear: both; }
-
-  [class*="small-block-grid-"] > li {
-    clear: none !important; } }
 /* Positioning */
 /* Display & Box Model */
 /* Other */
+/* ==========================================================================
+   Angular Specific
+   ========================================================================== */
 .ng-cloak {
   display: none !important; }
 
@@ -255,6 +13,11 @@ input.ng-invalid.ng-dirty {
 input.ng-valid.ng-dirty {
   background-color: #78FA89; }
 
+/* ==========================================================================
+   Modules
+   ========================================================================== */
+/* Notifier
+   ========================================================================== */
 .nofifier-hide-setup, .notifier-show-setup {
   -webkit-transition: all cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s;
   -moz-transition: all cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s;
@@ -293,9 +56,43 @@ input.ng-valid.ng-dirty {
   .notifier span {
     display: block; }
 
-/* ==========================================================================
-   PAGES
+/* Card List - used to display info as cards
    ========================================================================== */
+.card li > div {
+  border: 1px solid #787878;
+  background-color: #e5e5e5;
+  cursor: pointer;
+  margin-bottom: 0.5em;
+  padding-bottom: 0.2em; }
+  .card li > div:hover {
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.35); }
+  .card li > div h2 {
+    position: relative;
+    border-bottom: 1px solid #787878;
+    background-color: #133b54;
+    color: #fff;
+    font-size: 1em;
+    font-weight: normal;
+    -webkit-font-smoothing: antialiased !important;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
+    margin: 0;
+    padding: 0.1em 0.2em; }
+    @media screen and (max-width: 48em) {
+      .card li > div h2 {
+        border-bottom: none;
+        padding: 0.4em; } }
+    .card li > div h2 span {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      font-size: 0.6em;
+      color: #888888;
+      -webkit-font-smoothing: antialiased !important;
+      text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004); }
+  .card li > div p {
+    font-size: 0.7em;
+    margin: 0.2em; }
+
 /* Modules
    ========================================================================== */
 .page-info > .button {
@@ -321,7 +118,7 @@ input.ng-valid.ng-dirty {
     .listTable thead tr {
       padding: 20px; }
     .listTable thead th {
-      color: white; }
+      color: #ffffff; }
   .listTable tbody tr {
     border-bottom: 1px solid #efefef; }
     .listTable tbody tr:hover {
@@ -331,37 +128,6 @@ input.ng-valid.ng-dirty {
       .listTable tbody tr {
         height: 2em;
         font-size: 1.5em; } }
-
-.grid-list li {
-  height: 100px;
-  margin-bottom: 1em; }
-  .grid-list li > div {
-    border: 1px solid #ededed;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
-    cursor: pointer;
-    padding: 0;
-    background-color: #e9e9e9;
-    width: 100%;
-    height: 100%;
-    -webkit-box-shadow: 0px 1px 3px rgba(50, 50, 50, 0.5);
-    -moz-box-shadow: 0px 1px 3px rgba(50, 50, 50, 0.5);
-    box-shadow: 0px 1px 3px rgba(50, 50, 50, 0.5); }
-    .grid-list li > div:hover {
-      background-color: #d0d0d0; }
-.grid-list span.delete {
-  background: #cccccc;
-  border-radius: 0.8em;
-  -moz-border-radius: 0.8em;
-  -webkit-border-radius: 0.8em;
-  color: #ffffff;
-  display: inline-block;
-  font-weight: bold;
-  line-height: 1.6em;
-  margin-right: -50%;
-  text-align: center;
-  width: 1.6em;
-  float: right; }
 
 .editForm input {
   border: none;
