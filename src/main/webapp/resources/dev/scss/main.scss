@@ -73,6 +73,27 @@ input.ng-valid.ng-dirty {
   }
 }
 
+/* Uploader
+   ========================================================================== */
+.progress {
+  & > em {
+    position: absolute;
+    right: 5px;
+    top: 3px;
+  }
+}
+.meter {
+  flex-wrap: nowrap;
+  & > span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    float: left;
+    width: 200px;
+    margin-left: 0.5em;
+  }
+}
+
 /* Card List - used to display info as cards
    ========================================================================== */
 
@@ -170,9 +191,9 @@ input.ng-valid.ng-dirty {
     margin: 0 0 2em 0;
     background: #fff;
     padding: 10px;
-    border: 1px solid rgba(0,0,0,0.150);
+    border: 1px solid rgba(0, 0, 0, 0.150);
 
-    box-shadow: 1px 1px 2px rgba(0,0,0, 0.18);
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.18);
     &:before {
       z-index: -1;
       position: absolute;
@@ -182,9 +203,9 @@ input.ng-valid.ng-dirty {
       width: 100%;
       height: 100%;
       background-color: #fff;
-      border: 1px solid rgba(0,0,0,0.150);
+      border: 1px solid rgba(0, 0, 0, 0.150);
 
-      box-shadow: 1px 1px 2px rgba(0,0,0,0.19);
+      box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.19);
 
       -webkit-transform: rotate(1deg);
       -moz-transform: rotate(1deg);
@@ -226,7 +247,6 @@ input.ng-valid.ng-dirty {
 
     // Text (font-family, font-size, text-transform, letter-spacing)
     font-size: 1.2em;
-
 
     // Other
   }
