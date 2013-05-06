@@ -80,7 +80,7 @@
         <jackson.version>2.1.4</jackson.version>
         
         <!-- Jetty -->
-        <jetty.version>8.1.5.v20120716</jetty.version>
+        <jetty.version>9.0.2.v20130417</jetty.version>
         
         <!-- Spring -->
         <spring-framework.version>3.2.2.RELEASE</spring-framework.version>
@@ -312,7 +312,7 @@
             
             <!-- Jetty plugin -->
             <plugin>
-                <groupId>org.mortbay.jetty</groupId>
+                <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty.version}</version>
                 <configuration>
