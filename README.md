@@ -9,8 +9,9 @@ The IRIDA API project requires the creation of certain directories prior to exec
 
 Client Side Testing Set-up
 ==========================
-1. Download and install [node.js](http://nodejs.org)
-2. In irida-web main directory:
+1. Download and install [node.js](http://nodejs.org).
+2. Install `git`.
+3. In irida-web main directory:
     1. `npm install -g karma@~0.9.2`
     2. `npm install -g phantomjs@~1.8`
     3. `npm install`
