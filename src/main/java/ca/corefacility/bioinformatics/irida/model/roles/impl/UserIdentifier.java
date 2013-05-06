@@ -15,6 +15,8 @@
  */
 package ca.corefacility.bioinformatics.irida.model.roles.impl;
 
+import java.net.URI;
+
 /**
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
@@ -25,6 +27,11 @@ public class UserIdentifier extends Identifier{
     public UserIdentifier() {
         
     }
+    
+    public UserIdentifier(URI uri, String username) {
+        super(uri);
+        this.username = username;
+    }    
     
     public UserIdentifier(String username) {
         super();

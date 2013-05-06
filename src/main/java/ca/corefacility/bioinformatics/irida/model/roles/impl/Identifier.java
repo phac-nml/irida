@@ -40,6 +40,10 @@ public class Identifier implements Comparable<Identifier> {
     public Identifier() {
         this.uuid = UUID.randomUUID();
     }
+    
+    public Identifier(URI uri){
+        this.uri = uri;
+    }
 
     public Identifier(URI uri, UUID uuid) {
         this.uri = uri;
