@@ -56,6 +56,23 @@ input.ng-valid.ng-dirty {
   .notifier span {
     display: block; }
 
+/* Uploader
+   ========================================================================== */
+.progress > em {
+  position: absolute;
+  right: 5px;
+  top: 3px; }
+
+.meter {
+  flex-wrap: nowrap; }
+  .meter > span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    float: left;
+    width: 200px;
+    margin-left: 0.5em; }
+
 /* Card List - used to display info as cards
    ========================================================================== */
 .card li > div {
