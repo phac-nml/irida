@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head th:include="fragments/header" th:remove="tag"></head>
+    <body data-ng-app="irida">
+        <div th:include="fragments/bodyHeader" th:remove="tag"></div>
+
+        <div class="row ng-cloak" data-ng-controller="MainCtrl">
+            <notifier attr-icon="{{notifier.icon}}" attr-messege="{{notifier.message}}"></notifier>
+            <ng-view></ng-view>
+        </div>
+        <div class="row">
+            <p th:if="${loginError}">Wrong username or password</p>
+            <form th:action="@{/login.do}" method="post">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" /> <br />
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" /> <br />
+                <input type="submit" value="Log in" />
+            </form>
+        </div>
+    </body>
+</html>

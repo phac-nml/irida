@@ -30,6 +30,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * A basis for clients to begin discovering other URLs in our API.
@@ -64,5 +65,13 @@ public class RootController {
         resource.add(links);
         model.addAttribute(resource);
         return "index";
+    }
+
+    @RequestMapping("login.html")
+    public String login(Model model, @RequestParam(value = "authentication_error", defaultValue = "false") Boolean authenticationError) {
+        if (authenticationError) {
+            model.addAttribute("loginError", true);
+        }
+        return "login";
     }
 }

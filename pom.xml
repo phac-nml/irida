@@ -85,6 +85,7 @@
         <!-- Spring -->
         <spring-framework.version>3.2.2.RELEASE</spring-framework.version>
         <org.springframework.hateoas.version>0.4.0.RELEASE</org.springframework.hateoas.version>
+        <spring-framework-security-oauth2.version>1.0.4.RELEASE</spring-framework-security-oauth2.version>
         
         <!-- Thymeleaf -->
         <thymeleaf.version>2.0.16</thymeleaf.version>
@@ -180,6 +181,11 @@
             <artifactId>spring-hateoas</artifactId>
             <version>${org.springframework.hateoas.version}</version>
             <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security.oauth</groupId>
+            <artifactId>spring-security-oauth2</artifactId>
+            <version>${spring-framework-security-oauth2.version}</version>
         </dependency>
             
         <!-- THYMELEAF -->
