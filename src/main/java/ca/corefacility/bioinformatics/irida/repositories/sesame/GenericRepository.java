@@ -31,15 +31,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
-import org.openrdf.query.Binding;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.MalformedQueryException;
@@ -67,18 +63,20 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
     Class<Type> objectType; //The class object type being stored by this repo
     private String prefix; //String representation of that type
     private String sType;
+    
+    private AuditRepository auditRepo;
 
     public GenericRepository() {
     }
 
-    public GenericRepository(TripleStore store, Class type,String prefix, String sType) {
+    public GenericRepository(TripleStore store, Class type,String prefix, String sType,AuditRepository auditRepo) {
         this.store = store;
         this.prefix = prefix;
-        this.sType = sType;        
+        this.sType = sType;
+        this.auditRepo = auditRepo;
         
         URI = store.getURI() + sType + "/";
-        
-        
+                
         this.objectType = type;
     }
 
@@ -122,62 +120,6 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
         return uri;
     }
     
-    /**
-     * Add the auditing information to the database for the given object
-     * 
-     * @param uri The URI of the subject of the audit
-     * @param audit The auditing object for this subject
-     * @param con The ObjectConnection currently being used
-     * @throws RepositoryException
-     */
-    protected void createAudit(URI uri, Audit audit, ObjectConnection con) throws RepositoryException{
-        ValueFactory fac = con.getValueFactory();
-        Literal date = fac.createLiteral(audit.getCreated());
-        URI pred = fac.createURI(con.getNamespace("irida"), "created");
-        Statement st = fac.createStatement(uri, pred, date);
-        con.add(st);
-    }
-    
-    /**
-     * Get the auditing information for the given subject from the database
-     * @param uri The subject to retrieve auditing information for
-     * @param con The ObjectConnection being used
-     * @return An <code>Audit</code> object with the data from the database
-     * @throws MalformedQueryException
-     * @throws RepositoryException
-     * @throws QueryEvaluationException
-     */
-    protected Audit getAudit(URI uri, ObjectConnection con) throws MalformedQueryException, RepositoryException, QueryEvaluationException{
-        String qs = store.getPrefixes()
-                + "SELECT ?created WHERE{"
-                + "?s irida:created ?created .\n"
-                + "}";
-        
-        TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
-        query.setBinding("s", uri);
-        TupleQueryResult result = query.evaluate();
-        BindingSet bs = result.next();
-        Audit a = new Audit();
-        
-        Binding binding = bs.getBinding("created");
-        Value value = binding.getValue();
-        
-        Date d = null;
-        try{
-            XMLGregorianCalendar calendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(value.stringValue());
-            d = calendar.toGregorianCalendar().getTime();
-        }
-        catch (DatatypeConfigurationException ex) {
-                logger.error(ex.getMessage());
-                throw new StorageException("Failed to parse auditing date");        
-        }
-        
-        a.setCreated(d);
-                
-        result.close();
-        
-        return a;
-    }
     
     /**
      * Build a basic object from the given interface type
@@ -194,9 +136,7 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
         }
         
         Audit audit = (Audit) object.getAuditInformation();
-         
-        ObjectConnection con = store.getRepoConnection();
-        
+                 
         Identifier objid = generateIdentifier(object);
         
         if (exists(objid)) {
@@ -204,6 +144,17 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
         }
 
         object.setIdentifier((IDType) objid);
+
+        storeObject(object);
+        auditRepo.audit(audit, objid.getUri().toString());
+        
+        return object;
+    }
+    
+    public Type storeObject(Type object){
+        ObjectConnection con = store.getRepoConnection();
+        
+        Identifier objid = (Identifier) object.getIdentifier();
         
         try{
             con.begin();
@@ -213,8 +164,7 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
             con.addObject(uri, object);
             
             setIdentifiedBy(con,uri, objid.getIdentifier());
-            createAudit(uri, audit, con);
-            
+                        
             con.commit();
         }            
         catch (RepositoryException ex) {
@@ -229,7 +179,7 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
             }            
         }
         
-        return object;
+        return object;        
     }
     
     /**
@@ -292,7 +242,7 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
         String identifiedBy = getIdentifiedBy(con,u);
         Identifier objid = buildIdentifier(o,identifiedBy);
         Type ret = buildObject(o,(IDType)objid);
-        ret.setAuditInformation(getAudit(u, con));                
+        ret.setAuditInformation(auditRepo.getAudit(u));                
         
         return ret;
     }
@@ -312,7 +262,7 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
         
         try {
             String qs = store.getPrefixes()
-                    + "SELECT * "
+                    + "SELECT ?s "
                     + "WHERE{ ?s a ?type . \n"
                     + "}";
 
@@ -346,9 +296,16 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
 
     @Override
     public Type update(Type object) throws IllegalArgumentException {
-        delete((Identifier) object.getIdentifier());
-
-        object = create(object);
+        
+        Identifier id = (Identifier) object.getIdentifier();
+        
+        delete(id);
+        Audit a = (Audit) object.getAuditInformation();
+        a.setUpdated(new Date());
+        object.setAuditInformation(a);
+        String u = id.getUri().toString();
+        auditRepo.audit(a, u);
+        object = storeObject(object);
 
         return object;        
     }
@@ -399,8 +356,10 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
         ObjectConnection con = store.getRepoConnection();
         try{
             String qs = store.getPrefixes()
-                    + "SELECT * "
+                    + "SELECT ?s "
                     + "WHERE{ ?s a ?type . \n"
+                    + "?a irida:forResource ?s \n."
+                    + "?a irida:createdDate ?createdDate .\n"
                     + "}";
             
             qs += SparqlQuery.setOrderBy(sortProperty, order);

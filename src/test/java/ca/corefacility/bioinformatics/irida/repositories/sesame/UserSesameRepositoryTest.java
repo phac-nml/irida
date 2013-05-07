@@ -35,8 +35,8 @@ public class UserSesameRepositoryTest {
     public void setUp() {
         SailMemoryStore store = new SailMemoryStore();
         store.initialize();
-        
-        repo = new UserSesameRepository(store);
+        AuditRepository auditRepo = new AuditRepository(store);
+        repo = new UserSesameRepository(store,auditRepo);
         
         User u = new User("user1", "user1@there", "abc123", "user", "one", "111-111-1111");
         repo.create(u);

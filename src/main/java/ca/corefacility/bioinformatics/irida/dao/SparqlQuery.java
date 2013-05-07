@@ -61,6 +61,9 @@ public abstract class SparqlQuery {
                 qs += "ORDER BY DESC(?"+sortProperty+")\n";
             }
         }
+        else{
+            qs += "ORDER BY ?createdDate \n";
+        }
         
         return qs;
     }
