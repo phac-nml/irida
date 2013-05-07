@@ -33,6 +33,7 @@ public class Identifier implements Comparable<Identifier> {
     private UUID uuid;
     @NotNull
     private URI uri;
+    private String label;
     // alternative URI:
     //@URL
     //private String url;
@@ -106,4 +107,13 @@ public class Identifier implements Comparable<Identifier> {
     public void setUUID(UUID uuid) {
         this.uuid = uuid;
     }
+    
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+    
 }

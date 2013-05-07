@@ -13,21 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ca.corefacility.bioinformatics.irida.model.alibaba;
-
-import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
-import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import org.openrdf.annotations.Iri;
+package ca.corefacility.bioinformatics.irida.repositories.sesame.dao;
 
 /**
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-@Iri("http://corefacility.ca/irida/Resource")
-public interface IridaThing<AuditType extends Audit,IDType extends Identifier> extends Auditable<AuditType>, Identifiable<IDType>{
-    @Iri("http://www.w3.org/2000/01/rdf-schema#label")
-    public String getLabel();
+public class RdfPredicate {
+    public String prefix;
+    public String name;
+
+    public RdfPredicate(String prefix, String name) {
+        this.prefix = prefix;
+        this.name = name;
+    }
     
+    public String getSparqlNotation(){
+        return prefix +":"+name;
+    }
 }

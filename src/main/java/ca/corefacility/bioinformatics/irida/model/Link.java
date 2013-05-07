@@ -16,21 +16,27 @@
 package ca.corefacility.bioinformatics.irida.model;
 
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
+import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.StringIdentifier;
+import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 
 /**
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class Link implements IridaThing<Audit, Identifier>{
+public class Link implements Auditable<Audit>, Identifiable<Identifier>{
 
     Identifier identifier;
     
     Identifier subject;
-    String relationship;
+    RdfPredicate predicate;
     Identifier object;
+    
+    public Link(){
+        audit = new Audit();
+    }
     
     private Audit audit;
 
@@ -38,8 +44,8 @@ public class Link implements IridaThing<Audit, Identifier>{
         return subject;
     }
 
-    public String getRelationship() {
-        return relationship;
+    public RdfPredicate getRelationship() {
+        return predicate;
     }
 
     public Identifier getObject() {
@@ -50,8 +56,8 @@ public class Link implements IridaThing<Audit, Identifier>{
         this.subject = subject;
     }
 
-    public void setRelationship(String relationship) {
-        this.relationship = relationship;
+    public void setRelationship(RdfPredicate relationship) {
+        this.predicate = relationship;
     }
 
     public void setObject(Identifier object) {
@@ -60,22 +66,22 @@ public class Link implements IridaThing<Audit, Identifier>{
 
     @Override
     public Audit getAuditInformation() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return audit;
     }
 
     @Override
     public void setAuditInformation(Audit audit) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.audit = audit;
     }
 
     @Override
     public Identifier getIdentifier() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return identifier;
     }
 
     @Override
     public void setIdentifier(Identifier identifier) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.identifier = identifier;
     }
 
 

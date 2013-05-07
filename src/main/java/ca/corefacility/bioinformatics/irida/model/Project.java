@@ -126,4 +126,10 @@ public class Project implements ProjectIF, Comparable<Project>{
     public void setAuditInformation(Audit audit) {
         this.audit = audit;
     }
+
+    @Override
+    public String getLabel() {
+        return name;
+    }
+    
 }

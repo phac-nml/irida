@@ -64,4 +64,10 @@ public class Identified implements IdentifiedIF{
     public void setAuditInformation(Audit audit) {
         this.audit = audit;
     }
+
+    @Override
+    public String getLabel() {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return "I am identified";
+    }
 }

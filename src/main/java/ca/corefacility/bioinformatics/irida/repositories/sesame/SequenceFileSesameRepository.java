@@ -16,6 +16,7 @@
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import ca.corefacility.bioinformatics.irida.model.Link;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
@@ -25,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.model.alibaba.SampleIF;
 import ca.corefacility.bioinformatics.irida.model.alibaba.SequenceFileIF;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -50,11 +52,14 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
     
     private ProjectSesameRepository projectRepo;
     private SampleSesameRepository sampleRepo;
+    private LinksRepository linksRepo;
+    private final RdfPredicate hasFile = new RdfPredicate("irida", "hasFile");
     
     public SequenceFileSesameRepository(){}
     
-    public SequenceFileSesameRepository(TripleStore store,AuditRepository auditRepo) {
+    public SequenceFileSesameRepository(TripleStore store,AuditRepository auditRepo,LinksRepository linksRepo) {
         super(store,SequenceFileIF.class,SequenceFile.PREFIX,SequenceFile.TYPE,auditRepo);
+        this.linksRepo = linksRepo;
     }
     
     public void setProjectRepository(ProjectSesameRepository projectRepo){
@@ -82,7 +87,7 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
             String qs = store.getPrefixes()
                     + "SELECT ?s "
                     + "WHERE{ ?p a ?type . \n"
-                    + "?p irida:hasFile ?s . \n"
+                    + "?p "+hasFile.getSparqlNotation()+" ?s . \n"
                     + "}";
 
             ObjectQuery query = con.prepareObjectQuery(QueryLanguage.SPARQL, qs);
@@ -137,7 +142,11 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
     
     public List<SequenceFile> getFilesForProject(Project project){
         String uri = project.getIdentifier().getUri().toString();
-        return getFilesForContainer(uri,ProjectIF.class);    
+        return getFilesForContainer(uri,ProjectIF.class);
+    }
+    
+    public List<Identifier> listFilesForProject(Project project){
+        return linksRepo.listObjects(project.getIdentifier(), hasFile);
     }
     
     public List<SequenceFile> getFilesForSample(Sample sample){
@@ -147,12 +156,19 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
     
     public void addFileToProject(Project project, SequenceFile file){
         
-        java.net.URI pNetUri = projectRepo.buildURI(project.getIdentifier().getIdentifier());
+        /*java.net.URI pNetUri = projectRepo.buildURI(project.getIdentifier().getIdentifier());
         
         addFileToContainer(pNetUri.toString(), file);
         project.getAuditInformation().setUpdated(new Date());
 
-        auditRepo.audit(project.getAuditInformation(), pNetUri.toString());
+        auditRepo.audit(project.getAuditInformation(), pNetUri.toString());*/
+        
+        Link l = new Link();
+        l.setSubject(project.getIdentifier());
+        l.setObject(file.getIdentifier());
+        l.setRelationship(hasFile);
+        linksRepo.create(l);
+        
     }
     
     public void addFileToSample(Sample sample, SequenceFile file){

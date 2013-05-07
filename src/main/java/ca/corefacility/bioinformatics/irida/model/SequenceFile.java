@@ -99,4 +99,9 @@ public class SequenceFile implements SequenceFileIF, Comparable<SequenceFile> {
     public void setAuditInformation(Audit audit) {
         this.audit = audit;
     }
+
+    @Override
+    public String getLabel() {
+        return file.getName();
+    }
 }

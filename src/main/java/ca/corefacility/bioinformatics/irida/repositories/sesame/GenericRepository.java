@@ -103,6 +103,7 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
         Identifier objid = new Identifier();
         objid.setUri(java.net.URI.create(obj.toString()));
         objid.setUUID(UUID.fromString(identifiedBy));
+        objid.setLabel(obj.getLabel());
 
         return objid;
     }

@@ -191,4 +191,9 @@ public class User implements UserIF, Comparable<User>{
     public void setAuditInformation(Audit audit) {
         this.audit = audit;
     }
+
+    @Override
+    public String getLabel() {
+        return firstName + " " + lastName;
+    }
 }

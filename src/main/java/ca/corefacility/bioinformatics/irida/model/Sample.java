@@ -120,4 +120,9 @@ public class Sample implements SampleIF, Comparable<Sample>{
     public void setAuditInformation(Audit audit) {
         this.audit = audit;
     }
+
+    @Override
+    public String getLabel() {
+        return sampleName;
+    }
 }

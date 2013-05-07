@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.StringIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -52,14 +53,34 @@ import org.openrdf.repository.object.ObjectConnection;
 public class LinksRepository extends SesameRepository{
     
     public final String linkType = "http://corefacility.ca/irida/ResourceLink";
+    AuditRepository auditRepo;
     
     public LinksRepository(TripleStore store,AuditRepository auditRepo) {
         super(store,"ResourceLink");
+        this.auditRepo = auditRepo;
+    }
+    
+    public StringIdentifier buildIdentifier(BindingSet bs){
+        StringIdentifier id = null;
+        try {
+            Value uri = bs.getValue("object");
+            Value ident = bs.getValue("identifier");
+            Value label = bs.getValue("label");
+            id = new StringIdentifier();
+            id.setIdentifier(ident.stringValue());
+            id.setUri(new java.net.URI(uri.stringValue()));
+            id.setLabel(label.stringValue());
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(LinksRepository.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return id;
     }
     
     public Link create(Link link){
         Identifier subject = link.getSubject();
         Identifier object = link.getObject();
+        RdfPredicate predicate = link.getRelationship();
         
         java.net.URI subNetURI = getUriFromIdentifier(subject);
         java.net.URI objNetURI = getUriFromIdentifier(object);
@@ -71,7 +92,7 @@ public class LinksRepository extends SesameRepository{
             con.begin();
             URI subURI = fac.createURI(subNetURI.toString());
             URI objURI = fac.createURI(objNetURI.toString());            
-            URI pred = fac.createURI(con.getNamespace("irida"), "hasFile");
+            URI pred = fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
             
             Identifier identifier = generateIdentifier();
             java.net.URI netURI = identifier.getUri();
@@ -92,8 +113,9 @@ public class LinksRepository extends SesameRepository{
             con.add(fac.createStatement(linkURI, linkPredicate, pred));
             con.add(fac.createStatement(linkURI, linkObject, objURI));
 
+            auditRepo.audit(link.getAuditInformation(), linkURI.toString());
+            
             con.commit();
-            System.out.println("added");
             
         } catch (RepositoryException ex) {
             Logger.getLogger(LinksRepository.class.getName()).log(Level.SEVERE, null, ex);
@@ -105,7 +127,8 @@ public class LinksRepository extends SesameRepository{
         return link;
     }
     
-    public List<Identifier> listObjects(Identifier subjectId, String predicate){
+   
+    public List<Identifier> listObjects(Identifier subjectId, RdfPredicate predicate){
         
         List<Identifier> ids = new ArrayList<>();
         java.net.URI subNetURI = getUriFromIdentifier(subjectId);
@@ -114,31 +137,25 @@ public class LinksRepository extends SesameRepository{
         try {
             String qs = store.getPrefixes()
                     + "SELECT ?obj ?id "
-                    + "WHERE{ ?sub ?pred ?obj .\n"
-                    + "?obj irida:identifier ?id ."
+                    + "WHERE{ ?sub ?pred ?object .\n"
+                    + "?obj irida:identifier ?identifier ;"
+                    + " rdfs:label ?label .\n"
                     + "}";
             ValueFactory fac = con.getValueFactory();
             TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
             
             URI subURI = fac.createURI(subNetURI.toString());
             //URI predURI = fac.createURI(predicate);
-            URI predURI = fac.createURI(con.getNamespace("irida"), "hasFile");
+            URI predURI = fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
             query.setBinding("sub", subURI);
             query.setBinding("pred", predURI);
             TupleQueryResult results = query.evaluate();
             while(results.hasNext()){
-                BindingSet result = results.next();
-                
-                Value uri = result.getValue("obj");
-                Value ident = result.getValue("id");
-                StringIdentifier id = new StringIdentifier();
-                id.setIdentifier(ident.stringValue());
-                id.setUri(new java.net.URI(uri.stringValue()));
-                
-                ids.add(id);
+                BindingSet bs = results.next();
+                ids.add(buildIdentifier(bs));
             }
 
-        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException | URISyntaxException ex) {
+        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
             Logger.getLogger(LinksRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ids;
