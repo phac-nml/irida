@@ -13,7 +13,7 @@ angular.module('irida.directives', [])
                 icon: "@attrIcon"
             },
             replace: true,
-            controller: function ($scope, $attrs, $element, $timeout, MessagingService) {
+            controller: function ($scope, $attrs, $element, $timeout) {
 
                 var time, timer;
                 $scope.hidden = true;

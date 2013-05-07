@@ -1,5 +1,5 @@
 /* global angular */
-var irida = angular.module('irida.users', [
+angular.module('irida.users', [
     'ajaxService'
   ])
 

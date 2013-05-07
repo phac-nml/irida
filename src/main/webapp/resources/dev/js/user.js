@@ -8,7 +8,7 @@
  * This is the user module.
  * It is responsible for the user view.
  */
-var irida = angular.module('irida.user', [
+angular.module('irida.user', [
     'ajaxService',
     'messagingService'
   ])
