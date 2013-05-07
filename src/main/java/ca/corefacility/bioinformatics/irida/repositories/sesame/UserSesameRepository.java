@@ -69,7 +69,7 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier,UserI
      * @return and identifier for the object.
      */
     @Override
-    public Identifier generateIdentifier(User t) {
+    public Identifier generateNewIdentifier(User t) {
         UUID uuid = UUID.randomUUID();
         java.net.URI objuri = buildURI(t.getUsername());
         UserIdentifier ui = new UserIdentifier(t.getUsername());

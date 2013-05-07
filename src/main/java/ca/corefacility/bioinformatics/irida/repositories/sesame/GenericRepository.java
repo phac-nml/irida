@@ -53,10 +53,10 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public abstract class GenericRepository<IDType extends Identifier, TypeIF extends IridaThing, Type extends IridaThing> implements CRUDRepository<IDType, Type> {
+public abstract class GenericRepository<IDType extends Identifier, TypeIF extends IridaThing, Type extends IridaThing> extends SesameRepository implements CRUDRepository<IDType, Type> {
     
-    TripleStore store;
-    String URI; //The base URI for objects of this type 
+    //TripleStore store;
+    //String URI; //The base URI for objects of this type 
     
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(GenericRepository.class);
     
@@ -70,12 +70,13 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
     }
 
     public GenericRepository(TripleStore store, Class type,String prefix, String sType,AuditRepository auditRepo) {
+        super(store, sType);
         this.store = store;
         this.prefix = prefix;
         this.sType = sType;
         this.auditRepo = auditRepo;
         
-        URI = store.getURI() + sType + "/";
+        //URI = store.getURI() + sType + "/";
                 
         this.objectType = type;
     }
@@ -87,10 +88,8 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
      * @param t the object to generate the identifier for.
      * @return and identifier for the object.
      */
-    public Identifier generateIdentifier(Type t) {
-        UUID uuid = UUID.randomUUID();
-        java.net.URI objuri = buildURI(uuid.toString());
-        return new Identifier(objuri, uuid);
+    public Identifier generateNewIdentifier(Type t) {
+        return super.generateIdentifier();
     }
 
     /**
@@ -107,20 +106,9 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
 
         return objid;
     }
+     
     
-    /**
-     * Build a URI from a given String ID
-     *
-     * @param id The ID to build a URI for
-     * @return The constructed URI
-     */
-    public java.net.URI buildURI(String id) {
-        java.net.URI uri = java.net.URI.create(URI + id);
-
-        return uri;
-    }
-    
-    
+      
     /**
      * Build a basic object from the given interface type
      * @param base The base object to construct from
@@ -137,10 +125,14 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
         
         Audit audit = (Audit) object.getAuditInformation();
                  
-        Identifier objid = generateIdentifier(object);
+        Identifier objid = generateNewIdentifier(object);
         
         if (exists(objid)) {
             throw new EntityExistsException("Object " + objid.getUri().toString() + " already exists in the database");
+        }
+        
+        if(identifierExists(objid.getIdentifier())){
+            throw new EntityExistsException("An object with this identifier already exists in the database");            
         }
 
         object.setIdentifier((IDType) objid);
@@ -165,7 +157,7 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
             
             setIdentifiedBy(con,uri, objid.getIdentifier());
                         
-            con.commit();
+            con.commit();            
         }            
         catch (RepositoryException ex) {
             Logger.getLogger(GenericRepository.class.getName()).log(Level.SEVERE, null, ex);
@@ -435,7 +427,7 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
         
         return exists;     
     }
-
+    
     @Override
     public Integer count() {
         int count = 0;

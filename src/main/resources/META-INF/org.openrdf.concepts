@@ -3,3 +3,4 @@ ca.corefacility.bioinformatics.irida.model.alibaba.ProjectIF
 ca.corefacility.bioinformatics.irida.model.alibaba.UserIF
 ca.corefacility.bioinformatics.irida.model.alibaba.SequenceFileIF
 ca.corefacility.bioinformatics.irida.model.alibaba.AuditIF
+ca.corefacility.bioinformatics.irida.model.alibaba.LinkIF

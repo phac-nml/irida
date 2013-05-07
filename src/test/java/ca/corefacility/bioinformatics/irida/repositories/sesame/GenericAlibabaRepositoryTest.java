@@ -55,7 +55,7 @@ public class GenericAlibabaRepositoryTest {
     @Test
     public void testGenerateIdentifier() {
         Identified i = new Identified("blah");
-        Identifier id = repo.generateIdentifier(i);
+        Identifier id = repo.generateNewIdentifier(i);
         assertNotNull(id.getIdentifier());
     }
 

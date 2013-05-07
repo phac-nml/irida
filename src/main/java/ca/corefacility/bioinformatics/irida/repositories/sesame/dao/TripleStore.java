@@ -18,7 +18,6 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame.dao;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import org.openrdf.model.Namespace;
 import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.config.RepositoryConfigException;
