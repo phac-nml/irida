@@ -17,6 +17,7 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -25,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Transactional
-public interface SampleService {
+public interface SampleService extends CRUDService<Identifier, Sample>{
 
     /**
      * Add a sample file to a sample.
