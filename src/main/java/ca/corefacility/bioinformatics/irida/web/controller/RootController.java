@@ -62,7 +62,8 @@ public class RootController {
         }
 
 
-        resource.add(linkTo(methodOn(RootController.class, Model.class).getLinks(model)).withSelfRel());
+        resource.add(linkTo(methodOn(RootController.class, Model.class).
+                getLinks(model)).withSelfRel());
         resource.add(links);
         model.addAttribute(resource);
         return mav;

@@ -9,6 +9,11 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
 http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
     
+    <!-- Don't bother securing css and javascript resources -->
+    <sec:http pattern="/js/**" security="none" />
+    <sec:http pattern="/css/**" security="none" />
+    <sec:http pattern="/fonts/**" security="none" />
+    
     <sec:http pattern="/oauth/token" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
         <sec:intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY" />
         <sec:anonymous enabled="false" />
@@ -17,7 +22,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
         <sec:access-denied-handler ref="oauthAccessDeniedHandler" />
     </sec:http>
     
-    <sec:http pattern="/oauth(users|clients)/.*" request-matcher="regex"
+    <sec:http pattern="/oauth/(users|clients)/.*" request-matcher="regex"
               create-session="stateless" entry-point-ref="oauthAuthenticationEntryPoint"
               use-expressions="true">
         <sec:anonymous enabled="false" />
@@ -35,19 +40,18 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
         <sec:expression-handler ref="oauthWebExpressionHandler" />
     </sec:http>
     
-    <sec:http pattern="/(users|projects)/.*" request-matcher="regex" create-session="stateless"
+    <sec:http pattern="/(users|projects).*" request-matcher="regex" create-session="stateless"
               entry-point-ref="oauthAuthenticationEntryPoint"
               access-decision-manager-ref="accessDecisionManager">
         <sec:anonymous enabled="false" />
-        <sec:intercept-url pattern="/users/.*" access="ROLE_USER,SCOPE_READ" />
-        <sec:intercept-url pattern="/projects/.*" access="ROLE_USER,SCOPE_READ" />
+        <sec:intercept-url pattern="/users.*" access="ROLE_USER,SCOPE_READ" />
+        <sec:intercept-url pattern="/projects.*" access="ROLE_USER,SCOPE_READ" />
         <sec:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
         <sec:access-denied-handler ref="oauthAccessDeniedHandler" />
     </sec:http>
     
     <sec:http access-denied-page="/login.html?authorization_error=true" disable-url-rewriting="true">
         <sec:intercept-url pattern="/oauth/**" access="ROLE_USER" />
-        <sec:intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
         <sec:form-login authentication-failure-url="/login.html?authentication_error=true" default-target-url="/"
                         login-page="/login.html" login-processing-url="/login"
                         password-parameter="password" username-parameter="username" />
