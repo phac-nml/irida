@@ -11,8 +11,8 @@ angular.module('irida.users', [
     '/users', {
     templateUrl: './partials/users.html',
     controller: function ($scope, initData) {
-      $scope.users = initData.resources.resources;
-      $scope.links = initData.resources.links;
+      $scope.users = initData.resource.resources;
+      $scope.links = initData.resource.links;
     },
     resolve: {
       initData: function ($q, ajaxService) {

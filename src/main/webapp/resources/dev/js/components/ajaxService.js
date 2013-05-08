@@ -12,10 +12,10 @@ angular.module('ajaxService', [])
 
   function formatLinks(data) {
     var links = {};
-    angular.forEach(data.resources.links, function (val) {
+    angular.forEach(data.resource.links, function (val) {
       links[val.rel] = val.href;
     });
-    data.resources.links = links;
+    data.resource.links = links;
     return data;
   }
   return {

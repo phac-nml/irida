@@ -21,8 +21,8 @@ angular.module('irida.user', [
     '/users/:username', {
     templateUrl: './partials/user.html',
     controller: function ($scope, initData) {
-      $scope.user = initData.resources;
-      $scope.links = initData.resources.links;
+      $scope.user = initData.resource;
+      $scope.links = initData.resource.links;
     },
     resolve: {
       initData: function ($q, $route, ajaxService) {
