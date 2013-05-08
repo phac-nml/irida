@@ -34,9 +34,11 @@ angular.module('irida.directives', [])
         var fd = new FormData();
 
         var el = angular.element(element).parent();
-        var outer = angular.element('<div class="progress large-6 success radius"></div>');
-        var inner = angular.element('<span class="meter" ><span>' + file.name + '</span></span>');
+        var outer = angular.element('<div class="file-uploader"></div>');
+        var inner = angular.element('<span></span>');
+        var fileName = angular.element('<div>' + file.name + '</div>');
         var counter = angular.element('<em></em>');
+        outer.append(fileName);
         outer.append(inner);
         outer.append(counter);
         scope.$apply(function () {
