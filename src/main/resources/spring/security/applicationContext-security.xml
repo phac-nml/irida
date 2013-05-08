@@ -48,10 +48,10 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
     <sec:http access-denied-page="/login.html?authorization_error=true" disable-url-rewriting="true">
         <sec:intercept-url pattern="/oauth/**" access="ROLE_USER" />
         <sec:intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-        <sec:form-login authentication-failure-url="/login.jsp?authentication_error=true" default-target-url="/index.html"
-                        login-page="/login.html" login-processing-url="/login.do"
+        <sec:form-login authentication-failure-url="/login.html?authentication_error=true" default-target-url="/"
+                        login-page="/login.html" login-processing-url="/login"
                         password-parameter="password" username-parameter="username" />
-        <sec:logout logout-success-url="/index.html" logout-url="/logout" />
+        <sec:logout logout-success-url="/" logout-url="/logout" />
         <sec:anonymous />
     </sec:http>
     
@@ -114,7 +114,6 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
     </oauth:authorization-server>
     
     <oauth:resource-server id="resourceServerFilter" resource-id="irida" token-services-ref="tokenServices" />
-    
     
     <oauth:client-details-service id="clientDetails" />
     

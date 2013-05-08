@@ -10,7 +10,7 @@
         </div>
         <div class="row">
             <p th:if="${loginError}">Wrong username or password</p>
-            <form th:action="@{/login.do}" method="post">
+            <form th:action="@{/login}" method="post">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" /> <br />
                 <label for="password">Password</label>
