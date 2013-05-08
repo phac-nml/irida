@@ -40,7 +40,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
         <sec:expression-handler ref="oauthWebExpressionHandler" />
     </sec:http>
     
-    <sec:http pattern="/(users|projects).*" request-matcher="regex" create-session="stateless"
+    <sec:http pattern="/(users|projects).*" request-matcher="regex"
               entry-point-ref="oauthAuthenticationEntryPoint"
               access-decision-manager-ref="accessDecisionManager">
         <sec:anonymous enabled="false" />
@@ -90,12 +90,18 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
     
     <sec:authentication-manager alias="authenticationManager">
         <sec:authentication-provider>
-            <sec:user-service id="userDetailsService">
-                <sec:user name="marissa" password="koala" authorities="ROLE_USER" />
-                <sec:user name="paul" password="emu" authorities="ROLE_USER" />
+            <sec:password-encoder ref="passwordEncoder" />
+            <sec:user-service>
+                <!-- password is "password1", encoded by BCrypt. -->
+                <sec:user name="fbristow" password="$2a$10$vMzhJFdyM72NnnWIoMSbUecHRxZDtCE1fdiPfjfjT1WD0fISDXOX2" authorities="ROLE_USER" />
+                <sec:user name="josh" password="$2a$10$vMzhJFdyM72NnnWIoMSbUecHRxZDtCE1fdiPfjfjT1WD0fISDXOX2" authorities="ROLE_USER" />
+                <sec:user name="admin" password="$2a$10$vMzhJFdyM72NnnWIoMSbUecHRxZDtCE1fdiPfjfjT1WD0fISDXOX2" authorities="ROLE_USER" />
             </sec:user-service>
         </sec:authentication-provider>
     </sec:authentication-manager>
+    
+    <!-- Passwords should be encoded using the BCrypt algorithm -->
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
     
     <bean id="clientDetailsUserService" class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
         <constructor-arg ref="clientDetails" />
