@@ -246,6 +246,43 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
     
         return ret;
     }
+    
+    public List<Type> readMultiple(List<Identifier> idents){
+        List<Type> projects = new ArrayList<>();
+        ObjectConnection con = store.getRepoConnection();
+        
+        try{
+            //compile a string list of the string URIs
+            List<String> uris = new ArrayList<>();
+            for(Identifier i :idents){
+                java.net.URI uri = getUriFromIdentifier(i);
+                uris.add(uri.toString());
+            }
+            String[] strArr = new String[uris.size()];
+            uris.toArray(strArr);
+
+            Result<TypeIF> result = (Result<TypeIF>) con.getObjects(objectType, strArr);
+            while(result.hasNext()){
+                TypeIF o = result.next();
+            
+                URI u = con.getValueFactory().createURI(o.toString());
+                
+                Type ret = buildObjectFromResult(o, u, con);
+                
+                projects.add(ret);               
+            }
+            result.close();            
+        }
+        catch (RepositoryException | QueryEvaluationException | MalformedQueryException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Failed to read multiple objects"); 
+        }        
+        finally{
+            store.closeRepoConnection(con);
+        }
+        
+        return projects;        
+    }
 
     @Override
     public Type update(Type object) throws IllegalArgumentException {

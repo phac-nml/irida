@@ -17,11 +17,13 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import ca.corefacility.bioinformatics.irida.model.Link;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.alibaba.ProjectIF;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -44,12 +46,19 @@ public class ProjectSesameRepository extends GenericRepository<Identifier,Projec
     
 private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProjectSesameRepository.class);
 
+    LinksRepository links;
+    
     public ProjectSesameRepository(){}
     
     public ProjectSesameRepository(TripleStore store,AuditRepository auditRepo) {
         super(store,ProjectIF.class,ProjectIF.PREFIX,ProjectIF.TYPE,auditRepo);
-
+        
     }
+    
+    public ProjectSesameRepository(TripleStore store,AuditRepository auditRepo,LinksRepository links) {
+        super(store,ProjectIF.class,ProjectIF.PREFIX,ProjectIF.TYPE,auditRepo);
+        this.links = links;
+    }    
     
     @Override
     public Project buildObject(ProjectIF base,Identifier i){
@@ -64,7 +73,7 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProjectSe
     /**
      * {@inheritDoc}
      */    
-    @Override
+    /*@Override
     public Collection<Project> getProjectsForUser(User user) {
         List<Project> projects = new ArrayList<>();
         
@@ -110,7 +119,29 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProjectSe
         
         
         return projects;
+    }*/
+    
+    @Override
+    public Collection<Project> getProjectsForUser(User user) {
+        RdfPredicate pred = new RdfPredicate("irida", "hasProject");
+    
+        List<Identifier> projIds = links.listObjects(user.getIdentifier(), pred);
+        
+        List<Project> projs = readMultiple(projIds);
+        
+        return projs;
     }
     
+    public Link addUserToProject(User user, Project p){
+        RdfPredicate pred = new RdfPredicate("irida", "hasProject");
+        Link l = new Link();
+        l.setSubject(user.getIdentifier());
+        l.setRelationship(pred);
+        l.setObject(p.getIdentifier());
+
+        return links.create(l);
+    }
+
+
 
 }

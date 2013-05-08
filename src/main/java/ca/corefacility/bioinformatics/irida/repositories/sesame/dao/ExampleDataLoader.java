@@ -36,7 +36,7 @@ public class ExampleDataLoader {
     }
     
     public void addSampleData(){
-        userRepo.create(new User("tomX", "tom@nowhere.com", "PASSWOD!1", "Tom", "Matthews", "1234"));
+        userRepo.create(new User("tom", "tom@nowhere.com", "PASSWOD!1", "Tom", "Matthews", "1234"));
         userRepo.create(new User("franklin", "franklin@nowhere.com", "PASSWOD!2", "Franklin", "Bristow", "2345"));
         userRepo.create(new User("josh", "josh@nowhere.com", "PASSWOD!3", "Josh", "Adam", "3456"));
         userRepo.create(new User("matt", "matt@nowhere.com", "PASSWOD!4", "Matthew", "Stuart-Edwards", "4567"));
