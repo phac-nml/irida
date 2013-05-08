@@ -71,7 +71,7 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
 
     public GenericRepository(TripleStore store, Class type,String prefix, String sType,AuditRepository auditRepo) {
         super(store, sType);
-        this.store = store;
+        //this.store = store;
         this.prefix = prefix;
         this.sType = sType;
         this.auditRepo = auditRepo;
@@ -89,7 +89,7 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
      * @return and identifier for the object.
      */
     public Identifier generateNewIdentifier(Type t) {
-        return super.generateIdentifier();
+        return super.generateNewIdentifier();
     }
 
     /**
@@ -175,48 +175,8 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
         return object;        
     }
     
-    /**
-     * Retrieve the String that uniquely identifies this object
-     * @param con The object connection to retrieve with
-     * @param uri The subject whose identifier to retrieve
-     * @return The string that uniqely identifies this object in the database
-     * @throws MalformedQueryException
-     * @throws RepositoryException
-     * @throws QueryEvaluationException
-     */
-    public String getIdentifiedBy(ObjectConnection con, URI uri) throws MalformedQueryException, RepositoryException, QueryEvaluationException{
-        String id;
-        
-        String qs = store.getPrefixes()
-                + "SELECT ?id "
-                + "WHERE{ ?s irida:identifier ?id . \n"
-                + "}";
-        
-        TupleQuery query = con.prepareTupleQuery(qs);
-        query.setBinding("s", uri);
-        TupleQueryResult result = query.evaluate();
-        BindingSet bs = result.next();
-        
-        id = bs.getBinding("id").getValue().stringValue();
-        result.close();
-        
-        return id;
-    }
+
     
-    /**
-     * Set a unique identifier for this object in the database
-     * @param con The <code>ObjectConnection</code> to use to add
-     * @param uri The URI to add this identifier to
-     * @param id The string identifier to add to the object
-     * @throws RepositoryException
-     */
-    public void setIdentifiedBy(ObjectConnection con, URI uri, String id) throws RepositoryException{
-        ValueFactory vf = con.getValueFactory();
-        Literal litId = vf.createLiteral(id);
-        URI pred = vf.createURI(con.getNamespace("irida"), "identifier");
-        Statement stmt = vf.createStatement(uri, pred, litId);
-        con.add(stmt);     
-    }
     
     /**
      * Build an object of <code>Type</code> from the interface of that type.

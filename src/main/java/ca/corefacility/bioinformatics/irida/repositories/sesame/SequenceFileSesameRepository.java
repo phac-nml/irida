@@ -154,6 +154,7 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
         return getFilesForContainer(uri,SampleIF.class);    
     }    
     
+    @Override
     public void addFileToProject(Project project, SequenceFile file){
         
         /*java.net.URI pNetUri = projectRepo.buildURI(project.getIdentifier().getIdentifier());
@@ -171,14 +172,21 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
         
     }
     
+    @Override
     public void addFileToSample(Sample sample, SequenceFile file){
         
-        java.net.URI pNetUri = sampleRepo.buildURI(sample.getIdentifier().getIdentifier());
+        /*java.net.URI pNetUri = sampleRepo.buildURI(sample.getIdentifier().getIdentifier());
         
         addFileToContainer(pNetUri.toString(), file);
         sample.getAuditInformation().setUpdated(new Date());
 
-        auditRepo.audit(sample.getAuditInformation(), pNetUri.toString());
+        auditRepo.audit(sample.getAuditInformation(), pNetUri.toString());*/
+        
+        Link l = new Link();
+        l.setSubject(sample.getIdentifier());
+        l.setObject(file.getIdentifier());
+        l.setRelationship(hasFile);
+        linksRepo.create(l);        
     }    
     
 }

@@ -23,6 +23,8 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openrdf.model.Literal;
+import org.openrdf.model.Statement;
+import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.BooleanQuery;
@@ -134,17 +136,78 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AuditRepo
     }
     
     /**
+     * Retrieve the String that uniquely identifies this object
+     * @param con The object connection to retrieve with
+     * @param uri The subject whose identifier to retrieve
+     * @return The string that uniqely identifies this object in the database
+     * @throws MalformedQueryException
+     * @throws RepositoryException
+     * @throws QueryEvaluationException
+     */
+    public String getIdentifiedBy(ObjectConnection con, URI uri) throws MalformedQueryException, RepositoryException, QueryEvaluationException{
+        String id;
+        
+        String qs = store.getPrefixes()
+                + "SELECT ?id "
+                + "WHERE{ ?s irida:identifier ?id . \n"
+                + "}";
+        
+        TupleQuery query = con.prepareTupleQuery(qs);
+        query.setBinding("s", uri);
+        TupleQueryResult result = query.evaluate();
+        BindingSet bs = result.next();
+        
+        id = bs.getBinding("id").getValue().stringValue();
+        result.close();
+        
+        return id;
+    }
+    
+    public String getLabel(ObjectConnection con, URI uri) throws RepositoryException, MalformedQueryException, QueryEvaluationException{
+        String label;
+        
+        String qs = store.getPrefixes()
+                + "SELECT ?label "
+                + "WHERE{ ?s rdfs:label ?label . }";
+        
+        TupleQuery query = con.prepareTupleQuery(qs);
+        query.setBinding("s", uri);
+        TupleQueryResult result = query.evaluate();
+        BindingSet bs = result.next();
+        
+        label = bs.getBinding("label").getValue().stringValue();
+        result.close();
+        
+        return label;        
+    }
+    
+    /**
      * Generate an identifier for an object of type
      * <code>Type</code>.
      *
      * @param t the object to generate the identifier for.
      * @return and identifier for the object.
      */
-    public Identifier generateIdentifier() {
+    public Identifier generateNewIdentifier() {
         UUID uuid = UUID.randomUUID();
         java.net.URI objuri = buildURI(uuid.toString());
         return new Identifier(objuri, uuid);
-    }  
+    }   
+    
+    /**
+     * Set a unique identifier for this object in the database
+     * @param con The <code>ObjectConnection</code> to use to add
+     * @param uri The URI to add this identifier to
+     * @param id The string identifier to add to the object
+     * @throws RepositoryException
+     */
+    public void setIdentifiedBy(ObjectConnection con, URI uri, String id) throws RepositoryException{
+        ValueFactory vf = con.getValueFactory();
+        Literal litId = vf.createLiteral(id);
+        URI pred = vf.createURI(con.getNamespace("irida"), "identifier");
+        Statement stmt = vf.createStatement(uri, pred, litId);
+        con.add(stmt);     
+    }    
     
     /**
      * Build a URI from a given String ID

@@ -45,17 +45,13 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class AuditRepository {
+public class AuditRepository extends SesameRepository{
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AuditRepository.class);
-    
-    private TripleStore store;
-    private String URI;
     
     public AuditRepository(){}
     
     public AuditRepository(TripleStore store){
-        this.store = store;
-        this.URI = store.getURI() + "Audit/";
+        super(store, "Audit");
     }
     
     public String getAuditURI(String uri) throws RepositoryException{

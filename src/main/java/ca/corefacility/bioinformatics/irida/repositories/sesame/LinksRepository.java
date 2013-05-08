@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openrdf.model.Statement;
@@ -41,8 +42,6 @@ import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
-import org.openrdf.query.Update;
-import org.openrdf.query.UpdateExecutionException;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.object.ObjectConnection;
 
@@ -60,7 +59,7 @@ public class LinksRepository extends SesameRepository{
         this.auditRepo = auditRepo;
     }
     
-    public StringIdentifier buildIdentifier(BindingSet bs){
+    public StringIdentifier buildIdentiferFromBindingSet(BindingSet bs){
         StringIdentifier id = null;
         try {
             Value uri = bs.getValue("object");
@@ -76,6 +75,14 @@ public class LinksRepository extends SesameRepository{
         
         return id;
     }
+    
+    public Identifier buildLinkIdentifier(URI uri,String identifiedBy) {
+        Identifier objid = new Identifier();
+        objid.setUri(java.net.URI.create(uri.toString()));
+        objid.setIdentifier(identifiedBy);
+
+        return objid;
+    }     
     
     public Link create(Link link){
         Identifier subject = link.getSubject();
@@ -94,7 +101,7 @@ public class LinksRepository extends SesameRepository{
             URI objURI = fac.createURI(objNetURI.toString());            
             URI pred = fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
             
-            Identifier identifier = generateIdentifier();
+            Identifier identifier = generateNewIdentifier();
             java.net.URI netURI = identifier.getUri();
             URI linkURI = fac.createURI(netURI.toString());
             
@@ -103,6 +110,7 @@ public class LinksRepository extends SesameRepository{
             
             URI rdftype = fac.createURI(con.getNamespace("rdf"), "type");
             URI type = fac.createURI(linkType);
+            setIdentifiedBy(con, linkURI, identifier.getIdentifier());
             
             URI linkSubject = fac.createURI(con.getNamespace("irida"), "linkSubject");
             URI linkPredicate = fac.createURI(con.getNamespace("irida"), "linkPredicate");
@@ -127,6 +135,32 @@ public class LinksRepository extends SesameRepository{
         return link;
     }
     
+    public Identifier getIdentiferForURI(URI uri){
+        Identifier id = null;
+        ObjectConnection con = store.getRepoConnection();
+        try{
+            String qs = store.getPrefixes()
+                    + "SELECT ?object ?identifier ?label "
+                    + "WHERE{ ?object irida:identifier ?identifier ;"
+                    + " rdfs:label ?label .\n"
+                    + "}";
+            TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
+
+            query.setBinding("object", uri);
+            TupleQueryResult results = query.evaluate();
+            BindingSet bs = results.next();
+            id = buildIdentiferFromBindingSet(bs);
+        }
+        catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
+            Logger.getLogger(LinksRepository.class.getName()).log(Level.SEVERE, null, ex);
+        }        
+        finally{
+            store.closeRepoConnection(con);
+        }
+        
+        return id;
+    }
+    
    
     public List<Identifier> listObjects(Identifier subjectId, RdfPredicate predicate){
         
@@ -136,23 +170,22 @@ public class LinksRepository extends SesameRepository{
         ObjectConnection con = store.getRepoConnection();
         try {
             String qs = store.getPrefixes()
-                    + "SELECT ?obj ?id "
-                    + "WHERE{ ?sub ?pred ?object .\n"
-                    + "?obj irida:identifier ?identifier ;"
+                    + "SELECT ?object ?identifier ?label "
+                    + "WHERE{ ?subject ?predicate ?object .\n"
+                    + "?object irida:identifier ?identifier ;"
                     + " rdfs:label ?label .\n"
                     + "}";
             ValueFactory fac = con.getValueFactory();
             TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
             
             URI subURI = fac.createURI(subNetURI.toString());
-            //URI predURI = fac.createURI(predicate);
             URI predURI = fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
-            query.setBinding("sub", subURI);
-            query.setBinding("pred", predURI);
+            query.setBinding("subject", subURI);
+            query.setBinding("predicate", predURI);
             TupleQueryResult results = query.evaluate();
             while(results.hasNext()){
                 BindingSet bs = results.next();
-                ids.add(buildIdentifier(bs));
+                ids.add(buildIdentiferFromBindingSet(bs));
             }
 
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
@@ -160,10 +193,74 @@ public class LinksRepository extends SesameRepository{
         }
         return ids;
     }
+    
+    public List<Link> getLinks(Identifier subjectId){
+        List<Link> links = new ArrayList<>();
+        
+        java.net.URI subNetURI = getUriFromIdentifier(subjectId);
+        
+        ObjectConnection con = store.getRepoConnection();
+        try {
+            String qs = store.getPrefixes()
+                    + "SELECT ?link ?sub ?pred ?obj "
+                    + "WHERE{ ?link a irida:ResourceLink ;\n"
+                    + " irida:linkSubject ?sub ; \n"
+                    + " irida:linkPredicate ?pred ;\n"
+                    + " irida:linkObject ?obj ."
+                    + "}";
+            ValueFactory fac = con.getValueFactory();
+            TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
             
-    //@Override
-    public Link buildObject(LinkIF base, Identifier i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            URI subURI = fac.createURI(subNetURI.toString());
+            query.setBinding("sub", subURI);
+            
+            TupleQueryResult results = query.evaluate();
+            while(results.hasNext()){
+                BindingSet bs = results.next();
+                
+                String uristr = bs.getValue("link").stringValue();
+                URI uri = fac.createURI(uristr);
+                String identifiedBy = getIdentifiedBy(con, uri);
+                
+                Identifier linkId = buildLinkIdentifier(uri,identifiedBy);
+                Link link = buildLinkfromBindingSet(bs, con);
+                link.setIdentifier(linkId);
+                Audit audit = auditRepo.getAudit(uri);
+                link.setAuditInformation(audit);
+                
+                links.add(link);
+            }
+
+        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
+            Logger.getLogger(LinksRepository.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        
+        return links;
+    }
+    
+    private Link buildLinkfromBindingSet(BindingSet bs, ObjectConnection con){
+        ValueFactory fac = con.getValueFactory();
+        
+        String substr = bs.getValue("sub").stringValue();
+        URI subURI = fac.createURI(substr);
+        
+        String objstr = bs.getValue("obj").stringValue();
+        URI objURI = fac.createURI(objstr);
+        
+        String predstr = bs.getValue("pred").stringValue();
+        URI predURI = fac.createURI(predstr);
+
+        RdfPredicate pred = new RdfPredicate(predURI.getNamespace(), predURI.getLocalName());
+        
+        Identifier subId = getIdentiferForURI(subURI);
+        Identifier objId = getIdentiferForURI(objURI);
+        Link l = new Link();
+        l.setSubject(subId);
+        l.setObject(objId);
+        
+        l.setRelationship(pred);
+        
+        return l;
     }
        
 }
