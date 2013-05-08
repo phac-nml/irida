@@ -9,17 +9,28 @@ angular.module('irida.projectsList', ['ajaxService'])
     $routeProvider.when(
       '/projects', {
         templateUrl: './partials/projects.html',
-        controller: 'ProjectsListCtrl'
+        controller: function ($scope, initData) {
+          $scope.projects = initData.resources.resources;
+          $scope.links = initData.resources.links;
+        },
+        resolve: {
+          initData: function ($q, ajaxService) {
+            var defer = $q.defer();
+            ajaxService.get('/projects').then(function (data) {
+              var links = {};
+              angular.forEach(data.resources.links, function (val) {
+                links[val.rel] = val.href;
+              });
+              data.resources.links = links;
+              defer.resolve(data);
+            });
+            return defer.promise;
+          }
+        }
       })
   }])
-
   .controller('ProjectsListCtrl', ['$scope', '$location', 'ajaxService', function ($scope, $location, ajaxService) {
     'use strict';
-    $scope.projects = [];
-    $scope.links = {};
-    $scope.newProject = {};
-    $scope.errors = {};
-    $scope.projectsUrl = '/projects' + '?_' + Math.random();
 
     $scope.loadProjects = function (url) {
       if (url) {
@@ -85,11 +96,4 @@ angular.module('irida.projectsList', ['ajaxService'])
       $scope.projects = data.resources.resources;
     }
 
-    var render = function () {
-      $scope.loadProjects($scope.projectsUrl);
-    };
-
-    $scope.$on('$routeChangeSuccess', function () {
-      render();
-    });
   }]);
