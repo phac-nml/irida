@@ -30,7 +30,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * A basis for clients to begin discovering other URLs in our API.
@@ -38,7 +38,6 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Controller
-@RequestMapping(value = "/")
 public class RootController {
 
     private static final Logger logger = LoggerFactory.getLogger(RootController.class);
@@ -50,9 +49,10 @@ public class RootController {
         CONTROLLERS.put("projects", ProjectsController.class);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public String getLinks(Model model) {
+    @RequestMapping(method = RequestMethod.GET, value = "/")
+    public ModelAndView getLinks(Model model) {
         logger.debug("Discovering application");
+        ModelAndView mav = new ModelAndView("index");
         RootResource resource = new RootResource();
         List<Link> links = new ArrayList<>();
 
@@ -61,17 +61,10 @@ public class RootController {
             links.add(link);
         }
 
-        resource.add(linkTo(RootController.class).withSelfRel());
+
+        resource.add(linkTo(methodOn(RootController.class, Model.class).getLinks(model)).withSelfRel());
         resource.add(links);
         model.addAttribute(resource);
-        return "index";
-    }
-
-    @RequestMapping("login.html")
-    public String login(Model model, @RequestParam(value = "authentication_error", defaultValue = "false") Boolean authenticationError) {
-        if (authenticationError) {
-            model.addAttribute("loginError", true);
-        }
-        return "login";
+        return mav;
     }
 }
