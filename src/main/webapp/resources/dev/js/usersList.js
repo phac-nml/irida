@@ -90,8 +90,8 @@ angular.module('irida.users', [
     };
 
     function ajaxSuccessCallback(data) {
-      $scope.links = data.resources.links;
-      $scope.users = data.resources.resources;
+      $scope.links = data.resource.links;
+      $scope.users = data.resource.resources;
     }
 
     $scope.$on('$routeChangeSuccess', function () {
