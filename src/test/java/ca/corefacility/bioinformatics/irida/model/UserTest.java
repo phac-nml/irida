@@ -15,16 +15,13 @@
  */
 package ca.corefacility.bioinformatics.irida.model;
 
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import javax.validation.Configuration;
@@ -218,33 +215,6 @@ public class UserTest {
         for (int i = 1; i < users.size(); i++) {
             assertTrue(curr.getAuditInformation().getCreated().compareTo(users.get(i).getAuditInformation().getCreated()) < 0);
         }
-    }
-
-    @Test
-    public void testRemoveProject() {
-        User u = new User();
-        Map<Project, Role> projects = new HashMap<>();
-        Identifier id = new Identifier();
-        Project p = new Project();
-        p.setIdentifier(id);
-        projects.put(p, new Role());
-        u.setProjects(projects);
-
-        // now remove the project
-        u.removeProject(p);
-
-        assertTrue(projects.isEmpty());
-    }
-
-    @Test
-    public void testAddProject() {
-        User u = new User();
-        Identifier id = new Identifier();
-        Project p = new Project();
-        p.setIdentifier(id);
-        u.addProject(p, new Role());
-
-        assertTrue(u.getProjects().containsKey(p));
     }
 
     @Test

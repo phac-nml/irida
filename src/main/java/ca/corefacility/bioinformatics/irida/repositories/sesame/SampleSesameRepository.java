@@ -25,22 +25,23 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class SampleSesameRepository extends GenericRepository<Identifier, SampleIF, Sample>{
-    
+public class SampleSesameRepository extends GenericRepository<Identifier, SampleIF, Sample> {
+
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SampleSesameRepository.class);
-    
-    public SampleSesameRepository(){}
-    
-    public SampleSesameRepository(TripleStore store,AuditRepository auditRepo) {
-        super(store,SampleIF.class,Sample.PREFIX,Sample.TYPE,auditRepo);
-    }      
+
+    public SampleSesameRepository() {
+    }
+
+    public SampleSesameRepository(TripleStore store, AuditRepository auditRepo) {
+        super(store, SampleIF.class, Sample.PREFIX, Sample.TYPE, auditRepo);
+    }
 
     @Override
     public Sample buildObject(SampleIF base, Identifier i) {
         Sample s = new Sample();
         s.setIdentifier(i);
         s.setSampleName(base.getSampleName());
-        
+
         return s;
     }
 }

@@ -18,8 +18,6 @@ package ca.corefacility.bioinformatics.irida.model;
 import ca.corefacility.bioinformatics.irida.model.alibaba.SequenceFileIF;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
-import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import java.io.File;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;

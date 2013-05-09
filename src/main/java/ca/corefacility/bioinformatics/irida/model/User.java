@@ -46,12 +46,10 @@ public class User implements UserIF, Comparable<User>{
     @NotNull(message = "{user.phoneNumber.notnull}")
     @Size(min = 4, message = "{user.phoneNumber.size}")
     private String phoneNumber;
-    private Map<Project, Role> projects;
     @NotNull
     private Audit audit;
 
     public User() {
-        projects = new HashMap<>();
         audit = new Audit();
     }
 
@@ -104,10 +102,10 @@ public class User implements UserIF, Comparable<User>{
                 .add("firstName", firstName)
                 .add("lastName", lastName)
                 .add("phoneNumber", phoneNumber)
-                .add("projects", projects.size())
                 .toString();
     }
 
+    @Override
     public String getUsername() {
         return username;
     }
@@ -116,6 +114,7 @@ public class User implements UserIF, Comparable<User>{
         this.username = username;
     }
 
+    @Override
     public String getEmail() {
         return email;
     }
@@ -124,6 +123,7 @@ public class User implements UserIF, Comparable<User>{
         this.email = email;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
@@ -132,6 +132,7 @@ public class User implements UserIF, Comparable<User>{
         this.password = password;
     }
 
+    @Override
     public String getFirstName() {
         return firstName;
     }
@@ -140,6 +141,7 @@ public class User implements UserIF, Comparable<User>{
         this.firstName = firstName;
     }
 
+    @Override
     public String getLastName() {
         return lastName;
     }
@@ -148,28 +150,13 @@ public class User implements UserIF, Comparable<User>{
         this.lastName = lastName;
     }
 
+    @Override
     public String getPhoneNumber() {
         return phoneNumber;
     }
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    public void addProject(Project project, Role role) {
-        this.projects.put(project, role);
-    }
-
-    public void removeProject(Project project) {
-        this.projects.remove(project);
-    }
-
-    public Map<Project, Role> getProjects() {
-        return this.projects;
-    }
-
-    public void setProjects(Map<Project, Role> projects) {
-        this.projects = projects;
     }
 
     @Override

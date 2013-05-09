@@ -3,36 +3,24 @@ package ca.corefacility.bioinformatics.irida.model;
 import ca.corefacility.bioinformatics.irida.model.alibaba.ProjectIF;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
-import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Set;
 import javax.validation.constraints.NotNull;
 
 /**
  * A project object.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca> 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class Project implements ProjectIF, Comparable<Project>{
+public class Project implements ProjectIF, Comparable<Project> {
 
     private Identifier id;
     @NotNull(message = "{project.name.notnull}")
     private String name;
-    private Map<User, Role> users;
     @NotNull
     private Audit audit;
-    private Collection<Sample> samples;
 
     public Project() {
-        users = new HashMap<>();
-        samples = new HashSet<>();
         audit = new Audit();
     }
 
@@ -51,8 +39,7 @@ public class Project implements ProjectIF, Comparable<Project>{
         if (other instanceof Project) {
             Project p = (Project) other;
             return Objects.equals(id, p.id)
-                    && Objects.equals(name, p.name)
-                    && Objects.equals(samples, p.samples);
+                    && Objects.equals(name, p.name);
         }
 
         return false;
@@ -72,39 +59,9 @@ public class Project implements ProjectIF, Comparable<Project>{
         this.name = name;
     }
 
-    public Set<User> getUsersByRole(Role role) {
-        Set<User> filtered = new HashSet<>(users.keySet().size());
-        for (Entry<User, Role> entry : users.entrySet()) {
-            if (entry.getValue().equals(role)) {
-                filtered.add(entry.getKey());
-            }
-        }
-        return filtered;
-    }
-
-    public void addUserToProject(User u, Role r) {
-        users.put(u, r);
-    }
-
-    public Map<User, Role> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Map<User, Role> members) {
-        this.users = members;
-    }
-
-    public Collection<Sample> getSamples() {
-        return samples;
-    }
-
-    public void setSamples(Collection<Sample> samples) {
-        this.samples = samples;
-    }
-
     @Override
     public int compareTo(Project p) {
-        return audit.compareTo(p.audit);    
+        return audit.compareTo(p.audit);
     }
 
     @Override
