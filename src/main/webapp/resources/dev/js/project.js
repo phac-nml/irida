@@ -20,15 +20,12 @@ angular.module('irida.project', ['ajaxService'])
               defer.resolve(data);
             });
             return defer.promise;
-          },
-          users: {
-            // TODO: Get users once implemented on the server side.
           }
         }
       })
   }])
 
-.controller('ProjectCtrl', ['$scope', '$route', '$location', 'ajaxService', function ($scope, $route, $location, ajaxService) {
+  .controller('ProjectCtrl', ['$scope', '$route', '$location', 'ajaxService', function ($scope, $route, $location, ajaxService) {
     'use strict';
 
   }]);
