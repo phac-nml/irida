@@ -7,7 +7,7 @@ angular.module('irida.landing', [])
  */
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when(
-      '/', {
+      '/landing', {
         templateUrl: './partials/landing.html',
         controller: 'LandingCtrl'
       })
