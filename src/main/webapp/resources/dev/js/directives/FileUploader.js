@@ -1,3 +1,5 @@
+/*global angular */
+
 /**
  * Author: Josh Adam <josh.adam@phac-aspc.gc.ca>
  * Date:   2013-04-30
@@ -12,7 +14,7 @@ angular.module('irida.directives', [])
     scope: {
       files: '='
     },
-    link: function (scope, el, attrs) {
+    link: function (scope, el) {
       el.bind('change', function (event) {
         var files = event.target.files;
         //          scope.file = file ? file.name : undefined;
@@ -23,7 +25,7 @@ angular.module('irida.directives', [])
 
       function initializeFileUploads(files, element) {
         scope.uploadedFiles = [];
-        angular.forEach(files, function (value, key) {
+        angular.forEach(files, function (value) {
           uploadFile(value, element);
         });
       }
@@ -52,13 +54,13 @@ angular.module('irida.directives', [])
             var width = Math.round(percentage * innerWidth);
             scope.$apply(function () {
               counter.text(Math.round(percentage * 100) + " %");
-              inner.css('width', width)
+              inner.css('width', width);
             });
 
           }
         }, false);
 
-        xhr.upload.addEventListener('load', function (e) {
+        xhr.upload.addEventListener('load', function () {
           outer.fadeOut(function () {
             this.remove();
           });
@@ -66,10 +68,8 @@ angular.module('irida.directives', [])
 
         xhr.open("POST", uri, true);
         xhr.onreadystatechange = function () {
-          if (xhr.readyState == 4 && xhr.status == 200) {
-            // Handle response.
-            alert(xhr.responseText); // handle response.
-
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            // TODO: Handoe response.
           }
         };
         fd.append('file', file);

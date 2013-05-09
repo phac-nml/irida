@@ -10,18 +10,13 @@ angular.module('irida.projectsList', ['ajaxService'])
       '/projects', {
         templateUrl: './partials/projects.html',
         controller: function ($scope, initData) {
-          $scope.projects = initData.resources.resources;
-          $scope.links = initData.resources.links;
+          $scope.projects = initData.resource.resources;
+          $scope.links = initData.resource.links;
         },
         resolve: {
           initData: function ($q, ajaxService) {
             var defer = $q.defer();
             ajaxService.get('/projects').then(function (data) {
-              var links = {};
-              angular.forEach(data.resources.links, function (val) {
-                links[val.rel] = val.href;
-              });
-              data.resources.links = links;
               defer.resolve(data);
             });
             return defer.promise;
@@ -89,11 +84,8 @@ angular.module('irida.projectsList', ['ajaxService'])
     };
 
     function ajaxSuccessCallback(data) {
-      $scope.links = {};
-      angular.forEach(data.resources.links, function (val) {
-        $scope.links[val.rel] = val.href;
-      });
-      $scope.projects = data.resources.resources;
+      $scope.links = data.resource.links;
+      $scope.projects = data.resource.resources;
     }
 
   }]);
