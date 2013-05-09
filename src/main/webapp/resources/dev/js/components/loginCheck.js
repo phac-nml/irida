@@ -5,3 +5,11 @@
  * Time: 1:42 PM
  * To change this template use File | Settings | File Templates.
  */
+angular.module('logincheck', ['ngCookies'])
+  .factory('logincheck', ['$cookies', function ($cookies) {
+    return {
+      isLoggedIn: function () {
+        return typeof $cookies['JSESSIONID'] === 'string';
+      }
+    }
+  }]);
