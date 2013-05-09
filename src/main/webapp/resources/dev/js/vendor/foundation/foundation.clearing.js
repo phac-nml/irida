@@ -6,7 +6,7 @@
   Foundation.libs.clearing = {
     name : 'clearing',
 
-    version : '4.1.2',
+    version : '4.1.3',
 
     settings : {
       templates : {
@@ -317,7 +317,11 @@
     // image loading and preloading
 
     load : function ($image) {
-      var href = $image.parent().attr('href');
+      if ($image[0].nodeName === "A") {
+        var href = $image.attr('href');
+      } else {
+        var href = $image.parent().attr('href');
+      }
 
       this.preload($image);
 
