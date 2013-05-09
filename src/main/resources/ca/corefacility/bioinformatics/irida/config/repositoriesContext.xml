@@ -9,26 +9,35 @@
     <context:property-placeholder location="classpath:ca/corefacility/bioinformatics/irida/config/sesame.properties,
         classpath:ca/corefacility/bioinformatics/irida/config/filesystem.properties"/>
     
-    <import resource="tripleStoreContext.xml"/>    
+    <import resource="tripleStoreContext.xml"/>
+    
+    <bean id="linksRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.LinksRepository">
+        <constructor-arg ref="tripleStore"/>
+        <constructor-arg ref="auditRepository"/>
+    </bean>
         
     <bean id="userRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.UserSesameRepository">
         <constructor-arg ref="tripleStore" />
         <constructor-arg ref="auditRepository" />       
+        <constructor-arg ref="linksRepository" /> 
     </bean>
         
     <bean id="projectRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.ProjectSesameRepository">
         <constructor-arg ref="tripleStore" />
         <constructor-arg ref="auditRepository" /> 
+        <constructor-arg ref="linksRepository" /> 
     </bean> 
     
     <bean id="sampleRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.SampleSesameRepository">
         <constructor-arg ref="tripleStore" />
         <constructor-arg ref="auditRepository" />         
+        <constructor-arg ref="linksRepository" /> 
     </bean>
     
     <bean id="sequenceFileRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.SequenceFileSesameRepository">
         <constructor-arg ref="tripleStore" />
-        <constructor-arg ref="auditRepository" /> 
+        <constructor-arg ref="auditRepository" />
+        <constructor-arg ref="linksRepository" />  
         <property name="projectRepository" ref="projectRepository"/>
         <property name="sampleRepository" ref="sampleRepository"/>
     </bean>

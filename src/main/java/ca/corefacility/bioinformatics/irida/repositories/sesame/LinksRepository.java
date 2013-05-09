@@ -42,7 +42,6 @@ import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.object.ObjectConnection;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  *
