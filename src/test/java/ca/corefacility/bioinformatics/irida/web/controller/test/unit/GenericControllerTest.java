@@ -202,7 +202,6 @@ public class GenericControllerTest {
 
     @Test
     public void testListResources() throws InstantiationException, IllegalAccessException {
-        String resourceKey = "resources";
         int totalResources = 400;
         List<IdentifiableTestEntity> entities = new ArrayList<>();
         entities.add(entity);
@@ -210,8 +209,8 @@ public class GenericControllerTest {
         when(crudService.count()).thenReturn(totalResources);
         ModelAndView mav = controller.listResources(2, 20, "nonNull", Order.DESCENDING);
         Map<String, Object> model = mav.getModel();
-        assertNotNull(model.get(resourceKey));
-        Object o = model.get(resourceKey);
+        assertNotNull(model.get(GenericController.RESOURCE_NAME));
+        Object o = model.get(GenericController.RESOURCE_NAME);
         assertTrue(o instanceof ResourceCollection);
         ResourceCollection<IdentifiableTestResource> collection = (ResourceCollection<IdentifiableTestResource>) o;
         assertEquals(5, collection.getLinks().size());

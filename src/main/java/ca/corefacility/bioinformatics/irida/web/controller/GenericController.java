@@ -71,7 +71,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     private static final Logger logger = LoggerFactory.getLogger(GenericController.class);
     private static final String INDEX_PAGE = "index";
     private static final String PARTIALS_PREFIX = "partials/";
-    private static final String RESOURCE_NAME = "resource";
+    public static final String RESOURCE_NAME = "resource";
     protected CRUDService<IdentifierType, Type> crudService;
     private Class<ResourceType> resourceType;
     private Class<IdentifierType> identifierType;
