@@ -1,9 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title></title>
-</head>
-<body>
+<div class="reveal-modal medium loginModal">
+    <h2>Login Required</h2>
+    <form name="loginForm" novalidated="true">
+        <p>
+            <label for="username" class="uname" data-icon="u"> Your email or username </label>
+            <input id="username" name="username" required="required" type="text"
+                   placeholder="myusername or mymail@mail.com" ng-model="username"/>
+        </p>
 
-</body>
-</html>
+        <p>
+            <label for="password" class="youpasswd" data-icon="p"> Your password </label>
+            <input required="required" type="password" ng-model="password"
+                   placeholder="eg. X8df!90EO"/>
+        </p>
+        <div ng-show="showError" class="error">Invalid login credentials.</div>
+        <button data-ng-class="{disabled: !loginForm.$valid}" ng-click="login()">Login</button>
+    </form>
+</div>
