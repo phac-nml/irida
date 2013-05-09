@@ -44,20 +44,13 @@ import org.slf4j.LoggerFactory;
 //public class ProjectSesameRepository extends GenericAlibabaRepository<Identifier, ProjectIF> implements ProjectRepository{
 public class ProjectSesameRepository extends GenericRepository<Identifier,ProjectIF, Project> implements ProjectRepository{
     
-private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProjectSesameRepository.class);
-
-    LinksRepository links;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProjectSesameRepository.class);
+    private static final RdfPredicate hasProject = new RdfPredicate("irida", "hasProject");
     
     public ProjectSesameRepository(){}
     
-    public ProjectSesameRepository(TripleStore store,AuditRepository auditRepo) {
-        super(store,ProjectIF.class,ProjectIF.PREFIX,ProjectIF.TYPE,auditRepo);
-        
-    }
-    
-    public ProjectSesameRepository(TripleStore store,AuditRepository auditRepo,LinksRepository links) {
-        super(store,ProjectIF.class,ProjectIF.PREFIX,ProjectIF.TYPE,auditRepo);
-        this.links = links;
+    public ProjectSesameRepository(TripleStore store,AuditRepository auditRepo,LinksRepository linksRepo) {
+        super(store,ProjectIF.class,ProjectIF.PREFIX,ProjectIF.TYPE,auditRepo,linksRepo);
     }    
     
     @Override
@@ -123,25 +116,27 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProjectSe
     
     @Override
     public Collection<Project> getProjectsForUser(User user) {
-        RdfPredicate pred = new RdfPredicate("irida", "hasProject");
-    
-        List<Identifier> projIds = links.listObjects(user.getIdentifier(), pred);
+        List<Identifier> projIds = linksRepo.listObjects(user.getIdentifier(), hasProject);
         
         List<Project> projs = readMultiple(projIds);
         
         return projs;
     }
     
-    public Link addUserToProject(User user, Project p){
-        RdfPredicate pred = new RdfPredicate("irida", "hasProject");
+    public Collection<Identifier> listProjectsForUser(User user){
+        List<Identifier> projIds = linksRepo.listObjects(user.getIdentifier(), hasProject);
+        return projIds;
+    }
+    
+    public Link addUserToProject(Project p, User user){
         Link l = new Link();
         l.setSubject(user.getIdentifier());
-        l.setRelationship(pred);
+        l.setRelationship(hasProject);
         l.setObject(p.getIdentifier());
-
-        return links.create(l);
+        Link create = linksRepo.create(l);
+        
+        return create;
     }
-
 
 
 }

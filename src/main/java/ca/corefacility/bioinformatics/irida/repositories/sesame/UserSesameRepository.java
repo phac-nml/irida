@@ -56,8 +56,8 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier,UserI
     public UserSesameRepository() {
     }
 
-    public UserSesameRepository(TripleStore store,AuditRepository auditRepo) {
-        super(store, UserIF.class,User.PREFIX,User.TYPE,auditRepo);
+    public UserSesameRepository(TripleStore store,AuditRepository auditRepo,LinksRepository linksRepo) {
+        super(store, UserIF.class,User.PREFIX,User.TYPE,auditRepo,linksRepo);
 
     }
 
@@ -145,7 +145,8 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier,UserI
                         
             String identifiedBy = getIdentifiedBy(con,uri);
             Identifier objid = buildIdentifier(o,identifiedBy);
-            ret = buildObject(o,(UserIdentifier)objid);
+
+            ret = buildObjectFromResult(o, uri, con);
 
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
             logger.error(ex.getMessage());

@@ -24,16 +24,22 @@ import java.util.List;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.openrdf.repository.object.ObjectConnection;
 
 /**
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class GenericAlibabaRepositoryTest {
+public class GenericRepositoryTest {
     
     GenericRepository<Identifier,IdentifiedIF,Identified> repo;
     
-    public GenericAlibabaRepositoryTest() {
+    public GenericRepositoryTest() {
+    }
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
     }
     
     @Before
@@ -41,8 +47,9 @@ public class GenericAlibabaRepositoryTest {
         SailMemoryStore store = new SailMemoryStore();
         store.initialize();
         AuditRepository auditRepo = new AuditRepository(store);
+        LinksRepository linksRepo = new LinksRepository(store, auditRepo);
         
-        repo = new IdentifiedRepo(store,auditRepo);
+        repo = new IdentifiedRepo(store,auditRepo,linksRepo);
         
         repo.create(new Identified("data1"));
         repo.create(new Identified("data2"));
@@ -58,22 +65,6 @@ public class GenericAlibabaRepositoryTest {
         Identifier id = repo.generateNewIdentifier(i);
         assertNotNull(id.getIdentifier());
     }
-
-    /**
-     * Test of buildIdentifier method, of class GenericRepository.
-     
-    @Test
-    public void testBuildIdentifier() {
-        System.out.println("buildIdentifier");
-        BindingSet bs = null;
-        String subject = "";
-        GenericRepository instance = new GenericRepository();
-        Identifier expResult = null;
-        Identifier result = instance.buildIdentifier(bs, subject);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }*/
 
     /**
      * Test of create method, of class GenericRepository.
@@ -237,5 +228,98 @@ public class GenericAlibabaRepositoryTest {
         
         assertTrue(repo.count()> 0);
     }
+
+    /**
+     * Test of generateNewIdentifier method, of class GenericRepository.
+     */
+    @Test
+    public void testGenerateNewIdentifier() {
+        Identified i = new Identified();
+        i.setData("blah");
+
+        Identifier result = repo.generateNewIdentifier(i);
+        assertNotNull(result);
+    }
+
+    /**
+     * Test of buildIdentifier method, of class GenericRepository.
+     
+    @Test
+    public void testBuildIdentifier() {
+        System.out.println("buildIdentifier");
+        Object obj = null;
+        String identifiedBy = "";
+        GenericRepository instance = new GenericRepositoryImpl();
+        Identifier expResult = null;
+        Identifier result = instance.buildIdentifier(obj, identifiedBy);
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }*/
+
+    /**
+     * Test of buildObject method, of class GenericRepository.
+     
+    @Test
+    public void testBuildObject() {
+        System.out.println("buildObject");
+        Object base = null;
+        Identifier i = null;
+        GenericRepository instance = new GenericRepositoryImpl();
+        Object expResult = null;
+        Object result = instance.buildObject(base, i);
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }*/
+
+    /**
+     * Test of storeObject method, of class GenericRepository.
+     
+    @Test
+    public void testStoreObject() {
+        System.out.println("storeObject");
+        Object object = null;
+        GenericRepository instance = new GenericRepositoryImpl();
+        Object expResult = null;
+        Object result = instance.storeObject(object);
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }*/
+
+    /**
+     * Test of buildObjectFromResult method, of class GenericRepository.
+     
+    @Test
+    public void testBuildObjectFromResult() throws Exception {
+        System.out.println("buildObjectFromResult");
+        Object o = null;
+        org.openrdf.model.URI u = null;
+        ObjectConnection con = null;
+        GenericRepository instance = new GenericRepositoryImpl();
+        Object expResult = null;
+        Object result = instance.buildObjectFromResult(o, u, con);
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }*/
+
+    /**
+     * Test of readMultiple method, of class GenericRepository.
+     
+    @Test
+    public void testReadMultiple() {
+        System.out.println("readMultiple");
+        List<Identifier> idents = null;
+        GenericRepository instance = new GenericRepositoryImpl();
+        List expResult = null;
+        List result = instance.readMultiple(idents);
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }*/
+    
+    
 
 }

@@ -31,8 +31,8 @@ public class SampleSesameRepository extends GenericRepository<Identifier, Sample
     
     public SampleSesameRepository(){}
     
-    public SampleSesameRepository(TripleStore store,AuditRepository auditRepo) {
-        super(store,SampleIF.class,Sample.PREFIX,Sample.TYPE,auditRepo);
+    public SampleSesameRepository(TripleStore store,AuditRepository auditRepo,LinksRepository linksRepo) {
+        super(store,SampleIF.class,Sample.PREFIX,Sample.TYPE,auditRepo,linksRepo);
     }      
 
     @Override

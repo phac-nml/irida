@@ -52,14 +52,12 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
     
     private ProjectSesameRepository projectRepo;
     private SampleSesameRepository sampleRepo;
-    private LinksRepository linksRepo;
     private final RdfPredicate hasFile = new RdfPredicate("irida", "hasFile");
     
     public SequenceFileSesameRepository(){}
     
     public SequenceFileSesameRepository(TripleStore store,AuditRepository auditRepo,LinksRepository linksRepo) {
-        super(store,SequenceFileIF.class,SequenceFile.PREFIX,SequenceFile.TYPE,auditRepo);
-        this.linksRepo = linksRepo;
+        super(store,SequenceFileIF.class,SequenceFile.PREFIX,SequenceFile.TYPE,auditRepo,linksRepo);
     }
     
     public void setProjectRepository(ProjectSesameRepository projectRepo){

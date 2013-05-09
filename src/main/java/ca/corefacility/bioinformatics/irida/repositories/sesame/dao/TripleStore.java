@@ -17,6 +17,8 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame.dao;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import org.openrdf.model.Namespace;
+import org.openrdf.model.URI;
+import org.openrdf.model.impl.URIImpl;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
@@ -24,6 +26,7 @@ import org.openrdf.repository.config.RepositoryConfigException;
 import org.openrdf.repository.http.HTTPRepository;
 import org.openrdf.repository.object.ObjectConnection;
 import org.openrdf.repository.object.ObjectRepository;
+import org.openrdf.repository.object.config.ObjectRepositoryConfig;
 import org.openrdf.repository.object.config.ObjectRepositoryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,6 +97,9 @@ public class TripleStore {
         
         try {
             con = objectRepo.getConnection();
+            URI context = new URIImpl(URI);
+            
+            con.setInsertContext(context);
         } catch (RepositoryException ex) {
             logger.error(ex.getMessage());
             throw new StorageException("Could not retrieve repository connection");

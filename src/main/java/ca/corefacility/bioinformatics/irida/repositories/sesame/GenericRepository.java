@@ -65,20 +65,24 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
     private String sType;
     
     protected AuditRepository auditRepo;
+    protected LinksRepository linksRepo;
 
     public GenericRepository() {
     }
 
-    public GenericRepository(TripleStore store, Class type,String prefix, String sType,AuditRepository auditRepo) {
+    public GenericRepository(TripleStore store, Class type,String prefix, String sType,AuditRepository auditRepo, LinksRepository linksRepo) {
         super(store, sType);
-        //this.store = store;
+
         this.prefix = prefix;
         this.sType = sType;
         this.auditRepo = auditRepo;
-        
-        //URI = store.getURI() + sType + "/";
+        this.linksRepo = linksRepo;
                 
         this.objectType = type;
+    }
+    
+    public void setLinksRepository(LinksRepository linksRepo){
+        this.linksRepo = linksRepo;
     }
 
     /**
