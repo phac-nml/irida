@@ -1166,7 +1166,7 @@ blockquote p {
 @media print {
   * {
     background: transparent !important;
-    color: black !important;
+    color: #000 !important;
     /* Black prints faster: h5bp.com/s */
     box-shadow: none !important;
     text-shadow: none !important; }
@@ -1188,7 +1188,7 @@ blockquote p {
 
   pre,
   blockquote {
-    border: 1px solid #999999;
+    border: 1px solid #999;
     page-break-inside: avoid; }
 
   thead {
@@ -2301,7 +2301,7 @@ form.custom {
 /* Wrapped around .top-bar to contain to grid width */
 .contain-to-grid {
   width: 100%;
-  background: #133b54; }
+  background: #111111; }
 
 .fixed {
   width: 100%;
@@ -2312,10 +2312,10 @@ form.custom {
 
 .top-bar {
   overflow: hidden;
-  height: 30px;
-  line-height: 30px;
+  height: 45px;
+  line-height: 45px;
   position: relative;
-  background: #133b54;
+  background: #111111;
   margin-bottom: 1.875em; }
   .top-bar ul {
     margin-bottom: 0;
@@ -2334,11 +2334,11 @@ form.custom {
   .top-bar .title-area {
     position: relative; }
   .top-bar .name {
-    height: 30px;
+    height: 45px;
     margin: 0;
     font-size: 16px; }
     .top-bar .name h1 {
-      line-height: 30px;
+      line-height: 45px;
       font-size: 1.0625em;
       margin: 0; }
       .top-bar .name h1 a {
@@ -2346,7 +2346,7 @@ form.custom {
         color: white;
         width: 50%;
         display: block;
-        padding: 0 10px; }
+        padding: 0 15px; }
   .top-bar .toggle-topbar {
     position: absolute;
     right: 0;
@@ -2358,11 +2358,11 @@ form.custom {
       font-weight: bold;
       position: relative;
       display: block;
-      padding: 0 10px;
-      height: 30px;
-      line-height: 30px; }
+      padding: 0 15px;
+      height: 45px;
+      line-height: 45px; }
     .top-bar .toggle-topbar.menu-icon {
-      right: 10px;
+      right: 15px;
       top: 50%;
       margin-top: -16px;
       padding-left: 40px; }
@@ -2385,7 +2385,7 @@ form.custom {
     height: auto;
     background: transparent; }
     .top-bar.expanded .title-area {
-      background: #133b54; }
+      background: #111111; }
     .top-bar.expanded .toggle-topbar a {
       color: #888888; }
       .top-bar.expanded .toggle-topbar a span {
@@ -2417,7 +2417,7 @@ form.custom {
     width: 100%;
     color: white;
     padding: 12px 0 12px 0;
-    padding-left: 10px;
+    padding-left: 15px;
     font-size: 0.8125em;
     font-weight: bold;
     background: #333333; }
@@ -2443,7 +2443,7 @@ form.custom {
   .top-bar-section ul li.active a {
     background: #2b2b2b; }
   .top-bar-section .has-form {
-    padding: 10px; }
+    padding: 15px; }
   .top-bar-section .has-dropdown {
     position: relative; }
     .top-bar-section .has-dropdown > a:after {
@@ -2453,7 +2453,7 @@ form.custom {
       height: 0;
       border: solid 5px;
       border-color: transparent transparent transparent rgba(255, 255, 255, 0.5);
-      margin-right: 10px;
+      margin-right: 15px;
       margin-top: -4.5px;
       position: absolute;
       top: 50%;
@@ -2472,15 +2472,15 @@ form.custom {
       width: 100%; }
       .top-bar-section .dropdown li a {
         font-weight: normal;
-        padding: 8px 10px; }
+        padding: 8px 15px; }
       .top-bar-section .dropdown li.title h5 {
         margin-bottom: 0; }
         .top-bar-section .dropdown li.title h5 a {
           color: white;
-          line-height: 15px;
+          line-height: 22.5px;
           display: block; }
     .top-bar-section .dropdown label {
-      padding: 8px 10px 2px;
+      padding: 8px 15px 2px;
       margin-bottom: 0;
       text-transform: uppercase;
       color: #555555;
@@ -2496,7 +2496,7 @@ form.custom {
 
 @media only screen and (min-width: 58.75em) {
   .top-bar {
-    background: #133b54;
+    background: #111111;
     *zoom: 1;
     overflow: visible; }
     .top-bar:before, .top-bar:after {
@@ -2519,7 +2519,7 @@ form.custom {
       position: relative;
       top: 8px; }
     .top-bar.expanded {
-      background: #133b54; }
+      background: #111111; }
 
   .contain-to-grid .top-bar {
     max-width: 62.5em;
@@ -2539,9 +2539,9 @@ form.custom {
         .top-bar-section ul li .js-generated {
           display: none; }
     .top-bar-section li a:not(.button) {
-      padding: 0 10px;
-      line-height: 30px;
-      background: #133b54; }
+      padding: 0 15px;
+      line-height: 45px;
+      background: #111111; }
       .top-bar-section li a:not(.button):hover {
         background: black; }
     .top-bar-section .has-dropdown > a {
@@ -2574,26 +2574,26 @@ form.custom {
         color: white;
         line-height: 1;
         white-space: nowrap;
-        padding: 7px 10px;
-        background: #184a69; }
+        padding: 7px 15px;
+        background: #1e1e1e; }
       .top-bar-section .dropdown li label {
         white-space: nowrap;
-        background: #184a69; }
+        background: #1e1e1e; }
       .top-bar-section .dropdown li .dropdown {
         left: 100%;
         top: 0; }
     .top-bar-section > ul > .divider {
       border-bottom: none;
       border-top: none;
-      border-right: solid 1px #1c587e;
-      border-left: solid 1px #0a1e2a;
+      border-right: solid 1px #2b2b2b;
+      border-left: solid 1px black;
       clear: none;
-      height: 30px;
+      height: 45px;
       width: 0px; }
     .top-bar-section .has-form {
-      background: #133b54;
-      padding: 0 10px;
-      height: 30px; }
+      background: #111111;
+      padding: 0 15px;
+      height: 45px; }
     .top-bar-section ul.right li .dropdown {
       left: auto;
       right: 0; }
@@ -2652,7 +2652,7 @@ form.custom {
       right: 0px;
       width: 11px;
       height: 14px;
-      border: solid 4px black;
+      border: solid 4px #000;
       border-top: none;
       border-bottom: none; }
     .orbit-container .orbit-timer.paused > span {
@@ -2661,7 +2661,7 @@ form.custom {
       width: 11px;
       height: 14px;
       border: solid 8px;
-      border-color: transparent transparent transparent black; }
+      border-color: transparent transparent transparent #000; }
   .orbit-container:hover .orbit-timer > span {
     display: block; }
   .orbit-container .orbit-prev,
@@ -2688,17 +2688,17 @@ form.custom {
   .orbit-container .orbit-prev {
     left: 0; }
     .orbit-container .orbit-prev > span {
-      border-color: transparent white transparent transparent; }
+      border-color: transparent #fff transparent transparent; }
     .orbit-container .orbit-prev:hover > span {
-      border-color: transparent #cccccc transparent transparent; }
+      border-color: transparent #ccc transparent transparent; }
   .orbit-container .orbit-next {
     right: 0; }
     .orbit-container .orbit-next > span {
-      border-color: transparent transparent transparent white;
+      border-color: transparent transparent transparent #fff;
       left: 50%;
       margin-left: -8px; }
     .orbit-container .orbit-next:hover > span {
-      border-color: transparent transparent transparent #cccccc; }
+      border-color: transparent transparent transparent #ccc; }
 
 .orbit-bullets {
   margin: 0 auto 30px auto;
@@ -2712,7 +2712,7 @@ form.custom {
     background: #fff;
     float: left;
     margin-right: 6px;
-    border: solid 2px black;
+    border: solid 2px #000;
     -webkit-border-radius: 1000px;
     border-radius: 1000px; }
     .orbit-bullets li.active {
@@ -2892,9 +2892,9 @@ form.custom {
   text-decoration: none;
   font-size: 30px;
   font-weight: normal;
-  line-height: 0.5 !important; }
+  line-height: .5 !important; }
   .joyride-close-tip:hover, .joyride-close-tip:focus {
-    color: #eeeeee !important; }
+    color: #eee !important; }
 
 .joyride-modal-bg {
   position: fixed;
@@ -4019,7 +4019,7 @@ figure {
  * Define consistent border, margin, and padding.
  */
 fieldset {
-  border: 1px solid silver;
+  border: 1px solid #c0c0c0;
   margin: 0 2px;
   padding: 0.35em 0.625em 0.75em; }
 
@@ -4280,7 +4280,7 @@ ul.icons {
 
 .icon-border {
   border: solid 1px #eeeeee;
-  padding: 0.2em 0.25em 0.15em;
+  padding: .2em .25em .15em;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px; }
