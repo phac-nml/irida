@@ -17,31 +17,35 @@ limitations under the License.
 <html ng-app="irida">
 <head th:include="fragments/header" th:remove="tag"></head>
 <body>
-	<div th:include="fragments/bodyHeader" th:remove="tag"></div>
 
-	<div class="row ng-cloak" data-ng-controller="AppCtrl">
-		<notifier attr-icon="{{notifier.icon}}" attr-messege="{{notifier.message}}"></notifier>
-		<ng-view></ng-view>
-	</div>
-	<script th:src="@{/js/vendor/jquery.js}"></script>
-	<script th:src="@{/js/vendor/foundation/foundation.js}"></script>
-	<script th:src="@{/js/vendor/foundation/foundation.topbar.js}"></script>
-	<script th:src="@{/js/vendor/foundation/foundation.reveal.js}"></script>
-	<script th:src="@{/js/vendor/angular/angular.min.js}"></script>
-	<script th:src="@{/js/vendor/angular/angular-ui.js}"></script>
-	<script th:src="@{/js/vendor/angular/angular-resource.min.js}"></script>
-    <script src="/js/components/messagingService.js"></script>
-    <script src="/js/components/ajaxService.js"></script>
-	<script src="/js/app.js"></script>
-	<script th:src="@{/js/directives/Notifier.js}"></script>
-    <script th:src="@{/js/directives/FileUploader.js}"></script>
-	<script src="/js/project.js"></script>
-    <script src="/js/landing.js"></script>
-    <script src="/js/projectsList.js"></script>
-	<script src="/js/usersList.js"></script>
-	<script src="/js/user.js"></script>
-	<script>
-	$(document).foundation();
-	</script>
+<div class="row ng-cloak" data-ng-controller="AppCtrl">
+    <notifier attr-icon="{{notifier.icon}}" attr-messege="{{notifier.message}}"></notifier>
+    <ng-view></ng-view>
+</div>
+<div th:include="fragments/loginModal" th:remove="tag"></div>
+<script th:src="@{/js/vendor/jquery.js}"></script>
+<script th:src="@{/js/vendor/foundation/foundation.js}"></script>
+<script th:src="@{/js/vendor/foundation/foundation.topbar.js}"></script>
+<script th:src="@{/js/vendor/foundation/foundation.reveal.js}"></script>
+<script th:src="@{/js/vendor/angular/angular.min.js}"></script>
+<script th:src="@{/js/vendor/angular/angular-resource.min.js}"></script>
+<script th:src="@{/js/vendor/angular/angular-cookies.min.js}"></script>
+<script src="/js/vendor/angular/http-auth-interceptor.js"></script>
+<script src="/js/components/messagingService.js"></script>
+<script src="/js/components/ajaxService.js"></script>
+<script src="/js/components/loginCheck.js"></script>
+<script src="/js/app.js"></script>
+<script th:src="@{/js/directives/Notifier.js}"></script>
+<script th:src="@{/js/directives/FileUploader.js}"></script>
+<script th:src="@{/js/directives/LoginModal.js}"></script>
+<script src="/js/login.js"></script>
+<script src="/js/project.js"></script>
+<script src="/js/landing.js"></script>
+<script src="/js/projectsList.js"></script>
+<script src="/js/usersList.js"></script>
+<script src="/js/user.js"></script>
+<script>
+    $(document).foundation();
+</script>
 </body>
 </html>
