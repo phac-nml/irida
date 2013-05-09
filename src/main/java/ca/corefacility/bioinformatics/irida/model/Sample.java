@@ -18,14 +18,9 @@ package ca.corefacility.bioinformatics.irida.model;
 import ca.corefacility.bioinformatics.irida.model.alibaba.SampleIF;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
-import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * A biological sample. Each sample may correspond to many files.
@@ -33,7 +28,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class Sample implements SampleIF, Comparable<Sample>{
+public class Sample implements SampleIF, Comparable<Sample> {
 
     private Identifier id;
     @NotNull
@@ -41,14 +36,9 @@ public class Sample implements SampleIF, Comparable<Sample>{
     @NotNull
     @Size(min = 3)
     private String sampleName;
-    @NotEmpty // samples must belong to at least one project
-    private Collection<Project> projects;
-    private Collection<SequenceFile> files;
 
     public Sample() {
         audit = new Audit();
-        projects = new HashSet<>();
-        files = new HashSet<>();
     }
 
     public Sample(Identifier id) {
@@ -60,8 +50,7 @@ public class Sample implements SampleIF, Comparable<Sample>{
     public boolean equals(Object other) {
         if (other instanceof Sample) {
             Sample sample = (Sample) other;
-            return Objects.equals(sampleName, sample.sampleName)
-                    && Objects.equals(files, sample.files);
+            return Objects.equals(sampleName, sample.sampleName);
         }
 
         return false;
@@ -73,32 +62,12 @@ public class Sample implements SampleIF, Comparable<Sample>{
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(sampleName, files);
-    }
-
     public String getSampleName() {
         return sampleName;
     }
 
     public void setSampleName(String sampleName) {
         this.sampleName = sampleName;
-    }
-
-    public Collection<Project> getProjects() {
-        return projects;
-    }
-
-    public void setProject(Collection<Project> projects) {
-        this.projects = projects;
-    }
-
-    public Collection<SequenceFile> getFiles() {
-        return files;
-    }
-
-    public void setFiles(Collection<SequenceFile> files) {
-        this.files = files;
     }
 
     @Override
