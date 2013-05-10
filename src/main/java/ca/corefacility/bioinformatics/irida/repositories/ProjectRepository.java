@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories;
 
+import ca.corefacility.bioinformatics.irida.model.Link;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -34,4 +35,5 @@ public interface ProjectRepository extends CRUDRepository<Identifier, Project> {
      * @return the projects associated with the user.
      */
     public Collection<Project> getProjectsForUser(User user);
+    public Link addUserToProject(Project p, User user);
 }

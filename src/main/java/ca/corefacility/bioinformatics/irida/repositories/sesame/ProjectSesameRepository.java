@@ -66,54 +66,6 @@ public class ProjectSesameRepository extends GenericRepository<Identifier,Projec
     /**
      * {@inheritDoc}
      */    
-    /*@Override
-    public Collection<Project> getProjectsForUser(User user) {
-        List<Project> projects = new ArrayList<>();
-        
-        String uri = user.getIdentifier().getUri().toString();
-        
-        ObjectConnection con = store.getRepoConnection();
-        try {
-            String qs = store.getPrefixes()
-                    + "SELECT * "
-                    + "WHERE{ ?u a foaf:Person . \n"
-                    + "?s irida:hasUser ?u . \n"
-                    + "}\n";
-            
-            ObjectQuery query = con.prepareObjectQuery(QueryLanguage.SPARQL, qs);
-            URI puri = con.getValueFactory().createURI(uri);
-            query.setBinding("u", puri);
-            
-            Result<ProjectIF> result = query.evaluate(ProjectIF.class);
-            
-            while(result.hasNext()){
-                ProjectIF o = result.next();
-            
-                URI u = con.getValueFactory().createURI(o.toString());
-                
-                Project ret = buildObjectFromResult(o, u, con);
-                
-                projects.add(ret);               
-            }
-            result.close();
-    
-        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
-            logger.error(ex.getMessage());
-            throw new StorageException("Couldn't list projects for user "+user.getUsername()); 
-        }       
-        finally{
-            try {
-                con.close();
-            } catch (RepositoryException ex) {
-                logger.error(ex.getMessage());
-                throw new StorageException("Couldn't close connection"); 
-            }
-        }        
-        
-        
-        return projects;
-    }*/
-    
     @Override
     public Collection<Project> getProjectsForUser(User user) {
         List<Identifier> projIds = linksRepo.listObjects(user.getIdentifier(), hasProject);

@@ -16,6 +16,7 @@
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.Link;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
@@ -27,7 +28,6 @@ import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openrdf.model.Statement;
@@ -42,12 +42,14 @@ import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.object.ObjectConnection;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class LinksRepository extends SesameRepository implements CRUDRepository<Identifier, Link>{
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(LinksRepository.class);
     
     public final String linkType = "http://corefacility.ca/irida/ResourceLink";
     AuditRepository auditRepo;
@@ -57,10 +59,10 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
         this.auditRepo = auditRepo;
     }
     
-    public StringIdentifier buildIdentiferFromBindingSet(BindingSet bs){
+    public StringIdentifier buildIdentiferFromBindingSet(BindingSet bs,String bindingName){
         StringIdentifier id = null;
         try {
-            Value uri = bs.getValue("object");
+            Value uri = bs.getValue(bindingName);
             Value ident = bs.getValue("identifier");
             Value label = bs.getValue("label");
             id = new StringIdentifier();
@@ -147,7 +149,7 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
             query.setBinding("object", uri);
             TupleQueryResult results = query.evaluate();
             BindingSet bs = results.next();
-            id = buildIdentiferFromBindingSet(bs);
+            id = buildIdentiferFromBindingSet(bs,"object");
         }
         catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
             Logger.getLogger(LinksRepository.class.getName()).log(Level.SEVERE, null, ex);
@@ -183,7 +185,7 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
             TupleQueryResult results = query.evaluate();
             while(results.hasNext()){
                 BindingSet bs = results.next();
-                ids.add(buildIdentiferFromBindingSet(bs));
+                ids.add(buildIdentiferFromBindingSet(bs,"object"));
             }
 
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
@@ -191,6 +193,38 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
         }
         return ids;
     }
+    
+    public List<Identifier> listSubjects(Identifier objectId, RdfPredicate predicate){
+        
+        List<Identifier> ids = new ArrayList<>();
+        java.net.URI objNetUri = getUriFromIdentifier(objectId);
+        
+        ObjectConnection con = store.getRepoConnection();
+        try {
+            String qs = store.getPrefixes()
+                    + "SELECT ?subject ?identifier ?label "
+                    + "WHERE{ ?subject ?predicate ?object .\n"
+                    + "?subject irida:identifier ?identifier ;"
+                    + " rdfs:label ?label .\n"
+                    + "}";
+            ValueFactory fac = con.getValueFactory();
+            TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
+            
+            URI objURI = fac.createURI(objNetUri.toString());
+            URI predURI = fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
+            query.setBinding("object", objURI);
+            query.setBinding("predicate", predURI);
+            TupleQueryResult results = query.evaluate();
+            while(results.hasNext()){
+                BindingSet bs = results.next();
+                ids.add(buildIdentiferFromBindingSet(bs,"subject"));
+            }
+
+        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
+            Logger.getLogger(LinksRepository.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ids;
+    }    
     
     public List<Link> getLinks(Identifier subjectId){
         List<Link> links = new ArrayList<>();
@@ -263,37 +297,101 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
 
     @Override
     public Link read(Identifier id) throws EntityNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Link ret = null;
+        
+        java.net.URI linkNetURI = getUriFromIdentifier(id);
+        
+        ObjectConnection con = store.getRepoConnection();
+        try {
+            String qs = store.getPrefixes()
+                    + "SELECT ?link ?sub ?pred ?obj "
+                    + "WHERE{ ?link a irida:ResourceLink ;\n"
+                    + " irida:linkSubject ?sub ; \n"
+                    + " irida:linkPredicate ?pred ;\n"
+                    + " irida:linkObject ?obj ."
+                    + "}";
+            ValueFactory fac = con.getValueFactory();
+            TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
+            
+            URI subURI = fac.createURI(linkNetURI.toString());
+            query.setBinding("link", subURI);
+            
+            TupleQueryResult results = query.evaluate();
+            if(results.hasNext()){
+                BindingSet bs = results.next();
+                
+                String uristr = bs.getValue("link").stringValue();
+                URI uri = fac.createURI(uristr);
+                String identifiedBy = getIdentifiedBy(con, uri);
+                
+                Identifier linkId = buildLinkIdentifier(uri,identifiedBy);
+                ret = buildLinkfromBindingSet(bs, con);
+                ret.setIdentifier(linkId);
+                Audit audit = auditRepo.getAudit(uri);
+                ret.setAuditInformation(audit);
+            }
+
+        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
+            Logger.getLogger(LinksRepository.class.getName()).log(Level.SEVERE, null, ex);
+        }        
+        
+        return ret;
     }
 
     @Override
     public Link update(Link object) throws IllegalArgumentException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Link updates will not be supported.");
     }
 
     @Override
     public void delete(Identifier id) throws EntityNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (!exists(id)) {
+            throw new EntityNotFoundException("Object does not exist in the database.");            
+        }
+        
+        ObjectConnection con = store.getRepoConnection();
+
+        java.net.URI netURI = buildURI(id.getIdentifier());
+        String uri = netURI.toString();
+
+        ValueFactory vf = con.getValueFactory();
+        URI objecturi = vf.createURI(uri);
+
+        try {
+            con.remove(objecturi, null, null);
+            con.close();
+
+        } catch (RepositoryException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Failed to remove object" + id);
+        } finally {
+            try {
+                con.close();
+            } catch (RepositoryException ex) {
+                logger.error(ex.getMessage());
+                throw new StorageException("Failed to close connection");
+            }
+        }        
     }
 
     @Override
     public List<Link> list() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Listing links will not be supported.");
     }
 
     @Override
     public List<Link> list(int page, int size, String sortProperty, Order order) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Listing links will not be supported.");
     }
 
     @Override
     public Boolean exists(Identifier id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Checking existance of a link will not be supported");
     }
 
     @Override
     public Integer count() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
        
 }

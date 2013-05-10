@@ -25,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.alibaba.UserIF;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -52,6 +53,10 @@ import org.slf4j.LoggerFactory;
 public class UserSesameRepository extends GenericRepository<UserIdentifier,UserIF, User> implements UserRepository {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(UserSesameRepository.class);
+    private static final RdfPredicate hasUser = new RdfPredicate("irida", "hasUser");
+    private static final RdfPredicate hasProject = new RdfPredicate("irida", "hasProject");
+
+
 
     public UserSesameRepository() {
     }
@@ -233,46 +238,18 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier,UserI
     /**
      * {@inheritDoc}
      */
+    
     @Override
-    public Collection<User> getUsersForProject(Project project) {
-        List<User> users = new ArrayList<>();
-
-        String uri = project.getIdentifier().getUri().toString();
-
-        ObjectConnection con = store.getRepoConnection();
-        try {
-            String qs = store.getPrefixes()
-                    + "SELECT ?s "
-                    + "WHERE{ ?p a irida:Project . \n"
-                    + "?p irida:hasUser ?s . \n"
-                    + "}\n";
-
-            ObjectQuery query = con.prepareObjectQuery(QueryLanguage.SPARQL, qs);
-            URI puri = con.getValueFactory().createURI(uri);
-            query.setBinding("p", puri);
-
-            Result<UserIF> result = query.evaluate(UserIF.class);
-            while (result.hasNext()) {
-                UserIF o = result.next();
-                URI u = con.getValueFactory().createURI(o.toString());
-
-                User ret = buildObjectFromResult(o, u, con);
-                users.add(ret);
-            }
-            result.close();
-
-        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
-            logger.error(ex.getMessage());
-            throw new StorageException("Couldn't list project users");
-        } finally {
-            try {
-                con.close();
-            } catch (RepositoryException ex) {
-                logger.error(ex.getMessage());
-                throw new StorageException("Couldn't close connection");
-            }
-        }
-
+    public Collection<User> getUsersForProject(Project  project) {
+        List<Identifier> userIds = linksRepo.listSubjects(project.getIdentifier(), hasProject);
+        
+        List<User> users = readMultiple(userIds);
+        
         return users;
     }
+    
+    public Collection<Identifier> listProjectsForUser(Project project){
+        List<Identifier> projIds = linksRepo.listSubjects(project.getIdentifier(), hasProject);
+        return projIds;
+    }    
 }
