@@ -1,5 +1,4 @@
-/* global angular, console, LandingCtrl, ProjectCtrl, ProjectsListCtrl, UsersListCtrl, UserCtrl */
-
+/*global angular */
 angular.module('irida', [
     'http-auth-interceptor',
     'irida.login',
@@ -26,6 +25,7 @@ angular.module('irida', [
     }
   }])
   .controller('AppCtrl', ['$scope', 'authService', function ($scope) {
+    'use strict';
     $scope.notifier = {
       message: '',
       icon: ''
