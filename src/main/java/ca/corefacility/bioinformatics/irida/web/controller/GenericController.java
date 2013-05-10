@@ -32,6 +32,7 @@ import com.google.common.net.HttpHeaders;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -237,7 +238,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleAllOtherExceptions(Exception e) {
-        e.printStackTrace();
+        logger.error("An exception happened at " + new Date() + ". The stack trace follows: ", e);
         return new ResponseEntity<>("Server error.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
