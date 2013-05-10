@@ -22,22 +22,22 @@ limitations under the License.
     <notifier attr-icon="{{notifier.icon}}" attr-messege="{{notifier.message}}"></notifier>
     <ng-view></ng-view>
 </div>
-<div th:include="fragments/loginModal" th:remove="tag"></div>
-<script th:src="@{/js/vendor/jquery.js}"></script>
-<script th:src="@{/js/vendor/foundation/foundation.js}"></script>
-<script th:src="@{/js/vendor/foundation/foundation.topbar.js}"></script>
-<script th:src="@{/js/vendor/foundation/foundation.reveal.js}"></script>
-<script th:src="@{/js/vendor/angular/angular.min.js}"></script>
-<script th:src="@{/js/vendor/angular/angular-resource.min.js}"></script>
-<script th:src="@{/js/vendor/angular/angular-cookies.min.js}"></script>
+<div th:include="fragments/login-modal" th:remove="tag"></div>
+<script src="/js/vendor/jquery.js"></script>
+<script src="/js/vendor/foundation/foundation.js"></script>
+<script src="/js/vendor/foundation/foundation.topbar.js"></script>
+<script src="/js/vendor/foundation/foundation.reveal.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.1.4/angular.min.js"></script>
+<script src="/js/vendor/angular/angular-resource.min.js"></script>
+<script src="/js/vendor/angular/angular-cookies.min.js"></script>
 <script src="/js/vendor/angular/http-auth-interceptor.js"></script>
-<script src="/js/components/messagingService.js"></script>
-<script src="/js/components/ajaxService.js"></script>
-<script src="/js/components/loginCheck.js"></script>
+<script src="/js/components/messaging-service.js"></script>
+<script src="/js/components/ajax-service.js"></script>
+<script src="/js/components/cookie-service.js"></script>
 <script src="/js/app.js"></script>
-<script th:src="@{/js/directives/Notifier.js}"></script>
-<script th:src="@{/js/directives/FileUploader.js}"></script>
-<script th:src="@{/js/directives/LoginModal.js}"></script>
+<script src="/js/directives/Notifier.js"></script>
+<script src="/js/directives/FileUploader.js"></script>
+<script src="/js/directives/LoginModal.js"></script>
 <script src="/js/login.js"></script>
 <script src="/js/project.js"></script>
 <script src="/js/landing.js"></script>

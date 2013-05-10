@@ -13,11 +13,12 @@ angular.module('irida.login', [])
  * $routeProvider
  */
   .config(['$routeProvider', function ($routeProvider) {
+    'use strict';
     $routeProvider.when(
       '/', {
         templateUrl: './partials/login.html',
         controller: 'LoginCtrl'
-      })
+      });
   }])
   .controller('LoginCtrl', ['$scope', '$location', 'ajaxService', function ($scope, $location, ajaxService) {
     'use strict';
@@ -27,7 +28,6 @@ angular.module('irida.login', [])
           $location.path('/landing');
         },
         function () {
-          console.log("error")
           // TODO: Show a message stating that the login credentials are incorrect.
           $scope.showError = true;
         }

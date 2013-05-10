@@ -14,7 +14,7 @@ body {
   color: #222222;
   padding: 0;
   margin: 0;
-  font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+  font-family: "Junge", serif;
   font-weight: normal;
   font-style: normal;
   line-height: 1;
@@ -291,6 +291,10 @@ input.ng-invalid.ng-dirty {
 input.ng-valid.ng-dirty {
   background-color: #78FA89; }
 
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Cuprum', sans-serif;
+  font-weight: 700; }
+
 /* ==========================================================================
    Modules
    ========================================================================== */
@@ -365,98 +369,85 @@ input.ng-valid.ng-dirty {
 
 /* Card List - used to display info as cards
    ========================================================================== */
-.card-holder {
-  display: block;
-  padding: 0;
-  margin: 0 -10px;
-  *zoom: 1; }
-  .card-holder:before, .card-holder:after {
-    content: " ";
-    display: table; }
-  .card-holder:after {
-    clear: both; }
-  .card-holder > li {
-    display: block;
-    height: auto;
-    float: left;
-    padding: 0 10px 10px; }
-  .card-holder > li {
-    width: 33.33333%;
-    padding: 0 10px 10px; }
-    .card-holder > li:nth-of-type(3n+1) {
-      clear: both; }
-  .card-holder li {
-    position: relative; }
-    .card-holder li .card {
-      position: relative;
-      background: #fff;
-      padding: 10px;
-      border: 1px solid rgba(0, 0, 0, 0.15);
-      box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.18);
-      text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
-      cursor: pointer; }
-      .card-holder li .card h2 {
-        font-size: 1.1em;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis; }
-      .card-holder li .card span {
+.card-holder li {
+  position: relative; }
+  .card-holder li .card {
+    position: relative;
+    background: #fff;
+    padding: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.18);
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
+    cursor: pointer; }
+    .card-holder li .card h2 {
+      font-size: 1.1em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis; }
+    .card-holder li .card h2:after {
+      content: ' ';
+      display: block;
+      width: 100%;
+      height: 2px;
+      margin-top: 10px;
+      background: linear, left, rgba(147, 184, 189, 0) 0%, rgba(147, 184, 189, 0.8) 20%, #93b8bd 53%, rgba(147, 184, 189, 0.8) 79%, rgba(147, 184, 189, 0) 100%; }
+    .card-holder li .card span {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      color: #cccccc;
+      font-size: 0.6em; }
+    @media only screen and (min-width: 48em) {
+      .card-holder li .card:before {
+        z-index: -1;
         position: absolute;
-        top: 5px;
-        right: 5px;
-        color: #cccccc;
-        font-size: 0.6em; }
-      @media only screen and (min-width: 48em) {
-        .card-holder li .card:before {
-          z-index: -1;
-          position: absolute;
-          top: 0;
-          left: 0;
-          content: '';
-          width: 100%;
-          height: 100%;
-          background-color: #fff;
-          border: 1px solid rgba(0, 0, 0, 0.15);
-          box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.19);
-          -webkit-transition: all 0.3s ease-in-out;
-          -moz-transition: all 0.3s ease-in-out;
-          transition: all 0.3s ease-in-out; }
-        .card-holder li .card:hover:before {
-          top: -20;
-          left: 0;
-          -webkit-transform: rotate(-4deg);
-          -moz-transform: rotate(-4deg);
-          -ms-transform: rotate(-4deg);
-          -o-transform: rotate(-4deg);
-          transform: rotate(-4deg);
-          -webkit-transition: all 0.3s ease-in-out;
-          -moz-transition: all 0.3s ease-in-out;
-          transition: all 0.3s ease-in-out; }
-        .card-holder li .card:after {
-          height: 100%;
-          left: 0;
-          position: absolute;
-          top: 0;
-          width: 100%;
-          border: 1px solid rgba(0, 0, 0, 0.15);
-          background-color: #fff;
-          content: '';
-          z-index: -2;
-          box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-          -webkit-transition: all 0.3s ease-in-out;
-          -moz-transition: all 0.3s ease-in-out;
-          transition: all 0.3s ease-in-out; }
-        .card-holder li .card:hover:after {
-          top: 1px;
-          left: -2px;
-          -webkit-transform: rotate(3deg);
-          -moz-transform: rotate(3deg);
-          -ms-transform: rotate(3deg);
-          -o-transform: rotate(3deg);
-          transform: rotate(3deg);
-          -webkit-transition: all 0.3s ease-in-out;
-          -moz-transition: all 0.3s ease-in-out;
-          transition: all 0.3s ease-in-out; } }
+        top: 0;
+        left: 0;
+        content: '';
+        width: 100%;
+        height: 100%;
+        background-color: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.19);
+        -webkit-transition: all 0.3s ease-in-out;
+        -moz-transition: all 0.3s ease-in-out;
+        transition: all 0.3s ease-in-out; }
+      .card-holder li .card:hover:before {
+        top: -20;
+        left: 0;
+        -webkit-transform: rotate(-4deg);
+        -moz-transform: rotate(-4deg);
+        -ms-transform: rotate(-4deg);
+        -o-transform: rotate(-4deg);
+        transform: rotate(-4deg);
+        -webkit-transition: all 0.3s ease-in-out;
+        -moz-transition: all 0.3s ease-in-out;
+        transition: all 0.3s ease-in-out; }
+      .card-holder li .card:after {
+        height: 100%;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        background-color: #fff;
+        content: '';
+        z-index: -2;
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        -webkit-transition: all 0.3s ease-in-out;
+        -moz-transition: all 0.3s ease-in-out;
+        transition: all 0.3s ease-in-out; }
+      .card-holder li .card:hover:after {
+        top: 1px;
+        left: -2px;
+        -webkit-transform: rotate(3deg);
+        -moz-transform: rotate(3deg);
+        -ms-transform: rotate(3deg);
+        -o-transform: rotate(3deg);
+        transform: rotate(3deg);
+        -webkit-transition: all 0.3s ease-in-out;
+        -moz-transition: all 0.3s ease-in-out;
+        transition: all 0.3s ease-in-out; } }
 
 /* Modules
    ========================================================================== */
@@ -475,13 +466,12 @@ input.ng-valid.ng-dirty {
 .listTable {
   width: 100%; }
   .listTable thead {
+    font-family: 'Cuprum', sans-serif;
     font-weight: 700;
     font-size: 1.2em;
-    background-color: #000000;
+    background-color: #133b54;
     text-transform: uppercase;
     border-bottom: none; }
-    .listTable thead tr {
-      padding: 20px; }
     .listTable thead th {
       color: #ffffff; }
   .listTable tbody tr {
