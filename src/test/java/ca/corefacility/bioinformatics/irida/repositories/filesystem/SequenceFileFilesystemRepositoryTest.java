@@ -36,6 +36,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tests for {@link SequenceFileFilesystemRepository}.
@@ -44,6 +46,7 @@ import static org.junit.Assert.*;
  */
 public class SequenceFileFilesystemRepositoryTest {
 
+    private static final Logger logger = LoggerFactory.getLogger(SequenceFileFilesystemRepositoryTest.class);
     private SequenceFileFilesystemRepository repository;
     private Path baseDirectory;
     private static final String MISSING_FILE_NAME = "This file definitely doesn't exist.";
@@ -56,12 +59,16 @@ public class SequenceFileFilesystemRepositoryTest {
     }
 
     @After
-    public void tearDown() throws IOException {
-        File f = new File(System.getProperty("java.io.tmpdir"));
-        for (File child : f.listFiles()) {
-            if (child.getName().startsWith(TEMP_FILE_PREFIX)) {
-                delete(Paths.get(child.getAbsolutePath()));
+    public void tearDown() {
+        try {
+            File f = new File(System.getProperty("java.io.tmpdir"));
+            for (File child : f.listFiles()) {
+                if (child.getName().startsWith(TEMP_FILE_PREFIX)) {
+                    delete(Paths.get(child.getAbsolutePath()));
+                }
             }
+        } catch (IOException e) {
+            logger.error("Failed to delete created directory, not related to tests: " + e.getMessage());
         }
     }
 
