@@ -8,22 +8,30 @@ angular.module('irida', [
     'irida.user',
     'irida.users',
     'irida.directives',
-    'logincheck'
+    'CookieService'
   ])
   .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
     'use strict';
-
     $locationProvider.hashPrefix('!');
-
     $routeProvider.otherwise({redirectTo: '/'});
   }])
-  .run(['logincheck', '$location', function (logincheck, $location) {
+/**
+ * Redirect user to login page if already logged in.
+ */
+  .run(['CookieService', '$location', '$rootScope', function (CookieService, $location, $rootScope) {
     'use strict';
-    console.log($location.path());
-    if (logincheck.isLoggedIn() && $location.path() === '/') {
+    var hasCookie = CookieService.checkLoginCookie();
+    if(!hasCookie && $location.path() !== '/') {
+      $rootScope.$broadcast('event:auth-loginRequired');
+    }
+    if (hasCookie && $location.path() === '/') {
       $location.path('/landing');
     }
   }])
+/**
+ * AppCtrl
+ * Handles global variables and common functions
+ */
   .controller('AppCtrl', ['$scope', 'authService', function ($scope) {
     'use strict';
     $scope.notifier = {

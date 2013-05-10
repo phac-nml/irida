@@ -16,6 +16,11 @@ input.ng-valid.ng-dirty {
   background-color: #78FA89;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Cuprum', sans-serif;
+  font-weight: 700;
+}
+
 /* ==========================================================================
    Modules
    ========================================================================== */
@@ -99,7 +104,7 @@ input.ng-valid.ng-dirty {
 /* Card List - used to display info as cards
    ========================================================================== */
 .card-holder {
-  @include block-grid(3, $block-grid-default-spacing, true);
+  //@include block-grid(3, $block-grid-default-spacing, true);
   li {
     position: relative;
 
@@ -119,6 +124,20 @@ input.ng-valid.ng-dirty {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+      }
+      h2:after{
+        content:' ';
+        display:block;
+        width:100%;
+        height:2px;
+        margin-top:10px;
+        background:
+          linear-gradient(left,
+            rgba(147,184,189,0) 0%,
+            rgba(147,184,189,0.8) 20%,
+            rgba(147,184,189,1) 53%,
+            rgba(147,184,189,0.8) 79%,
+            rgba(147,184,189,0) 100%);
       }
       span {
         position: absolute;
@@ -208,14 +227,12 @@ input.ng-valid.ng-dirty {
 .listTable {
   width: 100%;
   thead {
+    font-family: 'Cuprum', sans-serif;
     font-weight: 700;
     font-size: 1.2em;
-    background-color: #000000;
+    background-color: $primary-color;
     text-transform: uppercase;
     border-bottom: none;
-    tr {
-      padding: 20px;
-    }
     th {
       color: #ffffff;
     }
