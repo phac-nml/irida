@@ -405,7 +405,7 @@ public class TestCRUDServiceImpl {
         e = crudService.create(e);
 
         assertNotNull(e.getAuditInformation());
-        assertTrue(e.getAuditInformation().getCreated().compareTo(new Date()) < 0);
+        assertTrue(e.getAuditInformation().getCreated().compareTo(new Date()) <= 0);
 
         verify(crudRepository).create(e);
     }
@@ -424,7 +424,7 @@ public class TestCRUDServiceImpl {
         e = crudService.update(id, ImmutableMap.of("nonNull", (Object) "another not null"));
         
         assertNotNull(e.getAuditInformation().getUpdated());
-        assertTrue(e.getAuditInformation().getUpdated().compareTo(new Date()) < 0);
+        assertTrue(e.getAuditInformation().getUpdated().compareTo(new Date()) <= 0);
         
         verify(crudRepository).exists(id);
         verify(crudRepository).read(id);

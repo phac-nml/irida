@@ -20,9 +20,12 @@
         <constructor-arg ref="validator" />
     </bean>
     
-    <bean id="sampleService" class="ca.corefacility.bioinformatics.irida.service.impl.SampleServiceImpl">
+    <bean id="sampleService" class="ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl">
         <constructor-arg ref="sampleRepository" />
         <constructor-arg ref="validator" />
+        <constructor-arg>            
+            <value type="java.lang.Class">ca.corefacility.bioinformatics.irida.model.Sample</value>
+        </constructor-arg>
     </bean>
     
     <bean id="sequenceFileService" class="ca.corefacility.bioinformatics.irida.service.impl.SequenceFileServiceImpl">
