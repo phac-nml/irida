@@ -1,3 +1,4 @@
+/*global angular */
 /**
  * Created with IntelliJ IDEA.
  * User: josh
@@ -7,6 +8,7 @@
  */
 angular.module('logincheck', ['ngCookies'])
   .factory('logincheck', ['$cookies', function ($cookies) {
+    'use strict';
     return {
       isLoggedIn: function () {
         return typeof $cookies['JSESSIONID'] === 'string';
