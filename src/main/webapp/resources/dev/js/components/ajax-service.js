@@ -55,6 +55,7 @@ angular.module('ajaxService', [])
 
           return deferred.promise;
         }
+        return false;
       },
       post: function (url, data) {
         if (url) {
@@ -73,6 +74,7 @@ angular.module('ajaxService', [])
 
           return deferred.promise;
         }
+        return false;
       },
       patch: function (url, data) {
         if (url && data) {
@@ -94,8 +96,9 @@ angular.module('ajaxService', [])
             });
           return deferred.promise;
         }
+        return false;
       },
-      delete: function (url) {
+      deleteItem: function (url) {
         if (url) {
           var deferred = $q.defer();
 
@@ -118,6 +121,7 @@ angular.module('ajaxService', [])
             });
           return deferred.promise;
         }
+        return false;
       }
     };
   });
