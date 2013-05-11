@@ -83,6 +83,6 @@ angular.module('irida.user', [
         function () {
           console.log('Error figure this out will ya!');
         });
-    }
+    };
 //    };
   }]);
