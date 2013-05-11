@@ -1,13 +1,17 @@
 /*global angular */
 
 /**
- * Created with IntelliJ IDEA.
  * User: josh
  * Date: 2013-05-08
  * Time: 2:33 PM
  */
 
 angular.module('irida.directives', [])
+/**
+ * Injected:
+ * @param ajaxService Handles all ajax related calls
+ * @param authService Responsible for all http-authentication checking
+ */
   .directive('loginModal', function (ajaxService, authService) {
     'use strict';
     return {
@@ -17,6 +21,8 @@ angular.module('irida.directives', [])
           closeOnBackgroundClick: false
         });
 
+        // Listening for $rootScope authentication broadcast events.
+        // Closes and opens the login model
         scope.$on('event:auth-loginRequired', function () {
           el.foundation('reveal', 'open');
         });
