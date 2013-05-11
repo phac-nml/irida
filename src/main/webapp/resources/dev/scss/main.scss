@@ -9,11 +9,11 @@
 }
 
 input.ng-invalid.ng-dirty {
-  background-color: #FA787E;
+  background-color: #e74c3c;
 }
 
 input.ng-valid.ng-dirty {
-  background-color: #78FA89;
+  background-color: #2ecc71;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -125,25 +125,11 @@ h1, h2, h3, h4, h5, h6 {
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      h2:after{
-        content:' ';
-        display:block;
-        width:100%;
-        height:2px;
-        margin-top:10px;
-        background:
-          linear-gradient(left,
-            rgba(147,184,189,0) 0%,
-            rgba(147,184,189,0.8) 20%,
-            rgba(147,184,189,1) 53%,
-            rgba(147,184,189,0.8) 79%,
-            rgba(147,184,189,0) 100%);
-      }
       span {
         position: absolute;
         top: 5px;
         right: 5px;
-        color: #cccccc;
+        color: #bdc3c7;
         font-size: 0.6em;
 
       }
@@ -230,7 +216,7 @@ h1, h2, h3, h4, h5, h6 {
     font-family: 'Cuprum', sans-serif;
     font-weight: 700;
     font-size: 1.2em;
-    background-color: $primary-color;
+    background-color: #34495e;
     text-transform: uppercase;
     border-bottom: none;
     th {
@@ -254,8 +240,12 @@ h1, h2, h3, h4, h5, h6 {
   input {
     border: none;
     box-shadow: none;
+    background-color: transparent;
     &:hover {
-      background-color: palegoldenrod;
+      background-color: #f1c40f;
+    }
+    &:focus {
+      border: 1px solid #95a5a6;
     }
   }
 }

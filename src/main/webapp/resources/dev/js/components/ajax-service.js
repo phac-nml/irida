@@ -38,13 +38,12 @@ angular.module('ajaxService', [])
           });
         return deferred.promise;
       },
-      get: function (url, data) {
+      get: function (url) {
         if (url) {
           var deferred = $q.defer();
           $http({
             url: url,
-            method: 'GET',
-            params: data
+            method: 'GET'
           })
             .success(function (data) {
               deferred.resolve(formatLinks(data));
