@@ -9,6 +9,7 @@
  * It is responsible for the user view.
  */
 angular.module('irida.user', [
+    'ui',
     'ajaxService',
     'messagingService'
   ])
@@ -67,21 +68,21 @@ angular.module('irida.user', [
     };
 
     $scope.blur = function (name) {
-      if ($scope.user[name] !== $scope.original[name]) {
-        ajaxService.patch($scope.links.self, '{"' + name + '":"' + $scope.user[name] + '"}').then(
+//      if ($scope.user[name] !== $scope.original[name]) {
+      ajaxService.patch($scope.links.self, '{"' + name + '":"' + $scope.user[name] + '"}').then(
 
-          function () {
-            $scope.notifier.icon = 'save';
-            $scope.notifier.message = 'Saved ' + name + ': ' + $scope.user[name];
-            messagingService.broadcast('notify');
+        function () {
+          $scope.notifier.icon = 'save';
+          $scope.notifier.message = 'Saved ' + name + ': ' + $scope.user[name];
+          messagingService.broadcast('notify');
 
-            // Update the original
-            $scope.original[name] = $scope.user[name];
-          },
+          // Update the original
+//            $scope.original[name] = $scope.user[name];
+        },
 
-          function () {
-            console.log('Error figure this out will ya!');
-          });
-      }
-    };
+        function () {
+          console.log('Error figure this out will ya!');
+        });
+    }
+//    };
   }]);
