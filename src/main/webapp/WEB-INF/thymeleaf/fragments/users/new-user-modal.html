@@ -15,7 +15,7 @@
                 <div class="large-6 columns"
                      data-ng-class="{error: errors.password || newUserForm.password.$dirty &amp;&amp; newUserForm.password.$invalid}">
                     <label class="control-label" for="password" th:text="#{user.password}">Passowrd</label>
-                    <input name="password" data-ng-model="newUser.password" data-ng-minlength="6" data-ng-pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/" data-ng-trim="true" type="password" required="required"/>
+                    <input name="password" data-ng-model="newUser.password" data-ng-minlength="6" data-ng-pattern="/^((?=.*[^a-zA-Z])(?=.*[a-z])(?=.*[A-Z])(?!.*\s).{6,})$/" data-ng-trim="true" type="password" required="required"/>
                     <small data-ng-show="errors.password" data-ng-bind-html-unsafe="errors.password"></small>
                 </div>
             </div>

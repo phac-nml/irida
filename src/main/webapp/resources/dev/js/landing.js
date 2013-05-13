@@ -1,5 +1,5 @@
 /* global angular */
-angular.module('irida.landing', [])
+angular.module('irida')
 
 /**
  * Configure the route parameters
@@ -12,7 +12,7 @@ angular.module('irida.landing', [])
         controller: 'LandingCtrl'
       })
   }])
-    .controller('LandingCtrl', ['$scope', function ($scope) {
-      'use strict';
+  .controller('LandingCtrl', ['$scope', function ($scope) {
+    'use strict';
 
-    }]);
+  }]);

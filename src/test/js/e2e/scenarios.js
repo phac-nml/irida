@@ -1,6 +1,31 @@
 describe('IRIDA e2e tests', function () {
   'use strict';
 
+// TODO: LOOK AT THIS WHEN TESTING AUTHORIZATION
+//  it('should fire "event:auth-loginRequired" event in case of 401', function() {
+//    var flag = false;
+//    var listener = jasmine.createSpy('listener');
+//    scope.$on('event:auth-loginRequired', listener);
+//    $httpBackend.when('GET', myApi.config.apiRoot + '/user').respond(401, '');
+//
+//    runs(function() {
+//      myApi.get(function(error, success) {
+//        // this never gets triggered as 401 are intercepted
+//      });
+//      setTimeout(function() {
+//        flag = true;
+//      }, 1000);
+//    });
+//
+//    waitsFor(function() {
+//      return flag;
+//    }, 'should be completed', 1200);
+//
+//    runs(function() {
+//      expect(listener).toHaveBeenCalled();
+//    });
+//  });
+
   /**
    * @Landing Page tests
    */

@@ -1,11 +1,7 @@
 /*global angular */
 angular.module('irida', [
+    'ui',
     'http-auth-interceptor',
-    'irida.login',
-    'irida.landing',
-    'irida.project',
-    'irida.user',
-    'irida.users',
     'ajaxService',
     'CookieService'
   ])
@@ -20,7 +16,7 @@ angular.module('irida', [
   .run(['CookieService', '$location', '$rootScope', function (CookieService, $location, $rootScope) {
     'use strict';
     var hasCookie = CookieService.checkLoginCookie();
-    if(!hasCookie && $location.path() !== '/') {
+    if (!hasCookie && $location.path() !== '/') {
       $rootScope.$broadcast('event:auth-loginRequired');
     }
     if (hasCookie && $location.path() === '/') {

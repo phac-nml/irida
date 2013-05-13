@@ -8,11 +8,7 @@
  * This is the user module.
  * It is responsible for the user view.
  */
-angular.module('irida.user', [
-    'ui',
-    'ajaxService',
-    'messagingService'
-  ])
+angular.module('irida')
 
 /**
  * Configure the route parameters
@@ -43,7 +39,7 @@ angular.module('irida.user', [
 /**
  * User View Contoller
  */
-  .controller('UserCtrl', ['$scope', '$location', 'ajaxService', 'messagingService', function ($scope, $location, ajaxService, messagingService) {
+  .controller('UserCtrl', ['$rootScope', '$scope', '$location', 'ajaxService', function ($rootScope, $scope, $location, ajaxService) {
     'use strict';
 
     $scope.deleteUser = function () {
@@ -52,32 +48,25 @@ angular.module('irida.user', [
         function () {
           $scope.notifier.icon = 'trash';
           $scope.notifier.message = 'Deleted ' + $scope.user.username;
-          messagingService.broadcast('notify');
+          $rootScope.$broadcast('notify');
           $location.path('/users');
         },
 
         function () {
           $scope.notifier.icon = 'ban-circle';
           $scope.notifier.message = 'Could not delete ' + $scope.user.username;
-          messagingService.broadcast('notify');
+          $rootScope.$broadcast('notify');
         });
     };
 
-    $scope.handleEnter = function ($event) {
-      $event.currentTarget.blur();
-    };
-
     $scope.blur = function (name) {
-//      if ($scope.user[name] !== $scope.original[name]) {
       ajaxService.patch($scope.links.self, '{"' + name + '":"' + $scope.user[name] + '"}').then(
 
         function () {
           $scope.notifier.icon = 'save';
           $scope.notifier.message = 'Saved ' + name + ': ' + $scope.user[name];
-          messagingService.broadcast('notify');
+          $rootScope.$broadcast('notify');
 
-          // Update the original
-//            $scope.original[name] = $scope.user[name];
         },
 
         function () {
