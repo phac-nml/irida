@@ -59,12 +59,7 @@ angular.module('irida')
         });
     };
 
-    $scope.handleEnter = function ($event) {
-      $event.currentTarget.blur();
-    };
-
     $scope.blur = function (name) {
-//      if ($scope.user[name] !== $scope.original[name]) {
       ajaxService.patch($scope.links.self, '{"' + name + '":"' + $scope.user[name] + '"}').then(
 
         function () {
@@ -72,8 +67,6 @@ angular.module('irida')
           $scope.notifier.message = 'Saved ' + name + ': ' + $scope.user[name];
           $rootScope.$broadcast('notify');
 
-          // Update the original
-//            $scope.original[name] = $scope.user[name];
         },
 
         function () {
