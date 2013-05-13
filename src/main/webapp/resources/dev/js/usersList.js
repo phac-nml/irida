@@ -1,12 +1,12 @@
 /* global angular, console */
-angular.module('irida.users', [
-    'ajaxService'])
+angular.module('irida')
 
 /**
  * Configure the route parameters
  * $routeProvider
  */
   .config(['$routeProvider', function ($routeProvider) {
+    'use strict';
     $routeProvider.when(
       '/users', {
         templateUrl: './partials/users.html',
