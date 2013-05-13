@@ -6,6 +6,7 @@ angular.module('irida')
  * $routeProvider
  */
   .config(['$routeProvider', function ($routeProvider) {
+    'use strict';
     $routeProvider.when(
       '/projects', {
         templateUrl: './partials/projects.html',
@@ -22,7 +23,7 @@ angular.module('irida')
             return defer.promise;
           }
         }
-      })
+      });
   }])
   .controller('ProjectsListCtrl', ['$rootScope', '$scope', '$location', 'ajaxService', function ($rootScope, $scope, $location, ajaxService) {
     'use strict';
