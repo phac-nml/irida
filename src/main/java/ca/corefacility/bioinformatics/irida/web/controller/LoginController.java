@@ -16,9 +16,9 @@
 package ca.corefacility.bioinformatics.irida.web.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Controller for sending back the login page.
@@ -28,11 +28,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class LoginController {
 
+    /**
+     * Handle login requests from spring security.
+     *
+     * @param authenticationError true if the login request failed.
+     * @return a model and view that includes an appropriately set error flag.
+     */
     @RequestMapping("login.html")
-    public String login(Model model, @RequestParam(value = "authentication_error", defaultValue = "false") Boolean authenticationError) {
+    public ModelAndView login(@RequestParam(value = "authentication_error",
+            defaultValue = "false") Boolean authenticationError) {
+
+        ModelAndView mav = new ModelAndView("login");
+
+        // if the initial login attempt failed, then set an appropriate
+        // flag to respond to the client with.
         if (authenticationError) {
-            model.addAttribute("loginError", true);
+            mav.addObject("loginError", Boolean.TRUE);
         }
-        return "login";
+
+        // respond to the client.
+        return mav;
     }
 }

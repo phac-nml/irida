@@ -21,13 +21,13 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import java.util.Collection;
 import java.util.HashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.hateoas.Link;
+
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 /**
@@ -39,19 +39,37 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 @RequestMapping(value = "/projects")
 public class ProjectsController extends GenericController<Identifier, Project, ProjectResource> {
 
+    /**
+     * rel used for accessing users associated with a project.
+     */
     private static final String PROJECT_USERS_REL = "project/users";
-    private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
+    /**
+     * Constructor for {@link ProjectsController}, requires a reference to a {@link ProjectService}.
+     *
+     * @param projectService the {@link ProjectService} to be used by this controller.
+     */
     @Autowired
     public ProjectsController(ProjectService projectService) {
         super(projectService, Identifier.class, Project.class, ProjectResource.class);
     }
-    
+
+    /**
+     * Projects should be sorted in descending order by default.
+     *
+     * @return a descending sort order (<code>Order.DESCENDING</code>).
+     */
     @Override
     protected Order getDefaultSortOrder() {
         return Order.DESCENDING;
     }
-            
+
+    /**
+     * Map a {@link ProjectResource} to a {@link Project}.
+     *
+     * @param pr the resource to map.
+     * @return an instance of {@link Project}.
+     */
     @Override
     public Project mapResourceToType(ProjectResource pr) {
         Project p = new Project();
@@ -59,6 +77,12 @@ public class ProjectsController extends GenericController<Identifier, Project, P
         return p;
     }
 
+    /**
+     * The {@link ProjectsController} should tell the client how to find the users for a specific {@link Project}.
+     *
+     * @param p the {@link Project} to construct custom links for.
+     * @return a collection of custom links.
+     */
     @Override
     public Collection<Link> constructCustomResourceLinks(Project p) {
         Collection<Link> links = new HashSet<>();

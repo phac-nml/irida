@@ -122,7 +122,9 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @param resource the resource to generate the links for.
      * @return a collection of links.
      */
-    public abstract Collection<Link> constructCustomResourceLinks(Type resource);
+    public Collection<Link> constructCustomResourceLinks(Type resource) {
+        return Collections.emptySet();
+    }
 
     /**
      * Map a representation of a resource to a concrete version of the resource so that we can store it in the

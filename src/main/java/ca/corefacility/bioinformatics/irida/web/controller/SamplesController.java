@@ -19,14 +19,12 @@ import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
-import java.util.Collection;
-import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
+ * A controller for managing {@link Sample} objects in the system.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
@@ -34,21 +32,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(value = "/samples")
 public class SamplesController extends GenericController<Identifier, Sample, SampleResource> {
 
+    /**
+     * Constructor, requires a reference to a {@link CRUDService}.
+     *
+     * @param sampleService the service used to manage samples.
+     */
     @Autowired
     public SamplesController(CRUDService<Identifier, Sample> sampleService) {
         super(sampleService, Identifier.class, Sample.class, SampleResource.class);
     }
-    
-    @Override
-    public Collection<Link> constructCustomResourceLinks(Sample resource) {
-        return Collections.emptySet();
-    }
 
+    /**
+     * Map a {@link SampleResource} to an instance of {@link Sample}.
+     *
+     * @param representation the {@link SampleResource} to map.
+     * @return and instance of {@link Sample}.
+     */
     @Override
     public Sample mapResourceToType(SampleResource representation) {
         Sample s = new Sample();
         s.setSampleName(representation.getSampleName());
         return s;
     }
-    
+
 }
