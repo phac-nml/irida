@@ -25,80 +25,99 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder;
-import static ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder.pageLinksFor;
 import ca.corefacility.bioinformatics.irida.web.controller.support.SortProperty;
 import com.google.common.base.Strings;
 import com.google.common.net.HttpHeaders;
 import com.google.gson.Gson;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.annotation.PostConstruct;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.util.*;
+
+import static ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder.pageLinksFor;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 /**
  * A controller that can serve any model from the database.
  *
+ * @param <IdentifierType> the type used to identify the resource served by this controller in the database.
+ * @param <Type>           the type that this controller is working with.
+ * @param <ResourceType>   the type that this controller uses to serialize and de-serialize the <code>Type</code> to the
+ *                         client.
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Controller
-@RequestMapping("/generic")
+@RequestMapping(value = "/generic", produces = MediaType.APPLICATION_JSON_VALUE)
 public abstract class GenericController<IdentifierType extends Identifier, Type extends Identifiable<IdentifierType> & Comparable<Type>, ResourceType extends Resource> {
 
-    private static final Logger logger = LoggerFactory.getLogger(GenericController.class);
-    private static final String INDEX_PAGE = "index";
-    private static final String PARTIALS_PREFIX = "partials/";
+    /**
+     * name of objects sent back to the client for all generic resources.
+     */
     public static final String RESOURCE_NAME = "resource";
+    /**
+     * logger.
+     */
+    private static final Logger logger = LoggerFactory.getLogger(GenericController.class);
+    /**
+     * index page for all collections.
+     */
+    private static final String INDEX_PAGE = "index";
+    /**
+     * partials page for all resources.
+     */
+    private static final String PARTIALS_PREFIX = "partials/";
+    /**
+     * The page used to show an individual resource.
+     */
+    private final String RESOURCE_INDIVIDUAL_INDEX;
+    /**
+     * service used for working with classes in the database.
+     */
     protected CRUDService<IdentifierType, Type> crudService;
+    /**
+     * The type used to serialize/de-serialize the <code>Type</code> to the client.
+     */
     private Class<ResourceType> resourceType;
+    /**
+     * The type of identifier used by <code>Type</code> in the database.
+     */
     private Class<IdentifierType> identifierType;
-    private Class<Type> type;
-    private String resourceIndividualIndex;
 
+    /**
+     * Construct an instance of {@link GenericController}. {@link GenericController} is an abstract type, and should
+     * only be used as a super-class.
+     *
+     * @param crudService    the service used to manage resources in the database.
+     * @param identifierType the type of identifier used by the type that this controller manages.
+     * @param type           the type that this controller is managing.
+     * @param resourceType   the type used to serialize/de-serialize the type to the client.
+     */
     protected GenericController(CRUDService<IdentifierType, Type> crudService,
-            Class<IdentifierType> identifierType, Class<Type> type, Class<ResourceType> resourceType) {
+                                Class<IdentifierType> identifierType, Class<Type> type, Class<ResourceType> resourceType) {
         this.crudService = crudService;
         this.resourceType = resourceType;
         this.identifierType = identifierType;
-        this.type = type;
-    }
 
-    @PostConstruct
-    public void initializePages() {
-        // initialize the names of the pages
+        // the index page for each individual resource consists of the partials prefix, plus the name of the type.
         String typeName = type.getSimpleName().toLowerCase();
-        this.resourceIndividualIndex = PARTIALS_PREFIX + typeName;
+        this.RESOURCE_INDIVIDUAL_INDEX = PARTIALS_PREFIX + typeName;
     }
 
     /**
-     * Construct a collection of {@link Link}s for a specific resource. Each
-     * resource may have custom links that refer to other controllers, but not
-     * all will. This method is called by
-     * {@link GenericController.getResource()}.
+     * Construct a collection of {@link Link}s for a specific resource. Each resource may have custom links that refer
+     * to other controllers, but not all will. This method is called by the <code>getResource</code> method.
      *
      * @param resource the resource to generate the links for.
      * @return a collection of links.
@@ -106,23 +125,28 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     public abstract Collection<Link> constructCustomResourceLinks(Type resource);
 
     /**
-     * Map a representation of a resource to a concrete version of the resource
-     * so that we can store it in the database.
+     * Map a representation of a resource to a concrete version of the resource so that we can store it in the
+     * database.
      *
      * @param resourceType the representation to map.
      * @return the concrete version of the representation.
      */
-    public abstract Type mapResourceToType(ResourceType representation);
+    public abstract Type mapResourceToType(ResourceType resourceType);
 
     /**
-     * Get the default sort property, {@link SortProperty.NONE} by default.
+     * Get the default sort property, <code>SortProperty.DEFAULT</code> by default.
      *
      * @return the default sort property for this class.
      */
     protected SortProperty getDefaultSortProperty() {
-        return SortProperty.NONE;
+        return SortProperty.DEFAULT;
     }
 
+    /**
+     * Get the default sort order for this class, <code>Order.ASCENDING</code> by default.
+     *
+     * @return the default sort order for this class.
+     */
     protected Order getDefaultSortOrder() {
         return Order.ASCENDING;
     }
@@ -130,41 +154,49 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     /**
      * Retrieve and construct a response with a collection of resources.
      *
-     * @param page the current page of the list of resources that the client
-     * wants.
-     * @param size the size of the page that the client wants to see.
+     * @param page         the current page of the list of resources that the client wants.
+     * @param size         the size of the page that the client wants to see.
      * @param sortProperty the property that the resources should be sorted by.
-     * @param sortOrder the order of the sort.
+     * @param sortOrder    the order of the sort.
      * @return a model and view containing the collection of resources.
      */
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView listResources(
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_PAGE, defaultValue = "1") int page,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SIZE, defaultValue = "20") int size,
-            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_PROPERTY, required = false) String sortProperty,
-            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER, required = false) Order sortOrder) throws InstantiationException, IllegalAccessException {
+            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_PROPERTY,
+                    required = false) String sortProperty,
+            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER,
+                    required = false) Order sortOrder) throws InstantiationException, IllegalAccessException {
         ModelAndView mav = new ModelAndView(INDEX_PAGE);
         List<Type> entities;
+        ControllerLinkBuilder linkBuilder = linkTo(getClass());
+        int totalEntities = crudService.count();
+        ResourceCollection<ResourceType> resources = new ResourceCollection<>();
 
-        // if the client did not specify a sort property, try to get a default sort property from the subclass.
-        if (Strings.isNullOrEmpty(sortProperty) && !SortProperty.NONE.equals(getDefaultSortProperty())) {
+        // if the client did not specify a sort property via parameters,
+        // try to get a default sort property from the subclass.
+        if (Strings.isNullOrEmpty(sortProperty) && !SortProperty.DEFAULT.equals(getDefaultSortProperty())) {
             sortProperty = getDefaultSortProperty().getSortProperty();
         }
 
-        // if the client did not specify a sort order, try to get the default sort order from the subclass.
+        // if the client did not specify a sort order via parameters,
+        // try to get the default sort order from the subclass.
         if (sortOrder == null && !Order.NONE.equals(getDefaultSortOrder())) {
             sortOrder = getDefaultSortOrder();
         }
 
+        // if no sort property is supplied by parameters, then the default sort property
+        // should be used by calling the service without specifying a property to sort by.
+        // Otherwise, call the service with the sort property supplied by the client.
         if (Strings.isNullOrEmpty(sortProperty)) {
             entities = crudService.list(page, size, sortOrder);
         } else {
             entities = crudService.list(page, size, sortProperty, sortOrder);
         }
-        ControllerLinkBuilder linkBuilder = linkTo(getClass());
-        int totalEntities = crudService.count();
-        ResourceCollection<ResourceType> resources = new ResourceCollection<>();
 
+        // for each entity returned by the service, construct a new instance of the
+        // resource type and add a self-rel using the linkBuilder.
         for (Type entity : entities) {
             ResourceType resource = resourceType.newInstance();
             resource.setResource(entity);
@@ -172,62 +204,156 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
             resources.add(resource);
         }
 
+        // the server will respond with only one page worth of entities, so we should tell
+        // the client how to get more pages of results by constructing a series of page links.
         resources.add(pageLinksFor(getClass(), page, size, totalEntities, sortProperty, sortOrder));
+        // we should also tell the client how many resources of this type there are in total
         resources.setTotalResources(totalEntities);
 
+        // finally, add the resource collection to the response
         mav.addObject(RESOURCE_NAME, resources);
+
+        // send the response back to the client.
         return mav;
     }
 
+    /**
+     * Retrieve and serialize an individual instance of a resource by identifier.
+     *
+     * @param resourceId the identifier of the resource to retrieve from the database.
+     * @return the model and view for the individual resource.
+     * @throws InstantiationException if the method fails to invoke the constructor for either
+     *                                <code>IdentifierType</code> or <code>ResourceType</code>.
+     * @throws IllegalAccessException if the constructor for either <code>IdentifierType</code> or
+     *                                <code>ResourceType</code> is marked <code>private</code>.
+     */
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
-    public ModelAndView getResource(@PathVariable String resourceId) throws InstantiationException, IllegalAccessException {
-        logger.debug(resourceIndividualIndex);
-        ModelAndView mav = new ModelAndView(resourceIndividualIndex);
+    public ModelAndView getResource(@PathVariable String resourceId)
+            throws InstantiationException, IllegalAccessException {
+        ModelAndView mav = new ModelAndView(RESOURCE_INDIVIDUAL_INDEX);
+
         logger.debug("Getting resource with id [" + resourceId + "]");
+
+        // construct an instance of the identifier with the value supplied by the client.
         IdentifierType id = identifierType.newInstance();
         id.setIdentifier(resourceId);
+
+        // try to retrieve a resource from the database using the identifier supplied by the client.
         Type t = crudService.read(id);
+
+        // prepare the resource for serialization to the client.
         ResourceType resource = resourceType.newInstance();
         resource.setResource(t);
+
+        // add any custom links for the specific resource type that we're serving
+        // right now (implemented in the class that extends GenericController).
         resource.add(constructCustomResourceLinks(t));
+        // add a self-rel to this resource
         resource.add(linkTo(getClass()).slash(resourceId).withSelfRel());
+
+        // add the resource to the model
         mav.addObject(RESOURCE_NAME, resource);
+
+        // send the response back to the client.
         return mav;
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    /**
+     * Create a new instance of {@link Type} in the database, then respond to the client with the location of the
+     * resource.
+     *
+     * @param representation the {@link ResourceType} that we should de-serialize to get an instance of {@link Type} to
+     *                       persist.
+     * @return a response containing the location of the newly persisted resource.
+     */
+    @RequestMapping(method = RequestMethod.POST,
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<String> create(@RequestBody ResourceType representation) {
+        // ask the subclass to map the de-serialized request to a concrete
+        // instance of the type managed by this controller.
         Type resource = mapResourceToType(representation);
+
+        // persist the resource to the database.
         resource = crudService.create(resource);
+
+        // the persisted resource is assigned an identifier by the service/database
+        // layer. We'll use this identifier to tell the client where to find the
+        // persisted resource.
         String id = resource.getIdentifier().getIdentifier();
         logger.debug("Created resource with ID [" + resource.getIdentifier().getIdentifier() + "]");
+
+        // the location of the new resource is relative to this class (i.e.,
+        // linkTo(getClass())) with the identifier appended.
         String location = linkTo(getClass()).slash(id).withSelfRel().getHref();
+
+        // construct a set of headers that we can add to the response,
+        // including the location header.
         MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap();
         responseHeaders.add(HttpHeaders.LOCATION, location);
-        ResponseEntity<String> response = new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
-        return response;
+
+        // send the response back to the client.
+        return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
     }
 
+    /**
+     * Delete the instance of the resource identified by a specific identifier.
+     *
+     * @param resourceId the identifier that should be deleted from the database.
+     * @return a response indicating that the resource was deleted.
+     * @throws InstantiationException if the constructor for {@link IdentifierType} fails.
+     * @throws IllegalAccessException if the constructor for {@link IdentifierType} is not public.
+     */
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.DELETE)
-    public ResponseEntity<String> delete(@PathVariable String resourceId) throws InstantiationException, IllegalAccessException {
+    public ResponseEntity<String> delete(@PathVariable String resourceId)
+            throws InstantiationException, IllegalAccessException {
+        // construct a new instance of an identifier as supplied by the client.
         IdentifierType id = identifierType.newInstance();
         id.setIdentifier(resourceId);
+
+        // ask the service to delete the resource specified by the identifier
         crudService.delete(id);
+
+        // respond to the client with a successful message
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/{resourceId}", method = RequestMethod.PATCH)
-    public ResponseEntity<String> update(@PathVariable String resourceId, @RequestBody Map<String, Object> representation) throws InstantiationException, IllegalAccessException {
+    /**
+     * Update some of the fields of an individual resource in the database. The client should only send the key-value
+     * pairs for the properties that are to be updated in the database.
+     *
+     * @param resourceId     the identifier of the resource to be updated.
+     * @param representation the properties to be updated and their new values.
+     * @return a response indicating that the resource was updated.
+     * @throws InstantiationException if the constructor for {@link IdentifierType} failed.
+     * @throws IllegalAccessException if the constructor for {@link IdentifierType} is not marked public.
+     */
+    @RequestMapping(value = "/{resourceId}", method = RequestMethod.PATCH,
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<String> update(@PathVariable String resourceId, @RequestBody Map<String, Object> representation)
+            throws InstantiationException, IllegalAccessException {
+
+        // construct a new instance of an identifier as specified by the client
         IdentifierType identifier = identifierType.newInstance();
         identifier.setIdentifier(resourceId);
+
+        // update the resource specified by the client. clients *may* be able
+        // to update the identifier of some resources, and so we should get a
+        // handle on the updated resource so that we can respond with a
+        // possibly updated location.
         Type resource = crudService.update(identifier, representation);
         String id = resource.getIdentifier().getIdentifier();
         logger.debug("Updated resource with ID [" + resource.getIdentifier().getIdentifier() + "]");
+
+        // construct the possibly updated location of the resource using the id
+        // of the resource as returned by the service after updating.
         String location = linkTo(getClass()).slash(id).withSelfRel().getHref();
+
+        // create a response including the new location.
         MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap();
         responseHeaders.add(HttpHeaders.LOCATION, location);
-        ResponseEntity<String> response = new ResponseEntity<>("success", responseHeaders, HttpStatus.OK);
-        return response;
+
+        // respond to the client
+        return new ResponseEntity<>("success", responseHeaders, HttpStatus.OK);
     }
 
     /**
@@ -250,6 +376,8 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      */
     @ExceptionHandler(InvalidPropertyException.class)
     public ResponseEntity<String> handleInvalidPropertyException(InvalidPropertyException e) {
+        logger.info("A client attempted to update a resource with an" +
+                " invalid property at " + new Date() + ". The stack trace follows: ", e);
         return new ResponseEntity<>("Cannot update resource with supplied properties.", HttpStatus.BAD_REQUEST);
     }
 
@@ -261,6 +389,8 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      */
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<String> handleNotFoundException(EntityNotFoundException e) {
+        logger.info("A client attempted to retrieve a resource with an identifier" +
+                " that does not exist at " + new Date() + ". The stack trace follows: ", e);
         return new ResponseEntity<>("No such resource found.", HttpStatus.NOT_FOUND);
     }
 
@@ -276,6 +406,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
             constraintViolations.add((ConstraintViolation<Type>) violation);
         }
+        logger.info("A client attempted to create or update a resource with invalid values at " + new Date());
         return new ResponseEntity<>(validationMessages(constraintViolations), HttpStatus.BAD_REQUEST);
     }
 
@@ -287,6 +418,8 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      */
     @ExceptionHandler(EntityExistsException.class)
     public ResponseEntity<String> handleExistsException(EntityExistsException e) {
+        logger.info("A client attempted to create a new resource with an identifier that exists, " +
+                "or modify a resource to have an identifier that already exists at " + new Date());
         return new ResponseEntity<>("An entity already exists with that identifier.", HttpStatus.CONFLICT);
     }
 
@@ -297,7 +430,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @return the constraint violations as a JSON object.
      */
     private <T> String validationMessages(Set<ConstraintViolation<T>> failures) {
-        Map<String, List<String>> mp = new HashMap();
+        Map<String, List<String>> mp = new HashMap<>();
         for (ConstraintViolation<T> failure : failures) {
             logger.debug(failure.getPropertyPath().toString() + ": " + failure.getMessage());
             String property = failure.getPropertyPath().toString();
@@ -309,7 +442,6 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
                 mp.put(property, list);
             }
         }
-        Gson g = new Gson();
-        return g.toJson(mp);
+        return new Gson().toJson(mp);
     }
 }

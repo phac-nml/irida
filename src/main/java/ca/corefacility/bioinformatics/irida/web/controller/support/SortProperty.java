@@ -25,7 +25,7 @@ import java.util.Objects;
 public class SortProperty {
 
     private String sortProperty;
-    public static final SortProperty NONE = new SortProperty(null);
+    public static final SortProperty DEFAULT = new SortProperty(null);
 
     public SortProperty(String sortProperty) {
         this.sortProperty = sortProperty;
