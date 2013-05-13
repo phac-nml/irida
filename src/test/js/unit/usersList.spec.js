@@ -6,6 +6,44 @@
 
 describe('UsersListCtrl', function () {
   var UsersListCtrl, $location, $scope, $httpBackend;
+  var response = {
+    'resource': {
+      'links': [
+        {
+          'rel': 'first',
+          'href': 'http://localhost:8080/users?page=1&size=20&sortOrder=ASCENDING'
+        },
+        {
+          'rel': 'next',
+          'href': 'http://localhost:8080/users?page=2&size=20&sortOrder=ASCENDING'
+        },
+        {
+          'rel': 'last',
+          'href': 'http://localhost:8080/users?page=6&size=20&sortOrder=ASCENDING'
+        },
+        {
+          'rel': 'self',
+          'href': 'http://localhost:8080/users?page=1&size=20&sortOrder=ASCENDING'
+        }
+      ],
+      'resources': [
+        {
+          'links': [
+            {
+              'rel': 'self',
+              'href': 'http://localhost:8080/users/tomX'
+            }
+          ],
+          'username': 'tomX',
+          'email': 'tom@nowhere.com',
+          'firstName': 'Tom',
+          'lastName': 'Matthews',
+          'phoneNumber': '1234',
+          'dateCreated': 1368461815490
+        }
+      ]
+    }
+  };
 
   beforeEach(module('irida'));
 
@@ -14,6 +52,7 @@ describe('UsersListCtrl', function () {
     $scope = $rootScope.$new();
     $httpBackend = $injector.get('$httpBackend');
     UsersListCtrl = $controller('UsersListCtrl', { $rootScope: $rootScope, $scope: $scope, $location: $location, ajaxService: ajaxService });
+    formatLink();
   }));
 
   afterEach(function () {
@@ -25,4 +64,16 @@ describe('UsersListCtrl', function () {
   it('should have a valid controller', inject(function () {
     expect(UsersListCtrl).toBeTruthy();
   }));
+
+  it('should load another page of users', function () {
+    $httpBackend.expectGET(response.resource.links[0].href).respond(response);
+    $scope.loadUsers(response.resource.links[0].href);
+    $httpBackend.flush();
+  });
+
+  function formatLink() {
+    'use strict';
+    $scope.links = response.resource.links;
+    $scope.users = response.resource.resources;
+  }
 });
