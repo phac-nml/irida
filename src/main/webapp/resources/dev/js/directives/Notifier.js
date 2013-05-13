@@ -6,6 +6,7 @@
 
 angular.module('irida')
   .directive('notifier', function () {
+    'use strict';
     return {
       restrict: 'E',
       scope: {
@@ -17,7 +18,6 @@ angular.module('irida')
         var time, timer;
         $scope.hidden = true;
         $scope.$on('notify', function () {
-          'use strict';
           if (time < 5) {
             $timeout.cancel(timer);
           }
@@ -27,7 +27,6 @@ angular.module('irida')
         });
 
         function countDown() {
-          'use strict';
           time -= 1;
           if (time > 0) {
             timer = $timeout(countDown, 1000);
@@ -40,7 +39,6 @@ angular.module('irida')
       },
       template: '<div style="display: none" class="ng-cloak notifier" data-ng-hide="hidden" data-ng-animate="\'notifier\'"><i class="icon-{{icon}}"></i> <span>{{message}}</span></div>',
       link: function () {
-        'use strict';
       }
     };
   });
