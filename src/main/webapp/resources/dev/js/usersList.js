@@ -25,7 +25,7 @@ angular.module('irida.users', [
         }
       });
   }])
-  .controller('UsersListCtrl', ['$scope', '$route', '$location', 'ajaxService', function ($scope, $route, $location, ajaxService) {
+  .controller('UsersListCtrl', ['$rootScope', '$scope', '$route', '$location', 'ajaxService', function ($rootScope, $scope, $route, $location, ajaxService) {
     'use strict';
 
     $scope.loadUsers = function (url) {
@@ -73,9 +73,15 @@ angular.module('irida.users', [
         ajaxService.create('/users', $scope.newUser).then(
 
           function () {
+            var u = $scope.newUser.username;
             $scope.loadUsers('/users');
             $scope.clearForm();
             $('#newUserModal').foundation('reveal', 'close');
+
+            // Notify user of update
+            $scope.notifier.message = 'Add ' + u;
+            $scope.notifier.icon = 'check';
+            $rootScope.$broadcast('notify');
           },
 
           function (data) {
