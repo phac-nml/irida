@@ -28,4 +28,7 @@ angular.module('irida.project', ['ajaxService'])
   .controller('ProjectCtrl', ['$scope', '$route', '$location', 'ajaxService', function ($scope, $route, $location, ajaxService) {
     'use strict';
 
+    $scope.removeUser = function (user) {
+      console.log(user + ' has been removed from the project');
+    };
   }]);

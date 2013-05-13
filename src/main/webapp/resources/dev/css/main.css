@@ -10,7 +10,7 @@ body {
   font-size: 100%; }
 
 body {
-  background: white;
+  background: #ecf0f1;
   color: #222222;
   padding: 0;
   margin: 0;
@@ -286,14 +286,15 @@ select {
   display: none !important; }
 
 input.ng-invalid.ng-dirty {
-  background-color: #FA787E; }
+  background-color: #e74c3c; }
 
 input.ng-valid.ng-dirty {
-  background-color: #78FA89; }
+  background-color: #2ecc71; }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Cuprum', sans-serif;
-  font-weight: 700; }
+  font-weight: 700;
+  letter-spacing: 2px; }
 
 /* ==========================================================================
    Modules
@@ -374,7 +375,7 @@ h1, h2, h3, h4, h5, h6 {
   .card-holder li .card {
     position: relative;
     background: #fff;
-    padding: 10px;
+    padding: 0.8em;
     border: 1px solid rgba(0, 0, 0, 0.15);
     box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.18);
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
@@ -384,18 +385,11 @@ h1, h2, h3, h4, h5, h6 {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis; }
-    .card-holder li .card h2:after {
-      content: ' ';
-      display: block;
-      width: 100%;
-      height: 2px;
-      margin-top: 10px;
-      background: linear, left, rgba(147, 184, 189, 0) 0%, rgba(147, 184, 189, 0.8) 20%, #93b8bd 53%, rgba(147, 184, 189, 0.8) 79%, rgba(147, 184, 189, 0) 100%; }
     .card-holder li .card span {
       position: absolute;
       top: 5px;
       right: 5px;
-      color: #cccccc;
+      color: #bdc3c7;
       font-size: 0.6em; }
     @media only screen and (min-width: 48em) {
       .card-holder li .card:before {
@@ -469,7 +463,7 @@ h1, h2, h3, h4, h5, h6 {
     font-family: 'Cuprum', sans-serif;
     font-weight: 700;
     font-size: 1.2em;
-    background-color: #133b54;
+    background-color: #34495e;
     text-transform: uppercase;
     border-bottom: none; }
     .listTable thead th {
@@ -486,6 +480,37 @@ h1, h2, h3, h4, h5, h6 {
 
 .editForm input {
   border: none;
-  box-shadow: none; }
+  box-shadow: none;
+  background-color: transparent; }
   .editForm input:hover {
-    background-color: palegoldenrod; }
+    background-color: #f1c40f; }
+  .editForm input:focus {
+    border: 1px solid #95a5a6; }
+
+.details div > h2 {
+  color: #ffffff;
+  margin-bottom: 0; }
+.details .description {
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  font-weight: 600; }
+
+.resource-list {
+  background-color: #bdc3c7; }
+  .resource-list ul {
+    list-style: none; }
+  .resource-list li {
+    display: block;
+    position: relative; }
+  .resource-list span a {
+    position: absolute;
+    top: 0;
+    right: 2px;
+    cursor: pointer;
+    color: #bdc3c7;
+    background-color: rgba(233, 75, 53, 0.1);
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out; }
+    .resource-list span a:hover {
+      background-color: #e94b35; }

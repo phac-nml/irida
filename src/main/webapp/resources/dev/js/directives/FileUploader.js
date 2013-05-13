@@ -1,23 +1,21 @@
-/*global angular */
-
 /**
  * Author: Josh Adam <josh.adam@phac-aspc.gc.ca>
  * Date:   2013-04-30
  * Time:   12:18 PM
  */
 
-angular.module('irida.directives', [])
+angular.module('irida')
   .directive('file', function () {
-    "use strict";
+    'use strict';
     return {
       restrict: 'A',
       scope: {
         files: '='
       },
-      link: function (scope, el) {
+      link: function (scope, el, attrs) {
+        console.log('Looking to see what is happening');
         el.bind('change', function (event) {
           var files = event.target.files;
-          //          scope.file = file ? file.name : undefined;
 
           initializeFileUploads(files, this);
           scope.$apply();
@@ -31,7 +29,7 @@ angular.module('irida.directives', [])
         }
 
         function uploadFile(file, element) {
-          var uri = "/sequenceFiles";
+          var uri = '/sequenceFiles';
           var xhr = new XMLHttpRequest();
           var fd = new FormData();
 
@@ -53,7 +51,7 @@ angular.module('irida.directives', [])
               var percentage = e.loaded / e.total;
               var width = Math.round(percentage * innerWidth);
               scope.$apply(function () {
-                counter.text(Math.round(percentage * 100) + " %");
+                counter.text(Math.round(percentage * 100) + ' %');
                 inner.css('width', width);
               });
 
@@ -66,14 +64,13 @@ angular.module('irida.directives', [])
             });
           });
 
-          xhr.open("POST", uri, true);
+          xhr.open('POST', uri, true);
           xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
-              // TODO: Handoe response.
+              // TODO: Handle response.
             }
           };
           fd.append('file', file);
-          // Initiate a multipart/form-data upload
           xhr.send(fd);
         }
       }

@@ -1,9 +1,7 @@
 /**
- * Created with JetBrains WebStorm.
  * User: josh
  * Date: 2013-05-06
  * Time: 9:56 PM
- * To change this template use File | Settings | File Templates.
  */
 
 angular.module('ajaxService', [])
@@ -20,6 +18,12 @@ angular.module('ajaxService', [])
     }
 
     return {
+      /**
+       * create - use to create a new resource on the server
+       * @param url
+       * @param data
+       * @returns callback promise for success and failure.
+       */
       create: function (url, data) {
         var deferred = $q.defer();
         $http({
@@ -34,28 +38,41 @@ angular.module('ajaxService', [])
             deferred.resolve(data);
           })
           .error(function (data) {
+            // TODO: (JOSH - 2013-05-10) Handle create errors
             deferred.reject(data);
           });
         return deferred.promise;
       },
-      get: function (url, data) {
+      /**
+       * get- use to get a resource from the server
+       * @param url
+       * @returns {*}
+       */
+      get: function (url) {
         if (url) {
           var deferred = $q.defer();
           $http({
             url: url,
-            method: 'GET',
-            params: data
+            method: 'GET'
           })
             .success(function (data) {
               deferred.resolve(formatLinks(data));
             })
             .error(function () {
-              deferred.reject('An error occurred while getting projects');
+              // TODO: (JOSH - 2013-05-10) Handle get errors properly
+              deferred.reject('An error occurred during get @ ' + url);
             });
 
           return deferred.promise;
         }
+        return false;
       },
+      /**
+       * post
+       * @param url
+       * @param data
+       * @returns {*}
+       */
       post: function (url, data) {
         if (url) {
           var deferred = $q.defer();
@@ -68,12 +85,20 @@ angular.module('ajaxService', [])
               deferred.resolve(data);
             })
             .error(function () {
-              deferred.reject('An error occurred while getting projects');
+              // TODO: (JOSH - 2013-05-10) Handle post errors properly
+              deferred.reject('An error occurred while posting @ ' + url);
             });
 
           return deferred.promise;
         }
+        return false;
       },
+      /**
+       * patch - uses to update a resource (usually one field)
+       * @param url
+       * @param data
+       * @returns {*}
+       */
       patch: function (url, data) {
         if (url && data) {
           var deferred = $q.defer();
@@ -94,8 +119,14 @@ angular.module('ajaxService', [])
             });
           return deferred.promise;
         }
+        return false;
       },
-      delete: function (url) {
+      /**
+       * delete - delete resource from server
+       * @param url
+       * @returns {*}
+       */
+      deleteItem: function (url) {
         if (url) {
           var deferred = $q.defer();
 
@@ -118,6 +149,7 @@ angular.module('ajaxService', [])
             });
           return deferred.promise;
         }
+        return false;
       }
     };
   });

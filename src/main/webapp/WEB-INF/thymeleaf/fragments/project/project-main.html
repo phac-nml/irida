@@ -11,14 +11,40 @@
                         cumque deserunt dolore est expedita fugit, harum hic ipsam iste maxime minima numquam odit
                         quibusdam, rerum sit.</p>
                 </div>
-                <div class="large-3 large-offset-1 small-12 columns">
+                <div class="large-3 large-offset-1 small-12 columns resource-list">
                     <h2>Users</h2>
                     <ul>
-                        <li><a href="#!/users/josh"><i class="icon-user"></i> Josh Adam</a></li>
-                        <li><a href=""><i class="icon-user"></i> Tom Matthews</a></li>
-                        <li><a href=""><i class="icon-user"></i> Aaron Petkau</a></li>
-                        <li><a href="#!/users/franklin"><i class="icon-user"></i> Franklin Bristow</a></li>
-                        <li><a href=""><i class="icon-user"></i> Mathew Stuart-Edwards</a></li>
+                        <li><a href="#!/users/josh"><i class="icon-user"></i> Josh Adam</a>
+                            <span class="remove">
+                                <a title="Remove user from project" ng-click="removeUser('josh')">
+                                    <i class="icon-remove"></i>
+                                </a>
+                            </span>
+                        </li>
+                        <li><a href=""><i class="icon-user"></i> Tom Matthews</a>
+                            <span class="remove">
+                                <a title="Remove user from project" ng-click="removeUser('tom')">
+                                    <i class="icon-remove"></i>
+                                </a>
+                            </span></li>
+                        <li><a href=""><i class="icon-user"></i> Aaron Petkau</a>
+                            <span class="remove">
+                                <a title="Remove user from project" ng-click="removeUser('aaron')">
+                                    <i class="icon-remove"></i>
+                                </a>
+                            </span></li>
+                        <li><a href="#!/users/franklin"><i class="icon-user"></i> Franklin Bristow</a>
+                            <span class="remove">
+                                <a title="Remove user from project" ng-click="removeUser('franklin')">
+                                    <i class="icon-remove"></i>
+                                </a>
+                            </span></li>
+                        <li><a href=""><i class="icon-user"></i> Mathew Stuart-Edwards</a>
+                            <span class="remove">
+                                <a title="Remove user from project" ng-click="removeUser('mathew')">
+                                    <i class="icon-remove"></i>
+                                </a>
+                            </span></li>
                     </ul>
                 </div>
             </div>

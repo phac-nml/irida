@@ -9,14 +9,17 @@
  * It is responsible for the user view.
  */
 angular.module('irida.user', [
+    'ui',
     'ajaxService',
-    'messagingService'])
+    'messagingService'
+  ])
 
 /**
  * Configure the route parameters
  * $routeProvider
  */
   .config(['$routeProvider', function ($routeProvider) {
+    'use strict';
     $routeProvider.when(
       '/users/:username', {
         templateUrl: './partials/user.html',
@@ -34,7 +37,7 @@ angular.module('irida.user', [
             return defer.promise;
           }
         }
-      })
+      });
   }])
 
 /**
@@ -44,11 +47,11 @@ angular.module('irida.user', [
     'use strict';
 
     $scope.deleteUser = function () {
-      ajaxService.delete($scope.links.self).then(
+      ajaxService.deleteItem($scope.links.self).then(
 
         function () {
-          $scope.notifier.icon = "trash";
-          $scope.notifier.message = "Deleted " + $scope.user.username;
+          $scope.notifier.icon = 'trash';
+          $scope.notifier.message = 'Deleted ' + $scope.user.username;
           messagingService.broadcast('notify');
           $location.path('/users');
         },
@@ -65,24 +68,21 @@ angular.module('irida.user', [
     };
 
     $scope.blur = function (name) {
-      var form = $scope.editUserForm;
-      if (form[name].$invalid) {
-        console.log("NOT VALIDE");
-      } else if ($scope.user[name] != $scope.original[name]) {
-        ajaxService.patch($scope.links.self, '{"' + name + '":"' + $scope.user[name] + '"}').then(
+//      if ($scope.user[name] !== $scope.original[name]) {
+      ajaxService.patch($scope.links.self, '{"' + name + '":"' + $scope.user[name] + '"}').then(
 
-          function (data) {
-            $scope.notifier.icon = "save";
-            $scope.notifier.message = "Saved " + name + ": " + $scope.user[name];
-            messagingService.broadcast('notify');
+        function () {
+          $scope.notifier.icon = 'save';
+          $scope.notifier.message = 'Saved ' + name + ': ' + $scope.user[name];
+          messagingService.broadcast('notify');
 
-            // Update the original
-            $scope.original[name] = $scope.user[name];
-          },
+          // Update the original
+//            $scope.original[name] = $scope.user[name];
+        },
 
-          function () {
-            console.log("ERROR");
-          });
-      }
+        function () {
+          console.log('Error figure this out will ya!');
+        });
     };
+//    };
   }]);
