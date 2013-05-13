@@ -11,7 +11,7 @@ angular.module('CookieService', ['ngCookies'])
     'use strict';
     return {
       checkLoginCookie: function () {
-        return typeof $cookies['JSESSIONID'] === 'string';
+        return typeof $cookies.JSESSIONID === 'string';
       }
-    }
+    };
   }]);
