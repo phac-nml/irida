@@ -15,7 +15,7 @@
     <!-- Passwords should be encoded using the BCrypt algorithm -->
     <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
-    <bean id="userService" class="ca.corefacility.bioinformatics.irida.service.impl.UserServiceImpl">
+    <bean id="userService" class="ca.corefacility.bioinformatics.irida.service.impl.UserServiceImpl" init-method="initializeRoles">
         <constructor-arg ref="userRepository"/>
         <constructor-arg ref="passwordEncoder"/>
         <constructor-arg ref="validator"/>
