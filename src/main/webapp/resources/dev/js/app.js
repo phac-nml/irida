@@ -1,7 +1,6 @@
 /*global angular */
 angular.module('irida', [
     'http-auth-interceptor',
-    'irida.user',
     'irida.users',
     'ajaxService',
     'CookieService'
