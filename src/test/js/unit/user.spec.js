@@ -3,17 +3,40 @@
  * Date: 2013-05-13
  * Time: 11:42 AM
  */
+
 describe('UserCtrl', function () {
+  var response = {
+    "resource": {
+      "links": [
+        {
+          "rel": "user/projects",
+          "href": "http://localhost:8080/users/user2/projects"
+        },
+        {
+          "rel": "self",
+          "href": "http://localhost:8080/users/user2"
+        }
+      ],
+      "username": "user2",
+      "email": "user2@nowhere.com",
+      "firstName": "User",
+      "lastName": "Number2",
+      "phoneNumber": "204-123-4567",
+      "dateCreated": 1368461816018
+    }
+  };
+
   var UserCtrl, $location, $scope, $httpBackend;
-  var url = '/login';
+  var url = 'http://localhost:8080/users/user2';
 
   beforeEach(module('irida'));
 
-  beforeEach(inject(function ($controller, _$location_, $rootScope, $injector) {
+  beforeEach(inject(function ($controller, _$location_, $rootScope, $injector, ajaxService) {
     $location = _$location_;
     $scope = $rootScope.$new();
     $httpBackend = $injector.get('$httpBackend');
-    UserCtrl = $controller('UserCtrl', { $scope: $scope });
+    UserCtrl = $controller('UserCtrl', { $rootScope: $rootScope, $scope: $scope, $location: $location, ajaxService: ajaxService });
+    setUpController();
   }));
 
   afterEach(function () {
@@ -26,4 +49,16 @@ describe('UserCtrl', function () {
     expect(UserCtrl).toBeTruthy();
   }));
 
+  it('should get information about the user', function () {
+    $httpBackend.expectDELETE(url).respond(200, '');
+    $scope.deleteUser();
+    $httpBackend.flush();
+  });
+
+  function setUpController() {
+    $scope.links = {};
+    $scope.notifier = {};
+    $scope.user = response.resource;
+    $scope.links.self = response.resource.links[1].href;
+  }
 });
