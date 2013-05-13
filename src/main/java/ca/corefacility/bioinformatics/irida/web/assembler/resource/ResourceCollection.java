@@ -15,12 +15,13 @@
  */
 package ca.corefacility.bioinformatics.irida.web.assembler.resource;
 
+import org.springframework.hateoas.ResourceSupport;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import org.springframework.hateoas.ResourceSupport;
 
 /**
  * Wraps a collection of {@link UserResource} objects to be sent to the client.
@@ -30,10 +31,19 @@ import org.springframework.hateoas.ResourceSupport;
 @XmlRootElement
 public class ResourceCollection<Type extends Resource> extends ResourceSupport implements Iterable<Type> {
 
+    /**
+     * A collection of resources to be serialized.
+     */
     @XmlElement
     private List<Type> resources;
+    /**
+     * The total number of resources in the ENTIRE collection (not just those that are being serialized).
+     */
     private int totalResources;
 
+    /**
+     * Default constructor, empty set of resources.
+     */
     public ResourceCollection() {
         this.resources = new ArrayList<>();
     }
@@ -56,14 +66,27 @@ public class ResourceCollection<Type extends Resource> extends ResourceSupport i
         return this.resources;
     }
 
+    /**
+     * Get the total number of resources in the collection.
+     *
+     * @return total resources in the collection.
+     */
     public int getTotalResources() {
         return this.totalResources;
     }
 
+    /**
+     * Set the total number of resources in the collection.
+     *
+     * @param totalResources total number of resources in the collection.
+     */
     public void setTotalResources(int totalResources) {
         this.totalResources = totalResources;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Iterator<Type> iterator() {
         return resources.iterator();

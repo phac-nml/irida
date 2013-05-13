@@ -19,9 +19,10 @@ import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.Date;
-import javax.xml.bind.annotation.XmlElement;
 import org.springframework.hateoas.ResourceSupport;
+
+import javax.xml.bind.annotation.XmlElement;
+import java.util.Date;
 
 /**
  * A generic container for all resources.
@@ -30,17 +31,35 @@ import org.springframework.hateoas.ResourceSupport;
  */
 public abstract class Resource<Type extends Identifiable & Auditable<Audit>> extends ResourceSupport {
 
+    /**
+     * the resource exposed by this container (not serialized).
+     */
     @JsonIgnore
     protected Type resource;
 
+    /**
+     * Constructor for a resource container.
+     *
+     * @param resource the resource to be serialized.
+     */
     public Resource(Type resource) {
         this.resource = resource;
     }
 
+    /**
+     * Set the resource to be serialized.
+     *
+     * @param resource the resource to be serialized.
+     */
     public void setResource(Type resource) {
         this.resource = resource;
     }
 
+    /**
+     * All serialized objects should include the creation date of the resource.
+     *
+     * @return the creation date of the resource.
+     */
     @XmlElement
     public Date getDateCreated() {
         return resource.getAuditInformation().getCreated();
