@@ -1,5 +1,5 @@
 /* global angular */
-angular.module('irida.projectsList', ['ajaxService'])
+angular.module('irida')
 
 /**
  * Configure the route parameters
