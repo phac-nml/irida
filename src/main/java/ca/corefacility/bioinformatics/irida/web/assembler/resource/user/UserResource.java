@@ -4,6 +4,7 @@ import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -72,13 +73,13 @@ public class UserResource extends Resource<User> {
         resource.setPhoneNumber(phoneNumber);
     }
 
-    @JsonProperty
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     @JsonIgnore
     public String getPassword() {
         return password;
+    }
+
+    @JsonProperty
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
