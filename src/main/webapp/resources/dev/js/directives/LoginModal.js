@@ -6,7 +6,7 @@
  * Time: 2:33 PM
  */
 
-angular.module('irida.directives', [])
+angular.module('irida')
 /**
  * Injected:
  * @param ajaxService Handles all ajax related calls

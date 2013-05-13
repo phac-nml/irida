@@ -4,7 +4,7 @@
  * Time:   8:19 AM
  */
 
-angular.module('irida.directives', [])
+angular.module('irida')
     .directive('notifier', function () {
         return {
             restrict: 'E',

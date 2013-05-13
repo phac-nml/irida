@@ -145,7 +145,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER, required = false) Order sortOrder) throws InstantiationException, IllegalAccessException {
         ModelAndView mav = new ModelAndView(INDEX_PAGE);
         List<Type> entities;
-
+        logger.debug("HELLO JOSH");
         // if the client did not specify a sort property, try to get a default sort property from the subclass.
         if (Strings.isNullOrEmpty(sortProperty) && !SortProperty.NONE.equals(getDefaultSortProperty())) {
             sortProperty = getDefaultSortProperty().getSortProperty();
