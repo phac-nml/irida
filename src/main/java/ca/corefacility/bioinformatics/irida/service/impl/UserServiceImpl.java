@@ -21,6 +21,8 @@ import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,6 +53,10 @@ public class UserServiceImpl extends CRUDServiceImpl<UserIdentifier, User> imple
      * The property name to use for passwords on the {@link User} class.
      */
     private static final String PASSWORD_PROPERTY = "password";
+    /**
+     * logger
+     */
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     /**
      * A reference to the user repository used to manage users.
      */
@@ -131,6 +137,7 @@ public class UserServiceImpl extends CRUDServiceImpl<UserIdentifier, User> imple
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        logger.debug("Loading user with username: [" + username + "].");
         org.springframework.security.core.userdetails.User userDetails = null;
         User u;
         try {
