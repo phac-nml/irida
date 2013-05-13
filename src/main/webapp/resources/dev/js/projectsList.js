@@ -24,7 +24,7 @@ angular.module('irida.projectsList', ['ajaxService'])
         }
       })
   }])
-  .controller('ProjectsListCtrl', ['$scope', '$location', 'ajaxService', function ($scope, $location, ajaxService) {
+  .controller('ProjectsListCtrl', ['$rootScope', '$scope', '$location', 'ajaxService', function ($rootScope, $scope, $location, ajaxService) {
     'use strict';
 
     $scope.loadProjects = function (url) {
@@ -69,6 +69,9 @@ angular.module('irida.projectsList', ['ajaxService'])
         ajaxService.create('/projects', $scope.newProject).then(
 
           function () {
+            $scope.notifier.message = 'Created a new some really crazy shit!';
+            $scope.notifier.icon = 'check';
+            $rootScope.$broadcast('notify');
             $scope.loadProjects($scope.projectsUrl);
             $scope.clearForm();
             $('#newProjectModal').foundation('reveal', 'close');

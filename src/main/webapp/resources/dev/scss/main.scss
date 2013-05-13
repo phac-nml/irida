@@ -29,7 +29,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Notifier
    ========================================================================== */
 
-.nofifier-hide-setup, .notifier-show-setup {
+.notifier-hide-setup, .notifier-show-setup {
   @include transition(all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s);
 }
 
@@ -127,6 +127,13 @@ h1, h2, h3, h4, h5, h6 {
         overflow: hidden;
         text-overflow: ellipsis;
       }
+      h2:after {
+        display: block;
+        content: ' ';
+        height: 1px;
+        width: 100%;
+        background-color: #bdc3c7;
+      }
       span {
         position: absolute;
         top: 5px;
@@ -134,6 +141,9 @@ h1, h2, h3, h4, h5, h6 {
         color: #bdc3c7;
         font-size: 0.6em;
 
+      }
+      p {
+        font-size: 0.8em;
       }
       @media #{$small} {
         &:before {

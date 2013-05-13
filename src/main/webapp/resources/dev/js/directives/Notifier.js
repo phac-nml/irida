@@ -38,7 +38,7 @@ angular.module('irida')
           }
         }
       },
-      template: '<div class="ng-cloak notifier" data-ng-hide="hidden" data-ng-animate="\'notifier\'"><i class="icon-{{icon}}"></i> <span>{{message}}</span></div>',
+      template: '<div style="display: none" class="ng-cloak notifier" data-ng-hide="hidden" data-ng-animate="\'notifier\'"><i class="icon-{{icon}}"></i> <span>{{message}}</span></div>',
       link: function () {
         'use strict';
       }

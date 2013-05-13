@@ -301,7 +301,7 @@ h1, h2, h3, h4, h5, h6 {
    ========================================================================== */
 /* Notifier
    ========================================================================== */
-.nofifier-hide-setup, .notifier-show-setup {
+.notifier-hide-setup, .notifier-show-setup {
   -webkit-transition: all cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s;
   -moz-transition: all cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s;
   transition: all cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s; }
@@ -385,12 +385,20 @@ h1, h2, h3, h4, h5, h6 {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis; }
+    .card-holder li .card h2:after {
+      display: block;
+      content: ' ';
+      height: 1px;
+      width: 100%;
+      background-color: #bdc3c7; }
     .card-holder li .card span {
       position: absolute;
       top: 5px;
       right: 5px;
       color: #bdc3c7;
       font-size: 0.6em; }
+    .card-holder li .card p {
+      font-size: 0.8em; }
     @media only screen and (min-width: 48em) {
       .card-holder li .card:before {
         z-index: -1;

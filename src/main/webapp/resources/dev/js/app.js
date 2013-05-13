@@ -7,7 +7,6 @@ angular.module('irida', [
     'irida.projectsList',
     'irida.user',
     'irida.users',
-//    'irida.directives',
     'CookieService'
   ])
   .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
