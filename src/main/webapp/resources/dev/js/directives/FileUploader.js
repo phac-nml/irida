@@ -12,7 +12,7 @@ angular.module('irida')
       scope: {
         files: '='
       },
-      link: function (scope, el, attrs) {
+      link: function (scope, el) {
         console.log('Looking to see what is happening');
         el.bind('change', function (event) {
           var files = event.target.files;
@@ -68,6 +68,7 @@ angular.module('irida')
           xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
               // TODO: Handle response.
+              console.log('Need to handle these');
             }
           };
           fd.append('file', file);
