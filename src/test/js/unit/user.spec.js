@@ -49,10 +49,18 @@ describe('UserCtrl', function () {
     expect(UserCtrl).toBeTruthy();
   }));
 
-  it('should get information about the user', function () {
+  it('should be able to delete a user user', function () {
     $httpBackend.expectDELETE(url).respond(200, '');
     $scope.deleteUser();
     $httpBackend.flush();
+  });
+
+  it('should notify the client when the user is deleted', function () {
+    $httpBackend.expectDELETE(url).respond(200, '');
+    $scope.deleteUser();
+    $httpBackend.flush();
+    expect($scope.notifier.message).toBe('Deleted user2');
+    expect($scope.notifier.icon).toBe('trash');
   });
 
   function setUpController() {
