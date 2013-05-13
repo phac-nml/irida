@@ -1,10 +1,12 @@
 /**
  * User: josh
  * Date: 2013-05-13
- * Time: 11:02 AM
+ * Time: 11:21 AM
  */
-describe('LandingCtrl', function () {
-  var LandingCtrl, $location, $scope, $httpBackend;
+
+describe('ProjectCtrl', function () {
+  var ProjectCtrl, $location, $scope, $httpBackend;
+  var url = '/login';
 
   beforeEach(module('irida'));
 
@@ -12,8 +14,7 @@ describe('LandingCtrl', function () {
     $location = _$location_;
     $scope = $rootScope.$new();
     $httpBackend = $injector.get('$httpBackend');
-    $httpBackend.when('GET', url).respond(response);
-    LandingCtrl = $controller('LandingCtrl', { $scope: $scope });
+    ProjectCtrl = $controller('ProjectCtrl', { $scope: $scope });
   }));
 
   afterEach(function () {
@@ -23,6 +24,7 @@ describe('LandingCtrl', function () {
   });
 
   it('should have a valid controller', inject(function () {
-    expect(LandingCtrl).toBeTruthy();
+    expect(ProjectCtrl).toBeTruthy();
   }));
+
 });

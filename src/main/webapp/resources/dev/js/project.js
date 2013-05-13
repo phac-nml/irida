@@ -1,10 +1,11 @@
-angular.module('irida.project', ['ajaxService'])
+angular.module('irida')
 
 /**
  * Configure the route parameters
  * $routeProvider
  */
   .config(['$routeProvider', function ($routeProvider) {
+    'use strict';
     $routeProvider.when(
       '/projects/:projectId', {
         templateUrl: './partials/project.html',
@@ -22,10 +23,10 @@ angular.module('irida.project', ['ajaxService'])
             return defer.promise;
           }
         }
-      })
+      });
   }])
 
-  .controller('ProjectCtrl', ['$scope', '$route', '$location', 'ajaxService', function ($scope, $route, $location, ajaxService) {
+  .controller('ProjectCtrl', ['$scope', function ($scope) {
     'use strict';
 
     $scope.removeUser = function (user) {
