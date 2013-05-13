@@ -1,12 +1,13 @@
 /* global angular, console */
-angular.module('irida.users', [
-    'ajaxService'])
+angular.module('irida')
 
 /**
  * Configure the route parameters
  * $routeProvider
  */
   .config(['$routeProvider', function ($routeProvider) {
+    'use strict';
+
     $routeProvider.when(
       '/users', {
         templateUrl: './partials/users.html',
@@ -25,7 +26,7 @@ angular.module('irida.users', [
         }
       });
   }])
-  .controller('UsersListCtrl', ['$rootScope', '$scope', '$route', '$location', 'ajaxService', function ($rootScope, $scope, $route, $location, ajaxService) {
+  .controller('UsersListCtrl', ['$rootScope', '$scope', '$location', 'ajaxService', function ($rootScope, $scope, $location, ajaxService) {
     'use strict';
 
     $scope.loadUsers = function (url) {
@@ -99,8 +100,4 @@ angular.module('irida.users', [
       $scope.links = data.resource.links;
       $scope.users = data.resource.resources;
     }
-
-    $scope.$on('$routeChangeSuccess', function () {
-      $(document).foundation('reveal', {});
-    });
   }]);
