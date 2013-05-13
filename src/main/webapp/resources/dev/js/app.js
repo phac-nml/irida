@@ -1,5 +1,6 @@
 /*global angular */
 angular.module('irida', [
+    'ui',
     'http-auth-interceptor',
     'irida.users',
     'ajaxService',
