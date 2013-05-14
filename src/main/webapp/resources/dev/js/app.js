@@ -7,8 +7,7 @@ angular.module('irida', [
   ])
   .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
     'use strict';
-//    $locationProvider.hashPrefix('!');
-        $locationProvider.html5Mode(true);
+    $locationProvider.html5Mode(true);
     $routeProvider.otherwise({redirectTo: '/'});
   }])
 /**
