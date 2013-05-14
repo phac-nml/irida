@@ -42,8 +42,9 @@
         <constructor-arg ref="validator"/>
     </bean>
     
-    <bean id="linkService" class="ca.corefacility.bioinformatics.irida.service.impl.LinkServiceImpl">
+    <bean id="linkService" class="ca.corefacility.bioinformatics.irida.service.impl.RelationshipServiceImpl">
         <constructor-arg ref="linksRepository" />
+        <constructor-arg ref="validator" />
     </bean>
     
     <!-- validator beans -->

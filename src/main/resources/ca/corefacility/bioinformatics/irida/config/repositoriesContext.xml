@@ -11,7 +11,7 @@
     
     <import resource="tripleStoreContext.xml"/>
     
-    <bean id="linksRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.LinksRepository">
+    <bean id="linksRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.RelationshipSesameRepository">
         <constructor-arg ref="tripleStore" />
         <constructor-arg ref="auditRepository" />
     </bean>
