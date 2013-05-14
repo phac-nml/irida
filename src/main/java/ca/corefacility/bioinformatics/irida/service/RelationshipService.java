@@ -18,14 +18,36 @@ package ca.corefacility.bioinformatics.irida.service;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+
 import java.util.Collection;
 
 /**
+ * Service for managing relationships between entities.
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public interface RelationshipService extends CRUDService<Identifier, Relationship>{
-    
-    public <S extends IridaThing,O extends IridaThing> Relationship createLink(S subject, O object);
-    public Collection<Relationship> listLinks(Identifier id,Class subjectType, Class objectType);
+public interface RelationshipService extends CRUDService<Identifier, Relationship> {
+
+    /**
+     * Create a relationship with the default type between two entities in the database. If more than one relationship
+     * type exists, then this method will throw an exception.
+     *
+     * @param subject   the subject of the relationship.
+     * @param object    the object of the relationship.
+     * @param <Subject> The subject type of the relationship.
+     * @param <Object>  the object type of the relationship.
+     * @return an instance of {@link Relationship} with an {@link Identifier}.
+     */
+    public <Subject extends IridaThing, Object extends IridaThing> Relationship create(Subject subject, Object object);
+
+    /**
+     * Get the list of links for a specific identifier with the specified object and subject types.
+     *
+     * @param id          the {@link Identifier} to get the relationships for.
+     * @param subjectType the type of class for the identifier.
+     * @param objectType  the type of class for the target of the relationship.
+     * @return the collection of relationships for this class.
+     */
+    public Collection<Relationship> getRelationshipsForEntity(Identifier id, Class subjectType, Class objectType);
 }
