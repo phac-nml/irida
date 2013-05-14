@@ -18,11 +18,13 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.Link;
+import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.StringIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.DefaultLinks;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
 import java.net.URISyntaxException;
@@ -53,12 +55,21 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
     
     public final String linkType = "http://corefacility.ca/irida/ResourceLink";
     AuditRepository auditRepo;
+    DefaultLinks linkList;
     
     public LinksRepository(TripleStore store,AuditRepository auditRepo) {
         super(store,"ResourceLink");
         this.auditRepo = auditRepo;
+        linkList = new DefaultLinks();
     }
     
+    /**
+     * Build an identifier object from a link binding set
+     * 
+     * @param bs The <type>BindingSet</type> to construct the identifier from
+     * @param bindingName The binding name of the subject from this binding set
+     * @return A <type>StringIdentifier</type> for this binding set
+     */
     public StringIdentifier buildIdentiferFromBindingSet(BindingSet bs,String bindingName){
         StringIdentifier id = null;
         try {
@@ -76,14 +87,41 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
         return id;
     }
     
+    /**
+     * Build a link identifier from a given URI and identifier string
+     * @param uri The URI to build from
+     * @param identifiedBy The unique string for this identifier
+     * @return A new instance of an Identifier
+     */
     public Identifier buildLinkIdentifier(URI uri,String identifiedBy) {
         Identifier objid = new Identifier();
         objid.setUri(java.net.URI.create(uri.toString()));
         objid.setIdentifier(identifiedBy);
 
         return objid;
-    }     
+    }
     
+    /**
+     * Create a new link in the system for the two given objects
+     * @param <SubjectType> The class of the subject object
+     * @param <ObjectType> The class of the object object
+     * @param subject The subject parameter of the link
+     * @param object The object parameter of the link
+     * @return A new <type>Link</type> object of the created relationship
+     */
+    public <SubjectType extends IridaThing,ObjectType extends IridaThing> Link create(SubjectType subject, ObjectType object){
+        
+        RdfPredicate pred = linkList.getLink(subject.getClass(), object.getClass());
+        Link link = new Link();
+        
+        link.setSubject((Identifier) subject.getIdentifier());
+        link.setRelationship(pred);
+        link.setObject((Identifier) object.getIdentifier());
+        
+        return create(link);
+    }
+    
+    @Override
     public Link create(Link link){
         Identifier subject = link.getSubject();
         Identifier object = link.getObject();
@@ -102,6 +140,8 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
             URI pred = fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
             
             Identifier identifier = generateNewIdentifier();
+            link.setIdentifier(identifier);
+            
             java.net.URI netURI = identifier.getUri();
             URI linkURI = fac.createURI(netURI.toString());
             
@@ -135,6 +175,11 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
         return link;
     }
     
+    /**
+     * Get an identifier object for the given URI
+     * @param uri The URI to retrieve and build an identifier for
+     * @return A new Identifier instance
+     */
     public Identifier getIdentiferForURI(URI uri){
         Identifier id = null;
         ObjectConnection con = store.getRepoConnection();
@@ -162,6 +207,12 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
     }
     
    
+    /**
+     * List the objects with the given subject and predicate
+     * @param subjectId The identifier of the subject for the requested triples
+     * @param predicate The predicate object of the requested triples
+     * @return A list of identifiers for the objects
+     */
     public List<Identifier> listObjects(Identifier subjectId, RdfPredicate predicate){
         
         List<Identifier> ids = new ArrayList<>();
@@ -194,6 +245,12 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
         return ids;
     }
     
+    /**
+     * List the objects with the given object and predicate
+     * @param objectId The identifier of the object for the requested triples
+     * @param predicate The predicate object of the requested triples
+     * @return A list of identifiers for the subjects
+     */
     public List<Identifier> listSubjects(Identifier objectId, RdfPredicate predicate){
         
         List<Identifier> ids = new ArrayList<>();
@@ -224,8 +281,91 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
             Logger.getLogger(LinksRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ids;
+    }
+    
+    /**
+     * Get a list of identifiers for links with the given subject identifier, subject class, and object class
+     * @param id The subject identifier
+     * @param subjectType The class of the subject type
+     * @param objectType The class of the object type
+     * @return A list of identifiers that match the given types
+     */
+    public List<Identifier> listLinks(Identifier id, Class subjectType,Class objectType){
+        RdfPredicate pred = linkList.getLink(subjectType, objectType);
+        
+        return listObjects(id, pred);
     }    
     
+    /**
+     * list the Link objects that have the given identifier type, subject class, and object class
+     * @param subjectId The identifier of the subject 
+     * @param subjectType The class of the subject
+     * @param objectType The class of the object
+     * @return A list of constructed links for the given types
+     */
+    public List<Link> getLinks(Identifier subjectId, Class subjectType, Class objectType){
+        RdfPredicate pred = linkList.getLink(subjectType, objectType);
+        
+        return getLinks(subjectId, pred);        
+    }
+    
+    /**
+     * Get a list of link objects for the given identifier and predicate
+     * @param subjectId The identifier of the subject of the links
+     * @param predicate The predicate of the requested triples
+     * @return A list of Link objects
+     */
+    public List<Link> getLinks(Identifier subjectId, RdfPredicate predicate){
+        List<Link> links = new ArrayList<>();
+        
+        java.net.URI subNetURI = getUriFromIdentifier(subjectId);
+        
+        ObjectConnection con = store.getRepoConnection();
+        try {
+            String qs = store.getPrefixes()
+                    + "SELECT ?link ?sub ?pred ?obj "
+                    + "WHERE{ ?link a irida:ResourceLink ;\n"
+                    + " irida:linkSubject ?sub ; \n"
+                    + " irida:linkPredicate ?pred ;\n"
+                    + " irida:linkObject ?obj ."
+                    + "}";
+            ValueFactory fac = con.getValueFactory();
+            TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
+            
+            URI subURI = fac.createURI(subNetURI.toString());
+            query.setBinding("sub", subURI);
+            URI predURI = fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
+            query.setBinding("pred", predURI);
+            
+            TupleQueryResult results = query.evaluate();
+            while(results.hasNext()){
+                BindingSet bs = results.next();
+                
+                String uristr = bs.getValue("link").stringValue();
+                URI uri = fac.createURI(uristr);
+                String identifiedBy = getIdentifiedBy(con, uri);
+                
+                Identifier linkId = buildLinkIdentifier(uri,identifiedBy);
+                Link link = buildLinkfromBindingSet(bs, con);
+                link.setIdentifier(linkId);
+                Audit audit = auditRepo.getAudit(uri);
+                link.setAuditInformation(audit);
+                
+                links.add(link);
+            }
+
+        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
+            Logger.getLogger(LinksRepository.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        
+        return links;
+    }
+
+    /**
+     * Get all the links for a given subject
+     * @param subjectId The identifier for the subject
+     * @return All links for the given subject type
+     */
     public List<Link> getLinks(Identifier subjectId){
         List<Link> links = new ArrayList<>();
         
@@ -391,7 +531,7 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
 
     @Override
     public Integer count() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Counting links will not be supported.");
     }
        
 }

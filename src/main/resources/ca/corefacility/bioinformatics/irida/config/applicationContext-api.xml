@@ -41,7 +41,11 @@
         <constructor-arg ref="sequenceFileFilesystemRepository"/>
         <constructor-arg ref="validator"/>
     </bean>
-
+    
+    <bean id="linkService" class="ca.corefacility.bioinformatics.irida.service.impl.LinkServiceImpl">
+        <constructor-arg ref="linksRepository" />
+    </bean>
+    
     <!-- validator beans -->
     <bean id="validator"
           class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">

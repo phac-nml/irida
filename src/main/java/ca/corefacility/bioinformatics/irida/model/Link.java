@@ -26,7 +26,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class Link implements Auditable<Audit>, Identifiable<Identifier>{
+public class Link implements Auditable<Audit>, Identifiable<Identifier>, Comparable<Link>{
 
     Identifier identifier;
     
@@ -82,6 +82,11 @@ public class Link implements Auditable<Audit>, Identifiable<Identifier>{
     @Override
     public void setIdentifier(Identifier identifier) {
         this.identifier = identifier;
+    }
+
+    @Override
+    public int compareTo(Link o) {
+        return audit.compareTo(o.audit);
     }
 
 
