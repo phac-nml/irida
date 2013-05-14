@@ -2,17 +2,14 @@ package ca.corefacility.bioinformatics.irida.model;
 
 import ca.corefacility.bioinformatics.irida.model.alibaba.UserIF;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
-import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
-import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.validators.Patterns;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import org.hibernate.validator.constraints.Email;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import org.hibernate.validator.constraints.Email;
+import java.util.Objects;
 
 /**
  * A user object.
@@ -20,7 +17,7 @@ import org.hibernate.validator.constraints.Email;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class User implements UserIF, Comparable<User>{
+public class User implements UserIF, Comparable<User> {
 
     private UserIdentifier id;
     @NotNull(message = "{user.username.notnull}")
@@ -33,8 +30,9 @@ public class User implements UserIF, Comparable<User>{
     @NotNull(message = "{user.password.notnull}")
     @Size(min = 6, message = "{user.password.size}") // passwords must be at least six characters long
     @Patterns({
-        @Pattern(regexp = "^.*[A-Z].*$", message = "{user.password.uppercase}"), // passwords must contain an upper-case letter
-        @Pattern(regexp = "^.*[0-9].*$", message = "{user.password.number}") // passwords must contain a number
+            @Pattern(regexp = "^.*[A-Z].*$",
+                    message = "{user.password.uppercase}"), // passwords must contain an upper-case letter
+            @Pattern(regexp = "^.*[0-9].*$", message = "{user.password.number}") // passwords must contain a number
     })
     private String password;
     @NotNull(message = "{user.firstName.notnull}")
@@ -49,10 +47,23 @@ public class User implements UserIF, Comparable<User>{
     @NotNull
     private Audit audit;
 
+    /**
+     * Construct an instance of {@link User} with no properties set.
+     */
     public User() {
         audit = new Audit();
     }
 
+    /**
+     * Construct an instance of {@link User} with all properties (except {@link UserIdentifier}) set.
+     *
+     * @param username    the username for this {@link User}.
+     * @param email       the e-mail for this {@link User}.
+     * @param password    the password for this {@link User}.
+     * @param firstName   the first name of this {@link User}.
+     * @param lastName    the last name of this {@link User}.
+     * @param phoneNumber the phone number of this {@link User}.
+     */
     public User(String username, String email, String password, String firstName, String lastName, String phoneNumber) {
         this();
         this.username = username;
@@ -63,16 +74,33 @@ public class User implements UserIF, Comparable<User>{
         this.phoneNumber = phoneNumber;
     }
 
+    /**
+     * Construct an instance of {@link User} with all properties set.
+     *
+     * @param id          the {@link UserIdentifier} for this {@link User}.
+     * @param username    the username for this {@link User}.
+     * @param email       the e-mail for this {@link User}.
+     * @param password    the password for this {@link User}.
+     * @param firstName   the first name of this {@link User}.
+     * @param lastName    the last name of this {@link User}.
+     * @param phoneNumber the phone number of this {@link User}.
+     */
     public User(UserIdentifier id, String username, String email, String password, String firstName, String lastName, String phoneNumber) {
         this(username, email, password, firstName, lastName, phoneNumber);
         this.id = id;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return Objects.hash(id, username, email, password, firstName, lastName, phoneNumber);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object other) {
         if (other instanceof User) {
@@ -89,11 +117,17 @@ public class User implements UserIF, Comparable<User>{
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int compareTo(User u) {
         return audit.compareTo(u.audit);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return com.google.common.base.Objects.toStringHelper(User.class)
@@ -165,6 +199,11 @@ public class User implements UserIF, Comparable<User>{
     }
 
     @Override
+    public void setAuditInformation(Audit audit) {
+        this.audit = audit;
+    }
+
+    @Override
     public UserIdentifier getIdentifier() {
         return id;
     }
@@ -172,11 +211,6 @@ public class User implements UserIF, Comparable<User>{
     @Override
     public void setIdentifier(UserIdentifier identifier) {
         this.id = identifier;
-    }
-
-    @Override
-    public void setAuditInformation(Audit audit) {
-        this.audit = audit;
     }
 
     @Override
