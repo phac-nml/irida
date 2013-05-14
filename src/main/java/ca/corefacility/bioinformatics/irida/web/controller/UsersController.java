@@ -60,7 +60,7 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
      */
     @Autowired
     public UsersController(UserService userService, ProjectService projectService) {
-        super(userService, UserIdentifier.class, User.class, UserResource.class);
+        super(userService, UserIdentifier.class, UserResource.class);
         this.userService = userService;
         this.projectService = projectService;
     }

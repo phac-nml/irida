@@ -19,7 +19,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
+import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
@@ -60,7 +62,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
  */
 @Controller
 @RequestMapping(value = "/generic", produces = MediaType.APPLICATION_JSON_VALUE)
-public abstract class GenericController<IdentifierType extends Identifier, Type extends Identifiable<IdentifierType> & Comparable<Type>, ResourceType extends Resource> {
+public abstract class GenericController<IdentifierType extends Identifier, Type extends Identifiable<IdentifierType>
+        & Auditable<Audit> & Comparable<Type>, ResourceType extends Resource<Type>> {
 
     /**
      * name of objects sent back to the client for all generic resources.
@@ -74,14 +77,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * index page for all collections.
      */
     private static final String INDEX_PAGE = "index";
-    /**
-     * partials page for all resources.
-     */
-    private static final String PARTIALS_PREFIX = "partials/";
-    /**
-     * The page used to show an individual resource.
-     */
-    private final String RESOURCE_INDIVIDUAL_INDEX;
+
     /**
      * service used for working with classes in the database.
      */
@@ -101,18 +97,14 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      *
      * @param crudService    the service used to manage resources in the database.
      * @param identifierType the type of identifier used by the type that this controller manages.
-     * @param type           the type that this controller is managing.
      * @param resourceType   the type used to serialize/de-serialize the type to the client.
      */
     protected GenericController(CRUDService<IdentifierType, Type> crudService,
-                                Class<IdentifierType> identifierType, Class<Type> type, Class<ResourceType> resourceType) {
+                                Class<IdentifierType> identifierType, Class<ResourceType> resourceType) {
         this.crudService = crudService;
         this.resourceType = resourceType;
         this.identifierType = identifierType;
 
-        // the index page for each individual resource consists of the partials prefix, plus the name of the type.
-        String typeName = type.getSimpleName().toLowerCase();
-        this.RESOURCE_INDIVIDUAL_INDEX = PARTIALS_PREFIX + typeName;
     }
 
     /**
@@ -232,7 +224,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
     public ModelAndView getResource(@PathVariable String resourceId)
             throws InstantiationException, IllegalAccessException {
-        ModelAndView mav = new ModelAndView(RESOURCE_INDIVIDUAL_INDEX);
+        ModelAndView mav = new ModelAndView(INDEX_PAGE);
 
         logger.debug("Getting resource with id [" + resourceId + "]");
 
@@ -290,7 +282,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
 
         // construct a set of headers that we can add to the response,
         // including the location header.
-        MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap();
+        MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
         responseHeaders.add(HttpHeaders.LOCATION, location);
 
         // send the response back to the client.
@@ -351,7 +343,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         String location = linkTo(getClass()).slash(id).withSelfRel().getHref();
 
         // create a response including the new location.
-        MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap();
+        MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
         responseHeaders.add(HttpHeaders.LOCATION, location);
 
         // respond to the client
@@ -364,6 +356,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @param e the exception as thrown by the service.
      * @return an appropriate HTTP response.
      */
+    @SuppressWarnings("unused")
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleAllOtherExceptions(Exception e) {
         logger.error("An exception happened at " + new Date() + ". The stack trace follows: ", e);
@@ -402,6 +395,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @param e the exception as thrown by the service.
      * @return an appropriate HTTP response.
      */
+    @SuppressWarnings("unchecked")
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<String> handleConstraintViolations(ConstraintViolationException e) {
         Set<ConstraintViolation<Type>> constraintViolations = new HashSet<>();
@@ -418,6 +412,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @param e the exception as thrown by the service.
      * @return an appropriate HTTP response.
      */
+    @SuppressWarnings("unused")
     @ExceptionHandler(EntityExistsException.class)
     public ResponseEntity<String> handleExistsException(EntityExistsException e) {
         logger.info("A client attempted to create a new resource with an identifier that exists, " +
