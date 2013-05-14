@@ -16,10 +16,13 @@
 package ca.corefacility.bioinformatics.irida.web.controller;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
+import ca.corefacility.bioinformatics.irida.web.controller.links.LabelledLink;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Controller;
@@ -43,6 +46,10 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      * rel used for accessing users associated with a project.
      */
     private static final String PROJECT_USERS_REL = "project/users";
+    /**
+     * Reference to {@link UserService} for getting users associated with a project.
+     */
+    private UserService userService;
 
     /**
      * Constructor for {@link ProjectsController}, requires a reference to a {@link ProjectService}.
@@ -50,8 +57,9 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      * @param projectService the {@link ProjectService} to be used by this controller.
      */
     @Autowired
-    public ProjectsController(ProjectService projectService) {
+    public ProjectsController(ProjectService projectService, UserService userService) {
         super(projectService, Identifier.class, ProjectResource.class);
+        this.userService = userService;
     }
 
     /**
@@ -89,6 +97,13 @@ public class ProjectsController extends GenericController<Identifier, Project, P
         links.add(linkTo(ProjectsController.class).
                 slash(p.getIdentifier().getIdentifier()).slash("users").
                 withRel(PROJECT_USERS_REL));
+        Collection<User> users = userService.getUsersForProject(p);
+        for (User u : users) {
+            LabelledLink labelledLink = new LabelledLink(
+                    linkTo(UsersController.class).slash(u.getIdentifier().getIdentifier()).withSelfRel());
+            labelledLink.setLabel(u.getLabel());
+            links.add(labelledLink);
+        }
         return links;
     }
 }
