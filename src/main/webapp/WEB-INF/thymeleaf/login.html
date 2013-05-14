@@ -2,8 +2,6 @@
 <html>
     <head th:include="fragments/header" th:remove="tag"></head>
     <body data-ng-app="irida">
-        <div th:include="fragments/bodyHeader" th:remove="tag"></div>
-
         <div class="row ng-cloak" data-ng-controller="MainCtrl">
             <notifier attr-icon="{{notifier.icon}}" attr-messege="{{notifier.message}}"></notifier>
             <ng-view></ng-view>
