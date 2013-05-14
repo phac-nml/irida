@@ -49,7 +49,7 @@ public class ProjectSesameRepository extends GenericRepository<Identifier,Projec
     
     public ProjectSesameRepository(){}
     
-    public ProjectSesameRepository(TripleStore store,AuditRepository auditRepo,LinksRepository linksRepo) {
+    public ProjectSesameRepository(TripleStore store,AuditRepository auditRepo,RelationshipSesameRepository linksRepo) {
         super(store,ProjectIF.class,ProjectIF.PREFIX,ProjectIF.TYPE,auditRepo,linksRepo);
     }    
     

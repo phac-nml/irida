@@ -39,7 +39,7 @@ public class ProjectSesameRepositoryTest {
         SailMemoryStore store = new SailMemoryStore();
         store.initialize();
         AuditRepository auditRepo = new AuditRepository(store);
-        LinksRepository linksRepo = new LinksRepository(store, auditRepo);
+        RelationshipSesameRepository linksRepo = new RelationshipSesameRepository(store, auditRepo);
         repo = new ProjectSesameRepository(store,auditRepo,linksRepo);
         Project p = new Project();
         p.setName("p1");

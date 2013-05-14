@@ -56,7 +56,7 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
     
     public SequenceFileSesameRepository(){}
     
-    public SequenceFileSesameRepository(TripleStore store,AuditRepository auditRepo,LinksRepository linksRepo) {
+    public SequenceFileSesameRepository(TripleStore store,AuditRepository auditRepo,RelationshipSesameRepository linksRepo) {
         super(store,SequenceFileIF.class,SequenceFile.PREFIX,SequenceFile.TYPE,auditRepo,linksRepo);
     }
     

@@ -61,7 +61,7 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier,UserI
     public UserSesameRepository() {
     }
 
-    public UserSesameRepository(TripleStore store,AuditRepository auditRepo,LinksRepository linksRepo) {
+    public UserSesameRepository(TripleStore store,AuditRepository auditRepo,RelationshipSesameRepository linksRepo) {
         super(store, UserIF.class,User.PREFIX,User.TYPE,auditRepo,linksRepo);
 
     }

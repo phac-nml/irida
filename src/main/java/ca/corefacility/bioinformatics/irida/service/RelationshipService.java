@@ -24,7 +24,7 @@ import java.util.Collection;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public interface LinkService extends CRUDService<Identifier, Relationship>{
+public interface RelationshipService extends CRUDService<Identifier, Relationship>{
     
     public <S extends IridaThing,O extends IridaThing> Relationship createLink(S subject, O object);
     public Collection<Relationship> listLinks(Identifier id,Class subjectType, Class objectType);

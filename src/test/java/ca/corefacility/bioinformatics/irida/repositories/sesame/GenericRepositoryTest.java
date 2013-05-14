@@ -47,7 +47,7 @@ public class GenericRepositoryTest {
         SailMemoryStore store = new SailMemoryStore();
         store.initialize();
         AuditRepository auditRepo = new AuditRepository(store);
-        LinksRepository linksRepo = new LinksRepository(store, auditRepo);
+        RelationshipSesameRepository linksRepo = new RelationshipSesameRepository(store, auditRepo);
         
         repo = new IdentifiedRepo(store,auditRepo,linksRepo);
         

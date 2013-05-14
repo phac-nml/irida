@@ -22,21 +22,22 @@ import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import ca.corefacility.bioinformatics.irida.repositories.sesame.LinksRepository;
-import ca.corefacility.bioinformatics.irida.service.LinkService;
+import ca.corefacility.bioinformatics.irida.repositories.RelationshipRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sesame.RelationshipSesameRepository;
+import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
 
-public class LinkServiceImpl implements LinkService {
+public class RelationshipServiceImpl extends CRUDServiceImpl<Identifier, Relationship> implements RelationshipService {
 
-    private LinksRepository linksRepository;
+    private RelationshipRepository linksRepository;
 
-    public LinkServiceImpl() {
-    }
 
-    public LinkServiceImpl(LinksRepository linksRepository) {
+    public RelationshipServiceImpl(RelationshipSesameRepository linksRepository, Validator validator) {
+        super(linksRepository, validator, Relationship.class);
         this.linksRepository = linksRepository;
     }
     
@@ -51,24 +52,10 @@ public class LinkServiceImpl implements LinkService {
         
     }
 
-    @Override
-    public Relationship create(Relationship object) throws EntityExistsException, ConstraintViolationException {
-        return linksRepository.create(object);
-    }
-
-    @Override
-    public Relationship read(Identifier id) throws EntityNotFoundException {
-        return linksRepository.read(id);
-    }
 
     @Override
     public Relationship update(Identifier id, Map<String, Object> updatedProperties) throws EntityExistsException, EntityNotFoundException, ConstraintViolationException, InvalidPropertyException {
         throw new UnsupportedOperationException("Updating links will not be supported.");
-    }
-
-    @Override
-    public void delete(Identifier id) throws EntityNotFoundException {
-        linksRepository.delete(id);
     }
 
     @Override

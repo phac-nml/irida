@@ -36,7 +36,7 @@ public class UserSesameRepositoryTest {
         SailMemoryStore store = new SailMemoryStore();
         store.initialize();
         AuditRepository auditRepo = new AuditRepository(store);
-        LinksRepository linksRepo = new LinksRepository(store, auditRepo);
+        RelationshipSesameRepository linksRepo = new RelationshipSesameRepository(store, auditRepo);
         repo = new UserSesameRepository(store,auditRepo,linksRepo);
         
         User u = new User("user1", "user1@there", "abc123", "user", "one", "111-111-1111");

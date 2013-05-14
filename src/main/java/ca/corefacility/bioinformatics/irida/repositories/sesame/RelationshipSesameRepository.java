@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.StringIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import ca.corefacility.bioinformatics.irida.repositories.RelationshipRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.DefaultLinks;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
@@ -50,14 +51,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class LinksRepository extends SesameRepository implements CRUDRepository<Identifier, Relationship>{
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(LinksRepository.class);
+public class RelationshipSesameRepository extends SesameRepository implements RelationshipRepository{
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(RelationshipSesameRepository.class);
     
     public final String linkType = "http://corefacility.ca/irida/ResourceLink";
     AuditRepository auditRepo;
     DefaultLinks linkList;
     
-    public LinksRepository(TripleStore store,AuditRepository auditRepo) {
+    public RelationshipSesameRepository(TripleStore store,AuditRepository auditRepo) {
         super(store,"ResourceLink");
         this.auditRepo = auditRepo;
         linkList = new DefaultLinks();
@@ -81,7 +82,7 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
             id.setUri(new java.net.URI(uri.stringValue()));
             id.setLabel(label.stringValue());
         } catch (URISyntaxException ex) {
-            Logger.getLogger(LinksRepository.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RelationshipSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         return id;
@@ -102,13 +103,9 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
     }
     
     /**
-     * Create a new link in the system for the two given objects
-     * @param <SubjectType> The class of the subject object
-     * @param <ObjectType> The class of the object object
-     * @param subject The subject parameter of the link
-     * @param object The object parameter of the link
-     * @return A new <type>Link</type> object of the created relationship
-     */
+     * {@inheritDoc}
+     */ 
+    @Override
     public <SubjectType extends IridaThing,ObjectType extends IridaThing> Relationship create(SubjectType subject, ObjectType object){
         
         RdfPredicate pred = linkList.getLink(subject.getClass(), object.getClass());
@@ -121,6 +118,9 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
         return create(link);
     }
     
+    /**
+     * {@inheritDoc}
+     */     
     @Override
     public Relationship create(Relationship link){
         Identifier subject = link.getSubject();
@@ -166,7 +166,7 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
             con.commit();
             
         } catch (RepositoryException ex) {
-            Logger.getLogger(LinksRepository.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RelationshipSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
         } 
         finally{
             store.closeRepoConnection(con);
@@ -197,7 +197,7 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
             id = buildIdentiferFromBindingSet(bs,"object");
         }
         catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
-            Logger.getLogger(LinksRepository.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RelationshipSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
         }        
         finally{
             store.closeRepoConnection(con);
@@ -208,11 +208,9 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
     
    
     /**
-     * List the objects with the given subject and predicate
-     * @param subjectId The identifier of the subject for the requested triples
-     * @param predicate The predicate object of the requested triples
-     * @return A list of identifiers for the objects
-     */
+     * {@inheritDoc}
+     */ 
+    @Override
     public List<Identifier> listObjects(Identifier subjectId, RdfPredicate predicate){
         
         List<Identifier> ids = new ArrayList<>();
@@ -240,17 +238,15 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
             }
 
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
-            Logger.getLogger(LinksRepository.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RelationshipSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ids;
     }
     
     /**
-     * List the objects with the given object and predicate
-     * @param objectId The identifier of the object for the requested triples
-     * @param predicate The predicate object of the requested triples
-     * @return A list of identifiers for the subjects
-     */
+     * {@inheritDoc}
+     */ 
+    @Override
     public List<Identifier> listSubjects(Identifier objectId, RdfPredicate predicate){
         
         List<Identifier> ids = new ArrayList<>();
@@ -278,18 +274,15 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
             }
 
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
-            Logger.getLogger(LinksRepository.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RelationshipSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ids;
     }
     
     /**
-     * Get a list of identifiers for links with the given subject identifier, subject class, and object class
-     * @param id The subject identifier
-     * @param subjectType The class of the subject type
-     * @param objectType The class of the object type
-     * @return A list of identifiers that match the given types
-     */
+     * {@inheritDoc}
+     */ 
+    @Override
     public List<Identifier> listLinks(Identifier id, Class subjectType,Class objectType){
         RdfPredicate pred = linkList.getLink(subjectType, objectType);
         
@@ -297,12 +290,9 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
     }    
     
     /**
-     * list the Link objects that have the given identifier type, subject class, and object class
-     * @param subjectId The identifier of the subject 
-     * @param subjectType The class of the subject
-     * @param objectType The class of the object
-     * @return A list of constructed links for the given types
-     */
+     * {@inheritDoc}
+     */ 
+    @Override
     public List<Relationship> getLinks(Identifier subjectId, Class subjectType, Class objectType){
         RdfPredicate pred = linkList.getLink(subjectType, objectType);
         
@@ -310,11 +300,9 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
     }
     
     /**
-     * Get a list of link objects for the given identifier and predicate
-     * @param subjectId The identifier of the subject of the links
-     * @param predicate The predicate of the requested triples
-     * @return A list of Link objects
-     */
+     * {@inheritDoc}
+     */ 
+    @Override
     public List<Relationship> getLinks(Identifier subjectId, RdfPredicate predicate){
         List<Relationship> links = new ArrayList<>();
         
@@ -355,17 +343,16 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
             }
 
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
-            Logger.getLogger(LinksRepository.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RelationshipSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
         } 
         
         return links;
     }
 
     /**
-     * Get all the links for a given subject
-     * @param subjectId The identifier for the subject
-     * @return All links for the given subject type
-     */
+     * {@inheritDoc}
+     */ 
+    @Override
     public List<Relationship> getLinks(Identifier subjectId){
         List<Relationship> links = new ArrayList<>();
         
@@ -404,7 +391,7 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
             }
 
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
-            Logger.getLogger(LinksRepository.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RelationshipSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
         } 
         
         return links;
@@ -472,7 +459,7 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
             }
 
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
-            Logger.getLogger(LinksRepository.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RelationshipSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
         }        
         
         return ret;
