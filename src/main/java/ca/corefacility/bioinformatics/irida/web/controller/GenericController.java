@@ -77,14 +77,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * index page for all collections.
      */
     private static final String INDEX_PAGE = "index";
-    /**
-     * partials page for all resources.
-     */
-    private static final String PARTIALS_PREFIX = "partials/";
-    /**
-     * The page used to show an individual resource.
-     */
-    private final String RESOURCE_INDIVIDUAL_INDEX;
+
     /**
      * service used for working with classes in the database.
      */
@@ -104,18 +97,14 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      *
      * @param crudService    the service used to manage resources in the database.
      * @param identifierType the type of identifier used by the type that this controller manages.
-     * @param type           the type that this controller is managing.
      * @param resourceType   the type used to serialize/de-serialize the type to the client.
      */
     protected GenericController(CRUDService<IdentifierType, Type> crudService,
-                                Class<IdentifierType> identifierType, Class<Type> type, Class<ResourceType> resourceType) {
+                                Class<IdentifierType> identifierType, Class<ResourceType> resourceType) {
         this.crudService = crudService;
         this.resourceType = resourceType;
         this.identifierType = identifierType;
 
-        // the index page for each individual resource consists of the partials prefix, plus the name of the type.
-        String typeName = type.getSimpleName().toLowerCase();
-        this.RESOURCE_INDIVIDUAL_INDEX = PARTIALS_PREFIX + typeName;
     }
 
     /**
@@ -173,7 +162,6 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
                     required = false) String sortProperty,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER,
                     required = false) Order sortOrder) throws InstantiationException, IllegalAccessException {
-        logger.debug("Adding a new message to this page.");
         ModelAndView mav = new ModelAndView(INDEX_PAGE);
         List<Type> entities;
         ControllerLinkBuilder linkBuilder = linkTo(getClass());
@@ -236,7 +224,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
     public ModelAndView getResource(@PathVariable String resourceId)
             throws InstantiationException, IllegalAccessException {
-        ModelAndView mav = new ModelAndView(RESOURCE_INDIVIDUAL_INDEX);
+        ModelAndView mav = new ModelAndView(INDEX_PAGE);
 
         logger.debug("Getting resource with id [" + resourceId + "]");
 

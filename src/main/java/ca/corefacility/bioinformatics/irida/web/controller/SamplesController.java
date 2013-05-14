@@ -39,7 +39,7 @@ public class SamplesController extends GenericController<Identifier, Sample, Sam
      */
     @Autowired
     public SamplesController(CRUDService<Identifier, Sample> sampleService) {
-        super(sampleService, Identifier.class, Sample.class, SampleResource.class);
+        super(sampleService, Identifier.class, SampleResource.class);
     }
 
     /**

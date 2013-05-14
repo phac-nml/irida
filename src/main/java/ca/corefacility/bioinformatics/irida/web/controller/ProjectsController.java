@@ -51,7 +51,7 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      */
     @Autowired
     public ProjectsController(ProjectService projectService) {
-        super(projectService, Identifier.class, Project.class, ProjectResource.class);
+        super(projectService, Identifier.class, ProjectResource.class);
     }
 
     /**

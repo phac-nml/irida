@@ -50,7 +50,7 @@ public class SequenceFileController extends GenericController<Identifier, Sequen
 
     @Autowired
     public SequenceFileController(CRUDService<Identifier, SequenceFile> sequenceFileService) {
-        super(sequenceFileService, Identifier.class, SequenceFile.class, SequenceFileResource.class);
+        super(sequenceFileService, Identifier.class, SequenceFileResource.class);
     }
 
     /**
