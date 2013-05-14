@@ -19,6 +19,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
+import org.springframework.security.core.userdetails.UserDetailsService;
+
 import java.util.Collection;
 
 /**
@@ -26,7 +28,7 @@ import java.util.Collection;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public interface UserService extends CRUDService<UserIdentifier, User> {
+public interface UserService extends CRUDService<UserIdentifier, User>, UserDetailsService {
 
     /**
      * Get a user from the database with the supplied username.

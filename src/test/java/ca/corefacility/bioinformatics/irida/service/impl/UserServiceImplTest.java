@@ -17,15 +17,22 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.UserService;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import javax.validation.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Testing the behavior of {@link UserServiceImpl}
@@ -37,13 +44,15 @@ public class UserServiceImplTest {
     private UserService userService;
     private UserRepository userRepository;
     private Validator validator;
+    private PasswordEncoder passwordEncoder;
 
     @Before
     public void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
         userRepository = mock(UserRepository.class);
-        userService = new UserServiceImpl(userRepository, validator);
+        passwordEncoder = mock(PasswordEncoder.class);
+        userService = new UserServiceImpl(userRepository, passwordEncoder, validator);
     }
 
     @Test
@@ -58,5 +67,77 @@ public class UserServiceImplTest {
         } catch (Throwable e) {
             fail();
         }
+    }
+
+    @Test
+    public void testBadPasswordCreate() {
+        // a user should not be persisted with a bad password (like password1)
+        String username = "fbristow";
+        String password = "password1";
+        String passwordEncoded = "$2a$10$vMzhJFdyM72NnnWIoMSbUecHRxZDtCE1fdiPfjfjT1WD0fISDXOX2";
+        String email = "fbristow@gmail.com";
+        String firstName = "Franklin";
+        String lastName = "Bristow";
+        String phoneNumber = "7029";
+        UserIdentifier uid = new UserIdentifier();
+        uid.setIdentifier(username);
+        User user = new User(uid, username, email, password, firstName, lastName, phoneNumber);
+        when(passwordEncoder.encode(password)).thenReturn(passwordEncoded);
+        try {
+            userService.create(user);
+            fail();
+        } catch (ConstraintViolationException e) {
+            Set<ConstraintViolation<?>> violationSet = e.getConstraintViolations();
+            assertEquals(1, violationSet.size());
+            ConstraintViolation<?> violation = violationSet.iterator().next();
+            assertTrue(violation.getPropertyPath().toString().contains("password"));
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testBadPasswordUpdate() {
+        // a user should not be persisted with a bad password (like password1)
+        String username = "fbristow";
+        String password = "password1";
+        String passwordEncoded = "$2a$10$vMzhJFdyM72NnnWIoMSbUecHRxZDtCE1fdiPfjfjT1WD0fISDXOX2";
+        UserIdentifier uid = new UserIdentifier();
+        uid.setIdentifier(username);
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("password", password);
+
+        when(passwordEncoder.encode(password)).thenReturn(passwordEncoded);
+        try {
+            userService.update(uid, properties);
+            fail();
+        } catch (ConstraintViolationException e) {
+            Set<ConstraintViolation<?>> violationSet = e.getConstraintViolations();
+            assertEquals(1, violationSet.size());
+            ConstraintViolation<?> violation = violationSet.iterator().next();
+            assertTrue(violation.getPropertyPath().toString().contains("password"));
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testLoadUserByUsername() {
+        String username = "fbristow";
+        String password = "password1";
+        String email = "fbristow@gmail.com";
+        String firstName = "Franklin";
+        String lastName = "Bristow";
+        String phoneNumber = "7029";
+        UserIdentifier uid = new UserIdentifier();
+        uid.setIdentifier(username);
+        User user = new User(uid, username, email, password, firstName, lastName, phoneNumber);
+
+        when(userRepository.getUserByUsername(username)).thenReturn(user);
+
+        UserDetails userDetails = userService.loadUserByUsername(username);
+
+        assertEquals(username, userDetails.getUsername());
+        assertEquals(password, userDetails.getPassword());
     }
 }
