@@ -22,10 +22,10 @@ import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
+ * Load example data into the database.
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * 
  */
 public class ExampleDataLoader {
     private UserRepository userRepo;
