@@ -17,7 +17,7 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
-import ca.corefacility.bioinformatics.irida.model.Link;
+import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class LinksRepository extends SesameRepository implements CRUDRepository<Identifier, Link>{
+public class LinksRepository extends SesameRepository implements CRUDRepository<Identifier, Relationship>{
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(LinksRepository.class);
     
     public final String linkType = "http://corefacility.ca/irida/ResourceLink";
@@ -109,23 +109,23 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
      * @param object The object parameter of the link
      * @return A new <type>Link</type> object of the created relationship
      */
-    public <SubjectType extends IridaThing,ObjectType extends IridaThing> Link create(SubjectType subject, ObjectType object){
+    public <SubjectType extends IridaThing,ObjectType extends IridaThing> Relationship create(SubjectType subject, ObjectType object){
         
         RdfPredicate pred = linkList.getLink(subject.getClass(), object.getClass());
-        Link link = new Link();
+        Relationship link = new Relationship();
         
         link.setSubject((Identifier) subject.getIdentifier());
-        link.setRelationship(pred);
+        link.setPredicate(pred);
         link.setObject((Identifier) object.getIdentifier());
         
         return create(link);
     }
     
     @Override
-    public Link create(Link link){
+    public Relationship create(Relationship link){
         Identifier subject = link.getSubject();
         Identifier object = link.getObject();
-        RdfPredicate predicate = link.getRelationship();
+        RdfPredicate predicate = link.getPredicate();
         
         java.net.URI subNetURI = getUriFromIdentifier(subject);
         java.net.URI objNetURI = getUriFromIdentifier(object);
@@ -303,7 +303,7 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
      * @param objectType The class of the object
      * @return A list of constructed links for the given types
      */
-    public List<Link> getLinks(Identifier subjectId, Class subjectType, Class objectType){
+    public List<Relationship> getLinks(Identifier subjectId, Class subjectType, Class objectType){
         RdfPredicate pred = linkList.getLink(subjectType, objectType);
         
         return getLinks(subjectId, pred);        
@@ -315,8 +315,8 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
      * @param predicate The predicate of the requested triples
      * @return A list of Link objects
      */
-    public List<Link> getLinks(Identifier subjectId, RdfPredicate predicate){
-        List<Link> links = new ArrayList<>();
+    public List<Relationship> getLinks(Identifier subjectId, RdfPredicate predicate){
+        List<Relationship> links = new ArrayList<>();
         
         java.net.URI subNetURI = getUriFromIdentifier(subjectId);
         
@@ -346,7 +346,7 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
                 String identifiedBy = getIdentifiedBy(con, uri);
                 
                 Identifier linkId = buildLinkIdentifier(uri,identifiedBy);
-                Link link = buildLinkfromBindingSet(bs, con);
+                Relationship link = buildLinkfromBindingSet(bs, con);
                 link.setIdentifier(linkId);
                 Audit audit = auditRepo.getAudit(uri);
                 link.setAuditInformation(audit);
@@ -366,8 +366,8 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
      * @param subjectId The identifier for the subject
      * @return All links for the given subject type
      */
-    public List<Link> getLinks(Identifier subjectId){
-        List<Link> links = new ArrayList<>();
+    public List<Relationship> getLinks(Identifier subjectId){
+        List<Relationship> links = new ArrayList<>();
         
         java.net.URI subNetURI = getUriFromIdentifier(subjectId);
         
@@ -395,7 +395,7 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
                 String identifiedBy = getIdentifiedBy(con, uri);
                 
                 Identifier linkId = buildLinkIdentifier(uri,identifiedBy);
-                Link link = buildLinkfromBindingSet(bs, con);
+                Relationship link = buildLinkfromBindingSet(bs, con);
                 link.setIdentifier(linkId);
                 Audit audit = auditRepo.getAudit(uri);
                 link.setAuditInformation(audit);
@@ -410,7 +410,7 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
         return links;
     }
     
-    private Link buildLinkfromBindingSet(BindingSet bs, ObjectConnection con){
+    private Relationship buildLinkfromBindingSet(BindingSet bs, ObjectConnection con){
         ValueFactory fac = con.getValueFactory();
         
         String substr = bs.getValue("sub").stringValue();
@@ -426,18 +426,18 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
         
         Identifier subId = getIdentiferForURI(subURI);
         Identifier objId = getIdentiferForURI(objURI);
-        Link l = new Link();
+        Relationship l = new Relationship();
         l.setSubject(subId);
         l.setObject(objId);
         
-        l.setRelationship(pred);
+        l.setPredicate(pred);
         
         return l;
     }
 
     @Override
-    public Link read(Identifier id) throws EntityNotFoundException {
-        Link ret = null;
+    public Relationship read(Identifier id) throws EntityNotFoundException {
+        Relationship ret = null;
         
         java.net.URI linkNetURI = getUriFromIdentifier(id);
         
@@ -479,7 +479,7 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
     }
 
     @Override
-    public Link update(Link object) throws IllegalArgumentException {
+    public Relationship update(Relationship object) throws IllegalArgumentException {
         throw new UnsupportedOperationException("Link updates will not be supported.");
     }
 
@@ -515,12 +515,12 @@ public class LinksRepository extends SesameRepository implements CRUDRepository<
     }
 
     @Override
-    public List<Link> list() {
+    public List<Relationship> list() {
         throw new UnsupportedOperationException("Listing links will not be supported.");
     }
 
     @Override
-    public List<Link> list(int page, int size, String sortProperty, Order order) {
+    public List<Relationship> list(int page, int size, String sortProperty, Order order) {
         throw new UnsupportedOperationException("Listing links will not be supported.");
     }
 

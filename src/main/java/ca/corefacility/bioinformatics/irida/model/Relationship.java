@@ -15,7 +15,6 @@
  */
 package ca.corefacility.bioinformatics.irida.model;
 
-import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
@@ -26,7 +25,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class Link implements Auditable<Audit>, Identifiable<Identifier>, Comparable<Link>{
+public class Relationship implements Auditable<Audit>, Identifiable<Identifier>, Comparable<Relationship>{
 
     Identifier identifier;
     
@@ -34,7 +33,7 @@ public class Link implements Auditable<Audit>, Identifiable<Identifier>, Compara
     RdfPredicate predicate;
     Identifier object;
     
-    public Link(){
+    public Relationship(){
         audit = new Audit();
     }
     
@@ -44,7 +43,7 @@ public class Link implements Auditable<Audit>, Identifiable<Identifier>, Compara
         return subject;
     }
 
-    public RdfPredicate getRelationship() {
+    public RdfPredicate getPredicate() {
         return predicate;
     }
 
@@ -56,7 +55,7 @@ public class Link implements Auditable<Audit>, Identifiable<Identifier>, Compara
         this.subject = subject;
     }
 
-    public void setRelationship(RdfPredicate relationship) {
+    public void setPredicate(RdfPredicate relationship) {
         this.predicate = relationship;
     }
 
@@ -85,7 +84,7 @@ public class Link implements Auditable<Audit>, Identifiable<Identifier>, Compara
     }
 
     @Override
-    public int compareTo(Link o) {
+    public int compareTo(Relationship o) {
         return audit.compareTo(o.audit);
     }
 

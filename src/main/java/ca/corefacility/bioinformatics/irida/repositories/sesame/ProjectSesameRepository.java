@@ -17,7 +17,7 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
-import ca.corefacility.bioinformatics.irida.model.Link;
+import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.alibaba.ProjectIF;
@@ -80,12 +80,12 @@ public class ProjectSesameRepository extends GenericRepository<Identifier,Projec
         return projIds;
     }
     
-    public Link addUserToProject(Project p, User user){
-        Link l = new Link();
+    public Relationship addUserToProject(Project p, User user){
+        Relationship l = new Relationship();
         l.setSubject(user.getIdentifier());
-        l.setRelationship(hasProject);
+        l.setPredicate(hasProject);
         l.setObject(p.getIdentifier());
-        Link create = linksRepo.create(l);
+        Relationship create = linksRepo.create(l);
         
         return create;
     }

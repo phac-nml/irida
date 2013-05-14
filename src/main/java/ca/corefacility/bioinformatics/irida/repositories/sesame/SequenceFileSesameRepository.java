@@ -16,7 +16,7 @@
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
-import ca.corefacility.bioinformatics.irida.model.Link;
+import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
@@ -162,10 +162,10 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
 
         auditRepo.audit(project.getAuditInformation(), pNetUri.toString());*/
         
-        Link l = new Link();
+        Relationship l = new Relationship();
         l.setSubject(project.getIdentifier());
         l.setObject(file.getIdentifier());
-        l.setRelationship(hasFile);
+        l.setPredicate(hasFile);
         linksRepo.create(l);
         
     }
@@ -180,10 +180,10 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
 
         auditRepo.audit(sample.getAuditInformation(), pNetUri.toString());*/
         
-        Link l = new Link();
+        Relationship l = new Relationship();
         l.setSubject(sample.getIdentifier());
         l.setObject(file.getIdentifier());
-        l.setRelationship(hasFile);
+        l.setPredicate(hasFile);
         linksRepo.create(l);        
     }    
     

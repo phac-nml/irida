@@ -15,7 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.service;
 
-import ca.corefacility.bioinformatics.irida.model.Link;
+import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import java.util.Collection;
@@ -24,8 +24,8 @@ import java.util.Collection;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public interface LinkService {
+public interface LinkService extends CRUDService<Identifier, Relationship>{
     
-    public <S extends IridaThing,O extends IridaThing> Link createLink(S subject, O object);
-    public Collection<Link> listLinks(Identifier id,Class subjectType, Class objectType);
+    public <S extends IridaThing,O extends IridaThing> Relationship createLink(S subject, O object);
+    public Collection<Relationship> listLinks(Identifier id,Class subjectType, Class objectType);
 }
