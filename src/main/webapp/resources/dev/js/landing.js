@@ -8,7 +8,7 @@ angular.module('irida')
   .config(['$routeProvider', function ($routeProvider) {
     'use strict';
     $routeProvider.when(
-      '/landing', {
+      '/', {
         templateUrl: './partials/landing.html',
         controller: 'LandingCtrl'
       });

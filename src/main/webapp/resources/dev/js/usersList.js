@@ -44,7 +44,7 @@ angular.module('irida')
 	};
 
 	$scope.gotoUser = function (url) {
-		$location.path(url.match(/\/users\/.*$/)[0]);
+		$location.path(url);
 	};
 
 	$scope.clearForm = function () {

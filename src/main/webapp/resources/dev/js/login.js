@@ -12,7 +12,7 @@ angular.module('irida')
   .config(['$routeProvider', function ($routeProvider) {
     'use strict';
     $routeProvider.when(
-      '/', {
+      '/login', {
         templateUrl: './partials/login.html',
         controller: 'LoginCtrl'
       });

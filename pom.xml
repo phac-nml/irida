@@ -322,7 +322,7 @@
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty.version}</version>
                 <configuration>
-                    <scanIntervalSeconds>1</scanIntervalSeconds>
+                    <scanIntervalSeconds>0</scanIntervalSeconds>
                 </configuration>
                 <executions>
                     <execution>
@@ -372,21 +372,21 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>com.kelveden</groupId>
-                <artifactId>maven-karma-plugin</artifactId>
-                <version>${plugin.maven.karma.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>start</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <browsers>PhantomJS</browsers>
-                </configuration>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>com.kelveden</groupId>-->
+                <!--<artifactId>maven-karma-plugin</artifactId>-->
+                <!--<version>${plugin.maven.karma.version}</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<goals>-->
+                            <!--<goal>start</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+                <!--<configuration>-->
+                    <!--<browsers>PhantomJS</browsers>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>

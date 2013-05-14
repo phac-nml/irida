@@ -8,7 +8,7 @@ angular.module('irida')
     'use strict';
     $routeProvider.when(
       '/projects/:projectId', {
-        templateUrl: './partials/project.html',
+        templateUrl: '/partials/project.html',
         controller: function ($scope, initData) {
           $scope.links = initData.resource.links;
           $scope.project = initData.resource;

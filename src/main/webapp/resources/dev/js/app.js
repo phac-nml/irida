@@ -7,7 +7,8 @@ angular.module('irida', [
   ])
   .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
     'use strict';
-    $locationProvider.hashPrefix('!');
+//    $locationProvider.hashPrefix('!');
+        $locationProvider.html5Mode(true);
     $routeProvider.otherwise({redirectTo: '/'});
   }])
 /**
@@ -16,11 +17,11 @@ angular.module('irida', [
   .run(['CookieService', '$location', '$rootScope', function (CookieService, $location, $rootScope) {
     'use strict';
     var hasCookie = CookieService.checkLoginCookie();
-    if (!hasCookie && $location.path() !== '/') {
+    if (!hasCookie && $location.path() !== '/login') {
       $rootScope.$broadcast('event:auth-loginRequired');
     }
-    if (hasCookie && $location.path() === '/') {
-      $location.path('/landing');
+    if (hasCookie && $location.path() === '/login') {
+      $location.path('/');
     }
   }])
 /**

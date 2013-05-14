@@ -76,6 +76,7 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
         logger.debug("Loading projects for user [" + username + "]");
         ModelAndView mav = new ModelAndView("users/user");
 
+
         // get the appropriate user from the database
         User u = userService.getUserByUsername(username);
 

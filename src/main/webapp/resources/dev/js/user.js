@@ -18,7 +18,7 @@ angular.module('irida')
     'use strict';
     $routeProvider.when(
       '/users/:username', {
-        templateUrl: './partials/user.html',
+        templateUrl: '/partials/user.html',
         controller: function ($scope, initData) {
           $scope.user = initData.resource;
           $scope.links = initData.resource.links;
@@ -37,7 +37,7 @@ angular.module('irida')
   }])
 
 /**
- * User View Contoller
+ * User View Controller
  */
   .controller('UserCtrl', ['$rootScope', '$scope', '$location', 'ajaxService', function ($rootScope, $scope, $location, ajaxService) {
     'use strict';
