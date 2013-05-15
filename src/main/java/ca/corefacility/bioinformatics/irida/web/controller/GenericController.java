@@ -70,6 +70,10 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      */
     public static final String RESOURCE_NAME = "resource";
     /**
+     * name of related resources sent back to the client.
+     */
+    public static final String RELATED_RESOURCES_NAME = "relatedResources";
+    /**
      * logger.
      */
     private static final Logger logger = LoggerFactory.getLogger(GenericController.class);
@@ -77,7 +81,6 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * index page for all collections.
      */
     private static final String INDEX_PAGE = "index";
-
     /**
      * service used for working with classes in the database.
      */
@@ -114,8 +117,21 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @param resource the resource to generate the links for.
      * @return a collection of links.
      */
-    public Collection<Link> constructCustomResourceLinks(Type resource) {
+    protected Collection<Link> constructCustomResourceLinks(Type resource) {
         return Collections.emptySet();
+    }
+
+    /**
+     * Construct a collection of {@link Resource}s that relate to the specified resource. Use this method to inject
+     * composite resources into the response *instead* of calling <code>constructCustomResourceLinks</code>. This method
+     * is required to generate a collection of collections because the implementing type may have more than one related
+     * type. This method is called by <code>getResource</code>.
+     *
+     * @param resource the resource to generate related collections for.
+     * @return a collection of collections of related resources.
+     */
+    protected <T extends Resource> Map<String, Collection<T>> constructRelatedResourceCollections(Type resource) {
+        return Collections.emptyMap();
     }
 
     /**
@@ -125,7 +141,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @param resourceType the representation to map.
      * @return the concrete version of the representation.
      */
-    public abstract Type mapResourceToType(ResourceType resourceType);
+    protected abstract Type mapResourceToType(ResourceType resourceType);
 
     /**
      * Get the default sort property, <code>SortProperty.DEFAULT</code> by default.
@@ -247,6 +263,8 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
 
         // add the resource to the model
         mav.addObject(RESOURCE_NAME, resource);
+        // add any related resources to the model
+        mav.addObject(RELATED_RESOURCES_NAME, constructRelatedResourceCollections(t));
 
         // send the response back to the client.
         return mav;

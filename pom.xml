@@ -84,7 +84,7 @@
         
         <!-- Spring -->
         <spring-framework.version>3.2.2.RELEASE</spring-framework.version>
-        <org.springframework.hateoas.version>0.4.0.RELEASE</org.springframework.hateoas.version>
+        <org.springframework.hateoas.version>0.5.0.RELEASE</org.springframework.hateoas.version>
         <spring-framework-security-oauth2.version>1.0.4.RELEASE</spring-framework-security-oauth2.version>
         
         <!-- Thymeleaf -->

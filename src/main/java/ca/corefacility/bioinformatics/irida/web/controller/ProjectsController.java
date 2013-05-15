@@ -15,21 +15,20 @@
  */
 package ca.corefacility.bioinformatics.irida.web.controller;
 
-import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.*;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
-import ca.corefacility.bioinformatics.irida.web.controller.links.LabelledLink;
+import ca.corefacility.bioinformatics.irida.web.controller.links.LabelledRelationshipResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.*;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
@@ -47,9 +46,25 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      */
     private static final String PROJECT_USERS_REL = "project/users";
     /**
+     * A label that's used to list the users associated with a project.
+     */
+    private static final String PROJECT_USERS_MAP_LABEL = "users";
+    /**
+     * A label that's used to list the samples associated with a project.
+     */
+    private static final String PROJECT_SAMPLES_MAP_LABEL = "samples";
+    /**
+     * A label that's used to list the sequence files associated with a project.
+     */
+    private static final String PROJECT_SEQUENCE_FILES_MAP_LABEL = "sequenceFiles";
+    /**
      * Reference to {@link UserService} for getting users associated with a project.
      */
     private UserService userService;
+    /**
+     * Reference to {@link RelationshipService} for getting related resources.
+     */
+    private RelationshipService relationshipService;
 
     /**
      * Constructor for {@link ProjectsController}, requires a reference to a {@link ProjectService}.
@@ -57,9 +72,10 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      * @param projectService the {@link ProjectService} to be used by this controller.
      */
     @Autowired
-    public ProjectsController(ProjectService projectService, UserService userService) {
+    public ProjectsController(ProjectService projectService, UserService userService, RelationshipService relationshipService) {
         super(projectService, Identifier.class, ProjectResource.class);
         this.userService = userService;
+        this.relationshipService = relationshipService;
     }
 
     /**
@@ -79,10 +95,54 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      * @return an instance of {@link Project}.
      */
     @Override
-    public Project mapResourceToType(ProjectResource pr) {
+    protected Project mapResourceToType(ProjectResource pr) {
         Project p = new Project();
         p.setName(pr.getName());
         return p;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    protected Map<String, Collection<LabelledRelationshipResource>> constructRelatedResourceCollections(Project project) {
+        Map<String, Collection<LabelledRelationshipResource>> resources = new HashMap<>();
+
+        resources.put(PROJECT_USERS_MAP_LABEL, getUsersForProject(project));
+        resources.put(PROJECT_SAMPLES_MAP_LABEL,
+                getRelatedResourcesForProject(project, Sample.class));
+        resources.put(PROJECT_SEQUENCE_FILES_MAP_LABEL, getRelatedResourcesForProject(project, SequenceFile.class));
+
+        return resources;
+    }
+
+    private Collection<LabelledRelationshipResource> getRelatedResourcesForProject(Project project, Class<?> relatedClass) {
+        Collection<Relationship> relationships = relationshipService.getRelationshipsForEntity(project.getIdentifier(),
+                Project.class, relatedClass);
+        for (Relationship r : relationships) {
+            LabelledRelationshipResource resource = new LabelledRelationshipResource("relationship", r);
+            
+        }
+        return Collections.emptySet();
+    }
+
+    /**
+     * Get the users for this project as a collection of {@link ca.corefacility.bioinformatics.irida.web.controller.links.LabelledRelationshipResource}.
+     *
+     * @param project the project to get the users for.
+     * @return labels and identifiers for the users attached to the project.
+     */
+    private Collection<LabelledRelationshipResource> getUsersForProject(Project project) {
+        Collection<User> users = userService.getUsersForProject(project);
+        List<LabelledRelationshipResource> userResources = new ArrayList<>(users.size());
+        for (User u : users) {
+            Relationship r = new Relationship(project.getIdentifier(), u.getIdentifier());
+            LabelledRelationshipResource resource = new LabelledRelationshipResource(u.getLabel(), r);
+            resource.add(linkTo(UsersController.class).slash(u.getIdentifier().getIdentifier()).withSelfRel());
+            userResources.add(resource);
+        }
+        return userResources;
     }
 
     /**
@@ -92,18 +152,18 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      * @return a collection of custom links.
      */
     @Override
-    public Collection<Link> constructCustomResourceLinks(Project p) {
+    protected Collection<Link> constructCustomResourceLinks(Project p) {
         Collection<Link> links = new HashSet<>();
         links.add(linkTo(ProjectsController.class).
                 slash(p.getIdentifier().getIdentifier()).slash("users").
                 withRel(PROJECT_USERS_REL));
-        Collection<User> users = userService.getUsersForProject(p);
+       /* Collection<User> users = userService.getUsersForProject(p);
         for (User u : users) {
-            LabelledLink labelledLink = new LabelledLink(
+            LabelledRelationshipResource labelledLink = new LabelledRelationshipResource(
                     linkTo(UsersController.class).slash(u.getIdentifier().getIdentifier()).withSelfRel());
             labelledLink.setLabel(u.getLabel());
             links.add(labelledLink);
-        }
+        }*/
         return links;
     }
 }
