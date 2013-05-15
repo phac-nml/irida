@@ -111,20 +111,23 @@ public class ProjectsController extends GenericController<Identifier, Project, P
 
         resources.put(PROJECT_USERS_MAP_LABEL, getUsersForProject(project));
         resources.put(PROJECT_SAMPLES_MAP_LABEL,
-                getRelatedResourcesForProject(project, Sample.class));
-        resources.put(PROJECT_SEQUENCE_FILES_MAP_LABEL, getRelatedResourcesForProject(project, SequenceFile.class));
+                getRelatedResourcesForProject(project, Sample.class, SamplesController.class));
+        resources.put(PROJECT_SEQUENCE_FILES_MAP_LABEL,
+                getRelatedResourcesForProject(project, SequenceFile.class, SequenceFileController.class));
 
         return resources;
     }
 
-    private Collection<LabelledRelationshipResource> getRelatedResourcesForProject(Project project, Class<?> relatedClass) {
+    private Collection<LabelledRelationshipResource> getRelatedResourcesForProject(Project project, Class<?> relatedClass, Class<?> controller) {
         Collection<Relationship> relationships = relationshipService.getRelationshipsForEntity(project.getIdentifier(),
                 Project.class, relatedClass);
+        List<LabelledRelationshipResource> resources = new ArrayList<>(relationships.size());
         for (Relationship r : relationships) {
             LabelledRelationshipResource resource = new LabelledRelationshipResource("relationship", r);
-            
+            resource.add(linkTo(controller).slash(r.getObject()).withSelfRel());
+            resources.add(resource);
         }
-        return Collections.emptySet();
+        return resources;
     }
 
     /**
@@ -157,13 +160,7 @@ public class ProjectsController extends GenericController<Identifier, Project, P
         links.add(linkTo(ProjectsController.class).
                 slash(p.getIdentifier().getIdentifier()).slash("users").
                 withRel(PROJECT_USERS_REL));
-       /* Collection<User> users = userService.getUsersForProject(p);
-        for (User u : users) {
-            LabelledRelationshipResource labelledLink = new LabelledRelationshipResource(
-                    linkTo(UsersController.class).slash(u.getIdentifier().getIdentifier()).withSelfRel());
-            labelledLink.setLabel(u.getLabel());
-            links.add(labelledLink);
-        }*/
+
         return links;
     }
 }
