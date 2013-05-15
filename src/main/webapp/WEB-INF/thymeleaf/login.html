@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html>
-    <head th:include="fragments/header" th:remove="tag"></head>
-    <body data-ng-app="irida">
-        <div class="row ng-cloak" data-ng-controller="MainCtrl">
-            <notifier attr-icon="{{notifier.icon}}" attr-messege="{{notifier.message}}"></notifier>
-            <ng-view></ng-view>
-        </div>
-        <div class="row">
-            <p th:if="${loginError}">Wrong username or password</p>
-            <form th:action="@{/login}" method="post">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" /> <br />
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" /> <br />
-                <input type="submit" value="Log in" />
-            </form>
-        </div>
-    </body>
+<head th:include="fragments/header" th:remove="tag"></head>
+<body>
+<div class="row" data-ng-app="" data-ng-controller="LoginCtrl">
+    <p th:if="${loginError}">Wrong username or password</p>
+
+    <form th:action="@{/login}" method="post">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" ng-model="username"/> <br/>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password"/> <br/>
+        <input class="button" type="submit" value="Log in" ng-model="password"/>
+    </form>
+</div>
+<script src="/js/vendor/angular/angular.min.js"></script>
+<script>
+    function LoginCtrl($scope) {
+        $scope.username = "";
+        $scope.password = "";
+    }
+</script>
+</body>
 </html>
