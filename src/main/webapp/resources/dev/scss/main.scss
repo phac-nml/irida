@@ -208,7 +208,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Modules
    ========================================================================== */
 .page-info {
-  &>.button {
+  ul {
     float: right;
     margin-right: 2em;
     @media screen and (max-width: $small-screen) {

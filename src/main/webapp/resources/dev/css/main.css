@@ -453,11 +453,11 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Modules
    ========================================================================== */
-.page-info > .button {
+.page-info ul {
   float: right;
   margin-right: 2em; }
   @media screen and (max-width: 48em) {
-    .page-info > .button {
+    .page-info ul {
       float: left; } }
 
 /**
