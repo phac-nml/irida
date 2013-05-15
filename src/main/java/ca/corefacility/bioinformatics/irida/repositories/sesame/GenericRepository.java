@@ -124,12 +124,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             Logger.getLogger(GenericRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
         finally{
-            try {
-                con.close();
-            } catch (RepositoryException ex) {
-                logger.error(ex.getMessage());
-                throw new StorageException("Failed to close connection");
-            }            
+            store.closeRepoConnection(con);            
         }
         
         return object;        
@@ -184,12 +179,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             logger.error(ex.getMessage());
             throw new StorageException("Failed to read resource");
         } finally {
-            try {
-                con.close();
-            } catch (RepositoryException ex) {
-                logger.error(ex.getMessage());
-                throw new StorageException("Failed to close connection");
-            }
+            store.closeRepoConnection(con);
         }        
     
         return ret;        
@@ -259,12 +249,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             throw new StorageException("Couldn't run exists query"); 
         }
         finally{
-            try {
-                con.close();
-            } catch (RepositoryException ex) {
-                logger.error(ex.getMessage());
-                throw new StorageException("Couldn't close connection");
-            }
+            store.closeRepoConnection(con);
         }   
         
         return exists;  
@@ -300,12 +285,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             throw new StorageException("Couldn't run count query");
         }
         finally{
-            try {
-                con.close();
-            } catch (RepositoryException ex) {
-                logger.error(ex.getMessage());
-                throw new StorageException("Couldn't close connection");
-            }
+            store.closeRepoConnection(con);
         }
             
         return count; 
@@ -348,12 +328,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             logger.error(ex.getMessage());
             throw new StorageException("Failed to remove object" + id);
         } finally {
-            try {
-                con.close();
-            } catch (RepositoryException ex) {
-                logger.error(ex.getMessage());
-                throw new StorageException("Failed to close connection");
-            }
+            store.closeRepoConnection(con);
         }
     }
 
@@ -399,12 +374,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             throw new StorageException("Failed to list objects"); 
         }
         finally{
-            try {
-                con.close();
-            } catch (RepositoryException ex) {
-                logger.error(ex.getMessage());
-                throw new StorageException("Failed to close connection");
-            }            
+            store.closeRepoConnection(con);
         }
         return users;
     }

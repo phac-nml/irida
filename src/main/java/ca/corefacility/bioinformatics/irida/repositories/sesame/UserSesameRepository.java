@@ -153,24 +153,10 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
             logger.error(ex.getMessage());
             throw new StorageException("Failed to get user " + username);
         } finally {
-            try {
-                con.close();
-            } catch (RepositoryException ex) {
-                logger.error(ex.getMessage());
-                throw new StorageException("Failed to close connection");
-            }
+            store.closeRepoConnection(con);
         }
 
         return ret;
-    }
-    
-    @Sparql("PREFIX foaf:<http://xmlns.com/foaf/0.1/> \n"
-            + "SELECT ?s "
-            + "WHERE{ ?s a foaf:Person . \n"
-            + "?s foaf:nick ?un . \n"
-            + "}")
-    public User getUserForUsername(@Bind("un") String username){
-        return null;
     }
 
     /**
@@ -181,7 +167,7 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
      */
     public boolean checkUsernameExists(String username) {
         boolean exists = false;
-        RepositoryConnection con = store.getRepoConnection();
+        ObjectConnection con = store.getRepoConnection();
 
         try {
 
@@ -206,29 +192,10 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
             logger.error(ex.getMessage());
             throw new StorageException("Failed execute ASK query");
         } finally {
-            try {
-                con.close();
-            } catch (RepositoryException ex) {
-                logger.error(ex.getMessage());
-                throw new StorageException("Failed to close connection");
-            }
+            store.closeRepoConnection(con);
         }
 
         return exists;
-    }
-
-    //@Override
-    public User buildObject(User base, UserIdentifier i) {
-        User u = new User();
-        u.setIdentifier(i);
-        u.setEmail(base.getEmail());
-        u.setFirstName(base.getFirstName());
-        u.setLastName(base.getLastName());
-        u.setPassword(base.getPassword());
-        u.setPhoneNumber(base.getPhoneNumber());
-        u.setUsername(base.getUsername());
-        
-        return u;
     }
 
     /**

@@ -52,16 +52,6 @@ public class ProjectSesameRepository extends GenericRepository<Identifier, Proje
         super(store,Project.class,Project.PREFIX,Project.TYPE,auditRepo,linksRepo);
     }    
     
-    //@Override
-    public Project buildObject(Project base,Identifier i){
-        Project p = new Project();
-        
-        p.setName(base.getName());
-        p.setIdentifier(i);
-        
-        return p;
-    }
-    
     /**
      * {@inheritDoc}
      */    

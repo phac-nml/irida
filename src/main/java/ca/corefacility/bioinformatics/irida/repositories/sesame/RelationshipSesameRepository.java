@@ -492,12 +492,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             logger.error(ex.getMessage());
             throw new StorageException("Failed to remove object" + id);
         } finally {
-            try {
-                con.close();
-            } catch (RepositoryException ex) {
-                logger.error(ex.getMessage());
-                throw new StorageException("Failed to close connection");
-            }
+            store.closeRepoConnection(con);
         }        
     }
 

@@ -3,7 +3,7 @@ target/
 /src/main/java/ca/corefacility/bioinformatics/irida/repositories/sesame/BackupSesameRepository.java
 /src/main/java/ca/corefacility/bioinformatics/irida/repositories/sesame/UserCRUDRepository.java
 /src/main/resources/ca/corefacility/bioinformatics/irida/dao/
-/src/main/java/a/
 
 .idea/*
 irida-api.iml
+/src/main/java/a/

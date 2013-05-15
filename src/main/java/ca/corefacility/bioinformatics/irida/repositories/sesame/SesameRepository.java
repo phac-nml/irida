@@ -124,12 +124,7 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AuditRepo
             throw new StorageException("Couldn't run exists query"); 
         }
         finally{
-            try {
-                con.close();
-            } catch (RepositoryException ex) {
-                logger.error(ex.getMessage());
-                throw new StorageException("Couldn't close connection");
-            }
+            store.closeRepoConnection(con);
         }   
         
         return exists;     
