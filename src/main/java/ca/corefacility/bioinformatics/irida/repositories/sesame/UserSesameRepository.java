@@ -21,7 +21,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.model.alibaba.UserIF;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
@@ -50,7 +49,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class UserSesameRepository extends GenericRepository<UserIdentifier,UserIF, User> implements UserRepository {
+public class UserSesameRepository extends GenericRepository<UserIdentifier, User> implements UserRepository {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(UserSesameRepository.class);
     private static final RdfPredicate hasUser = new RdfPredicate("irida", "hasUser");
@@ -62,7 +61,7 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier,UserI
     }
 
     public UserSesameRepository(TripleStore store,AuditRepository auditRepo,RelationshipSesameRepository linksRepo) {
-        super(store, UserIF.class,User.PREFIX,User.TYPE,auditRepo,linksRepo);
+        super(store, User.class,User.PREFIX,User.TYPE,auditRepo,linksRepo);
 
     }
 
@@ -91,7 +90,7 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier,UserI
      * @return An Identifier object built form the given binding set
      */
     @Override
-    public Identifier buildIdentifier(UserIF obj, String identifiedBy) {
+    public Identifier buildIdentifier(User obj, String identifiedBy) {
         UserIdentifier objid = new UserIdentifier();
         
         objid.setUri(java.net.URI.create(obj.toString()));
@@ -143,13 +142,10 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier,UserI
             Literal u = fac.createLiteral(username);
             tupleQuery.setBinding("username", u);
             
-            Result<UserIF> result = tupleQuery.evaluate(UserIF.class);
-            UserIF o = result.next();
+            Result<User> result = tupleQuery.evaluate(User.class);
+            User o = result.next();
             
             URI uri = fac.createURI(o.toString());
-                        
-            String identifiedBy = getIdentifiedBy(con,uri);
-            Identifier objid = buildIdentifier(o,identifiedBy);
 
             ret = buildObjectFromResult(o, uri, con);
 
@@ -173,7 +169,7 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier,UserI
             + "WHERE{ ?s a foaf:Person . \n"
             + "?s foaf:nick ?un . \n"
             + "}")
-    public UserIF getUserForUsername(@Bind("un") String username){
+    public User getUserForUsername(@Bind("un") String username){
         return null;
     }
 
@@ -221,8 +217,8 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier,UserI
         return exists;
     }
 
-    @Override
-    public User buildObject(UserIF base, UserIdentifier i) {
+    //@Override
+    public User buildObject(User base, UserIdentifier i) {
         User u = new User();
         u.setIdentifier(i);
         u.setEmail(base.getEmail());

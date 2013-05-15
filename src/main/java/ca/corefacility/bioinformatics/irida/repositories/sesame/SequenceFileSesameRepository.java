@@ -21,9 +21,6 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.alibaba.ProjectIF;
-import ca.corefacility.bioinformatics.irida.model.alibaba.SampleIF;
-import ca.corefacility.bioinformatics.irida.model.alibaba.SequenceFileIF;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
@@ -46,7 +43,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class SequenceFileSesameRepository extends GenericRepository<Identifier, SequenceFileIF, SequenceFile> implements SequenceFileRepository{
+public class SequenceFileSesameRepository extends GenericRepository<Identifier, SequenceFile> implements SequenceFileRepository{
     
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SequenceFileSesameRepository.class);
     
@@ -57,7 +54,7 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
     public SequenceFileSesameRepository(){}
     
     public SequenceFileSesameRepository(TripleStore store,AuditRepository auditRepo,RelationshipSesameRepository linksRepo) {
-        super(store,SequenceFileIF.class,SequenceFile.PREFIX,SequenceFile.TYPE,auditRepo,linksRepo);
+        super(store,SequenceFile.class,SequenceFile.PREFIX,SequenceFile.TYPE,auditRepo,linksRepo);
     }
     
     public void setProjectRepository(ProjectSesameRepository projectRepo){
@@ -67,15 +64,6 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
     public void setSampleRepository(SampleSesameRepository sampleRepo){
         this.sampleRepo = sampleRepo;
     }    
-    
-    @Override
-    public SequenceFile buildObject(SequenceFileIF base, Identifier i) {
-        SequenceFile f = new SequenceFile();
-        f.setIdentifier(i);
-        f.setFile(base.getFile());
-        
-        return f;
-    }
     
     public List<SequenceFile> getFilesForContainer(String uri,Class type){
         List<SequenceFile> files = new ArrayList<>();
@@ -93,9 +81,9 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
             query.setBinding("p", puri);
             query.setType("type", type);
 
-            Result<SequenceFileIF> result = query.evaluate(SequenceFileIF.class);
+            Result<SequenceFile> result = query.evaluate(SequenceFile.class);
             while (result.hasNext()) {
-                SequenceFileIF o = result.next();
+                SequenceFile o = result.next();
                 URI u = con.getValueFactory().createURI(o.toString());
 
                 SequenceFile ret = buildObjectFromResult(o, u, con);
@@ -140,7 +128,7 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
     
     public List<SequenceFile> getFilesForProject(Project project){
         String uri = project.getIdentifier().getUri().toString();
-        return getFilesForContainer(uri,ProjectIF.class);
+        return getFilesForContainer(uri,Project.class);
     }
     
     public List<Identifier> listFilesForProject(Project project){
@@ -149,7 +137,7 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
     
     public List<SequenceFile> getFilesForSample(Sample sample){
         String uri = sample.getIdentifier().getUri().toString();
-        return getFilesForContainer(uri,SampleIF.class);    
+        return getFilesForContainer(uri,Sample.class);    
     }    
     
     @Override

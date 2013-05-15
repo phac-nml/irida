@@ -15,8 +15,6 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
-import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SparqlQuery;
-import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
@@ -25,14 +23,14 @@ import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SparqlQuery;
+import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.openrdf.model.Literal;
-import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
@@ -53,24 +51,19 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public abstract class GenericRepository<IDType extends Identifier, TypeIF extends IridaThing, Type extends IridaThing> extends SesameRepository implements CRUDRepository<IDType, Type> {
-    
-    //TripleStore store;
-    //String URI; //The base URI for objects of this type 
-    
+public class GenericRepository<IDType extends Identifier, Type extends IridaThing> extends SesameRepository implements CRUDRepository<IDType, Type>{
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(GenericRepository.class);
     
-    Class<Type> objectType; //The class object type being stored by this repo
+    Class objectType; //The class object type being stored by this repo
     private String prefix; //String representation of that type
     private String sType;
     
     protected AuditRepository auditRepo;
-    protected RelationshipSesameRepository linksRepo;
-
-    public GenericRepository() {
-    }
-
-    public GenericRepository(TripleStore store, Class type,String prefix, String sType,AuditRepository auditRepo, RelationshipSesameRepository linksRepo) {
+    protected RelationshipSesameRepository linksRepo;    
+    
+    public GenericRepository(){}
+    
+    public GenericRepository(TripleStore store,Class objectType,String prefix, String sType,AuditRepository auditRepo, RelationshipSesameRepository linksRepo) {
         super(store, sType);
 
         this.prefix = prefix;
@@ -78,52 +71,11 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
         this.auditRepo = auditRepo;
         this.linksRepo = linksRepo;
                 
-        this.objectType = type;
+        this.objectType = objectType;
     }
-    
-    public void setLinksRepository(RelationshipSesameRepository linksRepo){
-        this.linksRepo = linksRepo;
-    }
-
-    /**
-     * Generate an identifier for an object of type
-     * <code>Type</code>.
-     *
-     * @param t the object to generate the identifier for.
-     * @return and identifier for the object.
-     */
-    public Identifier generateNewIdentifier(Type t) {
-        return super.generateNewIdentifier();
-    }
-
-    /**
-     * Build an identifier from the given binding set
-     *
-     * @param bs The binding set to build from
-     * @param subject The subject of the SPARQL query to build from
-     * @return An Identifier object built form the given binding set
-     */
-    public Identifier buildIdentifier(TypeIF obj, String identifiedBy) {
-        Identifier objid = new Identifier();
-        objid.setUri(java.net.URI.create(obj.toString()));
-        objid.setUUID(UUID.fromString(identifiedBy));
-        objid.setLabel(obj.getLabel());
-
-        return objid;
-    }
-     
-    
-      
-    /**
-     * Build a basic object from the given interface type
-     * @param base The base object to construct from
-     * @param i The identifier to add to that object
-     * @return A reconstructed object of <code>Type</code>
-     */
-    public abstract Type buildObject(TypeIF base,IDType i);
     
     @Override
-    public Type create(Type object) throws IllegalArgumentException, EntityExistsException {
+    public Type create(Type object) throws IllegalArgumentException {
         if (object == null) {
             throw new IllegalArgumentException("Object is null");
         }
@@ -140,13 +92,17 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
             throw new EntityExistsException("An object with this identifier already exists in the database");            
         }
 
-        object.setIdentifier((IDType) objid);
+        object.setIdentifier(objid);
 
         storeObject(object);
         auditRepo.audit(audit, objid.getUri().toString());
         
         return object;
     }
+    
+    public Identifier generateNewIdentifier(Type t) {
+        return super.generateNewIdentifier();
+    }    
     
     public Type storeObject(Type object){
         ObjectConnection con = store.getRepoConnection();
@@ -179,30 +135,23 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
         return object;        
     }
     
-
-    
-    
-    /**
-     * Build an object of <code>Type</code> from the interface of that type.
-     * Will also add the identifier and audit information to the object.
-     * Calls the abstract method <code>buildObject(TypeIF o, IDType objid)</code> of the implementing database to instantiate the object
-     * 
-     * @param o The Alibaba interface to construct the object from
-     * @param u The URI of the object to construct
-     * @param con An active objectconnection
-     * @return A reconstructed object of <code>Type</code>
-     * @throws MalformedQueryException
-     * @throws RepositoryException
-     * @throws QueryEvaluationException
-     */
-    public Type buildObjectFromResult(TypeIF o,URI u,ObjectConnection con) throws MalformedQueryException, RepositoryException, QueryEvaluationException{
+    public Type buildObjectFromResult(Type o,URI u,ObjectConnection con) throws MalformedQueryException, RepositoryException, QueryEvaluationException{
         String identifiedBy = getIdentifiedBy(con,u);
         Identifier objid = buildIdentifier(o,identifiedBy);
-        Type ret = buildObject(o,(IDType)objid);
-        ret.setAuditInformation(auditRepo.getAudit(u));                
+        o.setIdentifier(objid);
+        o.setAuditInformation(auditRepo.getAudit(u));                
         
-        return ret;
+        return o;
     }
+    
+    public Identifier buildIdentifier(Type obj, String identifiedBy) {
+        Identifier objid = new Identifier();
+        objid.setUri(java.net.URI.create(obj.toString()));
+        objid.setUUID(UUID.fromString(identifiedBy));
+        objid.setLabel(obj.getLabel());
+
+        return objid;
+    }    
 
     @Override
     public Type read(Identifier id) throws EntityNotFoundException {
@@ -223,16 +172,11 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
                     + "WHERE{ ?s a ?type . \n"
                     + "}";
 
-            //ObjectQuery tupleQuery = con.prepareObjectQuery(QueryLanguage.SPARQL, qs);
             ValueFactory fac = con.getValueFactory();
             URI u = fac.createURI(uri);
-            //tupleQuery.setBinding("s", u);
-            //tupleQuery.setType("type", objectType);
+
+            Type o = (Type) con.getObject(objectType, u);
             
-            //Result<TypeIF> result = (Result<TypeIF>) tupleQuery.evaluate(objectType);
-            
-            //TypeIF o = result.next();
-            TypeIF o = (TypeIF) con.getObject(objectType, u);
             
             ret = buildObjectFromResult(o, u, con);
 
@@ -248,7 +192,7 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
             }
         }        
     
-        return ret;
+        return ret;        
     }
     
     public List<Type> readMultiple(List<Identifier> idents){
@@ -265,9 +209,9 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
             String[] strArr = new String[uris.size()];
             uris.toArray(strArr);
 
-            Result<TypeIF> result = (Result<TypeIF>) con.getObjects(objectType, strArr);
+            Result<Type> result = (Result<Type>) con.getObjects(objectType, strArr);
             while(result.hasNext()){
-                TypeIF o = result.next();
+                Type o = result.next();
             
                 URI u = con.getValueFactory().createURI(o.toString());
                 
@@ -286,114 +230,10 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
         }
         
         return projects;        
-    }
-
-    @Override
-    public Type update(Type object) throws IllegalArgumentException {
-        
-        Identifier id = (Identifier) object.getIdentifier();
-        
-        delete(id);
-        Audit a = (Audit) object.getAuditInformation();
-        a.setUpdated(new Date());
-        object.setAuditInformation(a);
-        String u = id.getUri().toString();
-        auditRepo.audit(a, u);
-        object = storeObject(object);
-
-        return object;        
-    }
-
-    @Override
-    public void delete(Identifier id) throws EntityNotFoundException {
-        if (!exists(id)) {
-            throw new EntityNotFoundException("Object does not exist in the database.");            
-        }
-        
-        ObjectConnection con = store.getRepoConnection();
-
-        java.net.URI netURI = buildURI(id.getIdentifier());
-        String uri = netURI.toString();
-
-        ValueFactory vf = con.getValueFactory();
-        URI objecturi = vf.createURI(uri);
-
-        try {
-            con.remove(objecturi, null, null);
-            con.close();
-
-        } catch (RepositoryException ex) {
-            logger.error(ex.getMessage());
-            throw new StorageException("Failed to remove object" + id);
-        } finally {
-            try {
-                con.close();
-            } catch (RepositoryException ex) {
-                logger.error(ex.getMessage());
-                throw new StorageException("Failed to close connection");
-            }
-        }
-              
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Type> list() {
-        return list(0, 0, null, null);
-    }
-
-    @Override
-    public List<Type> list(int page, int size, String sortProperty, Order order) {
-        List<Type> users = new ArrayList<>();
-        ObjectConnection con = store.getRepoConnection();
-        try{
-            String qs = store.getPrefixes()
-                    + "SELECT ?s "
-                    + "WHERE{ ?s a ?type . \n"
-                    + "?a irida:forResource ?s \n."
-                    + "?a irida:createdDate ?createdDate .\n"
-                    + "}";
-            
-            qs += SparqlQuery.setOrderBy(sortProperty, order);
-            qs += SparqlQuery.setLimitOffset(page, size);
-            
-            
-            ObjectQuery query = con.prepareObjectQuery(QueryLanguage.SPARQL, qs);
-            query.setType("type", objectType);
-            
-            Result<TypeIF> result = (Result<TypeIF>) query.evaluate(objectType);
-            //Set<TypeIF> resSet = result.asSet();
-            //for(TypeIF o : resSet){
-            while(result.hasNext()){
-                TypeIF o = result.next();
-            
-                URI u = con.getValueFactory().createURI(o.toString());
-                        
-                Type ret = buildObjectFromResult(o, u, con);
-                users.add(ret);                
-            }
-            
-            
-        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
-            logger.error(ex.getMessage());
-            throw new StorageException("Failed to list objects"); 
-        }
-        finally{
-            try {
-                con.close();
-            } catch (RepositoryException ex) {
-                logger.error(ex.getMessage());
-                throw new StorageException("Failed to close connection");
-            }            
-        }
-        return users;       
-    }
+    }    
 
     @Override
     public Boolean exists(Identifier id) {
-        
         boolean exists = false;
         ObjectConnection con = store.getRepoConnection();
 
@@ -427,9 +267,9 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
             }
         }   
         
-        return exists;     
+        return exists;  
     }
-    
+
     @Override
     public Integer count() {
         int count = 0;
@@ -468,8 +308,107 @@ public abstract class GenericRepository<IDType extends Identifier, TypeIF extend
             }
         }
             
-        return count;    
+        return count; 
     }
+
+    @Override
+    public Type update(Type object) throws IllegalArgumentException {
+        IDType id = (IDType) object.getIdentifier();
+        
+        delete(id);
+        Audit a = (Audit) object.getAuditInformation();
+        a.setUpdated(new Date());
+        object.setAuditInformation(a);
+        String u = id.getUri().toString();
+        auditRepo.audit(a, u);
+        object = storeObject(object);
+
+        return object;
+    }
+
+    @Override
+    public void delete(IDType id) throws EntityNotFoundException {
+        if (!exists(id)) {
+            throw new EntityNotFoundException("Object does not exist in the database.");            
+        }
+        
+        ObjectConnection con = store.getRepoConnection();
+
+        java.net.URI netURI = buildURI(id.getIdentifier());
+        String uri = netURI.toString();
+
+        ValueFactory vf = con.getValueFactory();
+        URI objecturi = vf.createURI(uri);
+
+        try {
+            con.remove(objecturi, null, null);
+            con.close();
+
+        } catch (RepositoryException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Failed to remove object" + id);
+        } finally {
+            try {
+                con.close();
+            } catch (RepositoryException ex) {
+                logger.error(ex.getMessage());
+                throw new StorageException("Failed to close connection");
+            }
+        }
+    }
+
+    @Override
+    public List<Type> list() {
+        return list(0, 0, null, null);
+    }
+
+    @Override
+    public List<Type> list(int page, int size, String sortProperty, Order order) {
+        List<Type> users = new ArrayList<>();
+        ObjectConnection con = store.getRepoConnection();
+        try{
+            String qs = store.getPrefixes()
+                    + "SELECT ?s "
+                    + "WHERE{ ?s a ?type . \n"
+                    + "?a irida:forResource ?s \n."
+                    + "?a irida:createdDate ?createdDate .\n"
+                    + "}";
+            
+            qs += SparqlQuery.setOrderBy(sortProperty, order);
+            qs += SparqlQuery.setLimitOffset(page, size);
+            
+            
+            ObjectQuery query = con.prepareObjectQuery(QueryLanguage.SPARQL, qs);
+            query.setType("type", objectType);
+            
+            Result<Type> result = (Result<Type>) query.evaluate(objectType);
+            //Set<TypeIF> resSet = result.asSet();
+            //for(TypeIF o : resSet){
+            while(result.hasNext()){
+                Type o = result.next();
+            
+                URI u = con.getValueFactory().createURI(o.toString());
+                        
+                Type ret = buildObjectFromResult(o, u, con);
+                users.add(ret);                
+            }
+            
+            
+        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Failed to list objects"); 
+        }
+        finally{
+            try {
+                con.close();
+            } catch (RepositoryException ex) {
+                logger.error(ex.getMessage());
+                throw new StorageException("Failed to close connection");
+            }            
+        }
+        return users;
+    }
+
 
     
 }

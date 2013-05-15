@@ -15,12 +15,13 @@
  */
 package ca.corefacility.bioinformatics.irida.model;
 
-import ca.corefacility.bioinformatics.irida.model.alibaba.SequenceFileIF;
+import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import java.io.File;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
+import org.openrdf.annotations.Iri;
 
 /**
  * A file that may be stored somewhere on the file system and belongs to a
@@ -29,12 +30,16 @@ import javax.validation.constraints.NotNull;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class SequenceFile implements SequenceFileIF, Comparable<SequenceFile> {
-
+@Iri(SequenceFile.PREFIX + SequenceFile.TYPE)
+public class SequenceFile implements IridaThing<Audit,Identifier>, Comparable<SequenceFile> {
+    public static final String PREFIX = "http://corefacility.ca/irida/";
+    public static final String TYPE = "SequenceFile";
+    
     private Identifier id;
     @NotNull
     private Audit audit;
     @NotNull
+    @Iri(PREFIX + "File")
     private File file;
 
     public SequenceFile() {
