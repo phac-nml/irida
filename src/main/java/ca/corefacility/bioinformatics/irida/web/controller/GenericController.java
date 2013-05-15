@@ -61,7 +61,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Controller
-@RequestMapping(value = "/generic", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping("/generic")
 public abstract class GenericController<IdentifierType extends Identifier, Type extends Identifiable<IdentifierType>
         & Auditable<Audit> & Comparable<Type>, ResourceType extends Resource<Type>> {
 

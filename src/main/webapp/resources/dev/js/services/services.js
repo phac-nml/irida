@@ -5,7 +5,7 @@
  * Time: 8:51 AM
  * To change this template use File | Settings | File Templates.
  */
-angular.module('irida.services', ['http-auth-interceptor-buffer', 'ngCookies'])
+angular.module('irida.Services', ['http-auth-interceptor-buffer', 'ngCookies'])
 /**
  * Redirect user to login page if already logged in.
  */
@@ -13,6 +13,7 @@ angular.module('irida.services', ['http-auth-interceptor-buffer', 'ngCookies'])
     'use strict';
     var hasCookie = CookieService.checkLoginCookie();
     if (!hasCookie && $location.path() !== '/login') {
+      alert('login required');
       $rootScope.$broadcast('event:auth-loginRequired');
     }
     else if (hasCookie && $location.path() === '/login') {
@@ -27,6 +28,9 @@ angular.module('irida.services', ['http-auth-interceptor-buffer', 'ngCookies'])
     return {
       checkLoginCookie: function () {
         return typeof $cookies.JSESSIONID === 'string';
+      },
+      destroyCookie: function () {
+        delete $cookies.JSESSIONID;
       }
     };
   }])
@@ -81,7 +85,11 @@ angular.module('irida.services', ['http-auth-interceptor-buffer', 'ngCookies'])
             method: 'GET'
           })
             .success(function (data) {
-              deferred.resolve(formatLinks(data));
+              var d = data;
+              if(data.resource.links){
+                d = formatLinks(data);
+              }
+              deferred.resolve(d);
             })
             .error(function () {
               // TODO: (JOSH - 2013-05-10) Handle get errors properly
@@ -193,14 +201,15 @@ angular.module('irida.services', ['http-auth-interceptor-buffer', 'ngCookies'])
  * and broadcasts 'event:angular-auth-loginRequired'.
  */
   .config(['$httpProvider', function ($httpProvider) {
-
+    'use strict';
     var interceptor = ['$rootScope', '$q', 'httpBuffer', function ($rootScope, $q, httpBuffer) {
+
       function success(response) {
         return response;
       }
 
       function error(response) {
-        if ((response.status === 401 || response.status === 302) && !response.config.ignoreAuthModule) {
+        if ((response.status === 401 && !response.config.ignoreAuthModule ) || response.status === 302) {
           var deferred = $q.defer();
           httpBuffer.append(response.config, deferred);
           $rootScope.$broadcast('event:auth-loginRequired');
@@ -226,6 +235,7 @@ angular.module('irida.services', ['http-auth-interceptor-buffer', 'ngCookies'])
 angular.module('http-auth-interceptor-buffer', [])
 
   .factory('httpBuffer', ['$injector', function ($injector) {
+    'use strict';
     /** Holds all the requests, so they can be re-requested in future. */
     var buffer = [];
 

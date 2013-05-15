@@ -6,7 +6,10 @@
  * To change this template use File | Settings | File Templates.
  */
 angular.module('irida')
-  .controller('MainCtrl', [function () {
+  .controller('MainCtrl', ['$scope', '$location', 'CookieService', function ($scope, $location, CookieService) {
     'use strict';
-
+    $scope.logout = function () {
+      CookieService.destroyCookie();
+      $location.path('/');
+    };
   }]);

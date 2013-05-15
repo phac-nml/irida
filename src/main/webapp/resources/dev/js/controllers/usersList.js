@@ -27,7 +27,7 @@ angular.module('irida')
   }])
   .controller('UsersListCtrl', ['$rootScope', '$scope', '$location', 'ajaxService', function ($rootScope, $scope, $location, ajaxService) {
     'use strict';
-    $scope.userView = "table";
+    $scope.userView = 'table';
     $scope.loadUsers = function (url) {
       if (url) {
         ajaxService.get(url).then(
@@ -97,7 +97,7 @@ angular.module('irida')
 
     $scope.sortBy = function (sortProperty) {
       if(sortProperty) {
-        ajaxService.get('/users', {})
+        ajaxService.get('/users', {});
       }
     };
 

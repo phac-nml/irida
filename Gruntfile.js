@@ -27,7 +27,7 @@ module.exports = function(grunt) {
       all: [
         'Gruntfile.js',
         '<%= irida.dev %>/js/{,*/}*.js',
-        '!<%= irida.dev %>/js/vendor/{,*/}*.js',
+        '!<%= irida.dev %>/js/lib/{,*/}*.js',
       ]
     },
     karma: {
