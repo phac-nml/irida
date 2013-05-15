@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class GenericRepository<IDType extends Identifier, Type extends IridaThing> extends SesameRepository implements CRUDRepository<IDType, Type>{
+public class ConcreteProjectRepository<IDType extends Identifier, Type extends IridaThing> extends SesameRepository implements CRUDRepository<IDType, Type>{
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ConcreteProjectRepository.class);
     
     Class objectType; //The class object type being stored by this repo
@@ -61,9 +61,9 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     protected AuditRepository auditRepo;
     protected RelationshipSesameRepository linksRepo;    
     
-    public GenericRepository(){}
+    public ConcreteProjectRepository(){}
     
-    public GenericRepository(TripleStore store,Class objectType,String prefix, String sType,AuditRepository auditRepo, RelationshipSesameRepository linksRepo) {
+    public ConcreteProjectRepository(TripleStore store,Class objectType,String prefix, String sType,AuditRepository auditRepo, RelationshipSesameRepository linksRepo) {
         super(store, sType);
 
         this.prefix = prefix;

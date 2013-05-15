@@ -1,10 +1,11 @@
 package ca.corefacility.bioinformatics.irida.model;
 
-import ca.corefacility.bioinformatics.irida.model.alibaba.ProjectIF;
+import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
+import org.openrdf.annotations.Iri;
 
 /**
  * A project object.
@@ -12,10 +13,14 @@ import javax.validation.constraints.NotNull;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class Project implements ProjectIF, Comparable<Project> {
-
+@Iri(Project.PREFIX + Project.TYPE)
+public class Project implements IridaThing<Audit,Identifier>, Comparable<Project> {
+    public static final String PREFIX = "http://corefacility.ca/irida/";
+    public static final String TYPE = "Project";
+    
     private Identifier id;
     @NotNull(message = "{project.name.notnull}")
+    @Iri(PREFIX + "projectName")
     private String name;
     @NotNull
     private Audit audit;
@@ -50,7 +55,6 @@ public class Project implements ProjectIF, Comparable<Project> {
         return Objects.hash(id, name);
     }
 
-    @Override
     public String getName() {
         return name;
     }

@@ -20,7 +20,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.model.alibaba.ProjectIF;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
@@ -42,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 //public class ProjectSesameRepository extends GenericAlibabaRepository<Identifier, ProjectIF> implements ProjectRepository{
-public class ProjectSesameRepository extends GenericRepository<Identifier,ProjectIF, Project> implements ProjectRepository{
+public class ProjectSesameRepository extends GenericRepository<Identifier, Project> implements ProjectRepository{
     
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProjectSesameRepository.class);
     private static final RdfPredicate hasProject = new RdfPredicate("irida", "hasProject");
@@ -50,11 +49,11 @@ public class ProjectSesameRepository extends GenericRepository<Identifier,Projec
     public ProjectSesameRepository(){}
     
     public ProjectSesameRepository(TripleStore store,AuditRepository auditRepo,RelationshipSesameRepository linksRepo) {
-        super(store,ProjectIF.class,ProjectIF.PREFIX,ProjectIF.TYPE,auditRepo,linksRepo);
+        super(store,Project.class,Project.PREFIX,Project.TYPE,auditRepo,linksRepo);
     }    
     
-    @Override
-    public Project buildObject(ProjectIF base,Identifier i){
+    //@Override
+    public Project buildObject(Project base,Identifier i){
         Project p = new Project();
         
         p.setName(base.getName());

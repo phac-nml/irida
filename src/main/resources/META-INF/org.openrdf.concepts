@@ -1,5 +1,5 @@
-ca.corefacility.bioinformatics.irida.repositories.sesame.IdentifiedIF
-ca.corefacility.bioinformatics.irida.model.alibaba.ProjectIF
-ca.corefacility.bioinformatics.irida.model.alibaba.UserIF
-ca.corefacility.bioinformatics.irida.model.alibaba.SequenceFileIF
+ca.corefacility.bioinformatics.irida.repositories.sesame.Identified
+ca.corefacility.bioinformatics.irida.model.Project
+ca.corefacility.bioinformatics.irida.model.User
+ca.corefacility.bioinformatics.irida.model.SequenceFile
 ca.corefacility.bioinformatics.irida.model.alibaba.AuditIF

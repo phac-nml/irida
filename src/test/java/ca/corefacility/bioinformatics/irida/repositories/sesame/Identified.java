@@ -15,17 +15,25 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
+import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import static ca.corefacility.bioinformatics.irida.repositories.sesame.IdentifiedIF.PREFIX;
+import org.openrdf.annotations.Iri;
 
 /**
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class Identified implements IdentifiedIF{
+@Iri(Identified.PREFIX + Identified.TYPE)
+public class Identified implements IridaThing<Audit,Identifier>{
+    public static final String PREFIX = "http://nowhere/";
+    public static final String TYPE = "Identified";  
+    
     private Identifier id;
+    @Iri(PREFIX + "data")
     private String data;
     private Audit audit;
     

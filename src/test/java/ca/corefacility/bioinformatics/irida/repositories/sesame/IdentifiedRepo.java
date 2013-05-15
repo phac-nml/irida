@@ -22,15 +22,15 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class IdentifiedRepo extends GenericRepository<Identifier,IdentifiedIF, Identified> {
+public class IdentifiedRepo extends ConcreteProjectRepository<Identifier, Identified> {
     
     public IdentifiedRepo(){}
     
     public IdentifiedRepo(TripleStore store,AuditRepository auditRepo,RelationshipSesameRepository linksRepo) {
-        super(store,IdentifiedIF.class,IdentifiedIF.PREFIX,IdentifiedIF.TYPE,auditRepo,linksRepo);
+        super(store,Identified.class,Identified.PREFIX,Identified.TYPE,auditRepo,linksRepo);
 
     }
-    @Override
+    
     public Identified buildObject(IdentifiedIF base, Identifier i) {
         Identified idd = new Identified(base.getData());
         idd.setIdentifier(i);

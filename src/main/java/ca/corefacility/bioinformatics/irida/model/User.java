@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model;
 
-import ca.corefacility.bioinformatics.irida.model.alibaba.UserIF;
+import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.validators.Patterns;
@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Objects;
+import org.openrdf.annotations.Iri;
 
 /**
  * A user object.
@@ -17,15 +18,20 @@ import java.util.Objects;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class User implements UserIF, Comparable<User> {
-
+@Iri(User.PREFIX + User.TYPE)
+public class User implements IridaThing<Audit,UserIdentifier>, Comparable<User> {
+    public static final String PREFIX = "http://xmlns.com/foaf/0.1/";
+    public static final String TYPE = "Person";
+    
     private UserIdentifier id;
     @NotNull(message = "{user.username.notnull}")
     @Size(min = 3, message = "{user.username.size}")
+    @Iri(PREFIX + "nick")
     private String username;
     @NotNull(message = "{user.email.notnull}")
     @Size(min = 5, message = "{user.email.size}")
     @Email(message = "{user.email.invalid}")
+    @Iri(PREFIX + "mbox")
     private String email;
     @NotNull(message = "{user.password.notnull}")
     @Size(min = 6, message = "{user.password.size}") // passwords must be at least six characters long
@@ -34,15 +40,19 @@ public class User implements UserIF, Comparable<User> {
                     message = "{user.password.uppercase}"), // passwords must contain an upper-case letter
             @Pattern(regexp = "^.*[0-9].*$", message = "{user.password.number}") // passwords must contain a number
     })
+    @Iri(PREFIX + "password")
     private String password;
     @NotNull(message = "{user.firstName.notnull}")
     @Size(min = 2, message = "{user.firstName.size}")
+    @Iri(PREFIX + "firstName")
     private String firstName;
     @NotNull(message = "{user.lastName.notnull}")
     @Size(min = 2, message = "{user.lastName.size}")
+    @Iri(PREFIX + "lastName")
     private String lastName;
     @NotNull(message = "{user.phoneNumber.notnull}")
     @Size(min = 4, message = "{user.phoneNumber.size}")
+    @Iri(PREFIX + "phone")
     private String phoneNumber;
     @NotNull
     private Audit audit;
@@ -128,8 +138,8 @@ public class User implements UserIF, Comparable<User> {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public String toString() {
+    //@Override
+    public String stringValue() {
         return com.google.common.base.Objects.toStringHelper(User.class)
                 .add("username", username)
                 .add("email", email)
@@ -139,7 +149,6 @@ public class User implements UserIF, Comparable<User> {
                 .toString();
     }
 
-    @Override
     public String getUsername() {
         return username;
     }
@@ -148,7 +157,6 @@ public class User implements UserIF, Comparable<User> {
         this.username = username;
     }
 
-    @Override
     public String getEmail() {
         return email;
     }
@@ -157,7 +165,6 @@ public class User implements UserIF, Comparable<User> {
         this.email = email;
     }
 
-    @Override
     public String getPassword() {
         return password;
     }
@@ -166,7 +173,6 @@ public class User implements UserIF, Comparable<User> {
         this.password = password;
     }
 
-    @Override
     public String getFirstName() {
         return firstName;
     }
@@ -175,7 +181,6 @@ public class User implements UserIF, Comparable<User> {
         this.firstName = firstName;
     }
 
-    @Override
     public String getLastName() {
         return lastName;
     }
@@ -184,7 +189,6 @@ public class User implements UserIF, Comparable<User> {
         this.lastName = lastName;
     }
 
-    @Override
     public String getPhoneNumber() {
         return phoneNumber;
     }

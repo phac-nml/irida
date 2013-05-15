@@ -15,12 +15,13 @@
  */
 package ca.corefacility.bioinformatics.irida.model;
 
-import ca.corefacility.bioinformatics.irida.model.alibaba.SampleIF;
+import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.openrdf.annotations.Iri;
 
 /**
  * A biological sample. Each sample may correspond to many files.
@@ -28,13 +29,17 @@ import javax.validation.constraints.Size;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class Sample implements SampleIF, Comparable<Sample> {
-
+@Iri(Sample.PREFIX + Sample.TYPE)
+public class Sample implements IridaThing<Audit,Identifier>, Comparable<Sample> {
+    public static final String PREFIX = "http://corefacility.ca/irida/";
+    public static final String TYPE = "Sample";
+    
     private Identifier id;
     @NotNull
     private Audit audit;
     @NotNull
     @Size(min = 3)
+    @Iri("http://www.w3.org/2000/01/rdf-schema#label")
     private String sampleName;
 
     public Sample() {
@@ -61,7 +66,6 @@ public class Sample implements SampleIF, Comparable<Sample> {
         return audit.compareTo(other.audit);
     }
 
-    @Override
     public String getSampleName() {
         return sampleName;
     }
