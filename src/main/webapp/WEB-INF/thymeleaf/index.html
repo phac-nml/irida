@@ -4,7 +4,7 @@
 <body>
 <div class="row ng-cloak" data-ng-controller="MainCtrl">
     <div th:include="fragments/navbar" th:remove="tag"></div>
-    <notifier attr-icon="{{notifier.icon}}" attr-messege="{{notifier.message}}"></notifier>
+    <notifier attr-icon="{{notifier.icon}}" attr-message="{{notifier.message}}" attr-link="{{notifier.link}}"></notifier>
     <ng-view></ng-view>
 </div>
 <div th:include="fragments/login-modal" th:remove="tag"></div>
