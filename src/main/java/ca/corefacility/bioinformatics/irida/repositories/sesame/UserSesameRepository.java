@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
@@ -209,13 +210,18 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
      * {@inheritDoc}
      */
     
-    @Override
+    //@Override
     public Collection<User> getUsersForProject(Project  project) {
         List<Identifier> userIds = linksRepo.listSubjects(project.getIdentifier(), hasProject);
         
         List<User> users = readMultiple(userIds);
         
         return users;
+    }
+    
+    @Override
+    public Collection<Relationship> getUsersForProject(Identifier project){
+        return linksRepo.getSubjectLinks(project, hasProject);
     }
     
     public Collection<Identifier> listProjectsForUser(Project project){

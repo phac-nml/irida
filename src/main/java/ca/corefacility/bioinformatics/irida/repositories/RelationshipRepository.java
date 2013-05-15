@@ -84,4 +84,6 @@ public interface RelationshipRepository extends CRUDRepository<Identifier, Relat
      * @return All links for the given subject type
      */
     public List<Relationship> getLinks(Identifier subjectId);    
+    
+    public List<Relationship> getSubjectLinks(Identifier objectId, RdfPredicate predicate);
 }
