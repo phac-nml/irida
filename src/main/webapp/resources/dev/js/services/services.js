@@ -30,47 +30,7 @@ angular.module('irida.services', ['http-auth-interceptor-buffer', 'ngCookies'])
       }
     };
   }])
-  .factory('authService', ['$rootScope', 'httpBuffer', function ($rootScope, httpBuffer) {
-    return {
-      loginConfirmed: function () {
-        $rootScope.$broadcast('event:auth-loginConfirmed');
-        httpBuffer.retryAll();
-      }
-    };
-  }])
-
-/**
- * $http interceptor.
- * On 401 response (without 'ignoreAuthModule' option) stores the request
- * and broadcasts 'event:angular-auth-loginRequired'.
- */
-  .config(['$httpProvider', function ($httpProvider) {
-
-    var interceptor = ['$rootScope', '$q', 'httpBuffer', function ($rootScope, $q, httpBuffer) {
-      function success(response) {
-        return response;
-      }
-
-      function error(response) {
-        if ((response.status === 401 || response.status === 302) && !response.config.ignoreAuthModule) {
-          var deferred = $q.defer();
-          httpBuffer.append(response.config, deferred);
-          $rootScope.$broadcast('event:auth-loginRequired');
-          return deferred.promise;
-        }
-        // otherwise, default behaviour
-        return $q.reject(response);
-      }
-
-      return function (promise) {
-        return promise.then(success, error);
-      };
-
-    }];
-    $httpProvider.responseInterceptors.push(interceptor);
-  }])
-
-  .factory('ajaxService', function ($http, $q) {
+  .factory('ajaxService', ['$http', '$q', function ($http, $q) {
     'use strict';
 
     function formatLinks(data) {
@@ -217,8 +177,48 @@ angular.module('irida.services', ['http-auth-interceptor-buffer', 'ngCookies'])
         return false;
       }
     };
-  });
+  }])
+  .factory('authService', ['$rootScope', 'httpBuffer', function ($rootScope, httpBuffer) {
+    'use strict';
+    return {
+      loginConfirmed: function () {
+        $rootScope.$broadcast('event:auth-loginConfirmed');
+        httpBuffer.retryAll();
+      }
+    };
+  }])
+/**
+ * $http interceptor.
+ * On 401 response (without 'ignoreAuthModule' option) stores the request
+ * and broadcasts 'event:angular-auth-loginRequired'.
+ */
+  .config(['$httpProvider', function ($httpProvider) {
+
+    var interceptor = ['$rootScope', '$q', 'httpBuffer', function ($rootScope, $q, httpBuffer) {
+      function success(response) {
+        return response;
+      }
+
+      function error(response) {
+        if ((response.status === 401 || response.status === 302) && !response.config.ignoreAuthModule) {
+          var deferred = $q.defer();
+          httpBuffer.append(response.config, deferred);
+          $rootScope.$broadcast('event:auth-loginRequired');
+          return deferred.promise;
+        }
+        // otherwise, default behaviour
+        return $q.reject(response);
+      }
+
+      return function (promise) {
+        return promise.then(success, error);
+      };
+
+    }];
+    $httpProvider.responseInterceptors.push(interceptor);
+  }])
 ;
+
 
 /**
  * Private module, an utility, required internally by 'http-auth-interceptor'.
