@@ -2,7 +2,7 @@
 <html ng-app="irida">
 <head th:include="fragments/header" th:remove="tag"></head>
 <body>
-
+<div th:include="fragments/navbar" th:remove="tag"></div>
 <div class="row ng-cloak" data-ng-controller="AppCtrl">
     <notifier attr-icon="{{notifier.icon}}" attr-messege="{{notifier.message}}"></notifier>
     <ng-view></ng-view>
@@ -12,15 +12,12 @@
 <script src="/js/vendor/foundation/foundation.js"></script>
 <script src="/js/vendor/foundation/foundation.topbar.js"></script>
 <script src="/js/vendor/foundation/foundation.reveal.js"></script>
-<!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.1.4/angular.min.js"></script>-->
 <script src="/js/vendor/angular/angular.min.js"></script>
 <script src="/js/app.js"></script>
 <script src="/js/vendor/angular/angular-resource.min.js"></script>
 <script src="/js/vendor/angular/angular-cookies.min.js"></script>
 <script src="/js/vendor/angular/angular-ui.js"></script>
-<script src="/js/vendor/angular/http-auth-interceptor.js"></script>
-<script src="/js/components/ajax-service.js"></script>
-<script src="/js/components/cookie-service.js"></script>
+<script src="/js/services/services.js"></script>
 <script src="/js/directives/Notifier.js"></script>
 <script src="/js/directives/FileUploader.js"></script>
 <script src="/js/directives/LoginModal.js"></script>

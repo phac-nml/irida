@@ -1,11 +1,76 @@
 /**
+ * Created with IntelliJ IDEA.
  * User: josh
- * Date: 2013-05-06
- * Time: 9:56 PM
+ * Date: 2013-05-15
+ * Time: 8:51 AM
+ * To change this template use File | Settings | File Templates.
  */
+angular.module('irida.services', ['http-auth-interceptor-buffer', 'ngCookies'])
+/**
+ * Redirect user to login page if already logged in.
+ */
+  .run(['CookieService', '$location', '$rootScope', function (CookieService, $location, $rootScope) {
+    'use strict';
+    var hasCookie = CookieService.checkLoginCookie();
+    if (!hasCookie && $location.path() !== '/login') {
+      $rootScope.$broadcast('event:auth-loginRequired');
+    }
+    if (hasCookie && $location.path() === '/login') {
+      $location.path('/');
+    }
+  }])
+/**
+ * Confirms that the session contains a valid cookie for JSESSIONID
+ */
+  .factory('CookieService', ['$cookies', function ($cookies) {
+    'use strict';
+    return {
+      checkLoginCookie: function () {
+        return typeof $cookies.JSESSIONID === 'string';
+      }
+    };
+  }])
+  .factory('authService', ['$rootScope', 'httpBuffer', function ($rootScope, httpBuffer) {
+    return {
+      loginConfirmed: function () {
+        $rootScope.$broadcast('event:auth-loginConfirmed');
+        httpBuffer.retryAll();
+      }
+    };
+  }])
 
-angular.module('ajaxService', [])
-  .service('ajaxService', function ($http, $q) {
+/**
+ * $http interceptor.
+ * On 401 response (without 'ignoreAuthModule' option) stores the request
+ * and broadcasts 'event:angular-auth-loginRequired'.
+ */
+  .config(['$httpProvider', function ($httpProvider) {
+
+    var interceptor = ['$rootScope', '$q', 'httpBuffer', function ($rootScope, $q, httpBuffer) {
+      function success(response) {
+        return response;
+      }
+
+      function error(response) {
+        if ((response.status === 401 || response.status === 302) && !response.config.ignoreAuthModule) {
+          var deferred = $q.defer();
+          httpBuffer.append(response.config, deferred);
+          $rootScope.$broadcast('event:auth-loginRequired');
+          return deferred.promise;
+        }
+        // otherwise, default behaviour
+        return $q.reject(response);
+      }
+
+      return function (promise) {
+        return promise.then(success, error);
+      };
+
+    }];
+    $httpProvider.responseInterceptors.push(interceptor);
+  }])
+
+  .factory('ajaxService', function ($http, $q) {
     'use strict';
 
     function formatLinks(data) {
@@ -153,3 +218,46 @@ angular.module('ajaxService', [])
       }
     };
   });
+;
+
+/**
+ * Private module, an utility, required internally by 'http-auth-interceptor'.
+ */
+angular.module('http-auth-interceptor-buffer', [])
+
+  .factory('httpBuffer', ['$injector', function ($injector) {
+    /** Holds all the requests, so they can be re-requested in future. */
+    var buffer = [];
+
+    /** Service initialized later because of circular dependency problem. */
+    var $http;
+
+    function retryHttpRequest(config, deferred) {
+      $http = $http || $injector.get('$http');
+      $http(config).then(function (response) {
+        deferred.resolve(response);
+      });
+    }
+
+    return {
+      /**
+       * Appends HTTP request configuration object with deferred response attached to buffer.
+       */
+      append: function (config, deferred) {
+        buffer.push({
+          config: config,
+          deferred: deferred
+        });
+      },
+
+      /**
+       * Retries all the buffered requests clears the buffer.
+       */
+      retryAll: function () {
+        for (var i = 0; i < buffer.length; ++i) {
+          retryHttpRequest(buffer[i].config, buffer[i].deferred);
+        }
+        buffer = [];
+      }
+    };
+  }]);
