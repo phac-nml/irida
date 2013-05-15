@@ -3,7 +3,7 @@
 <head th:include="fragments/header" th:remove="tag"></head>
 <body>
 <div th:include="fragments/navbar" th:remove="tag"></div>
-<div class="row ng-cloak" data-ng-controller="AppCtrl">
+<div class="row ng-cloak" data-ng-controller="MainCtrl">
     <notifier attr-icon="{{notifier.icon}}" attr-messege="{{notifier.message}}"></notifier>
     <ng-view></ng-view>
 </div>
@@ -21,6 +21,7 @@
 <script src="/js/directives/Notifier.js"></script>
 <script src="/js/directives/FileUploader.js"></script>
 <script src="/js/directives/LoginModal.js"></script>
+<script src="/js/controllers/main.js"></script>
 <script src="/js/controllers/login.js"></script>
 <script src="/js/controllers/project.js"></script>
 <script src="/js/controllers/landing.js"></script>

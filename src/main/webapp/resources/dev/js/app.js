@@ -7,19 +7,5 @@ angular.module('irida', [
     'use strict';
     $locationProvider.html5Mode(true);
     $routeProvider.otherwise({redirectTo: '/'});
-  }])
-
-/**
- * AppCtrl
- * Handles global variables and common functions
- */
-  .controller('AppCtrl', ['$scope', 'authService', function ($scope) {
-    'use strict';
-    $scope.notifier = {
-      message: '',
-      icon: ''
-    };
-  }])
-
-;
+  }]);
 
