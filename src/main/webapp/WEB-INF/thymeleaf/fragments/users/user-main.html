@@ -1,0 +1,46 @@
+<div ng-switch="userView">
+    <div ng-switch-when="grid">
+    <ul class="card-holder small-block-grid-2 large-block-grid-3">
+        <li data-ng-repeat="user in users">
+            <div class="card" data-ng-click="gotoUser(user.links[0].href)">
+                <h2>{{user.firstName}} {{user.lastName}}</h2>
+                <span ng-bind="user.dateCreated | date: 'd MMM yyyy'"></span>
+
+                <p>{{user.username}}</p>
+
+                <p class="hide-for-small">Lorem ipsum dolor sit amet, consectetur adipisicing elit. A consectetur
+                    consequuntur dolorum hic modi
+                    molestias omnis quia quibusdam! Aut beatae delectus deserunt eum expedita id ipsa quae repudiandae
+                    saepe
+                    similique.</p>
+            </div>
+        </li>
+    </ul>
+    </div>
+    <div ng-switch-when="table">
+    <div class="row">
+        <div class="large-12 columns">
+            <table class="listTable table table-striped table-bordered large-12">
+                <thead>
+                <tr>
+                    <th class="hide-for-small" th:text="#{user.username}" data-ng-click="sortBy('username')"></th>
+                    <th th:text="#{user.firstName}"></th>
+                    <th th:text="#{user.lastName}"></th>
+                    <th class="hide-for-small" th:text="#{user.email}"></th>
+                    <th class="hide-for-small" th:text="#{user.phoneNumber}"></th>
+                </tr>
+                </thead>
+                <tbody data-ng-repeat="user in users">
+                <tr data-ng-click="gotoUser(user.links[0].href)">
+                    <td class="hide-for-small">{{user.username}}</td>
+                    <td>{{user.firstName}}</td>
+                    <td>{{user.lastName}}</td>
+                    <td class="hide-for-small"><a href="mailto:{{user.email}}">{{user.email}}</a></td>
+                    <td class="hide-for-small">{{user.phoneNumber}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+</div>
