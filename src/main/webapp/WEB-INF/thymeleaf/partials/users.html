@@ -1,6 +1,5 @@
-<div th:include="fragments/navbar" th:remove="tag"></div>
 <div class="large-12 columns" data-ng-controller="UsersListCtrl">
     <div th:substituteby="fragments/users/top-users"></div>
-    <div th:substituteby="fragments/users/users-table"></div>
+    <div th:substituteby="fragments/users/user-main"></div>
     <div th:substituteby="fragments/users/new-user-modal"></div>
 </div>
