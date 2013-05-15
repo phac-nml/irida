@@ -19,6 +19,9 @@ angular.module('irida')
         var time, timer;
         var TIMEOUT = 10;
         $scope.hidden = true;
+
+        // TODO: add link delete stuff here.
+
         $scope.$on('notify', function () {
           if (time < TIMEOUT) {
             $timeout.cancel(timer);

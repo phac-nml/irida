@@ -69,10 +69,10 @@ angular.module('irida')
       if ($scope.newProjectForm.$valid) {
         ajaxService.create('/projects', $scope.newProject).then(
 
-          function (data) {
-            console.log(data);
+          function (link) {
             $scope.notifier.message = 'Created: ' + $scope.newProject.name;
             $scope.notifier.icon = 'check';
+            $scope.notifier.link = link;
             $rootScope.$broadcast('notify');
             $scope.loadProjects($scope.projectsUrl);
             $scope.clearForm();
