@@ -22,7 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class IdentifiedRepo extends ConcreteProjectRepository<Identifier, Identified> {
+public class IdentifiedRepo extends GenericRepository<Identifier, Identified> {
     
     public IdentifiedRepo(){}
     

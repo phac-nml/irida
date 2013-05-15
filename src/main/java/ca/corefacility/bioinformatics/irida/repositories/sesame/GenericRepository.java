@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class GenericRepository<IDType extends Identifier, Type extends IridaThing> extends SesameRepository implements CRUDRepository<IDType, Type>{
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ConcreteProjectRepository.class);
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(GenericRepository.class);
     
     Class objectType; //The class object type being stored by this repo
     private String prefix; //String representation of that type
