@@ -22,41 +22,47 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 
 /**
+ * Modelling a relationship between two different entities in the database.
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class Relationship implements Auditable<Audit>, Identifiable<Identifier>, Comparable<Relationship>{
+public class Relationship implements Auditable<Audit>, Identifiable<Identifier>, Comparable<Relationship> {
 
     Identifier identifier;
-    
     Identifier subject;
     RdfPredicate predicate;
     Identifier object;
-    
-    public Relationship(){
+    private Audit audit;
+
+    public Relationship() {
         audit = new Audit();
     }
-    
-    private Audit audit;
+
+    public Relationship(Identifier subject, Identifier object) {
+        this();
+        this.subject = subject;
+        this.object = object;
+    }
 
     public Identifier getSubject() {
         return subject;
-    }
-
-    public RdfPredicate getPredicate() {
-        return predicate;
-    }
-
-    public Identifier getObject() {
-        return object;
     }
 
     public void setSubject(Identifier subject) {
         this.subject = subject;
     }
 
+    public RdfPredicate getPredicate() {
+        return predicate;
+    }
+
     public void setPredicate(RdfPredicate relationship) {
         this.predicate = relationship;
+    }
+
+    public Identifier getObject() {
+        return object;
     }
 
     public void setObject(Identifier object) {
@@ -89,5 +95,4 @@ public class Relationship implements Auditable<Audit>, Identifiable<Identifier>,
     }
 
 
-    
 }
