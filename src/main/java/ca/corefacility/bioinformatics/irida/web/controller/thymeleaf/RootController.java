@@ -1,7 +1,10 @@
 package ca.corefacility.bioinformatics.irida.web.controller.thymeleaf;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * The Thymeleaf portion of the web project is powered by an AngularJS single-page application. This controller is
@@ -9,10 +12,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * the server for resources using the REST api.
  */
 @Controller
-@RequestMapping("/**")
 public class RootController {
-    @RequestMapping
+    private static final Logger logger = LoggerFactory.getLogger(RootController.class);
+
+    /**
+     * Get the index for any request that does not contain the string "css", "js",
+     * or "font" for thymeleaf to render.
+     * @return the name of the index page
+     */
+    @RequestMapping(value = {"{path:(?!css|js|font).*$}", "{path:(?!css|js|font).*$}/**", "/"})
     public String getRoot() {
+        logger.debug("Loading index.");
         return "index";
     }
 }
