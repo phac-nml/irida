@@ -27,7 +27,9 @@ import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SparqlQuery;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -131,12 +133,14 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     }
     
     public Type buildObjectFromResult(Type o,URI u,ObjectConnection con) throws MalformedQueryException, RepositoryException, QueryEvaluationException{
-        String identifiedBy = getIdentifiedBy(con,u);
-        Identifier objid = buildIdentifier(o,identifiedBy);
-        o.setIdentifier(objid);
-        o.setAuditInformation(auditRepo.getAudit(u));                
+        Type ret = (Type) o.copy();
         
-        return o;
+        String identifiedBy = getIdentifiedBy(con,u);
+        Identifier objid = buildIdentifier(ret,identifiedBy);
+        ret.setIdentifier(objid);
+        ret.setAuditInformation(auditRepo.getAudit(u));                
+        
+        return ret;
     }
     
     public Identifier buildIdentifier(Type obj, String identifiedBy) {
@@ -152,7 +156,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     public Type read(Identifier id) throws EntityNotFoundException {
         Type ret = null;
         
-        java.net.URI netURI = buildURI(id.getIdentifier());
+        java.net.URI netURI = buildURIFromIdentifier(id);
         String uri = netURI.toString();
         
         if (!exists(id)) {
@@ -228,7 +232,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         ObjectConnection con = store.getRepoConnection();
 
         try {
-            java.net.URI netURI = buildURI(id.getIdentifier());
+            java.net.URI netURI = buildURIFromIdentifier(id);
             String uri = netURI.toString();
             
             String querystring = store.getPrefixes()
@@ -314,7 +318,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         
         ObjectConnection con = store.getRepoConnection();
 
-        java.net.URI netURI = buildURI(id.getIdentifier());
+        java.net.URI netURI = buildURIFromIdentifier(id);
         String uri = netURI.toString();
 
         ValueFactory vf = con.getValueFactory();
@@ -359,8 +363,12 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             Result<Type> result = (Result<Type>) query.evaluate(objectType);
             //Set<TypeIF> resSet = result.asSet();
             //for(TypeIF o : resSet){
-            while(result.hasNext()){
-                Type o = result.next();
+            Set<Type> asSet = result.asSet();
+            Iterator<Type> iterator = asSet.iterator();
+            
+            //while(result.hasNext()){
+            while(iterator.hasNext()){
+                Type o = iterator.next();
             
                 URI u = con.getValueFactory().createURI(o.toString());
                         

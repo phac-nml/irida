@@ -14,7 +14,7 @@ import org.openrdf.annotations.Iri;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Iri(Project.PREFIX + Project.TYPE)
-public class Project implements IridaThing<Audit,Identifier>, Comparable<Project> {
+public class Project implements IridaThing<Project,Audit,Identifier>, Comparable<Project> {
     public static final String PREFIX = "http://corefacility.ca/irida/";
     public static final String TYPE = "Project";
     
@@ -91,6 +91,13 @@ public class Project implements IridaThing<Audit,Identifier>, Comparable<Project
     @Override
     public String getLabel() {
         return name;
+    }
+
+    @Override
+    public Project copy() {
+        Project p = new Project();
+        p.setName(getName());
+        return p;
     }
     
 }

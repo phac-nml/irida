@@ -31,7 +31,7 @@ import org.openrdf.annotations.Iri;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Iri(SequenceFile.PREFIX + SequenceFile.TYPE)
-public class SequenceFile implements IridaThing<Audit,Identifier>, Comparable<SequenceFile> {
+public class SequenceFile implements IridaThing<SequenceFile,Audit,Identifier>, Comparable<SequenceFile> {
     public static final String PREFIX = "http://corefacility.ca/irida/";
     public static final String TYPE = "SequenceFile";
     
@@ -106,5 +106,12 @@ public class SequenceFile implements IridaThing<Audit,Identifier>, Comparable<Se
     @Override
     public String getLabel() {
         return file.getName();
+    }
+
+    @Override
+    public SequenceFile copy() {
+        SequenceFile f = new SequenceFile();
+        f.setFile(getFile());
+        return f;
     }
 }

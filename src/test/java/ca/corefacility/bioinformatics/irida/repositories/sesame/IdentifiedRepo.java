@@ -31,11 +31,4 @@ public class IdentifiedRepo extends GenericRepository<Identifier, Identified> {
 
     }
     
-    public Identified buildObject(IdentifiedIF base, Identifier i) {
-        Identified idd = new Identified(base.getData());
-        idd.setIdentifier(i);
-        
-        return idd;
-    }
-    
 }

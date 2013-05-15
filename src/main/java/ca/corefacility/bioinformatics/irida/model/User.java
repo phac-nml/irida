@@ -19,7 +19,7 @@ import org.openrdf.annotations.Iri;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Iri(User.PREFIX + User.TYPE)
-public class User implements IridaThing<Audit,UserIdentifier>, Comparable<User> {
+public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<User> {
     public static final String PREFIX = "http://xmlns.com/foaf/0.1/";
     public static final String TYPE = "Person";
     
@@ -220,5 +220,18 @@ public class User implements IridaThing<Audit,UserIdentifier>, Comparable<User> 
     @Override
     public String getLabel() {
         return firstName + " " + lastName;
+    }
+
+    @Override
+    public User copy() {
+        User u = new User();
+        u.setUsername(getUsername());
+        u.setEmail(getEmail());
+        u.setFirstName(getFirstName());
+        u.setLastName(getLastName());
+        u.setPassword(getPassword());
+        u.setPhoneNumber(getPhoneNumber());
+        
+        return u;        
     }
 }

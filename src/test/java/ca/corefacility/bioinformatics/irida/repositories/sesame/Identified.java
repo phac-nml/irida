@@ -16,11 +16,8 @@
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
-import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
-import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import static ca.corefacility.bioinformatics.irida.repositories.sesame.IdentifiedIF.PREFIX;
 import org.openrdf.annotations.Iri;
 
 /**
@@ -28,7 +25,7 @@ import org.openrdf.annotations.Iri;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Iri(Identified.PREFIX + Identified.TYPE)
-public class Identified implements IridaThing<Audit,Identifier>{
+public class Identified implements IridaThing<Identified,Audit,Identifier>{
     public static final String PREFIX = "http://nowhere/";
     public static final String TYPE = "Identified";  
     
@@ -77,5 +74,13 @@ public class Identified implements IridaThing<Audit,Identifier>{
     public String getLabel() {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         return "I am identified";
+    }
+
+    @Override
+    public Identified copy() {
+        Identified ret = new Identified();
+        ret.setData(getData());
+        
+        return ret;
     }
 }

@@ -104,7 +104,7 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
     public void addFileToContainer(String cID, SequenceFile file){
         ObjectConnection con = store.getRepoConnection();
         
-        java.net.URI fNetUri = buildURI(file.getIdentifier().getIdentifier());
+        java.net.URI fNetUri = buildURIFromIdentifier(file.getIdentifier());
         
         try{
             ValueFactory fac = con.getValueFactory();

@@ -478,7 +478,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
         
         ObjectConnection con = store.getRepoConnection();
 
-        java.net.URI netURI = buildURI(id.getIdentifier());
+        java.net.URI netURI = buildURIFromIdentifier(id);
         String uri = netURI.toString();
 
         ValueFactory vf = con.getValueFactory();

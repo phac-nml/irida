@@ -185,7 +185,7 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AuditRepo
      */
     public Identifier generateNewIdentifier() {
         UUID uuid = UUID.randomUUID();
-        java.net.URI objuri = buildURI(uuid.toString());
+        java.net.URI objuri = buildURIFromIdentifiedBy(uuid.toString());
         return new Identifier(objuri, uuid);
     }   
     
@@ -210,9 +210,21 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AuditRepo
      * @param id The ID to build a URI for
      * @return The constructed URI
      */
-    public java.net.URI buildURI(String id) {
+    public java.net.URI buildURIFromIdentifiedBy(String id) {
         java.net.URI uri = java.net.URI.create(URI + id);
 
         return uri;
-    }    
+    }
+    
+    public java.net.URI buildURIFromIdentifier(Identifier identifier){
+        java.net.URI uri;
+        if(identifier.getUri() != null){
+            uri = identifier.getUri();
+        }
+        else{
+            uri = buildURIFromIdentifiedBy(identifier.getIdentifier());
+        }
+        
+        return uri;        
+    }
 }

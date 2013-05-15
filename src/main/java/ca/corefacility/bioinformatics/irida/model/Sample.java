@@ -30,7 +30,7 @@ import org.openrdf.annotations.Iri;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Iri(Sample.PREFIX + Sample.TYPE)
-public class Sample implements IridaThing<Audit,Identifier>, Comparable<Sample> {
+public class Sample implements IridaThing<Sample,Audit,Identifier>, Comparable<Sample> {
     public static final String PREFIX = "http://corefacility.ca/irida/";
     public static final String TYPE = "Sample";
     
@@ -97,5 +97,12 @@ public class Sample implements IridaThing<Audit,Identifier>, Comparable<Sample> 
     @Override
     public String getLabel() {
         return sampleName;
+    }
+
+    @Override
+    public Sample copy() {
+        Sample s = new Sample();
+        s.setSampleName(getSampleName());
+        return s;
     }
 }

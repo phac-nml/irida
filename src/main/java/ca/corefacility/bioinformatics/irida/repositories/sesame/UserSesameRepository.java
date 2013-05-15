@@ -25,19 +25,26 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.openrdf.annotations.Bind;
 import org.openrdf.annotations.Sparql;
 import org.openrdf.model.Literal;
 import org.openrdf.model.URI;
+import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
+import org.openrdf.query.BindingSet;
 import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
+import org.openrdf.query.TupleQuery;
+import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.object.ObjectConnection;
@@ -75,7 +82,7 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
     @Override
     public Identifier generateNewIdentifier(User t) {
         UUID uuid = UUID.randomUUID();
-        java.net.URI objuri = buildURI(t.getUsername());
+        java.net.URI objuri = buildURIFromIdentifiedBy(t.getUsername());
         UserIdentifier ui = new UserIdentifier(t.getUsername());
         //ui.setUUID(uuid);
         ui.setUri(objuri);
@@ -138,7 +145,7 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
 
             ObjectQuery tupleQuery = con.prepareObjectQuery(QueryLanguage.SPARQL, qs);
             ValueFactory fac = con.getValueFactory();
-
+            
             Literal u = fac.createLiteral(username);
             tupleQuery.setBinding("username", u);
             
@@ -146,9 +153,9 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
             User o = result.next();
             
             URI uri = fac.createURI(o.toString());
-
+            
             ret = buildObjectFromResult(o, uri, con);
-
+            
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
             logger.error(ex.getMessage());
             throw new StorageException("Failed to get user " + username);
