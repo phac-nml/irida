@@ -15,7 +15,7 @@ angular.module('irida.services', ['http-auth-interceptor-buffer', 'ngCookies'])
     if (!hasCookie && $location.path() !== '/login') {
       $rootScope.$broadcast('event:auth-loginRequired');
     }
-    if (hasCookie && $location.path() === '/login') {
+    else if (hasCookie && $location.path() === '/login') {
       $location.path('/');
     }
   }])
