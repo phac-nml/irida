@@ -24,12 +24,12 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Wraps a collection of {@link UserResource} objects to be sent to the client.
+ * Wraps a collection of {@link ResourceCollection} objects to be sent to the client.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @XmlRootElement
-public class ResourceCollection<Type extends Resource> extends ResourceSupport implements Iterable<Type> {
+public class ResourceCollection<Type extends ResourceSupport> extends ResourceSupport implements Iterable<Type> {
 
     /**
      * A collection of resources to be serialized.
@@ -49,18 +49,18 @@ public class ResourceCollection<Type extends Resource> extends ResourceSupport i
     }
 
     /**
-     * Add a new {@link UserResource} to this collection.
+     * Add a new {@link ResourceCollection} to this collection.
      *
-     * @param u The {@link UserResource} to add.
+     * @param u The {@link ResourceCollection} to add.
      */
     public void add(Type u) {
         resources.add(u);
     }
 
     /**
-     * The collection of {@link UserResource} objects in this collection.
+     * The collection of {@link ResourceCollection} objects in this collection.
      *
-     * @return a collection of {@link UserResource} objects.
+     * @return a collection of {@link ResourceCollection} objects.
      */
     public List<Type> getResources() {
         return this.resources;

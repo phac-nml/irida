@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ca.corefacility.bioinformatics.irida.web.controller;
+package ca.corefacility.bioinformatics.irida.web.controller.api;
 
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.Link;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,9 +71,8 @@ public class RootController {
      * @return a response to the client.
      */
     @RequestMapping(method = RequestMethod.GET, value = "/")
-    public ModelAndView getLinks(Model model) {
+    public ResponseEntity<RootResource> getLinks(Model model) {
         logger.debug("Discovering application");
-        ModelAndView mav = new ModelAndView("index");
         RootResource resource = new RootResource();
         List<Link> links = new ArrayList<>();
 
@@ -86,9 +88,8 @@ public class RootController {
 
         // add all of the links to the response
         resource.add(links);
-        model.addAttribute(resource);
 
         // respond to the client
-        return mav;
+        return new ResponseEntity<>(resource, HttpStatus.OK);
     }
 }

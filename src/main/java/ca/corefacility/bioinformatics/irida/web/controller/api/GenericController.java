@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ca.corefacility.bioinformatics.irida.web.controller;
+package ca.corefacility.bioinformatics.irida.web.controller.api;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -155,14 +155,13 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @return a model and view containing the collection of resources.
      */
     @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView listResources(
+    public ResponseEntity<ResourceCollection<ResourceType>> listResources(
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_PAGE, defaultValue = "1") int page,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SIZE, defaultValue = "20") int size,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_PROPERTY,
                     required = false) String sortProperty,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER,
                     required = false) Order sortOrder) throws InstantiationException, IllegalAccessException {
-        ModelAndView mav = new ModelAndView(INDEX_PAGE);
         List<Type> entities;
         ControllerLinkBuilder linkBuilder = linkTo(getClass());
         int totalEntities = crudService.count();
@@ -204,11 +203,8 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         // we should also tell the client how many resources of this type there are in total
         resources.setTotalResources(totalEntities);
 
-        // finally, add the resource collection to the response
-        mav.addObject(RESOURCE_NAME, resources);
-
         // send the response back to the client.
-        return mav;
+        return new ResponseEntity<>(resources, HttpStatus.OK);
     }
 
     /**

@@ -4,7 +4,8 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
                              http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          id="WebApp_ID" version="2.5">
-    
+
+    <!--
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -17,7 +18,7 @@
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
-    </filter-mapping>
+    </filter-mapping> -->
     
     <!--
     - Location of the XML file that defines the root application context.
@@ -38,22 +39,41 @@
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+
+
+    <!--
+    - Servlet that dispatches request to registered handlers (Controller implementations).
+    -->
+    <servlet>
+        <servlet-name>irida-rest</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:spring/api/applicationContext-api.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>irida-rest</servlet-name>
+        <url-pattern>/rest/*</url-pattern>
+    </servlet-mapping>
     
     <!--
     - Servlet that dispatches request to registered handlers (Controller implementations).
     -->
     <servlet>
-        <servlet-name>irida</servlet-name>
+        <servlet-name>irida-thymeleaf</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>classpath:spring/mvc-core-config.xml</param-value>
+            <param-value>classpath:spring/thymeleaf/applicationContext-thymeleaf.xml</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
     
     <servlet-mapping>
-        <servlet-name>irida</servlet-name>
+        <servlet-name>irida-thymeleaf</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
 </web-app>
