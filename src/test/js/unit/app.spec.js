@@ -6,20 +6,20 @@
  * To change this template use File | Settings | File Templates.
  */
 
-describe('AppCtrl', function () {
+describe('MainCtrl', function () {
   describe('isCurrentUrl', function () {
-    var AppCtrl, $location, $scope;
+    var MainCtrl, $location, $scope;
 
     beforeEach(module('irida'));
 
-    beforeEach( inject( function ($controller, _$location_, $rootScope) {
+    beforeEach(inject(function ($controller, _$location_, $rootScope) {
       $location = _$location_;
       $scope = $rootScope.$new();
-      AppCtrl = $controller( 'AppCtrl', { $location : $location, $scope: $scope});
+      MainCtrl = $controller('MainCtrl', { $location: $location, $scope: $scope});
     }));
 
-    it( 'Should pass a dummy test', inject( function () {
-      expect(AppCtrl).toBeTruthy();
+    it('Should pass a dummy test', inject(function () {
+      expect(MainCtrl).toBeTruthy();
     }));
   });
 });
