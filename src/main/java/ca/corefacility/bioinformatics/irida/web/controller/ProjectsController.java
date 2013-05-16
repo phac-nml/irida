@@ -15,27 +15,30 @@
  */
 package ca.corefacility.bioinformatics.irida.web.controller;
 
-import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.Relationship;
-import ca.corefacility.bioinformatics.irida.model.Sample;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.*;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
 import ca.corefacility.bioinformatics.irida.web.controller.links.LabelledRelationshipResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.*;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  * Controller for managing {@link Project}s in the database.
@@ -46,6 +49,10 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 @RequestMapping(value = "/projects")
 public class ProjectsController extends GenericController<Identifier, Project, ProjectResource> {
 
+    /**
+     * Logger.
+     */
+    private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
     /**
      * rel used for accessing users associated with a project.
      */
@@ -84,20 +91,47 @@ public class ProjectsController extends GenericController<Identifier, Project, P
     }
 
     /**
+     * A default constructor is required for the convenience <code>methodOn</code> method that the Spring HATEOAS
+     * project provides. This method *should not* be used by anyone.
+     */
+    protected ProjectsController() {
+        super(null, null, null);
+    }
+
+    /**
      * Get all users associated with a project.
      *
      * @param projectId the project id to get users for.
      * @return a model with a collection of user resources.
      */
-    @RequestMapping("/{projectId}/users")
-    public ModelAndView getUsersForProject(@PathVariable String projectId) {
+    @RequestMapping(value = "/{projectId}/users", method = RequestMethod.GET)
+    public ModelMap getUsersForProject(@PathVariable String projectId) {
         Identifier id = new Identifier();
         id.setIdentifier(projectId);
+        ResourceCollection<UserResource> resources = new ResourceCollection<>();
+
+        // get all of the users belonging to this project
         Collection<Relationship> relationships = userService.getUsersForProject(id);
 
-        
+        // for each of those relationships, retrieve the complete user object
+        // and convert to a resource suitable for sending back to the client.
+        for (Relationship r : relationships) {
+            logger.debug(r.getSubject().getIdentifier());
+            User u = userService.getUserByUsername(r.getSubject().getIdentifier());
+            UserResource ur = new UserResource(u);
+            ur.add(linkTo(UsersController.class).slash(u.getIdentifier().getIdentifier()).withSelfRel());
+            resources.add(ur);
+        }
 
-        return new ModelAndView();
+        // add a link to this resource to the response
+        resources.add(
+                linkTo(methodOn(ProjectsController.class, String.class).getUsersForProject(projectId)).withSelfRel());
+
+        // prepare the response for the client
+        ModelMap model = new ModelMap();
+        model.addAttribute(GenericController.RESOURCE_NAME, resources);
+
+        return model;
     }
 
     /**
@@ -153,8 +187,10 @@ public class ProjectsController extends GenericController<Identifier, Project, P
                 Project.class, relatedClass);
         List<LabelledRelationshipResource> resources = new ArrayList<>(relationships.size());
         for (Relationship r : relationships) {
-            LabelledRelationshipResource resource = new LabelledRelationshipResource("relationship", r);
-            resource.add(linkTo(controller).slash(r.getObject()).withSelfRel());
+            Identifier relationshipIdentifier = r.getObject();
+            LabelledRelationshipResource resource = new LabelledRelationshipResource(relationshipIdentifier.getLabel(),
+                    r);
+            resource.add(linkTo(controller).slash(relationshipIdentifier.getIdentifier()).withSelfRel());
             resources.add(resource);
         }
         return resources;
