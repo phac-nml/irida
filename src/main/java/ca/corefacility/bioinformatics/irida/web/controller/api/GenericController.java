@@ -74,11 +74,6 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      */
     private static final Logger logger = LoggerFactory.getLogger(GenericController.class);
     /**
-     * index page for all collections.
-     */
-    private static final String INDEX_PAGE = "index";
-
-    /**
      * service used for working with classes in the database.
      */
     protected CRUDService<IdentifierType, Type> crudService;
@@ -155,13 +150,14 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @return a model and view containing the collection of resources.
      */
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<ResourceCollection<ResourceType>> listResources(
+    public ModelAndView listResources(
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_PAGE, defaultValue = "1") int page,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SIZE, defaultValue = "20") int size,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_PROPERTY,
                     required = false) String sortProperty,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER,
                     required = false) Order sortOrder) throws InstantiationException, IllegalAccessException {
+        ModelAndView mav = new ModelAndView();
         List<Type> entities;
         ControllerLinkBuilder linkBuilder = linkTo(getClass());
         int totalEntities = crudService.count();
@@ -203,8 +199,10 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         // we should also tell the client how many resources of this type there are in total
         resources.setTotalResources(totalEntities);
 
+        mav.addObject(RESOURCE_NAME, resources);
+
         // send the response back to the client.
-        return new ResponseEntity<>(resources, HttpStatus.OK);
+        return mav;
     }
 
     /**
@@ -220,7 +218,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
     public ModelAndView getResource(@PathVariable String resourceId)
             throws InstantiationException, IllegalAccessException {
-        ModelAndView mav = new ModelAndView(INDEX_PAGE);
+        ModelAndView mav = new ModelAndView();
 
         logger.debug("Getting resource with id [" + resourceId + "]");
 

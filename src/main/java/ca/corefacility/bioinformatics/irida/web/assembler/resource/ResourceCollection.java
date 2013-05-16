@@ -28,7 +28,7 @@ import java.util.List;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-@XmlRootElement
+@XmlRootElement(name = "resource")
 public class ResourceCollection<Type extends ResourceSupport> extends ResourceSupport implements Iterable<Type> {
 
     /**
