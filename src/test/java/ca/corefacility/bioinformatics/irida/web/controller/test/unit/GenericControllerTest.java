@@ -198,9 +198,13 @@ public class GenericControllerTest {
         entities.add(entity);
         when(crudService.list(2, 20, "nonNull", Order.DESCENDING)).thenReturn(entities);
         when(crudService.count()).thenReturn(totalResources);
-        ResponseEntity<ResourceCollection<IdentifiableTestResource>> mav = controller.listResources(2, 20, "nonNull",
+        ModelAndView mav = controller.listResources(2, 20, "nonNull",
                 Order.DESCENDING);
-        ResourceCollection<IdentifiableTestResource> collection  = mav.getBody();
+        Map<String, Object> model = mav.getModel();
+        assertNotNull(model.get(GenericController.RESOURCE_NAME));
+        Object o = model.get(GenericController.RESOURCE_NAME);
+        assertTrue(o instanceof ResourceCollection);
+        ResourceCollection<IdentifiableTestResource> collection = (ResourceCollection<IdentifiableTestResource>) o;
         assertEquals(5, collection.getLinks().size());
         assertEquals(totalResources, collection.getTotalResources());
 
