@@ -2,14 +2,14 @@
     <h2>Login Required</h2>
     <form name="loginForm" novalidated="true">
         <p>
-            <label for="username" class="uname" data-icon="u"> Your email or username </label>
+            <label for="username"> Your email or username </label>
             <input id="username" name="username" required="required" type="text"
-                   placeholder="myusername or mymail@mail.com" ng-model="username"/>
+                   placeholder="myusername or mymail@mail.com" ng-model="lm.username"/>
         </p>
 
         <p>
-            <label for="password" class="youpasswd" data-icon="p"> Your password </label>
-            <input required="required" type="password" ng-model="password"
+            <label for="password"> Your password </label>
+            <input required="required" type="password" ng-model="lm.password"
                    placeholder="eg. X8df!90EO"/>
         </p>
         <div ng-show="showError" class="error">Invalid login credentials.</div>

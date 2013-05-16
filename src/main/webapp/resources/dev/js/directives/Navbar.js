@@ -10,12 +10,16 @@ angular.module('irida')
   return {
     restrict: 'E',
     replace: true,
-    controller: function($scope, $attrs, $element, $location) {
+    controller: function($scope, $attrs, $element, $location, loginService) {
       $scope.logout = function () {
 //        delete $httpProvider.defaults.headers.common['Authorization'];
 //        console.log($http.defaults.headers);
+        loginService.deleteHeader();
         $location.path('/login');
       };
+    },
+    link: function (scope, el) {
+      el.foundation('topbar');
     },
     templateUrl: './partials/navbar.html'
   };

@@ -5,35 +5,109 @@
  * Time: 8:51 AM
  * To change this template use File | Settings | File Templates.
  */
-angular.module('irida.Services', ['http-auth-interceptor-buffer', 'ngCookies'])
-/**
- * Redirect user to login page if already logged in.
- */
-  .run(['CookieService', '$location', '$rootScope', function (CookieService, $location, $rootScope) {
+angular.module('irida.Services', ['http-auth-interceptor-buffer'])
+  .factory('loginService', ['Base64', '$cookieStore', '$http', function (Base64, $cookieStore, $http) {
     'use strict';
-    var hasCookie = CookieService.checkLoginCookie();
-    if (!hasCookie && $location.path() !== '/login') {
-//      alert('login required');
-      $rootScope.$broadcast('event:auth-loginRequired');
-    }
-    else if (hasCookie && $location.path() === '/login') {
-      $location.path('/');
-    }
-  }])
-/**
- * Confirms that the session contains a valid cookie for JSESSIONID
- */
-  .factory('CookieService', ['$cookies', function ($cookies) {
-    'use strict';
+    $http.defaults.headers.common['Authorization'] = 'Basic ' + $cookieStore.get('authdata');
     return {
-      checkLoginCookie: function () {
-        return typeof $cookies.JSESSIONID === 'string';
+      setHeader: function (username, password, callback) {
+        if (typeof username === 'string' && typeof password === 'string') {
+          var encoded = Base64.encode(username + ':' + password);
+          $http.defaults.headers.common.Authorization = 'Basic ' + encoded;
+          $cookieStore.put('authdata', encoded);
+          callback();
+        }
       },
-      destroyCookie: function () {
-        delete $cookies.JSESSIONID;
+      deleteHeader: function () {
+        $cookieStore.remove('authdata');
+        $http.defaults.headers.common.Authorization = 'Basic ';
       }
     };
   }])
+  .factory('Base64', function () {
+    var keyStr = 'ABCDEFGHIJKLMNOP' +
+      'QRSTUVWXYZabcdef' +
+      'ghijklmnopqrstuv' +
+      'wxyz0123456789+/' +
+      '=';
+    return {
+      encode: function (input) {
+        var output = "";
+        var chr1, chr2, chr3 = "";
+        var enc1, enc2, enc3, enc4 = "";
+        var i = 0;
+
+        do {
+          chr1 = input.charCodeAt(i++);
+          chr2 = input.charCodeAt(i++);
+          chr3 = input.charCodeAt(i++);
+
+          enc1 = chr1 >> 2;
+          enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+          enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+          enc4 = chr3 & 63;
+
+          if (isNaN(chr2)) {
+            enc3 = enc4 = 64;
+          } else if (isNaN(chr3)) {
+            enc4 = 64;
+          }
+
+          output = output +
+            keyStr.charAt(enc1) +
+            keyStr.charAt(enc2) +
+            keyStr.charAt(enc3) +
+            keyStr.charAt(enc4);
+          chr1 = chr2 = chr3 = "";
+          enc1 = enc2 = enc3 = enc4 = "";
+        } while (i < input.length);
+
+        return output;
+      },
+
+      decode: function (input) {
+        var output = "";
+        var chr1, chr2, chr3 = "";
+        var enc1, enc2, enc3, enc4 = "";
+        var i = 0;
+
+        // remove all characters that are not A-Z, a-z, 0-9, +, /, or =
+        var base64test = /[^A-Za-z0-9\+\/\=]/g;
+        if (base64test.exec(input)) {
+          alert("There were invalid base64 characters in the input text.\n" +
+            "Valid base64 characters are A-Z, a-z, 0-9, '+', '/',and '='\n" +
+            "Expect errors in decoding.");
+        }
+        input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+
+        do {
+          enc1 = keyStr.indexOf(input.charAt(i++));
+          enc2 = keyStr.indexOf(input.charAt(i++));
+          enc3 = keyStr.indexOf(input.charAt(i++));
+          enc4 = keyStr.indexOf(input.charAt(i++));
+
+          chr1 = (enc1 << 2) | (enc2 >> 4);
+          chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+          chr3 = ((enc3 & 3) << 6) | enc4;
+
+          output = output + String.fromCharCode(chr1);
+
+          if (enc3 != 64) {
+            output = output + String.fromCharCode(chr2);
+          }
+          if (enc4 != 64) {
+            output = output + String.fromCharCode(chr3);
+          }
+
+          chr1 = chr2 = chr3 = "";
+          enc1 = enc2 = enc3 = enc4 = "";
+
+        } while (i < input.length);
+
+        return output;
+      }
+    };
+  })
   .factory('ajaxService', ['$http', '$q', function ($http, $q) {
     'use strict';
 
@@ -186,19 +260,16 @@ angular.module('irida.Services', ['http-auth-interceptor-buffer', 'ngCookies'])
       }
     };
   }])
-  .factory('authService', ['$rootScope', 'httpBuffer', function ($rootScope, httpBuffer) {
-    'use strict';
+  .factory('authService', ['$rootScope','httpBuffer', function($rootScope, httpBuffer) {
     return {
-      loginConfirmed: function () {
-        $rootScope.$broadcast('event:auth-loginConfirmed');
-        httpBuffer.retryAll();
-      }
-    };
-  }])
-  .factory('authService', ['$rootScope', 'httpBuffer', function ($rootScope, httpBuffer) {
-    return {
-      loginConfirmed: function () {
-        $rootScope.$broadcast('event:auth-loginConfirmed');
+      /**
+       * call this function to indicate that authentication was successfull and trigger a
+       * retry of all deferred requests.
+       * @param data an optional argument to pass on to $broadcast which may be useful for
+       * example if you need to pass through details of the user that was logged in
+       */
+      loginConfirmed: function(data) {
+        $rootScope.$broadcast('event:auth-loginConfirmed', data);
         httpBuffer.retryAll();
       }
     };
@@ -209,15 +280,14 @@ angular.module('irida.Services', ['http-auth-interceptor-buffer', 'ngCookies'])
  * On 401 response (without 'ignoreAuthModule' option) stores the request
  * and broadcasts 'event:angular-auth-loginRequired'.
  */
-  .config(['$httpProvider', function ($httpProvider) {
+  .config(['$httpProvider', function($httpProvider) {
 
-    var interceptor = ['$rootScope', '$q', 'httpBuffer', function ($rootScope, $q, httpBuffer) {
+    var interceptor = ['$rootScope', '$q', 'httpBuffer', function($rootScope, $q, httpBuffer) {
       function success(response) {
         return response;
       }
 
       function error(response) {
-        console.log(response.config);
         if (response.status === 401 && !response.config.ignoreAuthModule) {
           var deferred = $q.defer();
           httpBuffer.append(response.config, deferred);
@@ -228,7 +298,7 @@ angular.module('irida.Services', ['http-auth-interceptor-buffer', 'ngCookies'])
         return $q.reject(response);
       }
 
-      return function (promise) {
+      return function(promise) {
         return promise.then(success, error);
       };
 
@@ -241,7 +311,7 @@ angular.module('irida.Services', ['http-auth-interceptor-buffer', 'ngCookies'])
  */
 angular.module('http-auth-interceptor-buffer', [])
 
-  .factory('httpBuffer', ['$injector', function ($injector) {
+  .factory('httpBuffer', ['$injector', '$cookieStore', function($injector, $cookieStore) {
     /** Holds all the requests, so they can be re-requested in future. */
     var buffer = [];
 
@@ -249,17 +319,21 @@ angular.module('http-auth-interceptor-buffer', [])
     var $http;
 
     function retryHttpRequest(config, deferred) {
-      $http = $http || $injector.get('$http');
-      $http(config).then(function (response) {
+      function successCallback(response) {
         deferred.resolve(response);
-      });
+      }
+      function errorCallback(response) {
+        deferred.reject(response);
+      }
+      $http = $http || $injector.get('$http');
+      $http(config).then(successCallback, errorCallback);
     }
 
     return {
       /**
        * Appends HTTP request configuration object with deferred response attached to buffer.
        */
-      append: function (config, deferred) {
+      append: function(config, deferred) {
         buffer.push({
           config: config,
           deferred: deferred
@@ -269,8 +343,9 @@ angular.module('http-auth-interceptor-buffer', [])
       /**
        * Retries all the buffered requests clears the buffer.
        */
-      retryAll: function () {
+      retryAll: function() {
         for (var i = 0; i < buffer.length; ++i) {
+          buffer[i].config.headers.Authorization = 'Basic ' + $cookieStore.get('authdata');
           retryHttpRequest(buffer[i].config, buffer[i].deferred);
         }
         buffer = [];
