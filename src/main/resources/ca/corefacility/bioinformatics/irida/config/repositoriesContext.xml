@@ -56,6 +56,7 @@
               class="ca.corefacility.bioinformatics.irida.repositories.sesame.dao.ExampleDataLoader">
             <constructor-arg ref="userRepository"/>
             <constructor-arg ref="projectRepository"/>
+            <constructor-arg ref="linksRepository" />
             <constructor-arg ref="passwordEncoder"/>
         </bean>
     </beans>
