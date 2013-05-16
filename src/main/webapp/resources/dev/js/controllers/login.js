@@ -17,10 +17,10 @@ angular.module('irida')
         controller: 'LoginCtrl'
       });
   }])
-  .controller('LoginCtrl', ['$scope', '$location', function ($scope, $location) {
+  .controller('LoginCtrl', ['$scope', '$location', 'loginService', function ($scope, $location, loginService) {
     'use strict';
     $scope.login = function () {
-//      $httpProvider.defaults.headers.common['Authorization'] = 'Basic ' + Base64.encode($scope.username + ':' + $scope.password);
+      loginService.setHeader($scope.username, $scope.password);
       $location.path('/');
     };
   }]);

@@ -27,12 +27,12 @@ describe('LoginCtrl', function () {
     expect(LoginCtrl).toBeTruthy();
   }));
 
-  it('should contact the server to login', function () {
-    'use strict';
-    $httpBackend.expectPOST('/login?password=pass1234&username=josh').respond(302, '');
-    $scope.username = 'josh';
-    $scope.password = 'pass1234';
-    $scope.login();
-    $httpBackend.flush();
-  });
+//  it('should contact the server to login', function () {
+//    'use strict';
+//    $httpBackend.expectPOST('/login?password=pass1234&username=josh').respond(302, '');
+//    $scope.username = 'josh';
+//    $scope.password = 'pass1234';
+//    $scope.login();
+//    $httpBackend.flush();
+//  });
 });

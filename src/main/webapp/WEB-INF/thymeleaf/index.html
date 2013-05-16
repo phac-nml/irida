@@ -4,12 +4,12 @@
 <body>
 <div class="row ng-cloak" data-ng-controller="MainCtrl">
     <ngs-navbar></ngs-navbar>
-    <ngs-notifier attr-icon="{{notifier.icon}}" attr-message="{{notifier.message}}" attr-link="{{notifier.link}}"></ngs-notifier>
+    <ngs-notifier attr-icon="{{notifier.icon}}" attr-message="{{notifier.message}}"
+                  attr-link="{{notifier.link}}"></ngs-notifier>
     <ng-view></ng-view>
 </div>
 <div th:include="fragments/login-modal" th:remove="tag"></div>
 <script src="/js/lib/jquery.js"></script>
-<script src="/js/lib/base64.js"></script>
 <script src="/js/lib/foundation/foundation.js"></script>
 <script src="/js/lib/foundation/foundation.topbar.js"></script>
 <script src="/js/lib/foundation/foundation.reveal.js"></script>

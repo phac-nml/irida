@@ -12,11 +12,13 @@ angular.module('irida')
  * @param ajaxService Handles all ajax related calls
  * @param authService Responsible for all http-authentication checking
  */
-  .directive('loginModal', function (ajaxService, authService) {
+  .directive('loginModal', function (loginService, authService) {
     'use strict';
     return {
       restrict: 'C',
       link: function (scope, el) {
+        scope.lm = {};
+
         el.foundation('reveal', {
           closeOnBackgroundClick: false
         });
@@ -31,15 +33,12 @@ angular.module('irida')
         });
 
         scope.login = function () {
-          ajaxService.post('/login', {username: scope.username, password: scope.password}).then(
-            function () {
+
+          if (scope.loginForm.$valid) {
+            loginService.setHeader(scope.lm.username, scope.lm.password, function () {
               authService.loginConfirmed();
-            },
-            function () {
-              // TODO: Show a message stating that the login credentials are incorrect.
-              scope.showError = true;
-            }
-          );
+            });
+          }
         };
       }
     };

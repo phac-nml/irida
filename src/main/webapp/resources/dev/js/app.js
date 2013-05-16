@@ -1,7 +1,7 @@
 /*global angular */
 angular.module('irida', [
     'ui',
-    'ngResource',
+    'ngCookies',
     'irida.Services'
   ])
   .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
