@@ -10,7 +10,7 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <!--import resource="security/applicationContext-security.xml"/-->
+    <import resource="classpath:/spring/security/applicationContext-security.xml" />
 
     <!--
         - POJOs labeled with the @Controller and @Service annotations are auto-detected.
