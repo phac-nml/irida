@@ -13,7 +13,7 @@ angular.module('irida.Services', ['http-auth-interceptor-buffer', 'ngCookies'])
     'use strict';
     var hasCookie = CookieService.checkLoginCookie();
     if (!hasCookie && $location.path() !== '/login') {
-      alert('login required');
+//      alert('login required');
       $rootScope.$broadcast('event:auth-loginRequired');
     }
     else if (hasCookie && $location.path() === '/login') {
