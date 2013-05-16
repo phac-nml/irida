@@ -16,6 +16,8 @@
 package ca.corefacility.bioinformatics.irida.repositories.sesame.dao;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.Sample;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import java.util.HashMap;
@@ -30,9 +32,12 @@ public class DefaultLinks {
     public DefaultLinks(){
         links.put(Project.class, new HashMap<Class, RdfPredicate>());
         links.get(Project.class).put(User.class, new RdfPredicate("irida", "hasUser"));
-        
+        links.get(Project.class).put(Sample.class, new RdfPredicate("irida", "hasSample"));
+        links.get(Project.class).put(SequenceFile.class, new RdfPredicate("irida", "hasSequenceFile"));
+
         links.put(User.class, new HashMap<Class, RdfPredicate>());
         links.get(User.class).put(Project.class, new RdfPredicate("irida", "hasProject"));
+
     }
     
     public HashMap<Class, HashMap<Class,RdfPredicate> > getLinks(){
