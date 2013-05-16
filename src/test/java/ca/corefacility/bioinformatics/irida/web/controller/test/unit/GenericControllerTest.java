@@ -27,32 +27,22 @@ import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.support.IdentifiableTestEntity;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.support.IdentifiableTestResource;
 import com.google.common.net.HttpHeaders;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.servlet.ModelAndView;
+
+import javax.validation.*;
+import java.util.*;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for the {@link GenericController}.
@@ -73,7 +63,8 @@ public class GenericControllerTest {
         id = new Identifier();
         entity = new IdentifiableTestEntity();
         entity.setIdentifier(id);
-        controller = new GenericController<Identifier, IdentifiableTestEntity, IdentifiableTestResource>(crudService, Identifier.class, IdentifiableTestResource.class) {
+        controller = new GenericController<Identifier, IdentifiableTestEntity, IdentifiableTestResource>(crudService,
+                Identifier.class, IdentifiableTestResource.class) {
             @Override
             public Collection<Link> constructCustomResourceLinks(IdentifiableTestEntity resource) {
                 return Collections.emptySet();
@@ -95,7 +86,8 @@ public class GenericControllerTest {
     public void testCreateBadEntity() {
         IdentifiableTestResource r = new IdentifiableTestResource(entity);
 
-        when(crudService.create(entity)).thenThrow(new ConstraintViolationException(new HashSet<ConstraintViolation<?>>()));
+        when(crudService.create(entity)).thenThrow(
+                new ConstraintViolationException(new HashSet<ConstraintViolation<?>>()));
 
         try {
             controller.create(r);
@@ -142,15 +134,14 @@ public class GenericControllerTest {
     @Test
     public void testGetResource() {
         when(crudService.read(id)).thenReturn(entity);
-        ModelAndView mav = null;
+        ModelMap model = null;
 
         try {
-            mav = controller.getResource(id.getIdentifier());
+            model = controller.getResource(id.getIdentifier());
         } catch (InstantiationException | IllegalAccessException e) {
             fail();
         }
 
-        Map<String, Object> model = mav.getModel();
         assertTrue(model.containsKey("resource"));
         IdentifiableTestResource resource = (IdentifiableTestResource) model.get("resource");
         assertTrue(resource.getLink(PageLink.REL_SELF).getHref().endsWith(id.getIdentifier()));
@@ -188,7 +179,8 @@ public class GenericControllerTest {
 
     @Test
     public void testUpdateFailsConstraints() throws InstantiationException, IllegalAccessException {
-        when(crudService.update(id, updatedFields)).thenThrow(new ConstraintViolationException(new HashSet<ConstraintViolation<?>>()));
+        when(crudService.update(id, updatedFields)).thenThrow(
+                new ConstraintViolationException(new HashSet<ConstraintViolation<?>>()));
         try {
             controller.update(id.getIdentifier(), updatedFields);
             fail();
@@ -205,10 +197,9 @@ public class GenericControllerTest {
         entities.add(entity);
         when(crudService.list(2, 20, "nonNull", Order.DESCENDING)).thenReturn(entities);
         when(crudService.count()).thenReturn(totalResources);
-        ModelAndView mav = controller.listResources(2, 20, "nonNull", Order.DESCENDING);
-        Map<String, Object> model = mav.getModel();
-        assertNotNull(model.get(GenericController.RESOURCE_NAME));
-        Object o = model.get(GenericController.RESOURCE_NAME);
+        ModelMap mav = controller.listResources(2, 20, "nonNull", Order.DESCENDING);
+        assertNotNull(mav.get(GenericController.RESOURCE_NAME));
+        Object o = mav.get(GenericController.RESOURCE_NAME);
         assertTrue(o instanceof ResourceCollection);
         ResourceCollection<IdentifiableTestResource> collection = (ResourceCollection<IdentifiableTestResource>) o;
         assertEquals(5, collection.getLinks().size());
@@ -230,7 +221,8 @@ public class GenericControllerTest {
         for (ConstraintViolation<IdentifiableTestEntity> v : violations) {
             constraintViolations.add(v);
         }
-        ResponseEntity<String> response = controller.handleConstraintViolations(new ConstraintViolationException(constraintViolations));
+        ResponseEntity<String> response = controller.handleConstraintViolations(
+                new ConstraintViolationException(constraintViolations));
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("{\"nonNull\":[\"may not be null\"]}", response.getBody());
     }
@@ -246,10 +238,11 @@ public class GenericControllerTest {
         ResponseEntity<String> response = controller.handleExistsException(new EntityExistsException("exists"));
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
     }
-    
+
     @Test
     public void testHandleInvalidPropertyException() {
-        ResponseEntity<String> response = controller.handleInvalidPropertyException(new InvalidPropertyException("invalid property"));
+        ResponseEntity<String> response = controller.handleInvalidPropertyException(
+                new InvalidPropertyException("invalid property"));
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }

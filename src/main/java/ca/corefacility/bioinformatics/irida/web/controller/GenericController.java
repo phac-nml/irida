@@ -39,10 +39,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -171,14 +171,14 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @return a model and view containing the collection of resources.
      */
     @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView listResources(
+    public ModelMap listResources(
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_PAGE, defaultValue = "1") int page,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SIZE, defaultValue = "20") int size,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_PROPERTY,
                     required = false) String sortProperty,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER,
                     required = false) Order sortOrder) throws InstantiationException, IllegalAccessException {
-        ModelAndView mav = new ModelAndView(INDEX_PAGE);
+        ModelMap model = new ModelMap();
         List<Type> entities;
         ControllerLinkBuilder linkBuilder = linkTo(getClass());
         int totalEntities = crudService.count();
@@ -221,10 +221,10 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         resources.setTotalResources(totalEntities);
 
         // finally, add the resource collection to the response
-        mav.addObject(RESOURCE_NAME, resources);
+        model.addAttribute(RESOURCE_NAME, resources);
 
         // send the response back to the client.
-        return mav;
+        return model;
     }
 
     /**
@@ -238,9 +238,9 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      *                                <code>ResourceType</code> is marked <code>private</code>.
      */
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
-    public ModelAndView getResource(@PathVariable String resourceId)
+    public ModelMap getResource(@PathVariable String resourceId)
             throws InstantiationException, IllegalAccessException {
-        ModelAndView mav = new ModelAndView(INDEX_PAGE);
+        ModelMap model = new ModelMap();
 
         logger.debug("Getting resource with id [" + resourceId + "]");
 
@@ -262,12 +262,12 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         resource.add(linkTo(getClass()).slash(resourceId).withSelfRel());
 
         // add the resource to the model
-        mav.addObject(RESOURCE_NAME, resource);
+        model.addAttribute(RESOURCE_NAME, resource);
         // add any related resources to the model
-        mav.addObject(RELATED_RESOURCES_NAME, constructRelatedResourceCollections(t));
+        model.addAttribute(RELATED_RESOURCES_NAME, constructRelatedResourceCollections(t));
 
         // send the response back to the client.
-        return mav;
+        return model;
     }
 
     /**
