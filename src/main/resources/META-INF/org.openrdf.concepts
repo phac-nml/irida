@@ -2,4 +2,4 @@ ca.corefacility.bioinformatics.irida.repositories.sesame.Identified
 ca.corefacility.bioinformatics.irida.model.Project
 ca.corefacility.bioinformatics.irida.model.User
 ca.corefacility.bioinformatics.irida.model.SequenceFile
-ca.corefacility.bioinformatics.irida.model.alibaba.AuditIF
+ca.corefacility.bioinformatics.irida.model.roles.impl.Audit

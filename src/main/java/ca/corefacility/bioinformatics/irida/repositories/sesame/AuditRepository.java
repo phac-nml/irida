@@ -17,19 +17,15 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
-import ca.corefacility.bioinformatics.irida.model.alibaba.AuditIF;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
-import org.openrdf.query.Binding;
 import org.openrdf.query.BindingSet;
-import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
@@ -112,7 +108,7 @@ public class AuditRepository extends SesameRepository{
     }
     
     
-    public void audit(AuditIF audit,String objectURI){
+    public void audit(Audit audit,String objectURI){
         ObjectConnection con = store.getRepoConnection();
         
         try {
@@ -149,14 +145,15 @@ public class AuditRepository extends SesameRepository{
 
             ValueFactory vf = con.getValueFactory();
             query.setBinding("ouri",uri);
-            Result<AuditIF> result = query.evaluate(AuditIF.class);
+            Result<Audit> result = query.evaluate(Audit.class);
             
             if(result.hasNext()){
-                AuditIF next = result.next();
+                Audit next = result.next();
                 
-                ret = new Audit();
-                ret.setCreated(next.getCreated());
-                ret.setUpdated(next.getUpdated());
+                ret = next.copy();
+                //ret = new Audit();
+                //ret.setCreated(next.getCreated());
+                //ret.setUpdated(next.getUpdated());
             }
             
             result.close();

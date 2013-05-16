@@ -16,22 +16,27 @@
 package ca.corefacility.bioinformatics.irida.model.roles.impl;
 
 import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.model.alibaba.AuditIF;
 import java.util.Date;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
+import org.openrdf.annotations.Iri;
 
 /**
  * Information that can be used to audit any object persisted to the database.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class Audit implements AuditIF,Comparable<Audit> {
-
+@Iri(Audit.TYPE)
+public class Audit implements Comparable<Audit> {
+    public static final String TYPE = "http://corefacility.ca/irida/Audit";
+    
     @NotNull
+    @Iri("http://corefacility.ca/irida/createdDate")
     private Date created;
     @NotNull
+    //@Iri("http://corefacility.ca/IRIDA/Audit/createdBy")
     private User createdBy;
+    @Iri("http://corefacility.ca/irida/updatedDate")
     private Date updated;
 
     public Audit() {
@@ -41,6 +46,15 @@ public class Audit implements AuditIF,Comparable<Audit> {
     public Audit(User user) {
         this();
         this.createdBy = user;
+    }
+    
+    public Audit copy(){
+        Audit a = new Audit();
+        a.setCreated(created);
+        a.setUpdated(updated);
+        a.setCreatedBy(createdBy);
+        
+        return a;
     }
 
     @Override
