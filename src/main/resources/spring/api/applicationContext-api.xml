@@ -10,7 +10,7 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <import resource="classpath:/spring/security/applicationContext-security.xml" />
+    <import resource="classpath:/spring/security/applicationContext-security.xml"/>
 
     <!--
         - POJOs labeled with the @Controller and @Service annotations are auto-detected.
@@ -28,4 +28,32 @@
         <property name="basename" value="messages/messages"/>
     </bean>
 
+    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+        <property name="defaultViews">
+            <list>
+                <bean class="ca.corefacility.bioinformatics.irida.web.spring.MappingJackson2JsonViewResource">
+                    <property name="prettyPrint" value="true"/>
+                    <property name="wrapRootValue" value="true"/>
+                </bean>
+                <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
+                    <constructor-arg>
+                        <bean class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+                            <property name="packagesToScan">
+                                <list>
+                                    <value>ca.corefacility.bioinformatics.irida.web.assembler.resource</value>
+                                </list>
+                            </property>
+                        </bean>
+                    </constructor-arg>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+
+        <!-- one of the properties available; the maximum file size in bytes -->
+        <property name="maxUploadSize" value="10737418240"/>
+    </bean>
 </beans>
