@@ -1,8 +1,21 @@
 package ca.corefacility.bioinformatics.irida.web.spring.authentication;
 
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 /**
- * Created with IntelliJ IDEA. User: fbristow Date: 16/05/13 Time: 1:47 PM To change this template use File | Settings |
- * File Templates.
+ * Basic HTTP Authentication entry point that *does not* send the WWW-Authenticate header.
+ *
+ * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class BasicAuthenticationEntryPoint {
+public class BasicAuthenticationEntryPoint implements AuthenticationEntryPoint {
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
+            throws IOException, ServletException {
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
+    }
 }
