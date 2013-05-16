@@ -18,7 +18,7 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.unit;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
-import ca.corefacility.bioinformatics.irida.web.controller.SequenceFileController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.SequenceFileController;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

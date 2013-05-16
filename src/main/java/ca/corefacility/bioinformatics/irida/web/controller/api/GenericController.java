@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ca.corefacility.bioinformatics.irida.web.controller;
+package ca.corefacility.bioinformatics.irida.web.controller.api;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -77,10 +77,6 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * logger.
      */
     private static final Logger logger = LoggerFactory.getLogger(GenericController.class);
-    /**
-     * index page for all collections.
-     */
-    private static final String INDEX_PAGE = "index";
     /**
      * service used for working with classes in the database.
      */

@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.web.controller;
+package ca.corefacility.bioinformatics.irida.web.controller.api;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;

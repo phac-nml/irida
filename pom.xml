@@ -6,31 +6,31 @@
     <artifactId>irida-web</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
-    
+
     <name>irida-web</name>
     <url>http://gitlab.corefacility.ca/irida/irida-web</url>
-    
+
     <issueManagement>
         <system>GitLab</system>
         <url>http://gitlab.corefacility.ca/irida/irida-web/issues</url>
     </issueManagement>
-    
+
     <scm>
         <connection>scm:git:http://gitlab.corefacility.ca/irida/irida-web.git</connection>
         <developerConnection>scm:git:ssh://git@gitlab.corefacility.ca/irida/irida-web.git</developerConnection>
         <url>http://gitlab.corefacility.ca/irida/irida-web</url>
     </scm>
-    
+
     <inceptionYear>2013</inceptionYear>
-    
+
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
             <distribution>manual</distribution>
-        </license>    
+        </license>
     </licenses>
-    
+
     <developers>
         <developer>
             <id>aaron</id>
@@ -63,55 +63,54 @@
     </developers>
 
     <properties>
-        <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        
+
         <!-- Java -->
         <java.version>1.7</java.version>
-        
+
         <!-- irida-api -->
         <irida.api.version>0.0.1-SNAPSHOT</irida.api.version>
-        
-        <!-- jaxb -->
-        <jaxb-api.version>2.2.7</jaxb-api.version>
-        <jaxb-impl.version>2.2.7-b53</jaxb-impl.version>
-        
+
         <!-- Jackson -->
         <jackson.version>2.1.4</jackson.version>
-        
+
         <!-- Jetty -->
         <jetty.version>9.0.2.v20130417</jetty.version>
-        
+
         <!-- Spring -->
         <spring-framework.version>3.2.2.RELEASE</spring-framework.version>
         <org.springframework.hateoas.version>0.5.0.RELEASE</org.springframework.hateoas.version>
         <spring-framework-security-oauth2.version>1.0.4.RELEASE</spring-framework-security-oauth2.version>
-        
+        <org.springframework.security.version>3.1.4.RELEASE</org.springframework.security.version>
+
         <!-- Thymeleaf -->
         <thymeleaf.version>2.0.16</thymeleaf.version>
-        
+
         <!-- Test -->
         <junit.version>4.11</junit.version>
- 
+
         <!-- Logging -->
         <slf4j.version>1.7.2</slf4j.version>
-        
+
         <!-- Gson -->
         <gson.version>2.2.2</gson.version>
-        
+
         <!-- JavaEE web API version -->
-        <javaee.web.api.version>6.0</javaee.web.api.version>
-        <javax.servlet.version>3.2-b05</javax.servlet.version>
-       
+        <javax.servlet.version>3.1</javax.servlet.version>
+
         <!-- REST-assured -->
         <rest.assured.version>1.7.2</rest.assured.version>
-        
+
         <!-- mockito -->
         <mockito.version>1.9.5</mockito.version>
-        
+
         <!-- commons file upload -->
         <commons.fileupload.version>1.3</commons.fileupload.version>
-       
+
+        <!-- jaxb -->
+        <jaxb-api.version>2.2.7</jaxb-api.version>
+        <jaxb-impl.version>2.2.7-b53</jaxb-impl.version>
+
         <!-- plugins -->
         <plugin.maven.compiler.version>2.3.2</plugin.maven.compiler.version>
         <plugin.maven.war.version>2.1.1</plugin.maven.war.version>
@@ -129,40 +128,11 @@
             <artifactId>irida-api</artifactId>
             <version>${irida.api.version}</version>
         </dependency>
-        
-        <!--<dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-web-api</artifactId>
-            <version>${javaee.web.api.version}</version>
-            <scope>provided</scope>
-        </dependency>-->
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>${jaxb-api.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>${jaxb-impl.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        
+
         <!-- Spring -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>${spring-framework.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aop</artifactId>
-            <version>${spring-framework.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jms</artifactId>
             <version>${spring-framework.version}</version>
         </dependency>
         <dependency>
@@ -180,14 +150,13 @@
             <groupId>org.springframework.hateoas</groupId>
             <artifactId>spring-hateoas</artifactId>
             <version>${org.springframework.hateoas.version}</version>
-            <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>org.springframework.security.oauth</groupId>
-            <artifactId>spring-security-oauth2</artifactId>
-            <version>${spring-framework-security-oauth2.version}</version>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${org.springframework.security.version}</version>
         </dependency>
-            
+
         <!-- THYMELEAF -->
         <dependency>
             <groupId>org.thymeleaf</groupId>
@@ -199,7 +168,7 @@
             <artifactId>thymeleaf-spring3</artifactId>
             <version>${thymeleaf.version}</version>
         </dependency>
-            
+
         <!-- Test Artifacts -->
         <dependency>
             <groupId>junit</groupId>
@@ -226,21 +195,21 @@
             <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
-        
+
         <!-- Jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
         </dependency>
-            
+
         <!-- Gson -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
         </dependency>
-        
+
         <!-- mockito -->
         <dependency>
             <groupId>org.mockito</groupId>
@@ -248,7 +217,7 @@
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
-        
+
         <!-- glassfish java ee 6 implementation -->
         <dependency>
             <groupId>org.glassfish</groupId>
@@ -256,12 +225,12 @@
             <version>${javax.servlet.version}</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
             <version>${commons.fileupload.version}</version>
-        </dependency> 
+        </dependency>
     </dependencies>
 
     <build>
@@ -274,11 +243,9 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
-                    <compilerArguments>
-                        <endorseddirs>${endorsed.dir}</endorseddirs>
-                    </compilerArguments>
                 </configuration>
             </plugin>
+
             <!-- Maven WAR plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -288,34 +255,7 @@
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
-            
-            <!-- Maven dependency plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>${plugin.maven.dependency.version}</version>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${endorsed.dir}</outputDirectory>
-                            <silent>true</silent>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>javax</groupId>
-                                    <artifactId>javaee-endorsed-api</artifactId>
-                                    <version>${javaee.web.api.version}</version>
-                                    <type>jar</type>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            
+
             <!-- Jetty plugin -->
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
@@ -338,14 +278,14 @@
                     </execution>
                     <execution>
                         <id>stop-jetty</id>
-                        <phase>post-integration-phase</phase>
+                        <phase>post-integration-test</phase>
                         <goals>
                             <goal>stop</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
-            
+
             <!-- maven failsafe plugin (integration testing) -->
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -359,7 +299,7 @@
                     </execution>
                 </executions>
             </plugin>
-            
+
             <!-- maven surefire plugin (unit testing) -->
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -372,21 +312,25 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--<plugin>-->
-                <!--<groupId>com.kelveden</groupId>-->
-                <!--<artifactId>maven-karma-plugin</artifactId>-->
-                <!--<version>${plugin.maven.karma.version}</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<goals>-->
-                            <!--<goal>start</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-                <!--<configuration>-->
-                    <!--<browsers>PhantomJS</browsers>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
+
+            <!-- maven karma plugin (javascript unit testing) -->
+            <plugin>
+                <groupId>com.kelveden</groupId>
+                <artifactId>maven-karma-plugin</artifactId>
+                <version>${plugin.maven.karma.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <browsers>PhantomJS</browsers>
+                </configuration>
+            </plugin>
+
+            <!-- maven jacoco plugin (code coverage for testing) -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>

@@ -1,5 +1,9 @@
 @import "foundation/foundation-global", "foundation/components/global", "foundation/components/progress-bars", "foundation/components/block-grid";
 @import "bourbon/bourbon";
+/* ==========================================================================
+   COLORS
+   ========================================================================== */
+$notifier-color : rgba(255, 242, 164, 1.0);
 
 /* ==========================================================================
    Angular Specific
@@ -28,7 +32,6 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Notifier
    ========================================================================== */
-$notifier-color : rgba(255, 242, 164, 1.0);
 
 .notifier-hide-setup, .notifier-show-setup {
   @include transition(all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s);
@@ -51,15 +54,24 @@ $notifier-color : rgba(255, 242, 164, 1.0);
 }
 
 .notifier {
-  width: 250px;
-  position: absolute;
+  // Box (display, float, position, left, top, height, width)
   left: 50%;
-  top: 20px;
   margin-left: -120px;
-
-  background-color: $notifier-color;
-  border-radius: 3px;
+  position: absolute;
+  width: 250px;
+  top: 20px;
+  
+  // Border
   border: 1px solid darken($notifier-color, 10);
+  border-radius: 3px;
+  
+  // Background
+  background-color: $notifier-color;
+  
+  // Text (font-family, font-size, text-transform, letter-spacing)
+  
+  // Other
+
   span {
     padding: 0.6em;
     width: 180px;
@@ -74,27 +86,6 @@ $notifier-color : rgba(255, 242, 164, 1.0);
       background-color: darken($notifier-color, 4);
     }
   }
-  //width: 150px;
-  //padding: 1em;
-  //position: absolute;
-  //left: 50%;
-  //top: 0;
-  //margin-left: -75px;
-  //background-color: rgba(0, 0, 0, 0.8);
-  //border-bottom: 2px solid #dddddd;
-  //border-radius: 0 0 10px 10px;
-  //color: #dddddd;
-  //text-align: center;
-  //z-index: 1000;
-  //i {
-  //  display: block;
-  //  font-size: 5em;
-  //  margin-bottom: 10px;
-  //}
-  //span {
-  //  display: block;
-  //
-  //}
 }
 
 /* Uploader

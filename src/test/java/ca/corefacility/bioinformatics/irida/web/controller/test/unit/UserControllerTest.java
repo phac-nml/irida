@@ -23,7 +23,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
-import ca.corefacility.bioinformatics.irida.web.controller.UsersController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.UsersController;
 import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
 import java.util.Collection;
 import java.util.HashSet;

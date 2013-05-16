@@ -3,12 +3,13 @@
 <head th:include="fragments/header" th:remove="tag"></head>
 <body>
 <div class="row ng-cloak" data-ng-controller="MainCtrl">
-    <div th:include="fragments/navbar" th:remove="tag"></div>
+    <ngs-navbar></ngs-navbar>
     <ngs-notifier attr-icon="{{notifier.icon}}" attr-message="{{notifier.message}}" attr-link="{{notifier.link}}"></ngs-notifier>
     <ng-view></ng-view>
 </div>
 <div th:include="fragments/login-modal" th:remove="tag"></div>
 <script src="/js/lib/jquery.js"></script>
+<script src="/js/lib/base64.js"></script>
 <script src="/js/lib/foundation/foundation.js"></script>
 <script src="/js/lib/foundation/foundation.topbar.js"></script>
 <script src="/js/lib/foundation/foundation.reveal.js"></script>
@@ -21,6 +22,7 @@
 <script src="/js/directives/Notifier.js"></script>
 <script src="/js/directives/FileUploader.js"></script>
 <script src="/js/directives/LoginModal.js"></script>
+<script src="/js/directives/Navbar.js"></script>
 <script src="/js/controllers/main.js"></script>
 <script src="/js/controllers/login.js"></script>
 <script src="/js/controllers/project.js"></script>
