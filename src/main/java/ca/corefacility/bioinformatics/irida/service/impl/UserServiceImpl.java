@@ -17,7 +17,9 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.UserService;
@@ -128,7 +130,7 @@ public class UserServiceImpl extends CRUDServiceImpl<UserIdentifier, User> imple
      * {@inheritDoc}
      */
     @Override
-    public Collection<User> getUsersForProject(Project project) {
+    public Collection<Relationship> getUsersForProject(Identifier project) {
         return userRepository.getUsersForProject(project);
     }
 

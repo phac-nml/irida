@@ -25,6 +25,7 @@ import java.util.Collection;
  * Specialized repository for {@link Project}.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public interface ProjectRepository extends CRUDRepository<Identifier, Project> {
 
@@ -35,5 +36,12 @@ public interface ProjectRepository extends CRUDRepository<Identifier, Project> {
      * @return the projects associated with the user.
      */
     public Collection<Project> getProjectsForUser(User user);
+    
+    /**
+     * Add a user to a project
+     * @param p The project to add the user to
+     * @param user The user to add
+     * @return A {@link Relationship} object describing the project/user link
+     */
     public Relationship addUserToProject(Project p, User user);
 }

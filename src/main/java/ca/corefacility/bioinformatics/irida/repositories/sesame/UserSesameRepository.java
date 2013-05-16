@@ -20,32 +20,22 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.openrdf.annotations.Bind;
-import org.openrdf.annotations.Sparql;
 import org.openrdf.model.Literal;
 import org.openrdf.model.URI;
-import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
-import org.openrdf.query.BindingSet;
 import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
-import org.openrdf.query.TupleQuery;
-import org.openrdf.query.TupleQueryResult;
-import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.object.ObjectConnection;
 import org.openrdf.repository.object.ObjectQuery;
@@ -90,7 +80,8 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
     }
 
     /**
-     * Build an identifier from the given binding set
+     * Build an identifier for the given User.  
+     * To be used on results from a database query
      *
      * @param bs The binding set to build from
      * @param subject The subject of the SPARQL query to build from
@@ -209,13 +200,17 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
      * {@inheritDoc}
      */
     
-    @Override
     public Collection<User> getUsersForProject(Project  project) {
         List<Identifier> userIds = linksRepo.listSubjects(project.getIdentifier(), hasProject);
         
         List<User> users = readMultiple(userIds);
         
         return users;
+    }
+    
+    @Override
+    public Collection<Relationship> getUsersForProject(Identifier project){
+        return linksRepo.getLinks(null,hasProject, project);
     }
     
     public Collection<Identifier> listProjectsForUser(Project project){

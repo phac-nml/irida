@@ -77,6 +77,16 @@ public interface RelationshipRepository extends CRUDRepository<Identifier, Relat
      * @return A list of Link objects
      */
     public List<Relationship> getLinks(Identifier subjectId, RdfPredicate predicate);
+    
+    /**
+     * Get links for the given Subject, Predicate, and Object.
+     * Any of subjectId, predicate, and objectId can be null, but not all 3
+     * @param subjectId The identifier of the subject for the requested triples
+     * @param predicate An {@link RdfPredicate} of the requested triples
+     * @param objectId The identifier of the Object of the requested triples
+     * @return
+     */
+    public List<Relationship> getLinks(Identifier subjectId, RdfPredicate predicate, Identifier objectId);
 
     /**
      * Get all the links for a given subject
@@ -84,4 +94,6 @@ public interface RelationshipRepository extends CRUDRepository<Identifier, Relat
      * @return All links for the given subject type
      */
     public List<Relationship> getLinks(Identifier subjectId);    
+    
+    public List<Relationship> getSubjectLinks(Identifier objectId, RdfPredicate predicate);
 }

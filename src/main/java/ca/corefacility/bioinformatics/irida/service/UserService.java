@@ -17,7 +17,9 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -44,5 +46,5 @@ public interface UserService extends CRUDService<UserIdentifier, User>, UserDeta
      * @param project the project to get users for.
      * @return the users associated with the project.
      */
-    public Collection<User> getUsersForProject(Project project);
+    public Collection<Relationship> getUsersForProject(Identifier project);
 }
