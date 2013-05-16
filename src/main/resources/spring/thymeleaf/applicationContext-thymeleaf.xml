@@ -11,9 +11,9 @@
         http://www.springframework.org/schema/context/spring-context.xsd">
 
 
-    <mvc:resources mapping="/css/**" location="/resources/dev/css/"/>
-    <mvc:resources mapping="/js/**" location="/resources/dev/js/"/>
-    <mvc:resources mapping="/font/**" location="/resources/dev/font/"/>
+    <mvc:resources mapping="/css/**" location="/resources/dev/css/" order="-1" />
+    <mvc:resources mapping="/js/**" location="/resources/dev/js/" order="-1" />
+    <mvc:resources mapping="/font/**" location="/resources/dev/font/" order="-1" />
 
     <!--
         - POJOs labeled with the @Controller and @Service annotations are auto-detected.

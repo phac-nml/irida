@@ -19,7 +19,7 @@ public class RootController {
      *
      * @return the name of the index page
      */
-    @RequestMapping(value = {"{path:(?!css|js|font).*$}", "{path:(?!css|js|font).*$}/**", "/"})
+    @RequestMapping("/**")
     public String getRoot() {
         logger.debug("Loading index.");
         return "index";
