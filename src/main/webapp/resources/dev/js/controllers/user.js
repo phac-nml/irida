@@ -27,7 +27,7 @@ angular.module('irida')
           initData: function ($q, $route, ajaxService) {
             var defer = $q.defer();
             var username = $route.current.params.username;
-            ajaxService.get('/users/' + username).then(function (data) {
+            ajaxService.get('/api/users/' + username).then(function (data) {
               defer.resolve(data);
             });
             return defer.promise;

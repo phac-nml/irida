@@ -17,18 +17,10 @@ angular.module('irida')
         controller: 'LoginCtrl'
       });
   }])
-  .controller('LoginCtrl', ['$scope', '$location', '$http','ajaxService', function ($scope, $location, $http, ajaxService) {
+  .controller('LoginCtrl', ['$scope', '$location', function ($scope, $location) {
     'use strict';
     $scope.login = function () {
-      $http.defaults.headers.common['Authorization'] = 'Basic ' + Base64.encode($scope.username + ':' + $scope.password);
-      ajaxService.post('/login').then(
-        function () {
-          $location.path('/');
-        },
-        function () {
-          // TODO: Show a message stating that the login credentials are incorrect.
-          $scope.showError = true;
-        }
-      );
+//      $httpProvider.defaults.headers.common['Authorization'] = 'Basic ' + Base64.encode($scope.username + ':' + $scope.password);
+      $location.path('/');
     };
   }]);

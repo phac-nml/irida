@@ -17,7 +17,7 @@ angular.module('irida')
         resolve: {
           initData: function ($q, ajaxService) {
             var defer = $q.defer();
-            ajaxService.get('/users').then(function (data) {
+            ajaxService.get('/api/users').then(function (data) {
               defer.resolve(data);
             });
             return defer.promise;
