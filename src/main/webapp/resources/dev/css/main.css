@@ -280,6 +280,9 @@ select {
   [class*="small-block-grid-"] > li {
     clear: none !important; } }
 /* ==========================================================================
+   COLORS
+   ========================================================================== */
+/* ==========================================================================
    Angular Specific
    ========================================================================== */
 .ng-cloak {
@@ -319,14 +322,14 @@ h1, h2, h3, h4, h5, h6 {
   opacity: 1; }
 
 .notifier {
-  width: 250px;
-  position: absolute;
   left: 50%;
-  top: 20px;
   margin-left: -120px;
-  background-color: #fff2a4;
+  position: absolute;
+  width: 250px;
+  top: 20px;
+  border: 1px solid #ffeb71;
   border-radius: 3px;
-  border: 1px solid #ffeb71; }
+  background-color: #fff2a4; }
   .notifier span {
     padding: 0.6em;
     width: 180px;
