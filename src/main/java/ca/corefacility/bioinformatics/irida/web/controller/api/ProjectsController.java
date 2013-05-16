@@ -29,9 +29,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -58,6 +61,10 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      */
     private static final String PROJECT_USERS_REL = "project/users";
     /**
+     * rel used for removing user relationships from a project.
+     */
+    private static final String PROJECT_USERS_DELETE_REL = "project/users/delete";
+    /**
      * A label that's used to list the users associated with a project.
      */
     private static final String PROJECT_USERS_MAP_LABEL = "users";
@@ -77,6 +84,10 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      * Reference to {@link RelationshipService} for getting related resources.
      */
     private RelationshipService relationshipService;
+    /**
+     * Reference to {@link ProjectService} for managing projects.
+     */
+    private ProjectService projectService;
 
     /**
      * Constructor for {@link ProjectsController}, requires a reference to a {@link ProjectService}.
@@ -132,6 +143,29 @@ public class ProjectsController extends GenericController<Identifier, Project, P
         model.addAttribute(GenericController.RESOURCE_NAME, resources);
 
         return model;
+    }
+
+    /**
+     * Add a relationship between a {@link Project} and a {@link User}.
+     *
+     * @param representation the JSON key-value pair that contains the identifier for the project and the identifier for
+     *                       the user.
+     * @return a response indicating that the collection was modified.
+     */
+    @RequestMapping(value = "/{projectId}/users", method = RequestMethod.PATCH)
+    public ResponseEntity<String> addUserToProject(@PathVariable String projectId,
+                                                   @RequestBody Map<String, Object> representation) {
+
+        // first, get the project
+        Identifier id = new Identifier();
+        id.setIdentifier(projectId);
+        Project p = projectService.read(id);
+        User u = userService.getUserByUsername(representation.get("userIdentifier").toString());
+        Role r = new Role();
+        r.setName("ROLE_USER");
+        projectService.addUserToProject(p, u, r);
+
+        return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
     /**
@@ -208,7 +242,11 @@ public class ProjectsController extends GenericController<Identifier, Project, P
         for (Relationship r : relationships) {
             Identifier userIdentifier = r.getSubject();
             LabelledRelationshipResource resource = new LabelledRelationshipResource(userIdentifier.getLabel(), r);
+            // rel pointing at the user instance
             resource.add(linkTo(UsersController.class).slash(userIdentifier.getIdentifier()).withSelfRel());
+            // rel telling the client how to delete the relationship between the user and the project.
+            resource.add(linkTo(RelationshipsController.class).slash(r.getIdentifier().getIdentifier())
+                    .withRel(PROJECT_USERS_DELETE_REL));
             userResources.add(resource);
         }
         return userResources;
