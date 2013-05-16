@@ -10,9 +10,10 @@ angular.module('irida')
   return {
     restrict: 'E',
     replace: true,
-    controller: function($scope, $attrs, $element, $location) {
+    controller: function($scope, $attrs, $element, $location, $http) {
+      $element.foundation();
       $scope.logout = function () {
-        // TODO: (JOSH - 2013-05-16) Remove http header for authentication
+        $http.defaults.headers.common['Authorization'] = '';
         $location.path('/login');
       };
     },
