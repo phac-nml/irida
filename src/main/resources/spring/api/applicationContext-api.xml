@@ -39,7 +39,7 @@
         </property>
         <property name="defaultViews">
             <list>
-                <bean class="ca.corefacility.bioinformatics.irida.web.spring.MappingJackson2JsonViewResource">
+                <bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
                     <property name="prettyPrint" value="true"/>
                 </bean>
                 <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
