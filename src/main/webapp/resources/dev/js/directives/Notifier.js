@@ -10,18 +10,23 @@ angular.module('irida')
     return {
       restrict: 'E',
       scope: {
-        message: '@attrMessege',
-        icon: '@attrIcon'
+        message: '@attrMessage',
+        icon: '@attrIcon',
+        link: '@attrLink'
       },
       replace: true,
       controller: function ($scope, $attrs, $element, $timeout) {
         var time, timer;
+        var TIMEOUT = 10;
         $scope.hidden = true;
+
+        // TODO: add link delete stuff here.
+
         $scope.$on('notify', function () {
-          if (time < 5) {
+          if (time < TIMEOUT) {
             $timeout.cancel(timer);
           }
-          time = 5;
+          time = TIMEOUT;
           $scope.hidden = false;
           countDown();
         });
@@ -37,7 +42,7 @@ angular.module('irida')
           }
         }
       },
-      template: '<div style="display: none" class="ng-cloak notifier" data-ng-hide="hidden" data-ng-animate="\'notifier\'"><i class="icon-{{icon}}"></i> <span>{{message}}</span></div>',
+      template: '<div style="display: none" class="ng-cloak notifier" data-ng-hide="hidden" data-ng-animate="\'notifier\'"><span class="left"><i class="icon-{{icon}}"></i> {{message}}</span><a class="right" ng-href="{{link}}">undo</a></div>',
       link: function () {
       }
     };

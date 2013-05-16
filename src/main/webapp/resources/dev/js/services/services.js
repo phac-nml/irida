@@ -63,8 +63,8 @@ angular.module('irida.Services', ['http-auth-interceptor-buffer', 'ngCookies'])
             'Content-Type': 'application/json'
           }
         })
-          .success(function (data) {
-            deferred.resolve(data);
+          .success(function (data, status, headers, config) {
+            deferred.resolve(headers('location'));
           })
           .error(function (data) {
             // TODO: (JOSH - 2013-05-10) Handle create errors

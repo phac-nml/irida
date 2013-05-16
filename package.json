@@ -20,6 +20,7 @@
     "karma-script-launcher": "0.0.1",
     "karma-junit-reporter": "0.0.1",
     "karma-ng-scenario": "0.0.1",
-    "karma-coffee-preprocessor": "0.0.1"
+    "karma-coffee-preprocessor": "0.0.1",
+    "grunt-jasmine-runner": "~0.6.0"
   }
 }
