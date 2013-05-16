@@ -8,7 +8,7 @@
 angular.module('irida')
   .controller('MainCtrl', ['$scope', '$location', 'CookieService', function ($scope, $location, CookieService) {
     'use strict';
-    $scope.notifier = {link: "#"};
+    $scope.notifier = {};
     $scope.logout = function () {
       CookieService.destroyCookie();
       $location.path('/');
