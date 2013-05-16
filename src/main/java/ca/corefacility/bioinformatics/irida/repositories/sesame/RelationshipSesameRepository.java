@@ -160,10 +160,10 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             con.add(fac.createStatement(linkURI, linkSubject, subURI));
             con.add(fac.createStatement(linkURI, linkPredicate, pred));
             con.add(fac.createStatement(linkURI, linkObject, objURI));
-
-            auditRepo.audit(link.getAuditInformation(), linkURI.toString());
             
             con.commit();
+            
+            auditRepo.audit(link.getAuditInformation(), linkURI.toString());
             
         } catch (RepositoryException ex) {
             Logger.getLogger(RelationshipSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
