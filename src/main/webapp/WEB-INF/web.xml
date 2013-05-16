@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://java.sun.com/xml/ns/javaee"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-                             http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-         id="WebApp_ID" version="2.5">
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
 
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
@@ -18,7 +17,7 @@
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/api/*</url-pattern>
     </filter-mapping>
-    
+
     <!--
     - Location of the XML file that defines the root application context.
     - Applied by ContextLoaderServlet.
@@ -26,7 +25,7 @@
     <context-param>
         <param-name>spring.profiles.active</param-name>
         <param-value>dev</param-value>
-    </context-param>    
+    </context-param>
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
@@ -57,7 +56,7 @@
         <servlet-name>irida-rest</servlet-name>
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
-    
+
     <!--
     - Servlet that dispatches request to registered handlers (Controller implementations).
     -->
@@ -70,7 +69,7 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
-    
+
     <servlet-mapping>
         <servlet-name>irida-thymeleaf</servlet-name>
         <url-pattern>/</url-pattern>
