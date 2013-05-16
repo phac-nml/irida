@@ -56,7 +56,7 @@
 
     <servlet-mapping>
         <servlet-name>irida-rest</servlet-name>
-        <url-pattern>/rest/*</url-pattern>
+        <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
     
     <!--
