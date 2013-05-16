@@ -29,11 +29,18 @@
     </bean>
 
     <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+        <property name="contentNegotiationManager" ref="cnManager"/>
+        <property name="viewResolvers">
+            <list>
+                <bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+                    <property name="order" value="1"/>
+                </bean>
+            </list>
+        </property>
         <property name="defaultViews">
             <list>
                 <bean class="ca.corefacility.bioinformatics.irida.web.spring.MappingJackson2JsonViewResource">
                     <property name="prettyPrint" value="true"/>
-                    <property name="wrapRootValue" value="true"/>
                 </bean>
                 <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
                     <constructor-arg>
@@ -55,5 +62,20 @@
 
         <!-- one of the properties available; the maximum file size in bytes -->
         <property name="maxUploadSize" value="10737418240"/>
+    </bean>
+    <bean id="cnManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+        <!-- DO NOT ignore the 'Accept' header when determining which type of response to send -->
+        <property name="ignoreAcceptHeader" value="false"/>
+        <!-- If we can't figure out what the client is asking for, send them HTML -->
+        <property name="defaultContentType" value="text/html"/>
+        <!-- Allow the content negotiator to infer response types using path extension -->
+        <property name="favorPathExtension" value="true"/>
+        <!-- specify extension to media type mappings -->
+        <property name="mediaTypes">
+            <map>
+                <entry key="json" value="application/json"/>
+                <entry key="xml" value="application/xml"/>
+            </map>
+        </property>
     </bean>
 </beans>
