@@ -29,7 +29,9 @@ import ca.corefacility.bioinformatics.irida.web.controller.links.LabelledRelatio
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
 
@@ -82,6 +84,23 @@ public class ProjectsController extends GenericController<Identifier, Project, P
     }
 
     /**
+     * Get all users associated with a project.
+     *
+     * @param projectId the project id to get users for.
+     * @return a model with a collection of user resources.
+     */
+    @RequestMapping("/{projectId}/users")
+    public ModelAndView getUsersForProject(@PathVariable String projectId) {
+        Identifier id = new Identifier();
+        id.setIdentifier(projectId);
+        Collection<Relationship> relationships = userService.getUsersForProject(id);
+
+        
+
+        return new ModelAndView();
+    }
+
+    /**
      * Projects should be sorted in descending order by default.
      *
      * @return a descending sort order (<code>Order.DESCENDING</code>).
@@ -121,6 +140,14 @@ public class ProjectsController extends GenericController<Identifier, Project, P
         return resources;
     }
 
+    /**
+     * Get the related resources between a {@link Project} and another type of resource.
+     *
+     * @param project      the project to get the related resources for.
+     * @param relatedClass the type of relationships that you want to retrieve.
+     * @param controller   the type of controller used to get resources of that type.
+     * @return a collection of labelled resources.
+     */
     private Collection<LabelledRelationshipResource> getRelatedResourcesForProject(Project project, Class<?> relatedClass, Class<?> controller) {
         Collection<Relationship> relationships = relationshipService.getRelationshipsForEntity(project.getIdentifier(),
                 Project.class, relatedClass);
