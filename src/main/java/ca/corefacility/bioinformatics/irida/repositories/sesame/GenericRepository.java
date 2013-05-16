@@ -136,16 +136,16 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         Type ret = (Type) o.copy();
         
         String identifiedBy = getIdentifiedBy(con,u);
-        Identifier objid = buildIdentifier(ret,identifiedBy);
+        Identifier objid = buildIdentifier(ret,u,identifiedBy);
         ret.setIdentifier(objid);
         ret.setAuditInformation(auditRepo.getAudit(u));                
         
         return ret;
     }
     
-    public Identifier buildIdentifier(Type obj, String identifiedBy) {
+    public Identifier buildIdentifier(Type obj, URI uri, String identifiedBy) {
         Identifier objid = new Identifier();
-        objid.setUri(java.net.URI.create(obj.toString()));
+        objid.setUri(java.net.URI.create(uri.toString()));
         objid.setUUID(UUID.fromString(identifiedBy));
         objid.setLabel(obj.getLabel());
 

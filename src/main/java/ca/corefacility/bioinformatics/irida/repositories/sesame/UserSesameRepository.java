@@ -88,10 +88,10 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
      * @return An Identifier object built form the given binding set
      */
     @Override
-    public Identifier buildIdentifier(User obj, String identifiedBy) {
+    public Identifier buildIdentifier(User obj, URI uri,String identifiedBy) {
         UserIdentifier objid = new UserIdentifier();
         
-        objid.setUri(java.net.URI.create(obj.toString()));
+        objid.setUri(java.net.URI.create(uri.toString()));
         objid.setIdentifier(obj.getUsername());
         
         return objid;
