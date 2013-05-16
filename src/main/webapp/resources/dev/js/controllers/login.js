@@ -20,7 +20,9 @@ angular.module('irida')
   .controller('LoginCtrl', ['$scope', '$location', function ($scope, $location) {
     'use strict';
     $scope.login = function () {
+      if ($scope.loginForm.$valid) {
 //      $httpProvider.defaults.headers.common['Authorization'] = 'Basic ' + Base64.encode($scope.username + ':' + $scope.password);
-      $location.path('/');
+        $location.path('/');
+      }
     };
   }]);
