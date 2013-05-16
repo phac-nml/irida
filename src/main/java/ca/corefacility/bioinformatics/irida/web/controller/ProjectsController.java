@@ -143,8 +143,9 @@ public class ProjectsController extends GenericController<Identifier, Project, P
         Collection<Relationship> relationships = userService.getUsersForProject(project.getIdentifier());
         List<LabelledRelationshipResource> userResources = new ArrayList<>(relationships.size());
         for (Relationship r : relationships) {
-            LabelledRelationshipResource resource = new LabelledRelationshipResource("relationship", r);
-            resource.add(linkTo(UsersController.class).slash(r.getObject().getIdentifier()).withSelfRel());
+            Identifier userIdentifier = r.getSubject();
+            LabelledRelationshipResource resource = new LabelledRelationshipResource(userIdentifier.getLabel(), r);
+            resource.add(linkTo(UsersController.class).slash(userIdentifier.getIdentifier()).withSelfRel());
             userResources.add(resource);
         }
         return userResources;
