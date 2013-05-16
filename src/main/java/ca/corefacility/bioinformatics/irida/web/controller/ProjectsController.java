@@ -15,7 +15,10 @@
  */
 package ca.corefacility.bioinformatics.irida.web.controller;
 
-import ca.corefacility.bioinformatics.irida.model.*;
+import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.Relationship;
+import ca.corefacility.bioinformatics.irida.model.Sample;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -137,12 +140,11 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      * @return labels and identifiers for the users attached to the project.
      */
     private Collection<LabelledRelationshipResource> getUsersForProject(Project project) {
-        Collection<User> users = userService.getUsersForProject(project);
-        List<LabelledRelationshipResource> userResources = new ArrayList<>(users.size());
-        for (User u : users) {
-            Relationship r = new Relationship(project.getIdentifier(), u.getIdentifier());
-            LabelledRelationshipResource resource = new LabelledRelationshipResource(u.getLabel(), r);
-            resource.add(linkTo(UsersController.class).slash(u.getIdentifier().getIdentifier()).withSelfRel());
+        Collection<Relationship> relationships = userService.getUsersForProject(project.getIdentifier());
+        List<LabelledRelationshipResource> userResources = new ArrayList<>(relationships.size());
+        for (Relationship r : relationships) {
+            LabelledRelationshipResource resource = new LabelledRelationshipResource("relationship", r);
+            resource.add(linkTo(UsersController.class).slash(r.getObject().getIdentifier()).withSelfRel());
             userResources.add(resource);
         }
         return userResources;
