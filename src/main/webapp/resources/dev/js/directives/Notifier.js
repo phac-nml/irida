@@ -5,27 +5,42 @@
  */
 
 angular.module('irida')
-  .directive('notifier', function () {
+  .directive('ngsNotifier', function () {
     'use strict';
     return {
       restrict: 'E',
       scope: {
         message: '@attrMessage',
         icon: '@attrIcon',
-        link: '@attrLink'
+        selfLink: '@attrLink'
       },
       replace: true,
-      controller: function ($scope, $attrs, $element, $timeout) {
+      controller: function ($scope, $attrs, $element, $timeout, ajaxService) {
         var time, timer;
         var TIMEOUT = 10;
+        $scope.el = $element.find('div');
+        $scope.elLeft = $element.find('span.left');
+        $scope.elRightWidth = $element.find('a').width();
         $scope.hidden = true;
 
+        $scope.el.bind('blur', function () {
+          console.log('blurred');
+        });
+
         // TODO: add link delete stuff here.
+        $scope.undo = function (link) {
+          ajaxService.deleteItem(link);
+          $timeout.cancel(timer);
+          $scope.hidden = true;
+        };
 
         $scope.$on('notify', function () {
           if (time < TIMEOUT) {
             $timeout.cancel(timer);
           }
+          // Recreate the size of the notification box
+          var w = $scope.elLeft.width() + $scope.elRightWidth;
+          $scope.el.focus();// todo: not working :(
           time = TIMEOUT;
           $scope.hidden = false;
           countDown();
@@ -42,7 +57,7 @@ angular.module('irida')
           }
         }
       },
-      template: '<div style="display: none" class="ng-cloak notifier" data-ng-hide="hidden" data-ng-animate="\'notifier\'"><span class="left"><i class="icon-{{icon}}"></i> {{message}}</span><a class="right" ng-href="{{link}}">undo</a></div>',
+      templateUrl: './partials/notifier.html',
       link: function () {
       }
     };

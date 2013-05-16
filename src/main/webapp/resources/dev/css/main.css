@@ -324,20 +324,20 @@ h1, h2, h3, h4, h5, h6 {
   left: 50%;
   top: 20px;
   margin-left: -120px;
-  background-color: #f39c12;
+  background-color: #fff2a4;
   border-radius: 3px;
-  border: 1px solid #c87f0a; }
+  border: 1px solid #ffeb71; }
   .notifier span {
     padding: 0.6em;
     width: 180px;
     overflow: hidden; }
   .notifier a {
-    border-left: 1px solid #c87f0a;
+    border-left: 1px solid #ffeb71;
     padding: 0.6em;
     width: 60px;
     display: inline-block; }
     .notifier a:hover {
-      background-color: #e5910c; }
+      background-color: #ffef90; }
 
 /* Uploader
    ========================================================================== */
