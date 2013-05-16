@@ -9,8 +9,8 @@ angular.module('irida')
     'use strict';
     $routeProvider.when(
       '/', {
-        templateUrl: './partials/landing.html',
-        controller: 'LandingCtrl'
+        controller: 'LandingCtrl',
+        templateUrl: '/partials/landing.html'
       });
   }])
   .controller('LandingCtrl', [function () {

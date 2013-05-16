@@ -13,13 +13,6 @@ module.exports = function(grunt) {
   grunt.initConfig({
     irida: iridaConfig,
 
-    connect: {
-      test: {
-        options: {
-          port: 9000
-        }
-      }
-    },
     jshint: {
       options: {
         jshintrc: '.jshintrc'
@@ -27,7 +20,7 @@ module.exports = function(grunt) {
       all: [
         'Gruntfile.js',
         '<%= irida.dev %>/js/{,*/}*.js',
-        '!<%= irida.dev %>/js/vendor/{,*/}*.js',
+        '!<%= irida.dev %>/js/lib/{,*/}*.js',
       ]
     },
     karma: {
@@ -37,8 +30,6 @@ module.exports = function(grunt) {
       }
     }
   });
-
-  grunt.renameTask('regarde', 'watch');
 
   grunt.registerTask('test', ['karma:unit']);
 

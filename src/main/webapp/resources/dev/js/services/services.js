@@ -5,7 +5,7 @@
  * Time: 8:51 AM
  * To change this template use File | Settings | File Templates.
  */
-angular.module('irida.services', ['http-auth-interceptor-buffer', 'ngCookies'])
+angular.module('irida.Services', ['http-auth-interceptor-buffer', 'ngCookies'])
 /**
  * Redirect user to login page if already logged in.
  */
@@ -13,9 +13,10 @@ angular.module('irida.services', ['http-auth-interceptor-buffer', 'ngCookies'])
     'use strict';
     var hasCookie = CookieService.checkLoginCookie();
     if (!hasCookie && $location.path() !== '/login') {
+      alert('login required');
       $rootScope.$broadcast('event:auth-loginRequired');
     }
-    if (hasCookie && $location.path() === '/login') {
+    else if (hasCookie && $location.path() === '/login') {
       $location.path('/');
     }
   }])
@@ -27,50 +28,13 @@ angular.module('irida.services', ['http-auth-interceptor-buffer', 'ngCookies'])
     return {
       checkLoginCookie: function () {
         return typeof $cookies.JSESSIONID === 'string';
+      },
+      destroyCookie: function () {
+        delete $cookies.JSESSIONID;
       }
     };
   }])
-  .factory('authService', ['$rootScope', 'httpBuffer', function ($rootScope, httpBuffer) {
-    return {
-      loginConfirmed: function () {
-        $rootScope.$broadcast('event:auth-loginConfirmed');
-        httpBuffer.retryAll();
-      }
-    };
-  }])
-
-/**
- * $http interceptor.
- * On 401 response (without 'ignoreAuthModule' option) stores the request
- * and broadcasts 'event:angular-auth-loginRequired'.
- */
-  .config(['$httpProvider', function ($httpProvider) {
-
-    var interceptor = ['$rootScope', '$q', 'httpBuffer', function ($rootScope, $q, httpBuffer) {
-      function success(response) {
-        return response;
-      }
-
-      function error(response) {
-        if ((response.status === 401 || response.status === 302) && !response.config.ignoreAuthModule) {
-          var deferred = $q.defer();
-          httpBuffer.append(response.config, deferred);
-          $rootScope.$broadcast('event:auth-loginRequired');
-          return deferred.promise;
-        }
-        // otherwise, default behaviour
-        return $q.reject(response);
-      }
-
-      return function (promise) {
-        return promise.then(success, error);
-      };
-
-    }];
-    $httpProvider.responseInterceptors.push(interceptor);
-  }])
-
-  .factory('ajaxService', function ($http, $q) {
+  .factory('ajaxService', ['$http', '$q', function ($http, $q) {
     'use strict';
 
     function formatLinks(data) {
@@ -99,8 +63,8 @@ angular.module('irida.services', ['http-auth-interceptor-buffer', 'ngCookies'])
             'Content-Type': 'application/json'
           }
         })
-          .success(function (data) {
-            deferred.resolve(data);
+          .success(function (data, status, headers, config) {
+            deferred.resolve(headers('location'));
           })
           .error(function (data) {
             // TODO: (JOSH - 2013-05-10) Handle create errors
@@ -121,7 +85,11 @@ angular.module('irida.services', ['http-auth-interceptor-buffer', 'ngCookies'])
             method: 'GET'
           })
             .success(function (data) {
-              deferred.resolve(formatLinks(data));
+              var d = data;
+              if(data.resource.links){
+                d = formatLinks(data);
+              }
+              deferred.resolve(d);
             })
             .error(function () {
               // TODO: (JOSH - 2013-05-10) Handle get errors properly
@@ -217,8 +185,49 @@ angular.module('irida.services', ['http-auth-interceptor-buffer', 'ngCookies'])
         return false;
       }
     };
-  });
+  }])
+  .factory('authService', ['$rootScope', 'httpBuffer', function ($rootScope, httpBuffer) {
+    'use strict';
+    return {
+      loginConfirmed: function () {
+        $rootScope.$broadcast('event:auth-loginConfirmed');
+        httpBuffer.retryAll();
+      }
+    };
+  }])
+/**
+ * $http interceptor.
+ * On 401 response (without 'ignoreAuthModule' option) stores the request
+ * and broadcasts 'event:angular-auth-loginRequired'.
+ */
+  .config(['$httpProvider', function ($httpProvider) {
+    'use strict';
+    var interceptor = ['$rootScope', '$q', 'httpBuffer', function ($rootScope, $q, httpBuffer) {
+
+      function success(response) {
+        return response;
+      }
+
+      function error(response) {
+        if ((response.status === 401 && !response.config.ignoreAuthModule ) || response.status === 302) {
+          var deferred = $q.defer();
+          httpBuffer.append(response.config, deferred);
+          $rootScope.$broadcast('event:auth-loginRequired');
+          return deferred.promise;
+        }
+        // otherwise, default behaviour
+        return $q.reject(response);
+      }
+
+      return function (promise) {
+        return promise.then(success, error);
+      };
+
+    }];
+    $httpProvider.responseInterceptors.push(interceptor);
+  }])
 ;
+
 
 /**
  * Private module, an utility, required internally by 'http-auth-interceptor'.
@@ -226,6 +235,7 @@ angular.module('irida.services', ['http-auth-interceptor-buffer', 'ngCookies'])
 angular.module('http-auth-interceptor-buffer', [])
 
   .factory('httpBuffer', ['$injector', function ($injector) {
+    'use strict';
     /** Holds all the requests, so they can be re-requested in future. */
     var buffer = [];
 

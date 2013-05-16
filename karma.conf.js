@@ -10,11 +10,11 @@ frameworks = ['jasmine'];
 
 // list of files / patterns to load in the browser
 files = [
-  'src/main/webapp/resources/dev/js/vendor/jquery.js',
-  'src/main/webapp/resources/dev/js/vendor/foundation/foundation.js',
-  'src/main/webapp/resources/dev/js/vendor/foundation/foundation.reveal.js',
-  'src/main/webapp/resources/dev/js/vendor/angular/angular.min.js',
-  'src/main/webapp/resources/dev/js/vendor/angular/angular-resource.min.js',
+  'src/main/webapp/resources/dev/js/lib/jquery.js',
+  'src/main/webapp/resources/dev/js/lib/foundation/foundation.js',
+  'src/main/webapp/resources/dev/js/lib/foundation/foundation.reveal.js',
+  'src/main/webapp/resources/dev/js/lib/angular/angular.min.js',
+  'src/main/webapp/resources/dev/js/lib/angular/angular-resource.min.js',
   'src/test/js/lib/angular/angular-mocks.js',
   'src/main/webapp/resources/dev/js/**/*.js',
   'src/test/js/unit/*.spec.js'
@@ -23,7 +23,7 @@ files = [
 
 // list of files to exclude
 exclude = [
-  
+
 ];
 
 

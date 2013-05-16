@@ -16,7 +16,7 @@ proxies = {
 // list of files to exclude
 exclude = [];
 
-browsers = ['Chrome', 'Firefox', 'PhantomJS'];
+browsers = ['PhantomJS'];
 
 // test results reporter to use
 // possible values: dots || progress || growl

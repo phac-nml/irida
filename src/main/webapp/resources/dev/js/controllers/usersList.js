@@ -1,4 +1,4 @@
-/* global angular */
+/* global angular, console */
 angular.module('irida')
 
 /**
@@ -8,16 +8,16 @@ angular.module('irida')
   .config(['$routeProvider', function ($routeProvider) {
     'use strict';
     $routeProvider.when(
-      '/projects', {
-        templateUrl: './partials/projects.html',
+      '/users', {
+        templateUrl: './partials/users.html',
         controller: function ($scope, initData) {
-          $scope.projects = initData.resource.resources;
+          $scope.users = initData.resource.resources;
           $scope.links = initData.resource.links;
         },
         resolve: {
           initData: function ($q, ajaxService) {
             var defer = $q.defer();
-            ajaxService.get('/projects?size=21&sortOrder=ASCENDING').then(function (data) {
+            ajaxService.get('/users').then(function (data) {
               defer.resolve(data);
             });
             return defer.promise;
@@ -25,10 +25,10 @@ angular.module('irida')
         }
       });
   }])
-  .controller('ProjectsListCtrl', ['$rootScope', '$scope', '$location', 'ajaxService', function ($rootScope, $scope, $location, ajaxService) {
+  .controller('UsersListCtrl', ['$rootScope', '$scope', '$location', 'ajaxService', function ($rootScope, $scope, $location, ajaxService) {
     'use strict';
-
-    $scope.loadProjects = function (url) {
+    $scope.userView = 'table';
+    $scope.loadUsers = function (url) {
       if (url) {
         ajaxService.get(url).then(
 
@@ -43,13 +43,17 @@ angular.module('irida')
       }
     };
 
+    $scope.gotoUser = function (url) {
+      $location.path(url.match('/users/.*')[0]);
+    };
+
     $scope.clearForm = function () {
-      $scope.newProject = {};
+      $scope.newUser = {};
       $scope.errors = {};
 
       // Need to reset all the fields in the form.
-      $('form[name=newProjectForm] .ng-dirty').removeClass('ng-dirty').addClass('ng-pristine');
-      var form = $scope.newProjectForm;
+      $('form[name=newUserForm] .ng-dirty').removeClass('ng-dirty').addClass('ng-pristine');
+      var form = $scope.newUserForm;
       for (var field in form) {
         if (form[field].$pristine === false) {
           form[field].$pristine = true;
@@ -57,25 +61,27 @@ angular.module('irida')
         if (form[field].$dirty === true) {
           form[field].$dirty = false;
         }
+        if (form[field].$invalid) {
+          form[field].$invalid = false;
+        }
       }
-      $scope.newProjectForm.$pristine = true;
+      $scope.newUserForm.$pristine = true;
     };
 
-    $scope.gotoProject = function (url) {
-      $location.path(url.match(/\/projects\/.*$/)[0]);
-    };
-
-    $scope.submitNewProject = function () {
-      if ($scope.newProjectForm.$valid) {
-        ajaxService.create('/projects', $scope.newProject).then(
+    $scope.submitNewUser = function () {
+      if ($scope.newUserForm.$valid) {
+        ajaxService.create('/users', $scope.newUser).then(
 
           function () {
-            $scope.notifier.message = 'Created a new some really crazy shit!';
+            var u = $scope.newUser.username;
+            $scope.loadUsers('/users');
+            $scope.clearForm();
+            $('#newUserModal').foundation('reveal', 'close');
+
+            // Notify user of update
+            $scope.notifier.message = 'Add ' + u;
             $scope.notifier.icon = 'check';
             $rootScope.$broadcast('notify');
-            $scope.loadProjects($scope.projectsUrl);
-            $scope.clearForm();
-            $('#newProjectModal').foundation('reveal', 'close');
           },
 
           function (data) {
@@ -84,12 +90,19 @@ angular.module('irida')
               $scope.errors[key] = data[key].join('</br>');
             });
           });
+      } else {
+        console.log('NOT VALID');
+      }
+    };
+
+    $scope.sortBy = function (sortProperty) {
+      if(sortProperty) {
+        ajaxService.get('/users', {});
       }
     };
 
     function ajaxSuccessCallback(data) {
       $scope.links = data.resource.links;
-      $scope.projects = data.resource.resources;
+      $scope.users = data.resource.resources;
     }
-
   }]);

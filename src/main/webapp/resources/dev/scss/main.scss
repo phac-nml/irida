@@ -28,6 +28,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Notifier
    ========================================================================== */
+$notifier-color : rgba(255, 242, 164, 1.0);
 
 .notifier-hide-setup, .notifier-show-setup {
   @include transition(all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s);
@@ -50,27 +51,50 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .notifier {
-  width: 150px;
-  padding: 1em;
+  width: 250px;
   position: absolute;
   left: 50%;
-  top: 0;
-  margin-left: -75px;
-  background-color: rgba(0, 0, 0, 0.8);
-  border-bottom: 2px solid #dddddd;
-  border-radius: 0 0 10px 10px;
-  color: #dddddd;
-  text-align: center;
-  z-index: 1000;
-  i {
-    display: block;
-    font-size: 5em;
-    margin-bottom: 10px;
-  }
-  span {
-    display: block;
+  top: 20px;
+  margin-left: -120px;
 
+  background-color: $notifier-color;
+  border-radius: 3px;
+  border: 1px solid darken($notifier-color, 10);
+  span {
+    padding: 0.6em;
+    width: 180px;
+    overflow: hidden;
   }
+  a{
+    border-left: 1px solid darken($notifier-color, 10);
+    padding: 0.6em;
+    width: 60px;
+    display: inline-block;
+    &:hover {
+      background-color: darken($notifier-color, 4);
+    }
+  }
+  //width: 150px;
+  //padding: 1em;
+  //position: absolute;
+  //left: 50%;
+  //top: 0;
+  //margin-left: -75px;
+  //background-color: rgba(0, 0, 0, 0.8);
+  //border-bottom: 2px solid #dddddd;
+  //border-radius: 0 0 10px 10px;
+  //color: #dddddd;
+  //text-align: center;
+  //z-index: 1000;
+  //i {
+  //  display: block;
+  //  font-size: 5em;
+  //  margin-bottom: 10px;
+  //}
+  //span {
+  //  display: block;
+  //
+  //}
 }
 
 /* Uploader

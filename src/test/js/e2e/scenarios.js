@@ -42,7 +42,7 @@ describe('IRIDA e2e tests', function () {
       input('username').enter('josh');
       input('password').enter('password1');
       element('.button').click();
-      expect(browser().window().href()).toBe('http://localhost:9000/  ');
+      expect(browser().location().path()).toBe("");
     });
 
 

@@ -13,7 +13,6 @@ angular.module('irida')
         files: '='
       },
       link: function (scope, el) {
-        console.log('Looking to see what is happening');
         el.bind('change', function (event) {
           var files = event.target.files;
 
