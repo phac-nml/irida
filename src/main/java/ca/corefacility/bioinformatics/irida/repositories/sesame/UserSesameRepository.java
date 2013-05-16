@@ -208,6 +208,9 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
         return users;
     }
     
+    /**
+     * {@inheritDoc}
+     */    
     @Override
     public Collection<Relationship> getUsersForProject(Identifier project){
         return linksRepo.getLinks(null,hasProject, project);

@@ -22,7 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 
 /**
- * Modelling a relationship between two different entities in the database.
+ * Modeling a relationship between two different entities in the database.
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>

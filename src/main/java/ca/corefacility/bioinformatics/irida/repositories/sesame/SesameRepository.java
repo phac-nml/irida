@@ -54,6 +54,14 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AuditRepo
         this.URI = store.getURI() + uriType + "/";
     }
 
+    /**
+     * Get the identifier for a given identifier.  If the URI property is populated
+     * it will return that URI.  If not it will query for the URI based on the 
+     * identifiedBy property.
+     * 
+     * @param identifier The identifier to get a URI for
+     * @return the URI for this identifier
+     */
     public java.net.URI getUriFromIdentifier(Identifier identifier){
         
         java.net.URI uri = null;
@@ -72,6 +80,14 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AuditRepo
         return uri;
     }
     
+    /**
+     * Query for the URI for the given identifier string
+     * @param id The identifier to find
+     * @return A String URI for this identifier
+     * @throws RepositoryException
+     * @throws QueryEvaluationException
+     * @throws MalformedQueryException
+     */
     public String getUriFromIdentifiedBy(String id) throws RepositoryException, QueryEvaluationException, MalformedQueryException{
         String uri;
         
@@ -99,6 +115,11 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AuditRepo
         return uri;
     }
     
+    /**
+     * Check if a string identifier exists in the repo
+     * @param id The identifier to test for
+     * @return Boolean whether that identifier exists
+     */
     public Boolean identifierExists(String id) {
         
         boolean exists = false;
@@ -158,6 +179,15 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AuditRepo
         return id;
     }
     
+    /**
+     * Get the label for a given URI
+     * @param con Object connection to retrieve with
+     * @param uri URI to retrieve a label for
+     * @return The string label for this object
+     * @throws RepositoryException
+     * @throws MalformedQueryException
+     * @throws QueryEvaluationException
+     */
     public String getLabel(ObjectConnection con, URI uri) throws RepositoryException, MalformedQueryException, QueryEvaluationException{
         String label;
         
@@ -216,6 +246,11 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AuditRepo
         return uri;
     }
     
+    /**
+     * Build a java.net.URI object for the given identifier
+     * @param identifier The identifier to build the URI for
+     * @return The constructed URI for this identifier
+     */
     public java.net.URI buildURIFromIdentifier(Identifier identifier){
         java.net.URI uri;
         if(identifier.getUri() != null){

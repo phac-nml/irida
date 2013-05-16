@@ -59,6 +59,9 @@ public class ProjectSesameRepository extends GenericRepository<Identifier, Proje
         return projIds;
     }
     
+    /**
+     * {@inheritDoc}
+     */     
     @Override
     public Relationship addUserToProject(Project p, User user){
         Relationship l = new Relationship();

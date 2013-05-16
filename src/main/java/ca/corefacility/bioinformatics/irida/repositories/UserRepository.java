@@ -41,9 +41,12 @@ public interface UserRepository extends CRUDRepository<UserIdentifier, User> {
 
     /**
      * Get all users associated with a project.
+     * NOTE: In the returned Relationship object, the User identifiers will be 
+     * the subject of the relationship as the user/project relationship is
+     * User :hasProject Project
      *
      * @param project the project to get the users for.
-     * @return the set of users belonging to a project.
+     * @return the collection of relationships describing users for this project
      */
     public Collection<Relationship> getUsersForProject(Identifier project);
 }
