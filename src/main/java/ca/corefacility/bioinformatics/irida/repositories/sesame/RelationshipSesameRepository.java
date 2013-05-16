@@ -349,6 +349,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
         return links;
     }
     
+    @Override
     public List<Relationship> getLinks(Identifier subjectId, RdfPredicate predicate, Identifier objectId){
         if(subjectId==null && predicate==null && objectId==null){
             throw new IllegalArgumentException("subjectId, predicate, and objectId cannot all be null");
