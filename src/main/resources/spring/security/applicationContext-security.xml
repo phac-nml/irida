@@ -11,6 +11,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
         <sec:http-basic entry-point-ref="authenticationEntryPoint"/>
     </sec:http>
 
+
     <sec:authentication-manager alias="authenticationManager">
         <sec:authentication-provider user-service-ref="userService">
             <sec:password-encoder ref="passwordEncoder"/>
@@ -18,7 +19,6 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
     </sec:authentication-manager>
 
     <bean id="authenticationEntryPoint"
-          class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
-        <property name="realmName" value="IRIDA API"/>
-    </bean>
+          class="ca.corefacility.bioinformatics.irida.web.spring.authentication.BasicAuthenticationEntryPoint"/>
+
 </beans>
