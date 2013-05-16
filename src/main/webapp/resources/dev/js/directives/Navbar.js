@@ -11,13 +11,11 @@ angular.module('irida')
     restrict: 'E',
     replace: true,
     controller: function($scope, $attrs, $element, $location, $http) {
-      $element.foundation();
       $scope.logout = function () {
         $http.defaults.headers.common['Authorization'] = '';
         $location.path('/login');
       };
     },
-    templateUrl: './partials/navbar.html',
-    link: function() {}
+    templateUrl: './partials/navbar.html'
   };
 });
