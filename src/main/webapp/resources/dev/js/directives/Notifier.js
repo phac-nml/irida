@@ -12,7 +12,7 @@ angular.module('irida')
       scope: {
         message: '@attrMessage',
         icon: '@attrIcon',
-        selfLink: '@attr`Link'
+        selfLink: '@attrLink'
       },
       replace: true,
       controller: function ($scope, $attrs, $element, $timeout, ajaxService) {
