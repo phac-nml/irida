@@ -10,14 +10,16 @@ angular.module('irida')
     return {
       restrict: 'E',
       replace: true,
-      controller: function ($scope, $attrs, $element, $location, loginService) {
+      controller: function ($scope, $attrs, $element, $route, $location, loginService) {
+        var re = /^\/([^\/]+)/;
         $scope.nav = {
-          hide: $location.path() === '/login'
+          hide: $location.path() === '/login',
+          loc: $location.path().match(re)[1]
         };
         // Hide navigation if originally on login page
         $scope.$on('$routeChangeStart', function() {
-//          var path = $location.path().match();
           $scope.nav.hide = $location.path() === '/login';
+          $scope.nav.loc = $location.path().match(re)[1];
         });
 
         $scope.logout = function () {
