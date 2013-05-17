@@ -39,10 +39,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -69,6 +69,10 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * name of objects sent back to the client for all generic resources.
      */
     public static final String RESOURCE_NAME = "resource";
+    /**
+     * name of related resources sent back to the client.
+     */
+    public static final String RELATED_RESOURCES_NAME = "relatedResources";
     /**
      * logger.
      */
@@ -109,8 +113,21 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @param resource the resource to generate the links for.
      * @return a collection of links.
      */
-    public Collection<Link> constructCustomResourceLinks(Type resource) {
+    protected Collection<Link> constructCustomResourceLinks(Type resource) {
         return Collections.emptySet();
+    }
+
+    /**
+     * Construct a collection of {@link Resource}s that relate to the specified resource. Use this method to inject
+     * composite resources into the response *instead* of calling <code>constructCustomResourceLinks</code>. This method
+     * is required to generate a collection of collections because the implementing type may have more than one related
+     * type. This method is called by <code>getResource</code>.
+     *
+     * @param resource the resource to generate related collections for.
+     * @return a collection of collections of related resources.
+     */
+    protected <T extends Resource> Map<String, Collection<T>> constructRelatedResourceCollections(Type resource) {
+        return Collections.emptyMap();
     }
 
     /**
@@ -120,7 +137,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @param resourceType the representation to map.
      * @return the concrete version of the representation.
      */
-    public abstract Type mapResourceToType(ResourceType resourceType);
+    protected abstract Type mapResourceToType(ResourceType resourceType);
 
     /**
      * Get the default sort property, <code>SortProperty.DEFAULT</code> by default.
@@ -150,14 +167,14 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @return a model and view containing the collection of resources.
      */
     @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView listResources(
+    public ModelMap listResources(
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_PAGE, defaultValue = "1") int page,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SIZE, defaultValue = "20") int size,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_PROPERTY,
                     required = false) String sortProperty,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER,
                     required = false) Order sortOrder) throws InstantiationException, IllegalAccessException {
-        ModelAndView mav = new ModelAndView();
+        ModelMap model = new ModelMap();
         List<Type> entities;
         ControllerLinkBuilder linkBuilder = linkTo(getClass());
         int totalEntities = crudService.count();
@@ -199,10 +216,11 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         // we should also tell the client how many resources of this type there are in total
         resources.setTotalResources(totalEntities);
 
-        mav.addObject(RESOURCE_NAME, resources);
+        // finally, add the resource collection to the response
+        model.addAttribute(RESOURCE_NAME, resources);
 
         // send the response back to the client.
-        return mav;
+        return model;
     }
 
     /**
@@ -216,9 +234,9 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      *                                <code>ResourceType</code> is marked <code>private</code>.
      */
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
-    public ModelAndView getResource(@PathVariable String resourceId)
+    public ModelMap getResource(@PathVariable String resourceId)
             throws InstantiationException, IllegalAccessException {
-        ModelAndView mav = new ModelAndView();
+        ModelMap model = new ModelMap();
 
         logger.debug("Getting resource with id [" + resourceId + "]");
 
@@ -240,10 +258,12 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         resource.add(linkTo(getClass()).slash(resourceId).withSelfRel());
 
         // add the resource to the model
-        mav.addObject(RESOURCE_NAME, resource);
+        model.addAttribute(RESOURCE_NAME, resource);
+        // add any related resources to the model
+        model.addAttribute(RELATED_RESOURCES_NAME, constructRelatedResourceCollections(t));
 
         // send the response back to the client.
-        return mav;
+        return model;
     }
 
     /**

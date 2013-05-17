@@ -33,10 +33,10 @@ import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.*;
 import java.util.*;
@@ -134,15 +134,14 @@ public class GenericControllerTest {
     @Test
     public void testGetResource() {
         when(crudService.read(id)).thenReturn(entity);
-        ModelAndView mav = null;
+        ModelMap model = null;
 
         try {
-            mav = controller.getResource(id.getIdentifier());
+            model = controller.getResource(id.getIdentifier());
         } catch (InstantiationException | IllegalAccessException e) {
             fail();
         }
 
-        Map<String, Object> model = mav.getModel();
         assertTrue(model.containsKey("resource"));
         IdentifiableTestResource resource = (IdentifiableTestResource) model.get("resource");
         assertTrue(resource.getLink(PageLink.REL_SELF).getHref().endsWith(id.getIdentifier()));
@@ -198,11 +197,9 @@ public class GenericControllerTest {
         entities.add(entity);
         when(crudService.list(2, 20, "nonNull", Order.DESCENDING)).thenReturn(entities);
         when(crudService.count()).thenReturn(totalResources);
-        ModelAndView mav = controller.listResources(2, 20, "nonNull",
-                Order.DESCENDING);
-        Map<String, Object> model = mav.getModel();
-        assertNotNull(model.get(GenericController.RESOURCE_NAME));
-        Object o = model.get(GenericController.RESOURCE_NAME);
+        ModelMap mav = controller.listResources(2, 20, "nonNull", Order.DESCENDING);
+        assertNotNull(mav.get(GenericController.RESOURCE_NAME));
+        Object o = mav.get(GenericController.RESOURCE_NAME);
         assertTrue(o instanceof ResourceCollection);
         ResourceCollection<IdentifiableTestResource> collection = (ResourceCollection<IdentifiableTestResource>) o;
         assertEquals(5, collection.getLinks().size());
@@ -213,6 +210,31 @@ public class GenericControllerTest {
             Link link = r.getLink(PageLink.REL_SELF);
             assertTrue(link.getHref().endsWith(entity.getIdentifier().getIdentifier()));
         }
+    }
+
+    @Test
+    public void testListResourcesNoSortProperty() throws InstantiationException, IllegalAccessException {
+        int totalResources = 400;
+        List<IdentifiableTestEntity> entities = new ArrayList<>();
+        entities.add(entity);
+        when(crudService.list(2, 20, Order.DESCENDING)).thenReturn(entities);
+        when(crudService.count()).thenReturn(totalResources);
+        ModelMap mav = controller.listResources(2, 20, null, Order.DESCENDING);
+        assertNotNull(mav.get(GenericController.RESOURCE_NAME));
+        Object o = mav.get(GenericController.RESOURCE_NAME);
+        assertTrue(o instanceof ResourceCollection);
+        ResourceCollection<IdentifiableTestResource> collection = (ResourceCollection<IdentifiableTestResource>) o;
+        assertEquals(5, collection.getLinks().size());
+        assertEquals(totalResources, collection.getTotalResources());
+
+        for (IdentifiableTestResource r : collection) {
+            assertEquals(1, r.getLinks().size());
+            Link link = r.getLink(PageLink.REL_SELF);
+            assertTrue(link.getHref().endsWith(entity.getIdentifier().getIdentifier()));
+        }
+
+        verify(crudService).list(2, 20, Order.DESCENDING);
+        verify(crudService, times(0)).list(2, 20, null, Order.DESCENDING);
     }
 
     @Test
@@ -247,5 +269,11 @@ public class GenericControllerTest {
         ResponseEntity<String> response = controller.handleInvalidPropertyException(
                 new InvalidPropertyException("invalid property"));
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    public void testHandleOtherExceptions() {
+        ResponseEntity<String> response = controller.handleAllOtherExceptions(new Exception("exception"));
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 }
