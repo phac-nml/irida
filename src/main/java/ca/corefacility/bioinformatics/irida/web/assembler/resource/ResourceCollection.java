@@ -91,4 +91,13 @@ public class ResourceCollection<Type extends ResourceSupport> extends ResourceSu
     public Iterator<Type> iterator() {
         return resources.iterator();
     }
+
+    /**
+     * Get the number of elements in the collection.
+     *
+     * @return the number of elements in the collection.
+     */
+    public int size() {
+        return resources.size();
+    }
 }
