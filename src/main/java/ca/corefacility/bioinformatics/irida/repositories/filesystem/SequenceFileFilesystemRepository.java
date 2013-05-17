@@ -29,6 +29,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -176,5 +177,10 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<File, Se
     @Override
     public Integer count() {
         throw new UnsupportedOperationException("Files cannot be counted");
+    }
+
+    @Override
+    public SequenceFile update(File id, Map<String, Object> updatedFields) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

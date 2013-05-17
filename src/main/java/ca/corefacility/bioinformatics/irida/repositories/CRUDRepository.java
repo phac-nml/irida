@@ -1,8 +1,10 @@
 package ca.corefacility.bioinformatics.irida.repositories;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import java.util.List;
+import java.util.Map;
 
 /**
  * All Service interfaces should extend this interface to inherit common methods
@@ -46,6 +48,8 @@ public interface CRUDRepository<IdentifierType, Type> {
      * exception will be thrown with a reason for failure.
      */
     public Type update(Type object) throws IllegalArgumentException;
+    
+    public Type update(IdentifierType id, Map<String, Object> updatedFields) throws InvalidPropertyException,SecurityException ;
 
     /**
      * Delete the object with the specified identifier from the database.

@@ -138,14 +138,17 @@ public class CRUDServiceImpl<KeyType extends Identifier, ValueType extends Compa
                 throw new InvalidPropertyException("Cannot set property [" + field.getKey() + "].");
             }
         }
-
+                
         // check if the entity exists in the database
         if (!exists(id)) {
             throw new EntityNotFoundException("Entity not found.");
         }
+        else{
+            return repository.update(id, updatedFields);
+        }
 
         // load the entity from the database
-        ValueType entity = repository.read(id);
+        /*ValueType entity = repository.read(id);
 
         // update the appropriate fields
         for (Entry<String, Object> field : updatedFields.entrySet()) {
@@ -158,10 +161,12 @@ public class CRUDServiceImpl<KeyType extends Identifier, ValueType extends Compa
         // check that it doesn't violate any constraints
         Set<ConstraintViolation<ValueType>> constraintViolations = validator.validate(entity);
         if (constraintViolations.isEmpty()) {
-            return repository.update(entity);
+            //return repository.update(entity);
+            return repository.update(id, updatedFields);
+            //return entity;
         }
 
-        throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(constraintViolations));
+        throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(constraintViolations));*/
     }
 
     /**

@@ -17,6 +17,7 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
@@ -25,14 +26,23 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SparqlQuery;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.validation.ConstraintViolationException;
+import org.openrdf.annotations.Iri;
+import org.openrdf.model.Literal;
+import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
@@ -44,6 +54,7 @@ import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryException;
+import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.object.ObjectConnection;
 import org.openrdf.repository.object.ObjectQuery;
 import org.openrdf.result.Result;
@@ -308,6 +319,62 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         object = storeObject(object);
 
         return object;
+    }
+    
+    @Override
+    public Type update(IDType id, Map<String, Object> updatedFields) throws InvalidPropertyException,SecurityException {        
+        for (Entry<String, Object> field : updatedFields.entrySet()) {
+            try{
+            Field declaredField = objectType.getDeclaredField(field.getKey());
+
+            Iri annotation = declaredField.getAnnotation(Iri.class);
+
+            logger.debug("Updating " + field.getKey() + " -- " + annotation.value());
+            
+            updateField(id, annotation.value(), field.getValue());
+            }
+            catch(NoSuchFieldException ex){
+                logger.error("No field " + field.getKey() + " exists.  Cannot update object.");
+            }
+        }
+        
+        return read(id);
+    }
+    
+    private void updateField(IDType id, String predicate, Object value){
+        ObjectConnection con = store.getRepoConnection();
+        java.net.URI netURI = buildURIFromIdentifier(id);
+        String uri = netURI.toString();
+        
+        try {
+            con.begin();
+            
+            ValueFactory fac = con.getValueFactory();
+            URI subURI = fac.createURI(uri);
+            URI predURI = fac.createURI(predicate);
+            Literal objValue = fac.createLiteral(value);
+        
+            RepositoryResult<Statement> curvalues = con.getStatements(subURI, predURI, null);
+            while(curvalues.hasNext()){
+                Statement next = curvalues.next();
+                logger.debug("current value: " + next.getObject().stringValue());
+            }
+            
+            Statement removed = fac.createStatement(subURI, predURI, null);
+            con.remove(removed);
+            
+            Statement added = fac.createStatement(subURI, predURI, objValue);
+            con.add(added);
+            
+            con.commit();
+        } catch (RepositoryException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Failed to update field");
+        } 
+        finally {
+            store.closeRepoConnection(con);
+        }            
+       
     }
 
     @Override

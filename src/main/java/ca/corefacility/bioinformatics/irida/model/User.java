@@ -56,6 +56,19 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
     private String phoneNumber;
     @NotNull
     private Audit audit;
+    
+    @Iri("http://irida/intval")
+    private Integer intVal;
+
+    public Integer getIntVal() {
+        return intVal;
+    }
+
+    public void setIntVal(Integer intVal) {
+        this.intVal = intVal;
+    }
+    
+    
 
     /**
      * Construct an instance of {@link User} with no properties set.
@@ -83,6 +96,17 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
     }
+    
+    public User(String username, String email, String password, String firstName, String lastName, String phoneNumber,int intVal) {
+        this();
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.intVal = intVal;
+    }    
 
     /**
      * Construct an instance of {@link User} with all properties set.
