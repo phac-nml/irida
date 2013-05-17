@@ -5,22 +5,28 @@
  */
 
 angular.module('irida')
-  .directive('ngsNavbar', function() {
-  'use strict';
-  return {
-    restrict: 'E',
-    replace: true,
-    controller: function($scope, $attrs, $element, $location, loginService) {
-      $scope.logout = function () {
-//        delete $httpProvider.defaults.headers.common['Authorization'];
-//        console.log($http.defaults.headers);
-        loginService.deleteHeader();
-        $location.path('/login');
-      };
-    },
-    link: function (scope, el) {
-      el.foundation('topbar');
-    },
-    templateUrl: './partials/navbar.html'
-  };
-});
+  .directive('ngsNavbar', function () {
+    'use strict';
+    return {
+      restrict: 'E',
+      replace: true,
+      controller: function ($scope, $attrs, $element, $location, loginService) {
+        $scope.nav = {
+          hide: $location.path() === '/login'
+        };
+        // Hide navigation if originally on login page
+        $scope.$on('$routeChangeStart', function(next, current) {
+          $scope.nav.hide = $location.path() === '/login';
+        });
+
+        $scope.logout = function () {
+          loginService.deleteHeader();
+          $location.path('/login');
+        };
+      },
+      link: function (scope, el) {
+        el.foundation('topbar');
+      },
+      templateUrl: './partials/navbar.html'
+    };
+  });

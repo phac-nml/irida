@@ -1,5 +1,6 @@
 <ul class="card-holder small-block-grid-2 large-block-grid-3">
     <li data-ng-repeat="project in projects">
+        <!-- todo: do not use links[0] -->
         <div class="card" data-ng-click="gotoProject(project.links[0].href)">
             <h2>{{project.name}}</h2>
             <span ng-bind="project.dateCreated | date: 'd MMM yyyy'"></span>
