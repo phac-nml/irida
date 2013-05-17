@@ -1,4 +1,4 @@
-<div ng-controller="LoginCtrl"><h2>Login</h2>
+<div class="large-4 large-offset-8" ng-controller="LoginCtrl"><h2>Login</h2>
 <form name="loginForm" novalidated="true">
     <p>
         <label for="username" class="uname" data-icon="u"> Your email or username </label>
@@ -12,5 +12,5 @@
                placeholder="eg. X8df!90EO"/>
     </p>
     <div ng-show="showError" class="error">Invalid login credentials.</div>
-    <button data-ng-class="{disabled: !loginForm.$valid}" ng-click="login()">Login</button>
+    <button class="radius" data-ng-class="{disabled: !loginForm.$valid}" ng-click="login()">Login</button>
 </form></div>

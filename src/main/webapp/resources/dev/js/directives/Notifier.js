@@ -58,7 +58,7 @@ angular.module('irida')
         }
       },
       templateUrl: './partials/notifier.html',
-      link: function () {
+      link: function (scope, el) {
       }
     };
   });

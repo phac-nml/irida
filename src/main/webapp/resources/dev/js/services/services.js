@@ -5,6 +5,7 @@
  * Time: 8:51 AM
  * To change this template use File | Settings | File Templates.
  */
+
 angular.module('irida.Services', ['http-auth-interceptor-buffer'])
   .factory('loginService', ['Base64', '$cookieStore', '$http', function (Base64, $cookieStore, $http) {
     'use strict';
@@ -15,7 +16,9 @@ angular.module('irida.Services', ['http-auth-interceptor-buffer'])
           var encoded = Base64.encode(username + ':' + password);
           $http.defaults.headers.common.Authorization = 'Basic ' + encoded;
           $cookieStore.put('authdata', encoded);
-          callback();
+          if (typeof callback === 'function') {
+            callback();
+          }
         }
       },
       deleteHeader: function () {
@@ -260,7 +263,7 @@ angular.module('irida.Services', ['http-auth-interceptor-buffer'])
       }
     };
   }])
-  .factory('authService', ['$rootScope','httpBuffer', function($rootScope, httpBuffer) {
+  .factory('authService', ['$rootScope', 'httpBuffer', function ($rootScope, httpBuffer) {
     return {
       /**
        * call this function to indicate that authentication was successfull and trigger a
@@ -268,7 +271,7 @@ angular.module('irida.Services', ['http-auth-interceptor-buffer'])
        * @param data an optional argument to pass on to $broadcast which may be useful for
        * example if you need to pass through details of the user that was logged in
        */
-      loginConfirmed: function(data) {
+      loginConfirmed: function (data) {
         $rootScope.$broadcast('event:auth-loginConfirmed', data);
         httpBuffer.retryAll();
       }
@@ -280,9 +283,9 @@ angular.module('irida.Services', ['http-auth-interceptor-buffer'])
  * On 401 response (without 'ignoreAuthModule' option) stores the request
  * and broadcasts 'event:angular-auth-loginRequired'.
  */
-  .config(['$httpProvider', function($httpProvider) {
+  .config(['$httpProvider', function ($httpProvider) {
 
-    var interceptor = ['$rootScope', '$q', 'httpBuffer', function($rootScope, $q, httpBuffer) {
+    var interceptor = ['$rootScope', '$q', 'httpBuffer', function ($rootScope, $q, httpBuffer) {
       function success(response) {
         return response;
       }
@@ -298,7 +301,7 @@ angular.module('irida.Services', ['http-auth-interceptor-buffer'])
         return $q.reject(response);
       }
 
-      return function(promise) {
+      return function (promise) {
         return promise.then(success, error);
       };
 
@@ -311,7 +314,7 @@ angular.module('irida.Services', ['http-auth-interceptor-buffer'])
  */
 angular.module('http-auth-interceptor-buffer', [])
 
-  .factory('httpBuffer', ['$injector', '$cookieStore', function($injector, $cookieStore) {
+  .factory('httpBuffer', ['$injector', '$cookieStore', function ($injector, $cookieStore) {
     /** Holds all the requests, so they can be re-requested in future. */
     var buffer = [];
 
@@ -322,9 +325,11 @@ angular.module('http-auth-interceptor-buffer', [])
       function successCallback(response) {
         deferred.resolve(response);
       }
+
       function errorCallback(response) {
         deferred.reject(response);
       }
+
       $http = $http || $injector.get('$http');
       $http(config).then(successCallback, errorCallback);
     }
@@ -333,7 +338,7 @@ angular.module('http-auth-interceptor-buffer', [])
       /**
        * Appends HTTP request configuration object with deferred response attached to buffer.
        */
-      append: function(config, deferred) {
+      append: function (config, deferred) {
         buffer.push({
           config: config,
           deferred: deferred
@@ -343,7 +348,7 @@ angular.module('http-auth-interceptor-buffer', [])
       /**
        * Retries all the buffered requests clears the buffer.
        */
-      retryAll: function() {
+      retryAll: function () {
         for (var i = 0; i < buffer.length; ++i) {
           buffer[i].config.headers.Authorization = 'Basic ' + $cookieStore.get('authdata');
           retryHttpRequest(buffer[i].config, buffer[i].deferred);
