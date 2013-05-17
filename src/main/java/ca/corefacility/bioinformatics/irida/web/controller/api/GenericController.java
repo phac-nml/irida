@@ -192,6 +192,8 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
             sortOrder = getDefaultSortOrder();
         }
 
+        logger.debug("Sort property: [" + sortProperty + "], sort order: [" + sortOrder + "]");
+
         // if no sort property is supplied by parameters, then the default sort property
         // should be used by calling the service without specifying a property to sort by.
         // Otherwise, call the service with the sort property supplied by the client.

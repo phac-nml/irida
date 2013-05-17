@@ -16,6 +16,15 @@
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/api/*</url-pattern>
+        <!--
+            the security filter chain should be applied both when a raw request is made (i.e., directly to the server
+            AND when a request is forwarded to a protected URL by some other component. This happens in
+            ca.corefacility.bioinformatics.irida.web.controller.thymeleaf.RootController when a client requests data
+            that is not text/html: the controller then FORWARDs the request to another servlet under /api/ that handles
+            requests for JSON and XML data.
+        -->
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
 
     <!--
