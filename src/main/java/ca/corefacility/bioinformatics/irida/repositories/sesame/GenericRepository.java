@@ -323,18 +323,20 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     
     @Override
     public Type update(IDType id, Map<String, Object> updatedFields) throws InvalidPropertyException,SecurityException {        
-        for (Entry<String, Object> field : updatedFields.entrySet()) {
-            try{
-            Field declaredField = objectType.getDeclaredField(field.getKey());
+        if(exists(id)){
+            for (Entry<String, Object> field : updatedFields.entrySet()) {
+                try{
+                Field declaredField = objectType.getDeclaredField(field.getKey());
 
-            Iri annotation = declaredField.getAnnotation(Iri.class);
+                Iri annotation = declaredField.getAnnotation(Iri.class);
 
-            logger.debug("Updating " + field.getKey() + " -- " + annotation.value());
-            
-            updateField(id, annotation.value(), field.getValue());
-            }
-            catch(NoSuchFieldException ex){
-                logger.error("No field " + field.getKey() + " exists.  Cannot update object.");
+                logger.debug("Updating " + field.getKey() + " -- " + annotation.value());
+
+                updateField(id, annotation.value(), field.getValue());
+                }
+                catch(NoSuchFieldException ex){
+                    logger.error("No field " + field.getKey() + " exists.  Cannot update object.");
+                }
             }
         }
         
@@ -359,9 +361,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
                 Statement next = curvalues.next();
                 logger.debug("current value: " + next.getObject().stringValue());
             }
-            
-            Statement removed = fac.createStatement(subURI, predURI, null);
-            con.remove(removed);
+            con.remove(subURI, predURI, null);
             
             Statement added = fac.createStatement(subURI, predURI, objValue);
             con.add(added);

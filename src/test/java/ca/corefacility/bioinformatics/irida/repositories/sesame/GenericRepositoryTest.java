@@ -20,7 +20,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -217,7 +219,32 @@ public class GenericRepositoryTest {
             fail();
         }
     }
+    
+    /**
+     * Test update method with 2 params
+     */
+    @Test
+    public void testUpdate_2param() {
+        Identified u = new Identified("newdata");
+        u = repo.create(u);
+        //public Type update(IDType id, Map<String, Object> updatedFields) throws InvalidPropertyException,SecurityException {        
+        
+        try{
+            String differentData = "different";
+            HashMap<String,Object> changes = new HashMap<>();
+            changes.put("data", differentData);
+            u = repo.update(u.getIdentifier(), changes);
+            
+            Identified j = repo.read(u.getIdentifier());
+            assertNotNull(j);
+            assertTrue(j.getData().compareTo(differentData)==0);
+        }
+        catch(IllegalArgumentException e){
+            fail();
+        }
+    }    
 
+    
     /**
      * Test of count method, of class GenericRepository.
      */

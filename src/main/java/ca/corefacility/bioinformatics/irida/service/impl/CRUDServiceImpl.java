@@ -143,12 +143,9 @@ public class CRUDServiceImpl<KeyType extends Identifier, ValueType extends Compa
         if (!exists(id)) {
             throw new EntityNotFoundException("Entity not found.");
         }
-        else{
-            return repository.update(id, updatedFields);
-        }
 
         // load the entity from the database
-        /*ValueType entity = repository.read(id);
+        ValueType entity = repository.read(id);
 
         // update the appropriate fields
         for (Entry<String, Object> field : updatedFields.entrySet()) {
@@ -166,7 +163,7 @@ public class CRUDServiceImpl<KeyType extends Identifier, ValueType extends Compa
             //return entity;
         }
 
-        throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(constraintViolations));*/
+        throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(constraintViolations));
     }
 
     /**
