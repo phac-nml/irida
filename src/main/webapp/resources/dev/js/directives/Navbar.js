@@ -15,7 +15,8 @@ angular.module('irida')
           hide: $location.path() === '/login'
         };
         // Hide navigation if originally on login page
-        $scope.$on('$routeChangeStart', function(next, current) {
+        $scope.$on('$routeChangeStart', function() {
+//          var path = $location.path().match();
           $scope.nav.hide = $location.path() === '/login';
         });
 
@@ -27,6 +28,6 @@ angular.module('irida')
       link: function (scope, el) {
         el.foundation('topbar');
       },
-      templateUrl: './partials/navbar.html'
+      templateUrl: '/partials/navbar.html'
     };
   });
