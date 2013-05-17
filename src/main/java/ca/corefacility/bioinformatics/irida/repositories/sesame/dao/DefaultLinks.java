@@ -61,4 +61,21 @@ public class DefaultLinks {
         
         return link;
     }
+    
+    public <S extends IridaThing,O extends IridaThing> void addLink(Class subject,RdfPredicate pred,Class object){
+        HashMap<Class,RdfPredicate> preds;
+        
+        if(!links.containsKey(subject)){
+            links.put(subject, new HashMap<Class, RdfPredicate>());
+        }
+        
+        preds = links.get(subject);
+        
+        if(preds.containsKey(object)){
+            throw new IllegalArgumentException("Default link already exists for " + subject.getName() + " and " + object.getName());
+        }
+        else{
+            preds.put(object, pred);
+        }
+    }
 }

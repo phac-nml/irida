@@ -44,6 +44,13 @@ public class Relationship implements Auditable<Audit>, Identifiable<Identifier>,
         this.subject = subject;
         this.object = object;
     }
+    
+    public Relationship(Identifier subject, RdfPredicate predicate, Identifier object) {
+        this();
+        this.subject = subject;
+        this.predicate = predicate;
+        this.object = object;
+    }
 
     public Identifier getSubject() {
         return subject;

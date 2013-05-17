@@ -64,6 +64,10 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
         linkList = new DefaultLinks();
     }
     
+    public <S extends IridaThing,O extends IridaThing> void addRelationship(Class subject,RdfPredicate pred,Class object){
+        linkList.addLink(subject, pred, object);
+    }
+    
     /**
      * Build an identifier object from a link binding set
      * 
@@ -180,7 +184,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
      * @param uri The URI to retrieve and build an identifier for
      * @return A new Identifier instance
      */
-    public Identifier getIdentiferForURI(URI uri){
+    private Identifier getIdentiferForURI(URI uri){
         Identifier id = null;
         ObjectConnection con = store.getRepoConnection();
         try{
