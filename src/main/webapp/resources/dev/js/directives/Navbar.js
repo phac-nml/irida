@@ -11,10 +11,18 @@ angular.module('NGS')
       restrict: 'E',
       replace: true,
       controller: function ($scope, $attrs, $element, $route, $location, loginService) {
+        $scope.navbar = {
+          expandDD: true
+        };
+
+        $scope.toggleDD = function() {
+          $scope.navbar.expandDD = !$scope.navbar.expandDD;
+        };
+
         var re = /^\/([^\/]+)/;
         $scope.nav = {
           hide: $location.path() === '/login',
-          loc: $location.path().match(re)[1]
+//          loc: $location.path().match(re)[1]
         };
         // Hide navigation if originally on login page
         $scope.$on('$routeChangeStart', function() {
@@ -26,9 +34,6 @@ angular.module('NGS')
           loginService.deleteHeader();
           $location.path('/login');
         };
-      },
-      link: function (scope, el) {
-        el.foundation('topbar');
       },
       templateUrl: '/partials/navbar.html'
     };
