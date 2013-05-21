@@ -22,13 +22,13 @@ angular.module('NGS')
         var re = /^\/([^\/]+)/;
         $scope.nav = {
           hide: $location.path() === '/login',
-//          loc: $location.path().match(re)[1]
+          loc: $location.path().match(re) ? $location.path().match(re)[1] : ''
         };
         // Hide navigation if originally on login page
         $scope.$on('$routeChangeStart', function() {
           $scope.navbar.expandDD = false;
           $scope.nav.hide = $location.path() === '/login';
-          $scope.nav.loc = $location.path().match(re)[1];
+          $scope.nav.loc = $location.path().match(re) ? $location.path().match(re)[1] : '';
         });
 
         $scope.logout = function () {
