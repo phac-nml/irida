@@ -1,9 +1,10 @@
 @import "foundation/foundation-global", "foundation/components/global", "foundation/components/progress-bars", "foundation/components/block-grid";
 @import "bourbon/bourbon";
+
 /* ==========================================================================
    COLORS
    ========================================================================== */
-$notifier-color : rgba(255, 242, 164, 1.0);
+$notifier-color: rgba(255, 242, 164, 1.0);
 
 /* ==========================================================================
    Angular Specific
@@ -23,7 +24,7 @@ input.ng-valid.ng-dirty {
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Ubuntu', sans-serif;
   font-weight: 700;
-  letter-spacing:2px;
+  letter-spacing: 2px;
 }
 
 /* ==========================================================================
@@ -60,27 +61,27 @@ h1, h2, h3, h4, h5, h6 {
   position: absolute;
   width: 300px;
   top: 20px;
-  
+
   // Border
   border: 1px solid darken($notifier-color, 10);
   border-radius: 3px;
-  
+
   // Background
   background-color: $notifier-color;
-  
+
   // Text (font-family, font-size, text-transform, letter-spacing)
-  
+
   // Other
   z-index: 999;
 
   span {
     padding: 0.6em;
     width: 230px;
-    white-space:nowrap;
+    white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
   }
-  a{
+  a {
     border-left: 1px solid darken($notifier-color, 10);
     padding: 0.6em;
     width: 60px;
@@ -90,8 +91,6 @@ h1, h2, h3, h4, h5, h6 {
     }
   }
 }
-
-
 
 /* Uploader
    ========================================================================== */
@@ -146,7 +145,6 @@ h1, h2, h3, h4, h5, h6 {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        @include transition(all .5s ease-in-out);
       }
       h2:after {
         display: block;
@@ -258,7 +256,7 @@ h1, h2, h3, h4, h5, h6 {
     display: block;
     position: relative;
   }
-  span a{
+  span a {
     position: absolute;
     top: 0;
     right: 2px;
