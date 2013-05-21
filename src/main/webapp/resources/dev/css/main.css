@@ -393,10 +393,7 @@ h1, h2, h3, h4, h5, h6 {
       font-size: 1.1em;
       white-space: nowrap;
       overflow: hidden;
-      text-overflow: ellipsis;
-      -webkit-transition: all 0.5s ease-in-out;
-      -moz-transition: all 0.5s ease-in-out;
-      transition: all 0.5s ease-in-out; }
+      text-overflow: ellipsis; }
     .card-holder li .card h2:after {
       display: block;
       content: ' ';

@@ -10,9 +10,9 @@ angular.module('irida')
     $routeProvider.when(
       '/projects', {
         templateUrl: './partials/projects.html',
-        controller: function ($scope, initData) {
+        controller: function ($scope, resourceService, initData) {
           $scope.projects = initData.resource.resources;
-          $scope.links = initData.resource.links;
+          $scope.links = resourceService.formatResourceLinks(initData.resource.links);
         },
         resolve: {
           initData: function ($q, ajaxService) {
@@ -25,7 +25,7 @@ angular.module('irida')
         }
       });
   }])
-  .controller('ProjectsListCtrl', ['$rootScope', '$scope', '$location', 'ajaxService', function ($rootScope, $scope, $location, ajaxService) {
+  .controller('ProjectsListCtrl', ['$rootScope', '$scope', '$location', 'ajaxService', 'resourceService', function ($rootScope, $scope, $location, ajaxService, resourceService) {
     'use strict';
 
     $scope.loadProjects = function (url) {
@@ -89,7 +89,7 @@ angular.module('irida')
     };
 
     function ajaxSuccessCallback(data) {
-      $scope.links = data.resource.links;
+      $scope.links = resourceService.formatResourceLinks(data.resource.links);
       $scope.projects = data.resource.resources;
     }
 

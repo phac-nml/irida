@@ -63,7 +63,7 @@ public class ProjectsController extends GenericController<Identifier, Project, P
     /**
      * rel used for removing user relationships from a project.
      */
-    private static final String PROJECT_USERS_DELETE_REL = "project/users/delete";
+    private static final String PROJECT_USERS_DELETE_REL = "delete";
     /**
      * A label that's used to list the users associated with a project.
      */

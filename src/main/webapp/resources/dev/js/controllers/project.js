@@ -9,9 +9,10 @@ angular.module('irida')
     $routeProvider.when(
       '/projects/:projectId', {
         templateUrl: '/partials/project.html',
-        controller: function ($scope, initData) {
-          $scope.links = initData.resource.links;
+        controller: function ($scope, resourceService, initData) {
+          $scope.links = resourceService.formatResourceLinks(initData.resource.links);
           $scope.project = initData.resource;
+          $scope.users = resourceService.formatRelatedResource(initData.relatedResources.users);
         },
         resolve: {
           initData: function ($q, $route, ajaxService) {
@@ -26,10 +27,20 @@ angular.module('irida')
       });
   }])
 
-  .controller('ProjectCtrl', ['$scope', function ($scope) {
+  .controller('ProjectCtrl', ['$scope', 'ajaxService', function ($scope, ajaxService) {
     'use strict';
 
-    $scope.removeUser = function (user) {
-      console.log(user + ' has been removed from the project');
+    $scope.removeUser = function (url) {
+      ajaxService.deleteItem(url).then(
+        // Success
+        function () {
+          // TODO: (JOSH - 2013-05-21) Need to refresh the users or remove the deleted one.
+          // TODO: (JOSH - 2013-05-21) Show success notification with ability to undo.
+        },
+        // Error
+        function () {
+
+        }
+      );
     };
   }]);
