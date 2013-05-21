@@ -5,8 +5,8 @@
     </ul>
     <section class="top-bar-section">
         <ul class="right">
-            <li><a href="/projects">Projects</a></li>
-            <li><a href="/users">Users</a></li>
+            <li ng-class="{active: nav.loc === 'projects'}"><a href="/projects">Projects</a></li>
+            <li ng-class="{active: nav.loc === 'users'}"><a href="/users">Users</a></li>
             <li><a ng-click="logout()" href="#">Logout</a></li>
         </ul>
     </section>
