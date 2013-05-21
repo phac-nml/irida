@@ -10,7 +10,7 @@ describe('MainCtrl', function () {
   describe('isCurrentUrl', function () {
     var MainCtrl, $location, $scope;
 
-    beforeEach(module('irida'));
+    beforeEach(module('NGS'));
 
     beforeEach(inject(function ($controller, _$location_, $rootScope) {
       $location = _$location_;

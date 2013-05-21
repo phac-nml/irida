@@ -44,7 +44,7 @@ var url = '/projects?size=21&sortOrder=ASCENDING';
 describe('ProjectsListCtrl', function () {
   var ProjectsListCtrl, $location, $scope, $httpBackend;
 
-  beforeEach(module('irida'));
+  beforeEach(module('NGS'));
 
   beforeEach(inject(function ($controller, _$location_, $rootScope, $injector, ajaxService) {
     $location = _$location_;
