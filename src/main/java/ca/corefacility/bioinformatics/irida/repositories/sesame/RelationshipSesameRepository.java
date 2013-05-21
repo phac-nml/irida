@@ -341,7 +341,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
                 Identifier linkId = buildLinkIdentifier(uri,identifiedBy);
                 Relationship link = buildLinkfromBindingSet(bs, con);
                 link.setIdentifier(linkId);
-                Audit audit = auditRepo.getAudit(uri);
+                Audit audit = auditRepo.getAudit(uri.toString());
                 link.setAuditInformation(audit);
                 
                 links.add(link);
@@ -402,7 +402,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
                 Identifier linkId = buildLinkIdentifier(uri,identifiedBy);
                 Relationship link = buildLinkfromBindingSet(bs, con);
                 link.setIdentifier(linkId);
-                Audit audit = auditRepo.getAudit(uri);
+                Audit audit = auditRepo.getAudit(uri.toString());
                 link.setAuditInformation(audit);
                 
                 links.add(link);
@@ -449,7 +449,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
                 Identifier linkId = buildLinkIdentifier(uri,identifiedBy);
                 Relationship link = buildLinkfromBindingSet(bs, con);
                 link.setIdentifier(linkId);
-                Audit audit = auditRepo.getAudit(uri);
+                Audit audit = auditRepo.getAudit(uri.toString());
                 link.setAuditInformation(audit);
                 
                 links.add(link);
@@ -497,7 +497,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
                 Identifier linkId = buildLinkIdentifier(uri,identifiedBy);
                 Relationship link = buildLinkfromBindingSet(bs, con);
                 link.setIdentifier(linkId);
-                Audit audit = auditRepo.getAudit(uri);
+                Audit audit = auditRepo.getAudit(uri.toString());
                 link.setAuditInformation(audit);
                 
                 links.add(link);
@@ -567,7 +567,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
                 Identifier linkId = buildLinkIdentifier(uri,identifiedBy);
                 ret = buildLinkfromBindingSet(bs, con);
                 ret.setIdentifier(linkId);
-                Audit audit = auditRepo.getAudit(uri);
+                Audit audit = auditRepo.getAudit(uri.toString());
                 ret.setAuditInformation(audit);
             }
 
@@ -578,7 +578,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
         return ret;
     }
 
-    @Override
+    //@Override
     public Relationship update(Relationship object) throws IllegalArgumentException {
         throw new UnsupportedOperationException("Link updates will not be supported.");
     }

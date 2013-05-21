@@ -141,11 +141,12 @@ public class TestCRUDServiceImpl {
         i.setIdentifier(id);
         when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
         when(crudRepository.read(id)).thenReturn(i);
-        when(crudRepository.update(i)).thenReturn(i);
+        //when(crudRepository.update(i)).thenReturn(i);
 
         Map<String, Object> updatedFields = new HashMap<>();
         updatedFields.put("nonNull", newField);
         updatedFields.put("integerValue", newIntegerValue);
+        when(crudRepository.update(id, updatedFields)).thenReturn(i);
         try {
             i = crudService.update(id, updatedFields);
         } catch (ConstraintViolationException e) {
@@ -417,17 +418,20 @@ public class TestCRUDServiceImpl {
         e.setIdentifier(id);
         e.setNonNull("Not null");
         e.setAuditInformation(new Audit());
+        
+        ImmutableMap<String, Object> changed = ImmutableMap.of("nonNull", (Object) "another not null");
         when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
         when(crudRepository.read(id)).thenReturn(e);
-        when(crudRepository.update(e)).thenReturn(e);
+        when(crudRepository.update(id,changed)).thenReturn(e);
 
-        e = crudService.update(id, ImmutableMap.of("nonNull", (Object) "another not null"));
+        e = crudService.update(id, changed);
         
         assertNotNull(e.getAuditInformation().getUpdated());
         assertTrue(e.getAuditInformation().getUpdated().compareTo(new Date()) <= 0);
         
         verify(crudRepository).exists(id);
         verify(crudRepository).read(id);
-        verify(crudRepository).update(e);
+        //verify(crudRepository).update(e);
+        verify(crudRepository).update(id,changed);
     }
 }

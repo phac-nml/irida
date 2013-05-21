@@ -139,7 +139,7 @@ public class SequenceFileFilesystemRepositoryTest {
     @Test
     public void testReadFile() {
         try {
-            repository.read(new File("."));
+            repository.read(new Identifier());
             fail();
         } catch (UnsupportedOperationException e) {
         } catch (Exception e) {
@@ -253,7 +253,7 @@ public class SequenceFileFilesystemRepositoryTest {
     @Test
     public void testDelete() {
         try {
-            repository.delete(new File("."));
+            repository.delete(new Identifier());
             fail();
         } catch (UnsupportedOperationException e) {
         } catch (Exception e) {

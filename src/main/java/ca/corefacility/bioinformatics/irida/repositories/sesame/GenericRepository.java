@@ -149,7 +149,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         String identifiedBy = getIdentifiedBy(con,u);
         Identifier objid = buildIdentifier(ret,u,identifiedBy);
         ret.setIdentifier(objid);
-        ret.setAuditInformation(auditRepo.getAudit(u));                
+        ret.setAuditInformation(auditRepo.getAudit(u.toString()));                
         
         return ret;
     }
@@ -305,24 +305,13 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             
         return count; 
     }
-
-    @Override
-    public Type update(Type object) throws IllegalArgumentException {
-        IDType id = (IDType) object.getIdentifier();
-        
-        delete(id);
-        Audit a = (Audit) object.getAuditInformation();
-        a.setUpdated(new Date());
-        object.setAuditInformation(a);
-        String u = id.getUri().toString();
-        auditRepo.audit(a, u);
-        object = storeObject(object);
-
-        return object;
-    }
     
     @Override
     public Type update(IDType id, Map<String, Object> updatedFields) throws InvalidPropertyException,SecurityException {        
+        
+        java.net.URI netURI = buildURIFromIdentifier(id);
+        Audit audit = auditRepo.getAudit(netURI.toString());
+        
         if(exists(id)){
             for (Entry<String, Object> field : updatedFields.entrySet()) {
                 try{
@@ -338,6 +327,8 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
                     logger.error("No field " + field.getKey() + " exists.  Cannot update object.");
                 }
             }
+            audit.setUpdated(new Date());
+            auditRepo.audit(audit, netURI.toString());
         }
         
         return read(id);

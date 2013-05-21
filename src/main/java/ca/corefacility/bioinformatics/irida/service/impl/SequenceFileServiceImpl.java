@@ -34,7 +34,7 @@ import javax.validation.Validator;
  */
 public class SequenceFileServiceImpl extends CRUDServiceImpl<Identifier, SequenceFile> {
 
-    private CRUDRepository<File, SequenceFile> fileRepository;
+    private CRUDRepository<Identifier, SequenceFile> fileRepository;
 
     /**
      * Constructor.
@@ -44,7 +44,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Identifier, Sequenc
      */
     public SequenceFileServiceImpl(
             SequenceFileRepository sequenceFileRepository,
-            CRUDRepository<File, SequenceFile> fileRepository,
+            CRUDRepository<Identifier, SequenceFile> fileRepository,
             Validator validator) {
         super(sequenceFileRepository, validator, SequenceFile.class);
         this.fileRepository = fileRepository;
@@ -74,7 +74,8 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Identifier, Sequenc
         SequenceFile updated = super.update(id, updatedFields);
 
         if (updatedFields.containsKey("file")) {
-            updated = fileRepository.update(updated);
+            
+            updated = fileRepository.update(id,updatedFields);
             updated = super.update(id, ImmutableMap.of("file",
                     (Object) updated.getFile()));
         }

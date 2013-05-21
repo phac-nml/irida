@@ -40,16 +40,15 @@ public interface CRUDRepository<IdentifierType, Type> {
      * Update the specified object in the database. The object <b>must</b> have
      * a valid identifier prior to being passed to this method.
      *
-     * @param object The object to update.
+     * @param id The identifier of the object to update.
+     * @param updatedFields A map of the properties of the object that were updated.
      * @return The object as it was persisted in the database. May modify the
      * identifier of the object when returned.
      * @throws IllegalArgumentException If the object to persist does not have a
      * valid identifier, or the object does not pass validation, then an
      * exception will be thrown with a reason for failure.
-     */
-    public Type update(Type object) throws IllegalArgumentException;
-    
-    public Type update(IdentifierType id, Map<String, Object> updatedFields) throws InvalidPropertyException,SecurityException ;
+     */    
+    public Type update(IdentifierType id, Map<String, Object> updatedFields) throws InvalidPropertyException,SecurityException;
 
     /**
      * Delete the object with the specified identifier from the database.

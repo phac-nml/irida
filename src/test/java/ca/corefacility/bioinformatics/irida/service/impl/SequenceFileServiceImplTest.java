@@ -43,7 +43,7 @@ public class SequenceFileServiceImplTest {
 
     private CRUDService<Identifier, SequenceFile> sequenceFileService;
     private SequenceFileRepository crudRepository;
-    private CRUDRepository<File, SequenceFile> fileRepository;
+    private CRUDRepository<Identifier, SequenceFile> fileRepository;
     private Validator validator;
     private static final Logger logger = LoggerFactory.getLogger(SequenceFileServiceImplTest.class);
 
@@ -64,7 +64,10 @@ public class SequenceFileServiceImplTest {
         SequenceFile withIdentifier = new SequenceFile(new Identifier(), f);
         when(crudRepository.create(sf)).thenReturn(withIdentifier);
         when(fileRepository.create(withIdentifier)).thenReturn(withIdentifier);
-        when(crudRepository.update(withIdentifier)).thenReturn(withIdentifier);
+        //when(crudRepository.update(withIdentifier)).thenReturn(withIdentifier);
+        when(crudRepository.update(withIdentifier.getIdentifier(),
+                ImmutableMap.of("file", (Object) withIdentifier.getFile()))).thenReturn(withIdentifier);
+        
         when(crudRepository.exists(withIdentifier.getIdentifier())).thenReturn(Boolean.TRUE);
         when(crudRepository.read(withIdentifier.getIdentifier())).thenReturn(withIdentifier);
 
@@ -73,7 +76,8 @@ public class SequenceFileServiceImplTest {
 
         verify(crudRepository).create(sf);
         verify(fileRepository).create(withIdentifier);
-        verify(crudRepository).update(withIdentifier);
+        verify(crudRepository).update(withIdentifier.getIdentifier(),
+                ImmutableMap.of("file", (Object) withIdentifier.getFile()));
         verify(crudRepository).read(withIdentifier.getIdentifier());
         verify(crudRepository).exists(withIdentifier.getIdentifier());
     }
@@ -86,19 +90,20 @@ public class SequenceFileServiceImplTest {
                 Files.createTempFile(null, null).toFile());
 
         sf.getFile().deleteOnExit();
+        ImmutableMap<String, Object> updatedMap = ImmutableMap.of("identifier", (Object) updatedId);
 
         when(crudRepository.exists(originalId)).thenReturn(Boolean.TRUE);
         when(crudRepository.read(originalId)).thenReturn(sf);
-        when(crudRepository.update(sf)).thenReturn(sf);
-
-        sequenceFileService.update(originalId, ImmutableMap.of("identifier", (Object) updatedId));
+        when(crudRepository.update(sf.getIdentifier(),updatedMap)).thenReturn(sf);
+        
+        sequenceFileService.update(originalId, updatedMap);
 
         assertEquals(updatedId, sf.getIdentifier());
 
         verify(crudRepository).exists(originalId);
         verify(crudRepository).read(originalId);
-        verify(crudRepository).update(sf);
-        verify(fileRepository, times(0)).update(sf);
+        verify(crudRepository).update(originalId,updatedMap);
+        verify(fileRepository, times(0)).update(sf.getIdentifier(),updatedMap);
     }
 
     @Test
@@ -108,13 +113,15 @@ public class SequenceFileServiceImplTest {
         File updatedFile = Files.createTempFile(null, null).toFile();
         SequenceFile sf = new SequenceFile(id, originalFile);
         sf.getFile().deleteOnExit();
+        
+        ImmutableMap<String, Object> updatedMap = ImmutableMap.of("file", (Object) updatedFile);
 
         when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
         when(crudRepository.read(id)).thenReturn(sf);
-        when(crudRepository.update(sf)).thenReturn(sf);
-        when(fileRepository.update(sf)).thenReturn(sf);
+        when(crudRepository.update(sf.getIdentifier(),updatedMap)).thenReturn(sf);
+        when(fileRepository.update(sf.getIdentifier(),updatedMap)).thenReturn(sf);
 
-        sequenceFileService.update(id, ImmutableMap.of("file", (Object) updatedFile));
+        sequenceFileService.update(id, updatedMap);
 
         assertEquals(updatedFile, sf.getFile());
 
@@ -123,7 +130,7 @@ public class SequenceFileServiceImplTest {
         // directory
         verify(crudRepository, times(2)).exists(id);
         verify(crudRepository, times(2)).read(id);
-        verify(crudRepository, times(2)).update(sf);
-        verify(fileRepository).update(sf);
+        verify(crudRepository, times(2)).update(sf.getIdentifier(),updatedMap);
+        verify(fileRepository).update(sf.getIdentifier(),updatedMap);
     }
 }

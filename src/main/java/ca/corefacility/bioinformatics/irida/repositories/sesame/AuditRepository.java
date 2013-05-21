@@ -128,7 +128,7 @@ public class AuditRepository extends SesameRepository{
         }
     }
     
-    public Audit getAudit(URI uri){
+    public Audit getAudit(String strURI){
         Audit ret = null;
         
         ObjectConnection con = store.getRepoConnection();
@@ -144,6 +144,7 @@ public class AuditRepository extends SesameRepository{
             ObjectQuery query = con.prepareObjectQuery(QueryLanguage.SPARQL, querystring);
 
             ValueFactory vf = con.getValueFactory();
+            URI uri = vf.createURI(strURI);
             query.setBinding("ouri",uri);
             Result<Audit> result = query.evaluate(Audit.class);
             

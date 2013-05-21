@@ -199,32 +199,12 @@ public class GenericRepositoryTest {
         } 
     }
 
-    /**
-     * Test of update method, of class GenericRepository.
-     */
-    @Test
-    public void testUpdate() {
-        Identified u = new Identified("newdata");
-        u = repo.create(u);
-        
-        try{
-            u.setData("different");
-            u = repo.update(u);
-            
-            Identified j = repo.read(u.getIdentifier());
-            assertNotNull(j);
-            assertTrue(j.getData().compareTo(u.getData())==0);
-        }
-        catch(IllegalArgumentException e){
-            fail();
-        }
-    }
     
     /**
      * Test update method with 2 params
      */
     @Test
-    public void testUpdate_2param() {
+    public void testUpdate() {
         Identified u = new Identified("newdata");
         u = repo.create(u);
         //public Type update(IDType id, Map<String, Object> updatedFields) throws InvalidPropertyException,SecurityException {        
