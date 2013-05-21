@@ -4,7 +4,7 @@
  * Time:   8:19 AM
  */
 
-angular.module('irida')
+angular.module('NGS')
   .directive('ngsNavbar', function () {
     'use strict';
     return {

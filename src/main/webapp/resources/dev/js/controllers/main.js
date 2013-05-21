@@ -5,8 +5,11 @@
  * Time: 10:27 AM
  * To change this template use File | Settings | File Templates.
  */
-angular.module('irida')
-  .controller('MainCtrl', ['$scope', '$location', function ($scope, $location) {
-    'use strict';
-    $scope.notifier = {};
-  }]);
+(function (ng, app) {
+  'use strict';
+  app.
+    controller('MainCtrl', ['$scope', '$location', function ($scope, $location) {
+      'use strict';
+      $scope.notifier = {};
+    }]);
+})(angular, NGS);

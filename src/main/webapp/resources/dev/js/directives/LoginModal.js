@@ -6,7 +6,7 @@
  * Time: 2:33 PM
  */
 
-angular.module('irida')
+angular.module('NGS')
 /**
  * Injected:
  * @param ajaxService Handles all ajax related calls

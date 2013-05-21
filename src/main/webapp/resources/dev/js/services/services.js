@@ -6,7 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-angular.module('irida.Services', ['http-auth-interceptor-buffer'])
+angular.module('NGS.Services', ['http-auth-interceptor-buffer'])
   .factory('loginService', ['Base64', '$cookieStore', '$http', function (Base64, $cookieStore, $http) {
     'use strict';
     $http.defaults.headers.common['Authorization'] = 'Basic ' + $cookieStore.get('authdata');
