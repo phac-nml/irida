@@ -89,6 +89,9 @@
         }
       };
 
+      // Initialize
+      $scope.setWindowTitle('All Projects');
+
       function ajaxSuccessCallback(data) {
         $scope.links = resourceService.formatResourceLinks(data.resource.links);
         $scope.projects = data.resource.resources;

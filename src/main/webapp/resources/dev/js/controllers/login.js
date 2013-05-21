@@ -23,5 +23,8 @@
         loginService.setHeader($scope.username, $scope.password);
         $location.path('/');
       };
+
+      // Initialize
+      $scope.setWindowTitle('Login');
     }]);
 })(angular, NGS);

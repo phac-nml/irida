@@ -99,6 +99,9 @@
         }
       };
 
+      // Initialize
+      $scope.setWindowTitle('All Users');
+
       function ajaxSuccessCallback(data) {
         $scope.links = data.resource.links;
         $scope.users = data.resource.resources;

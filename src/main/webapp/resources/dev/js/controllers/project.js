@@ -44,5 +44,8 @@
           }
         );
       };
+
+      // Initialize
+      $scope.setWindowTitle($scope.project.name);
     }]);
 })(angular, NGS);

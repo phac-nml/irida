@@ -11,5 +11,10 @@
     controller('MainCtrl', ['$scope', '$location', function ($scope, $location) {
       'use strict';
       $scope.notifier = {};
+
+      // Window Title
+      $scope.setWindowTitle = function (title) {
+        $scope.windowTitle = title;
+      };
     }]);
 })(angular, NGS);

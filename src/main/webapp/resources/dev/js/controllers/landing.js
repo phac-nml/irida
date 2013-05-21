@@ -14,8 +14,10 @@
           templateUrl: '/partials/landing.html'
         });
     }])
-    .controller('LandingCtrl', [function () {
+    .controller('LandingCtrl', ['$scope', function ($scope) {
       'use strict';
 
+      // Initialize
+      $scope.setWindowTitle('Landing Page');
     }]);
 })(angular, NGS);

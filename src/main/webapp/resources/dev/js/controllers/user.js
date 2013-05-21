@@ -37,8 +37,6 @@
    * User View Controller
    */
     .controller('UserCtrl', ['$rootScope', '$scope', '$location', 'ajaxService', function ($rootScope, $scope, $location, ajaxService) {
-      'use strict';
-
       $scope.deleteUser = function () {
         ajaxService.deleteItem($scope.links.self).then(
 
@@ -70,6 +68,7 @@
             console.log('Error figure this out will ya!');
           });
       };
-//    };
+
+      $scope.setWindowTitle($scope.user.username);
     }]);
 })(angular, NGS);

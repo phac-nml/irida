@@ -11,10 +11,10 @@ NGS.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
   $locationProvider.html5Mode(true);
 
   // Handle all routes
-//  $routeProvider
-//    .when('/login',
-//    {
-//      action: 'login.main'
-//    });
+  $routeProvider
+    .when('/login',
+    {
+      action: 'login.main'
+    });
 }]);
 
