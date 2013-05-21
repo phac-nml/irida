@@ -12,7 +12,7 @@ angular.module('NGS')
       replace: true,
       controller: function ($scope, $attrs, $element, $route, $location, loginService) {
         $scope.navbar = {
-          expandDD: true
+          expandDD: false
         };
 
         $scope.toggleDD = function() {
@@ -26,6 +26,7 @@ angular.module('NGS')
         };
         // Hide navigation if originally on login page
         $scope.$on('$routeChangeStart', function() {
+          $scope.navbar.expandDD = false;
           $scope.nav.hide = $location.path() === '/login';
           $scope.nav.loc = $location.path().match(re)[1];
         });
