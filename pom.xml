@@ -82,6 +82,7 @@
         <org.springframework.hateoas.version>0.5.0.RELEASE</org.springframework.hateoas.version>
         <spring-framework-security-oauth2.version>1.0.4.RELEASE</spring-framework-security-oauth2.version>
         <org.springframework.security.version>3.1.4.RELEASE</org.springframework.security.version>
+        <org.springframework.plugin.version>0.8.0.RELEASE</org.springframework.plugin.version>
 
         <!-- Thymeleaf -->
         <thymeleaf.version>2.0.16</thymeleaf.version>
@@ -155,6 +156,11 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
             <version>${org.springframework.security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.plugin</groupId>
+            <artifactId>spring-plugin-core</artifactId>
+            <version>${org.springframework.plugin.version}</version>
         </dependency>
 
         <!-- THYMELEAF -->
