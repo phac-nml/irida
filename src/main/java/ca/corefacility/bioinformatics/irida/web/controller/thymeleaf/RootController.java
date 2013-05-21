@@ -29,6 +29,10 @@ public final class RootController {
      * Prefix used by spring for forwarding requests to another controller.
      */
     private static final String SPRING_FORWARD_PREFIX = "forward:";
+    /**
+     * Prefix used for all requests.
+     */
+    private static final String FORWARD_PREFIX = SPRING_FORWARD_PREFIX + REST_API_PREFIX;
 
     /**
      * Get the index for any request that does not contain the string "css", "js", or "font" for thymeleaf to render.
@@ -55,12 +59,12 @@ public final class RootController {
         String view = request.getRequestURI();
 
         // the URI to forward to includes the REST prefix and the view name
-        StringBuilder forward = new StringBuilder(SPRING_FORWARD_PREFIX);
-        forward.append(REST_API_PREFIX).append(view);
+        StringBuilder forwardBuilder = new StringBuilder(FORWARD_PREFIX).append(view);
+        String forward = forwardBuilder.toString();
 
-        logger.debug("Forwarding to REST API: [" + forward.toString() + "]");
+        logger.debug("Forwarding to REST API: [" + forward + "]");
 
         // let Spring internally forward the client to the correct resource
-        return forward.toString();
+        return forward;
     }
 }
