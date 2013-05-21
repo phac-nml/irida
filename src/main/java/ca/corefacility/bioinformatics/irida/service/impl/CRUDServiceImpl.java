@@ -159,7 +159,7 @@ public class CRUDServiceImpl<KeyType extends Identifier, ValueType extends Compa
 
         // at this point, everything is A-OK, so go through the act of updating the entity:
 
-        // 1) load the entity from the database
+        /*// 1) load the entity from the database
         ValueType entity = repository.read(id);
 
         // 2) update the appropriate fields
@@ -168,17 +168,10 @@ public class CRUDServiceImpl<KeyType extends Identifier, ValueType extends Compa
         }
 
         // 3) set the date that the entity was updated on
-        entity.getAuditInformation().setUpdated(new Date());
+        entity.getAuditInformation().setUpdated(new Date());*/
 
         // check that it doesn't violate any constraints
-        Set<ConstraintViolation<ValueType>> constraintViolations = validator.validate(entity);
-        if (constraintViolations.isEmpty()) {
-            //return repository.update(entity);
-            return repository.update(id, updatedFields);
-            //return entity;
-        }
-
-        throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(constraintViolations));
+        return repository.update(id, updatedFields);
     }
 
     /**

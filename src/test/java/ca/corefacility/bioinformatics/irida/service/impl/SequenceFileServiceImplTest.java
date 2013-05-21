@@ -69,7 +69,6 @@ public class SequenceFileServiceImplTest {
                 ImmutableMap.of("file", (Object) withIdentifier.getFile()))).thenReturn(withIdentifier);
         
         when(crudRepository.exists(withIdentifier.getIdentifier())).thenReturn(Boolean.TRUE);
-        when(crudRepository.read(withIdentifier.getIdentifier())).thenReturn(withIdentifier);
 
         SequenceFile created = sequenceFileService.create(sf);
         assertEquals(created, withIdentifier);
@@ -78,7 +77,6 @@ public class SequenceFileServiceImplTest {
         verify(fileRepository).create(withIdentifier);
         verify(crudRepository).update(withIdentifier.getIdentifier(),
                 ImmutableMap.of("file", (Object) withIdentifier.getFile()));
-        verify(crudRepository).read(withIdentifier.getIdentifier());
         verify(crudRepository).exists(withIdentifier.getIdentifier());
     }
 
@@ -86,22 +84,20 @@ public class SequenceFileServiceImplTest {
     public void testUpdateWithoutFile() throws IOException {
         Identifier updatedId = new Identifier();
         Identifier originalId = new Identifier();
-        SequenceFile sf = new SequenceFile(originalId,
-                Files.createTempFile(null, null).toFile());
-
+        File f = Files.createTempFile(null, null).toFile();
+        SequenceFile sf = new SequenceFile(originalId,f);
+        SequenceFile updatedSf = new SequenceFile(updatedId, f);
         sf.getFile().deleteOnExit();
         ImmutableMap<String, Object> updatedMap = ImmutableMap.of("identifier", (Object) updatedId);
 
         when(crudRepository.exists(originalId)).thenReturn(Boolean.TRUE);
-        when(crudRepository.read(originalId)).thenReturn(sf);
-        when(crudRepository.update(sf.getIdentifier(),updatedMap)).thenReturn(sf);
+        when(crudRepository.update(sf.getIdentifier(),updatedMap)).thenReturn(updatedSf);
         
-        sequenceFileService.update(originalId, updatedMap);
+        sf = sequenceFileService.update(originalId, updatedMap);
 
         assertEquals(updatedId, sf.getIdentifier());
 
         verify(crudRepository).exists(originalId);
-        verify(crudRepository).read(originalId);
         verify(crudRepository).update(originalId,updatedMap);
         verify(fileRepository, times(0)).update(sf.getIdentifier(),updatedMap);
     }
@@ -112,16 +108,16 @@ public class SequenceFileServiceImplTest {
         File originalFile = Files.createTempFile(null, null).toFile();
         File updatedFile = Files.createTempFile(null, null).toFile();
         SequenceFile sf = new SequenceFile(id, originalFile);
+        SequenceFile updatedSf = new SequenceFile(id, updatedFile);
         sf.getFile().deleteOnExit();
         
         ImmutableMap<String, Object> updatedMap = ImmutableMap.of("file", (Object) updatedFile);
 
         when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
-        when(crudRepository.read(id)).thenReturn(sf);
-        when(crudRepository.update(sf.getIdentifier(),updatedMap)).thenReturn(sf);
-        when(fileRepository.update(sf.getIdentifier(),updatedMap)).thenReturn(sf);
+        when(crudRepository.update(sf.getIdentifier(),updatedMap)).thenReturn(updatedSf);
+        when(fileRepository.update(sf.getIdentifier(),updatedMap)).thenReturn(updatedSf);
 
-        sequenceFileService.update(id, updatedMap);
+        sf = sequenceFileService.update(id, updatedMap);
 
         assertEquals(updatedFile, sf.getFile());
 
@@ -129,7 +125,6 @@ public class SequenceFileServiceImplTest {
         // again after an updated file has been dropped into the appropriate
         // directory
         verify(crudRepository, times(2)).exists(id);
-        verify(crudRepository, times(2)).read(id);
         verify(crudRepository, times(2)).update(sf.getIdentifier(),updatedMap);
         verify(fileRepository).update(sf.getIdentifier(),updatedMap);
     }
