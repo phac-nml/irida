@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SparqlQuery;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
+import java.lang.reflect.Field;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
@@ -38,8 +39,12 @@ import org.openrdf.result.Result;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.openrdf.annotations.Iri;
+import org.openrdf.model.Literal;
+import org.openrdf.model.Statement;
 
 /**
  * TODO: Add comments for each of the private and protected data members in this class.
