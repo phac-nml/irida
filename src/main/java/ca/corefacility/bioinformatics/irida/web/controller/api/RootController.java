@@ -63,7 +63,6 @@ public class RootController {
     /**
      * Creates a response with a set of links used to discover the rest of the system.
      *
-     * @param model the model
      * @return a response to the client.
      */
     @RequestMapping(method = RequestMethod.GET, value = "/")

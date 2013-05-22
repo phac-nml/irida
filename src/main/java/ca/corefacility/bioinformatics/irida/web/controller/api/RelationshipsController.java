@@ -30,7 +30,8 @@ public class RelationshipsController extends GenericController<Identifier, Relat
      */
     @Autowired
     public RelationshipsController(RelationshipService relationshipService) {
-        super(relationshipService, Relationship.class, Identifier.class, RelationshipResource.class);
+        super(relationshipService, relationshipService, Relationship.class, Identifier.class,
+                RelationshipResource.class);
     }
 
     /**

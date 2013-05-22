@@ -18,6 +18,7 @@ package ca.corefacility.bioinformatics.irida.web.controller.api;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
+import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
 import com.google.common.net.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +52,9 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 public class SequenceFileController extends GenericController<Identifier, SequenceFile, SequenceFileResource> {
 
     @Autowired
-    public SequenceFileController(CRUDService<Identifier, SequenceFile> sequenceFileService) {
-        super(sequenceFileService, SequenceFile.class, Identifier.class, SequenceFileResource.class);
+    public SequenceFileController(CRUDService<Identifier, SequenceFile> sequenceFileService, RelationshipService relationshipService) {
+        super(sequenceFileService, relationshipService, SequenceFile.class, Identifier.class,
+                SequenceFileResource.class);
     }
 
     /**

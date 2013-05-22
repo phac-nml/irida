@@ -98,7 +98,7 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      */
     @Autowired
     public ProjectsController(ProjectService projectService, UserService userService, RelationshipService relationshipService) {
-        super(projectService, Project.class, Identifier.class, ProjectResource.class);
+        super(projectService, relationshipService, Project.class, Identifier.class, ProjectResource.class);
         this.userService = userService;
         this.relationshipService = relationshipService;
     }
@@ -108,7 +108,7 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      * project provides. This method *should not* be used by anyone.
      */
     protected ProjectsController() {
-        super(null, null, null, null);
+        super(null, null, null, null, null);
     }
 
     /**

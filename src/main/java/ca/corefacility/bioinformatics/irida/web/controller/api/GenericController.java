@@ -89,7 +89,6 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     /**
      * Service used to relate one resource to another.
      */
-    @Autowired
     protected RelationshipService relationshipService;
     /**
      * The type used to serialize/de-serialize the <code>Type</code> to the client.
@@ -117,8 +116,8 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @param identifierType the type of identifier used by the type that this controller manages.
      * @param resourceType   the type used to serialize/de-serialize the type to the client.
      */
-    protected GenericController(CRUDService<IdentifierType, Type> crudService, Class<Type> type,
-                                Class<IdentifierType> identifierType, Class<ResourceType> resourceType) {
+    protected GenericController(CRUDService<IdentifierType, Type> crudService, RelationshipService relationshipService,
+                                Class<Type> type, Class<IdentifierType> identifierType, Class<ResourceType> resourceType) {
         this.crudService = crudService;
         this.resourceType = resourceType;
         this.identifierType = identifierType;
@@ -181,10 +180,9 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * only one type of relationship exists between the two resource types, so each pair of resources on either side of
      * the relationship type are distinct.
      *
-     * @param <T> The type of classes that relate to this resource type.
      * @return The set of all classes uniquely related to this resource type.
      */
-    protected <T extends Identifiable> Map<String, Class<T>> getUniquelyRelatedClasses() {
+    protected Map<String, Class<?>> getUniquelyRelatedClasses() {
         return Collections.emptyMap();
     }
 
@@ -198,12 +196,15 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      */
     private Map<String, Collection<LabelledRelationshipResource>> constructRelatedResourceCollections(Type resource) {
         logger.debug("Loading related resources for [" + resource + "]");
-        Map<String, Class<Identifiable>> uniquelyRelatedClasses = getUniquelyRelatedClasses();
+        Map<String, Class<?>> uniquelyRelatedClasses = getUniquelyRelatedClasses();
         Map<String, Collection<LabelledRelationshipResource>> relatedResources = new HashMap<>();
+        logger.debug("Total uniquely related resources: [" + uniquelyRelatedClasses.size() + "]");
 
-        for (Map.Entry<String, Class<Identifiable>> relatedClass : uniquelyRelatedClasses.entrySet()) {
+        for (Map.Entry<String, Class<?>> relatedClass : uniquelyRelatedClasses.entrySet()) {
+            logger.debug("Loading relationships for " + relatedClass.getValue());
             Collection<Relationship> relationships = relationshipService.getRelationshipsForEntity(
                     resource.getIdentifier(), type, relatedClass.getValue());
+            logger.debug("Total relationships: " + relationships.size());
             List<LabelledRelationshipResource> resources = new ArrayList<>(relationships.size());
             for (Relationship r : relationships) {
                 Identifier relationshipIdentifier = r.getObject();

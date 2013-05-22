@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
-import static junit.framework.Assert.*;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -69,10 +69,13 @@ public class ProjectsControllerTest {
         Object o = map.get(GenericController.RESOURCE_NAME);
         assertNotNull(o);
         assertTrue(o instanceof ResourceCollection);
+        @SuppressWarnings("unchecked")
         ResourceCollection<UserResource> users = (ResourceCollection<UserResource>) o;
         assertEquals(1, users.size());
         UserResource ur = users.iterator().next();
         assertTrue(ur.getLink("self").getHref().endsWith(username));
         assertTrue(users.getLink("self").getHref().contains(projectId));
     }
+
+
 }

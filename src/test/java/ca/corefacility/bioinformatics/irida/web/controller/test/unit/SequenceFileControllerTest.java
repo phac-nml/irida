@@ -54,7 +54,7 @@ public class SequenceFileControllerTest {
     @Before
     public void setUp() {
         service = mock(CRUDService.class);
-        controller = new SequenceFileController(service);
+        controller = new SequenceFileController(service, null);
 
         // fake out the servlet response so that the URI builder will work.
         RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());

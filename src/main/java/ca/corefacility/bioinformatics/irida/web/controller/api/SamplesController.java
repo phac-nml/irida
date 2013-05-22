@@ -18,6 +18,7 @@ package ca.corefacility.bioinformatics.irida.web.controller.api;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
+import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
@@ -40,8 +41,8 @@ public class SamplesController extends GenericController<Identifier, Sample, Sam
      * @param sampleService the service used to manage samples.
      */
     @Autowired
-    public SamplesController(CRUDService<Identifier, Sample> sampleService) {
-        super(sampleService, Sample.class, Identifier.class, SampleResource.class);
+    public SamplesController(CRUDService<Identifier, Sample> sampleService, RelationshipService relationshipService) {
+        super(sampleService, relationshipService, Sample.class, Identifier.class, SampleResource.class);
     }
 
     /**

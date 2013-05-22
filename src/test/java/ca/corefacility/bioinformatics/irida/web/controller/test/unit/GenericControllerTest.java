@@ -21,11 +21,14 @@ import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
+import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.links.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.support.IdentifiableTestEntity;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.support.IdentifiableTestResource;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.net.HttpHeaders;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,6 +56,7 @@ public class GenericControllerTest {
 
     private GenericController<Identifier, IdentifiableTestEntity, IdentifiableTestResource> controller;
     private CRUDService<Identifier, IdentifiableTestEntity> crudService;
+    private RelationshipService relationshipService;
     private IdentifiableTestEntity entity;
     private Identifier id;
     private Map<String, Object> updatedFields;
@@ -60,19 +64,21 @@ public class GenericControllerTest {
     @Before
     public void setUp() {
         crudService = mock(CRUDService.class);
+        relationshipService = mock(RelationshipService.class);
         id = new Identifier();
         entity = new IdentifiableTestEntity();
         entity.setIdentifier(id);
         controller = new GenericController<Identifier, IdentifiableTestEntity, IdentifiableTestResource>(crudService,
-                IdentifiableTestEntity.class, Identifier.class, IdentifiableTestResource.class) {
-            @Override
-            public Collection<Link> constructCustomResourceLinks(IdentifiableTestEntity resource) {
-                return Collections.emptySet();
-            }
-
+                relationshipService, IdentifiableTestEntity.class, Identifier.class, IdentifiableTestResource.class) {
             @Override
             public IdentifiableTestEntity mapResourceToType(IdentifiableTestResource representation) {
                 return entity;
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            protected Map<String, Class<?>> getUniquelyRelatedClasses() {
+                return (Map<String, Class<?>>) ImmutableMap.of("related", (Class<?>) IdentifiableTestEntity.class);
             }
         };
         updatedFields = new HashMap<>();
@@ -235,6 +241,27 @@ public class GenericControllerTest {
 
         verify(crudService).list(2, 20, Order.DESCENDING);
         verify(crudService, times(0)).list(2, 20, null, Order.DESCENDING);
+    }
+
+    @Test
+    public void testGetRelatedResources() {
+        // basically, the only way to get related resources is to call "getResource" and supply the appropriate related
+        // resource calls for the relationshipService.
+        when(crudService.read(id)).thenReturn(entity);
+        ModelMap model = null;
+
+        try {
+            model = controller.getResource(id.getIdentifier());
+        } catch (InstantiationException | IllegalAccessException e) {
+            fail();
+        }
+
+        // get the collection of related resources
+        assertTrue(model.containsKey(GenericController.RELATED_RESOURCES_NAME));
+        Map<String, Collection<LabelledRelationshipResource>> relatedResources =
+                (Map<String, Collection<LabelledRelationshipResource>>) model
+                        .get(GenericController.RELATED_RESOURCES_NAME);
+
     }
 
     @Test

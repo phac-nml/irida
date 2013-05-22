@@ -54,7 +54,7 @@ public class UserControllerTest {
     public void setUp() {
         userService = mock(UserService.class);
         projectService = mock(ProjectService.class);
-        controller = new UsersController(userService, projectService);
+        controller = new UsersController(userService, projectService, null);
 
         // fake out the servlet response so that the URI builder will work.
         RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
