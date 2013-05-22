@@ -48,7 +48,7 @@ public interface CRUDRepository<IdentifierType, Type> {
      * valid identifier, or the object does not pass validation, then an
      * exception will be thrown with a reason for failure.
      */    
-    public Type update(IdentifierType id, Map<String, Object> updatedFields) throws InvalidPropertyException,SecurityException;
+    public Type update(IdentifierType id, Map<String, Object> updatedFields) throws InvalidPropertyException;
 
     /**
      * Delete the object with the specified identifier from the database.

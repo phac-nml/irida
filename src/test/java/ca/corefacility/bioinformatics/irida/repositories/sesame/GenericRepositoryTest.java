@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SailMemoryStore;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
@@ -23,6 +24,8 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -207,7 +210,6 @@ public class GenericRepositoryTest {
     public void testUpdate() {
         Identified u = new Identified("newdata");
         u = repo.create(u);
-        //public Type update(IDType id, Map<String, Object> updatedFields) throws InvalidPropertyException,SecurityException {        
         
         try{
             String differentData = "different";
@@ -217,9 +219,9 @@ public class GenericRepositoryTest {
             
             Identified j = repo.read(u.getIdentifier());
             assertNotNull(j);
-            assertTrue(j.getData().compareTo(differentData)==0);
+            assertEquals(j.getData(),differentData);
         }
-        catch(IllegalArgumentException e){
+        catch(IllegalArgumentException|InvalidPropertyException ex){
             fail();
         }
     }    
