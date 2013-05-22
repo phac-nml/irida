@@ -6,7 +6,7 @@
 describe('LandingCtrl', function () {
   var LandingCtrl, $location, $scope, $httpBackend;
 
-  beforeEach(module('irida'));
+  beforeEach(module('NGS'));
 
   beforeEach(inject(function ($controller, _$location_, $rootScope, $injector) {
     $location = _$location_;

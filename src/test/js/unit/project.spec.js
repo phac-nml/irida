@@ -8,7 +8,7 @@ describe('ProjectCtrl', function () {
   var ProjectCtrl, $location, $scope, $httpBackend;
   var url = '/login';
 
-  beforeEach(module('irida'));
+  beforeEach(module('NGS'));
 
   beforeEach(inject(function ($controller, _$location_, $rootScope, $injector) {
     $location = _$location_;

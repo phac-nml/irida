@@ -29,7 +29,7 @@ describe('UserCtrl', function () {
   var UserCtrl, $location, $scope, $httpBackend;
   var url = 'http://localhost:8080/users/user2';
 
-  beforeEach(module('irida'));
+  beforeEach(module('NGS'));
 
   beforeEach(inject(function ($controller, _$location_, $rootScope, $injector, ajaxService) {
     $location = _$location_;

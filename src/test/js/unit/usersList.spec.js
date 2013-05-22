@@ -45,7 +45,7 @@ describe('UsersListCtrl', function () {
     }
   };
 
-  beforeEach(module('irida'));
+  beforeEach(module('NGS'));
 
   beforeEach(inject(function ($controller, _$location_, $rootScope, $injector, ajaxService) {
     $location = _$location_;

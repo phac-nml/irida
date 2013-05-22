@@ -4,7 +4,7 @@
  * Time:   12:18 PM
  */
 
-angular.module('irida')
+angular.module('NGS')
   .directive('file', function () {
     'use strict';
     return {
