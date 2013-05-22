@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -229,7 +230,6 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Identifi
             File target = updateFilesystemFile(id,updatedFile);
             file.setFile(target);
         }
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         
         return file;
     }
@@ -244,5 +244,13 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Identifi
     public Boolean exists(Identifier id) {
         throw new UnsupportedOperationException("SequenceFile file exists "
                 + "should be populated by SequenceFileSesameRepository.");        
+    }
+
+    /**
+     * Reading multiple files will not be supported
+     */
+    @Override
+    public Collection<SequenceFile> readMultiple(Collection<Identifier> idents) {
+        throw new UnsupportedOperationException("Reading multiple files will not be supported.");
     }
 }

@@ -17,7 +17,6 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
@@ -47,31 +46,30 @@ import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 
 /**
- * TODO: Add comments for each of the private and protected data members in this class.
+ * Repository for storing objects of a type that extend {@link IridaThing}
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class GenericRepository<IDType extends Identifier, Type extends IridaThing> extends SesameRepository
         implements CRUDRepository<IDType, Type> {
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(GenericRepository.class);
-    protected AuditRepository auditRepo;
-    protected RelationshipSesameRepository linksRepo;
+    
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(GenericRepository.class); //Logger to use for this repository
+    protected AuditRepository auditRepo; //The auditing repository to use for auditing purposes in this repository
+    protected RelationshipSesameRepository linksRepo; //The relationship repository to use for adding and querying relationships
     private Class objectType; //The class object type being stored by this repo
-    private String prefix; 
-    private String sType; //String representation of that type
+    private String prefix;  //The RDF prefix of the object type in this repository
+    private String sType; //The RDF local name of the object type in this repository
 
     public GenericRepository() {
     }
 
     /**
-     * TODO: Comment this constructor, I have no idea what many of these arguments are supposed to be (fb)
-     *
      * @param store A {@link TripleStore} to use for storing data in this repository
      * @param objectType The class of objects to store in this repository
-     * @param prefix
-     * @param sType
-     * @param auditRepo
-     * @param linksRepo
+     * @param prefix The RDF prefix of the object type in this repository
+     * @param sType The RDF local name of the object type in this repository
+     * @param auditRepo The audit repository to use for this repository
+     * @param linksRepo The links repository to use for this repository
      */
     public GenericRepository(TripleStore store, Class objectType, String prefix, String sType, AuditRepository auditRepo, RelationshipSesameRepository linksRepo) {
         super(store, sType);
@@ -114,22 +112,22 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     }
 
     /**
-     * TODO: does this method need to be public? Write method-level comments for this method (fb)
+     * Generate a new identifier for the given object.  May be overridden for specific class implementations
      *
-     * @param t
-     * @return
+     * @param t The object to generate an identifier for
+     * @return A newly generated identifier for the given object
      */
-    public Identifier generateNewIdentifier(Type t) {
+    protected Identifier generateNewIdentifier(Type t) {
         return super.generateNewIdentifier();
     }
 
     /**
-     * TODO: does this method need to be public? Write method-level comments for this method (fb)
+     * Store the given object in the RDF triplestore
      *
-     * @param object
-     * @return
+     * @param object The object to store in the triplestore
+     * @return The object that was just stored 
      */
-    public Type storeObject(Type object) {
+    private Type storeObject(Type object) {
         ObjectConnection con = store.getRepoConnection();
 
         Identifier objid = (Identifier) object.getIdentifier();
@@ -154,41 +152,42 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     }
 
     /**
-     * TODO: does this method need to be public? write method-level comments for this method (fb)
+     * Build a concrete Java object with an {@link Identifier} and {@link Audit} of <code>Type</code>.
+     * The passed object may be an EntityProxied class that needs to be rebuilt
      *
-     * @param o
-     * @param u
-     * @param con
-     * @return
+     * @param object The object to reconstruct
+     * @param uri The URI to use to construct this object's {@link Identifier}
+     * @param con An object connection to use to construct this object
+     * @return A reconstructed object of the repository's set type
      * @throws MalformedQueryException
      * @throws RepositoryException
      * @throws QueryEvaluationException
      */
-    public Type buildObjectFromResult(Type o, URI u, ObjectConnection con)
+    protected Type buildObjectFromResult(Type object, URI uri, ObjectConnection con)
             throws MalformedQueryException, RepositoryException, QueryEvaluationException {
-        Type ret = (Type) o.copy();
+        Type ret = (Type) object.copy();
 
-        String identifiedBy = getIdentifiedBy(con, u);
-        Identifier objid = buildIdentifier(ret, u, identifiedBy);
+        String identifiedBy = getIdentifiedBy(con, uri);
+        Identifier objid = buildIdentifier(ret, uri, identifiedBy);
         ret.setIdentifier(objid);
-        ret.setAuditInformation(auditRepo.getAudit(u.toString()));                
+        ret.setAuditInformation(auditRepo.getAudit(uri.toString()));                
         
         return ret;
     }
 
     /**
-     * TODO: does this method need to be public? write method-level comments for this method (fb)
+     * Build an {@link Identifier} for the given object
      *
-     * @param obj
-     * @param uri
-     * @param identifiedBy
-     * @return
+     * @param object The object to build an identifier for
+     * @param uri The URI of the object to build an identifier for
+     * @param identifiedBy The string identifier for this object
+     * @return An {@link Identifier} for the given object
      */
-    public Identifier buildIdentifier(Type obj, URI uri, String identifiedBy) {
+    protected Identifier buildIdentifier(Type object, URI uri, String identifiedBy) {
         Identifier objid = new Identifier();
         objid.setUri(java.net.URI.create(uri.toString()));
         objid.setUUID(UUID.fromString(identifiedBy));
-        objid.setLabel(obj.getLabel());
+        objid.setLabel(object.getLabel());
 
         return objid;
     }
@@ -234,12 +233,10 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     }
 
     /**
-     * TODO: This should be exposed in both CRUDRepository and CRUDService.
-     *
-     * @param idents
-     * @return
+     * {@inheritDoc}
      */
-    public List<Type> readMultiple(List<Identifier> idents) {
+    @Override
+    public Collection<Type> readMultiple(Collection<Identifier> idents) { 
         List<Type> projects = new ArrayList<>();
         ObjectConnection con = store.getRepoConnection();
 

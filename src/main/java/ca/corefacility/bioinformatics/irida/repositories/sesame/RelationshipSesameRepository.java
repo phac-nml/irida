@@ -30,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -631,6 +632,11 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
 
     @Override
     public Relationship update(Identifier id, Map<String, Object> updatedFields) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Collection<Relationship> readMultiple(Collection<Identifier> idents) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
        

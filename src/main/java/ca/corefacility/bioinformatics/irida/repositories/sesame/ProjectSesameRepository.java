@@ -49,7 +49,7 @@ public class ProjectSesameRepository extends GenericRepository<Identifier, Proje
     public Collection<Project> getProjectsForUser(User user) {
         List<Identifier> projIds = linksRepo.listObjects(user.getIdentifier(), hasProject);
         
-        List<Project> projs = readMultiple(projIds);
+        Collection<Project> projs = readMultiple(projIds);
         
         return projs;
     }

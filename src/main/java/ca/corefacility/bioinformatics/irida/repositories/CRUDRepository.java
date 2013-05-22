@@ -3,6 +3,8 @@ package ca.corefacility.bioinformatics.irida.repositories;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +37,14 @@ public interface CRUDRepository<IdentifierType, Type> {
      * database.
      */
     public Type read(IdentifierType id) throws EntityNotFoundException;
+    
+
+    /**
+     * Read multiple objects by the given collection of identifiers
+     * @param idents The unique identifiers of the objects to read
+     * @return A collection of the requested objects
+     */
+    public Collection<Type> readMultiple(Collection<Identifier> idents);
 
     /**
      * Update the specified object in the database. The object <b>must</b> have
