@@ -96,7 +96,7 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Identifi
      * This method is not supported by {@link SequenceFileFilesystemRepository}
      * and will throw an {@link UnsupportedOperationException}.
      *
-     * @see SequenceFileSesameRepository
+     * @see ca.corefacility.bioinformatics.irida.repositories.sesame.SequenceFileSesameRepository
      *
      * @param id the file to load.
      * @return the {@link SequenceFile} with a reference to the file.
@@ -194,10 +194,6 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Identifi
         }
         
         return target;
-
-        //object.setFile(target);
-
-        //return object;        
     }
 
     @Override
@@ -208,10 +204,6 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Identifi
     @Override
     public List<SequenceFile> list(int page, int size, String sortProperty, Order order) {
         throw new UnsupportedOperationException("Files cannot be listed independently.");
-    }
-
-    public Boolean exists(File id) {
-        return id.exists();
     }
 
     @Override
@@ -229,8 +221,6 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Identifi
             File target = updateFilesystemFile(id,updatedFile);
             file.setFile(target);
         }
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        
         return file;
     }
 
