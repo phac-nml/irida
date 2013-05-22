@@ -1,13 +1,13 @@
 /*global angular */
 var NGS = angular.module('NGS', [
-  'restangular',
   'ui',
   'ngCookies',
   'ngResource',
+  'infinite-scroll',
   'NGS.Services'
 ]);
 
-NGS.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
+NGS.config(['$locationProvider', function ($locationProvider) {
   'use strict';
   $locationProvider.html5Mode(true);
 }]);

@@ -16,7 +16,7 @@
                     <div class="large-3 large-offset-1 small-12 columns resource-list">
                         <h2>Users</h2>
                         <ul>
-                            <li ng-repeat="user in users"><a href="#" ng-click="gotoUser(user.link.self)"><i class="icon-user"></i> {{user.label}}</a>
+                            <li ng-repeat="user in users"><a href="#" ng-click="gotoUser($index)"><i class="icon-user"></i> {{user.label}}</a>
                             <span class="remove">
                                 <a title="Remove user from project" ng-click="removeUser(user.links.delete)">
                                     <i class="icon-remove"></i>
