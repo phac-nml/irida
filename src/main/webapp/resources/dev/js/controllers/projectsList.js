@@ -89,13 +89,45 @@
         }
       };
 
-      // Initialize
-      $scope.$emit('setWindowTitle','All Projects');
+      // INFINITE SCROLL
+      $scope.scroll = {
+        disabled: false,
+        check: true
+      };
+
+      $scope.loadMore = function () {
+        if ($scope.scroll.check && $scope.links.next) {
+          $scope.scroll.check = false;
+          var url = $scope.links.next;
+          ajaxService.get(url).then(
+
+            function (data) {
+              ajaxSuccessCallback(data);
+            },
+
+            function (errorMessage) {
+              // TODO: handle error message
+              console.log(errorMessage);
+            });
+        }
+        else {
+          $scope.scroll.disabled = true;
+        }
+      };
 
       function ajaxSuccessCallback(data) {
+        $scope.links = {};
         $scope.links = resourceService.formatResourceLinks(data.resource.links);
-        $scope.projects = data.resource.resources;
+        console.log($scope.links);
+//        $scope.projects = data.resource.resources;
+        angular.forEach(data.resource.resources, function (p) {
+          $scope.projects.push(p);
+        });
+        $scope.scroll.check = true;
       }
+
+      // Initialize
+      $scope.$emit('setWindowTitle', 'All Projects');
 
     }]);
 })(angular, NGS);

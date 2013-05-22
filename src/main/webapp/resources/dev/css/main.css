@@ -279,6 +279,9 @@ select {
 
   [class*="small-block-grid-"] > li {
     clear: none !important; } }
+html {
+  -webkit-font-smoothing: antialiased; }
+
 /* ==========================================================================
    COLORS
    ========================================================================== */
@@ -396,7 +399,6 @@ h1, h2, h3, h4, h5, h6 {
     padding: 0.8em;
     height: 12em;
     border: 1px solid rgba(0, 0, 0, 0.15);
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
     cursor: pointer;
     overflow: hidden;
     -webkit-transition: all 0.3s ease-in-out;
@@ -455,8 +457,14 @@ h1, h2, h3, h4, h5, h6 {
     .listTable thead th {
       color: #ffffff; }
   .listTable tbody tr {
+    -webkit-transition: background-color 0.5s ease-in-out;
+    -moz-transition: background-color 0.5s ease-in-out;
+    transition: background-color 0.5s ease-in-out;
     border-bottom: 1px solid #efefef; }
     .listTable tbody tr:hover {
+      -webkit-transition: background-color 0.5s ease-in-out;
+      -moz-transition: background-color 0.5s ease-in-out;
+      transition: background-color 0.5s ease-in-out;
       cursor: pointer;
       background-color: #c2ccd1; }
     @media screen and (max-width: 48em) {
