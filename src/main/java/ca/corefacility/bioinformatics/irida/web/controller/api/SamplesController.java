@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Controller
+@ExposesResourceFor(Sample.class)
 @RequestMapping(value = "/samples")
 public class SamplesController extends GenericController<Identifier, Sample, SampleResource> {
 
@@ -39,7 +41,7 @@ public class SamplesController extends GenericController<Identifier, Sample, Sam
      */
     @Autowired
     public SamplesController(CRUDService<Identifier, Sample> sampleService) {
-        super(sampleService, Identifier.class, SampleResource.class);
+        super(sampleService, Sample.class, Identifier.class, SampleResource.class);
     }
 
     /**

@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
 import com.google.common.net.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -45,12 +46,13 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Controller
+@ExposesResourceFor(SequenceFile.class)
 @RequestMapping(value = "/sequenceFiles")
 public class SequenceFileController extends GenericController<Identifier, SequenceFile, SequenceFileResource> {
 
     @Autowired
     public SequenceFileController(CRUDService<Identifier, SequenceFile> sequenceFileService) {
-        super(sequenceFileService, Identifier.class, SequenceFileResource.class);
+        super(sequenceFileService, SequenceFile.class, Identifier.class, SequenceFileResource.class);
     }
 
     /**

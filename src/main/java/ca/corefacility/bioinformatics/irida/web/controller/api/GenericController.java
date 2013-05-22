@@ -18,14 +18,17 @@ package ca.corefacility.bioinformatics.irida.web.controller.api;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
+import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.controller.links.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder;
 import ca.corefacility.bioinformatics.irida.web.controller.support.SortProperty;
 import com.google.common.base.Strings;
@@ -33,6 +36,8 @@ import com.google.common.net.HttpHeaders;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityLinks;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
@@ -82,6 +87,11 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      */
     protected CRUDService<IdentifierType, Type> crudService;
     /**
+     * Service used to relate one resource to another.
+     */
+    @Autowired
+    protected RelationshipService relationshipService;
+    /**
      * The type used to serialize/de-serialize the <code>Type</code> to the client.
      */
     private Class<ResourceType> resourceType;
@@ -89,6 +99,15 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * The type of identifier used by <code>Type</code> in the database.
      */
     private Class<IdentifierType> identifierType;
+    /**
+     * The type of class that the generic controller is exposing.
+     */
+    private Class<Type> type;
+    /**
+     * Reference to EntityLinks for generating links between resources.
+     */
+    @Autowired
+    private EntityLinks entityLinks;
 
     /**
      * Construct an instance of {@link GenericController}. {@link GenericController} is an abstract type, and should
@@ -98,36 +117,12 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @param identifierType the type of identifier used by the type that this controller manages.
      * @param resourceType   the type used to serialize/de-serialize the type to the client.
      */
-    protected GenericController(CRUDService<IdentifierType, Type> crudService,
+    protected GenericController(CRUDService<IdentifierType, Type> crudService, Class<Type> type,
                                 Class<IdentifierType> identifierType, Class<ResourceType> resourceType) {
         this.crudService = crudService;
         this.resourceType = resourceType;
         this.identifierType = identifierType;
-
-    }
-
-    /**
-     * Construct a collection of {@link Link}s for a specific resource. Each resource may have custom links that refer
-     * to other controllers, but not all will. This method is called by the <code>getResource</code> method.
-     *
-     * @param resource the resource to generate the links for.
-     * @return a collection of links.
-     */
-    protected Collection<Link> constructCustomResourceLinks(Type resource) {
-        return Collections.emptySet();
-    }
-
-    /**
-     * Construct a collection of {@link Resource}s that relate to the specified resource. Use this method to inject
-     * composite resources into the response *instead* of calling <code>constructCustomResourceLinks</code>. This method
-     * is required to generate a collection of collections because the implementing type may have more than one related
-     * type. This method is called by <code>getResource</code>.
-     *
-     * @param resource the resource to generate related collections for.
-     * @return a collection of collections of related resources.
-     */
-    protected <T extends Resource> Map<String, Collection<T>> constructRelatedResourceCollections(Type resource) {
-        return Collections.emptyMap();
+        this.type = type;
     }
 
     /**
@@ -155,6 +150,73 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      */
     protected Order getDefaultSortOrder() {
         return Order.ASCENDING;
+    }
+
+    /**
+     * Construct a collection of {@link Link}s for a specific resource. Each resource may have custom links that refer
+     * to other controllers, but not all will. This method is called by the <code>getResource</code> method.
+     *
+     * @param resource the resource to generate the links for.
+     * @return a collection of links.
+     */
+    protected Collection<Link> constructCustomResourceLinks(Type resource) {
+        return Collections.emptySet();
+    }
+
+    /**
+     * Construct a collection of {@link Resource}s that relate to the specified resource. Use this method to inject
+     * composite resources into the response *instead* of calling <code>constructCustomResourceLinks</code>. This method
+     * is required to generate a collection of collections because the implementing type may have more than one related
+     * type. This method is called by <code>getResource</code>.
+     *
+     * @param resource the resource to generate related collections for.
+     * @return a collection of collections of related resources.
+     */
+    protected Map<String, Collection<LabelledRelationshipResource>> constructCustomRelatedResourceCollections(Type resource) {
+        return Collections.emptyMap();
+    }
+
+    /**
+     * Construct a collection of {@link Resource}s that are related to the specified resource uniquely. In other words,
+     * only one type of relationship exists between the two resource types, so each pair of resources on either side of
+     * the relationship type are distinct.
+     *
+     * @param <T> The type of classes that relate to this resource type.
+     * @return The set of all classes uniquely related to this resource type.
+     */
+    protected <T extends Identifiable> Map<String, Class<T>> getUniquelyRelatedClasses() {
+        return Collections.emptyMap();
+    }
+
+    /**
+     * Construct a collection of {@link Resource}s that uniquely relate to the specified resource. This method is
+     * required to generate a collection of collections because the implementing type may have more than one related
+     * type. This method is called by <code>getResource</code>.
+     *
+     * @param resource the resource to generate related collections for.
+     * @return a collection of collections of related resources.
+     */
+    private Map<String, Collection<LabelledRelationshipResource>> constructRelatedResourceCollections(Type resource) {
+        logger.debug("Loading related resources for [" + resource + "]");
+        Map<String, Class<Identifiable>> uniquelyRelatedClasses = getUniquelyRelatedClasses();
+        Map<String, Collection<LabelledRelationshipResource>> relatedResources = new HashMap<>();
+
+        for (Map.Entry<String, Class<Identifiable>> relatedClass : uniquelyRelatedClasses.entrySet()) {
+            Collection<Relationship> relationships = relationshipService.getRelationshipsForEntity(
+                    resource.getIdentifier(), type, relatedClass.getValue());
+            List<LabelledRelationshipResource> resources = new ArrayList<>(relationships.size());
+            for (Relationship r : relationships) {
+                Identifier relationshipIdentifier = r.getObject();
+                LabelledRelationshipResource relationshipResource = new LabelledRelationshipResource(
+                        relationshipIdentifier.getLabel(), r);
+                relationshipResource.add(entityLinks.linkToSingleResource(relatedClass.getValue(),
+                        relationshipIdentifier.getIdentifier()));
+                resources.add(relationshipResource);
+            }
+            relatedResources.put(relatedClass.getKey(), resources);
+        }
+
+        return relatedResources;
     }
 
     /**
@@ -261,8 +323,12 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
 
         // add the resource to the model
         model.addAttribute(RESOURCE_NAME, resource);
+        // get a set of uniquely related resources for this resource
+        Map<String, Collection<LabelledRelationshipResource>> relatedResources = constructRelatedResourceCollections(t);
+        // add any non-uniquely related resources to this resource
+        relatedResources.putAll(constructCustomRelatedResourceCollections(t));
         // add any related resources to the model
-        model.addAttribute(RELATED_RESOURCES_NAME, constructRelatedResourceCollections(t));
+        model.addAttribute(RELATED_RESOURCES_NAME, relatedResources);
 
         // send the response back to the client.
         return model;

@@ -28,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.links.LabelledRelatio
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +50,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Controller
+@ExposesResourceFor(Project.class)
 @RequestMapping(value = "/projects")
 public class ProjectsController extends GenericController<Identifier, Project, ProjectResource> {
 
@@ -96,7 +98,7 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      */
     @Autowired
     public ProjectsController(ProjectService projectService, UserService userService, RelationshipService relationshipService) {
-        super(projectService, Identifier.class, ProjectResource.class);
+        super(projectService, Project.class, Identifier.class, ProjectResource.class);
         this.userService = userService;
         this.relationshipService = relationshipService;
     }
@@ -106,7 +108,7 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      * project provides. This method *should not* be used by anyone.
      */
     protected ProjectsController() {
-        super(null, null, null);
+        super(null, null, null, null);
     }
 
     /**
@@ -194,39 +196,24 @@ public class ProjectsController extends GenericController<Identifier, Project, P
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
-    protected Map<String, Collection<LabelledRelationshipResource>> constructRelatedResourceCollections(Project project) {
-        Map<String, Collection<LabelledRelationshipResource>> resources = new HashMap<>();
-
-        resources.put(PROJECT_USERS_MAP_LABEL, getUsersForProject(project));
-        resources.put(PROJECT_SAMPLES_MAP_LABEL,
-                getRelatedResourcesForProject(project, Sample.class, SamplesController.class));
-        resources.put(PROJECT_SEQUENCE_FILES_MAP_LABEL,
-                getRelatedResourcesForProject(project, SequenceFile.class, SequenceFileController.class));
-
-        return resources;
+    protected Map<String, Class<?>> getUniquelyRelatedClasses() {
+        Map<String, Class<?>> relatedResources = new HashMap<>();
+        relatedResources.put(PROJECT_SAMPLES_MAP_LABEL, Sample.class);
+        relatedResources.put(PROJECT_SEQUENCE_FILES_MAP_LABEL, SequenceFile.class);
+        return relatedResources;
     }
 
     /**
-     * Get the related resources between a {@link Project} and another type of resource.
-     *
-     * @param project      the project to get the related resources for.
-     * @param relatedClass the type of relationships that you want to retrieve.
-     * @param controller   the type of controller used to get resources of that type.
-     * @return a collection of labelled resources.
+     * {@inheritDoc}
      */
-    private Collection<LabelledRelationshipResource> getRelatedResourcesForProject(Project project, Class<?> relatedClass, Class<?> controller) {
-        Collection<Relationship> relationships = relationshipService.getRelationshipsForEntity(project.getIdentifier(),
-                Project.class, relatedClass);
-        List<LabelledRelationshipResource> resources = new ArrayList<>(relationships.size());
-        for (Relationship r : relationships) {
-            Identifier relationshipIdentifier = r.getObject();
-            LabelledRelationshipResource resource = new LabelledRelationshipResource(relationshipIdentifier.getLabel(),
-                    r);
-            resource.add(linkTo(controller).slash(relationshipIdentifier.getIdentifier()).withSelfRel());
-            resources.add(resource);
-        }
+    @SuppressWarnings("unchecked")
+    @Override
+    protected Map<String, Collection<LabelledRelationshipResource>> constructCustomRelatedResourceCollections(Project project) {
+        Map<String, Collection<LabelledRelationshipResource>> resources = new HashMap<>();
+
+        resources.put(PROJECT_USERS_MAP_LABEL, getUsersForProject(project));
+
         return resources;
     }
 

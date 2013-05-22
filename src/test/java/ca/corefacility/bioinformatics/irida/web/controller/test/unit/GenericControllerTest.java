@@ -64,7 +64,7 @@ public class GenericControllerTest {
         entity = new IdentifiableTestEntity();
         entity.setIdentifier(id);
         controller = new GenericController<Identifier, IdentifiableTestEntity, IdentifiableTestResource>(crudService,
-                Identifier.class, IdentifiableTestResource.class) {
+                IdentifiableTestEntity.class, Identifier.class, IdentifiableTestResource.class) {
             @Override
             public Collection<Link> constructCustomResourceLinks(IdentifiableTestEntity resource) {
                 return Collections.emptySet();

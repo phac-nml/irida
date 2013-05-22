@@ -7,6 +7,7 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.relationship.
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * Controller for managing {@link Relationship} entities.
  */
 @Controller
+@ExposesResourceFor(Relationship.class)
 @RequestMapping("/relationships")
 public class RelationshipsController extends GenericController<Identifier, Relationship, RelationshipResource> {
     /**
@@ -28,7 +30,7 @@ public class RelationshipsController extends GenericController<Identifier, Relat
      */
     @Autowired
     public RelationshipsController(RelationshipService relationshipService) {
-        super(relationshipService, Identifier.class, RelationshipResource.class);
+        super(relationshipService, Relationship.class, Identifier.class, RelationshipResource.class);
     }
 
     /**
