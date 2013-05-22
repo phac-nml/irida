@@ -15,6 +15,9 @@ files = [
   'src/main/webapp/resources/dev/js/lib/foundation/foundation.reveal.js',
   'src/main/webapp/resources/dev/js/lib/angular/angular.min.js',
   'src/main/webapp/resources/dev/js/lib/angular/angular-resource.min.js',
+  'src/main/webapp/resources/dev/js/lib/underscore.min.js',
+  'src/main/webapp/resources/dev/js/lib/angular/restangular.min.js',
+  'src/main/webapp/resources/dev/js/lib/angular/angular-ui.js',
   'src/test/js/lib/angular/angular-mocks.js',
   'src/main/webapp/resources/dev/js/**/*.js',
   'src/test/js/unit/*.spec.js'

@@ -18,6 +18,6 @@
       'use strict';
 
       // Initialize
-      $scope.setWindowTitle('Landing Page');
+      $scope.$emit('setWindowTitle','Landing Page');
     }]);
 })(angular, NGS);

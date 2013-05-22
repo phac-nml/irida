@@ -13,8 +13,8 @@
       $scope.notifier = {};
 
       // Window Title
-      $scope.setWindowTitle = function (title) {
+      $scope.$on('setWindowTitle', function (event, title) {
         $scope.windowTitle = title;
-      };
+      });
     }]);
 })(angular, NGS);

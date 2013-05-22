@@ -25,6 +25,6 @@
       };
 
       // Initialize
-      $scope.setWindowTitle('Login');
+      $scope.$emit('setWindowTitle','Login');
     }]);
 })(angular, NGS);

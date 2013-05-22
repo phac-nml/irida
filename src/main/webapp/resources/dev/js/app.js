@@ -1,5 +1,6 @@
 /*global angular */
 var NGS = angular.module('NGS', [
+  'restangular',
   'ui',
   'ngCookies',
   'ngResource',
@@ -9,12 +10,5 @@ var NGS = angular.module('NGS', [
 NGS.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
   'use strict';
   $locationProvider.html5Mode(true);
-
-  // Handle all routes
-  $routeProvider
-    .when('/login',
-    {
-      action: 'login.main'
-    });
 }]);
 
