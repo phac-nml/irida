@@ -16,7 +16,7 @@
             $scope.users = resourceService.formatRelatedResource(initData.relatedResources.users);
           },
           resolve: {
-            initData: function ($q, $route, Restangular) {
+            initData: function ($route, Restangular) {
               var id = $route.current.params.projectId;
               return Restangular.one('projects', id).get();
             }
@@ -42,6 +42,6 @@
       };
 
       // Initialize
-      $scope.setWindowTitle($scope.project.name);
+      $scope.$emit('setWindowTitle', 'Project Page');
     }]);
 })(angular, NGS);

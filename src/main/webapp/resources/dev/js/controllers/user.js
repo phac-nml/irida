@@ -69,6 +69,6 @@
           });
       };
 
-      $scope.setWindowTitle($scope.user.username);
+      $scope.$emit('setWindowTitle', 'User Page');
     }]);
 })(angular, NGS);

@@ -90,7 +90,7 @@
       };
 
       // Initialize
-      $scope.setWindowTitle('All Projects');
+      $scope.$emit('setWindowTitle','All Projects');
 
       function ajaxSuccessCallback(data) {
         $scope.links = resourceService.formatResourceLinks(data.resource.links);
