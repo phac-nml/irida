@@ -1,11 +1,12 @@
-<ul class="card-holder small-block-grid-2 large-block-grid-3">
+<ul class="card-holder small-block-grid-2 large-block-grid-3" infinite-scroll='loadMore()' infinite-scroll-distance='1'>
     <li data-ng-repeat="project in projects">
         <!-- todo: do not use links[0] -->
         <div class="card" data-ng-click="gotoProject(project.links[0].href)">
             <h2>{{project.name}}</h2>
             <span ng-bind="project.dateCreated | date: 'd MMM yyyy'"></span>
 
-            <p class="hide-for-small">Lorem ipsum dolor sit amet, consectetur adipisicing elit. A consectetur consequuntur dolorum hic modi
+            <p class="hide-for-small">Lorem ipsum dolor sit amet, consectetur adipisicing elit. A consectetur
+                consequuntur dolorum hic modi
                 molestias omnis quia quibusdam! Aut beatae delectus deserunt eum expedita id ipsa quae repudiandae saepe
                 similique.</p>
         </div>
