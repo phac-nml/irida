@@ -370,6 +370,11 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
 
         return read(id);
     }
+    
+    protected Literal createLiteral(ValueFactory fac,String predicate,Object obj){
+        Literal lit = fac.createLiteral(obj);
+        return lit;
+    }
 
     private void updateField(IDType id, String predicate, Object value) {
         ObjectConnection con = store.getRepoConnection();
@@ -382,7 +387,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             ValueFactory fac = con.getValueFactory();
             URI subURI = fac.createURI(uri);
             URI predURI = fac.createURI(predicate);
-            Literal objValue = fac.createLiteral(value);
+            Literal objValue = createLiteral(fac, predicate, value);
 
             RepositoryResult<Statement> curvalues = con.getStatements(subURI, predURI, null);
             while (curvalues.hasNext()) {
