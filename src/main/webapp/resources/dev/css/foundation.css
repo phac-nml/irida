@@ -86,7 +86,7 @@ select {
   margin-right: auto;
   margin-top: 0;
   margin-bottom: 0;
-  max-width: 100%;
+  max-width: 62.5em;
   *zoom: 1; }
   .row:before, .row:after {
     content: " ";
@@ -2522,7 +2522,7 @@ form.custom {
       background: #34495e; }
 
   .contain-to-grid .top-bar {
-    max-width: 100%;
+    max-width: 62.5em;
     margin: 0 auto; }
 
   .top-bar-section {

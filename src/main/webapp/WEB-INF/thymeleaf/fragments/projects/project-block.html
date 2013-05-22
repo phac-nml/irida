@@ -1,4 +1,9 @@
 <ul class="card-holder small-block-grid-2 large-block-grid-3" infinite-scroll='loadMore()' infinite-scroll-distance='1'>
+    <li>
+        <div class="card new-card"  ng-click="openModal()">
+            <i class="icon-plus"></i>
+        </div>
+    </li>
     <li data-ng-repeat="project in projects">
         <!-- todo: do not use links[0] -->
         <div class="card" data-ng-click="gotoProject(project.links[0].href)">

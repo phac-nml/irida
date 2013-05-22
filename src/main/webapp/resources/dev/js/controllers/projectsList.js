@@ -89,6 +89,12 @@
         }
       };
 
+      // NEW PROJECT MODAL
+      $scope.openModal = function () {
+        console.log('open seseme');
+        $('#newProjectModal').foundation('reveal', 'open')
+      };
+
       // INFINITE SCROLL
       $scope.scroll = {
         disabled: false,
