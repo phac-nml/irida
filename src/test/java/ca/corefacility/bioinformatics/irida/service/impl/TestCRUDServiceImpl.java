@@ -128,33 +128,6 @@ public class TestCRUDServiceImpl {
         }
     }
 
-    //@Test
-    public void testUpdatedValidEntity() {
-        String oldField = "Absolutely not null";
-        String newField = "super not null.";
-        Integer oldIntegerValue = 30;
-        Integer newIntegerValue = 50;
-        IdentifiableTestEntity i = new IdentifiableTestEntity();
-        i.setNonNull(oldField);
-        i.setIntegerValue(oldIntegerValue);
-        Identifier id = new Identifier();
-        i.setIdentifier(id);
-        Map<String, Object> updatedFields = new HashMap<>();
-        updatedFields.put("nonNull", newField);
-        updatedFields.put("integerValue", newIntegerValue);
-        
-        when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
-        when(crudRepository.update(id, updatedFields)).thenReturn(i);
-        
-        try {
-            i = crudService.update(id, updatedFields);
-        } catch (ConstraintViolationException e) {
-            fail();
-        }
-        assertNotNull(i.getAuditInformation().getUpdated());
-        
-    }
-
     @Test
     public void testUpdateInvalidEntry() {
         IdentifiableTestEntity i = new IdentifiableTestEntity();
