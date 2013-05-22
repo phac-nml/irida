@@ -26,33 +26,10 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SparqlQuery;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.validation.ConstraintViolationException;
-import org.openrdf.annotations.Iri;
-import org.openrdf.model.Literal;
-import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
-import org.openrdf.query.BindingSet;
-import org.openrdf.query.BooleanQuery;
-import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.QueryEvaluationException;
-import org.openrdf.query.QueryLanguage;
-import org.openrdf.query.TupleQuery;
-import org.openrdf.query.TupleQueryResult;
+import org.openrdf.query.*;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.object.ObjectConnection;
@@ -60,100 +37,148 @@ import org.openrdf.repository.object.ObjectQuery;
 import org.openrdf.result.Result;
 import org.slf4j.LoggerFactory;
 
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
+ * TODO: Add comments for each of the private and protected data members in this class.
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class GenericRepository<IDType extends Identifier, Type extends IridaThing> extends SesameRepository implements CRUDRepository<IDType, Type>{
+public class GenericRepository<IDType extends Identifier, Type extends IridaThing> extends SesameRepository
+        implements CRUDRepository<IDType, Type> {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(GenericRepository.class);
-    
-    Class objectType; //The class object type being stored by this repo
+    protected AuditRepository auditRepo;
+    protected RelationshipSesameRepository linksRepo;
+    private Class objectType; //The class object type being stored by this repo
     private String prefix; //String representation of that type
     private String sType;
-    
-    protected AuditRepository auditRepo;
-    protected RelationshipSesameRepository linksRepo;    
-    
-    public GenericRepository(){}
-    
-    public GenericRepository(TripleStore store,Class objectType,String prefix, String sType,AuditRepository auditRepo, RelationshipSesameRepository linksRepo) {
+
+    public GenericRepository() {
+    }
+
+    /**
+     * TODO: Comment this constructor, I have no idea what many of these arguments are supposed to be (fb)
+     *
+     * @param store
+     * @param objectType
+     * @param prefix
+     * @param sType
+     * @param auditRepo
+     * @param linksRepo
+     */
+    public GenericRepository(TripleStore store, Class objectType, String prefix, String sType, AuditRepository auditRepo, RelationshipSesameRepository linksRepo) {
         super(store, sType);
 
         this.prefix = prefix;
         this.sType = sType;
         this.auditRepo = auditRepo;
         this.linksRepo = linksRepo;
-                
+
         this.objectType = objectType;
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Type create(Type object) throws IllegalArgumentException {
         if (object == null) {
             throw new IllegalArgumentException("Object is null");
         }
-        
+
         Audit audit = (Audit) object.getAuditInformation();
-                 
+
         Identifier objid = generateNewIdentifier(object);
-        
+
         if (exists(objid)) {
             throw new EntityExistsException("Object " + objid.getUri().toString() + " already exists in the database");
         }
-        
-        if(identifierExists(objid.getIdentifier())){
-            throw new EntityExistsException("An object with this identifier already exists in the database");            
+
+        if (identifierExists(objid.getIdentifier())) {
+            throw new EntityExistsException("An object with this identifier already exists in the database");
         }
 
         object.setIdentifier(objid);
 
         storeObject(object);
         auditRepo.audit(audit, objid.getUri().toString());
-        
+
         return object;
     }
-    
+
+    /**
+     * TODO: does this method need to be public? Write method-level comments for this method (fb)
+     *
+     * @param t
+     * @return
+     */
     public Identifier generateNewIdentifier(Type t) {
         return super.generateNewIdentifier();
-    }    
-    
-    public Type storeObject(Type object){
+    }
+
+    /**
+     * TODO: does this method need to be public? Write method-level comments for this method (fb)
+     *
+     * @param object
+     * @return
+     */
+    public Type storeObject(Type object) {
         ObjectConnection con = store.getRepoConnection();
-        
+
         Identifier objid = (Identifier) object.getIdentifier();
-        
-        try{
+
+        try {
             con.begin();
             ValueFactory fac = con.getValueFactory();
 
             URI uri = fac.createURI(objid.getUri().toString());
             con.addObject(uri, object);
-            
-            setIdentifiedBy(con,uri, objid.getIdentifier());
-                        
-            con.commit();            
-        }            
-        catch (RepositoryException ex) {
+
+            setIdentifiedBy(con, uri, objid.getIdentifier());
+
+            con.commit();
+        } catch (RepositoryException ex) {
             Logger.getLogger(GenericRepository.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            store.closeRepoConnection(con);
         }
-        finally{
-            store.closeRepoConnection(con);            
-        }
-        
-        return object;        
+
+        return object;
     }
-    
-    public Type buildObjectFromResult(Type o,URI u,ObjectConnection con) throws MalformedQueryException, RepositoryException, QueryEvaluationException{
+
+    /**
+     * TODO: does this method need to be public? write method-level comments for this method (fb)
+     *
+     * @param o
+     * @param u
+     * @param con
+     * @return
+     * @throws MalformedQueryException
+     * @throws RepositoryException
+     * @throws QueryEvaluationException
+     */
+    public Type buildObjectFromResult(Type o, URI u, ObjectConnection con)
+            throws MalformedQueryException, RepositoryException, QueryEvaluationException {
         Type ret = (Type) o.copy();
-        
-        String identifiedBy = getIdentifiedBy(con,u);
-        Identifier objid = buildIdentifier(ret,u,identifiedBy);
+
+        String identifiedBy = getIdentifiedBy(con, u);
+        Identifier objid = buildIdentifier(ret, u, identifiedBy);
         ret.setIdentifier(objid);
         ret.setAuditInformation(auditRepo.getAudit(u.toString()));                
         
         return ret;
     }
-    
+
+    /**
+     * TODO: does this method need to be public? write method-level comments for this method (fb)
+     *
+     * @param obj
+     * @param uri
+     * @param identifiedBy
+     * @return
+     */
     public Identifier buildIdentifier(Type obj, URI uri, String identifiedBy) {
         Identifier objid = new Identifier();
         objid.setUri(java.net.URI.create(uri.toString()));
@@ -161,21 +186,24 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         objid.setLabel(obj.getLabel());
 
         return objid;
-    }    
+    }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Type read(Identifier id) throws EntityNotFoundException {
         Type ret = null;
-        
+
         java.net.URI netURI = buildURIFromIdentifier(id);
         String uri = netURI.toString();
-        
+
         if (!exists(id)) {
             throw new EntityNotFoundException("No such object with the given URI exists.");
         }
-        
+
         ObjectConnection con = store.getRepoConnection();
-        
+
         try {
             String qs = store.getPrefixes()
                     + "SELECT ?s "
@@ -186,8 +214,8 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             URI u = fac.createURI(uri);
 
             Type o = (Type) con.getObject(objectType, u);
-            
-            
+
+
             ret = buildObjectFromResult(o, u, con);
 
         } catch (RepositoryException | QueryEvaluationException | MalformedQueryException ex) {
@@ -195,19 +223,25 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             throw new StorageException("Failed to read resource");
         } finally {
             store.closeRepoConnection(con);
-        }        
-    
-        return ret;        
+        }
+
+        return ret;
     }
-    
-    public List<Type> readMultiple(List<Identifier> idents){
+
+    /**
+     * TODO: This should be exposed in both CRUDRepository and CRUDService.
+     *
+     * @param idents
+     * @return
+     */
+    public List<Type> readMultiple(List<Identifier> idents) {
         List<Type> projects = new ArrayList<>();
         ObjectConnection con = store.getRepoConnection();
-        
-        try{
+
+        try {
             //compile a string list of the string URIs
             List<String> uris = new ArrayList<>();
-            for(Identifier i :idents){
+            for (Identifier i : idents) {
                 java.net.URI uri = getUriFromIdentifier(i);
                 uris.add(uri.toString());
             }
@@ -215,28 +249,29 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             uris.toArray(strArr);
 
             Result<Type> result = (Result<Type>) con.getObjects(objectType, strArr);
-            while(result.hasNext()){
+            while (result.hasNext()) {
                 Type o = result.next();
-            
+
                 URI u = con.getValueFactory().createURI(o.toString());
-                
+
                 Type ret = buildObjectFromResult(o, u, con);
-                
-                projects.add(ret);               
+
+                projects.add(ret);
             }
-            result.close();            
-        }
-        catch (RepositoryException | QueryEvaluationException | MalformedQueryException ex) {
+            result.close();
+        } catch (RepositoryException | QueryEvaluationException | MalformedQueryException ex) {
             logger.error(ex.getMessage());
-            throw new StorageException("Failed to read multiple objects"); 
-        }        
-        finally{
+            throw new StorageException("Failed to read multiple objects");
+        } finally {
             store.closeRepoConnection(con);
         }
-        
-        return projects;        
-    }    
 
+        return projects;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Boolean exists(Identifier id) {
         boolean exists = false;
@@ -245,11 +280,11 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         try {
             java.net.URI netURI = buildURIFromIdentifier(id);
             String uri = netURI.toString();
-            
+
             String querystring = store.getPrefixes()
                     + "ASK\n"
                     + "{?uri a ?type}";
-            
+
             BooleanQuery existsQuery = con.prepareBooleanQuery(QueryLanguage.SPARQL, querystring);
 
             ValueFactory vf = con.getValueFactory();
@@ -257,53 +292,54 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             existsQuery.setBinding("uri", objecturi);
 
             exists = existsQuery.evaluate();
-            
-            
-        } catch (RepositoryException |MalformedQueryException | QueryEvaluationException ex) {
+
+
+        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
             logger.error(ex.getMessage());
-            throw new StorageException("Couldn't run exists query"); 
-        }
-        finally{
+            throw new StorageException("Couldn't run exists query");
+        } finally {
             store.closeRepoConnection(con);
-        }   
-        
-        return exists;  
+        }
+
+        return exists;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Integer count() {
         int count = 0;
-        
+
         ObjectConnection con = store.getRepoConnection();
-        
+
         try {
             String qs = store.getPrefixes()
                     + "SELECT (count(?s) as ?c) \n"
                     + "WHERE{ ?s a ?type . \n"
                     + "}\n";
-            
+
             TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
-            
+
             URI vtype = con.getValueFactory().createURI(prefix, sType);
             tupleQuery.setBinding("type", vtype);
-            
+
             TupleQueryResult result = tupleQuery.evaluate();
-            
+
             BindingSet bindingSet = result.next();
             Value countval = bindingSet.getValue("c");
             count = Integer.parseInt(countval.stringValue());
-                      
+
             result.close();
-    
+
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
             logger.error(ex.getMessage());
             throw new StorageException("Couldn't run count query");
-        }
-        finally{
+        } finally {
             store.closeRepoConnection(con);
         }
-            
-        return count; 
+
+        return count;
     }
     
     @Override
@@ -368,12 +404,15 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
        
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void delete(IDType id) throws EntityNotFoundException {
         if (!exists(id)) {
-            throw new EntityNotFoundException("Object does not exist in the database.");            
+            throw new EntityNotFoundException("Object does not exist in the database.");
         }
-        
+
         ObjectConnection con = store.getRepoConnection();
 
         java.net.URI netURI = buildURIFromIdentifier(id);
@@ -394,57 +433,59 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Type> list() {
         return list(0, 0, null, null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Type> list(int page, int size, String sortProperty, Order order) {
         List<Type> users = new ArrayList<>();
         ObjectConnection con = store.getRepoConnection();
-        try{
+        try {
             String qs = store.getPrefixes()
                     + "SELECT ?s "
                     + "WHERE{ ?s a ?type . \n"
                     + "?a irida:forResource ?s \n."
                     + "?a irida:createdDate ?createdDate .\n"
                     + "}";
-            
+
             qs += SparqlQuery.setOrderBy(sortProperty, order);
             qs += SparqlQuery.setLimitOffset(page, size);
-            
-            
+
+
             ObjectQuery query = con.prepareObjectQuery(QueryLanguage.SPARQL, qs);
             query.setType("type", objectType);
-            
+
             Result<Type> result = (Result<Type>) query.evaluate(objectType);
             //Set<TypeIF> resSet = result.asSet();
             //for(TypeIF o : resSet){
             Set<Type> asSet = result.asSet();
             Iterator<Type> iterator = asSet.iterator();
-            
+
             //while(result.hasNext()){
-            while(iterator.hasNext()){
+            while (iterator.hasNext()) {
                 Type o = iterator.next();
-            
+
                 URI u = con.getValueFactory().createURI(o.toString());
-                        
+
                 Type ret = buildObjectFromResult(o, u, con);
-                users.add(ret);                
+                users.add(ret);
             }
-            
-            
+
+
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
             logger.error(ex.getMessage());
-            throw new StorageException("Failed to list objects"); 
-        }
-        finally{
+            throw new StorageException("Failed to list objects");
+        } finally {
             store.closeRepoConnection(con);
         }
         return users;
     }
-
-
-    
 }
