@@ -57,14 +57,13 @@ public class SequenceFileServiceImplTest {
     }
 
     @Test
-    public void testCreateFile() throws IOException {
+    public void testCreateFile() throws IOException, NoSuchFieldException {
         File f = Files.createTempFile(null, null).toFile();
         f.deleteOnExit();
         SequenceFile sf = new SequenceFile(f);
         SequenceFile withIdentifier = new SequenceFile(new Identifier(), f);
         when(crudRepository.create(sf)).thenReturn(withIdentifier);
         when(fileRepository.create(withIdentifier)).thenReturn(withIdentifier);
-        //when(crudRepository.update(withIdentifier)).thenReturn(withIdentifier);
         when(crudRepository.update(withIdentifier.getIdentifier(),
                 ImmutableMap.of("file", (Object) withIdentifier.getFile()))).thenReturn(withIdentifier);
         
@@ -81,7 +80,7 @@ public class SequenceFileServiceImplTest {
     }
 
     @Test
-    public void testUpdateWithoutFile() throws IOException {
+    public void testUpdateWithoutFile() throws IOException, NoSuchFieldException {
         Identifier updatedId = new Identifier();
         Identifier originalId = new Identifier();
         File f = Files.createTempFile(null, null).toFile();
@@ -103,7 +102,7 @@ public class SequenceFileServiceImplTest {
     }
 
     @Test
-    public void testUpdateWithFile() throws IOException {
+    public void testUpdateWithFile() throws IOException, NoSuchFieldException {
         Identifier id = new Identifier();
         File originalFile = Files.createTempFile(null, null).toFile();
         File updatedFile = Files.createTempFile(null, null).toFile();

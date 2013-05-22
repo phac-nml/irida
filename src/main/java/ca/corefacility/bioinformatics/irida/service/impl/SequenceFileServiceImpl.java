@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
@@ -25,6 +26,8 @@ import com.google.common.collect.ImmutableMap;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.validation.Validator;
 
 /**
@@ -70,14 +73,17 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Identifier, Sequenc
      * {@inheritDoc}
      */
     @Override
-    public SequenceFile update(Identifier id, Map<String, Object> updatedFields) {
+    public SequenceFile update(Identifier id, Map<String, Object> updatedFields) throws InvalidPropertyException {
         SequenceFile updated = super.update(id, updatedFields);
 
         if (updatedFields.containsKey("file")) {
-            
-            updated = fileRepository.update(id,updatedFields);
-            updated = super.update(id, ImmutableMap.of("file",
-                    (Object) updated.getFile()));
+            try {
+                updated = fileRepository.update(id,updatedFields);
+                updated = super.update(id, ImmutableMap.of("file",
+                        (Object) updated.getFile()));
+            } catch (NoSuchFieldException ex) {
+                throw new InvalidPropertyException("A property of this object could not be updated.");
+            }
         }
 
         return updated;

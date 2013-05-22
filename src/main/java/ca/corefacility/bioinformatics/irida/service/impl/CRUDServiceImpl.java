@@ -18,6 +18,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A universal CRUD service for all types. Specialized services should extend this class to get basic CRUD methods for
@@ -171,10 +173,11 @@ public class CRUDServiceImpl<KeyType extends Identifier, ValueType extends Compa
         /*Audit audit = auditRepository.getAudit(id);
         audit.setUpdated(new Date());
         auditRepository.audit(audit, id);*/
-        
-        
-        // check that it doesn't violate any constraints
-        return repository.update(id, updatedFields);
+        try {
+            return repository.update(id, updatedFields);
+        } catch (NoSuchFieldException ex) {
+            throw new InvalidPropertyException("Cannot update field for this object.");
+        }
     }
 
     /**

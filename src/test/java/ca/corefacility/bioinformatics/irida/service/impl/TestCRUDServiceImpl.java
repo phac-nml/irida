@@ -129,7 +129,7 @@ public class TestCRUDServiceImpl {
     }
 
     //@Test
-    public void testUpdatedValidEntity() {
+    public void testUpdatedValidEntity() throws NoSuchFieldException {
         String oldField = "Absolutely not null";
         String newField = "super not null.";
         Integer oldIntegerValue = 30;
@@ -410,7 +410,7 @@ public class TestCRUDServiceImpl {
     }
 
     //@Test
-    public void testUpdateSetAuditInformation() {
+    public void testUpdateSetAuditInformation() throws NoSuchFieldException {
         Identifier id = new Identifier();
         IdentifiableTestEntity e = new IdentifiableTestEntity();
         e.setIdentifier(id);

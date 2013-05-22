@@ -57,8 +57,8 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     protected AuditRepository auditRepo;
     protected RelationshipSesameRepository linksRepo;
     private Class objectType; //The class object type being stored by this repo
-    private String prefix; //String representation of that type
-    private String sType;
+    private String prefix; 
+    private String sType; //String representation of that type
 
     public GenericRepository() {
     }
@@ -66,8 +66,8 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     /**
      * TODO: Comment this constructor, I have no idea what many of these arguments are supposed to be (fb)
      *
-     * @param store
-     * @param objectType
+     * @param store A {@link TripleStore} to use for storing data in this repository
+     * @param objectType The class of objects to store in this repository
      * @param prefix
      * @param sType
      * @param auditRepo
@@ -348,7 +348,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     }
     
     @Override
-    public Type update(IDType id, Map<String, Object> updatedFields) throws InvalidPropertyException,SecurityException {        
+    public Type update(IDType id, Map<String, Object> updatedFields) throws NoSuchFieldException {        
         
         java.net.URI netURI = buildURIFromIdentifier(id);
         Audit audit = auditRepo.getAudit(netURI.toString());
@@ -356,16 +356,17 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         if(exists(id)){
             for (Entry<String, Object> field : updatedFields.entrySet()) {
                 try{
-                Field declaredField = objectType.getDeclaredField(field.getKey());
+                    Field declaredField = objectType.getDeclaredField(field.getKey());
 
-                Iri annotation = declaredField.getAnnotation(Iri.class);
+                    Iri annotation = declaredField.getAnnotation(Iri.class);
 
-                logger.debug("Updating " + field.getKey() + " -- " + annotation.value());
+                    logger.debug("Updating " + field.getKey() + " -- " + annotation.value());
 
-                updateField(id, annotation.value(), field.getValue());
+                    updateField(id, annotation.value(), field.getValue());
                 }
                 catch(NoSuchFieldException ex){
                     logger.error("No field " + field.getKey() + " exists.  Cannot update object.");
+                    throw new NoSuchFieldException("No field named "+field.getKey()+" exists for this object type");
                 }
             }
             audit.setUpdated(new Date());
