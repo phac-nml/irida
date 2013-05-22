@@ -18,119 +18,122 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
-import java.net.URISyntaxException;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
-import org.openrdf.query.BindingSet;
-import org.openrdf.query.BooleanQuery;
-import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.QueryEvaluationException;
-import org.openrdf.query.QueryLanguage;
-import org.openrdf.query.TupleQuery;
-import org.openrdf.query.TupleQueryResult;
+import org.openrdf.query.*;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.object.ObjectConnection;
 import org.slf4j.LoggerFactory;
 
+import java.net.URISyntaxException;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
+ * TODO: comment the data members in this class.
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class SesameRepository {
-private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AuditRepository.class);
-    
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AuditRepository.class);
     protected TripleStore store;
     protected String URI;
-    
-    public SesameRepository(){}
-    
-    public SesameRepository(TripleStore store,String uriType){
+
+    public SesameRepository() {
+    }
+
+    /**
+     * TODO: Comment this constructor, I don't know what these parameters are used for (fb)
+     *
+     * @param store
+     * @param uriType
+     */
+    public SesameRepository(TripleStore store, String uriType) {
         this.store = store;
         this.URI = store.getURI() + uriType + "/";
     }
 
     /**
-     * Get the identifier for a given identifier.  If the URI property is populated
-     * it will return that URI.  If not it will query for the URI based on the 
-     * identifiedBy property.
-     * 
+     * Get the identifier for a given identifier.  If the URI property is populated it will return that URI.  If not it
+     * will query for the URI based on the identifiedBy property.
+     *
      * @param identifier The identifier to get a URI for
      * @return the URI for this identifier
      */
-    public java.net.URI getUriFromIdentifier(Identifier identifier){
-        
+    public java.net.URI getUriFromIdentifier(Identifier identifier) {
+
         java.net.URI uri = null;
-        if(identifier.getUri() != null){
+        if (identifier.getUri() != null) {
             uri = identifier.getUri();
-        }
-        else{
+        } else {
             try {
                 String uriStr = getUriFromIdentifiedBy(identifier.getIdentifier());
                 uri = new java.net.URI(uriStr);
-            } catch (    RepositoryException | QueryEvaluationException | MalformedQueryException | URISyntaxException ex) {
+            } catch (RepositoryException | QueryEvaluationException | MalformedQueryException | URISyntaxException ex) {
                 Logger.getLogger(GenericRepository.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
         return uri;
     }
-    
+
     /**
      * Query for the URI for the given identifier string
+     *
      * @param id The identifier to find
      * @return A String URI for this identifier
      * @throws RepositoryException
      * @throws QueryEvaluationException
      * @throws MalformedQueryException
      */
-    public String getUriFromIdentifiedBy(String id) throws RepositoryException, QueryEvaluationException, MalformedQueryException{
+    public String getUriFromIdentifiedBy(String id)
+            throws RepositoryException, QueryEvaluationException, MalformedQueryException {
         String uri;
-        
+
         ObjectConnection con = store.getRepoConnection();
-        
+
         String qs = store.getPrefixes()
                 + "SELECT ?s "
                 + "WHERE{ ?s irida:identifier ?id . \n"
                 + "}";
-        
+
         TupleQuery query = con.prepareTupleQuery(qs);
         ValueFactory fac = con.getValueFactory();
         Literal idLit = fac.createLiteral(id);
-        
+
         query.setBinding("id", idLit);
         TupleQueryResult result = query.evaluate();
         BindingSet bs = result.next();
-        
+
         uri = bs.getBinding("s").getValue().stringValue();
-        
+
         result.close();
-        
+
         con.close();
-        
+
         return uri;
     }
-    
+
     /**
      * Check if a string identifier exists in the repo
+     *
      * @param id The identifier to test for
      * @return Boolean whether that identifier exists
      */
     public Boolean identifierExists(String id) {
-        
+
         boolean exists = false;
         ObjectConnection con = store.getRepoConnection();
 
         try {
-            
+
             String querystring = store.getPrefixes()
                     + "ASK\n"
                     + "{?uri irida:identifier ?id}";
-            
+
             BooleanQuery existsQuery = con.prepareBooleanQuery(QueryLanguage.SPARQL, querystring);
 
             ValueFactory vf = con.getValueFactory();
@@ -138,21 +141,21 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AuditRepo
             existsQuery.setBinding("id", idLit);
 
             exists = existsQuery.evaluate();
-            
-            
-        } catch (RepositoryException |MalformedQueryException | QueryEvaluationException ex) {
+
+
+        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
             logger.error(ex.getMessage());
-            throw new StorageException("Couldn't run exists query"); 
-        }
-        finally{
+            throw new StorageException("Couldn't run exists query");
+        } finally {
             store.closeRepoConnection(con);
-        }   
-        
-        return exists;     
+        }
+
+        return exists;
     }
-    
+
     /**
      * Retrieve the String that uniquely identifies this object
+     *
      * @param con The object connection to retrieve with
      * @param uri The subject whose identifier to retrieve
      * @return The string that uniqely identifies this object in the database
@@ -160,27 +163,29 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AuditRepo
      * @throws RepositoryException
      * @throws QueryEvaluationException
      */
-    public String getIdentifiedBy(ObjectConnection con, URI uri) throws MalformedQueryException, RepositoryException, QueryEvaluationException{
+    public String getIdentifiedBy(ObjectConnection con, URI uri)
+            throws MalformedQueryException, RepositoryException, QueryEvaluationException {
         String id;
-        
+
         String qs = store.getPrefixes()
                 + "SELECT ?id "
                 + "WHERE{ ?s irida:identifier ?id . \n"
                 + "}";
-        
+
         TupleQuery query = con.prepareTupleQuery(qs);
         query.setBinding("s", uri);
         TupleQueryResult result = query.evaluate();
         BindingSet bs = result.next();
-        
+
         id = bs.getBinding("id").getValue().stringValue();
         result.close();
-        
+
         return id;
     }
-    
+
     /**
      * Get the label for a given URI
+     *
      * @param con Object connection to retrieve with
      * @param uri URI to retrieve a label for
      * @return The string label for this object
@@ -188,52 +193,52 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AuditRepo
      * @throws MalformedQueryException
      * @throws QueryEvaluationException
      */
-    public String getLabel(ObjectConnection con, URI uri) throws RepositoryException, MalformedQueryException, QueryEvaluationException{
+    public String getLabel(ObjectConnection con, URI uri)
+            throws RepositoryException, MalformedQueryException, QueryEvaluationException {
         String label;
-        
+
         String qs = store.getPrefixes()
                 + "SELECT ?label "
                 + "WHERE{ ?s rdfs:label ?label . }";
-        
+
         TupleQuery query = con.prepareTupleQuery(qs);
         query.setBinding("s", uri);
         TupleQueryResult result = query.evaluate();
         BindingSet bs = result.next();
-        
+
         label = bs.getBinding("label").getValue().stringValue();
         result.close();
-        
-        return label;        
+
+        return label;
     }
-    
+
     /**
-     * Generate an identifier for an object of type
-     * <code>Type</code>.
+     * Generate an {@link Identifier} for an object of type <code>Type</code>.
      *
-     * @param t the object to generate the identifier for.
-     * @return and identifier for the object.
+     * @return an {@link Identifier} for the object.
      */
     public Identifier generateNewIdentifier() {
         UUID uuid = UUID.randomUUID();
         java.net.URI objuri = buildURIFromIdentifiedBy(uuid.toString());
         return new Identifier(objuri, uuid);
-    }   
-    
+    }
+
     /**
      * Set a unique identifier for this object in the database
+     *
      * @param con The <code>ObjectConnection</code> to use to add
      * @param uri The URI to add this identifier to
-     * @param id The string identifier to add to the object
+     * @param id  The string identifier to add to the object
      * @throws RepositoryException
      */
-    public void setIdentifiedBy(ObjectConnection con, URI uri, String id) throws RepositoryException{
+    public void setIdentifiedBy(ObjectConnection con, URI uri, String id) throws RepositoryException {
         ValueFactory vf = con.getValueFactory();
         Literal litId = vf.createLiteral(id);
         URI pred = vf.createURI(con.getNamespace("irida"), "identifier");
         Statement stmt = vf.createStatement(uri, pred, litId);
-        con.add(stmt);     
-    }    
-    
+        con.add(stmt);
+    }
+
     /**
      * Build a URI from a given String ID
      *
@@ -245,21 +250,21 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AuditRepo
 
         return uri;
     }
-    
+
     /**
      * Build a java.net.URI object for the given identifier
+     *
      * @param identifier The identifier to build the URI for
      * @return The constructed URI for this identifier
      */
-    public java.net.URI buildURIFromIdentifier(Identifier identifier){
+    public java.net.URI buildURIFromIdentifier(Identifier identifier) {
         java.net.URI uri;
-        if(identifier.getUri() != null){
+        if (identifier.getUri() != null) {
             uri = identifier.getUri();
-        }
-        else{
+        } else {
             uri = buildURIFromIdentifiedBy(identifier.getIdentifier());
         }
-        
-        return uri;        
+
+        return uri;
     }
 }
