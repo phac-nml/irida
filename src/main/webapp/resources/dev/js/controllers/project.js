@@ -16,13 +16,9 @@
             $scope.users = resourceService.formatRelatedResource(initData.relatedResources.users);
           },
           resolve: {
-            initData: function ($q, $route, ajaxService) {
-              var defer = $q.defer();
+            initData: function ($q, $route, Restangular) {
               var id = $route.current.params.projectId;
-              ajaxService.get('/api/projects/' + id).then(function (data) {
-                defer.resolve(data);
-              });
-              return defer.promise;
+              return Restangular.one('projects', id).get();
             }
           }
         });
