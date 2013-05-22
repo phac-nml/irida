@@ -284,14 +284,6 @@ public class SequenceFileFilesystemRepositoryTest {
     }
 
     @Test
-    public void testExists() {
-        File f = new File(MISSING_FILE_NAME);
-        assertFalse(repository.exists(f));
-        f = new File(".");
-        assertTrue(repository.exists(f));
-    }
-
-    @Test
     public void testCount() {
         try {
             repository.count();

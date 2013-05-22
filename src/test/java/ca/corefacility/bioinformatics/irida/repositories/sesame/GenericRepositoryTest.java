@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SailMemoryStore;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
@@ -220,7 +221,7 @@ public class GenericRepositoryTest {
             assertNotNull(j);
             assertEquals(j.getData(),differentData);
         }
-        catch(IllegalArgumentException|NoSuchFieldException ex){
+        catch(IllegalArgumentException|InvalidPropertyException ex){
             fail();
         }
     }    

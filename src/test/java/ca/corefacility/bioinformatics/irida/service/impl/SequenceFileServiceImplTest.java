@@ -21,18 +21,20 @@ import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import com.google.common.collect.ImmutableMap;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
+import org.junit.Before;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Tests for {@link SequenceFileServiceImpl}.
@@ -41,11 +43,11 @@ import org.slf4j.LoggerFactory;
  */
 public class SequenceFileServiceImplTest {
 
+    private static final Logger logger = LoggerFactory.getLogger(SequenceFileServiceImplTest.class);
     private CRUDService<Identifier, SequenceFile> sequenceFileService;
     private SequenceFileRepository crudRepository;
     private CRUDRepository<Identifier, SequenceFile> fileRepository;
     private Validator validator;
-    private static final Logger logger = LoggerFactory.getLogger(SequenceFileServiceImplTest.class);
 
     @Before
     public void setUp() {
@@ -66,7 +68,7 @@ public class SequenceFileServiceImplTest {
         when(fileRepository.create(withIdentifier)).thenReturn(withIdentifier);
         when(crudRepository.update(withIdentifier.getIdentifier(),
                 ImmutableMap.of("file", (Object) withIdentifier.getFile()))).thenReturn(withIdentifier);
-        
+
         when(crudRepository.exists(withIdentifier.getIdentifier())).thenReturn(Boolean.TRUE);
 
         SequenceFile created = sequenceFileService.create(sf);
@@ -84,21 +86,21 @@ public class SequenceFileServiceImplTest {
         Identifier updatedId = new Identifier();
         Identifier originalId = new Identifier();
         File f = Files.createTempFile(null, null).toFile();
-        SequenceFile sf = new SequenceFile(originalId,f);
+        SequenceFile sf = new SequenceFile(originalId, f);
         SequenceFile updatedSf = new SequenceFile(updatedId, f);
         sf.getFile().deleteOnExit();
         ImmutableMap<String, Object> updatedMap = ImmutableMap.of("identifier", (Object) updatedId);
 
         when(crudRepository.exists(originalId)).thenReturn(Boolean.TRUE);
-        when(crudRepository.update(sf.getIdentifier(),updatedMap)).thenReturn(updatedSf);
-        
+        when(crudRepository.update(sf.getIdentifier(), updatedMap)).thenReturn(updatedSf);
+
         sf = sequenceFileService.update(originalId, updatedMap);
 
         assertEquals(updatedId, sf.getIdentifier());
 
         verify(crudRepository).exists(originalId);
-        verify(crudRepository).update(originalId,updatedMap);
-        verify(fileRepository, times(0)).update(sf.getIdentifier(),updatedMap);
+        verify(crudRepository).update(originalId, updatedMap);
+        verify(fileRepository, times(0)).update(sf.getIdentifier(), updatedMap);
     }
 
     @Test
@@ -109,12 +111,12 @@ public class SequenceFileServiceImplTest {
         SequenceFile sf = new SequenceFile(id, originalFile);
         SequenceFile updatedSf = new SequenceFile(id, updatedFile);
         sf.getFile().deleteOnExit();
-        
+
         ImmutableMap<String, Object> updatedMap = ImmutableMap.of("file", (Object) updatedFile);
 
         when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
-        when(crudRepository.update(sf.getIdentifier(),updatedMap)).thenReturn(updatedSf);
-        when(fileRepository.update(sf.getIdentifier(),updatedMap)).thenReturn(updatedSf);
+        when(crudRepository.update(sf.getIdentifier(), updatedMap)).thenReturn(updatedSf);
+        when(fileRepository.update(sf.getIdentifier(), updatedMap)).thenReturn(updatedSf);
 
         sf = sequenceFileService.update(id, updatedMap);
 
@@ -124,7 +126,7 @@ public class SequenceFileServiceImplTest {
         // again after an updated file has been dropped into the appropriate
         // directory
         verify(crudRepository, times(2)).exists(id);
-        verify(crudRepository, times(2)).update(sf.getIdentifier(),updatedMap);
-        verify(fileRepository).update(sf.getIdentifier(),updatedMap);
+        verify(crudRepository, times(2)).update(sf.getIdentifier(), updatedMap);
+        verify(fileRepository).update(sf.getIdentifier(), updatedMap);
     }
 }

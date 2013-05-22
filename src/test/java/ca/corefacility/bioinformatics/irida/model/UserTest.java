@@ -17,24 +17,17 @@ package ca.corefacility.bioinformatics.irida.model;
 
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Set;
-import javax.validation.Configuration;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
 import org.hibernate.validator.resourceloading.PlatformResourceBundleLocator;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.springframework.context.support.ResourceBundleMessageSource;
+
+import javax.validation.*;
+import java.sql.Date;
+import java.util.*;
+
+import static org.junit.Assert.*;
 
 /**
  * Testing the validation for user objects.
@@ -47,13 +40,15 @@ public class UserTest {
     private Validator validator;
     private ResourceBundle b;
 
+    @SuppressWarnings("deprecated")
     @Before
     public void setUp() {
         b = ResourceBundle.getBundle(MESSAGES_BASENAME);
         Configuration<?> configuration = Validation.byDefaultProvider().configure();
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setBasename(MESSAGES_BASENAME);
-        configuration.messageInterpolator(new ResourceBundleMessageInterpolator(new PlatformResourceBundleLocator(MESSAGES_BASENAME)));
+        configuration.messageInterpolator(
+                new ResourceBundleMessageInterpolator(new PlatformResourceBundleLocator(MESSAGES_BASENAME)));
         ValidatorFactory factory = configuration.buildValidatorFactory();
         validator = factory.getValidator();
 
@@ -213,14 +208,18 @@ public class UserTest {
 
         User curr = users.get(0);
         for (int i = 1; i < users.size(); i++) {
-            assertTrue(curr.getAuditInformation().getCreated().compareTo(users.get(i).getAuditInformation().getCreated()) < 0);
+            assertTrue(curr.getAuditInformation()
+                    .getCreated()
+                    .compareTo(users.get(i).getAuditInformation().getCreated()) < 0);
         }
     }
 
     @Test
     public void testEquals() {
-        User u1 = new User(new UserIdentifier("username"), "username", "email", "password", "firstName", "lastName", "phoneNumber");
-        User u2 = new User(new UserIdentifier("username"), "username", "email", "password", "firstName", "lastName", "phoneNumber");
+        User u1 = new User(new UserIdentifier("username"), "username", "email", "password", "firstName", "lastName",
+                "phoneNumber");
+        User u2 = new User(new UserIdentifier("username"), "username", "email", "password", "firstName", "lastName",
+                "phoneNumber");
         // the two users DO NOT share the same identifier, and should therefore be different
         assertFalse(u1.equals(u2));
 
@@ -231,7 +230,8 @@ public class UserTest {
 
     @Test
     public void testEqualsFields() {
-        User u1 = new User(new UserIdentifier("username"), "username", "email", "password", "firstName", "lastName", "phoneNumber");
+        User u1 = new User(new UserIdentifier("username"), "username", "email", "password", "firstName", "lastName",
+                "phoneNumber");
         User u2 = new User(u1.getIdentifier(), "username", "email", "password", "firstName", "notequal", "phoneNumber");
 
         assertFalse(u1.equals(u2));

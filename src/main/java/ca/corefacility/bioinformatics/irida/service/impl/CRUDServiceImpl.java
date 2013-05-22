@@ -158,24 +158,9 @@ public class CRUDServiceImpl<KeyType extends Identifier, ValueType extends Compa
         if (!exists(id)) {
             throw new EntityNotFoundException("Entity not found.");
         }
+
         // at this point, everything is A-OK, so go through the act of updating the entity:
-        /*// 1) load the entity from the database
-        ValueType entity = repository.read(id);
-        // 2) update the appropriate fields
-        for (Entry<String, Object> field : updatedFields.entrySet()) {
-        setValue(entity, field.getKey(), field.getValue());
-        }
-        // 3) set the date that the entity was updated on
-        entity.getAuditInformation().setUpdated(new Date());*/
-        
-        /*Audit audit = auditRepository.getAudit(id);
-        audit.setUpdated(new Date());
-        auditRepository.audit(audit, id);*/
-        try {
-            return repository.update(id, updatedFields);
-        } catch (NoSuchFieldException ex) {
-            throw new InvalidPropertyException("Cannot update field for this object.");
-        }
+        return repository.update(id, updatedFields);
     }
 
     /**

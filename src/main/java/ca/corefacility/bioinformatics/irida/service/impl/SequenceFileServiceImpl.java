@@ -23,12 +23,10 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import com.google.common.collect.ImmutableMap;
-import java.io.File;
+
+import javax.validation.Validator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.validation.Validator;
 
 /**
  * Implementation for managing {@link SequenceFile}.
@@ -43,7 +41,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Identifier, Sequenc
      * Constructor.
      *
      * @param sequenceFileRepository the sequence file repository.
-     * @param validator validator.
+     * @param validator              validator.
      */
     public SequenceFileServiceImpl(
             SequenceFileRepository sequenceFileRepository,
@@ -77,36 +75,32 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Identifier, Sequenc
         SequenceFile updated = super.update(id, updatedFields);
 
         if (updatedFields.containsKey("file")) {
-            try {
-                updated = fileRepository.update(id,updatedFields);
-                updated = super.update(id, ImmutableMap.of("file",
-                        (Object) updated.getFile()));
-            } catch (NoSuchFieldException ex) {
-                throw new InvalidPropertyException("A property of this object could not be updated.");
-            }
+            updated = fileRepository.update(id, updatedFields);
+            updated = super.update(id, ImmutableMap.of("file",
+                    (Object) updated.getFile()));
         }
 
         return updated;
     }
-    
-    public void addFileToProject(Project project, SequenceFile file){
+
+    public void addFileToProject(Project project, SequenceFile file) {
         sequenceFileRepository().addFileToProject(project, file);
     }
-    
-    public void addFileToSample(Sample sample, SequenceFile file){
+
+    public void addFileToSample(Sample sample, SequenceFile file) {
         sequenceFileRepository().addFileToSample(sample, file);
     }
-    
-    public List<SequenceFile> getFilesForSample(Sample sample){
+
+    public List<SequenceFile> getFilesForSample(Sample sample) {
         return sequenceFileRepository().getFilesForSample(sample);
     }
-    
-    public List<SequenceFile> getFilesForProject(Project project){
+
+    public List<SequenceFile> getFilesForProject(Project project) {
         return sequenceFileRepository().getFilesForProject(project);
-    }   
-    
-    public SequenceFileRepository sequenceFileRepository(){
+    }
+
+    public SequenceFileRepository sequenceFileRepository() {
         return (SequenceFileRepository) repository;
     }
-    
+
 }

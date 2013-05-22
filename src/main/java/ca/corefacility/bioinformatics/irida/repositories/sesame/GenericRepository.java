@@ -17,6 +17,7 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
@@ -25,10 +26,8 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SparqlQuery;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
-import java.lang.reflect.Field;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
+import org.openrdf.annotations.Iri;
+import org.openrdf.model.*;
 import org.openrdf.query.*;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
@@ -37,13 +36,11 @@ import org.openrdf.repository.object.ObjectQuery;
 import org.openrdf.result.Result;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.openrdf.annotations.Iri;
-import org.openrdf.model.Literal;
-import org.openrdf.model.Statement;
 
 /**
  * Repository for storing objects of a type that extend {@link IridaThing}
@@ -170,6 +167,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         String identifiedBy = getIdentifiedBy(con, uri);
         Identifier objid = buildIdentifier(ret, uri, identifiedBy);
         ret.setIdentifier(objid);
+
         ret.setAuditInformation(auditRepo.getAudit(uri.toString()));                
         
         return ret;
@@ -343,16 +341,16 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
 
         return count;
     }
-    
+
     @Override
-    public Type update(IDType id, Map<String, Object> updatedFields) throws NoSuchFieldException {        
-        
+    public Type update(IDType id, Map<String, Object> updatedFields) throws InvalidPropertyException {
+
         java.net.URI netURI = buildURIFromIdentifier(id);
         Audit audit = auditRepo.getAudit(netURI.toString());
-        
-        if(exists(id)){
+
+        if (exists(id)) {
             for (Entry<String, Object> field : updatedFields.entrySet()) {
-                try{
+                try {
                     Field declaredField = objectType.getDeclaredField(field.getKey());
 
                     Iri annotation = declaredField.getAnnotation(Iri.class);
@@ -360,51 +358,50 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
                     logger.debug("Updating " + field.getKey() + " -- " + annotation.value());
 
                     updateField(id, annotation.value(), field.getValue());
-                }
-                catch(NoSuchFieldException ex){
+                } catch (NoSuchFieldException ex) {
                     logger.error("No field " + field.getKey() + " exists.  Cannot update object.");
-                    throw new NoSuchFieldException("No field named "+field.getKey()+" exists for this object type");
+                    throw new InvalidPropertyException(
+                            "No field named " + field.getKey() + " exists for this object type");
                 }
             }
             audit.setUpdated(new Date());
             auditRepo.audit(audit, netURI.toString());
         }
-        
+
         return read(id);
     }
-    
-    private void updateField(IDType id, String predicate, Object value){
+
+    private void updateField(IDType id, String predicate, Object value) {
         ObjectConnection con = store.getRepoConnection();
         java.net.URI netURI = buildURIFromIdentifier(id);
         String uri = netURI.toString();
-        
+
         try {
             con.begin();
-            
+
             ValueFactory fac = con.getValueFactory();
             URI subURI = fac.createURI(uri);
             URI predURI = fac.createURI(predicate);
             Literal objValue = fac.createLiteral(value);
-        
+
             RepositoryResult<Statement> curvalues = con.getStatements(subURI, predURI, null);
-            while(curvalues.hasNext()){
+            while (curvalues.hasNext()) {
                 Statement next = curvalues.next();
                 logger.debug("current value: " + next.getObject().stringValue());
             }
             con.remove(subURI, predURI, null);
-            
+
             Statement added = fac.createStatement(subURI, predURI, objValue);
             con.add(added);
-            
+
             con.commit();
         } catch (RepositoryException ex) {
             logger.error(ex.getMessage());
             throw new StorageException("Failed to update field");
-        } 
-        finally {
+        } finally {
             store.closeRepoConnection(con);
-        }            
-       
+        }
+
     }
 
     /**
