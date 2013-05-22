@@ -295,9 +295,20 @@ input.ng-valid.ng-dirty {
   background-color: #2ecc71; }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Ubuntu", sans-serif;
+  font-family: 'Ubuntu', sans-serif;
   font-weight: 700;
   letter-spacing: 2px; }
+
+.fade-enter-setup, .fade-leave-setup {
+  transition: opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s; }
+
+.fade-enter-setup,
+.fade-leave-setup.fade-leave-start {
+  opacity: 0; }
+
+.fade-leave-setup,
+.fade-enter-setup.fade-enter-start {
+  opacity: 1; }
 
 /* ==========================================================================
    Modules
@@ -393,10 +404,7 @@ h1, h2, h3, h4, h5, h6 {
       font-size: 1.1em;
       white-space: nowrap;
       overflow: hidden;
-      text-overflow: ellipsis;
-      -webkit-transition: all 0.5s ease-in-out;
-      -moz-transition: all 0.5s ease-in-out;
-      transition: all 0.5s ease-in-out; }
+      text-overflow: ellipsis; }
     .card-holder li .card h2:after {
       display: block;
       content: ' ';
@@ -437,7 +445,7 @@ h1, h2, h3, h4, h5, h6 {
 .listTable {
   width: 100%; }
   .listTable thead {
-    font-family: "Cuprum", sans-serif;
+    font-family: 'Cuprum', sans-serif;
     font-weight: 700;
     font-size: 1.2em;
     background-color: #34495e;

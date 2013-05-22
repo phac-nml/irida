@@ -6,7 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-angular.module('irida.Services', ['http-auth-interceptor-buffer'])
+angular.module('NGS.Services', ['http-auth-interceptor-buffer'])
   .factory('loginService', ['Base64', '$cookieStore', '$http', function (Base64, $cookieStore, $http) {
     'use strict';
     $http.defaults.headers.common['Authorization'] = 'Basic ' + $cookieStore.get('authdata');
@@ -113,16 +113,6 @@ angular.module('irida.Services', ['http-auth-interceptor-buffer'])
   })
   .factory('ajaxService', ['$http', '$q', function ($http, $q) {
     'use strict';
-
-    function formatLinks(data) {
-      var links = {};
-      angular.forEach(data.resource.links, function (val) {
-        links[val.rel] = val.href;
-      });
-      data.resource.links = links;
-      return data;
-    }
-
     return {
       /**
        * create - use to create a new resource on the server
@@ -162,11 +152,7 @@ angular.module('irida.Services', ['http-auth-interceptor-buffer'])
             method: 'GET'
           })
             .success(function (data) {
-              var d = data;
-              if (data.resource.links) {
-                d = formatLinks(data);
-              }
-              deferred.resolve(d);
+              deferred.resolve(data);
             })
             .error(function () {
               // TODO: (JOSH - 2013-05-10) Handle get errors properly
@@ -277,6 +263,35 @@ angular.module('irida.Services', ['http-auth-interceptor-buffer'])
       }
     };
   }])
+  .factory('resourceService', [function () {
+    'use strict';
+    var formatLinks = function (links) {
+      var l = {};
+      angular.forEach(links, function (val) {
+        l[val.rel] = val.href;
+      });
+      return l;
+    };
+
+    return {
+      formatResourceLinks: function (links) {
+        return formatLinks(links);
+      },
+      formatRelatedResource: function (relatedResource) {
+        // - links
+        //   \- to resource
+        //   \- to delete resource
+        // - label
+        // - dateCreated
+        var resource = [];
+        angular.forEach(relatedResource, function (r) {
+          var links = formatLinks(r.links);
+          resource.push({label: r.label, dateCreated: r.dateCreated, links: links});
+        });
+        return resource;
+      }
+    };
+  }])
 
 /**
  * $http interceptor.
@@ -286,6 +301,7 @@ angular.module('irida.Services', ['http-auth-interceptor-buffer'])
   .config(['$httpProvider', function ($httpProvider) {
 
     var interceptor = ['$rootScope', '$q', 'httpBuffer', function ($rootScope, $q, httpBuffer) {
+      'use strict';
       function success(response) {
         return response;
       }
