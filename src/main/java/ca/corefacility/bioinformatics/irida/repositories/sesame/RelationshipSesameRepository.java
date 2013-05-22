@@ -578,11 +578,6 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
         return ret;
     }
 
-    //@Override
-    public Relationship update(Relationship object) throws IllegalArgumentException {
-        throw new UnsupportedOperationException("Link updates will not be supported.");
-    }
-
     @Override
     public void delete(Identifier id) throws EntityNotFoundException {
         if (!exists(id)) {
