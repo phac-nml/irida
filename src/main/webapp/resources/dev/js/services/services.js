@@ -250,6 +250,7 @@ angular.module('NGS.Services', ['http-auth-interceptor-buffer'])
     };
   }])
   .factory('authService', ['$rootScope', 'httpBuffer', function ($rootScope, httpBuffer) {
+    'use strict';
     return {
       /**
        * call this function to indicate that authentication was successfull and trigger a
