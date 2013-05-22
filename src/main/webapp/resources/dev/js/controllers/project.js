@@ -13,18 +13,22 @@
           controller: function ($scope, resourceService, initData) {
             $scope.links = resourceService.formatResourceLinks(initData.resource.links);
             $scope.project = initData.resource;
-            $scope.users = resourceService.formatRelatedResource(initData.relatedResources.users);
+            $scope.users = resourceService.formatRelatedResource(initData.relatedResources.users, 'users');
           },
           resolve: {
-            initData: function ($route, Restangular) {
+            initData: function ($q, $route, ajaxService) {
               var id = $route.current.params.projectId;
-              return Restangular.one('projects', id).get();
+              var defer = $q.defer();
+              ajaxService.get('/api/projects/' + id).then(function (data) {
+                defer.resolve(data);
+              });
+              return defer.promise;
             }
           }
         });
     }])
 
-    .controller('ProjectCtrl', ['$scope', 'ajaxService', function ($scope, ajaxService) {
+    .controller('ProjectCtrl', ['$scope', '$location', 'ajaxService', function ($scope, $location, ajaxService) {
       'use strict';
 
       $scope.removeUser = function (url) {
@@ -39,6 +43,10 @@
 
           }
         );
+      };
+
+      $scope.gotoUser = function (index) {
+        $location.path($scope.users[index].links.self.match(/\/users\/.*/)[0]);
       };
 
       // Initialize
