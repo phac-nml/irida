@@ -33,23 +33,21 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * TODO: comment the data members in this class.
+ * A basic repository for storing and retrieving information in an RDF {@link TripleStore}
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class SesameRepository {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AuditRepository.class);
-    protected TripleStore store;
-    protected String URI;
+    protected TripleStore store; //The {@link TripleStore} to use for storing and retrieving objects in this repository
+    protected String URI; //The base URI for this repository
 
     public SesameRepository() {
     }
 
     /**
-     * TODO: Comment this constructor, I don't know what these parameters are used for (fb)
-     *
-     * @param store
-     * @param uriType
+     * @param store The {@link TripleStore} to use for storing and retrieving objects in this repository
+     * @param uriType The base URI for this repository
      */
     public SesameRepository(TripleStore store, String uriType) {
         this.store = store;

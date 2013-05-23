@@ -18,6 +18,7 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -107,6 +108,10 @@ public class AuditRepository extends SesameRepository{
         return aURI;
     }
     
+    public void audit(Audit audit,Identifier identifier){
+        java.net.URI uriFromIdentifier = getUriFromIdentifier(identifier);
+        audit(audit,uriFromIdentifier.toString());
+    }
     
     public void audit(Audit audit,String objectURI){
         ObjectConnection con = store.getRepoConnection();
@@ -128,7 +133,12 @@ public class AuditRepository extends SesameRepository{
         }
     }
     
-    public Audit getAudit(URI uri){
+    public Audit getAudit(Identifier identifier){
+        java.net.URI uriFromIdentifier = getUriFromIdentifier(identifier);
+        return getAudit(uriFromIdentifier.toString());
+    }
+    
+    public Audit getAudit(String strURI){
         Audit ret = null;
         
         ObjectConnection con = store.getRepoConnection();
@@ -144,6 +154,7 @@ public class AuditRepository extends SesameRepository{
             ObjectQuery query = con.prepareObjectQuery(QueryLanguage.SPARQL, querystring);
 
             ValueFactory vf = con.getValueFactory();
+            URI uri = vf.createURI(strURI);
             query.setBinding("ouri",uri);
             Result<Audit> result = query.evaluate(Audit.class);
             

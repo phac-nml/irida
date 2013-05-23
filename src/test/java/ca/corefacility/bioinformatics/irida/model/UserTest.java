@@ -17,24 +17,19 @@ package ca.corefacility.bioinformatics.irida.model;
 
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Set;
-import javax.validation.Configuration;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
 import org.hibernate.validator.resourceloading.PlatformResourceBundleLocator;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.springframework.context.support.ResourceBundleMessageSource;
+
+import javax.validation.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import static org.junit.Assert.*;
 
 /**
  * Testing the validation for user objects.
@@ -48,12 +43,14 @@ public class UserTest {
     private ResourceBundle b;
 
     @Before
+    @SuppressWarnings("deprecated")
     public void setUp() {
         b = ResourceBundle.getBundle(MESSAGES_BASENAME);
         Configuration<?> configuration = Validation.byDefaultProvider().configure();
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setBasename(MESSAGES_BASENAME);
-        configuration.messageInterpolator(new ResourceBundleMessageInterpolator(new PlatformResourceBundleLocator(MESSAGES_BASENAME)));
+        configuration.messageInterpolator(
+                new ResourceBundleMessageInterpolator(new PlatformResourceBundleLocator(MESSAGES_BASENAME)));
         ValidatorFactory factory = configuration.buildValidatorFactory();
         validator = factory.getValidator();
 
@@ -184,7 +181,7 @@ public class UserTest {
     }
 
     @Test
-    public void testCompareTo() {
+    public void testCompareTo() throws ParseException {
         // should be able to sort users in ascending order of their creation date
         List<User> users = new ArrayList<>();
 
@@ -196,9 +193,11 @@ public class UserTest {
         Audit a2 = new Audit();
         Audit a3 = new Audit();
 
-        a1.setCreated(Date.valueOf("2011-1-1"));
-        a2.setCreated(Date.valueOf("2012-1-1"));
-        a3.setCreated(Date.valueOf("2013-1-1"));
+        DateFormat sf = new SimpleDateFormat("YYYY-MM-dd");
+
+        a1.setCreated(sf.parse("2011-01-01"));
+        a2.setCreated(sf.parse("2012-01-01"));
+        a3.setCreated(sf.parse("2013-01-01"));
 
         u2.setAuditInformation(a1);
         u1.setAuditInformation(a2);
@@ -213,14 +212,18 @@ public class UserTest {
 
         User curr = users.get(0);
         for (int i = 1; i < users.size(); i++) {
-            assertTrue(curr.getAuditInformation().getCreated().compareTo(users.get(i).getAuditInformation().getCreated()) < 0);
+            assertTrue(curr.getAuditInformation()
+                    .getCreated()
+                    .compareTo(users.get(i).getAuditInformation().getCreated()) < 0);
         }
     }
 
     @Test
     public void testEquals() {
-        User u1 = new User(new UserIdentifier("username"), "username", "email", "password", "firstName", "lastName", "phoneNumber");
-        User u2 = new User(new UserIdentifier("username"), "username", "email", "password", "firstName", "lastName", "phoneNumber");
+        User u1 = new User(new UserIdentifier("username"), "username", "email", "password", "firstName", "lastName",
+                "phoneNumber");
+        User u2 = new User(new UserIdentifier("username"), "username", "email", "password", "firstName", "lastName",
+                "phoneNumber");
         // the two users DO NOT share the same identifier, and should therefore be different
         assertFalse(u1.equals(u2));
 
@@ -231,7 +234,8 @@ public class UserTest {
 
     @Test
     public void testEqualsFields() {
-        User u1 = new User(new UserIdentifier("username"), "username", "email", "password", "firstName", "lastName", "phoneNumber");
+        User u1 = new User(new UserIdentifier("username"), "username", "email", "password", "firstName", "lastName",
+                "phoneNumber");
         User u2 = new User(u1.getIdentifier(), "username", "email", "password", "firstName", "notequal", "phoneNumber");
 
         assertFalse(u1.equals(u2));

@@ -82,7 +82,7 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
-    }
+    } 
 
     /**
      * Construct an instance of {@link User} with all properties set.

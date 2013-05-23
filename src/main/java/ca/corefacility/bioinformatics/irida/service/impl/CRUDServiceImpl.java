@@ -8,6 +8,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sesame.AuditRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
 import javax.validation.ConstraintViolation;
@@ -30,6 +31,7 @@ public class CRUDServiceImpl<KeyType extends Identifier, ValueType extends Compa
     protected CRUDRepository<KeyType, ValueType> repository;
     protected Validator validator;
     protected Class<ValueType> valueType;
+    protected AuditRepository auditRepository;
 
     public CRUDServiceImpl(CRUDRepository<KeyType, ValueType> repository, Validator validator, Class<ValueType> valueType) {
         this.repository = repository;
@@ -158,20 +160,7 @@ public class CRUDServiceImpl<KeyType extends Identifier, ValueType extends Compa
         }
 
         // at this point, everything is A-OK, so go through the act of updating the entity:
-
-        // 1) load the entity from the database
-        ValueType entity = repository.read(id);
-
-        // 2) update the appropriate fields
-        for (Entry<String, Object> field : updatedFields.entrySet()) {
-            setValue(entity, field.getKey(), field.getValue());
-        }
-
-        // 3) set the date that the entity was updated on
-        entity.getAuditInformation().setUpdated(new Date());
-
-        // 4) respond to the client with the updated entity
-        return repository.update(entity);
+        return repository.update(id, updatedFields);
     }
 
     /**
@@ -294,6 +283,14 @@ public class CRUDServiceImpl<KeyType extends Identifier, ValueType extends Compa
         }
 
         return values;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<ValueType> readMultiple(Collection<Identifier> idents) {
+        return repository.readMultiple(idents);
     }
 
     private enum MethodType {
