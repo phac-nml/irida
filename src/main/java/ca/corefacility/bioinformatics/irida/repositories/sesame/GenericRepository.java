@@ -49,8 +49,9 @@ import java.util.logging.Logger;
  */
 public class GenericRepository<IDType extends Identifier, Type extends IridaThing> extends SesameRepository
         implements CRUDRepository<IDType, Type> {
-    
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(GenericRepository.class); //Logger to use for this repository
+
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(
+            GenericRepository.class); //Logger to use for this repository
     protected AuditRepository auditRepo; //The auditing repository to use for auditing purposes in this repository
     protected RelationshipSesameRepository linksRepo; //The relationship repository to use for adding and querying relationships
     private Class objectType; //The class object type being stored by this repo
@@ -61,12 +62,12 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     }
 
     /**
-     * @param store A {@link TripleStore} to use for storing data in this repository
+     * @param store      A {@link TripleStore} to use for storing data in this repository
      * @param objectType The class of objects to store in this repository
-     * @param prefix The RDF prefix of the object type in this repository
-     * @param sType The RDF local name of the object type in this repository
-     * @param auditRepo The audit repository to use for this repository
-     * @param linksRepo The links repository to use for this repository
+     * @param prefix     The RDF prefix of the object type in this repository
+     * @param sType      The RDF local name of the object type in this repository
+     * @param auditRepo  The audit repository to use for this repository
+     * @param linksRepo  The links repository to use for this repository
      */
     public GenericRepository(TripleStore store, Class objectType, String prefix, String sType, AuditRepository auditRepo, RelationshipSesameRepository linksRepo) {
         super(store, sType);
@@ -83,6 +84,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public Type create(Type object) throws IllegalArgumentException {
         if (object == null) {
             throw new IllegalArgumentException("Object is null");
@@ -122,7 +124,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
      * Store the given object in the RDF triplestore
      *
      * @param object The object to store in the triplestore
-     * @return The object that was just stored 
+     * @return The object that was just stored
      */
     private Type storeObject(Type object) {
         ObjectConnection con = store.getRepoConnection();
@@ -149,12 +151,12 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     }
 
     /**
-     * Build a concrete Java object with an {@link Identifier} and {@link Audit} of <code>Type</code>.
-     * The passed object may be an EntityProxied class that needs to be rebuilt
+     * Build a concrete Java object with an {@link Identifier} and {@link Audit} of <code>Type</code>. The passed object
+     * may be an EntityProxied class that needs to be rebuilt
      *
      * @param object The object to reconstruct
-     * @param uri The URI to use to construct this object's {@link Identifier}
-     * @param con An object connection to use to construct this object
+     * @param uri    The URI to use to construct this object's {@link Identifier}
+     * @param con    An object connection to use to construct this object
      * @return A reconstructed object of the repository's set type
      * @throws MalformedQueryException
      * @throws RepositoryException
@@ -168,16 +170,16 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         Identifier objid = buildIdentifier(ret, uri, identifiedBy);
         ret.setIdentifier(objid);
 
-        ret.setAuditInformation(auditRepo.getAudit(uri.toString()));                
-        
+        ret.setAuditInformation(auditRepo.getAudit(uri.toString()));
+
         return ret;
     }
 
     /**
      * Build an {@link Identifier} for the given object
      *
-     * @param object The object to build an identifier for
-     * @param uri The URI of the object to build an identifier for
+     * @param object       The object to build an identifier for
+     * @param uri          The URI of the object to build an identifier for
      * @param identifiedBy The string identifier for this object
      * @return An {@link Identifier} for the given object
      */
@@ -234,7 +236,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
      * {@inheritDoc}
      */
     @Override
-    public Collection<Type> readMultiple(Collection<Identifier> idents) { 
+    public Collection<Type> readMultiple(Collection<Identifier> idents) {
         List<Type> projects = new ArrayList<>();
         ObjectConnection con = store.getRepoConnection();
 
