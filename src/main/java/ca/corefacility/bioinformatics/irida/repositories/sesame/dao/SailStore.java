@@ -17,28 +17,48 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame.dao;
 
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
-import javax.annotation.PostConstruct;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
-import org.openrdf.sail.memory.MemoryStore;
+import org.openrdf.sail.nativerdf.NativeStore;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
 /**
- *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class SailMemoryStore extends TripleStore{
-    
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SailMemoryStore.class);
+public class SailStore extends TripleStore {
 
-    public SailMemoryStore(){
-        super(new SailRepository(new MemoryStore()),"http://localhost/");
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SailStore.class);
+    private static File file;
+
+    static {
+        try {
+            file = Files.createTempDirectory(null, null).toFile();
+            file.deleteOnExit();
+            logger.debug("Temporary files stored in [" + file + "]");
+        } catch (IOException e) {
+            logger.error("Failed to create temp directory:", e);
+            System.exit(1);
+        }
+
     }
-    
+
+    public SailStore() {
+        super(new SailRepository(new NativeStore(file)), "http://localhost/");
+    }
+
+    public SailStore(File location) {
+
+    }
+
     @Override
     @PostConstruct
-    public void initialize(){
+    public void initialize() {
         super.initialize();
         RepositoryConnection con = super.getRepoConnection();
         try {
@@ -49,7 +69,7 @@ public class SailMemoryStore extends TripleStore{
         } catch (RepositoryException ex) {
             logger.error(ex.getMessage());
             throw new StorageException("Could not set namespaces for memory store");
-        }        
+        }
     }
-    
+
 }
