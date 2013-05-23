@@ -16,16 +16,14 @@
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SailMemoryStore;
+import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SailStore;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -48,7 +46,7 @@ public class GenericRepositoryTest {
     
     @Before
     public void setUp() throws NoSuchMethodException {
-        SailMemoryStore store = new SailMemoryStore();
+        SailStore store = new SailStore();
         store.initialize();
         AuditRepository auditRepo = new AuditRepository(store);
         RelationshipSesameRepository linksRepo = new RelationshipSesameRepository(store, auditRepo);

@@ -16,11 +16,20 @@
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.model.Relationship;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
-import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SailMemoryStore;
+import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SailStore;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -28,16 +37,22 @@ import static org.junit.Assert.assertNotNull;
  */
 public class RelationshipSesameRepositoryTest {
 
-    RelationshipSesameRepository linksRepo;
-    IdentifiedRepo repo;
-    RdfPredicate pred;
+    private static final Logger logger = LoggerFactory.getLogger(RelationshipSesameRepositoryTest.class);
+    private RelationshipSesameRepository linksRepo;
+    private IdentifiedRepo repo;
+    private RdfPredicate pred;
+    private Identifier first;
+    private Identifier second;
 
     public RelationshipSesameRepositoryTest() {
     }
 
     @Before
-    public void setUp() {
-        SailMemoryStore store = new SailMemoryStore();
+    public void setUp() throws IOException {
+        File tempDir = Files.createTempDirectory(null).toFile();
+        tempDir.deleteOnExit();
+        logger.debug("Database stored in [" + tempDir + "]");
+        SailStore store = new SailStore(tempDir);
         store.initialize();
         AuditRepository auditRepo = new AuditRepository(store);
         linksRepo = new RelationshipSesameRepository(store, auditRepo);
@@ -50,12 +65,22 @@ public class RelationshipSesameRepositoryTest {
         Identified i1 = repo.create(new Identified("first"));
         Identified i2 = repo.create(new Identified("second"));
 
+        first = i1.getIdentifier();
+        second = i2.getIdentifier();
+
         linksRepo.create(i1, i2);
     }
 
+    /**
+     * If an entity happens to be persisted without a label, then getting the entity out of the database with the entity
+     * will fail because the query used to get the links out of the database relies on the existence of a label.
+     */
     @Test
-    public void testGetLinks() {
-
+    public void testGetLinksWithoutLabel() {
+        Identified withoutLabel = repo.create(new Identified());
+        List<Relationship> relationships = linksRepo.getLinks(withoutLabel.getIdentifier(), Identified.class,
+                Identified.class);
+        assertEquals(1, relationships.size());
     }
 
     /**

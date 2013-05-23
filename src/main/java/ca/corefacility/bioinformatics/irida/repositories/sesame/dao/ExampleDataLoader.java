@@ -23,6 +23,8 @@ import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.RelationshipRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ import java.util.List;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class ExampleDataLoader {
+    private static final Logger logger = LoggerFactory.getLogger(ExampleDataLoader.class);
     private UserRepository userRepo;
     private ProjectRepository projRepo;
     private RelationshipRepository relationshipRepo;
@@ -53,6 +56,7 @@ public class ExampleDataLoader {
     }
 
     public void addSampleData() {
+        logger.debug("Adding users to database.");
         User tom = userRepo.create(
                 new User("tom", "tom@nowhere.com", passwordEncoder.encode("PASSWOD!1"), "Tom", "Matthews", "1234"));
         User franklin = userRepo.create(
@@ -73,6 +77,7 @@ public class ExampleDataLoader {
         userRepo.create(
                 new User("admin", "admin@admin.com", passwordEncoder.encode("password1"), "Admin", "Admin", "5678"));
 
+        logger.debug("Adding samples to database.");
         List<Sample> samples = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             Sample s = new Sample();
@@ -81,10 +86,12 @@ public class ExampleDataLoader {
             samples.add(s);
         }
 
-        for (int i = 1; i <= 100; i++) {
+        logger.debug("Adding projects to database.");
+        for (int i = 1; i <= 1; i++) {
+            logger.debug("Adding project [" + i + "] of 100");
             Project p = projRepo.create(new Project("Project " + i));
             User u = userRepo.create(
-                    new User("user" + i, "user" + i + "@nowhere.com", "PASSWOD!" + i, "User", "Number" + i,
+                    new User("user" + i, "user" + i + "@nowhere.com", passwordEncoder.encode("PASSWOD!" + i), "User", "Number" + i,
                             i + "04-123-4567"));
             // add relationships to users
             relationshipRepo.create(tom, p);

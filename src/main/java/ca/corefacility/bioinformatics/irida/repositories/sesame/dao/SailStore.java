@@ -20,40 +20,35 @@ import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
+import org.openrdf.sail.memory.MemoryStore;
 import org.openrdf.sail.nativerdf.NativeStore;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 
 /**
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class SailStore extends TripleStore {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SailStore.class);
-    private static File file;
 
-    static {
-        try {
-            file = Files.createTempDirectory(null, null).toFile();
-            file.deleteOnExit();
-            logger.debug("Temporary files stored in [" + file + "]");
-        } catch (IOException e) {
-            logger.error("Failed to create temp directory:", e);
-            System.exit(1);
-        }
-
-    }
-
+    /**
+     * Create a memory-backed storage connection.
+     */
     public SailStore() {
-        super(new SailRepository(new NativeStore(file)), "http://localhost/");
+        super(new SailRepository(new MemoryStore()), "http://localhost/");
     }
 
+    /**
+     * Create a file-backed storage connection using the specified location as a directory.
+     *
+     * @param location the directory to use for storing data.
+     */
     public SailStore(File location) {
-
+        super(new SailRepository(new NativeStore(location)), "http://localhost/");
     }
 
     @Override
