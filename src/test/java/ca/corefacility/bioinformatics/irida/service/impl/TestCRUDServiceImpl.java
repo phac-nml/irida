@@ -47,6 +47,7 @@ public class TestCRUDServiceImpl {
     private SimpleDateFormat dateFormatter;
 
     @Before
+    @SuppressWarnings("unchecked")
     public void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
