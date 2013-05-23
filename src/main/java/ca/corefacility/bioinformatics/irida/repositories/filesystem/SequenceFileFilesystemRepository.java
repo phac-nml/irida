@@ -16,6 +16,7 @@
 package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
@@ -27,8 +28,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +41,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class SequenceFileFilesystemRepository implements CRUDRepository<File, SequenceFile> {
+public class SequenceFileFilesystemRepository implements CRUDRepository<Identifier, SequenceFile> {
 
     private static final Logger logger = LoggerFactory.getLogger(SequenceFileFilesystemRepository.class);
     private final Path BASE_DIRECTORY;
@@ -94,14 +97,14 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<File, Se
      * This method is not supported by {@link SequenceFileFilesystemRepository}
      * and will throw an {@link UnsupportedOperationException}.
      *
-     * @see SequenceFileSesameRepository
+     * @see ca.corefacility.bioinformatics.irida.repositories.sesame.SequenceFileSesameRepository
      *
      * @param id the file to load.
      * @return the {@link SequenceFile} with a reference to the file.
      * @throws EntityNotFoundException if the file cannot be found.
      */
     @Override
-    public SequenceFile read(File id) throws EntityNotFoundException {
+    public SequenceFile read(Identifier id) throws EntityNotFoundException {    
         throw new UnsupportedOperationException("SequenceFile file reference "
                 + "should be populated by SequenceFileSesameRepository.");
     }
@@ -109,7 +112,7 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<File, Se
     /**
      * {@inheritDoc}
      */
-    @Override
+    //@Override
     public SequenceFile update(SequenceFile object) throws IllegalArgumentException {
         if (object.getIdentifier() == null
                 || Strings.isNullOrEmpty(object.getIdentifier().getIdentifier())) {
@@ -125,7 +128,7 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<File, Se
                     + "before?");
         }
 
-        // the directory exists. does the target file exist? if so, we don't
+        // the directory exists. does the target file exist? if so, we don't 
         // want to overwrite the file. We'll rename the existing file with the
         // current date appended to the end so that we're retaining existing
         // file names.
@@ -152,10 +155,46 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<File, Se
 
         return object;
     }
+    
+    private File updateFilesystemFile(Identifier identifier, File file){
+        if (identifier == null
+                || Strings.isNullOrEmpty(identifier.getIdentifier())) {
+            throw new IllegalArgumentException("Identifier is required.");
+        }
 
-    @Override
-    public void delete(File id) throws EntityNotFoundException {
-        throw new UnsupportedOperationException("Files cannot be deleted.");
+        // the sequence file directory must previously exist, if not, then
+        // we're doing something very weird.
+        Path sequenceFileDir = getSequenceFileDir(identifier);
+        if (!sequenceFileDir.toFile().exists()) {
+            throw new IllegalArgumentException("The directory for this "
+                    + "SequenceFile does not exist, has it been persisted "
+                    + "before?");
+        }
+
+        // the directory exists. does the target file exist? if so, we don't 
+        // want to overwrite the file. We'll rename the existing file with the
+        // current date appended to the end so that we're retaining existing
+        // file names.
+        File target = sequenceFileDir.resolve(file.getName()).toFile();
+        if (target.exists()) {
+            File renamedTarget = new File(target.getAbsoluteFile() + "-" + new Date().getTime());
+
+            // rename the existing file
+            try {
+                Files.move(target, renamedTarget);
+            } catch (IOException e) {
+                throw new StorageException("Couldn't rename existing file.");
+            }
+        }
+
+        // now handle storing the file as before:
+        try {
+            Files.move(file, target);
+        } catch (IOException e) {
+            throw new StorageException("Couldn't move updated file to existing directory.");
+        }
+        
+        return target;
     }
 
     @Override
@@ -169,12 +208,41 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<File, Se
     }
 
     @Override
-    public Boolean exists(File id) {
-        return id.exists();
+    public Integer count() {
+        throw new UnsupportedOperationException("Files cannot be counted");
+    }
+    
+    //NEW STUFF
+
+    @Override
+    public SequenceFile update(Identifier id, Map<String, Object> updatedFields) throws InvalidPropertyException, SecurityException {
+        SequenceFile file = new SequenceFile();
+        if(updatedFields.containsKey("file")){
+            File updatedFile = (File) updatedFields.get("file");
+            File target = updateFilesystemFile(id,updatedFile);
+            file.setFile(target);
+        }
+
+        return file;
     }
 
     @Override
-    public Integer count() {
-        throw new UnsupportedOperationException("Files cannot be counted");
+    public void delete(Identifier id) throws EntityNotFoundException {
+        throw new UnsupportedOperationException("Files cannot be deleted.");
+
+    }
+
+    @Override
+    public Boolean exists(Identifier id) {
+        throw new UnsupportedOperationException("SequenceFile file exists "
+                + "should be populated by SequenceFileSesameRepository.");        
+    }
+
+    /**
+     * Reading multiple files will not be supported
+     */
+    @Override
+    public Collection<SequenceFile> readMultiple(Collection<Identifier> idents) {
+        throw new UnsupportedOperationException("Reading multiple files will not be supported.");
     }
 }

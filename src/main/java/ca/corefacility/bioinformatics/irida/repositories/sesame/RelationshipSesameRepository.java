@@ -30,7 +30,9 @@ import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openrdf.model.Statement;
@@ -340,7 +342,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
                 Identifier linkId = buildLinkIdentifier(uri,identifiedBy);
                 Relationship link = buildLinkfromBindingSet(bs, con);
                 link.setIdentifier(linkId);
-                Audit audit = auditRepo.getAudit(uri);
+                Audit audit = auditRepo.getAudit(uri.toString());
                 link.setAuditInformation(audit);
                 
                 links.add(link);
@@ -401,7 +403,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
                 Identifier linkId = buildLinkIdentifier(uri,identifiedBy);
                 Relationship link = buildLinkfromBindingSet(bs, con);
                 link.setIdentifier(linkId);
-                Audit audit = auditRepo.getAudit(uri);
+                Audit audit = auditRepo.getAudit(uri.toString());
                 link.setAuditInformation(audit);
                 
                 links.add(link);
@@ -448,7 +450,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
                 Identifier linkId = buildLinkIdentifier(uri,identifiedBy);
                 Relationship link = buildLinkfromBindingSet(bs, con);
                 link.setIdentifier(linkId);
-                Audit audit = auditRepo.getAudit(uri);
+                Audit audit = auditRepo.getAudit(uri.toString());
                 link.setAuditInformation(audit);
                 
                 links.add(link);
@@ -496,7 +498,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
                 Identifier linkId = buildLinkIdentifier(uri,identifiedBy);
                 Relationship link = buildLinkfromBindingSet(bs, con);
                 link.setIdentifier(linkId);
-                Audit audit = auditRepo.getAudit(uri);
+                Audit audit = auditRepo.getAudit(uri.toString());
                 link.setAuditInformation(audit);
                 
                 links.add(link);
@@ -566,7 +568,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
                 Identifier linkId = buildLinkIdentifier(uri,identifiedBy);
                 ret = buildLinkfromBindingSet(bs, con);
                 ret.setIdentifier(linkId);
-                Audit audit = auditRepo.getAudit(uri);
+                Audit audit = auditRepo.getAudit(uri.toString());
                 ret.setAuditInformation(audit);
             }
 
@@ -575,11 +577,6 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
         }        
         
         return ret;
-    }
-
-    @Override
-    public Relationship update(Relationship object) throws IllegalArgumentException {
-        throw new UnsupportedOperationException("Link updates will not be supported.");
     }
 
     @Override
@@ -626,6 +623,16 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
     @Override
     public Integer count() {
         throw new UnsupportedOperationException("Counting links will not be supported.");
+    }
+
+    @Override
+    public Relationship update(Identifier id, Map<String, Object> updatedFields) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Collection<Relationship> readMultiple(Collection<Identifier> idents) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
        
 }

@@ -15,12 +15,17 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SailMemoryStore;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -197,8 +202,9 @@ public class GenericRepositoryTest {
         } 
     }
 
+    
     /**
-     * Test of update method, of class GenericRepository.
+     * Test update method with 2 params
      */
     @Test
     public void testUpdate() {
@@ -206,18 +212,21 @@ public class GenericRepositoryTest {
         u = repo.create(u);
         
         try{
-            u.setData("different");
-            u = repo.update(u);
+            String differentData = "different";
+            HashMap<String,Object> changes = new HashMap<>();
+            changes.put("data", differentData);
+            u = repo.update(u.getIdentifier(), changes);
             
             Identified j = repo.read(u.getIdentifier());
             assertNotNull(j);
-            assertTrue(j.getData().compareTo(u.getData())==0);
+            assertEquals(j.getData(),differentData);
         }
-        catch(IllegalArgumentException e){
+        catch(IllegalArgumentException|InvalidPropertyException ex){
             fail();
         }
-    }
+    }    
 
+    
     /**
      * Test of count method, of class GenericRepository.
      */

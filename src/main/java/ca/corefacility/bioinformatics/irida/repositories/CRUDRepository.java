@@ -1,8 +1,12 @@
 package ca.corefacility.bioinformatics.irida.repositories;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * All Service interfaces should extend this interface to inherit common methods
@@ -33,19 +37,28 @@ public interface CRUDRepository<IdentifierType, Type> {
      * database.
      */
     public Type read(IdentifierType id) throws EntityNotFoundException;
+    
+
+    /**
+     * Read multiple objects by the given collection of identifiers
+     * @param idents The unique identifiers of the objects to read
+     * @return A collection of the requested objects
+     */
+    public Collection<Type> readMultiple(Collection<Identifier> idents);
 
     /**
      * Update the specified object in the database. The object <b>must</b> have
      * a valid identifier prior to being passed to this method.
      *
-     * @param object The object to update.
+     * @param id The identifier of the object to update.
+     * @param updatedFields A map of the properties of the object that were updated.
      * @return The object as it was persisted in the database. May modify the
      * identifier of the object when returned.
      * @throws IllegalArgumentException If the object to persist does not have a
      * valid identifier, or the object does not pass validation, then an
      * exception will be thrown with a reason for failure.
-     */
-    public Type update(Type object) throws IllegalArgumentException;
+     */    
+    public Type update(IdentifierType id, Map<String, Object> updatedFields) throws InvalidPropertyException;
 
     /**
      * Delete the object with the specified identifier from the database.

@@ -24,9 +24,14 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.openrdf.annotations.Iri;
+import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
@@ -34,6 +39,7 @@ import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.repository.RepositoryException;
+import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.object.ObjectConnection;
 import org.openrdf.repository.object.ObjectQuery;
 import org.openrdf.result.Result;
@@ -126,6 +132,30 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
         }
     }
     
+    
+    @Override
+    protected Literal createLiteral(ValueFactory fac,String predicate,Object obj){
+        
+        String fileAnnotation = "";
+        try {
+            Field declaredField = SequenceFile.class.getDeclaredField("file");
+            Iri annotation = declaredField.getAnnotation(Iri.class);
+            fileAnnotation = annotation.value();
+
+        } catch (NoSuchFieldException | SecurityException ex) {
+            Logger.getLogger(SequenceFileSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
+        }
+               
+        if(fileAnnotation.compareTo(predicate) == 0){
+            URI ioFile = fac.createURI("java:java.io.File");
+            return fac.createLiteral(obj.toString(),ioFile);
+        }
+        else{
+            return super.createLiteral(fac, predicate, obj);
+        }
+    }    
+    
+    @Override
     public List<SequenceFile> getFilesForProject(Project project){
         String uri = project.getIdentifier().getUri().toString();
         return getFilesForContainer(uri,Project.class);
@@ -135,6 +165,7 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
         return linksRepo.listObjects(project.getIdentifier(), hasFile);
     }
     
+    @Override
     public List<SequenceFile> getFilesForSample(Sample sample){
         String uri = sample.getIdentifier().getUri().toString();
         return getFilesForContainer(uri,Sample.class);    
