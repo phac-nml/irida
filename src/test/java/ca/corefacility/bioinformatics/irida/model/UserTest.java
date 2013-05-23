@@ -24,7 +24,9 @@ import org.junit.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
 import javax.validation.*;
-import java.sql.Date;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -40,8 +42,8 @@ public class UserTest {
     private Validator validator;
     private ResourceBundle b;
 
-    @SuppressWarnings("deprecated")
     @Before
+    @SuppressWarnings("deprecated")
     public void setUp() {
         b = ResourceBundle.getBundle(MESSAGES_BASENAME);
         Configuration<?> configuration = Validation.byDefaultProvider().configure();
@@ -179,7 +181,7 @@ public class UserTest {
     }
 
     @Test
-    public void testCompareTo() {
+    public void testCompareTo() throws ParseException {
         // should be able to sort users in ascending order of their creation date
         List<User> users = new ArrayList<>();
 
@@ -191,9 +193,11 @@ public class UserTest {
         Audit a2 = new Audit();
         Audit a3 = new Audit();
 
-        a1.setCreated(Date.valueOf("2011-1-1"));
-        a2.setCreated(Date.valueOf("2012-1-1"));
-        a3.setCreated(Date.valueOf("2013-1-1"));
+        DateFormat sf = new SimpleDateFormat("YYYY-MM-dd");
+
+        a1.setCreated(sf.parse("2011-01-01"));
+        a2.setCreated(sf.parse("2012-01-01"));
+        a3.setCreated(sf.parse("2013-01-01"));
 
         u2.setAuditInformation(a1);
         u1.setAuditInformation(a2);
