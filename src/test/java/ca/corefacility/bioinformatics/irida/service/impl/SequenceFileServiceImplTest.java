@@ -50,7 +50,9 @@ public class SequenceFileServiceImplTest {
     private Validator validator;
 
     @Before
+    @SuppressWarnings("unchecked")
     public void setUp() {
+
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
         crudRepository = mock(SequenceFileRepository.class);
