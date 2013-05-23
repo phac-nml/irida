@@ -94,7 +94,7 @@ public class ExampleDataLoader {
 
             // add relationships to samples
             for (int j = 0; j < samples.size(); j++) {
-                relationshipRepo.create(samples.get(j), p);
+                relationshipRepo.create(p, samples.get(j));
             }
         }
 
