@@ -5,7 +5,7 @@
     <artifactId>irida-api</artifactId>
     <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
-    <name>irida-api</name>
+    <name>irida-api-old</name>
     <url>http://gitlab.corefacility.ca/irida/irida-api</url>
     
     <issueManagement>

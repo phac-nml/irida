@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ca.corefacility.bioinformatics.irida.service.impl;
+package ca.corefacility.bioinformatics.irida.utils;
 
-import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
-import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
+import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import javax.validation.constraints.NotNull;
@@ -25,7 +24,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class IdentifiableTestEntity implements Identifiable<Identifier>, Auditable<Audit>, Comparable<IdentifiableTestEntity> {
+public class IdentifiableTestEntity implements IridaThing<IdentifiableTestEntity,Audit,Identifier>, Comparable<IdentifiableTestEntity> {
 
     private Identifier id;
     @NotNull
@@ -33,6 +32,7 @@ public class IdentifiableTestEntity implements Identifiable<Identifier>, Auditab
     private Integer integerValue;
     @NotNull
     private Audit audit;
+    private String label;
 
     public IdentifiableTestEntity() {
         this.id = new Identifier();
@@ -86,4 +86,21 @@ public class IdentifiableTestEntity implements Identifiable<Identifier>, Auditab
     public void setIntegerValue(Integer integerValue) {
         this.integerValue = integerValue;
     }
+
+    @Override
+    public String getLabel() {
+        return label;
+    }
+    
+    public void setLabel(String label){
+        this.label = label;
+    }
+
+    @Override
+    public IdentifiableTestEntity copy() {
+        IdentifiableTestEntity copy = new IdentifiableTestEntity(); 
+        copy.setNonNull(getNonNull());
+        copy.setLabel(getLabel());
+        return copy;
+   }
 }

@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import javax.validation.constraints.NotNull;
 import org.openrdf.annotations.Iri;
 
 /**
@@ -27,6 +28,7 @@ import org.openrdf.annotations.Iri;
  */
 @Iri("http://corefacility.ca/irida/Resource")
 public interface IridaThing<DataType extends IridaThing,AuditType extends Audit,IDType extends Identifier> extends Auditable<AuditType>, Identifiable<IDType>{
+    @NotNull
     @Iri("http://www.w3.org/2000/01/rdf-schema#label")
     public String getLabel();
  

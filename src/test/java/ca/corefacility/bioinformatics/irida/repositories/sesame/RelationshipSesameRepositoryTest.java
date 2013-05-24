@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
+import ca.corefacility.bioinformatics.irida.utils.Identified;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
@@ -76,11 +77,11 @@ public class RelationshipSesameRepositoryTest {
      * will fail because the query used to get the links out of the database relies on the existence of a label.
      */
     @Test
-    public void testGetLinksWithoutLabel() {
-        Identified withoutLabel = repo.create(new Identified());
+    public void testEmptyLinks() {
+        Identified withoutLabel = repo.create(new Identified("data"));
         List<Relationship> relationships = linksRepo.getLinks(withoutLabel.getIdentifier(), Identified.class,
                 Identified.class);
-        assertEquals(1, relationships.size());
+        assertEquals(0, relationships.size());
     }
 
     /**

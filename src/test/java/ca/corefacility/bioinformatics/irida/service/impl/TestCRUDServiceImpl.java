@@ -15,12 +15,15 @@
  */
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntity;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import ca.corefacility.bioinformatics.irida.utils.Identified;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
@@ -59,6 +62,7 @@ public class TestCRUDServiceImpl {
     @Test
     public void testAddInvalidObject() {
         IdentifiableTestEntity i = new IdentifiableTestEntity(); // nothing is set, this should be invalid
+        i.setLabel("labelled");
 
         try {
             crudService.create(i);
@@ -67,11 +71,29 @@ public class TestCRUDServiceImpl {
             assertEquals(1, constraintViolations.getConstraintViolations().size());
         }
     }
+    
+    @Test
+    public void addObjectWithoutLabel() {
+        IdentifiableTestEntity i = new IdentifiableTestEntity(); // nothing is set, this should be invalid
+        i.setNonNull("Definitely not null.");
+        
+        try {
+            crudService.create(i);
+            fail();
+        } catch (ConstraintViolationException constraintViolations) {
 
+            assertEquals(1, constraintViolations.getConstraintViolations().size());
+            ConstraintViolation<?> next = constraintViolations.getConstraintViolations().iterator().next();
+            Path propertyPath = next.getPropertyPath();
+            assertEquals("label", propertyPath.toString());
+        }
+    }    
+      
     @Test
     public void testAddValidObject() {
         IdentifiableTestEntity i = new IdentifiableTestEntity();
         i.setNonNull("Definitely not null.");
+        i.setLabel("labelled");
 
         try {
             crudService.create(i);
@@ -364,6 +386,7 @@ public class TestCRUDServiceImpl {
     public void testSetAuditInformation() {
         IdentifiableTestEntity e = new IdentifiableTestEntity();
         e.setNonNull("Not null");
+        e.setLabel("labelled");
         e.setAuditInformation(null);
         when(crudRepository.create(e)).thenReturn(e);
 

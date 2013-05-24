@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
+import ca.corefacility.bioinformatics.irida.utils.Identified;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SailStore;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
