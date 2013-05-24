@@ -64,12 +64,12 @@ describe('ProjectsListCtrl', function () {
     expect(ProjectsListCtrl).toBeTruthy();
   }));
 
-  it('should fetch the current list of projects', function () {
-    'use static';
-    $httpBackend.expectGET(url);
-    $scope.loadProjects(url);
-    $httpBackend.flush();
-    expect($scope.projects.length).toBe(1);
-  });
+//  it('should fetch the current list of projects', function () {
+//    'use static';
+//    $httpBackend.expectGET(url);
+//    $scope.loadProjects(url);
+//    $httpBackend.flush();
+//    expect($scope.projects.length).toBe(1);
+//  });
 
 });
