@@ -316,13 +316,19 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
         
         ObjectConnection con = store.getRepoConnection();
         try {
-            String qs = store.getPrefixes()
-                    + "SELECT ?link ?sub ?pred ?obj "
-                    + "WHERE{ ?link a irida:ResourceLink ;\n"
-                    + " irida:linkSubject ?sub ; \n"
-                    + " irida:linkPredicate ?pred ;\n"
-                    + " irida:linkObject ?obj ."
-                    + "}";
+            String qs = store.getPrefixes() +
+                    "SELECT ?link ?sub ?pred ?obj " +
+                    "WHERE{ " +
+                    "?link a irida:ResourceLink ; " +
+                    " irida:linkPredicate ?linkPred ; " +
+                    " irida:linkElement ?sub ; " +
+                    " irida:linkElement ?obj . " +
+                    "?sub ?pred ?obj. " +
+                    "OPTIONAL{ " +
+                    "?linkPred owl:inverseOf ?inv " +
+                    "} " +
+                    "FILTER(?pred IN (?linkPred,?inv)). " +
+                    "}";
             ValueFactory fac = con.getValueFactory();
             TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
             
@@ -365,13 +371,27 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
         
         ObjectConnection con = store.getRepoConnection();
         try {
-            String qs = store.getPrefixes()
+            /*String qs = store.getPrefixes()
                     + "SELECT ?link ?sub ?pred ?obj "
                     + "WHERE{ ?link a irida:ResourceLink ;\n"
                     + " irida:linkSubject ?sub ; \n"
                     + " irida:linkPredicate ?pred ;\n"
                     + " irida:linkObject ?obj ."
-                    + "}";
+                    + "}";*/
+            
+            String qs = store.getPrefixes() + 
+                    "SELECT ?link ?sub ?pred ?obj " +
+                    "WHERE{ " +
+                    "?link a irida:ResourceLink ; " +
+                    " irida:linkPredicate ?linkPred ; " +
+                    " irida:linkElement ?sub ; " +
+                    " irida:linkElement ?obj . " +
+                    "?sub ?pred ?obj. " +
+                    "OPTIONAL{ " +
+                    "?linkPred owl:inverseOf ?inv " +
+                    "} " +
+                    "FILTER(?pred IN (?linkPred,?inv)). " +
+                    "}";
             ValueFactory fac = con.getValueFactory();
             TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
             
