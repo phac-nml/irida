@@ -65,7 +65,7 @@ public class SampleSesameRepositoryTest {
 
         /** verify that the entity exists in the database as a type of something */
         query = connection.prepareTupleQuery(
-                "select * where {?identifier <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?type}");
+                "select * where {?identifier a ?type}");
         query.setBinding("identifier", valueFactory.createURI(id.getUri().toString()));
         result = query.evaluate();
         assertTrue(result.hasNext());
