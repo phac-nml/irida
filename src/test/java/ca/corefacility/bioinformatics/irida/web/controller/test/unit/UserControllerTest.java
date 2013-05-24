@@ -54,7 +54,7 @@ public class UserControllerTest {
     public void setUp() {
         userService = mock(UserService.class);
         projectService = mock(ProjectService.class);
-        controller = new UsersController(userService, projectService, null);
+        controller = new UsersController(userService, projectService);
 
         // fake out the servlet response so that the URI builder will work.
         RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
@@ -78,6 +78,7 @@ public class UserControllerTest {
         when(projectService.getProjectsForUser(u)).thenReturn(projects);
         // run the test
         ModelAndView output = controller.getUserProjects(username);
+        @SuppressWarnings("unchecked")
         ResourceCollection<ProjectResource> pulledProjects = (ResourceCollection<ProjectResource>) output.getModel().get("projectResources");
         List<ProjectResource> projectResources = pulledProjects.getResources();
         assertEquals(1, projectResources.size());

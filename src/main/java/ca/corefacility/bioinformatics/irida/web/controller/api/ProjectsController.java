@@ -97,8 +97,8 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      * @param projectService the {@link ProjectService} to be used by this controller.
      */
     @Autowired
-    public ProjectsController(ProjectService projectService, UserService userService, RelationshipService relationshipService) {
-        super(projectService, relationshipService, Project.class, Identifier.class, ProjectResource.class);
+    public ProjectsController(ProjectService projectService, UserService userService) {
+        super(projectService, Project.class, Identifier.class, ProjectResource.class);
         this.userService = userService;
         this.relationshipService = relationshipService;
     }
@@ -108,7 +108,7 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      * project provides. This method *should not* be used by anyone.
      */
     protected ProjectsController() {
-        super(null, null, null, null, null);
+        super(null, null, null, null);
     }
 
     /**

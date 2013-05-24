@@ -4,7 +4,6 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
@@ -62,8 +61,8 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
      * @param projectService the {@link ProjectService} that this controller uses.
      */
     @Autowired
-    public UsersController(UserService userService, ProjectService projectService, RelationshipService relationshipService) {
-        super(userService, relationshipService, User.class, UserIdentifier.class, UserResource.class);
+    public UsersController(UserService userService, ProjectService projectService) {
+        super(userService, User.class, UserIdentifier.class, UserResource.class);
         this.userService = userService;
         this.projectService = projectService;
     }

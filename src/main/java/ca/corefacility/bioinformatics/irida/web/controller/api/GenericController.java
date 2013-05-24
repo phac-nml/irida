@@ -87,10 +87,6 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      */
     protected CRUDService<IdentifierType, Type> crudService;
     /**
-     * Service used to relate one resource to another.
-     */
-    protected RelationshipService relationshipService;
-    /**
      * The type used to serialize/de-serialize the <code>Type</code> to the client.
      */
     private Class<ResourceType> resourceType;
@@ -107,6 +103,11 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      */
     @Autowired
     private EntityLinks entityLinks;
+    /**
+     * Reference to {@link RelationshipService} for getting relationships between resources.
+     */
+    @Autowired
+    private RelationshipService relationshipService;
 
     /**
      * Construct an instance of {@link GenericController}. {@link GenericController} is an abstract type, and should
@@ -116,8 +117,8 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @param identifierType the type of identifier used by the type that this controller manages.
      * @param resourceType   the type used to serialize/de-serialize the type to the client.
      */
-    protected GenericController(CRUDService<IdentifierType, Type> crudService, RelationshipService relationshipService,
-                                Class<Type> type, Class<IdentifierType> identifierType, Class<ResourceType> resourceType) {
+    protected GenericController(CRUDService<IdentifierType, Type> crudService, Class<Type> type,
+                                Class<IdentifierType> identifierType, Class<ResourceType> resourceType) {
         this.crudService = crudService;
         this.resourceType = resourceType;
         this.identifierType = identifierType;
@@ -201,9 +202,12 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         logger.debug("Total uniquely related resources: [" + uniquelyRelatedClasses.size() + "]");
 
         for (Map.Entry<String, Class<?>> relatedClass : uniquelyRelatedClasses.entrySet()) {
-            logger.debug("Loading relationships for " + relatedClass.getValue());
+            logger.debug("Loading relationships between [" + type + "] and [" + relatedClass.getValue() + "]");
+
             Collection<Relationship> relationships = relationshipService.getRelationshipsForEntity(
                     resource.getIdentifier(), type, relatedClass.getValue());
+
+
             logger.debug("Total relationships: " + relationships.size());
             List<LabelledRelationshipResource> resources = new ArrayList<>(relationships.size());
             for (Relationship r : relationships) {
@@ -523,5 +527,14 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
             }
         }
         return new Gson().toJson(mp);
+    }
+
+    /**
+     * Set a reference to the {@link RelationshipService}.
+     *
+     * @param relationshipService a reference to a {@link RelationshipService}.
+     */
+    public void setRelationshipService(RelationshipService relationshipService) {
+        this.relationshipService = relationshipService;
     }
 }

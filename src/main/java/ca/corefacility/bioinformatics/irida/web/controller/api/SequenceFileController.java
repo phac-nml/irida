@@ -52,8 +52,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 public class SequenceFileController extends GenericController<Identifier, SequenceFile, SequenceFileResource> {
 
     @Autowired
-    public SequenceFileController(CRUDService<Identifier, SequenceFile> sequenceFileService, RelationshipService relationshipService) {
-        super(sequenceFileService, relationshipService, SequenceFile.class, Identifier.class,
+    public SequenceFileController(CRUDService<Identifier, SequenceFile> sequenceFileService) {
+        super(sequenceFileService, SequenceFile.class, Identifier.class,
                 SequenceFileResource.class);
     }
 

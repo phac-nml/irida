@@ -52,35 +52,36 @@ import static org.mockito.Mockito.*;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
+@SuppressWarnings("unused")
 public class GenericControllerTest {
 
     private GenericController<Identifier, IdentifiableTestEntity, IdentifiableTestResource> controller;
     private CRUDService<Identifier, IdentifiableTestEntity> crudService;
-    private RelationshipService relationshipService;
     private IdentifiableTestEntity entity;
     private Identifier id;
     private Map<String, Object> updatedFields;
 
     @Before
+    @SuppressWarnings("unchecked")
     public void setUp() {
         crudService = mock(CRUDService.class);
-        relationshipService = mock(RelationshipService.class);
+        RelationshipService relationshipService = mock(RelationshipService.class);
         id = new Identifier();
         entity = new IdentifiableTestEntity();
         entity.setIdentifier(id);
         controller = new GenericController<Identifier, IdentifiableTestEntity, IdentifiableTestResource>(crudService,
-                relationshipService, IdentifiableTestEntity.class, Identifier.class, IdentifiableTestResource.class) {
+                IdentifiableTestEntity.class, Identifier.class, IdentifiableTestResource.class) {
             @Override
             public IdentifiableTestEntity mapResourceToType(IdentifiableTestResource representation) {
                 return entity;
             }
 
             @Override
-            @SuppressWarnings("unchecked")
             protected Map<String, Class<?>> getUniquelyRelatedClasses() {
                 return (Map<String, Class<?>>) ImmutableMap.of("related", (Class<?>) IdentifiableTestEntity.class);
             }
         };
+        controller.setRelationshipService(relationshipService);
         updatedFields = new HashMap<>();
 
         // fake out the servlet response so that the URI builder will work.
@@ -117,8 +118,7 @@ public class GenericControllerTest {
 
     @Test
     public void testDeleteEntity() throws InstantiationException, IllegalAccessException {
-        ResponseEntity<String> response = null;
-        response = controller.delete(UUID.randomUUID().toString());
+        ResponseEntity<String> response = controller.delete(UUID.randomUUID().toString());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
@@ -207,6 +207,7 @@ public class GenericControllerTest {
         assertNotNull(mav.get(GenericController.RESOURCE_NAME));
         Object o = mav.get(GenericController.RESOURCE_NAME);
         assertTrue(o instanceof ResourceCollection);
+        @SuppressWarnings("unchecked")
         ResourceCollection<IdentifiableTestResource> collection = (ResourceCollection<IdentifiableTestResource>) o;
         assertEquals(5, collection.getLinks().size());
         assertEquals(totalResources, collection.getTotalResources());
@@ -229,6 +230,7 @@ public class GenericControllerTest {
         assertNotNull(mav.get(GenericController.RESOURCE_NAME));
         Object o = mav.get(GenericController.RESOURCE_NAME);
         assertTrue(o instanceof ResourceCollection);
+        @SuppressWarnings("unchecked")
         ResourceCollection<IdentifiableTestResource> collection = (ResourceCollection<IdentifiableTestResource>) o;
         assertEquals(5, collection.getLinks().size());
         assertEquals(totalResources, collection.getTotalResources());
@@ -258,6 +260,7 @@ public class GenericControllerTest {
 
         // get the collection of related resources
         assertTrue(model.containsKey(GenericController.RELATED_RESOURCES_NAME));
+        @SuppressWarnings("unchecked")
         Map<String, Collection<LabelledRelationshipResource>> relatedResources =
                 (Map<String, Collection<LabelledRelationshipResource>>) model
                         .get(GenericController.RELATED_RESOURCES_NAME);

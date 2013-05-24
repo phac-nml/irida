@@ -41,8 +41,8 @@ public class SamplesController extends GenericController<Identifier, Sample, Sam
      * @param sampleService the service used to manage samples.
      */
     @Autowired
-    public SamplesController(CRUDService<Identifier, Sample> sampleService, RelationshipService relationshipService) {
-        super(sampleService, relationshipService, Sample.class, Identifier.class, SampleResource.class);
+    public SamplesController(CRUDService<Identifier, Sample> sampleService) {
+        super(sampleService, Sample.class, Identifier.class, SampleResource.class);
     }
 
     /**
