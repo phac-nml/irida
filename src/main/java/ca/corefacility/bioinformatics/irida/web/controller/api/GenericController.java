@@ -79,6 +79,10 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      */
     public static final String RELATED_RESOURCES_NAME = "relatedResources";
     /**
+     * Rel used for terminating a relationship between resources.
+     */
+    public static final String REL_DELETE_RELATIONSHIP = "delete";
+    /**
      * logger.
      */
     private static final Logger logger = LoggerFactory.getLogger(GenericController.class);
@@ -172,7 +176,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @param resource the resource to generate related collections for.
      * @return a collection of collections of related resources.
      */
-    protected Map<String, Collection<LabelledRelationshipResource>> constructCustomRelatedResourceCollections(Type resource) {
+    protected Map<String, ResourceCollection<LabelledRelationshipResource>> constructCustomRelatedResourceCollections(Type resource) {
         return Collections.emptyMap();
     }
 
@@ -195,10 +199,10 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @param resource the resource to generate related collections for.
      * @return a collection of collections of related resources.
      */
-    private Map<String, Collection<LabelledRelationshipResource>> constructRelatedResourceCollections(Type resource) {
+    private Map<String, ResourceCollection<LabelledRelationshipResource>> constructRelatedResourceCollections(Type resource) {
         logger.debug("Loading related resources for [" + resource + "]");
         Map<String, Class<?>> uniquelyRelatedClasses = getUniquelyRelatedClasses();
-        Map<String, Collection<LabelledRelationshipResource>> relatedResources = new HashMap<>();
+        Map<String, ResourceCollection<LabelledRelationshipResource>> relatedResources = new HashMap<>();
         logger.debug("Total uniquely related resources: [" + uniquelyRelatedClasses.size() + "]");
 
         for (Map.Entry<String, Class<?>> relatedClass : uniquelyRelatedClasses.entrySet()) {
@@ -209,13 +213,16 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
 
 
             logger.debug("Total relationships: " + relationships.size());
-            List<LabelledRelationshipResource> resources = new ArrayList<>(relationships.size());
+            ResourceCollection<LabelledRelationshipResource> resources = new ResourceCollection<>(relationships.size());
+            resources.add(linkTo(RelationshipsController.class).withSelfRel());
             for (Relationship r : relationships) {
                 Identifier relationshipIdentifier = r.getObject();
                 LabelledRelationshipResource relationshipResource = new LabelledRelationshipResource(
                         relationshipIdentifier.getLabel(), r);
                 relationshipResource.add(entityLinks.linkToSingleResource(relatedClass.getValue(),
                         relationshipIdentifier.getIdentifier()));
+                relationshipResource.add(linkTo(RelationshipsController.class).slash(r.getIdentifier().getIdentifier())
+                        .withRel(REL_DELETE_RELATIONSHIP));
                 resources.add(relationshipResource);
             }
             relatedResources.put(relatedClass.getKey(), resources);
@@ -329,7 +336,8 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         // add the resource to the model
         model.addAttribute(RESOURCE_NAME, resource);
         // get a set of uniquely related resources for this resource
-        Map<String, Collection<LabelledRelationshipResource>> relatedResources = constructRelatedResourceCollections(t);
+        Map<String, ResourceCollection<LabelledRelationshipResource>> relatedResources = constructRelatedResourceCollections(
+                t);
         // add any non-uniquely related resources to this resource
         relatedResources.putAll(constructCustomRelatedResourceCollections(t));
         // add any related resources to the model
@@ -532,9 +540,18 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     /**
      * Set a reference to the {@link RelationshipService}.
      *
-     * @param relationshipService a reference to a {@link RelationshipService}.
+     * @param relationshipService a reference to the {@link RelationshipService}.
      */
     public void setRelationshipService(RelationshipService relationshipService) {
         this.relationshipService = relationshipService;
+    }
+
+    /**
+     * Set a reference to the {@link EntityLinks} service.
+     *
+     * @param entityLinks a reference to the {@link EntityLinks} service.
+     */
+    public void setEntityLinks(EntityLinks entityLinks) {
+        this.entityLinks = entityLinks;
     }
 }

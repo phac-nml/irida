@@ -19,7 +19,6 @@ import ca.corefacility.bioinformatics.irida.model.*;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
@@ -39,7 +38,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -83,10 +85,6 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      */
     private UserService userService;
     /**
-     * Reference to {@link RelationshipService} for getting related resources.
-     */
-    private RelationshipService relationshipService;
-    /**
      * Reference to {@link ProjectService} for managing projects.
      */
     private ProjectService projectService;
@@ -100,7 +98,7 @@ public class ProjectsController extends GenericController<Identifier, Project, P
     public ProjectsController(ProjectService projectService, UserService userService) {
         super(projectService, Project.class, Identifier.class, ProjectResource.class);
         this.userService = userService;
-        this.relationshipService = relationshipService;
+        this.projectService = projectService;
     }
 
     /**
@@ -209,8 +207,8 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      */
     @SuppressWarnings("unchecked")
     @Override
-    protected Map<String, Collection<LabelledRelationshipResource>> constructCustomRelatedResourceCollections(Project project) {
-        Map<String, Collection<LabelledRelationshipResource>> resources = new HashMap<>();
+    protected Map<String, ResourceCollection<LabelledRelationshipResource>> constructCustomRelatedResourceCollections(Project project) {
+        Map<String, ResourceCollection<LabelledRelationshipResource>> resources = new HashMap<>();
 
         resources.put(PROJECT_USERS_MAP_LABEL, getUsersForProject(project));
 
@@ -223,9 +221,9 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      * @param project the project to get the users for.
      * @return labels and identifiers for the users attached to the project.
      */
-    private Collection<LabelledRelationshipResource> getUsersForProject(Project project) {
+    private ResourceCollection<LabelledRelationshipResource> getUsersForProject(Project project) {
         Collection<Relationship> relationships = userService.getUsersForProject(project.getIdentifier());
-        List<LabelledRelationshipResource> userResources = new ArrayList<>(relationships.size());
+        ResourceCollection<LabelledRelationshipResource> userResources = new ResourceCollection<>(relationships.size());
         for (Relationship r : relationships) {
             Identifier userIdentifier = r.getSubject();
             LabelledRelationshipResource resource = new LabelledRelationshipResource(userIdentifier.getLabel(), r);
