@@ -49,6 +49,15 @@ public class ResourceCollection<Type extends ResourceSupport> extends ResourceSu
     }
 
     /**
+     * Constructor with a pre-defined size for the set of resources.
+     *
+     * @param size the size of the collection.
+     */
+    public ResourceCollection(int size) {
+        this.resources = new ArrayList<>(size);
+    }
+
+    /**
      * Add a new {@link ResourceCollection} to this collection.
      *
      * @param u The {@link ResourceCollection} to add.
