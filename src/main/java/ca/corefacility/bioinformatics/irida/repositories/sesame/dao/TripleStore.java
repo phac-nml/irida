@@ -86,7 +86,7 @@ public class TripleStore {
             logger.error(ex.getMessage());
         }      
     }
-
+    
     /**
      * Get the repository connection for this triplestore
      * @return The repository connection

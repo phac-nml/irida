@@ -302,64 +302,9 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
     public List<Relationship> getLinks(Identifier subjectId, Class subjectType, Class objectType){
         RdfPredicate pred = linkList.getLink(subjectType, objectType);
         
-        return getLinks(subjectId, pred);        
+        return getLinks(subjectId, pred, null);        
     }
     
-    /**
-     * {@inheritDoc}
-     */ 
-    @Override
-    public List<Relationship> getLinks(Identifier subjectId, RdfPredicate predicate){
-        List<Relationship> links = new ArrayList<>();
-        
-        java.net.URI subNetURI = getUriFromIdentifier(subjectId);
-        
-        ObjectConnection con = store.getRepoConnection();
-        try {
-            String qs = store.getPrefixes() +
-                    "SELECT ?link ?sub ?pred ?obj " +
-                    "WHERE{ " +
-                    "?link a irida:ResourceLink ; " +
-                    " irida:linkPredicate ?linkPred ; " +
-                    " irida:linkElement ?sub ; " +
-                    " irida:linkElement ?obj . " +
-                    "?sub ?pred ?obj. " +
-                    "OPTIONAL{ " +
-                    "?linkPred owl:inverseOf ?inv " +
-                    "} " +
-                    "FILTER(?pred IN (?linkPred,?inv)). " +
-                    "}";
-            ValueFactory fac = con.getValueFactory();
-            TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
-            
-            URI subURI = fac.createURI(subNetURI.toString());
-            query.setBinding("sub", subURI);
-            URI predURI = fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
-            query.setBinding("pred", predURI);
-            
-            TupleQueryResult results = query.evaluate();
-            while(results.hasNext()){
-                BindingSet bs = results.next();
-                
-                String uristr = bs.getValue("link").stringValue();
-                URI uri = fac.createURI(uristr);
-                String identifiedBy = getIdentifiedBy(con, uri);
-                
-                Identifier linkId = buildLinkIdentifier(uri,identifiedBy);
-                Relationship link = buildLinkfromBindingSet(bs, con);
-                link.setIdentifier(linkId);
-                Audit audit = auditRepo.getAudit(uri.toString());
-                link.setAuditInformation(audit);
-                
-                links.add(link);
-            }
-
-        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
-            Logger.getLogger(RelationshipSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-        
-        return links;
-    }
     
     @Override
     public List<Relationship> getLinks(Identifier subjectId, RdfPredicate predicate, Identifier objectId){
@@ -436,100 +381,6 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
         return links;        
     }
     
-    @Override
-    public List<Relationship> getSubjectLinks(Identifier objectId, RdfPredicate predicate){
-        List<Relationship> links = new ArrayList<>();
-        
-        java.net.URI subNetURI = getUriFromIdentifier(objectId);
-        
-        ObjectConnection con = store.getRepoConnection();
-        try {
-            String qs = store.getPrefixes()
-                    + "SELECT ?link ?sub ?pred ?obj "
-                    + "WHERE{ ?link a irida:ResourceLink ;\n"
-                    + " irida:linkSubject ?sub ; \n"
-                    + " irida:linkPredicate ?pred ;\n"
-                    + " irida:linkObject ?obj ."
-                    + "}";
-            ValueFactory fac = con.getValueFactory();
-            TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
-            
-            URI subURI = fac.createURI(subNetURI.toString());
-            query.setBinding("obj", subURI);
-            URI predURI = fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
-            query.setBinding("pred", predURI);
-            
-            TupleQueryResult results = query.evaluate();
-            while(results.hasNext()){
-                BindingSet bs = results.next();
-                
-                String uristr = bs.getValue("link").stringValue();
-                URI uri = fac.createURI(uristr);
-                String identifiedBy = getIdentifiedBy(con, uri);
-                
-                Identifier linkId = buildLinkIdentifier(uri,identifiedBy);
-                Relationship link = buildLinkfromBindingSet(bs, con);
-                link.setIdentifier(linkId);
-                Audit audit = auditRepo.getAudit(uri.toString());
-                link.setAuditInformation(audit);
-                
-                links.add(link);
-            }
-
-        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
-            Logger.getLogger(RelationshipSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-        
-        return links;
-    }  
-
-    /**
-     * {@inheritDoc}
-     */ 
-    @Override
-    public List<Relationship> getLinks(Identifier subjectId){
-        List<Relationship> links = new ArrayList<>();
-        
-        java.net.URI subNetURI = getUriFromIdentifier(subjectId);
-        
-        ObjectConnection con = store.getRepoConnection();
-        try {
-            String qs = store.getPrefixes()
-                    + "SELECT ?link ?sub ?pred ?obj "
-                    + "WHERE{ ?link a irida:ResourceLink ;\n"
-                    + " irida:linkSubject ?sub ; \n"
-                    + " irida:linkPredicate ?pred ;\n"
-                    + " irida:linkObject ?obj ."
-                    + "}";
-            ValueFactory fac = con.getValueFactory();
-            TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
-            
-            URI subURI = fac.createURI(subNetURI.toString());
-            query.setBinding("sub", subURI);
-            
-            TupleQueryResult results = query.evaluate();
-            while(results.hasNext()){
-                BindingSet bs = results.next();
-                
-                String uristr = bs.getValue("link").stringValue();
-                URI uri = fac.createURI(uristr);
-                String identifiedBy = getIdentifiedBy(con, uri);
-                
-                Identifier linkId = buildLinkIdentifier(uri,identifiedBy);
-                Relationship link = buildLinkfromBindingSet(bs, con);
-                link.setIdentifier(linkId);
-                Audit audit = auditRepo.getAudit(uri.toString());
-                link.setAuditInformation(audit);
-                
-                links.add(link);
-            }
-
-        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
-            Logger.getLogger(RelationshipSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-        
-        return links;
-    }
     
     private Relationship buildLinkfromBindingSet(BindingSet bs, ObjectConnection con){
         ValueFactory fac = con.getValueFactory();
