@@ -16,9 +16,10 @@
     <beans profile="dev">
         <bean id="tripleStore" init-method="initialize" destroy-method="close"
               class="ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SailStore">
-            <constructor-arg>
+            <!-- uncomment this block if you want to look at the data that's in the sesame repository. -->
+            <!--<constructor-arg>
                 <value type="java.io.File">/tmp/sail</value>
-            </constructor-arg>
+            </constructor-arg>-->
         </bean>
 
     </beans>
