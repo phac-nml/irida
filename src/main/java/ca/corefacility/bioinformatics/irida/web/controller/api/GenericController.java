@@ -225,6 +225,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
                         .withRel(REL_RELATIONSHIP));
                 resources.add(relationshipResource);
             }
+            resources.setTotalResources(relationships.size());
             relatedResources.put(relatedClass.getKey(), resources);
         }
 

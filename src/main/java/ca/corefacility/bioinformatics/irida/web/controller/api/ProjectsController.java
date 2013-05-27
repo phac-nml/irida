@@ -65,10 +65,6 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      */
     private static final String PROJECT_USERS_REL = "project/users";
     /**
-     * rel used for removing user relationships from a project.
-     */
-    private static final String PROJECT_USERS_DELETE_REL = "delete";
-    /**
      * A label that's used to list the users associated with a project.
      */
     private static final String PROJECT_USERS_MAP_LABEL = "users";
@@ -231,9 +227,14 @@ public class ProjectsController extends GenericController<Identifier, Project, P
             resource.add(linkTo(UsersController.class).slash(userIdentifier.getIdentifier()).withSelfRel());
             // rel telling the client how to delete the relationship between the user and the project.
             resource.add(linkTo(RelationshipsController.class).slash(r.getIdentifier().getIdentifier())
-                    .withRel(PROJECT_USERS_DELETE_REL));
+                    .withRel(REL_RELATIONSHIP));
             userResources.add(resource);
         }
+
+        userResources.add(linkTo(methodOn(ProjectsController.class, String.class).getUsersForProject(
+                project.getIdentifier().getIdentifier())).withRel(PROJECT_USERS_REL));
+        userResources.setTotalResources(relationships.size());
+
         return userResources;
     }
 
