@@ -62,13 +62,12 @@ public class TestCRUDServiceImpl {
     @Test
     public void testAddInvalidObject() {
         IdentifiableTestEntity i = new IdentifiableTestEntity(); // nothing is set, this should be invalid
-        i.setLabel("labelled");
 
         try {
             crudService.create(i);
             fail();
         } catch (ConstraintViolationException constraintViolations) {
-            assertEquals(1, constraintViolations.getConstraintViolations().size());
+            assertEquals(2, constraintViolations.getConstraintViolations().size());
         }
     }
     
