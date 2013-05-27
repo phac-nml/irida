@@ -181,7 +181,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
     private Identifier getIdentiferForURI(URI uri) {
         Identifier id = null;
         ObjectConnection con = store.getRepoConnection();
-        logger.debug("Going to get identifier for URI: [" + uri + "]");
+        logger.trace("Going to get identifier for URI: [" + uri + "]");
         try {
             String qs = store.getPrefixes()
                     + "SELECT ?object ?identifier ?label "
@@ -536,7 +536,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
     }
 
     private Relationship buildLinkfromBindingSet(BindingSet bs, ObjectConnection con) {
-        logger.debug("Building relationship from binding set [" + bs + "]");
+        logger.trace("Building relationship from binding set [" + bs + "]");
         ValueFactory fac = con.getValueFactory();
 
         String substr = bs.getValue("sub").stringValue();
