@@ -8,12 +8,13 @@
         <bean id="tripleStore" init-method="initialize" destroy-method="close"
               class="ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore">
             <constructor-arg value="${db.uri}"/>
-            <constructor-arg value="${db.instance}"/>
+            <constructor-arg value="${db.production.instance}"/>
             <constructor-arg value="${db.base_uri}"/>
-        </bean>
+        </bean>       
     </beans>
+    
 
-    <beans profile="dev">
+    <beans profile="memory">
         <bean id="tripleStore" init-method="initialize" destroy-method="close"
               class="ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SailStore">
             <!-- uncomment this block if you want to look at the data that's in the sesame repository. -->
@@ -21,7 +22,24 @@
                 <value type="java.io.File">/tmp/sail</value>
             </constructor-arg>-->
         </bean>
-
+    </beans>
+    
+    <beans profile="dev">
+        <bean id="tripleStore" init-method="initialize" destroy-method="close"
+              class="ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore">
+            <constructor-arg value="${db.uri}"/>
+            <constructor-arg value="${db.dev.instance}"/>
+            <constructor-arg value="${db.base_uri}"/>
+        </bean>
+        <bean id="rdfFileLoader" init-method="addResourceList" class="ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RDFFileLoader">
+            <constructor-arg ref="tripleStore"/>
+            <constructor-arg>
+                <list>
+                    <value>classpath:/ca/corefacility/bioinformatics/irida/config/rdf/Irida.owl</value>
+                    <value>classpath:/ca/corefacility/bioinformatics/irida/config/rdf/exampledata.rdf</value>
+                </list>
+            </constructor-arg>
+        </bean> 
     </beans>
 
 </beans>
