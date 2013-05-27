@@ -81,7 +81,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     /**
      * Rel used for terminating a relationship between resources.
      */
-    public static final String REL_DELETE_RELATIONSHIP = "delete";
+    public static final String REL_RELATIONSHIP = "relationship";
     /**
      * logger.
      */
@@ -222,7 +222,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
                 relationshipResource.add(entityLinks.linkToSingleResource(relatedClass.getValue(),
                         relationshipIdentifier.getIdentifier()));
                 relationshipResource.add(linkTo(RelationshipsController.class).slash(r.getIdentifier().getIdentifier())
-                        .withRel(REL_DELETE_RELATIONSHIP));
+                        .withRel(REL_RELATIONSHIP));
                 resources.add(relationshipResource);
             }
             relatedResources.put(relatedClass.getKey(), resources);

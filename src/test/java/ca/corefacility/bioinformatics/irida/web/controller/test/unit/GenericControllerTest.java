@@ -320,7 +320,7 @@ public class GenericControllerTest {
         // the two resources.
         for (LabelledRelationshipResource resource : labels) {
             assertTrue(resource.hasLink(PageLink.REL_SELF));
-            assertTrue(resource.hasLink(GenericController.REL_DELETE_RELATIONSHIP));
+            assertTrue(resource.hasLink(GenericController.REL_RELATIONSHIP));
             // each resource should also have a label that's associated with it
             assertEquals(relatedResourceLabel, resource.getLabel());
             // and a creation date (i.e., related since)
