@@ -10,7 +10,15 @@
             <constructor-arg value="${db.uri}"/>
             <constructor-arg value="${db.production.instance}"/>
             <constructor-arg value="${db.base_uri}"/>
-        </bean>       
+        </bean>
+        <bean id="rdfFileLoader" init-method="addDataWithoutClear" class="ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RDFFileLoader">
+            <constructor-arg ref="tripleStore"/>
+            <constructor-arg>
+                <list>
+                    <value>classpath:/ca/corefacility/bioinformatics/irida/config/rdf/Irida.owl</value>
+                </list>
+            </constructor-arg>
+        </bean>              
     </beans>
     
 

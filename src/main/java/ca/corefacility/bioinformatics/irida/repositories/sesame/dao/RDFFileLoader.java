@@ -49,6 +49,29 @@ public class RDFFileLoader {
         this.resources = resources;
     }
     
+    public void addDataWithoutClear(){
+        ObjectConnection con = store.getRepoConnection();
+        URI context = con.getValueFactory().createURI(store.URI);
+        
+        try {
+            con.begin();
+            for(Resource res : resources){
+                InputStream str = res.getInputStream();
+
+                con.add(str, store.URI, RDFFormat.RDFXML, context);
+            }
+            con.commit();
+        } catch (RepositoryException | RDFParseException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't add RDF resource to repository"); 
+        } catch (IOException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't read RDF file");
+        }
+        finally{
+            store.closeRepoConnection(con);
+        }        
+    }
     
     public void addResourceList(){
         ObjectConnection con = store.getRepoConnection();
