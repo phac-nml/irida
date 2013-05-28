@@ -63,10 +63,10 @@ public class RDFFileLoader {
             con.commit();
         } catch (RepositoryException | RDFParseException ex) {
             logger.error(ex.getMessage());
-            throw new StorageException("Couldn't add RDF resource to repository"); 
+            throw new StorageException("Couldn't add RDF resource to repository: " + ex.getMessage()); 
         } catch (IOException ex) {
             logger.error(ex.getMessage());
-            throw new StorageException("Couldn't read RDF file");
+            throw new StorageException("Couldn't read RDF file: " + ex.getMessage());
         }
         finally{
             store.closeRepoConnection(con);
@@ -88,10 +88,10 @@ public class RDFFileLoader {
             con.commit();
         } catch (RepositoryException | RDFParseException ex) {
             logger.error(ex.getMessage());
-            throw new StorageException("Couldn't add RDF resource to repository"); 
+            throw new StorageException("Couldn't add RDF resource to repository: " + ex.getMessage()); 
         } catch (IOException ex) {
             logger.error(ex.getMessage());
-            throw new StorageException("Couldn't read RDF file");
+            throw new StorageException("Couldn't read RDF file: "+ ex.getMessage());
         }
         finally{
             store.closeRepoConnection(con);
