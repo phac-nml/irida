@@ -19,6 +19,8 @@ import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,8 +53,14 @@ public class AuditRepository extends SesameRepository{
         super(store, "Audit");
     }
     
+    /**
+     * Get the audit URI for a given object
+     * @param uri The URI of the object to find an audit object for
+     * @return The String URI of the audit object
+     * @throws RepositoryException
+     */
     public String getAuditURI(String uri) throws RepositoryException{
-        String aURI = null;
+        /*String aURI = null;
                 
         ObjectConnection con = store.getRepoConnection();
 
@@ -105,7 +113,69 @@ public class AuditRepository extends SesameRepository{
         }
         
         
-        return aURI;
+        return aURI;*/
+        String aURI = null;
+                
+        ObjectConnection con = store.getRepoConnection();
+
+        try {
+            
+            String querystring = store.getPrefixes()
+                    + "SELECT ?auri\n"
+                    + "{?auri a irida:Audit .\n"
+                    + "?auri irida:forResource ?ouri ."
+                    + "}";
+            
+            TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, querystring);
+
+            ValueFactory vf = con.getValueFactory();
+            URI ouri = vf.createURI(uri);
+            
+            query.setBinding("ouri",ouri);
+            
+            TupleQueryResult result = query.evaluate();
+            
+            if(result.hasNext()){
+                BindingSet ret = result.next();
+                Value val = ret.getValue("auri");
+                String parentURI = val.stringValue();
+                
+                ValueFactory fac = con.getValueFactory();
+                URI pred = fac.createURI(con.getNamespace("irida"), "subAudit");
+                URI parentURIo = fac.createURI(parentURI);
+                aURI = URI + UUID.randomUUID().toString();
+                URI aURIo = fac.createURI(aURI);
+                Statement st = fac.createStatement(parentURIo, pred, aURIo);
+                con.add(st);
+            }
+            else{
+                aURI = URI + UUID.randomUUID().toString();
+
+                ValueFactory fac = con.getValueFactory();
+                URI pred = fac.createURI(con.getNamespace("irida"), "forResource");
+                URI aURIo = fac.createURI(aURI);
+                Statement st = fac.createStatement(aURIo, pred, ouri);
+
+                con.add(st);
+            }
+            
+            result.close();
+            
+        } catch (RepositoryException |MalformedQueryException | QueryEvaluationException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't run exists query"); 
+        }
+        finally{
+            try {
+                con.close();
+            } catch (RepositoryException ex) {
+                logger.error(ex.getMessage());
+                throw new StorageException("Couldn't close connection");
+            }
+        }
+        
+        
+        return aURI;        
     }
     
     public void audit(Audit audit,Identifier identifier){
@@ -160,8 +230,9 @@ public class AuditRepository extends SesameRepository{
             
             if(result.hasNext()){
                 Audit next = result.next();
-                
+                URI auri = vf.createURI(next.toString());
                 ret = next.copy();
+                ret.setUpdates(getUpdates(auri));
                 //ret = new Audit();
                 //ret.setCreated(next.getCreated());
                 //ret.setUpdated(next.getUpdated());
@@ -182,7 +253,50 @@ public class AuditRepository extends SesameRepository{
             }
         }
         
-        return ret;
+        return ret;   
+    }
+    
+    public List<Audit> getUpdates(URI uri){
+        List<Audit> subAudits = new ArrayList<>();
         
+        ObjectConnection con = store.getRepoConnection();
+
+        try {
+            
+            String querystring = store.getPrefixes()
+                    + "SELECT ?suburi\n"
+                    + "{?auri a irida:Audit .\n"
+                    + "?auri irida:subAudit ?suburi ."
+                    + "}";
+            
+            ObjectQuery query = con.prepareObjectQuery(QueryLanguage.SPARQL, querystring);
+
+            query.setBinding("auri",uri);
+            Result<Audit> result = query.evaluate(Audit.class);
+            
+            
+            while(result.hasNext()){
+                Audit next = result.next();
+                
+                Audit ret = next.copy();
+                subAudits.add(ret);
+            }
+            
+            result.close();
+            
+        } catch (RepositoryException |MalformedQueryException | QueryEvaluationException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't run exists query"); 
+        }
+        finally{
+            try {
+                con.close();
+            } catch (RepositoryException ex) {
+                logger.error(ex.getMessage());
+                throw new StorageException("Couldn't close connection");
+            }
+        }
+        
+        return subAudits;        
     }
 }
