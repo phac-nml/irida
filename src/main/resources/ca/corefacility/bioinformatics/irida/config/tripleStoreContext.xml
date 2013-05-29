@@ -43,8 +43,8 @@
             <constructor-arg ref="tripleStore"/>
             <constructor-arg>
                 <list>
-                    <value>classpath:/ca/corefacility/bioinformatics/irida/config/rdf/Irida.owl</value>
-                    <value>classpath:/ca/corefacility/bioinformatics/irida/config/rdf/exampledata.rdf</value>
+                    <value>classpath:/ca/corefacility/bioinformatics/irida/rdf/Irida.owl</value>
+                    <value>classpath:/ca/corefacility/bioinformatics/irida/rdf/exampledata.rdf</value>
                 </list>
             </constructor-arg>
         </bean> 
