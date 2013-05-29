@@ -233,9 +233,6 @@ public class AuditRepository extends SesameRepository{
                 URI auri = vf.createURI(next.toString());
                 ret = next.copy();
                 ret.setUpdates(getUpdates(auri));
-                //ret = new Audit();
-                //ret.setCreated(next.getCreated());
-                //ret.setUpdated(next.getUpdated());
             }
             
             result.close();
@@ -245,12 +242,7 @@ public class AuditRepository extends SesameRepository{
             throw new StorageException("Couldn't run exists query"); 
         }
         finally{
-            try {
-                con.close();
-            } catch (RepositoryException ex) {
-                logger.error(ex.getMessage());
-                throw new StorageException("Couldn't close connection");
-            }
+            store.closeRepoConnection(con);
         }
         
         return ret;   
@@ -289,12 +281,7 @@ public class AuditRepository extends SesameRepository{
             throw new StorageException("Couldn't run exists query"); 
         }
         finally{
-            try {
-                con.close();
-            } catch (RepositoryException ex) {
-                logger.error(ex.getMessage());
-                throw new StorageException("Couldn't close connection");
-            }
+            store.closeRepoConnection(con);
         }
         
         return subAudits;        
