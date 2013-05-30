@@ -122,7 +122,7 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
             
             file.getAuditInformation().setUpdated(new Date());
             
-            auditRepo.audit(file.getAuditInformation(), fNetUri.toString());
+            auditRepo.audit(file.getAuditInformation(), fNetUri.toString(),null);
             
         } catch (RepositoryException ex) {
             logger.error(ex.getMessage());

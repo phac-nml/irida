@@ -105,7 +105,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         object.setIdentifier(objid);
 
         storeObject(object);
-        auditRepo.audit(audit, objid.getUri().toString());
+        auditRepo.audit(audit, objid.getUri().toString(),null);
 
         return object;
     }
@@ -356,6 +356,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         java.net.URI netURI = buildURIFromIdentifier(id);
         Audit audit = auditRepo.getAudit(netURI.toString());
 
+        Map<String,Value> originals = new HashMap<>();
         if (exists(id)) {
             for (Entry<String, Object> field : updatedFields.entrySet()) {
                 try {
@@ -365,7 +366,8 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
 
                     logger.trace("Updating " + field.getKey() + " -- " + annotation.value());
 
-                    updateField(id, annotation.value(), field.getValue());
+                    Value original = updateField(id, annotation.value(), field.getValue());
+                    originals.put(annotation.value(), original);
                 } catch (NoSuchFieldException ex) {
                     logger.error("No field " + field.getKey() + " exists.  Cannot update object.");
                     throw new InvalidPropertyException(
@@ -373,7 +375,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
                 }
             }
             audit.setUpdated(new Date());
-            auditRepo.audit(audit, netURI.toString());
+            auditRepo.audit(audit, netURI.toString(),originals);
         }
 
         return read(id);
@@ -384,10 +386,11 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         return lit;
     }
 
-    private void updateField(IDType id, String predicate, Object value) {
+    private Value updateField(IDType id, String predicate, Object value) {
         ObjectConnection con = store.getRepoConnection();
         java.net.URI netURI = buildURIFromIdentifier(id);
         String uri = netURI.toString();
+        Value originalValue = null;
 
         try {
             con.begin();
@@ -400,6 +403,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             RepositoryResult<Statement> curvalues = con.getStatements(subURI, predURI, null);
             while (curvalues.hasNext()) {
                 Statement next = curvalues.next();
+                originalValue = next.getObject();
                 logger.trace("current value: " + next.getObject().stringValue());
             }
             con.remove(subURI, predURI, null);
@@ -414,6 +418,8 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         } finally {
             store.closeRepoConnection(con);
         }
+        
+        return originalValue;
 
     }
 

@@ -160,7 +160,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
 
             con.commit();
 
-            auditRepo.audit(link.getAuditInformation(), linkURI.toString());
+            auditRepo.audit(link.getAuditInformation(), linkURI.toString(),null);
 
         } catch (RepositoryException ex) {
             logger.error("A RepositoryException occurred at [" + new Date() + "]", ex);
