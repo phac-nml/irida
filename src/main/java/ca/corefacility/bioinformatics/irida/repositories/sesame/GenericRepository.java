@@ -471,7 +471,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             String qs = store.getPrefixes()
                     + "SELECT ?s "
                     + "WHERE{ ?s a ?type . \n"
-                    + "?a irida:forResource ?s \n."
+                    + "?a irida:auditForResource ?s \n."
                     + "?a irida:createdDate ?createdDate .\n"
                     + "}";
 

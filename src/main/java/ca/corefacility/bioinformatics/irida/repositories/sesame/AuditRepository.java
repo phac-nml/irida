@@ -62,60 +62,6 @@ public class AuditRepository extends SesameRepository{
      * @throws RepositoryException
      */
     public String getAuditURI(ObjectConnection con,String uri) throws RepositoryException{
-        /*String aURI = null;
-                
-        ObjectConnection con = store.getRepoConnection();
-
-        try {
-            
-            String querystring = store.getPrefixes()
-                    + "SELECT ?auri\n"
-                    + "{?auri a irida:Audit .\n"
-                    + "?auri irida:forResource ?ouri ."
-                    + "}";
-            
-            TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, querystring);
-
-            ValueFactory vf = con.getValueFactory();
-            URI ouri = vf.createURI(uri);
-            
-            query.setBinding("ouri",ouri);
-            
-            TupleQueryResult result = query.evaluate();
-            
-            if(result.hasNext()){
-                BindingSet ret = result.next();
-                Value val = ret.getValue("auri");
-                aURI = val.stringValue();
-            }
-            else{
-                aURI = URI + UUID.randomUUID().toString();
-
-                ValueFactory fac = con.getValueFactory();
-                URI pred = fac.createURI(con.getNamespace("irida"), "forResource");
-                URI aURIo = fac.createURI(aURI);
-                Statement st = fac.createStatement(aURIo, pred, ouri);
-
-                con.add(st);
-            }
-            
-            result.close();
-            
-        } catch (RepositoryException |MalformedQueryException | QueryEvaluationException ex) {
-            logger.error(ex.getMessage());
-            throw new StorageException("Couldn't run exists query"); 
-        }
-        finally{
-            try {
-                con.close();
-            } catch (RepositoryException ex) {
-                logger.error(ex.getMessage());
-                throw new StorageException("Couldn't close connection");
-            }
-        }
-        
-        
-        return aURI;*/
         String aURI = null;
                 
         //ObjectConnection con = store.getRepoConnection();
@@ -125,7 +71,7 @@ public class AuditRepository extends SesameRepository{
             String querystring = store.getPrefixes()
                     + "SELECT ?auri\n"
                     + "{?auri a irida:Audit .\n"
-                    + "?auri irida:forResource ?ouri ."
+                    + "?auri irida:auditForResource ?ouri ."
                     + "}";
             
             TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, querystring);
@@ -143,7 +89,7 @@ public class AuditRepository extends SesameRepository{
                 String parentURI = val.stringValue();
                 
                 ValueFactory fac = con.getValueFactory();
-                URI pred = fac.createURI(con.getNamespace("irida"), "subAudit");
+                URI pred = fac.createURI(con.getNamespace("irida"), "hasUpdate");
                 URI parentURIo = fac.createURI(parentURI);
                 aURI = URI + UUID.randomUUID().toString();
                 URI aURIo = fac.createURI(aURI);
@@ -154,7 +100,7 @@ public class AuditRepository extends SesameRepository{
                 aURI = URI + UUID.randomUUID().toString();
 
                 ValueFactory fac = con.getValueFactory();
-                URI pred = fac.createURI(con.getNamespace("irida"), "forResource");
+                URI pred = fac.createURI(con.getNamespace("irida"), "auditForResource");
                 URI aURIo = fac.createURI(aURI);
                 Statement st = fac.createStatement(aURIo, pred, ouri);
 
@@ -221,7 +167,7 @@ public class AuditRepository extends SesameRepository{
             String querystring = store.getPrefixes()
                     + "SELECT ?auri\n"
                     + "{?auri a irida:Audit .\n"
-                    + "?auri irida:forResource ?ouri ."
+                    + "?auri irida:auditForResource ?ouri ."
                     + "}";
             
             ObjectQuery query = con.prepareObjectQuery(QueryLanguage.SPARQL, querystring);
@@ -261,7 +207,7 @@ public class AuditRepository extends SesameRepository{
             String querystring = store.getPrefixes()
                     + "SELECT ?suburi\n"
                     + "{?auri a irida:Audit .\n"
-                    + "?auri irida:subAudit ?suburi ."
+                    + "?auri irida:hasUpdate ?suburi ."
                     + "}";
             
             ObjectQuery query = con.prepareObjectQuery(QueryLanguage.SPARQL, querystring);
