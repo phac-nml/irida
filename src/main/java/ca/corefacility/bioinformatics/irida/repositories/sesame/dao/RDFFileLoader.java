@@ -38,27 +38,29 @@ public class RDFFileLoader {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(RDFFileLoader.class);
     
     List<Resource> resources;
+    String context;
     public RDFFileLoader(){}
     
     public RDFFileLoader(TripleStore store){
         this.store = store;
     }
 
-    public RDFFileLoader(TripleStore store, List<Resource> resources) {
+    public RDFFileLoader(TripleStore store, List<Resource> resources, String context) {
         this.store = store;
         this.resources = resources;
+        this.context = context;
     }
     
     public void addDataWithoutClear(){
         ObjectConnection con = store.getRepoConnection();
-        URI context = con.getValueFactory().createURI(store.URI);
+        URI contextURI = con.getValueFactory().createURI(context);
         
         try {
             con.begin();
             for(Resource res : resources){
                 InputStream str = res.getInputStream();
 
-                con.add(str, store.URI, RDFFormat.RDFXML, context);
+                con.add(str, store.URI, RDFFormat.RDFXML, contextURI);
             }
             con.commit();
         } catch (RepositoryException | RDFParseException ex) {
@@ -75,15 +77,15 @@ public class RDFFileLoader {
     
     public void addResourceList(){
         ObjectConnection con = store.getRepoConnection();
-        URI context = con.getValueFactory().createURI(store.URI);
+        URI contextURI = con.getValueFactory().createURI(context);
         
         try {
             con.begin();
-            con.clear(context);
+            con.clear(contextURI);
             for(Resource res : resources){
                 InputStream str = res.getInputStream();
 
-                con.add(str, store.URI, RDFFormat.RDFXML, context);
+                con.add(str, store.URI, RDFFormat.RDFXML, contextURI);
             }
             con.commit();
         } catch (RepositoryException | RDFParseException ex) {
