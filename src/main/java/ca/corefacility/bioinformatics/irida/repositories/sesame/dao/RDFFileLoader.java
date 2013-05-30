@@ -16,15 +16,18 @@
 package ca.corefacility.bioinformatics.irida.repositories.sesame.dao;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.openrdf.repository.RepositoryConnection;
+import org.openrdf.model.URI;
 import org.openrdf.repository.RepositoryException;
+import org.openrdf.repository.object.ObjectConnection;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParseException;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
 
 /**
  *
@@ -34,33 +37,67 @@ public class RDFFileLoader {
     TripleStore store;
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(RDFFileLoader.class);
     
-    
+    List<Resource> resources;
+    String context;
     public RDFFileLoader(){}
     
     public RDFFileLoader(TripleStore store){
         this.store = store;
     }
+
+    public RDFFileLoader(TripleStore store, List<Resource> resources, String context) {
+        this.store = store;
+        this.resources = resources;
+        this.context = context;
+    }
     
-    public void addRdfFile(File f){
-        RepositoryConnection con = store.getRepoConnection();
+    public void addDataWithoutClear(){
+        ObjectConnection con = store.getRepoConnection();
+        URI contextURI = con.getValueFactory().createURI(context);
+        
         try {
             con.begin();
-            
-            con.add(f, null, RDFFormat.RDFXML);
-            
+            for(Resource res : resources){
+                InputStream str = res.getInputStream();
+
+                con.add(str, store.URI, RDFFormat.RDFXML, contextURI);
+            }
             con.commit();
-        } catch (RepositoryException | IOException | RDFParseException ex) {
+        } catch (RepositoryException | RDFParseException ex) {
             logger.error(ex.getMessage());
-            throw new StorageException("Couldn't add file "+f+" to repository"); 
+            throw new StorageException("Couldn't add RDF resource to repository: " + ex.getMessage()); 
+        } catch (IOException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't read RDF file: " + ex.getMessage());
         }
         finally{
-            try {
-                con.close();
-            } catch (RepositoryException ex) {
-                logger.error(ex.getMessage());
-                throw new StorageException("Couldn't close connection to repository"); 
+            store.closeRepoConnection(con);
+        }        
+    }
+    
+    public void addResourceList(){
+        ObjectConnection con = store.getRepoConnection();
+        URI contextURI = con.getValueFactory().createURI(context);
+        
+        try {
+            con.begin();
+            con.clear(contextURI);
+            for(Resource res : resources){
+                InputStream str = res.getInputStream();
+
+                con.add(str, store.URI, RDFFormat.RDFXML, contextURI);
             }
+            con.commit();
+        } catch (RepositoryException | RDFParseException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't add RDF resource to repository: " + ex.getMessage()); 
+        } catch (IOException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't read RDF file: "+ ex.getMessage());
+        }
+        finally{
+            store.closeRepoConnection(con);
         }
         
-    }
+    }    
 }
