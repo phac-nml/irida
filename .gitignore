@@ -8,3 +8,4 @@ target/
 irida-api.iml
 /src/main/java/a/
 /src/main/resources/ca/corefacility/bioinformatics/irida/rdf/catalog-v001.xml
+/src/main/java/ca/corefacility/bioinformatics/irida/repositories/sesame/TextSearch.java

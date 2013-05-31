@@ -56,8 +56,10 @@ public class RelationshipSesameRepositoryTest {
         SailStore store = new SailStore(tempDir);
         store.initialize();
         AuditRepository auditRepo = new AuditRepository(store);
+        IdentifierGenerator<Identified> idGen = new IdentifierGenerator<>(store);
         linksRepo = new RelationshipSesameRepository(store, auditRepo);
         repo = new IdentifiedRepo(store, auditRepo, linksRepo);
+        repo.setIdGen(idGen);
 
 
         pred = new RdfPredicate("irida", "identifiedRelationship");

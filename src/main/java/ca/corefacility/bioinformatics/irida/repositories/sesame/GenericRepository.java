@@ -57,6 +57,8 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     private Class objectType; //The class object type being stored by this repo
     private String prefix;  //The RDF prefix of the object type in this repository
     private String sType; //The RDF local name of the object type in this repository
+    
+    private IdentifierGenerator<Type> idGen;
 
     public GenericRepository() {
     }
@@ -77,8 +79,13 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         this.auditRepo = auditRepo;
         this.linksRepo = linksRepo;
 
-        this.objectType = objectType;
+        this.objectType = objectType;        
     }
+
+    public void setIdGen(IdentifierGenerator<Type> idGen) {
+        this.idGen = idGen;
+    }
+    
 
     /**
      * {@inheritDoc}
@@ -92,7 +99,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
 
         Audit audit = (Audit) object.getAuditInformation();
 
-        Identifier objid = generateNewIdentifier(object);
+        Identifier objid = idGen.generateNewIdentifier(object,URI);
 
         if (exists(objid)) {
             throw new EntityExistsException("Object " + objid.getUri().toString() + " already exists in the database");
@@ -115,10 +122,11 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
      *
      * @param t The object to generate an identifier for
      * @return A newly generated identifier for the given object
-     */
+     * TODO: remove this old method
+     
     protected Identifier generateNewIdentifier(Type t) {
         return super.generateNewIdentifier();
-    }
+    }*/
 
     /**
      * Store the given object in the RDF triplestore
@@ -168,7 +176,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         Type ret = (Type) object.copy();
 
         String identifiedBy = getIdentifiedBy(con, uri);
-        Identifier objid = buildIdentifier(ret, uri, identifiedBy);
+        Identifier objid = idGen.buildIdentifier(ret, uri, identifiedBy);
         ret.setIdentifier(objid);
 
         ret.setAuditInformation(auditRepo.getAudit(uri.toString()));
@@ -183,7 +191,8 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
      * @param uri          The URI of the object to build an identifier for
      * @param identifiedBy The string identifier for this object
      * @return An {@link Identifier} for the given object
-     */
+     * TODO: remove this old method
+     
     protected Identifier buildIdentifier(Type object, URI uri, String identifiedBy) {
         Identifier objid = new Identifier();
         objid.setUri(java.net.URI.create(uri.toString()));
@@ -191,7 +200,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         objid.setLabel(object.getLabel());
 
         return objid;
-    }
+    }*/
 
     /**
      * {@inheritDoc}
@@ -377,8 +386,41 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             audit.setUpdated(new Date());
             auditRepo.audit(audit, netURI.toString(),originals);
         }
+        else{
+            throw new StorageException("Trying to update an object that doesn't exist: " + id.toString());
+        }
+        
+        Type obj = read(id);
+        updateLabel(id,obj.getLabel());
 
-        return read(id);
+        return obj;
+    }
+    
+    public void updateLabel(IDType id, String label){
+        ObjectConnection con = store.getRepoConnection();
+        java.net.URI netURI = buildURIFromIdentifier(id);
+        String uri = netURI.toString();
+
+        try {
+            con.begin();
+
+            ValueFactory fac = con.getValueFactory();
+            URI subURI = fac.createURI(uri);
+            URI predURI = fac.createURI(con.getNamespace("rdfs"),"label");
+            Literal labelLiteral = fac.createLiteral(label);
+
+            con.remove(subURI, predURI, null);
+
+            Statement added = fac.createStatement(subURI, predURI, labelLiteral);
+            con.add(added);
+
+            con.commit();
+        } catch (RepositoryException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Failed to update label");
+        } finally {
+            store.closeRepoConnection(con);
+        }        
     }
 
     protected Literal createLiteral(ValueFactory fac, String predicate, Object obj) {

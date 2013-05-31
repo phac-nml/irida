@@ -68,7 +68,7 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
      *
      * @param t the object to generate the identifier for.
      * @return and identifier for the object.
-     */
+     
     @Override
     public Identifier generateNewIdentifier(User t) {
         UUID uuid = UUID.randomUUID();
@@ -77,7 +77,7 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
         //ui.setUUID(uuid);
         ui.setUri(objuri);
         return ui;
-    }
+    }*/
 
     /**
      * Build an identifier for the given User.  
@@ -86,7 +86,7 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
      * @param bs The binding set to build from
      * @param subject The subject of the SPARQL query to build from
      * @return An Identifier object built form the given binding set
-     */
+     *TODO: remove this old method
     @Override
     public Identifier buildIdentifier(User obj, URI uri,String identifiedBy) {
         UserIdentifier objid = new UserIdentifier();
@@ -95,7 +95,7 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
         objid.setIdentifier(obj.getUsername());
         
         return objid;
-    }   
+    }  */ 
     
     /**
      * {@inheritDoc}

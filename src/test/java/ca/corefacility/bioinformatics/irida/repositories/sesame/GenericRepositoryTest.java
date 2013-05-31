@@ -49,10 +49,12 @@ public class GenericRepositoryTest {
     public void setUp() throws NoSuchMethodException {
         SailStore store = new SailStore();
         store.initialize();
+        IdentifierGenerator<Identified> idGen = new IdentifierGenerator<>(store);
         AuditRepository auditRepo = new AuditRepository(store);
         RelationshipSesameRepository linksRepo = new RelationshipSesameRepository(store, auditRepo);
         
         repo = new IdentifiedRepo(store,auditRepo,linksRepo);
+        repo.setIdGen(idGen);
         
         repo.create(new Identified("data1"));
         repo.create(new Identified("data2"));
@@ -219,13 +221,13 @@ public class GenericRepositoryTest {
             Identified j = repo.read(u.getIdentifier());
             assertNotNull(j);
             assertEquals(j.getData(),differentData);
+            assertEquals(j.getLabel(),j.getIdentifier().getLabel());
         }
         catch(IllegalArgumentException|InvalidPropertyException ex){
             fail();
         }
-    }    
-
-    
+    }
+        
     /**
      * Test of count method, of class GenericRepository.
      */

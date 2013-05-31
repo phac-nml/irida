@@ -56,7 +56,7 @@ public class AuditRepository extends SesameRepository{
     }
     
     /**
-     * Get the audit URI for a given object
+     * Get the audit URI for a given object.  Will create a new Audit object URI if necessary
      * @param uri The URI of the object to find an audit object for
      * @return The String URI of the audit object
      * @throws RepositoryException
@@ -64,8 +64,6 @@ public class AuditRepository extends SesameRepository{
     public String getAuditURI(ObjectConnection con,String uri) throws RepositoryException{
         String aURI = null;
                 
-        //ObjectConnection con = store.getRepoConnection();
-
         try {
             
             String querystring = store.getPrefixes()
@@ -88,10 +86,13 @@ public class AuditRepository extends SesameRepository{
                 Value val = ret.getValue("auri");
                 String parentURI = val.stringValue();
                 
+                Identifier auditId = generateNewIdentifier();
+                
                 ValueFactory fac = con.getValueFactory();
                 URI pred = fac.createURI(con.getNamespace("irida"), "hasUpdate");
                 URI parentURIo = fac.createURI(parentURI);
-                aURI = URI + UUID.randomUUID().toString();
+                aURI = auditId.getUri().toString();
+                
                 URI aURIo = fac.createURI(aURI);
                 Statement st = fac.createStatement(parentURIo, pred, aURIo);
                 con.add(st);
@@ -112,9 +113,6 @@ public class AuditRepository extends SesameRepository{
         } catch (RepositoryException |MalformedQueryException | QueryEvaluationException ex) {
             logger.error(ex.getMessage());
             throw new StorageException("Couldn't run exists query"); 
-        }
-        finally{
-
         }
         
         
