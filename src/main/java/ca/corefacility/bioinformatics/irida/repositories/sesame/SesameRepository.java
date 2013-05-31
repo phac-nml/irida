@@ -38,7 +38,7 @@ import java.util.logging.Logger;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class SesameRepository {
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AuditRepository.class);
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SesameRepository.class);
     protected TripleStore store; //The {@link TripleStore} to use for storing and retrieving objects in this repository
     protected String URI; //The base URI for this repository
 
