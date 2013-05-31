@@ -28,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.controller.exceptions.GenericsException;
 import ca.corefacility.bioinformatics.irida.web.controller.links.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder;
 import ca.corefacility.bioinformatics.irida.web.controller.support.SortProperty;
@@ -311,21 +312,30 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      *                                <code>ResourceType</code> is marked <code>private</code>.
      */
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
-    public ModelMap getResource(@PathVariable String resourceId)
-            throws InstantiationException, IllegalAccessException {
+    public ModelMap getResource(@PathVariable String resourceId) {
         ModelMap model = new ModelMap();
 
         logger.debug("Getting resource with id [" + resourceId + "]");
+        // construct a new instance of an identifier as specified by the client
+        IdentifierType identifier = null;
 
-        // construct an instance of the identifier with the value supplied by the client.
-        IdentifierType id = identifierType.newInstance();
-        id.setIdentifier(resourceId);
+        try {
+            identifier = identifierType.newInstance();
+            identifier.setIdentifier(resourceId);
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new GenericsException("Failed to construct an instance of Identifier for [" + getClass() + "]");
+        }
 
         // try to retrieve a resource from the database using the identifier supplied by the client.
-        Type t = crudService.read(id);
+        Type t = crudService.read(identifier);
 
         // prepare the resource for serialization to the client.
-        ResourceType resource = resourceType.newInstance();
+        ResourceType resource = null;
+        try {
+            resource = resourceType.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new GenericsException("Failed to construct an instance of ResourceType for [" + getClass() + "]");
+        }
         resource.setResource(t);
 
         // add any custom links for the specific resource type that we're serving
@@ -394,14 +404,19 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @throws IllegalAccessException if the constructor for {@link IdentifierType} is not public.
      */
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.DELETE)
-    public ResponseEntity<String> delete(@PathVariable String resourceId)
-            throws InstantiationException, IllegalAccessException {
-        // construct a new instance of an identifier as supplied by the client.
-        IdentifierType id = identifierType.newInstance();
-        id.setIdentifier(resourceId);
+    public ResponseEntity<String> delete(@PathVariable String resourceId) {
+        // construct a new instance of an identifier as specified by the client
+        IdentifierType identifier = null;
+
+        try {
+            identifier = identifierType.newInstance();
+            identifier.setIdentifier(resourceId);
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new GenericsException("Failed to construct an instance of Identifier for [" + getClass() + "]");
+        }
 
         // ask the service to delete the resource specified by the identifier
-        crudService.delete(id);
+        crudService.delete(identifier);
 
         // respond to the client with a successful message
         return new ResponseEntity<>("success", HttpStatus.OK);
@@ -419,12 +434,17 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      */
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.PATCH,
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<String> update(@PathVariable String resourceId, @RequestBody Map<String, Object> representation)
-            throws InstantiationException, IllegalAccessException {
+    public ResponseEntity<String> update(@PathVariable String resourceId, @RequestBody Map<String, Object> representation) {
 
         // construct a new instance of an identifier as specified by the client
-        IdentifierType identifier = identifierType.newInstance();
-        identifier.setIdentifier(resourceId);
+        IdentifierType identifier = null;
+
+        try {
+            identifier = identifierType.newInstance();
+            identifier.setIdentifier(resourceId);
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new GenericsException("Failed to construct an instance of Identifier for [" + getClass() + "]");
+        }
 
         // update the resource specified by the client. clients *may* be able
         // to update the identifier of some resources, and so we should get a

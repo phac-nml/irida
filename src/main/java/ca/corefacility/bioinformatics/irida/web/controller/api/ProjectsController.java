@@ -22,8 +22,10 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
 import ca.corefacility.bioinformatics.irida.web.controller.links.LabelledRelationshipResource;
+import com.google.common.net.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -84,6 +88,11 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      * Reference to {@link ProjectService} for managing projects.
      */
     private ProjectService projectService;
+    /**
+     * Reference to {@link SamplesController} for managing related samples.
+     */
+    @Autowired
+    private SamplesController samplesController;
 
     /**
      * Constructor for {@link ProjectsController}, requires a reference to a {@link ProjectService}.
@@ -148,20 +157,70 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      *                       the user.
      * @return a response indicating that the collection was modified.
      */
-    @RequestMapping(value = "/{projectId}/users", method = RequestMethod.PATCH)
+    @RequestMapping(value = "/{projectId}/users", method = RequestMethod.POST)
     public ResponseEntity<String> addUserToProject(@PathVariable String projectId,
                                                    @RequestBody Map<String, Object> representation) {
-
-        // first, get the project
         Identifier id = new Identifier();
         id.setIdentifier(projectId);
+        // first, get the project
         Project p = projectService.read(id);
+
+        // then, get the user
         User u = userService.getUserByUsername(representation.get("userIdentifier").toString());
         Role r = new Role();
         r.setName("ROLE_USER");
+
+        // then add the user to the project with the specified role.
         projectService.addUserToProject(p, u, r);
 
         return new ResponseEntity<>("success", HttpStatus.OK);
+    }
+
+    /**
+     * Create a new sample resource and create a relationship between the sample and the project.
+     *
+     * @param projectId the identifier of the project that you want to add the sample to.
+     * @param sample    the sample that you want to create.
+     * @return a response indicating that the sample was created and appropriate location information.
+     */
+    @RequestMapping(value = "/{projectId}/samples", method = RequestMethod.POST)
+    public ResponseEntity<String> addSampleToProject(@PathVariable String projectId, @RequestBody SampleResource sample) {
+        Identifier id = new Identifier();
+        id.setIdentifier(projectId);
+
+        // load the project that we're adding to
+        Project p = projectService.read(id);
+
+        // construct the sample that we're going to create
+        Sample s = samplesController.mapResourceToType(sample);
+
+        // add the sample to the project
+        Relationship r = projectService.addSampleToProject(p, s);
+
+        // construct a link to the sample itself on the samples controller
+        String sampleId = r.getObject().getIdentifier();
+        String location = linkTo(SamplesController.class).slash(sampleId).withSelfRel().getHref();
+        String relationshipLocation = linkTo(methodOn(ProjectsController.class).getProjectSample(projectId, sampleId)).withSelfRel().getHref();
+        relationshipLocation = "<" + relationshipLocation + ">; rel=relationship";
+
+        // construct a set of headers to add to the response
+        MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
+        responseHeaders.add(HttpHeaders.LOCATION, location);
+        responseHeaders.add(HttpHeaders.LINK, relationshipLocation);
+
+        // respond to the request
+        return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
+    }
+
+    /**
+     * Get the representation of a specific sample that's associated with the project.
+     *
+     * @param sampleId the sample identifier that we're looking for.
+     * @return a representation of the specific sample.
+     */
+    @RequestMapping(value = "/{projectId}/samples/{sampleId}", method = RequestMethod.GET)
+    public ModelMap getProjectSample(@PathVariable String projectId, @PathVariable String sampleId) {
+        return samplesController.getResource(sampleId);
     }
 
     /**
@@ -252,5 +311,14 @@ public class ProjectsController extends GenericController<Identifier, Project, P
                 withRel(PROJECT_USERS_REL));
 
         return links;
+    }
+
+    /**
+     * Provide an instance of {@link SamplesController} for linking to {@link Sample} resources.
+     *
+     * @param samplesController a reference to a {@link SamplesController}
+     */
+    public void setSamplesController(SamplesController samplesController) {
+        this.samplesController = samplesController;
     }
 }
