@@ -91,7 +91,6 @@ public class ProjectsController extends GenericController<Identifier, Project, P
     /**
      * Reference to {@link SamplesController} for managing related samples.
      */
-    @Autowired
     private SamplesController samplesController;
 
     /**
@@ -100,10 +99,11 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      * @param projectService the {@link ProjectService} to be used by this controller.
      */
     @Autowired
-    public ProjectsController(ProjectService projectService, UserService userService) {
+    public ProjectsController(ProjectService projectService, UserService userService, SamplesController samplesController) {
         super(projectService, Project.class, Identifier.class, ProjectResource.class);
         this.userService = userService;
         this.projectService = projectService;
+        this.samplesController = samplesController;
     }
 
     /**
@@ -311,14 +311,5 @@ public class ProjectsController extends GenericController<Identifier, Project, P
                 withRel(PROJECT_USERS_REL));
 
         return links;
-    }
-
-    /**
-     * Provide an instance of {@link SamplesController} for linking to {@link Sample} resources.
-     *
-     * @param samplesController a reference to a {@link SamplesController}
-     */
-    public void setSamplesController(SamplesController samplesController) {
-        this.samplesController = samplesController;
     }
 }

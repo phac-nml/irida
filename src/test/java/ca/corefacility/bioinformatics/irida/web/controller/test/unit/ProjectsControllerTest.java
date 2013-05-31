@@ -52,8 +52,7 @@ public class ProjectsControllerTest {
         relationshipService = mock(RelationshipService.class);
         samplesController = mock(SamplesController.class);
 
-        controller = new ProjectsController(projectService, userService);
-        controller.setSamplesController(samplesController);
+        controller = new ProjectsController(projectService, userService, samplesController);
         // fake out the servlet response so that the URI builder will work.
         RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
         RequestContextHolder.setRequestAttributes(ra);
