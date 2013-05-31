@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.exceptions.GenericsException;
 import ca.corefacility.bioinformatics.irida.web.controller.links.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.support.IdentifiableTestEntity;
@@ -153,7 +154,7 @@ public class GenericControllerTest {
 
         try {
             model = controller.getResource(id.getIdentifier());
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (GenericsException e) {
             fail();
         }
 
@@ -294,7 +295,7 @@ public class GenericControllerTest {
 
         try {
             model = controller.getResource(id.getIdentifier());
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (GenericsException e) {
             fail();
         }
 
