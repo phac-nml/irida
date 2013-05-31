@@ -59,6 +59,7 @@
 
     <bean id="auditRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.AuditRepository">
         <constructor-arg ref="tripleStore"/>
+        <property name="idGen" ref="identifierGenerator"/>
     </bean>
 
     <bean id="sequenceFileFilesystemRepository"

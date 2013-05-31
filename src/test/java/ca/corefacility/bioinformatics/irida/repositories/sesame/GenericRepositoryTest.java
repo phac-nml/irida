@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.utils.Identified;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SailStore;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import java.net.URI;
@@ -50,7 +51,9 @@ public class GenericRepositoryTest {
         SailStore store = new SailStore();
         store.initialize();
         IdentifierGenerator<Identified> idGen = new IdentifierGenerator<>(store);
+        IdentifierGenerator<IridaThing> auditIdGen = new IdentifierGenerator<>(store);
         AuditRepository auditRepo = new AuditRepository(store);
+        auditRepo.setIdGen(auditIdGen);
         RelationshipSesameRepository linksRepo = new RelationshipSesameRepository(store, auditRepo);
         
         repo = new IdentifiedRepo(store,auditRepo,linksRepo);

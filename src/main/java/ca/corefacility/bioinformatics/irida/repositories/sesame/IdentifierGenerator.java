@@ -76,7 +76,7 @@ public class IdentifierGenerator<Type extends IridaThing> {
      * @param uri The URI to retrieve and build an identifier for
      * @return A new Identifier instance
      */
-    private Identifier getIdentiferForURI(URI uri) {
+    public Identifier getIdentiferForURI(URI uri) {
         Identifier id = null;
         ObjectConnection con = store.getRepoConnection();
         logger.trace("Going to get identifier for URI: [" + uri + "]");
@@ -144,5 +144,22 @@ public class IdentifierGenerator<Type extends IridaThing> {
         objid.setLabel(object.getLabel());
 
         return objid;
+    }
+
+    /**
+     * Build a java.net.URI object for the given identifier
+     *
+     * @param identifier The identifier to build the URI for
+     * @return The constructed URI for this identifier
+     */
+    public java.net.URI buildURIFromIdentifier(Identifier identifier,String baseURI) {
+        java.net.URI uri;
+        if (identifier.getUri() != null) {
+            uri = identifier.getUri();
+        } else {
+            uri = buildURIFromIdentifiedBy(identifier.getIdentifier(),baseURI);
+        }
+
+        return uri;
     }    
 }

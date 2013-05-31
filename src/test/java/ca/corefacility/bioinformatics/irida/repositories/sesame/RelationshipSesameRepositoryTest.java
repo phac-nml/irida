@@ -17,6 +17,7 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.utils.Identified;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
+import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SailStore;
@@ -57,7 +58,9 @@ public class RelationshipSesameRepositoryTest {
         store.initialize();
         AuditRepository auditRepo = new AuditRepository(store);
         IdentifierGenerator<Identified> idGen = new IdentifierGenerator<>(store);
+        IdentifierGenerator linkIdGen = new IdentifierGenerator<>(store);
         linksRepo = new RelationshipSesameRepository(store, auditRepo);
+        linksRepo.setIdGen(linkIdGen);
         repo = new IdentifiedRepo(store, auditRepo, linksRepo);
         repo.setIdGen(idGen);
 

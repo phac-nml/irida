@@ -36,7 +36,9 @@ public class UserSesameRepositoryTest {
         SailStore store = new SailStore();
         store.initialize();
         UserIdentifierGenerator idGen = new UserIdentifierGenerator(store);
+        IdentifierGenerator auditIdGen = new IdentifierGenerator(store);
         AuditRepository auditRepo = new AuditRepository(store);
+        auditRepo.setIdGen(auditIdGen);
         RelationshipSesameRepository linksRepo = new RelationshipSesameRepository(store, auditRepo);
         repo = new UserSesameRepository(store,auditRepo,linksRepo);
         repo.setIdGen(idGen);

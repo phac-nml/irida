@@ -58,8 +58,6 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     private String prefix;  //The RDF prefix of the object type in this repository
     private String sType; //The RDF local name of the object type in this repository
     
-    private IdentifierGenerator<Type> idGen;
-
     public GenericRepository() {
     }
 
@@ -80,10 +78,6 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         this.linksRepo = linksRepo;
 
         this.objectType = objectType;        
-    }
-
-    public void setIdGen(IdentifierGenerator<Type> idGen) {
-        this.idGen = idGen;
     }
     
 
@@ -117,16 +111,6 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         return object;
     }
 
-    /**
-     * Generate a new identifier for the given object.  May be overridden for specific class implementations
-     *
-     * @param t The object to generate an identifier for
-     * @return A newly generated identifier for the given object
-     * TODO: remove this old method
-     
-    protected Identifier generateNewIdentifier(Type t) {
-        return super.generateNewIdentifier();
-    }*/
 
     /**
      * Store the given object in the RDF triplestore
@@ -184,23 +168,6 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         return ret;
     }
 
-    /**
-     * Build an {@link Identifier} for the given object
-     *
-     * @param object       The object to build an identifier for
-     * @param uri          The URI of the object to build an identifier for
-     * @param identifiedBy The string identifier for this object
-     * @return An {@link Identifier} for the given object
-     * TODO: remove this old method
-     
-    protected Identifier buildIdentifier(Type object, URI uri, String identifiedBy) {
-        Identifier objid = new Identifier();
-        objid.setUri(java.net.URI.create(uri.toString()));
-        objid.setUUID(UUID.fromString(identifiedBy));
-        objid.setLabel(object.getLabel());
-
-        return objid;
-    }*/
 
     /**
      * {@inheritDoc}
@@ -209,7 +176,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     public Type read(Identifier id) throws EntityNotFoundException {
         Type ret = null;
 
-        java.net.URI netURI = buildURIFromIdentifier(id);
+        java.net.URI netURI = idGen.buildURIFromIdentifier(id,URI);
         String uri = netURI.toString();
 
         logger.trace("Looking up uri: [" + uri + "]");
@@ -292,7 +259,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         ObjectConnection con = store.getRepoConnection();
 
         try {
-            java.net.URI netURI = buildURIFromIdentifier(id);
+            java.net.URI netURI = idGen.buildURIFromIdentifier(id,URI);
             String uri = netURI.toString();
 
             logger.trace("Checking for the existence of [" + uri + "]");
@@ -362,7 +329,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     @Override
     public Type update(IDType id, Map<String, Object> updatedFields) throws InvalidPropertyException {
 
-        java.net.URI netURI = buildURIFromIdentifier(id);
+        java.net.URI netURI = idGen.buildURIFromIdentifier(id,URI);
         Audit audit = auditRepo.getAudit(netURI.toString());
 
         Map<String,Value> originals = new HashMap<>();
@@ -398,7 +365,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     
     public void updateLabel(IDType id, String label){
         ObjectConnection con = store.getRepoConnection();
-        java.net.URI netURI = buildURIFromIdentifier(id);
+        java.net.URI netURI = idGen.buildURIFromIdentifier(id,URI);
         String uri = netURI.toString();
 
         try {
@@ -430,7 +397,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
 
     private Value updateField(IDType id, String predicate, Object value) {
         ObjectConnection con = store.getRepoConnection();
-        java.net.URI netURI = buildURIFromIdentifier(id);
+        java.net.URI netURI = idGen.buildURIFromIdentifier(id,URI);
         String uri = netURI.toString();
         Value originalValue = null;
 
@@ -476,7 +443,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
 
         ObjectConnection con = store.getRepoConnection();
 
-        java.net.URI netURI = buildURIFromIdentifier(id);
+        java.net.URI netURI = idGen.buildURIFromIdentifier(id,URI);
         String uri = netURI.toString();
 
         ValueFactory vf = con.getValueFactory();

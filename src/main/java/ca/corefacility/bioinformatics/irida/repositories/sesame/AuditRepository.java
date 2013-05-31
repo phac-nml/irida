@@ -86,7 +86,7 @@ public class AuditRepository extends SesameRepository{
                 Value val = ret.getValue("auri");
                 String parentURI = val.stringValue();
                 
-                Identifier auditId = generateNewIdentifier();
+                Identifier auditId = idGen.generateNewIdentifier(null, URI);
                 
                 ValueFactory fac = con.getValueFactory();
                 URI pred = fac.createURI(con.getNamespace("irida"), "hasUpdate");
