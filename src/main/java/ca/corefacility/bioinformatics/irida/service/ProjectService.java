@@ -15,13 +15,13 @@ import java.util.Collection;
 public interface ProjectService extends CRUDService<Identifier, Project> {
 
     /**
-     * Add the specified user to the project with a role. If the user is a
-     * manager for the project, then the user should be added to the project
+     * Add the specified user to the {@link Project} with a role. If the user is a
+     * manager for the {@link Project}, then the user should be added to the {@link Project}
      * with the 'ROLE_MANAGER' role.
      *
-     * @param project the project to add the user to.
-     * @param user    the user to add to the project.
-     * @param role    the role that the user plays on the project.
+     * @param project the {@link Project} to add the user to.
+     * @param user    the user to add to the {@link Project}.
+     * @param role    the role that the user plays on the {@link Project}.
      */
     public void addUserToProject(Project project, User user, Role role);
 
@@ -45,14 +45,23 @@ public interface ProjectService extends CRUDService<Identifier, Project> {
     public void removeSampleFromProject(Project project, Sample sample);
 
     /**
-     * Add the specified {@link SequenceFile} to the project.
+     * Add the specified {@link SequenceFile} to the {@link Project}.
      *
-     * @param project the project to add the sequence file to.
-     * @param sf      the sequence file to add to the project. If the sequence file has not previously been persisted,
-     *                then the service will persist the sequence file.
+     * @param project the {@link Project} to add the {@link SequenceFile} to.
+     * @param sf      the {@link SequenceFile} to add to the {@link Project}. If the {@link SequenceFile} has not
+     *                previously been persisted, then the service will persist the {@link SequenceFile}.
      * @return a reference to the relationship resource created between the two entities.
      */
     public Relationship addSequenceFileToProject(Project project, SequenceFile sf);
+
+    /**
+     * Remove the specified {@link SequenceFile} from the {@link Project}. If the {@link SequenceFile} is not associated
+     * with any other {@link Project}s, then as a side-effect, the {@link SequenceFile} will be deleted from the system.
+     *
+     * @param project the {@link Project} from which to remove the file.
+     * @param sf      the {@link SequenceFile} to remove.
+     */
+    public void removeSequenceFileFromProject(Project project, SequenceFile sf);
 
     /**
      * Get all {@link Project}s associated with a particular {@link User}.

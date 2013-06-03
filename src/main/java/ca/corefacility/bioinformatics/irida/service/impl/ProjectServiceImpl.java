@@ -64,6 +64,14 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Identifier, Project> imp
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeSequenceFileFromProject(Project project, SequenceFile sf) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     @Override
     public Collection<Project> getProjectsForUser(User user) {
         return projectRepository.getProjectsForUser(user);
