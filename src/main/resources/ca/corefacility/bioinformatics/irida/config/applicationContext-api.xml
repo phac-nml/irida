@@ -15,7 +15,8 @@
     <!-- Passwords should be encoded using the BCrypt algorithm -->
     <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
-    <bean id="userService" class="ca.corefacility.bioinformatics.irida.service.impl.UserServiceImpl" init-method="initializeRoles">
+    <bean id="userService" class="ca.corefacility.bioinformatics.irida.service.impl.UserServiceImpl"
+          init-method="initializeRoles">
         <constructor-arg ref="userRepository"/>
         <constructor-arg ref="passwordEncoder"/>
         <constructor-arg ref="validator"/>
@@ -41,12 +42,12 @@
         <constructor-arg ref="sequenceFileFilesystemRepository"/>
         <constructor-arg ref="validator"/>
     </bean>
-    
+
     <bean id="linkService" class="ca.corefacility.bioinformatics.irida.service.impl.RelationshipServiceImpl">
-        <constructor-arg ref="linksRepository" />
-        <constructor-arg ref="validator" />
+        <constructor-arg ref="linksRepository"/>
+        <constructor-arg ref="validator"/>
     </bean>
-    
+
     <!-- validator beans -->
     <bean id="validator"
           class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
