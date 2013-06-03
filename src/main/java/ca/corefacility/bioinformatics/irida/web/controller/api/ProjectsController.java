@@ -19,8 +19,10 @@ import ca.corefacility.bioinformatics.irida.model.*;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SampleService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
@@ -64,6 +66,14 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 public class ProjectsController extends GenericController<Identifier, Project, ProjectResource> {
 
     /**
+     * rel used for accessing an individual project.
+     */
+    public static final String PROJECT_REL = "project";
+    /**
+     * rel used for accessing the list of samples associated with a project.
+     */
+    public static final String PROJECT_SAMPLES_REL = "project/samples";
+    /**
      * Logger.
      */
     private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
@@ -92,6 +102,10 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      */
     private ProjectService projectService;
     /**
+     * Reference to {@link SampleService} for managing samples associated with projects.
+     */
+    private SampleService sampleService;
+    /**
      * Reference to {@link SamplesController} for managing related samples.
      */
     private SamplesController samplesController;
@@ -106,11 +120,12 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      * @param projectService the {@link ProjectService} to be used by this controller.
      */
     @Autowired
-    public ProjectsController(ProjectService projectService, UserService userService,
+    public ProjectsController(ProjectService projectService, UserService userService, SampleService sampleService,
                               SamplesController samplesController, SequenceFileController sequenceFileController) {
         super(projectService, Project.class, Identifier.class, ProjectResource.class);
         this.userService = userService;
         this.projectService = projectService;
+        this.sampleService = sampleService;
         this.samplesController = samplesController;
         this.sequenceFileController = sequenceFileController;
     }
@@ -141,7 +156,6 @@ public class ProjectsController extends GenericController<Identifier, Project, P
         // for each of those relationships, retrieve the complete user object
         // and convert to a resource suitable for sending back to the client.
         for (Relationship r : relationships) {
-            logger.debug(r.getSubject().getIdentifier());
             User u = userService.getUserByUsername(r.getSubject().getIdentifier());
             UserResource ur = new UserResource(u);
             ur.add(linkTo(UsersController.class).slash(u.getIdentifier().getIdentifier()).withSelfRel());
@@ -222,6 +236,17 @@ public class ProjectsController extends GenericController<Identifier, Project, P
     }
 
     /**
+     * Get the list of {@link Sample} associated with this {@link Project}.
+     *
+     * @param projectId the identifier of the {@link Project} to get the {@link Sample}s for.
+     * @return the list of {@link Sample}s associated with this {@link Project}.
+     */
+    @RequestMapping(value = "/{projectId}/samples", method = RequestMethod.GET)
+    public ModelMap getProjectSamples(@PathVariable String projectId) {
+        return new ModelMap();
+    }
+
+    /**
      * Get the representation of a specific sample that's associated with the project.
      *
      * @param sampleId the sample identifier that we're looking for.
@@ -230,6 +255,41 @@ public class ProjectsController extends GenericController<Identifier, Project, P
     @RequestMapping(value = "/{projectId}/samples/{sampleId}", method = RequestMethod.GET)
     public ModelMap getProjectSample(@PathVariable String projectId, @PathVariable String sampleId) {
         return samplesController.getResource(sampleId);
+    }
+
+    /**
+     * Remove a specific {@link Sample} from the collection of {@link Sample}s associated with a {@link Project}.
+     *
+     * @param projectId the {@link Project} identifier.
+     * @param sampleId  the {@link Sample} identifier.
+     * @return a response including links back to the specific {@link Project} and collection of {@link Sample}.
+     */
+    @RequestMapping(value = "/{projectId}/samples/{sampleId}", method = RequestMethod.DELETE)
+    public ModelMap removeSampleFromProject(@PathVariable String projectId, @PathVariable String sampleId) {
+        ModelMap modelMap = new ModelMap();
+        Identifier projectIdentifier = new Identifier();
+        projectIdentifier.setIdentifier(projectId);
+
+        Identifier sampleIdentifier = new Identifier();
+        sampleIdentifier.setIdentifier(sampleId);
+
+        // load the sample and project
+        Project p = projectService.read(projectIdentifier);
+        Sample s = sampleService.read(sampleIdentifier);
+
+        // remove the relationship.
+        projectService.removeSampleFromProject(p, s);
+
+        // respond to the client.
+        RootResource resource = new RootResource();
+        // add links back to the collection of samples and to the project itself.
+        resource.add(linkTo(methodOn(ProjectsController.class).getProjectSamples(projectId)).withRel(PROJECT_SAMPLES_REL));
+        resource.add(linkTo(ProjectsController.class).slash(projectId).withRel(PROJECT_REL));
+
+        // add the links to the response.
+        modelMap.addAttribute(GenericController.RESOURCE_NAME, resource);
+
+        return modelMap;
     }
 
     /**

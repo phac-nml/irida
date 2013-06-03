@@ -5,25 +5,27 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RelationshipService;
+import ca.corefacility.bioinformatics.irida.service.SampleService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.ProjectsController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.SamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.SequenceFileController;
+import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -32,16 +34,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link ProjectsController}.
@@ -52,17 +50,20 @@ public class ProjectsControllerTest {
     SequenceFileController sequenceFilesController;
     ProjectService projectService;
     UserService userService;
+    SampleService sampleService;
     RelationshipService relationshipService;
 
     @Before
     public void setUp() {
         projectService = mock(ProjectService.class);
         userService = mock(UserService.class);
+        sampleService = mock(SampleService.class);
         relationshipService = mock(RelationshipService.class);
         samplesController = mock(SamplesController.class);
         sequenceFilesController = mock(SequenceFileController.class);
 
-        controller = new ProjectsController(projectService, userService, samplesController, sequenceFilesController);
+        controller = new ProjectsController(projectService, userService, sampleService,
+                samplesController, sequenceFilesController);
         // fake out the servlet response so that the URI builder will work.
         RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
         RequestContextHolder.setRequestAttributes(ra);
@@ -129,6 +130,38 @@ public class ProjectsControllerTest {
         assertEquals(1, links.size());
         assertEquals("<http://localhost/projects/" + projectId + "/samples/" + s.getIdentifier().getIdentifier() +
                 ">; rel=relationship", links.iterator().next());
+    }
+
+    @Test
+    public void testRemoveSampleFromProject() {
+        Project p = constructProject();
+        Sample s = constructSample();
+
+        String projectId = p.getIdentifier().getIdentifier();
+        String sampleId = s.getIdentifier().getIdentifier();
+
+        when(projectService.read(p.getIdentifier())).thenReturn(p);
+        when(sampleService.read(s.getIdentifier())).thenReturn(s);
+
+        ModelMap modelMap = controller.removeSampleFromProject(projectId, sampleId);
+
+        // verify that we actually tried to remove the sample from the project.
+        verify(projectService, times(1)).removeSampleFromProject(p, s);
+
+        // confirm that the response looks right.
+        Object o = modelMap.get(GenericController.RESOURCE_NAME);
+        assertTrue(o instanceof RootResource);
+        @SuppressWarnings("unchecked")
+        RootResource resource = (RootResource) o;
+        List<Link> links = resource.getLinks();
+
+        // should be two links in the response, one back to the individual project, the other to the samples collection
+        Set<String> rels = Sets.newHashSet(ProjectsController.PROJECT_REL, ProjectsController.PROJECT_SAMPLES_REL);
+        for (Link link : links) {
+            assertTrue(rels.contains(link.getRel()));
+            assertNotNull(rels.remove(link.getRel()));
+        }
+        assertTrue(rels.isEmpty());
     }
 
     @Test
