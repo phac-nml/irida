@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -240,7 +241,8 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      * @return a response entity indicating the success of the addition.
      * @throws IOException if the sample file cannot be saved.
      */
-    @RequestMapping(value = "/{projectId}/sequenceFiles")
+    @RequestMapping(value = "/{projectId}/sequenceFiles", consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            method = RequestMethod.POST)
     public ResponseEntity<String> addSequenceFileToProject(@PathVariable String projectId,
                                                            @RequestParam("file") MultipartFile file) throws IOException {
         Identifier id = new Identifier();
