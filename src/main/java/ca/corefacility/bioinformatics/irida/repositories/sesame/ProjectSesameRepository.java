@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-//public class ProjectSesameRepository extends GenericAlibabaRepository<Identifier, ProjectIF> implements ProjectRepository{
 public class ProjectSesameRepository extends GenericRepository<Identifier, Project> implements ProjectRepository{
     
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProjectSesameRepository.class);

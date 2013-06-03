@@ -38,10 +38,7 @@ public class TripleStore {
     public String URI;
     String serverUrl;
     String repoName;
-    /*
-     * To change this template, choose Tools | Templates
-     * and open the template in the editor.
-     */
+
     private Repository repo;
     private ObjectRepository objectRepo;
 
@@ -85,7 +82,7 @@ public class TripleStore {
             logger.error(ex.getMessage());
         }
     }
-
+    
     /**
      * Get the repository connection for this triplestore
      *
