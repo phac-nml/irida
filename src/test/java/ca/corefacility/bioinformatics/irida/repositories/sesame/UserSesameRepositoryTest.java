@@ -15,7 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
-import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SailMemoryStore;
+import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SailStore;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.User;
@@ -33,7 +33,7 @@ public class UserSesameRepositoryTest {
     
     @Before
     public void setUp() {
-        SailMemoryStore store = new SailMemoryStore();
+        SailStore store = new SailStore();
         store.initialize();
         AuditRepository auditRepo = new AuditRepository(store);
         RelationshipSesameRepository linksRepo = new RelationshipSesameRepository(store, auditRepo);

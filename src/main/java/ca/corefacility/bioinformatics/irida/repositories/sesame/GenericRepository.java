@@ -132,6 +132,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         Identifier objid = (Identifier) object.getIdentifier();
 
         try {
+            logger.trace("Adding new object to the database.");
             con.begin();
             ValueFactory fac = con.getValueFactory();
 
@@ -201,6 +202,8 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
 
         java.net.URI netURI = buildURIFromIdentifier(id);
         String uri = netURI.toString();
+
+        logger.trace("Looking up uri: [" + uri + "]");
 
         if (!exists(id)) {
             throw new EntityNotFoundException("No such object with the given URI exists.");
@@ -283,6 +286,8 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             java.net.URI netURI = buildURIFromIdentifier(id);
             String uri = netURI.toString();
 
+            logger.trace("Checking for the existence of [" + uri + "]");
+
             String querystring = store.getPrefixes()
                     + "ASK\n"
                     + "{?uri a ?type}";
@@ -295,6 +300,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
 
             exists = existsQuery.evaluate();
 
+            logger.trace("[" + uri + "] exists? " + exists);
 
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
             logger.error(ex.getMessage());
@@ -357,7 +363,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
 
                     Iri annotation = declaredField.getAnnotation(Iri.class);
 
-                    logger.debug("Updating " + field.getKey() + " -- " + annotation.value());
+                    logger.trace("Updating " + field.getKey() + " -- " + annotation.value());
 
                     updateField(id, annotation.value(), field.getValue());
                 } catch (NoSuchFieldException ex) {
@@ -372,8 +378,8 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
 
         return read(id);
     }
-    
-    protected Literal createLiteral(ValueFactory fac,String predicate,Object obj){
+
+    protected Literal createLiteral(ValueFactory fac, String predicate, Object obj) {
         Literal lit = fac.createLiteral(obj);
         return lit;
     }
@@ -394,7 +400,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             RepositoryResult<Statement> curvalues = con.getStatements(subURI, predURI, null);
             while (curvalues.hasNext()) {
                 Statement next = curvalues.next();
-                logger.debug("current value: " + next.getObject().stringValue());
+                logger.trace("current value: " + next.getObject().stringValue());
             }
             con.remove(subURI, predURI, null);
 

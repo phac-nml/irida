@@ -17,28 +17,43 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame.dao;
 
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
-import javax.annotation.PostConstruct;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.sail.memory.MemoryStore;
+import org.openrdf.sail.nativerdf.NativeStore;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
- */
-public class SailMemoryStore extends TripleStore{
-    
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SailMemoryStore.class);
+import javax.annotation.PostConstruct;
+import java.io.File;
 
-    public SailMemoryStore(){
-        super(new SailRepository(new MemoryStore()),"http://localhost/");
+/**
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ */
+public class SailStore extends TripleStore {
+
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SailStore.class);
+
+    /**
+     * Create a memory-backed storage connection.
+     */
+    public SailStore() {
+        super(new SailRepository(new MemoryStore()), "http://localhost/");
     }
-    
+
+    /**
+     * Create a file-backed storage connection using the specified location as a directory.
+     *
+     * @param location the directory to use for storing data.
+     */
+    public SailStore(File location) {
+        super(new SailRepository(new NativeStore(location)), "http://localhost/");
+    }
+
     @Override
     @PostConstruct
-    public void initialize(){
+    public void initialize() {
         super.initialize();
         RepositoryConnection con = super.getRepoConnection();
         try {
@@ -49,7 +64,7 @@ public class SailMemoryStore extends TripleStore{
         } catch (RepositoryException ex) {
             logger.error(ex.getMessage());
             throw new StorageException("Could not set namespaces for memory store");
-        }        
+        }
     }
-    
+
 }

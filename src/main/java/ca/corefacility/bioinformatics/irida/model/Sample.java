@@ -39,7 +39,7 @@ public class Sample implements IridaThing<Sample,Audit,Identifier>, Comparable<S
     private Audit audit;
     @NotNull
     @Size(min = 3)
-    @Iri("http://www.w3.org/2000/01/rdf-schema#label")
+    @Iri(PREFIX + "sampleName")
     private String sampleName;
 
     public Sample() {

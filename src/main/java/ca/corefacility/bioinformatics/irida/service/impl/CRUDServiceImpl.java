@@ -10,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.AuditRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
+import org.springframework.cache.annotation.Cacheable;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -28,9 +29,9 @@ import java.util.Map.Entry;
 public class CRUDServiceImpl<KeyType extends Identifier, ValueType extends Comparable<ValueType> & Auditable<Audit>>
         implements CRUDService<KeyType, ValueType> {
 
-    protected CRUDRepository<KeyType, ValueType> repository;
-    protected Validator validator;
-    protected Class<ValueType> valueType;
+    protected final CRUDRepository<KeyType, ValueType> repository;
+    protected final Validator validator;
+    protected final Class<ValueType> valueType;
     protected AuditRepository auditRepository;
 
     public CRUDServiceImpl(CRUDRepository<KeyType, ValueType> repository, Validator validator, Class<ValueType> valueType) {
@@ -97,6 +98,7 @@ public class CRUDServiceImpl<KeyType extends Identifier, ValueType extends Compa
      * {@inheritDoc}
      */
     @Override
+    @Cacheable("cached")
     public List<ValueType> list(int page, int size, final String sortProperty, final Order order)
             throws IllegalArgumentException {
         if (!methodAvailable(sortProperty, MethodType.GETTER)) {
@@ -284,7 +286,7 @@ public class CRUDServiceImpl<KeyType extends Identifier, ValueType extends Compa
 
         return values;
     }
-    
+
     /**
      * {@inheritDoc}
      */

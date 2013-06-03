@@ -54,7 +54,7 @@
         <constructor-arg value="${sequence.file.base.directory}"/>
     </bean>
 
-    <beans profile="dev">
+    <beans profile="memory">
         <bean id="exampleData" init-method="addSampleData"
               class="ca.corefacility.bioinformatics.irida.repositories.sesame.dao.ExampleDataLoader">
             <constructor-arg ref="userRepository"/>

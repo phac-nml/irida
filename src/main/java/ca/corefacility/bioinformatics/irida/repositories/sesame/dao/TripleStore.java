@@ -26,122 +26,122 @@ import org.openrdf.repository.config.RepositoryConfigException;
 import org.openrdf.repository.http.HTTPRepository;
 import org.openrdf.repository.object.ObjectConnection;
 import org.openrdf.repository.object.ObjectRepository;
-import org.openrdf.repository.object.config.ObjectRepositoryConfig;
 import org.openrdf.repository.object.config.ObjectRepositoryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class TripleStore {
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-    private Repository repo;
-    private ObjectRepository objectRepo; 
-    
+    private static final Logger logger = LoggerFactory.getLogger(TripleStore.class);
     public String URI;
-    
     String serverUrl;
     String repoName;
-    
-    private static final Logger logger = LoggerFactory.getLogger(TripleStore.class);
+    /*
+     * To change this template, choose Tools | Templates
+     * and open the template in the editor.
+     */
+    private Repository repo;
+    private ObjectRepository objectRepo;
 
-    public TripleStore(){}
-    
-    public TripleStore(String serverUrl, String repoName, String uri){
+    public TripleStore() {
+    }
+
+    public TripleStore(String serverUrl, String repoName, String uri) {
         this.serverUrl = serverUrl;
         this.repoName = repoName;
         this.URI = uri;
-        
-        repo = new HTTPRepository(serverUrl,repoName);
+
+        repo = new HTTPRepository(serverUrl, repoName);
 
     }
-    
-    public TripleStore(Repository repo,String uri){
+
+    public TripleStore(Repository repo, String uri) {
         this.URI = uri;
-        this.repo = repo;        
+        this.repo = repo;
     }
-    
+
     /**
      * Return the base URI for this TripleStore
+     *
      * @return The base URI for this TripleStore instance
      */
-    public String getURI(){
+    public String getURI() {
         return URI;
     }
-    
+
     /**
      * Initialize the connection to the triplestore
      */
-    public void initialize(){
+    public void initialize() {
         try {
             ObjectRepositoryFactory orf = new ObjectRepositoryFactory();
             objectRepo = orf.createRepository(repo);
-            objectRepo.initialize();
+            if (!objectRepo.isInitialized()) {
+                objectRepo.initialize();
+            }
         } catch (RepositoryException | RepositoryConfigException ex) {
             logger.error(ex.getMessage());
-        }      
+        }
     }
     
     /**
      * Get the repository connection for this triplestore
+     *
      * @return The repository connection
      * @throws StorageException
      */
-    public ObjectConnection getRepoConnection() throws StorageException{
+    public ObjectConnection getRepoConnection() throws StorageException {
         ObjectConnection con = null;
-        
+
         try {
             con = objectRepo.getConnection();
             URI context = new URIImpl(URI);
-            
+
             con.setInsertContext(context);
         } catch (RepositoryException ex) {
             logger.error(ex.getMessage());
             throw new StorageException("Could not retrieve repository connection");
         }
-        
+
         return con;
     }
 
     /**
      * Get the prefixes defined by this repository for use in queries
+     *
      * @return A String of the prefixes used
      */
     public String getPrefixes() throws RepositoryException {
         String prefixes = "";
-        
+
         ObjectConnection con = getRepoConnection();
 
         try {
             RepositoryResult<Namespace> namespaces = con.getNamespaces();
-            while(namespaces.hasNext()){
+            while (namespaces.hasNext()) {
                 Namespace ns = namespaces.next();
-                String cur = "PREFIX "+ns.getPrefix()+": <"+ns.getName()+">\n";
+                String cur = "PREFIX " + ns.getPrefix() + ": <" + ns.getName() + ">\n";
                 prefixes += cur;
             }
         } catch (RepositoryException ex) {
             logger.error(ex.getMessage());
             throw new StorageException("Could not retrieve namespace prefixes");
-        }
-        finally{
+        } finally {
             closeRepoConnection(con);
         }
-                
+
         return prefixes;
     }
-    
-    public void closeRepoConnection(ObjectConnection con) throws StorageException{
+
+    public void closeRepoConnection(ObjectConnection con) throws StorageException {
         try {
             con.close();
         } catch (RepositoryException ex) {
             logger.error(ex.getMessage());
             throw new StorageException("Couldn't close connection");
-        }        
+        }
     }
 
     /**
@@ -155,7 +155,7 @@ public class TripleStore {
             throw new StorageException("Could not shut down repository");
         }
     }
-    
-    
+
+
 }
     

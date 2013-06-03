@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ca.corefacility.bioinformatics.irida.repositories.sesame;
+package ca.corefacility.bioinformatics.irida.utils;
 
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
@@ -34,7 +34,9 @@ public class Identified implements IridaThing<Identified,Audit,Identifier>{
     private String data;
     private Audit audit;
     
-    public Identified(){}
+    public Identified(){
+        audit = new Audit();
+    }
     
     public Identified(String data){
         this.data = data;
@@ -73,7 +75,7 @@ public class Identified implements IridaThing<Identified,Audit,Identifier>{
     @Override
     public String getLabel() {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        return "I am identified";
+        return data;
     }
 
     @Override
