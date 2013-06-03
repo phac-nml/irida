@@ -37,11 +37,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -92,6 +91,10 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      * Reference to {@link SamplesController} for managing related samples.
      */
     private SamplesController samplesController;
+    /**
+     * Reference to {@link SequenceFileController} for managing related sequence files.
+     */
+    private SequenceFileController sequenceFileController;
 
     /**
      * Constructor for {@link ProjectsController}, requires a reference to a {@link ProjectService}.
@@ -99,11 +102,13 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      * @param projectService the {@link ProjectService} to be used by this controller.
      */
     @Autowired
-    public ProjectsController(ProjectService projectService, UserService userService, SamplesController samplesController) {
+    public ProjectsController(ProjectService projectService, UserService userService,
+                              SamplesController samplesController, SequenceFileController sequenceFileController) {
         super(projectService, Project.class, Identifier.class, ProjectResource.class);
         this.userService = userService;
         this.projectService = projectService;
         this.samplesController = samplesController;
+        this.sequenceFileController = sequenceFileController;
     }
 
     /**
@@ -221,6 +226,23 @@ public class ProjectsController extends GenericController<Identifier, Project, P
     @RequestMapping(value = "/{projectId}/samples/{sampleId}", method = RequestMethod.GET)
     public ModelMap getProjectSample(@PathVariable String projectId, @PathVariable String sampleId) {
         return samplesController.getResource(sampleId);
+    }
+
+    /**
+     * Create a new {@link SequenceFile} resource and add a relationship between the {@link SequenceFile} and the
+     * {@link Project}.
+     *
+     * @param projectId the identifier of the project to add the sequence file to.
+     * @param file      the file to add to the project.
+     * @return a response entity indicating the success of the addition.
+     * @throws IOException if the sample file cannot be saved.
+     */
+    @RequestMapping(value = "/{projectId}/sequenceFiles")
+    public ResponseEntity<String> addSequenceFileToProject(@PathVariable String projectId,
+                                                           @RequestParam("file") MultipartFile file) throws IOException {
+        ResponseEntity<String> response = sequenceFileController.create(file);
+
+        return new ResponseEntity<>("glub", HttpStatus.I_AM_A_TEAPOT);
     }
 
     /**
