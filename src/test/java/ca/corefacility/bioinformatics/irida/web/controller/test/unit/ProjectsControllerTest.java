@@ -3,10 +3,7 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.unit;
 import ca.corefacility.bioinformatics.irida.model.*;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.RelationshipService;
-import ca.corefacility.bioinformatics.irida.service.SampleService;
-import ca.corefacility.bioinformatics.irida.service.UserService;
+import ca.corefacility.bioinformatics.irida.service.*;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
@@ -51,6 +48,7 @@ public class ProjectsControllerTest {
     ProjectService projectService;
     UserService userService;
     SampleService sampleService;
+    CRUDService<Identifier, SequenceFile> sequenceFileService;
     RelationshipService relationshipService;
 
     @Before
@@ -60,9 +58,10 @@ public class ProjectsControllerTest {
         sampleService = mock(SampleService.class);
         relationshipService = mock(RelationshipService.class);
         samplesController = mock(SamplesController.class);
+        sequenceFileService = mock(CRUDService.class);
         sequenceFilesController = mock(SequenceFileController.class);
 
-        controller = new ProjectsController(projectService, userService, sampleService,
+        controller = new ProjectsController(projectService, userService, sampleService, sequenceFileService,
                 samplesController, sequenceFilesController);
         // fake out the servlet response so that the URI builder will work.
         RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
@@ -194,6 +193,39 @@ public class ProjectsControllerTest {
         assertEquals(1, links.size());
         assertEquals("<http://localhost/projects/" + projectId + "/sequenceFiles/" + sf.getIdentifier().getIdentifier()
                 + ">; rel=relationship", links.iterator().next());
+    }
+
+    @Test
+    public void testRemoveSequenceFileFromProject() {
+        Project p = constructProject();
+        SequenceFile sf = constructSequenceFile();
+
+        String projectId = p.getIdentifier().getIdentifier();
+        String sequenceFileId = sf.getIdentifier().getIdentifier();
+
+        when(projectService.read(p.getIdentifier())).thenReturn(p);
+        when(sequenceFileService.read(sf.getIdentifier())).thenReturn(sf);
+
+        // remove the file
+        ModelMap modelMap = controller.removeSequenceFileFromProject(projectId, sequenceFileId);
+
+        // confirm that we called the appropriate service method
+        verify(projectService, times(1)).removeSequenceFileFromProject(p, sf);
+
+        // confirm that the response looks right.
+        Object o = modelMap.get(GenericController.RESOURCE_NAME);
+        assertTrue(o instanceof RootResource);
+        @SuppressWarnings("unchecked")
+        RootResource resource = (RootResource) o;
+        List<Link> links = resource.getLinks();
+
+        // should be two links in the response, one back to the individual project, the other to the samples collection
+        Set<String> rels = Sets.newHashSet(ProjectsController.PROJECT_REL, ProjectsController.PROJECT_SEQUENCE_FILES_REL);
+        for (Link link : links) {
+            assertTrue(rels.contains(link.getRel()));
+            assertNotNull(rels.remove(link.getRel()));
+        }
+        assertTrue(rels.isEmpty());
     }
 
     /**

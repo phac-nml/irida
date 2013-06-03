@@ -18,6 +18,7 @@ package ca.corefacility.bioinformatics.irida.web.controller.api;
 import ca.corefacility.bioinformatics.irida.model.*;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
@@ -74,6 +75,10 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      */
     public static final String PROJECT_SAMPLES_REL = "project/samples";
     /**
+     * rel used for accessing the list of sequence files associated with a project.
+     */
+    public static final String PROJECT_SEQUENCE_FILES_REL = "project/sequenceFiles";
+    /**
      * Logger.
      */
     private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
@@ -106,6 +111,10 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      */
     private SampleService sampleService;
     /**
+     * Reference to {@link CRUDService} for managing {@link SequenceFile}s associated with projects.
+     */
+    private CRUDService<Identifier, SequenceFile> sequenceFileService;
+    /**
      * Reference to {@link SamplesController} for managing related samples.
      */
     private SamplesController samplesController;
@@ -121,11 +130,13 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      */
     @Autowired
     public ProjectsController(ProjectService projectService, UserService userService, SampleService sampleService,
+                              CRUDService<Identifier, SequenceFile> sequenceFileService,
                               SamplesController samplesController, SequenceFileController sequenceFileController) {
         super(projectService, Project.class, Identifier.class, ProjectResource.class);
         this.userService = userService;
         this.projectService = projectService;
         this.sampleService = sampleService;
+        this.sequenceFileService = sequenceFileService;
         this.samplesController = samplesController;
         this.sequenceFileController = sequenceFileController;
     }
@@ -243,7 +254,7 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      */
     @RequestMapping(value = "/{projectId}/samples", method = RequestMethod.GET)
     public ModelMap getProjectSamples(@PathVariable String projectId) {
-        return new ModelMap();
+        throw new UnsupportedOperationException("not implemented");
     }
 
     /**
@@ -340,6 +351,54 @@ public class ProjectsController extends GenericController<Identifier, Project, P
         responseHeaders.add(HttpHeaders.LINK, relationshipLocation);
 
         return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
+    }
+
+    /**
+     * Remove a {@link SequenceFile} from the collection of {@link SequenceFile}s associated with a {@link Project}.
+     *
+     * @param projectId      the {@link Project} identifier.
+     * @param sequenceFileId the {@link SequenceFile} identifier.
+     * @return a set of links back to the {@link SequenceFile} collection and the individual {@link Project}.
+     */
+    @RequestMapping(value = "/{projectId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.DELETE)
+    public ModelMap removeSequenceFileFromProject(@PathVariable String projectId, @PathVariable String sequenceFileId) {
+        ModelMap modelMap = new ModelMap();
+
+        Identifier projectIdentifier = new Identifier();
+        projectIdentifier.setIdentifier(projectId);
+
+        Identifier sequenceFileIdentifier = new Identifier();
+        sequenceFileIdentifier.setIdentifier(sequenceFileId);
+
+        // load the appropriate data
+        Project p = projectService.read(projectIdentifier);
+        SequenceFile sf = sequenceFileService.read(sequenceFileIdentifier);
+
+        // remove the sequence file from the project
+        projectService.removeSequenceFileFromProject(p, sf);
+
+        // construct a response
+        // respond to the client.
+        RootResource resource = new RootResource();
+        // add links back to the collection of samples and to the project itself.
+        resource.add(linkTo(methodOn(ProjectsController.class).getProjectSequenceFiles(projectId)).withRel(PROJECT_SEQUENCE_FILES_REL));
+        resource.add(linkTo(ProjectsController.class).slash(projectId).withRel(PROJECT_REL));
+
+        // add the links to the response.
+        modelMap.addAttribute(GenericController.RESOURCE_NAME, resource);
+
+        return modelMap;
+    }
+
+    /**
+     * Get the list of {@link SequenceFile}s associated with a {@link Project}.
+     *
+     * @param projectId the identifier for the {@link Project}.
+     * @return a representation of all {@link SequenceFile}s associated with the {@link Project}.
+     */
+    @RequestMapping(value = "/{projectId}/sequenceFiles", method = RequestMethod.GET)
+    public ModelMap getProjectSequenceFiles(@PathVariable String projectId) {
+        throw new UnsupportedOperationException("not implemented");
     }
 
     /**
