@@ -318,14 +318,6 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
 
         ObjectConnection con = store.getRepoConnection();
         try {
-            /*String qs = store.getPrefixes()
-                    + "SELECT ?link ?sub ?pred ?obj "
-                    + "WHERE{ ?link a irida:ResourceLink ;\n"
-                    + " irida:linkSubject ?sub ; \n"
-                    + " irida:linkPredicate ?pred ;\n"
-                    + " irida:linkObject ?obj ."
-                    + "}";*/
-            
             String qs = store.getPrefixes() + 
                     "SELECT ?link ?sub ?pred ?obj " +
                     "WHERE{ " +
