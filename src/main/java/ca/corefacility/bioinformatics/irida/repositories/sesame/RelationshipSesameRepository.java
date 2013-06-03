@@ -647,7 +647,37 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
 
     @Override
     public Boolean exists(Identifier id) {
-        throw new UnsupportedOperationException("Checking existence of a link will not be supported");
+        boolean exists = false;
+        ObjectConnection con = store.getRepoConnection();
+
+        try {
+            java.net.URI netURI = buildURIFromIdentifier(id);
+            String uri = netURI.toString();
+
+            logger.trace("Checking for the existence of [" + uri + "]");
+
+            String querystring = store.getPrefixes()
+                    + "ASK\n"
+                    + "{?uri a irida:ResourceLink}";
+
+            BooleanQuery existsQuery = con.prepareBooleanQuery(QueryLanguage.SPARQL, querystring);
+
+            ValueFactory vf = con.getValueFactory();
+            URI objecturi = vf.createURI(uri);
+            existsQuery.setBinding("uri", objecturi);
+
+            exists = existsQuery.evaluate();
+
+            logger.trace("[" + uri + "] exists? " + exists);
+
+        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't run exists query");
+        } finally {
+            store.closeRepoConnection(con);
+        }
+
+        return exists;        
     }
 
     @Override
