@@ -40,7 +40,10 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -240,9 +243,53 @@ public class ProjectsController extends GenericController<Identifier, Project, P
     @RequestMapping(value = "/{projectId}/sequenceFiles")
     public ResponseEntity<String> addSequenceFileToProject(@PathVariable String projectId,
                                                            @RequestParam("file") MultipartFile file) throws IOException {
-        ResponseEntity<String> response = sequenceFileController.create(file);
+        Identifier id = new Identifier();
+        id.setIdentifier(projectId);
 
-        return new ResponseEntity<>("glub", HttpStatus.I_AM_A_TEAPOT);
+        // load the project that we're adding to
+        Project p = projectService.read(id);
+
+        // create a temporary file to send back to the service
+        Path temp = Files.createTempDirectory(null);
+        Path target = temp.resolve(file.getOriginalFilename());
+
+        target = Files.write(target, file.getBytes());
+        File f = target.toFile();
+
+        // construct the sequence file that we're going to create
+        SequenceFile sf = new SequenceFile(f);
+
+        // add the sequence file to the database and create the relationship between the resources
+        Relationship r = projectService.addSequenceFileToProject(p, sf);
+
+        // erase the temp files.
+        f.delete();
+        temp.toFile().delete();
+
+        String sequenceFileId = r.getObject().getIdentifier();
+        String location = linkTo(SequenceFileController.class).slash(sequenceFileId).withSelfRel().getHref();
+        String relationshipLocation = linkTo(methodOn(ProjectsController.class).getProjectSequenceFile(projectId,
+                sequenceFileId)).withSelfRel().getHref();
+        relationshipLocation = "<" + relationshipLocation + ">; rel=relationship";
+
+        // construct a set of headers to add to the response
+        MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
+        responseHeaders.add(HttpHeaders.LOCATION, location);
+        responseHeaders.add(HttpHeaders.LINK, relationshipLocation);
+
+        return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
+    }
+
+    /**
+     * Get the representation of a sequence file that's associated with a project.
+     *
+     * @param projectId      the project that the sequence file belongs to.
+     * @param sequenceFileId the identifier of the sequence file.
+     * @return a representation of the sequence file.
+     */
+    @RequestMapping(value = "/{projectId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.GET)
+    public ModelMap getProjectSequenceFile(@PathVariable String projectId, @PathVariable String sequenceFileId) {
+        return sequenceFileController.getResource(sequenceFileId);
     }
 
     /**

@@ -141,11 +141,7 @@ public class ProjectsControllerTest {
         Project p = constructProject();
         Relationship r = new Relationship(p.getIdentifier(), sf.getIdentifier());
         String projectId = p.getIdentifier().getIdentifier();
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add(HttpHeaders.LOCATION, "http://localhost/sequenceFiles/" + sf.getIdentifier().getIdentifier());
-        ResponseEntity<String> fileCreationResponse = new ResponseEntity<>("success", headers, HttpStatus.CREATED);
 
-        when(sequenceFilesController.create(mmf)).thenReturn(fileCreationResponse);
         when(projectService.read(p.getIdentifier())).thenReturn(p);
         when(projectService.addSequenceFileToProject(eq(p), any(SequenceFile.class))).thenReturn(r);
 
