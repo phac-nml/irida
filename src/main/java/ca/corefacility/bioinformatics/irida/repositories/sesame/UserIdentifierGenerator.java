@@ -16,11 +16,9 @@
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
-import java.util.UUID;
 import org.openrdf.model.URI;
 
 /**
@@ -34,15 +32,20 @@ public class UserIdentifierGenerator extends IdentifierGenerator<User>{
     }
 
     @Override
-    protected Identifier generateNewIdentifier(User obj, String baseURI) {
+    public Identifier generateNewIdentifier(User obj, String baseURI) {
+        if(obj == null){
+            throw new IllegalArgumentException("User cannot be null when creating new identifiers");
+        }
+        
         java.net.URI objuri = buildURIFromIdentifiedBy(obj.getUsername(),baseURI);
         UserIdentifier ui = new UserIdentifier(obj.getUsername());
         ui.setUri(objuri);
+        ui.setLabel(obj.getLabel());
         return ui;
     }
 
     @Override
-    protected Identifier buildIdentifier(User object, URI uri, String identifiedBy) {
+    public Identifier buildIdentifier(User object, URI uri, String identifiedBy) {
         UserIdentifier objid = new UserIdentifier();
         
         objid.setUri(java.net.URI.create(uri.toString()));

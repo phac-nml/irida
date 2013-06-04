@@ -23,6 +23,7 @@
           class="ca.corefacility.bioinformatics.irida.repositories.sesame.RelationshipSesameRepository">
         <constructor-arg ref="tripleStore"/>
         <constructor-arg ref="auditRepository"/>
+        <property name="idGen" ref="identifierGenerator"/>
     </bean>
 
     <bean id="userRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.UserSesameRepository">

@@ -48,15 +48,20 @@ public class IdentifierGenerator<Type extends IridaThing> {
     }
     
     /**
-     * Generate a new identifier for the given object.  May be overridden for specific class implementations
+     * Generate a new identifier for the given object.  
+     * This implementation is independent of the object but it may be overridden for specific class implementations
      *
      * @param t The object to generate an identifier for
      * @return A newly generated identifier for the given object
      */
-    protected Identifier generateNewIdentifier(Type obj, String baseURI) {
+    public Identifier generateNewIdentifier(Type obj, String baseURI) {
         UUID uuid = UUID.randomUUID();
         java.net.URI objuri = buildURIFromIdentifiedBy(uuid.toString(), baseURI);
-        return new Identifier(objuri, uuid);
+        Identifier id = new Identifier(objuri, uuid);
+        if(obj != null){
+            id.setLabel(obj.getLabel());
+        }
+        return id;
     }
     
     /**
@@ -65,13 +70,14 @@ public class IdentifierGenerator<Type extends IridaThing> {
      * @param id The ID to build a URI for
      * @return The constructed URI
      */
-    public java.net.URI buildURIFromIdentifiedBy(String id, String baseURI) {
+    protected java.net.URI buildURIFromIdentifiedBy(String id, String baseURI) {
         java.net.URI uri = java.net.URI.create(baseURI + id);
 
         return uri;
     }    
+    
     /**
-     * Get an identifier object for the given URI
+     * Queries the triplestore for an identifier object for the given URI
      *
      * @param uri The URI to retrieve and build an identifier for
      * @return A new Identifier instance
@@ -110,7 +116,7 @@ public class IdentifierGenerator<Type extends IridaThing> {
      * @param bindingName The binding name of the subject from this binding set
      * @return A <type>StringIdentifier</type> for this binding set
      */
-    public StringIdentifier buildIdentiferFromBindingSet(BindingSet bs, String bindingName) {
+    private StringIdentifier buildIdentiferFromBindingSet(BindingSet bs, String bindingName) {
         StringIdentifier id = null;
         try {
             Value uri = bs.getValue(bindingName);
@@ -137,7 +143,7 @@ public class IdentifierGenerator<Type extends IridaThing> {
      * @param identifiedBy The string identifier for this object
      * @return An {@link Identifier} for the given object
      */
-    protected Identifier buildIdentifier(Type object, URI uri, String identifiedBy) {
+    public Identifier buildIdentifier(Type object, URI uri, String identifiedBy) {
         Identifier objid = new Identifier();
         objid.setUri(java.net.URI.create(uri.toString()));
         objid.setUUID(UUID.fromString(identifiedBy));
