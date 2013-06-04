@@ -5,13 +5,16 @@ import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.SamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
+import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
 import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
 import org.junit.Before;
@@ -25,6 +28,7 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -40,13 +44,15 @@ public class ProjectSamplesControllerTest {
     private ProjectService projectService;
     private SampleService sampleService;
     private SamplesController samplesController;
+    private RelationshipService relationshipService;
 
     @Before
     public void setUp() {
         projectService = mock(ProjectService.class);
         sampleService = mock(SampleService.class);
         samplesController = mock(SamplesController.class);
-        controller = new ProjectSamplesController(projectService, sampleService, samplesController);
+        relationshipService = mock(RelationshipService.class);
+        controller = new ProjectSamplesController(projectService, sampleService, relationshipService, samplesController);
         // fake out the servlet response so that the URI builder will work.
         RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
         RequestContextHolder.setRequestAttributes(ra);
@@ -111,6 +117,40 @@ public class ProjectSamplesControllerTest {
 
         // should be two links in the response, one back to the individual project, the other to the samples collection
         Set<String> rels = Sets.newHashSet(ProjectsController.PROJECT_REL, ProjectSamplesController.PROJECT_SAMPLES_REL);
+        for (Link link : links) {
+            assertTrue(rels.contains(link.getRel()));
+            assertNotNull(rels.remove(link.getRel()));
+        }
+        assertTrue(rels.isEmpty());
+    }
+
+    @Test
+    public void testGetProjectSamples() {
+        Project p = constructProject();
+        Sample s = constructSample();
+        Relationship r = new Relationship();
+        r.setSubject(p.getIdentifier());
+        r.setObject(s.getIdentifier());
+        r.setIdentifier(new Identifier());
+        Collection<Relationship> relationships = Sets.newHashSet(r);
+
+        String projectId = p.getIdentifier().getIdentifier();
+
+        when(projectService.read(p.getIdentifier())).thenReturn(p);
+        when(relationshipService.getRelationshipsForEntity(p.getIdentifier(), Project.class, Sample.class)).thenReturn(relationships);
+        when(sampleService.read(s.getIdentifier())).thenReturn(s);
+
+        ModelMap modelMap = controller.getProjectSamples(projectId);
+
+        Object o = modelMap.get(GenericController.RESOURCE_NAME);
+        assertTrue(o instanceof ResourceCollection);
+        @SuppressWarnings("unchecked")
+        ResourceCollection<SampleResource> samples = (ResourceCollection<SampleResource>) o;
+        assertEquals(1, samples.size());
+        SampleResource resource = samples.iterator().next();
+        assertEquals(s.getSampleName(), resource.getSampleName());
+        List<Link> links = resource.getLinks();
+        Set<String> rels = Sets.newHashSet(PageLink.REL_SELF, GenericController.REL_RELATIONSHIP);
         for (Link link : links) {
             assertTrue(rels.contains(link.getRel()));
             assertNotNull(rels.remove(link.getRel()));

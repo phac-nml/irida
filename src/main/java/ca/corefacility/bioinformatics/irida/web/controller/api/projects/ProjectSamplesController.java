@@ -5,10 +5,13 @@ import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RelationshipsController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.SamplesController;
 import com.google.common.net.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.Collection;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -42,9 +47,13 @@ public class ProjectSamplesController {
      */
     private ProjectService projectService;
     /**
-     * Reference to {@link SampleService}
+     * Reference to {@link SampleService}.
      */
     private SampleService sampleService;
+    /**
+     * Reference to {@link RelationshipService}.
+     */
+    private RelationshipService relationshipService;
     /**
      * Reference to {@link SamplesController}.
      */
@@ -55,9 +64,10 @@ public class ProjectSamplesController {
 
     @Autowired
     public ProjectSamplesController(ProjectService projectService, SampleService sampleService,
-                                    SamplesController samplesController) {
+                                    RelationshipService relationshipService, SamplesController samplesController) {
         this.projectService = projectService;
         this.sampleService = sampleService;
+        this.relationshipService = relationshipService;
         this.samplesController = samplesController;
     }
 
@@ -106,7 +116,29 @@ public class ProjectSamplesController {
      */
     @RequestMapping(value = "/projects/{projectId}/samples", method = RequestMethod.GET)
     public ModelMap getProjectSamples(@PathVariable String projectId) {
-        throw new UnsupportedOperationException("not implemented");
+        ModelMap modelMap = new ModelMap();
+
+        Identifier id = new Identifier();
+        id.setIdentifier(projectId);
+
+        Collection<Relationship> relationships = relationshipService.
+                getRelationshipsForEntity(id, Project.class, Sample.class);
+        ResourceCollection<SampleResource> sampleResources = new ResourceCollection<>(relationships.size());
+
+        for (Relationship r : relationships) {
+            Sample sample = sampleService.read(r.getObject());
+            SampleResource sr = new SampleResource();
+            sr.setResource(sample);
+            sr.add(linkTo(methodOn(SamplesController.class).
+                    getResource(sample.getIdentifier().getIdentifier())).withSelfRel());
+            sr.add(linkTo(methodOn(RelationshipsController.class).
+                    getResource(r.getIdentifier().getIdentifier())).withRel(GenericController.REL_RELATIONSHIP));
+            sampleResources.add(sr);
+        }
+
+        modelMap.addAttribute(GenericController.RESOURCE_NAME, sampleResources);
+
+        return modelMap;
     }
 
     /**
