@@ -114,6 +114,9 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     @Autowired
     private RelationshipService relationshipService;
 
+    protected GenericController() {
+    }
+
     /**
      * Construct an instance of {@link GenericController}. {@link GenericController} is an abstract type, and should
      * only be used as a super-class.

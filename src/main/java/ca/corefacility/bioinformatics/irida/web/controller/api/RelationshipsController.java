@@ -18,10 +18,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @ExposesResourceFor(Relationship.class)
 @RequestMapping("/relationships")
 public class RelationshipsController extends GenericController<Identifier, Relationship, RelationshipResource> {
+
     /**
      * logger.
      */
     private static final Logger logger = LoggerFactory.getLogger(RelationshipsController.class);
+
+    protected RelationshipsController() {
+    }
 
     /**
      * Create a controller for managing {@link Relationship} resources on the web.

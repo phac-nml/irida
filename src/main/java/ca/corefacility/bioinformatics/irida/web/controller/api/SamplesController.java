@@ -18,7 +18,6 @@ package ca.corefacility.bioinformatics.irida.web.controller.api;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
-import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
@@ -34,6 +33,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @ExposesResourceFor(Sample.class)
 @RequestMapping(value = "/samples")
 public class SamplesController extends GenericController<Identifier, Sample, SampleResource> {
+
+    protected SamplesController() {
+    }
 
     /**
      * Constructor, requires a reference to a {@link CRUDService}.
