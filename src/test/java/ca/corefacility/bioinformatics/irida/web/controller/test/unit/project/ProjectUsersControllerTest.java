@@ -11,11 +11,13 @@ import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RelationshipsController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectUsersController;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.net.HttpHeaders;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -58,9 +60,11 @@ public class ProjectUsersControllerTest {
         u.setIdentifier(userId);
         Identifier id = new Identifier();
         id.setIdentifier(projectId);
+        Relationship r = new Relationship(userId, id);
+        r.setIdentifier(new Identifier());
 
         Collection<Relationship> relationshipCollection = new ArrayList<>();
-        relationshipCollection.add(new Relationship(userId, id));
+        relationshipCollection.add(r);
 
         when(userService.getUsersForProject(id)).thenReturn(relationshipCollection);
         when(userService.getUserByUsername(username)).thenReturn(u);
@@ -74,6 +78,9 @@ public class ProjectUsersControllerTest {
         assertEquals(1, users.size());
         UserResource ur = users.iterator().next();
         assertTrue(ur.getLink("self").getHref().endsWith(username));
+        Link relationship = ur.getLink(RelationshipsController.REL_RELATIONSHIP);
+        assertNotNull(relationship);
+        assertTrue(relationship.getHref().contains(r.getIdentifier().getIdentifier()));
         assertTrue(users.getLink("self").getHref().contains(projectId));
     }
 

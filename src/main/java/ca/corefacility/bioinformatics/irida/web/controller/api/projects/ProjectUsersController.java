@@ -10,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RelationshipsController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.UsersController;
 import com.google.common.net.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +82,9 @@ public class ProjectUsersController {
             User u = userService.getUserByUsername(r.getSubject().getIdentifier());
             UserResource ur = new UserResource(u);
             ur.add(linkTo(UsersController.class).slash(u.getIdentifier().getIdentifier()).withSelfRel());
+            ur.add(linkTo(RelationshipsController.class).
+                    slash(r.getIdentifier().getIdentifier()).withRel(RelationshipsController.REL_RELATIONSHIP));
+
             resources.add(ur);
         }
 
