@@ -6,8 +6,12 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.RelationshipService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RelationshipsController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.SequenceFileController;
 import com.google.common.net.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -52,6 +57,10 @@ public class ProjectSequenceFilesController {
      */
     private CRUDService<Identifier, SequenceFile> sequenceFileService;
     /**
+     * Reference to {@link RelationshipService} for managing {@link Relationship}.
+     */
+    private RelationshipService relationshipService;
+    /**
      * Reference to {@link SequenceFileController}.
      */
     private SequenceFileController sequenceFileController;
@@ -60,9 +69,12 @@ public class ProjectSequenceFilesController {
     }
 
     @Autowired
-    public ProjectSequenceFilesController(ProjectService projectService, CRUDService<Identifier, SequenceFile> sequenceFileService, SequenceFileController sequenceFileController) {
+    public ProjectSequenceFilesController(ProjectService projectService,
+                                          CRUDService<Identifier, SequenceFile> sequenceFileService,
+                                          RelationshipService relationshipService, SequenceFileController sequenceFileController) {
         this.projectService = projectService;
         this.sequenceFileService = sequenceFileService;
+        this.relationshipService = relationshipService;
         this.sequenceFileController = sequenceFileController;
     }
 
@@ -161,7 +173,29 @@ public class ProjectSequenceFilesController {
      */
     @RequestMapping(value = "/projects/{projectId}/sequenceFiles", method = RequestMethod.GET)
     public ModelMap getProjectSequenceFiles(@PathVariable String projectId) {
-        throw new UnsupportedOperationException("not implemented");
+        ModelMap modelMap = new ModelMap();
+
+        Identifier id = new Identifier();
+        id.setIdentifier(projectId);
+
+        Collection<Relationship> relationships = relationshipService.
+                getRelationshipsForEntity(id, Project.class, SequenceFile.class);
+        ResourceCollection<SequenceFileResource> sampleResources = new ResourceCollection<>(relationships.size());
+
+        for (Relationship r : relationships) {
+            SequenceFile sequenceFile = sequenceFileService.read(r.getObject());
+            SequenceFileResource sr = new SequenceFileResource();
+            sr.setResource(sequenceFile);
+            sr.add(linkTo(methodOn(SequenceFileController.class).
+                    getResource(sequenceFile.getIdentifier().getIdentifier())).withSelfRel());
+            sr.add(linkTo(methodOn(RelationshipsController.class).
+                    getResource(r.getIdentifier().getIdentifier())).withRel(GenericController.REL_RELATIONSHIP));
+            sampleResources.add(sr);
+        }
+
+        modelMap.addAttribute(GenericController.RESOURCE_NAME, sampleResources);
+
+        return modelMap;
     }
 
     /**

@@ -6,11 +6,15 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.RelationshipService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.SequenceFileController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
+import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
 import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
 import org.junit.Before;
@@ -30,6 +34,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -47,6 +52,7 @@ public class ProjectSequenceFilesControllerTest {
     private ProjectSequenceFilesController controller;
     private ProjectService projectService;
     private CRUDService<Identifier, SequenceFile> sequenceFileService;
+    private RelationshipService relationshipService;
     private SequenceFileController sequenceFilesController;
 
     public ProjectSequenceFilesControllerTest() {
@@ -57,8 +63,9 @@ public class ProjectSequenceFilesControllerTest {
         projectService = mock(ProjectService.class);
         sequenceFileService = mock(CRUDService.class);
         sequenceFilesController = mock(SequenceFileController.class);
+        relationshipService = mock(RelationshipService.class);
 
-        controller = new ProjectSequenceFilesController(projectService, sequenceFileService, sequenceFilesController);
+        controller = new ProjectSequenceFilesController(projectService, sequenceFileService, relationshipService, sequenceFilesController);
         // fake out the servlet response so that the URI builder will work.
         RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
         RequestContextHolder.setRequestAttributes(ra);
@@ -97,7 +104,7 @@ public class ProjectSequenceFilesControllerTest {
     }
 
     @Test
-    public void testRemoveSequenceFileFromProject() {
+    public void testRemoveSequenceFileFromProject() throws IOException {
         Project p = constructProject();
         SequenceFile sf = constructSequenceFile();
 
@@ -129,6 +136,40 @@ public class ProjectSequenceFilesControllerTest {
         assertTrue(rels.isEmpty());
     }
 
+    @Test
+    public void testGetSequenceFilesForProject() throws IOException {
+        Project p = constructProject();
+        SequenceFile sf = constructSequenceFile();
+        Relationship r = new Relationship();
+        r.setSubject(p.getIdentifier());
+        r.setObject(sf.getIdentifier());
+        r.setIdentifier(new Identifier());
+        Collection<Relationship> relationships = Sets.newHashSet(r);
+
+        String projectId = p.getIdentifier().getIdentifier();
+
+        when(projectService.read(p.getIdentifier())).thenReturn(p);
+        when(relationshipService.getRelationshipsForEntity(p.getIdentifier(), Project.class, SequenceFile.class)).thenReturn(relationships);
+        when(sequenceFileService.read(sf.getIdentifier())).thenReturn(sf);
+
+        ModelMap modelMap = controller.getProjectSequenceFiles(projectId);
+
+        Object o = modelMap.get(GenericController.RESOURCE_NAME);
+        assertTrue(o instanceof ResourceCollection);
+        @SuppressWarnings("unchecked")
+        ResourceCollection<SequenceFileResource> samples = (ResourceCollection<SequenceFileResource>) o;
+        assertEquals(1, samples.size());
+        SequenceFileResource resource = samples.iterator().next();
+        assertEquals(sf.getFile().getName(), resource.getFile().getName());
+        List<Link> links = resource.getLinks();
+        Set<String> rels = Sets.newHashSet(PageLink.REL_SELF, GenericController.REL_RELATIONSHIP);
+        for (Link link : links) {
+            assertTrue(rels.contains(link.getRel()));
+            assertNotNull(rels.remove(link.getRel()));
+        }
+        assertTrue(rels.isEmpty());
+    }
+
     /**
      * Construct a simple {@link Project}.
      *
@@ -148,12 +189,15 @@ public class ProjectSequenceFilesControllerTest {
      *
      * @return a {@link SequenceFile} with identifier.
      */
-    private SequenceFile constructSequenceFile() {
+    private SequenceFile constructSequenceFile() throws IOException {
         String sequenceFileId = UUID.randomUUID().toString();
         Identifier sequenceFileIdentifier = new Identifier();
+        File f = Files.createTempFile(null, null).toFile();
+        f.deleteOnExit();
         sequenceFileIdentifier.setIdentifier(sequenceFileId);
         SequenceFile sf = new SequenceFile();
         sf.setIdentifier(sequenceFileIdentifier);
+        sf.setFile(f);
         return sf;
     }
 }
