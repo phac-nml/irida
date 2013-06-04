@@ -59,10 +59,7 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      * rel used for accessing an individual project.
      */
     public static final String PROJECT_REL = "project";
-    /**
-     * Logger.
-     */
-    private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
+
     /**
      * rel used for accessing users associated with a project.
      */
@@ -93,14 +90,6 @@ public class ProjectsController extends GenericController<Identifier, Project, P
     public ProjectsController(ProjectService projectService, UserService userService) {
         super(projectService, Project.class, Identifier.class, ProjectResource.class);
         this.userService = userService;
-    }
-
-    /**
-     * A default constructor is required for the convenience <code>methodOn</code> method that the Spring HATEOAS
-     * project provides. This method *should not* be used by anyone.
-     */
-    protected ProjectsController() {
-        super(null, null, null, null);
     }
 
     /**
