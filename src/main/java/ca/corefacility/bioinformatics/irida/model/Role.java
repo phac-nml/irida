@@ -1,12 +1,13 @@
 package ca.corefacility.bioinformatics.irida.model;
 
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
-import java.util.Objects;
-import javax.validation.constraints.NotNull;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import org.springframework.security.core.GrantedAuthority;
+
+import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 /**
  * Roles for authorization in the application.
@@ -30,6 +31,11 @@ public class Role implements Comparable<Role>, GrantedAuthority, Auditable<Audit
     public Role(Identifier id) {
         this();
         this.id = id;
+    }
+
+    public Role(String name) {
+        this();
+        this.name = name;
     }
 
     @Override
@@ -81,6 +87,11 @@ public class Role implements Comparable<Role>, GrantedAuthority, Auditable<Audit
     }
 
     @Override
+    public void setAuditInformation(Audit audit) {
+        this.audit = audit;
+    }
+
+    @Override
     public Identifier getIdentifier() {
         return id;
     }
@@ -88,10 +99,5 @@ public class Role implements Comparable<Role>, GrantedAuthority, Auditable<Audit
     @Override
     public void setIdentifier(Identifier identifier) {
         this.id = identifier;
-    }
-
-    @Override
-    public void setAuditInformation(Audit audit) {
-        this.audit = audit;
     }
 }
