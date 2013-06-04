@@ -16,6 +16,7 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api;
 
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
+import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.Link;

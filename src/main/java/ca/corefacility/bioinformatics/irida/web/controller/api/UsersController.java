@@ -8,6 +8,7 @@ import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
+import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
