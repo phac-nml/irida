@@ -12,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController
 import ca.corefacility.bioinformatics.irida.web.controller.api.ProjectsController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.SamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.SequenceFileController;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
 import org.junit.Before;
@@ -228,6 +229,32 @@ public class ProjectsControllerTest {
         assertTrue(rels.isEmpty());
     }
 
+    @Test
+    public void testAddUserToProject() {
+        Project p = constructProject();
+        User u = constructUser();
+
+        when(projectService.read(p.getIdentifier())).thenReturn(p);
+        when(userService.getUserByUsername(u.getUsername())).thenReturn(u);
+
+        // prepare the "user" for addition to the project, just a map of userId and a username.
+        Map<String, String> user = ImmutableMap.of(ProjectsController.USER_ID_KEY, u.getUsername());
+
+        // add the user to the project
+        ResponseEntity<String> response = controller.addUserToProject(p.getIdentifier().getIdentifier(), user);
+
+        // confirm that the service method was called
+        verify(projectService, times(1)).addUserToProject(p, u, new Role("ROLE_USER"));
+
+        // check that the response is as expected:
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        List<String> locations = response.getHeaders().get(HttpHeaders.LOCATION);
+        assertNotNull(locations);
+        assertFalse(locations.isEmpty());
+        assertEquals(1, locations.size());
+        assertEquals("http://localhost/projects/" + p.getIdentifier().getIdentifier() + "/users/" + u.getUsername(), locations.iterator().next());
+    }
+
     /**
      * Construct a simple {@link Sample}.
      *
@@ -270,5 +297,21 @@ public class ProjectsControllerTest {
         SequenceFile sf = new SequenceFile();
         sf.setIdentifier(sequenceFileIdentifier);
         return sf;
+    }
+
+    /**
+     * Construct a simple {@link User}.
+     *
+     * @return a {@link User} with identifier.
+     */
+    private User constructUser() {
+        User u = new User();
+        String username = "fbristow";
+        UserIdentifier uid = new UserIdentifier();
+        uid.setIdentifier(username);
+        u.setIdentifier(uid);
+        u.setUsername(username);
+
+        return u;
     }
 }

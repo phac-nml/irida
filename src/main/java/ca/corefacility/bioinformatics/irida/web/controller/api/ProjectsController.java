@@ -79,6 +79,10 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      */
     public static final String PROJECT_SEQUENCE_FILES_REL = "project/sequenceFiles";
     /**
+     * key used in map when adding user to project.
+     */
+    public static final String USER_ID_KEY = "userId";
+    /**
      * Logger.
      */
     private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
@@ -193,21 +197,27 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      */
     @RequestMapping(value = "/{projectId}/users", method = RequestMethod.POST)
     public ResponseEntity<String> addUserToProject(@PathVariable String projectId,
-                                                   @RequestBody Map<String, Object> representation) {
+                                                   @RequestBody Map<String, String> representation) {
         Identifier id = new Identifier();
         id.setIdentifier(projectId);
         // first, get the project
         Project p = projectService.read(id);
 
+        String username = representation.get(USER_ID_KEY);
+
         // then, get the user
-        User u = userService.getUserByUsername(representation.get("userIdentifier").toString());
-        Role r = new Role();
-        r.setName("ROLE_USER");
+        User u = userService.getUserByUsername(username);
+        Role r = new Role("ROLE_USER");
 
         // then add the user to the project with the specified role.
         projectService.addUserToProject(p, u, r);
 
-        return new ResponseEntity<>("success", HttpStatus.OK);
+        String location = linkTo(ProjectsController.class).slash(projectId).slash("users").slash(username).withSelfRel().getHref();
+
+        MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
+        responseHeaders.add(HttpHeaders.LOCATION, location);
+
+        return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
     }
 
     /**
