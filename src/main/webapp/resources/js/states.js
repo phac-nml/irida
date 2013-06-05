@@ -37,6 +37,7 @@
           }
         },
         controller: function ($scope, data) {
+          console.log(data);
           $scope.project = {
             name: data.resource.name,
             users: data.relatedResources.users.resources
@@ -46,7 +47,7 @@
       .state('login', {
         url: '/login',
 
-        templateUrl: '/partials/login.content.html'
+        templateUrl: '/partials/login.html'
       });
   });
 })
