@@ -15,24 +15,47 @@
  */
 package ca.corefacility.bioinformatics.irida.service;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * A service class for working with samples.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-@Transactional
-public interface SampleService extends CRUDService<Identifier, Sample>{
+public interface SampleService extends CRUDService<Identifier, Sample> {
 
     /**
      * Add a sample file to a sample.
      *
-     * @param sample the sample that the file belongs to.
+     * @param sample     the sample that the file belongs to.
      * @param sampleFile the file that we're adding.
+     * @return the relationship created between the two entities.
      */
-    public void addSampleFileToSample(Sample sample, SequenceFile sampleFile);
+    public Relationship addSequenceFileToSample(Sample sample, SequenceFile sampleFile);
+
+    /**
+     * Get a specific instance of a {@link Sample} that belongs to a {@link Project}. If the {@link Sample} is not
+     * associated to the {@link Project} (i.e., no {@link Relationship} is shared between the {@link Sample} and
+     * {@link Project}, then an {@link EntityNotFoundException} will be thrown.
+     *
+     * @param project    the {@link Project} to get the {@link Sample} for.
+     * @param identifier the {@link Identifier} of the {@link Sample}
+     * @return the {@link Sample} as requested
+     * @throws EntityNotFoundException if no {@link Relationship} exists between {@link Sample} and {@link Project}.
+     */
+    public Sample getSampleForProject(Project project, Identifier identifier) throws EntityNotFoundException;
+
+    /**
+     * Move an instance of a {@link SequenceFile} associated with a {@link Sample} to its parent {@link Project}.
+     *
+     * @param project the project
+     * @param sample
+     * @param sequenceFile
+     */
+    public void removeSequenceFileFromSample(Project project, Sample sample, SequenceFile sequenceFile);
 }
