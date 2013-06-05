@@ -22,8 +22,10 @@ public interface ProjectService extends CRUDService<Identifier, Project> {
      * @param project the {@link Project} to add the user to.
      * @param user    the user to add to the {@link Project}.
      * @param role    the role that the user plays on the {@link Project}.
+     * 
+     * @return a reference to the relationship resource created between the two entities.
      */
-    public void addUserToProject(Project project, User user, Role role);
+    public Relationship addUserToProject(Project project, User user, Role role);
 
     /**
      * Add the specified {@link Sample} to the {@link Project}.
