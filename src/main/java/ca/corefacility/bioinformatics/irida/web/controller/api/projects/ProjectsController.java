@@ -29,8 +29,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController
 import ca.corefacility.bioinformatics.irida.web.controller.api.RelationshipsController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.UsersController;
 import ca.corefacility.bioinformatics.irida.web.controller.links.LabelledRelationshipResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Link;
@@ -59,7 +57,6 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      * rel used for accessing an individual project.
      */
     public static final String PROJECT_REL = "project";
-
     /**
      * rel used for accessing users associated with a project.
      */
@@ -80,6 +77,12 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      * Reference to {@link UserService} for getting users associated with a project.
      */
     private UserService userService;
+
+    /**
+     * Default constructor. Should not be used.
+     */
+    protected ProjectsController() {
+    }
 
     /**
      * Constructor for {@link ProjectsController}, requires a reference to a {@link ProjectService}.

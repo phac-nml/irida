@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ca.corefacility.bioinformatics.irida.web.controller.api;
+package ca.corefacility.bioinformatics.irida.web.controller.api.samples;
 
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
+import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.stereotype.Controller;
@@ -33,6 +34,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @ExposesResourceFor(Sample.class)
 @RequestMapping(value = "/samples")
 public class SamplesController extends GenericController<Identifier, Sample, SampleResource> {
+
+    /**
+     * Rel to get to the sequence files associated with a sample.
+     */
+    public static final String REL_SEQUENCE_FILES = "sample/sequenceFiles";
+    /**
+     * Rel to get to the project that this sample belongs to.
+     */
+    public static final String REL_PROJECT = "sample/project";
 
     protected SamplesController() {
     }
