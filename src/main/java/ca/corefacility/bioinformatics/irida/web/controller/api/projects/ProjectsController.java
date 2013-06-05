@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
@@ -29,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController
 import ca.corefacility.bioinformatics.irida.web.controller.api.RelationshipsController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.UsersController;
 import ca.corefacility.bioinformatics.irida.web.controller.links.LabelledRelationshipResource;
+import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Link;
@@ -77,6 +79,10 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      * Reference to {@link UserService} for getting users associated with a project.
      */
     private UserService userService;
+    /**
+     * Reference to {@link RelationshipService}.
+     */
+    private RelationshipService relationshipService;
 
     /**
      * Default constructor. Should not be used.
@@ -90,9 +96,11 @@ public class ProjectsController extends GenericController<Identifier, Project, P
      * @param projectService the {@link ProjectService} to be used by this controller.
      */
     @Autowired
-    public ProjectsController(ProjectService projectService, UserService userService) {
+    public ProjectsController(ProjectService projectService, UserService userService,
+                              RelationshipService relationshipService) {
         super(projectService, Project.class, Identifier.class, ProjectResource.class);
         this.userService = userService;
+        this.relationshipService = relationshipService;
     }
 
     /**
@@ -124,7 +132,6 @@ public class ProjectsController extends GenericController<Identifier, Project, P
     @Override
     protected Map<String, Class<?>> getUniquelyRelatedClasses() {
         Map<String, Class<?>> relatedResources = new HashMap<>();
-        relatedResources.put(PROJECT_SAMPLES_MAP_LABEL, Sample.class);
         relatedResources.put(PROJECT_SEQUENCE_FILES_MAP_LABEL, SequenceFile.class);
         return relatedResources;
     }
@@ -138,8 +145,33 @@ public class ProjectsController extends GenericController<Identifier, Project, P
         Map<String, ResourceCollection<LabelledRelationshipResource>> resources = new HashMap<>();
 
         resources.put(PROJECT_USERS_MAP_LABEL, getUsersForProject(project));
-
+        resources.put(PROJECT_SAMPLES_MAP_LABEL, getSamplesForProject(project));
         return resources;
+    }
+
+    /**
+     * Get the samples for this project.
+     *
+     * @param project the project to get samples for.
+     * @return the labels and identifiers for the samples attached to this project.
+     */
+    private ResourceCollection<LabelledRelationshipResource> getSamplesForProject(Project project) {
+        Collection<Relationship> relationships = relationshipService.getRelationshipsForEntity(project.getIdentifier(),
+                Project.class, Sample.class);
+        ResourceCollection<LabelledRelationshipResource> sampleResources = new ResourceCollection<>(relationships.size());
+        String projectId = project.getIdentifier().getIdentifier();
+        for (Relationship r : relationships) {
+            Identifier sampleIdentifier = r.getObject();
+            LabelledRelationshipResource resource = new LabelledRelationshipResource(sampleIdentifier.getLabel(), r);
+            resource.add(linkTo(methodOn(ProjectSamplesController.class)
+                    .getProjectSample(projectId, sampleIdentifier.getIdentifier())).withRel(PageLink.REL_SELF));
+            sampleResources.add(resource);
+        }
+        sampleResources.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSamples(projectId))
+                .withRel(ProjectSamplesController.PROJECT_SAMPLES_REL));
+        sampleResources.setTotalResources(relationships.size());
+
+        return sampleResources;
     }
 
     /**

@@ -159,7 +159,7 @@ public class ProjectSamplesControllerTest {
         SampleResource resource = samples.iterator().next();
         assertEquals(s.getSampleName(), resource.getSampleName());
         List<Link> links = resource.getLinks();
-        Set<String> rels = Sets.newHashSet(PageLink.REL_SELF, GenericController.REL_RELATIONSHIP);
+        Set<String> rels = Sets.newHashSet(PageLink.REL_SELF);
         for (Link link : links) {
             assertTrue(rels.contains(link.getRel()));
             assertNotNull(rels.remove(link.getRel()));
