@@ -158,6 +158,29 @@ public class SampleSequenceFilesController {
     @RequestMapping(value = "/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.GET)
     public ModelMap getSequenceFileForSample(@PathVariable String projectId, @PathVariable String sampleId,
                                              @PathVariable String sequenceFileId) {
-        throw new UnsupportedOperationException("not implemented.");
+        ModelMap modelMap = new ModelMap();
+        Identifier projectIdentifier = new Identifier(projectId);
+        Identifier sampleIdentifier = new Identifier(sampleId);
+        Identifier sequenceFileIdentifier = new Identifier(sequenceFileId);
+        // test for the existence of a relationship between the project, sample and sequence files
+        Relationship projectSampleRel = relationshipService.getRelationship(projectIdentifier, sampleIdentifier);
+        Relationship sampleSequenceFileRel = relationshipService.getRelationship(sampleIdentifier, sequenceFileIdentifier);
+
+        // if the relationships exist, load the sequence file from the database and prepare for serialization.
+        SequenceFile sf = sequenceFileService.read(sampleSequenceFileRel.getObject());
+        SequenceFileResource sfr = new SequenceFileResource();
+        sfr.setResource(sf);
+
+        // add links to the resource
+        sfr.add(linkTo(methodOn(SequenceFileController.class).getResource(sequenceFileId)).withSelfRel());
+        sfr.add(linkTo(methodOn(SampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
+                .withRel(REL_PROJECT_SEQUENCE_FILE));
+        sfr.add(linkTo(methodOn(SampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,
+                sequenceFileId)).withRel(GenericController.REL_RELATIONSHIP));
+
+        // add the resource to the response
+        modelMap.addAttribute(GenericController.RESOURCE_NAME, sfr);
+
+        return modelMap;
     }
 }

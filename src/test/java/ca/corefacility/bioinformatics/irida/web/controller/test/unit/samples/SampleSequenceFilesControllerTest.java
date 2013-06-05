@@ -9,7 +9,6 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
@@ -120,6 +119,45 @@ public class SampleSequenceFilesControllerTest {
         List<Link> links = resource.getLinks();
         Set<String> rels = Sets.newHashSet(SampleSequenceFilesController.REL_SAMPLE,
                 SampleSequenceFilesController.REL_PROJECT_SEQUENCE_FILE);
+        for (Link l : links) {
+            assertTrue(rels.contains(l.getRel()));
+            assertNotNull(rels.remove(l.getRel()));
+        }
+
+        assertTrue(rels.isEmpty());
+    }
+
+    @Test
+    public void testGetSequenceFileForSample() throws IOException {
+        Project p = constructProject();
+        Sample s = constructSample();
+        SequenceFile sf = constructSequenceFile();
+        Relationship projectSampleRelationship = new Relationship();
+        projectSampleRelationship.setSubject(p.getIdentifier());
+        projectSampleRelationship.setObject(s.getIdentifier());
+        Relationship sampleSequenceFileRelationship = new Relationship();
+        sampleSequenceFileRelationship.setSubject(s.getIdentifier());
+        sampleSequenceFileRelationship.setObject(sf.getIdentifier());
+
+        when(relationshipService.getRelationship(p.getIdentifier(), s.getIdentifier())).thenReturn(projectSampleRelationship);
+        when(relationshipService.getRelationship(s.getIdentifier(), sf.getIdentifier())).thenReturn(sampleSequenceFileRelationship);
+        when(sequenceFileService.read(sf.getIdentifier())).thenReturn(sf);
+
+        ModelMap modelMap = controller.getSequenceFileForSample(p.getIdentifier().getIdentifier(),
+                s.getIdentifier().getIdentifier(), sf.getIdentifier().getIdentifier());
+
+        verify(relationshipService, times(1)).getRelationship(p.getIdentifier(), s.getIdentifier());
+        verify(relationshipService, times(1)).getRelationship(s.getIdentifier(), sf.getIdentifier());
+        verify(sequenceFileService, times(1)).read(sf.getIdentifier());
+
+        Object o = modelMap.get(GenericController.RESOURCE_NAME);
+        assertNotNull(o);
+        assertTrue(o instanceof SequenceFileResource);
+        SequenceFileResource sfr = (SequenceFileResource) o;
+        assertEquals(sf.getFile().getName(), sfr.getFile().getName());
+        List<Link> links = sfr.getLinks();
+        Set<String> rels = Sets.newHashSet(PageLink.REL_SELF, SampleSequenceFilesController.REL_PROJECT_SEQUENCE_FILE,
+                GenericController.REL_RELATIONSHIP);
         for (Link l : links) {
             assertTrue(rels.contains(l.getRel()));
             assertNotNull(rels.remove(l.getRel()));
