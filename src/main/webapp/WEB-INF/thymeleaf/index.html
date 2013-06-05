@@ -1,50 +1,59 @@
 <!DOCTYPE html>
-<html ng-app="NGS" ng-controller="MainCtrl">
+<html lang="en" data-ng-app="NGS">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <title>NGS Archiver :: {{windowTitle}}</title>
-    <meta name="description" content=""/>
-
-    <link href='http://fonts.googleapis.com/css?family=Ubuntu:400,700' rel='stylesheet' type='text/css'/>
-    <link rel="stylesheet" type="text/css" href="/css/foundation.css" th:href="@{/css/foundation.css}"/>
-    <link rel="stylesheet" type="text/css" href="/css/main.css" th:href="@{/css/main.css}"/>
+    <title>NGS Archive</title>
+    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600' rel='stylesheet' type='text/css'/>
+    <link rel="stylesheet" type="text/css" href="/css/foundation.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/main.css"/>
 </head>
-<body>
-<ngs-navbar></ngs-navbar>
+<body data-ng-controller="MainCtrl">
+<div class="main">
+    <div ui-view=""></div>
+</div>
+<!--<ngs-notifier></ngs-notifier>-->
+<!--<ngs-navbar></ngs-navbar>-->
+<!--<header>NGS Archive</header>-->
+<!--<div class="main">-->
+<!--<div class="left-bar" data-ng-controller="ProjectsListCtrl as pCtrl">-->
+<!--<ul>-->
+<!--<li data-ng-repeat="p in pCtrl.projects" data-ng-click="pCtrl.gotoProject(p.links[0].href)"><i class="fav icon-star"></i> {{p.name}}</li>-->
+<!--</ul>-->
+<!--</div>-->
+<!--<ng-view class="content" ng-animate="{enter:'fade-enter'}"></ng-view>-->
+<!--</div>-->
 
-
-    <ngs-notifier attr-icon="{{notifier.icon}}" attr-message="{{notifier.message}}"
-                  attr-link="{{notifier.link}}"></ngs-notifier>
-    <ng-view ng-animate="{enter:'fade-enter'}"></ng-view>
-
-<div th:include="fragments/login-modal" th:remove="tag"></div>
 <script src="/js/lib/jquery.js"></script>
 <script src="/js/lib/foundation/foundation.js"></script>
-<script src="/js/lib/foundation/foundation.reveal.js"></script>
-<script src="/js/lib/angular/angular.min.js"></script>
-<script src="/js/lib/angular/angular-resource.min.js"></script>
-<script src="/js/lib/angular/angular-cookies.min.js"></script>
-<script src="/js/lib/angular/angular-ui.js"></script>
-<script src="/js/lib/angular/ng-infinite-scroll.min.js"></script>
+<script src="/js/lib/foundation/foundation.section.js"></script>
+<script src="/js/lib/angular.min.js"></script>
+<script src="/js/lib/angular-resource.min.js"></script>
+<script src="/js/lib/angular-cookies.min.js"></script>
+<script src="/js/lib/angular-router.min.js"></script>
+<!-- <script src="/js/lib/angular/angular-ui.js"></script> -->
+<!-- <script src="/js/lib/angular/ng-infinite-scroll.min.js"></script> -->
 <script src="/js/app.js"></script>
-<script src="/js/services/services.js"></script>
-<script src="/js/directives/Notifier.js"></script>
-<script src="/js/directives/FileUploader.js"></script>
-<script src="/js/directives/LoginModal.js"></script>
-<script src="/js/directives/Navbar.js"></script>
+<script src="/js/states.js"></script>
+<script src="/js/services/http-auth-interceptor.js"></script>
+<script src="/js/services/loginService.js"></script>
+<script src="/js/services/ajaxService.js"></script>
+<script src="/js/directives/section.js"></script>
+<!-- <script src="/js/directives/FileUploader.js"></script> -->
+<!-- <script src="/js/directives/LoginModal.js"></script> -->
+<!-- <script src="/js/directives/Navbar.js"></script> -->
+<!-- <script src="/js/directives/InfinitePosition.js"></script> -->
 <script src="/js/controllers/main.js"></script>
 <script src="/js/controllers/login.js"></script>
-<script src="/js/controllers/project.js"></script>
-<script src="/js/controllers/landing.js"></script>
+<!-- <script src="/js/controllers/project.js"></script> -->
+<!-- <script src="/js/controllers/landing.js"></script> -->
 <script src="/js/controllers/projectsList.js"></script>
-<script src="/js/controllers/usersList.js"></script>
-<script src="/js/controllers/user.js"></script>
+<script src="/js/controllers/project.js"></script>
+<!-- <script src="/js/controllers/usersList.js"></script> -->
+<!-- <script src="/js/controllers/user.js"></script> -->
 
-<!--<script src="/js/config/render-context.js"></script>-->
-
-<!-- TODO (josh: 2013-05-21) Make the setup of foundation into a directive -->
+<!-- TODO (josh: 2013-05-21) Make the setup of foundation into a directive  -->
 <script>
     $(document).foundation();
 </script>

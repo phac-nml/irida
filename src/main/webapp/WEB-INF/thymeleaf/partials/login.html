@@ -1,16 +1,19 @@
 <div class="large-4 large-offset-8" ng-controller="LoginCtrl"><h2>Login</h2>
-<form name="loginForm" novalidated="true">
-    <p>
-        <label for="username" class="uname" data-icon="u"> Your email or username </label>
-        <input id="username" name="username" required="required" type="text"
-               placeholder="myusername or mymail@mail.com" ng-model="username"/>
-    </p>
 
-    <p>
-        <label for="password" class="youpasswd" data-icon="p"> Your password </label>
-        <input id="password" required="required" type="password" ng-model="password"
-               placeholder="eg. X8df!90EO"/>
-    </p>
-    <div ng-show="showError" class="error">Invalid login credentials.</div>
-    <button class="radius" data-ng-class="{disabled: !loginForm.$valid}" ng-click="login()">Login</button>
-</form></div>
+    <form name="loginForm" novalidated="true">
+        <p>
+            <label for="username" class="uname" data-icon="u"> Your email or username </label>
+            <input id="username" name="username" required="required" type="text"
+                   placeholder="myusername or mymail@mail.com" ng-model="username"/>
+        </p>
+
+        <p>
+            <label for="password" class="youpasswd" data-icon="p"> Your password </label>
+            <input id="password" required="required" type="password" ng-model="password"
+                   placeholder="eg. X8df!90EO"/>
+        </p>
+
+        <div ng-show="showError" class="error">Invalid login credentials.</div>
+        <button class="radius" data-ng-class="{disabled: !loginForm.$valid}" ng-click="login()">Login</button>
+    </form>
+</div>

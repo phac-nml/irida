@@ -13,9 +13,9 @@
 
     <!-- resources to be served outside of request mappings (CSS, JS, fonts) -->
     <!-- These mappings have a higher precedence than those in the request mappings -->
-    <mvc:resources mapping="/css/**" location="/resources/dev/css/" order="-1"/>
-    <mvc:resources mapping="/js/**" location="/resources/dev/js/" order="-1"/>
-    <mvc:resources mapping="/font/**" location="/resources/dev/font/" order="-1"/>
+    <mvc:resources mapping="/css/**" location="/resources/css/" order="-1"/>
+    <mvc:resources mapping="/js/**" location="/resources/js/" order="-1"/>
+    <mvc:resources mapping="/font/**" location="/resources/font/" order="-1"/>
 
     <!--
         - POJOs labeled with the @Controller and @Service annotations are auto-detected.

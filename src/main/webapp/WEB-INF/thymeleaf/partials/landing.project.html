@@ -1,0 +1,25 @@
+<div data-ng-controller="ProjectCtrl">
+    <div class="large-12 columns">
+        <h1>{{project.name}}</h1>
+        <div class="section-container tabs" data-section="tabs" ngs-section="">
+            <section>
+                <p class="title" data-section-title=""><a href="#">Project Samples</a></p>
+
+                <div class="content" data-section-content="">
+                    <div class="row"><div class="large-12 columns"><p>This will contain a list of project files.</p></div></div>
+                </div>
+            </section>
+            <section>
+                <p class="title" data-section-title=""><a href="#">Project Users</a></p>
+
+                <div class="content" data-section-content="">
+                    <div class="row" data-ng-repeat="u in project.users">
+                        <div class="large-4 columns">{{u.label}}</div>
+                        <div class="large-4 columns">{{u.dateCreated  | date:'short'}}</div>
+                        <div class="large-4 columns">FRED IS DEAD</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>

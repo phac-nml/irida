@@ -1,5 +1,6 @@
-<div style="display: none" class="ng-cloak notifier" tabindex="-1" data-ng-hide="hidden" data-ng-animate="'notifier'">
+<div style="display: none" class="ng-cloak notifier" tabindex="-1" data-ng-hide="hidden">
     <span class="left">
-        <i class="icon-{{icon}}"></i> {{message}}
-    </span><a href="#" class="right" ng-click="undo(selfLink)">undo</a>
+        <i class="icon-{{data.icon}}"></i> {{data.msg}}
+    </span>
+    <span class="right" ng-click="sendCallback()">undo</span>
 </div>
