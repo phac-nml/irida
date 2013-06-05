@@ -12,7 +12,8 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RelationshipsController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.SamplesController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SamplesController;
 import com.google.common.net.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -142,14 +143,39 @@ public class ProjectSamplesController {
     }
 
     /**
-     * Get the representation of a specific sample that's associated with the project.
+     * Get the representation of a specific sample that's associated with the project. This method originally passed
+     * through to {@link SamplesController}, but that was a bad idea because it ignored the project identifier entirely,
+     * meaning that a client could read *any* {@link Sample}, as long as they had the identifier for it.
      *
-     * @param sampleId the sample identifier that we're looking for.
+     * @param projectId the {@link Project} identifier that the {@link Sample} should be associated with.
+     * @param sampleId  the {@link Sample} identifier that we're looking for.
      * @return a representation of the specific sample.
      */
     @RequestMapping(value = "/projects/{projectId}/samples/{sampleId}", method = RequestMethod.GET)
     public ModelMap getProjectSample(@PathVariable String projectId, @PathVariable String sampleId) {
-        return samplesController.getResource(sampleId);
+        ModelMap modelMap = new ModelMap();
+        Identifier projectIdentifier = new Identifier(projectId);
+        Identifier sampleIdentifier = new Identifier(sampleId);
+
+        // load the project
+        Project p = projectService.read(projectIdentifier);
+        // get the sample for the project.
+        Sample s = sampleService.getSampleForProject(p, sampleIdentifier);
+
+        // prepare the sample for serializing to the client
+        SampleResource sr = new SampleResource();
+        sr.setResource(s);
+
+        // add a link to: 1) self, 2) sequenceFiles, 3) project
+        sr.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSample(projectId, sampleId)).withSelfRel());
+        sr.add(linkTo(methodOn(ProjectsController.class).getResource(projectId)).withRel(SamplesController.REL_PROJECT));
+        sr.add(linkTo(methodOn(SampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
+                .withRel(SamplesController.REL_SEQUENCE_FILES));
+
+        // add the sample resource to the response
+        modelMap.addAttribute(GenericController.RESOURCE_NAME, sr);
+
+        return modelMap;
     }
 
     /**

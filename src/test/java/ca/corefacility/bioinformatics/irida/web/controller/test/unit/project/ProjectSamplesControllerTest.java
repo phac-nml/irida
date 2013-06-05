@@ -11,7 +11,7 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.SamplesController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
@@ -137,7 +137,8 @@ public class ProjectSamplesControllerTest {
         String projectId = p.getIdentifier().getIdentifier();
 
         when(projectService.read(p.getIdentifier())).thenReturn(p);
-        when(relationshipService.getRelationshipsForEntity(p.getIdentifier(), Project.class, Sample.class)).thenReturn(relationships);
+        when(relationshipService.getRelationshipsForEntity(p.getIdentifier(),
+                Project.class, Sample.class)).thenReturn(relationships);
         when(sampleService.read(s.getIdentifier())).thenReturn(s);
 
         ModelMap modelMap = controller.getProjectSamples(projectId);
@@ -151,6 +152,33 @@ public class ProjectSamplesControllerTest {
         assertEquals(s.getSampleName(), resource.getSampleName());
         List<Link> links = resource.getLinks();
         Set<String> rels = Sets.newHashSet(PageLink.REL_SELF, GenericController.REL_RELATIONSHIP);
+        for (Link link : links) {
+            assertTrue(rels.contains(link.getRel()));
+            assertNotNull(rels.remove(link.getRel()));
+        }
+        assertTrue(rels.isEmpty());
+    }
+
+    @Test
+    public void testGetIndividualSample() {
+        Project p = constructProject();
+        Sample s = constructSample();
+
+        when(projectService.read(p.getIdentifier())).thenReturn(p);
+        when(sampleService.getSampleForProject(p, s.getIdentifier())).thenReturn(s);
+
+        ModelMap modelMap = controller.getProjectSample(p.getIdentifier().getIdentifier(),
+                s.getIdentifier().getIdentifier());
+
+        verify(sampleService, times(1)).getSampleForProject(p, s.getIdentifier());
+        verify(projectService, times(1)).read(p.getIdentifier());
+
+        Object o = modelMap.get(GenericController.RESOURCE_NAME);
+        assertTrue(o instanceof SampleResource);
+        SampleResource sr = (SampleResource) o;
+        Set<String> rels = Sets.newHashSet(PageLink.REL_SELF, SamplesController.REL_SEQUENCE_FILES,
+                SamplesController.REL_PROJECT);
+        List<Link> links = sr.getLinks();
         for (Link link : links) {
             assertTrue(rels.contains(link.getRel()));
             assertNotNull(rels.remove(link.getRel()));
