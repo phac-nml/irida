@@ -11,7 +11,6 @@ import java.util.Collection;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-@Transactional
 public interface ProjectService extends CRUDService<Identifier, Project> {
 
     /**
