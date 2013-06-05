@@ -5,10 +5,13 @@ import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
@@ -16,12 +19,15 @@ import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
 import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.hateoas.Link;
 import org.springframework.ui.ModelMap;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -35,14 +41,16 @@ public class SampleSequenceFilesControllerTest {
     private SequenceFileService sequenceFileService;
     private SampleService sampleService;
     private RelationshipService relationshipService;
+    private ProjectService projectService;
 
     @Before
     public void setUp() {
         sampleService = mock(SampleService.class);
         sequenceFileService = mock(SequenceFileService.class);
         relationshipService = mock(RelationshipService.class);
+        projectService = mock(ProjectService.class);
 
-        controller = new SampleSequenceFilesController(sequenceFileService, sampleService, relationshipService);
+        controller = new SampleSequenceFilesController(sequenceFileService, sampleService, relationshipService, projectService);
     }
 
     @Test
@@ -80,6 +88,44 @@ public class SampleSequenceFilesControllerTest {
         assertNotNull(sfr.getLink(PageLink.REL_SELF));
         assertNotNull(sfr.getLink(GenericController.REL_RELATIONSHIP));
         assertEquals(sf.getFile().getName(), sfr.getFile().getName());
+    }
+
+    @Test
+    public void testRemoveSequenceFileFromSample() throws IOException {
+        Project p = constructProject();
+        Sample s = constructSample();
+        SequenceFile sf = constructSequenceFile();
+        Relationship r = new Relationship();
+        r.setSubject(p.getIdentifier());
+        r.setObject(sf.getIdentifier());
+
+        when(projectService.read(p.getIdentifier())).thenReturn(p);
+        when(sampleService.read(s.getIdentifier())).thenReturn(s);
+        when(sequenceFileService.read(sf.getIdentifier())).thenReturn(sf);
+        when(sampleService.removeSequenceFileFromSample(p, s, sf)).thenReturn(r);
+
+        ModelMap modelMap = controller.removeSequenceFileFromSample(p.getIdentifier().getIdentifier(),
+                s.getIdentifier().getIdentifier(), sf.getIdentifier().getIdentifier());
+
+        verify(projectService, times(1)).read(p.getIdentifier());
+        verify(sampleService, times(1)).read(s.getIdentifier());
+        verify(sequenceFileService, times(1)).read(sf.getIdentifier());
+
+        verify(sampleService, times(1)).removeSequenceFileFromSample(p, s, sf);
+
+        Object o = modelMap.get(GenericController.RESOURCE_NAME);
+        assertNotNull(o);
+        assertTrue(o instanceof RootResource);
+        RootResource resource = (RootResource) o;
+        List<Link> links = resource.getLinks();
+        Set<String> rels = Sets.newHashSet(SampleSequenceFilesController.REL_SAMPLE,
+                SampleSequenceFilesController.REL_PROJECT_SEQUENCE_FILE);
+        for (Link l : links) {
+            assertTrue(rels.contains(l.getRel()));
+            assertNotNull(rels.remove(l.getRel()));
+        }
+
+        assertTrue(rels.isEmpty());
     }
 
     /**
