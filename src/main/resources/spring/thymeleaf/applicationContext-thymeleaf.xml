@@ -39,6 +39,7 @@
         <property name="prefix" value="/WEB-INF/thymeleaf/"/>
         <property name="suffix" value=".html"/>
         <property name="templateMode" value="HTML5"/>
+        <property name="cacheable" value="false" />
     </bean>
 
     <bean id="templateEngine"
