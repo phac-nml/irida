@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.service;
 
+import ca.corefacility.bioinformatics.irida.exceptions.MultipleRelationshipsException;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -50,4 +51,13 @@ public interface RelationshipService extends CRUDService<Identifier, Relationshi
      * @return the collection of relationships for this class.
      */
     public Collection<Relationship> getRelationshipsForEntity(Identifier id, Class subjectType, Class objectType);
+
+    /**
+     * Check to see if any kind of relationship between two {@link Identifier} entities exists in the database.
+     *
+     * @param subject the subject {@link Identifier}.
+     * @param object  the object {@link Identifier}.
+     * @return the collection of relationships between two entities
+     */
+    public Relationship getRelationship(Identifier subject, Identifier object) throws MultipleRelationshipsException;
 }

@@ -18,6 +18,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.exceptions.MultipleRelationshipsException;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
@@ -66,7 +67,15 @@ public class RelationshipServiceImpl extends CRUDServiceImpl<Identifier, Relatio
     @Override
     public Collection<Relationship> getRelationshipsForEntity(Identifier id, Class subjectType, Class objectType) {
         return linksRepository.getLinks(id, subjectType, objectType);
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Relationship getRelationship(Identifier subject, Identifier object) throws MultipleRelationshipsException {
+        // TODO: implement this method.
+        throw new UnsupportedOperationException("not implemented.");
     }
 
     /**
