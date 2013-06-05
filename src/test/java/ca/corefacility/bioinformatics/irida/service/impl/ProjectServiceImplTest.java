@@ -30,8 +30,11 @@ import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
+import com.google.common.collect.ImmutableList;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
@@ -99,17 +102,18 @@ public class ProjectServiceImplTest {
 
     /**
      * Test of removeSampleFromProject method, of class ProjectServiceImpl.
-     
+     */
     @Test
     public void testRemoveSampleFromProject() {
-        System.out.println("removeSampleFromProject");
-        Project project = null;
-        Sample sample = null;
-        ProjectServiceImpl instance = null;
-        instance.removeSampleFromProject(project, sample);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }*/
+        Sample s = new Sample();
+        s.setSampleName("sample");
+        Project p = new Project("project");
+        List<Relationship> rels = new ArrayList<>();
+        rels.add(new Relationship(p.getIdentifier(), new RdfPredicate("irida", "hasSample"),s.getIdentifier() ));
+        when(relationshipRepository.getLinks(p.getIdentifier(),null,s.getIdentifier())).thenReturn(rels);
+        
+        projectService.removeSampleFromProject(p, s);
+    }
 
     /**
      * Test of addSequenceFileToProject method, of class ProjectServiceImpl.

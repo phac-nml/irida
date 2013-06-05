@@ -15,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
 import javax.validation.Validator;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * A specialized service layer for projects.
@@ -55,7 +56,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Identifier, Project> imp
      */
     @Override
     public void removeSampleFromProject(Project project, Sample sample) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        relationshipRepository.delete(project, sample);
     }
 
     /**
