@@ -15,10 +15,10 @@
  */
 package ca.corefacility.bioinformatics.irida.model.roles.impl;
 
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Objects;
 import java.util.UUID;
-import javax.validation.constraints.NotNull;
 
 /**
  * Any object that wishes to be uniquely identifiable in the database should
@@ -41,8 +41,12 @@ public class Identifier implements Comparable<Identifier> {
     public Identifier() {
         this.uuid = UUID.randomUUID();
     }
-    
-    public Identifier(URI uri){
+
+    public Identifier(String identifier) {
+        setIdentifier(identifier);
+    }
+
+    public Identifier(URI uri) {
         this.uri = uri;
     }
 
@@ -83,7 +87,7 @@ public class Identifier implements Comparable<Identifier> {
     public String getIdentifier() {
         return uuid.toString();
     }
-    
+
     public void setIdentifier(String identifier) {
         this.uuid = UUID.fromString(identifier);
     }
@@ -107,13 +111,13 @@ public class Identifier implements Comparable<Identifier> {
     public void setUUID(UUID uuid) {
         this.uuid = uuid;
     }
-    
-    public void setLabel(String label) {
-        this.label = label;
-    }
 
     public String getLabel() {
         return label;
     }
-    
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
 }
