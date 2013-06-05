@@ -50,7 +50,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Identifier, Sample> imple
      * {@inheritDoc}
      */
     @Override
-    public void removeSequenceFileFromSample(Project project, Sample sample, SequenceFile sequenceFile) {
+    public Relationship removeSequenceFileFromSample(Project project, Sample sample, SequenceFile sequenceFile) {
         throw new UnsupportedOperationException("not implemented.");
     }
 }

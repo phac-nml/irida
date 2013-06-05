@@ -56,6 +56,7 @@ public interface SampleService extends CRUDService<Identifier, Sample> {
      * @param project      the {@link Project} to which we're moving the {@link SequenceFile}.
      * @param sample       the {@link Sample} from which we're moving the {@link SequenceFile}.
      * @param sequenceFile the {@link SequenceFile} that we're moving.
+     * @return the new relationship between the {@link Project} and {@link SequenceFile}.
      */
-    public void removeSequenceFileFromSample(Project project, Sample sample, SequenceFile sequenceFile);
+    public Relationship removeSequenceFileFromSample(Project project, Sample sample, SequenceFile sequenceFile);
 }
