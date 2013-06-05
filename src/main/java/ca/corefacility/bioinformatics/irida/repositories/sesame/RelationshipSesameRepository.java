@@ -25,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.StringIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.RelationshipRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.DefaultLinks;
+import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.QualifiedRDFPredicate;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
 import org.openrdf.model.Statement;
@@ -134,7 +135,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             con.begin();
             URI subURI = fac.createURI(subNetURI.toString());
             URI objURI = fac.createURI(objNetURI.toString());
-            URI pred = fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
+            URI pred = predicate.getPredicateURI(con);//fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
 
             Identifier identifier = generateNewIdentifier();
             link.setIdentifier(identifier);
@@ -226,7 +227,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
 
             URI subURI = fac.createURI(subNetURI.toString());
-            URI predURI = fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
+            URI predURI = predicate.getPredicateURI(con);//fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
             query.setBinding("subject", subURI);
             query.setBinding("predicate", predURI);
             TupleQueryResult results = query.evaluate();
@@ -267,7 +268,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
 
             URI objURI = fac.createURI(objNetUri.toString());
-            URI predURI = fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
+            URI predURI = predicate.getPredicateURI(con);//fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
             query.setBinding("object", objURI);
             query.setBinding("predicate", predURI);
             TupleQueryResult results = query.evaluate();
@@ -341,7 +342,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             }
 
             if (predicate != null) {
-                URI predURI = fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
+                URI predURI = predicate.getPredicateURI(con);//fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
                 query.setBinding("pred", predURI);
             }
 
@@ -394,7 +395,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
         String predstr = bs.getValue("pred").stringValue();
         URI predURI = fac.createURI(predstr);
 
-        RdfPredicate pred = new RdfPredicate(predURI.getNamespace(), predURI.getLocalName());
+        RdfPredicate pred = new QualifiedRDFPredicate(predstr);//new RdfPredicate(predURI.getNamespace(), predURI.getLocalName());
 
         Identifier subId = getIdentiferForURI(subURI);
         Identifier objId = getIdentiferForURI(objURI);
@@ -470,8 +471,21 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
         URI objecturi = vf.createURI(uri);
 
         try {
+            con.begin();
+            //first we'll remove the predicate between the subject and object.
+            Relationship relationship = read(id);
+            java.net.URI subNetURI = getUriFromIdentifier(relationship.getSubject());
+            java.net.URI objNetURI = getUriFromIdentifier(relationship.getObject());
+            RdfPredicate predicate = relationship.getPredicate();
+            URI subURI = vf.createURI(subNetURI.toString());
+            URI objURI = vf.createURI(objNetURI.toString());
+
+            URI pred = predicate.getPredicateURI(con);//vf.createURI(con.getNamespace(predicate.prefix), predicate.name);
+            con.remove(subURI,pred,objURI);
+            
+            //then we'll remove the relationship object
             con.remove(objecturi, null, null);
-            con.close();
+            con.commit();
 
         } catch (RepositoryException ex) {
             logger.error(ex.getMessage());
