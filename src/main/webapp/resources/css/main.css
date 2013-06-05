@@ -56,9 +56,9 @@ body {
     font-size: 1em;
     font-weight: 600; }
   .left-side .side-body {
-    -webkit-box-flex: 2;
-    -moz-box-flex: 2;
-    box-flex: 2; }
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    box-flex: 1; }
   .left-side li {
     display: block;
     padding: .2em .8em;
@@ -70,6 +70,5 @@ body {
       border-right: 0.4em solid #008dde; }
 
 .detailed-content {
-  background-color: lightblue;
   height: 100%;
   margin-left: 15em; }

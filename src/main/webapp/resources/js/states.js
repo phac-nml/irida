@@ -47,7 +47,7 @@
       .state('login', {
         url: '/login',
 
-        templateUrl: '/partials/login.content.html'
+        templateUrl: '/partials/login.html'
       });
   });
 })

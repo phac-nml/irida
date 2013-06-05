@@ -76,7 +76,7 @@ body {
   }
 
   .side-body {
-    @include box-flex(2);
+    @include box-flex(1);
   }
 
   // Nested
@@ -101,7 +101,6 @@ body {
 
 .detailed-content {
   // @extends
-  background-color: lightblue;
 
   // Positioning (z-index, top, etc...)
 
