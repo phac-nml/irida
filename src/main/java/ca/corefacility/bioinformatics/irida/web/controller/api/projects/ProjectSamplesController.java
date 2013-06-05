@@ -130,10 +130,8 @@ public class ProjectSamplesController {
             Sample sample = sampleService.read(r.getObject());
             SampleResource sr = new SampleResource();
             sr.setResource(sample);
-            sr.add(linkTo(methodOn(SamplesController.class).
-                    getResource(sample.getIdentifier().getIdentifier())).withSelfRel());
-            sr.add(linkTo(methodOn(RelationshipsController.class).
-                    getResource(r.getIdentifier().getIdentifier())).withRel(GenericController.REL_RELATIONSHIP));
+            sr.add(linkTo(methodOn(ProjectSamplesController.class).
+                    getProjectSample(projectId, sample.getIdentifier().getIdentifier())).withSelfRel());
             sampleResources.add(sr);
         }
 
