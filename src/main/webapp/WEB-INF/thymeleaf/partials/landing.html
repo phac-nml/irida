@@ -1,6 +1,12 @@
 <div class="left-side" data-ng-controller="ProjectsListCtrl">
-    <ul>
-        <li data-ng-repeat="p in projects" data-ng-click="gotoProject(p.links[0].href)">{{p.name}}</li>
-    </ul>
+    <div class="side-header">
+        <h1>HEADER</h1>
+    </div>
+    <div class="side-body">
+        <h2>Projects</h2>
+        <ul>
+            <li data-ng-repeat="p in projects" data-ng-click="gotoProject(p.links[0].href)">{{p.name}}</li>
+        </ul>
+    </div>
 </div>
 <div class="detailed-content" ui-view=""></div>

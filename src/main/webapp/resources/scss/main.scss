@@ -66,6 +66,7 @@ body {
   // Other (colors, fonts, align)
 
   // @includes
+  @include box(vertical, start, stretch);
   @include linear-gradient($color-slate-gray, darken($color-slate-gray, 10));
 
   // Nested
