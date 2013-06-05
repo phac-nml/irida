@@ -17,7 +17,9 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.utils.Identified;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
+import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.StringIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SailStore;
 import org.junit.Before;
@@ -28,10 +30,14 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
+import org.openrdf.model.URI;
+import org.openrdf.query.BindingSet;
 
 /**
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
@@ -44,6 +50,9 @@ public class RelationshipSesameRepositoryTest {
     private RdfPredicate pred;
     private Identifier first;
     private Identifier second;
+    private Identifier third;
+    private Relationship relationship1;
+    private Relationship relationship2;
 
     public RelationshipSesameRepositoryTest() {
     }
@@ -65,11 +74,15 @@ public class RelationshipSesameRepositoryTest {
 
         Identified i1 = repo.create(new Identified("first"));
         Identified i2 = repo.create(new Identified("second"));
+        Identified i3 = repo.create(new Identified("third"));
 
         first = i1.getIdentifier();
         second = i2.getIdentifier();
-
-        linksRepo.create(i1, i2);
+        third = i3.getIdentifier();
+        
+        relationship1 = linksRepo.create(i1, i2);
+        relationship2 = linksRepo.create(i1, i3);
+        linksRepo.create(i3,i2);
     }
 
     /**
@@ -114,7 +127,8 @@ public class RelationshipSesameRepositoryTest {
 
     /**
      * Test of getLinks method, of class RelationshipSesameRepository.
-     */
+     * This method cannot be tested in this fashion due to the reliance on owl inferencing by the database
+     
     @Test
     public void testGetLinks_3args_2() {
         Identified i1 = repo.create(new Identified("first"));
@@ -124,5 +138,129 @@ public class RelationshipSesameRepositoryTest {
         assertNotNull(linksRepo.getLinks(null, pred, null));
         assertNotNull(linksRepo.getLinks(i1.getIdentifier(), null, i2.getIdentifier()));
         assertNotNull(linksRepo.getLinks(i1.getIdentifier(), pred, i2.getIdentifier()));
+    }*/
+
+    /**
+     * Test of addRelationship method, of class RelationshipSesameRepository.
+     
+    @Test
+    public void testAddRelationship() {
+        System.out.println("addRelationship");
+        Class subject = null;
+        RdfPredicate pred = null;
+        Class object = null;
+        RelationshipSesameRepository instance = null;
+        instance.addRelationship(subject, pred, object);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }*/
+
+    /**
+     * Test of listObjects method, of class RelationshipSesameRepository.
+     */
+    @Test
+    public void testListObjects() {
+        List<Identifier> listObjects = linksRepo.listObjects(first, pred);
+        assertNotNull(listObjects);
+        assertTrue(listObjects.size() == 2);
     }
+    
+    @Test
+    public void testListObjectsInvalid(){
+        List<Identifier> listObjects = linksRepo.listObjects(second, pred);
+        assertNotNull(listObjects);
+        assertTrue(listObjects.isEmpty());
+    }
+    
+    /**
+     * Test of listSubjects method, of class RelationshipSesameRepository.
+     */
+    @Test
+    public void testListSubjects() {
+        List<Identifier> listSubjects = linksRepo.listSubjects(second, pred);
+        assertNotNull(listSubjects);
+        assertTrue(listSubjects.size() == 2);        
+    }
+
+    /**
+     * Test of listLinks method, of class RelationshipSesameRepository.
+     */
+    @Test
+    public void testListLinks() {
+        List<Identifier> listLinks = linksRepo.listLinks(third, Identified.class, Identified.class);
+        assertTrue(listLinks.size() == 1);
+        Identifier get = listLinks.get(0);
+        assertEquals(get.getIdentifier(),second.getIdentifier());
+    }
+
+    /**
+     * Test of getLinks method, of class RelationshipSesameRepository.
+     * This method cannot be tested in this fashion due to the reliance on owl inferencing by the database
+    @Test
+    public void testGetLinks_3args_1() {
+        List<Relationship> links = linksRepo.getLinks(first, Identified.class, Identified.class);
+    }*/
+
+    /**
+     * Test of read method, of class RelationshipSesameRepository.
+     */
+    @Test
+    public void testRead() {
+        Relationship read = linksRepo.read(relationship1.getIdentifier());
+        assertNotNull(read);
+        assertEquals(read.getSubject().getIdentifier(), first.getIdentifier());
+    }
+
+    /**
+     * Test of delete method, of class RelationshipSesameRepository.
+     * This method cannot be tested in this fashion due to the reliance on owl inferencing by the database
+    @Test
+    public void testDelete_GenericType_GenericType() {
+        Identified i1 = repo.create(new Identified("first"));
+        Identified i2 = repo.create(new Identified("second"));
+        
+        Relationship create = linksRepo.create(i1, i2);
+        linksRepo.delete(i1, i2);
+        assertFalse(linksRepo.exists(create.getIdentifier()));
+    }*/
+
+    /**
+     * Test of delete method, of class RelationshipSesameRepository.
+     */
+    @Test
+    public void testDelete_Identifier() {
+        Identified i1 = repo.create(new Identified("first"));
+        Identified i2 = repo.create(new Identified("second"));
+        
+        Relationship create = linksRepo.create(i1, i2);
+        linksRepo.delete(create.getIdentifier());
+        assertFalse(linksRepo.exists(create.getIdentifier()));
+    }
+
+
+    /**
+     * Test of exists method, of class RelationshipSesameRepository.
+     */
+    @Test
+    public void testExists() {
+        Identified i1 = repo.create(new Identified("first"));
+        Identified i2 = repo.create(new Identified("second"));
+        
+        Relationship create = linksRepo.create(i1, i2);
+        Boolean exists = linksRepo.exists(create.getIdentifier());
+        assertTrue(exists);        
+    }
+
+    /**
+     * Test of readMultiple method, of class RelationshipSesameRepository.
+     //TODO not supported yet
+    @Test
+    public void testReadMultiple() {
+        List<Identifier> ids = new ArrayList<>();
+        ids.add(relationship1.getIdentifier());
+        ids.add(relationship2.getIdentifier());
+        
+        Collection<Relationship> readMultiple = linksRepo.readMultiple(ids);
+        assertFalse(readMultiple.isEmpty());
+    }*/
 }

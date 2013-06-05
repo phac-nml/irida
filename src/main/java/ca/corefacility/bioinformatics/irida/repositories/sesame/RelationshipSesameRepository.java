@@ -55,6 +55,14 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
         linkList = new DefaultLinks();
     }
 
+    /**
+     * Add a default relationship to the relationship repository repository
+     * @param <S> The class of the subject
+     * @param <O> The class of the object
+     * @param subject The class of the subject
+     * @param pred The predicate to link the subject/object
+     * @param object The class of the object
+     */
     public <S extends IridaThing, O extends IridaThing> void addRelationship(Class subject, RdfPredicate pred, Class object) {
         linkList.addLink(subject, pred, object);
     }
@@ -66,7 +74,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
      * @param bindingName The binding name of the subject from this binding set
      * @return A <type>StringIdentifier</type> for this binding set
      */
-    public StringIdentifier buildIdentiferFromBindingSet(BindingSet bs, String bindingName) {
+    private StringIdentifier buildIdentiferFromBindingSet(BindingSet bs, String bindingName) {
         StringIdentifier id = null;
         try {
             Value uri = bs.getValue(bindingName);
@@ -92,7 +100,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
      * @param identifiedBy The unique string for this identifier
      * @return A new instance of an Identifier
      */
-    public Identifier buildLinkIdentifier(URI uri, String identifiedBy) {
+    private Identifier buildLinkIdentifier(URI uri, String identifiedBy) {
         Identifier objid = new Identifier();
         objid.setUri(java.net.URI.create(uri.toString()));
         objid.setIdentifier(identifiedBy);
@@ -455,6 +463,17 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
 
         return ret;
     }
+    
+    public <SubjectType extends IridaThing, ObjectType extends IridaThing> void delete(SubjectType subject, ObjectType object) {
+        RdfPredicate pred = linkList.getLink(subject.getClass(), object.getClass());
+        
+        List<Relationship> links = getLinks((Identifier)subject.getIdentifier(), pred, (Identifier)object.getIdentifier());
+        logger.trace("Deleting " + links.size() + " relationships.");
+        for(Relationship r : links){
+            delete(r.getIdentifier());
+        }
+    }
+    
 
     @Override
     public void delete(Identifier id) throws EntityNotFoundException {
@@ -494,6 +513,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             store.closeRepoConnection(con);
         }
     }
+    
 
     @Override
     public List<Relationship> list() {
