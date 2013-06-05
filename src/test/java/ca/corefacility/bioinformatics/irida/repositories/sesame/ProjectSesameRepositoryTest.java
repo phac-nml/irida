@@ -17,8 +17,20 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SailStore;
 import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.Relationship;
+import ca.corefacility.bioinformatics.irida.model.User;
 
 import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+import org.openrdf.model.URI;
+import org.openrdf.model.ValueFactory;
+import org.openrdf.query.BooleanQuery;
+import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.QueryEvaluationException;
+import org.openrdf.query.QueryLanguage;
+import org.openrdf.repository.RepositoryException;
+import org.openrdf.repository.object.ObjectConnection;
 
 /**
  *
@@ -26,15 +38,18 @@ import org.junit.Before;
  */
 public class ProjectSesameRepositoryTest {
     
+    SailStore store;
     private ProjectSesameRepository repo;
+    private UserSesameRepository urepo;
     
     @Before
     public void setUp() {
-        SailStore store = new SailStore();
+        store = new SailStore();
         store.initialize();
         AuditRepository auditRepo = new AuditRepository(store);
         RelationshipSesameRepository linksRepo = new RelationshipSesameRepository(store, auditRepo);
         repo = new ProjectSesameRepository(store,auditRepo,linksRepo);
+        urepo = new UserSesameRepository(store, auditRepo, linksRepo);
         Project p = new Project();
         p.setName("p1");
         repo.create(p);
@@ -44,7 +59,29 @@ public class ProjectSesameRepositoryTest {
         p = new Project();
         p.setName("p3");
         repo.create(p);
+
+    }
+    
+    @Test
+    public void testAddUserToProject() throws MalformedQueryException, RepositoryException, QueryEvaluationException{
+        Project project = repo.create(new Project("a new project"));
+        User user = urepo.create(new User("anon", "anon@nowhere.com", "PASSWOD!1", "Anon", "Guy", "1234"));
         
+        Relationship addUserToProject = repo.addUserToProject(project, user);
+        assertNotNull(addUserToProject);
+        ObjectConnection con = store.getRepoConnection();
+        String qs = "ASK {?sub ?pred ?obj}";
+        ValueFactory vf = con.getValueFactory();
+        BooleanQuery query = con.prepareBooleanQuery(QueryLanguage.SPARQL, qs);
+        URI sub = vf.createURI(user.getIdentifier().getUri().toString());
+        URI pred = addUserToProject.getPredicate().getPredicateURI(con);
+        URI obj = vf.createURI(project.getIdentifier().getUri().toString());
+        query.setBinding("sub", sub);
+        query.setBinding("pred", pred);
+        query.setBinding("obj", obj);
+        boolean evaluate = query.evaluate();
+        assertTrue(evaluate);
+        con.close();
     }
 
 }
