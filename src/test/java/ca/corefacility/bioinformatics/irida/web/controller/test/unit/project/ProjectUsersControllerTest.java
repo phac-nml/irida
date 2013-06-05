@@ -70,6 +70,10 @@ public class ProjectUsersControllerTest {
         when(userService.getUserByUsername(username)).thenReturn(u);
 
         ModelMap map = controller.getUsersForProject(projectId);
+
+        verify(userService, times(1)).getUsersForProject(id);
+        verify(userService, times(1)).getUserByUsername(username);
+
         Object o = map.get(GenericController.RESOURCE_NAME);
         assertNotNull(o);
         assertTrue(o instanceof ResourceCollection);
@@ -100,6 +104,8 @@ public class ProjectUsersControllerTest {
 
         // confirm that the service method was called
         verify(projectService, times(1)).addUserToProject(p, u, new Role("ROLE_USER"));
+        verify(projectService, times(1)).read(p.getIdentifier());
+        verify(userService, times(1)).getUserByUsername(u.getUsername());
 
         // check that the response is as expected:
         assertEquals(HttpStatus.CREATED, response.getStatusCode());

@@ -87,6 +87,9 @@ public class ProjectSequenceFilesControllerTest {
 
         ResponseEntity<String> response = controller.addSequenceFileToProject(p.getIdentifier().getIdentifier(), mmf);
 
+        verify(projectService, times(1)).read(p.getIdentifier());
+        verify(projectService, times(1)).addSequenceFileToProject(eq(p), any(SequenceFile.class));
+
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
         List<String> locations = response.getHeaders().get(HttpHeaders.LOCATION);
@@ -117,6 +120,8 @@ public class ProjectSequenceFilesControllerTest {
         // remove the file
         ModelMap modelMap = controller.removeSequenceFileFromProject(projectId, sequenceFileId);
 
+        verify(projectService, times(1)).read(p.getIdentifier());
+        verify(sequenceFileService, times(1)).read(sf.getIdentifier());
         // confirm that we called the appropriate service method
         verify(projectService, times(1)).removeSequenceFileFromProject(p, sf);
 
@@ -148,11 +153,13 @@ public class ProjectSequenceFilesControllerTest {
 
         String projectId = p.getIdentifier().getIdentifier();
 
-        when(projectService.read(p.getIdentifier())).thenReturn(p);
         when(relationshipService.getRelationshipsForEntity(p.getIdentifier(), Project.class, SequenceFile.class)).thenReturn(relationships);
         when(sequenceFileService.read(sf.getIdentifier())).thenReturn(sf);
 
         ModelMap modelMap = controller.getProjectSequenceFiles(projectId);
+
+        verify(relationshipService, times(1)).getRelationshipsForEntity(p.getIdentifier(), Project.class, SequenceFile.class);
+        verify(sequenceFileService, times(1)).read(sf.getIdentifier());
 
         Object o = modelMap.get(GenericController.RESOURCE_NAME);
         assertTrue(o instanceof ResourceCollection);

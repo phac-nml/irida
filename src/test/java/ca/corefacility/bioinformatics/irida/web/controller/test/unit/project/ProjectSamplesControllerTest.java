@@ -74,6 +74,10 @@ public class ProjectSamplesControllerTest {
 
         ResponseEntity<String> response = controller.addSampleToProject(p.getIdentifier().getIdentifier(), sr);
 
+        verify(projectService, times(1)).read(p.getIdentifier());
+        verify(projectService, times(1)).addSampleToProject(p, s);
+        verify(samplesController, times(1)).mapResourceToType(sr);
+
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
         // the location header should correspond to the created sample URL under the samples controller.
@@ -107,6 +111,8 @@ public class ProjectSamplesControllerTest {
 
         // verify that we actually tried to remove the sample from the project.
         verify(projectService, times(1)).removeSampleFromProject(p, s);
+        verify(projectService, times(1)).read(p.getIdentifier());
+        verify(sampleService, times(1)).read(s.getIdentifier());
 
         // confirm that the response looks right.
         Object o = modelMap.get(GenericController.RESOURCE_NAME);
@@ -136,12 +142,14 @@ public class ProjectSamplesControllerTest {
 
         String projectId = p.getIdentifier().getIdentifier();
 
-        when(projectService.read(p.getIdentifier())).thenReturn(p);
         when(relationshipService.getRelationshipsForEntity(p.getIdentifier(),
                 Project.class, Sample.class)).thenReturn(relationships);
         when(sampleService.read(s.getIdentifier())).thenReturn(s);
 
         ModelMap modelMap = controller.getProjectSamples(projectId);
+
+        verify(relationshipService, times(1)).getRelationshipsForEntity(p.getIdentifier(), Project.class, Sample.class);
+        verify(sampleService, times(1)).read(s.getIdentifier());
 
         Object o = modelMap.get(GenericController.RESOURCE_NAME);
         assertTrue(o instanceof ResourceCollection);
