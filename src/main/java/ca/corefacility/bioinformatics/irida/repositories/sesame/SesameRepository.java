@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
@@ -104,6 +105,11 @@ public class SesameRepository {
 
         query.setBinding("id", idLit);
         TupleQueryResult result = query.evaluate();
+        
+        if(!result.hasNext()){
+            throw new EntityNotFoundException("No object with identifier " + id + " exists in the repository");
+        }
+        
         BindingSet bs = result.next();
 
         uri = bs.getBinding("s").getValue().stringValue();

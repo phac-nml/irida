@@ -24,50 +24,40 @@ import org.openrdf.repository.RepositoryException;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class RdfPredicate {
-    private String prefix;
-    private String name;
+public class QualifiedRDFPredicate extends RdfPredicate{
+    private String uriString;
 
-    public RdfPredicate(){}
-    
-    public RdfPredicate(String prefix, String name) {
-        this.prefix = prefix;
-        this.name = name;
+    public QualifiedRDFPredicate(String uriString) {
+        this.uriString = uriString;
     }
     
     /**
-     * Get the notation of this rdfPredicate for use in a SPARQL query
-     * @return A String of this RDF predicate
+     * {@inheritDoc}
      */
-    public String getSparqlNotation(){
-        return prefix +":"+name;
+    @Override
+    public String getSparqlNotation() {
+        return "<"+uriString+">";
     }
 
-    /**
-     * Get the prefix of this RDF predicate
-     * @return The string prefix of this predicate
-     */
+    @Override
     public String getPrefix() {
-        return prefix;
+        throw new UnsupportedOperationException("Cannot return the prefix of a QualifiedRDFPredicate.  Use getPredicateURI instead");
+    }
+
+    @Override
+    public String getName() {
+        throw new UnsupportedOperationException("Cannot return the name of a QualifiedRDFPredicate.  Use getPredicateURI instead");
     }
 
     /**
-     * Get the local name of this rdf predicate
-     * @return The string local name of this predicate
+     * {@inheritDoc}
      */
-    public String getName() {
-        return name;
+    @Override
+    public URI getPredicateURI(RepositoryConnection con) throws RepositoryException {
+        ValueFactory vf = con.getValueFactory();
+        URI uri = vf.createURI(uriString);
+        return uri;
     }
     
-    /**
-     * Build a Sesame URI for this RDFPredicate
-     * @param con An object connection to construct this predicate for
-     * @return A URI of the predicate
-     * @throws RepositoryException
-     */
-    public URI getPredicateURI(RepositoryConnection con) throws RepositoryException{
-        ValueFactory vf = con.getValueFactory();
-        URI pred = vf.createURI(con.getNamespace(this.prefix), this.name);
-        return pred;
-    }
+    
 }

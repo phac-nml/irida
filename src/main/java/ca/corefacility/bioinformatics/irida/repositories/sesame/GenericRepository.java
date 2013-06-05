@@ -37,6 +37,8 @@ import org.openrdf.result.Result;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -380,7 +382,14 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     }
 
     protected Literal createLiteral(ValueFactory fac, String predicate, Object obj) {
-        Literal lit = fac.createLiteral(obj);
+        Literal lit = null;// = fac.createLiteral(obj);
+        try {
+            Method method = ValueFactory.class.getMethod("createLiteral", obj.getClass());
+            lit = (Literal) method.invoke(fac, obj);
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+            logger.error("Couldn't create literal for object type: "+obj.getClass().getName());
+            throw new StorageException("Cannot create literal for object type: "+obj.getClass().getName());
+        }
         return lit;
     }
 

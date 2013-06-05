@@ -45,6 +45,25 @@
     
 
 
+    <!-- http://corefacility.ca/irida/hasSample -->
+
+    <owl:ObjectProperty rdf:about="&irida;hasSample">
+        <rdfs:domain rdf:resource="&irida;Project"/>
+        <rdfs:range rdf:resource="&irida;Sample"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://corefacility.ca/irida/hasSequenceFile -->
+
+    <owl:ObjectProperty rdf:about="&irida;hasSequenceFile">
+        <rdfs:domain rdf:resource="&irida;Project"/>
+        <rdfs:range rdf:resource="&irida;SequenceFile"/>
+        <owl:inverseOf rdf:resource="&irida;sequenceFileHasProject"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://corefacility.ca/irida/hasUser -->
 
     <owl:ObjectProperty rdf:about="&irida;hasUser">
@@ -81,6 +100,25 @@
     
 
 
+    <!-- http://corefacility.ca/irida/sampleHasProject -->
+
+    <owl:ObjectProperty rdf:about="&irida;sampleHasProject">
+        <rdfs:range rdf:resource="&irida;Project"/>
+        <rdfs:domain rdf:resource="&irida;Sample"/>
+        <owl:inverseOf rdf:resource="&irida;hasSample"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://corefacility.ca/irida/sequenceFileHasProject -->
+
+    <owl:ObjectProperty rdf:about="&irida;sequenceFileHasProject">
+        <rdfs:range rdf:resource="&irida;Project"/>
+        <rdfs:domain rdf:resource="&irida;SequenceFile"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
@@ -103,17 +141,29 @@
     <owl:Class rdf:about="&irida;ResourceLink">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="&irida;linkObject"/>
+                <owl:onProperty rdf:resource="&irida;linkSubject"/>
                 <owl:cardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:cardinality>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="&irida;linkSubject"/>
+                <owl:onProperty rdf:resource="&irida;linkObject"/>
                 <owl:cardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:cardinality>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
+    
+
+
+    <!-- http://corefacility.ca/irida/Sample -->
+
+    <owl:Class rdf:about="&irida;Sample"/>
+    
+
+
+    <!-- http://corefacility.ca/irida/SequenceFile -->
+
+    <owl:Class rdf:about="&irida;SequenceFile"/>
 </rdf:RDF>
 
 

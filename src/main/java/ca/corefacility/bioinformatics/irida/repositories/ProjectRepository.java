@@ -17,6 +17,7 @@ package ca.corefacility.bioinformatics.irida.repositories;
 
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import java.util.Collection;
@@ -39,9 +40,9 @@ public interface ProjectRepository extends CRUDRepository<Identifier, Project> {
     
     /**
      * Add a user to a project
-     * @param p The project to add the user to
+     * @param project The project to add the user to
      * @param user The user to add
      * @return A {@link Relationship} object describing the project/user link
      */
-    public Relationship addUserToProject(Project p, User user);
+    public Relationship addUserToProject(Project project, User user);
 }

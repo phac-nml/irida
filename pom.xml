@@ -168,7 +168,7 @@
             <artifactId>alibaba-repository-object</artifactId>
             <version>${openrdf.alibaba.version}</version>
             <type>jar</type>
-        </dependency>
+        </dependency>      
     </dependencies>
     <build>
         <finalName>irida-api</finalName>
