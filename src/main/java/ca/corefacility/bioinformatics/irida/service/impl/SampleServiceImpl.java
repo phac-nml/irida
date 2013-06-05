@@ -45,4 +45,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Identifier, Sample> imple
     public Sample getSampleForProject(Project project, Identifier identifier) throws EntityNotFoundException {
         throw new UnsupportedOperationException("not implemented.");
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeSequenceFileFromSample(Project project, Sample sample, SequenceFile sequenceFile) {
+        throw new UnsupportedOperationException("not implemented.");
+    }
 }
