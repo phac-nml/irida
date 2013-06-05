@@ -22,9 +22,11 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import com.google.common.collect.ImmutableMap;
 
 import javax.validation.Validator;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -33,9 +35,16 @@ import java.util.Map;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class SequenceFileServiceImpl extends CRUDServiceImpl<Identifier, SequenceFile> {
+public class SequenceFileServiceImpl extends CRUDServiceImpl<Identifier, SequenceFile> implements SequenceFileService {
 
+    /**
+     * A reference to the file system repository.
+     */
     private CRUDRepository<Identifier, SequenceFile> fileRepository;
+    /**
+     * A reference to the data store repository.
+     */
+    private SequenceFileRepository sequenceFileRepository;
 
     /**
      * Constructor.
@@ -48,6 +57,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Identifier, Sequenc
             CRUDRepository<Identifier, SequenceFile> fileRepository,
             Validator validator) {
         super(sequenceFileRepository, validator, SequenceFile.class);
+        this.sequenceFileRepository = sequenceFileRepository;
         this.fileRepository = fileRepository;
     }
 
@@ -84,23 +94,22 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Identifier, Sequenc
     }
 
     public void addFileToProject(Project project, SequenceFile file) {
-        sequenceFileRepository().addFileToProject(project, file);
+        sequenceFileRepository.addFileToProject(project, file);
     }
 
     public void addFileToSample(Sample sample, SequenceFile file) {
-        sequenceFileRepository().addFileToSample(sample, file);
-    }
-
-    public List<SequenceFile> getFilesForSample(Sample sample) {
-        return sequenceFileRepository().getFilesForSample(sample);
+        sequenceFileRepository.addFileToSample(sample, file);
     }
 
     public List<SequenceFile> getFilesForProject(Project project) {
-        return sequenceFileRepository().getFilesForProject(project);
+        return sequenceFileRepository.getFilesForProject(project);
     }
 
-    public SequenceFileRepository sequenceFileRepository() {
-        return (SequenceFileRepository) repository;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<SequenceFile> getSequenceFilesForSample(Sample s) {
+        return sequenceFileRepository.getFilesForSample(s);
     }
-
 }
