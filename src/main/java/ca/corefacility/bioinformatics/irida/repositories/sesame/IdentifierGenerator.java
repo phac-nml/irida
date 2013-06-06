@@ -36,7 +36,9 @@ import org.openrdf.repository.object.ObjectConnection;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * A class for generating IRIDA identifiers for objects that implement {@link IridaThing}.
+ * The class can be extended to generate identifiers for specific types of objects.
+ * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class IdentifierGenerator<Type extends IridaThing> {

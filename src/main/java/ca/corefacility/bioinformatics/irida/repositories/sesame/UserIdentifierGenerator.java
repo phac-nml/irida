@@ -22,7 +22,8 @@ import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
 import org.openrdf.model.URI;
 
 /**
- *
+ * Class for generating identifiers for objects of type User.
+ * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class UserIdentifierGenerator extends IdentifierGenerator<User>{
@@ -31,6 +32,9 @@ public class UserIdentifierGenerator extends IdentifierGenerator<User>{
         super(store);
     }
 
+    /**
+     * {@inheritDoc}
+     */    
     @Override
     public Identifier generateNewIdentifier(User obj, String baseURI) {
         if(obj == null){
@@ -43,7 +47,10 @@ public class UserIdentifierGenerator extends IdentifierGenerator<User>{
         ui.setLabel(obj.getLabel());
         return ui;
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */  
     @Override
     public Identifier buildIdentifier(User object, URI uri, String identifiedBy) {
         UserIdentifier objid = new UserIdentifier();

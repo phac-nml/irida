@@ -46,10 +46,16 @@ public class ProjectSesameRepositoryTest {
     public void setUp() {
         store = new SailStore();
         store.initialize();
+        IdentifierGenerator idGen = new IdentifierGenerator(store);
+        UserIdentifierGenerator userIdGen = new UserIdentifierGenerator(store);
+        
         AuditRepository auditRepo = new AuditRepository(store);
         RelationshipSesameRepository linksRepo = new RelationshipSesameRepository(store, auditRepo);
+        linksRepo.setIdGen(idGen);
         repo = new ProjectSesameRepository(store,auditRepo,linksRepo);
+        repo.setIdGen(idGen);
         urepo = new UserSesameRepository(store, auditRepo, linksRepo);
+        urepo.setIdGen(userIdGen);
         Project p = new Project();
         p.setName("p1");
         repo.create(p);
