@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -31,7 +34,23 @@ public class SampleServiceImpl extends CRUDServiceImpl<Identifier, Sample> imple
      * {@inheritDoc}
      */
     @Override
-    public void addSampleFileToSample(Sample sample, SequenceFile sampleFile) {
+    public Relationship addSequenceFileToSample(Sample sample, SequenceFile sampleFile) {
+        throw new UnsupportedOperationException("not implemented.");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Sample getSampleForProject(Project project, Identifier identifier) throws EntityNotFoundException {
+        throw new UnsupportedOperationException("not implemented.");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Relationship removeSequenceFileFromSample(Project project, Sample sample, SequenceFile sequenceFile) {
         throw new UnsupportedOperationException("not implemented.");
     }
 }

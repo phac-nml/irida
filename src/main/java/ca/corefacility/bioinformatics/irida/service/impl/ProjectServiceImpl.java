@@ -6,9 +6,8 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import ca.corefacility.bioinformatics.irida.model.*;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
-import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.RelationshipRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
 import javax.validation.Validator;
@@ -21,23 +20,23 @@ import java.util.Collection;
  */
 public class ProjectServiceImpl extends CRUDServiceImpl<Identifier, Project> implements ProjectService {
 
-    private CRUDRepository<UserIdentifier, User> userRepository;
-    private CRUDRepository<Identifier, Sample> sampleRepository;
-    private ProjectRepository projectRepository;
 
-    public ProjectServiceImpl(ProjectRepository projectRepository, CRUDRepository<UserIdentifier, User> userRepository, CRUDRepository<Identifier, Sample> sampleRepository, Validator validator) {
+    private RelationshipRepository relationshipRepository;
+    private ProjectRepository projectRepository;
+    
+
+    public ProjectServiceImpl(ProjectRepository projectRepository, RelationshipRepository relationshipRepository, Validator validator) {
         super(projectRepository, validator, Project.class);
         this.projectRepository = projectRepository;
-        this.sampleRepository = sampleRepository;
-        this.userRepository = userRepository;
+        this.relationshipRepository = relationshipRepository;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void addUserToProject(Project project, User user, Role role) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Relationship addUserToProject(Project project, User user, Role role) {
+        return projectRepository.addUserToProject(project, user);
     }
 
     /**
@@ -45,7 +44,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Identifier, Project> imp
      */
     @Override
     public Relationship addSampleToProject(Project project, Sample sample) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return relationshipRepository.create(project, sample);
     }
 
     /**
@@ -53,7 +52,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Identifier, Project> imp
      */
     @Override
     public void removeSampleFromProject(Project project, Sample sample) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        relationshipRepository.delete(project, sample);
     }
 
     /**
@@ -61,7 +60,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Identifier, Project> imp
      */
     @Override
     public Relationship addSequenceFileToProject(Project project, SequenceFile sf) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return relationshipRepository.create(project, sf);
     }
 
     /**
@@ -69,7 +68,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Identifier, Project> imp
      */
     @Override
     public void removeSequenceFileFromProject(Project project, SequenceFile sf) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        relationshipRepository.delete(project, sf);
     }
 
     @Override

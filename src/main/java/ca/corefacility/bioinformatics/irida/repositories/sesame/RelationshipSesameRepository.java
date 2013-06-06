@@ -25,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.StringIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.RelationshipRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.DefaultLinks;
+import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.QualifiedRDFPredicate;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
 import org.openrdf.model.Statement;
@@ -54,6 +55,14 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
         linkList = new DefaultLinks();
     }
 
+    /**
+     * Add a default relationship to the relationship repository repository
+     * @param <S> The class of the subject
+     * @param <O> The class of the object
+     * @param subject The class of the subject
+     * @param pred The predicate to link the subject/object
+     * @param object The class of the object
+     */
     public <S extends IridaThing, O extends IridaThing> void addRelationship(Class subject, RdfPredicate pred, Class object) {
         linkList.addLink(subject, pred, object);
     }
@@ -65,7 +74,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
      * @param bindingName The binding name of the subject from this binding set
      * @return A <type>StringIdentifier</type> for this binding set
      */
-    public StringIdentifier buildIdentiferFromBindingSet(BindingSet bs, String bindingName) {
+    private StringIdentifier buildIdentiferFromBindingSet(BindingSet bs, String bindingName) {
         StringIdentifier id = null;
         try {
             Value uri = bs.getValue(bindingName);
@@ -91,7 +100,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
      * @param identifiedBy The unique string for this identifier
      * @return A new instance of an Identifier
      */
-    public Identifier buildLinkIdentifier(URI uri, String identifiedBy) {
+    private Identifier buildLinkIdentifier(URI uri, String identifiedBy) {
         Identifier objid = new Identifier();
         objid.setUri(java.net.URI.create(uri.toString()));
         objid.setIdentifier(identifiedBy);
@@ -134,7 +143,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             con.begin();
             URI subURI = fac.createURI(subNetURI.toString());
             URI objURI = fac.createURI(objNetURI.toString());
-            URI pred = fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
+            URI pred = predicate.getPredicateURI(con);
 
             Identifier identifier = idGen.generateNewIdentifier(null, URI);
             link.setIdentifier(identifier);
@@ -193,7 +202,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
 
             URI subURI = fac.createURI(subNetURI.toString());
-            URI predURI = fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
+            URI predURI = predicate.getPredicateURI(con);
             query.setBinding("subject", subURI);
             query.setBinding("predicate", predURI);
             TupleQueryResult results = query.evaluate();
@@ -234,7 +243,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
 
             URI objURI = fac.createURI(objNetUri.toString());
-            URI predURI = fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
+            URI predURI = predicate.getPredicateURI(con);
             query.setBinding("object", objURI);
             query.setBinding("predicate", predURI);
             TupleQueryResult results = query.evaluate();
@@ -308,7 +317,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             }
 
             if (predicate != null) {
-                URI predURI = fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
+                URI predURI = predicate.getPredicateURI(con);
                 query.setBinding("pred", predURI);
             }
 
@@ -361,7 +370,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
         String predstr = bs.getValue("pred").stringValue();
         URI predURI = fac.createURI(predstr);
 
-        RdfPredicate pred = new RdfPredicate(predURI.getNamespace(), predURI.getLocalName());
+        RdfPredicate pred = new QualifiedRDFPredicate(predstr);//new RdfPredicate(predURI.getNamespace(), predURI.getLocalName());
 
         Identifier subId = idGen.getIdentiferForURI(subURI);
         Identifier objId = idGen.getIdentiferForURI(objURI);
@@ -421,7 +430,27 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
 
         return ret;
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */    
+    @Override
+    public <SubjectType extends IridaThing, ObjectType extends IridaThing> void delete(SubjectType subject, ObjectType object) {
+        RdfPredicate pred = linkList.getLink(subject.getClass(), object.getClass());
+        
+        List<Relationship> links = getLinks((Identifier)subject.getIdentifier(), pred, (Identifier)object.getIdentifier());
+        if(links.isEmpty()){
+            throw new EntityNotFoundException("No relationship found to delete between objects");
+        }
+        logger.trace("Deleting " + links.size() + " relationships.");
+        for(Relationship r : links){
+            delete(r.getIdentifier());
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void delete(Identifier id) throws EntityNotFoundException {
         if (!exists(id)) {
@@ -437,8 +466,21 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
         URI objecturi = vf.createURI(uri);
 
         try {
+            con.begin();
+            //first we'll remove the predicate between the subject and object.
+            Relationship relationship = read(id);
+            java.net.URI subNetURI = getUriFromIdentifier(relationship.getSubject());
+            java.net.URI objNetURI = getUriFromIdentifier(relationship.getObject());
+            RdfPredicate predicate = relationship.getPredicate();
+            URI subURI = vf.createURI(subNetURI.toString());
+            URI objURI = vf.createURI(objNetURI.toString());
+
+            URI pred = predicate.getPredicateURI(con);
+            con.remove(subURI,pred,objURI);
+            
+            //then we'll remove the relationship object
             con.remove(objecturi, null, null);
-            con.close();
+            con.commit();
 
         } catch (RepositoryException ex) {
             logger.error(ex.getMessage());
@@ -447,17 +489,21 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             store.closeRepoConnection(con);
         }
     }
+    
 
     @Override
     public List<Relationship> list() {
         throw new UnsupportedOperationException("Listing links will not be supported.");
     }
-
+    
     @Override
     public List<Relationship> list(int page, int size, String sortProperty, Order order) {
         throw new UnsupportedOperationException("Listing links will not be supported.");
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Boolean exists(Identifier id) {
         boolean exists = false;
@@ -492,12 +538,12 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
 
         return exists;        
     }
-
+    
     @Override
     public Integer count() {
         throw new UnsupportedOperationException("Counting links will not be supported.");
     }
-
+    
     @Override
     public Relationship update(Identifier id, Map<String, Object> updatedFields) {
         throw new UnsupportedOperationException("Updating a relationship will not be supported");

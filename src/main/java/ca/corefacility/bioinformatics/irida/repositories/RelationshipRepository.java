@@ -27,7 +27,8 @@ import java.util.List;
  */
 public interface RelationshipRepository extends CRUDRepository<Identifier, Relationship>{ 
     /**
-     * Create a new link in the system for the two given objects
+     * Create a new link in the system for the two given objects.
+     * A default link type must be defined for the types.
      * @param <SubjectType> The class of the subject object
      * @param <ObjectType> The class of the object object
      * @param subject The subject parameter of the link
@@ -36,6 +37,14 @@ public interface RelationshipRepository extends CRUDRepository<Identifier, Relat
      */
     public <SubjectType extends IridaThing,ObjectType extends IridaThing> Relationship create(SubjectType subject, ObjectType object);
    
+    /**
+     * Delete default links between the two given objects.
+     * @param <SubjectType> The class of the subject object
+     * @param <ObjectType> The class of the object object
+     * @param subject The subject parameter of the link to delete
+     * @param object The object parameter of the link to delete
+     */
+    public <SubjectType extends IridaThing, ObjectType extends IridaThing> void delete(SubjectType subject, ObjectType object);
     /**
      * List the objects with the given subject and predicate
      * @param subjectId The identifier of the subject for the requested triples
