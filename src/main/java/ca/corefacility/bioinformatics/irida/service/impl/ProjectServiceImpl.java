@@ -6,16 +6,12 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import ca.corefacility.bioinformatics.irida.model.*;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
-import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.RelationshipRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sesame.RelationshipSesameRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
 import javax.validation.Validator;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * A specialized service layer for projects.
@@ -72,7 +68,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Identifier, Project> imp
      */
     @Override
     public void removeSequenceFileFromProject(Project project, SequenceFile sf) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        relationshipRepository.delete(project, sf);
     }
 
     @Override
