@@ -227,10 +227,14 @@ public class ProjectsController extends GenericController<Identifier, Project, P
     @Override
     protected Collection<Link> constructCustomResourceLinks(Project p) {
         Collection<Link> links = new HashSet<>();
+        String projectId = p.getIdentifier().getIdentifier();
         links.add(linkTo(ProjectsController.class).
                 slash(p.getIdentifier().getIdentifier()).slash("users").
                 withRel(PROJECT_USERS_REL));
-
+        links.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSamples(projectId))
+                .withRel(ProjectSamplesController.REL_PROJECT_SAMPLES));
+        links.add(linkTo(methodOn(ProjectSequenceFilesController.class).getProjectSequenceFiles(projectId))
+                .withRel(ProjectSequenceFilesController.REL_PROJECT_SEQUENCE_FILES));
         return links;
     }
 }

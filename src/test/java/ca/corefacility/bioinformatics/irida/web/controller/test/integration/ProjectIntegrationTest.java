@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.preemptive;
 import static org.junit.Assert.assertNotNull;
@@ -63,5 +64,14 @@ public class ProjectIntegrationTest {
         String location = r.getHeader(HttpHeaders.LOCATION);
         assertNotNull(location);
         assertTrue(location.startsWith("http://localhost:8080/api/projects/"));
+    }
+
+    @Test
+    public void testGetProject() {
+        Map<String, String> project = new HashMap<>();
+        project.put("name", "new project");
+        Response r = given().body(project).post("/projects");
+        String location = r.getHeader(HttpHeaders.LOCATION);
+        expect().statusCode(HttpStatus.OK.value()).when().get(location);
     }
 }
