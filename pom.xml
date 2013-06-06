@@ -100,7 +100,7 @@
         <javax.servlet.version>3.1</javax.servlet.version>
 
         <!-- REST-assured -->
-        <rest.assured.version>1.7.2</rest.assured.version>
+        <rest.assured.version>1.8.0</rest.assured.version>
 
         <!-- mockito -->
         <mockito.version>1.9.5</mockito.version>
@@ -175,11 +175,25 @@
             <version>${thymeleaf.version}</version>
         </dependency>
 
-        <!-- Test Artifacts -->
+        <!-- Test -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- mockito -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- rest-assured -->
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${rest.assured.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- used by Spring MVC Test framework -->
@@ -216,13 +230,6 @@
             <version>${gson.version}</version>
         </dependency>
 
-        <!-- mockito -->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>${mockito.version}</version>
-            <scope>test</scope>
-        </dependency>
 
         <!-- glassfish java ee 6 implementation -->
         <dependency>
@@ -296,6 +303,12 @@
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>${plugin.maven.failsafe.version}</version>
+                <configuration>
+                    <includes>
+                        <include>**/test/integration/**/*Test.java</include>
+                    </includes>
+                    <encoding>UTF-8</encoding>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -310,6 +323,11 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${plugin.maven.surefire.version}</version>
+                <configuration>
+                    <includes>
+                        <include>**/test/unit/**/*Test.java</include>
+                    </includes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
