@@ -136,6 +136,8 @@ public class ProjectSamplesController {
             sampleResources.add(sr);
         }
 
+        sampleResources.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
+
         modelMap.addAttribute(GenericController.RESOURCE_NAME, sampleResources);
 
         return modelMap;

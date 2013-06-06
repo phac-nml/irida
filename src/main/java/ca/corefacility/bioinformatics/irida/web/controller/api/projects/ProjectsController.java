@@ -136,7 +136,7 @@ public class ProjectsController extends GenericController<Identifier, Project, P
         resources.put(PROJECT_USERS_MAP_LABEL, getUsersForProject(project));
         resources.put(PROJECT_SAMPLES_MAP_LABEL, getSamplesForProject(project));
         resources.put(PROJECT_SEQUENCE_FILES_MAP_LABEL, getSequenceFilesForProject(project));
-        
+
         return resources;
     }
 

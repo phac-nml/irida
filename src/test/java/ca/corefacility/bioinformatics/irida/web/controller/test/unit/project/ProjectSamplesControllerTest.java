@@ -154,6 +154,11 @@ public class ProjectSamplesControllerTest {
         @SuppressWarnings("unchecked")
         ResourceCollection<SampleResource> samples = (ResourceCollection<SampleResource>) o;
         assertEquals(1, samples.size());
+        List<Link> resourceLinks = samples.getLinks();
+        assertEquals(1, resourceLinks.size());
+        Link self = resourceLinks.iterator().next();
+        assertEquals("self", self.getRel());
+        assertEquals("http://localhost/projects/" + projectId + "/samples", self.getHref());
         SampleResource resource = samples.iterator().next();
         assertEquals(s.getSampleName(), resource.getSampleName());
         List<Link> links = resource.getLinks();
