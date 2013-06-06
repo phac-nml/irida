@@ -1,72 +1,57 @@
 @import "bourbon/bourbon";
-@import "fws/buttons";
 
 @import "foundation/variables";
+@import "fws/variables";
+@import "fws/buttons";
+@import "fws/accordian";
 
-// ============================================================================
-// VARIABLES
-// ============================================================================
-
-$font: 'Source Sans Pro', sans-serif;
-
-$color-white: #ffffff;
-$color-light-gray: #DFE2E2;
-$color-slate-gray: #494d4e;
-$color-hightlight: #008dde;
-
-$color-body-font: #222222;
-$color-header: rgba(0, 0, 0, .1);
-
-$width-sidebar: 15em;
-$width-sidebar-collapsed: 3em;
-$height-header: 3em;
-
-$default-border-radius: 3px;
 
 // ============================================================================
 // FONT AWESOME STUFF
 // ============================================================================
-//$fontAwesomePath:   "../font" !default;
-//
-//@font-face {
-//  font-family: 'FontAwesome';
-//  src: url('#{$fontAwesomePath}/fontawesome-webfont.eot?v=3.1.0');
-//  src: url('#{$fontAwesomePath}/fontawesome-webfont.eot?#iefix&v=3.1.0') format("embedded-opentype"),
-//  url('#{$fontAwesomePath}/fontawesome-webfont.woff?v=3.1.0') format("woff"),
-//  url('#{$fontAwesomePath}/fontawesome-webfont.ttf?v=3.1.0') format("truetype");
-//  font-weight: normal;
-//  font-style: normal;
-//}
-//
-//[class^="icon-"],
-//[class*=" icon-"] {
-//  font-family: FontAwesome;
-//  font-weight: normal;
-//  font-style: normal;
-//  text-decoration: inherit;
-//  -webkit-font-smoothing: antialiased;
-//
-//  /* sprites.less reset */
-//  display: inline;
-//  width: auto;
-//  height: auto;
-//  line-height: normal;
-//  vertical-align: baseline;
-//  background-image: none;
-//  background-position: 0% 0%;
-//  background-repeat: repeat;
-//  margin-top: 0;
-//}
-//
-//[class^="icon-"]:before,
-//[class*=" icon-"]:before {
-//  text-decoration: inherit;
-//  display: inline-block;
-//  speak: none;
-//}
-//
-//.icon-chevron-sign-left:before    { content: "\f137"; }
-//.icon-chevron-sign-right:before   { content: "\f138"; }
+$fontAwesomePath:   "../font" !default;
+
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('#{$fontAwesomePath}/fontawesome-webfont.eot?v=3.1.0');
+  src: url('#{$fontAwesomePath}/fontawesome-webfont.eot?#iefix&v=3.1.0') format("embedded-opentype"),
+  url('#{$fontAwesomePath}/fontawesome-webfont.woff?v=3.1.0') format("woff"),
+  url('#{$fontAwesomePath}/fontawesome-webfont.ttf?v=3.1.0') format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon-"],
+[class*=" icon-"] {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+
+  /* sprites.less reset */
+  display: inline;
+  width: auto;
+  height: auto;
+  line-height: normal;
+  vertical-align: baseline;
+  background-image: none;
+  background-position: 0% 0%;
+  background-repeat: repeat;
+  margin-top: 0;
+}
+
+[class^="icon-"]:before,
+[class*=" icon-"]:before {
+  text-decoration: inherit;
+  display: inline-block;
+  speak: none;
+}
+
+.icon-chevron-sign-left:before    { content: "\f137"; }
+.icon-chevron-sign-right:before   { content: "\f138"; }
+.icon-chevron-sign-up:before      { content: "\f139"; }
+.icon-chevron-sign-down:before    { content: "\f13a"; }
 
 // ============================================================================
 // GLOBAL AND BOX SETTINGS
@@ -88,6 +73,7 @@ body {
   // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
   height: 100%;
   width: 100%;
+  background-color: $color-slate-gray;
 }
 
 .top-bar {
@@ -130,7 +116,7 @@ body {
   width: 100%;
 
   // Other (colors, fonts, align)
-  background-color: $color-white;
+  background-color: $color-slate-gray;
   color: $color-body-font;
   font-family: $font;
 
@@ -158,7 +144,6 @@ body {
   display: -ms-flex;
   display: flex;
   height: 100%;
-  overflow: auto;
   padding-top: 55px;
   width: $width-sidebar;
 
@@ -179,6 +164,7 @@ body {
 
 .sidebar__body {
   @include box-flex(1);
+  overflow: auto;
 
   // Nested
   li {
@@ -208,16 +194,28 @@ body {
   // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
   height: 100%;
   width: 100%;
-  padding-top: 45px;
+  padding-top: 55px;
 
   //margin-left: $width-sidebar;
 
   // Other (colors, fonts, align)
   background-color: $color-white;
+  box-shadow:         -3px 0px 10px rgba(50, 50, 50, 0.75);
+  -webkit-border-top-left-radius: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-bottomleft: 5px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-left: 1px solid $color-light-gray;
 
   // @includes
   @include box-flex(1);
 
   // Nested
+  h3 {
+    margin-top: 0;
+  }
 }
+
 

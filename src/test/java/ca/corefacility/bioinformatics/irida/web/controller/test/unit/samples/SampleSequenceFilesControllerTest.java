@@ -35,6 +35,10 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * Unit tests for {@link SampleSequenceFilesController}.
@@ -54,6 +58,8 @@ public class SampleSequenceFilesControllerTest {
         projectService = mock(ProjectService.class);
 
         controller = new SampleSequenceFilesController(sequenceFileService, sampleService, relationshipService, projectService);
+        RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
+        RequestContextHolder.setRequestAttributes(ra);
     }
 
     @Test

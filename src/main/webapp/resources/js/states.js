@@ -40,8 +40,9 @@
           console.log(data);
           $scope.project = {
             name: data.resource.name,
-            users: data.relatedResources.users.resources
+            users: data.relatedResources.users.resources,
           };
+          $scope.samples = data.relatedResources.samples.resources
         }
       })
       .state('login', {
