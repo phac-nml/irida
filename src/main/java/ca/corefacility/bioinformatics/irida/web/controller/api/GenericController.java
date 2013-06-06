@@ -32,6 +32,8 @@ import ca.corefacility.bioinformatics.irida.web.controller.exceptions.GenericsEx
 import ca.corefacility.bioinformatics.irida.web.controller.links.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder;
 import ca.corefacility.bioinformatics.irida.web.controller.support.SortProperty;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.google.common.base.Strings;
 import com.google.common.net.HttpHeaders;
 import com.google.gson.Gson;
@@ -44,6 +46,7 @@ import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.LinkedMultiValueMap;
@@ -537,6 +540,43 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         logger.info("A client attempted to create a new resource with an identifier that exists, " +
                 "or modify a resource to have an identifier that already exists at " + new Date());
         return new ResponseEntity<>("An entity already exists with that identifier.", HttpStatus.CONFLICT);
+    }
+
+    /**
+     * Handle {@link JsonParseException}.
+     *
+     * @param e the exception as thrown by the JSON parser.
+     * @return an appropriate HTTP response.
+     */
+    @SuppressWarnings("unused")
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<String> handleInvalidJsonException(HttpMessageNotReadableException e) {
+        String message = "Your request could not be parsed.";
+        Throwable cause = e.getCause();
+        if (cause instanceof UnrecognizedPropertyException) {
+            // this is thrown when Jackson tries to de-serialize JSON into an object and the JSON object has a field that
+            // doesn't exist
+            UnrecognizedPropertyException unrecognizedProperty = (UnrecognizedPropertyException) cause;
+            String propertyName = unrecognizedProperty.getUnrecognizedPropertyName();
+            Collection<Object> acceptableProperties = unrecognizedProperty.getKnownPropertyIds();
+            StringBuilder builder = new StringBuilder("Unrecognized property [");
+            builder.append(propertyName).append("] in JSON request. The object that you were trying to create or update accepts the following fields: [\n");
+            for (Object acceptableProperty : acceptableProperties) {
+                // DON'T append the links entry
+                if (!acceptableProperty.equals("links")) {
+                    builder.append(acceptableProperty).append(",\n");
+                }
+            }
+            builder.append("].");
+            message = builder.toString();
+        } else if (cause instanceof JsonParseException) {
+            JsonParseException parseException = (JsonParseException) cause;
+            if (parseException.getMessage().contains("double-quote")) {
+                message = "Your request could not be parsed. Field names must be surrounded by double quotes (see: http://www.json.org/).";
+            }
+        }
+
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
     /**

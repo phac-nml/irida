@@ -43,7 +43,7 @@ public class ProjectSamplesController {
     /**
      * rel used for accessing the list of samples associated with a project.
      */
-    public static final String PROJECT_SAMPLES_REL = "project/samples";
+    public static final String REL_PROJECT_SAMPLES = "project/samples";
     /**
      * Reference to {@link ProjectService}.
      */
@@ -136,6 +136,8 @@ public class ProjectSamplesController {
             sampleResources.add(sr);
         }
 
+        sampleResources.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
+
         modelMap.addAttribute(GenericController.RESOURCE_NAME, sampleResources);
 
         return modelMap;
@@ -204,7 +206,7 @@ public class ProjectSamplesController {
         RootResource resource = new RootResource();
         // add links back to the collection of samples and to the project itself.
         resource.add(linkTo(methodOn(ProjectSamplesController.class)
-                .getProjectSamples(projectId)).withRel(PROJECT_SAMPLES_REL));
+                .getProjectSamples(projectId)).withRel(REL_PROJECT_SAMPLES));
         resource.add(linkTo(ProjectsController.class).slash(projectId).withRel(ProjectsController.REL_PROJECT));
 
         // add the links to the response.
