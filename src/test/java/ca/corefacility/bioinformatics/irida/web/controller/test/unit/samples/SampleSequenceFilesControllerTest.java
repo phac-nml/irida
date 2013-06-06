@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.samples;
 
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Sample;
@@ -15,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
 import org.junit.Before;
@@ -29,10 +31,7 @@ import org.springframework.util.FileCopyUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -211,6 +210,61 @@ public class SampleSequenceFilesControllerTest {
         assertEquals(1, locations.size());
         assertEquals("<http://localhost/projects/" + projectId + "/samples/" + sampleId +
                 "/sequenceFiles/" + sequenceFileId + ">; rel=relationship", links.iterator().next());
+    }
+
+    @Test
+    public void testAddExistingSequenceFileToSample() throws IOException {
+        Project p = constructProject();
+        Sample s = constructSample();
+        SequenceFile sf = constructSequenceFile();
+        Relationship projectSampleRelationship = new Relationship(p.getIdentifier(), s.getIdentifier());
+        Relationship sampleSequenceFileRelationship = new Relationship(s.getIdentifier(), sf.getIdentifier());
+        String projectId = p.getIdentifier().getIdentifier();
+        String sampleId = s.getIdentifier().getIdentifier();
+        String sequenceFileId = sf.getIdentifier().getIdentifier();
+
+        when(relationshipService.getRelationship(p.getIdentifier(), s.getIdentifier())).thenReturn(projectSampleRelationship);
+        when(sampleService.read(s.getIdentifier())).thenReturn(s);
+        when(sequenceFileService.read(sf.getIdentifier())).thenReturn(sf);
+        when(sampleService.addSequenceFileToSample(s, sf)).thenReturn(sampleSequenceFileRelationship);
+
+        Map<String, String> requestBody = ImmutableMap.of(SampleSequenceFilesController.SEQUENCE_FILE_ID_KEY, sequenceFileId);
+
+        ResponseEntity<String> response = controller.addExistingSequenceFileToSample(projectId, sampleId, requestBody);
+
+        verify(relationshipService).getRelationship(p.getIdentifier(), s.getIdentifier());
+        verify(sampleService).read(s.getIdentifier());
+        verify(sequenceFileService).read(sf.getIdentifier());
+        verify(sampleService).addSequenceFileToSample(s, sf);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+
+        List<String> locations = response.getHeaders().get(HttpHeaders.LOCATION);
+        assertNotNull(locations);
+        assertFalse(locations.isEmpty());
+        assertEquals(1, locations.size());
+        // the sequence file location is still the same, but we've added a new relationship
+        assertEquals("http://localhost/sequenceFiles/" + sequenceFileId, locations.iterator().next());
+
+        List<String> links = response.getHeaders().get(HttpHeaders.LINK);
+        assertNotNull(links);
+        assertFalse(links.isEmpty());
+        assertEquals(1, links.size());
+        assertEquals("<http://localhost/projects/" + projectId + "/samples/" + sampleId +
+                "/sequenceFiles/" + sequenceFileId + ">; rel=relationship", links.iterator().next());
+    }
+
+    @Test
+    public void testAddExistingSequenceFileToSampleBadRequest() {
+        Map<String, String> requestBody = new HashMap<>();
+        try {
+            controller.addExistingSequenceFileToSample(UUID.randomUUID().toString(), UUID.randomUUID().toString(), requestBody);
+            fail();
+        } catch (InvalidPropertyException e) {
+
+        } catch (Exception e) {
+            fail();
+        }
     }
 
     /**
