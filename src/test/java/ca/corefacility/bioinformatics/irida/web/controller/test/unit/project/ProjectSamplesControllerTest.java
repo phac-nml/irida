@@ -7,7 +7,6 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
@@ -121,7 +120,7 @@ public class ProjectSamplesControllerTest {
         List<Link> links = resource.getLinks();
 
         // should be two links in the response, one back to the individual project, the other to the samples collection
-        Set<String> rels = Sets.newHashSet(ProjectsController.REL_PROJECT, ProjectSamplesController.PROJECT_SAMPLES_REL);
+        Set<String> rels = Sets.newHashSet(ProjectsController.REL_PROJECT, ProjectSamplesController.REL_PROJECT_SAMPLES);
         for (Link link : links) {
             assertTrue(rels.contains(link.getRel()));
             assertNotNull(rels.remove(link.getRel()));
