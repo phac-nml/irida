@@ -47,7 +47,7 @@ public class ProjectSequenceFilesController {
     /**
      * rel used for accessing the list of sequence files associated with a project.
      */
-    public static final String PROJECT_SEQUENCE_FILES_REL = "project/sequenceFiles";
+    public static final String REL_PROJECT_SEQUENCE_FILES = "project/sequenceFiles";
     /**
      * Reference to {@link ProjectService}.
      */
@@ -156,7 +156,7 @@ public class ProjectSequenceFilesController {
         // respond to the client.
         RootResource resource = new RootResource();
         // add links back to the collection of samples and to the project itself.
-        resource.add(linkTo(methodOn(ProjectSequenceFilesController.class).getProjectSequenceFiles(projectId)).withRel(PROJECT_SEQUENCE_FILES_REL));
+        resource.add(linkTo(methodOn(ProjectSequenceFilesController.class).getProjectSequenceFiles(projectId)).withRel(REL_PROJECT_SEQUENCE_FILES));
         resource.add(linkTo(ProjectsController.class).slash(projectId).withRel(ProjectsController.REL_PROJECT));
 
         // add the links to the response.
