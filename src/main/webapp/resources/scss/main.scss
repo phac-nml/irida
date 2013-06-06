@@ -148,7 +148,7 @@ body {
   display: -ms-flex;
   display: flex;
   height: 100%;
-  overflow-y: scroll;
+  overflow: auto;
   width: $width-sidebar;
 
   // Other (colors, fonts, align)
