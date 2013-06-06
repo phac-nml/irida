@@ -350,7 +350,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <browsers>PhantomJS</browsers>
+                    <browsers>Firefox</browsers>
                 </configuration>
             </plugin>
 

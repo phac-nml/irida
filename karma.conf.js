@@ -62,7 +62,7 @@ autoWatch = true;
 // - Safari (only Mac)
 // - PhantomJS
 // - IE (only Windows)
-browsers = ['PhantomJS'];
+browsers = ['Firefox'];
 
 
 // If browser does not capture in given timeout [ms], kill it
@@ -76,5 +76,7 @@ singleRun = false;
 plugins = [
   'karma-jasmine',
   'karma-phantomjs-launcher',
+  'karma-chrome-launcher',
+  'karma-firefox-launcher',
   'karma-junit-reporter'
 ];
