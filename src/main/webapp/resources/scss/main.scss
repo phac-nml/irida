@@ -21,6 +21,8 @@ $width-sidebar: 15em;
 $width-sidebar-collapsed: 3em;
 $height-header: 3em;
 
+$default-border-radius: 3px;
+
 // ============================================================================
 // FONT AWESOME STUFF
 // ============================================================================
@@ -90,21 +92,28 @@ body {
 
 .top-bar {
   margin-bottom: 0;
+  .top-bar-section ul {
+    background-color: transparent;
+  }
 }
 
 .login__outer {
   height: 100%;
   width: 100%;
 
+  display: -webkit-box;
+  display: -moz-box;
   display: -webkit-flex;
   display: -moz-flex;
   display: -ms-flex;
   display: flex;
 
+  -webkit-justify-content: center;
   justify-content: center;
+  -webkit-align-items: center;
   align-items: center;
 
-  background-color: $color-slate-gray;
+  @include linear-gradient($color-slate-gray, darken($color-slate-gray, 10));
 }
 
 .login__inner {
@@ -113,6 +122,7 @@ body {
   width: 400px;
 
   background-color: $color-white;
+  border-radius: $default-border-radius;
 }
 
 .main-content {
@@ -149,6 +159,7 @@ body {
   display: flex;
   height: 100%;
   overflow: auto;
+  padding-top: 55px;
   width: $width-sidebar;
 
   // Other (colors, fonts, align)
@@ -166,17 +177,7 @@ body {
   @include transition(all 2.0s ease-in);
 }
 
-.sidebar--collapsed {
-  width: $width-sidebar-collapsed;
-  @include transition(all 2.0s ease-out);
-
-  .sidebar__body {
-    display: none;
-  }
-}
-
 .sidebar__body {
-  padding-top: 1em;
   @include box-flex(1);
 
   // Nested
@@ -207,6 +208,8 @@ body {
   // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
   height: 100%;
   width: 100%;
+  padding-top: 45px;
+
   //margin-left: $width-sidebar;
 
   // Other (colors, fonts, align)

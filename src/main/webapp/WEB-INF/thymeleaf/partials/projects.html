@@ -1,4 +1,4 @@
-<nav class="top-bar" ng-class="{'expanded' : navbar.expandDD}" ng-hide="nav.hide">
+<div class="fixed"><nav class="top-bar" ng-class="{'expanded' : navbar.expandDD}" ng-hide="nav.hide">
     <ul class="title-area">
         <li class="name"><h1><a href="/projects">NGS Archive</a></h1></li>
         <li class="toggle-topbar menu-icon"><a href="#" ng-click="toggleDD()"><span>Menu</span></a></li>
@@ -10,7 +10,7 @@
     <li><a ng-click="logout()" href="#">Logout</a></li>
     </ul>
     </section>
-</nav>
+</nav></div>
 <div class="main-content">
     <div class="sidebar" data-ng-controller="ProjectsListCtrl">
         <div class="sidebar__body">
