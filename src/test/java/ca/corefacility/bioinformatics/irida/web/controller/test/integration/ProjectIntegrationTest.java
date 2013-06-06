@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.integration;
 
 
+import com.google.common.net.HttpHeaders;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
@@ -8,8 +9,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.preemptive;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -46,5 +51,17 @@ public class ProjectIntegrationTest {
         Response r = given().body("{ name: \"some stupid project\" }").
                 expect().response().statusCode(HttpStatus.BAD_REQUEST.value()).when().post("/projects");
         assertTrue(r.getBody().asString().contains("double quotes"));
+    }
+
+    @Test
+    public void testCreateProject() {
+        Map<String, String> project = new HashMap<>();
+        project.put("name", "new project");
+
+        Response r = given().body(project).expect().response()
+                .statusCode(HttpStatus.CREATED.value()).when().post("/projects");
+        String location = r.getHeader(HttpHeaders.LOCATION);
+        assertNotNull(location);
+        assertTrue(location.startsWith("http://localhost:8080/api/projects/"));
     }
 }
