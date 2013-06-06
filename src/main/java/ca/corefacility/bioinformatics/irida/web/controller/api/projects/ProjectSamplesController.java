@@ -11,12 +11,12 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RelationshipsController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SamplesController;
 import com.google.common.net.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Collection;
+import java.util.Map;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -204,9 +205,43 @@ public class ProjectSamplesController {
         // add links back to the collection of samples and to the project itself.
         resource.add(linkTo(methodOn(ProjectSamplesController.class)
                 .getProjectSamples(projectId)).withRel(PROJECT_SAMPLES_REL));
-        resource.add(linkTo(ProjectsController.class).slash(projectId).withRel(ProjectsController.PROJECT_REL));
+        resource.add(linkTo(ProjectsController.class).slash(projectId).withRel(ProjectsController.REL_PROJECT));
 
         // add the links to the response.
+        modelMap.addAttribute(GenericController.RESOURCE_NAME, resource);
+
+        return modelMap;
+    }
+
+    /**
+     * Update a {@link Sample} details.
+     *
+     * @param projectId     the identifier of the {@link Project} that the {@link Sample} belongs to.
+     * @param sampleId      the identifier of the {@link Sample}.
+     * @param updatedFields the updated fields of the {@link Sample}.
+     * @return a response including links to the {@link Project} and {@link Sample}.
+     */
+    @RequestMapping(value = "/projects/{projectId}/samples/{sampleId}", method = RequestMethod.PATCH,
+            consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ModelMap updateSample(@PathVariable String projectId, @PathVariable String sampleId,
+                                 @RequestBody Map<String, Object> updatedFields) {
+        ModelMap modelMap = new ModelMap();
+        Identifier projectIdentifier = new Identifier(projectId);
+        Identifier sampleIdentifier = new Identifier(sampleId);
+        // confirm that the project is related to the sample
+        Relationship r = relationshipService.getRelationship(projectIdentifier, sampleIdentifier);
+
+        // issue an update request
+        Sample s = sampleService.update(sampleIdentifier, updatedFields);
+
+        // respond to the client with a link to self, sequence files collection and project.
+        RootResource resource = new RootResource();
+        resource.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSample(projectId, sampleId))
+                .withSelfRel());
+        resource.add(linkTo(methodOn(SampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
+                .withRel(SamplesController.REL_SEQUENCE_FILES));
+        resource.add(linkTo(ProjectsController.class).slash(projectId).withRel(ProjectsController.REL_PROJECT));
+
         modelMap.addAttribute(GenericController.RESOURCE_NAME, resource);
 
         return modelMap;
