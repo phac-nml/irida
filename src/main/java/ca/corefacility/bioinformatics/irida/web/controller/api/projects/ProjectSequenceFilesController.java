@@ -157,7 +157,7 @@ public class ProjectSequenceFilesController {
         RootResource resource = new RootResource();
         // add links back to the collection of samples and to the project itself.
         resource.add(linkTo(methodOn(ProjectSequenceFilesController.class).getProjectSequenceFiles(projectId)).withRel(PROJECT_SEQUENCE_FILES_REL));
-        resource.add(linkTo(ProjectsController.class).slash(projectId).withRel(ProjectsController.PROJECT_REL));
+        resource.add(linkTo(ProjectsController.class).slash(projectId).withRel(ProjectsController.REL_PROJECT));
 
         // add the links to the response.
         modelMap.addAttribute(GenericController.RESOURCE_NAME, resource);

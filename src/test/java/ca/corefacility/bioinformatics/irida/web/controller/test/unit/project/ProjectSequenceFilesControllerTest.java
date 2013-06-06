@@ -133,7 +133,7 @@ public class ProjectSequenceFilesControllerTest {
         List<Link> links = resource.getLinks();
 
         // should be two links in the response, one back to the individual project, the other to the samples collection
-        Set<String> rels = Sets.newHashSet(ProjectsController.PROJECT_REL, ProjectSequenceFilesController.PROJECT_SEQUENCE_FILES_REL);
+        Set<String> rels = Sets.newHashSet(ProjectsController.REL_PROJECT, ProjectSequenceFilesController.PROJECT_SEQUENCE_FILES_REL);
         for (Link link : links) {
             assertTrue(rels.contains(link.getRel()));
             assertNotNull(rels.remove(link.getRel()));
