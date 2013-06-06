@@ -30,7 +30,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController
 import ca.corefacility.bioinformatics.irida.web.controller.api.RelationshipsController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.UsersController;
 import ca.corefacility.bioinformatics.irida.web.controller.links.LabelledRelationshipResource;
-import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Link;
@@ -129,16 +128,6 @@ public class ProjectsController extends GenericController<Identifier, Project, P
     /**
      * {@inheritDoc}
      */
-    @Override
-    protected Map<String, Class<?>> getUniquelyRelatedClasses() {
-        Map<String, Class<?>> relatedResources = new HashMap<>();
-        relatedResources.put(PROJECT_SEQUENCE_FILES_MAP_LABEL, SequenceFile.class);
-        return relatedResources;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @SuppressWarnings("unchecked")
     @Override
     protected Map<String, ResourceCollection<LabelledRelationshipResource>> constructCustomRelatedResourceCollections(Project project) {
@@ -146,7 +135,35 @@ public class ProjectsController extends GenericController<Identifier, Project, P
 
         resources.put(PROJECT_USERS_MAP_LABEL, getUsersForProject(project));
         resources.put(PROJECT_SAMPLES_MAP_LABEL, getSamplesForProject(project));
+        resources.put(PROJECT_SEQUENCE_FILES_MAP_LABEL, getSequenceFilesForProject(project));
+        
         return resources;
+    }
+
+    /**
+     * Get the {@link SequenceFile} entities related to this {@link Project}.
+     *
+     * @param project the {@link Project} to load {@link SequenceFile} entities for.
+     * @return labelled relationships
+     */
+    private ResourceCollection<LabelledRelationshipResource> getSequenceFilesForProject(Project project) {
+        Collection<Relationship> relationships = relationshipService.getRelationshipsForEntity(project.getIdentifier(),
+                Project.class, SequenceFile.class);
+        ResourceCollection<LabelledRelationshipResource> sequenceFileResources = new ResourceCollection<>(relationships.size());
+        String projectId = project.getIdentifier().getIdentifier();
+        for (Relationship r : relationships) {
+            Identifier sequenceFileIdentifier = r.getObject();
+            LabelledRelationshipResource resource = new LabelledRelationshipResource(sequenceFileIdentifier.getLabel(), r);
+            resource.add(linkTo(methodOn(ProjectSequenceFilesController.class).getProjectSequenceFile(projectId,
+                    sequenceFileIdentifier.getIdentifier())).withSelfRel());
+            sequenceFileResources.add(resource);
+        }
+
+        sequenceFileResources.add(linkTo(methodOn(ProjectSequenceFilesController.class)
+                .getProjectSequenceFiles(projectId)).withRel(ProjectSequenceFilesController.REL_PROJECT_SEQUENCE_FILES));
+        sequenceFileResources.setTotalResources(relationships.size());
+
+        return sequenceFileResources;
     }
 
     /**
@@ -164,11 +181,11 @@ public class ProjectsController extends GenericController<Identifier, Project, P
             Identifier sampleIdentifier = r.getObject();
             LabelledRelationshipResource resource = new LabelledRelationshipResource(sampleIdentifier.getLabel(), r);
             resource.add(linkTo(methodOn(ProjectSamplesController.class)
-                    .getProjectSample(projectId, sampleIdentifier.getIdentifier())).withRel(PageLink.REL_SELF));
+                    .getProjectSample(projectId, sampleIdentifier.getIdentifier())).withSelfRel());
             sampleResources.add(resource);
         }
         sampleResources.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSamples(projectId))
-                .withRel(ProjectSamplesController.PROJECT_SAMPLES_REL));
+                .withRel(ProjectSamplesController.REL_PROJECT_SAMPLES));
         sampleResources.setTotalResources(relationships.size());
 
         return sampleResources;
