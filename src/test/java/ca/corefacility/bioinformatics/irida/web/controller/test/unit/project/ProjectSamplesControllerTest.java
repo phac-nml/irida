@@ -7,14 +7,16 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
 import org.junit.Before;
@@ -28,10 +30,7 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -122,7 +121,7 @@ public class ProjectSamplesControllerTest {
         List<Link> links = resource.getLinks();
 
         // should be two links in the response, one back to the individual project, the other to the samples collection
-        Set<String> rels = Sets.newHashSet(ProjectsController.PROJECT_REL, ProjectSamplesController.PROJECT_SAMPLES_REL);
+        Set<String> rels = Sets.newHashSet(ProjectsController.REL_PROJECT, ProjectSamplesController.PROJECT_SAMPLES_REL);
         for (Link link : links) {
             assertTrue(rels.contains(link.getRel()));
             assertNotNull(rels.remove(link.getRel()));
@@ -192,6 +191,46 @@ public class ProjectSamplesControllerTest {
             assertNotNull(rels.remove(link.getRel()));
         }
         assertTrue(rels.isEmpty());
+    }
+
+    @Test
+    public void testUpdateSample() {
+        Project p = constructProject();
+        Sample s = constructSample();
+        Relationship r = new Relationship(p.getIdentifier(), s.getIdentifier());
+        Map<String, Object> updatedFields = ImmutableMap.of("sampleName", (Object) "some new name");
+        String projectId = p.getIdentifier().getIdentifier();
+        String sampleId = s.getIdentifier().getIdentifier();
+
+        when(relationshipService.getRelationship(p.getIdentifier(), s.getIdentifier())).thenReturn(r);
+        when(sampleService.update(s.getIdentifier(), updatedFields)).thenReturn(s);
+
+        ModelMap modelMap = controller.updateSample(projectId, sampleId, updatedFields);
+
+        verify(relationshipService).getRelationship(p.getIdentifier(), s.getIdentifier());
+        verify(sampleService).update(s.getIdentifier(), updatedFields);
+
+        Object o = modelMap.get(GenericController.RESOURCE_NAME);
+        assertNotNull(o);
+        assertTrue(o instanceof RootResource);
+        RootResource resource = (RootResource) o;
+        Map<String, String> links = linksToMap(resource.getLinks());
+        String self = links.get(PageLink.REL_SELF);
+        assertEquals("http://localhost/projects/" + projectId + "/samples/" + sampleId, self);
+        String sequenceFiles = links.get(SamplesController.REL_SEQUENCE_FILES);
+        assertEquals("http://localhost/projects/" + projectId + "/samples/" + sampleId + "/sequenceFiles", sequenceFiles);
+        String project = links.get(ProjectsController.REL_PROJECT);
+        assertEquals("http://localhost/projects/" + projectId, project);
+    }
+
+    private Map<String, String> linksToMap(List<Link> links) {
+        Map<String, String> linksMap = new HashMap<>();
+
+        for (Link l : links) {
+            linksMap.put(l.getRel(), l.getHref());
+        }
+
+        return linksMap;
     }
 
     /**

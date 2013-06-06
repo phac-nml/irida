@@ -58,7 +58,7 @@ public class ProjectsController extends GenericController<Identifier, Project, P
     /**
      * rel used for accessing an individual project.
      */
-    public static final String PROJECT_REL = "project";
+    public static final String REL_PROJECT = "project";
     /**
      * rel used for accessing users associated with a project.
      */
