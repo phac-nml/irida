@@ -551,7 +551,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     @SuppressWarnings("unused")
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<String> handleInvalidJsonException(HttpMessageNotReadableException e) {
-        ResponseEntity<String> response;
+        String message = "Your request could not be parsed.";
         Throwable cause = e.getCause();
         if (cause instanceof UnrecognizedPropertyException) {
             // this is thrown when Jackson tries to de-serialize JSON into an object and the JSON object has a field that
@@ -568,12 +568,15 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
                 }
             }
             builder.append("].");
-            response = new ResponseEntity<>(builder.toString(), HttpStatus.BAD_REQUEST);
-        } else {
-            response = new ResponseEntity<>("Your request could not be parsed.", HttpStatus.BAD_REQUEST);
+            message = builder.toString();
+        } else if (cause instanceof JsonParseException) {
+            JsonParseException parseException = (JsonParseException) cause;
+            if (parseException.getMessage().contains("double-quote")) {
+                message = "Your request could not be parsed. Field names must be surrounded by double quotes (see: http://www.json.org/).";
+            }
         }
 
-        return response;
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
     /**
