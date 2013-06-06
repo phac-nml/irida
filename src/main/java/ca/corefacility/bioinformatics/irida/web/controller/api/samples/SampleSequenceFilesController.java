@@ -16,13 +16,25 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController
 import ca.corefacility.bioinformatics.irida.web.controller.api.SequenceFileController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSequenceFilesController;
+import com.google.common.net.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -109,6 +121,60 @@ public class SampleSequenceFilesController {
 
         modelMap.addAttribute(GenericController.RESOURCE_NAME, resources);
         return modelMap;
+    }
+
+    /**
+     * Add a new {@link SequenceFile} to a {@link Sample}.
+     *
+     * @param projectId the identifier for the {@link Project}.
+     * @param sampleId  the identifier for the {@link Sample}.
+     * @param file      the content of the {@link SequenceFile}.
+     * @return a response indicating the success of the submission.
+     */
+    @RequestMapping(value = "/projects/{projectId}/samples/{sampleId}/sequenceFiles", method = RequestMethod.POST,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> addNewSequenceFileToSample(@PathVariable String projectId,
+                                                             @PathVariable String sampleId,
+                                                             @RequestParam("file") MultipartFile file) throws IOException {
+        Identifier projectIdentifier = new Identifier(projectId);
+        Identifier sampleIdentifier = new Identifier(sampleId);
+        // confirm that a relationship exists between the project and the sample
+        Relationship r = relationshipService.getRelationship(projectIdentifier, sampleIdentifier);
+
+        // load the sample from the database
+        Sample s = sampleService.read(sampleIdentifier);
+
+        // prepare a new sequence file using the multipart file supplied by the caller
+        Path temp = Files.createTempDirectory(null);
+        Path target = temp.resolve(file.getOriginalFilename());
+
+        target = Files.write(target, file.getBytes());
+        File f = target.toFile();
+
+        SequenceFile sf = new SequenceFile(f);
+
+        // persist the changes by calling the sample service
+        Relationship sampleSequenceFileRelationship = sampleService.addSequenceFileToSample(s, sf);
+
+        f.delete();
+        temp.toFile().delete();
+
+        // prepare a link to the sequence file itself (on the sequence file controller)
+        String sequenceFileId = sampleSequenceFileRelationship.getObject().getIdentifier();
+        String location = linkTo(SequenceFileController.class).slash(sequenceFileId).withSelfRel().getHref();
+
+        // prepare a link to the relationship between the sample and the sequence file (on this controller)
+        String relationshipLocation = linkTo(methodOn(SampleSequenceFilesController.class)
+                .getSequenceFileForSample(projectId, sampleId, sequenceFileId)).withSelfRel().getHref();
+        relationshipLocation = "<" + relationshipLocation + ">; rel=relationship";
+
+        // prepare the headers
+        MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
+        responseHeaders.add(HttpHeaders.LOCATION, location);
+        responseHeaders.add(HttpHeaders.LINK, relationshipLocation);
+
+        // respond to the client
+        return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
     }
 
     /**

@@ -16,10 +16,15 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
 import com.google.common.collect.Sets;
+import com.google.common.net.HttpHeaders;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.Link;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -164,6 +169,48 @@ public class SampleSequenceFilesControllerTest {
         }
 
         assertTrue(rels.isEmpty());
+    }
+
+    @Test
+    public void testAddNewSequenceFileToSample() throws IOException {
+        Project p = constructProject();
+        Sample s = constructSample();
+        SequenceFile sf = constructSequenceFile();
+        Relationship projectSampleRelationship = new Relationship(p.getIdentifier(), s.getIdentifier());
+        Relationship sampleSequenceFileRelationship = new Relationship(s.getIdentifier(), sf.getIdentifier());
+        String projectId = p.getIdentifier().getIdentifier();
+        String sampleId = s.getIdentifier().getIdentifier();
+        String sequenceFileId = sf.getIdentifier().getIdentifier();
+
+        File f = Files.createTempFile(UUID.randomUUID().toString(), null).toFile();
+        f.deleteOnExit();
+        MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh", FileCopyUtils.copyToByteArray(f));
+
+        when(relationshipService.getRelationship(p.getIdentifier(), s.getIdentifier())).thenReturn(projectSampleRelationship);
+        when(sampleService.read(s.getIdentifier())).thenReturn(s);
+        when(sampleService.addSequenceFileToSample(eq(s), any(SequenceFile.class))).thenReturn(sampleSequenceFileRelationship);
+
+        ResponseEntity<String> response = controller.addNewSequenceFileToSample(p.getIdentifier().getIdentifier(),
+                s.getIdentifier().getIdentifier(), mmf);
+
+        verify(relationshipService, times(1)).getRelationship(p.getIdentifier(), s.getIdentifier());
+        verify(sampleService, times(1)).read(s.getIdentifier());
+        verify(sampleService, times(1)).addSequenceFileToSample(eq(s), any(SequenceFile.class));
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+
+        List<String> locations = response.getHeaders().get(HttpHeaders.LOCATION);
+        assertNotNull(locations);
+        assertFalse(locations.isEmpty());
+        assertEquals(1, locations.size());
+        assertEquals("http://localhost/sequenceFiles/" + sequenceFileId, locations.iterator().next());
+
+        List<String> links = response.getHeaders().get(HttpHeaders.LINK);
+        assertNotNull(links);
+        assertFalse(links.isEmpty());
+        assertEquals(1, locations.size());
+        assertEquals("<http://localhost/projects/" + projectId + "/samples/" + sampleId +
+                "/sequenceFiles/" + sequenceFileId + ">; rel=relationship", links.iterator().next());
     }
 
     /**
