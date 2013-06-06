@@ -12,9 +12,9 @@
                             <section class="ac-container">
                                 <div data-ng-repeat="s in samples">
                                     <input id="ac-{{$index}}" name="accordion-1" type="checkbox" />
-                                    <label for="ac-{{$index}}">{{s.label}}<i class="icon-chevron-sign-down"></i> </label>
+                                    <label for="ac-{{$index}}"><span>{{s.dateCreated | date:'shortDate'}}</span>{{s.label}}<i class="icon-chevron-sign-down"></i> </label>
                                     <article class="ac-small">
-                                        <p>Some content... </p>
+                                        <div class="spinner"></div>
                                     </article>
                                 </div>
                             </section>
