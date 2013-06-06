@@ -143,7 +143,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             con.begin();
             URI subURI = fac.createURI(subNetURI.toString());
             URI objURI = fac.createURI(objNetURI.toString());
-            URI pred = predicate.getPredicateURI(con);//fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
+            URI pred = predicate.getPredicateURI(con);
 
             Identifier identifier = generateNewIdentifier();
             link.setIdentifier(identifier);
@@ -235,7 +235,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
 
             URI subURI = fac.createURI(subNetURI.toString());
-            URI predURI = predicate.getPredicateURI(con);//fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
+            URI predURI = predicate.getPredicateURI(con);
             query.setBinding("subject", subURI);
             query.setBinding("predicate", predURI);
             TupleQueryResult results = query.evaluate();
@@ -276,7 +276,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
 
             URI objURI = fac.createURI(objNetUri.toString());
-            URI predURI = predicate.getPredicateURI(con);//fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
+            URI predURI = predicate.getPredicateURI(con);
             query.setBinding("object", objURI);
             query.setBinding("predicate", predURI);
             TupleQueryResult results = query.evaluate();
@@ -350,7 +350,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             }
 
             if (predicate != null) {
-                URI predURI = predicate.getPredicateURI(con);//fac.createURI(con.getNamespace(predicate.prefix), predicate.name);
+                URI predURI = predicate.getPredicateURI(con);
                 query.setBinding("pred", predURI);
             }
 
@@ -464,17 +464,26 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
         return ret;
     }
     
+    /**
+     * {@inheritDoc}
+     */    
+    @Override
     public <SubjectType extends IridaThing, ObjectType extends IridaThing> void delete(SubjectType subject, ObjectType object) {
         RdfPredicate pred = linkList.getLink(subject.getClass(), object.getClass());
         
         List<Relationship> links = getLinks((Identifier)subject.getIdentifier(), pred, (Identifier)object.getIdentifier());
+        if(links.isEmpty()){
+            throw new EntityNotFoundException("No relationship found to delete between objects");
+        }
         logger.trace("Deleting " + links.size() + " relationships.");
         for(Relationship r : links){
             delete(r.getIdentifier());
         }
     }
     
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void delete(Identifier id) throws EntityNotFoundException {
         if (!exists(id)) {
@@ -499,7 +508,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             URI subURI = vf.createURI(subNetURI.toString());
             URI objURI = vf.createURI(objNetURI.toString());
 
-            URI pred = predicate.getPredicateURI(con);//vf.createURI(con.getNamespace(predicate.prefix), predicate.name);
+            URI pred = predicate.getPredicateURI(con);
             con.remove(subURI,pred,objURI);
             
             //then we'll remove the relationship object
@@ -519,12 +528,15 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
     public List<Relationship> list() {
         throw new UnsupportedOperationException("Listing links will not be supported.");
     }
-
+    
     @Override
     public List<Relationship> list(int page, int size, String sortProperty, Order order) {
         throw new UnsupportedOperationException("Listing links will not be supported.");
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Boolean exists(Identifier id) {
         boolean exists = false;
@@ -559,12 +571,12 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
 
         return exists;        
     }
-
+    
     @Override
     public Integer count() {
         throw new UnsupportedOperationException("Counting links will not be supported.");
     }
-
+    
     @Override
     public Relationship update(Identifier id, Map<String, Object> updatedFields) {
         throw new UnsupportedOperationException("Updating a relationship will not be supported");
