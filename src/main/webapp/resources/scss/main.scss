@@ -1,4 +1,5 @@
 @import "bourbon/bourbon";
+@import "fws/buttons";
 
 @import "foundation/variables";
 
@@ -89,6 +90,29 @@ body {
 
 .top-bar {
   margin-bottom: 0;
+}
+
+.login__outer {
+  height: 100%;
+  width: 100%;
+
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  background-color: $color-slate-gray;
+}
+
+.login__inner {
+  height: 300px;
+  padding: 1em;
+  width: 400px;
+
+  background-color: $color-white;
 }
 
 .main-content {

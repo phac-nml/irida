@@ -1,26 +1,24 @@
-<!--<div class="row">-->
-    <div class="large-12 columns" data-ng-controller="ProjectsListCtrl as pCtrl">
-        <ul class="card-holder" infinite-scroll='pCtrl.loadMore()'
-            infinite-scroll-distance='1'>
-            <!--<li>-->
-                <!--<div class="card new-card" ng-click="pCtrl.openModal()">-->
-                    <!--<i class="icon-plus"></i>-->
-                <!--</div>-->
-            <!--</li>-->
-            <li data-ng-repeat="project in projects">
-                <!-- todo: do not use links[0] -->
-                <div class="card" data-ng-click="pCtrl.gotoProject(project.links[0].href)">
-                    <h2>{{project.name}}</h2>
-                    <span ng-bind="project.dateCreated | date: 'd MMM yyyy'"></span>
-
-                    <p class="hide-for-small">Lorem ipsum dolor sit amet, consectetur adipisicing elit. A consectetur
-                        consequuntur dolorum hic modi
-                        molestias omnis quia quibusdam! Aut beatae delectus deserunt eum expedita id ipsa quae
-                        repudiandae saepe
-                        similique.</p>
-                </div>
-            </li>
-        </ul>
-        <div th:substituteby="fragments/projects/new-project-modal"></div>
+<nav class="top-bar" ng-class="{'expanded' : navbar.expandDD}" ng-hide="nav.hide">
+    <ul class="title-area">
+        <li class="name"><h1><a href="/projects">NGS Archive</a></h1></li>
+        <li class="toggle-topbar menu-icon"><a href="#" ng-click="toggleDD()"><span>Menu</span></a></li>
+    </ul>
+    <section class="top-bar-section">
+    <ul class="right">
+    <!--<li ng-class="{active: nav.loc === 'projects'}"><a href="/projects">Projects</a></li>-->
+    <!--<li ng-class="{active: nav.loc === 'users'}"><a href="/users">Users</a></li>-->
+    <li><a ng-click="logout()" href="#">Logout</a></li>
+    </ul>
+    </section>
+</nav>
+<div class="main-content">
+    <div class="sidebar" data-ng-controller="ProjectsListCtrl">
+        <div class="sidebar__body">
+            <h2>Projects</h2>
+            <ul>
+                <li data-ng-repeat="p in projects" data-ng-click="gotoProject(p.links[0].href)">{{p.name}}</li>
+            </ul>
+        </div>
     </div>
-<!--</div>-->
+    <div class="detailed-content" ui-view=""></div>
+</div>

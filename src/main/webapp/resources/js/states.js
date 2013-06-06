@@ -10,7 +10,7 @@
     $stateProvider
       .state('projects', {
         url: '/projects',
-        templateUrl: '/partials/landing.html',
+        templateUrl: '/partials/projects.html',
         resolve: {
           data: function ($q, ajaxService) {
             var defer = $q.defer();
@@ -26,7 +26,7 @@
       })
       .state('projects.detail', {
         url: '/:projectId',
-        templateUrl: '/partials/landing.project.html',
+        templateUrl: '/partials/projects.detail.html',
         resolve: {
           data: function ($q, $stateParams, ajaxService) {
             var defer = $q.defer();
