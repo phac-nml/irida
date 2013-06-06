@@ -12,9 +12,9 @@ import org.springframework.http.HttpStatus;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.jayway.restassured.RestAssured.expect;
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.preemptive;
+import static com.jayway.restassured.RestAssured.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -69,9 +69,25 @@ public class ProjectIntegrationTest {
     @Test
     public void testGetProject() {
         Map<String, String> project = new HashMap<>();
-        project.put("name", "new project");
+        String projectName = "new project";
+        project.put("name", projectName);
         Response r = given().body(project).post("/projects");
         String location = r.getHeader(HttpHeaders.LOCATION);
-        expect().statusCode(HttpStatus.OK.value()).when().get(location);
+        expect().body("resource.name", equalTo(projectName)).and()
+                .body("resource.links.rel", hasItems("self", "project/users", "project/samples", "project/sequenceFiles"))
+                .when().get(location);
+    }
+
+    @Test
+    public void testUpdateProjectName() {
+        Map<String, String> project = new HashMap<>();
+        String projectName = "new project";
+        String updatedName = "updated new project";
+        project.put("name", projectName);
+        Response r = given().body(project).post("/projects");
+        String location = r.getHeader(HttpHeaders.LOCATION);
+        project.put("name", updatedName);
+        given().body(project).expect().statusCode(HttpStatus.OK.value()).when().patch(location);
+        expect().body("resource.name", equalTo(updatedName)).when().get(location);
     }
 }
