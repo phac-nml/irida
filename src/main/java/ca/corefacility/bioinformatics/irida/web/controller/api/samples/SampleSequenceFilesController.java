@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.samples;
 
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Sample;
@@ -16,14 +17,24 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController
 import ca.corefacility.bioinformatics.irida.web.controller.api.SequenceFileController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSequenceFilesController;
+import com.google.common.net.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Map;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -36,13 +47,17 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @Controller
 public class SampleSequenceFilesController {
     /**
-     * Rel to get back to the sample.
+     * Rel to get back to the {@link Sample}.
      */
     public static final String REL_SAMPLE = "sample";
     /**
-     * Rel to get to the new location of the sequence file.
+     * Rel to get to the new location of the {@link SequenceFile}.
      */
     public static final String REL_PROJECT_SEQUENCE_FILE = "project/sequenceFile";
+    /**
+     * The key used in the request to add an existing {@link SequenceFile} to a {@link Sample}.
+     */
+    public static final String SEQUENCE_FILE_ID_KEY = "sequenceFileId";
     /**
      * Reference to the {@link SequenceFileService}.
      */
@@ -109,6 +124,111 @@ public class SampleSequenceFilesController {
 
         modelMap.addAttribute(GenericController.RESOURCE_NAME, resources);
         return modelMap;
+    }
+
+    /**
+     * Add a new {@link SequenceFile} to a {@link Sample}.
+     *
+     * @param projectId the identifier for the {@link Project}.
+     * @param sampleId  the identifier for the {@link Sample}.
+     * @param file      the content of the {@link SequenceFile}.
+     * @return a response indicating the success of the submission.
+     */
+    @RequestMapping(value = "/projects/{projectId}/samples/{sampleId}/sequenceFiles", method = RequestMethod.POST,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> addNewSequenceFileToSample(@PathVariable String projectId,
+                                                             @PathVariable String sampleId,
+                                                             @RequestParam("file") MultipartFile file) throws IOException {
+        Identifier projectIdentifier = new Identifier(projectId);
+        Identifier sampleIdentifier = new Identifier(sampleId);
+        // confirm that a relationship exists between the project and the sample
+        Relationship r = relationshipService.getRelationship(projectIdentifier, sampleIdentifier);
+
+        // load the sample from the database
+        Sample s = sampleService.read(sampleIdentifier);
+
+        // prepare a new sequence file using the multipart file supplied by the caller
+        Path temp = Files.createTempDirectory(null);
+        Path target = temp.resolve(file.getOriginalFilename());
+
+        target = Files.write(target, file.getBytes());
+        File f = target.toFile();
+
+        SequenceFile sf = new SequenceFile(f);
+
+        // persist the changes by calling the sample service
+        Relationship sampleSequenceFileRelationship = sampleService.addSequenceFileToSample(s, sf);
+
+        f.delete();
+        temp.toFile().delete();
+
+        // prepare a link to the sequence file itself (on the sequence file controller)
+        String sequenceFileId = sampleSequenceFileRelationship.getObject().getIdentifier();
+        String location = linkTo(SequenceFileController.class).slash(sequenceFileId).withSelfRel().getHref();
+
+        // prepare a link to the relationship between the sample and the sequence file (on this controller)
+        String relationshipLocation = linkTo(methodOn(SampleSequenceFilesController.class)
+                .getSequenceFileForSample(projectId, sampleId, sequenceFileId)).withSelfRel().getHref();
+        relationshipLocation = "<" + relationshipLocation + ">; rel=relationship";
+
+        // prepare the headers
+        MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
+        responseHeaders.add(HttpHeaders.LOCATION, location);
+        responseHeaders.add(HttpHeaders.LINK, relationshipLocation);
+
+        // respond to the client
+        return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
+    }
+
+    /**
+     * Add a relationship between an existing {@link SequenceFile} and a {@link Sample}. If the {@link SequenceFile} has
+     * a relationship with the {@link Project} that this {@link Sample} belongs to, then the relationship is terminated.
+     * The {@link SequenceFile} is not required to belong to the parent {@link Project}.
+     *
+     * @param projectId   the identifier of the {@link Project} that the {@link Sample} belongs to.
+     * @param sampleId    the identifier of the {@link Sample}.
+     * @param requestBody the JSON/XML encoded request that contains the {@link SequenceFile} identifier.
+     * @return
+     */
+    @RequestMapping(value = "/projects/{projectId}/samples/{sampleId}/sequenceFiles", method = RequestMethod.POST,
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<String> addExistingSequenceFileToSample(@PathVariable String projectId,
+                                                                  @PathVariable String sampleId,
+                                                                  @RequestBody Map<String, String> requestBody) {
+        // sanity checking, does the correct key exist in the request body?
+        if (!requestBody.containsKey(SEQUENCE_FILE_ID_KEY)) {
+            throw new InvalidPropertyException("Required property [" + SEQUENCE_FILE_ID_KEY + "] not found in request.");
+        }
+
+        Identifier projectIdentifier = new Identifier(projectId);
+        Identifier sampleIdentifier = new Identifier(sampleId);
+        Identifier sequenceFileIdentifier = new Identifier(requestBody.get(SEQUENCE_FILE_ID_KEY));
+        // confirm the relationship between the sample and the project.
+        Relationship r = relationshipService.getRelationship(projectIdentifier, sampleIdentifier);
+
+        // load the sample and sequence file from the database.
+        Sample s = sampleService.read(sampleIdentifier);
+        SequenceFile sf = sequenceFileService.read(sequenceFileIdentifier);
+
+        // persist the changes by calling the sample service
+        Relationship sampleSequenceFileRelationship = sampleService.addSequenceFileToSample(s, sf);
+
+        // prepare a link to the sequence file itself (on the sequence file controller)
+        String sequenceFileId = sampleSequenceFileRelationship.getObject().getIdentifier();
+        String location = linkTo(SequenceFileController.class).slash(sequenceFileId).withSelfRel().getHref();
+
+        // prepare a link to the relationship between the two
+        String relationshipLocation = linkTo(methodOn(SampleSequenceFilesController.class)
+                .getSequenceFileForSample(projectId, sampleId, sequenceFileId)).withSelfRel().getHref();
+        relationshipLocation = "<" + relationshipLocation + ">; rel=relationship";
+
+        // prepare the headers
+        MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
+        responseHeaders.add(HttpHeaders.LOCATION, location);
+        responseHeaders.add(HttpHeaders.LINK, relationshipLocation);
+
+        // respond to the client
+        return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
     }
 
     /**
