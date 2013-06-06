@@ -1,5 +1,7 @@
 @import "bourbon/bourbon";
 
+@import "foundation/variables";
+
 // ============================================================================
 // VARIABLES
 // ============================================================================
@@ -12,18 +14,69 @@ $color-slate-gray: #494d4e;
 $color-hightlight: #008dde;
 
 $color-body-font: #222222;
+$color-header: rgba(0, 0, 0, .1);
 
 $width-sidebar: 15em;
+$width-sidebar-collapsed: 3em;
+$height-header: 3em;
+
+// ============================================================================
+// FONT AWESOME STUFF
+// ============================================================================
+//$fontAwesomePath:   "../font" !default;
+//
+//@font-face {
+//  font-family: 'FontAwesome';
+//  src: url('#{$fontAwesomePath}/fontawesome-webfont.eot?v=3.1.0');
+//  src: url('#{$fontAwesomePath}/fontawesome-webfont.eot?#iefix&v=3.1.0') format("embedded-opentype"),
+//  url('#{$fontAwesomePath}/fontawesome-webfont.woff?v=3.1.0') format("woff"),
+//  url('#{$fontAwesomePath}/fontawesome-webfont.ttf?v=3.1.0') format("truetype");
+//  font-weight: normal;
+//  font-style: normal;
+//}
+//
+//[class^="icon-"],
+//[class*=" icon-"] {
+//  font-family: FontAwesome;
+//  font-weight: normal;
+//  font-style: normal;
+//  text-decoration: inherit;
+//  -webkit-font-smoothing: antialiased;
+//
+//  /* sprites.less reset */
+//  display: inline;
+//  width: auto;
+//  height: auto;
+//  line-height: normal;
+//  vertical-align: baseline;
+//  background-image: none;
+//  background-position: 0% 0%;
+//  background-repeat: repeat;
+//  margin-top: 0;
+//}
+//
+//[class^="icon-"]:before,
+//[class*=" icon-"]:before {
+//  text-decoration: inherit;
+//  display: inline-block;
+//  speak: none;
+//}
+//
+//.icon-chevron-sign-left:before    { content: "\f137"; }
+//.icon-chevron-sign-right:before   { content: "\f138"; }
 
 // ============================================================================
 // GLOBAL AND BOX SETTINGS
 // ============================================================================
 
 html {
-  position: absolute;
   height: 100%;
   width: 100%;
   -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-weight: 600;
 }
 
 body {
@@ -31,8 +84,15 @@ body {
 
   // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
   height: 100%;
-  padding: 0;
-  margin: 0;
+  width: 100%;
+}
+
+.top-bar {
+  margin-bottom: 0;
+}
+
+.main-content {
+  height: 100%;
   width: 100%;
 
   // Other (colors, fonts, align)
@@ -40,23 +100,31 @@ body {
   color: $color-body-font;
   font-family: $font;
 
-  @include box(vertical, start, stretch);
+  // @include box(vertical, start, stretch);
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: flex;
 }
 
-.main-content {
-  width: 100%;
-  height: 100%;
+.no-flexbox body {
+  display: -webit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
 }
 
-.left-side {
+.sidebar {
   // @extends
 
   // Positioning (z-index, top, etc...)
-  float: left;
-  height: 100%;
 
   // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
-  padding-top: 1.4em;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: flex;
+  height: 100%;
+  overflow-y: scroll;
   width: $width-sidebar;
 
   // Other (colors, fonts, align)
@@ -71,13 +139,21 @@ body {
     font-size: 1em;
     font-weight: 600;
   }
-  .side-header {
+  @include transition(all 2.0s ease-in);
+}
 
-  }
+.sidebar--collapsed {
+  width: $width-sidebar-collapsed;
+  @include transition(all 2.0s ease-out);
 
-  .side-body {
-    @include box-flex(1);
+  .sidebar__body {
+    display: none;
   }
+}
+
+.sidebar__body {
+  padding-top: 1em;
+  @include box-flex(1);
 
   // Nested
   li {
@@ -106,11 +182,14 @@ body {
 
   // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
   height: 100%;
-  margin-left: $width-sidebar;
+  width: 100%;
+  //margin-left: $width-sidebar;
 
   // Other (colors, fonts, align)
+  background-color: $color-white;
 
   // @includes
+  @include box-flex(1);
 
   // Nested
 }

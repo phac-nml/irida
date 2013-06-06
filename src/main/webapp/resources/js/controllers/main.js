@@ -7,9 +7,14 @@
 (function (ng, app) {
   'use strict';
   app.
-    controller('MainCtrl', ['$scope', '$location', function ($scope, $location) {
+    controller('MainCtrl', ['$scope', '$location', 'loginService', function ($scope, $location, loginService) {
       $scope.$on('event:auth-loginRequired', function () {
         $location.path('/login');
       });
+
+      $scope.logout = function () {
+        loginService.deleteHeader();
+        $location.path('/login');
+      };
     }]);
 })(angular, NGS);

@@ -1,12 +1,24 @@
-<div class="left-side" data-ng-controller="ProjectsListCtrl">
-    <div class="side-header">
-        <h2>HEADER</h2>
+<nav class="top-bar" ng-class="{'expanded' : navbar.expandDD}" ng-hide="nav.hide">
+    <ul class="title-area">
+        <li class="name"><h1><a href="/projects">NGS Archive</a></h1></li>
+        <li class="toggle-topbar menu-icon"><a href="#" ng-click="toggleDD()"><span>Menu</span></a></li>
+    </ul>
+    <section class="top-bar-section">
+    <ul class="right">
+    <!--<li ng-class="{active: nav.loc === 'projects'}"><a href="/projects">Projects</a></li>-->
+    <!--<li ng-class="{active: nav.loc === 'users'}"><a href="/users">Users</a></li>-->
+    <li><a ng-click="logout()" href="#">Logout</a></li>
+    </ul>
+    </section>
+</nav>
+<div class="main-content">
+    <div class="sidebar" data-ng-controller="ProjectsListCtrl">
+        <div class="sidebar__body">
+            <h2>Projects</h2>
+            <ul>
+                <li data-ng-repeat="p in projects" data-ng-click="gotoProject(p.links[0].href)">{{p.name}}</li>
+            </ul>
+        </div>
     </div>
-    <div class="side-body">
-        <h2>Projects</h2>
-        <ul>
-            <li data-ng-repeat="p in projects" data-ng-click="gotoProject(p.links[0].href)">{{p.name}}</li>
-        </ul>
-    </div>
+    <div class="detailed-content" ui-view=""></div>
 </div>
-<div class="detailed-content" ui-view=""></div>

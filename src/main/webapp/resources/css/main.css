@@ -1,38 +1,41 @@
 html {
-  position: absolute;
   height: 100%;
   width: 100%;
   -webkit-font-smoothing: antialiased; }
 
+h1, h2, h3, h4 {
+  font-weight: 600; }
+
 body {
   height: 100%;
-  padding: 0;
-  margin: 0;
+  width: 100%; }
+
+.top-bar {
+  margin-bottom: 0; }
+
+.main-content {
+  height: 100%;
   width: 100%;
   background-color: white;
   color: #222222;
   font-family: "Source Sans Pro", sans-serif;
-  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: flex; }
+
+.no-flexbox body {
+  display: -webit-box;
   display: -moz-box;
-  display: box;
-  -webkit-box-orient: vertical;
-  -moz-box-orient: vertical;
-  box-orient: vertical;
-  -webkit-box-pack: start;
-  -moz-box-pack: start;
-  box-pack: start;
-  -webkit-box-align: stretch;
-  -moz-box-align: stretch;
-  box-align: stretch; }
+  display: -ms-flexbox; }
 
-.main-content {
-  width: 100%;
-  height: 100%; }
-
-.left-side {
-  float: left;
+.sidebar {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: flex;
   height: 100%;
-  padding-top: 1.4em;
+  overflow-y: scroll;
   width: 15em;
   display: -webkit-box;
   display: -moz-box;
@@ -49,26 +52,43 @@ body {
   background-color: #494d4e;
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #494d4e), color-stop(100%, #303334));
   background-image: -webkit-linear-gradient(#494d4e, #303334);
-  background-image: linear-gradient(#494d4e, #303334); }
-  .left-side h2 {
+  background-image: linear-gradient(#494d4e, #303334);
+  -webkit-transition: all 2s ease-in;
+  -moz-transition: all 2s ease-in;
+  transition: all 2s ease-in; }
+  .sidebar h2 {
     margin-left: 1em;
     color: #dfe2e2;
     font-size: 1em;
     font-weight: 600; }
-  .left-side .side-body {
-    -webkit-box-flex: 1;
-    -moz-box-flex: 1;
-    box-flex: 1; }
-  .left-side li {
+
+.sidebar--collapsed {
+  width: 3em;
+  -webkit-transition: all 2s ease-out;
+  -moz-transition: all 2s ease-out;
+  transition: all 2s ease-out; }
+  .sidebar--collapsed .sidebar__body {
+    display: none; }
+
+.sidebar__body {
+  padding-top: 1em;
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  box-flex: 1; }
+  .sidebar__body li {
     display: block;
     padding: .2em .8em;
     color: #dfe2e2;
     cursor: pointer;
     text-shadow: 0px 1px 0px black; }
-    .left-side li:hover {
+    .sidebar__body li:hover {
       background-color: rgba(0, 0, 0, 0.2);
       border-right: 0.4em solid #008dde; }
 
 .detailed-content {
   height: 100%;
-  margin-left: 15em; }
+  width: 100%;
+  background-color: white;
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  box-flex: 1; }
