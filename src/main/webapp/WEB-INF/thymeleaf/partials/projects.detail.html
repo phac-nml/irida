@@ -1,12 +1,25 @@
 <div data-ng-controller="ProjectCtrl">
     <div class="large-12 columns">
-        <h1>{{project.name}}</h1>
+        <h3>{{project.name}}</h3>
+
         <div class="section-container tabs" data-section="tabs" ngs-section="">
             <section>
                 <p class="title" data-section-title=""><a href="#">Project Samples</a></p>
 
                 <div class="content" data-section-content="">
-                    <div class="row"><div class="large-12 columns"><p>This will contain a list of project files.</p></div></div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <section class="ac-container">
+                                <div data-ng-repeat="s in samples">
+                                    <input id="ac-{{$index}}" name="accordion-1" type="checkbox" />
+                                    <label for="ac-{{$index}}">{{s.label}}<i class="icon-chevron-sign-down"></i> </label>
+                                    <article class="ac-small">
+                                        <p>Some content... </p>
+                                    </article>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
                 </div>
             </section>
             <section>
@@ -15,11 +28,12 @@
                 <div class="content" data-section-content="">
                     <div class="row" data-ng-repeat="u in project.users">
                         <div class="large-4 columns">{{u.label}}</div>
-                        <div class="large-4 columns">{{u.dateCreated  | date:'short'}}</div>
+                        <div class="large-4 columns">{{u.dateCreated | date:'short'}}</div>
                         <div class="large-4 columns">FRED IS DEAD</div>
                     </div>
                 </div>
             </section>
         </div>
     </div>
+
 </div>

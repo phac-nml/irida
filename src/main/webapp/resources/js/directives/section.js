@@ -5,11 +5,16 @@
  * License: MIT
  */
 
-angular.module ( 'ngs-section', [] ).directive ( 'ngsSection', function () {
-    return {
-      restrict: 'A',
-      link: function ( scope, elm, atts ) {
-        elm.foundation ( 'section' );
-      }
-    };
-  } );
+angular.module('ngs-section', []).directive('ngsSection', function () {
+  'use strict';
+  return {
+    restrict: 'A',
+    compile: function (elm, atts) {
+      return {
+        post: function (scope, elm, attr, controller) {
+          elm.foundation('section', 'reflow');
+        }
+      };
+    }
+  };
+});
