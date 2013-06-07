@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -102,17 +101,16 @@ public class ProjectSequenceFilesController {
         Path target = temp.resolve(file.getOriginalFilename());
 
         target = Files.write(target, file.getBytes());
-        File f = target.toFile();
 
         // construct the sequence file that we're going to create
-        SequenceFile sf = new SequenceFile(f);
+        SequenceFile sf = new SequenceFile(target);
 
         // add the sequence file to the database and create the relationship between the resources
         Relationship r = projectService.addSequenceFileToProject(p, sf);
 
         // erase the temp files.
-        f.delete();
-        temp.toFile().delete();
+        Files.delete(target);
+        Files.delete(temp);
 
         String sequenceFileId = r.getObject().getIdentifier();
         String location = linkTo(SequenceFileController.class).slash(sequenceFileId).withSelfRel().getHref();

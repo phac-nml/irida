@@ -31,14 +31,11 @@ import org.springframework.util.FileCopyUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * Unit tests for {@link SampleSequenceFilesController}.
@@ -58,8 +55,6 @@ public class SampleSequenceFilesControllerTest {
         projectService = mock(ProjectService.class);
 
         controller = new SampleSequenceFilesController(sequenceFileService, sampleService, relationshipService, projectService);
-        RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
-        RequestContextHolder.setRequestAttributes(ra);
     }
 
     @Test
@@ -96,7 +91,7 @@ public class SampleSequenceFilesControllerTest {
         SequenceFileResource sfr = resources.iterator().next();
         assertNotNull(sfr.getLink(PageLink.REL_SELF));
         assertNotNull(sfr.getLink(GenericController.REL_RELATIONSHIP));
-        assertEquals(sf.getFile().getName(), sfr.getFile().getName());
+        assertEquals(sf.getFile().getFileName().toString(), sfr.getFile());
     }
 
     @Test
@@ -164,7 +159,7 @@ public class SampleSequenceFilesControllerTest {
         assertNotNull(o);
         assertTrue(o instanceof SequenceFileResource);
         SequenceFileResource sfr = (SequenceFileResource) o;
-        assertEquals(sf.getFile().getName(), sfr.getFile().getName());
+        assertEquals(sf.getFile().getFileName().toString(), sfr.getFile());
         List<Link> links = sfr.getLinks();
         Set<String> rels = Sets.newHashSet(PageLink.REL_SELF, SampleSequenceFilesController.REL_PROJECT_SEQUENCE_FILE,
                 GenericController.REL_RELATIONSHIP);
@@ -297,8 +292,7 @@ public class SampleSequenceFilesControllerTest {
     private SequenceFile constructSequenceFile() throws IOException {
         String sequenceFileId = UUID.randomUUID().toString();
         Identifier sequenceFileIdentifier = new Identifier();
-        File f = Files.createTempFile(null, null).toFile();
-        f.deleteOnExit();
+        Path f = Files.createTempFile(null, null);
         sequenceFileIdentifier.setIdentifier(sequenceFileId);
         SequenceFile sf = new SequenceFile();
         sf.setIdentifier(sequenceFileIdentifier);
