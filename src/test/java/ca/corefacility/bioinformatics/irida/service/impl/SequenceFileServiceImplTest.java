@@ -15,11 +15,14 @@
  */
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import ca.corefacility.bioinformatics.irida.repositories.RelationshipRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.service.CRUDService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,8 +35,10 @@ import javax.validation.ValidatorFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
 /**
@@ -44,9 +49,10 @@ import static org.mockito.Mockito.*;
 public class SequenceFileServiceImplTest {
 
     private static final Logger logger = LoggerFactory.getLogger(SequenceFileServiceImplTest.class);
-    private CRUDService<Identifier, SequenceFile> sequenceFileService;
+    private SequenceFileService sequenceFileService;
     private SequenceFileRepository crudRepository;
     private CRUDRepository<Identifier, SequenceFile> fileRepository;
+    private RelationshipRepository relationshipRepository;
     private Validator validator;
 
     @Before
@@ -57,7 +63,8 @@ public class SequenceFileServiceImplTest {
         validator = factory.getValidator();
         crudRepository = mock(SequenceFileRepository.class);
         fileRepository = mock(CRUDRepository.class);
-        sequenceFileService = new SequenceFileServiceImpl(crudRepository, fileRepository, validator);
+        relationshipRepository = mock(RelationshipRepository.class);
+        sequenceFileService = new SequenceFileServiceImpl(crudRepository, fileRepository, relationshipRepository, validator);
     }
 
     @Test
@@ -132,5 +139,37 @@ public class SequenceFileServiceImplTest {
         verify(crudRepository, times(2)).exists(id);
         verify(crudRepository, times(2)).update(sf.getIdentifier(), updatedMap);
         verify(fileRepository).update(sf.getIdentifier(), updatedMap);
+
+        Files.delete(originalFile);
+        Files.delete(updatedFile);
+    }
+
+    @Test
+    public void testCreateSequenceFileWithOwner() throws IOException {
+        Path file = Files.createTempFile(null, null);
+        SequenceFile sf = new SequenceFile(file);
+        sf.setIdentifier(new Identifier());
+        Identifier owner = new Identifier();
+        Relationship r = new Relationship(owner, sf.getIdentifier());
+
+        when(crudRepository.create(sf)).thenReturn(sf);
+        when(crudRepository.update(any(Identifier.class), any(Map.class))).thenReturn(sf);
+        when(crudRepository.exists(sf.getIdentifier())).thenReturn(true);
+        when(fileRepository.create(sf)).thenReturn(sf);
+        when(relationshipRepository.create(Project.class, owner, SequenceFile.class, sf.getIdentifier())).thenReturn(r);
+
+        Relationship created = sequenceFileService.createSequenceFileWithOwner(sf, Project.class, owner);
+
+        verify(crudRepository).create(sf);
+        verify(crudRepository).update(any(Identifier.class), any(Map.class));
+        verify(crudRepository).exists(sf.getIdentifier());
+        verify(fileRepository).create(sf);
+        verify(relationshipRepository).create(Project.class, owner, SequenceFile.class, sf.getIdentifier());
+
+        assertNotNull(created);
+        assertEquals(owner, created.getSubject());
+        assertEquals(sf.getIdentifier(), created.getObject());
+
+        Files.delete(file);
     }
 }
