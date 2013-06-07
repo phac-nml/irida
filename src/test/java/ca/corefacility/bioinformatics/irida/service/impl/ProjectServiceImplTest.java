@@ -137,27 +137,6 @@ public class ProjectServiceImplTest {
     }
 
     /**
-     * Test of addSequenceFileToProject method, of class ProjectServiceImpl.
-     */
-    @Test
-    public void testAddSequenceFileToProject() {
-
-        SequenceFile s = new SequenceFile(Paths.get("/dev/null"));
-        Project p = new Project();
-        p.setName("project");
-
-        when(relationshipRepository.create(p, s))
-                .thenReturn(new Relationship(p.getIdentifier(), new RdfPredicate("irida", "hasSequenceFile"), s.getIdentifier()));
-
-        Relationship rel = projectService.addSequenceFileToProject(p, s);
-        assertNotNull(rel);
-        assertEquals(rel.getSubject(), p.getIdentifier());
-        assertEquals(rel.getObject(), s.getIdentifier());
-
-        verify(relationshipRepository).create(p, s);
-    }
-
-    /**
      * Test of removeSequenceFileFromProject method, of class ProjectServiceImpl.
 
      @Test public void testRemoveSequenceFileFromProject() {

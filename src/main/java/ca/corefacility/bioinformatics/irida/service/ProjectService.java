@@ -46,16 +46,6 @@ public interface ProjectService extends CRUDService<Identifier, Project> {
     public void removeSampleFromProject(Project project, Sample sample);
 
     /**
-     * Add the specified {@link SequenceFile} to the {@link Project}.
-     *
-     * @param project the {@link Project} to add the {@link SequenceFile} to.
-     * @param sf      the {@link SequenceFile} to add to the {@link Project}. If the {@link SequenceFile} has not
-     *                previously been persisted, then the service will persist the {@link SequenceFile}.
-     * @return a reference to the relationship resource created between the two entities.
-     */
-    public Relationship addSequenceFileToProject(Project project, SequenceFile sf);
-
-    /**
      * Remove the specified {@link SequenceFile} from the {@link Project}. If the {@link SequenceFile} is not associated
      * with any other {@link Project}s, then as a side-effect, the {@link SequenceFile} will be deleted from the system.
      *
