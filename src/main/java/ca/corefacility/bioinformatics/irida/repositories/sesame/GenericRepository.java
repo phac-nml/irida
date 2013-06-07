@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
@@ -444,7 +445,14 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         URI objecturi = vf.createURI(uri);
 
         try {
+            //Remove all things linking to this resource
+            List<Relationship> links = linksRepo.getLinks(id, null, (Identifier) null);
+            for(Relationship r : links){
+                linksRepo.delete(r.getIdentifier());
+            }
+            
             con.remove(objecturi, null, null);
+            
             con.close();
 
         } catch (RepositoryException ex) {
