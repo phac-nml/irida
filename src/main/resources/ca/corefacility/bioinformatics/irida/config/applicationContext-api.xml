@@ -37,7 +37,7 @@
     <bean id="sequenceFileService" class="ca.corefacility.bioinformatics.irida.service.impl.SequenceFileServiceImpl">
         <constructor-arg ref="sequenceFileRepository"/>
         <constructor-arg ref="sequenceFileFilesystemRepository"/>
-        <constructor-arg ref="relationshipRepository"/>
+        <constructor-arg ref="linksRepository"/>
         <constructor-arg ref="validator"/>
     </bean>
 
