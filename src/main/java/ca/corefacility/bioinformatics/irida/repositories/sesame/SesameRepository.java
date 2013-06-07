@@ -163,6 +163,41 @@ public class SesameRepository {
 
         return exists;
     }
+    
+    /**
+     * Check whether a URI exists in the system
+     * @param uri
+     * @return Boolean whether the identifier exists
+     */
+    public Boolean uriExists(String uri) {
+
+        boolean exists = false;
+        ObjectConnection con = store.getRepoConnection();
+
+        try {
+
+            String querystring = store.getPrefixes()
+                    + "ASK\n"
+                    + "{?uri ?p ?o}";
+
+            BooleanQuery existsQuery = con.prepareBooleanQuery(QueryLanguage.SPARQL, querystring);
+
+            ValueFactory vf = con.getValueFactory();
+            URI idLit = vf.createURI(uri);
+            existsQuery.setBinding("uri", idLit);
+
+            exists = existsQuery.evaluate();
+
+
+        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't run exists query");
+        } finally {
+            store.closeRepoConnection(con);
+        }
+
+        return exists;
+    }       
 
     /**
      * Retrieve the String that uniquely identifies this object
@@ -193,7 +228,7 @@ public class SesameRepository {
 
         return id;
     }
-
+     
     /**
      * Get the label for a given URI
      *

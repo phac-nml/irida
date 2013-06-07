@@ -32,7 +32,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Identifier, Project> imp
     private ProjectRepository projectRepository;
     private CRUDRepository<Identifier, Sample> sampleRepository;
 
-
     public ProjectServiceImpl(ProjectRepository projectRepository, RelationshipRepository relationshipRepository,
                               CRUDRepository<Identifier, Sample> sampleRepository, Validator validator) {
         super(projectRepository, validator, Project.class);
@@ -75,14 +74,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Identifier, Project> imp
     @Override
     public void removeSampleFromProject(Project project, Sample sample) {
         relationshipRepository.delete(project, sample);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Relationship addSequenceFileToProject(Project project, SequenceFile sf) {
-        return relationshipRepository.create(project, sf);
     }
 
     /**

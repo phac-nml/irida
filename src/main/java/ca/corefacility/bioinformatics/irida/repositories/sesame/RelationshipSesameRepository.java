@@ -57,11 +57,12 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
 
     /**
      * Add a default relationship to the relationship repository repository
-     * @param <S> The class of the subject
-     * @param <O> The class of the object
+     *
+     * @param <S>     The class of the subject
+     * @param <O>     The class of the object
      * @param subject The class of the subject
-     * @param pred The predicate to link the subject/object
-     * @param object The class of the object
+     * @param pred    The predicate to link the subject/object
+     * @param object  The class of the object
      */
     public <S extends IridaThing, O extends IridaThing> void addRelationship(Class subject, RdfPredicate pred, Class object) {
         linkList.addLink(subject, pred, object);
@@ -113,13 +114,21 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
      */
     @Override
     public <SubjectType extends IridaThing, ObjectType extends IridaThing> Relationship create(SubjectType subject, ObjectType object) {
+        return create(subject.getClass(), (Identifier) subject.getIdentifier(),
+                object.getClass(), (Identifier) object.getIdentifier());
+    }
 
-        RdfPredicate pred = linkList.getLink(subject.getClass(), object.getClass());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Relationship create(Class subjectType, Identifier subject, Class objectType, Identifier object) {
+        RdfPredicate predicate = linkList.getLink(subjectType, objectType);
         Relationship link = new Relationship();
 
-        link.setSubject((Identifier) subject.getIdentifier());
-        link.setPredicate(pred);
-        link.setObject((Identifier) object.getIdentifier());
+        link.setSubject(subject);
+        link.setPredicate(predicate);
+        link.setObject(object);
 
         return create(link);
     }
@@ -136,6 +145,13 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
         java.net.URI subNetURI = getUriFromIdentifier(subject);
         java.net.URI objNetURI = getUriFromIdentifier(object);
         
+        if(!uriExists(subNetURI.toString())){
+            throw new EntityNotFoundException("Subject "+ subject.toString()+ " was not found in the database.  A relationship for this element cannot be created" );
+        }
+        if(!uriExists(objNetURI.toString())){
+            throw new EntityNotFoundException("Object "+ subject.toString()+ " was not found in the database.  A relationship for this element cannot be created" );
+        }        
+
         ObjectConnection con = store.getRepoConnection();
         ValueFactory fac = con.getValueFactory();
 
@@ -280,9 +296,8 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
     public List<Relationship> getLinks(Identifier subjectId, Class subjectType, Class objectType) {
         RdfPredicate pred = linkList.getLink(subjectType, objectType);
 
-        return getLinks(subjectId, pred, null);        
+        return getLinks(subjectId, pred, null);
     }
-
 
     @Override
     public List<Relationship> getLinks(Identifier subjectId, RdfPredicate predicate, Identifier objectId) {
@@ -294,7 +309,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
 
         ObjectConnection con = store.getRepoConnection();
         try {
-            String qs = store.getPrefixes() + 
+            String qs = store.getPrefixes() +
                     "SELECT ?link ?sub ?pred ?obj " +
                     "WHERE{ " +
                     "?link a irida:ResourceLink ; " +
@@ -430,24 +445,24 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
 
         return ret;
     }
-    
+
     /**
      * {@inheritDoc}
-     */    
+     */
     @Override
     public <SubjectType extends IridaThing, ObjectType extends IridaThing> void delete(SubjectType subject, ObjectType object) {
         RdfPredicate pred = linkList.getLink(subject.getClass(), object.getClass());
-        
-        List<Relationship> links = getLinks((Identifier)subject.getIdentifier(), pred, (Identifier)object.getIdentifier());
-        if(links.isEmpty()){
+
+        List<Relationship> links = getLinks((Identifier) subject.getIdentifier(), pred, (Identifier) object.getIdentifier());
+        if (links.isEmpty()) {
             throw new EntityNotFoundException("No relationship found to delete between objects");
         }
         logger.trace("Deleting " + links.size() + " relationships.");
-        for(Relationship r : links){
+        for (Relationship r : links) {
             delete(r.getIdentifier());
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -476,8 +491,8 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             URI objURI = vf.createURI(objNetURI.toString());
 
             URI pred = predicate.getPredicateURI(con);
-            con.remove(subURI,pred,objURI);
-            
+            con.remove(subURI, pred, objURI);
+
             //then we'll remove the relationship object
             con.remove(objecturi, null, null);
             con.commit();
@@ -489,18 +504,17 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             store.closeRepoConnection(con);
         }
     }
-    
 
     @Override
     public List<Relationship> list() {
         throw new UnsupportedOperationException("Listing links will not be supported.");
     }
-    
+
     @Override
     public List<Relationship> list(int page, int size, String sortProperty, Order order) {
         throw new UnsupportedOperationException("Listing links will not be supported.");
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -536,14 +550,14 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             store.closeRepoConnection(con);
         }
 
-        return exists;        
+        return exists;
     }
-    
+
     @Override
     public Integer count() {
         throw new UnsupportedOperationException("Counting links will not be supported.");
     }
-    
+
     @Override
     public Relationship update(Identifier id, Map<String, Object> updatedFields) {
         throw new UnsupportedOperationException("Updating a relationship will not be supported");
