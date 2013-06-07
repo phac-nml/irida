@@ -25,7 +25,7 @@ import org.openrdf.sail.nativerdf.NativeStore;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
+import java.nio.file.Path;
 
 /**
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
@@ -47,8 +47,8 @@ public class SailStore extends TripleStore {
      *
      * @param location the directory to use for storing data.
      */
-    public SailStore(File location) {
-        super(new SailRepository(new NativeStore(location)), "http://localhost/");
+    public SailStore(Path location) {
+        super(new SailRepository(new NativeStore(location.toFile())), "http://localhost/");
     }
 
     @Override

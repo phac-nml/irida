@@ -32,6 +32,8 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 import com.google.common.collect.ImmutableList;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -120,7 +122,8 @@ public class ProjectServiceImplTest {
      */
     @Test
     public void testAddSequenceFileToProject() {
-        SequenceFile s = new SequenceFile(new File("/dev/null"));
+
+        SequenceFile s = new SequenceFile(Paths.get("/dev/null"));
         Project p = new Project();
         p.setName("project");
         

@@ -29,9 +29,9 @@ import org.slf4j.LoggerFactory;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -62,8 +62,8 @@ public class SequenceFileServiceImplTest {
 
     @Test
     public void testCreateFile() throws IOException, NoSuchFieldException {
-        File f = Files.createTempFile(null, null).toFile();
-        f.deleteOnExit();
+        Path f = Files.createTempFile(null, null);
+
         SequenceFile sf = new SequenceFile(f);
         SequenceFile withIdentifier = new SequenceFile(new Identifier(), f);
         when(crudRepository.create(sf)).thenReturn(withIdentifier);
@@ -74,6 +74,7 @@ public class SequenceFileServiceImplTest {
         when(crudRepository.exists(withIdentifier.getIdentifier())).thenReturn(Boolean.TRUE);
 
         SequenceFile created = sequenceFileService.create(sf);
+
         assertEquals(created, withIdentifier);
 
         verify(crudRepository).create(sf);
@@ -81,16 +82,17 @@ public class SequenceFileServiceImplTest {
         verify(crudRepository).update(withIdentifier.getIdentifier(),
                 ImmutableMap.of("file", (Object) withIdentifier.getFile()));
         verify(crudRepository).exists(withIdentifier.getIdentifier());
+        Files.delete(f);
     }
 
     @Test
     public void testUpdateWithoutFile() throws IOException, NoSuchFieldException {
         Identifier updatedId = new Identifier();
         Identifier originalId = new Identifier();
-        File f = Files.createTempFile(null, null).toFile();
+        Path f = Files.createTempFile(null, null);
         SequenceFile sf = new SequenceFile(originalId, f);
         SequenceFile updatedSf = new SequenceFile(updatedId, f);
-        sf.getFile().deleteOnExit();
+
         ImmutableMap<String, Object> updatedMap = ImmutableMap.of("identifier", (Object) updatedId);
 
         when(crudRepository.exists(originalId)).thenReturn(Boolean.TRUE);
@@ -103,16 +105,16 @@ public class SequenceFileServiceImplTest {
         verify(crudRepository).exists(originalId);
         verify(crudRepository).update(originalId, updatedMap);
         verify(fileRepository, times(0)).update(sf.getIdentifier(), updatedMap);
+        Files.delete(f);
     }
 
     @Test
     public void testUpdateWithFile() throws IOException, NoSuchFieldException {
         Identifier id = new Identifier();
-        File originalFile = Files.createTempFile(null, null).toFile();
-        File updatedFile = Files.createTempFile(null, null).toFile();
+        Path originalFile = Files.createTempFile(null, null);
+        Path updatedFile = Files.createTempFile(null, null);
         SequenceFile sf = new SequenceFile(id, originalFile);
         SequenceFile updatedSf = new SequenceFile(id, updatedFile);
-        sf.getFile().deleteOnExit();
 
         ImmutableMap<String, Object> updatedMap = ImmutableMap.of("file", (Object) updatedFile);
 

@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -60,8 +61,7 @@ public class RelationshipSesameRepositoryTest {
 
     @Before
     public void setUp() throws IOException {
-        File tempDir = Files.createTempDirectory(null).toFile();
-        tempDir.deleteOnExit();
+        Path tempDir = Files.createTempDirectory(null);
         logger.debug("Database stored in [" + tempDir + "]");
         SailStore store = new SailStore(tempDir);
         store.initialize();
