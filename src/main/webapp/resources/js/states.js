@@ -6,7 +6,7 @@
  */
 (function (ng, app) {
   'use strict';
-  app.config(function ($stateProvider, $routeProvider) {
+  app.config(function ($stateProvider) {
     $stateProvider
       .state('projects', {
         url: '/projects',
@@ -36,13 +36,14 @@
             return defer.promise;
           }
         },
-        controller: function ($scope, $stateParams, data) {
+        controller: function ($scope, $stateParams, linkFormatter, data) {
           console.log(data);
           $scope.project = {
             id: $stateParams.projectId,
             name: data.resource.name,
             users: data.relatedResources.users.resources,
-            samples: data.relatedResources.samples.resources
+            samples: data.relatedResources.samples.resources,
+            links: linkFormatter.clean(data.resource.links)
           };
         }
       })

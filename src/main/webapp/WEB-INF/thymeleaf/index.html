@@ -11,17 +11,6 @@
     <script src="/js/lib/custom.modernizr.js"></script>
 </head>
 <body data-ng-controller="MainCtrl" ui-view="">
-<!--<ngs-notifier></ngs-notifier>-->
-<!--<ngs-navbar></ngs-navbar>-->
-<!--<header>NGS Archive</header>-->
-<!--<div class="main">-->
-<!--<div class="left-bar" data-ng-controller="ProjectsListCtrl as pCtrl">-->
-<!--<ul>-->
-<!--<li data-ng-repeat="p in pCtrl.projects" data-ng-click="pCtrl.gotoProject(p.links[0].href)"><i class="fav icon-star"></i> {{p.name}}</li>-->
-<!--</ul>-->
-<!--</div>-->
-<!--<ng-view class="content" ng-animate="{enter:'fade-enter'}"></ng-view>-->
-<!--</div>-->
 
 <script src="/js/lib/jquery.js"></script>
 <script src="/js/lib/foundation/foundation.js"></script>
@@ -31,26 +20,20 @@
 <script src="/js/lib/angular-resource.min.js"></script>
 <script src="/js/lib/angular-cookies.min.js"></script>
 <script src="/js/lib/angular-router.min.js"></script>
-<!-- <script src="/js/lib/angular/angular-ui.js"></script> -->
-<!-- <script src="/js/lib/angular/ng-infinite-scroll.min.js"></script> -->
+
 <script src="/js/app.js"></script>
 <script src="/js/states.js"></script>
 <script src="/js/services/http-auth-interceptor.js"></script>
-<script src="/js/services/loginService.js"></script>
-<script src="/js/services/ajaxService.js"></script>
+<script src="/js/services/login-service.js"></script>
+<script src="/js/services/ajax-service.js"></script>
+<script src="/js/services/link-formatter.js"></script>
 <script src="/js/directives/section.js"></script>
-<!-- <script src="/js/directives/FileUploader.js"></script> -->
-<!-- <script src="/js/directives/LoginModal.js"></script> -->
-<!-- <script src="/js/directives/Navbar.js"></script> -->
-<!-- <script src="/js/directives/InfinitePosition.js"></script> -->
+
 <script src="/js/controllers/main.js"></script>
 <script src="/js/controllers/login.js"></script>
-<!-- <script src="/js/controllers/project.js"></script> -->
-<!-- <script src="/js/controllers/landing.js"></script> -->
+
 <script src="/js/controllers/projectsList.js"></script>
 <script src="/js/controllers/project.js"></script>
-<!-- <script src="/js/controllers/usersList.js"></script> -->
-<!-- <script src="/js/controllers/user.js"></script> -->
 
 <!-- TODO (josh: 2013-05-21) Make the setup of foundation into a directive  -->
 <script>

@@ -142,5 +142,5 @@
         return false;
       }
     };
-  }] )
+  }] );
 }) ( angular, NGS );

@@ -4,9 +4,9 @@
  * Time:    10:23 AM
  * License: MIT
  */
-(function(ng, app) {
+(function (ng, app) {
   'use strict';
-  app  .factory('loginService', ['Base64', '$cookieStore', '$http', function (Base64, $cookieStore, $http) {
+  app.factory('loginService', ['Base64', '$cookieStore', '$http', function (Base64, $cookieStore, $http) {
       $http.defaults.headers.common.Authorization = 'Basic ' + $cookieStore.get('authdata');
       return {
         setHeader: function (username, password, callback) {
@@ -19,7 +19,7 @@
             }
           }
         },
-        setAuthHeader: function(encoded, callback) {
+        setAuthHeader: function (encoded, callback) {
           $http.defaults.headers.common.Authorization = 'Basic ' + encoded;
           callback();
         },

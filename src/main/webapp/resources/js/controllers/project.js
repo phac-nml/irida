@@ -8,6 +8,13 @@
   'use strict';
   app.controller('ProjectCtrl', ['$scope', 'ajaxService', '$location', '$timeout', function ($scope, ajaxService, $location, $timeout) {
     $scope.samples = {};
+
+    $scope.deleteProject = function () {
+      ajaxService.deleteItem($scope.project.links.self).then(function() {
+        console.log('deleted');
+      });
+    };
+
     $scope.loadSample = function (s) {
 //      ajaxService.get(s.links[0].href).then(function (data) {
 //        console.log(data);
