@@ -144,6 +144,13 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
 
         java.net.URI subNetURI = getUriFromIdentifier(subject);
         java.net.URI objNetURI = getUriFromIdentifier(object);
+        
+        if(!uriExists(subNetURI.toString())){
+            throw new EntityNotFoundException("Subject "+ subject.toString()+ " was not found in the database.  A relationship for this element cannot be created" );
+        }
+        if(!uriExists(objNetURI.toString())){
+            throw new EntityNotFoundException("Object "+ subject.toString()+ " was not found in the database.  A relationship for this element cannot be created" );
+        }        
 
         ObjectConnection con = store.getRepoConnection();
         ValueFactory fac = con.getValueFactory();
