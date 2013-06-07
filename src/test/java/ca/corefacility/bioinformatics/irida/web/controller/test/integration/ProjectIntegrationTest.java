@@ -96,8 +96,7 @@ public class ProjectIntegrationTest {
 
     @Test
     public void testDeleteProject() {
-        String projectsJson = get(PROJECTS).asString();
-        String projectUri = from(projectsJson).get("resource.resources[0].links[0].href");
+        String projectUri = "http://localhost:8080/api/projects/59106ae3-e20e-4e80-b559-d9ce9f7e348d";
         expect().body("resource.links.rel", hasItems("collection")).and()
                 .body("resource.links.href", hasItems("http://localhost:8080/api/projects")).when().delete(projectUri);
     }
@@ -105,8 +104,7 @@ public class ProjectIntegrationTest {
     @Test
     public void verifyRelatedResources() {
         // project should have the following related resource names: samples, users, sequenceFiles
-        String projectsJson = get(PROJECTS).asString();
-        String projectUri = from(projectsJson).get("resource.resources[0].links[0].href");
+        String projectUri = "http://localhost:8080/api/projects/abb5b630-4db5-4899-9487-1d8d38b5c752";
         expect().body("relatedResources.samples.links.rel", hasItem("project/samples")).and()
                 .body("relatedResources.users.links.rel", hasItem("project/users")).and()
                 .body("relatedResources.sequenceFiles.links.rel", hasItem("project/sequenceFiles")).when().get(projectUri);
