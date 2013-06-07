@@ -28,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.exceptions.GenericsException;
 import ca.corefacility.bioinformatics.irida.web.controller.links.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder;
@@ -86,6 +87,10 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * Rel used for terminating a relationship between resources.
      */
     public static final String REL_RELATIONSHIP = "relationship";
+    /**
+     * Link back to the collection after deletion of a resource.
+     */
+    public static final String REL_COLLECTION = "collection";
     /**
      * logger.
      */
@@ -410,7 +415,8 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @throws IllegalAccessException if the constructor for {@link IdentifierType} is not public.
      */
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.DELETE)
-    public ResponseEntity<String> delete(@PathVariable String resourceId) {
+    public ModelMap delete(@PathVariable String resourceId) {
+        ModelMap modelMap = new ModelMap();
         // construct a new instance of an identifier as specified by the client
         IdentifierType identifier = null;
 
@@ -424,8 +430,13 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         // ask the service to delete the resource specified by the identifier
         crudService.delete(identifier);
 
+        RootResource rootResource = new RootResource();
+        rootResource.add(linkTo(getClass()).withRel(REL_COLLECTION));
+
+        modelMap.addAttribute(RESOURCE_NAME, rootResource);
+
         // respond to the client with a successful message
-        return new ResponseEntity<>("success", HttpStatus.OK);
+        return modelMap;
     }
 
     /**
