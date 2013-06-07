@@ -2,6 +2,7 @@
 
 @import "foundation/variables";
 @import "fws/variables";
+@import "fws/mixins";
 @import "fws/buttons";
 @import "fws/accordian";
 
@@ -52,6 +53,7 @@ $fontAwesomePath:   "../font" !default;
 .icon-chevron-sign-right:before   { content: "\f138"; }
 .icon-chevron-sign-up:before      { content: "\f139"; }
 .icon-chevron-sign-down:before    { content: "\f13a"; }
+.icon-reorder:before              { content: "\f0c9"; }
 
 // ============================================================================
 // GLOBAL AND BOX SETTINGS
@@ -158,7 +160,6 @@ body {
   color: $color-body-font;
   font-family: $font;
 
-  // @include box(vertical, start, stretch);
   display: -webkit-flex;
   display: -moz-flex;
   display: -ms-flex;
@@ -175,6 +176,7 @@ body {
   // @extends
 
   // Positioning (z-index, top, etc...)
+  position: relative;
 
   // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
   display: -webkit-flex;
@@ -182,7 +184,6 @@ body {
   display: -ms-flex;
   display: flex;
   height: 100%;
-  padding-top: 55px;
   width: $width-sidebar;
 
   // Other (colors, fonts, align)
@@ -191,13 +192,23 @@ body {
   @include box(vertical, start, stretch);
   @include linear-gradient($color-slate-gray, darken($color-slate-gray, 10));
 
+  a.ngs-button {
+    margin-left: 5px;
+    margin-top: 6px;
+    background-color: $color-slate-gray;
+    font-size: 1.2em;
+    &:active {
+      background-color: lighten($color-slate-gray, 5);
+    }
+  }
+
   h2 {
     margin-left: 1em;
-    color: $color-light-gray;
+    @include ngs-light-text ();
     font-size: 1em;
     font-weight: 600;
   }
-  @include transition(all 2.0s ease-in);
+  @include transition(width .5s ease-in);
 }
 
 .sidebar__body {
@@ -215,13 +226,26 @@ body {
     // Other (colors, fonts, align)
     color: $color-light-gray;
     cursor: pointer;
+    overflow: hidden;
     text-shadow: 0px 1px 0px rgb(0, 0, 0);
+    white-space: nowrap;
 
     &:hover {
       background-color: rgba(0, 0, 0, .2);
       border-right: .4em solid $color-hightlight;
     }
   }
+}
+
+.sidebar__rotated {
+  //@include box-flex(1);
+  @include transform(rotate(90deg));
+  display: none;
+  font-size: 2.3em;
+  @include ngs-light-text ();
+  position: absolute;
+  top: 100px;
+  left: -29px;
 }
 
 .detailed-content {
@@ -232,7 +256,6 @@ body {
   // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
   height: 100%;
   width: 100%;
-  padding-top: 55px;
 
   //margin-left: $width-sidebar;
 

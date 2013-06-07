@@ -1,9 +1,4 @@
-.ngs-button,
-.ngs-button--quiet,
-.ngs-button--large,
-.ngs-button--large--quiet,
-.ngs-button--cta,
-.ngs-button--large--cta {
+.ngs-button {
   position: relative;
   display: inline-block;
   vertical-align: top;
@@ -32,8 +27,7 @@
   font-size: 12px;
   line-height: 2rem;
   letter-spacing: 1px;
-  color: #c6c8c8;
-  text-shadow: 0 -1px rgba(0,0,0,0.69);
+  @include ngs-light-text ();
   vertical-align: top;
   background-color: #595b5b;
   -webkit-box-shadow: inset 0 1px rgba(255,255,255,0.12);
@@ -41,6 +35,9 @@
   border: 1px solid rgba(0,0,0,0.36);
   -webkit-border-radius: 3px;
   border-radius: 3px;
+  &:active {
+    background-color: lighten(#595b5b, 10);
+  }
   &.expanded {
     width: 100%;
   }
