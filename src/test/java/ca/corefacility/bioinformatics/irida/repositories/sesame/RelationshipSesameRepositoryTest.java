@@ -61,9 +61,10 @@ public class RelationshipSesameRepositoryTest {
 
     @Before
     public void setUp() throws IOException {
-        Path tempDir = Files.createTempDirectory(null);
-        logger.debug("Database stored in [" + tempDir + "]");
-        SailStore store = new SailStore(tempDir);
+        //Path tempDir = Files.createTempDirectory(null);
+        //logger.debug("Database stored in [" + tempDir + "]");
+        //SailStore store = new SailStore(tempDir);
+        SailStore store = new SailStore();
         store.initialize();
         AuditRepository auditRepo = new AuditRepository(store);
         linksRepo = new RelationshipSesameRepository(store, auditRepo);
