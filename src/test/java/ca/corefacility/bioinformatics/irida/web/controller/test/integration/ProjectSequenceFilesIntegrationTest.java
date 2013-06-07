@@ -41,8 +41,6 @@ public class ProjectSequenceFilesIntegrationTest {
                 .multiPart("file", sequenceFile.toFile()).expect().statusCode(HttpStatus.CREATED.value())
                 .when().post(sequenceFileUri);
 
-        String responseBody = r.getBody().asString();
-
         // confirm that the location and relationship links look okay
         String location = r.getHeader(HttpHeaders.LOCATION);
         String linkLocation = r.getHeader(HttpHeaders.LINK);
@@ -51,7 +49,8 @@ public class ProjectSequenceFilesIntegrationTest {
         assertTrue(location.matches("^http://localhost:8080/api/sequenceFiles/[a-f0-9\\-]+$"));
 
         assertNotNull(linkLocation);
-        assertTrue(location.matches("^<http://localhost:8080/api/projects/[a-f0-9\\-]+/sequenceFiles/[a-f0-9\\-]+>; rel=relationship$"));
+        assertTrue(linkLocation.matches("^<http://localhost:8080/api/projects/[a-f0-9\\-]+/sequenceFiles/[a-f0-9\\-]+>;" +
+                " rel=relationship$"));
 
         // clean up after yourself.
         Files.delete(sequenceFile);

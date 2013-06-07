@@ -7,6 +7,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RelationshipService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
@@ -14,6 +15,8 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController
 import ca.corefacility.bioinformatics.irida.web.controller.api.RelationshipsController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.SequenceFileController;
 import com.google.common.net.HttpHeaders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -48,13 +51,17 @@ public class ProjectSequenceFilesController {
      */
     public static final String REL_PROJECT_SEQUENCE_FILES = "project/sequenceFiles";
     /**
+     * logger.
+     */
+    private static final Logger logger = LoggerFactory.getLogger(ProjectSequenceFilesController.class);
+    /**
      * Reference to {@link ProjectService}.
      */
     private ProjectService projectService;
     /**
      * Reference to {@link CRUDService} for managing {@link SequenceFile}.
      */
-    private CRUDService<Identifier, SequenceFile> sequenceFileService;
+    private SequenceFileService sequenceFileService;
     /**
      * Reference to {@link RelationshipService} for managing {@link Relationship}.
      */
@@ -68,9 +75,9 @@ public class ProjectSequenceFilesController {
     }
 
     @Autowired
-    public ProjectSequenceFilesController(ProjectService projectService,
-                                          CRUDService<Identifier, SequenceFile> sequenceFileService,
-                                          RelationshipService relationshipService, SequenceFileController sequenceFileController) {
+    public ProjectSequenceFilesController(ProjectService projectService, SequenceFileService sequenceFileService,
+                                          RelationshipService relationshipService,
+                                          SequenceFileController sequenceFileController) {
         this.projectService = projectService;
         this.sequenceFileService = sequenceFileService;
         this.relationshipService = relationshipService;
@@ -78,7 +85,8 @@ public class ProjectSequenceFilesController {
     }
 
     /**
-     * Create a new {@link ca.corefacility.bioinformatics.irida.model.SequenceFile} resource and add a relationship between the {@link ca.corefacility.bioinformatics.irida.model.SequenceFile} and the
+     * Create a new {@link ca.corefacility.bioinformatics.irida.model.SequenceFile} resource and add a relationship
+     * between the {@link ca.corefacility.bioinformatics.irida.model.SequenceFile} and the
      * {@link ca.corefacility.bioinformatics.irida.model.Project}.
      *
      * @param projectId the identifier of the project to add the sequence file to.
@@ -93,27 +101,33 @@ public class ProjectSequenceFilesController {
         Identifier id = new Identifier();
         id.setIdentifier(projectId);
 
-        // load the project that we're adding to
-        Project p = projectService.read(id);
+        logger.trace("Adding sequence file to project [" + projectId + "]");
 
         // create a temporary file to send back to the service
         Path temp = Files.createTempDirectory(null);
         Path target = temp.resolve(file.getOriginalFilename());
 
+        logger.trace("Writing MultipartFile to temporary file.");
         target = Files.write(target, file.getBytes());
 
         // construct the sequence file that we're going to create
         SequenceFile sf = new SequenceFile(target);
 
+        logger.trace("Diving into service to create file.");
         // add the sequence file to the database and create the relationship between the resources
-        Relationship r = projectService.addSequenceFileToProject(p, sf);
+        Relationship r = sequenceFileService.createSequenceFileWithOwner(sf, Project.class, id);
 
+        logger.trace("Sequence file created with id [" + r.getObject().getIdentifier() + "]");
         // erase the temp files.
-        Files.delete(target);
-        Files.delete(temp);
+        logger.trace("Cleaning up temporary files.");
+        Files.deleteIfExists(target);
+        Files.deleteIfExists(temp);
+        logger.trace("Temporary files removed.");
 
+        logger.trace("Constructing location header.");
         String sequenceFileId = r.getObject().getIdentifier();
         String location = linkTo(SequenceFileController.class).slash(sequenceFileId).withSelfRel().getHref();
+        logger.trace("Constructing relationship link header.");
         String relationshipLocation = linkTo(methodOn(ProjectSequenceFilesController.class).getProjectSequenceFile(projectId,
                 sequenceFileId)).withSelfRel().getHref();
         relationshipLocation = "<" + relationshipLocation + ">; rel=relationship";
@@ -123,6 +137,7 @@ public class ProjectSequenceFilesController {
         responseHeaders.add(HttpHeaders.LOCATION, location);
         responseHeaders.add(HttpHeaders.LINK, relationshipLocation);
 
+        logger.trace("Responding to client.");
         return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
     }
 

@@ -4,9 +4,9 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RelationshipService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
@@ -48,7 +48,7 @@ public class ProjectSequenceFilesControllerTest {
 
     private ProjectSequenceFilesController controller;
     private ProjectService projectService;
-    private CRUDService<Identifier, SequenceFile> sequenceFileService;
+    private SequenceFileService sequenceFileService;
     private RelationshipService relationshipService;
     private SequenceFileController sequenceFilesController;
 
@@ -58,7 +58,7 @@ public class ProjectSequenceFilesControllerTest {
     @Before
     public void setUp() {
         projectService = mock(ProjectService.class);
-        sequenceFileService = mock(CRUDService.class);
+        sequenceFileService = mock(SequenceFileService.class);
         sequenceFilesController = mock(SequenceFileController.class);
         relationshipService = mock(RelationshipService.class);
 
@@ -76,13 +76,12 @@ public class ProjectSequenceFilesControllerTest {
         Relationship r = new Relationship(p.getIdentifier(), sf.getIdentifier());
         String projectId = p.getIdentifier().getIdentifier();
 
-        when(projectService.read(p.getIdentifier())).thenReturn(p);
-        when(projectService.addSequenceFileToProject(eq(p), any(SequenceFile.class))).thenReturn(r);
+        when(sequenceFileService.createSequenceFileWithOwner(any(SequenceFile.class), eq(Project.class), eq(p.getIdentifier()))).thenReturn(r);
 
         ResponseEntity<String> response = controller.addSequenceFileToProject(p.getIdentifier().getIdentifier(), mmf);
 
-        verify(projectService, times(1)).read(p.getIdentifier());
-        verify(projectService, times(1)).addSequenceFileToProject(eq(p), any(SequenceFile.class));
+        verify(sequenceFileService, times(1))
+                .createSequenceFileWithOwner(any(SequenceFile.class), eq(Project.class), eq(p.getIdentifier()));
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
