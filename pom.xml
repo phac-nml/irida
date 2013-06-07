@@ -276,6 +276,8 @@
                 <version>${jetty.version}</version>
                 <configuration>
                     <scanIntervalSeconds>0</scanIntervalSeconds>
+                    <stopPort>8995</stopPort>
+                    <stopKey>STOP</stopKey>
                 </configuration>
                 <executions>
                     <execution>
@@ -308,6 +310,14 @@
                         <include>**/test/integration/**/*Test.java</include>
                     </includes>
                     <encoding>UTF-8</encoding>
+                    <properties>
+                        <property>
+                            <name>listener</name>
+                            <value>
+                                ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener
+                            </value>
+                        </property>
+                    </properties>
                 </configuration>
                 <executions>
                     <execution>
@@ -327,6 +337,14 @@
                     <includes>
                         <include>**/test/unit/**/*Test.java</include>
                     </includes>
+                    <properties>
+                        <property>
+                            <name>listener</name>
+                            <value>
+                                ca.corefacility.bioinformatics.irida.web.controller.test.listeners.UnitTestListener
+                            </value>
+                        </property>
+                    </properties>
                 </configuration>
                 <executions>
                     <execution>

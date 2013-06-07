@@ -17,7 +17,7 @@ package ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
-import java.io.File;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -38,7 +38,7 @@ public class SequenceFileResource extends Resource<SequenceFile> {
     }
 
     @XmlElement
-    public File getFile() {
-        return resource.getFile();
+    public String getFile() {
+        return resource.getFile().getFileName().toString();
     }
 }

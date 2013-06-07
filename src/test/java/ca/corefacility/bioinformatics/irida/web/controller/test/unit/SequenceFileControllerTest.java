@@ -19,18 +19,9 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.SequenceFileController;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.UUID;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -40,6 +31,18 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.*;
+
 /**
  * Unit tests for {@link SequenceFileController}.
  *
@@ -47,9 +50,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  */
 public class SequenceFileControllerTest {
 
+    private static final String ORIGINAL_FILENAME = "original";
     private SequenceFileController controller;
     private CRUDService<Identifier, SequenceFile> service;
-    private static final String ORIGINAL_FILENAME = "original";
 
     @Before
     public void setUp() {
@@ -69,8 +72,7 @@ public class SequenceFileControllerTest {
 
     @Test
     public void testDuplicateFilename() throws IOException {
-        File f = Files.createTempFile(UUID.randomUUID().toString(), null).toFile();
-        f.deleteOnExit();
+        Path f = Files.createTempFile(UUID.randomUUID().toString(), null);
 
         Identifier firstId = new Identifier();
         SequenceFile first = new SequenceFile(f);
@@ -79,7 +81,8 @@ public class SequenceFileControllerTest {
 
         when(service.create(any(SequenceFile.class))).thenReturn(first);
 
-        MockMultipartFile mmf = new MockMultipartFile(ORIGINAL_FILENAME, ORIGINAL_FILENAME, "blurgh", FileCopyUtils.copyToByteArray(new FileInputStream(f)));
+        MockMultipartFile mmf = new MockMultipartFile(ORIGINAL_FILENAME, ORIGINAL_FILENAME, "blurgh",
+                FileCopyUtils.copyToByteArray(Files.newInputStream(f)));
 
         ResponseEntity<String> response = controller.create(mmf);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());

@@ -67,7 +67,7 @@ public class SequenceFileController extends GenericController<Identifier, Sequen
      */
     @Override
     public SequenceFile mapResourceToType(SequenceFileResource representation) {
-        return new SequenceFile(representation.getFile());
+        return new SequenceFile();
     }
 
     /**
@@ -85,17 +85,16 @@ public class SequenceFileController extends GenericController<Identifier, Sequen
 
         // write the bytes from the multi-part file into the temporary location
         target = Files.write(target, file.getBytes());
-        File f = target.toFile();
 
         // construct a new sequence file using that temporary file location
-        SequenceFile sf = new SequenceFile(f);
+        SequenceFile sf = new SequenceFile(target);
 
         // ask the service to create the file in the database
         sf = crudService.create(sf);
 
-        // clean up after yourself, remove the temporary file and directory that you created before
-        f.delete();
-        temp.toFile().delete();
+        // clean up after yourself, remove the temporary file and directory that you created
+        Files.delete(target);
+        Files.delete(temp);
 
         // get a handle on the identifier of the new sequence file so that you can respond with its location
         String identifier = sf.getIdentifier().getIdentifier();

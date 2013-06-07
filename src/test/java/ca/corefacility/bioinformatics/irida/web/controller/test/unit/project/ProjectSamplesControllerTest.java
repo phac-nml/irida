@@ -23,11 +23,7 @@ import org.junit.Test;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.*;
 
@@ -51,9 +47,6 @@ public class ProjectSamplesControllerTest {
         samplesController = mock(SamplesController.class);
         relationshipService = mock(RelationshipService.class);
         controller = new ProjectSamplesController(projectService, sampleService, relationshipService, samplesController);
-        // fake out the servlet response so that the URI builder will work.
-        RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
-        RequestContextHolder.setRequestAttributes(ra);
     }
 
     @Test

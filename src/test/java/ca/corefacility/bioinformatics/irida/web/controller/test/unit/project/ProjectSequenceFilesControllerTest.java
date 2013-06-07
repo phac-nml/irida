@@ -22,18 +22,15 @@ import org.junit.Test;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -66,9 +63,6 @@ public class ProjectSequenceFilesControllerTest {
         relationshipService = mock(RelationshipService.class);
 
         controller = new ProjectSequenceFilesController(projectService, sequenceFileService, relationshipService, sequenceFilesController);
-        // fake out the servlet response so that the URI builder will work.
-        RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
-        RequestContextHolder.setRequestAttributes(ra);
     }
 
     @Test
@@ -167,7 +161,7 @@ public class ProjectSequenceFilesControllerTest {
         ResourceCollection<SequenceFileResource> samples = (ResourceCollection<SequenceFileResource>) o;
         assertEquals(1, samples.size());
         SequenceFileResource resource = samples.iterator().next();
-        assertEquals(sf.getFile().getName(), resource.getFile().getName());
+        assertEquals(sf.getFile().getFileName().toString(), resource.getFile());
         List<Link> links = resource.getLinks();
         Set<String> rels = Sets.newHashSet(PageLink.REL_SELF, GenericController.REL_RELATIONSHIP);
         for (Link link : links) {
@@ -199,8 +193,7 @@ public class ProjectSequenceFilesControllerTest {
     private SequenceFile constructSequenceFile() throws IOException {
         String sequenceFileId = UUID.randomUUID().toString();
         Identifier sequenceFileIdentifier = new Identifier();
-        File f = Files.createTempFile(null, null).toFile();
-        f.deleteOnExit();
+        Path f = Files.createTempFile(null, null);
         sequenceFileIdentifier.setIdentifier(sequenceFileId);
         SequenceFile sf = new SequenceFile();
         sf.setIdentifier(sequenceFileIdentifier);

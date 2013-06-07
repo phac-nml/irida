@@ -29,7 +29,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -152,15 +151,15 @@ public class SampleSequenceFilesController {
         Path target = temp.resolve(file.getOriginalFilename());
 
         target = Files.write(target, file.getBytes());
-        File f = target.toFile();
 
-        SequenceFile sf = new SequenceFile(f);
+        SequenceFile sf = new SequenceFile(target);
 
         // persist the changes by calling the sample service
         Relationship sampleSequenceFileRelationship = sampleService.addSequenceFileToSample(s, sf);
 
-        f.delete();
-        temp.toFile().delete();
+        // clean up the temporary files.
+        Files.delete(target);
+        Files.delete(temp);
 
         // prepare a link to the sequence file itself (on the sequence file controller)
         String sequenceFileId = sampleSequenceFileRelationship.getObject().getIdentifier();

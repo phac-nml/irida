@@ -25,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.exceptions.GenericsException;
 import ca.corefacility.bioinformatics.irida.web.controller.links.LabelledRelationshipResource;
@@ -93,10 +94,6 @@ public class GenericControllerTest {
         controller.setRelationshipService(relationshipService);
         controller.setEntityLinks(entityLinks);
         updatedFields = new HashMap<>();
-
-        // fake out the servlet response so that the URI builder will work.
-        RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
-        RequestContextHolder.setRequestAttributes(ra);
     }
 
     @Test
@@ -128,8 +125,11 @@ public class GenericControllerTest {
 
     @Test
     public void testDeleteEntity() throws InstantiationException, IllegalAccessException {
-        ResponseEntity<String> response = controller.delete(UUID.randomUUID().toString());
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        ModelMap modelMap = controller.delete(UUID.randomUUID().toString());
+        RootResource rootResource = (RootResource) modelMap.get(GenericController.RESOURCE_NAME);
+        Link l = rootResource.getLink(GenericController.REL_COLLECTION);
+        assertNotNull(l);
+        assertEquals("http://localhost/generic", l.getHref());
     }
 
     @Test
