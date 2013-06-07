@@ -6,12 +6,14 @@
  */
 (function (ng, app) {
   'use strict';
-  app.controller('ProjectCtrl', ['$scope', 'ajaxService', '$location', '$timeout', function ($scope, ajaxService, $location, $timeout) {
+  app.controller('ProjectCtrl', ['$scope', '$rootScope', 'ajaxService', '$location', '$timeout', function ($scope, $rootScope, ajaxService, $location, $timeout) {
     $scope.samples = {};
 
     $scope.deleteProject = function () {
       ajaxService.deleteItem($scope.project.links.self).then(function() {
-        console.log('deleted');
+        // TODO: Show notification and undo of delete
+        $rootScope.$broadcast('PROJECT_DELETED', {'name':$scope.project.name});
+        $location.path('/projects');
       });
     };
 

@@ -7,37 +7,24 @@
 
 (function (ng, app) {
   'use strict';
-//  app.config(['$routeProvider', function ($routeProvider) {
-//    $routeProvider.when('/projects/:projectId', {
-//      templateUrl: '/partials/landing.html',
-//      controller: function ($scope, data) {
-//        debugger;
-//        $scope.projects = data.resource.resources;
-//      },
-//      resolve: {
-//        data: function ($q, ajaxService) {
-//          debugger;
-//          var defer = $q.defer();
-//          ajaxService.get('/api/projects').then(function (data) {
-//            defer.resolve(data);
-//          });
-//          return defer.promise();
-//        }
-//      }
-//    });
-//  }]);
 
   app.controller('ProjectsListCtrl', ['$scope', 'ajaxService', '$location', function ($scope, ajaxService, $location) {
-//    $scope.projects = [];
-
-//    ajaxService.get('/api/projects').then(function (data) {
-//      $scope.projects = data.resource.resources;
-//    });
+    $scope.$on('PROJECT_DELETED', function (event, args) {
+      for (var i = 0; i < $scope.projects.length; i++) {
+        if ($scope.projects[i].name === args.name) {
+          $scope.projects.splice(i, 1);
+        }
+      }
+    });
 
     $scope.gotoProject = function (url) {
 //      console.log(url.match(/projecets\/(.*)$/);
       $location.path(url.match(/\/projects\/.*$/)[0] + '/samples');
 //      $scope.$broadcast('CHANGE_PROJECT', url);
     };
+
+    $scope.$on('PROJECT_DELETED', function () {
+      console.log('DELTE');
+    });
   }]);
 })(angular, NGS);
