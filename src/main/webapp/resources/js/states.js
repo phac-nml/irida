@@ -36,14 +36,24 @@
             return defer.promise;
           }
         },
-        controller: function ($scope, data) {
+        controller: function ($scope, $stateParams, data) {
           console.log(data);
           $scope.project = {
+            id: $stateParams.projectId,
             name: data.resource.name,
             users: data.relatedResources.users.resources,
+            samples: data.relatedResources.samples.resources
           };
-          $scope.samples = data.relatedResources.samples.resources
         }
+      })
+      .state('projects.detail.samples', {
+        url: '/samples',
+        templateUrl: '/partials/projects.detail.samples.html'
+      })
+//      .state('projects.details.')
+      .state('projects.detail.users', {
+        url: '/users',
+        templateUrl: '/partials/projects.detail.users.html'
       })
       .state('login', {
         url: '/login',

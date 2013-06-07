@@ -12,7 +12,7 @@
       $scope.sidebar = {
         visible: true,
         widthExpanded: '15em',
-        widthCollapsed: '4.5em'
+        widthCollapsed: '4.2em'
       };
 
       $scope.$on('event:auth-loginRequired', function () {
@@ -28,10 +28,10 @@
         if ($scope.sidebar.visible) {
           $('.sidebar__body').fadeOut('fast');
           $('.sidebar__rotated').fadeIn('slow');
-          $('.sidebar').width($scope.sidebar.widthCollapsed);
+          $('.detailed-content').css({'margin-left': $scope.sidebar.widthCollapsed});
         }
         else {
-          $('.sidebar').width($scope.sidebar.widthExpanded);
+          $('.detailed-content').css({'margin-left': $scope.sidebar.widthExpanded});
           $('.sidebar__rotated').fadeOut('fast');
           $('.sidebar__body').fadeIn('slow');
         }

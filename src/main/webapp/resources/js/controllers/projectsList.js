@@ -36,7 +36,7 @@
 
     $scope.gotoProject = function (url) {
 //      console.log(url.match(/projecets\/(.*)$/);
-      $location.path(url.match(/\/projects\/.*$/)[0]);
+      $location.path(url.match(/\/projects\/.*$/)[0] + '/samples');
 //      $scope.$broadcast('CHANGE_PROJECT', url);
     };
   }]);

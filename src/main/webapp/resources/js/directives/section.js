@@ -9,12 +9,8 @@ angular.module('ngs-section', []).directive('ngsSection', function () {
   'use strict';
   return {
     restrict: 'A',
-    compile: function (elm, atts) {
-      return {
-        post: function (scope, elm, attr, controller) {
-          elm.foundation('section', 'reflow');
-        }
-      };
+    link: function (scope, elem, attrs) {
+      elem.foundation('section');
     }
   };
 });

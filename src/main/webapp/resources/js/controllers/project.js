@@ -6,25 +6,17 @@
  */
 (function (ng, app) {
   'use strict';
-  app.controller('ProjectCtrl', ['$scope', 'ajaxService', '$location', function ($scope, ajaxService, $location) {
-//    $scope.project = {};
-//    if ($stateParams.projectId) {
-//      ajaxService.get('/api/projects/' + $stateParams.projectId).then(function (data) {
-//        $scope.project.name = data.resource.name;
-//        $scope.project.users = data.relatedResources.users.resources;
+  app.controller('ProjectCtrl', ['$scope', 'ajaxService', '$location', '$timeout', function ($scope, ajaxService, $location, $timeout) {
+    $scope.samples = {};
+    $scope.loadSample = function (s) {
+//      ajaxService.get(s.links[0].href).then(function (data) {
 //        console.log(data);
+//        $scope.samples[s.label] = {'loaded':'loaded'};
 //      });
-//    }
-//    else {
-//      // todo: what to do now... no project id.
-//    }
-//    $scope.$on('CHANGE_PROJECT', function (event, url) {
-//      ajaxService.get(url).then(function(data){
-//        $scope.project = {
-//          name: data.resource.name,
-//          users: data.relatedResources.users.resources
-//        };
-//      });
-//    });
+//      $scope.samples[s.label] = {'loaded':'loaded'};
+      $timeout(function () {
+        $scope.samples[s.label] = {'loaded':'loaded'};
+      }, 500);
+    };
   }]);
 })(angular, NGS);

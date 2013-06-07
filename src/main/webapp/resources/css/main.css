@@ -79,7 +79,6 @@
   padding: 0 1.16rem;
   font-size: 1em;
   line-height: 2rem;
-  letter-spacing: 1px;
   color: #c6c8c8;
   text-shadow: 0 -1px rgba(0, 0, 0, 0.69);
   vertical-align: top;
@@ -93,8 +92,6 @@
   width: 100%; }
   .ac-container label span {
     margin-right: 2em;
-    color: #acafaf;
-    text-shadow: 0 -1px rgba(0, 0, 0, 0.49);
     font-size: .8em; }
   .ac-container label i {
     float: right;
@@ -102,8 +99,8 @@
     margin-top: 7px; }
 
 .ac-container label:hover {
-  opacity: 0.9;
-  cursor: pointer; }
+  cursor: pointer;
+  color: #008dde; }
 
 .ac-container input {
   display: none; }
@@ -129,14 +126,8 @@
   padding: 20px;
   text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.8); }
 
-.ac-container input:checked ~ article.ac-small {
-  height: 140px; }
-
-.ac-container input:checked ~ article.ac-medium {
-  height: 180px; }
-
-.ac-container input:checked ~ article.ac-large {
-  height: 230px; }
+.ac-container input:checked ~ article {
+  height: 200px; }
 
 @font-face {
   font-family: 'FontAwesome';
@@ -184,6 +175,12 @@
 .icon-reorder:before {
   content: "\f0c9"; }
 
+.icon-cog:before {
+  content: "\f013"; }
+
+.icon-trash:before {
+  content: "\f014"; }
+
 html {
   height: 100%;
   width: 100%;
@@ -193,6 +190,7 @@ h1, h2, h3, h4 {
   font-weight: 600; }
 
 body {
+  position: relative;
   height: 100%;
   width: 100%;
   background-color: #494d4e; }
@@ -247,10 +245,17 @@ body {
   width: 100%;
   min-width: 100%; }
 
-.top-bar {
-  margin-bottom: 0; }
-  .top-bar .top-bar-section ul {
-    background-color: transparent; }
+.main.top-bar {
+  margin-bottom: 0;
+  background-color: rgba(0, 0, 0, 0.2); }
+  .main.top-bar .name h1 a {
+    color: #494d4e; }
+  .main.top-bar .top-bar-section, .main.top-bar .top-bar-section ul a, .main.top-bar .top-bar-section li a:not(.button) {
+    background-color: #b7bebe; }
+    .main.top-bar .top-bar-section:hover, .main.top-bar .top-bar-section ul a:hover, .main.top-bar .top-bar-section li a:not(.button):hover {
+      background-color: #494d4e; }
+      .main.top-bar .top-bar-section:hover a, .main.top-bar .top-bar-section ul a:hover a, .main.top-bar .top-bar-section li a:not(.button):hover a {
+        color: #008dde; }
 
 .login__outer {
   height: 100%;
@@ -294,32 +299,16 @@ body {
   display: -ms-flexbox; }
 
 .sidebar {
-  position: relative;
-  display: -webkit-flex;
-  display: -moz-flex;
-  display: -ms-flex;
-  display: flex;
-  height: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  overflow: auto;
   width: 15em;
-  display: -webkit-box;
-  display: -moz-box;
-  display: box;
-  -webkit-box-orient: vertical;
-  -moz-box-orient: vertical;
-  box-orient: vertical;
-  -webkit-box-pack: start;
-  -moz-box-pack: start;
-  box-pack: start;
-  -webkit-box-align: stretch;
-  -moz-box-align: stretch;
-  box-align: stretch;
   background-color: #494d4e;
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #494d4e), color-stop(100%, #303334));
   background-image: -webkit-linear-gradient(#494d4e, #303334);
-  background-image: linear-gradient(#494d4e, #303334);
-  -webkit-transition: width 0.5s ease-in;
-  -moz-transition: width 0.5s ease-in;
-  transition: width 0.5s ease-in; }
+  background-image: linear-gradient(#494d4e, #303334); }
   .sidebar a.ngs-button {
     margin-left: 5px;
     margin-top: 6px;
@@ -335,10 +324,8 @@ body {
     font-weight: 600; }
 
 .sidebar__body {
-  -webkit-box-flex: 1;
-  -moz-box-flex: 1;
-  box-flex: 1;
-  overflow: auto; }
+  overflow: auto;
+  margin-top: 55px; }
   .sidebar__body li {
     display: block;
     padding: .2em .8em;
@@ -348,8 +335,9 @@ body {
     text-shadow: 0px 1px 0px black;
     white-space: nowrap; }
     .sidebar__body li:hover {
-      background-color: rgba(0, 0, 0, 0.2);
-      border-right: 0.4em solid #008dde; }
+      background-color: rgba(0, 0, 0, 0.1);
+      border-right: 0.4em solid #008dde;
+      color: #008dde; }
 
 .sidebar__rotated {
   -webkit-transform: rotate(90deg);
@@ -366,7 +354,9 @@ body {
   left: -29px; }
 
 .detailed-content {
+  z-index: 20;
   height: 100%;
+  margin-left: 15em;
   width: 100%;
   background-color: white;
   box-shadow: -3px 0px 10px rgba(50, 50, 50, 0.75);
@@ -379,6 +369,9 @@ body {
   border-left: 1px solid #dfe2e2;
   -webkit-box-flex: 1;
   -moz-box-flex: 1;
-  box-flex: 1; }
+  box-flex: 1;
+  -webkit-transition: margin-left 0.5s ease-in;
+  -moz-transition: margin-left 0.5s ease-in;
+  transition: margin-left 0.5s ease-in; }
   .detailed-content h3 {
     margin-top: 0; }

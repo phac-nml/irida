@@ -31,9 +31,8 @@
   padding: 0 1.16rem;
   font-size: 1em;
   line-height: 2rem;
-  letter-spacing: 1px;
-  color: #c6c8c8;
-  text-shadow: 0 -1px rgba(0,0,0,0.69);
+  //letter-spacing: 1px;
+  @include ngs-light-text();
   vertical-align: top;
   background-color: #595b5b;
   -webkit-box-shadow: inset 0 1px rgba(255,255,255,0.12);
@@ -47,8 +46,6 @@
 
   span {
     margin-right: 2em;
-    color: darken(#c6c8c8,10);
-    text-shadow: 0 -1px rgba(0,0,0,0.49);
     font-size: .8em;
   }
 
@@ -60,8 +57,9 @@
 }
 
 .ac-container label:hover{
-  opacity: 0.9;
+  //opacity: 0.9;
   cursor: pointer;
+  color: $color-hightlight;
 }
 
 .ac-container input{
@@ -95,12 +93,12 @@
   text-shadow: 1px 1px 1px rgba(255,255,255,0.8);
 }
 
-.ac-container input:checked ~ article.ac-small{
-  height: 140px;
+.ac-container input:checked ~ article{
+  height: 200px;
 }
-.ac-container input:checked ~ article.ac-medium{
-  height: 180px;
-}
-.ac-container input:checked ~ article.ac-large{
-  height: 230px;
-}
+//.ac-container input:checked ~ article.ac-medium{
+//  height: 180px;
+//}
+//.ac-container input:checked ~ article.ac-large{
+//  height: 230px;
+//}

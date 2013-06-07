@@ -1,23 +1,19 @@
 @import "bourbon/bourbon";
-
 @import "foundation/variables";
 @import "fws/variables";
 @import "fws/mixins";
 @import "fws/buttons";
 @import "fws/accordian";
 
-
 // ============================================================================
 // FONT AWESOME STUFF
 // ============================================================================
-$fontAwesomePath:   "../font" !default;
+$fontAwesomePath: "../font" !default;
 
 @font-face {
   font-family: 'FontAwesome';
   src: url('#{$fontAwesomePath}/fontawesome-webfont.eot?v=3.1.0');
-  src: url('#{$fontAwesomePath}/fontawesome-webfont.eot?#iefix&v=3.1.0') format("embedded-opentype"),
-  url('#{$fontAwesomePath}/fontawesome-webfont.woff?v=3.1.0') format("woff"),
-  url('#{$fontAwesomePath}/fontawesome-webfont.ttf?v=3.1.0') format("truetype");
+  src: url('#{$fontAwesomePath}/fontawesome-webfont.eot?#iefix&v=3.1.0') format("embedded-opentype"), url('#{$fontAwesomePath}/fontawesome-webfont.woff?v=3.1.0') format("woff"), url('#{$fontAwesomePath}/fontawesome-webfont.ttf?v=3.1.0') format("truetype");
   font-weight: normal;
   font-style: normal;
 }
@@ -49,11 +45,33 @@ $fontAwesomePath:   "../font" !default;
   speak: none;
 }
 
-.icon-chevron-sign-left:before    { content: "\f137"; }
-.icon-chevron-sign-right:before   { content: "\f138"; }
-.icon-chevron-sign-up:before      { content: "\f139"; }
-.icon-chevron-sign-down:before    { content: "\f13a"; }
-.icon-reorder:before              { content: "\f0c9"; }
+.icon-chevron-sign-left:before {
+  content: "\f137";
+}
+
+.icon-chevron-sign-right:before {
+  content: "\f138";
+}
+
+.icon-chevron-sign-up:before {
+  content: "\f139";
+}
+
+.icon-chevron-sign-down:before {
+  content: "\f13a";
+}
+
+.icon-reorder:before {
+  content: "\f0c9";
+}
+
+.icon-cog:before {
+  content: "\f013";
+}
+
+.icon-trash:before {
+  content: "\f014";
+}
 
 // ============================================================================
 // GLOBAL AND BOX SETTINGS
@@ -71,6 +89,7 @@ h1, h2, h3, h4 {
 
 body {
   // Positioning (z-index, top, etc...)
+  position: relative;
 
   // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
   height: 100%;
@@ -91,24 +110,48 @@ body {
 }
 
 @-moz-keyframes spin {
-  0% { -moz-transform: rotate(0deg); }
-  100% { -moz-transform: rotate(359deg); }
+  0% {
+    -moz-transform: rotate(0deg);
+  }
+  100% {
+    -moz-transform: rotate(359deg);
+  }
 }
+
 @-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(359deg); }
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+  }
 }
+
 @-o-keyframes spin {
-  0% { -o-transform: rotate(0deg); }
-  100% { -o-transform: rotate(359deg); }
+  0% {
+    -o-transform: rotate(0deg);
+  }
+  100% {
+    -o-transform: rotate(359deg);
+  }
 }
+
 @-ms-keyframes spin {
-  0% { -ms-transform: rotate(0deg); }
-  100% { -ms-transform: rotate(359deg); }
+  0% {
+    -ms-transform: rotate(0deg);
+  }
+  100% {
+    -ms-transform: rotate(359deg);
+  }
 }
+
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(359deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(359deg);
+  }
 }
 
 .row {
@@ -116,10 +159,20 @@ body {
   min-width: 100%;
 }
 
-.top-bar {
+.main.top-bar {
   margin-bottom: 0;
-  .top-bar-section ul {
-    background-color: transparent;
+  background-color: rgba(0,0,0,.2);
+  .name h1 a {
+    color: $color-slate-gray;
+  }
+  .top-bar-section, .top-bar-section ul a, .top-bar-section li a:not(.button) {
+    background-color: darken($color-light-gray, 15);
+    &:hover {
+      background-color: $color-slate-gray;
+      a {
+        color: $color-hightlight;
+      }
+    }
   }
 }
 
@@ -176,20 +229,18 @@ body {
   // @extends
 
   // Positioning (z-index, top, etc...)
-  position: relative;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
 
   // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
-  display: -webkit-flex;
-  display: -moz-flex;
-  display: -ms-flex;
-  display: flex;
-  height: 100%;
+  overflow: auto;
   width: $width-sidebar;
 
   // Other (colors, fonts, align)
 
   // @includes
-  @include box(vertical, start, stretch);
   @include linear-gradient($color-slate-gray, darken($color-slate-gray, 10));
 
   a.ngs-button {
@@ -204,16 +255,15 @@ body {
 
   h2 {
     margin-left: 1em;
-    @include ngs-light-text ();
+    @include ngs-light-text();
     font-size: 1em;
     font-weight: 600;
   }
-  @include transition(width .5s ease-in);
 }
 
 .sidebar__body {
-  @include box-flex(1);
   overflow: auto;
+  margin-top: 55px;
 
   // Nested
   li {
@@ -231,18 +281,18 @@ body {
     white-space: nowrap;
 
     &:hover {
-      background-color: rgba(0, 0, 0, .2);
+      background-color: rgba(0, 0, 0, .1);
       border-right: .4em solid $color-hightlight;
+      color: $color-hightlight;
     }
   }
 }
 
 .sidebar__rotated {
-  //@include box-flex(1);
   @include transform(rotate(90deg));
   display: none;
   font-size: 2.3em;
-  @include ngs-light-text ();
+  @include ngs-light-text();
   position: absolute;
   top: 100px;
   left: -29px;
@@ -252,16 +302,18 @@ body {
   // @extends
 
   // Positioning (z-index, top, etc...)
+  z-index: 20;
 
   // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
   height: 100%;
+  margin-left: $width-sidebar;
   width: 100%;
 
   //margin-left: $width-sidebar;
 
   // Other (colors, fonts, align)
   background-color: $color-white;
-  box-shadow:         -3px 0px 10px rgba(50, 50, 50, 0.75);
+  box-shadow: -3px 0px 10px rgba(50, 50, 50, 0.75);
   -webkit-border-top-left-radius: 5px;
   -webkit-border-bottom-left-radius: 5px;
   -moz-border-radius-topleft: 5px;
@@ -272,6 +324,7 @@ body {
 
   // @includes
   @include box-flex(1);
+  @include transition(margin-left .5s ease-in);
 
   // Nested
   h3 {
