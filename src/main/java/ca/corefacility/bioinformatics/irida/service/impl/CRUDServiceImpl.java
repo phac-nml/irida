@@ -10,6 +10,8 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.AuditRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 
 import javax.validation.ConstraintViolation;
@@ -29,6 +31,7 @@ import java.util.Map.Entry;
 public class CRUDServiceImpl<KeyType extends Identifier, ValueType extends Comparable<ValueType> & Auditable<Audit>>
         implements CRUDService<KeyType, ValueType> {
 
+    private static final Logger logger = LoggerFactory.getLogger(CRUDServiceImpl.class);
     protected final CRUDRepository<KeyType, ValueType> repository;
     protected final Validator validator;
     protected final Class<ValueType> valueType;
@@ -233,15 +236,40 @@ public class CRUDServiceImpl<KeyType extends Identifier, ValueType extends Compa
      */
     private Method getMethod(String property, MethodType type, Object... params) throws NoSuchMethodException {
         String methodName = getMethodName(property, type);
+        logger.trace("checking for existence of method with name [" + methodName + "] and types: [" + params + "]");
 
         if (MethodType.GETTER.equals(type)) {
             return valueType.getDeclaredMethod(methodName);
         } else {
+            logger.trace("trying to find a setter: [" + methodName + "]");
             // check to see if the parameter is null
             Object param = params[0];
             if (param != null) {
-                // if not, throw it on through
-                return valueType.getDeclaredMethod(methodName, param.getClass());
+                logger.trace("the parameter it not null (because it's a setter, dummy). trying to " +
+                        "find a setter with parameter type: [" + param.getClass() + "]");
+                Method[] methods = valueType.getMethods();
+                for (Method m : methods) {
+                    // find the set of methods with the same name as the setter that we're searching for
+                    if (m.getName().equals(methodName)) {
+
+                        // get the parameter types of the method and ensure that the method only accepts
+                        // one parameter
+                        Class<?>[] parameterTypes = m.getParameterTypes();
+                        if (parameterTypes.length == 1) {
+
+                            // try to cast the value that was sent to this method as the type of parameter
+                            // for the method. if the classes are equal, this should just work. if the
+                            // parameter type is a superclass or interface of the type of the value, then
+                            // this should also work.
+                            Class<?> parameter = parameterTypes[0];
+                            try {
+                                parameter.cast(param);
+                                return m;
+                            } catch (ClassCastException e) {
+                            }
+                        }
+                    }
+                }
             } else {
                 // if the parameter is null, just see if we can find a
                 // method with the correct name.

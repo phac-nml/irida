@@ -19,9 +19,11 @@ import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import java.io.File;
-import java.util.Objects;
-import javax.validation.constraints.NotNull;
 import org.openrdf.annotations.Iri;
+
+import javax.validation.constraints.NotNull;
+import java.nio.file.Path;
+import java.util.Objects;
 
 /**
  * A file that may be stored somewhere on the file system and belongs to a
@@ -31,26 +33,25 @@ import org.openrdf.annotations.Iri;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Iri(SequenceFile.PREFIX + SequenceFile.TYPE)
-public class SequenceFile implements IridaThing<SequenceFile,Audit,Identifier>, Comparable<SequenceFile> {
+public class SequenceFile implements IridaThing<SequenceFile, Audit, Identifier>, Comparable<SequenceFile> {
     public static final String PREFIX = "http://corefacility.ca/irida/";
     public static final String TYPE = "SequenceFile";
-    
     private Identifier id;
     @NotNull
     private Audit audit;
     @NotNull
-    @Iri(PREFIX + "File")
-    private File file;
+    
+    private Path file;
 
     public SequenceFile() {
     }
-
-    public SequenceFile(File sampleFile) {
+    
+    public SequenceFile(Path sampleFile) {
         this.audit = new Audit();
         this.file = sampleFile;
     }
 
-    public SequenceFile(Identifier id, File sampleFile) {
+    public SequenceFile(Identifier id, Path sampleFile) {
         this(sampleFile);
         this.id = id;
     }
@@ -75,17 +76,22 @@ public class SequenceFile implements IridaThing<SequenceFile,Audit,Identifier>, 
         return audit.compareTo(other.audit);
     }
 
-    public File getFile() {
+    public Path getFile() {
         return file;
     }
 
-    public void setFile(File file) {
+    public void setFile(Path file) {
         this.file = file;
     }
 
     @Override
     public Audit getAuditInformation() {
         return audit;
+    }
+
+    @Override
+    public void setAuditInformation(Audit audit) {
+        this.audit = audit;
     }
 
     @Override
@@ -99,19 +105,19 @@ public class SequenceFile implements IridaThing<SequenceFile,Audit,Identifier>, 
     }
 
     @Override
-    public void setAuditInformation(Audit audit) {
-        this.audit = audit;
-    }
-
-    @Override
     public String getLabel() {
-        return file.getName();
+        return file.getFileName().toString();
     }
+    
+    @Iri(PREFIX + "File")
+    public File getIoFile(){
+        return file.toFile();
+    }    
 
     @Override
     public SequenceFile copy() {
         SequenceFile f = new SequenceFile();
-        f.setFile(getFile());
+        f.setFile(getIoFile().toPath());
         return f;
     }
 }

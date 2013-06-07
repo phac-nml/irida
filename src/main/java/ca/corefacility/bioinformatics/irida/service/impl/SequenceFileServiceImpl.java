@@ -27,6 +27,7 @@ import com.google.common.collect.ImmutableMap;
 
 import javax.validation.Validator;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -72,8 +73,10 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Identifier, Sequenc
         sequenceFile = fileRepository.create(sequenceFile);
         // And finally, update the database with the stored file location
 
-        sequenceFile = super.update(sequenceFile.getIdentifier(),
-                ImmutableMap.of("file", (Object) sequenceFile.getFile()));
+        Map<String,Object> changed = new HashMap<>();
+        changed.put("file", sequenceFile.getFile());
+        sequenceFile = super.update(sequenceFile.getIdentifier(), changed);
+        
         return sequenceFile;
     }
 

@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Project;
@@ -25,9 +26,11 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openrdf.annotations.Iri;
@@ -131,6 +134,32 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
             store.closeRepoConnection(con);           
         }
     }
+
+    @Override
+    public SequenceFile update(Identifier id, Map<String, Object> updatedFields) throws InvalidPropertyException {
+        if(updatedFields.containsKey("file")){
+            Object field = updatedFields.get("file");
+            
+            Method declaredMethod;
+            try {
+                declaredMethod = SequenceFile.class.getDeclaredMethod("getIoFile");
+            } catch (    NoSuchMethodException | SecurityException ex) {
+                logger.error("No field file exists.  Cannot update object.");
+                throw new InvalidPropertyException("No field named file exists for this object type");            
+            }
+
+            Iri annotation = declaredMethod.getAnnotation(Iri.class);
+
+            logger.trace("Updating file -- " + annotation.value());
+
+            updateField(id, annotation.value(), field);
+            
+            updatedFields.remove("file");
+        }
+        
+        return super.update(id, updatedFields);
+    }
+    
     
     
     @Override
@@ -138,11 +167,11 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
         
         String fileAnnotation = "";
         try {
-            Field declaredField = SequenceFile.class.getDeclaredField("file");
-            Iri annotation = declaredField.getAnnotation(Iri.class);
+            Method declaredMethod = SequenceFile.class.getDeclaredMethod("getIoFile");
+            Iri annotation = declaredMethod.getAnnotation(Iri.class);
             fileAnnotation = annotation.value();
 
-        } catch (NoSuchFieldException | SecurityException ex) {
+        } catch (SecurityException | NoSuchMethodException ex) {
             Logger.getLogger(SequenceFileSesameRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
                
