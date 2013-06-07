@@ -10,11 +10,9 @@ import org.springframework.http.HttpStatus;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.jayway.restassured.RestAssured.get;
-import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.*;
 import static com.jayway.restassured.path.json.JsonPath.from;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Integration tests for project samples.
@@ -48,5 +46,27 @@ public class ProjectSamplesIntegrationTest {
 
         assertNotNull(linkLocation);
         assertTrue(linkLocation.matches("^<http://localhost:8080/api/projects/[a-f0-9\\-]+/samples/[a-f0-9\\-]+>; rel=relationship$"));
+    }
+
+    @Test
+    public void testDeleteSampleFromProject() {
+        String projectUri = "http://localhost:8080/api/projects/6b80820f-38f8-4c73-83a6-12d17dc2c31c";
+
+        // load the project
+        String projectJson = get(projectUri).asString();
+        // get the uri for a specific sample associated with a project
+        String sampleUri = from(projectJson).get("relatedResources.samples.resources[0].links.find{it.rel == 'self'}.href");
+        // issue a delete against the service
+        Response r = expect().statusCode(HttpStatus.OK.value()).when().delete(sampleUri);
+
+        // check that the response body contains links to the project and samples collection
+        String responseBody = r.getBody().asString();
+        String projectUriRel = from(responseBody).get("resource.links.find{it.rel == 'project'}.href");
+        assertNotNull(projectUriRel);
+        assertEquals(projectUri, projectUriRel);
+
+        String samplesUri = from(responseBody).get("resource.links.find{it.rel == 'project/samples'}.href");
+        assertNotNull(samplesUri);
+        assertEquals(projectUri + "/samples", samplesUri);
     }
 }
