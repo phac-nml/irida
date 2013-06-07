@@ -18,6 +18,7 @@ package ca.corefacility.bioinformatics.irida.model;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import java.io.File;
 import org.openrdf.annotations.Iri;
 
 import javax.validation.constraints.NotNull;
@@ -39,12 +40,12 @@ public class SequenceFile implements IridaThing<SequenceFile, Audit, Identifier>
     @NotNull
     private Audit audit;
     @NotNull
-    @Iri(PREFIX + "File")
+    
     private Path file;
 
     public SequenceFile() {
     }
-
+    
     public SequenceFile(Path sampleFile) {
         this.audit = new Audit();
         this.file = sampleFile;
@@ -107,11 +108,16 @@ public class SequenceFile implements IridaThing<SequenceFile, Audit, Identifier>
     public String getLabel() {
         return file.getFileName().toString();
     }
+    
+    @Iri(PREFIX + "File")
+    public File getIoFile(){
+        return file.toFile();
+    }    
 
     @Override
     public SequenceFile copy() {
         SequenceFile f = new SequenceFile();
-        f.setFile(getFile());
+        f.setFile(getIoFile().toPath());
         return f;
     }
 }

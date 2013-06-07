@@ -393,7 +393,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         return lit;
     }
 
-    private void updateField(IDType id, String predicate, Object value) {
+    protected void updateField(IDType id, String predicate, Object value) {
         ObjectConnection con = store.getRepoConnection();
         java.net.URI netURI = buildURIFromIdentifier(id);
         String uri = netURI.toString();
