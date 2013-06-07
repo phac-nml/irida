@@ -405,7 +405,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         return lit;
     }
 
-    protected void updateField(IDType id, String predicate, Object value) {
+    protected Value updateField(IDType id, String predicate, Object value) {
         ObjectConnection con = store.getRepoConnection();
         java.net.URI netURI = idGen.buildURIFromIdentifier(id,URI);
         String uri = netURI.toString();
