@@ -25,6 +25,7 @@
     <bean id="projectService" class="ca.corefacility.bioinformatics.irida.service.impl.ProjectServiceImpl">
         <constructor-arg ref="projectRepository"/>
         <constructor-arg ref="linksRepository"/>
+        <constructor-arg ref="sampleRepository" />
         <constructor-arg ref="validator"/>
     </bean>
 
