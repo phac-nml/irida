@@ -98,7 +98,7 @@ public class RelationshipSesameRepositoryTest {
     @Test
     public void testEmptyLinks() {
         Identified withoutLabel = repo.create(new Identified("data"));
-        List<Relationship> relationships = linksRepo.getLinks(withoutLabel.getIdentifier(), Identified.class,
+        List<Relationship> relationships = linksRepo.getLinksForSubject(withoutLabel.getIdentifier(), Identified.class,
                 Identified.class);
         assertEquals(0, relationships.size());
     }

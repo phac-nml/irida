@@ -66,7 +66,7 @@ public class RelationshipServiceImpl extends CRUDServiceImpl<Identifier, Relatio
      */
     @Override
     public Collection<Relationship> getRelationshipsForEntity(Identifier id, Class subjectType, Class objectType) {
-        return linksRepository.getLinks(id, subjectType, objectType);
+        return linksRepository.getLinksForSubject(id, subjectType, objectType);
     }
 
     /**

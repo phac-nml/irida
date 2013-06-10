@@ -149,7 +149,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             throw new EntityNotFoundException("Subject "+ subject.toString()+ " was not found in the database.  A relationship for this element cannot be created" );
         }
         if(!uriExists(objNetURI.toString())){
-            throw new EntityNotFoundException("Object "+ subject.toString()+ " was not found in the database.  A relationship for this element cannot be created" );
+            throw new EntityNotFoundException("Object "+ object.toString()+ " was not found in the database.  A relationship for this element cannot be created" );
         }        
 
         ObjectConnection con = store.getRepoConnection();
@@ -293,7 +293,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
      * {@inheritDoc}
      */
     @Override
-    public List<Relationship> getLinks(Identifier subjectId, Class subjectType, Class objectType) {
+    public List<Relationship> getLinksForSubject(Identifier subjectId, Class subjectType, Class objectType) {
         RdfPredicate pred = linkList.getLink(subjectType, objectType);
 
         return getLinks(subjectId, pred, null);
