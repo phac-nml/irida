@@ -83,5 +83,31 @@ public class ProjectSesameRepositoryTest {
         assertTrue(evaluate);
         con.close();
     }
+    
+    /*
+     * Doesn't work as expected right now because we can't list relationships without inference from OWLIM right now.  hopefully updated soon
+     * @Test
+    public void testRemoveUserFromProject() throws MalformedQueryException, RepositoryException, QueryEvaluationException{
+        Project project = repo.create(new Project("a new project"));
+        User user = urepo.create(new User("anon", "anon@nowhere.com", "PASSWOD!1", "Anon", "Guy", "1234"));
+        
+        Relationship addUserToProject = repo.addUserToProject(project, user);
+        assertNotNull(addUserToProject);
+        repo.removeUserFromProject(project, user);
+        
+        ObjectConnection con = store.getRepoConnection();
+        String qs = "ASK {?sub ?pred ?obj}";
+        ValueFactory vf = con.getValueFactory();
+        BooleanQuery query = con.prepareBooleanQuery(QueryLanguage.SPARQL, qs);
+        URI sub = vf.createURI(user.getIdentifier().getUri().toString());
+        URI pred = addUserToProject.getPredicate().getPredicateURI(con);
+        URI obj = vf.createURI(project.getIdentifier().getUri().toString());
+        query.setBinding("sub", sub);
+        query.setBinding("pred", pred);
+        query.setBinding("obj", obj);
+        boolean evaluate = query.evaluate();
+        assertFalse(evaluate);
+        con.close();        
+    }*/
 
 }

@@ -78,6 +78,11 @@ public class ProjectSesameRepository extends GenericRepository<Identifier, Proje
      */
     @Override
     public void removeUserFromProject(Project project, User user) {
-        throw new UnsupportedOperationException("not implemented.");
+        //throw new UnsupportedOperationException("not implemented.");
+        
+        List<Relationship> links = linksRepo.getLinks(user.getIdentifier(), hasProject, project.getIdentifier());
+        for(Relationship r : links){
+            linksRepo.delete(r.getIdentifier());
+        }
     }
 }
