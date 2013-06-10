@@ -369,7 +369,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     
     public void updateLabel(IDType id, String label){
         ObjectConnection con = store.getRepoConnection();
-        java.net.URI netURI = buildURIFromIdentifier(id);
+        java.net.URI netURI = idGen.buildURIFromIdentifier(id,URI);
 
         String uri = netURI.toString();
 
