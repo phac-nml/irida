@@ -199,12 +199,12 @@ public class ProjectSamplesControllerTest {
         String projectId = p.getIdentifier().getIdentifier();
         String sampleId = s.getIdentifier().getIdentifier();
 
-        when(relationshipService.getRelationship(p.getIdentifier(), s.getIdentifier())).thenReturn(r);
+        when(projectService.read(p.getIdentifier())).thenReturn(p);
         when(sampleService.update(s.getIdentifier(), updatedFields)).thenReturn(s);
 
         ModelMap modelMap = controller.updateSample(projectId, sampleId, updatedFields);
 
-        verify(relationshipService).getRelationship(p.getIdentifier(), s.getIdentifier());
+        verify(sampleService).getSampleForProject(p, s.getIdentifier());
         verify(sampleService).update(s.getIdentifier(), updatedFields);
 
         Object o = modelMap.get(GenericController.RESOURCE_NAME);

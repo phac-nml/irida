@@ -75,4 +75,23 @@ public class ProjectSamplesIntegrationTest {
         // now confirm that the sample is not there anymore
         expect().body("relatedResources.samples.resources.label", not(hasItem(sampleLabel))).when().get(projectUri);
     }
+
+    //@Test
+    public void testUpdateProjectSample() {
+        String projectUri = "http://localhost:8080/api/projects/6b80820f-38f8-4c73-83a6-12d17dc2c31c";
+        String projectSampleUri = projectUri + "/samples/c6ce0cfa-2676-48fe-bd0c-c31d97c77d5c";
+        Map<String, String> updatedFields = new HashMap<>();
+        String updatedName = "Totally different sample name.";
+        updatedFields.put("sampleName", updatedName);
+
+        Response r = given().body(updatedFields).expect().statusCode(HttpStatus.OK.value()).when().patch(projectSampleUri);
+
+        String responseBody = r.getBody().asString();
+        String updatedUri = from(responseBody).get("resource.links.find{it.rel == 'project/sample'}.href");
+        assertNotNull(updatedUri);
+        assertEquals(projectSampleUri, updatedUri);
+
+        // now confirm that the sample name was updated
+        expect().body("relatedResources.samples.resources.label", hasItem(updatedName)).when().get(projectUri);
+    }
 }
