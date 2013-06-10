@@ -7,6 +7,8 @@ import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import ca.corefacility.bioinformatics.irida.repositories.RelationshipRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
 
 import javax.validation.Validator;
@@ -19,15 +21,25 @@ import javax.validation.Validator;
 public class SampleServiceImpl extends CRUDServiceImpl<Identifier, Sample> implements SampleService {
 
     /**
+     * Reference to {@link RelationshipRepository}.
+     */
+    private RelationshipRepository relationshipRepository;
+    /**
+     * Reference to {@link CRUDRepository} for managing {@link Sample}.
+     */
+    private CRUDRepository<Identifier, Sample> sampleRepository;
+
+    /**
      * Constructor.
      *
      * @param sampleRepository the sample repository.
      * @param validator        validator.
      */
-    public SampleServiceImpl(
-            CRUDRepository<Identifier, Sample> sampleRepository,
-            Validator validator) {
+    public SampleServiceImpl(CRUDRepository<Identifier, Sample> sampleRepository,
+                             RelationshipRepository relationshipRepository, Validator validator) {
         super(sampleRepository, validator, Sample.class);
+        this.sampleRepository = sampleRepository;
+        this.relationshipRepository = relationshipRepository;
     }
 
     /**
@@ -43,7 +55,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Identifier, Sample> imple
      */
     @Override
     public Sample getSampleForProject(Project project, Identifier identifier) throws EntityNotFoundException {
-        throw new UnsupportedOperationException("not implemented.");
+        // confirm that the link between project and this identifier exists
+        relationshipRepository.getLinks(project.getIdentifier(), RdfPredicate.ANY, identifier);
+        // load the sample from the database
+        Sample s = sampleRepository.read(identifier);
+        // return sample to the caller
+        return s;
     }
 
     /**
