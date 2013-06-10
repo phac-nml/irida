@@ -149,7 +149,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             throw new EntityNotFoundException("Subject "+ subject.toString()+ " was not found in the database.  A relationship for this element cannot be created" );
         }
         if(!uriExists(objNetURI.toString())){
-            throw new EntityNotFoundException("Object "+ subject.toString()+ " was not found in the database.  A relationship for this element cannot be created" );
+            throw new EntityNotFoundException("Object "+ object.toString()+ " was not found in the database.  A relationship for this element cannot be created" );
         }        
 
         ObjectConnection con = store.getRepoConnection();
