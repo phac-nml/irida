@@ -369,7 +369,8 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     
     public void updateLabel(IDType id, String label){
         ObjectConnection con = store.getRepoConnection();
-        java.net.URI netURI = idGen.buildURIFromIdentifier(id,URI);
+        java.net.URI netURI = buildURIFromIdentifier(id);
+
         String uri = netURI.toString();
 
         try {
@@ -392,7 +393,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         } finally {
             store.closeRepoConnection(con);
         }        
-    }
+    }    
 
     protected Literal createLiteral(ValueFactory fac, String predicate, Object obj) {
         Literal lit = null;// = fac.createLiteral(obj);

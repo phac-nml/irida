@@ -21,30 +21,34 @@ import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 
 /**
- *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class RdfPredicate {
+
+    public static final RdfPredicate ANY = new RdfPredicate("any", "any");
     private String prefix;
     private String name;
 
-    public RdfPredicate(){}
-    
+    public RdfPredicate() {
+    }
+
     public RdfPredicate(String prefix, String name) {
         this.prefix = prefix;
         this.name = name;
     }
-    
+
     /**
      * Get the notation of this rdfPredicate for use in a SPARQL query
+     *
      * @return A String of this RDF predicate
      */
-    public String getSparqlNotation(){
-        return prefix +":"+name;
+    public String getSparqlNotation() {
+        return prefix + ":" + name;
     }
 
     /**
      * Get the prefix of this RDF predicate
+     *
      * @return The string prefix of this predicate
      */
     public String getPrefix() {
@@ -53,19 +57,21 @@ public class RdfPredicate {
 
     /**
      * Get the local name of this rdf predicate
+     *
      * @return The string local name of this predicate
      */
     public String getName() {
         return name;
     }
-    
+
     /**
      * Build a Sesame URI for this RDFPredicate
+     *
      * @param con An object connection to construct this predicate for
      * @return A URI of the predicate
      * @throws RepositoryException
      */
-    public URI getPredicateURI(RepositoryConnection con) throws RepositoryException{
+    public URI getPredicateURI(RepositoryConnection con) throws RepositoryException {
         ValueFactory vf = con.getValueFactory();
         URI pred = vf.createURI(con.getNamespace(this.prefix), this.name);
         return pred;

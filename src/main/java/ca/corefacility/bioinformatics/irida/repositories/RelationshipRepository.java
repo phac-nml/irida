@@ -41,9 +41,10 @@ public interface RelationshipRepository extends CRUDRepository<Identifier, Relat
     /**
      * Create a new {@link Relationship} in the system between two {@link Identifier}s.
      *
-     * @param subjectClass
-     * @param subject the subject of the {@link Relationship}.
-     * @param object  the object of the {@link Relationship}.
+     * @param subjectClass the class type of the subject
+     * @param subject      the subject of the {@link Relationship}.
+     * @param objectClass  the class type of the object.
+     * @param object       the object of the {@link Relationship}.
      * @return a new {@link Relationship}.
      */
     public Relationship create(Class subjectClass, Identifier subject, Class objectClass, Identifier object);
