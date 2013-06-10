@@ -378,9 +378,40 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             audit.setUpdated(new Date());
             auditRepo.audit(audit, netURI.toString());
         }
+    
+        Type obj = read(id);
+        updateLabel(id,obj.getLabel());
 
-        return read(id);
+        return obj;
     }
+    
+    public void updateLabel(IDType id, String label){
+        ObjectConnection con = store.getRepoConnection();
+        java.net.URI netURI = buildURIFromIdentifier(id);
+
+        String uri = netURI.toString();
+
+        try {
+            con.begin();
+
+            ValueFactory fac = con.getValueFactory();
+            URI subURI = fac.createURI(uri);
+            URI predURI = fac.createURI(con.getNamespace("rdfs"),"label");
+            Literal labelLiteral = fac.createLiteral(label);
+
+            con.remove(subURI, predURI, null);
+
+            Statement added = fac.createStatement(subURI, predURI, labelLiteral);
+            con.add(added);
+
+            con.commit();
+        } catch (RepositoryException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Failed to update label");
+        } finally {
+            store.closeRepoConnection(con);
+        }        
+    }    
 
     protected Literal createLiteral(ValueFactory fac, String predicate, Object obj) {
         Literal lit = null;// = fac.createLiteral(obj);
