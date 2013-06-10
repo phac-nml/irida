@@ -109,7 +109,8 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         object.setIdentifier(objid);
 
         storeObject(object);
-        auditRepo.audit(audit, objid.getUri().toString(),null);
+        Map<String, Value> predicateValues = getPredicateValues(object);
+        auditRepo.audit(audit, objid.getUri().toString(),predicateValues);
 
         return object;
     }
@@ -418,11 +419,11 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             URI subURI = fac.createURI(uri);
             URI predURI = fac.createURI(predicate);
             Literal objValue = createLiteral(fac, predicate, value);
+            originalValue = objValue;
 
             RepositoryResult<Statement> curvalues = con.getStatements(subURI, predURI, null);
             while (curvalues.hasNext()) {
                 Statement next = curvalues.next();
-                originalValue = next.getObject();
                 logger.trace("current value: " + next.getObject().stringValue());
             }
             con.remove(subURI, predURI, null);
@@ -532,5 +533,68 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             store.closeRepoConnection(con);
         }
         return users;
+    }
+    
+    private Collection<String> getFieldPredicates(Class c){
+        List<String> predicates = new ArrayList<>();
+        if(c.getSuperclass() != null){
+            Collection<String> added = getFieldPredicates(c.getSuperclass());
+            predicates.addAll(added);
+        }
+        
+        if(c.getInterfaces() != null){
+            for(Class inf : c.getInterfaces()){
+                Collection<String> added = getFieldPredicates(inf);
+                predicates.addAll(added);
+            }
+        }
+        
+        for(Field f : c.getDeclaredFields()){
+            Iri iri = f.getAnnotation(Iri.class);
+            if(iri != null){
+                predicates.add(iri.value());
+            }
+        }
+        
+        for(Method m : c.getDeclaredMethods()){
+            Iri iri = m.getAnnotation(Iri.class);
+            if(iri != null){
+                predicates.add(iri.value());
+            }
+        }
+        
+        return predicates;
+    }
+    
+    private Map<String,Value> getPredicateValues(Type obj){
+        java.net.URI uriFromIdentifier = getUriFromIdentifier((Identifier) obj.getIdentifier());
+        Map<String,Value> values = new HashMap<>();
+        Collection<String> preds = getFieldPredicates(obj.getClass());
+        
+        ObjectConnection con = store.getRepoConnection();
+        ValueFactory vf = con.getValueFactory();
+        
+        try{
+            URI sub = vf.createURI(uriFromIdentifier.toString());
+            for(String predStr : preds){
+                URI pred = vf.createURI(predStr);
+                RepositoryResult<Statement> statements = con.getStatements(sub, pred, null);
+                if(statements.hasNext()){
+                    Statement next = statements.next();
+                    Value object = next.getObject();
+                    values.put(predStr, object);
+                }
+                statements.close();
+            }
+        }
+        catch (RepositoryException ex) {
+            logger.error("Couldn't get predicate values for this object: "+ex.getMessage());
+            throw new StorageException("Repository failed to get predicate values for this object");
+        }        
+        finally{
+            store.closeRepoConnection(con);
+        }
+        
+        return values;
     }
 }

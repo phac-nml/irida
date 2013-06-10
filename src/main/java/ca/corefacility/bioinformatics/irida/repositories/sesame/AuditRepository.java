@@ -119,20 +119,20 @@ public class AuditRepository extends SesameRepository{
         return aURI;        
     }
     
-    public void audit(Audit audit,Identifier identifier,Map<String,Value> originalFields){
+    public void audit(Audit audit,Identifier identifier,Map<String,Value> updatedFields){
         java.net.URI uriFromIdentifier = getUriFromIdentifier(identifier);
-        audit(audit,uriFromIdentifier.toString(),originalFields);
+        audit(audit,uriFromIdentifier.toString(),updatedFields);
     }
     
-    public void audit(Audit audit,String objectURI,Map<String,Value> originalFields){
+    public void audit(Audit audit,String objectURI,Map<String,Value> updatedFields){
         ObjectConnection con = store.getRepoConnection();
         
         try {
             con.begin();
             String aURI = getAuditURI(con,objectURI);
             con.addObject(aURI, audit);
-            if(originalFields != null){
-                createVersion(con,aURI,objectURI,originalFields);
+            if(updatedFields != null){
+                createVersion(con,aURI,objectURI,updatedFields);
             }
 
             con.commit();
@@ -240,7 +240,7 @@ public class AuditRepository extends SesameRepository{
 
             ValueFactory fac = con.getValueFactory();
             URI audit = fac.createURI(auditURI);
-            URI pred = fac.createURI(con.getNamespace("irida"), "originalValues");
+            URI pred = fac.createURI(con.getNamespace("irida"), "addedValues");
             BNode versionURI = fac.createBNode();
             Statement st = fac.createStatement(audit, pred, versionURI);
 
@@ -255,8 +255,8 @@ public class AuditRepository extends SesameRepository{
         
         }
         catch (RepositoryException ex) {
-            logger.error("Couldn't create original values for object: " + ex.getMessage());
-            throw new StorageException("Couldn't create original values for object: " + ex.getMessage());
+            logger.error("Couldn't create added values for object: " + ex.getMessage());
+            throw new StorageException("Couldn't create added values for object: " + ex.getMessage());
         }
     }    
 }
