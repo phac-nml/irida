@@ -12,6 +12,8 @@ import java.util.Map;
 
 import static com.jayway.restassured.RestAssured.*;
 import static com.jayway.restassured.path.json.JsonPath.from;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
 
 /**
@@ -54,6 +56,7 @@ public class ProjectSamplesIntegrationTest {
 
         // load the project
         String projectJson = get(projectUri).asString();
+        String sampleLabel = from(projectJson).get("relatedResources.samples.resources[0].label");
         // get the uri for a specific sample associated with a project
         String sampleUri = from(projectJson).get("relatedResources.samples.resources[0].links.find{it.rel == 'self'}.href");
         // issue a delete against the service
@@ -68,5 +71,8 @@ public class ProjectSamplesIntegrationTest {
         String samplesUri = from(responseBody).get("resource.links.find{it.rel == 'project/samples'}.href");
         assertNotNull(samplesUri);
         assertEquals(projectUri + "/samples", samplesUri);
+
+        // now confirm that the sample is not there anymore
+        expect().body("relatedResources.samples.resources.label", not(hasItem(sampleLabel))).when().get(projectUri);
     }
 }
