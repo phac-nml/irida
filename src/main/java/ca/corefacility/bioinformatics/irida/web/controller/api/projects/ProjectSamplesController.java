@@ -231,10 +231,11 @@ public class ProjectSamplesController {
         Identifier projectIdentifier = new Identifier(projectId);
         Identifier sampleIdentifier = new Identifier(sampleId);
         // confirm that the project is related to the sample
-        Relationship r = relationshipService.getRelationship(projectIdentifier, sampleIdentifier);
+        Project p = projectService.read(projectIdentifier);
+        sampleService.getSampleForProject(p, sampleIdentifier);
 
         // issue an update request
-        Sample s = sampleService.update(sampleIdentifier, updatedFields);
+        sampleService.update(sampleIdentifier, updatedFields);
 
         // respond to the client with a link to self, sequence files collection and project.
         RootResource resource = new RootResource();

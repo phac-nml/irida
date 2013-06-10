@@ -12,6 +12,7 @@ import java.util.Map;
 
 import static com.jayway.restassured.RestAssured.*;
 import static com.jayway.restassured.path.json.JsonPath.from;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 /**
@@ -54,6 +55,7 @@ public class ProjectSamplesIntegrationTest {
 
         // load the project
         String projectJson = get(projectUri).asString();
+        String sampleLabel = from(projectJson).get("relatedResources.samples.resources[0].label");
         // get the uri for a specific sample associated with a project
         String sampleUri = from(projectJson).get("relatedResources.samples.resources[0].links.find{it.rel == 'self'}.href");
         // issue a delete against the service
@@ -68,5 +70,23 @@ public class ProjectSamplesIntegrationTest {
         String samplesUri = from(responseBody).get("resource.links.find{it.rel == 'project/samples'}.href");
         assertNotNull(samplesUri);
         assertEquals(projectUri + "/samples", samplesUri);
+
+        // now confirm that the sample is not there anymore
+        expect().body("relatedResources.samples.resources.label", not(hasItem(sampleLabel))).when().get(projectUri);
+    }
+
+    @Test
+    public void testUpdateProjectSample() {
+        String projectUri = "http://localhost:8080/api/projects/6b80820f-38f8-4c73-83a6-12d17dc2c31c";
+        String projectSampleUri = projectUri + "/samples/c6ce0cfa-2676-48fe-bd0c-c31d97c77d5c";
+        Map<String, String> updatedFields = new HashMap<>();
+        String updatedName = "Totally different sample name.";
+        updatedFields.put("sampleName", updatedName);
+
+        given().body(updatedFields).expect().body("resource.links.rel", hasItems("self", "project", "sample/sequenceFiles"))
+                .when().patch(projectSampleUri);
+
+        // now confirm that the sample name was updated
+        expect().body("relatedResources.samples.resources.label", hasItem(updatedName)).when().get(projectUri);
     }
 }

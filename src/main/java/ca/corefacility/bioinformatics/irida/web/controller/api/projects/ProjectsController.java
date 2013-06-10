@@ -27,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RelationshipsController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.UsersController;
 import ca.corefacility.bioinformatics.irida.web.controller.links.LabelledRelationshipResource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -200,14 +199,16 @@ public class ProjectsController extends GenericController<Identifier, Project, P
     private ResourceCollection<LabelledRelationshipResource> getUsersForProject(Project project) {
         Collection<Relationship> relationships = userService.getUsersForProject(project.getIdentifier());
         ResourceCollection<LabelledRelationshipResource> userResources = new ResourceCollection<>(relationships.size());
+        String projectId = project.getIdentifier().getIdentifier();
         for (Relationship r : relationships) {
             Identifier userIdentifier = r.getSubject();
+
             LabelledRelationshipResource resource = new LabelledRelationshipResource(userIdentifier.getLabel(), r);
             // rel pointing at the user instance
             resource.add(linkTo(UsersController.class).slash(userIdentifier.getIdentifier()).withSelfRel());
             // rel telling the client how to delete the relationship between the user and the project.
-            resource.add(linkTo(RelationshipsController.class).slash(r.getIdentifier().getIdentifier())
-                    .withRel(REL_RELATIONSHIP));
+            resource.add(linkTo(methodOn(ProjectUsersController.class).removeUserFromProject(projectId,
+                    userIdentifier.getIdentifier())).withRel(REL_RELATIONSHIP));
             userResources.add(resource);
         }
 

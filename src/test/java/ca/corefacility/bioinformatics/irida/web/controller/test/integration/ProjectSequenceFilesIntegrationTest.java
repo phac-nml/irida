@@ -10,9 +10,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static com.jayway.restassured.RestAssured.get;
-import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.*;
 import static com.jayway.restassured.path.json.JsonPath.from;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -54,5 +54,26 @@ public class ProjectSequenceFilesIntegrationTest {
 
         // clean up after yourself.
         Files.delete(sequenceFile);
+    }
+
+    @Test
+    public void testRemoveSequenceFileFromProject() throws IOException {
+        String sequenceFilesUri = "http://localhost:8080/api/projects/6b80820f-38f8-4c73-83a6-12d17dc2c31c/sequenceFiles";
+
+        // add the sequence file, then remove it
+        Path sequenceFile = Files.createTempFile("null", "null");
+        Files.write(sequenceFile, ">test read\nACTGTAGCTAGTCGAGC".getBytes());
+
+        // submit the file
+        Response r = given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE).multiPart("file", sequenceFile.toFile())
+                .expect().statusCode(HttpStatus.CREATED.value()).when().post(sequenceFilesUri);
+
+        String link = r.getHeader(HttpHeaders.LINK);
+        // the link header needs to be parsed out to get the URL that we want, since only one header is sent back, we should
+        // just parse out the only link that's between < and >.
+        link = link.substring(1, link.indexOf('>', 1));
+
+        expect().body("resource.links.rel", hasItems("project", "project/sequenceFiles")).and()
+                .statusCode(HttpStatus.OK.value()).when().delete(link);
     }
 }

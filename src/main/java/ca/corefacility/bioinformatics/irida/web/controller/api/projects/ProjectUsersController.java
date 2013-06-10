@@ -8,6 +8,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RelationshipsController;
@@ -44,6 +45,10 @@ public class ProjectUsersController {
      */
     public static final String USER_ID_KEY = "userId";
     /**
+     * Rel to get to the list of users associated with a project.
+     */
+    public static final String REL_PROJECT_USERS = "project/users";
+    /**
      * Reference to {@link UserService} for managing {@link User}.
      */
     private UserService userService;
@@ -69,12 +74,10 @@ public class ProjectUsersController {
      */
     @RequestMapping(value = "/projects/{projectId}/users", method = RequestMethod.GET)
     public ModelMap getUsersForProject(@PathVariable String projectId) {
-        Identifier id = new Identifier();
-        id.setIdentifier(projectId);
         ResourceCollection<UserResource> resources = new ResourceCollection<>();
 
         // get all of the users belonging to this project
-        Collection<Relationship> relationships = userService.getUsersForProject(id);
+        Collection<Relationship> relationships = userService.getUsersForProject(new Identifier(projectId));
 
         // for each of those relationships, retrieve the complete user object
         // and convert to a resource suitable for sending back to the client.
@@ -109,10 +112,8 @@ public class ProjectUsersController {
     @RequestMapping(value = "/projects/{projectId}/users", method = RequestMethod.POST)
     public ResponseEntity<String> addUserToProject(@PathVariable String projectId,
                                                    @RequestBody Map<String, String> representation) {
-        Identifier id = new Identifier();
-        id.setIdentifier(projectId);
         // first, get the project
-        Project p = projectService.read(id);
+        Project p = projectService.read(new Identifier(projectId));
 
         String username = representation.get(USER_ID_KEY);
 
@@ -129,5 +130,38 @@ public class ProjectUsersController {
         responseHeaders.add(HttpHeaders.LOCATION, location);
 
         return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
+    }
+
+    /**
+     * Remove the relationship between a {@link Project} and a {@link User}.
+     *
+     * @param projectId the {@link Project} identifier to remove the {@link User} from.
+     * @param userId    the {@link User} identifier to remove from the {@link Project}.
+     * @return a response including links back to the {@link Project} and the {@link User} collection for
+     *         the {@link Project}.
+     */
+    @RequestMapping(value = "/projects/{projectId}/users/{userId}", method = RequestMethod.DELETE)
+    public ModelMap removeUserFromProject(@PathVariable String projectId, @PathVariable String userId) {
+        // Read the project and user from the database
+        Project p = projectService.read(new Identifier(projectId));
+        User u = userService.getUserByUsername(userId);
+
+        // ask the project service to remove the user from the project
+        projectService.removeUserFromProject(p, u);
+
+        // prepare a link back to the user collection of the project
+        RootResource response = new RootResource();
+        response.add(linkTo(methodOn(ProjectUsersController.class).getUsersForProject(projectId))
+                .withRel(REL_PROJECT_USERS));
+
+        // prepare a link back to the project
+        response.add(linkTo(ProjectsController.class).slash(projectId)
+                .withRel(ProjectsController.REL_PROJECT));
+
+        // respond to the client
+        ModelMap modelMap = new ModelMap();
+        modelMap.addAttribute(GenericController.RESOURCE_NAME, response);
+
+        return modelMap;
     }
 }
