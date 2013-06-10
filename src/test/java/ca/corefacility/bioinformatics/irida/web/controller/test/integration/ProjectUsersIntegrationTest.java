@@ -8,13 +8,11 @@ import org.springframework.http.HttpStatus;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.jayway.restassured.RestAssured.expect;
-import static com.jayway.restassured.RestAssured.get;
-import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.*;
 import static com.jayway.restassured.path.json.JsonPath.from;
-
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Integration test for project and user.
@@ -46,5 +44,23 @@ public class ProjectUsersIntegrationTest {
 
         // confirm that aaron is part of the project now
         expect().body("relatedResources.users.resources.label", hasItem(name)).when().get(projectUri);
+    }
+
+    @Test
+    public void testRemoveUserFromProject() {
+        String name = "Tom Matthews";
+        String projectUri = "http://localhost:8080/api/projects/6b80820f-38f8-4c73-83a6-12d17dc2c31c";
+
+        // get the project
+        String projectJson = get(projectUri).asString();
+        String userRelationshipUri = from(projectJson).get("relatedResources.users.resources.find{it.label == '"
+                + name + "'}.links.find{it.rel == 'relationship'}.href");
+
+        // delete the user relationship
+        expect().body("resource.links.rel", hasItems("project", "project/users"))
+                .when().delete(userRelationshipUri);
+
+        // get the project again and confirm that tom isn't part of the project anymore
+        expect().body("relatedResources.users.resources.label", not(hasItem(name))).when().get(projectUri);
     }
 }
