@@ -26,12 +26,12 @@
 
       $scope.toggleProjectList = function () {
         if ($scope.sidebar.visible) {
+          $('.sidebar').width($scope.sidebar.widthCollapsed);
           $('.sidebar__body').fadeOut('fast');
           $('.sidebar__rotated').fadeIn('slow');
-          $('.detailed-content').css({'margin-left': $scope.sidebar.widthCollapsed});
         }
         else {
-          $('.detailed-content').css({'margin-left': $scope.sidebar.widthExpanded});
+          $('.sidebar').width($scope.sidebar.widthExpanded);
           $('.sidebar__rotated').fadeOut('fast');
           $('.sidebar__body').fadeIn('slow');
         }

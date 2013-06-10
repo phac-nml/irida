@@ -1,8 +1,10 @@
 <div class="main-content">
     <div class="sidebar" data-ng-controller="ProjectsListCtrl">
-<div class="fixed">        <nav class="main top-bar">
-            <ul class="title-area"><a class="ngs-button" data-ng-click="toggleProjectList($event)"><i class="icon-reorder"></i></a></ul>
-        </nav></div>
+
+        <span class="title-area"><a class="ngs-button" data-ng-click="toggleProjectList($event)"><i
+                class="icon-reorder"></i></a>
+        </span>
+
         <div class="sidebar__body">
             <h2>Projects</h2>
             <ul>
@@ -12,17 +14,17 @@
         <div class="sidebar__rotated">Projects</div>
     </div>
     <div class="detailed-content">
-            <nav class="main top-bar">
-                <ul class="title-area">
-                    <li class="name"><h1><a href="/projects">NGS Archive</a></h1></li>
-                    <li class="toggle-topbar menu-icon"><a href="#" ng-click="toggleDD()"><span>Menu</span></a></li>
+        <nav class="main top-bar">
+            <ul class="title-area">
+                <li class="name"><h1><a href="/projects">NGS Archive</a></h1></li>
+                <li class="toggle-topbar menu-icon"><a href="#" ng-click="toggleDD()"><span>Menu</span></a></li>
+            </ul>
+            <section class="top-bar-section">
+                <ul class="right">
+                    <li><a ng-click="logout()" href="#">Logout</a></li>
                 </ul>
-                <section class="top-bar-section">
-                    <ul class="right">
-                        <li><a ng-click="logout()" href="#">Logout</a></li>
-                    </ul>
-                </section>
-            </nav>
+            </section>
+        </nav>
         <div ui-view=""></div>
     </div>
 </div>
