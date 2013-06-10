@@ -367,7 +367,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         return obj;
     }
     
-    public void updateLabel(IDType id, String label){
+    private void updateLabel(IDType id, String label){
         ObjectConnection con = store.getRepoConnection();
         java.net.URI netURI = idGen.buildURIFromIdentifier(id,URI);
 
@@ -411,7 +411,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         ObjectConnection con = store.getRepoConnection();
         java.net.URI netURI = idGen.buildURIFromIdentifier(id,URI);
         String uri = netURI.toString();
-        Value originalValue = null;
+        Value updatedValue = null;
 
         try {
             con.begin();
@@ -420,7 +420,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             URI subURI = fac.createURI(uri);
             URI predURI = fac.createURI(predicate);
             Literal objValue = createLiteral(fac, predicate, value);
-            originalValue = objValue;
+            updatedValue = objValue;
 
             RepositoryResult<Statement> curvalues = con.getStatements(subURI, predURI, null);
             while (curvalues.hasNext()) {
@@ -440,7 +440,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             store.closeRepoConnection(con);
         }
         
-        return originalValue;
+        return updatedValue;
 
     }
 
