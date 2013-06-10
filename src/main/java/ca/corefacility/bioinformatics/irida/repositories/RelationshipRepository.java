@@ -94,7 +94,7 @@ public interface RelationshipRepository extends CRUDRepository<Identifier, Relat
      * @param objectType  The class of the object
      * @return A list of constructed links for the given types
      */
-    public List<Relationship> getLinks(Identifier subjectId, Class subjectType, Class objectType);
+    public List<Relationship> getLinksForSubject(Identifier subjectId, Class subjectType, Class objectType);
 
     /**
      * Get links for the given Subject, Predicate, and Object.

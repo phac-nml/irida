@@ -326,7 +326,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
      * {@inheritDoc}
      */
     @Override
-    public List<Relationship> getLinks(Identifier subjectId, Class subjectType, Class objectType) {
+    public List<Relationship> getLinksForSubject(Identifier subjectId, Class subjectType, Class objectType) {
         RdfPredicate pred = linkList.getLink(subjectType, objectType);
 
         return getLinks(subjectId, pred, null);
