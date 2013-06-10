@@ -9,10 +9,12 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RelationshipsController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectUsersController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.net.HttpHeaders;
 import org.junit.Before;
@@ -20,11 +22,7 @@ import org.junit.Test;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.*;
 
@@ -110,6 +108,36 @@ public class ProjectUsersControllerTest {
         assertFalse(locations.isEmpty());
         assertEquals(1, locations.size());
         assertEquals("http://localhost/projects/" + p.getIdentifier().getIdentifier() + "/users/" + u.getUsername(), locations.iterator().next());
+    }
+
+    @Test
+    public void testRemoveUserFromProject() {
+        Project p = constructProject();
+        User u = constructUser();
+
+        String projectId = p.getIdentifier().getIdentifier();
+
+        when(projectService.read(p.getIdentifier())).thenReturn(p);
+        when(userService.getUserByUsername(u.getIdentifier().getIdentifier())).thenReturn(u);
+
+        ModelMap modelMap = controller.removeUserFromProject(projectId, u.getIdentifier().getIdentifier());
+
+        verify(projectService).read(p.getIdentifier());
+        verify(userService).getUserByUsername(u.getIdentifier().getIdentifier());
+        verify(projectService).removeUserFromProject(p, u);
+
+        Object o = modelMap.get(GenericController.RESOURCE_NAME);
+        assertTrue(o instanceof RootResource);
+        RootResource r = (RootResource) o;
+        // confirm that a project link exists
+        Link projectLink = r.getLink(ProjectsController.REL_PROJECT);
+        assertNotNull(projectLink);
+        assertEquals("http://localhost/projects/" + projectId, projectLink.getHref());
+
+        // confirm that a project users link exists
+        Link projectUsersLink = r.getLink(ProjectUsersController.REL_PROJECT_USERS);
+        assertNotNull(projectUsersLink);
+        assertEquals("http://localhost/projects/" + projectId + "/users", projectUsersLink.getHref());
     }
 
     /**
