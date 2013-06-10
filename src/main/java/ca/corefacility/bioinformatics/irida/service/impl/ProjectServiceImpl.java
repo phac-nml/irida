@@ -52,6 +52,14 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Identifier, Project> imp
      * {@inheritDoc}
      */
     @Override
+    public void removeUserFromProject(Project project, User user) {
+        projectRepository.removeUserFromProject(project, user);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Relationship addSampleToProject(Project project, Sample sample) {
         logger.trace("Adding sample to project.");
         // the sample hasn't been persisted before, persist it before calling the relationshipRepository.

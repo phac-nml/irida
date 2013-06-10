@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import ca.corefacility.bioinformatics.irida.model.*;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 
@@ -14,17 +13,24 @@ import java.util.Collection;
 public interface ProjectService extends CRUDService<Identifier, Project> {
 
     /**
-     * Add the specified user to the {@link Project} with a role. If the user is a
-     * manager for the {@link Project}, then the user should be added to the {@link Project}
-     * with the 'ROLE_MANAGER' role.
+     * Add the specified {@link User} to the {@link Project} with a {@link Role}. If the {@link User} is a
+     * manager for the {@link Project}, then the {@link User} should be added to the {@link Project}
+     * with the 'ROLE_MANAGER' {@link Role}.
      *
      * @param project the {@link Project} to add the user to.
      * @param user    the user to add to the {@link Project}.
      * @param role    the role that the user plays on the {@link Project}.
-     * 
      * @return a reference to the relationship resource created between the two entities.
      */
     public Relationship addUserToProject(Project project, User user, Role role);
+
+    /**
+     * Remove the specified {@link User} from the {@link Project}.
+     *
+     * @param project the {@link Project} to remove the {@link User} from.
+     * @param user    the {@link User} to be removed from the {@link Project}.
+     */
+    public void removeUserFromProject(Project project, User user);
 
     /**
      * Add the specified {@link Sample} to the {@link Project}.
