@@ -84,4 +84,34 @@ public class SampleServiceImplTest {
 
         assertEquals(r, created);
     }
+
+    @Test
+    public void testRemoveSequenceFileFromSample() {
+        Sample s = new Sample();
+        s.setIdentifier(new Identifier());
+        SequenceFile sf = new SequenceFile();
+        sf.setIdentifier(new Identifier());
+        Project p = new Project();
+        p.setIdentifier(new Identifier());
+        Relationship r = new Relationship(p.getIdentifier(), sf.getIdentifier());
+        Relationship sampleSequenceFile = new Relationship(s.getIdentifier(), sf.getIdentifier());
+        sampleSequenceFile.setIdentifier(new Identifier());
+        List<Relationship> relationships = new ArrayList<>();
+        relationships.add(sampleSequenceFile);
+
+        when(relationshipRepository.getLinks(p.getIdentifier(), RdfPredicate.ANY, s.getIdentifier()))
+                .thenReturn(new ArrayList<Relationship>());
+        when(relationshipRepository.getLinks(s.getIdentifier(), RdfPredicate.ANY, sf.getIdentifier()))
+                .thenReturn(relationships);
+        when(relationshipRepository.create(p, sf)).thenReturn(r);
+
+        Relationship created = sampleService.removeSequenceFileFromSample(p, s, sf);
+
+        verify(relationshipRepository).getLinks(p.getIdentifier(), RdfPredicate.ANY, s.getIdentifier());
+        verify(relationshipRepository).getLinks(s.getIdentifier(), RdfPredicate.ANY, sf.getIdentifier());
+        verify(relationshipRepository).delete(sampleSequenceFile.getIdentifier());
+        verify(relationshipRepository).create(p, sf);
+
+        assertEquals(created, r);
+    }
 }

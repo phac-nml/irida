@@ -13,6 +13,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate
 import ca.corefacility.bioinformatics.irida.service.SampleService;
 
 import javax.validation.Validator;
+import java.util.List;
 
 /**
  * Service class for managing {@link Sample}.
@@ -88,6 +89,25 @@ public class SampleServiceImpl extends CRUDServiceImpl<Identifier, Sample> imple
      */
     @Override
     public Relationship removeSequenceFileFromSample(Project project, Sample sample, SequenceFile sequenceFile) {
-        throw new UnsupportedOperationException("not implemented.");
+        // confirm that project and sample have a relationship
+        relationshipRepository.getLinks(project.getIdentifier(), RdfPredicate.ANY, sample.getIdentifier());
+
+        // confirm that sample and sequence file have a relationship
+        List<Relationship> relationships = relationshipRepository.getLinks(sample.getIdentifier(), RdfPredicate.ANY,
+                sequenceFile.getIdentifier());
+        if (relationships.size() > 1) {
+            throw new IllegalStateException("More than one type of relationship between sample [" +
+                    sample.getIdentifier() + "] and sequenceFile [" + sequenceFile.getIdentifier() + "]");
+        }
+        Relationship r = relationships.iterator().next();
+
+        // delete the relationship between sample and sequence file
+        relationshipRepository.delete(r.getIdentifier());
+
+        // add a new relationship between project and sequence file
+        Relationship created = relationshipRepository.create(project, sequenceFile);
+
+        // return the relationship
+        return created;
     }
 }
