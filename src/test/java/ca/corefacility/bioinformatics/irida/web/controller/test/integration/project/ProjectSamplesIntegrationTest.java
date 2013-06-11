@@ -40,13 +40,9 @@ public class ProjectSamplesIntegrationTest {
 
         // check that the locations are set appropriately.
         String location = r.getHeader(HttpHeaders.LOCATION);
-        String linkLocation = r.getHeader(HttpHeaders.LINK);
 
         assertNotNull(location);
-        assertTrue(location.matches("^http://localhost:8080/api/samples/[a-f0-9\\-]+$"));
-
-        assertNotNull(linkLocation);
-        assertTrue(linkLocation.matches("^<http://localhost:8080/api/projects/[a-f0-9\\-]+/samples/[a-f0-9\\-]+>; rel=relationship$"));
+        assertTrue(location.matches("^http://localhost:8080/api/projects/[a-f0-9\\-]+/samples/[a-f0-9\\-]+$"));
     }
 
     @Test

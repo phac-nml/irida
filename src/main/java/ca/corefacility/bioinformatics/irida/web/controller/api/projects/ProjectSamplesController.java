@@ -96,15 +96,12 @@ public class ProjectSamplesController {
 
         // construct a link to the sample itself on the samples controller
         String sampleId = r.getObject().getIdentifier();
-        String location = linkTo(SamplesController.class).slash(sampleId).withSelfRel().getHref();
-        String relationshipLocation = linkTo(methodOn(ProjectSamplesController.class)
+        String location = linkTo(methodOn(ProjectSamplesController.class)
                 .getProjectSample(projectId, sampleId)).withSelfRel().getHref();
-        relationshipLocation = "<" + relationshipLocation + ">; rel=relationship";
 
         // construct a set of headers to add to the response
         MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
         responseHeaders.add(HttpHeaders.LOCATION, location);
-        responseHeaders.add(HttpHeaders.LINK, relationshipLocation);
 
         // respond to the request
         return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
