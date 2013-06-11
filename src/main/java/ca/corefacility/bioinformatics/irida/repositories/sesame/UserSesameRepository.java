@@ -61,41 +61,6 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
         super(store, User.class,User.PREFIX,User.TYPE,auditRepo,linksRepo);
 
     }
-
-    /**
-     * Generate an identifier for an object of type
-     * <code>Type</code>.
-     *
-     * @param t the object to generate the identifier for.
-     * @return and identifier for the object.
-     */
-    @Override
-    public Identifier generateNewIdentifier(User t) {
-        UUID uuid = UUID.randomUUID();
-        java.net.URI objuri = buildURIFromIdentifiedBy(t.getUsername());
-        UserIdentifier ui = new UserIdentifier(t.getUsername());
-        //ui.setUUID(uuid);
-        ui.setUri(objuri);
-        return ui;
-    }
-
-    /**
-     * Build an identifier for the given User.  
-     * To be used on results from a database query
-     *
-     * @param bs The binding set to build from
-     * @param subject The subject of the SPARQL query to build from
-     * @return An Identifier object built form the given binding set
-     */
-    @Override
-    public Identifier buildIdentifier(User obj, URI uri,String identifiedBy) {
-        UserIdentifier objid = new UserIdentifier();
-        
-        objid.setUri(java.net.URI.create(uri.toString()));
-        objid.setIdentifier(obj.getUsername());
-        
-        return objid;
-    }   
     
     /**
      * {@inheritDoc}

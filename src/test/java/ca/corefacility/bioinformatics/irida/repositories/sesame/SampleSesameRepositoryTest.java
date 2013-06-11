@@ -28,10 +28,13 @@ public class SampleSesameRepositoryTest {
     public void setUp() {
         store = new SailStore();
         store.initialize();
+        IdentifierGenerator<Sample> idGen = new IdentifierGenerator<>(store);
+
         AuditRepository auditRepo = new AuditRepository(store);
         RelationshipSesameRepository linksRepo = new RelationshipSesameRepository(store, auditRepo);
 
         repository = new SampleSesameRepository(store, auditRepo, linksRepo);
+        repository.setIdGen(idGen);
     }
 
     /**

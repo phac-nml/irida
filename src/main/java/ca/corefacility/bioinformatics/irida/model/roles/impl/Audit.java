@@ -17,6 +17,7 @@ package ca.corefacility.bioinformatics.irida.model.roles.impl;
 
 import ca.corefacility.bioinformatics.irida.model.User;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import org.openrdf.annotations.Iri;
@@ -38,6 +39,8 @@ public class Audit implements Comparable<Audit> {
     private User createdBy;
     @Iri("http://corefacility.ca/irida/updatedDate")
     private Date updated;
+    
+    private List<Audit> updates;
 
     public Audit() {
         this.created = new Date();
@@ -100,5 +103,13 @@ public class Audit implements Comparable<Audit> {
     
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    public List<Audit> getUpdates() {
+        return updates;
+    }
+
+    public void setUpdates(List<Audit> updates) {
+        this.updates = updates;
     }
 }

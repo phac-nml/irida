@@ -17,6 +17,7 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
 import org.openrdf.model.Literal;
@@ -42,6 +43,8 @@ public class SesameRepository {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SesameRepository.class);
     protected TripleStore store; //The {@link TripleStore} to use for storing and retrieving objects in this repository
     protected String URI; //The base URI for this repository
+    
+    IdentifierGenerator idGen;
 
     public SesameRepository() {
     }
@@ -54,6 +57,10 @@ public class SesameRepository {
         this.store = store;
         this.URI = store.getURI() + uriType + "/";
     }
+    
+    public <Type extends IridaThing> void setIdGen(IdentifierGenerator<Type> idGen) {
+        this.idGen = idGen;
+    }    
 
     /**
      * Get the identifier for a given identifier.  If the URI property is populated it will return that URI.  If not it
@@ -255,12 +262,12 @@ public class SesameRepository {
      * Generate an {@link Identifier} for an object of type <code>Type</code>.
      *
      * @return an {@link Identifier} for the object.
-     */
+     *TODO remove old method
     public Identifier generateNewIdentifier() {
         UUID uuid = UUID.randomUUID();
         java.net.URI objuri = buildURIFromIdentifiedBy(uuid.toString());
         return new Identifier(objuri, uuid);
-    }
+    }*/
 
     /**
      * Set a unique identifier for this object in the database
@@ -283,27 +290,11 @@ public class SesameRepository {
      *
      * @param id The ID to build a URI for
      * @return The constructed URI
-     */
+     * TODO remove old method
     public java.net.URI buildURIFromIdentifiedBy(String id) {
         java.net.URI uri = java.net.URI.create(URI + id);
 
         return uri;
-    }
+    }*/
 
-    /**
-     * Build a java.net.URI object for the given identifier
-     *
-     * @param identifier The identifier to build the URI for
-     * @return The constructed URI for this identifier
-     */
-    public java.net.URI buildURIFromIdentifier(Identifier identifier) {
-        java.net.URI uri;
-        if (identifier.getUri() != null) {
-            uri = identifier.getUri();
-        } else {
-            uri = buildURIFromIdentifiedBy(identifier.getIdentifier());
-        }
-
-        return uri;
-    }
 }
