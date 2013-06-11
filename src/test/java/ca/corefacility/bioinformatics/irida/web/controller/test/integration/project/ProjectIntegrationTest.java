@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.web.controller.test.integration;
+package ca.corefacility.bioinformatics.irida.web.controller.test.integration.project;
 
 
 import com.google.common.net.HttpHeaders;
