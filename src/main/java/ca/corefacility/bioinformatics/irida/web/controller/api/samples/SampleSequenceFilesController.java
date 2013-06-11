@@ -210,8 +210,9 @@ public class SampleSequenceFilesController {
         Identifier projectIdentifier = new Identifier(projectId);
         Identifier sampleIdentifier = new Identifier(sampleId);
         Identifier sequenceFileIdentifier = new Identifier(requestBody.get(SEQUENCE_FILE_ID_KEY));
+        Project p = projectService.read(projectIdentifier);
         // confirm the relationship between the sample and the project.
-        Relationship r = relationshipService.getRelationship(projectIdentifier, sampleIdentifier);
+        sampleService.getSampleForProject(p, sampleIdentifier);
 
         // load the sample and sequence file from the database.
         Sample s = sampleService.read(sampleIdentifier);
