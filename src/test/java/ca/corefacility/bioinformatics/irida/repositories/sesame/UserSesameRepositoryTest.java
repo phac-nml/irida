@@ -35,9 +35,13 @@ public class UserSesameRepositoryTest {
     public void setUp() {
         SailStore store = new SailStore();
         store.initialize();
+        UserIdentifierGenerator idGen = new UserIdentifierGenerator(store);
+        IdentifierGenerator auditIdGen = new IdentifierGenerator(store);
         AuditRepository auditRepo = new AuditRepository(store);
+        auditRepo.setIdGen(auditIdGen);
         RelationshipSesameRepository linksRepo = new RelationshipSesameRepository(store, auditRepo);
         repo = new UserSesameRepository(store,auditRepo,linksRepo);
+        repo.setIdGen(idGen);
         
         User u = new User("user1", "user1@there", "abc123", "user", "one", "111-111-1111");
         repo.create(u);

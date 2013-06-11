@@ -10,17 +10,27 @@
         classpath:ca/corefacility/bioinformatics/irida/config/filesystem.properties"/>
 
     <import resource="tripleStoreContext.xml"/>
+    
+    <bean id="identifierGenerator" class="ca.corefacility.bioinformatics.irida.repositories.sesame.IdentifierGenerator">
+        <constructor-arg ref="tripleStore"/>
+    </bean>
+    
+    <bean id="userIdentifierGenerator" class="ca.corefacility.bioinformatics.irida.repositories.sesame.UserIdentifierGenerator">
+        <constructor-arg ref="tripleStore"/>
+    </bean>    
 
     <bean id="linksRepository"
           class="ca.corefacility.bioinformatics.irida.repositories.sesame.RelationshipSesameRepository">
         <constructor-arg ref="tripleStore"/>
         <constructor-arg ref="auditRepository"/>
+        <property name="idGen" ref="identifierGenerator"/>
     </bean>
 
     <bean id="userRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.UserSesameRepository">
         <constructor-arg ref="tripleStore"/>
         <constructor-arg ref="auditRepository"/>
         <constructor-arg ref="linksRepository"/>
+        <property name="idGen" ref="userIdentifierGenerator"/>
     </bean>
 
     <bean id="projectRepository"
@@ -28,12 +38,14 @@
         <constructor-arg ref="tripleStore"/>
         <constructor-arg ref="auditRepository"/>
         <constructor-arg ref="linksRepository"/>
+        <property name="idGen" ref="identifierGenerator"/>
     </bean>
 
     <bean id="sampleRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.SampleSesameRepository">
         <constructor-arg ref="tripleStore"/>
         <constructor-arg ref="auditRepository"/>
         <constructor-arg ref="linksRepository"/>
+        <property name="idGen" ref="identifierGenerator"/>
     </bean>
 
     <bean id="sequenceFileRepository"
@@ -43,10 +55,12 @@
         <constructor-arg ref="linksRepository"/>
         <property name="projectRepository" ref="projectRepository"/>
         <property name="sampleRepository" ref="sampleRepository"/>
+        <property name="idGen" ref="identifierGenerator"/>
     </bean>
 
     <bean id="auditRepository" class="ca.corefacility.bioinformatics.irida.repositories.sesame.AuditRepository">
         <constructor-arg ref="tripleStore"/>
+        <property name="idGen" ref="identifierGenerator"/>
     </bean>
 
     <bean id="sequenceFileFilesystemRepository"

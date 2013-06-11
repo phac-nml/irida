@@ -48,7 +48,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
     public final String linkType = "http://corefacility.ca/irida/ResourceLink";
     AuditRepository auditRepo;
     DefaultLinks linkList;
-
+    
     public RelationshipSesameRepository(TripleStore store, AuditRepository auditRepo) {
         super(store, "ResourceLink");
         this.auditRepo = auditRepo;
@@ -161,7 +161,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             URI objURI = fac.createURI(objNetURI.toString());
             URI pred = predicate.getPredicateURI(con);
 
-            Identifier identifier = generateNewIdentifier();
+            Identifier identifier = idGen.generateNewIdentifier(null, URI);
             link.setIdentifier(identifier);
 
             java.net.URI netURI = identifier.getUri();
@@ -185,7 +185,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
 
             con.commit();
 
-            auditRepo.audit(link.getAuditInformation(), linkURI.toString());
+            auditRepo.audit(link.getAuditInformation(), linkURI.toString(),null);
 
         } catch (RepositoryException ex) {
             logger.error("A RepositoryException occurred at [" + new Date() + "]", ex);
@@ -195,39 +195,6 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
         }
 
         return link;
-    }
-
-    /**
-     * Get an identifier object for the given URI
-     *
-     * @param uri The URI to retrieve and build an identifier for
-     * @return A new Identifier instance
-     */
-    private Identifier getIdentiferForURI(URI uri) {
-        Identifier id = null;
-        ObjectConnection con = store.getRepoConnection();
-        logger.trace("Going to get identifier for URI: [" + uri + "]");
-        try {
-            String qs = store.getPrefixes()
-                    + "SELECT ?object ?identifier ?label "
-                    + "WHERE{ ?object irida:identifier ?identifier ;"
-                    + " rdfs:label ?label .\n"
-                    + "}";
-            TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
-
-            query.setBinding("object", uri);
-            TupleQueryResult results = query.evaluate();
-            BindingSet bs = results.next();
-            id = buildIdentiferFromBindingSet(bs, "object");
-        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
-            logger.error("A RepositoryException | MalformedQueryException | " +
-                    "QueryEvaluationException occurred at [" + new Date() + "]", ex);
-            throw new StorageException("Failed to get identifier for URI: [" + uri + "]");
-        } finally {
-            store.closeRepoConnection(con);
-        }
-
-        return id;
     }
 
     /**
@@ -420,8 +387,8 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
 
         RdfPredicate pred = new QualifiedRDFPredicate(predstr);//new RdfPredicate(predURI.getNamespace(), predURI.getLocalName());
 
-        Identifier subId = getIdentiferForURI(subURI);
-        Identifier objId = getIdentiferForURI(objURI);
+        Identifier subId = idGen.getIdentiferForURI(subURI);
+        Identifier objId = idGen.getIdentiferForURI(objURI);
         Relationship l = new Relationship();
         l.setSubject(subId);
         l.setObject(objId);
@@ -507,7 +474,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
 
         ObjectConnection con = store.getRepoConnection();
 
-        java.net.URI netURI = buildURIFromIdentifier(id);
+        java.net.URI netURI = idGen.buildURIFromIdentifier(id,URI);
         String uri = netURI.toString();
 
         ValueFactory vf = con.getValueFactory();
@@ -557,7 +524,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
         ObjectConnection con = store.getRepoConnection();
 
         try {
-            java.net.URI netURI = buildURIFromIdentifier(id);
+            java.net.URI netURI = idGen.buildURIFromIdentifier(id,URI);
             String uri = netURI.toString();
 
             logger.trace("Checking for the existence of [" + uri + "]");

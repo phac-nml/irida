@@ -60,7 +60,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     private Class objectType; //The class object type being stored by this repo
     private String prefix;  //The RDF prefix of the object type in this repository
     private String sType; //The RDF local name of the object type in this repository
-
+    
     public GenericRepository() {
     }
 
@@ -80,8 +80,9 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         this.auditRepo = auditRepo;
         this.linksRepo = linksRepo;
 
-        this.objectType = objectType;
+        this.objectType = objectType;        
     }
+    
 
     /**
      * {@inheritDoc}
@@ -95,7 +96,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
 
         Audit audit = (Audit) object.getAuditInformation();
 
-        Identifier objid = generateNewIdentifier(object);
+        Identifier objid = idGen.generateNewIdentifier(object,URI);
 
         if (exists(objid)) {
             throw new EntityExistsException("Object " + objid.getUri().toString() + " already exists in the database");
@@ -108,20 +109,12 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         object.setIdentifier(objid);
 
         storeObject(object);
-        auditRepo.audit(audit, objid.getUri().toString());
+        Map<String, Value> predicateValues = getPredicateValues(object);
+        auditRepo.audit(audit, objid.getUri().toString(),predicateValues);
 
         return object;
     }
 
-    /**
-     * Generate a new identifier for the given object.  May be overridden for specific class implementations
-     *
-     * @param t The object to generate an identifier for
-     * @return A newly generated identifier for the given object
-     */
-    protected Identifier generateNewIdentifier(Type t) {
-        return super.generateNewIdentifier();
-    }
 
     /**
      * Store the given object in the RDF triplestore
@@ -171,7 +164,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         Type ret = (Type) object.copy();
 
         String identifiedBy = getIdentifiedBy(con, uri);
-        Identifier objid = buildIdentifier(ret, uri, identifiedBy);
+        Identifier objid = idGen.buildIdentifier(ret, uri, identifiedBy);
         ret.setIdentifier(objid);
 
         ret.setAuditInformation(auditRepo.getAudit(uri.toString()));
@@ -179,22 +172,6 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         return ret;
     }
 
-    /**
-     * Build an {@link Identifier} for the given object
-     *
-     * @param object       The object to build an identifier for
-     * @param uri          The URI of the object to build an identifier for
-     * @param identifiedBy The string identifier for this object
-     * @return An {@link Identifier} for the given object
-     */
-    protected Identifier buildIdentifier(Type object, URI uri, String identifiedBy) {
-        Identifier objid = new Identifier();
-        objid.setUri(java.net.URI.create(uri.toString()));
-        objid.setUUID(UUID.fromString(identifiedBy));
-        objid.setLabel(object.getLabel());
-
-        return objid;
-    }
 
     /**
      * {@inheritDoc}
@@ -203,7 +180,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     public Type read(Identifier id) throws EntityNotFoundException {
         Type ret = null;
 
-        java.net.URI netURI = buildURIFromIdentifier(id);
+        java.net.URI netURI = idGen.buildURIFromIdentifier(id,URI);
         String uri = netURI.toString();
 
         logger.trace("Looking up uri: [" + uri + "]");
@@ -286,7 +263,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         ObjectConnection con = store.getRepoConnection();
 
         try {
-            java.net.URI netURI = buildURIFromIdentifier(id);
+            java.net.URI netURI = idGen.buildURIFromIdentifier(id,URI);
             String uri = netURI.toString();
 
             logger.trace("Checking for the existence of [" + uri + "]");
@@ -356,9 +333,10 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     @Override
     public Type update(IDType id, Map<String, Object> updatedFields) throws InvalidPropertyException {
 
-        java.net.URI netURI = buildURIFromIdentifier(id);
+        java.net.URI netURI = idGen.buildURIFromIdentifier(id,URI);
         Audit audit = auditRepo.getAudit(netURI.toString());
 
+        Map<String,Value> originals = new HashMap<>();
         if (exists(id)) {
             for (Entry<String, Object> field : updatedFields.entrySet()) {
                 try {
@@ -368,7 +346,8 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
 
                     logger.trace("Updating " + field.getKey() + " -- " + annotation.value());
 
-                    updateField(id, annotation.value(), field.getValue());
+                    Value original = updateField(id, annotation.value(), field.getValue());
+                    originals.put(annotation.value(), original);
                 } catch (NoSuchFieldException ex) {
                     logger.error("No field " + field.getKey() + " exists.  Cannot update object.");
                     throw new InvalidPropertyException(
@@ -376,18 +355,21 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
                 }
             }
             audit.setUpdated(new Date());
-            auditRepo.audit(audit, netURI.toString());
+            auditRepo.audit(audit, netURI.toString(),originals);
         }
-    
+        else{
+            throw new StorageException("Trying to update an object that doesn't exist: " + id.toString());
+        }
+        
         Type obj = read(id);
         updateLabel(id,obj.getLabel());
 
         return obj;
     }
     
-    public void updateLabel(IDType id, String label){
+    private void updateLabel(IDType id, String label){
         ObjectConnection con = store.getRepoConnection();
-        java.net.URI netURI = buildURIFromIdentifier(id);
+        java.net.URI netURI = idGen.buildURIFromIdentifier(id,URI);
 
         String uri = netURI.toString();
 
@@ -425,10 +407,11 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         return lit;
     }
 
-    protected void updateField(IDType id, String predicate, Object value) {
+    protected Value updateField(IDType id, String predicate, Object value) {
         ObjectConnection con = store.getRepoConnection();
-        java.net.URI netURI = buildURIFromIdentifier(id);
+        java.net.URI netURI = idGen.buildURIFromIdentifier(id,URI);
         String uri = netURI.toString();
+        Value updatedValue = null;
 
         try {
             con.begin();
@@ -437,6 +420,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             URI subURI = fac.createURI(uri);
             URI predURI = fac.createURI(predicate);
             Literal objValue = createLiteral(fac, predicate, value);
+            updatedValue = objValue;
 
             RepositoryResult<Statement> curvalues = con.getStatements(subURI, predURI, null);
             while (curvalues.hasNext()) {
@@ -455,6 +439,8 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         } finally {
             store.closeRepoConnection(con);
         }
+        
+        return updatedValue;
 
     }
 
@@ -469,7 +455,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
 
         ObjectConnection con = store.getRepoConnection();
 
-        java.net.URI netURI = buildURIFromIdentifier(id);
+        java.net.URI netURI = idGen.buildURIFromIdentifier(id,URI);
         String uri = netURI.toString();
 
         ValueFactory vf = con.getValueFactory();
@@ -513,7 +499,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             String qs = store.getPrefixes()
                     + "SELECT ?s "
                     + "WHERE{ ?s a ?type . \n"
-                    + "?a irida:forResource ?s \n."
+                    + "?a irida:auditForResource ?s \n."
                     + "?a irida:createdDate ?createdDate .\n"
                     + "}";
 
@@ -548,5 +534,68 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             store.closeRepoConnection(con);
         }
         return users;
+    }
+    
+    private Collection<String> getFieldPredicates(Class c){
+        List<String> predicates = new ArrayList<>();
+        if(c.getSuperclass() != null){
+            Collection<String> added = getFieldPredicates(c.getSuperclass());
+            predicates.addAll(added);
+        }
+        
+        if(c.getInterfaces() != null){
+            for(Class inf : c.getInterfaces()){
+                Collection<String> added = getFieldPredicates(inf);
+                predicates.addAll(added);
+            }
+        }
+        
+        for(Field f : c.getDeclaredFields()){
+            Iri iri = f.getAnnotation(Iri.class);
+            if(iri != null){
+                predicates.add(iri.value());
+            }
+        }
+        
+        for(Method m : c.getDeclaredMethods()){
+            Iri iri = m.getAnnotation(Iri.class);
+            if(iri != null){
+                predicates.add(iri.value());
+            }
+        }
+        
+        return predicates;
+    }
+    
+    private Map<String,Value> getPredicateValues(Type obj){
+        java.net.URI uriFromIdentifier = getUriFromIdentifier((Identifier) obj.getIdentifier());
+        Map<String,Value> values = new HashMap<>();
+        Collection<String> preds = getFieldPredicates(obj.getClass());
+        
+        ObjectConnection con = store.getRepoConnection();
+        ValueFactory vf = con.getValueFactory();
+        
+        try{
+            URI sub = vf.createURI(uriFromIdentifier.toString());
+            for(String predStr : preds){
+                URI pred = vf.createURI(predStr);
+                RepositoryResult<Statement> statements = con.getStatements(sub, pred, null);
+                if(statements.hasNext()){
+                    Statement next = statements.next();
+                    Value object = next.getObject();
+                    values.put(predStr, object);
+                }
+                statements.close();
+            }
+        }
+        catch (RepositoryException ex) {
+            logger.error("Couldn't get predicate values for this object: "+ex.getMessage());
+            throw new StorageException("Repository failed to get predicate values for this object");
+        }        
+        finally{
+            store.closeRepoConnection(con);
+        }
+        
+        return values;
     }
 }

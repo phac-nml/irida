@@ -113,7 +113,7 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
     public void addFileToContainer(String cID, SequenceFile file){
         ObjectConnection con = store.getRepoConnection();
         
-        java.net.URI fNetUri = buildURIFromIdentifier(file.getIdentifier());
+        java.net.URI fNetUri = idGen.buildURIFromIdentifier(file.getIdentifier(),URI);
         
         try{
             ValueFactory fac = con.getValueFactory();
@@ -125,7 +125,7 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
             
             file.getAuditInformation().setUpdated(new Date());
             
-            auditRepo.audit(file.getAuditInformation(), fNetUri.toString());
+            auditRepo.audit(file.getAuditInformation(), fNetUri.toString(),null);
             
         } catch (RepositoryException ex) {
             logger.error(ex.getMessage());
