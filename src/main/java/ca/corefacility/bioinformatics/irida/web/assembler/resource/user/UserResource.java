@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.assembler.resource.user;
 
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,7 +17,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @XmlRootElement(name = "user")
-public class UserResource extends Resource<User> {
+public class UserResource extends Resource<UserIdentifier, User> {
 
     private String password;
 
