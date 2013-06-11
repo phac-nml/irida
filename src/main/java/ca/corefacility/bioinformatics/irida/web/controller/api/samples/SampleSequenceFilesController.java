@@ -18,6 +18,8 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.SequenceFileContr
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSequenceFilesController;
 import com.google.common.net.HttpHeaders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -57,6 +59,10 @@ public class SampleSequenceFilesController {
      * The key used in the request to add an existing {@link SequenceFile} to a {@link Sample}.
      */
     public static final String SEQUENCE_FILE_ID_KEY = "sequenceFileId";
+    /**
+     * logger
+     */
+    private static final Logger logger = LoggerFactory.getLogger(SampleSequenceFilesController.class);
     /**
      * Reference to the {@link SequenceFileService}.
      */
@@ -140,8 +146,9 @@ public class SampleSequenceFilesController {
                                                              @RequestParam("file") MultipartFile file) throws IOException {
         Identifier projectIdentifier = new Identifier(projectId);
         Identifier sampleIdentifier = new Identifier(sampleId);
+        Project p = projectService.read(projectIdentifier);
         // confirm that a relationship exists between the project and the sample
-        Relationship r = relationshipService.getRelationship(projectIdentifier, sampleIdentifier);
+        sampleService.getSampleForProject(p, sampleIdentifier);
 
         // load the sample from the database
         Sample s = sampleService.read(sampleIdentifier);
@@ -155,11 +162,12 @@ public class SampleSequenceFilesController {
         SequenceFile sf = new SequenceFile(target);
 
         // persist the changes by calling the sample service
-        Relationship sampleSequenceFileRelationship = sampleService.addSequenceFileToSample(s, sf);
+        Relationship sampleSequenceFileRelationship = sequenceFileService
+                .createSequenceFileWithOwner(sf, Sample.class, sampleIdentifier);
 
         // clean up the temporary files.
-        Files.delete(target);
-        Files.delete(temp);
+        Files.deleteIfExists(target);
+        Files.deleteIfExists(temp);
 
         // prepare a link to the sequence file itself (on the sequence file controller)
         String sequenceFileId = sampleSequenceFileRelationship.getObject().getIdentifier();
