@@ -37,11 +37,14 @@ public class DefaultLinks {
 
         links.put(User.class, new HashMap<Class, RdfPredicate>());
         links.get(User.class).put(Project.class, new RdfPredicate("irida", "hasProject"));
+
         links.put(Sample.class, new HashMap<Class, RdfPredicate>());
         links.get(Sample.class).put(Project.class, new RdfPredicate("irida", "sampleHasProject"));
+        links.get(Sample.class).put(SequenceFile.class, new RdfPredicate("irida", "sampleHasSequenceFile"));
 
         links.put(SequenceFile.class, new HashMap<Class, RdfPredicate>());
         links.get(SequenceFile.class).put(Project.class, new RdfPredicate("irida", "sequenceFileHasProject"));
+        links.get(SequenceFile.class).put(Sample.class, new RdfPredicate("irida", "sequenceFileHasSample"));
     }
 
     public HashMap<Class, HashMap<Class, RdfPredicate>> getLinks() {

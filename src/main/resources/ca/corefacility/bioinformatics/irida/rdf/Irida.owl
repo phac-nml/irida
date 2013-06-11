@@ -110,11 +110,30 @@
     
 
 
+    <!-- http://corefacility.ca/irida/sampleHasSequenceFile -->
+
+    <owl:ObjectProperty rdf:about="&irida;sampleHasSequenceFile">
+        <rdfs:domain rdf:resource="&irida;Sample"/>
+        <rdfs:range rdf:resource="&irida;SequenceFile"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://corefacility.ca/irida/sequenceFileHasProject -->
 
     <owl:ObjectProperty rdf:about="&irida;sequenceFileHasProject">
         <rdfs:range rdf:resource="&irida;Project"/>
         <rdfs:domain rdf:resource="&irida;SequenceFile"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://corefacility.ca/irida/sequenceFileHasSample -->
+
+    <owl:ObjectProperty rdf:about="&irida;sequenceFileHasSample">
+        <rdfs:range rdf:resource="&irida;Sample"/>
+        <rdfs:domain rdf:resource="&irida;SequenceFile"/>
+        <owl:inverseOf rdf:resource="&irida;sampleHasSequenceFile"/>
     </owl:ObjectProperty>
     
 
