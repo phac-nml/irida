@@ -24,7 +24,7 @@ public class ProjectUsersIntegrationTest {
     public void testAddExistingUserToProject() {
         String username = "aaron";
         String name = "Aaron Petkau";
-        String projectUri = "http://localhost:8080/api/projects/6b80820f-38f8-4c73-83a6-12d17dc2c31c";
+        String projectUri = "http://localhost:8080/api/projects/90dd11ef-6fea-4d37-ab79-58b285ca2991";
         Map<String, String> users = new HashMap<>();
         users.put("userId", username);
 
@@ -49,7 +49,7 @@ public class ProjectUsersIntegrationTest {
     @Test
     public void testRemoveUserFromProject() {
         String name = "Tom Matthews";
-        String projectUri = "http://localhost:8080/api/projects/6b80820f-38f8-4c73-83a6-12d17dc2c31c";
+        String projectUri = "http://localhost:8080/api/projects/a77a9cc7-545a-4d5b-8f21-39a449a81bc9";
 
         // get the project
         String projectJson = get(projectUri).asString();

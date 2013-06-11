@@ -25,8 +25,8 @@ public class SampleSequenceFilesIntegrationTest {
 
     @Test
     public void testAddSequenceFileToSample() throws IOException {
-        String sampleUri = "http://localhost:8080/api//projects/6b80820f-38f8-4c73-83a6-12d17dc2c31c" +
-                "/samples/8a3d677e-d309-4db6-9087-09d88cbea793";
+        String sampleUri = "http://localhost:8080/api/projects/c4893f30-b054-46e5-8ebe-ed1b295dfa38" +
+                "/samples/07ac0624-8f04-43ba-b45f-e6d65a8bd6ba";
         Response response = expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
         String sampleBody = response.getBody().asString();
         String sequenceFileUri = from(sampleBody).getString("resource.links.find{it.rel == 'sample/sequenceFiles'}.href");

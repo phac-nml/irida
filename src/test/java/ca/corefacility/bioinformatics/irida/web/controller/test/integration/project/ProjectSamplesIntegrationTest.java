@@ -51,7 +51,7 @@ public class ProjectSamplesIntegrationTest {
 
     @Test
     public void testDeleteSampleFromProject() {
-        String projectUri = "http://localhost:8080/api/projects/6b80820f-38f8-4c73-83a6-12d17dc2c31c";
+        String projectUri = "http://localhost:8080/api/projects/270116df-1d19-468f-ab6c-801a5b535e88";
 
         // load the project
         String projectJson = get(projectUri).asString();
@@ -77,8 +77,8 @@ public class ProjectSamplesIntegrationTest {
 
     @Test
     public void testUpdateProjectSample() {
-        String projectUri = "http://localhost:8080/api/projects/6b80820f-38f8-4c73-83a6-12d17dc2c31c";
-        String projectSampleUri = projectUri + "/samples/c6ce0cfa-2676-48fe-bd0c-c31d97c77d5c";
+        String projectUri = "http://localhost:8080/api/projects/64a16089-a7ac-4cd7-aab9-8138db8f93a0";
+        String projectSampleUri = projectUri + "/samples/07ac0624-8f04-43ba-b45f-e6d65a8bd6ba";
         Map<String, String> updatedFields = new HashMap<>();
         String updatedName = "Totally different sample name.";
         updatedFields.put("sampleName", updatedName);
