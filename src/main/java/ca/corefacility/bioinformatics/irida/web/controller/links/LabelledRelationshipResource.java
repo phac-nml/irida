@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.controller.links;
 
 import ca.corefacility.bioinformatics.irida.model.Relationship;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -10,7 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class LabelledRelationshipResource extends Resource<Relationship> {
+public class LabelledRelationshipResource extends Resource<Identifier, Relationship> {
     @XmlElement
     private String label;
 

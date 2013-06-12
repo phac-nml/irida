@@ -176,7 +176,6 @@ public class SampleSequenceFilesControllerTest {
         Project p = constructProject();
         Sample s = constructSample();
         SequenceFile sf = constructSequenceFile();
-        Relationship projectSampleRelationship = new Relationship(p.getIdentifier(), s.getIdentifier());
         Relationship sampleSequenceFileRelationship = new Relationship(s.getIdentifier(), sf.getIdentifier());
         String projectId = p.getIdentifier().getIdentifier();
         String sampleId = s.getIdentifier().getIdentifier();
@@ -186,16 +185,19 @@ public class SampleSequenceFilesControllerTest {
         f.deleteOnExit();
         MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh", FileCopyUtils.copyToByteArray(f));
 
-        when(relationshipService.getRelationship(p.getIdentifier(), s.getIdentifier())).thenReturn(projectSampleRelationship);
         when(sampleService.read(s.getIdentifier())).thenReturn(s);
-        when(sampleService.addSequenceFileToSample(eq(s), any(SequenceFile.class))).thenReturn(sampleSequenceFileRelationship);
+        when(sequenceFileService.createSequenceFileWithOwner(any(SequenceFile.class), eq(Sample.class),
+                eq(s.getIdentifier()))).thenReturn(sampleSequenceFileRelationship);
+        when(projectService.read(p.getIdentifier())).thenReturn(p);
 
         ResponseEntity<String> response = controller.addNewSequenceFileToSample(p.getIdentifier().getIdentifier(),
                 s.getIdentifier().getIdentifier(), mmf);
 
-        verify(relationshipService, times(1)).getRelationship(p.getIdentifier(), s.getIdentifier());
+        verify(sampleService).getSampleForProject(p, s.getIdentifier());
+        verify(projectService).read(p.getIdentifier());
         verify(sampleService, times(1)).read(s.getIdentifier());
-        verify(sampleService, times(1)).addSequenceFileToSample(eq(s), any(SequenceFile.class));
+        verify(sequenceFileService).createSequenceFileWithOwner(any(SequenceFile.class), eq(Sample.class),
+                eq(s.getIdentifier()));
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
@@ -218,13 +220,13 @@ public class SampleSequenceFilesControllerTest {
         Project p = constructProject();
         Sample s = constructSample();
         SequenceFile sf = constructSequenceFile();
-        Relationship projectSampleRelationship = new Relationship(p.getIdentifier(), s.getIdentifier());
         Relationship sampleSequenceFileRelationship = new Relationship(s.getIdentifier(), sf.getIdentifier());
         String projectId = p.getIdentifier().getIdentifier();
         String sampleId = s.getIdentifier().getIdentifier();
         String sequenceFileId = sf.getIdentifier().getIdentifier();
 
-        when(relationshipService.getRelationship(p.getIdentifier(), s.getIdentifier())).thenReturn(projectSampleRelationship);
+        when(projectService.read(p.getIdentifier())).thenReturn(p);
+        when(sampleService.getSampleForProject(p, s.getIdentifier())).thenReturn(s);
         when(sampleService.read(s.getIdentifier())).thenReturn(s);
         when(sequenceFileService.read(sf.getIdentifier())).thenReturn(sf);
         when(sampleService.addSequenceFileToSample(s, sf)).thenReturn(sampleSequenceFileRelationship);
@@ -233,7 +235,8 @@ public class SampleSequenceFilesControllerTest {
 
         ResponseEntity<String> response = controller.addExistingSequenceFileToSample(projectId, sampleId, requestBody);
 
-        verify(relationshipService).getRelationship(p.getIdentifier(), s.getIdentifier());
+        verify(projectService).read(p.getIdentifier());
+        verify(sampleService).getSampleForProject(p, s.getIdentifier());
         verify(sampleService).read(s.getIdentifier());
         verify(sequenceFileService).read(sf.getIdentifier());
         verify(sampleService).addSequenceFileToSample(s, sf);

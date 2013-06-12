@@ -328,44 +328,4 @@ public class GenericControllerTest {
             assertEquals(createdDate, resource.getDateCreated());
         }
     }
-
-    @Test
-    public void testHandleConstraintViolations() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        Validator validator = factory.getValidator();
-        Set<ConstraintViolation<?>> constraintViolations = new HashSet<>();
-        Set<ConstraintViolation<IdentifiableTestEntity>> violations = validator.validate(new IdentifiableTestEntity());
-        for (ConstraintViolation<IdentifiableTestEntity> v : violations) {
-            constraintViolations.add(v);
-        }
-        ResponseEntity<String> response = controller.handleConstraintViolations(
-                new ConstraintViolationException(constraintViolations));
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("{\"nonNull\":[\"may not be null\"]}", response.getBody());
-    }
-
-    @Test
-    public void testHandleNotFoundException() {
-        ResponseEntity<String> response = controller.handleNotFoundException(new EntityNotFoundException("not found"));
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    }
-
-    @Test
-    public void testHandleExistsException() {
-        ResponseEntity<String> response = controller.handleExistsException(new EntityExistsException("exists"));
-        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
-    }
-
-    @Test
-    public void testHandleInvalidPropertyException() {
-        ResponseEntity<String> response = controller.handleInvalidPropertyException(
-                new InvalidPropertyException("invalid property"));
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
-
-    @Test
-    public void testHandleOtherExceptions() {
-        ResponseEntity<String> response = controller.handleAllOtherExceptions(new Exception("exception"));
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    }
 }

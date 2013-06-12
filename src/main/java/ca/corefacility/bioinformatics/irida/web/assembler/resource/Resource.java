@@ -18,6 +18,7 @@ package ca.corefacility.bioinformatics.irida.web.assembler.resource;
 import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.hateoas.ResourceSupport;
 
@@ -29,7 +30,8 @@ import java.util.Date;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public abstract class Resource<Type extends Identifiable & Auditable<Audit>> extends ResourceSupport {
+public abstract class Resource<IdentifierType extends Identifier,
+        Type extends Identifiable<IdentifierType> & Auditable<Audit>> extends ResourceSupport {
 
     /**
      * the resource exposed by this container (not serialized).
@@ -63,5 +65,15 @@ public abstract class Resource<Type extends Identifiable & Auditable<Audit>> ext
     @XmlElement
     public Date getDateCreated() {
         return resource.getAuditInformation().getCreated();
+    }
+
+    /**
+     * All serialized objects should also include their identifier.
+     *
+     * @return the identifier of the resource.
+     */
+    @XmlElement
+    public String getIdentifier() {
+        return resource.getIdentifier().getIdentifier();
     }
 }

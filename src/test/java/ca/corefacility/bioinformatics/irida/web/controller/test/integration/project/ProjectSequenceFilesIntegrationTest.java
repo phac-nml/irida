@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.web.controller.test.integration;
+package ca.corefacility.bioinformatics.irida.web.controller.test.integration.project;
 
 import com.google.common.net.HttpHeaders;
 import com.jayway.restassured.response.Response;
@@ -23,16 +23,17 @@ import static org.junit.Assert.assertTrue;
  */
 public class ProjectSequenceFilesIntegrationTest {
 
+    private static final String PROJECT_URI = "http://localhost:8080/api/projects/dd82c9e0-40da-48a7-bb7c-1935f8144dbb";
+
     @Test
     public void testAddSequenceFileToProject() throws IOException {
-        String projectUri = "http://localhost:8080/api/projects/6b80820f-38f8-4c73-83a6-12d17dc2c31c";
 
         // prepare a file for sending to the server
         Path sequenceFile = Files.createTempFile(null, null);
         Files.write(sequenceFile, ">test read\nACGTACTCATG".getBytes());
 
         // get the project
-        String projectJson = get(projectUri).asString();
+        String projectJson = get(PROJECT_URI).asString();
         // get the uri for adding new sequence files
         String sequenceFileUri = from(projectJson).get("resource.links.find{it.rel == 'project/sequenceFiles'}.href");
 
@@ -58,15 +59,13 @@ public class ProjectSequenceFilesIntegrationTest {
 
     @Test
     public void testRemoveSequenceFileFromProject() throws IOException {
-        String sequenceFilesUri = "http://localhost:8080/api/projects/6b80820f-38f8-4c73-83a6-12d17dc2c31c/sequenceFiles";
-
         // add the sequence file, then remove it
         Path sequenceFile = Files.createTempFile("null", "null");
         Files.write(sequenceFile, ">test read\nACTGTAGCTAGTCGAGC".getBytes());
 
         // submit the file
         Response r = given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE).multiPart("file", sequenceFile.toFile())
-                .expect().statusCode(HttpStatus.CREATED.value()).when().post(sequenceFilesUri);
+                .expect().statusCode(HttpStatus.CREATED.value()).when().post(PROJECT_URI + "/sequenceFiles");
 
         String link = r.getHeader(HttpHeaders.LINK);
         // the link header needs to be parsed out to get the URL that we want, since only one header is sent back, we should

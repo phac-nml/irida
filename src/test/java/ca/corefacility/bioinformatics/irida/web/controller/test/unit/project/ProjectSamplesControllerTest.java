@@ -76,15 +76,7 @@ public class ProjectSamplesControllerTest {
         assertNotNull(locations);
         assertFalse(locations.isEmpty());
         assertEquals(1, locations.size());
-        assertEquals("http://localhost/samples/" + s.getIdentifier().getIdentifier(), locations.iterator().next());
-
-        // the Link header should contain a reference to the relationship between sample and project.
-        List<String> links = response.getHeaders().get(HttpHeaders.LINK);
-        assertNotNull(links);
-        assertFalse(links.isEmpty());
-        assertEquals(1, links.size());
-        assertEquals("<http://localhost/projects/" + projectId + "/samples/" + s.getIdentifier().getIdentifier() +
-                ">; rel=relationship", links.iterator().next());
+        assertEquals("http://localhost/projects/" + projectId + "/samples/" + s.getIdentifier().getIdentifier(), locations.iterator().next());
     }
 
     @Test
