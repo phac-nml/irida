@@ -10,6 +10,7 @@ The IRIDA API project requires the creation of certain directories prior to exec
 Client Side Testing Set-up
 ==========================
 1. Download and install [node.js](http://nodejs.org).
+   > **NOTE**: PhantomJS fails to start under the following versions of node: [ 0.10.8, 0.10.9, 0.10.10 ]. We recommend that you download version 0.10.6 (http://nodejs.org/dist/v0.10.6/node-v0.10.6.tar.gz).
 2. Install `git`.
 3. In irida-web main directory:
     1. `npm install -g karma@~0.9.2`
