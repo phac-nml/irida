@@ -2,30 +2,26 @@
     <div class="large-12 columns">
         <h3>{{project.name}}</h3>
 
-        <nav class="top-bar">
-            <section class="top-bar-section">
-                <ul>
-                    <li class="active"><a ng-href="/projects/{{project.id}}/samples">Samples</a></li>
-                    <li class="divider"></li>
-                    <li><a ng-href="/projects/{{project.id}}/users">Users</a></li>
-                    <li class="divider"></li>
-                </ul>
-            </section>
-            <section class="top-bar-section">
-                <ul class="right">
-                    <li class="has-dropdown"><a href="#"><i class="icon-cog"></i> Project Settings</a>
-                        <ul class="dropdown">
-                            <li><a data-ng-click="deleteProject()"><i class="icon-trash"></i> Delete Project</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </section>
-        </nav>
+        <!--<nav class="top-bar">-->
+            <!--<section class="top-bar-section">-->
+                <!--<ul>-->
+                    <!--<li class="active"><a ng-href="/projects/{{project.id}}/samples">Samples</a></li>-->
+                    <!--<li><a ng-href="/projects/{{project.id}}/users">Users</a></li>-->
+                <!--</ul>-->
+            <!--</section>-->
+            <!--<section class="top-bar-section">-->
+                <!--<ul class="right">-->
+                    <!--<li class="has-dropdown"><a href="#"><i class="icon-cog"></i> Project Settings</a>-->
+                        <!--<ul class="dropdown">-->
+                            <!--<li><a data-ng-click="deleteProject()"><i class="icon-trash"></i> Delete Project</a></li>-->
+                        <!--</ul>-->
+                    <!--</li>-->
+                <!--</ul>-->
+            <!--</section>-->
+        <!--</nav>-->
 
-        <div class="row">
-            <div class="large-12 columns" ui-view="">
-
-            </div>
-        </div>
+        <!-- <div class="row"> -->
+        <div class="large-12 columns" ui-view=""></div>
+        <!-- </div> -->
     </div>
 </div>

@@ -1,5 +1,5 @@
-<div class="main-content">
-    <div class="sidebar" data-ng-controller="ProjectsListCtrl">
+<div class="main-content" data-ng-controller="ProjectsListCtrl">
+    <div class="sidebar">
 
         <span class="title-area"><a class="ngs-button" data-ng-click="toggleProjectList($event)"><i
                 class="icon-reorder"></i></a>
@@ -25,6 +25,25 @@
                 </ul>
             </section>
         </nav>
-        <div ui-view=""></div>
+        <!--<div ui-view=""></div>-->
+
+        <div class="row">
+            <div class="large-12 columns">
+                <div class="section-container tabs" data-section="tabs">
+                    <section>
+                        <p class="title" data-section-title=""><a href="#">Section 1</a></p>
+                        <div class="content" data-section-content="">
+                            <p>Content of section 1.</p>
+                        </div>
+                    </section>
+                    <section>
+                        <p class="title" data-section-title=""><a href="#">Section 2</a></p>
+                        <div class="content" data-section-content>
+                            <p>Content of section 2.</p>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

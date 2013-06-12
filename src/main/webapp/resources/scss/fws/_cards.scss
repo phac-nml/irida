@@ -1,0 +1,39 @@
+$block-grid-media-queries: false;
+.cardholder {
+  // Box (display, float, position, left, top, height, width)
+
+  // Border
+
+  // Background
+
+  // Text (font-family, font-size, text-transform, letter-spacing)
+
+  // Other
+
+  @include block-grid(2, $block-grid-default-spacing, true);
+
+  @media only screen and (min-width: 768px) {
+    @include block-grid(4, $block-grid-default-spacing, true);
+  }
+
+  @media only screen and (min-width: 1100px) {
+    @include block-grid(6, $block-grid-default-spacing, true);
+  }
+
+  li {
+    padding: 0.4em;
+  }
+}
+
+.card {
+  padding: 0.2em;
+  background-color: $color-light-gray;
+  border: 1px solid $color-slate-gray;
+  cursor: pointer;
+  @include transition(background-color .25s ease-in);
+
+  &:hover {
+    background-color: $color-card-hover;
+    @include transition(background-color .15s ease-in);
+  }
+}

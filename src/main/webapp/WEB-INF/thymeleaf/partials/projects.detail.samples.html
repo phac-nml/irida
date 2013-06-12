@@ -1,4 +1,4 @@
-<div class="section-container accordion" data-section="accordion" data-options="deep_linking: true" ngs-section="">
+<!-- <div class="section-container accordion" data-section="accordion" data-options="deep_linking: true" ngs-section="">
     <section data-ng-repeat="s in project.samples">
         <p class="title" data-section-title=""><a data-ng-click="loadSample(s)">{{s.label}}</a></p>
 
@@ -7,9 +7,21 @@
                 <div class="spinner" data-ng-switch-default="">
                 </div>
                 <div data-ng-switch-when="loaded">
-                    loaded
+                    <div class="panel">
+                        {{samples[s.label].data.dateCreated | date:'short'}}
+                    </div>
                 </div>
             </div>
         </div>
     </section>
-</div>
+</div> -->
+
+<ul class="cardholder">
+    <li data-ng-repeat="s in project.samples">
+        <div class="card" data-ng-click="gotoProject(s.links[0].href)">
+            <div class="card__label">{{s.label}}</div>
+            <div class="card__date">{{s.dateCreated | date: 'short'}}</div>
+
+        </div>
+    </li>
+</ul>

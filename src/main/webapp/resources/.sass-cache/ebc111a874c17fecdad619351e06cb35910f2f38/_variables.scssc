@@ -1,0 +1,2545 @@
+3.2.9 (Media Mark)
+9c7f09c439068adf4f5651bdab0e449bebf982c1
+o:Sass::Tree::RootNode
+:@template"k//
+// Foundation Variables
+//
+
+
+// The default font-size is set to 100% of the browser style sheet (usually 16px)
+// for compatibility with browser-based text zoom or user-set defaults.
+$base-font-size: 100% !default;
+
+// $base-line-height is 24px while $base-font-size is 16px
+// $base-line-height: 150%;
+
+// This is the default html and body font-size for the base em value.
+
+// Since the typical default browser font-size is 16px, that makes the calculation for grid size.
+// If you want your base font-size to be a different size and not have it effect grid size too,
+// set the value of $em-base to $base-font-size ($em-base: $base-font-size;)
+$em-base: 16px !default;
+
+// Working in ems is annoying. Think in pixels by using this handy function, emCalc(#px)
+@function emCalc($pxWidth) {
+  @return $pxWidth / $em-base * 1em;
+}
+
+// Change whether or not you include browser prefixes
+// $experimental: true;
+
+// Various global styles
+
+$default-float: left;
+
+// $body-bg: #fff;
+// $body-font-color: #222;
+// $body-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+// $body-font-weight: normal;
+// $body-font-style: normal;
+
+// Font-smoothing
+
+// $font-smoothing: antialiased;
+
+// Text direction settings
+
+// $text-direction: ltr;
+
+// Colors
+
+// $primary-color: #2ba6cb;
+// $secondary-color: #e9e9e9;
+// $alert-color: #c60f13;
+// $success-color: #5da423;
+
+// Make sure border radius matches unless we want it different.
+
+// $global-radius: 3px;
+// $global-rounded: 1000px;
+
+// Inset shadow shiny edges and depressions.
+
+// $shiny-edge-size: 0 1px 0;
+// $shiny-edge-color: rgba(#fff, .5);
+// $shiny-edge-active-color: rgba(#000, .2);
+
+// Control whether or not CSS classes come through in the CSS files.
+
+// $include-html-classes: true;
+// $include-print-styles: true;
+// $include-html-global-classes: $include-html-classes;
+// $include-html-type-classes: $include-html-classes;
+// $include-html-grid-classes: $include-html-classes;
+// $include-html-visibility-classes: $include-html-classes;
+$include-html-button-classes: false; //$include-html-classes;
+// $include-html-form-classes: $include-html-classes;
+// $include-html-custom-form-classes: $include-html-classes;
+// $include-html-media-classes: $include-html-classes;
+// $include-html-section-classes: $include-html-classes;
+// $include-html-orbit-classes: $include-html-classes;
+// $include-html-reveal-classes: $include-html-classes;
+// $include-html-joyride-classes: $include-html-classes;
+// $include-html-clearing-classes: $include-html-classes;
+// $include-html-alert-classes: $include-html-classes;
+// $include-html-nav-classes: $include-html-classes;
+// $include-html-top-bar-classes: $include-html-classes;
+// $include-html-label-classes: $include-html-classes;
+// $include-html-panel-classes: $include-html-classes;
+// $include-html-pricing-classes: $include-html-classes;
+// $include-html-progress-classes: $include-html-classes;
+// $include-html-magellan-classes: $include-html-classes;
+// $include-html-tooltip-classes: $include-html-classes;
+
+// Media Queries
+
+// $small-screen: 768px;
+// $medium-screen: 1280px;
+// $large-screen: 1440px;
+
+// $screen: "only screen";
+// $small: "only screen and (min-width: #{$small-screen})";
+// $medium: "only screen and (min-width: #{$medium-screen})";
+// $large: "only screen and (min-width: #{$large-screen})";
+// $landscape: "only screen and (orientation: landscape)";
+// $portrait: "only screen and (orientation: portrait)";
+
+//// Cursors
+
+//Custom use example -> $cursor-default-value: url(http://cursors-site.net/path/to/custom/cursor/default.cur),progress;
+
+// $cursor-crosshair-value: "crosshair";
+// $cursor-default-value: "default";
+// $cursor-pointer-value: "pointer";
+// $cursor-help-value: "help";
+
+//
+// Grid Variables
+//
+
+// $row-width: emCalc(1000px);
+// $column-gutter: emCalc(30px);
+// $total-columns: 12;
+
+//
+// Block Grid Variables
+//
+
+// Maximum number of block grid elements per row
+
+// $block-grid-elements: 12;
+// $block-grid-default-spacing: emCalc(20px);
+
+// Enables media queries for block-grid classes. Set to false if writing semantic HTML.
+
+// $block-grid-media-queries: true;
+
+//
+// Typography Variables
+//
+
+// Heading font styles
+
+// $header-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+// $header-font-weight: bold;
+// $header-font-style: normal;
+// $header-font-color: #222;
+// $header-line-height: 1.4;
+// $header-top-margin: .2em;
+// $header-bottom-margin: .5em;
+// $header-text-rendering: optimizeLegibility;
+
+// Heading font sizes
+
+// $h1-font-size: emCalc(44px);
+// $h2-font-size: emCalc(37px);
+// $h3-font-size: emCalc(27px);
+// $h4-font-size: emCalc(23px);
+// $h5-font-size: emCalc(18px);
+// $h6-font-size: 1em;
+
+// Subheaders
+
+// $subheader-line-height: 1.4;
+// $subheader-font-color: lighten($header-font-color, 30%);
+// $subheader-font-weight: 300;
+// $subheader-top-margin: .2em;
+// $subheader-bottom-margin: .5em;
+
+// <small> styling
+
+// $small-font-size: 60%;
+// $small-font-color: lighten($header-font-color, 30%);
+
+// Paragraphs
+
+// $paragraph-font-family: inherit;
+// $paragraph-font-weight: normal;
+// $paragraph-font-size: 1em;
+// $paragraph-line-height: 1.6;
+// $paragraph-margin-bottom: emCalc(20px);
+// $paragraph-aside-font-size: emCalc(14px);
+// $paragraph-aside-line-height: 1.35;
+// $paragraph-aside-font-style: italic;
+
+// <code> tags
+
+// $code-color: darken($alert-color, 15%);
+// $code-font-family: Consolas, 'Liberation Mono', Courier, monospace;
+// $code-font-weight: bold;
+
+// Anchors
+
+// $anchor-text-decoration: none;
+// $anchor-font-color: $primary-color;
+// $anchor-font-color-hover: darken($primary-color, 5%);
+
+// <hr> element
+
+// $hr-border-width: 1px;
+// $hr-border-style: solid;
+// $hr-border-color: #ddd;
+// $hr-margin: emCalc(20px);
+
+// Lists
+
+// $list-style-position: outside;
+// $list-side-margin: emCalc(20px);
+// $list-nested-margin: emCalc(20px);
+// $definition-list-header-weight: bold;
+// $definition-list-header-margin-bottom: .3em;
+// $definition-list-margin-bottom: emCalc(12px);
+
+// Blockquotes
+
+// $blockquote-font-color: lighten($header-font-color, 30%);
+// $blockquote-padding: emCalc(9px) emCalc(20px) 0 emCalc(19px);
+// $blockquote-border: 1px solid #ddd;
+// $blockquote-cite-font-size: emCalc(13px);
+// $blockquote-cite-font-color: lighten($header-font-color, 20%);
+// $blockquote-cite-link-color: $blockquote-cite-font-color;
+
+// Acronym
+
+// $acronym-underline: 1px dotted #ddd;
+
+// Padding and margin
+
+// $microformat-padding: emCalc(10px) emCalc(12px);
+// $microformat-margin: 0 0 emCalc(20px) 0;
+
+// Border styles
+
+// $microformat-border-width: 1px;
+// $microformat-border-style: solid;
+// $microformat-border-color: #ddd;
+
+// Full name font styles
+
+// $microformat-fullname-font-weight: bold;
+// $microformat-fullname-font-size: emCalc(15px);
+
+// Summary font styles
+
+// $microformat-summary-font-weight: bold;
+
+// <abbr> padding
+
+// $microformat-abbr-padding: 0 emCalc(1px);
+
+// <abbr> font styles
+
+// $microformat-abbr-font-weight: bold;
+// $microformat-abbr-font-decoration: none;
+
+//
+// Form Variables
+//
+
+// Base for lots of form spacing and positioning styles
+
+// $form-spacing: emCalc(16px);
+
+// Labels
+
+// $form-label-pointer: pointer;
+// $form-label-font-size: emCalc(14px);
+// $form-label-font-weight: 500;
+// $form-label-font-color: lighten(#000, 30%);
+// $form-label-bottom-margin: emCalc(3px);
+// $input-font-family: inherit;
+// $input-font-color: rgba(0,0,0,0.75);
+// $input-font-size: emCalc(14px);
+// $input-bg-color: #fff;
+// $input-focus-bg-color: darken(#fff, 2%);
+// $input-border-color: darken(#fff, 20%);
+// $input-focus-border-color: darken(#fff, 40%);
+// $input-border-style: solid;
+// $input-border-width: 1px;
+// $input-disabled-bg: #ddd;
+// $input-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+// $input-include-glowing-effect: true;
+
+// Fieldset border and spacing.
+
+// $fieldset-border-style: solid;
+// $fieldset-border-width: 1px;
+// $fieldset-border-color: #ddd;
+// $fieldset-padding: emCalc(20px);
+// $fieldset-margin: emCalc(18px) 0;
+
+// Legends
+
+// $legend-bg: #fff;
+// $legend-font-weight: bold;
+// $legend-padding: 0 emCalc(3px);
+
+// Prefix and postfix input elements
+
+// $input-prefix-bg: darken(#fff, 5%);
+// $input-prefix-border-color: darken(#fff, 20%);
+// $input-prefix-border-size: 1px;
+// $input-prefix-border-type: solid;
+// $input-prefix-overflow: hidden;
+// $input-prefix-font-color: #333;
+// $input-prefix-font-color-alt: #fff;
+
+// Error states for inputs and labels
+
+// $input-error-message-padding: emCalc(6px) emCalc(4px);
+// $input-error-message-top: -($form-spacing) - emCalc(5px);
+// $input-error-message-font-size: emCalc(12px);
+// $input-error-message-font-weight: bold;
+// $input-error-message-font-color: #fff;
+// $input-error-message-font-color-alt: #333;
+
+// Glowing effect of inputs when focused
+
+// $glowing-effect-fade-time: 0.45s;
+// $glowing-effect-color: $input-focus-border-color;
+
+//
+// Button Variables
+//
+
+// Padding for buttons.
+
+// $button-tny: emCalc(7px);
+// $button-sml: emCalc(9px);
+// $button-med: emCalc(12px);
+// $button-lrg: emCalc(16px);
+
+// Display property.
+
+// $button-display: inline-block;
+// $button-margin-bottom: emCalc(20px);
+
+// Button text styles.
+
+// $button-font-family: inherit;
+// $button-font-color: #fff;
+// $button-font-color-alt: #333;
+// $button-font-med: emCalc(16px);
+// $button-font-tny: emCalc(11px);
+// $button-font-sml: emCalc(13px);
+// $button-font-lrg: emCalc(20px);
+// $button-font-weight: bold;
+// $button-font-align: center;
+
+// Various hover effects.
+
+// $button-function-factor: 10%;
+
+// Button border styles.
+
+// $button-border-width: 1px;
+// $button-border-style: solid;
+// $button-border-color: darken($primary-color, $button-function-factor);
+
+// Radius used throughout the core.
+
+// $button-radius: $global-radius;
+
+// Opacity for disabled buttons.
+
+// $button-disabled-opacity: 0.6;
+
+//
+// Button Groups
+//
+
+// Sets the margin for the right side by default, and the left margin if right-to-left direction is used
+
+// $button-bar-margin-opposite: emCalc(10px);
+
+//
+// Dropdown Button Variables
+//
+
+// Color of the pip in dropdown buttons
+
+// $dropdown-button-pip-color: #fff;
+// $dropdown-button-pip-color-alt: #333;
+
+// Tiny dropdown buttons
+
+// $dropdown-button-padding-tny: $button-tny * 5;
+// $dropdown-button-pip-size-tny: $button-tny;
+// $dropdown-button-pip-right-tny: $button-tny * 2;
+// $dropdown-button-pip-top-tny: -$button-tny / 2 + emCalc(1px);
+
+// Small dropdown buttons
+
+// $dropdown-button-padding-sml: $button-sml * 5;
+// $dropdown-button-pip-size-sml: $button-sml;
+// $dropdown-button-pip-right-sml: $button-sml * 2;
+// $dropdown-button-pip-top-sml: -$button-sml / 2 + emCalc(1px);
+
+// Medium dropdown buttons
+
+// $dropdown-button-padding-med: $button-med * 4 + emCalc(3px);
+// $dropdown-button-pip-size-med: $button-med - emCalc(3px);
+// $dropdown-button-pip-right-med: $button-med * 2;
+// $dropdown-button-pip-top-med: -$button-med / 2 + emCalc(2px);
+
+// Large dropdown buttons
+
+// $dropdown-button-padding-lrg: $button-lrg * 4;
+// $dropdown-button-pip-size-lrg: $button-lrg - emCalc(6px);
+// $dropdown-button-pip-right-lrg: $button-lrg + emCalc(12px);
+// $dropdown-button-pip-top-lrg: -$button-lrg / 2 + emCalc(3px);
+
+//
+// Split Button Variables
+//
+
+// Shared styles for Split Buttons
+
+// $split-button-function-factor: 15%;
+// $split-button-pip-color: #fff;
+// $split-button-pip-color-alt: #333;
+// $split-button-active-bg-tint: rgba(0,0,0,0.1);
+
+// Tiny split buttons
+
+// $split-button-padding-tny: $button-tny * 9;
+// $split-button-span-width-tny: $button-tny * 6.5;
+// $split-button-pip-size-tny: $button-tny;
+// $split-button-pip-top-tny: $button-tny * 2;
+// $split-button-pip-left-tny: emCalc(-5px);
+
+// Small split buttons
+
+// $split-button-padding-sml: $button-sml * 7;
+// $split-button-span-width-sml: $button-sml * 5;
+// $split-button-pip-size-sml: $button-sml;
+// $split-button-pip-top-sml: $button-sml * 1.5;
+// $split-button-pip-left-sml: emCalc(-9px);
+
+// Medium split buttons
+
+// $split-button-padding-med: $button-med * 6.4;
+// $split-button-span-width-med: $button-med * 4;
+// $split-button-pip-size-med: $button-med - emCalc(3px);
+// $split-button-pip-top-med: $button-med * 1.5;
+// $split-button-pip-left-med: emCalc(-9px);
+
+// Large split buttons
+
+// $split-button-padding-lrg: $button-lrg * 6;
+// $split-button-span-width-lrg: $button-lrg * 3.75;
+// $split-button-pip-size-lrg: $button-lrg - emCalc(6px);
+// $split-button-pip-top-lrg: $button-lrg + emCalc(5px);
+// $split-button-pip-left-lrg: emCalc(-9px);
+
+//
+// Alert Variables
+//
+
+// Alert padding
+
+// $alert-padding-top:                emCalc(11px);
+// $alert-padding-default-float:      $alert-padding-top;
+// $alert-padding-opposite-direction: $alert-padding-top + emCalc(10px);
+// $alert-padding-bottom:             $alert-padding-top + emCalc(1px);
+
+// Text style
+
+// $alert-font-weight:                bold;
+// $alert-font-size:                  emCalc(14px);
+// $alert-font-color:                 #fff;
+// $alert-font-color-alt:             darken($secondary-color, 60%);
+
+// Hover effect
+
+// $alert-function-factor:            10%;
+
+// Border Styles
+
+// $alert-border-style:               solid;
+// $alert-border-width:               1px;
+// $alert-border-color:               darken($primary-color, $alert-function-factor);
+// $alert-bottom-margin:              emCalc(20px);
+
+// Close Button style
+
+// $alert-close-color:                #333;
+// $alert-close-position:             emCalc(5px);
+// $alert-close-font-size:            emCalc(22px);
+// $alert-close-opacity:              0.3;
+// $alert-close-opacity-hover:        0.5;
+// $alert-close-padding:              5px 4px 4px;
+
+// Border radius
+
+// $alert-radius:                     $global-radius;
+
+
+//
+// Breadcrumb Variables
+//
+
+// Background color for the breadcrumb container.
+
+// $crumb-bg: lighten($secondary-color, 5%);
+
+// Padding around the breadcrumbs.
+
+// $crumb-padding: emCalc(6px) emCalc(14px) emCalc(9px);
+// $crumb-side-padding: emCalc(12px);
+
+// Border styles.
+
+// $crumb-function-factor: 10%;
+// $crumb-border-size: 1px;
+// $crumb-border-style: solid;
+// $crumb-border-color: darken($crumb-bg, $crumb-function-factor);
+// $crumb-radius: $global-radius;
+
+// Various text styles for breadcrumbs.
+
+// $crumb-font-size: emCalc(11px);
+// $crumb-font-color: $primary-color;
+// $crumb-font-color-current: #333;
+// $crumb-font-color-unavailable: #999;
+// $crumb-font-transform: uppercase;
+// $crumb-link-decor: underline;
+
+// Slash between breadcrumbs
+
+// $crumb-slash-color: #aaa;
+// $crumb-slash: "/";
+
+//
+// Clearing Variables
+//
+
+// Background colors for parts of Clearing.
+
+// $clearing-bg: #111;
+// $clearing-caption-bg: $clearing-bg;
+// $clearing-carousel-bg: #111;
+// $clearing-img-bg: $clearing-bg;
+
+// Close button
+
+// $clearing-close-color: #fff;
+// $clearing-close-size: 40px;
+
+// Style the arrows
+
+// $clearing-arrow-size: 16px;
+// $clearing-arrow-color: $clearing-close-color;
+
+// Style captions
+
+// $clearing-caption-font-color: #fff;
+// $clearing-caption-padding: 10px 30px;
+
+// Make the image and carousel height and style
+
+// $clearing-active-img-height: 75%;
+// $clearing-carousel-height: 150px;
+// $clearing-carousel-thumb-width: 175px;
+// $clearing-carousel-thumb-active-border: 4px solid rgb(255,255,255);
+
+//
+// Custom Form Variables
+//
+
+// Basic form styles input styles
+
+// $custom-form-border-color: #ccc;
+// $custom-form-border-size: 1px;
+// $custom-form-bg: #fff;
+// $custom-form-bg-disabled: #ddd;
+// $custom-form-input-size: 16px;
+// $custom-form-check-color: #222;
+// $custom-form-check-size: 14px;
+// $custom-form-radio-size: 8px;
+// $custom-form-checkbox-radius: 0px;
+
+// Custom select form element.
+
+// $custom-select-bg: #fff;
+// $custom-select-fade-to-color: #f3f3f3;
+// $custom-select-border-color: #ddd;
+// $custom-select-triangle-color: #aaa;
+// $custom-select-triangle-color-open: #222;
+// $custom-select-height: emCalc(13px) + ($form-spacing * 1.5);
+// $custom-select-margin-bottom: emCalc(20px);
+// $custom-select-font-color-selected: #141414;
+// $custom-select-disabled-color: #888;
+
+// Custom select dropdown element.
+
+// $custom-dropdown-height: 200px;
+// $custom-dropdown-bg: #fff;
+// $custom-dropdown-border-color: darken(#fff, 20%);
+// $custom-dropdown-border-width: 1px;
+// $custom-dropdown-border-style: solid;
+// $custom-dropdown-font-color: #555;
+// $custom-dropdown-font-size: emCalc(14px);
+// $custom-dropdown-color-selected: #eeeeee;
+// $custom-dropdown-font-color-selected: #000;
+// $custom-dropdown-shadow: 0 2px 2px 0px rgba(0,0,0,0.1);
+// $custom-dropdown-offset-top: none;
+// $custom-dropdown-list-padding: emCalc(4px);
+// $custom-dropdown-left-padding: emCalc(6px);
+// $custom-dropdown-right-padding: emCalc(38px);
+// $custom-dropdown-list-item-min-height: emCalc(24px);
+
+//
+// Dropdown Variables
+//
+
+// Height and width styles.
+
+// $f-dropdown-max-width: 200px;
+// $f-dropdown-height: auto;
+// $f-dropdown-max-height: none;
+// $f-dropdown-margin-top: 2px;
+
+// Background color
+
+// $f-dropdown-bg: #fff;
+
+// Border styles for dropdowns.
+
+// $f-dropdown-border-style: solid;
+// $f-dropdown-border-width: 1px;
+// $f-dropdown-border-color: darken(#fff, 20%);
+
+// Triangle pip.
+
+// $f-dropdown-triangle-size: 6px;
+// $f-dropdown-triangle-color: #fff;
+// $f-dropdown-triangle-side-offset: 10px;
+
+// List elements.
+
+// $f-dropdown-list-style: none;
+// $f-dropdown-font-color: #555;
+// $f-dropdown-font-size: emCalc(14px);
+// $f-dropdown-list-padding: emCalc(5px) emCalc(10px);
+// $f-dropdown-line-height: emCalc(18px);
+// $f-dropdown-list-hover-bg: #eeeeee;
+// $dropdown-mobile-left: 0;
+
+// When the dropdown has custom content.
+
+// $f-dropdown-content-padding: emCalc(20px);
+
+//
+// Flex Video Variables
+//
+
+// Video container padding and margins
+
+// $flex-video-padding-top: emCalc(25px);
+// $flex-video-padding-bottom: 67.5%;
+// $flex-video-margin-bottom: emCalc(16px);
+
+// Widescreen bottom padding
+
+// $flex-video-widescreen-padding-bottom: 57.25%;
+
+//
+// Inline List Variables
+//
+
+// Margins and padding of the inline list.
+
+// $inline-list-margin-bottom: emCalc(17px) emCalc(-22px );
+// $inline-list-margin: 0 0;
+// $inline-list-padding: 0;
+
+// Overflow of the inline list.
+
+// $inline-list-overflow: hidden;
+
+// List items
+
+// $inline-list-display: block;
+
+// Elments within list items
+
+// $inline-list-children-display: block;
+
+//
+// Joyride Variables
+//
+
+// Joyride styles
+
+// $joyride-tip-bg: rgb(0,0,0);
+// $joyride-tip-default-width: 300px;
+// $joyride-tip-padding: emCalc(18px) emCalc(20px) emCalc(24px);
+// $joyride-tip-border: solid 1px #555;
+// $joyride-tip-radius: 4px;
+// $joyride-tip-position-offset: 22px;
+
+// Tip font styles
+
+// $joyride-tip-font-color: #fff;
+// $joyride-tip-font-size: emCalc(14px);
+// $joyride-tip-header-weight: bold;
+
+// Changes the nub size
+
+// $joyride-tip-nub-size: 14px;
+
+// Adjusts the styles for the timer when its enabled
+
+// $joyride-tip-timer-width: 50px;
+// $joyride-tip-timer-height: 3px;
+// $joyride-tip-timer-color: #666;
+
+// Changes up the styles for the close button
+
+// $joyride-tip-close-color: #777;
+// $joyride-tip-close-size: 30px;
+// $joyride-tip-close-weight: normal;
+
+// When Joyride is filling the screen, style for the bg
+
+// $joyride-screenfill: rgba(0,0,0,0.5);
+
+//
+// Keystroke Variables
+//
+
+// Text styles.
+
+// $keystroke-font: "Consolas", "Menlo", "Courier", monospace;
+// $keystroke-font-size: emCalc(15px);
+// $keystroke-font-color: #222;
+// $keystroke-font-color-alt: #fff;
+// $keystroke-function-factor: 7%;
+
+// Keystroke padding.
+
+// $keystroke-padding: emCalc(2px) emCalc(4px) emCalc(0px);
+
+// Background and border styles.
+
+// $keystroke-bg: darken(#fff, $keystroke-function-factor);
+// $keystroke-border-style: solid;
+// $keystroke-border-width: 1px;
+// $keystroke-border-color: darken($keystroke-bg, $keystroke-function-factor);
+// $keystroke-radius: $global-radius;
+
+//
+// Label Variables
+//
+
+// Style the labels
+
+// $label-padding: emCalc(3px) emCalc(10px) emCalc(4px);
+// $label-radius: $global-radius;
+
+// We use these to style the label text
+
+// $label-font-sizing: emCalc(14px);
+// $label-font-weight: bold;
+// $label-font-color: #333;
+// $label-font-color-alt: #fff;
+
+//
+// Magellan Variables
+//
+
+// Basic visual styles
+
+// $magellan-bg: #fff;
+// $magellan-padding: 10px;
+
+//
+// Orbit Settings
+//
+
+// Caption styles
+
+// $orbit-container-bg: #f5f5f5;
+// $orbit-caption-bg-old: rgb(0,0,0);
+// $orbit-caption-bg: rgba(0,0,0,0.6);
+// $orbit-caption-font-color: #fff;
+
+// Left/right nav styles
+
+// $orbit-nav-bg-old: rgb(0,0,0);
+// $orbit-nav-bg: rgba(0,0,0,0.6);
+
+// Timer styles
+
+// $orbit-timer-bg-old: rgb(0,0,0);
+// $orbit-timer-bg: rgba(0,0,0,0.6);
+
+// Bullet nav styles
+
+// $orbit-bullet-nav-color: #999;
+// $orbit-bullet-nav-color-active: #222;
+
+// Slide numbers
+
+// $orbit-slide-number-bg: rgba(0,0,0,0);
+// $orbit-slide-number-font-color: #fff;
+// $orbit-slide-number-padding: emCalc(5px);
+
+// Graceful Loading Wrapper and preloader
+
+// $wrapper-class: "slideshow-wrapper";
+// $preloader-class: "preloader" ;
+
+//
+// Pagination Variables
+//
+
+// Pagination container
+
+// $pagination-height: emCalc(24px);
+// $pagination-margin: emCalc(-5px);
+
+// List-item properties
+
+// $pagination-li-float: $default-float;
+// $pagination-li-height: emCalc(24px);
+// $pagination-li-font-color: #222;
+// $pagination-li-font-size: emCalc(14px);
+// $pagination-li-margin: emCalc(5px);
+
+// Pagination anchor links
+
+// $pagination-link-pad: emCalc(1px) emCalc(7px) emCalc(1px);
+// $pagination-link-font-color: #999;
+// $pagination-link-active-bg: darken(#fff, 10%);
+
+// Disabled anchor links
+
+// $pagination-link-unavailable-cursor: $cursor-default-value;
+// $pagination-link-unavailable-font-color: #999;
+// $pagination-link-unavailable-bg-active: transparent;
+
+// Currently selected anchor links
+
+// $pagination-link-current-background: $primary-color;
+// $pagination-link-current-font-color: #fff;
+// $pagination-link-current-font-weight: bold;
+// $pagination-link-current-cursor: $cursor-default-value;
+// $pagination-link-current-active-bg: $primary-color;
+
+//
+// Panel Variables
+//
+
+// Background and border styles
+
+// $panel-bg: darken(#fff, 5%);
+// $panel-border-style: solid;
+// $panel-border-size: 1px;
+
+// Control how much we darken things on hover
+
+// $panel-function-factor: 10%;
+// $panel-border-color: darken($panel-bg, $panel-function-factor);
+
+// Inner padding and bottom margin
+
+// $panel-margin-bottom: emCalc(20px);
+// $panel-padding: emCalc(20px);
+
+// Font colors
+
+// $panel-font-color: #333;
+// $panel-font-color-alt: #fff;
+
+//
+// Pricing Table Variables
+//
+
+// Border color
+
+// $price-table-border: solid 1px #ddd;
+
+// Bottom margin of the pricing table
+
+// $price-table-margin-bottom: emCalc(20px);
+
+// Control the title styles
+
+// $price-title-bg: #ddd;
+// $price-title-padding: emCalc(15px) emCalc(20px);
+// $price-title-align: center;
+// $price-title-color: #333;
+// $price-title-weight: bold;
+// $price-title-size: emCalc(16px);
+
+// Control the price styles
+
+// $price-money-bg: #eee;
+// $price-money-padding: emCalc(15px) emCalc(20px);
+// $price-money-align: center;
+// $price-money-color: #333;
+// $price-money-weight: normal;
+// $price-money-size: emCalc(20px);
+
+// Description styles
+
+// $price-bg: #fff;
+// $price-desc-color: #777;
+// $price-desc-padding: emCalc(15px);
+// $price-desc-align: center;
+// $price-desc-font-size: emCalc(12px);
+// $price-desc-weight: normal;
+// $price-desc-line-height: 1.4;
+// $price-desc-bottom-border: dotted 1px #ddd;
+
+// List item styles
+
+// $price-item-color: #333;
+// $price-item-padding: emCalc(15px);
+// $price-item-align: center;
+// $price-item-font-size: emCalc(14px);
+// $price-item-weight: normal;
+// $price-item-bottom-border: dotted 1px #ddd;
+
+// CTA area styles
+
+// $price-cta-bg: #f5f5f5;
+// $price-cta-align: center;
+// $price-cta-padding: emCalc(20px) emCalc(20px) 0;
+
+//
+// Progress Bar Variables
+//
+
+// Progress bar height
+
+// $progress-bar-height: emCalc(25px);
+// $progress-bar-color: transparent;
+
+// Border styles
+
+// $progress-bar-border-color: darken(#fff, 20%);
+// $progress-bar-border-size: 1px;
+// $progress-bar-border-style: solid;
+// $progress-bar-border-radius: $global-radius;
+
+// Margin & padding
+
+// $progress-bar-pad: emCalc(2px);
+// $progress-bar-margin-bottom: emCalc(10px);
+
+// Meter colors
+
+// $progress-meter-color: $primary-color;
+// $progress-meter-secondary-color: $secondary-color;
+// $progress-meter-success-color: $success-color;
+// $progress-meter-alert-color: $alert-color;
+
+//
+// Reveal Variables
+//
+
+// Reveal overlay.
+
+// $reveal-overlay-bg: rgba(#000, .45);
+// $reveal-overlay-bg-old: #000;
+
+// Modal itself.
+
+// $reveal-modal-bg: #fff;
+// $reveal-position-top: 50px;
+// $reveal-default-width: 80%;
+// $reveal-modal-padding: emCalc(20px);
+// $reveal-box-shadow: 0 0 10px rgba(#000,.4);
+
+// Reveal close button
+
+// $reveal-close-font-size: emCalc(22px);
+// $reveal-close-top: emCalc(8px);
+// $reveal-close-side: emCalc(11px);
+// $reveal-close-color: #aaa;
+// $reveal-close-weight: bold;
+
+// Modal border
+
+// $reveal-border-style: solid;
+// $reveal-border-width: 1px;
+// $reveal-border-color: #666;
+
+// $reveal-modal-class: "reveal-modal";
+// $close-reveal-modal-class: "close-reveal-modal";
+
+//
+// Section Variables
+//
+
+// Padding and hover factor
+
+// $section-title-padding: emCalc(15px);
+// $section-content-padding: emCalc(15px);
+// $section-function-factor: 10%;
+
+// Titles
+
+// $section-title-color: #333;
+// $section-title-bg: #efefef;
+// $section-title-bg-active: darken($section-title-bg, $section-function-factor);
+// $section-title-bg-active-tabs: #fff;
+// $section-title-bg-hover: darken($section-title-bg, $section-function-factor/2);
+
+// Border size
+
+// $section-border-size: 1px;
+// $section-border-style: solid;
+// $section-border-color: #ccc;
+
+// Font controls
+
+// $section-font-size: emCalc(14px);
+
+// Control the color of the background and some size options
+
+// $section-content-bg: #fff;
+// $section-vertical-nav-min-width: emCalc(200px);
+// $section-vertical-tabs-title-width: emCalc(200px);
+// $section-bottom-margin: emCalc(20px);
+
+// $title-selector: ".title";
+// $content-selector: ".content";
+
+//
+// Side Nav Variables
+//
+
+// Padding
+
+// $side-nav-padding: emCalc(14px) 0;
+
+// List styles
+
+// $side-nav-list-type: none;
+// $side-nav-list-position: inside;
+// $side-nav-list-margin: 0 0 emCalc(7px) 0;
+
+// Link styles
+
+// $side-nav-link-color: $primary-color;
+// $side-nav-link-color-active: lighten(#000, 30%);
+// $side-nav-font-size: emCalc(14px);
+// $side-nav-font-weight: bold;
+
+// Border styles
+
+// $side-nav-divider-size: 1px;
+// $side-nav-divider-style: solid;
+// $side-nav-divider-color: darken(#fff, 10%);
+
+//
+// Sub Nav Variables
+//
+
+// Margin and padding
+
+// $sub-nav-list-margin: emCalc(-4px) 0 emCalc(18px);
+// $sub-nav-list-padding-top: emCalc(4px);
+
+// Definition
+
+// $sub-nav-font-size: emCalc(14px);
+// $sub-nav-font-color: #999;
+// $sub-nav-font-weight: normal;
+// $sub-nav-text-decoration: none;
+// $sub-nav-border-radius: 1000px;
+
+// Active item styles
+
+// $sub-nav-active-font-weight: bold;
+// $sub-nav-active-bg: $primary-color;
+// $sub-nav-active-color: #fff;
+// $sub-nav-active-padding: emCalc(3px) emCalc(9px);
+// $sub-nav-active-cursor: $cursor-default-value;
+
+//
+// Switch Variables
+//
+
+// Border styles and background colors for the switch container
+
+// $switch-border-color: darken(#fff, 20%);
+// $switch-border-style: solid;
+// $switch-border-width: 1px;
+// $switch-bg: #fff;
+
+// Switch heights for our default classes
+
+// $switch-height-tny: 22px;
+// $switch-height-sml: 28px;
+// $switch-height-med: 36px;
+// $switch-height-lrg: 44px;
+// $switch-bottom-margin: emCalc(20px);
+
+// Font sizes for our classes.
+
+// $switch-font-size-tny: 11px;
+// $switch-font-size-sml: 12px;
+// $switch-font-size-med: 14px;
+// $switch-font-size-lrg: 17px;
+// $switch-label-side-padding: 6px;
+
+// Switch-paddle
+
+// $switch-paddle-bg: #fff;
+// $switch-paddle-fade-to-color: darken($switch-paddle-bg, 10%);
+// $switch-paddle-border-color: darken($switch-paddle-bg, 35%);
+// $switch-paddle-border-width: 1px;
+// $switch-paddle-border-style: solid;
+// $switch-paddle-transition-speed: .1s;
+// $switch-paddle-transition-ease: ease-out;
+// $switch-positive-color: lighten($success-color, 50%);
+// $switch-negative-color: #f5f5f5;
+
+// Outline Style for tabbing through switches
+
+// $switch-label-outline: 1px dotted #888;
+
+//
+// Table Variables
+//
+
+// Background color for the table and even rows
+
+// $table-bg: #fff;
+// $table-even-row-bg: #f9f9f9;
+
+// Table cell border style
+
+// $table-border-style: solid;
+// $table-border-size: 1px;
+// $table-border-color: #ddd;
+
+// Table head styles
+
+// $table-head-bg: #f5f5f5;
+// $table-head-font-size: emCalc(14px);
+// $table-head-font-color: #222;
+// $table-head-font-weight: bold;
+// $table-head-padding: emCalc(8px) emCalc(10px) emCalc(10px);
+
+// Row padding and font styles
+
+// $table-row-padding: emCalc(9px) emCalc(10px);
+// $table-row-font-size: emCalc(14px);
+// $table-row-font-color: #222;
+// $table-line-height: emCalc(18px);
+
+// Display and margin of tables
+
+// $table-display: table-cell;
+// $table-margin-bottom: emCalc(20px);
+
+//
+// Image Thumbnail Variables
+//
+
+// Border styles
+
+// $thumb-border-style: solid;
+// $thumb-border-width: 4px;
+// $thumb-border-color: #fff;
+// $thumb-box-shadow: 0 0 0 1px rgba(#000,.2);
+// $thumb-box-shadow-hover: 0 0 6px 1px rgba($primary-color,0.5);
+
+// Radius and transition speed for thumbs
+
+// $thumb-radius: $global-radius;
+// $thumb-transition-speed: 200ms;
+
+//
+// Tooltip Variables
+//
+
+// $has-tip-border-bottom: dotted 1px #ccc;
+// $has-tip-font-weight: bold;
+// $has-tip-font-color: #333;
+// $has-tip-border-bottom-hover: dotted 1px darken($primary-color, 20%);
+// $has-tip-font-color-hover: $primary-color;
+// $has-tip-cursor-type: help;
+
+// $tooltip-padding: emCalc(8px);
+// $tooltip-bg: #000;
+// $tooltip-font-size: emCalc(15px);
+// $tooltip-font-weight: bold;
+// $tooltip-font-color: #fff;
+// $tooltip-line-height: 1.3;
+// $tooltip-close-font-size: emCalc(10px);
+// $tooltip-close-font-weight: normal;
+// $tooltip-close-font-color: #888;
+// $tooltip-font-size-sml: emCalc(14px);
+// $tooltip-radius: $global-radius;
+// $tooltip-pip-size: 5px;
+
+//
+// Top Bar Variables
+//
+
+// Background color for the top bar
+
+// $topbar-bg:                            #111 !default;
+
+// Height and margin
+
+// $topbar-height:                        45px;
+// $topbar-margin-bottom:                 emCalc(30px);
+
+// Control Input height for top bar
+
+// $topbar-input-height:                  2.45em;
+
+// Controlling the styles for the title in the top bar
+
+// $topbar-title-weight:                  bold;
+// $topbar-title-font-size:               emCalc(17px);
+
+// Style the top bar dropdown elements
+
+// $topbar-dropdown-bg:                   #222;
+// $topbar-dropdown-link-color:           #fff;
+// $topbar-dropdown-link-bg:              lighten($topbar-bg, 5%);
+// $topbar-dropdown-toggle-size:          5px;
+// $topbar-dropdown-toggle-color:         #fff;
+// $topbar-dropdown-toggle-alpha:         0.5;
+
+// Set the link colors and styles for top-level nav
+
+// $topbar-link-color:                    #fff;
+// $topbar-link-color-hover:              #fff;
+// $topbar-link-color-active:             #fff;
+// $topbar-link-weight:                   bold;
+// $topbar-link-font-size:                emCalc(13px);
+// $topbar-link-hover-lightness:          -30%; // Darken by 30%
+// $topbar-link-bg-hover:                 darken($topbar-bg, 3%);
+// $topbar-link-bg-active:                darken($topbar-bg, 3%);
+
+// $topbar-dropdown-label-color:          #555;
+// $topbar-dropdown-label-text-transform: uppercase;
+// $topbar-dropdown-label-font-weight:    bold;
+// $topbar-dropdown-label-font-size:      emCalc(10px);
+
+// Top menu icon styles
+
+// $topbar-menu-link-transform:           uppercase;
+// $topbar-menu-link-font-size:           emCalc(13px);
+// $topbar-menu-link-weight:              bold;
+// $topbar-menu-link-color:               #fff;
+// $topbar-menu-icon-color:               #fff;
+// $topbar-menu-link-color-toggled:       #888;
+// $topbar-menu-icon-color-toggled:       #888;
+
+// Transitions and breakpoint styles
+
+// $topbar-transition-speed:              300ms;
+// $topbar-breakpoint:                    emCalc(940px); // Change to 9999px for always mobile layout
+// $topbar-media-query:                   "only screen and (min-width: #{$topbar-breakpoint})";
+
+// Divider Styles
+
+// $topbar-divider-border-bottom:         solid 1px lighten($topbar-bg, 10%);
+// $topbar-divider-border-top:            solid 1px darken($topbar-bg, 10%);
+
+// Sticky Class
+
+// $topbar-sticky-class:                  ".sticky";
+:@has_childrenT:@options{ :@children[vo:Sass::Tree::CommentNode
+:
+@type:silent:@value["%/*
+ * Foundation Variables
+ * */;@;	[ :
+@lineio;
+
+;;;["ú/* The default font-size is set to 100% of the browser style sheet (usually 16px)
+ * for compatibility with browser-based text zoom or user-set defaults. */;@;	[ ;io:Sass::Tree::VariableNode:@guarded"!default:
+@name"base-font-size:
+@expro:Sass::Script::Number:@denominator_units[ :@numerator_units["%;ii;@:@original"	100%;i;@;	[ ;io;
+
+;;;["^/* $base-line-height is 24px while $base-font-size is 16px
+ * $base-line-height: 150%; */;@;	[ ;io;
+
+;;;["M/* This is the default html and body font-size for the base em value. */;@;	[ ;io;
+
+;;;["/* Since the typical default browser font-size is 16px, that makes the calculation for grid size.
+ * If you want your base font-size to be a different size and not have it effect grid size too,
+ * set the value of $em-base to $base-font-size ($em-base: $base-font-size;) */;@;	[ ;io;;"!default;"em-base;o;;[ ;["px;i;@;"	16px;i;@;	[ ;io;
+
+;;;["`/* Working in ems is annoying. Think in pixels by using this handy function, emCalc(#px) */;@;	[ ;io:Sass::Tree::FunctionNode;"emCalc;T;@;	[o:Sass::Tree::ReturnNode	;o:Sass::Script::Operation
+:@operand1o;
+;o:Sass::Script::Variable	;"pxWidth;@;i:@underscored_name"pxWidth:@operator:div;@:@operand2o;	;"em-base;@;i;"em_base;i;:
+times;@;o;;[ ;["em;i;@;"1em;i;i;@;	[ ;i:@splat0;i:
+@args[[o;;"pxWidth;@;"pxWidth0o;
+
+;;;["U/* Change whether or not you include browser prefixes
+ * $experimental: true; */;@;	[ ;io;
+
+;;;[" /* Various global styles */;@;	[ ;i!o;;0;"default-float;o:Sass::Script::String	;:identifier;"	left;@;i#;@;	[ ;i#o;
+
+;;;["æ/* $body-bg: #fff;
+ * $body-font-color: #222;
+ * $body-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+ * $body-font-weight: normal;
+ * $body-font-style: normal; */;@;	[ ;i%o;
+
+;;;["/* Font-smoothing */;@;	[ ;i+o;
+
+;;;["(/* $font-smoothing: antialiased; */;@;	[ ;i-o;
+
+;;;[""/* Text direction settings */;@;	[ ;i/o;
+
+;;;[" /* $text-direction: ltr; */;@;	[ ;i1o;
+
+;;;["/* Colors */;@;	[ ;i3o;
+
+;;;["w/* $primary-color: #2ba6cb;
+ * $secondary-color: #e9e9e9;
+ * $alert-color: #c60f13;
+ * $success-color: #5da423; */;@;	[ ;i5o;
+
+;;;["G/* Make sure border radius matches unless we want it different. */;@;	[ ;i:o;
+
+;;;[";/* $global-radius: 3px;
+ * $global-rounded: 1000px; */;@;	[ ;i<o;
+
+;;;["4/* Inset shadow shiny edges and depressions. */;@;	[ ;i?o;
+
+;;;["x/* $shiny-edge-size: 0 1px 0;
+ * $shiny-edge-color: rgba(#fff, .5);
+ * $shiny-edge-active-color: rgba(#000, .2); */;@;	[ ;iAo;
+
+;;;["L/* Control whether or not CSS classes come through in the CSS files. */;@;	[ ;iEo;
+
+;;;[""/* $include-html-classes: true;
+ * $include-print-styles: true;
+ * $include-html-global-classes: $include-html-classes;
+ * $include-html-type-classes: $include-html-classes;
+ * $include-html-grid-classes: $include-html-classes;
+ * $include-html-visibility-classes: $include-html-classes; */;@;	[ ;iGo;;0;" include-html-button-classes;o:Sass::Script::Bool;F;@;iM;@;	[ ;iMo;
+
+;;;["Ÿ/*$include-html-classes;
+ * $include-html-form-classes: $include-html-classes;
+ * $include-html-custom-form-classes: $include-html-classes;
+ * $include-html-media-classes: $include-html-classes;
+ * $include-html-section-classes: $include-html-classes;
+ * $include-html-orbit-classes: $include-html-classes;
+ * $include-html-reveal-classes: $include-html-classes;
+ * $include-html-joyride-classes: $include-html-classes;
+ * $include-html-clearing-classes: $include-html-classes;
+ * $include-html-alert-classes: $include-html-classes;
+ * $include-html-nav-classes: $include-html-classes;
+ * $include-html-top-bar-classes: $include-html-classes;
+ * $include-html-label-classes: $include-html-classes;
+ * $include-html-panel-classes: $include-html-classes;
+ * $include-html-pricing-classes: $include-html-classes;
+ * $include-html-progress-classes: $include-html-classes;
+ * $include-html-magellan-classes: $include-html-classes;
+ * $include-html-tooltip-classes: $include-html-classes; */;@;	[ ;iMo;
+
+;;;["/* Media Queries */;@;	[ ;i`o;
+
+;;;["U/* $small-screen: 768px;
+ * $medium-screen: 1280px;
+ * $large-screen: 1440px; */;@;	[ ;ibo;
+
+;;;["G/* $screen: "only screen";
+ * $small: "only screen and (min-width: #{$small-screen})";
+ * $medium: "only screen and (min-width: #{$medium-screen})";
+ * $large: "only screen and (min-width: #{$large-screen})";
+ * $landscape: "only screen and (orientation: landscape)";
+ * $portrait: "only screen and (orientation: portrait)"; */;@;	[ ;ifo;
+
+;;;["/*// Cursors */;@;	[ ;imo;
+
+;;;["/*Custom use example -> $cursor-default-value: url(http://cursors-site.net/path/to/custom/cursor/default.cur),progress; */;@;	[ ;ioo;
+
+;;;["î/* $cursor-crosshair-value: "crosshair";
+ * $cursor-default-value: "default";
+ * $cursor-pointer-value: "pointer";
+ * $cursor-help-value: "help"; */;@;	[ ;iqo;
+
+;;;["/*
+ * Grid Variables
+ * */;@;	[ ;ivo;
+
+;;;["^/* $row-width: emCalc(1000px);
+ * $column-gutter: emCalc(30px);
+ * $total-columns: 12; */;@;	[ ;izo;
+
+;;;["%/*
+ * Block Grid Variables
+ * */;@;	[ ;i~o;
+
+;;;["8/* Maximum number of block grid elements per row */;@;	[ ;i}o;
+
+;;;["R/* $block-grid-elements: 12;
+ * $block-grid-default-spacing: emCalc(20px); */;@;	[ ;io;
+
+;;;["_/* Enables media queries for block-grid classes. Set to false if writing semantic HTML. */;@;	[ ;iÇo;
+
+;;;["+/* $block-grid-media-queries: true; */;@;	[ ;iÑo;
+
+;;;["%/*
+ * Typography Variables
+ * */;@;	[ ;iÜo;
+
+;;;["/* Heading font styles */;@;	[ ;iäo;
+
+;;;[":/* $header-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+ * $header-font-weight: bold;
+ * $header-font-style: normal;
+ * $header-font-color: #222;
+ * $header-line-height: 1.4;
+ * $header-top-margin: .2em;
+ * $header-bottom-margin: .5em;
+ * $header-text-rendering: optimizeLegibility; */;@;	[ ;iåo;
+
+;;;["/* Heading font sizes */;@;	[ ;iïo;
+
+;;;["π/* $h1-font-size: emCalc(44px);
+ * $h2-font-size: emCalc(37px);
+ * $h3-font-size: emCalc(27px);
+ * $h4-font-size: emCalc(23px);
+ * $h5-font-size: emCalc(18px);
+ * $h6-font-size: 1em; */;@;	[ ;ióo;
+
+;;;["/* Subheaders */;@;	[ ;iûo;
+
+;;;["¡/* $subheader-line-height: 1.4;
+ * $subheader-font-color: lighten($header-font-color, 30%);
+ * $subheader-font-weight: 300;
+ * $subheader-top-margin: .2em;
+ * $subheader-bottom-margin: .5em; */;@;	[ ;i†o;
+
+;;;["/* <small> styling */;@;	[ ;i¶o;
+
+;;;["Y/* $small-font-size: 60%;
+ * $small-font-color: lighten($header-font-color, 30%); */;@;	[ ;i®o;
+
+;;;["/* Paragraphs */;@;	[ ;i´o;
+
+;;;["./* $paragraph-font-family: inherit;
+ * $paragraph-font-weight: normal;
+ * $paragraph-font-size: 1em;
+ * $paragraph-line-height: 1.6;
+ * $paragraph-margin-bottom: emCalc(20px);
+ * $paragraph-aside-font-size: emCalc(14px);
+ * $paragraph-aside-line-height: 1.35;
+ * $paragraph-aside-font-style: italic; */;@;	[ ;i≠o;
+
+;;;["/* <code> tags */;@;	[ ;i∂o;
+
+;;;["ê/* $code-color: darken($alert-color, 15%);
+ * $code-font-family: Consolas, 'Liberation Mono', Courier, monospace;
+ * $code-font-weight: bold; */;@;	[ ;i∏o;
+
+;;;["/* Anchors */;@;	[ ;iºo;
+
+;;;["Ñ/* $anchor-text-decoration: none;
+ * $anchor-font-color: $primary-color;
+ * $anchor-font-color-hover: darken($primary-color, 5%); */;@;	[ ;iæo;
+
+;;;["/* <hr> element */;@;	[ ;i¬o;
+
+;;;["u/* $hr-border-width: 1px;
+ * $hr-border-style: solid;
+ * $hr-border-color: #ddd;
+ * $hr-margin: emCalc(20px); */;@;	[ ;iƒo;
+
+;;;["/* Lists */;@;	[ ;i…o;
+
+;;;["¯/* $list-style-position: outside;
+ * $list-side-margin: emCalc(20px);
+ * $list-nested-margin: emCalc(20px);
+ * $definition-list-header-weight: bold;
+ * $definition-list-header-margin-bottom: .3em;
+ * $definition-list-margin-bottom: emCalc(12px); */;@;	[ ;iÀo;
+
+;;;["/* Blockquotes */;@;	[ ;i“o;
+
+;;;["S/* $blockquote-font-color: lighten($header-font-color, 30%);
+ * $blockquote-padding: emCalc(9px) emCalc(20px) 0 emCalc(19px);
+ * $blockquote-border: 1px solid #ddd;
+ * $blockquote-cite-font-size: emCalc(13px);
+ * $blockquote-cite-font-color: lighten($header-font-color, 20%);
+ * $blockquote-cite-link-color: $blockquote-cite-font-color; */;@;	[ ;i‘o;
+
+;;;["/* Acronym */;@;	[ ;i€o;
+
+;;;["//* $acronym-underline: 1px dotted #ddd; */;@;	[ ;i›o;
+
+;;;["/* Padding and margin */;@;	[ ;iﬂo;
+
+;;;["g/* $microformat-padding: emCalc(10px) emCalc(12px);
+ * $microformat-margin: 0 0 emCalc(20px) 0; */;@;	[ ;i·o;
+
+;;;["/* Border styles */;@;	[ ;i‰o;
+
+;;;["s/* $microformat-border-width: 1px;
+ * $microformat-border-style: solid;
+ * $microformat-border-color: #ddd; */;@;	[ ;iÊo;
+
+;;;[" /* Full name font styles */;@;	[ ;iÍo;
+
+;;;["e/* $microformat-fullname-font-weight: bold;
+ * $microformat-fullname-font-size: emCalc(15px); */;@;	[ ;iÏo;
+
+;;;["/* Summary font styles */;@;	[ ;iÔo;
+
+;;;["2/* $microformat-summary-font-weight: bold; */;@;	[ ;iÒo;
+
+;;;["/* <abbr> padding */;@;	[ ;iÛo;
+
+;;;["4/* $microformat-abbr-padding: 0 emCalc(1px); */;@;	[ ;iıo;
+
+;;;["/* <abbr> font styles */;@;	[ ;i˜o;
+
+;;;["[/* $microformat-abbr-font-weight: bold;
+ * $microformat-abbr-font-decoration: none; */;@;	[ ;i˘o;
+
+;;;["/*
+ * Form Variables
+ * */;@;	[ ;i¸o;
+
+;;;["?/* Base for lots of form spacing and positioning styles */;@;	[ ;i o;
+
+;;;["'/* $form-spacing: emCalc(16px); */;@;	[ ;io;
+
+;;;["/* Labels */;@;	[ ;io;
+
+;;;["ã/* $form-label-pointer: pointer;
+ * $form-label-font-size: emCalc(14px);
+ * $form-label-font-weight: 500;
+ * $form-label-font-color: lighten(#000, 30%);
+ * $form-label-bottom-margin: emCalc(3px);
+ * $input-font-family: inherit;
+ * $input-font-color: rgba(0,0,0,0.75);
+ * $input-font-size: emCalc(14px);
+ * $input-bg-color: #fff;
+ * $input-focus-bg-color: darken(#fff, 2%);
+ * $input-border-color: darken(#fff, 20%);
+ * $input-focus-border-color: darken(#fff, 40%);
+ * $input-border-style: solid;
+ * $input-border-width: 1px;
+ * $input-disabled-bg: #ddd;
+ * $input-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+ * $input-include-glowing-effect: true; */;@;	[ ;io;
+
+;;;["'/* Fieldset border and spacing. */;@;	[ ;io;
+
+;;;["Æ/* $fieldset-border-style: solid;
+ * $fieldset-border-width: 1px;
+ * $fieldset-border-color: #ddd;
+ * $fieldset-padding: emCalc(20px);
+ * $fieldset-margin: emCalc(18px) 0; */;@;	[ ;io;
+
+;;;["/* Legends */;@;	[ ;i o;
+
+;;;["]/* $legend-bg: #fff;
+ * $legend-font-weight: bold;
+ * $legend-padding: 0 emCalc(3px); */;@;	[ ;i"o;
+
+;;;[",/* Prefix and postfix input elements */;@;	[ ;i&o;
+
+;;;["/* $input-prefix-bg: darken(#fff, 5%);
+ * $input-prefix-border-color: darken(#fff, 20%);
+ * $input-prefix-border-size: 1px;
+ * $input-prefix-border-type: solid;
+ * $input-prefix-overflow: hidden;
+ * $input-prefix-font-color: #333;
+ * $input-prefix-font-color-alt: #fff; */;@;	[ ;i(o;
+
+;;;["-/* Error states for inputs and labels */;@;	[ ;i0o;
+
+;;;["-/* $input-error-message-padding: emCalc(6px) emCalc(4px);
+ * $input-error-message-top: -($form-spacing) - emCalc(5px);
+ * $input-error-message-font-size: emCalc(12px);
+ * $input-error-message-font-weight: bold;
+ * $input-error-message-font-color: #fff;
+ * $input-error-message-font-color-alt: #333; */;@;	[ ;i2o;
+
+;;;["0/* Glowing effect of inputs when focused */;@;	[ ;i9o;
+
+;;;["a/* $glowing-effect-fade-time: 0.45s;
+ * $glowing-effect-color: $input-focus-border-color; */;@;	[ ;i;o;
+
+;;;["!/*
+ * Button Variables
+ * */;@;	[ ;i>o;
+
+;;;["/* Padding for buttons. */;@;	[ ;iBo;
+
+;;;["}/* $button-tny: emCalc(7px);
+ * $button-sml: emCalc(9px);
+ * $button-med: emCalc(12px);
+ * $button-lrg: emCalc(16px); */;@;	[ ;iDo;
+
+;;;["/* Display property. */;@;	[ ;iIo;
+
+;;;["Q/* $button-display: inline-block;
+ * $button-margin-bottom: emCalc(20px); */;@;	[ ;iKo;
+
+;;;["/* Button text styles. */;@;	[ ;iNo;
+
+;;;["*/* $button-font-family: inherit;
+ * $button-font-color: #fff;
+ * $button-font-color-alt: #333;
+ * $button-font-med: emCalc(16px);
+ * $button-font-tny: emCalc(11px);
+ * $button-font-sml: emCalc(13px);
+ * $button-font-lrg: emCalc(20px);
+ * $button-font-weight: bold;
+ * $button-font-align: center; */;@;	[ ;iPo;
+
+;;;["!/* Various hover effects. */;@;	[ ;iZo;
+
+;;;["(/* $button-function-factor: 10%; */;@;	[ ;i\o;
+
+;;;[" /* Button border styles. */;@;	[ ;i^o;
+
+;;;["ä/* $button-border-width: 1px;
+ * $button-border-style: solid;
+ * $button-border-color: darken($primary-color, $button-function-factor); */;@;	[ ;i`o;
+
+;;;["+/* Radius used throughout the core. */;@;	[ ;ido;
+
+;;;["*/* $button-radius: $global-radius; */;@;	[ ;ifo;
+
+;;;["(/* Opacity for disabled buttons. */;@;	[ ;iho;
+
+;;;[")/* $button-disabled-opacity: 0.6; */;@;	[ ;ijo;
+
+;;;["/*
+ * Button Groups
+ * */;@;	[ ;ilo;
+
+;;;["p/* Sets the margin for the right side by default, and the left margin if right-to-left direction is used */;@;	[ ;ipo;
+
+;;;["5/* $button-bar-margin-opposite: emCalc(10px); */;@;	[ ;iro;
+
+;;;["*/*
+ * Dropdown Button Variables
+ * */;@;	[ ;ito;
+
+;;;["//* Color of the pip in dropdown buttons */;@;	[ ;ixo;
+
+;;;["U/* $dropdown-button-pip-color: #fff;
+ * $dropdown-button-pip-color-alt: #333; */;@;	[ ;izo;
+
+;;;[" /* Tiny dropdown buttons */;@;	[ ;i}o;
+
+;;;["ÿ/* $dropdown-button-padding-tny: $button-tny * 5;
+ * $dropdown-button-pip-size-tny: $button-tny;
+ * $dropdown-button-pip-right-tny: $button-tny * 2;
+ * $dropdown-button-pip-top-tny: -$button-tny / 2 + emCalc(1px); */;@;	[ ;io;
+
+;;;["!/* Small dropdown buttons */;@;	[ ;iÑo;
+
+;;;["ÿ/* $dropdown-button-padding-sml: $button-sml * 5;
+ * $dropdown-button-pip-size-sml: $button-sml;
+ * $dropdown-button-pip-right-sml: $button-sml * 2;
+ * $dropdown-button-pip-top-sml: -$button-sml / 2 + emCalc(1px); */;@;	[ ;iÜo;
+
+;;;[""/* Medium dropdown buttons */;@;	[ ;ião;
+
+;;;["Ù/* $dropdown-button-padding-med: $button-med * 4 + emCalc(3px);
+ * $dropdown-button-pip-size-med: $button-med - emCalc(3px);
+ * $dropdown-button-pip-right-med: $button-med * 2;
+ * $dropdown-button-pip-top-med: -$button-med / 2 + emCalc(2px); */;@;	[ ;iço;
+
+;;;["!/* Large dropdown buttons */;@;	[ ;iío;
+
+;;;["Ò/* $dropdown-button-padding-lrg: $button-lrg * 4;
+ * $dropdown-button-pip-size-lrg: $button-lrg - emCalc(6px);
+ * $dropdown-button-pip-right-lrg: $button-lrg + emCalc(12px);
+ * $dropdown-button-pip-top-lrg: -$button-lrg / 2 + emCalc(3px); */;@;	[ ;iîo;
+
+;;;["'/*
+ * Split Button Variables
+ * */;@;	[ ;iôo;
+
+;;;["*/* Shared styles for Split Buttons */;@;	[ ;iùo;
+
+;;;["£/* $split-button-function-factor: 15%;
+ * $split-button-pip-color: #fff;
+ * $split-button-pip-color-alt: #333;
+ * $split-button-active-bg-tint: rgba(0,0,0,0.1); */;@;	[ ;iüo;
+
+;;;["/* Tiny split buttons */;@;	[ ;i§o;
+
+;;;["Ì/* $split-button-padding-tny: $button-tny * 9;
+ * $split-button-span-width-tny: $button-tny * 6.5;
+ * $split-button-pip-size-tny: $button-tny;
+ * $split-button-pip-top-tny: $button-tny * 2;
+ * $split-button-pip-left-tny: emCalc(-5px); */;@;	[ ;i¶o;
+
+;;;["/* Small split buttons */;@;	[ ;i¨o;
+
+;;;["Ì/* $split-button-padding-sml: $button-sml * 7;
+ * $split-button-span-width-sml: $button-sml * 5;
+ * $split-button-pip-size-sml: $button-sml;
+ * $split-button-pip-top-sml: $button-sml * 1.5;
+ * $split-button-pip-left-sml: emCalc(-9px); */;@;	[ ;iÆo;
+
+;;;["/* Medium split buttons */;@;	[ ;i¥o;
+
+;;;["˝/* $split-button-padding-med: $button-med * 6.4;
+ * $split-button-span-width-med: $button-med * 4;
+ * $split-button-pip-size-med: $button-med - emCalc(3px);
+ * $split-button-pip-top-med: $button-med * 1.5;
+ * $split-button-pip-left-med: emCalc(-9px); */;@;	[ ;i∂o;
+
+;;;["/* Large split buttons */;@;	[ ;iºo;
+
+;;;["/* $split-button-padding-lrg: $button-lrg * 6;
+ * $split-button-span-width-lrg: $button-lrg * 3.75;
+ * $split-button-pip-size-lrg: $button-lrg - emCalc(6px);
+ * $split-button-pip-top-lrg: $button-lrg + emCalc(5px);
+ * $split-button-pip-left-lrg: emCalc(-9px); */;@;	[ ;iæo;
+
+;;;[" /*
+ * Alert Variables
+ * */;@;	[ ;iƒo;
+
+;;;["/* Alert padding */;@;	[ ;i»o;
+
+;;;["/* $alert-padding-top:                emCalc(11px);
+ * $alert-padding-default-float:      $alert-padding-top;
+ * $alert-padding-opposite-direction: $alert-padding-top + emCalc(10px);
+ * $alert-padding-bottom:             $alert-padding-top + emCalc(1px); */;@;	[ ;i o;
+
+;;;["/* Text style */;@;	[ ;iœo;
+
+;;;["”/* $alert-font-weight:                bold;
+ * $alert-font-size:                  emCalc(14px);
+ * $alert-font-color:                 #fff;
+ * $alert-font-color-alt:             darken($secondary-color, 60%); */;@;	[ ;i—o;
+
+;;;["/* Hover effect */;@;	[ ;i÷o;
+
+;;;["2/* $alert-function-factor:            10%; */;@;	[ ;iÿo;
+
+;;;["/* Border Styles */;@;	[ ;i⁄o;
+
+;;;["‰/* $alert-border-style:               solid;
+ * $alert-border-width:               1px;
+ * $alert-border-color:               darken($primary-color, $alert-function-factor);
+ * $alert-bottom-margin:              emCalc(20px); */;@;	[ ;i‹o;
+
+;;;["/* Close Button style */;@;	[ ;i·o;
+
+;;;["/* $alert-close-color:                #333;
+ * $alert-close-position:             emCalc(5px);
+ * $alert-close-font-size:            emCalc(22px);
+ * $alert-close-opacity:              0.3;
+ * $alert-close-opacity-hover:        0.5;
+ * $alert-close-padding:              5px 4px 4px; */;@;	[ ;i„o;
+
+;;;["/* Border radius */;@;	[ ;iÍo;
+
+;;;["=/* $alert-radius:                     $global-radius; */;@;	[ ;iÏo;
+
+;;;["%/*
+ * Breadcrumb Variables
+ * */;@;	[ ;iÔo;
+
+;;;["9/* Background color for the breadcrumb container. */;@;	[ ;iÛo;
+
+;;;["4/* $crumb-bg: lighten($secondary-color, 5%); */;@;	[ ;iıo;
+
+;;;["*/* Padding around the breadcrumbs. */;@;	[ ;i˜o;
+
+;;;["f/* $crumb-padding: emCalc(6px) emCalc(14px) emCalc(9px);
+ * $crumb-side-padding: emCalc(12px); */;@;	[ ;i˘o;
+
+;;;["/* Border styles. */;@;	[ ;i¸o;
+
+;;;["¬/* $crumb-function-factor: 10%;
+ * $crumb-border-size: 1px;
+ * $crumb-border-style: solid;
+ * $crumb-border-color: darken($crumb-bg, $crumb-function-factor);
+ * $crumb-radius: $global-radius; */;@;	[ ;i˛o;
+
+;;;["//* Various text styles for breadcrumbs. */;@;	[ ;io;
+
+;;;["›/* $crumb-font-size: emCalc(11px);
+ * $crumb-font-color: $primary-color;
+ * $crumb-font-color-current: #333;
+ * $crumb-font-color-unavailable: #999;
+ * $crumb-font-transform: uppercase;
+ * $crumb-link-decor: underline; */;@;	[ ;io;
+
+;;;["$/* Slash between breadcrumbs */;@;	[ ;io;
+
+;;;[":/* $crumb-slash-color: #aaa;
+ * $crumb-slash: "/"; */;@;	[ ;io;
+
+;;;["#/*
+ * Clearing Variables
+ * */;@;	[ ;io;
+
+;;;["3/* Background colors for parts of Clearing. */;@;	[ ;io;
+
+;;;["É/* $clearing-bg: #111;
+ * $clearing-caption-bg: $clearing-bg;
+ * $clearing-carousel-bg: #111;
+ * $clearing-img-bg: $clearing-bg; */;@;	[ ;io;
+
+;;;["/* Close button */;@;	[ ;io;
+
+;;;["F/* $clearing-close-color: #fff;
+ * $clearing-close-size: 40px; */;@;	[ ;io;
+
+;;;["/* Style the arrows */;@;	[ ;i"o;
+
+;;;["W/* $clearing-arrow-size: 16px;
+ * $clearing-arrow-color: $clearing-close-color; */;@;	[ ;i$o;
+
+;;;["/* Style captions */;@;	[ ;i'o;
+
+;;;["W/* $clearing-caption-font-color: #fff;
+ * $clearing-caption-padding: 10px 30px; */;@;	[ ;i)o;
+
+;;;["7/* Make the image and carousel height and style */;@;	[ ;i,o;
+
+;;;["Ω/* $clearing-active-img-height: 75%;
+ * $clearing-carousel-height: 150px;
+ * $clearing-carousel-thumb-width: 175px;
+ * $clearing-carousel-thumb-active-border: 4px solid rgb(255,255,255); */;@;	[ ;i.o;
+
+;;;["&/*
+ * Custom Form Variables
+ * */;@;	[ ;i3o;
+
+;;;[")/* Basic form styles input styles */;@;	[ ;i7o;
+
+;;;["3/* $custom-form-border-color: #ccc;
+ * $custom-form-border-size: 1px;
+ * $custom-form-bg: #fff;
+ * $custom-form-bg-disabled: #ddd;
+ * $custom-form-input-size: 16px;
+ * $custom-form-check-color: #222;
+ * $custom-form-check-size: 14px;
+ * $custom-form-radio-size: 8px;
+ * $custom-form-checkbox-radius: 0px; */;@;	[ ;i9o;
+
+;;;["&/* Custom select form element. */;@;	[ ;iCo;
+
+;;;["ä/* $custom-select-bg: #fff;
+ * $custom-select-fade-to-color: #f3f3f3;
+ * $custom-select-border-color: #ddd;
+ * $custom-select-triangle-color: #aaa;
+ * $custom-select-triangle-color-open: #222;
+ * $custom-select-height: emCalc(13px) + ($form-spacing * 1.5);
+ * $custom-select-margin-bottom: emCalc(20px);
+ * $custom-select-font-color-selected: #141414;
+ * $custom-select-disabled-color: #888; */;@;	[ ;iEo;
+
+;;;["*/* Custom select dropdown element. */;@;	[ ;iOo;
+
+;;;["ü/* $custom-dropdown-height: 200px;
+ * $custom-dropdown-bg: #fff;
+ * $custom-dropdown-border-color: darken(#fff, 20%);
+ * $custom-dropdown-border-width: 1px;
+ * $custom-dropdown-border-style: solid;
+ * $custom-dropdown-font-color: #555;
+ * $custom-dropdown-font-size: emCalc(14px);
+ * $custom-dropdown-color-selected: #eeeeee;
+ * $custom-dropdown-font-color-selected: #000;
+ * $custom-dropdown-shadow: 0 2px 2px 0px rgba(0,0,0,0.1);
+ * $custom-dropdown-offset-top: none;
+ * $custom-dropdown-list-padding: emCalc(4px);
+ * $custom-dropdown-left-padding: emCalc(6px);
+ * $custom-dropdown-right-padding: emCalc(38px);
+ * $custom-dropdown-list-item-min-height: emCalc(24px); */;@;	[ ;iQo;
+
+;;;["#/*
+ * Dropdown Variables
+ * */;@;	[ ;iao;
+
+;;;["#/* Height and width styles. */;@;	[ ;ieo;
+
+;;;["Å/* $f-dropdown-max-width: 200px;
+ * $f-dropdown-height: auto;
+ * $f-dropdown-max-height: none;
+ * $f-dropdown-margin-top: 2px; */;@;	[ ;igo;
+
+;;;["/* Background color */;@;	[ ;ilo;
+
+;;;[" /* $f-dropdown-bg: #fff; */;@;	[ ;ino;
+
+;;;["'/* Border styles for dropdowns. */;@;	[ ;ipo;
+
+;;;["}/* $f-dropdown-border-style: solid;
+ * $f-dropdown-border-width: 1px;
+ * $f-dropdown-border-color: darken(#fff, 20%); */;@;	[ ;iro;
+
+;;;["/* Triangle pip. */;@;	[ ;ivo;
+
+;;;["z/* $f-dropdown-triangle-size: 6px;
+ * $f-dropdown-triangle-color: #fff;
+ * $f-dropdown-triangle-side-offset: 10px; */;@;	[ ;ixo;
+
+;;;["/* List elements. */;@;	[ ;i|o;
+
+;;;["/* $f-dropdown-list-style: none;
+ * $f-dropdown-font-color: #555;
+ * $f-dropdown-font-size: emCalc(14px);
+ * $f-dropdown-list-padding: emCalc(5px) emCalc(10px);
+ * $f-dropdown-line-height: emCalc(18px);
+ * $f-dropdown-list-hover-bg: #eeeeee;
+ * $dropdown-mobile-left: 0; */;@;	[ ;i~o;
+
+;;;["0/* When the dropdown has custom content. */;@;	[ ;iÜo;
+
+;;;["5/* $f-dropdown-content-padding: emCalc(20px); */;@;	[ ;iào;
+
+;;;["%/*
+ * Flex Video Variables
+ * */;@;	[ ;iäo;
+
+;;;["./* Video container padding and margins */;@;	[ ;iéo;
+
+;;;["~/* $flex-video-padding-top: emCalc(25px);
+ * $flex-video-padding-bottom: 67.5%;
+ * $flex-video-margin-bottom: emCalc(16px); */;@;	[ ;iêo;
+
+;;;["$/* Widescreen bottom padding */;@;	[ ;iîo;
+
+;;;["9/* $flex-video-widescreen-padding-bottom: 57.25%; */;@;	[ ;iño;
+
+;;;["&/*
+ * Inline List Variables
+ * */;@;	[ ;iòo;
+
+;;;["2/* Margins and padding of the inline list. */;@;	[ ;iúo;
+
+;;;["|/* $inline-list-margin-bottom: emCalc(17px) emCalc(-22px );
+ * $inline-list-margin: 0 0;
+ * $inline-list-padding: 0; */;@;	[ ;iûo;
+
+;;;["'/* Overflow of the inline list. */;@;	[ ;i¢o;
+
+;;;[")/* $inline-list-overflow: hidden; */;@;	[ ;i§o;
+
+;;;["/* List items */;@;	[ ;i¶o;
+
+;;;["'/* $inline-list-display: block; */;@;	[ ;i®o;
+
+;;;["$/* Elments within list items */;@;	[ ;i™o;
+
+;;;["0/* $inline-list-children-display: block; */;@;	[ ;i¨o;
+
+;;;[""/*
+ * Joyride Variables
+ * */;@;	[ ;iÆo;
+
+;;;["/* Joyride styles */;@;	[ ;i≤o;
+
+;;;["ı/* $joyride-tip-bg: rgb(0,0,0);
+ * $joyride-tip-default-width: 300px;
+ * $joyride-tip-padding: emCalc(18px) emCalc(20px) emCalc(24px);
+ * $joyride-tip-border: solid 1px #555;
+ * $joyride-tip-radius: 4px;
+ * $joyride-tip-position-offset: 22px; */;@;	[ ;i¥o;
+
+;;;["/* Tip font styles */;@;	[ ;iªo;
+
+;;;["w/* $joyride-tip-font-color: #fff;
+ * $joyride-tip-font-size: emCalc(14px);
+ * $joyride-tip-header-weight: bold; */;@;	[ ;iΩo;
+
+;;;["/* Changes the nub size */;@;	[ ;i¡o;
+
+;;;["'/* $joyride-tip-nub-size: 14px; */;@;	[ ;i√o;
+
+;;;["</* Adjusts the styles for the timer when its enabled */;@;	[ ;i≈o;
+
+;;;["p/* $joyride-tip-timer-width: 50px;
+ * $joyride-tip-timer-height: 3px;
+ * $joyride-tip-timer-color: #666; */;@;	[ ;i«o;
+
+;;;["5/* Changes up the styles for the close button */;@;	[ ;iÀo;
+
+;;;["r/* $joyride-tip-close-color: #777;
+ * $joyride-tip-close-size: 30px;
+ * $joyride-tip-close-weight: normal; */;@;	[ ;iÕo;
+
+;;;["?/* When Joyride is filling the screen, style for the bg */;@;	[ ;i—o;
+
+;;;["0/* $joyride-screenfill: rgba(0,0,0,0.5); */;@;	[ ;i”o;
+
+;;;["$/*
+ * Keystroke Variables
+ * */;@;	[ ;i’o;
+
+;;;["/* Text styles. */;@;	[ ;iŸo;
+
+;;;["œ/* $keystroke-font: "Consolas", "Menlo", "Courier", monospace;
+ * $keystroke-font-size: emCalc(15px);
+ * $keystroke-font-color: #222;
+ * $keystroke-font-color-alt: #fff;
+ * $keystroke-function-factor: 7%; */;@;	[ ;i€o;
+
+;;;["/* Keystroke padding. */;@;	[ ;i·o;
+
+;;;["C/* $keystroke-padding: emCalc(2px) emCalc(4px) emCalc(0px); */;@;	[ ;i„o;
+
+;;;["(/* Background and border styles. */;@;	[ ;iÂo;
+
+;;;["˜/* $keystroke-bg: darken(#fff, $keystroke-function-factor);
+ * $keystroke-border-style: solid;
+ * $keystroke-border-width: 1px;
+ * $keystroke-border-color: darken($keystroke-bg, $keystroke-function-factor);
+ * $keystroke-radius: $global-radius; */;@;	[ ;iÁo;
+
+;;;[" /*
+ * Label Variables
+ * */;@;	[ ;iÌo;
+
+;;;["/* Style the labels */;@;	[ ;iÒo;
+
+;;;["b/* $label-padding: emCalc(3px) emCalc(10px) emCalc(4px);
+ * $label-radius: $global-radius; */;@;	[ ;iÛo;
+
+;;;["//* We use these to style the label text */;@;	[ ;iˆo;
+
+;;;["Ä/* $label-font-sizing: emCalc(14px);
+ * $label-font-weight: bold;
+ * $label-font-color: #333;
+ * $label-font-color-alt: #fff; */;@;	[ ;i¯o;
+
+;;;["#/*
+ * Magellan Variables
+ * */;@;	[ ;i˝o;
+
+;;;["/* Basic visual styles */;@;	[ ;io;
+
+;;;[":/* $magellan-bg: #fff;
+ * $magellan-padding: 10px; */;@;	[ ;io;
+
+;;;["/*
+ * Orbit Settings
+ * */;@;	[ ;io;
+
+;;;["/* Caption styles */;@;	[ ;i
+o;
+
+;;;["î/* $orbit-container-bg: #f5f5f5;
+ * $orbit-caption-bg-old: rgb(0,0,0);
+ * $orbit-caption-bg: rgba(0,0,0,0.6);
+ * $orbit-caption-font-color: #fff; */;@;	[ ;io;
+
+;;;[" /* Left/right nav styles */;@;	[ ;io;
+
+;;;["L/* $orbit-nav-bg-old: rgb(0,0,0);
+ * $orbit-nav-bg: rgba(0,0,0,0.6); */;@;	[ ;io;
+
+;;;["/* Timer styles */;@;	[ ;io;
+
+;;;["P/* $orbit-timer-bg-old: rgb(0,0,0);
+ * $orbit-timer-bg: rgba(0,0,0,0.6); */;@;	[ ;io;
+
+;;;["/* Bullet nav styles */;@;	[ ;io;
+
+;;;["R/* $orbit-bullet-nav-color: #999;
+ * $orbit-bullet-nav-color-active: #222; */;@;	[ ;io;
+
+;;;["/* Slide numbers */;@;	[ ;i o;
+
+;;;["Ç/* $orbit-slide-number-bg: rgba(0,0,0,0);
+ * $orbit-slide-number-font-color: #fff;
+ * $orbit-slide-number-padding: emCalc(5px); */;@;	[ ;i"o;
+
+;;;["1/* Graceful Loading Wrapper and preloader */;@;	[ ;i&o;
+
+;;;["R/* $wrapper-class: "slideshow-wrapper";
+ * $preloader-class: "preloader" ; */;@;	[ ;i(o;
+
+;;;["%/*
+ * Pagination Variables
+ * */;@;	[ ;i+o;
+
+;;;["/* Pagination container */;@;	[ ;i/o;
+
+;;;["Q/* $pagination-height: emCalc(24px);
+ * $pagination-margin: emCalc(-5px); */;@;	[ ;i1o;
+
+;;;["/* List-item properties */;@;	[ ;i4o;
+
+;;;["…/* $pagination-li-float: $default-float;
+ * $pagination-li-height: emCalc(24px);
+ * $pagination-li-font-color: #222;
+ * $pagination-li-font-size: emCalc(14px);
+ * $pagination-li-margin: emCalc(5px); */;@;	[ ;i6o;
+
+;;;[""/* Pagination anchor links */;@;	[ ;i<o;
+
+;;;["ò/* $pagination-link-pad: emCalc(1px) emCalc(7px) emCalc(1px);
+ * $pagination-link-font-color: #999;
+ * $pagination-link-active-bg: darken(#fff, 10%); */;@;	[ ;i>o;
+
+;;;[" /* Disabled anchor links */;@;	[ ;iBo;
+
+;;;["´/* $pagination-link-unavailable-cursor: $cursor-default-value;
+ * $pagination-link-unavailable-font-color: #999;
+ * $pagination-link-unavailable-bg-active: transparent; */;@;	[ ;iDo;
+
+;;;["*/* Currently selected anchor links */;@;	[ ;iHo;
+
+;;;["	/* $pagination-link-current-background: $primary-color;
+ * $pagination-link-current-font-color: #fff;
+ * $pagination-link-current-font-weight: bold;
+ * $pagination-link-current-cursor: $cursor-default-value;
+ * $pagination-link-current-active-bg: $primary-color; */;@;	[ ;iJo;
+
+;;;[" /*
+ * Panel Variables
+ * */;@;	[ ;iPo;
+
+;;;["'/* Background and border styles */;@;	[ ;iTo;
+
+;;;["b/* $panel-bg: darken(#fff, 5%);
+ * $panel-border-style: solid;
+ * $panel-border-size: 1px; */;@;	[ ;iVo;
+
+;;;["5/* Control how much we darken things on hover */;@;	[ ;iZo;
+
+;;;["j/* $panel-function-factor: 10%;
+ * $panel-border-color: darken($panel-bg, $panel-function-factor); */;@;	[ ;i\o;
+
+;;;["*/* Inner padding and bottom margin */;@;	[ ;i_o;
+
+;;;["O/* $panel-margin-bottom: emCalc(20px);
+ * $panel-padding: emCalc(20px); */;@;	[ ;iao;
+
+;;;["/* Font colors */;@;	[ ;ido;
+
+;;;["C/* $panel-font-color: #333;
+ * $panel-font-color-alt: #fff; */;@;	[ ;ifo;
+
+;;;["(/*
+ * Pricing Table Variables
+ * */;@;	[ ;iio;
+
+;;;["/* Border color */;@;	[ ;imo;
+
+;;;["//* $price-table-border: solid 1px #ddd; */;@;	[ ;ioo;
+
+;;;["-/* Bottom margin of the pricing table */;@;	[ ;iqo;
+
+;;;["4/* $price-table-margin-bottom: emCalc(20px); */;@;	[ ;iso;
+
+;;;["#/* Control the title styles */;@;	[ ;iuo;
+
+;;;["Œ/* $price-title-bg: #ddd;
+ * $price-title-padding: emCalc(15px) emCalc(20px);
+ * $price-title-align: center;
+ * $price-title-color: #333;
+ * $price-title-weight: bold;
+ * $price-title-size: emCalc(16px); */;@;	[ ;iwo;
+
+;;;["#/* Control the price styles */;@;	[ ;i~o;
+
+;;;["–/* $price-money-bg: #eee;
+ * $price-money-padding: emCalc(15px) emCalc(20px);
+ * $price-money-align: center;
+ * $price-money-color: #333;
+ * $price-money-weight: normal;
+ * $price-money-size: emCalc(20px); */;@;	[ ;iÄo;
+
+;;;["/* Description styles */;@;	[ ;iáo;
+
+;;;["/* $price-bg: #fff;
+ * $price-desc-color: #777;
+ * $price-desc-padding: emCalc(15px);
+ * $price-desc-align: center;
+ * $price-desc-font-size: emCalc(12px);
+ * $price-desc-weight: normal;
+ * $price-desc-line-height: 1.4;
+ * $price-desc-bottom-border: dotted 1px #ddd; */;@;	[ ;iâo;
+
+;;;["/* List item styles */;@;	[ ;iío;
+
+;;;["ÿ/* $price-item-color: #333;
+ * $price-item-padding: emCalc(15px);
+ * $price-item-align: center;
+ * $price-item-font-size: emCalc(14px);
+ * $price-item-weight: normal;
+ * $price-item-bottom-border: dotted 1px #ddd; */;@;	[ ;iîo;
+
+;;;["/* CTA area styles */;@;	[ ;iõo;
+
+;;;["s/* $price-cta-bg: #f5f5f5;
+ * $price-cta-align: center;
+ * $price-cta-padding: emCalc(20px) emCalc(20px) 0; */;@;	[ ;iùo;
+
+;;;["'/*
+ * Progress Bar Variables
+ * */;@;	[ ;i°o;
+
+;;;["/* Progress bar height */;@;	[ ;i•o;
+
+;;;["S/* $progress-bar-height: emCalc(25px);
+ * $progress-bar-color: transparent; */;@;	[ ;ißo;
+
+;;;["/* Border styles */;@;	[ ;i™o;
+
+;;;["≠/* $progress-bar-border-color: darken(#fff, 20%);
+ * $progress-bar-border-size: 1px;
+ * $progress-bar-border-style: solid;
+ * $progress-bar-border-radius: $global-radius; */;@;	[ ;i¨o;
+
+;;;["/* Margin & padding */;@;	[ ;i±o;
+
+;;;["X/* $progress-bar-pad: emCalc(2px);
+ * $progress-bar-margin-bottom: emCalc(10px); */;@;	[ ;i≥o;
+
+;;;["/* Meter colors */;@;	[ ;i∂o;
+
+;;;["¬/* $progress-meter-color: $primary-color;
+ * $progress-meter-secondary-color: $secondary-color;
+ * $progress-meter-success-color: $success-color;
+ * $progress-meter-alert-color: $alert-color; */;@;	[ ;i∏o;
+
+;;;["!/*
+ * Reveal Variables
+ * */;@;	[ ;iΩo;
+
+;;;["/* Reveal overlay. */;@;	[ ;i¡o;
+
+;;;["P/* $reveal-overlay-bg: rgba(#000, .45);
+ * $reveal-overlay-bg-old: #000; */;@;	[ ;i√o;
+
+;;;["/* Modal itself. */;@;	[ ;i∆o;
+
+;;;["≤/* $reveal-modal-bg: #fff;
+ * $reveal-position-top: 50px;
+ * $reveal-default-width: 80%;
+ * $reveal-modal-padding: emCalc(20px);
+ * $reveal-box-shadow: 0 0 10px rgba(#000,.4); */;@;	[ ;i»o;
+
+;;;["/* Reveal close button */;@;	[ ;iŒo;
+
+;;;["±/* $reveal-close-font-size: emCalc(22px);
+ * $reveal-close-top: emCalc(8px);
+ * $reveal-close-side: emCalc(11px);
+ * $reveal-close-color: #aaa;
+ * $reveal-close-weight: bold; */;@;	[ ;i–o;
+
+;;;["/* Modal border */;@;	[ ;i÷o;
+
+;;;["d/* $reveal-border-style: solid;
+ * $reveal-border-width: 1px;
+ * $reveal-border-color: #666; */;@;	[ ;iÿo;
+
+;;;["c/* $reveal-modal-class: "reveal-modal";
+ * $close-reveal-modal-class: "close-reveal-modal"; */;@;	[ ;i‹o;
+
+;;;[""/*
+ * Section Variables
+ * */;@;	[ ;iﬂo;
+
+;;;["#/* Padding and hover factor */;@;	[ ;i„o;
+
+;;;["}/* $section-title-padding: emCalc(15px);
+ * $section-content-padding: emCalc(15px);
+ * $section-function-factor: 10%; */;@;	[ ;iÂo;
+
+;;;["/* Titles */;@;	[ ;iÈo;
+
+;;;["/* $section-title-color: #333;
+ * $section-title-bg: #efefef;
+ * $section-title-bg-active: darken($section-title-bg, $section-function-factor);
+ * $section-title-bg-active-tabs: #fff;
+ * $section-title-bg-hover: darken($section-title-bg, $section-function-factor/2); */;@;	[ ;iÎo;
+
+;;;["/* Border size */;@;	[ ;iÒo;
+
+;;;["f/* $section-border-size: 1px;
+ * $section-border-style: solid;
+ * $section-border-color: #ccc; */;@;	[ ;iÛo;
+
+;;;["/* Font controls */;@;	[ ;i˜o;
+
+;;;[",/* $section-font-size: emCalc(14px); */;@;	[ ;i˘o;
+
+;;;["D/* Control the color of the background and some size options */;@;	[ ;i˚o;
+
+;;;["≤/* $section-content-bg: #fff;
+ * $section-vertical-nav-min-width: emCalc(200px);
+ * $section-vertical-tabs-title-width: emCalc(200px);
+ * $section-bottom-margin: emCalc(20px); */;@;	[ ;i˝o;
+
+;;;["G/* $title-selector: ".title";
+ * $content-selector: ".content"; */;@;	[ ;io;
+
+;;;["#/*
+ * Side Nav Variables
+ * */;@;	[ ;io;
+
+;;;["/* Padding */;@;	[ ;i	o;
+
+;;;["-/* $side-nav-padding: emCalc(14px) 0; */;@;	[ ;io;
+
+;;;["/* List styles */;@;	[ ;io;
+
+;;;["v/* $side-nav-list-type: none;
+ * $side-nav-list-position: inside;
+ * $side-nav-list-margin: 0 0 emCalc(7px) 0; */;@;	[ ;io;
+
+;;;["/* Link styles */;@;	[ ;io;
+
+;;;["•/* $side-nav-link-color: $primary-color;
+ * $side-nav-link-color-active: lighten(#000, 30%);
+ * $side-nav-font-size: emCalc(14px);
+ * $side-nav-font-weight: bold; */;@;	[ ;io;
+
+;;;["/* Border styles */;@;	[ ;io;
+
+;;;["y/* $side-nav-divider-size: 1px;
+ * $side-nav-divider-style: solid;
+ * $side-nav-divider-color: darken(#fff, 10%); */;@;	[ ;io;
+
+;;;[""/*
+ * Sub Nav Variables
+ * */;@;	[ ;i o;
+
+;;;["/* Margin and padding */;@;	[ ;i$o;
+
+;;;["h/* $sub-nav-list-margin: emCalc(-4px) 0 emCalc(18px);
+ * $sub-nav-list-padding-top: emCalc(4px); */;@;	[ ;i&o;
+
+;;;["/* Definition */;@;	[ ;i)o;
+
+;;;["¨/* $sub-nav-font-size: emCalc(14px);
+ * $sub-nav-font-color: #999;
+ * $sub-nav-font-weight: normal;
+ * $sub-nav-text-decoration: none;
+ * $sub-nav-border-radius: 1000px; */;@;	[ ;i+o;
+
+;;;["/* Active item styles */;@;	[ ;i1o;
+
+;;;["÷/* $sub-nav-active-font-weight: bold;
+ * $sub-nav-active-bg: $primary-color;
+ * $sub-nav-active-color: #fff;
+ * $sub-nav-active-padding: emCalc(3px) emCalc(9px);
+ * $sub-nav-active-cursor: $cursor-default-value; */;@;	[ ;i3o;
+
+;;;["!/*
+ * Switch Variables
+ * */;@;	[ ;i9o;
+
+;;;["G/* Border styles and background colors for the switch container */;@;	[ ;i=o;
+
+;;;["Å/* $switch-border-color: darken(#fff, 20%);
+ * $switch-border-style: solid;
+ * $switch-border-width: 1px;
+ * $switch-bg: #fff; */;@;	[ ;i?o;
+
+;;;["1/* Switch heights for our default classes */;@;	[ ;iDo;
+
+;;;["û/* $switch-height-tny: 22px;
+ * $switch-height-sml: 28px;
+ * $switch-height-med: 36px;
+ * $switch-height-lrg: 44px;
+ * $switch-bottom-margin: emCalc(20px); */;@;	[ ;iFo;
+
+;;;["&/* Font sizes for our classes. */;@;	[ ;iLo;
+
+;;;["¶/* $switch-font-size-tny: 11px;
+ * $switch-font-size-sml: 12px;
+ * $switch-font-size-med: 14px;
+ * $switch-font-size-lrg: 17px;
+ * $switch-label-side-padding: 6px; */;@;	[ ;iNo;
+
+;;;["/* Switch-paddle */;@;	[ ;iTo;
+
+;;;["û/* $switch-paddle-bg: #fff;
+ * $switch-paddle-fade-to-color: darken($switch-paddle-bg, 10%);
+ * $switch-paddle-border-color: darken($switch-paddle-bg, 35%);
+ * $switch-paddle-border-width: 1px;
+ * $switch-paddle-border-style: solid;
+ * $switch-paddle-transition-speed: .1s;
+ * $switch-paddle-transition-ease: ease-out;
+ * $switch-positive-color: lighten($success-color, 50%);
+ * $switch-negative-color: #f5f5f5; */;@;	[ ;iVo;
+
+;;;["5/* Outline Style for tabbing through switches */;@;	[ ;i`o;
+
+;;;["2/* $switch-label-outline: 1px dotted #888; */;@;	[ ;ibo;
+
+;;;[" /*
+ * Table Variables
+ * */;@;	[ ;ido;
+
+;;;["7/* Background color for the table and even rows */;@;	[ ;iho;
+
+;;;[";/* $table-bg: #fff;
+ * $table-even-row-bg: #f9f9f9; */;@;	[ ;ijo;
+
+;;;[""/* Table cell border style */;@;	[ ;imo;
+
+;;;["`/* $table-border-style: solid;
+ * $table-border-size: 1px;
+ * $table-border-color: #ddd; */;@;	[ ;ioo;
+
+;;;["/* Table head styles */;@;	[ ;iso;
+
+;;;["»/* $table-head-bg: #f5f5f5;
+ * $table-head-font-size: emCalc(14px);
+ * $table-head-font-color: #222;
+ * $table-head-font-weight: bold;
+ * $table-head-padding: emCalc(8px) emCalc(10px) emCalc(10px); */;@;	[ ;iuo;
+
+;;;["&/* Row padding and font styles */;@;	[ ;i{o;
+
+;;;["ü/* $table-row-padding: emCalc(9px) emCalc(10px);
+ * $table-row-font-size: emCalc(14px);
+ * $table-row-font-color: #222;
+ * $table-line-height: emCalc(18px); */;@;	[ ;i}o;
+
+;;;["'/* Display and margin of tables */;@;	[ ;iÇo;
+
+;;;["M/* $table-display: table-cell;
+ * $table-margin-bottom: emCalc(20px); */;@;	[ ;iÑo;
+
+;;;["*/*
+ * Image Thumbnail Variables
+ * */;@;	[ ;iáo;
+
+;;;["/* Border styles */;@;	[ ;ião;
+
+;;;["Õ/* $thumb-border-style: solid;
+ * $thumb-border-width: 4px;
+ * $thumb-border-color: #fff;
+ * $thumb-box-shadow: 0 0 0 1px rgba(#000,.2);
+ * $thumb-box-shadow-hover: 0 0 6px 1px rgba($primary-color,0.5); */;@;	[ ;iço;
+
+;;;["1/* Radius and transition speed for thumbs */;@;	[ ;iìo;
+
+;;;["L/* $thumb-radius: $global-radius;
+ * $thumb-transition-speed: 200ms; */;@;	[ ;iïo;
+
+;;;[""/*
+ * Tooltip Variables
+ * */;@;	[ ;iòo;
+
+;;;["/* $has-tip-border-bottom: dotted 1px #ccc;
+ * $has-tip-font-weight: bold;
+ * $has-tip-font-color: #333;
+ * $has-tip-border-bottom-hover: dotted 1px darken($primary-color, 20%);
+ * $has-tip-font-color-hover: $primary-color;
+ * $has-tip-cursor-type: help; */;@;	[ ;iúo;
+
+;;;["ò/* $tooltip-padding: emCalc(8px);
+ * $tooltip-bg: #000;
+ * $tooltip-font-size: emCalc(15px);
+ * $tooltip-font-weight: bold;
+ * $tooltip-font-color: #fff;
+ * $tooltip-line-height: 1.3;
+ * $tooltip-close-font-size: emCalc(10px);
+ * $tooltip-close-font-weight: normal;
+ * $tooltip-close-font-color: #888;
+ * $tooltip-font-size-sml: emCalc(14px);
+ * $tooltip-radius: $global-radius;
+ * $tooltip-pip-size: 5px; */;@;	[ ;i£o;
+
+;;;[""/*
+ * Top Bar Variables
+ * */;@;	[ ;i∞o;
+
+;;;["+/* Background color for the top bar */;@;	[ ;i¥o;
+
+;;;["@/* $topbar-bg:                            #111 !default; */;@;	[ ;i∂o;
+
+;;;["/* Height and margin */;@;	[ ;i∏o;
+
+;;;["o/* $topbar-height:                        45px;
+ * $topbar-margin-bottom:                 emCalc(30px); */;@;	[ ;i∫o;
+
+;;;["+/* Control Input height for top bar */;@;	[ ;iΩo;
+
+;;;["9/* $topbar-input-height:                  2.45em; */;@;	[ ;iøo;
+
+;;;[">/* Controlling the styles for the title in the top bar */;@;	[ ;i¡o;
+
+;;;["o/* $topbar-title-weight:                  bold;
+ * $topbar-title-font-size:               emCalc(17px); */;@;	[ ;i√o;
+
+;;;["./* Style the top bar dropdown elements */;@;	[ ;i∆o;
+
+;;;["3/* $topbar-dropdown-bg:                   #222;
+ * $topbar-dropdown-link-color:           #fff;
+ * $topbar-dropdown-link-bg:              lighten($topbar-bg, 5%);
+ * $topbar-dropdown-toggle-size:          5px;
+ * $topbar-dropdown-toggle-color:         #fff;
+ * $topbar-dropdown-toggle-alpha:         0.5; */;@;	[ ;i»o;
+
+;;;[";/* Set the link colors and styles for top-level nav */;@;	[ ;iœo;
+
+;;;["ø/* $topbar-link-color:                    #fff;
+ * $topbar-link-color-hover:              #fff;
+ * $topbar-link-color-active:             #fff;
+ * $topbar-link-weight:                   bold;
+ * $topbar-link-font-size:                emCalc(13px);
+ * $topbar-link-hover-lightness:          -30%; // Darken by 30%
+ * $topbar-link-bg-hover:                 darken($topbar-bg, 3%);
+ * $topbar-link-bg-active:                darken($topbar-bg, 3%); */;@;	[ ;i—o;
+
+;;;["œ/* $topbar-dropdown-label-color:          #555;
+ * $topbar-dropdown-label-text-transform: uppercase;
+ * $topbar-dropdown-label-font-weight:    bold;
+ * $topbar-dropdown-label-font-size:      emCalc(10px); */;@;	[ ;i⁄o;
+
+;;;["/* Top menu icon styles */;@;	[ ;iﬂo;
+
+;;;["_/* $topbar-menu-link-transform:           uppercase;
+ * $topbar-menu-link-font-size:           emCalc(13px);
+ * $topbar-menu-link-weight:              bold;
+ * $topbar-menu-link-color:               #fff;
+ * $topbar-menu-icon-color:               #fff;
+ * $topbar-menu-link-color-toggled:       #888;
+ * $topbar-menu-icon-color-toggled:       #888; */;@;	[ ;i·o;
+
+;;;[",/* Transitions and breakpoint styles */;@;	[ ;iÈo;
+
+;;;["˘/* $topbar-transition-speed:              300ms;
+ * $topbar-breakpoint:                    emCalc(940px); // Change to 9999px for always mobile layout
+ * $topbar-media-query:                   "only screen and (min-width: #{$topbar-breakpoint})"; */;@;	[ ;iÎo;
+
+;;;["/* Divider Styles */;@;	[ ;iÔo;
+
+;;;["ù/* $topbar-divider-border-bottom:         solid 1px lighten($topbar-bg, 10%);
+ * $topbar-divider-border-top:            solid 1px darken($topbar-bg, 10%); */;@;	[ ;iÒo;
+
+;;;["/* Sticky Class */;@;	[ ;iÙo;
+
+;;;["</* $topbar-sticky-class:                  ".sticky"; */;@;	[ ;iˆ;i

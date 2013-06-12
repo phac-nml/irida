@@ -1,26 +1,35 @@
 @import "bourbon/bourbon";
-
-@import "foundation/variables";
+@import "foundation/variables", "foundation/components/global", "foundation/components/block-grid";
 @import "fws/variables";
 @import "fws/mixins";
 @import "fws/buttons";
 @import "fws/accordian";
+@import "fws/cards";
+
+.main.top-bar {
+  border-top-left-radius: 5px;
+  @include linear-gradient($color-hightlight, $color-phac-dark-blue);
+}
+
+.top-bar-section ul li.active > a, .top-bar-section li a:not(.button) {
+  //background-color: transparent;
+  //&:hover {
+  //  background-color: rgba(0,0,0,.2);
+  //}
+}
 
 .top-bar {
-  background-color: rgba(0,0,0,.2);
 }
 
 // ============================================================================
 // FONT AWESOME STUFF
 // ============================================================================
-$fontAwesomePath:   "../font" !default;
+$fontAwesomePath: "../font" !default;
 
 @font-face {
   font-family: 'FontAwesome';
   src: url('#{$fontAwesomePath}/fontawesome-webfont.eot?v=3.1.0');
-  src: url('#{$fontAwesomePath}/fontawesome-webfont.eot?#iefix&v=3.1.0') format("embedded-opentype"),
-  url('#{$fontAwesomePath}/fontawesome-webfont.woff?v=3.1.0') format("woff"),
-  url('#{$fontAwesomePath}/fontawesome-webfont.ttf?v=3.1.0') format("truetype");
+  src: url('#{$fontAwesomePath}/fontawesome-webfont.eot?#iefix&v=3.1.0') format("embedded-opentype"), url('#{$fontAwesomePath}/fontawesome-webfont.woff?v=3.1.0') format("woff"), url('#{$fontAwesomePath}/fontawesome-webfont.ttf?v=3.1.0') format("truetype");
   font-weight: normal;
   font-style: normal;
 }
@@ -52,11 +61,25 @@ $fontAwesomePath:   "../font" !default;
   speak: none;
 }
 
-.icon-chevron-sign-left:before    { content: "\f137"; }
-.icon-chevron-sign-right:before   { content: "\f138"; }
-.icon-chevron-sign-up:before      { content: "\f139"; }
-.icon-chevron-sign-down:before    { content: "\f13a"; }
-.icon-reorder:before              { content: "\f0c9"; }
+.icon-chevron-sign-left:before {
+  content: "\f137";
+}
+
+.icon-chevron-sign-right:before {
+  content: "\f138";
+}
+
+.icon-chevron-sign-up:before {
+  content: "\f139";
+}
+
+.icon-chevron-sign-down:before {
+  content: "\f13a";
+}
+
+.icon-reorder:before {
+  content: "\f0c9";
+}
 
 // ============================================================================
 // GLOBAL AND BOX SETTINGS
@@ -94,24 +117,48 @@ body {
 }
 
 @-moz-keyframes spin {
-  0% { -moz-transform: rotate(0deg); }
-  100% { -moz-transform: rotate(359deg); }
+  0% {
+    -moz-transform: rotate(0deg);
+  }
+  100% {
+    -moz-transform: rotate(359deg);
+  }
 }
+
 @-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(359deg); }
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+  }
 }
+
 @-o-keyframes spin {
-  0% { -o-transform: rotate(0deg); }
-  100% { -o-transform: rotate(359deg); }
+  0% {
+    -o-transform: rotate(0deg);
+  }
+  100% {
+    -o-transform: rotate(359deg);
+  }
 }
+
 @-ms-keyframes spin {
-  0% { -ms-transform: rotate(0deg); }
-  100% { -ms-transform: rotate(359deg); }
+  0% {
+    -ms-transform: rotate(0deg);
+  }
+  100% {
+    -ms-transform: rotate(359deg);
+  }
 }
+
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(359deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(359deg);
+  }
 }
 
 .row {
@@ -156,11 +203,10 @@ body {
   color: $color-body-font;
   font-family: $font;
 
-
-  display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
-  display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
-  display: -ms-flexbox;      /* TWEENER - IE 10 */
-  display: -webkit-flex;     /* NEW - Chrome */
+  display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box; /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox; /* TWEENER - IE 10 */
+  display: -webkit-flex; /* NEW - Chrome */
   display: flex;
 }
 
@@ -171,10 +217,6 @@ body {
   position: relative;
 
   // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
-  //display: -webkit-flex;
-  //display: -moz-flex;
-  //display: -ms-flex;
-  //display: flex;
   height: 100%;
   width: $width-sidebar;
 
@@ -182,7 +224,7 @@ body {
 
   // @includes
   @include box(vertical, start, stretch);
-  @include linear-gradient($color-slate-gray, darken($color-slate-gray, 10));
+  @include linear-gradient($color-hightlight, $color-phac-dark-blue);
 
   a.ngs-button {
     margin-left: 5px;
@@ -196,7 +238,7 @@ body {
 
   h2 {
     margin-left: 1em;
-    @include ngs-light-text ();
+    @include ngs-light-text();
     font-size: 1em;
     font-weight: 600;
   }
@@ -215,6 +257,8 @@ body {
 
     // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
     display: block;
+
+    border-right: 0.3em solid transparent;
     padding: .2em .8em;
 
     // Other (colors, fonts, align)
@@ -223,10 +267,12 @@ body {
     overflow: hidden;
     text-shadow: 0px 1px 0px rgb(0, 0, 0);
     white-space: nowrap;
+    @include transition(all .5s ease-out);
 
     &:hover {
       background-color: rgba(0, 0, 0, .2);
-      border-right: .4em solid $color-hightlight;
+      border-right: 0.7em solid $color-hightlight;
+      @include transition(all .25s ease-in);
     }
   }
 }
@@ -236,7 +282,7 @@ body {
   @include transform(rotate(90deg));
   display: none;
   font-size: 2.3em;
-  @include ngs-light-text ();
+  @include ngs-light-text();
   position: absolute;
   top: 100px;
   left: -29px;
@@ -255,14 +301,13 @@ body {
 
   // Other (colors, fonts, align)
   background-color: $color-white;
-  box-shadow:         -3px 0px 10px rgba(50, 50, 50, 0.75);
   -webkit-border-top-left-radius: 5px;
   -webkit-border-bottom-left-radius: 5px;
   -moz-border-radius-topleft: 5px;
   -moz-border-radius-bottomleft: 5px;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
-  border-left: 1px solid $color-light-gray;
+  border-left: 1px solid $color-slate-gray;
 
   // @includes
   @include box-flex(1);
