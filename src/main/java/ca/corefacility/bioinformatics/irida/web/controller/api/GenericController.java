@@ -451,7 +451,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      */
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.PATCH,
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<String> update(@PathVariable String resourceId, @RequestBody Map<String, Object> representation) {
+    public ModelMap update(@PathVariable String resourceId, @RequestBody Map<String, Object> representation) {
 
         // construct a new instance of an identifier as specified by the client
         IdentifierType identifier = null;
@@ -473,14 +473,16 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
 
         // construct the possibly updated location of the resource using the id
         // of the resource as returned by the service after updating.
-        String location = linkTo(getClass()).slash(id).withSelfRel().getHref();
+
 
         // create a response including the new location.
-        MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
-        responseHeaders.add(HttpHeaders.LOCATION, location);
-
+        ModelMap modelMap = new ModelMap();
+        RootResource rootResource = new RootResource();
+        rootResource.add(linkTo(getClass()).slash(id).withSelfRel());
+        rootResource.add(linkTo(getClass()).withRel(REL_COLLECTION));
+        modelMap.addAttribute(RESOURCE_NAME, rootResource);
         // respond to the client
-        return new ResponseEntity<>("success", responseHeaders, HttpStatus.OK);
+        return modelMap;
     }
 
     /**
