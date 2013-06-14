@@ -91,7 +91,7 @@ public class SampleSequenceFilesControllerTest {
         SequenceFileResource sfr = resources.iterator().next();
         assertNotNull(sfr.getLink(PageLink.REL_SELF));
         assertNotNull(sfr.getLink(GenericController.REL_RELATIONSHIP));
-        assertEquals(sf.getFile().getFileName().toString(), sfr.getFile());
+        assertEquals(sf.getFile().toString(), sfr.getFile());
     }
 
     @Test
@@ -159,7 +159,7 @@ public class SampleSequenceFilesControllerTest {
         assertNotNull(o);
         assertTrue(o instanceof SequenceFileResource);
         SequenceFileResource sfr = (SequenceFileResource) o;
-        assertEquals(sf.getFile().getFileName().toString(), sfr.getFile());
+        assertEquals(sf.getFile().toString(), sfr.getFile());
         List<Link> links = sfr.getLinks();
         Set<String> rels = Sets.newHashSet(PageLink.REL_SELF, SampleSequenceFilesController.REL_PROJECT_SEQUENCE_FILE,
                 GenericController.REL_RELATIONSHIP);

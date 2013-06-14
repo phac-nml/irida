@@ -161,7 +161,7 @@ public class ProjectSequenceFilesControllerTest {
         ResourceCollection<SequenceFileResource> samples = (ResourceCollection<SequenceFileResource>) o;
         assertEquals(1, samples.size());
         SequenceFileResource resource = samples.iterator().next();
-        assertEquals(sf.getFile().getFileName().toString(), resource.getFile());
+        assertEquals(sf.getFile().toString(), resource.getFile());
         List<Link> links = resource.getLinks();
         Set<String> rels = Sets.newHashSet(PageLink.REL_SELF, GenericController.REL_RELATIONSHIP);
         for (Link link : links) {
