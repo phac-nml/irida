@@ -14,7 +14,7 @@
   color: inherit;
   background: transparent;
   border: none;
-  cursor: default;
+  cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -48,4 +48,15 @@
   opacity: 0.3;
   cursor: default;
   pointer-events: none;
+}
+
+.ngs-button__caution {
+  color: $color-white;
+  background-color: $color-red;
+  &:hover {
+    background-color: lighten($color-red, 10);
+  }
+  &:active {
+    background-color: darken($color-red, 10);
+  }
 }

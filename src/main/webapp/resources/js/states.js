@@ -35,6 +35,7 @@
         templateUrl: '/partials/projects.detail.html',
         resolve: {
           data: function ($q, $stateParams, ajaxService) {
+            console.log('Getting project data for: ' + $stateParams.projectId);
             var defer = $q.defer();
             ajaxService.get('/api/projects/' + $stateParams.projectId).then(function (data) {
               defer.resolve(data);
@@ -54,28 +55,25 @@
           };
         }
       })
-      .state('projects.detail.samples', {
-        url: '/samples',
-        templateUrl: '/partials/projects.detail.samples.html',
-        controller: function () {
-          console.log("SAMPLE");
-        }
-      })
-//      .state('projects.details.')
-      .state('projects.detail.users', {
-        url: '/users',
-        templateUrl: '/partials/projects.detail.users.html',
-        controller: function () {
-          console.log("USERS");
-        }
-      })
+//      .state('projects.detail.samples', {
+//        url: '/samples',
+//        templateUrl: '/partials/projects.detail.samples.html',
+//        controller: function () {
+//          console.log("SAMPLE");
+//        }
+//      })
+////      .state('projects.details.')
+//      .state('projects.detail.users', {
+//        url: '/users',
+//        templateUrl: '/partials/projects.detail.users.html',
+//        controller: function () {
+//          console.log("USERS");
+//        }
+//      })
       .state('login', {
         url: '/login',
 
-        templateUrl: '/partials/login.html',
-        controller: function () {
-          console.log("LOGIN");
-        }
+        templateUrl: '/partials/login.html'
       });
   });
 })

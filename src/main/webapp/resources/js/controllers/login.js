@@ -14,7 +14,7 @@
     .controller('LoginCtrl', ['$scope', '$location', 'loginService', function ($scope, $location, loginService) {
       $scope.login = function () {
         loginService.setHeader($scope.username, $scope.password);
-        $location.path('/projects');
+        $location.path('/');
       };
     }]);
 })(angular, NGS);

@@ -8,32 +8,122 @@ $block-grid-media-queries: false;
 
   // Text (font-family, font-size, text-transform, letter-spacing)
 
-  // Other
 
-  @include block-grid(2, $block-grid-default-spacing, true);
+}
 
-  @media only screen and (min-width: 768px) {
-    @include block-grid(4, $block-grid-default-spacing, true);
-  }
-
-  @media only screen and (min-width: 1100px) {
-    @include block-grid(6, $block-grid-default-spacing, true);
-  }
-
-  li {
-    padding: 0.4em;
-  }
+.cardholder__after {
+  clear: both;
 }
 
 .card {
-  padding: 0.2em;
+  // Extends
+
+  // Positioning (position, top, ...)
+  position: relative;
+
+  // Display & Box Model
+  display: inline-block;
+
+  // Color
   background-color: $color-light-gray;
   border: 1px solid $color-slate-gray;
+
+  // Text
+
+  // Other
   cursor: pointer;
+
+  //@media only screen and (min-width: 768px) {
+    $count: 2;
+  // Extends
+
+  // Positioning (position, top, ...)
+    float: left;
+
+  // Display & Box Model
+    height: 3em;
+    margin-right: 10%/$count;
+    margin-top: 10%/$count;
+    width: 90%/$count;
+
+  // Color
+
+  // Text
+
+  // Other
+
+  // Imports
+  //}
+
+  @media only screen and (min-width: 1100px) {
+    $count: 4;
+  // Extends
+
+  // Positioning (position, top, ...)
+    float: left;
+
+  // Display & Box Model
+    height: 3em;
+    margin-right: 10%/$count;
+    margin-top: 10%/$count;
+    width: 90%/$count;
+
+  // Color
+
+  // Text
+
+  // Other
+
+  // Imports
+  }
+
+  @media only screen and (min-width: 1280px) {
+  $count: 6;
+  // Extends
+
+  // Positioning (position, top, ...)
+    float: left;
+
+  // Display & Box Model
+    height: 3em;
+    margin-right: 10%/$count;
+    margin-top: 10%/$count;
+    width: 90%/$count;
+
+  // Color
+
+  // Text
+
+  // Other
+
+  // Imports
+  }
+
+  // Imports
   @include transition(background-color .25s ease-in);
 
   &:hover {
     background-color: $color-card-hover;
     @include transition(background-color .15s ease-in);
   }
+}
+
+.card__date {
+  // Extends
+
+  // Positioning (position, top, ...)
+  position: absolute;
+  right: 5px;
+  top: 2px;
+
+  // Display & Box Model
+
+  // Color
+
+  // Text
+  font-size: .8em;
+
+  // Other
+
+  // Imports
 }

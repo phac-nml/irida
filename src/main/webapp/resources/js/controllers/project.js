@@ -12,11 +12,10 @@
 
       $scope.deleteProject = function () {
         ajaxService.deleteItem($scope.project.links.self).then(function () {
-          // TODO: Show notification and undo of delete
           $rootScope.$broadcast('PROJECT_DELETED', {
             'name': $scope.project.name
           });
-          $location.path('/projects');
+          $location.path('/');
         });
       };
 

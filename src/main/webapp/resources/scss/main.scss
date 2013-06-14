@@ -1,84 +1,27 @@
 @import "bourbon/bourbon";
 @import "foundation/variables", "foundation/components/global", "foundation/components/block-grid";
 @import "fws/variables";
+@import "fws/custom-font-awesome";
 @import "fws/mixins";
 @import "fws/buttons";
 @import "fws/accordian";
+@import "fws/sidebar";
 @import "fws/cards";
+@import "fws/project";
 
 .main.top-bar {
   border-top-left-radius: 5px;
-  @include linear-gradient($color-hightlight, $color-phac-dark-blue);
+  @include linear-gradient(lighten($color-phac-dark-blue, 5), $color-phac-dark-blue);
 }
 
 .top-bar-section ul li.active > a, .top-bar-section li a:not(.button) {
-  //background-color: transparent;
-  //&:hover {
-  //  background-color: rgba(0,0,0,.2);
-  //}
+  @include linear-gradient(lighten($color-phac-dark-blue, 5), $color-phac-dark-blue);
+  &:hover {
+    background-color: rgba(0, 0, 0, .2);
+  }
 }
 
 .top-bar {
-}
-
-// ============================================================================
-// FONT AWESOME STUFF
-// ============================================================================
-$fontAwesomePath: "../font" !default;
-
-@font-face {
-  font-family: 'FontAwesome';
-  src: url('#{$fontAwesomePath}/fontawesome-webfont.eot?v=3.1.0');
-  src: url('#{$fontAwesomePath}/fontawesome-webfont.eot?#iefix&v=3.1.0') format("embedded-opentype"), url('#{$fontAwesomePath}/fontawesome-webfont.woff?v=3.1.0') format("woff"), url('#{$fontAwesomePath}/fontawesome-webfont.ttf?v=3.1.0') format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
-
-[class^="icon-"],
-[class*=" icon-"] {
-  font-family: FontAwesome;
-  font-weight: normal;
-  font-style: normal;
-  text-decoration: inherit;
-  -webkit-font-smoothing: antialiased;
-
-  /* sprites.less reset */
-  display: inline;
-  width: auto;
-  height: auto;
-  line-height: normal;
-  vertical-align: baseline;
-  background-image: none;
-  background-position: 0% 0%;
-  background-repeat: repeat;
-  margin-top: 0;
-}
-
-[class^="icon-"]:before,
-[class*=" icon-"]:before {
-  text-decoration: inherit;
-  display: inline-block;
-  speak: none;
-}
-
-.icon-chevron-sign-left:before {
-  content: "\f137";
-}
-
-.icon-chevron-sign-right:before {
-  content: "\f138";
-}
-
-.icon-chevron-sign-up:before {
-  content: "\f139";
-}
-
-.icon-chevron-sign-down:before {
-  content: "\f13a";
-}
-
-.icon-reorder:before {
-  content: "\f0c9";
 }
 
 // ============================================================================
@@ -182,7 +125,7 @@ body {
   -webkit-align-items: center;
   align-items: center;
 
-  @include linear-gradient($color-slate-gray, darken($color-slate-gray, 10));
+  @include linear-gradient($color-hightlight, $color-phac-dark-blue);
 }
 
 .login__inner {
@@ -208,84 +151,6 @@ body {
   display: -ms-flexbox; /* TWEENER - IE 10 */
   display: -webkit-flex; /* NEW - Chrome */
   display: flex;
-}
-
-.sidebar {
-  // @extends
-
-  // Positioning (z-index, top, etc...)
-  position: relative;
-
-  // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
-  height: 100%;
-  width: $width-sidebar;
-
-  // Other (colors, fonts, align)
-
-  // @includes
-  @include box(vertical, start, stretch);
-  @include linear-gradient($color-hightlight, $color-phac-dark-blue);
-
-  a.ngs-button {
-    margin-left: 5px;
-    margin-top: 6px;
-    background-color: $color-slate-gray;
-    font-size: 1.2em;
-    &:active {
-      background-color: lighten($color-slate-gray, 5);
-    }
-  }
-
-  h2 {
-    margin-left: 1em;
-    @include ngs-light-text();
-    font-size: 1em;
-    font-weight: 600;
-  }
-  @include transition(width .5s ease-in);
-}
-
-.sidebar__body {
-  @include box-flex(1);
-  overflow-x: hidden;
-  overflow-y: auto;
-  //margin-top: 55px;
-
-  // Nested
-  li {
-    // Positioning (z-index, top, etc...)
-
-    // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
-    display: block;
-
-    border-right: 0.3em solid transparent;
-    padding: .2em .8em;
-
-    // Other (colors, fonts, align)
-    color: $color-light-gray;
-    cursor: pointer;
-    overflow: hidden;
-    text-shadow: 0px 1px 0px rgb(0, 0, 0);
-    white-space: nowrap;
-    @include transition(all .5s ease-out);
-
-    &:hover {
-      background-color: rgba(0, 0, 0, .2);
-      border-right: 0.7em solid $color-hightlight;
-      @include transition(all .25s ease-in);
-    }
-  }
-}
-
-.sidebar__rotated {
-  //@include box-flex(1);
-  @include transform(rotate(90deg));
-  display: none;
-  font-size: 2.3em;
-  @include ngs-light-text();
-  position: absolute;
-  top: 100px;
-  left: -29px;
 }
 
 .detailed-content {

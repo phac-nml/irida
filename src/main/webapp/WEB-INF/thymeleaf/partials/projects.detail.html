@@ -1,27 +1,56 @@
 <div data-ng-controller="ProjectCtrl">
-    <div class="large-12 columns">
-        <h3>{{project.name}}</h3>
 
-        <!--<nav class="top-bar">-->
-            <!--<section class="top-bar-section">-->
-                <!--<ul>-->
-                    <!--<li class="active"><a ng-href="/projects/{{project.id}}/samples">Samples</a></li>-->
-                    <!--<li><a ng-href="/projects/{{project.id}}/users">Users</a></li>-->
-                <!--</ul>-->
-            <!--</section>-->
-            <!--<section class="top-bar-section">-->
-                <!--<ul class="right">-->
-                    <!--<li class="has-dropdown"><a href="#"><i class="icon-cog"></i> Project Settings</a>-->
-                        <!--<ul class="dropdown">-->
-                            <!--<li><a data-ng-click="deleteProject()"><i class="icon-trash"></i> Delete Project</a></li>-->
-                        <!--</ul>-->
-                    <!--</li>-->
-                <!--</ul>-->
-            <!--</section>-->
-        <!--</nav>-->
+    <!--<nav class="top-bar">-->
+    <!--<section class="top-bar-section">-->
+    <!--<ul>-->
+    <!--<li class="active"><a ng-href="/projects/{{project.id}}/samples">Samples</a></li>-->
+    <!--<li><a ng-href="/projects/{{project.id}}/users">Users</a></li>-->
+    <!--</ul>-->
+    <!--</section>-->
+    <!--<section class="top-bar-section">-->
+    <!--<ul class="right">-->
+    <!--<li class="has-dropdown"><a href="#"><i class="icon-cog"></i> Project Settings</a>-->
+    <!--<ul class="dropdown">-->
+    <!--<li><a data-ng-click="deleteProject()"><i class="icon-trash"></i> Delete Project</a></li>-->
+    <!--</ul>-->
+    <!--</li>-->
+    <!--</ul>-->
+    <!--</section>-->
+    <!--</nav>-->
 
-        <!-- <div class="row"> -->
-        <div class="large-12 columns" ui-view=""></div>
-        <!-- </div> -->
+    <div class="row">
+        <div class="large-12 columns">
+            <h3 class="project__name">{{project.name}}</h3>
+            <button class="right ngs-button ngs-button__caution" data-ng-click="deleteProject()"><i class="icon-trash"></i> Delete Project</button>
+            <div class="project__samples">
+
+            </div>
+            <div class="section-container tabs" data-section="tabs" ngs-section="">
+                <section>
+                    <p class="title" data-section-title=""><a href="#">Project Samples</a></p>
+
+                    <div class="content" data-section-content="">
+                        <div class="cardholder">
+                            <div class="card" data-ng-repeat="s in project.samples">
+                                {{s.label}}<span class="card__date">{{s.dateCreated | date:'shortDate'}}</span>
+                            </div>
+                        </div>
+                        <div class="cardholder__after"></div>
+                    </div>
+                </section>
+                <section>
+                    <p class="title" data-section-title=""><a href="#">Project Users</a></p>
+
+                    <div class="content" data-section-content="">
+                        <div class="user" data-ng-repeat="u in project.users">
+                            <button class="ngs-button">View</button>
+                            <button class="ngs-button ngs-button__caution">Remove</button>
+                            <em>{{u.label}}</em>
+                            <span>{{u.dateCreated | date:'shortDate'}}</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
     </div>
 </div>

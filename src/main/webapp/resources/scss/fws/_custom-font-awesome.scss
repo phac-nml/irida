@@ -1,0 +1,63 @@
+// ============================================================================
+// FONT AWESOME STUFF
+// ============================================================================
+$fontAwesomePath: "../font" !default;
+
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('#{$fontAwesomePath}/fontawesome-webfont.eot?v=3.1.0');
+  src: url('#{$fontAwesomePath}/fontawesome-webfont.eot?#iefix&v=3.1.0') format("embedded-opentype"), url('#{$fontAwesomePath}/fontawesome-webfont.woff?v=3.1.0') format("woff"), url('#{$fontAwesomePath}/fontawesome-webfont.ttf?v=3.1.0') format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon-"],
+[class*=" icon-"] {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+
+  /* sprites.less reset */
+  display: inline;
+  width: auto;
+  height: auto;
+  line-height: normal;
+  vertical-align: baseline;
+  background-image: none;
+  background-position: 0% 0%;
+  background-repeat: repeat;
+  margin-top: 0;
+}
+
+[class^="icon-"]:before,
+[class*=" icon-"]:before {
+  text-decoration: inherit;
+  display: inline-block;
+  speak: none;
+}
+
+.icon-chevron-sign-left:before {
+  content: "\f137";
+}
+
+.icon-chevron-sign-right:before {
+  content: "\f138";
+}
+
+.icon-chevron-sign-up:before {
+  content: "\f139";
+}
+
+.icon-chevron-sign-down:before {
+  content: "\f13a";
+}
+
+.icon-reorder:before {
+  content: "\f0c9";
+}
+
+.icon-trash:before {
+  content: "\f014";
+}
