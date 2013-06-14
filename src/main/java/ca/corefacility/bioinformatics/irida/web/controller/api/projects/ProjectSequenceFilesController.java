@@ -220,6 +220,27 @@ public class ProjectSequenceFilesController {
      */
     @RequestMapping(value = "/projects/{projectId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.GET)
     public ModelMap getProjectSequenceFile(@PathVariable String projectId, @PathVariable String sequenceFileId) {
-        return sequenceFileController.getResource(sequenceFileId);
+
+        // get the project
+        Project p = projectService.read(new Identifier(projectId));
+
+        // get the sequence file
+        SequenceFile sf = sequenceFileService.getSequenceFileFromProject(p, new Identifier(sequenceFileId));
+
+        ModelMap modelMap = new ModelMap();
+
+        // prepare response for the client
+        SequenceFileResource sfr = new SequenceFileResource();
+        sfr.setResource(sf);
+
+        // construct self link, project link, relationship link.
+        sfr.add(linkTo(SequenceFileController.class).slash(sequenceFileId).withSelfRel());
+        sfr.add(linkTo(ProjectsController.class).slash(projectId).withRel(ProjectsController.REL_PROJECT));
+        sfr.add(linkTo(methodOn(getClass()).removeSequenceFileFromProject(projectId, sequenceFileId))
+                .withRel(GenericController.REL_RELATIONSHIP));
+
+        modelMap.addAttribute(GenericController.RESOURCE_NAME, sfr);
+
+        return modelMap;
     }
 }

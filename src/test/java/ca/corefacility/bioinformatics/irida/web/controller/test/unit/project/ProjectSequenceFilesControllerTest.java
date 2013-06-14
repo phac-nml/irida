@@ -170,6 +170,35 @@ public class ProjectSequenceFilesControllerTest {
         assertTrue(rels.isEmpty());
     }
 
+    @Test
+    public void testGetSequenceFileForProject() throws IOException {
+        Project p = constructProject();
+        SequenceFile sf = constructSequenceFile();
+        String sequenceFileId = sf.getIdentifier().getIdentifier();
+        String projectId = p.getIdentifier().getIdentifier();
+
+        // first we're going to load the project
+        when(projectService.read(p.getIdentifier())).thenReturn(p);
+        // then we're going to ask for the sequence file from the sequence file controller
+        when(sequenceFileService.getSequenceFileFromProject(p, sf.getIdentifier())).thenReturn(sf);
+
+        ModelMap modelMap = controller.getProjectSequenceFile(projectId, sequenceFileId);
+
+        verify(projectService).read(p.getIdentifier());
+        verify(sequenceFileService).getSequenceFileFromProject(p, sf.getIdentifier());
+
+        // the sequence file should contain links to itself, the relationship between the project and the sequence file,
+        // and a reference to the project.
+        SequenceFileResource r = (SequenceFileResource) modelMap.get(GenericController.RESOURCE_NAME);
+        Link self = r.getLink(PageLink.REL_SELF);
+        Link relationship = r.getLink(GenericController.REL_RELATIONSHIP);
+        Link project = r.getLink(ProjectsController.REL_PROJECT);
+
+        assertEquals("http://localhost/sequenceFiles/" + sequenceFileId, self.getHref());
+        assertEquals("http://localhost/projects/" + projectId + "/sequenceFiles/" + sequenceFileId, relationship.getHref());
+        assertEquals("http://localhost/projects/" + projectId, project.getHref());
+    }
+
     /**
      * Construct a simple {@link Project}.
      *

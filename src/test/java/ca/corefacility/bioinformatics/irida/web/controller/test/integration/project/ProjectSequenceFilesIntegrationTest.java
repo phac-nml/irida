@@ -60,7 +60,7 @@ public class ProjectSequenceFilesIntegrationTest {
     @Test
     public void testRemoveSequenceFileFromProject() throws IOException {
         // add the sequence file, then remove it
-        Path sequenceFile = Files.createTempFile("null", "null");
+        Path sequenceFile = Files.createTempFile(null, null);
         Files.write(sequenceFile, ">test read\nACTGTAGCTAGTCGAGC".getBytes());
 
         // submit the file
@@ -74,5 +74,22 @@ public class ProjectSequenceFilesIntegrationTest {
 
         expect().body("resource.links.rel", hasItems("project", "project/sequenceFiles")).and()
                 .statusCode(HttpStatus.OK.value()).when().delete(link);
+        Files.delete(sequenceFile);
+    }
+
+    @Test
+    public void testGetSequenceFileForProject() throws IOException {
+        Path sequenceFile = Files.createTempFile(null, null);
+        Files.write(sequenceFile, ">test read\nACTACGHATYGCTAGC".getBytes());
+
+        // submit the file
+        Response r = given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE).multiPart("file", sequenceFile.toFile())
+                .expect().statusCode(HttpStatus.CREATED.value()).when().post(PROJECT_URI + "/sequenceFiles");
+        String location = r.getHeader(HttpHeaders.LINK);
+        location = location.substring(1, location.indexOf('>', 1));
+
+        expect().body("resource.links.rel", hasItems("self", "project", "relationship")).when().get(location);
+
+        Files.delete(sequenceFile);
     }
 }
