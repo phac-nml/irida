@@ -15,9 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
@@ -40,13 +38,10 @@ import org.springframework.hateoas.EntityLinks;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.validation.*;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -177,8 +172,10 @@ public class GenericControllerTest {
     @Test
     public void testUpdate() throws InstantiationException, IllegalAccessException {
         when(crudService.update(id, updatedFields)).thenReturn(entity);
-        ResponseEntity<String> response = controller.update(id.getIdentifier(), updatedFields);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        ModelMap response = controller.update(id.getIdentifier(), updatedFields);
+        RootResource r = (RootResource) response.get(GenericController.RESOURCE_NAME);
+        assertNotNull(r.getLink(PageLink.REL_SELF));
+        assertNotNull(r.getLink(GenericController.REL_COLLECTION));
     }
 
     @Test

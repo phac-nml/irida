@@ -55,11 +55,8 @@ public class TotalIntegrationTest {
         // get the location of the individual sample
         String sampleLocation = r.getHeader(HttpHeaders.LOCATION);
 
-        System.out.println("SAMPLE LOCATION HERE ----------->" + sampleLocation + "<--------------------------");
-
         // now get the sample
         String sampleJson = get(sampleLocation).asString();
-        System.out.println("SAMPLE JSON HERE ----------->" + sampleJson + "<--------------------------");
         String sampleSequenceFilesLocation = from(sampleJson).getString("resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
 
         // add a new sequence file to the sample
