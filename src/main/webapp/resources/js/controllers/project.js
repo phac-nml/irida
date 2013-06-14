@@ -10,6 +10,15 @@
     function ($scope, $rootScope, ajaxService, $location, $timeout) {
       $scope.samples = {};
 
+      $scope.list1 = {
+        title: 'AngularJS - Drag Me'
+      };
+      $scope.list2 = [];
+      
+      $scope.addFileToSample = function () {
+        console.log('HELP');
+      };
+
       $scope.deleteProject = function () {
         ajaxService.deleteItem($scope.project.links.self).then(function () {
           $rootScope.$broadcast('PROJECT_DELETED', {
@@ -18,7 +27,6 @@
           $location.path('/');
         });
       };
-
     }
   ]);
 })(angular, NGS);

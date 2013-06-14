@@ -9,7 +9,8 @@ var NGS = angular.module('NGS', [
   'http-auth-interceptor',
   'ngResource',
   'ui.state',
-  'ngs-section'
+  'ngs-section',
+  'ngDragDrop'
 ]);
 
 /**

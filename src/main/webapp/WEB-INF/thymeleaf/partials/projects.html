@@ -1,31 +1,28 @@
-<div class="main-content" data-ng-controller="ProjectsListCtrl">
-    <div class="sidebar">
-
-        <span class="sidebar__button">
-            <a class="ngs-button" data-ng-click="toggleProjectList($event)"><i class="icon-reorder"></i></a>
-        </span>
-
-        <div class="sidebar__body">
-            <h2>Projects</h2>
-            <ul>
-                <li data-ng-repeat="p in projects" data-ng-click="gotoProject(p.links[0].href)">{{p.name}}</li>
+<div>
+    <nav class="main top-bar">
+        <ul class="title-area">
+            <li class="name"><h1><a href="/projects">NGS Archive</a></h1></li>
+            <li class="toggle-topbar menu-icon"><a href="#" ng-click="toggleDD()"><span>Menu</span></a></li>
+        </ul>
+        <section class="top-bar-section">
+            <ul class="right">
+                <li><a ng-click="logout()" href="#">Logout</a></li>
             </ul>
-        </div>
-        <div class="sidebar__rotated">Projects</div>
-    </div>
-
-    <div class="detailed-content">
-        <nav class="main top-bar">
-            <ul class="title-area">
-                <li class="name"><h1><a href="/projects">NGS Archive</a></h1></li>
-                <li class="toggle-topbar menu-icon"><a href="#" ng-click="toggleDD()"><span>Menu</span></a></li>
-            </ul>
-            <section class="top-bar-section">
-                <ul class="right">
-                    <li><a ng-click="logout()" href="#">Logout</a></li>
+        </section>
+    </nav>
+    <div class="main-content flex-container" data-ng-controller="ProjectsListCtrl">
+        <div class="sidebar flex-item">
+            <div class="sidebar__body">
+                <h2>Projects
+                    <button class="ngs-button ngs-button__sidebar" data-ng-click="createProject()"><i class="icon-plus"></i></button>
+                </h2>
+                <ul>
+                    <li data-ng-repeat="p in projects" data-ng-click="gotoProject(p.links[0].href)">{{p.name}}</li>
                 </ul>
-            </section>
-        </nav>
-        <div ui-view=""></div>
+            </div>
+        </div>
+
+        <div class="detailed-content flex-item" ui-view="">
+        </div>
     </div>
 </div>

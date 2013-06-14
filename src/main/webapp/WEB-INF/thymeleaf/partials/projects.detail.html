@@ -1,47 +1,36 @@
 <div data-ng-controller="ProjectCtrl">
-
-    <!--<nav class="top-bar">-->
-    <!--<section class="top-bar-section">-->
-    <!--<ul>-->
-    <!--<li class="active"><a ng-href="/projects/{{project.id}}/samples">Samples</a></li>-->
-    <!--<li><a ng-href="/projects/{{project.id}}/users">Users</a></li>-->
-    <!--</ul>-->
-    <!--</section>-->
-    <!--<section class="top-bar-section">-->
-    <!--<ul class="right">-->
-    <!--<li class="has-dropdown"><a href="#"><i class="icon-cog"></i> Project Settings</a>-->
-    <!--<ul class="dropdown">-->
-    <!--<li><a data-ng-click="deleteProject()"><i class="icon-trash"></i> Delete Project</a></li>-->
-    <!--</ul>-->
-    <!--</li>-->
-    <!--</ul>-->
-    <!--</section>-->
-    <!--</nav>-->
-
     <div class="row">
         <div class="large-12 columns">
             <h3 class="project__name">{{project.name}}</h3>
-            <button class="right ngs-button ngs-button__caution" data-ng-click="deleteProject()"><i class="icon-trash"></i> Delete Project</button>
-            <div class="project__samples">
-
+            <button class="right ngs-button ngs-button__caution" data-ng-click="deleteProject()"><i
+                    class="icon-trash"></i> Delete Project
+            </button>
+            <div class="row project__samples">
+                <div class="ngs-button" data-ng-repeat="s in project.sequenceFiles" data-drag="true"
+                     data-jqyoui-options="{revert: 'invalid'}" ng-model="project.sequenceFiles"
+                     jqyoui-draggable="{index: {{$index}},animate:true}">
+                    <i class="icon-file-alt"></i> {{s.label}}
+                </div>
             </div>
             <div class="section-container tabs" data-section="tabs" ngs-section="">
                 <section>
                     <p class="title" data-section-title=""><a href="#">Project Samples</a></p>
 
-                    <div class="content" data-section-content="">
+                    <div class="content" data-slug="section1">
                         <div class="cardholder">
-                            <div class="card" data-ng-repeat="s in project.samples">
+                            <div class="card" data-ng-repeat="s in project.samples"  data-drop="true" data-jqyoui-options=""
+                                 ng-model="list2" jqyoui-droppable="{multiple:true, onDrop: 'addFileToSample'}">
                                 {{s.label}}<span class="card__date">{{s.dateCreated | date:'shortDate'}}</span>
                             </div>
                         </div>
+
                         <div class="cardholder__after"></div>
                     </div>
                 </section>
                 <section>
                     <p class="title" data-section-title=""><a href="#">Project Users</a></p>
 
-                    <div class="content" data-section-content="">
+                    <div class="content" data-slug="section2">
                         <div class="user" data-ng-repeat="u in project.users">
                             <button class="ngs-button">View</button>
                             <button class="ngs-button ngs-button__caution">Remove</button>
@@ -53,4 +42,13 @@
             </div>
         </div>
     </div>
+    <h2>{{list2}}</h2>
+
+    <!--<div class="ngs-button" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" ng-model="list1"-->
+         <!--jqyoui-draggable="{animate:true}" ng-hide="!list1.title">{{list1.title}}-->
+    <!--</div>-->
+    <!--<div style="height: 100px; width: 100px; background-color: orange;" data-drop="true" data-jqyoui-options=""-->
+         <!--ng-model="list2" jqyoui-droppable="{multiple:true, onDrop: 'addFileToSample'}">-->
+
+    <!--</div>-->
 </div>
