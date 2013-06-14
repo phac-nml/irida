@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.integration.pro
 
 import com.google.common.net.HttpHeaders;
 import com.jayway.restassured.response.Response;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,6 +14,7 @@ import java.nio.file.Path;
 import static com.jayway.restassured.RestAssured.*;
 import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.CoreMatchers.hasItems;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -89,6 +91,26 @@ public class ProjectSequenceFilesIntegrationTest {
         location = location.substring(1, location.indexOf('>', 1));
 
         expect().body("resource.links.rel", hasItems("self", "project", "relationship")).when().get(location);
+
+        Files.delete(sequenceFile);
+    }
+
+    @Test
+    public void testGetSequenceFileContentForProject() throws IOException {
+        // add the sequence file, then remove it
+        Path sequenceFile = Files.createTempFile(null, null);
+        Files.write(sequenceFile, ">test read\nACTGTAGCTAGTCGAGC".getBytes());
+
+        // submit the file
+        Response r = given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE).multiPart("file", sequenceFile.toFile())
+                .expect().statusCode(HttpStatus.CREATED.value()).when().post(PROJECT_URI + "/sequenceFiles");
+        String location = r.getHeader(HttpHeaders.LINK);
+        location = location.substring(1, location.indexOf('>', 1));
+
+        r = given().header(HttpHeaders.ACCEPT, "application/fastq").get(location);
+        byte[] fileContents = Files.readAllBytes(sequenceFile);
+
+        assertArrayEquals(fileContents, r.getBody().asByteArray());
 
         Files.delete(sequenceFile);
     }
