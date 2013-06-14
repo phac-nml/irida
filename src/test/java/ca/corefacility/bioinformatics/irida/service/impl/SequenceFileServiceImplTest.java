@@ -22,8 +22,10 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.RelationshipRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -169,6 +171,32 @@ public class SequenceFileServiceImplTest {
         assertNotNull(created);
         assertEquals(owner, created.getSubject());
         assertEquals(sf.getIdentifier(), created.getObject());
+
+        Files.delete(file);
+    }
+
+    @Test
+    public void testGetSequenceFileFromProject() throws IOException {
+        Path file = Files.createTempFile(null, null);
+        SequenceFile sf = new SequenceFile(file);
+        sf.setIdentifier(new Identifier());
+        Project p = new Project();
+        p.setIdentifier(new Identifier());
+        Relationship r = new Relationship(p.getIdentifier(), sf.getIdentifier());
+
+        when(crudRepository.read(sf.getIdentifier())).thenReturn(sf);
+        when(crudRepository.exists(sf.getIdentifier())).thenReturn(true);
+        when(relationshipRepository.getLinks(p.getIdentifier(), RdfPredicate.ANY, sf.getIdentifier()))
+                .thenReturn(Lists.newArrayList(r));
+
+        SequenceFile read = sequenceFileService.getSequenceFileFromProject(p, sf.getIdentifier());
+
+        verify(crudRepository).exists(sf.getIdentifier());
+        verify(crudRepository).read(sf.getIdentifier());
+        verify(relationshipRepository).getLinks(p.getIdentifier(), RdfPredicate.ANY, sf.getIdentifier());
+
+        assertNotNull(read);
+        assertEquals(read, sf);
 
         Files.delete(file);
     }
