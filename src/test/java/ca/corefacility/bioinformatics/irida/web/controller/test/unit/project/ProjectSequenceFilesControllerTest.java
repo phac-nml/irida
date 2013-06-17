@@ -14,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController
 import ca.corefacility.bioinformatics.irida.web.controller.api.SequenceFileController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
-import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
+import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageLink;
 import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
 import org.junit.Before;
@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.FileCopyUtils;
@@ -160,7 +161,7 @@ public class ProjectSequenceFilesControllerTest {
         ResourceCollection<SequenceFileResource> samples = (ResourceCollection<SequenceFileResource>) o;
         assertEquals(1, samples.size());
         SequenceFileResource resource = samples.iterator().next();
-        assertEquals(sf.getFile().getFileName().toString(), resource.getFile());
+        assertEquals(sf.getFile().toString(), resource.getFile());
         List<Link> links = resource.getLinks();
         Set<String> rels = Sets.newHashSet(PageLink.REL_SELF, GenericController.REL_RELATIONSHIP);
         for (Link link : links) {
@@ -168,6 +169,59 @@ public class ProjectSequenceFilesControllerTest {
             assertNotNull(rels.remove(link.getRel()));
         }
         assertTrue(rels.isEmpty());
+    }
+
+    @Test
+    public void testGetSequenceFileForProject() throws IOException {
+        Project p = constructProject();
+        SequenceFile sf = constructSequenceFile();
+        String sequenceFileId = sf.getIdentifier().getIdentifier();
+        String projectId = p.getIdentifier().getIdentifier();
+
+        // first we're going to load the project
+        when(projectService.read(p.getIdentifier())).thenReturn(p);
+        // then we're going to ask for the sequence file from the sequence file controller
+        when(sequenceFileService.getSequenceFileFromProject(p, sf.getIdentifier())).thenReturn(sf);
+
+        ModelMap modelMap = controller.getProjectSequenceFile(projectId, sequenceFileId);
+
+        verify(projectService).read(p.getIdentifier());
+        verify(sequenceFileService).getSequenceFileFromProject(p, sf.getIdentifier());
+
+        // the sequence file should contain links to itself, the relationship between the project and the sequence file,
+        // and a reference to the project.
+        SequenceFileResource r = (SequenceFileResource) modelMap.get(GenericController.RESOURCE_NAME);
+        Link self = r.getLink(PageLink.REL_SELF);
+        Link relationship = r.getLink(GenericController.REL_RELATIONSHIP);
+        Link project = r.getLink(ProjectsController.REL_PROJECT);
+
+        assertEquals("http://localhost/sequenceFiles/" + sequenceFileId, self.getHref());
+        assertEquals("http://localhost/projects/" + projectId + "/sequenceFiles/" + sequenceFileId, relationship.getHref());
+        assertEquals("http://localhost/projects/" + projectId, project.getHref());
+    }
+
+    @Test
+    public void testGetSequenceFileContents() throws IOException {
+        Project p = constructProject();
+        SequenceFile sf = constructSequenceFile();
+        String sequenceFileId = sf.getIdentifier().getIdentifier();
+        String projectId = p.getIdentifier().getIdentifier();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        // first we're going to load the project
+        when(projectService.read(p.getIdentifier())).thenReturn(p);
+        // then we're going to ask for the sequence file from the sequence file controller
+        when(sequenceFileService.getSequenceFileFromProject(p, sf.getIdentifier())).thenReturn(sf);
+
+        controller.getProjectSequenceFileContents(projectId, sequenceFileId, response);
+
+        verify(projectService).read(p.getIdentifier());
+        verify(sequenceFileService).getSequenceFileFromProject(p, sf.getIdentifier());
+
+        byte[] fileContents = Files.readAllBytes(sf.getFile());
+        assertArrayEquals(fileContents, response.getContentAsByteArray());
+        assertEquals(fileContents.length, response.getContentLength());
+        assertEquals("application/fastq", response.getContentType());
     }
 
     /**
@@ -193,6 +247,7 @@ public class ProjectSequenceFilesControllerTest {
         String sequenceFileId = UUID.randomUUID().toString();
         Identifier sequenceFileIdentifier = new Identifier();
         Path f = Files.createTempFile(null, null);
+        Files.write(f, "This is some pretty unique content.".getBytes());
         sequenceFileIdentifier.setIdentifier(sequenceFileId);
         SequenceFile sf = new SequenceFile();
         sf.setIdentifier(sequenceFileIdentifier);

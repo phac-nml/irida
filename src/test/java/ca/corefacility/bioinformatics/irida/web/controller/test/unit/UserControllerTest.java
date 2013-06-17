@@ -24,10 +24,11 @@ import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.UsersController;
-import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+
+import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageLink;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

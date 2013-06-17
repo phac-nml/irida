@@ -43,21 +43,9 @@ public class PartialsController {
      * @param pageName the name of the page fragment to send back to the client.
      * @return a reference to the page fragment.
      */
-    @RequestMapping(value = "/{pageName}", method = RequestMethod.GET)
+    @RequestMapping(value = {"/{pageName}", "/{pageName}/*"}, method = RequestMethod.GET)
     public String getPage(@PathVariable String pageName) {
         logger.debug(pageName);
         return "partials/" + pageName;
-    }
-
-    /**
-     * Send a single page fragment back to the client.
-     *
-     * @param singlePage the name of the page fragment to send back to the client.
-     * @return a reference to the page fragment.
-     */
-    @RequestMapping(value = "/{singlePage}/*", method = RequestMethod.GET)
-    public String getUserPartial(@PathVariable String singlePage) {
-        logger.debug(singlePage);
-        return "partials/" + singlePage;
     }
 }

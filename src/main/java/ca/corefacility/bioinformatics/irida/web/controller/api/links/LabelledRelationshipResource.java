@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.web.controller.links;
+package ca.corefacility.bioinformatics.irida.web.controller.api.links;
 
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;

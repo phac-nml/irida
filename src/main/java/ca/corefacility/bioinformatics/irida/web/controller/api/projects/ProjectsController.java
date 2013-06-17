@@ -28,7 +28,9 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.UsersController;
-import ca.corefacility.bioinformatics.irida.web.controller.links.LabelledRelationshipResource;
+import ca.corefacility.bioinformatics.irida.web.controller.api.links.LabelledRelationshipResource;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SamplesController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Link;
@@ -179,8 +181,13 @@ public class ProjectsController extends GenericController<Identifier, Project, P
         for (Relationship r : relationships) {
             Identifier sampleIdentifier = r.getObject();
             LabelledRelationshipResource resource = new LabelledRelationshipResource(sampleIdentifier.getLabel(), r);
+            // add a link to get the specific sample from the project
             resource.add(linkTo(methodOn(ProjectSamplesController.class)
                     .getProjectSample(projectId, sampleIdentifier.getIdentifier())).withSelfRel());
+            // add a link to add sequence files to the sample
+            resource.add(linkTo(methodOn(SampleSequenceFilesController.class)
+                    .getSampleSequenceFiles(projectId, sampleIdentifier.getIdentifier()))
+                    .withRel(SamplesController.REL_SEQUENCE_FILES));
             sampleResources.add(resource);
         }
         sampleResources.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSamples(projectId))
@@ -191,7 +198,7 @@ public class ProjectsController extends GenericController<Identifier, Project, P
     }
 
     /**
-     * Get the users for this project as a collection of {@link ca.corefacility.bioinformatics.irida.web.controller.links.LabelledRelationshipResource}.
+     * Get the users for this project as a collection of {@link ca.corefacility.bioinformatics.irida.web.controller.api.links.LabelledRelationshipResource}.
      *
      * @param project the project to get the users for.
      * @return labels and identifiers for the users attached to the project.

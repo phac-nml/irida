@@ -31,7 +31,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -85,14 +87,13 @@ public class ProjectSequenceFilesController {
     }
 
     /**
-     * Create a new {@link ca.corefacility.bioinformatics.irida.model.SequenceFile} resource and add a relationship
-     * between the {@link ca.corefacility.bioinformatics.irida.model.SequenceFile} and the
-     * {@link ca.corefacility.bioinformatics.irida.model.Project}.
+     * Create a new {@link SequenceFile} resource and add a {@link Relationship} between the {@link SequenceFile} and
+     * the {@link Project}.
      *
-     * @param projectId the identifier of the project to add the sequence file to.
-     * @param file      the file to add to the project.
+     * @param projectId the {@link Identifier} of the {@link Project} to add the {@link SequenceFile} to.
+     * @param file      the file to add to the {@link Project}.
      * @return a response entity indicating the success of the addition.
-     * @throws java.io.IOException if the sample file cannot be saved.
+     * @throws java.io.IOException if the {@link SequenceFile} cannot be saved.
      */
     @RequestMapping(value = "/projects/{projectId}/sequenceFiles", consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             method = RequestMethod.POST)
@@ -144,8 +145,8 @@ public class ProjectSequenceFilesController {
     /**
      * Remove a {@link SequenceFile} from the collection of {@link SequenceFile}s associated with a {@link Project}.
      *
-     * @param projectId      the {@link Project} identifier.
-     * @param sequenceFileId the {@link SequenceFile} identifier.
+     * @param projectId      the {@link Project} {@link Identifier}.
+     * @param sequenceFileId the {@link SequenceFile} {@link Identifier}.
      * @return a set of links back to the {@link SequenceFile} collection and the individual {@link Project}.
      */
     @RequestMapping(value = "/projects/{projectId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.DELETE)
@@ -181,7 +182,7 @@ public class ProjectSequenceFilesController {
     /**
      * Get the list of {@link SequenceFile}s associated with a {@link Project}.
      *
-     * @param projectId the identifier for the {@link Project}.
+     * @param projectId the {@link Identifier} for the {@link Project}.
      * @return a representation of all {@link SequenceFile}s associated with the {@link Project}.
      */
     @RequestMapping(value = "/projects/{projectId}/sequenceFiles", method = RequestMethod.GET)
@@ -212,14 +213,68 @@ public class ProjectSequenceFilesController {
     }
 
     /**
-     * Get the representation of a sequence file that's associated with a project.
+     * Get the representation of a {@link SequenceFile} that's associated with a {@link Project}.
      *
-     * @param projectId      the project that the sequence file belongs to.
-     * @param sequenceFileId the identifier of the sequence file.
-     * @return a representation of the sequence file.
+     * @param projectId      the {@link Project} that the {@link SequenceFile} belongs to.
+     * @param sequenceFileId the {@link Identifier} of the {@link SequenceFile}.
+     * @return a representation of the {@link SequenceFile}.
      */
     @RequestMapping(value = "/projects/{projectId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.GET)
     public ModelMap getProjectSequenceFile(@PathVariable String projectId, @PathVariable String sequenceFileId) {
-        return sequenceFileController.getResource(sequenceFileId);
+        SequenceFile sf = getSequenceFileForProject(projectId, sequenceFileId);
+
+        ModelMap modelMap = new ModelMap();
+
+        // prepare response for the client
+        SequenceFileResource sfr = new SequenceFileResource();
+        sfr.setResource(sf);
+
+        // construct self link, project link, relationship link.
+        sfr.add(linkTo(SequenceFileController.class).slash(sequenceFileId).withSelfRel());
+        sfr.add(linkTo(ProjectsController.class).slash(projectId).withRel(ProjectsController.REL_PROJECT));
+        sfr.add(linkTo(methodOn(getClass()).removeSequenceFileFromProject(projectId, sequenceFileId))
+                .withRel(GenericController.REL_RELATIONSHIP));
+
+        modelMap.addAttribute(GenericController.RESOURCE_NAME, sfr);
+
+        return modelMap;
+    }
+
+    /**
+     * Get the actual fastq contents of the {@link SequenceFile} that's associated with a {@link Project}.
+     *
+     * @param projectId      the {@link Identifier} of the {@link Project}.
+     * @param sequenceFileId the {@link Identifier} of the {@link SequenceFile}.
+     * @param response       the {@link HttpServletResponse} used to write the response to.
+     */
+    @RequestMapping(value = "/projects/{projectId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.GET,
+            produces = {"application/fastq", "application/fasta"})
+    public void getProjectSequenceFileContents(@PathVariable String projectId, @PathVariable String sequenceFileId,
+                                               HttpServletResponse response) throws IOException {
+        SequenceFile sf = getSequenceFileForProject(projectId, sequenceFileId);
+        Path fileContent = sf.getFile();
+        response.setHeader(HttpHeaders.CONTENT_TYPE, "application/fastq");
+        response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(Files.size(fileContent)));
+        OutputStream os = response.getOutputStream();
+        Files.copy(fileContent, os);
+        os.flush();
+        os.close();
+    }
+
+    /**
+     * Get the specified {@link SequenceFile} from the supplied {@link Project}.
+     *
+     * @param projectId      the {@link Identifier} of the {@link Project}.
+     * @param sequenceFileId the {@link Identifier} of the {@link SequenceFile}.
+     * @return the {@link SequenceFile}.
+     */
+    private SequenceFile getSequenceFileForProject(String projectId, String sequenceFileId) {
+        // get the project
+        Project p = projectService.read(new Identifier(projectId));
+
+        // get the sequence file
+        SequenceFile sf = sequenceFileService.getSequenceFileFromProject(p, new Identifier(sequenceFileId));
+
+        return sf;
     }
 }

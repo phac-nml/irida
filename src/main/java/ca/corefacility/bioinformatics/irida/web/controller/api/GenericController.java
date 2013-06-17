@@ -15,9 +15,6 @@
  */
 package ca.corefacility.bioinformatics.irida.web.controller.api;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
@@ -29,15 +26,12 @@ import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
-import ca.corefacility.bioinformatics.irida.web.controller.exceptions.GenericsException;
-import ca.corefacility.bioinformatics.irida.web.controller.links.LabelledRelationshipResource;
-import ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder;
-import ca.corefacility.bioinformatics.irida.web.controller.support.SortProperty;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+import ca.corefacility.bioinformatics.irida.web.controller.api.exception.GenericsException;
+import ca.corefacility.bioinformatics.irida.web.controller.api.links.LabelledRelationshipResource;
+import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageableControllerLinkBuilder;
+import ca.corefacility.bioinformatics.irida.web.controller.api.support.SortProperty;
 import com.google.common.base.Strings;
 import com.google.common.net.HttpHeaders;
-import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,18 +41,15 @@ import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import java.util.*;
 
-import static ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder.pageLinksFor;
+import static ca.corefacility.bioinformatics.irida.web.controller.api.links.PageableControllerLinkBuilder.pageLinksFor;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 /**

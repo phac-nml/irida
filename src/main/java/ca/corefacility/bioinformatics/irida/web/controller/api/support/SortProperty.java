@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ca.corefacility.bioinformatics.irida.web.controller.support;
+package ca.corefacility.bioinformatics.irida.web.controller.api.support;
 
 import java.util.Objects;
 
