@@ -615,6 +615,19 @@ select {
 .project__name {
   display: inline-block; }
 
+.project__samples {
+  margin-left: 1em; }
+
+.project__sample {
+  display: inline-block;
+  margin: 0 1em 0.4em 0.4em;
+  border: 1px solid #133b54;
+  padding: 0.4em; }
+  .project__sample span {
+    float: right; }
+  .project__sample i {
+    font-size: 3em; }
+
 .main.top-bar, .top-bar-section ul li.active > a, .top-bar-section li a:not(.button) {
   background-color: #184a69;
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #184a69), color-stop(100%, #133b54));

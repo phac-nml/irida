@@ -6,10 +6,10 @@
                     class="icon-trash"></i> Delete Project
             </button>
             <div class="row project__samples">
-                <div class="ngs-button" data-ng-repeat="s in project.sequenceFiles" data-drag="true"
+                <div class="project__sample" data-ng-repeat="s in project.sequenceFiles" data-drag="true"
                      data-jqyoui-options="{revert: 'invalid'}" ng-model="project.sequenceFiles"
                      jqyoui-draggable="{index: {{$index}},animate:true}">
-                    <i class="icon-file-alt"></i> {{s.label}}
+                    <i class="icon-file-alt"></i><span>{{s.label}}</span>
                 </div>
             </div>
             <div class="section-container tabs" data-section="tabs" ngs-section="">
@@ -19,7 +19,7 @@
                     <div class="content" data-slug="section1">
                         <div class="cardholder">
                             <div class="card" data-ng-repeat="s in project.samples"  data-drop="true" data-jqyoui-options=""
-                                 ng-model="list2" jqyoui-droppable="{multiple:true, onDrop: 'addFileToSample(\'{{s.links.self}}\')'}">
+                                 ng-model="list2" jqyoui-droppable="{multiple:true, onDrop: 'addFileToSample(\'{{s.links['sample/sequenceFiles']}}\')'}">
                                 {{s.label}}<span class="card__date">{{s.dateCreated | date:'shortDate'}}</span>
                             </div>
                         </div>
