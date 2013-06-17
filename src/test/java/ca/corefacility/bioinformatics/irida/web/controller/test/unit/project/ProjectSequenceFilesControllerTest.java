@@ -14,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController
 import ca.corefacility.bioinformatics.irida.web.controller.api.SequenceFileController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
-import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
+import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageLink;
 import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
 import org.junit.Before;

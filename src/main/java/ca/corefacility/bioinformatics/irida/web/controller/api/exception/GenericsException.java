@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.web.controller.exceptions;
+package ca.corefacility.bioinformatics.irida.web.controller.api.exception;
 
 /**
  * An exception that can be used when the {@link ca.corefacility.bioinformatics.irida.web.controller.api.GenericController}

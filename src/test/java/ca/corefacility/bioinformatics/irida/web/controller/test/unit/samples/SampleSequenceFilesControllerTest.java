@@ -15,7 +15,7 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
-import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
+import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageLink;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;

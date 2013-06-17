@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ca.corefacility.bioinformatics.irida.web.controller.links;
+package ca.corefacility.bioinformatics.irida.web.controller.api.links;
 
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import com.google.common.base.Strings;

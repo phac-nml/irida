@@ -16,11 +16,12 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.links;
 
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
-import ca.corefacility.bioinformatics.irida.web.controller.links.PageLink;
-import ca.corefacility.bioinformatics.irida.web.controller.links.PageableControllerLinkBuilder;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+
+import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageLink;
+import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageableControllerLinkBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
