@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.integration.pro
 
 
 import com.google.common.net.HttpHeaders;
+import com.google.common.net.MediaType;
 import com.jayway.restassured.response.Response;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
@@ -9,8 +10,8 @@ import org.springframework.http.HttpStatus;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.jayway.restassured.RestAssured.*;
-import static com.jayway.restassured.path.json.JsonPath.from;
+import static com.jayway.restassured.RestAssured.expect;
+import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -108,5 +109,18 @@ public class ProjectIntegrationTest {
         expect().body("relatedResources.samples.links.rel", hasItem("project/samples")).and()
                 .body("relatedResources.users.links.rel", hasItem("project/users")).and()
                 .body("relatedResources.sequenceFiles.links.rel", hasItem("project/sequenceFiles")).when().get(projectUri);
+    }
+
+    /**
+     * Make sure that if we issue a HEAD request on a resource, the request succeeds. We have two valid endpoints where
+     * a client can get data from (provided that they use the correct Accept headers). Make sure that both work.
+     */
+    @Test
+    public void verifyExistenceOfProjectWithHEAD() {
+        String projectUri = "http://localhost:8080/projects/731ba863-3291-4b5a-8b6f-a44365f5c533";
+        expect().statusCode(HttpStatus.OK.value()).when().head(projectUri);
+        projectUri = "http://localhost:8080/api/projects/731ba863-3291-4b5a-8b6f-a44365f5c533";
+        given().header("Accept", MediaType.JSON_UTF_8.toString()).expect()
+                .statusCode(HttpStatus.OK.value()).when().head(projectUri);
     }
 }
