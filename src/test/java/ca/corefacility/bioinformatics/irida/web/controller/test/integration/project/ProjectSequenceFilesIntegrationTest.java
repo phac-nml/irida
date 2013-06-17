@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.integration.pro
 
 import com.google.common.net.HttpHeaders;
 import com.jayway.restassured.response.Response;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,10 +12,9 @@ import java.nio.file.Path;
 
 import static com.jayway.restassured.RestAssured.*;
 import static com.jayway.restassured.path.json.JsonPath.from;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Integration tests for sequence files.
@@ -54,6 +52,13 @@ public class ProjectSequenceFilesIntegrationTest {
         assertNotNull(linkLocation);
         assertTrue(linkLocation.matches("^<http://localhost:8080/api/projects/[a-f0-9\\-]+/sequenceFiles/[a-f0-9\\-]+>;" +
                 " rel=relationship$"));
+
+        String sequenceFileIdentifier = location.substring(location.lastIndexOf('/') + 1);
+
+        // now confirm that when you get the project, the sequence file identifier is correct:
+        expect().body("relatedResources.sequenceFiles.resources.identifier",
+                hasItem(sequenceFileIdentifier)).when().get(PROJECT_URI).asString();
+
 
         // clean up after yourself.
         Files.delete(sequenceFile);
