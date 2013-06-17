@@ -27,4 +27,15 @@ public class LabelledRelationshipResource extends Resource<Identifier, Relations
     public void setLabel(String label) {
         this.label = label;
     }
+
+    /**
+     * We don't want to expose the {@link Identifier} for the {@link Relationship}, but rather the {@link Identifier}
+     * for the object of the {@link Relationship}.
+     *
+     * @return the {@link Identifier} for the object of the {@link Relationship}.
+     */
+    @Override
+    public String getIdentifier() {
+        return resource.getObject().getIdentifier();
+    }
 }

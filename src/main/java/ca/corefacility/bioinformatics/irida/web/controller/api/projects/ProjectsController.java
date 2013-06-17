@@ -208,7 +208,7 @@ public class ProjectsController extends GenericController<Identifier, Project, P
         ResourceCollection<LabelledRelationshipResource> userResources = new ResourceCollection<>(relationships.size());
         String projectId = project.getIdentifier().getIdentifier();
         for (Relationship r : relationships) {
-            Identifier userIdentifier = r.getSubject();
+            Identifier userIdentifier = r.getObject();
 
             LabelledRelationshipResource resource = new LabelledRelationshipResource(userIdentifier.getLabel(), r);
             // rel pointing at the user instance
