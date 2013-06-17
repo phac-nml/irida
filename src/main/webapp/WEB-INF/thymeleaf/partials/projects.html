@@ -17,7 +17,7 @@
                     <button class="ngs-button ngs-button__sidebar" data-ng-click="createProject()"><i class="icon-plus"></i></button>
                 </h2>
                 <ul>
-                    <li data-ng-repeat="p in projects" data-ng-click="gotoProject(p.links[0].href)">{{p.name}}</li>
+                    <li data-ng-repeat="p in projects" data-ng-click="gotoProject(p.links.self)">{{p.name}}</li>
                 </ul>
             </div>
         </div>

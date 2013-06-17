@@ -19,7 +19,7 @@
                     <div class="content" data-slug="section1">
                         <div class="cardholder">
                             <div class="card" data-ng-repeat="s in project.samples"  data-drop="true" data-jqyoui-options=""
-                                 ng-model="list2" jqyoui-droppable="{multiple:true, onDrop: 'addFileToSample'}">
+                                 ng-model="list2" jqyoui-droppable="{multiple:true, onDrop: 'addFileToSample(\'{{s.links.self}}\')'}">
                                 {{s.label}}<span class="card__date">{{s.dateCreated | date:'shortDate'}}</span>
                             </div>
                         </div>
@@ -42,13 +42,5 @@
             </div>
         </div>
     </div>
-    <h2>{{list2}}</h2>
-
-    <!--<div class="ngs-button" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" ng-model="list1"-->
-         <!--jqyoui-draggable="{animate:true}" ng-hide="!list1.title">{{list1.title}}-->
-    <!--</div>-->
-    <!--<div style="height: 100px; width: 100px; background-color: orange;" data-drop="true" data-jqyoui-options=""-->
-         <!--ng-model="list2" jqyoui-droppable="{multiple:true, onDrop: 'addFileToSample'}">-->
-
-    <!--</div>-->
+    <p>{{list2}}</p>
 </div>

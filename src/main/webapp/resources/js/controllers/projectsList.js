@@ -15,6 +15,7 @@
       for (var i = 0; i < $scope.projects.length; i++) {
         if ($scope.projects[i].name === args.name) {
           $scope.projects.splice(i, 1);
+          break;
         }
       }
     });
