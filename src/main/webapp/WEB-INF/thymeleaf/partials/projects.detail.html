@@ -19,11 +19,11 @@
 
                     <div class="content" data-slug="section1">
                         <div class="cardholder" data-ng-hide="sample.details">
-                            <div class="card" data-ng-repeat="s in project.samples" data-ng-click="getSequenceFiles(s.links['sample/sequenceFiles'])"
+                            <div class="card" data-ng-repeat="s in project.samples" data-ng-click="getSequenceFiles(s)"
                                  data-drop="true"
                                  data-jqyoui-options=""
                                  ng-model="list2"
-                                 jqyoui-droppable="{multiple:true, onDrop: 'addFileToSample(\'{{s.links['sample/sequenceFiles']}}\')', onOver: 'dragOverOut', onOut: 'dragOverOut'}">
+                                 jqyoui-droppable="{multiple:true, onDrop: 'addFileToDetailSample(\'{{s.links['sample/sequenceFiles']}}\')', onOver: 'dragOverOut', onOut: 'dragOverOut'}">
                                 <div class="card--text">
                                     <h4>{{s.label}}</h4>
                                     <span>{{s.dateCreated | date:'mediumDate'}}</span></div>
@@ -42,7 +42,10 @@
                                     <li data-ng-repeat="s in project.samples">{{s.label}}</li>
                                 </ul>
                             </div>
-                            <div class="large-9 columns">
+                            <div class="large-9 columns" data-drop="true"
+                                 data-jqyoui-options=""
+                                 ng-model="list2"
+                                 jqyoui-droppable="{multiple:true, onDrop: 'addFileToSample(\'{{s.links['sample/sequenceFiles']}}\')', onOver: 'dragOverOut', onOut: 'dragOverOut'}">
                                 <ul class="sample--details--files">
                                     <li data-ng-repeat="f in sample.sequenceFiles">{{f.dateCreated | date:'mediumDate'}}</li>
                                 </ul>
@@ -67,5 +70,4 @@
             </div>
         </div>
     </div>
-    <p>{{list2}}</p>
 </div>

@@ -7,10 +7,7 @@
   'use strict';
   app.controller( 'ProjectCtrl', [ '$scope', '$rootScope', 'ajaxService', '$location',
     function ( $scope, $rootScope, ajaxService, $location ) {
-      $scope.sample = {
-        details: false,
-        sequenceFiles: []
-      }
+      $scope.sample = {};
       $scope.samples = {};
       $scope.list2 = [ ];
 
@@ -24,12 +21,23 @@
         } );
       };
 
-      $scope.getSequenceFiles = function (url) {
+      $scope.addFileToDetailSample = function () {
+        ajaxService.create( $scope.sample.addUrl, {
+          'sequenceFileId': $scope.list2[ 0 ].identifier
+        } ).then( function ( data ) {
+            console.log( data );
+            $scope.list2 = [ ];
+          } );
+      };
+
+      $scope.getSequenceFiles = function (sample) {
         console.log('getting sequence files');
         // TODO: (Josh: 2013-06-18) Add loading spinner!
+        $scope.sample.addUrl = sample.links['sample/sequenceFiles'];
+        $scope.sample.sequenceFiles = [];
         $scope.sample.details = true;
         
-        ajaxService.get(url).then(function (data) {
+        ajaxService.get(sample.links['sample/sequenceFiles']).then(function (data) {
           console.log(data);
           $scope.sample.sequenceFiles = data.resource.resources;
           console.log($scope.sample.sequenceFiles);
