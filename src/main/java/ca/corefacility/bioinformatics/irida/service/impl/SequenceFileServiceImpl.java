@@ -30,7 +30,6 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import com.google.common.collect.ImmutableMap;
 
 import javax.validation.Validator;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -110,14 +109,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Identifier, Sequenc
      * {@inheritDoc}
      */
     @Override
-    public Collection<SequenceFile> getSequenceFilesForSample(Sample s) {
-        return sequenceFileRepository.getFilesForSample(s);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Relationship createSequenceFileWithOwner(SequenceFile sequenceFile, Class ownerType, Identifier owner) {
         SequenceFile created = create(sequenceFile);
         Relationship relationship = relationshipRepository.create(ownerType, owner,
@@ -130,23 +121,52 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Identifier, Sequenc
      */
     @Override
     public SequenceFile getSequenceFileFromProject(Project project, Identifier sequenceFileId) throws EntityNotFoundException {
+        String noSuchSequenceFileMessage = "No sequence file exists with identifier [" + sequenceFileId.getIdentifier() + "]";
         // verify that the sequence file exists
         if (!sequenceFileRepository.exists(sequenceFileId)) {
-            throw new EntityNotFoundException("No sequence file exists with identifier ["
-                    + sequenceFileId.getIdentifier() + "]");
+            throw new EntityNotFoundException(noSuchSequenceFileMessage);
         }
 
         // verify that a relationship between project and sequence file exists
-        List<Relationship> relationships = relationshipRepository.getLinks(project.getIdentifier(), RdfPredicate.ANY, sequenceFileId);
-        if (relationships == null || relationships.isEmpty()) {
-            throw new EntityNotFoundException("No sequence file exists with identifier ["
-                    + sequenceFileId.getIdentifier() + "]");
-        }
+        verifyNonEmptyRelationships(relationshipRepository
+                .getLinks(project.getIdentifier(), RdfPredicate.ANY, sequenceFileId));
 
         // read the sequence file
         SequenceFile sf = sequenceFileRepository.read(sequenceFileId);
 
         // return to caller.
         return sf;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SequenceFile getSequenceFileFromSample(Project project, Sample sample, Identifier sequenceFileId) throws EntityNotFoundException {
+        String noSuchSequenceFileMessage = "No sequence file exists with identifier [" + sequenceFileId.getIdentifier() + "]";
+
+        //verify that the sequence file exists
+        if (!sequenceFileRepository.exists(sequenceFileId)) {
+            throw new EntityNotFoundException(noSuchSequenceFileMessage);
+        }
+
+        // verify that a relationship exists between project and sample
+        verifyNonEmptyRelationships(relationshipRepository
+                .getLinks(project.getIdentifier(), RdfPredicate.ANY, sample.getIdentifier()));
+
+        // verify that a relationship exists between sample and sequence file
+        verifyNonEmptyRelationships(relationshipRepository.getLinks(sample.getIdentifier(), RdfPredicate.ANY, sequenceFileId));
+
+        // read the sequence file
+        SequenceFile sf = sequenceFileRepository.read(sequenceFileId);
+
+        // return to caller
+        return sf;
+    }
+
+    private void verifyNonEmptyRelationships(List<Relationship> relationships) {
+        if (relationships == null || relationships.isEmpty()) {
+            throw new EntityNotFoundException("No relationship exists between the specified entities.");
+        }
     }
 }

@@ -17,6 +17,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
+import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
@@ -194,6 +195,38 @@ public class SequenceFileServiceImplTest {
         verify(crudRepository).exists(sf.getIdentifier());
         verify(crudRepository).read(sf.getIdentifier());
         verify(relationshipRepository).getLinks(p.getIdentifier(), RdfPredicate.ANY, sf.getIdentifier());
+
+        assertNotNull(read);
+        assertEquals(read, sf);
+
+        Files.delete(file);
+    }
+
+    @Test
+    public void testGetSequenceFileFromSample() throws IOException {
+        Path file = Files.createTempFile(null, null);
+        SequenceFile sf = new SequenceFile(file);
+        sf.setIdentifier(new Identifier());
+        Project p = new Project();
+        p.setIdentifier(new Identifier());
+        Sample s = new Sample();
+        s.setIdentifier(new Identifier());
+        Relationship projectSample = new Relationship(p.getIdentifier(), s.getIdentifier());
+        Relationship sampleSequenceFile = new Relationship(s.getIdentifier(), sf.getIdentifier());
+
+        when(crudRepository.read(sf.getIdentifier())).thenReturn(sf);
+        when(crudRepository.exists(sf.getIdentifier())).thenReturn(true);
+        when(relationshipRepository.getLinks(p.getIdentifier(), RdfPredicate.ANY, s.getIdentifier()))
+                .thenReturn(Lists.newArrayList(projectSample));
+        when(relationshipRepository.getLinks(s.getIdentifier(), RdfPredicate.ANY, sf.getIdentifier()))
+                .thenReturn(Lists.newArrayList(sampleSequenceFile));
+
+        SequenceFile read = sequenceFileService.getSequenceFileFromSample(p, s, sf.getIdentifier());
+
+        verify(crudRepository).exists(sf.getIdentifier());
+        verify(crudRepository).read(sf.getIdentifier());
+        verify(relationshipRepository).getLinks(p.getIdentifier(), RdfPredicate.ANY, s.getIdentifier());
+        verify(relationshipRepository).getLinks(s.getIdentifier(), RdfPredicate.ANY, sf.getIdentifier());
 
         assertNotNull(read);
         assertEquals(read, sf);

@@ -7,23 +7,12 @@ import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 
-import java.util.Collection;
-
 /**
  * Service for managing {@link SequenceFile} entities.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public interface SequenceFileService extends CRUDService<Identifier, SequenceFile> {
-
-    /**
-     * Get a the collection of {@link SequenceFile} that belong to a particular {@link Sample}.
-     *
-     * @param s the {@link Sample} to get {@link SequenceFile} entities for.
-     * @return the collection of {@link SequenceFile} entities for the {@link Sample}.
-     */
-    public Collection<SequenceFile> getSequenceFilesForSample(Sample s);
-
     /**
      * Persist the {@link SequenceFile} to the database and create a new relationship between the {@link SequenceFile}
      * and some other entity identified by the {@link Identifier}.
@@ -40,7 +29,7 @@ public interface SequenceFileService extends CRUDService<Identifier, SequenceFil
     /**
      * Get a {@link SequenceFile} that is associated with a specific {@Link Project}. If the {@link SequenceFile} is
      * not associated with the {@link Project}, or no {@link SequenceFile} with the specified {@link Identifier} exists,
-     * then an {@link ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException} will be thrown.
+     * then an {@link EntityNotFoundException} will be thrown.
      *
      * @param project        the {@link Project} to get the {@link SequenceFile} from.
      * @param sequenceFileId the {@link Identifier} of the {@link SequenceFile}.
@@ -49,4 +38,18 @@ public interface SequenceFileService extends CRUDService<Identifier, SequenceFil
      *                                 the supplied {@link Project}.
      */
     public SequenceFile getSequenceFileFromProject(Project project, Identifier sequenceFileId) throws EntityNotFoundException;
+
+    /**
+     * Get a {@link SequenceFile} that is associated with a specific {@link Sample}. If the {@link SequenceFile} is not
+     * associated with the {@link Sample}, or no {@link SequenceFile} with the specified {@link Identifier} exists, then
+     * an {@link EntityNotFoundException} will be thrown.
+     *
+     * @param project        the {@link Project} to get the {@link Sample} from.
+     * @param sample         the {@link Sample} to get the {@link SequenceFile} from.
+     * @param sequenceFileId the {@link Identifier} of the {@link SequenceFile}.
+     * @return the {@link SequenceFile} belonging to the {@link Identifier}.
+     * @throws EntityNotFoundException when the {@link Identifier} specified does not exist, or is not associated with
+     *                                 the supplied {@link Sample}.
+     */
+    public SequenceFile getSequenceFileFromSample(Project project, Sample sample, Identifier sequenceFileId) throws EntityNotFoundException;
 }
