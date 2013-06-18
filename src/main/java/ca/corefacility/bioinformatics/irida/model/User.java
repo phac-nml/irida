@@ -6,12 +6,14 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.validators.Patterns;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import org.hibernate.validator.constraints.Email;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Objects;
+import java.util.Set;
 import org.openrdf.annotations.Iri;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -241,7 +243,7 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
         u.setPhoneNumber(getPhoneNumber());
         
         //have to recreate the roles fancily
-        Collection<String> stringRoles = getRoles();
+        Collection<String> stringRoles = getStringRoles();
         Collection<Role> newRoles = new ArrayList<>();
         for(String roleStr : stringRoles){
             newRoles.add(new Role(roleStr));
@@ -261,14 +263,19 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
         this.roles = roles;
     }
     
+    /**
+     * Get the system roles of this user as string values.
+     * Helper method for Alibaba
+     * @return a Set<String> of role names
+     */
     @Iri("http://corefacility.ca/irida/systemRole")
-    public Collection<String> getRoles(){
-        ArrayList<String> stringRoles = new ArrayList<>();
+    public Set<String> getStringRoles(){       
+        Set<String> roleSet = new HashSet<>();
         for(Role role : roles){
-            stringRoles.add(role.getName());
+            roleSet.add(role.getName());
         }
         
-        return stringRoles;
+        return roleSet;
     }
 
     @Override

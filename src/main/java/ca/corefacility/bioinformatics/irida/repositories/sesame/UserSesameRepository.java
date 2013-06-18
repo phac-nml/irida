@@ -18,25 +18,35 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
+import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import org.openrdf.annotations.Iri;
 import org.openrdf.model.Literal;
+import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
+import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.repository.RepositoryException;
+import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.object.ObjectConnection;
 import org.openrdf.repository.object.ObjectQuery;
 import org.openrdf.result.Result;
@@ -77,6 +87,83 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
 
         return super.create(u);
     }
+
+    /**
+     * Update a {@link User} object.
+     * This override method exists to update the roles of a user, then passes to the superclass
+     * @param id The {@link UserIdentifier} of the user to update
+     * @param updatedFields The fields to update
+     * @return A {@link User} containing the updated fields
+     * @throws InvalidPropertyException 
+     */
+    @Override
+    public User update(UserIdentifier id, Map<String, Object> updatedFields) throws InvalidPropertyException {
+
+        if(updatedFields.containsKey("roles")){
+            Collection<Role> roles = (Collection<Role>) updatedFields.get("roles");
+            
+            Method declaredMethod;
+            try {
+                declaredMethod = User.class.getDeclaredMethod("getStringRoles");
+            } catch (NoSuchMethodException | SecurityException ex) {
+                logger.error("No field roles exists.  Cannot update object.");
+                throw new InvalidPropertyException("No field named roles exists for this object type");            
+            }
+
+            Iri annotation = declaredMethod.getAnnotation(Iri.class);
+
+            logger.trace("Updating roles -- " + annotation.value());
+            
+            updateRoleField(id, annotation.value(), roles);
+            
+            updatedFields.remove("roles");
+        }
+        
+        return super.update(id, updatedFields);
+   
+    }
+    
+    /**
+     * Update the role field for a User
+     * @param id The {@link UserIdentifier} of the user to update
+     * @param predicate The predicate to update from the @Iri annotation on the User class
+     * @param roles The roles to update this user with
+     */
+    protected void updateRoleField(UserIdentifier id, String predicate, Collection<Role> roles) {
+        ObjectConnection con = store.getRepoConnection();
+        java.net.URI netURI = idGen.buildURIFromIdentifier(id,URI);
+        String uri = netURI.toString();
+
+        try {
+            con.begin();
+            ValueFactory fac = con.getValueFactory();
+            URI subURI = fac.createURI(uri);
+            URI predURI = fac.createURI(predicate);
+            
+            RepositoryResult<Statement> curvalues = con.getStatements(subURI, predURI, null);
+            while (curvalues.hasNext()) {
+                Statement next = curvalues.next();
+                logger.trace("current value: " + next.getObject().stringValue());
+            }
+            con.remove(subURI, predURI, null);            
+
+            for(Role r : roles){
+                Literal objValue = fac.createLiteral(r.getName());
+                Statement added = fac.createStatement(subURI, predURI, objValue);
+                con.add(added);                
+            }
+
+            con.commit();
+        } catch (RepositoryException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Failed to update field");
+        } finally {
+            store.closeRepoConnection(con);
+        }
+    }
+            
+    
+   
 
     /**
      * {@inheritDoc}
