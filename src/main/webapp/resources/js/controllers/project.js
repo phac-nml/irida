@@ -3,22 +3,41 @@
  * Date:    2013-06-04
  * Time:    1:05 PM
  * License: MIT
- */
-(function (ng, app) {
+ */ ( function ( ng, app ) {
   'use strict';
-  app.controller('ProjectCtrl', [ '$scope', '$rootScope', 'ajaxService', '$location', '$timeout',
-    function ($scope, $rootScope, ajaxService, $location, $timeout) {
+  app.controller( 'ProjectCtrl', [ '$scope', '$rootScope', 'ajaxService', '$location',
+    function ( $scope, $rootScope, ajaxService, $location ) {
       $scope.samples = {};
+      $scope.list2 = [ ];
 
-      $scope.deleteProject = function () {
-        ajaxService.deleteItem($scope.project.links.self).then(function () {
-          $rootScope.$broadcast('PROJECT_DELETED', {
-            'name': $scope.project.name
-          });
-          $location.path('/');
-        });
+      $scope.addFileToSample = function ( evt, ui, url ) {
+        console.log( $scope.list2[ 0 ].identifier );
+        console.log( url );
+        // TODO: (Josh: 2013-06-14) MONDAY: FIX THIS.  NEED TO PASS THE DATA 
+        ajaxService.create( url, {
+          'sequenceFileId': $scope.list2[ 0 ].identifier
+        } ).then( function ( data ) {
+          console.log( data );
+          $scope.list2 = [ ];
+        } );
       };
 
+      $scope.fileDrag = function ( evt ) {
+        $( evt.target ).toggleClass( 'project__file--drag' );
+      };
+
+      $scope.dragOverOut = function ( evt ) {
+        $( evt.target ).toggleClass( 'card--dragover' );
+      }
+
+      $scope.deleteProject = function ( ) {
+        ajaxService.deleteItem( $scope.project.links.self ).then( function ( ) {
+          $rootScope.$broadcast( 'PROJECT_DELETED', {
+            'name': $scope.project.name
+          } );
+          $location.path( '/' );
+        } );
+      };
     }
-  ]);
-})(angular, NGS);
+  ] );
+} )( angular, NGS );

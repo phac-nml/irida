@@ -24,6 +24,7 @@
           }
         },
         controller: function ($scope, data) {
+          formatObjectLinks(data);
           $scope.projects = data.resource.resources;
         }
       })
@@ -35,7 +36,6 @@
         templateUrl: '/partials/projects.detail.html',
         resolve: {
           data: function ($q, $stateParams, ajaxService) {
-            console.log('Getting project data for: ' + $stateParams.projectId);
             var defer = $q.defer();
             ajaxService.get('/api/projects/' + $stateParams.projectId).then(function (data) {
               defer.resolve(data);
@@ -43,38 +43,44 @@
             return defer.promise;
           }
         },
-        controller: function ($scope, $stateParams, linkFormatter, data) {
-          console.log("PROJECT");
+        controller: function ($scope, $stateParams, data) {
+          formatObjectLinks(data);
           console.log(data);
           $scope.project = {
             id: $stateParams.projectId,
             name: data.resource.name,
             users: data.relatedResources.users.resources,
             samples: data.relatedResources.samples.resources,
-            links: linkFormatter.clean(data.resource.links)
+            sequenceFiles: data.relatedResources.sequenceFiles.resources,
+            links: data.resource.links
           };
         }
       })
-//      .state('projects.detail.samples', {
-//        url: '/samples',
-//        templateUrl: '/partials/projects.detail.samples.html',
-//        controller: function () {
-//          console.log("SAMPLE");
-//        }
-//      })
-////      .state('projects.details.')
-//      .state('projects.detail.users', {
-//        url: '/users',
-//        templateUrl: '/partials/projects.detail.users.html',
-//        controller: function () {
-//          console.log("USERS");
-//        }
-//      })
+
       .state('login', {
         url: '/login',
 
         templateUrl: '/partials/login.html'
       });
   });
+
+  function formatObjectLinks(obj) {
+    for(var key in obj) {
+      if(key === 'links') {
+        obj[key] = linkFormatter(obj[key]);
+      }
+      else if(typeof obj[key] === 'object') {
+        formatObjectLinks(obj[key]);
+      }
+    }
+  }
+
+  function linkFormatter (links) {
+    var l = {};
+    for(var i = 0; i < links.length; i++){
+      l[links[i].rel] = links[i].href;
+    }
+    return l;
+  }
 })
   (angular, NGS);

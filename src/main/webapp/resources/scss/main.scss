@@ -9,19 +9,9 @@
 @import "fws/cards";
 @import "fws/project";
 
-.main.top-bar {
-  border-top-left-radius: 5px;
+.main.top-bar, .top-bar-section ul li.active > a, .top-bar-section li a:not(.button)  {
   @include linear-gradient(lighten($color-phac-dark-blue, 5), $color-phac-dark-blue);
-}
-
-.top-bar-section ul li.active > a, .top-bar-section li a:not(.button) {
-  @include linear-gradient(lighten($color-phac-dark-blue, 5), $color-phac-dark-blue);
-  &:hover {
-    background-color: rgba(0, 0, 0, .2);
-  }
-}
-
-.top-bar {
+  margin-bottom: 0;
 }
 
 // ============================================================================
@@ -34,17 +24,17 @@ html {
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4 {
-  font-weight: 600;
-}
-
 body {
   // Positioning (z-index, top, etc...)
 
   // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
   height: 100%;
   width: 100%;
-  background-color: $color-slate-gray;
+  background-color: #ffffff;
+}
+
+h1, h2, h3, h4 {
+  font-weight: 600;
 }
 
 .spinner:before {
@@ -107,25 +97,12 @@ body {
 .row {
   width: 100%;
   min-width: 100%;
+  padding: 0 1em;
 }
 
 .login__outer {
   height: 100%;
   width: 100%;
-
-  display: -webkit-box;
-  display: -moz-box;
-  display: -webkit-flex;
-  display: -moz-flex;
-  display: -ms-flex;
-  display: flex;
-
-  -webkit-justify-content: center;
-  justify-content: center;
-  -webkit-align-items: center;
-  align-items: center;
-
-  @include linear-gradient($color-hightlight, $color-phac-dark-blue);
 }
 
 .login__inner {
@@ -137,20 +114,16 @@ body {
   border-radius: $default-border-radius;
 }
 
-.main-content {
+.main--outer {
+  margin-left: $width-sidebar;
   height: 100%;
-  width: 100%;
+}
+
+.main-content {
 
   // Other (colors, fonts, align)
-  background-color: $color-slate-gray;
   color: $color-body-font;
   font-family: $font;
-
-  display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
-  display: -moz-box; /* OLD - Firefox 19- (buggy but mostly works) */
-  display: -ms-flexbox; /* TWEENER - IE 10 */
-  display: -webkit-flex; /* NEW - Chrome */
-  display: flex;
 }
 
 .detailed-content {
@@ -159,23 +132,15 @@ body {
   // Positioning (z-index, top, etc...)
 
   // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
-  height: 100%;
-  width: 100%;
+
+  padding-top: 1rem;
+  //width: 100%;
 
   //margin-left: $width-sidebar;
 
   // Other (colors, fonts, align)
-  background-color: $color-white;
-  -webkit-border-top-left-radius: 5px;
-  -webkit-border-bottom-left-radius: 5px;
-  -moz-border-radius-topleft: 5px;
-  -moz-border-radius-bottomleft: 5px;
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
-  border-left: 1px solid $color-slate-gray;
 
   // @includes
-  @include box-flex(1);
 
   // Nested
   h3 {

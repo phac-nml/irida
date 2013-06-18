@@ -1,7 +1,7 @@
 $font: 'Source Sans Pro', sans-serif;
 
 $color-phac-dark-blue: #133B54;
-$color-white: #ffffff;
+$color-white: rgba(236, 240, 241,1.0);
 $color-light-gray: #DFE2E2;
 $color-slate-gray: #494d4e;
 $color-red: #f00;
@@ -12,7 +12,7 @@ $color-card-hover: $color-hightlight;
 $color-body-font: #222222;
 $color-header: rgba(0, 0, 0, .1);
 
-$width-sidebar: 10em;
+$width-sidebar: 10rem;
 $width-sidebar-collapsed: 3em;
 $height-header: 3em;
 

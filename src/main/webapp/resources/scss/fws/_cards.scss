@@ -108,6 +108,10 @@ $block-grid-media-queries: false;
   }
 }
 
+.card--dragover {
+  background-color: orange;
+}
+
 .card__date {
   // Extends
 

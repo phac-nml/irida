@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -96,6 +97,13 @@ public class ControllerExceptionHandler {
         logger.info("A client attempted to create a new resource with an identifier that exists, " +
                 "or modify a resource to have an identifier that already exists at " + new Date());
         return new ResponseEntity<>("An entity already exists with that identifier.", HttpStatus.CONFLICT);
+    }
+
+    @SuppressWarnings("unused")
+    @ExceptionHandler(org.springframework.web.HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<String> handleMethodNotSupportedException(HttpRequestMethodNotSupportedException e){
+        logger.debug("FUCK OFF");
+        return new ResponseEntity<>("This method is not supported at this endpoint.", HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     /**

@@ -2,28 +2,25 @@
   // @extends
 
   // Positioning (z-index, top, etc...)
-  position: relative;
+  bottom: 0;
+  left: $width-sidebar;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
 
   // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
   height: 100%;
+  padding-top: 1rem;
+  margin-left: -$width-sidebar;
   width: $width-sidebar;
 
   // Other (colors, fonts, align)
   box-shadow: inset -5px 0 15px -2px rgba(0,0,0,.3);
 
   // @includes
-  @include box(vertical, start, stretch);
-  @include linear-gradient($color-hightlight, $color-phac-dark-blue);
-
-  a.ngs-button {
-    margin-left: 5px;
-    margin-top: 6px;
-    background-color: $color-slate-gray;
-    font-size: 1.2em;
-    &:active {
-      background-color: lighten($color-slate-gray, 5);
-    }
-  }
+  //@include box(vertical, start, stretch);
+  // @include linear-gradient($color-phac-dark-blue, $color-hightlight);
+  background-color: #484b4c;
 
   h2 {
     margin-left: 1em;
@@ -31,24 +28,56 @@
     font-size: 1em;
     font-weight: 600;
   }
-  @include transition(width .5s ease-in);
 }
 
-.sidebar__button {
-  @media only screen and (min-width: 768px) {
-    display: none;
+input.sidebar__search {
+  //vertical-align: top;
+  box-sizing: border-box;
+  border-radius: 6px;
+  margin: 10px 3px;
+  height: 2.2rem;
+  font: inherit;
+  font-weight: 200;
+  outline: none;
+  border: 1px solid rgba(0,0,0,0.36);
+  background-color: #595b5b;
+  box-shadow: inset 0 1px rgba(0,0,0,0.18);
+  color: #c6c8c8;
+  -webkit-appearance: none;
+  padding: 0 0 0 1.7em;
+  border-radius: 30px;
+  background-image: url("/css/img/search_light.svg");
+  background-position: 1em center;
+  background-repeat: no-repeat;
+  -webkit-background-size: 16px;
+  -moz-background-size: 16px;
+  background-size: 16px;
+  width: 95%;
+  &:focus {
+    background-color: lighten(#595b5b, 3);
+    background-image: url("/css/img/search_light.svg");
+    background-position: 1em center;
+    background-repeat: no-repeat;
+    -webkit-background-size: 16px;
+    -moz-background-size: 16px;
+    background-size: 16px;
+    //color: var-color-focus;
+  }
+  &::-webkit-search-cancel-button,
+  &::-webkit-search-decoration {
+    margin-right: 5px;
+  }
+  &:focus::-webkit-input-placeholder,
+  &:focus::-webkit-input-placeholder {
+    color: #c6c8c8;
   }
 }
 
-.sidebar--is-collapsed {
-
-}
 
 .sidebar__body {
-  @include box-flex(1);
+  //@include box-flex(1);
   overflow-x: hidden;
   overflow-y: auto;
-  //margin-top: 55px;
 
   // Nested
   li {
@@ -56,6 +85,7 @@
 
     // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
     display: block;
+    width: 100%;
 
     border-right: 0.3em solid transparent;
     padding: .2em .8em;
@@ -74,19 +104,4 @@
       @include transition(all .25s ease-in);
     }
   }
-
-  @media only screen and (min-width: 768px) {
-    margin-top: 2.4em;
-  }
-}
-
-.sidebar__rotated {
-  //@include box-flex(1);
-  @include transform(rotate(90deg));
-  display: none;
-  font-size: 2.3em;
-  @include ngs-light-text();
-  position: absolute;
-  top: 100px;
-  left: -29px;
 }
