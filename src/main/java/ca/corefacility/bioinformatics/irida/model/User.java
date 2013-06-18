@@ -4,13 +4,20 @@ import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.validators.Patterns;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import org.hibernate.validator.constraints.Email;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Objects;
+import java.util.Set;
 import org.openrdf.annotations.Iri;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 
 /**
  * A user object.
@@ -19,7 +26,7 @@ import org.openrdf.annotations.Iri;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Iri(User.PREFIX + User.TYPE)
-public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<User> {
+public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<User>, UserDetails {
     public static final String PREFIX = "http://xmlns.com/foaf/0.1/";
     public static final String TYPE = "Person";
     
@@ -56,12 +63,15 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
     private String phoneNumber;
     @NotNull
     private Audit audit;
+    @NotNull
+    private Collection<Role> roles;
 
     /**
      * Construct an instance of {@link User} with no properties set.
      */
     public User() {
         audit = new Audit();
+        roles = new ArrayList<>();
     }
 
     /**
@@ -232,6 +242,59 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
         u.setPassword(getPassword());
         u.setPhoneNumber(getPhoneNumber());
         
+        //have to recreate the roles fancily
+        Collection<String> stringRoles = getStringRoles();
+        Collection<Role> newRoles = new ArrayList<>();
+        for(String roleStr : stringRoles){
+            newRoles.add(new Role(roleStr));
+        }
+        
+        u.setRoles(newRoles);
+        
         return u;        
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles;
+    }
+    
+    public void setRoles(Collection<Role> roles){
+        this.roles = roles;
+    }
+    
+    /**
+     * Get the system roles of this user as string values.
+     * Helper method for Alibaba
+     * @return a Set<String> of role names
+     */
+    @Iri("http://corefacility.ca/irida/systemRole")
+    public Set<String> getStringRoles(){       
+        Set<String> roleSet = new HashSet<>();
+        for(Role role : roles){
+            roleSet.add(role.getName());
+        }
+        
+        return roleSet;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

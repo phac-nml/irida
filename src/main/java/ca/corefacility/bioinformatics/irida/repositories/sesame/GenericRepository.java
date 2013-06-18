@@ -343,6 +343,9 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
                     Field declaredField = objectType.getDeclaredField(field.getKey());
 
                     Iri annotation = declaredField.getAnnotation(Iri.class);
+                    if(annotation == null){
+                        throw new InvalidPropertyException("The field " + field.getKey() + " does not have an @Iri annotation");
+                    }
 
                     logger.trace("Updating " + field.getKey() + " -- " + annotation.value());
 
