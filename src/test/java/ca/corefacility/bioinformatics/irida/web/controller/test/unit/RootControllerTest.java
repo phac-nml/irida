@@ -15,8 +15,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Map;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test for the {@link RootController}.
@@ -35,7 +35,7 @@ public class RootControllerTest {
 
     @Test
     public void testGetLinks() {
-        Map<String, Class> controllers = controller.CONTROLLERS;
+        Map<String, Class> controllers = RootController.CONTROLLERS;
         ModelMap map = controller.getLinks();
         Object o = map.get(GenericController.RESOURCE_NAME);
         assertNotNull(o);
