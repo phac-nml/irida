@@ -15,7 +15,6 @@
  */
 package ca.corefacility.bioinformatics.irida.web.controller.api;
 
-import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
@@ -47,7 +46,10 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static ca.corefacility.bioinformatics.irida.web.controller.api.links.PageableControllerLinkBuilder.pageLinksFor;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -195,47 +197,6 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     }
 
     /**
-     * Construct a collection of {@link Resource}s that uniquely relate to the specified resource. This method is
-     * required to generate a collection of collections because the implementing type may have more than one related
-     * type. This method is called by <code>getResource</code>.
-     *
-     * @param resource the resource to generate related collections for.
-     * @return a collection of collections of related resources.
-     */
-    private Map<String, ResourceCollection<LabelledRelationshipResource>> constructRelatedResourceCollections(Type resource) {
-        logger.debug("Loading related resources for [" + resource + "]");
-        Map<String, Class<?>> uniquelyRelatedClasses = getUniquelyRelatedClasses();
-        Map<String, ResourceCollection<LabelledRelationshipResource>> relatedResources = new HashMap<>();
-        logger.debug("Total uniquely related resources: [" + uniquelyRelatedClasses.size() + "]");
-
-        for (Map.Entry<String, Class<?>> relatedClass : uniquelyRelatedClasses.entrySet()) {
-            logger.debug("Loading relationships between [" + type + "] and [" + relatedClass.getValue() + "]");
-
-            Collection<Relationship> relationships = relationshipService.getRelationshipsForEntity(
-                    resource.getIdentifier(), type, relatedClass.getValue());
-
-
-            logger.debug("Total relationships: " + relationships.size());
-            ResourceCollection<LabelledRelationshipResource> resources = new ResourceCollection<>(relationships.size());
-            resources.add(linkTo(RelationshipsController.class).withSelfRel());
-            for (Relationship r : relationships) {
-                Identifier relationshipIdentifier = r.getObject();
-                LabelledRelationshipResource relationshipResource = new LabelledRelationshipResource(
-                        relationshipIdentifier.getLabel(), r);
-                relationshipResource.add(entityLinks.linkToSingleResource(relatedClass.getValue(),
-                        relationshipIdentifier.getIdentifier()));
-                relationshipResource.add(linkTo(RelationshipsController.class).slash(r.getIdentifier().getIdentifier())
-                        .withRel(REL_RELATIONSHIP));
-                resources.add(relationshipResource);
-            }
-            resources.setTotalResources(relationships.size());
-            relatedResources.put(relatedClass.getKey(), resources);
-        }
-
-        return relatedResources;
-    }
-
-    /**
      * Retrieve and construct a response with a collection of resources.
      *
      * @param page         the current page of the list of resources that the client wants.
@@ -349,10 +310,8 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         // add the resource to the model
         model.addAttribute(RESOURCE_NAME, resource);
         // get a set of uniquely related resources for this resource
-        Map<String, ResourceCollection<LabelledRelationshipResource>> relatedResources = constructRelatedResourceCollections(
-                t);
-        // add any non-uniquely related resources to this resource
-        relatedResources.putAll(constructCustomRelatedResourceCollections(t));
+        Map<String, ResourceCollection<LabelledRelationshipResource>> relatedResources =
+                constructCustomRelatedResourceCollections(t);
         // add any related resources to the model
         model.addAttribute(RELATED_RESOURCES_NAME, relatedResources);
 

@@ -12,7 +12,6 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RelationshipsController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectUsersController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
 import com.google.common.collect.ImmutableMap;
@@ -76,9 +75,9 @@ public class ProjectUsersControllerTest {
         assertEquals(1, users.size());
         UserResource ur = users.iterator().next();
         assertTrue(ur.getLink("self").getHref().endsWith(username));
-        Link relationship = ur.getLink(RelationshipsController.REL_RELATIONSHIP);
+        Link relationship = ur.getLink(GenericController.REL_RELATIONSHIP);
         assertNotNull(relationship);
-        assertTrue(relationship.getHref().contains(r.getIdentifier().getIdentifier()));
+        assertEquals("http://localhost/projects/" + projectId + "/users/" + username, relationship.getHref());
         assertTrue(users.getLink("self").getHref().contains(projectId));
     }
 

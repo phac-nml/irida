@@ -12,7 +12,6 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RelationshipsController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.SequenceFileController;
 import com.google.common.net.HttpHeaders;
 import org.slf4j.Logger;
@@ -202,8 +201,8 @@ public class ProjectSequenceFilesController {
             sr.setResource(sequenceFile);
             sr.add(linkTo(methodOn(SequenceFileController.class).
                     getResource(sequenceFile.getIdentifier().getIdentifier())).withSelfRel());
-            sr.add(linkTo(methodOn(RelationshipsController.class).
-                    getResource(r.getIdentifier().getIdentifier())).withRel(GenericController.REL_RELATIONSHIP));
+            sr.add(linkTo(methodOn(ProjectSequenceFilesController.class).getProjectSequenceFile(projectId,
+                    r.getIdentifier().getIdentifier())).withRel(GenericController.REL_RELATIONSHIP));
             sampleResources.add(sr);
         }
 
