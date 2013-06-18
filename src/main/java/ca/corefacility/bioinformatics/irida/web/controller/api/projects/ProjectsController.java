@@ -30,7 +30,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController
 import ca.corefacility.bioinformatics.irida.web.controller.api.UsersController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.links.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SamplesController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Link;
@@ -187,7 +186,7 @@ public class ProjectsController extends GenericController<Identifier, Project, P
             // add a link to add sequence files to the sample
             resource.add(linkTo(methodOn(SampleSequenceFilesController.class)
                     .getSampleSequenceFiles(projectId, sampleIdentifier.getIdentifier()))
-                    .withRel(SamplesController.REL_SEQUENCE_FILES));
+                    .withRel(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
             sampleResources.add(resource);
         }
         sampleResources.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSamples(projectId))

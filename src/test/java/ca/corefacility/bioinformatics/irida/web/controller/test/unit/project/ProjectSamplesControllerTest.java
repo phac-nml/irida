@@ -11,10 +11,10 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageLink;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SamplesController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageLink;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
@@ -37,16 +37,14 @@ public class ProjectSamplesControllerTest {
     private ProjectSamplesController controller;
     private ProjectService projectService;
     private SampleService sampleService;
-    private SamplesController samplesController;
     private RelationshipService relationshipService;
 
     @Before
     public void setUp() {
         projectService = mock(ProjectService.class);
         sampleService = mock(SampleService.class);
-        samplesController = mock(SamplesController.class);
         relationshipService = mock(RelationshipService.class);
-        controller = new ProjectSamplesController(projectService, sampleService, relationshipService, samplesController);
+        controller = new ProjectSamplesController(projectService, sampleService, relationshipService);
     }
 
     @Test
@@ -61,13 +59,11 @@ public class ProjectSamplesControllerTest {
 
         when(projectService.read(p.getIdentifier())).thenReturn(p);
         when(projectService.addSampleToProject(p, s)).thenReturn(r);
-        when(samplesController.mapResourceToType(sr)).thenReturn(s);
 
         ResponseEntity<String> response = controller.addSampleToProject(p.getIdentifier().getIdentifier(), sr);
 
         verify(projectService, times(1)).read(p.getIdentifier());
         verify(projectService, times(1)).addSampleToProject(p, s);
-        verify(samplesController, times(1)).mapResourceToType(sr);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
@@ -172,8 +168,8 @@ public class ProjectSamplesControllerTest {
         Object o = modelMap.get(GenericController.RESOURCE_NAME);
         assertTrue(o instanceof SampleResource);
         SampleResource sr = (SampleResource) o;
-        Set<String> rels = Sets.newHashSet(PageLink.REL_SELF, SamplesController.REL_SEQUENCE_FILES,
-                SamplesController.REL_PROJECT);
+        Set<String> rels = Sets.newHashSet(PageLink.REL_SELF, SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES,
+                ProjectSamplesController.REL_PROJECT);
         List<Link> links = sr.getLinks();
         for (Link link : links) {
             assertTrue(rels.contains(link.getRel()));
@@ -206,7 +202,7 @@ public class ProjectSamplesControllerTest {
         Map<String, String> links = linksToMap(resource.getLinks());
         String self = links.get(PageLink.REL_SELF);
         assertEquals("http://localhost/projects/" + projectId + "/samples/" + sampleId, self);
-        String sequenceFiles = links.get(SamplesController.REL_SEQUENCE_FILES);
+        String sequenceFiles = links.get(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
         assertEquals("http://localhost/projects/" + projectId + "/samples/" + sampleId + "/sequenceFiles", sequenceFiles);
         String project = links.get(ProjectsController.REL_PROJECT);
         assertEquals("http://localhost/projects/" + projectId, project);
