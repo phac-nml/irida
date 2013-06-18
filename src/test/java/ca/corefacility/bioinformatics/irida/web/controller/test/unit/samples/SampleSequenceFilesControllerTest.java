@@ -241,7 +241,6 @@ public class SampleSequenceFilesControllerTest {
 
         when(projectService.read(p.getIdentifier())).thenReturn(p);
         when(sampleService.getSampleForProject(p, s.getIdentifier())).thenReturn(s);
-        when(sampleService.read(s.getIdentifier())).thenReturn(s);
         when(sequenceFileService.read(sf.getIdentifier())).thenReturn(sf);
         when(sampleService.addSequenceFileToSample(p, s, sf)).thenReturn(sampleSequenceFileRelationship);
 
@@ -251,7 +250,6 @@ public class SampleSequenceFilesControllerTest {
 
         verify(projectService).read(p.getIdentifier());
         verify(sampleService).getSampleForProject(p, s.getIdentifier());
-        verify(sampleService).read(s.getIdentifier());
         verify(sequenceFileService).read(sf.getIdentifier());
         verify(sampleService).addSequenceFileToSample(p, s, sf);
 
