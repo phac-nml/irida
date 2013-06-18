@@ -610,48 +610,119 @@ input.sidebar__search {
 .cardholder__after {
   clear: both; }
 
+.folder {
+  -webkit-perspective: 800px;
+  -moz-perspective: 800px;
+  perspective: 800px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  display: inline-block;
+  width: 0;
+  height: 60px;
+  -webkit-transition: all 0.25s ease-in;
+  -moz-transition: all 0.25s ease-in;
+  transition: all 0.25s ease-in; }
+  .folder div {
+    width: 75px;
+    height: 57px;
+    background-color: #93bad8;
+    /* Enabling 3d space for the transforms */
+    -webkit-transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    /* Enabling a smooth animated transition */
+    -webkit-transition: 0.5s;
+    -moz-transition: 0.5s;
+    transition: 0.5s;
+    /* Disable text seleltion on the folder */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    position: absolute;
+    top: 0; }
+
+.folder--front {
+  border-radius: 5px 5px 0 0;
+  -moz-transform: rotateX(-30deg);
+  -webkit-transform: rotateX(-30deg);
+  transform: rotateX(-30deg);
+  -moz-transform-origin: 50% 100%;
+  -webkit-transform-origin: 50% 100%;
+  transform-origin: 50% 100%;
+  background-image: -moz-linear-gradient(top, #93bad8 0%, #6c9dc0 85%, #628faf 100%);
+  background-image: -webkit-linear-gradient(top, #93bad8 0%, #6c9dc0 85%, #628faf 100%);
+  background-image: linear, top, #93bad8 0%, #6c9dc0 85%, #628faf 100%;
+  box-shadow: 0 -2px 2px rgba(0, 0, 0, 0.1), 0 1px rgba(255, 255, 255, 0.35) inset;
+  z-index: 10; }
+
+.folder--back {
+  background-image: -webkit-linear-gradient(top, #93bad8 0%, #89afcc 10%, #5985a5 60%);
+  background-image: -moz-linear-gradient(top, #93bad8 0%, #89afcc 10%, #5985a5 60%);
+  background-image: linear, top, #93bad8 0%, #89afcc 10%, #5985a5 60%;
+  border-radius: 0 5px 0 0;
+  box-shadow: 0 -1px 1px rgba(0, 0, 0, 0.15); }
+  .folder--back:before {
+    content: '';
+    width: 30px;
+    height: 5px;
+    border-radius: 4px 4px 0 0;
+    background-color: #93bad8;
+    position: absolute;
+    top: -5px;
+    left: 0px;
+    box-shadow: 0 -1px 1px rgba(0, 0, 0, 0.15); }
+  .folder--back:after {
+    content: '';
+    width: 100%;
+    height: 4px;
+    border-radius: 5px;
+    position: absolute;
+    bottom: 5px;
+    left: 0px;
+    box-shadow: 0 4px 8px #333; }
+
+.folder--draghover {
+  -webkit-perspective: 300px;
+  -moz-perspective: 300px;
+  perspective: 300px;
+  height: 0px; }
+
 .card {
   position: relative;
   display: inline-block;
-  background-color: #dfe2e2;
-  border: 1px solid #494d4e;
   cursor: pointer;
   float: left;
-  height: 3em;
+  height: 60px;
   margin-right: 5%;
-  margin-top: 5%;
-  width: 45%;
-  -webkit-transition: background-color 0.25s ease-in;
-  -moz-transition: background-color 0.25s ease-in;
-  transition: background-color 0.25s ease-in; }
+  margin-top: 2.5%;
+  width: 45%; }
   @media only screen and (min-width: 1100px) {
     .card {
       float: left;
-      height: 3em;
       margin-right: 2.5%;
       margin-top: 2.5%;
       width: 22.5%; } }
   @media only screen and (min-width: 1280px) {
     .card {
       float: left;
-      height: 3em;
-      margin-right: 1.66667%;
-      margin-top: 1.66667%;
-      width: 15%; } }
+      margin-right: 2%;
+      margin-top: 2%;
+      width: 18%; } }
   .card:hover {
-    background-color: #1c587e;
-    -webkit-transition: background-color 0.15s ease-in;
-    -moz-transition: background-color 0.15s ease-in;
-    transition: background-color 0.15s ease-in; }
+    border-radius: 3px;
+    background-color: #dfe2e2; }
 
-.card--dragover {
-  background-color: orange; }
-
-.card__date {
-  position: absolute;
-  right: 5px;
-  top: 2px;
-  font-size: .8em; }
+.card--text {
+  margin-left: 80px; }
+  .card--text h4 {
+    font-size: 0.9em;
+    margin: 0;
+    white-space: nowrap;
+    text-overflow: ellipsis; }
+  .card--text span {
+    font-size: .8em; }
 
 .project__name {
   display: inline-block; }
