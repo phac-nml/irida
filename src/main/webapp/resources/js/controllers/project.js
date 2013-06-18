@@ -11,9 +11,7 @@
       $scope.list2 = [ ];
 
       $scope.addFileToSample = function ( evt, ui, url ) {
-        console.log( $scope.list2[ 0 ].identifier );
-        console.log( url );
-        // TODO: (Josh: 2013-06-14) MONDAY: FIX THIS.  NEED TO PASS THE DATA 
+        $scope.dragOverOut(evt);
         ajaxService.create( url, {
           'sequenceFileId': $scope.list2[ 0 ].identifier
         } ).then( function ( data ) {
@@ -27,7 +25,8 @@
       };
 
       $scope.dragOverOut = function ( evt ) {
-        $( evt.target ).toggleClass( 'card--dragover' );
+        console.log(evt);
+        $( evt.target).find('.folder').toggleClass( 'folder--draghover' );
       }
 
       $scope.deleteProject = function ( ) {
