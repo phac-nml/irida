@@ -1,4 +1,4 @@
-<div>
+<div class="main--outer">
     <nav class="main top-bar">
         <ul class="title-area">
             <li class="name"><h1><a href="/projects">NGS Archive</a></h1></li>
@@ -10,19 +10,20 @@
             </ul>
         </section>
     </nav>
-    <div class="main-content flex-container" data-ng-controller="ProjectsListCtrl">
-        <div class="sidebar flex-item">
+    <div class="main-content" data-ng-controller="ProjectsListCtrl">
+        <div class="sidebar">
             <div class="sidebar__body">
                 <h2>Projects
                     <button class="ngs-button ngs-button__sidebar" data-ng-click="createProject()"><i class="icon-plus"></i></button>
                 </h2>
+                <input class="sidebar__search" placeholder="Search" type="search" data-ng-model="projectSearch.name" />
                 <ul>
-                    <li data-ng-repeat="p in projects" data-ng-click="gotoProject(p.links.self)">{{p.name}}</li>
+                    <li data-ng-repeat="p in projects | filter:projectSearch" data-ng-click="gotoProject(p.links.self)">{{p.name}}</li>
                 </ul>
             </div>
         </div>
 
-        <div class="detailed-content flex-item" ui-view="">
+        <div class="detailed-content row" ui-view="">
         </div>
     </div>
 </div>

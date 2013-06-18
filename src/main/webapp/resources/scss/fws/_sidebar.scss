@@ -2,11 +2,16 @@
   // @extends
 
   // Positioning (z-index, top, etc...)
-  position: relative;
+  bottom: 0;
+  left: $width-sidebar;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
 
   // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
   height: 100%;
   padding-top: 1rem;
+  margin-left: -$width-sidebar;
   width: $width-sidebar;
 
   // Other (colors, fonts, align)
@@ -14,7 +19,8 @@
 
   // @includes
   //@include box(vertical, start, stretch);
-  @include linear-gradient($color-phac-dark-blue, $color-hightlight);
+  // @include linear-gradient($color-phac-dark-blue, $color-hightlight);
+  background-color: #484b4c;
 
   h2 {
     margin-left: 1em;
@@ -23,6 +29,50 @@
     font-weight: 600;
   }
 }
+
+input.sidebar__search {
+  //vertical-align: top;
+  box-sizing: border-box;
+  border-radius: 6px;
+  margin: 10px 3px;
+  height: 2.2rem;
+  font: inherit;
+  font-weight: 200;
+  outline: none;
+  border: 1px solid rgba(0,0,0,0.36);
+  background-color: #595b5b;
+  box-shadow: inset 0 1px rgba(0,0,0,0.18);
+  color: #c6c8c8;
+  -webkit-appearance: none;
+  padding: 0 0 0 1.7em;
+  border-radius: 30px;
+  background-image: url("/css/img/search_light.svg");
+  background-position: 1em center;
+  background-repeat: no-repeat;
+  -webkit-background-size: 16px;
+  -moz-background-size: 16px;
+  background-size: 16px;
+  width: 95%;
+  &:focus {
+    background-color: lighten(#595b5b, 3);
+    background-image: url("/css/img/search_light.svg");
+    background-position: 1em center;
+    background-repeat: no-repeat;
+    -webkit-background-size: 16px;
+    -moz-background-size: 16px;
+    background-size: 16px;
+    //color: var-color-focus;
+  }
+  &::-webkit-search-cancel-button,
+  &::-webkit-search-decoration {
+    margin-right: 5px;
+  }
+  &:focus::-webkit-input-placeholder,
+  &:focus::-webkit-input-placeholder {
+    color: #c6c8c8;
+  }
+}
+
 
 .sidebar__body {
   //@include box-flex(1);
@@ -35,6 +85,7 @@
 
     // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
     display: block;
+    width: 100%;
 
     border-right: 0.3em solid transparent;
     padding: .2em .8em;

@@ -25,7 +25,6 @@
         },
         controller: function ($scope, data) {
           formatObjectLinks(data);
-          console.log(data);
           $scope.projects = data.resource.resources;
         }
       })

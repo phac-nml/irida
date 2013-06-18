@@ -2,22 +2,26 @@
   display: inline-block;
 }
 
-.project__samples {
+.project__files {
 	margin-left: 1em;
 }
 
-.project__sample {
+.project__file {
 	// Box (display, float, position, left, top, height, width)
 	display: inline-block;
 	margin: 0 1em 0.4em 0.4em;
 	
 	// Border
 	border: 1px solid $color-phac-dark-blue;
+	border-radius: $default-border-radius;
+
 	// Background
+	background-color: rgba(41, 128, 185,1);
 	
 	// Text (font-family, font-size, text-transform, letter-spacing)
 	
 	// Other
+	cursor: move;
 	padding: 0.4em;
 	span {
 		float: right;
@@ -25,5 +29,12 @@
 
 	i {
 		font-size: 3em;
+	}
+}
+
+.project__file--drag {
+	background-color: rgba(41, 128, 185,0.4);
+	span {
+		display: none;
 	}
 }

@@ -5,21 +5,21 @@
             <button class="right ngs-button ngs-button__caution" data-ng-click="deleteProject()"><i
                     class="icon-trash"></i> Delete Project
             </button>
-            <div class="row project__samples">
-                <div class="project__sample" data-ng-repeat="s in project.sequenceFiles" data-drag="true"
-                     data-jqyoui-options="{revert: 'invalid'}" ng-model="project.sequenceFiles"
-                     jqyoui-draggable="{index: {{$index}},animate:true}">
+            <div class="row project__files">
+                <div class="project__file" data-ng-repeat="s in project.sequenceFiles" data-drag="true"
+                     data-jqyoui-options="{revert: 'invalid', cursorAt: { left: 5, top: 5 }}" ng-model="project.sequenceFiles"
+                     jqyoui-draggable="{index: {{$index}},animate:true, onStart: 'fileDrag', onStop: 'fileDrag'}">
                     <i class="icon-file-alt"></i><span>{{s.label}}</span>
                 </div>
             </div>
             <div class="section-container tabs" data-section="tabs" ngs-section="">
                 <section>
-                    <p class="title" data-section-title=""><a href="#">Project Samples</a></p>
+                    <p class="title" data-section-title=""><a ng-href="#">Project Samples</a></p>
 
                     <div class="content" data-slug="section1">
                         <div class="cardholder">
                             <div class="card" data-ng-repeat="s in project.samples"  data-drop="true" data-jqyoui-options=""
-                                 ng-model="list2" jqyoui-droppable="{multiple:true, onDrop: 'addFileToSample(\'{{s.links['sample/sequenceFiles']}}\')'}">
+                                 ng-model="list2" jqyoui-droppable="{multiple:true, onDrop: 'addFileToSample(\'{{s.links['sample/sequenceFiles']}}\')', onOver: 'dragOverOut', onOut: 'dragOverOut'}">
                                 {{s.label}}<span class="card__date">{{s.dateCreated | date:'shortDate'}}</span>
                             </div>
                         </div>
@@ -28,7 +28,7 @@
                     </div>
                 </section>
                 <section>
-                    <p class="title" data-section-title=""><a href="#">Project Users</a></p>
+                    <p class="title" data-section-title=""><a ng-href="#">Project Users</a></p>
 
                     <div class="content" data-slug="section2">
                         <div class="user" data-ng-repeat="u in project.users">

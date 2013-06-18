@@ -22,6 +22,14 @@
         } );
       };
 
+      $scope.fileDrag = function ( evt ) {
+        $( evt.target ).toggleClass( 'project__file--drag' );
+      };
+
+      $scope.dragOverOut = function ( evt ) {
+        $( evt.target ).toggleClass( 'card--dragover' );
+      }
+
       $scope.deleteProject = function ( ) {
         ajaxService.deleteItem( $scope.project.links.self ).then( function ( ) {
           $rootScope.$broadcast( 'PROJECT_DELETED', {
