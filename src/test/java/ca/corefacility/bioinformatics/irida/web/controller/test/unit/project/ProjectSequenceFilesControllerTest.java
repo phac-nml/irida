@@ -11,10 +11,9 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.SequenceFileController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageLink;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageLink;
 import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
 import org.junit.Before;
@@ -51,7 +50,6 @@ public class ProjectSequenceFilesControllerTest {
     private ProjectService projectService;
     private SequenceFileService sequenceFileService;
     private RelationshipService relationshipService;
-    private SequenceFileController sequenceFilesController;
 
     public ProjectSequenceFilesControllerTest() {
     }
@@ -60,10 +58,9 @@ public class ProjectSequenceFilesControllerTest {
     public void setUp() {
         projectService = mock(ProjectService.class);
         sequenceFileService = mock(SequenceFileService.class);
-        sequenceFilesController = mock(SequenceFileController.class);
         relationshipService = mock(RelationshipService.class);
 
-        controller = new ProjectSequenceFilesController(projectService, sequenceFileService, relationshipService, sequenceFilesController);
+        controller = new ProjectSequenceFilesController(projectService, sequenceFileService, relationshipService);
     }
 
     @Test
@@ -90,14 +87,8 @@ public class ProjectSequenceFilesControllerTest {
         assertNotNull(locations);
         assertFalse(locations.isEmpty());
         assertEquals(1, locations.size());
-        assertEquals("http://localhost/sequenceFiles/" + sf.getIdentifier().getIdentifier(), locations.iterator().next());
-
-        List<String> links = response.getHeaders().get(HttpHeaders.LINK);
-        assertNotNull(links);
-        assertFalse(links.isEmpty());
-        assertEquals(1, links.size());
-        assertEquals("<http://localhost/projects/" + projectId + "/sequenceFiles/" + sf.getIdentifier().getIdentifier()
-                + ">; rel=relationship", links.iterator().next());
+        assertEquals("http://localhost/projects/" + projectId + "/sequenceFiles/" +
+                sf.getIdentifier().getIdentifier(), locations.iterator().next());
     }
 
     @Test
@@ -162,13 +153,9 @@ public class ProjectSequenceFilesControllerTest {
         assertEquals(1, samples.size());
         SequenceFileResource resource = samples.iterator().next();
         assertEquals(sf.getFile().toString(), resource.getFile());
-        List<Link> links = resource.getLinks();
-        Set<String> rels = Sets.newHashSet(PageLink.REL_SELF, GenericController.REL_RELATIONSHIP);
-        for (Link link : links) {
-            assertTrue(rels.contains(link.getRel()));
-            assertNotNull(rels.remove(link.getRel()));
-        }
-        assertTrue(rels.isEmpty());
+        Link self = resource.getLink(PageLink.REL_SELF);
+
+        assertEquals("http://localhost/projects/" + projectId + "/sequenceFiles/" + sf.getIdentifier().getIdentifier(), self.getHref());
     }
 
     @Test
@@ -192,11 +179,9 @@ public class ProjectSequenceFilesControllerTest {
         // and a reference to the project.
         SequenceFileResource r = (SequenceFileResource) modelMap.get(GenericController.RESOURCE_NAME);
         Link self = r.getLink(PageLink.REL_SELF);
-        Link relationship = r.getLink(GenericController.REL_RELATIONSHIP);
         Link project = r.getLink(ProjectsController.REL_PROJECT);
 
-        assertEquals("http://localhost/sequenceFiles/" + sequenceFileId, self.getHref());
-        assertEquals("http://localhost/projects/" + projectId + "/sequenceFiles/" + sequenceFileId, relationship.getHref());
+        assertEquals("http://localhost/projects/" + projectId + "/sequenceFiles/" + sequenceFileId, self.getHref());
         assertEquals("http://localhost/projects/" + projectId, project.getHref());
     }
 

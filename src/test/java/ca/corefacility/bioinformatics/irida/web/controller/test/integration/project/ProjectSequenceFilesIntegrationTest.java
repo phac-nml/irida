@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.integration.pro
 
 import com.google.common.net.HttpHeaders;
 import com.jayway.restassured.response.Response;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,10 +12,9 @@ import java.nio.file.Path;
 
 import static com.jayway.restassured.RestAssured.*;
 import static com.jayway.restassured.path.json.JsonPath.from;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Integration tests for sequence files.
@@ -46,14 +44,16 @@ public class ProjectSequenceFilesIntegrationTest {
 
         // confirm that the location and relationship links look okay
         String location = r.getHeader(HttpHeaders.LOCATION);
-        String linkLocation = r.getHeader(HttpHeaders.LINK);
 
         assertNotNull(location);
-        assertTrue(location.matches("^http://localhost:8080/api/sequenceFiles/[a-f0-9\\-]+$"));
+        assertTrue(location.matches("^http://localhost:8080/api/projects/[a-f0-9\\-]+/sequenceFiles/[a-f0-9\\-]+$"));
 
-        assertNotNull(linkLocation);
-        assertTrue(linkLocation.matches("^<http://localhost:8080/api/projects/[a-f0-9\\-]+/sequenceFiles/[a-f0-9\\-]+>;" +
-                " rel=relationship$"));
+        String sequenceFileIdentifier = location.substring(location.lastIndexOf('/') + 1);
+
+        // now confirm that when you get the project, the sequence file identifier is correct:
+        expect().body("relatedResources.sequenceFiles.resources.identifier",
+                hasItem(sequenceFileIdentifier)).when().get(PROJECT_URI).asString();
+
 
         // clean up after yourself.
         Files.delete(sequenceFile);
@@ -69,28 +69,24 @@ public class ProjectSequenceFilesIntegrationTest {
         Response r = given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE).multiPart("file", sequenceFile.toFile())
                 .expect().statusCode(HttpStatus.CREATED.value()).when().post(PROJECT_URI + "/sequenceFiles");
 
-        String link = r.getHeader(HttpHeaders.LINK);
-        // the link header needs to be parsed out to get the URL that we want, since only one header is sent back, we should
-        // just parse out the only link that's between < and >.
-        link = link.substring(1, link.indexOf('>', 1));
+        String location = r.getHeader(HttpHeaders.LOCATION);
 
         expect().body("resource.links.rel", hasItems("project", "project/sequenceFiles")).and()
-                .statusCode(HttpStatus.OK.value()).when().delete(link);
+                .statusCode(HttpStatus.OK.value()).when().delete(location);
         Files.delete(sequenceFile);
     }
 
     @Test
     public void testGetSequenceFileForProject() throws IOException {
         Path sequenceFile = Files.createTempFile(null, null);
-        Files.write(sequenceFile, ">test read\nACTACGHATYGCTAGC".getBytes());
+        Files.write(sequenceFile, ">test read\nACTACGCATTGCTAGC".getBytes());
 
         // submit the file
         Response r = given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE).multiPart("file", sequenceFile.toFile())
                 .expect().statusCode(HttpStatus.CREATED.value()).when().post(PROJECT_URI + "/sequenceFiles");
-        String location = r.getHeader(HttpHeaders.LINK);
-        location = location.substring(1, location.indexOf('>', 1));
+        String location = r.getHeader(HttpHeaders.LOCATION);
 
-        expect().body("resource.links.rel", hasItems("self", "project", "relationship")).when().get(location);
+        expect().body("resource.links.rel", hasItems("self", "project")).when().get(location);
 
         Files.delete(sequenceFile);
     }
@@ -104,8 +100,7 @@ public class ProjectSequenceFilesIntegrationTest {
         // submit the file
         Response r = given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE).multiPart("file", sequenceFile.toFile())
                 .expect().statusCode(HttpStatus.CREATED.value()).when().post(PROJECT_URI + "/sequenceFiles");
-        String location = r.getHeader(HttpHeaders.LINK);
-        location = location.substring(1, location.indexOf('>', 1));
+        String location = r.getHeader(HttpHeaders.LOCATION);
 
         r = given().header(HttpHeaders.ACCEPT, "application/fastq").get(location);
         byte[] fileContents = Files.readAllBytes(sequenceFile);

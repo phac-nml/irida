@@ -14,8 +14,9 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageLink;
+import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSequenceFilesController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
@@ -86,11 +87,19 @@ public class SampleSequenceFilesControllerTest {
         ResourceCollection<SequenceFileResource> resources = (ResourceCollection<SequenceFileResource>) o;
         assertNotNull(resources);
         assertEquals(1, resources.size());
-        assertNotNull(resources.getLink(PageLink.REL_SELF));
-        assertNotNull(resources.getLink(SampleSequenceFilesController.REL_SAMPLE));
+
+        Link selfCollection = resources.getLink(PageLink.REL_SELF);
+        Link sample = resources.getLink(SampleSequenceFilesController.REL_SAMPLE);
+        String sampleLocation = "http://localhost/projects/" + p.getIdentifier().getIdentifier() +
+                "/samples/" + s.getIdentifier().getIdentifier();
+
+        assertEquals(sampleLocation + "/sequenceFiles", selfCollection.getHref());
+        assertEquals(sampleLocation, sample.getHref());
+
+        // confirm that the self rel for an individual sequence file exists
         SequenceFileResource sfr = resources.iterator().next();
-        assertNotNull(sfr.getLink(PageLink.REL_SELF));
-        assertNotNull(sfr.getLink(GenericController.REL_RELATIONSHIP));
+        Link self = sfr.getLink(PageLink.REL_SELF);
+        assertEquals(sampleLocation + "/sequenceFiles/" + sf.getIdentifier().getIdentifier(), self.getHref());
         assertEquals(sf.getFile().toString(), sfr.getFile());
     }
 
@@ -121,15 +130,20 @@ public class SampleSequenceFilesControllerTest {
         assertNotNull(o);
         assertTrue(o instanceof RootResource);
         RootResource resource = (RootResource) o;
-        List<Link> links = resource.getLinks();
-        Set<String> rels = Sets.newHashSet(SampleSequenceFilesController.REL_SAMPLE,
-                SampleSequenceFilesController.REL_PROJECT_SEQUENCE_FILE);
-        for (Link l : links) {
-            assertTrue(rels.contains(l.getRel()));
-            assertNotNull(rels.remove(l.getRel()));
-        }
 
-        assertTrue(rels.isEmpty());
+        Link sample = resource.getLink(SampleSequenceFilesController.REL_SAMPLE);
+        Link sequenceFiles = resource.getLink(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
+        Link projectSequenceFile = resource.getLink(ProjectSequenceFilesController.REL_PROJECT_SEQUENCE_FILE);
+
+        String projectLocation = "http://localhost/projects/" + p.getIdentifier().getIdentifier();
+        String sampleLocation = projectLocation + "/samples/" + s.getIdentifier().getIdentifier();
+
+        assertNotNull(sample);
+        assertEquals(sampleLocation, sample.getHref());
+        assertNotNull(sequenceFiles);
+        assertEquals(sampleLocation + "/sequenceFiles", sequenceFiles.getHref());
+        assertNotNull(projectSequenceFile);
+        assertEquals(projectLocation + "/sequenceFiles/" + sf.getIdentifier().getIdentifier(), projectSequenceFile.getHref());
     }
 
     @Test
@@ -161,14 +175,20 @@ public class SampleSequenceFilesControllerTest {
         SequenceFileResource sfr = (SequenceFileResource) o;
         assertEquals(sf.getFile().toString(), sfr.getFile());
         List<Link> links = sfr.getLinks();
-        Set<String> rels = Sets.newHashSet(PageLink.REL_SELF, SampleSequenceFilesController.REL_PROJECT_SEQUENCE_FILE,
-                GenericController.REL_RELATIONSHIP);
-        for (Link l : links) {
-            assertTrue(rels.contains(l.getRel()));
-            assertNotNull(rels.remove(l.getRel()));
-        }
 
-        assertTrue(rels.isEmpty());
+        Link self = sfr.getLink(PageLink.REL_SELF);
+        Link sampleSequenceFiles = sfr.getLink(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
+        Link sample = sfr.getLink(SampleSequenceFilesController.REL_SAMPLE);
+
+        String sampleLocation = "http://localhost/projects/" + p.getIdentifier().getIdentifier() +
+                "/samples/" + s.getIdentifier().getIdentifier();
+
+        assertNotNull(self);
+        assertEquals(sampleLocation + "/sequenceFiles/" + sf.getIdentifier().getIdentifier(), self.getHref());
+        assertNotNull(sampleSequenceFiles);
+        assertEquals(sampleLocation + "/sequenceFiles", sampleSequenceFiles.getHref());
+        assertNotNull(sample);
+        assertEquals(sampleLocation, sample.getHref());
     }
 
     @Test
@@ -205,14 +225,8 @@ public class SampleSequenceFilesControllerTest {
         assertNotNull(locations);
         assertFalse(locations.isEmpty());
         assertEquals(1, locations.size());
-        assertEquals("http://localhost/sequenceFiles/" + sequenceFileId, locations.iterator().next());
-
-        List<String> links = response.getHeaders().get(HttpHeaders.LINK);
-        assertNotNull(links);
-        assertFalse(links.isEmpty());
-        assertEquals(1, locations.size());
-        assertEquals("<http://localhost/projects/" + projectId + "/samples/" + sampleId +
-                "/sequenceFiles/" + sequenceFileId + ">; rel=relationship", links.iterator().next());
+        assertEquals("http://localhost/projects/" + projectId + "/samples/" + sampleId
+                + "/sequenceFiles/" + sequenceFileId, locations.iterator().next());
     }
 
     @Test
@@ -248,14 +262,9 @@ public class SampleSequenceFilesControllerTest {
         assertFalse(locations.isEmpty());
         assertEquals(1, locations.size());
         // the sequence file location is still the same, but we've added a new relationship
-        assertEquals("http://localhost/sequenceFiles/" + sequenceFileId, locations.iterator().next());
-
-        List<String> links = response.getHeaders().get(HttpHeaders.LINK);
-        assertNotNull(links);
-        assertFalse(links.isEmpty());
-        assertEquals(1, links.size());
-        assertEquals("<http://localhost/projects/" + projectId + "/samples/" + sampleId +
-                "/sequenceFiles/" + sequenceFileId + ">; rel=relationship", links.iterator().next());
+        assertEquals("http://localhost/projects/" + projectId +
+                "/samples/" + sampleId +
+                "/sequenceFiles/" + sequenceFileId, locations.iterator().next());
     }
 
     @Test
