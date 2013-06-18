@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.SequenceFileController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSequenceFilesController;
 import com.google.common.net.HttpHeaders;
@@ -54,7 +53,7 @@ public class SampleSequenceFilesController {
     /**
      * Rel to get to the new location of the {@link SequenceFile}.
      */
-    public static final String REL_PROJECT_SEQUENCE_FILE = "project/sequenceFile";
+    public static final String REL_SAMPLE_SEQUENCE_FILES = "sample/sequenceFiles";
     /**
      * The key used in the request to add an existing {@link SequenceFile} to a {@link Sample}.
      */
@@ -113,9 +112,8 @@ public class SampleSequenceFilesController {
             String sequenceFileId = sf.getIdentifier().getIdentifier();
             SequenceFileResource sfr = new SequenceFileResource();
             sfr.setResource(sf);
-            sfr.add(linkTo(SequenceFileController.class).slash(sequenceFileId).withSelfRel());
-            sfr.add(linkTo(methodOn(SampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId, sequenceFileId))
-                    .withRel(GenericController.REL_RELATIONSHIP));
+            sfr.add(linkTo(methodOn(SampleSequenceFilesController.class)
+                    .getSequenceFileForSample(projectId, sampleId, sequenceFileId)).withSelfRel());
             resources.add(sfr);
         }
 
@@ -170,17 +168,12 @@ public class SampleSequenceFilesController {
 
         // prepare a link to the sequence file itself (on the sequence file controller)
         String sequenceFileId = sampleSequenceFileRelationship.getObject().getIdentifier();
-        String location = linkTo(SequenceFileController.class).slash(sequenceFileId).withSelfRel().getHref();
-
-        // prepare a link to the relationship between the sample and the sequence file (on this controller)
-        String relationshipLocation = linkTo(methodOn(SampleSequenceFilesController.class)
+        String location = linkTo(methodOn(SampleSequenceFilesController.class)
                 .getSequenceFileForSample(projectId, sampleId, sequenceFileId)).withSelfRel().getHref();
-        relationshipLocation = "<" + relationshipLocation + ">; rel=relationship";
 
         // prepare the headers
         MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
         responseHeaders.add(HttpHeaders.LOCATION, location);
-        responseHeaders.add(HttpHeaders.LINK, relationshipLocation);
 
         // respond to the client
         return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
@@ -222,17 +215,12 @@ public class SampleSequenceFilesController {
 
         // prepare a link to the sequence file itself (on the sequence file controller)
         String sequenceFileId = sampleSequenceFileRelationship.getObject().getIdentifier();
-        String location = linkTo(SequenceFileController.class).slash(sequenceFileId).withSelfRel().getHref();
-
-        // prepare a link to the relationship between the two
-        String relationshipLocation = linkTo(methodOn(SampleSequenceFilesController.class)
+        String location = linkTo(methodOn(SampleSequenceFilesController.class)
                 .getSequenceFileForSample(projectId, sampleId, sequenceFileId)).withSelfRel().getHref();
-        relationshipLocation = "<" + relationshipLocation + ">; rel=relationship";
 
         // prepare the headers
         MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
         responseHeaders.add(HttpHeaders.LOCATION, location);
-        responseHeaders.add(HttpHeaders.LINK, relationshipLocation);
 
         // respond to the client
         return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
@@ -267,7 +255,10 @@ public class SampleSequenceFilesController {
         resource.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSample(projectId, sampleId))
                 .withRel(REL_SAMPLE));
         resource.add(linkTo(methodOn(ProjectSequenceFilesController.class)
-                .getProjectSequenceFile(projectId, r.getObject().getIdentifier())).withRel(REL_PROJECT_SEQUENCE_FILE));
+                .getProjectSequenceFile(projectId, r.getObject().getIdentifier()))
+                .withRel(ProjectSequenceFilesController.REL_PROJECT_SEQUENCE_FILE));
+        resource.add(linkTo(methodOn(SampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
+                .withRel(REL_SAMPLE_SEQUENCE_FILES));
 
         modelMap.addAttribute(GenericController.RESOURCE_NAME, resource);
 
@@ -277,7 +268,7 @@ public class SampleSequenceFilesController {
     /**
      * Get a specific {@link SequenceFile} associated with a {@link Sample}.
      *
-     * @param projectId      the identifier of the {@link ca.corefacility.bioinformatics.irida.model.Project}.
+     * @param projectId      the identifier of the {@link Project}.
      * @param sampleId       the identifier of the {@link Sample}.
      * @param sequenceFileId the identifier of the {@link SequenceFile}.
      * @return a representation of the {@link SequenceFile}.
@@ -299,11 +290,12 @@ public class SampleSequenceFilesController {
         sfr.setResource(sf);
 
         // add links to the resource
-        sfr.add(linkTo(SequenceFileController.class).slash(sequenceFileId).withSelfRel());
         sfr.add(linkTo(methodOn(SampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
-                .withRel(REL_PROJECT_SEQUENCE_FILE));
+                .withRel(REL_SAMPLE_SEQUENCE_FILES));
         sfr.add(linkTo(methodOn(SampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,
-                sequenceFileId)).withRel(GenericController.REL_RELATIONSHIP));
+                sequenceFileId)).withSelfRel());
+        sfr.add(linkTo(methodOn(ProjectSamplesController.class)
+                .getProjectSample(projectId, sampleId)).withRel(REL_SAMPLE));
 
         // add the resource to the response
         modelMap.addAttribute(GenericController.RESOURCE_NAME, sfr);

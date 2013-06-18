@@ -41,14 +41,9 @@ public class SampleSequenceFilesIntegrationTest {
 
         // check that the location and link headers were created:
         String location = r.getHeader(HttpHeaders.LOCATION);
-        String link = r.getHeader(HttpHeaders.LINK);
 
         assertNotNull(location);
-        assertTrue(location.matches("http://localhost:8080/api/sequenceFiles/[a-f0-9\\-]+"));
-
-        assertNotNull(link);
-        assertTrue(link.matches("<http://localhost:8080/api/projects/[a-f0-9\\-]+/samples/[a-f0-9\\-]+" +
-                "/sequenceFiles/[a-f0-9\\-]+>; rel=relationship"));
+        assertTrue(location.matches("http://localhost:8080/api/projects/[a-f0-9\\-]+/samples/[a-f0-9\\-]+/sequenceFiles/[a-f0-9\\-]+"));
 
         // clean up
         Files.delete(sequenceFile);
@@ -84,14 +79,9 @@ public class SampleSequenceFilesIntegrationTest {
         r = given().body(existingSequenceFile).expect().statusCode(HttpStatus.CREATED.value()).when()
                 .post(sequenceFileUri);
         location = r.getHeader(HttpHeaders.LOCATION);
-        String link = r.getHeader(HttpHeaders.LINK);
 
         assertNotNull(location);
-        assertTrue(location.matches("http://localhost:8080/api/sequenceFiles/[a-f0-9\\-]+"));
-
-        assertNotNull(link);
-        assertTrue(link.matches("<http://localhost:8080/api/projects/[0-9a-f\\-]+/samples/[a-f0-9\\-]+" +
-                "/sequenceFiles/[a-f0-9\\-]+>; rel=relationship"));
+        assertTrue(location.matches("http://localhost:8080/api/projects/[a-f0-9\\-]+/samples/[a-f0-9\\-]+/sequenceFiles/[a-f0-9\\-]+"));
     }
 
     @Test
@@ -113,11 +103,7 @@ public class SampleSequenceFilesIntegrationTest {
         String location = r.getHeader(HttpHeaders.LOCATION);
         String identifier = location.substring(location.lastIndexOf('/') + 1);
 
-        // get the link, this what we want to remove from the sample
-        String link = r.getHeader(HttpHeaders.LINK);
-        String sequenceFileRelationship = link.substring(1, link.indexOf('>'));
-
-        r = expect().statusCode(HttpStatus.OK.value()).when().delete(sequenceFileRelationship);
+        r = expect().statusCode(HttpStatus.OK.value()).when().delete(location);
         String responseBody = r.getBody().asString();
         String sampleLocation = from(responseBody).getString("resource.links.find{it.rel == 'sample'}.href");
         String sequenceFileLocation = from(responseBody).getString("resource.links.find{it.rel == 'project/sequenceFile'}.href");

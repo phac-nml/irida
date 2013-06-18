@@ -12,7 +12,6 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.SequenceFileController;
 import com.google.common.net.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +50,10 @@ public class ProjectSequenceFilesController {
      * rel used for accessing the list of sequence files associated with a project.
      */
     public static final String REL_PROJECT_SEQUENCE_FILES = "project/sequenceFiles";
+    /**
+     * rel used for accessing a specific sequence file associated with a project.
+     */
+    public static final String REL_PROJECT_SEQUENCE_FILE = "project/sequenceFile";
     /**
      * logger.
      */
@@ -120,16 +123,11 @@ public class ProjectSequenceFilesController {
 
         logger.trace("Constructing location header.");
         String sequenceFileId = r.getObject().getIdentifier();
-        String location = linkTo(SequenceFileController.class).slash(sequenceFileId).withSelfRel().getHref();
-        logger.trace("Constructing relationship link header.");
-        String relationshipLocation = linkTo(methodOn(ProjectSequenceFilesController.class).getProjectSequenceFile(projectId,
-                sequenceFileId)).withSelfRel().getHref();
-        relationshipLocation = "<" + relationshipLocation + ">; rel=relationship";
+        String location = linkTo(methodOn(ProjectSequenceFilesController.class).getProjectSequenceFile(projectId, sequenceFileId)).withSelfRel().getHref();
 
         // construct a set of headers to add to the response
         MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
         responseHeaders.add(HttpHeaders.LOCATION, location);
-        responseHeaders.add(HttpHeaders.LINK, relationshipLocation);
 
         logger.trace("Responding to client.");
         return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
@@ -193,10 +191,8 @@ public class ProjectSequenceFilesController {
             SequenceFile sequenceFile = sequenceFileService.read(r.getObject());
             SequenceFileResource sr = new SequenceFileResource();
             sr.setResource(sequenceFile);
-            sr.add(linkTo(SequenceFileController.class).
-                    slash(sequenceFile.getIdentifier().getIdentifier()).withSelfRel());
-            sr.add(linkTo(methodOn(ProjectSequenceFilesController.class).getProjectSequenceFile(projectId,
-                    r.getIdentifier().getIdentifier())).withRel(GenericController.REL_RELATIONSHIP));
+            sr.add(linkTo(methodOn(ProjectSequenceFilesController.class).
+                    getProjectSequenceFile(projectId, sequenceFile.getIdentifier().getIdentifier())).withSelfRel());
             sampleResources.add(sr);
         }
 
@@ -223,10 +219,9 @@ public class ProjectSequenceFilesController {
         sfr.setResource(sf);
 
         // construct self link, project link, relationship link.
-        sfr.add(linkTo(SequenceFileController.class).slash(sequenceFileId).withSelfRel());
+        sfr.add(linkTo(methodOn(ProjectSequenceFilesController.class)
+                .getProjectSequenceFile(projectId, sequenceFileId)).withSelfRel());
         sfr.add(linkTo(ProjectsController.class).slash(projectId).withRel(ProjectsController.REL_PROJECT));
-        sfr.add(linkTo(methodOn(getClass()).removeSequenceFileFromProject(projectId, sequenceFileId))
-                .withRel(GenericController.REL_RELATIONSHIP));
 
         modelMap.addAttribute(GenericController.RESOURCE_NAME, sfr);
 
