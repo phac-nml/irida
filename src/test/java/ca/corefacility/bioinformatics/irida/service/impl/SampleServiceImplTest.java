@@ -10,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.repositories.RelationshipRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
@@ -71,16 +72,24 @@ public class SampleServiceImplTest {
         SequenceFile sf = new SequenceFile();
         sf.setIdentifier(new Identifier());
         Relationship r = new Relationship(s.getIdentifier(), sf.getIdentifier());
+        Project p = new Project();
+        p.setIdentifier(new Identifier());
+        Relationship projectSequenceFile = new Relationship(p.getIdentifier(), sf.getIdentifier());
+        projectSequenceFile.setIdentifier(new Identifier());
+        List<Relationship> relationships = Lists.newArrayList(projectSequenceFile);
 
         when(sampleRepository.exists(s.getIdentifier())).thenReturn(Boolean.TRUE);
         when(sequenceFileRepository.exists(sf.getIdentifier())).thenReturn(Boolean.TRUE);
         when(relationshipRepository.create(Sample.class, s.getIdentifier(), SequenceFile.class, sf.getIdentifier())).thenReturn(r);
+        when(relationshipRepository.getLinks(p.getIdentifier(), RdfPredicate.ANY, sf.getIdentifier())).thenReturn(relationships);
 
-        Relationship created = sampleService.addSequenceFileToSample(s, sf);
+        Relationship created = sampleService.addSequenceFileToSample(p, s, sf);
 
         verify(sampleRepository).exists(s.getIdentifier());
         verify(sequenceFileRepository).exists(sf.getIdentifier());
         verify(relationshipRepository).create(Sample.class, s.getIdentifier(), SequenceFile.class, sf.getIdentifier());
+        verify(relationshipRepository).getLinks(p.getIdentifier(), RdfPredicate.ANY, sf.getIdentifier());
+        verify(relationshipRepository).delete(projectSequenceFile.getIdentifier());
 
         assertEquals(r, created);
     }

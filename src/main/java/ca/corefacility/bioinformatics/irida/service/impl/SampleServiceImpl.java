@@ -54,7 +54,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Identifier, Sample> imple
      * {@inheritDoc}
      */
     @Override
-    public Relationship addSequenceFileToSample(Sample sample, SequenceFile sampleFile) {
+    public Relationship addSequenceFileToSample(Project project, Sample sample, SequenceFile sampleFile) {
         // confirm that both the sample and sequence file exist already, fail fast if either don't exist
         if (!sampleRepository.exists(sample.getIdentifier())) {
             throw new IllegalArgumentException("Sample must be persisted before adding a sequence file.");
@@ -63,6 +63,16 @@ public class SampleServiceImpl extends CRUDServiceImpl<Identifier, Sample> imple
         if (!sequenceFileRepository.exists(sampleFile.getIdentifier())) {
             throw new IllegalArgumentException("Sequence file must be persisted before adding to sample.");
         }
+
+        // get the existing relationship between the project and sequence file
+        List<Relationship> projectSequenceFileRelationships = relationshipRepository.getLinks(project.getIdentifier(),
+                RdfPredicate.ANY, sampleFile.getIdentifier());
+        if (projectSequenceFileRelationships.size() != 1) {
+            throw new IllegalArgumentException("Project and SequenceFile must be related.");
+        }
+        Relationship projectSequenceFileRelationship = projectSequenceFileRelationships.iterator().next();
+        // remove the existing relationship
+        relationshipRepository.delete(projectSequenceFileRelationship.getIdentifier());
 
         Relationship r = relationshipRepository.create(Sample.class, sample.getIdentifier(),
                 SequenceFile.class, sampleFile.getIdentifier());
