@@ -42,4 +42,9 @@ public class SequenceFileResource extends Resource<Identifier, SequenceFile> {
     public String getFile() {
         return resource.getFile().toString();
     }
+
+    @XmlElement
+    public String getFileName() {
+        return resource.getFile().getFileName().toString();
+    }
 }

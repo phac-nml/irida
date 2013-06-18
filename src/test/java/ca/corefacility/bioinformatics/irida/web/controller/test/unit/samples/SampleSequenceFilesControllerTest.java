@@ -151,30 +151,23 @@ public class SampleSequenceFilesControllerTest {
         Project p = constructProject();
         Sample s = constructSample();
         SequenceFile sf = constructSequenceFile();
-        Relationship projectSampleRelationship = new Relationship();
-        projectSampleRelationship.setSubject(p.getIdentifier());
-        projectSampleRelationship.setObject(s.getIdentifier());
-        Relationship sampleSequenceFileRelationship = new Relationship();
-        sampleSequenceFileRelationship.setSubject(s.getIdentifier());
-        sampleSequenceFileRelationship.setObject(sf.getIdentifier());
 
-        when(relationshipService.getRelationship(p.getIdentifier(), s.getIdentifier())).thenReturn(projectSampleRelationship);
-        when(relationshipService.getRelationship(s.getIdentifier(), sf.getIdentifier())).thenReturn(sampleSequenceFileRelationship);
-        when(sequenceFileService.read(sf.getIdentifier())).thenReturn(sf);
+        when(projectService.read(p.getIdentifier())).thenReturn(p);
+        when(sampleService.read(s.getIdentifier())).thenReturn(s);
+        when(sequenceFileService.getSequenceFileFromSample(p, s, sf.getIdentifier())).thenReturn(sf);
 
         ModelMap modelMap = controller.getSequenceFileForSample(p.getIdentifier().getIdentifier(),
                 s.getIdentifier().getIdentifier(), sf.getIdentifier().getIdentifier());
 
-        verify(relationshipService, times(1)).getRelationship(p.getIdentifier(), s.getIdentifier());
-        verify(relationshipService, times(1)).getRelationship(s.getIdentifier(), sf.getIdentifier());
-        verify(sequenceFileService, times(1)).read(sf.getIdentifier());
+        verify(projectService).read(p.getIdentifier());
+        verify(sampleService).read(s.getIdentifier());
+        verify(sequenceFileService).getSequenceFileFromSample(p, s, sf.getIdentifier());
 
         Object o = modelMap.get(GenericController.RESOURCE_NAME);
         assertNotNull(o);
         assertTrue(o instanceof SequenceFileResource);
         SequenceFileResource sfr = (SequenceFileResource) o;
         assertEquals(sf.getFile().toString(), sfr.getFile());
-        List<Link> links = sfr.getLinks();
 
         Link self = sfr.getLink(PageLink.REL_SELF);
         Link sampleSequenceFiles = sfr.getLink(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
