@@ -30,13 +30,14 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 public interface SampleService extends CRUDService<Identifier, Sample> {
 
     /**
-     * Add a sample file to a sample.
+     * Add a {@link SequenceFile} to a {@link Sample}.
      *
-     * @param sample     the sample that the file belongs to.
-     * @param sampleFile the file that we're adding.
-     * @return the relationship created between the two entities.
+     * @param project    the {@Project} to move the {@link SequenceFile} from.
+     * @param sample     the {@link Sample} that the {@link SequenceFile} belongs to.
+     * @param sampleFile the {@link SequenceFile} that we're adding.
+     * @return the {@link Relationship} created between the two entities.
      */
-    public Relationship addSequenceFileToSample(Sample sample, SequenceFile sampleFile);
+    public Relationship addSequenceFileToSample(Project project, Sample sample, SequenceFile sampleFile);
 
     /**
      * Get a specific instance of a {@link Sample} that belongs to a {@link Project}. If the {@link Sample} is not

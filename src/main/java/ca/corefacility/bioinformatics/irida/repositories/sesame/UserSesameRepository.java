@@ -265,7 +265,7 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
      */    
     @Override
     public Collection<Relationship> getUsersForProject(Identifier project){
-        return linksRepo.getLinks(null,hasProject, project);
+        return linksRepo.getLinks(project, hasUser, null);
     }
     
     public Collection<Identifier> listProjectsForUser(Project project){

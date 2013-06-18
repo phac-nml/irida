@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
@@ -34,4 +36,17 @@ public interface SequenceFileService extends CRUDService<Identifier, SequenceFil
      *         {@link SequenceFile}.
      */
     public Relationship createSequenceFileWithOwner(SequenceFile sequenceFile, Class ownerType, Identifier owner);
+
+    /**
+     * Get a {@link SequenceFile} that is associated with a specific {@Link Project}. If the {@link SequenceFile} is
+     * not associated with the {@link Project}, or no {@link SequenceFile} with the specified {@link Identifier} exists,
+     * then an {@link ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException} will be thrown.
+     *
+     * @param project        the {@link Project} to get the {@link SequenceFile} from.
+     * @param sequenceFileId the {@link Identifier} of the {@link SequenceFile}.
+     * @return the {@link SequenceFile} belonging to the {@link Identifier}.
+     * @throws EntityNotFoundException when the {@link Identifier} specified does not exist, or is not associated with
+     *                                 the supplied {@link Project}.
+     */
+    public SequenceFile getSequenceFileFromProject(Project project, Identifier sequenceFileId) throws EntityNotFoundException;
 }
