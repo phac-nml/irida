@@ -153,6 +153,7 @@ public class ProjectSequenceFilesControllerTest {
         assertEquals(1, samples.size());
         SequenceFileResource resource = samples.iterator().next();
         assertEquals(sf.getFile().toString(), resource.getFile());
+        assertEquals(sf.getFile().getFileName().toString(), resource.getFileName());
         Link self = resource.getLink(PageLink.REL_SELF);
 
         assertEquals("http://localhost/projects/" + projectId + "/sequenceFiles/" + sf.getIdentifier().getIdentifier(), self.getHref());
