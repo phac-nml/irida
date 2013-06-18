@@ -15,6 +15,8 @@ import java.util.Map;
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.path.json.JsonPath.from;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.*;
 
 /**
@@ -82,6 +84,10 @@ public class SampleSequenceFilesIntegrationTest {
 
         assertNotNull(location);
         assertTrue(location.matches("http://localhost:8080/api/projects/[a-f0-9\\-]+/samples/[a-f0-9\\-]+/sequenceFiles/[a-f0-9\\-]+"));
+
+        // confirm that the sequence file was removed from the project
+        expect().body("relatedResources.sequenceFiles.identifier", not(hasItem(identifier)))
+                .when().get(projectUri).getBody().asString();
     }
 
     @Test

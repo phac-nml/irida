@@ -243,7 +243,7 @@ public class SampleSequenceFilesControllerTest {
         when(sampleService.getSampleForProject(p, s.getIdentifier())).thenReturn(s);
         when(sampleService.read(s.getIdentifier())).thenReturn(s);
         when(sequenceFileService.read(sf.getIdentifier())).thenReturn(sf);
-        when(sampleService.addSequenceFileToSample(s, sf)).thenReturn(sampleSequenceFileRelationship);
+        when(sampleService.addSequenceFileToSample(p, s, sf)).thenReturn(sampleSequenceFileRelationship);
 
         Map<String, String> requestBody = ImmutableMap.of(SampleSequenceFilesController.SEQUENCE_FILE_ID_KEY, sequenceFileId);
 
@@ -253,7 +253,7 @@ public class SampleSequenceFilesControllerTest {
         verify(sampleService).getSampleForProject(p, s.getIdentifier());
         verify(sampleService).read(s.getIdentifier());
         verify(sequenceFileService).read(sf.getIdentifier());
-        verify(sampleService).addSequenceFileToSample(s, sf);
+        verify(sampleService).addSequenceFileToSample(p, s, sf);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
