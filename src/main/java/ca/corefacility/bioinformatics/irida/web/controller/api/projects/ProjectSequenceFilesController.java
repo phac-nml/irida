@@ -67,22 +67,17 @@ public class ProjectSequenceFilesController {
      * Reference to {@link RelationshipService} for managing {@link Relationship}.
      */
     private RelationshipService relationshipService;
-    /**
-     * Reference to {@link SequenceFileController}.
-     */
-    private SequenceFileController sequenceFileController;
+
 
     protected ProjectSequenceFilesController() {
     }
 
     @Autowired
     public ProjectSequenceFilesController(ProjectService projectService, SequenceFileService sequenceFileService,
-                                          RelationshipService relationshipService,
-                                          SequenceFileController sequenceFileController) {
+                                          RelationshipService relationshipService) {
         this.projectService = projectService;
         this.sequenceFileService = sequenceFileService;
         this.relationshipService = relationshipService;
-        this.sequenceFileController = sequenceFileController;
     }
 
     /**
@@ -102,7 +97,6 @@ public class ProjectSequenceFilesController {
         id.setIdentifier(projectId);
 
         logger.trace("Adding sequence file to project [" + projectId + "]");
-
         // create a temporary file to send back to the service
         Path temp = Files.createTempDirectory(null);
         Path target = temp.resolve(file.getOriginalFilename());
@@ -199,8 +193,8 @@ public class ProjectSequenceFilesController {
             SequenceFile sequenceFile = sequenceFileService.read(r.getObject());
             SequenceFileResource sr = new SequenceFileResource();
             sr.setResource(sequenceFile);
-            sr.add(linkTo(methodOn(SequenceFileController.class).
-                    getResource(sequenceFile.getIdentifier().getIdentifier())).withSelfRel());
+            sr.add(linkTo(SequenceFileController.class).
+                    slash(sequenceFile.getIdentifier().getIdentifier()).withSelfRel());
             sr.add(linkTo(methodOn(ProjectSequenceFilesController.class).getProjectSequenceFile(projectId,
                     r.getIdentifier().getIdentifier())).withRel(GenericController.REL_RELATIONSHIP));
             sampleResources.add(sr);

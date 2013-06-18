@@ -113,8 +113,7 @@ public class SampleSequenceFilesController {
             String sequenceFileId = sf.getIdentifier().getIdentifier();
             SequenceFileResource sfr = new SequenceFileResource();
             sfr.setResource(sf);
-            sfr.add(linkTo(methodOn(SequenceFileController.class).getResource(sequenceFileId))
-                    .withSelfRel());
+            sfr.add(linkTo(SequenceFileController.class).slash(sequenceFileId).withSelfRel());
             sfr.add(linkTo(methodOn(SampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId, sequenceFileId))
                     .withRel(GenericController.REL_RELATIONSHIP));
             resources.add(sfr);
@@ -300,7 +299,7 @@ public class SampleSequenceFilesController {
         sfr.setResource(sf);
 
         // add links to the resource
-        sfr.add(linkTo(methodOn(SequenceFileController.class).getResource(sequenceFileId)).withSelfRel());
+        sfr.add(linkTo(SequenceFileController.class).slash(sequenceFileId).withSelfRel());
         sfr.add(linkTo(methodOn(SampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
                 .withRel(REL_PROJECT_SEQUENCE_FILE));
         sfr.add(linkTo(methodOn(SampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,

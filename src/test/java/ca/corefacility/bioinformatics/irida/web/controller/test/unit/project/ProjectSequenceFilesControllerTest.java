@@ -51,7 +51,6 @@ public class ProjectSequenceFilesControllerTest {
     private ProjectService projectService;
     private SequenceFileService sequenceFileService;
     private RelationshipService relationshipService;
-    private SequenceFileController sequenceFilesController;
 
     public ProjectSequenceFilesControllerTest() {
     }
@@ -60,10 +59,9 @@ public class ProjectSequenceFilesControllerTest {
     public void setUp() {
         projectService = mock(ProjectService.class);
         sequenceFileService = mock(SequenceFileService.class);
-        sequenceFilesController = mock(SequenceFileController.class);
         relationshipService = mock(RelationshipService.class);
 
-        controller = new ProjectSequenceFilesController(projectService, sequenceFileService, relationshipService, sequenceFilesController);
+        controller = new ProjectSequenceFilesController(projectService, sequenceFileService, relationshipService);
     }
 
     @Test
