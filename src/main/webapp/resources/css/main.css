@@ -385,6 +385,9 @@ select {
 .icon-plus:before {
   content: "\f067"; }
 
+.icon-arrow-left:before {
+  content: "\f060"; }
+
 .ngs-button {
   position: relative;
   display: inline-block;
@@ -609,6 +612,22 @@ input.sidebar__search {
 
 .cardholder__after {
   clear: both; }
+
+.sample--details--names {
+  background-color: #dfe2e2;
+  list-style: none;
+  margin-left: 0; }
+  .sample--details--names li {
+    padding: 0.2em; }
+    .sample--details--names li:hover {
+      background-color: #d2d6d6;
+      cursor: pointer; }
+
+.sample--details--files {
+  background-color: black;
+  color: #dfe2e2;
+  list-style: none;
+  margin-left: 0; }
 
 .folder {
   -webkit-perspective: 800px;

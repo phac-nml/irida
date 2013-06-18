@@ -18,8 +18,9 @@
                     <p class="title" data-section-title=""><a ng-href="#">Project Samples</a></p>
 
                     <div class="content" data-slug="section1">
-                        <div class="cardholder">
-                            <div class="card" data-ng-repeat="s in project.samples" data-drop="true"
+                        <div class="cardholder" data-ng-hide="sample.details">
+                            <div class="card" data-ng-repeat="s in project.samples" data-ng-click="getSequenceFiles(s.links['sample/sequenceFiles'])"
+                                 data-drop="true"
                                  data-jqyoui-options=""
                                  ng-model="list2"
                                  jqyoui-droppable="{multiple:true, onDrop: 'addFileToSample(\'{{s.links['sample/sequenceFiles']}}\')', onOver: 'dragOverOut', onOut: 'dragOverOut'}">
@@ -34,8 +35,21 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div class="sample--details row" data-ng-show="sample.details">
+                            <div class="large-12 columns"><button class="ngs-button" data-ng-click="sample.details = false"><i class="icon-arrow-left"></i> Back</button></div>
+                            <div class="large-3 columns">
+                                <ul class="sample--details--names">
+                                    <li data-ng-repeat="s in project.samples">{{s.label}}</li>
+                                </ul>
+                            </div>
+                            <div class="large-9 columns">
+                                <ul class="sample--details--files">
+                                    <li data-ng-repeat="f in sample.sequenceFiles">{{f.dateCreated | date:'mediumDate'}}</li>
+                                </ul>
+                            </div>
+                        </div>
                         <div class="cardholder__after"></div>
+
                     </div>
                 </section>
                 <section>
