@@ -279,12 +279,11 @@ public class SampleSequenceFilesController {
         Identifier projectIdentifier = new Identifier(projectId);
         Identifier sampleIdentifier = new Identifier(sampleId);
         Identifier sequenceFileIdentifier = new Identifier(sequenceFileId);
-        // test for the existence of a relationship between the project, sample and sequence files
-        Relationship projectSampleRel = relationshipService.getRelationship(projectIdentifier, sampleIdentifier);
-        Relationship sampleSequenceFileRel = relationshipService.getRelationship(sampleIdentifier, sequenceFileIdentifier);
+        Project p = projectService.read(projectIdentifier);
+        Sample s = sampleService.read(sampleIdentifier);
 
         // if the relationships exist, load the sequence file from the database and prepare for serialization.
-        SequenceFile sf = sequenceFileService.read(sampleSequenceFileRel.getObject());
+        SequenceFile sf = sequenceFileService.getSequenceFileFromSample(p, s, sequenceFileIdentifier);
         SequenceFileResource sfr = new SequenceFileResource();
         sfr.setResource(sf);
 
