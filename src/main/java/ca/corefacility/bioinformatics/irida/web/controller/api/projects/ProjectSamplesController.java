@@ -12,7 +12,6 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SamplesController;
 import com.google.common.net.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,6 +40,10 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @Controller
 public class ProjectSamplesController {
     /**
+     * Rel to get to the project that this sample belongs to.
+     */
+    public static final String REL_PROJECT = "sample/project";
+    /**
      * rel used for accessing the list of samples associated with a project.
      */
     public static final String REL_PROJECT_SAMPLES = "project/samples";
@@ -56,21 +59,16 @@ public class ProjectSamplesController {
      * Reference to {@link RelationshipService}.
      */
     private RelationshipService relationshipService;
-    /**
-     * Reference to {@link SamplesController}.
-     */
-    private SamplesController samplesController;
 
     protected ProjectSamplesController() {
     }
 
     @Autowired
     public ProjectSamplesController(ProjectService projectService, SampleService sampleService,
-                                    RelationshipService relationshipService, SamplesController samplesController) {
+                                    RelationshipService relationshipService) {
         this.projectService = projectService;
         this.sampleService = sampleService;
         this.relationshipService = relationshipService;
-        this.samplesController = samplesController;
     }
 
     /**
@@ -89,7 +87,7 @@ public class ProjectSamplesController {
         Project p = projectService.read(id);
 
         // construct the sample that we're going to create
-        Sample s = samplesController.mapResourceToType(sample);
+        Sample s = sample.getResource();
 
         // add the sample to the project
         Relationship r = projectService.addSampleToProject(p, s);
@@ -141,9 +139,7 @@ public class ProjectSamplesController {
     }
 
     /**
-     * Get the representation of a specific sample that's associated with the project. This method originally passed
-     * through to {@link SamplesController}, but that was a bad idea because it ignored the project identifier entirely,
-     * meaning that a client could read *any* {@link Sample}, as long as they had the identifier for it.
+     * Get the representation of a specific sample that's associated with the project.
      *
      * @param projectId the {@link Project} identifier that the {@link Sample} should be associated with.
      * @param sampleId  the {@link Sample} identifier that we're looking for.
@@ -166,9 +162,9 @@ public class ProjectSamplesController {
 
         // add a link to: 1) self, 2) sequenceFiles, 3) project
         sr.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSample(projectId, sampleId)).withSelfRel());
-        sr.add(linkTo(methodOn(ProjectsController.class).getResource(projectId)).withRel(SamplesController.REL_PROJECT));
+        sr.add(linkTo(methodOn(ProjectsController.class).getResource(projectId)).withRel(REL_PROJECT));
         sr.add(linkTo(methodOn(SampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
-                .withRel(SamplesController.REL_SEQUENCE_FILES));
+                .withRel(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
 
         // add the sample resource to the response
         modelMap.addAttribute(GenericController.RESOURCE_NAME, sr);
@@ -239,7 +235,7 @@ public class ProjectSamplesController {
         resource.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSample(projectId, sampleId))
                 .withSelfRel());
         resource.add(linkTo(methodOn(SampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
-                .withRel(SamplesController.REL_SEQUENCE_FILES));
+                .withRel(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
         resource.add(linkTo(ProjectsController.class).slash(projectId).withRel(ProjectsController.REL_PROJECT));
 
         modelMap.addAttribute(GenericController.RESOURCE_NAME, resource);

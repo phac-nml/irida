@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.hateoas.ResourceSupport;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.Date;
 
 /**
@@ -46,6 +47,17 @@ public abstract class Resource<IdentifierType extends Identifier,
      */
     public Resource(Type resource) {
         this.resource = resource;
+    }
+
+    /**
+     * Get the concrete instance of the resource.
+     *
+     * @return the resource.
+     */
+    @JsonIgnore
+    @XmlTransient // *REALLY* ignore this property, **PLEASE**.
+    public Type getResource() {
+        return resource;
     }
 
     /**

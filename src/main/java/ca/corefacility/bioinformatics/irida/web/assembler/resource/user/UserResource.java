@@ -81,6 +81,6 @@ public class UserResource extends Resource<UserIdentifier, User> {
 
     @JsonProperty
     public void setPassword(String password) {
-        this.password = password;
+        resource.setPassword(password);
     }
 }
