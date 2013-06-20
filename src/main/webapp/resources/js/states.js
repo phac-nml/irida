@@ -13,7 +13,7 @@
      */
       .state('projects', {
         url: '/',
-        templateUrl: '/partials/projects.html',
+        templateUrl: '/partials/landing.html',
         resolve: {
           data: function ($q, ajaxService) {
             var defer = $q.defer();
@@ -28,12 +28,16 @@
           $scope.projects = data.resource.resources;
         }
       })
+      .state('projects.main', {
+        url: 'landing',
+        templateUrl: '/partials/default-landing.html'
+      })
     /**
      * Project Page
      */
       .state('projects.detail', {
         url: 'projects/:projectId',
-        templateUrl: '/partials/projects.detail.html',
+        templateUrl: '/partials/project.html',
         resolve: {
           data: function ($q, $stateParams, ajaxService) {
             var defer = $q.defer();
@@ -59,25 +63,24 @@
 
       .state('login', {
         url: '/login',
-
         templateUrl: '/partials/login.html'
       });
   });
 
   function formatObjectLinks(obj) {
-    for(var key in obj) {
-      if(key === 'links') {
+    for (var key in obj) {
+      if (key === 'links') {
         obj[key] = linkFormatter(obj[key]);
       }
-      else if(typeof obj[key] === 'object') {
+      else if (typeof obj[key] === 'object') {
         formatObjectLinks(obj[key]);
       }
     }
   }
 
-  function linkFormatter (links) {
+  function linkFormatter(links) {
     var l = {};
-    for(var i = 0; i < links.length; i++){
+    for (var i = 0; i < links.length; i++) {
       l[links[i].rel] = links[i].href;
     }
     return l;

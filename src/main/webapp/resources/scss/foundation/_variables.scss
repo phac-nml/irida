@@ -2,7 +2,6 @@
 // Foundation Variables
 //
 
-
 // The default font-size is set to 100% of the browser style sheet (usually 16px)
 // for compatibility with browser-based text zoom or user-set defaults.
 $base-font-size: 100% !default;
@@ -69,7 +68,7 @@ $default-float: left;
 // $include-html-type-classes: $include-html-classes;
 // $include-html-grid-classes: $include-html-classes;
 // $include-html-visibility-classes: $include-html-classes;
-$include-html-button-classes: false; //$include-html-classes;
+//$include-html-button-classes: $include-html-classes;
 // $include-html-form-classes: $include-html-classes;
 // $include-html-custom-form-classes: $include-html-classes;
 // $include-html-media-classes: $include-html-classes;
@@ -1203,12 +1202,12 @@ $include-html-button-classes: false; //$include-html-classes;
 
 // Background color for the top bar
 
-// $topbar-bg:                            #111 !default;
+$topbar-bg:                            #2d2d2d !default;
 
 // Height and margin
 
-// $topbar-height:                        45px;
-// $topbar-margin-bottom:                 emCalc(30px);
+$topbar-height:                        27px;
+$topbar-margin-bottom:                 emCalc(15px);
 
 // Control Input height for top bar
 
@@ -1257,7 +1256,7 @@ $include-html-button-classes: false; //$include-html-classes;
 // Transitions and breakpoint styles
 
 // $topbar-transition-speed:              300ms;
-// $topbar-breakpoint:                    emCalc(940px); // Change to 9999px for always mobile layout
+$topbar-breakpoint:                    emCalc(0px); // Change to 9999px for always mobile layout
 // $topbar-media-query:                   "only screen and (min-width: #{$topbar-breakpoint})";
 
 // Divider Styles

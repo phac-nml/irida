@@ -1,29 +1,32 @@
-<div class="main--outer">
-    <nav class="main top-bar">
-        <ul class="title-area">
-            <li class="name"><h1><a href="/projects">NGS Archive</a></h1></li>
-            <li class="toggle-topbar menu-icon"><a href="#" ng-click="toggleDD()"><span>Menu</span></a></li>
-        </ul>
-        <section class="top-bar-section">
-            <ul class="right">
-                <li><a ng-click="logout()" href="#">Logout</a></li>
+<div class="outer">
+    <!--<nav class="main top-bar">-->
+        <!--<ul class="title-area">-->
+            <!--<li class="name"><h1><a href="/projects">NGS Archive</a></h1></li>-->
+            <!--<li class="toggle-topbar menu-icon"><a href="#" ng-click="toggleDD()"><span>Menu</span></a></li>-->
+        <!--</ul>-->
+        <!--<section class="top-bar-section">-->
+            <!--<ul class="right">-->
+                <!--<li><a ng-click="logout()" href="#">Logout</a></li>-->
+            <!--</ul>-->
+        <!--</section>-->
+    <!--</nav>-->
+    <div class="sidebar">
+        <div class="">
+            <h2>Projects
+                <button class="ngs-button ngs-button__sidebar" data-ng-click="createProject()"><i class="icon-plus"></i></button>
+            </h2>
+            <input class="sidebar__search" placeholder="Search" type="search" data-ng-model="projectSearch.name" />
+            <ul>
+                <li data-ng-repeat="p in projects | filter:projectSearch" data-ng-click="gotoProject(p.links.self)">{{p.name}}</li>
             </ul>
-        </section>
-    </nav>
-    <div class="main-content" data-ng-controller="ProjectsListCtrl">
-        <div class="sidebar">
-            <div class="sidebar__body">
-                <h2>Projects
-                    <button class="ngs-button ngs-button__sidebar" data-ng-click="createProject()"><i class="icon-plus"></i></button>
-                </h2>
-                <input class="sidebar__search" placeholder="Search" type="search" data-ng-model="projectSearch.name" />
-                <ul>
-                    <li data-ng-repeat="p in projects | filter:projectSearch" data-ng-click="gotoProject(p.links.self)">{{p.name}}</li>
-                </ul>
-            </div>
         </div>
+    </div>
+    <div class="main" data-ng-controller="ProjectsListCtrl">
 
         <div class="detailed-content row" ui-view="">
         </div>
     </div>
 </div>
+<script type="text/javascript">
+
+</script>

@@ -34,7 +34,42 @@
 
 .project__file--drag {
 	background-color: rgba(41, 128, 185,0.4);
-	span {
-		display: none;
-	}
+	//div {
+	//	display: none;
+	//}
 }
+
+.sample--details {
+}
+
+.sample--details--names {
+  background-color: #484b4c;
+  color: white;
+  list-style: none;
+  margin-left: 0;
+  li {
+    padding: 0.2em;
+    @include transition(all .5s ease-out);
+
+    &:hover {
+      cursor: pointer;
+      background-color: rgba(0, 0, 0, .2);
+      border-right: 0.7em solid $color-hightlight;
+      @include transition(all .25s ease-in);
+    }
+  }
+}
+
+.curr-sample {
+  background-color:lighten(#484b4c, 10);
+  border-right: 0.7em solid $color-hightlight;
+}
+
+.sample--details--files {
+  background-color: black;
+  color: $color-light-gray;
+  list-style: none;
+  margin-left: 0;
+  min-height: 200px;
+}
+

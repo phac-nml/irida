@@ -1,0 +1,67 @@
+<div data-ng-controller="LandingCtrl">
+    <nav id="nav-main" class="top-bar">
+        <ul class="title-area">
+            <li class="name"><h1><a href="/projects">NGS Archive</a></h1></li>
+        </ul>
+        <section class="top-bar-section">
+            <ul class="right">
+                <li><a ng-click="logout()" href="#">Logout</a></li>
+            </ul>
+        </section>
+    </nav>
+    <div class="outer">
+        <div class="sidebar">
+            <div class="sidebar--projects" data-ng-controller="ProjectsListCtrl">
+                <ul data-ng-repeat="p in projects">
+                    <li data-ng-click="gotoProject(p.links.self)">
+                        <div>
+                            <img src="/css/img/project.png" alt=""/>
+                            <span>{{p.name}}</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="main" ui-view=""></div>
+    </div>
+    <script type="text/javascript">
+        (function () {
+            var SIDEBAR_W = '176',
+                    MAINNAV_H = getTotalHeight('nav-main'),
+                    OUTER = document.getElementsByClassName('outer')[0],
+                    SIDEBAR = document.getElementsByClassName('sidebar')[0],
+                    CONTENT = document.getElementsByClassName('main')[0];
+
+            window.onresize = adjustWindow;
+
+            function adjustWindow() {
+                var h = window.innerHeight - MAINNAV_H;
+                var w = window.innerWidth;
+
+                OUTER.style.width = w + 'px';
+                OUTER.style.height = h + 'px';
+
+                SIDEBAR.style.height = h + 'px';
+                SIDEBAR.style.width = SIDEBAR_W + 'px';
+
+                CONTENT.style.height = h + 'px';
+                CONTENT.style.width = w - SIDEBAR_W + 'px';
+            }
+
+            function getTotalHeight(elmID) {
+                var elmHeight, elmMargin;
+                if (document.all) { // IE
+                    elmHeight = parseInt(document.getElementById(elmID).currentStyle.height, 10);
+                    elmMargin = parseInt(document.getElementById(elmID).currentStyle.marginTop, 10) + parseInt(document.getElementById(elmID).currentStyle.marginBottom, 10);
+                }
+                else { // Mozilla
+                    elmHeight = parseInt(document.defaultView.getComputedStyle(document.getElementById(elmID), '').getPropertyValue('height'), 10);
+                    elmMargin = parseInt(document.defaultView.getComputedStyle(document.getElementById(elmID), '').getPropertyValue('margin-top')) + parseInt(document.defaultView.getComputedStyle(document.getElementById(elmID), '').getPropertyValue('margin-bottom'));
+                }
+                return elmHeight + elmMargin;
+            }
+
+            adjustWindow();
+        })();
+    </script>
+</div>

@@ -1,18 +1,20 @@
 @import "bourbon/bourbon";
-@import "foundation/variables", "foundation/components/global", "foundation/components/block-grid";
 @import "fws/variables";
+@import "foundation/variables", "foundation/components/global", "foundation/components/block-grid";
 @import "fws/custom-font-awesome";
 @import "fws/mixins";
 @import "fws/buttons";
-@import "fws/accordian";
-@import "fws/sidebar";
-@import "fws/cards";
-@import "fws/project";
 
-.main.top-bar, .top-bar-section ul li.active > a, .top-bar-section li a:not(.button)  {
-  @include linear-gradient(lighten($color-phac-dark-blue, 5), $color-phac-dark-blue);
-  margin-bottom: 0;
-}
+//@import "fws/accordian";
+//@import "fws/sidebar";
+//@import "fws/cards";
+//@import "fws/project";
+//@import "fws/spinner";
+
+//.main.top-bar, .top-bar-section ul li.active > a, .top-bar-section li a:not(.button)  {
+//  @include linear-gradient(lighten($color-phac-dark-blue, 5), $color-phac-dark-blue);
+//  margin-bottom: 0;
+//}
 
 // ============================================================================
 // GLOBAL AND BOX SETTINGS
@@ -37,63 +39,6 @@ h1, h2, h3, h4 {
   font-weight: 600;
 }
 
-.spinner:before {
-  margin: 10px;
-  content: url("/css/img/spinner.png");
-  height: 36px;
-  width: 36px;
-  display: inline-block;
-  -moz-animation: spin 2s infinite linear;
-  -o-animation: spin 2s infinite linear;
-  -webkit-animation: spin 2s infinite linear;
-  animation: spin 2s infinite linear;
-}
-
-@-moz-keyframes spin {
-  0% {
-    -moz-transform: rotate(0deg);
-  }
-  100% {
-    -moz-transform: rotate(359deg);
-  }
-}
-
-@-webkit-keyframes spin {
-  0% {
-    -webkit-transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(359deg);
-  }
-}
-
-@-o-keyframes spin {
-  0% {
-    -o-transform: rotate(0deg);
-  }
-  100% {
-    -o-transform: rotate(359deg);
-  }
-}
-
-@-ms-keyframes spin {
-  0% {
-    -ms-transform: rotate(0deg);
-  }
-  100% {
-    -ms-transform: rotate(359deg);
-  }
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(359deg);
-  }
-}
-
 .row {
   width: 100%;
   min-width: 100%;
@@ -114,38 +59,101 @@ h1, h2, h3, h4 {
   border-radius: $default-border-radius;
 }
 
-.main--outer {
-  margin-left: $width-sidebar;
+// General Layout
+//nav.nav-main {
+//  background-color: #2d2d2d;
+//  color: #babab8;
+//  height: 24px;
+//  z-index: 900;
+//}
+.outer {
+  display: block;
+  float: left;
   height: 100%;
+  width: 100%;
+  background-color: #ffffff;
 }
 
-.main-content {
-
-  // Other (colors, fonts, align)
-  color: $color-body-font;
-  font-family: $font;
+.sidebar {
+  background-color: #ffffff;
+  display: block;
+  float: left;
+  font-family: arial, sans-serif;
+  height: 949px;
+  margin-top: 0px;
+  min-height: 1px;
+  position: relative;
+  width: 0;
 }
 
-.detailed-content {
-  // @extends
+.main {
+  background-color: #ffffff;
+  float: left;
+  min-width: 1px;
+}
 
-  // Positioning (z-index, top, etc...)
+.login {
+  height: 300px;
+  width: 300px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: -150px;
+  margin-top: -150px;
+  background-color: #ffffff;
+}
 
-  // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
+.sidebar--projects {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 
-  padding-top: 1rem;
-  //width: 100%;
+  height: 700px;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
 
-  //margin-left: $width-sidebar;
+  ul {
+    list-style: none;
+    margin: 0;
+    margin-right: emCalc(10px);
+    padding: 0;
+  }
 
-  // Other (colors, fonts, align)
+  li {
+    margin: 0;
+    padding: emCalc(3px) 0;
+    &:hover {
+      cursor: pointer;
+      background-color: #eeeeee;
+    }
 
-  // @includes
-
-  // Nested
-  h3 {
-    margin-top: 0;
+    img {
+      padding-left: emCalc(8px);
+      padding-bottom: 5px;
+      margin-right: emCalc(8px);
+    }
   }
 }
 
-
+//.detailed-content {
+//  // @extends
+//
+//  // Positioning (z-index, top, etc...)
+//
+//  // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
+//
+//  padding-top: 1rem;
+//  //width: 100%;
+//
+//  //margin-left: $width-sidebar;
+//
+//  // Other (colors, fonts, align)
+//
+//  // @includes
+//
+//  // Nested
+//  h3 {
+//    margin-top: 0;
+//  }
+//}

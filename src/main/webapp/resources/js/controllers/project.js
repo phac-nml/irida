@@ -3,64 +3,89 @@
  * Date:    2013-06-04
  * Time:    1:05 PM
  * License: MIT
- */ ( function ( ng, app ) {
+ */
+(function (ng, app) {
   'use strict';
-  app.controller( 'ProjectCtrl', [ '$scope', '$rootScope', 'ajaxService', '$location',
-    function ( $scope, $rootScope, ajaxService, $location ) {
+  app.controller('ProjectCtrl', [ '$scope', '$rootScope', 'ajaxService', '$location',
+    function ($scope, $rootScope, ajaxService, $location) {
       $scope.sample = {};
       $scope.samples = {};
       $scope.list2 = [ ];
+      var detailFileDrag = false;
 
-      $scope.addFileToSample = function ( evt, ui, url ) {
+      $scope.addFileToSample = function (evt, ui, url) {
         $scope.dragOverOut(evt);
-        ajaxService.create( url, {
-          'sequenceFileId': $scope.list2[ 0 ].identifier
-        } ).then( function ( data ) {
-          console.log( data );
-          $scope.list2 = [ ];
-        } );
+        addSequenceFileToSample(url);
       };
 
-      $scope.addFileToDetailSample = function () {
-        ajaxService.create( $scope.sample.addUrl, {
-          'sequenceFileId': $scope.list2[ 0 ].identifier
-        } ).then( function ( data ) {
-            console.log( data );
-            $scope.list2 = [ ];
-          } );
+      $scope.addFileToDetailSample = function (evt, ui) {
+        // Need to know if this is a drop to self list
+        if (detailFileDrag) {
+          $scope.sample.sequenceFiles = $scope.sample.sequenceFiles2.slice(0);
+          detailFileDrag = false;
+        }
+        else {
+          addSequenceFileToSample($scope.sample.addUrl, function () {
+            getSequnceFilesForSample($scope.sample.addUrl);
+          });
+        }
       };
+
+      function addSequenceFileToSample(url, callback) {
+        ajaxService.create(url, {
+          'sequenceFileId': $scope.list2[ 0 ].identifier
+        }).then(function () {
+            $scope.list2 = [ ];
+            if (typeof callback === 'function') {
+              callback();
+            }
+          });
+      }
+
+      function getSequnceFilesForSample(url) {
+        ajaxService.get(url).then(function (data) {
+          $scope.sample.sequenceFiles = data.resource.resources;
+          $scope.sample.sequenceFiles2 = data.resource.resources;
+        });
+      }
 
       $scope.getSequenceFiles = function (sample) {
-        console.log('getting sequence files');
         // TODO: (Josh: 2013-06-18) Add loading spinner!
-        $scope.sample.addUrl = sample.links['sample/sequenceFiles'];
-        $scope.sample.sequenceFiles = [];
-        $scope.sample.details = true;
-        
-        ajaxService.get(sample.links['sample/sequenceFiles']).then(function (data) {
-          console.log(data);
-          $scope.sample.sequenceFiles = data.resource.resources;
-          console.log($scope.sample.sequenceFiles);
+        $scope.sample = {
+          name: sample.label,
+          addUrl: sample.links['sample/sequenceFiles'],
+          sequenceFiles: [],
+          sequenceFiles2: [],
+          details: true
+        };
+
+        getSequnceFilesForSample(sample.links['sample/sequenceFiles']);
+      };
+
+      $scope.fileDrag = function (evt) {
+        $(evt.target).toggleClass('project__file--drag');
+      };
+
+      $scope.dragOverOut = function (evt) {
+        $(evt.target).find('.folder').toggleClass('folder--draghover');
+      };
+
+      $scope.detailFileDrag = function (evt, ui, file) {
+        detailFileDrag = true;
+      };
+
+      $scope.detailFileDrop = function () {
+//        detailFileDrag = false;
+      };
+
+      $scope.deleteProject = function () {
+        ajaxService.deleteItem($scope.project.links.self).then(function () {
+          $rootScope.$broadcast('PROJECT_DELETED', {
+            'name': $scope.project.name
+          });
+          $location.path('/');
         });
       };
-
-      $scope.fileDrag = function ( evt ) {
-        $( evt.target ).toggleClass( 'project__file--drag' );
-      };
-
-      $scope.dragOverOut = function ( evt ) {
-        console.log(evt);
-        $( evt.target).find('.folder').toggleClass( 'folder--draghover' );
-      };
-
-      $scope.deleteProject = function ( ) {
-        ajaxService.deleteItem( $scope.project.links.self ).then( function ( ) {
-          $rootScope.$broadcast( 'PROJECT_DELETED', {
-            'name': $scope.project.name
-          } );
-          $location.path( '/' );
-        } );
-      };
     }
-  ] );
-} )( angular, NGS );
+  ]);
+})(angular, NGS);

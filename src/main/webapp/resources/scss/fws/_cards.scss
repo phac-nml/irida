@@ -4,29 +4,6 @@ $block-grid-media-queries: false;
   clear: both;
 }
 
-.sample--details {
-}
-
-.sample--details--names {
-  background-color: $color-light-gray;
-  list-style: none;
-  margin-left: 0;
-  li {
-    padding: 0.2em;
-    &:hover {
-      background-color: darken($color-light-gray, 5);
-      cursor: pointer;
-    }
-  }
-}
-
-.sample--details--files {
-  background-color: black;
-  color: $color-light-gray;
-  list-style: none;
-  margin-left: 0;
-}
-
 .folder {
   -webkit-perspective: 800px;
   -moz-perspective: 800px;
@@ -213,4 +190,10 @@ $block-grid-media-queries: false;
   span {
     font-size: .8em;
   }
+}
+
+.card__droppable {
+  border: 2px solid $color-slate-gray;
+  background-color: mediumpurple;
+  display: inline-block;
 }

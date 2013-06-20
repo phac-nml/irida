@@ -1,36 +1,66 @@
 <div data-ng-controller="ProjectCtrl" data-ng-init="init()">
-    <section>
-        <h1>{{project.name}}</h1>
 
-        <div class="row details">
-            <div class="large-8 small-12 columns description">
-                <h2>Description</h2>
+    <div class="row">
+        <h1>{{project.name}}
+            <button data-ng-click="deleteProject()" class="ngs-button ngs-button__caution right">Delete</button>
+        </h1>
+    </div>
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab accusamus aliquid architecto
-                    autem
-                    cumque deserunt dolore est expedita fugit, harum hic ipsam iste maxime minima numquam odit
-                    quibusdam, rerum sit.</p>
-            </div>
-            <div class="large-3 large-offset-1 small-12 columns resource-list">
-                <h2>Users</h2>
-                <ul>
-                    <li ng-repeat="user in users"><a href="#" ng-click="gotoUser($index)"><i class="icon-user"></i>
-                        {{user.label}}</a>
-                            <span class="remove">
-                                <a title="Remove user from project" ng-click="removeUser(user.links.delete)">
-                                    <i class="icon-remove"></i>
-                                </a>
-                            </span>
-                    </li>
-                </ul>
-            </div>
+    <div class="row">
+        <div class="button-bar">
+            <ul class="button-group radius">
+                <li><a href="#" class="small split button secondary"><i class="icon-check-empty"></i><span data-dropdown="drop1"></span></a></li>
+            </ul>
+
+            <ul class="button-group radius">
+                <li><a href="#" class="small button secondary">Button 1</a></li>
+                <li><a href="#" class="small button secondary">Button 2</a></li>
+                <li><a href="#" class="small button secondary">Button 3</a></li>
+            </ul>
         </div>
-        <hr/>
-        <div class="row">
-            <div>
-                <input type="file" multiple="multiple" data-file="param.files"/>
-            </div>
+    </div>
 
+    <ul id="drop1" class="f-dropdown" data-dropdown-content="">
+        <li><a href="#">This is a link</a></li>
+        <li><a href="#">This is another</a></li>
+        <li><a href="#">Yet another</a></li>
+    </ul>
+
+    <div class="row">
+        <table class="large-12">
+            <tbody>
+            <tr data-ng-repeat="s in project.sequenceFiles">
+                <td><input type="checkbox" name="selectedSamples"/></td>
+                <td>{{s.label}}</td>
+                <td>{{s.createdDate | angularMoment }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <!--<div class="row details">-->
+    <!--<div class="large-8 small-12 columns description">-->
+    <!--<h2>Description</h2>-->
+
+    <!--<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab accusamus aliquid architecto-->
+    <!--autem-->
+    <!--cumque deserunt dolore est expedita fugit, harum hic ipsam iste maxime minima numquam odit-->
+    <!--quibusdam, rerum sit.</p>-->
+    <!--</div>-->
+    <!--<hr/>-->
+    <!--</div>-->
+    <!--<div class="row">-->
+    <!--<div class="large-8 small-12 columns"><h2>Recent Activity</h2>-->
+    <!--<ul>-->
+    <!--<li>File 1 uploaded on xxxxx</li>-->
+    <!--<li>File 1 uploaded on xxxxx</li>-->
+    <!--<li>File 1 uploaded on xxxxx</li>-->
+    <!--</ul>-->
+    <!--</div>-->
+    <!--</div>-->
+    <div class="row hide-for-touch">
+        <div>
+            <input type="file" multiple="multiple" data-file="param.files"/>
         </div>
-    </section>
+
+    </div>
 </div>
