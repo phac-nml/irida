@@ -539,31 +539,35 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         return users;
     }
     
-    private Collection<String> getFieldPredicates(Class c){
-        List<String> predicates = new ArrayList<>();
+    public void listFields(List<String> fields){
+        
+    }
+    
+    private Map<String,String> getFieldPredicates(Class c){
+        Map<String,String> predicates = new HashMap<>();
         if(c.getSuperclass() != null){
-            Collection<String> added = getFieldPredicates(c.getSuperclass());
-            predicates.addAll(added);
+            Map<String,String> added = getFieldPredicates(c.getSuperclass());
+            predicates.putAll(added);
         }
         
         if(c.getInterfaces() != null){
             for(Class inf : c.getInterfaces()){
-                Collection<String> added = getFieldPredicates(inf);
-                predicates.addAll(added);
+                Map<String,String> added = getFieldPredicates(inf);
+                predicates.putAll(added);
             }
         }
         
         for(Field f : c.getDeclaredFields()){
             Iri iri = f.getAnnotation(Iri.class);
             if(iri != null){
-                predicates.add(iri.value());
+                predicates.put(f.getName(), iri.value());
             }
         }
         
         for(Method m : c.getDeclaredMethods()){
             Iri iri = m.getAnnotation(Iri.class);
             if(iri != null){
-                predicates.add(iri.value());
+                predicates.put(m.getName(), iri.value());                
             }
         }
         
@@ -573,14 +577,16 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     private Map<String,Value> getPredicateValues(Type obj){
         java.net.URI uriFromIdentifier = getUriFromIdentifier((Identifier) obj.getIdentifier());
         Map<String,Value> values = new HashMap<>();
-        Collection<String> preds = getFieldPredicates(obj.getClass());
+        Map<String,String> preds = getFieldPredicates(obj.getClass());
         
         ObjectConnection con = store.getRepoConnection();
         ValueFactory vf = con.getValueFactory();
         
         try{
             URI sub = vf.createURI(uriFromIdentifier.toString());
-            for(String predStr : preds){
+            Set<String> keySet = preds.keySet();
+            for(String fieldName : keySet){
+                String predStr = preds.get(fieldName);
                 URI pred = vf.createURI(predStr);
                 RepositoryResult<Statement> statements = con.getStatements(sub, pred, null);
                 if(statements.hasNext()){
