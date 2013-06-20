@@ -539,8 +539,76 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         return users;
     }
     
-    public void listFields(List<String> fields){
+    /**
+     * List objects of this type that have the given fields
+     * @param fields The fields we want to select from the database
+     * @return A Map<Identifier, Map<String,String>> of object identifiers and key/value pairs of the selected fields
+     */
+    public Map<Identifier,Map<String,String>> listFields(List<String> fields){
+        Map<Identifier,Map<String,String>> results = new HashMap<>();
+        Map<String, String> fieldPredicates = getFieldPredicates(objectType);
         
+        ObjectConnection con = store.getRepoConnection();
+        
+        int numPreds = fields.size();
+        try{
+            String qs = store.getPrefixes() + //get the prefixes
+                    "SELECT * WHERE {" +
+                    "?s a ?type .";
+            
+            //create a statement for the values we want to list
+            for(int i=0;i<numPreds;i++){
+                qs += "?s ?pred"+i + "?val"+i + ".";
+            }
+            
+            qs += "}"; //close the query
+            
+            TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
+            ValueFactory fac = con.getValueFactory();
+            
+            //set the type binding
+            URI type = fac.createURI(prefix, sType);
+            query.setBinding("type", type);
+            
+            //set the rest of the bindings for the object
+            for(int i=0;i<numPreds;i++){
+                if(fieldPredicates.containsKey(fields.get(i))){
+                    String predStr = fieldPredicates.get(fields.get(i));
+                    URI pred = fac.createURI(predStr);
+                    query.setBinding("pred"+i, pred);
+                }
+                else{
+                    throw new IllegalArgumentException("The object doesn't contain the field " + fields.get(i));
+                }
+                
+            }
+                     
+            TupleQueryResult evaluate = query.evaluate();
+            while(evaluate.hasNext()){
+                BindingSet bs = evaluate.next();
+                Binding subjectBinding = bs.getBinding("s");
+                String subString = subjectBinding.getValue().toString();
+                logger.debug("getting id for " + subString);
+                Identifier identiferForURI = idGen.getIdentiferForURI(fac.createURI(subString));
+                Map<String,String> values = new HashMap<>();
+                for(int i=0;i<numPreds;i++){
+                    Binding binding = bs.getBinding("val"+i);
+                    String stringValue = binding.getValue().stringValue();
+                    values.put(fields.get(i), stringValue);
+                }
+                results.put(identiferForURI,values);
+            }
+            
+            evaluate.close();
+                        
+        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
+            Logger.getLogger(GenericRepository.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            store.closeRepoConnection(con);
+        }
+        
+        return results;
+                
     }
     
     private Map<String,String> getFieldPredicates(Class c){

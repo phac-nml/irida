@@ -22,9 +22,12 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -240,7 +243,42 @@ public class GenericRepositoryTest {
         
         assertTrue(repo.count()> 0);
     }
+    
+    @Test
+    public void testListFields(){
+        
+        try{
+            Map<Identifier, Map<String, String>> listFields = repo.listFields(ImmutableList.of("data"));
+            assertFalse(listFields.isEmpty());
+            for(Identifier id : listFields.keySet()){
+                Map<String, String> get = listFields.get(id);
+                assertTrue(get.containsKey("data"));
+            }
+            
+            List<String> of = ImmutableList.of();
+            Map<Identifier, Map<String, String>> noParamsList = repo.listFields(of);
+            assertFalse(noParamsList.isEmpty());
+            for(Identifier id : noParamsList.keySet()){
+                Map<String, String> get = noParamsList.get(id);
+                assertTrue(get.isEmpty());
+            }            
+        }
+        catch(IllegalArgumentException ex){
+            fail(ex.getMessage());
+        }
+    }
+    
+    @Test
+    public void testListInvalidFields(){
+        try{
+            Map<Identifier, Map<String, String>> listFields = repo.listFields(ImmutableList.of("baddata"));
+            fail();
+        }
+        catch(IllegalArgumentException ex){
 
+        }        
+    }
+    
     /**
      * Test of generateNewIdentifier method, of class GenericRepository.
      
