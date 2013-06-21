@@ -544,12 +544,14 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
      * @param fields The fields we want to select from the database
      * @return A Map<Identifier, Map<String,String>> of object identifiers and key/value pairs of the selected fields
      */
-    public Map<Identifier,Map<String,String>> listFields(List<String> fields){
+    public Map<Identifier,Map<String,Object>> listFields(List<String> fields){
         Map<Identifier,Map<String,String>> results = new HashMap<>();
+        
+        Map<Identifier,Map<String,Object>> objResults = new HashMap<>();
         Map<String, String> fieldPredicates = getFieldPredicates(objectType);
         
         ObjectConnection con = store.getRepoConnection();
-        
+                
         int numPreds = fields.size();
         try{
             String qs = store.getPrefixes() + //get the prefixes
@@ -573,10 +575,9 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             //set the rest of the bindings for the object
             for(int i=0;i<numPreds;i++){
                 setListBinding(fields.get(i), fieldPredicates, i, query, fac);
-                
             }
                      
-            TupleQueryResult evaluate = query.evaluate();
+            TupleQueryResult evaluate = query.evaluate();     
             while(evaluate.hasNext()){
                 BindingSet bs = evaluate.next();
                 Binding subjectBinding = bs.getBinding("s");
@@ -584,27 +585,58 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
                 
                 Identifier identiferForURI = idGen.getIdentiferForURI(fac.createURI(subString));
                 Map<String,String> values = new HashMap<>();
+                Map<String,Object> objValues = new HashMap<>();
                 for(int i=0;i<numPreds;i++){
                     Binding binding = bs.getBinding("val"+i);
                     String stringValue = binding.getValue().stringValue();
+                    
+                    //We have to get the value in its original format.  For this we need to use some reflection
+                    //first get the class of the field
+                    Class pClass = null;
+                    try{
+                        pClass = getFieldType(objectType, fields.get(i));
+                    }
+                    catch(NoSuchFieldException ex){
+                        throw new StorageException("Cannot read the field " + fields.get(i) + " from class "+objectType.getCanonicalName());
+                    }
+                    
+                    Object value = null;
+                    
+                    //if the field is a string, we can add it as-is
+                    if(pClass.equals(String.class)){
+                        value = stringValue;
+                    }
+                    else //if it's not, we need to run valueOf on the string value
+                    {
+                        try {
+                            Method valueOf = pClass.getMethod("valueOf", String.class);
+                            value = valueOf.invoke(pClass, stringValue);
+
+                        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+                            throw new StorageException("Could not run valueOf(String) on class " + pClass.getCanonicalName());
+                        }
+                    }
                     values.put(fields.get(i), stringValue);
+                    objValues.put(fields.get(i), value);
                 }
                 results.put(identiferForURI,values);
+                objResults.put(identiferForURI, objValues);
             }
             
             evaluate.close();
                         
         } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
-            Logger.getLogger(GenericRepository.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't list fields for type " + objectType.getCanonicalName());
         }finally{
             store.closeRepoConnection(con);
         }
         
-        return results;
+        return objResults;
                 
     }
     
-    protected void setListBinding(String fieldName, Map<String, String> fieldPredicates, int index, TupleQuery query, ValueFactory fac){
+    protected void setListBinding(String fieldName, Map<String, String> fieldPredicates, int index, Query query, ValueFactory fac){
         if(fieldPredicates.containsKey(fieldName)){
             String predStr = fieldPredicates.get(fieldName);
             URI pred = fac.createURI(predStr);
@@ -613,6 +645,12 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         else{
             throw new IllegalArgumentException("The object doesn't contain the field '" + fieldName + "'");
         }        
+    }
+    
+    protected Class getFieldType(Class c, String field) throws NoSuchFieldException{
+        Field declaredField = c.getDeclaredField(field);
+        
+        return declaredField.getType();
     }
     
     private Map<String,String> getFieldPredicates(Class c){
@@ -639,7 +677,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         for(Method m : c.getDeclaredMethods()){
             Iri iri = m.getAnnotation(Iri.class);
             if(iri != null){
-                predicates.put(m.getName(), iri.value());                
+                predicates.put(m.getName(), iri.value()); 
             }
         }
         

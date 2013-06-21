@@ -64,9 +64,9 @@ public class GenericRepositoryTest {
         repo = new IdentifiedRepo(store,auditRepo,linksRepo);
         repo.setIdGen(idGen);
         
-        repo.create(new Identified("data1","udata1"));
-        repo.create(new Identified("data2","udata2"));
-        repo.create(new Identified("data3","udata3"));
+        repo.create(new Identified("data1",1,"udata1"));
+        repo.create(new Identified("data2",2,"udata2"));
+        repo.create(new Identified("data3",3,"udata3"));
     }
     
     /**
@@ -84,7 +84,7 @@ public class GenericRepositoryTest {
      */
     @Test
     public void testCreate() {
-        Identified i = new Identified("newdata","newudata");
+        Identified i = new Identified("newdata",9,"newudata");
 
         try {
             i = repo.create(i);
@@ -109,7 +109,7 @@ public class GenericRepositoryTest {
      */
     @Test
     public void testRead() {
-        Identified i = new Identified("newdata","newudata");
+        Identified i = new Identified("newdata",9,"newudata");
 
         i = repo.create(i);
         try{
@@ -170,7 +170,7 @@ public class GenericRepositoryTest {
      */
     @Test
     public void testDelete() {
-        Identified u = new Identified("newdata","newudata");
+        Identified u = new Identified("newdata",9,"newudata");
         u = repo.create(u);
         
         try{
@@ -200,7 +200,7 @@ public class GenericRepositoryTest {
      */
     @Test
     public void testExists() {
-        Identified u = new Identified("newdata","newudata");
+        Identified u = new Identified("newdata",9,"newudata");
         u = repo.create(u);
         
         try{
@@ -219,7 +219,7 @@ public class GenericRepositoryTest {
      */
     @Test
     public void testUpdate() {
-        Identified u = new Identified("newdata","newudata");
+        Identified u = new Identified("newdata",9,"newudata");
         u = repo.create(u);
         
         try{
@@ -240,7 +240,7 @@ public class GenericRepositoryTest {
     
     @Test
     public void testUpdateUnannotatedMember(){
-        Identified u = new Identified("newdata","newudata");
+        Identified u = new Identified("newdata",9,"newudata");
         u = repo.create(u);
         
         try{
@@ -263,7 +263,7 @@ public class GenericRepositoryTest {
      */
     @Test
     public void testCount() {
-        repo.create(new Identified("newdata","newudata"));
+        repo.create(new Identified("newdata",9,"newudata"));
         
         assertTrue(repo.count()> 0);
     }
@@ -272,21 +272,23 @@ public class GenericRepositoryTest {
     public void testListFields(){
         
         try{
-            Map<Identifier, Map<String, String>> listFields = repo.listFields(ImmutableList.of("data","unannotatedData"));
+            Map<Identifier, Map<String, Object>> listFields = repo.listFields(ImmutableList.of("data","unannotatedData","intData"));
             assertFalse(listFields.isEmpty());
             for(Identifier id : listFields.keySet()){
-                Map<String, String> get = listFields.get(id);
+                Map<String, Object> get = listFields.get(id);
                 assertTrue(get.containsKey("data"));
                 assertNotNull(get.get("data"));
                 assertTrue(get.containsKey("unannotatedData"));
                 assertNotNull(get.get("unannotatedData"));
+                assertTrue(get.containsKey("intData"));
+                assertNotNull(get.get("intData"));
             }
             
             List<String> of = ImmutableList.of();
-            Map<Identifier, Map<String, String>> noParamsList = repo.listFields(of);
+            Map<Identifier, Map<String, Object>> noParamsList = repo.listFields(of);
             assertFalse(noParamsList.isEmpty());
             for(Identifier id : noParamsList.keySet()){
-                Map<String, String> get = noParamsList.get(id);
+                Map<String, Object> get = noParamsList.get(id);
                 assertTrue(get.isEmpty());
             }            
         }
@@ -298,7 +300,7 @@ public class GenericRepositoryTest {
     @Test
     public void testListInvalidFields(){
         try{
-            Map<Identifier, Map<String, String>> listFields = repo.listFields(ImmutableList.of("baddata"));
+            Map<Identifier, Map<String, Object>> listFields = repo.listFields(ImmutableList.of("baddata"));
             fail();
         }
         catch(IllegalArgumentException ex){

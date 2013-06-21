@@ -39,8 +39,10 @@ import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.Query;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
+import org.openrdf.query.TupleQuery;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.object.ObjectConnection;
@@ -159,6 +161,18 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
         
         return super.update(id, updatedFields);
     }
+    
+    @Override
+    protected void setListBinding(String fieldName, Map<String, String> fieldPredicates, int index, Query query, ValueFactory fac){
+        if(fieldName.equals("file")){
+            String predStr = fieldPredicates.get("getIoFile");
+            URI pred = fac.createURI(predStr);
+            query.setBinding("pred"+index, pred);
+        }
+        else{
+            super.setListBinding(fieldName, fieldPredicates, index, query, fac);
+        }
+    }     
     
     
     

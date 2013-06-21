@@ -43,8 +43,10 @@ import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.Query;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
+import org.openrdf.query.TupleQuery;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.object.ObjectConnection;
@@ -122,6 +124,19 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
         return super.update(id, updatedFields);
    
     }
+    
+    
+    @Override
+    protected void setListBinding(String fieldName, Map<String, String> fieldPredicates, int index, Query query, ValueFactory fac){
+        if(fieldName.equals("role")){
+            String predStr = fieldPredicates.get("getStringRoles");
+            URI pred = fac.createURI(predStr);
+            query.setBinding("pred"+index, pred);
+        }
+        else{
+            super.setListBinding(fieldName, fieldPredicates, index, query, fac);
+        }
+    }    
     
     /**
      * Update the role field for a User

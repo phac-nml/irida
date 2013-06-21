@@ -24,6 +24,7 @@ import java.util.Map;
 import org.openrdf.annotations.Iri;
 import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
+import org.openrdf.query.Query;
 import org.openrdf.query.TupleQuery;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +68,7 @@ public class IdentifiedRepo extends GenericRepository<Identifier, Identified> {
     }
     
     @Override
-    protected void setListBinding(String fieldName, Map<String, String> fieldPredicates, int index, TupleQuery query, ValueFactory fac){
+    protected void setListBinding(String fieldName, Map<String, String> fieldPredicates, int index, Query query, ValueFactory fac){
         if(fieldName.equals("unannotatedData")){
             String predStr = fieldPredicates.get("getAnnotatedGetter");
             URI pred = fac.createURI(predStr);

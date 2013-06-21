@@ -32,6 +32,8 @@ public class Identified implements IridaThing<Identified,Audit,Identifier>{
     private Identifier id;
     @Iri(PREFIX + "data")
     private String data;
+    @Iri(PREFIX + "intData")
+    private Integer intData;
     private String unannotatedData;
     
     private Audit audit;
@@ -40,8 +42,9 @@ public class Identified implements IridaThing<Identified,Audit,Identifier>{
         audit = new Audit();
     }
     
-    public Identified(String data,String unannotatedData){
+    public Identified(String data,Integer intData,String unannotatedData){
         this.data = data;
+        this.intData = intData;
         this.unannotatedData = unannotatedData;
         this.audit = new Audit();
     }
@@ -53,6 +56,15 @@ public class Identified implements IridaThing<Identified,Audit,Identifier>{
     public void setData(String data){
         this.data = data;
     }
+
+    public Integer getIntData() {
+        return intData;
+    }
+
+    public void setIntData(Integer intData) {
+        this.intData = intData;
+    }
+    
 
     public String getUnannotatedData() {
         return unannotatedData;
@@ -97,6 +109,7 @@ public class Identified implements IridaThing<Identified,Audit,Identifier>{
     public Identified copy() {
         Identified ret = new Identified();
         ret.setData(getData());
+        ret.setIntData(getIntData());
         ret.setUnannotatedData(getAnnotatedGetter());
         
         return ret;
