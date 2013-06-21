@@ -53,7 +53,7 @@ public class IdentifierGeneratorTest {
      */
     @Test
     public void testGenerateNewIdentifier() {
-        Identified obj = new Identified("bleh");
+        Identified obj = new Identified("bleh","newudata");
         Identifier id = idGen.generateNewIdentifier(obj, "http://nowhere");
         assertNotNull(id);
         assertNotNull(id.getIdentifier());
@@ -76,7 +76,7 @@ public class IdentifierGeneratorTest {
      */
     @Test
     public void testGetIdentiferForURI() {
-        Identified obj = new Identified("bleh");
+        Identified obj = new Identified("bleh","newudata");
         Identified created = repo.create(obj);
         
         try{
@@ -95,7 +95,7 @@ public class IdentifierGeneratorTest {
      */
     @Test
     public void testBuildIdentifier() {
-        Identified obj = new Identified("bleh");
+        Identified obj = new Identified("bleh","newudata");
         UUID uuid = UUID.randomUUID();
         URIImpl uri = new URIImpl("http://nowhere/"+uuid.toString());
         

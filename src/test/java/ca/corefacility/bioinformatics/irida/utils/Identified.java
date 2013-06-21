@@ -32,14 +32,17 @@ public class Identified implements IridaThing<Identified,Audit,Identifier>{
     private Identifier id;
     @Iri(PREFIX + "data")
     private String data;
+    private String unannotatedData;
+    
     private Audit audit;
     
     public Identified(){
         audit = new Audit();
     }
     
-    public Identified(String data){
+    public Identified(String data,String unannotatedData){
         this.data = data;
+        this.unannotatedData = unannotatedData;
         this.audit = new Audit();
     }
     
@@ -50,7 +53,19 @@ public class Identified implements IridaThing<Identified,Audit,Identifier>{
     public void setData(String data){
         this.data = data;
     }
-    
+
+    public String getUnannotatedData() {
+        return unannotatedData;
+    }
+
+    public void setUnannotatedData(String unannotatedData) {
+        this.unannotatedData = unannotatedData;
+    }
+
+    @Iri(PREFIX + "unannotatedData")
+    public String getAnnotatedGetter(){
+        return unannotatedData;
+    }
 
     @Override
     public Identifier getIdentifier() {
@@ -82,6 +97,7 @@ public class Identified implements IridaThing<Identified,Audit,Identifier>{
     public Identified copy() {
         Identified ret = new Identified();
         ret.setData(getData());
+        ret.setUnannotatedData(getAnnotatedGetter());
         
         return ret;
     }

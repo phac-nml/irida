@@ -78,9 +78,9 @@ public class RelationshipSesameRepositoryTest {
         pred = new RdfPredicate("irida", "identifiedRelationship");
         linksRepo.addRelationship(Identified.class, pred, Identified.class);
 
-        Identified i1 = repo.create(new Identified("first"));
-        Identified i2 = repo.create(new Identified("second"));
-        Identified i3 = repo.create(new Identified("third"));
+        Identified i1 = repo.create(new Identified("first","udata1"));
+        Identified i2 = repo.create(new Identified("second","udata2"));
+        Identified i3 = repo.create(new Identified("third","udata3"));
 
         first = i1.getIdentifier();
         second = i2.getIdentifier();
@@ -97,7 +97,7 @@ public class RelationshipSesameRepositoryTest {
      */
     @Test
     public void testEmptyLinks() {
-        Identified withoutLabel = repo.create(new Identified("data"));
+        Identified withoutLabel = repo.create(new Identified("data","newudata"));
         List<Relationship> relationships = linksRepo.getLinksForSubject(withoutLabel.getIdentifier(), Identified.class,
                 Identified.class);
         assertEquals(0, relationships.size());
@@ -108,8 +108,8 @@ public class RelationshipSesameRepositoryTest {
      */
     @Test
     public void testCreate_GenericType_GenericType() {
-        Identified i1 = repo.create(new Identified("first"));
-        Identified i2 = repo.create(new Identified("second"));
+        Identified i1 = repo.create(new Identified("first","udata1"));
+        Identified i2 = repo.create(new Identified("second","udata2"));
 
         Relationship create = linksRepo.create(i1, i2);
         assertNotNull(create);
@@ -121,8 +121,8 @@ public class RelationshipSesameRepositoryTest {
      */
     @Test
     public void testCreate_Relationship() {
-        Identified i1 = repo.create(new Identified("first"));
-        Identified i2 = repo.create(new Identified("second"));
+        Identified i1 = repo.create(new Identified("first","udata1"));
+        Identified i2 = repo.create(new Identified("second","udata2"));
 
         Relationship r = new Relationship(i1.getIdentifier(), pred, i2.getIdentifier());
 
@@ -235,8 +235,8 @@ public class RelationshipSesameRepositoryTest {
      */
     @Test
     public void testDelete_Identifier() {
-        Identified i1 = repo.create(new Identified("first"));
-        Identified i2 = repo.create(new Identified("second"));
+        Identified i1 = repo.create(new Identified("first","udata1"));
+        Identified i2 = repo.create(new Identified("second","udata2"));
         
         Relationship create = linksRepo.create(i1, i2);
         linksRepo.delete(create.getIdentifier());
@@ -249,8 +249,8 @@ public class RelationshipSesameRepositoryTest {
      */
     @Test
     public void testExists() {
-        Identified i1 = repo.create(new Identified("first"));
-        Identified i2 = repo.create(new Identified("second"));
+        Identified i1 = repo.create(new Identified("first","udata1"));
+        Identified i2 = repo.create(new Identified("second","udata2"));
         
         Relationship create = linksRepo.create(i1, i2);
         Boolean exists = linksRepo.exists(create.getIdentifier());

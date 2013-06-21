@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.net.URI;
@@ -52,6 +53,7 @@ public class GenericRepositoryTest {
     @Before
     public void setUp() throws NoSuchMethodException {
         SailStore store = new SailStore();
+        //TripleStore store = new TripleStore("http://localhost:8888/openrdf-sesame/", "test","http://bobloblaw:8888/");
         store.initialize();
         IdentifierGenerator<Identified> idGen = new IdentifierGenerator<>(store);
         IdentifierGenerator<IridaThing> auditIdGen = new IdentifierGenerator<>(store);
@@ -62,9 +64,9 @@ public class GenericRepositoryTest {
         repo = new IdentifiedRepo(store,auditRepo,linksRepo);
         repo.setIdGen(idGen);
         
-        repo.create(new Identified("data1"));
-        repo.create(new Identified("data2"));
-        repo.create(new Identified("data3"));
+        repo.create(new Identified("data1","udata1"));
+        repo.create(new Identified("data2","udata2"));
+        repo.create(new Identified("data3","udata3"));
     }
     
     /**
@@ -82,7 +84,7 @@ public class GenericRepositoryTest {
      */
     @Test
     public void testCreate() {
-        Identified i = new Identified("newdata");
+        Identified i = new Identified("newdata","newudata");
 
         try {
             i = repo.create(i);
@@ -107,12 +109,14 @@ public class GenericRepositoryTest {
      */
     @Test
     public void testRead() {
-        Identified i = new Identified("newdata");
+        Identified i = new Identified("newdata","newudata");
 
         i = repo.create(i);
         try{
             i = repo.read(i.getIdentifier());
             assertNotNull(i);
+            assertNotNull(i.getData());
+            assertNotNull(i.getUnannotatedData());
         }
         catch(IllegalArgumentException e){
             System.err.println(e.getMessage());
@@ -166,7 +170,7 @@ public class GenericRepositoryTest {
      */
     @Test
     public void testDelete() {
-        Identified u = new Identified("newdata");
+        Identified u = new Identified("newdata","newudata");
         u = repo.create(u);
         
         try{
@@ -196,7 +200,7 @@ public class GenericRepositoryTest {
      */
     @Test
     public void testExists() {
-        Identified u = new Identified("newdata");
+        Identified u = new Identified("newdata","newudata");
         u = repo.create(u);
         
         try{
@@ -215,7 +219,7 @@ public class GenericRepositoryTest {
      */
     @Test
     public void testUpdate() {
-        Identified u = new Identified("newdata");
+        Identified u = new Identified("newdata","newudata");
         u = repo.create(u);
         
         try{
@@ -233,13 +237,33 @@ public class GenericRepositoryTest {
             fail();
         }
     }
+    
+    @Test
+    public void testUpdateUnannotatedMember(){
+        Identified u = new Identified("newdata","newudata");
+        u = repo.create(u);
+        
+        try{
+            String differentData = "different";
+            HashMap<String,Object> changes = new HashMap<>();
+            changes.put("unannotatedData", differentData);
+            u = repo.update(u.getIdentifier(), changes);
+            
+            Identified j = repo.read(u.getIdentifier());
+            assertNotNull(j);
+            assertEquals(j.getUnannotatedData(),differentData);
+        }
+        catch(IllegalArgumentException|InvalidPropertyException ex){
+            fail(ex.getMessage());
+        }        
+    }
         
     /**
      * Test of count method, of class GenericRepository.
      */
     @Test
     public void testCount() {
-        repo.create(new Identified("newdata"));
+        repo.create(new Identified("newdata","newudata"));
         
         assertTrue(repo.count()> 0);
     }
@@ -248,11 +272,14 @@ public class GenericRepositoryTest {
     public void testListFields(){
         
         try{
-            Map<Identifier, Map<String, String>> listFields = repo.listFields(ImmutableList.of("data"));
+            Map<Identifier, Map<String, String>> listFields = repo.listFields(ImmutableList.of("data","unannotatedData"));
             assertFalse(listFields.isEmpty());
             for(Identifier id : listFields.keySet()){
                 Map<String, String> get = listFields.get(id);
                 assertTrue(get.containsKey("data"));
+                assertNotNull(get.get("data"));
+                assertTrue(get.containsKey("unannotatedData"));
+                assertNotNull(get.get("unannotatedData"));
             }
             
             List<String> of = ImmutableList.of();
