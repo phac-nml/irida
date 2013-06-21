@@ -23,13 +23,23 @@
                 </ul>
             </div>
 
-            <button class="btn" data-ng-show="show.sequenceOptions">Download</button>
+            <div class="btn-group">
+                <button class="btn" data-ng-show="show.sequenceOptions">Download</button>
+            </div>
 
-            <div class="btn-group" data-ng-hide="show.sequenceOptions&lt;2">
+            <div class="btn-group" data-ng-show="show.sequenceOptions&gt;1">
                 <button class="btn dropdown-toggle">Modify Files&nbsp;<span class="caret"></span></button>
 
                 <ul class="dropdown-menu">
                     <li><a href="">Concatenate</a></li>
+                </ul>
+            </div>
+
+            <div class="btn-group" data-ng-show="show.sequenceOptions">
+                <button class="btn dropdown-toggle">Add to Sample&nbsp;<span class="caret"></span></button>
+
+                <ul class="dropdown-menu">
+                    <li data-ng-repeat="s in project.samples"><a href="#">{{s.label}}</a></li>
                 </ul>
             </div>
         </div>
@@ -43,7 +53,7 @@
                     <td class="file-select"><input class="cb" data-ng-click="checkSelectedFiles()"
                                                    data-ng-checked="allFiles" type="checkbox" value="$index"
                                                    name="selectedFiles"/></td>
-                    <td><a href="" data-ng-click="downloadFile($event, s.links.self)">{{s.label}}</a></td>
+                    <td><a href="{{s.links.self}}">{{s.label}}</a></td>
                     <td class="file-date">{{s.createdDate | angularMoment }}</td>
                 </tr>
                 </tbody>

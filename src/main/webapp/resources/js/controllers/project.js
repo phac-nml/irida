@@ -9,6 +9,7 @@
   app.controller('ProjectCtrl', [ '$scope', '$rootScope', 'ajaxService', '$location',
     function ($scope, $rootScope, ajaxService, $location) {
       $scope.show = {sequenceOptions: 0};
+      $scope.allFiles = false;
       $scope.sample = {};
       $scope.samples = {};
       $scope.list2 = [ ];
@@ -101,7 +102,13 @@
 
       $scope.modifyAllCbSelection = function () {
         $scope.allFiles = !$scope.allFiles;
-        $scope.show.sequenceOptions = $scope.allFiles;
+//        $scope.show.sequenceOptions = angular.element('input[name=\'selectedFiles\']:checked').length;
+        if($scope.allFiles) {
+          $scope.show.sequenceOptions = 100;
+        }
+        else {
+          $scope.show.sequenceOptions = 0;
+        }
       };
     }
   ]);
