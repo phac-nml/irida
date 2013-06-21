@@ -89,11 +89,6 @@
       };
 
       // NEW
-      $scope.selectedCount = function () {
-        console.log('clas');
-        return angular.element("input[name='selectedFiles']:checked").length > 0;
-      };
-
       $scope.downloadFile = function (ev, url) {
         ev.preventDefault();
         console.log(url);
@@ -102,6 +97,11 @@
 
       $scope.checkSelectedFiles = function () {
         $scope.show.sequenceOptions = angular.element('input[name=\'selectedFiles\']:checked').length;
+      };
+
+      $scope.modifyAllCbSelection = function () {
+        $scope.allFiles = !$scope.allFiles;
+        $scope.show.sequenceOptions = $scope.allFiles;
       };
     }
   ]);
