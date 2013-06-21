@@ -11,6 +11,7 @@ var NGS = angular.module('NGS', [
   'ui.state',
   'ngs-section',
   'filters',
+  'ui.bootstrap',
   'ngDragDrop'
 ]);
 

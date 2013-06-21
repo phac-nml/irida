@@ -242,6 +242,8 @@ public class ProjectSequenceFilesController {
         SequenceFile sf = getSequenceFileForProject(projectId, sequenceFileId);
         Path fileContent = sf.getFile();
         response.setHeader(HttpHeaders.CONTENT_TYPE, "application/fastq");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""
+                + fileContent.getFileName().toString() + "\"");
         response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(Files.size(fileContent)));
         OutputStream os = response.getOutputStream();
         Files.copy(fileContent, os);

@@ -1,66 +1,52 @@
-<div data-ng-controller="ProjectCtrl" data-ng-init="init()">
+<div class="container-fluid" data-ng-controller="ProjectCtrl" data-ng-init="init()">
 
-    <div class="row">
-        <h1>{{project.name}}
-            <button data-ng-click="deleteProject()" class="ngs-button ngs-button__caution right">Delete</button>
-        </h1>
-    </div>
-
-    <div class="row">
-        <div class="button-bar">
-            <ul class="button-group radius">
-                <li><a href="#" class="small split button secondary"><i class="icon-check-empty"></i><span data-dropdown="drop1"></span></a></li>
-            </ul>
-
-            <ul class="button-group radius">
-                <li><a href="#" class="small button secondary">Button 1</a></li>
-                <li><a href="#" class="small button secondary">Button 2</a></li>
-                <li><a href="#" class="small button secondary">Button 3</a></li>
-            </ul>
+    <div class="row-fluid">
+        <div class="span12">
+            <h1>{{project.name}}
+                <button data-ng-click="deleteProject()" class="btn btn-danger pull-right">Delete</button>
+            </h1>
         </div>
     </div>
 
-    <ul id="drop1" class="f-dropdown" data-dropdown-content="">
-        <li><a href="#">This is a link</a></li>
-        <li><a href="#">This is another</a></li>
-        <li><a href="#">Yet another</a></li>
-    </ul>
+    <div class="row-fluid row--btn">
+        <div class="span12">
+            <div class="btn-group">
+                <button class="btn" data-ng-click="allFiles = !allFiles"><div class="cb" data-ng-class="{true: 'cb--checked'}[allFiles]"></div></button>
+                <a class="btn dropdown-toggle">
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="" data-ng-click="allFiles=true">Select All</a></li>
+                    <li><a href="" data-ng-click="allFiles=false">Select None</a></li>
+                </ul>
+            </div>
 
-    <div class="row">
-        <table class="large-12">
-            <tbody>
-            <tr data-ng-repeat="s in project.sequenceFiles">
-                <td><input type="checkbox" name="selectedSamples"/></td>
-                <td>{{s.label}}</td>
-                <td>{{s.createdDate | angularMoment }}</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <!--<div class="row details">-->
-    <!--<div class="large-8 small-12 columns description">-->
-    <!--<h2>Description</h2>-->
-
-    <!--<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab accusamus aliquid architecto-->
-    <!--autem-->
-    <!--cumque deserunt dolore est expedita fugit, harum hic ipsam iste maxime minima numquam odit-->
-    <!--quibusdam, rerum sit.</p>-->
-    <!--</div>-->
-    <!--<hr/>-->
-    <!--</div>-->
-    <!--<div class="row">-->
-    <!--<div class="large-8 small-12 columns"><h2>Recent Activity</h2>-->
-    <!--<ul>-->
-    <!--<li>File 1 uploaded on xxxxx</li>-->
-    <!--<li>File 1 uploaded on xxxxx</li>-->
-    <!--<li>File 1 uploaded on xxxxx</li>-->
-    <!--</ul>-->
-    <!--</div>-->
-    <!--</div>-->
-    <div class="row hide-for-touch">
-        <div>
-            <input type="file" multiple="multiple" data-file="param.files"/>
+            <div class="btn-group" data-ng-show="show.sequenceOptions">
+                <button class="btn">Left</button>
+                <button class="btn">Middle</button>
+                <button class="btn">Right</button>
+            </div>
+            </div>
         </div>
 
-    </div>
+        <div class="row-fluid">
+            <div class="span12">
+                <table class="table">
+                    <tbody>
+                    <tr data-ng-repeat="s in project.sequenceFiles">
+                        <td class="file-select"><input class="cb" data-ng-click="checkSelectedFiles()" data-ng-checked="allFiles" type="checkbox" value="$index" name="selectedFiles"/></td>
+                        <td><a href="" data-ng-click="downloadFile($event, s.links.self)">{{s.label}}</a></td>
+                        <td class="file-date">{{s.createdDate | angularMoment }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row hide-for-touch">
+            <div>
+                <input type="file" multiple="multiple" data-file="param.files"/>
+            </div>
+
+        </div>
 </div>

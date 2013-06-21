@@ -8,6 +8,7 @@
   'use strict';
   app.controller('ProjectCtrl', [ '$scope', '$rootScope', 'ajaxService', '$location',
     function ($scope, $rootScope, ajaxService, $location) {
+      $scope.show = {};
       $scope.sample = {};
       $scope.samples = {};
       $scope.list2 = [ ];
@@ -85,6 +86,22 @@
           });
           $location.path('/');
         });
+      };
+
+      // NEW
+      $scope.selectedCount = function () {
+        console.log('clas');
+        return angular.element("input[name='selectedFiles']:checked").length > 0;
+      };
+
+      $scope.downloadFile = function (ev, url) {
+        ev.preventDefault();
+        console.log(url);
+        ajaxService.getFastaFile(url);
+      };
+
+      $scope.checkSelectedFiles = function () {
+        $scope.show.sequenceOptions = angular.element('input[name=\'selectedFiles\']:checked').length;
       };
     }
   ]);

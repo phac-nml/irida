@@ -1,9 +1,10 @@
-@import "bourbon/bourbon";
+//@import "bourbon/bourbon";
 @import "fws/variables";
-@import "foundation/variables", "foundation/components/global", "foundation/components/block-grid";
-@import "fws/custom-font-awesome";
-@import "fws/mixins";
-@import "fws/buttons";
+
+//@import "foundation/variables", "foundation/components/global", "foundation/components/block-grid";
+//@import "fws/custom-font-awesome";
+//@import "fws/mixins";
+//@import "fws/buttons";
 
 //@import "fws/accordian";
 //@import "fws/sidebar";
@@ -59,13 +60,10 @@ h1, h2, h3, h4 {
   border-radius: $default-border-radius;
 }
 
-// General Layout
-//nav.nav-main {
-//  background-color: #2d2d2d;
-//  color: #babab8;
-//  height: 24px;
-//  z-index: 900;
-//}
+#nav-main {
+  margin-bottom: 10px;
+}
+
 .outer {
   display: block;
   float: left;
@@ -116,22 +114,15 @@ h1, h2, h3, h4 {
   ul {
     list-style: none;
     margin: 0;
-    margin-right: emCalc(10px);
     padding: 0;
   }
 
   li {
     margin: 0;
-    padding: emCalc(3px) 0;
+    padding: 4px 0 4px 10px;
     &:hover {
       cursor: pointer;
       background-color: #eeeeee;
-    }
-
-    img {
-      padding-left: emCalc(8px);
-      padding-bottom: 5px;
-      margin-right: emCalc(8px);
     }
   }
 }
@@ -157,3 +148,58 @@ h1, h2, h3, h4 {
 //    margin-top: 0;
 //  }
 //}
+
+.row--btn {
+  padding-bottom: 10px;
+}
+
+.cb {
+  -webkit-appearance: none;
+  background-color: #fafafa;
+  border: 1px solid #cacece;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05);
+  padding: 4px;
+  //border-radius: 3px;
+  display: inline-block;
+  position: relative;
+}
+
+input.cb--btn {
+  margin: -3px 0 0 0;
+}
+
+input.cb:active, .cb:checked:active, .cb--checked {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+input.cb:checked, .cb--checked {
+  background-color: #e9ecee;
+  border: 1px solid #adb8c0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05), inset 15px 10px -12px rgba(255, 255, 255, 0.1);
+  color: #99a1a7;
+}
+
+input.cb:checked:after, .cb--checked:after {
+  content: '\2714';
+  font-size: 12px;
+  position: absolute;
+  top: -3px;
+  left: 1px;
+  color: #222;
+}
+
+.cb--checked:after {
+  top: -6px;
+}
+
+// SequenceFile Table
+td.file-select {
+  width: 13px;
+  input.cb {
+    margin-top: 0;
+  }
+}
+
+td.file-date {
+  text-align: right;
+}

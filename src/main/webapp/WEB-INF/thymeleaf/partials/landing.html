@@ -1,21 +1,19 @@
 <div data-ng-controller="LandingCtrl">
-    <nav id="nav-main" class="top-bar">
-        <ul class="title-area">
-            <li class="name"><h1><a href="/projects">NGS Archive</a></h1></li>
-        </ul>
-        <section class="top-bar-section">
-            <ul class="right">
-                <li><a ng-click="logout()" href="#">Logout</a></li>
+    <div id="nav-main" class="navbar navbar-static-top navbar-inverse">
+        <div class="navbar-inner">
+            <a class="brand" href="#">NGS Archive</a>
+            <ul class="nav pull-right">
+                <li><a href="#" data-ng-click="logout()">Logout</a></li>
             </ul>
-        </section>
-    </nav>
+        </div>
+    </div>
     <div class="outer">
         <div class="sidebar">
             <div class="sidebar--projects" data-ng-controller="ProjectsListCtrl">
                 <ul data-ng-repeat="p in projects">
                     <li data-ng-click="gotoProject(p.links.self)">
                         <div>
-                            <img src="/css/img/project.png" alt=""/>
+                            <i class="icon-folder-close"></i>&nbsp;
                             <span>{{p.name}}</span>
                         </div>
                     </li>
