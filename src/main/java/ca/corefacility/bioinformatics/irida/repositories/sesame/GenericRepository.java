@@ -572,14 +572,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             
             //set the rest of the bindings for the object
             for(int i=0;i<numPreds;i++){
-                if(fieldPredicates.containsKey(fields.get(i))){
-                    String predStr = fieldPredicates.get(fields.get(i));
-                    URI pred = fac.createURI(predStr);
-                    query.setBinding("pred"+i, pred);
-                }
-                else{
-                    throw new IllegalArgumentException("The object doesn't contain the field " + fields.get(i));
-                }
+                setListBinding(fields.get(i), fieldPredicates, i, query, fac);
                 
             }
                      
@@ -588,7 +581,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
                 BindingSet bs = evaluate.next();
                 Binding subjectBinding = bs.getBinding("s");
                 String subString = subjectBinding.getValue().toString();
-                logger.debug("getting id for " + subString);
+                
                 Identifier identiferForURI = idGen.getIdentiferForURI(fac.createURI(subString));
                 Map<String,String> values = new HashMap<>();
                 for(int i=0;i<numPreds;i++){
@@ -609,6 +602,17 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         
         return results;
                 
+    }
+    
+    protected void setListBinding(String fieldName, Map<String, String> fieldPredicates, int index, TupleQuery query, ValueFactory fac){
+        if(fieldPredicates.containsKey(fieldName)){
+            String predStr = fieldPredicates.get(fieldName);
+            URI pred = fac.createURI(predStr);
+            query.setBinding("pred"+index, pred);
+        }
+        else{
+            throw new IllegalArgumentException("The object doesn't contain the field '" + fieldName + "'");
+        }        
     }
     
     private Map<String,String> getFieldPredicates(Class c){
