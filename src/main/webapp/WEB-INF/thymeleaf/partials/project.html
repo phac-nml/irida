@@ -11,7 +11,9 @@
     <div class="row-fluid row--btn">
         <div class="span12">
             <div class="btn-group">
-                <button class="btn" data-ng-click="modifyAllCbSelection()"><div class="cb" data-ng-class="{true: 'cb--checked'}[allFiles]"></div></button>
+                <button class="btn" data-ng-click="modifyAllCbSelection()">
+                    <div class="cb" data-ng-class="{true: 'cb--checked'}[allFiles]"></div>
+                </button>
                 <a class="btn dropdown-toggle">
                     <span class="caret"></span>
                 </a>
@@ -21,32 +23,38 @@
                 </ul>
             </div>
 
-            <div class="btn-group" data-ng-show="show.sequenceOptions">
-                <button class="btn">Left</button>
-                <button class="btn">Middle</button>
-                <button class="btn">Right</button>
-            </div>
+            <button class="btn" data-ng-show="show.sequenceOptions">Download</button>
+
+            <div class="btn-group" data-ng-hide="show.sequenceOptions&lt;2">
+                <button class="btn dropdown-toggle">Modify Files&nbsp;<span class="caret"></span></button>
+
+                <ul class="dropdown-menu">
+                    <li><a href="">Concatenate</a></li>
+                </ul>
             </div>
         </div>
+    </div>
 
-        <div class="row-fluid">
-            <div class="span12">
-                <table class="table">
-                    <tbody>
-                    <tr data-ng-repeat="s in project.sequenceFiles">
-                        <td class="file-select"><input class="cb" data-ng-click="checkSelectedFiles()" data-ng-checked="allFiles" type="checkbox" value="$index" name="selectedFiles"/></td>
-                        <td><a href="" data-ng-click="downloadFile($event, s.links.self)">{{s.label}}</a></td>
-                        <td class="file-date">{{s.createdDate | angularMoment }}</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+    <div class="row-fluid">
+        <div class="span12">
+            <table class="table">
+                <tbody>
+                <tr data-ng-repeat="s in project.sequenceFiles">
+                    <td class="file-select"><input class="cb" data-ng-click="checkSelectedFiles()"
+                                                   data-ng-checked="allFiles" type="checkbox" value="$index"
+                                                   name="selectedFiles"/></td>
+                    <td><a href="" data-ng-click="downloadFile($event, s.links.self)">{{s.label}}</a></td>
+                    <td class="file-date">{{s.createdDate | angularMoment }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row hide-for-touch">
+        <div>
+            <input type="file" multiple="multiple" data-file="param.files"/>
         </div>
 
-        <div class="row hide-for-touch">
-            <div>
-                <input type="file" multiple="multiple" data-file="param.files"/>
-            </div>
-
-        </div>
+    </div>
 </div>

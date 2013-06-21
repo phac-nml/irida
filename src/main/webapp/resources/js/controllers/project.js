@@ -8,7 +8,7 @@
   'use strict';
   app.controller('ProjectCtrl', [ '$scope', '$rootScope', 'ajaxService', '$location',
     function ($scope, $rootScope, ajaxService, $location) {
-      $scope.show = {};
+      $scope.show = {sequenceOptions: 0};
       $scope.sample = {};
       $scope.samples = {};
       $scope.list2 = [ ];
