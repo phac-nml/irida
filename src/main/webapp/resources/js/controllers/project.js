@@ -103,11 +103,14 @@
        * Delete the currently viewed project
        */
       $scope.deleteProject = function () {
-        ajaxService.deleteItem($scope.project.links.self).then(function () {
-          $rootScope.$broadcast('PROJECT_DELETED', {
-            'name': $scope.project.name
+        ajaxService.deleteItem($scope.project.links.self).then(function (data) {
+          $rootScope.$broadcast('NOTIFY', {
+            'msg': 'Deleted ' + $scope.project.name,
+            'callback': function () {
+              alert("THIS NEEDS TO BE IMPLEMENTED");
+            }
           });
-          $location.path('/');
+          $location.path('/landing');
         });
       };
 

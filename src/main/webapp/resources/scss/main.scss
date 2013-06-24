@@ -1,5 +1,6 @@
 @import "bourbon/bourbon";
 @import "fws/variables";
+@import "fws/notifier";
 
 //@import "foundation/variables", "foundation/components/global", "foundation/components/block-grid";
 //@import "fws/custom-font-awesome";
@@ -50,11 +51,16 @@ h1, h2, h3, h4 {
   min-height: 250px;
 }
 
-// Custom
+
+/* ==========================================================================
+   Modules
+   ========================================================================== */
 
 .button-bar {
   margin-bottom: 1.5em;
 }
+
+
 
 // Login Page
 

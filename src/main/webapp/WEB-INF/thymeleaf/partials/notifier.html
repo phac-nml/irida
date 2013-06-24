@@ -1,6 +1,6 @@
-<div style="display: none" class="ng-cloak notifier" tabindex="-1" data-ng-hide="hidden">
-    <span class="left">
-        <i class="icon-{{data.icon}}"></i> {{data.msg}}
+<div class="notifier" data-ng-show="noty.show">
+    <span class="pull-left">
+        {{data.msg}}
     </span>
-    <span class="right" ng-click="sendCallback()">undo</span>
+    <a class="pull-right" ng-click="undo()">undo</a>
 </div>
