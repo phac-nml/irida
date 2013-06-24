@@ -96,12 +96,12 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
     @Override
     public User update(UserIdentifier id, Map<String, Object> updatedFields) throws InvalidPropertyException {
 
-        if(updatedFields.containsKey("roles")){
-            Collection<Role> roles = (Collection<Role>) updatedFields.get("roles");
+        if(updatedFields.containsKey("role")){
+            Role role = (Role) updatedFields.get("role");
             
             Method declaredMethod;
             try {
-                declaredMethod = User.class.getDeclaredMethod("getStringRoles");
+                declaredMethod = User.class.getDeclaredMethod("getStringRole");
             } catch (NoSuchMethodException | SecurityException ex) {
                 logger.error("No field roles exists.  Cannot update object.");
                 throw new InvalidPropertyException("No field named roles exists for this object type");            
@@ -109,17 +109,17 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
 
             Iri annotation = declaredMethod.getAnnotation(Iri.class);
 
-            logger.trace("Updating roles -- " + annotation.value());
+            logger.trace("Updating role -- " + annotation.value());
             
-            updateRoleField(id, annotation.value(), roles);
+            updateRoleField(id, annotation.value(), role);
             
-            updatedFields.remove("roles");
+            updatedFields.remove("role");
         }
         
         return super.update(id, updatedFields);
    
     }
-    
+     
     /**
      * Set a predicate binding for a {@link Query} based on a map of predicates.
      * This override will use the method invocation "getStringRoles" for "role" and otherwise call super
@@ -147,7 +147,7 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
      * @param predicate The predicate to update from the @Iri annotation on the User class
      * @param roles The roles to update this user with
      */
-    protected void updateRoleField(UserIdentifier id, String predicate, Collection<Role> roles) {
+    protected void updateRoleField(UserIdentifier id, String predicate, Role role) {
         ObjectConnection con = store.getRepoConnection();
         java.net.URI netURI = idGen.buildURIFromIdentifier(id,URI);
         String uri = netURI.toString();
@@ -165,11 +165,10 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
             }
             con.remove(subURI, predURI, null);            
 
-            for(Role r : roles){
-                Literal objValue = fac.createLiteral(r.getName());
-                Statement added = fac.createStatement(subURI, predURI, objValue);
-                con.add(added);                
-            }
+
+            Literal objValue = fac.createLiteral(role.getName());
+            Statement added = fac.createStatement(subURI, predURI, objValue);
+            con.add(added);                
 
             con.commit();
         } catch (RepositoryException ex) {

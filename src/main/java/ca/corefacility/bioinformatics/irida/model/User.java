@@ -63,15 +63,13 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
     private String phoneNumber;
     @NotNull
     private Audit audit;
-    @NotNull
-    private Collection<Role> roles;
+    private Role role;
 
     /**
      * Construct an instance of {@link User} with no properties set.
      */
     public User() {
         audit = new Audit();
-        roles = new ArrayList<>();
     }
 
     /**
@@ -243,24 +241,25 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
         u.setPhoneNumber(getPhoneNumber());
         
         //have to recreate the roles fancily
-        Collection<String> stringRoles = getStringRoles();
-        Collection<Role> newRoles = new ArrayList<>();
-        for(String roleStr : stringRoles){
-            newRoles.add(new Role(roleStr));
-        }
-        
-        u.setRoles(newRoles);
+        String stringRole = getStringRole();
+        u.setRole(new Role(stringRole));
         
         return u;        
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        ArrayList<Role> roles = new ArrayList<>();
+        roles.add(role);
         return roles;
     }
     
-    public void setRoles(Collection<Role> roles){
-        this.roles = roles;
+    public Role getRole(){
+        return role;
+    }
+    
+    public void setRole(Role role){
+        this.role = role;
     }
     
     /**
@@ -269,13 +268,14 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
      * @return a Set<String> of role names
      */
     @Iri("http://corefacility.ca/irida/systemRole")
-    public Set<String> getStringRoles(){       
-        Set<String> roleSet = new HashSet<>();
-        for(Role role : roles){
-            roleSet.add(role.getName());
+    public String getStringRole(){
+        if(role != null){
+            return role.getName();    
+        }
+        else{
+            return null;
         }
         
-        return roleSet;
     }
 
     @Override

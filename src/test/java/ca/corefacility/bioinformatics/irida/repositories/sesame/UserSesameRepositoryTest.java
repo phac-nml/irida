@@ -21,9 +21,13 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -32,7 +36,6 @@ import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
-import org.openrdf.query.TupleQuery;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.object.ObjectConnection;
 
@@ -43,11 +46,12 @@ import org.openrdf.repository.object.ObjectConnection;
 public class UserSesameRepositoryTest {
     
     private UserSesameRepository repo;
-    private SailStore store;
+    private TripleStore store;
     
     @Before
     public void setUp() {
         store = new SailStore();
+        //store = new TripleStore("http://localhost:8888/openrdf-sesame/", "test","http://bobloblaw:8888/");
         store.initialize();
         UserIdentifierGenerator idGen = new UserIdentifierGenerator(store);
         IdentifierGenerator auditIdGen = new IdentifierGenerator(store);
@@ -147,21 +151,16 @@ public class UserSesameRepositoryTest {
     @Test
     public void testUpdateRole() throws RepositoryException, MalformedQueryException, QueryEvaluationException{
         User u = new User("test", "testuser@test", "123456", "a", "test", "123-456-7890");
-        Collection<Role> roles = new ArrayList<>();
-        roles.add(new Role("ROLE_USER"));
-        roles.add(new Role("ROLE_ADMIN"));
-        u.setRoles(roles);
+
+        u.setRole(new Role("ROLE_USER"));
         u = repo.create(u);
-        
-        roles.add(new Role("ROLE_SUPERUSER"));
-        u.setRoles(roles);
-        
+                
         HashMap<String,Object> changes = new HashMap<>();
-        changes.put("roles", roles);
+        changes.put("role", new Role("ROLE_SUPERUSER"));
         
         try{
             User updated = repo.update(u.getIdentifier(),changes);
-            assertTrue(updated.getAuthorities().size() == 3);
+            assertEquals(updated.getRole().getName(),"ROLE_SUPERUSER");
             
             ObjectConnection con = store.getRepoConnection();
             ValueFactory fac = con.getValueFactory();
@@ -170,16 +169,16 @@ public class UserSesameRepositoryTest {
                     + "{?user irida:systemRole ?role }";
             BooleanQuery query = con.prepareBooleanQuery(QueryLanguage.SPARQL, qs);
             query.setBinding("user", fac.createURI(u.getIdentifier().getUri().toString()));
-            for(Role r : roles){
-                query.setBinding("role", fac.createLiteral(r.getName()));
-                boolean res = query.evaluate();
-                assertTrue(res);
-            }
+
+            query.setBinding("role", fac.createLiteral("ROLE_SUPERUSER"));
+            boolean res = query.evaluate();
+            assertTrue(res);
+
             
         }
         catch(InvalidPropertyException ex){
             fail(ex.getMessage());
         }
     }
-
+    
 }
