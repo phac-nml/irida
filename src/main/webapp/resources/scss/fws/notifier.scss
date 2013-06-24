@@ -1,0 +1,63 @@
+/* Notifier
+   ========================================================================== */
+
+.notifier-hide-setup, .notifier-show-setup {
+  @include transition(all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s);
+}
+
+.notifier-hide-setup {
+  opacity: 1;
+}
+
+.notifier-hide-setup.notifier-hide-start {
+  opacity: 0;
+}
+
+.notifier-show-setup {
+  opacity: 0;
+}
+
+.notifier-show-setup.notifier-show-start {
+  opacity: 1;
+}
+
+.notifier {
+  // Box (display, float, position, left, top, height, width)
+  left: 50%;
+  margin-left: -150px;
+  position: absolute;
+  width: 300px;
+  top: 13px;
+
+  // Border
+  border: 1px solid darken(palegoldenrod, 10);
+  border-radius: 3px;
+
+  // Background
+  background-color: palegoldenrod;
+
+  // Text (font-family, font-size, text-transform, letter-spacing)
+
+  // Other
+  z-index: 999;
+
+  span {
+    padding: 0.3em;
+    //width: 230px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  a {
+    cursor: pointer;
+    text-decoration: none;
+    border-left: 1px solid darken(palegoldenrod, 10);
+    padding: 0.3em;
+    width: 60px;
+    text-align: center;
+    display: inline-block;
+    &:hover {
+      background-color: darken(palegoldenrod, 4);
+    }
+  }
+}

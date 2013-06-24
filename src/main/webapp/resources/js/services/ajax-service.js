@@ -81,33 +81,6 @@
       /**
        * post
        * @param url
-       * @returns {*}
-       */
-      getFastaFile: function (url) {
-        if (url) {
-          var deferred = $q.defer();
-          $http({
-            url: url,
-            method: 'GET',
-            headers: {
-              'Accept': 'application/fasta'
-            }
-          })
-            .success(function (data) {
-              deferred.resolve(data);
-            })
-            .error(function () {
-              // TODO: (JOSH - 2013-05-10) Handle get errors properly
-              deferred.reject('An error occurred during get @ ' + url);
-            });
-
-          return deferred.promise;
-        }
-        return false;
-      },
-      /**
-       * post
-       * @param url
        * @param data
        * @returns {*}
        */
@@ -176,6 +149,7 @@
             }
           })
             .success(function (data) {
+              formatObjectLinks(data);
               deferred.resolve(data);
             })
             .error(function (data, status, headers, config) {

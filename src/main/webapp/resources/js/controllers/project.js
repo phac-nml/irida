@@ -103,18 +103,20 @@
        * Delete the currently viewed project
        */
       $scope.deleteProject = function () {
-        ajaxService.deleteItem($scope.project.links.self).then(function () {
-          $rootScope.$broadcast('PROJECT_DELETED', {
-            'name': $scope.project.name
+        ajaxService.deleteItem($scope.project.links.self).then(function (data) {
+          $rootScope.$broadcast('NOTIFY', {
+            'msg': 'Deleted ' + $scope.project.name,
+            'callback': function () {
+              alert("THIS NEEDS TO BE IMPLEMENTED");
+            }
           });
-          $location.path('/');
+          $location.path('/landing');
         });
       };
 
-      $scope.downloadFile = function (e, url, type) {
+      $scope.downloadFile = function (e, fileObject, type) {
         e.preventDefault();
-        console.log(url);
-        $window.open(url.links.self + '.' + type, '_blank');
+        $window.open(fileObject.links[type], '_blank');
       };
 
       $scope.checkSelectedFiles = function () {
