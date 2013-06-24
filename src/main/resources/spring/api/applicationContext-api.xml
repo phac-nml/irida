@@ -41,6 +41,8 @@
                 <entry key="json" value="application/json"/>
                 <entry key="xml" value="application/xml"/>
                 <entry key="fasta" value="application/fasta"/>
+                <entry key="fastq" value="application/fastq"/>
+                <entry key="gbk" value="application/genbank"/>
             </map>
         </property>
         <property name="viewResolvers">
