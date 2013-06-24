@@ -23,10 +23,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -226,27 +223,6 @@ public class ProjectSequenceFilesController {
         modelMap.addAttribute(GenericController.RESOURCE_NAME, sfr);
 
         return modelMap;
-    }
-
-    /**
-     * Get the actual fastq contents of the {@link SequenceFile} that's associated with a {@link Project}.
-     *
-     * @param projectId      the {@link Identifier} of the {@link Project}.
-     * @param sequenceFileId the {@link Identifier} of the {@link SequenceFile}.
-     * @param response       the {@link HttpServletResponse} used to write the response to.
-     */
-    @RequestMapping(value = "/projects/{projectId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.GET,
-            produces = {"application/fastq", "application/fasta"})
-    public void getProjectSequenceFileContents(@PathVariable String projectId, @PathVariable String sequenceFileId,
-                                               HttpServletResponse response) throws IOException {
-        SequenceFile sf = getSequenceFileForProject(projectId, sequenceFileId);
-        Path fileContent = sf.getFile();
-        response.setHeader(HttpHeaders.CONTENT_TYPE, "application/fastq");
-        response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(Files.size(fileContent)));
-        OutputStream os = response.getOutputStream();
-        Files.copy(fileContent, os);
-        os.flush();
-        os.close();
     }
 
     /**
