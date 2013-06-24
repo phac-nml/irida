@@ -8,30 +8,30 @@
   'use strict';
   app.controller('ProjectCtrl', [ '$scope', '$rootScope', 'ajaxService', '$location',
     function ($scope, $rootScope, ajaxService, $location) {
-      $scope.show = {sequenceOptions: 0};
-      $scope.allFiles = false;
+      $scope.show = {sequenceOptions: 0}; // TODO: (Josh: 2013-06-24) Maybe rename this variable 
+//      $scope.allFiles = false;
       $scope.sample = {};
       $scope.samples = {};
-      $scope.list2 = [ ];
-      var detailFileDrag = false;
+//      $scope.list2 = [ ];
+//      var detailFileDrag = false;
 
-      $scope.addFileToSample = function (evt, ui, url) {
-        $scope.dragOverOut(evt);
-        addSequenceFileToSample(url);
-      };
-
-      $scope.addFileToDetailSample = function (evt, ui) {
-        // Need to know if this is a drop to self list
-        if (detailFileDrag) {
-          $scope.sample.sequenceFiles = $scope.sample.sequenceFiles2.slice(0);
-          detailFileDrag = false;
-        }
-        else {
-          addSequenceFileToSample($scope.sample.addUrl, function () {
-            getSequnceFilesForSample($scope.sample.addUrl);
-          });
-        }
-      };
+//      $scope.addFileToSample = function (evt, ui, url) {
+//        $scope.dragOverOut(evt);
+//        addSequenceFileToSample(url);
+//      };
+//
+//      $scope.addFileToDetailSample = function (evt, ui) {
+//        // Need to know if this is a drop to self list
+//        if (detailFileDrag) {
+//          $scope.sample.sequenceFiles = $scope.sample.sequenceFiles2.slice(0);
+//          detailFileDrag = false;
+//        }
+//        else {
+//          addSequenceFileToSample($scope.sample.addUrl, function () {
+//            getSequnceFilesForSample($scope.sample.addUrl);
+//          });
+//        }
+//      };
 
       function addSequenceFileToSample(url, callback) {
         ajaxService.create(url, {
