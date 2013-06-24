@@ -62,7 +62,12 @@ public abstract class SparqlQuery {
             }
         }
         else{
-            qs += "ORDER BY ?createdDate \n";
+            if(order == Order.ASCENDING){
+                qs += "ORDER BY ?createdDate \n";
+            }
+            else{
+                qs += "ORDER BY DESC(?createdDate) \n";
+            }
         }
         
         return qs;

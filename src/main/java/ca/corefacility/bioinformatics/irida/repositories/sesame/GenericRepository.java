@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import ca.corefacility.bioinformatics.irida.model.FieldMap;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
@@ -544,13 +545,16 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
      * @param fields The fields we want to select from the database
      * @return A Map<Identifier, Map<String,Object>> of object identifiers and key/value pairs of the selected fields
      */
-    public Map<Identifier,Map<String,Object>> listFields(List<String> fields){
+    public List<FieldMap> listFields(List<String> fields){
         return listFields(fields,0, 0, null, null);
     }
     
-    public Map<Identifier,Map<String,Object>> listFields(List<String> fields,int page, int size, String sortProperty, Order order){
-        Map<Identifier,Map<String,Object>> objResults = new HashMap<>();
+    public List<FieldMap> listFields(List<String> fields,int page, int size, String sortProperty, Order order){
+        List<FieldMap> fieldList = new ArrayList<>();
+
         Map<String, String> fieldPredicates = getFieldPredicates(objectType);
+                
+        Map<String,String> bindingNames = new HashMap<>(); //get the names of the value bindings
         
         ObjectConnection con = store.getRepoConnection();
                 
@@ -562,15 +566,16 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             
             //create a statement for the values we want to list
             for(int i=0;i<numPreds;i++){
-                qs += "OPTIONAL{ ?s ?pred"+i + "?val"+i + " } . ";
+                qs += "OPTIONAL{ ?s ?pred"+i + " ?val"+i + " } . ";
+                bindingNames.put(fields.get(i),"val"+i);
             }
             
-            
+            //get the audit and creation time for the object
             qs += "?a irida:auditForResource ?s . "
                   + "?a irida:createdDate ?createdDate . "
-                  + "}"; //close the query
+                  + "}";
             
-            qs += SparqlQuery.setOrderBy(sortProperty, order);
+            qs += SparqlQuery.setOrderBy(bindingNames.get(sortProperty), order); //we ned to get the name of the binding value based on the property
             qs += SparqlQuery.setLimitOffset(page, size);
             
             TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
@@ -585,6 +590,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
                 setListBinding(fields.get(i), fieldPredicates, "pred"+i, query, fac);
             }
                      
+            logger.debug(qs);
             TupleQueryResult evaluate = query.evaluate();     
             while(evaluate.hasNext()){
                 BindingSet bs = evaluate.next();
@@ -626,7 +632,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
                         objValues.put(fields.get(i), value);
                     }
                 }
-                objResults.put(identiferForURI, objValues);
+                fieldList.add(new FieldMap(identiferForURI, objValues));
             }
             
             evaluate.close();
@@ -638,7 +644,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             store.closeRepoConnection(con);
         }
         
-        return objResults;
+        return fieldList;
                 
     }
     

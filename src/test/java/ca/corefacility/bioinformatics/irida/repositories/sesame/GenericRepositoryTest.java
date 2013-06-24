@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.utils.Identified;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SailStore;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.FieldMap;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -272,10 +273,10 @@ public class GenericRepositoryTest {
     public void testListFields(){
         
         try{
-            Map<Identifier, Map<String, Object>> listFields = repo.listFields(ImmutableList.of("data","unannotatedData","intData"));
+            List<FieldMap> listFields = repo.listFields(ImmutableList.of("data","unannotatedData","intData"));
             assertFalse(listFields.isEmpty());
-            for(Identifier id : listFields.keySet()){
-                Map<String, Object> get = listFields.get(id);
+            for(FieldMap idFields : listFields){
+                Map<String, Object> get = idFields.getFields();
                 assertTrue(get.containsKey("data"));
                 assertNotNull(get.get("data"));
                 assertTrue(get.containsKey("unannotatedData"));
@@ -285,12 +286,13 @@ public class GenericRepositoryTest {
             }
             
             List<String> of = ImmutableList.of();
-            Map<Identifier, Map<String, Object>> noParamsList = repo.listFields(of);
+            List<FieldMap> noParamsList = repo.listFields(of);
             assertFalse(noParamsList.isEmpty());
-            for(Identifier id : noParamsList.keySet()){
-                Map<String, Object> get = noParamsList.get(id);
+            for(FieldMap idFields : noParamsList){
+                Map<String, Object> get = idFields.getFields();
                 assertTrue(get.isEmpty());
-            }            
+                assertNotNull(idFields.getIdentifier());
+            }          
         }
         catch(IllegalArgumentException ex){
             fail(ex.getMessage());
@@ -299,22 +301,31 @@ public class GenericRepositoryTest {
     
     @Test
     public void testListFields_5args(){
-        Map<Identifier, Map<String, Object>> listFields = repo.listFields(ImmutableList.of("data","unannotatedData","intData"),0, 1, null, Order.ASCENDING);
+        List<FieldMap> listFields = repo.listFields(ImmutableList.of("data","unannotatedData","intData"),0, 1, "data", Order.ASCENDING);
         
         if(listFields.size() != 1){
             fail();
         }
         
-        listFields = repo.listFields(ImmutableList.of("data","unannotatedData","intData"),0, 2, null, Order.ASCENDING);
+        listFields = repo.listFields(ImmutableList.of("data","unannotatedData","intData"),0, 2, "data", Order.DESCENDING);
         if(listFields.size() != 2){
             fail();
         }
+        
+        List<FieldMap> listFields1 = repo.listFields(ImmutableList.of("data","unannotatedData","intData"),0, 0, "data", Order.ASCENDING);
+        List<FieldMap> listFields2 = repo.listFields(ImmutableList.of("data","unannotatedData","intData"),0, 0, "data", Order.DESCENDING);
+        
+        FieldMap first = listFields1.get(0);
+        FieldMap last = listFields2.get(listFields2.size()-1);
+        
+        assertEquals(first.getIdentifier().getIdentifier(), last.getIdentifier().getIdentifier());  //ensure the sorting works properly
+        
     }
     
     @Test
     public void testListInvalidFields(){
         try{
-            Map<Identifier, Map<String, Object>> listFields = repo.listFields(ImmutableList.of("baddata"));
+            List<FieldMap> listFields = repo.listFields(ImmutableList.of("bananna"));
             fail();
         }
         catch(IllegalArgumentException ex){

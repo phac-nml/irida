@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SailStore;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.model.FieldMap;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -27,6 +28,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -188,12 +190,12 @@ public class UserSesameRepositoryTest {
         u.setRole(new Role("ROLE_USER"));
         u = repo.create(u);
         
-        Map<Identifier, Map<String, Object>> listFields = repo.listFields(ImmutableList.of("firstName","role"));
+        List<FieldMap> listFields = repo.listFields(ImmutableList.of("firstName","role"));
         assertNotNull(listFields);
         
         boolean hasRole = false;
-        for(Identifier id : listFields.keySet()){
-            Map<String, Object> get = listFields.get(id);
+        for(FieldMap field : listFields){
+            Map<String, Object> get = field.getFields();
             assertTrue(get.containsKey("firstName"));
             if(get.containsKey("role")){
                 hasRole = true;
