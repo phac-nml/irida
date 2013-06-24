@@ -58,15 +58,14 @@
                                                                name="selectedFiles"/></td>
                                 <td>
                                     <div class="btn-group">
-                                        <button class="btn" data-ng-click="downloadFile($event, s, 'fasta')">
+                                        <button class="btn" data-ng-click="downloadFile($event, s, 'project/sequenceFile/fasta')">
                                             {{s.label}}
                                         </button>
                                         <a class="btn dropdown-toggle">
                                             <span class="caret"></span>
                                         </a>
                                         <ul class="dropdown-menu">
-                                            <li><a href="">Fasta</a></li>
-                                            <li><a href="">GenBank</a></li>
+                                            <li><a href="" data-ng-click="downloadFile($event, s, 'project/sequenceFile/fasta')">Fasta</a></li>
                                         </ul>
                                     </div>
                                 </td>

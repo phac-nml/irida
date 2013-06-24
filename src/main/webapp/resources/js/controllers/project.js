@@ -111,10 +111,9 @@
         });
       };
 
-      $scope.downloadFile = function (e, url, type) {
+      $scope.downloadFile = function (e, fileObject, type) {
         e.preventDefault();
-        console.log(url);
-        $window.open(url.links.self + '.' + type, '_blank');
+        $window.open(fileObject.links[type], '_blank');
       };
 
       $scope.checkSelectedFiles = function () {
