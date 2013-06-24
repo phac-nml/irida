@@ -1,4 +1,4 @@
-//@import "bourbon/bourbon";
+@import "bourbon/bourbon";
 @import "fws/variables";
 
 //@import "foundation/variables", "foundation/components/global", "foundation/components/block-grid";
@@ -8,7 +8,7 @@
 
 //@import "fws/accordian";
 //@import "fws/sidebar";
-//@import "fws/cards";
+@import "fws/cards";
 //@import "fws/project";
 //@import "fws/spinner";
 
@@ -40,11 +40,23 @@ h1, h2, h3, h4 {
   font-weight: 600;
 }
 
-.row {
-  width: 100%;
-  min-width: 100%;
-  padding: 0 1em;
+
+// Bootstrap Over-rides
+.nav-tabs li {
+  cursor: pointer;
 }
+
+.tab-content {
+  min-height: 250px;
+}
+
+// Custom
+
+.button-bar {
+  margin-bottom: 1.5em;
+}
+
+// Login Page
 
 .login__outer {
   height: 100%;
