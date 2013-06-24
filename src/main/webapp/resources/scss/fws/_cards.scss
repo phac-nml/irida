@@ -1,14 +1,4 @@
 $block-grid-media-queries: false;
-.cardholder {
-  // Box (display, float, position, left, top, height, width)
-
-  // Border
-
-  // Background
-
-  // Text (font-family, font-size, text-transform, letter-spacing)
-
-}
 
 .cardholder__after {
   clear: both;
@@ -200,4 +190,10 @@ $block-grid-media-queries: false;
   span {
     font-size: .8em;
   }
+}
+
+.card__droppable {
+  border: 2px solid $color-slate-gray;
+  background-color: mediumpurple;
+  display: inline-block;
 }

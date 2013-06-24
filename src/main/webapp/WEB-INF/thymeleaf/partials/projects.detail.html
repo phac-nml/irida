@@ -7,10 +7,16 @@
             </button>
             <div class="row project__files">
                 <div class="project__file" data-ng-repeat="s in project.sequenceFiles" data-drag="true"
-                     data-jqyoui-options="{revert: 'invalid', cursorAt: { left: 5, top: 5 }}"
+                     data-jqyoui-options="{revert: 'invalid'}"
                      ng-model="project.sequenceFiles"
                      jqyoui-draggable="{index: {{$index}},animate:true, onStart: 'fileDrag', onStop: 'fileDrag'}">
-                    <i class="icon-file-alt"></i><span>{{s.label}}</span>
+                    <i class="icon-file-alt"></i>
+
+                    <div>
+                        <span>{{s.label}}</span>
+
+                        <p>{{s.dateCreated | date: 'short'}}</p>
+                    </div>
                 </div>
             </div>
             <div class="section-container tabs" data-section="tabs" ngs-section="">
@@ -18,8 +24,10 @@
                     <p class="title" data-section-title=""><a ng-href="#">Project Samples</a></p>
 
                     <div class="content" data-slug="section1">
-                        <div class="cardholder">
-                            <div class="card" data-ng-repeat="s in project.samples" data-drop="true"
+                        <div class="cardholder" data-ng-hide="sample.details">
+                            <div class="card card__droppable" data-ng-repeat="s in project.samples"
+                                 data-ng-click="getSequenceFiles(s)"
+                                 data-drop="true"
                                  data-jqyoui-options=""
                                  ng-model="list2"
                                  jqyoui-droppable="{multiple:true, onDrop: 'addFileToSample(\'{{s.links['sample/sequenceFiles']}}\')', onOver: 'dragOverOut', onOut: 'dragOverOut'}">
@@ -34,7 +42,38 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div class="sample--details row" data-ng-show="sample.details">
+                            <div class="large-12 columns">
+                                <button class="ngs-button" data-ng-click="sample.details = false"><i
+                                        class="icon-arrow-left"></i> Back
+                                </button>
+                            </div>
+                            <div class="large-3 columns">
+                                <ul class="sample--details--names">
+                                    <li data-ng-repeat="s in project.samples" data-ng-click="getSequenceFiles(s)"
+                                        data-ng-class="{true: 'curr-sample'}[s.label == sample.name]">
+                                        {{s.label}}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="large-9 columns" data-drop="true"
+                                 data-jqyoui-options=""
+                                 ng-model="list2"
+                                 jqyoui-droppable="{multiple:true, onDrop: 'addFileToDetailSample'}">
+                                <!-- TODO: (josh 2013-06-19) Show message showing no files if there are not any -->
+                                <ul class="sample--details--files">
+                                    <li data-ng-repeat="f in sample.sequenceFiles">
+                                        <div data-drag="true"
+                                             data-jqyoui-options="{revert: 'invalid', cursorAt: { left: 5, top: 5 }}"
+                                             ng-model="sample.sequenceFiles"
+                                             jqyoui-draggable="{index: {{$index}},animate:true, onStart: 'detailFileDrag({{f}})', onStop: 'detailFileDrop'}">
+                                            <i class="icon-file-alt"></i>
+                                            <span class="filename">{{f.fileName}}</span> - <span class="date">{{f.dateCreated | angularMoment }}</span>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                         <div class="cardholder__after"></div>
                     </div>
                 </section>
@@ -53,5 +92,4 @@
             </div>
         </div>
     </div>
-    <p>{{list2}}</p>
 </div>
