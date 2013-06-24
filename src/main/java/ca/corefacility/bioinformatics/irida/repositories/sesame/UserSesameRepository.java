@@ -132,7 +132,7 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
     @Override
     protected void setListBinding(String fieldName, Map<String, String> fieldPredicates, String bindingName, Query query, ValueFactory fac){
         if(fieldName.equals("role")){
-            String predStr = fieldPredicates.get("getStringRoles");
+            String predStr = fieldPredicates.get("getStringRole");
             URI pred = fac.createURI(predStr);
             query.setBinding(bindingName, pred);
         }

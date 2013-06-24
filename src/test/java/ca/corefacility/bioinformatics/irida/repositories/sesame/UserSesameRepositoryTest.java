@@ -181,4 +181,25 @@ public class UserSesameRepositoryTest {
         }
     }
     
+    @Test
+    public void listFieldsForUser(){
+        User u = new User("test", "testuser@test", "123456", "a", "test", "123-456-7890");
+
+        u.setRole(new Role("ROLE_USER"));
+        u = repo.create(u);
+        
+        Map<Identifier, Map<String, Object>> listFields = repo.listFields(ImmutableList.of("firstName","role"));
+        assertNotNull(listFields);
+        
+        boolean hasRole = false;
+        for(Identifier id : listFields.keySet()){
+            Map<String, Object> get = listFields.get(id);
+            assertTrue(get.containsKey("firstName"));
+            if(get.containsKey("role")){
+                hasRole = true;
+            }
+        }
+        assertTrue(hasRole);
+    }
+    
 }
