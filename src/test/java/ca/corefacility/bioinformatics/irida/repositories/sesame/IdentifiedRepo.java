@@ -68,14 +68,14 @@ public class IdentifiedRepo extends GenericRepository<Identifier, Identified> {
     }
     
     @Override
-    protected void setListBinding(String fieldName, Map<String, String> fieldPredicates, int index, Query query, ValueFactory fac){
+    protected void setListBinding(String fieldName, Map<String, String> fieldPredicates, String bindingName, Query query, ValueFactory fac){
         if(fieldName.equals("unannotatedData")){
             String predStr = fieldPredicates.get("getAnnotatedGetter");
             URI pred = fac.createURI(predStr);
-            query.setBinding("pred"+index, pred);
+            query.setBinding(bindingName, pred);
         }
         else{
-            super.setListBinding(fieldName, fieldPredicates, index, query, fac);
+            super.setListBinding(fieldName, fieldPredicates, bindingName, query, fac);
         }
       
     }    

@@ -29,24 +29,19 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import org.openrdf.annotations.Iri;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
-import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.Query;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
-import org.openrdf.query.TupleQuery;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.object.ObjectConnection;
@@ -125,16 +120,24 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
    
     }
     
-    
+    /**
+     * Set a predicate binding for a {@link Query} based on a map of predicates.
+     * This override will use the method invocation "getStringRoles" for "role" and otherwise call super
+     * @param fieldName The name of the field to set a binding for
+     * @param fieldPredicates A Map<String,String> of predicate URIs for the fields
+     * @param bindingName The name of the binding to set the predicate for 
+     * @param query The query to set the binding for
+     * @param fac A ValueVactory to use to create the URI
+     */
     @Override
-    protected void setListBinding(String fieldName, Map<String, String> fieldPredicates, int index, Query query, ValueFactory fac){
+    protected void setListBinding(String fieldName, Map<String, String> fieldPredicates, String bindingName, Query query, ValueFactory fac){
         if(fieldName.equals("role")){
             String predStr = fieldPredicates.get("getStringRoles");
             URI pred = fac.createURI(predStr);
-            query.setBinding("pred"+index, pred);
+            query.setBinding(bindingName, pred);
         }
         else{
-            super.setListBinding(fieldName, fieldPredicates, index, query, fac);
+            super.setListBinding(fieldName, fieldPredicates, bindingName, query, fac);
         }
     }    
     

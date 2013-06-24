@@ -26,7 +26,10 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -162,17 +165,46 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
         return super.update(id, updatedFields);
     }
     
+    /**
+     * Set a predicate binding for a {@link Query} based on a map of predicates.
+     * This override will use the method invocation "getIoFile" for "file" and otherwise call super
+     * @param fieldName The name of the field to set a binding for
+     * @param fieldPredicates A Map<String,String> of predicate URIs for the fields
+     * @param bindingName The name of the binding to set the predicate for 
+     * @param query The query to set the binding for
+     * @param fac A ValueVactory to use to create the URI
+     */    
     @Override
-    protected void setListBinding(String fieldName, Map<String, String> fieldPredicates, int index, Query query, ValueFactory fac){
+    protected void setListBinding(String fieldName, Map<String, String> fieldPredicates, String bindingName, Query query, ValueFactory fac){
         if(fieldName.equals("file")){
             String predStr = fieldPredicates.get("getIoFile");
             URI pred = fac.createURI(predStr);
-            query.setBinding("pred"+index, pred);
+            query.setBinding(bindingName, pred);
         }
         else{
-            super.setListBinding(fieldName, fieldPredicates, index, query, fac);
+            super.setListBinding(fieldName, fieldPredicates, bindingName, query, fac);
         }
-    }     
+    }
+    
+    /**
+     * Convert to the given class type from a string.
+     * This override will convert for Path, and call super otherwise
+     * @param stringValue The string value to convert
+     * @param pClass The class to convert to
+     * @return A new instance of an object of type pClass
+     */    
+    @Override
+    protected Object convertFromString(String stringValue, Class pClass){
+        Object value;
+        if(pClass.equals(Path.class)){
+            value = Paths.get(stringValue);
+        }
+        else{
+            value = super.convertFromString(stringValue, pClass);
+        }
+        
+        return value;
+    }    
     
     
     

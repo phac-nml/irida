@@ -542,11 +542,9 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     /**
      * List objects of this type that have the given fields
      * @param fields The fields we want to select from the database
-     * @return A Map<Identifier, Map<String,String>> of object identifiers and key/value pairs of the selected fields
+     * @return A Map<Identifier, Map<String,Object>> of object identifiers and key/value pairs of the selected fields
      */
     public Map<Identifier,Map<String,Object>> listFields(List<String> fields){
-        Map<Identifier,Map<String,String>> results = new HashMap<>();
-        
         Map<Identifier,Map<String,Object>> objResults = new HashMap<>();
         Map<String, String> fieldPredicates = getFieldPredicates(objectType);
         
@@ -560,7 +558,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             
             //create a statement for the values we want to list
             for(int i=0;i<numPreds;i++){
-                qs += "?s ?pred"+i + "?val"+i + ".";
+                qs += "OPTIONAL{ ?s ?pred"+i + "?val"+i + " } .";
             }
             
             qs += "}"; //close the query
@@ -574,7 +572,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
             
             //set the rest of the bindings for the object
             for(int i=0;i<numPreds;i++){
-                setListBinding(fields.get(i), fieldPredicates, i, query, fac);
+                setListBinding(fields.get(i), fieldPredicates, "pred"+i, query, fac);
             }
                      
             TupleQueryResult evaluate = query.evaluate();     
@@ -587,39 +585,36 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
                 Map<String,String> values = new HashMap<>();
                 Map<String,Object> objValues = new HashMap<>();
                 for(int i=0;i<numPreds;i++){
-                    Binding binding = bs.getBinding("val"+i);
-                    String stringValue = binding.getValue().stringValue();
-                    
-                    //We have to get the value in its original format.  For this we need to use some reflection
-                    //first get the class of the field
-                    Class pClass = null;
-                    try{
-                        pClass = getFieldType(objectType, fields.get(i));
-                    }
-                    catch(NoSuchFieldException ex){
-                        throw new StorageException("Cannot read the field " + fields.get(i) + " from class "+objectType.getCanonicalName());
-                    }
-                    
-                    Object value = null;
-                    
-                    //if the field is a string, we can add it as-is
-                    if(pClass.equals(String.class)){
-                        value = stringValue;
-                    }
-                    else //if it's not, we need to run valueOf on the string value
+                    String bindingName = "val"+i;
+                    if(bs.hasBinding(bindingName))
                     {
-                        try {
-                            Method valueOf = pClass.getMethod("valueOf", String.class);
-                            value = valueOf.invoke(pClass, stringValue);
+                        Binding binding = bs.getBinding("val"+i);
+                        String stringValue = binding.getValue().stringValue();
 
-                        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-                            throw new StorageException("Could not run valueOf(String) on class " + pClass.getCanonicalName());
+                        //We have to get the value in its original format.  For this we need to use some reflection
+                        //first get the class of the field
+                        Class pClass = null;
+                        try{
+                            pClass = getFieldType(objectType, fields.get(i));
                         }
+                        catch(NoSuchFieldException ex){
+                            throw new StorageException("Cannot read the field " + fields.get(i) + " from class "+objectType.getCanonicalName());
+                        }
+
+                        Object value = null;
+
+                        //if the field is a string, we can add it as-is
+                        if(pClass.equals(String.class)){
+                            value = stringValue;
+                        }
+                        else //if it's not, we need to run valueOf on the string value
+                        {
+                            value = convertFromString(stringValue, pClass);
+                        }
+                        values.put(fields.get(i), stringValue);
+                        objValues.put(fields.get(i), value);
                     }
-                    values.put(fields.get(i), stringValue);
-                    objValues.put(fields.get(i), value);
                 }
-                results.put(identiferForURI,values);
                 objResults.put(identiferForURI, objValues);
             }
             
@@ -636,17 +631,51 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
                 
     }
     
-    protected void setListBinding(String fieldName, Map<String, String> fieldPredicates, int index, Query query, ValueFactory fac){
+    /**
+     * Convert to the given class type from a string.
+     * This method will just call valueOf for basic types.  It could be overridden for other types.
+     * @param stringValue The string value to convert
+     * @param pClass The class to convert to
+     * @return A new instance of an object of type pClass
+     */
+    protected Object convertFromString(String stringValue, Class pClass){
+        Object value = null;
+        try {
+            Method valueOf = pClass.getMethod("valueOf", String.class);
+            value = valueOf.invoke(pClass, stringValue);
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+            logger.debug("Could not run valueOf(String) on class " + pClass.getCanonicalName() + " : " + ex.getMessage());
+            throw new StorageException("Could not run valueOf(String) on class " + pClass.getCanonicalName());
+        }        
+        return value;
+    }
+    
+    /**
+     * Set a predicate binding for a {@link Query} based on a map of predicates
+     * @param fieldName The name of the field to set a binding for
+     * @param fieldPredicates A Map<String,String> of predicate URIs for the fields
+     * @param bindingName The name of the binding to set the predicate for 
+     * @param query The query to set the binding for
+     * @param fac A ValueVactory to use to create the URI
+     */
+    protected void setListBinding(String fieldName, Map<String, String> fieldPredicates, String bindingName, Query query, ValueFactory fac){
         if(fieldPredicates.containsKey(fieldName)){
             String predStr = fieldPredicates.get(fieldName);
             URI pred = fac.createURI(predStr);
-            query.setBinding("pred"+index, pred);
+            query.setBinding(bindingName, pred);
         }
         else{
             throw new IllegalArgumentException("The object doesn't contain the field '" + fieldName + "'");
         }        
     }
     
+    /**
+     * Get the type of the field for the given class
+     * @param c The class to check
+     * @param field The field to check
+     * @return The Class of the field in the given class
+     * @throws NoSuchFieldException
+     */
     protected Class getFieldType(Class c, String field) throws NoSuchFieldException{
         Field declaredField = c.getDeclaredField(field);
         
