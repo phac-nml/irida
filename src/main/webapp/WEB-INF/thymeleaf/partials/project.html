@@ -46,19 +46,26 @@
     </div>
 
     <div class="row-fluid">
-        <div class="span12">
-            <table class="table">
-                <tbody>
-                <tr data-ng-repeat="s in project.sequenceFiles">
-                    <td class="file-select"><input class="cb" data-ng-click="checkSelectedFiles()"
-                                                   data-ng-checked="allFiles" type="checkbox" value="$index"
-                                                   name="selectedFiles"/></td>
-                    <td><a href="{{s.links.self}}">{{s.label}}</a></td>
-                    <td class="file-date">{{s.createdDate | angularMoment }}</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+        <tabs>
+            <pane heading="Sequence Files">
+                <div class="span12">
+                    <table class="table">
+                        <tbody>
+                        <tr data-ng-repeat="s in project.sequenceFiles">
+                            <td class="file-select"><input class="cb" data-ng-click="checkSelectedFiles()"
+                                                           data-ng-checked="allFiles" type="checkbox" value="$index"
+                                                           name="selectedFiles"/></td>
+                            <td><a href="{{s.links.self}}">{{s.label}}</a></td>
+                            <td class="file-date">{{s.createdDate | angularMoment }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </pane>
+            <pane heading="Samples">Samples in here</pane>
+            <pane heading="Users">List all users in here!</pane>
+        </tabs>
+
     </div>
 
     <div class="row hide-for-touch">

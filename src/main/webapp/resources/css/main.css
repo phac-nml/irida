@@ -149,3 +149,7 @@ td.file-select {
 /* line 203, ../scss/main.scss */
 td.file-date {
   text-align: right; }
+
+/* line 207, ../scss/main.scss */
+.nav-tabs li {
+  cursor: pointer; }
