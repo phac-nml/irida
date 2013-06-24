@@ -67,4 +67,8 @@ public class Role implements Comparable<Role>, GrantedAuthority {
     public String getAuthority() {
         return name;
     }
+    
+    public static Role valueOf(String value){
+        return new Role(value);
+    }
 }
