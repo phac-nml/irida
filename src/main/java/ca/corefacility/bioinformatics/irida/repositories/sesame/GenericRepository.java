@@ -585,6 +585,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
                 Map<String,String> values = new HashMap<>();
                 Map<String,Object> objValues = new HashMap<>();
                 for(int i=0;i<numPreds;i++){
+                    String fieldName = fields.get(i);
                     String bindingName = "val"+i;
                     if(bs.hasBinding(bindingName))
                     {
@@ -595,10 +596,10 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
                         //first get the class of the field
                         Class pClass = null;
                         try{
-                            pClass = getFieldType(objectType, fields.get(i));
+                            pClass = getFieldType(objectType, fieldName);
                         }
                         catch(NoSuchFieldException ex){
-                            throw new StorageException("Cannot read the field " + fields.get(i) + " from class "+objectType.getCanonicalName());
+                            throw new StorageException("Cannot read the field \"" + fieldName + "\" from class "+objectType.getCanonicalName());
                         }
 
                         Object value = null;
