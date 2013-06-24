@@ -29,20 +29,17 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import org.openrdf.annotations.Iri;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
-import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.Query;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.repository.RepositoryException;
@@ -99,12 +96,12 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
     @Override
     public User update(UserIdentifier id, Map<String, Object> updatedFields) throws InvalidPropertyException {
 
-        if(updatedFields.containsKey("roles")){
-            Collection<Role> roles = (Collection<Role>) updatedFields.get("roles");
+        if(updatedFields.containsKey("role")){
+            Role role = (Role) updatedFields.get("role");
             
             Method declaredMethod;
             try {
-                declaredMethod = User.class.getDeclaredMethod("getStringRoles");
+                declaredMethod = User.class.getDeclaredMethod("getStringRole");
             } catch (NoSuchMethodException | SecurityException ex) {
                 logger.error("No field roles exists.  Cannot update object.");
                 throw new InvalidPropertyException("No field named roles exists for this object type");            
@@ -112,24 +109,24 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
 
             Iri annotation = declaredMethod.getAnnotation(Iri.class);
 
-            logger.trace("Updating roles -- " + annotation.value());
+            logger.trace("Updating role -- " + annotation.value());
             
-            updateRoleField(id, annotation.value(), roles);
+            updateRoleField(id, annotation.value(), role);
             
-            updatedFields.remove("roles");
+            updatedFields.remove("role");
         }
         
         return super.update(id, updatedFields);
    
     }
-    
+     
     /**
      * Update the role field for a User
      * @param id The {@link UserIdentifier} of the user to update
      * @param predicate The predicate to update from the @Iri annotation on the User class
      * @param roles The roles to update this user with
      */
-    protected void updateRoleField(UserIdentifier id, String predicate, Collection<Role> roles) {
+    protected void updateRoleField(UserIdentifier id, String predicate, Role role) {
         ObjectConnection con = store.getRepoConnection();
         java.net.URI netURI = idGen.buildURIFromIdentifier(id,URI);
         String uri = netURI.toString();
@@ -147,11 +144,10 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
             }
             con.remove(subURI, predURI, null);            
 
-            for(Role r : roles){
-                Literal objValue = fac.createLiteral(r.getName());
-                Statement added = fac.createStatement(subURI, predURI, objValue);
-                con.add(added);                
-            }
+
+            Literal objValue = fac.createLiteral(role.getName());
+            Statement added = fac.createStatement(subURI, predURI, objValue);
+            con.add(added);                
 
             con.commit();
         } catch (RepositoryException ex) {
