@@ -156,6 +156,10 @@ public class ProjectsController extends GenericController<Identifier, Project, P
             LabelledRelationshipResource resource = new LabelledRelationshipResource(sequenceFileIdentifier.getLabel(), r);
             resource.add(linkTo(methodOn(ProjectSequenceFilesController.class).getProjectSequenceFile(projectId,
                     sequenceFileIdentifier.getIdentifier())).withSelfRel());
+            Link fastaLink = linkTo(methodOn(ProjectSequenceFilesController.class).getProjectSequenceFile(projectId,
+                    sequenceFileIdentifier.getIdentifier())).withRel(ProjectSequenceFilesController.REL_PROJECT_SEQUENCE_FILE_FASTA);
+            // we need to add the fasta suffix manually to the end, so that web-based clients can find the file.
+            resource.add(new Link(fastaLink.getHref() + ".fasta", ProjectSequenceFilesController.REL_PROJECT_SEQUENCE_FILE_FASTA));
             sequenceFileResources.add(resource);
         }
 

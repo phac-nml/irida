@@ -92,6 +92,7 @@ public class SampleSequenceFilesControllerTest {
         Link sample = resources.getLink(SampleSequenceFilesController.REL_SAMPLE);
         String sampleLocation = "http://localhost/projects/" + p.getIdentifier().getIdentifier() +
                 "/samples/" + s.getIdentifier().getIdentifier();
+        String sequenceFileLocation = sampleLocation + "/sequenceFiles/" + sf.getIdentifier().getIdentifier();
 
         assertEquals(sampleLocation + "/sequenceFiles", selfCollection.getHref());
         assertEquals(sampleLocation, sample.getHref());
@@ -99,8 +100,13 @@ public class SampleSequenceFilesControllerTest {
         // confirm that the self rel for an individual sequence file exists
         SequenceFileResource sfr = resources.iterator().next();
         Link self = sfr.getLink(PageLink.REL_SELF);
-        assertEquals(sampleLocation + "/sequenceFiles/" + sf.getIdentifier().getIdentifier(), self.getHref());
+        assertEquals(sequenceFileLocation, self.getHref());
         assertEquals(sf.getFile().toString(), sfr.getFile());
+
+        // confirm that we have a link to the fasta formatted file
+        Link fasta = sfr.getLink(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_FASTA);
+        assertNotNull(fasta);
+        assertEquals(sequenceFileLocation + ".fasta", fasta.getHref());
     }
 
     @Test
@@ -172,16 +178,20 @@ public class SampleSequenceFilesControllerTest {
         Link self = sfr.getLink(PageLink.REL_SELF);
         Link sampleSequenceFiles = sfr.getLink(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
         Link sample = sfr.getLink(SampleSequenceFilesController.REL_SAMPLE);
+        Link selfFasta = sfr.getLink(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_FASTA);
 
         String sampleLocation = "http://localhost/projects/" + p.getIdentifier().getIdentifier() +
                 "/samples/" + s.getIdentifier().getIdentifier();
+        String sequenceFileLocation = sampleLocation + "/sequenceFiles/" + sf.getIdentifier().getIdentifier();
 
         assertNotNull(self);
-        assertEquals(sampleLocation + "/sequenceFiles/" + sf.getIdentifier().getIdentifier(), self.getHref());
+        assertEquals(sequenceFileLocation, self.getHref());
         assertNotNull(sampleSequenceFiles);
         assertEquals(sampleLocation + "/sequenceFiles", sampleSequenceFiles.getHref());
         assertNotNull(sample);
         assertEquals(sampleLocation, sample.getHref());
+        assertNotNull(selfFasta);
+        assertEquals(sequenceFileLocation + ".fasta", selfFasta.getHref());
     }
 
     @Test

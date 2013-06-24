@@ -20,6 +20,7 @@ import com.google.common.net.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -54,6 +55,10 @@ public class SampleSequenceFilesController {
      * Rel to get to the new location of the {@link SequenceFile}.
      */
     public static final String REL_SAMPLE_SEQUENCE_FILES = "sample/sequenceFiles";
+    /**
+     * Rel to get the FASTA formatted sequence file.
+     */
+    public static final String REL_SAMPLE_SEQUENCE_FILE_FASTA = "sample/sequenceFile/fasta";
     /**
      * The key used in the request to add an existing {@link SequenceFile} to a {@link Sample}.
      */
@@ -114,6 +119,9 @@ public class SampleSequenceFilesController {
             sfr.setResource(sf);
             sfr.add(linkTo(methodOn(SampleSequenceFilesController.class)
                     .getSequenceFileForSample(projectId, sampleId, sequenceFileId)).withSelfRel());
+            Link fastaLink = linkTo(methodOn(SampleSequenceFilesController.class)
+                    .getSequenceFileForSample(projectId, sampleId, sequenceFileId)).withRel(REL_SAMPLE_SEQUENCE_FILE_FASTA);
+            sfr.add(new Link(fastaLink.getHref() + ".fasta", fastaLink.getRel()));
             resources.add(sfr);
         }
 
@@ -294,7 +302,9 @@ public class SampleSequenceFilesController {
                 sequenceFileId)).withSelfRel());
         sfr.add(linkTo(methodOn(ProjectSamplesController.class)
                 .getProjectSample(projectId, sampleId)).withRel(REL_SAMPLE));
-
+        Link fastaLink = linkTo(methodOn(SampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,
+                sequenceFileId)).withRel(REL_SAMPLE_SEQUENCE_FILE_FASTA);
+        sfr.add(new Link(fastaLink.getHref() + ".fasta", fastaLink.getRel()));
         // add the resource to the response
         modelMap.addAttribute(GenericController.RESOURCE_NAME, sfr);
 
