@@ -24,7 +24,6 @@
           }
         },
         controller: function ($scope, data) {
-          formatObjectLinks(data);
           $scope.projects = data.resource.resources;
         }
       })
@@ -48,7 +47,6 @@
           }
         },
         controller: function ($scope, $stateParams, data) {
-          formatObjectLinks(data);
           console.log(data);
           $scope.project = {
             id: $stateParams.projectId,
@@ -66,24 +64,5 @@
         templateUrl: '/partials/login.html'
       });
   });
-
-  function formatObjectLinks(obj) {
-    for (var key in obj) {
-      if (key === 'links') {
-        obj[key] = linkFormatter(obj[key]);
-      }
-      else if (typeof obj[key] === 'object') {
-        formatObjectLinks(obj[key]);
-      }
-    }
-  }
-
-  function linkFormatter(links) {
-    var l = {};
-    for (var i = 0; i < links.length; i++) {
-      l[links[i].rel] = links[i].href;
-    }
-    return l;
-  }
 })
   (angular, NGS);
