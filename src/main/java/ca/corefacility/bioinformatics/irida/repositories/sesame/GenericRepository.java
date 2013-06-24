@@ -545,6 +545,10 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
      * @return A Map<Identifier, Map<String,Object>> of object identifiers and key/value pairs of the selected fields
      */
     public Map<Identifier,Map<String,Object>> listFields(List<String> fields){
+        return listFields(fields,0, 0, null, null);
+    }
+    
+    public Map<Identifier,Map<String,Object>> listFields(List<String> fields,int page, int size, String sortProperty, Order order){
         Map<Identifier,Map<String,Object>> objResults = new HashMap<>();
         Map<String, String> fieldPredicates = getFieldPredicates(objectType);
         
@@ -554,14 +558,20 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         try{
             String qs = store.getPrefixes() + //get the prefixes
                     "SELECT * WHERE {" +
-                    "?s a ?type .";
+                    "?s a ?type . ";
             
             //create a statement for the values we want to list
             for(int i=0;i<numPreds;i++){
-                qs += "OPTIONAL{ ?s ?pred"+i + "?val"+i + " } .";
+                qs += "OPTIONAL{ ?s ?pred"+i + "?val"+i + " } . ";
             }
             
-            qs += "}"; //close the query
+            
+            qs += "?a irida:auditForResource ?s . "
+                  + "?a irida:createdDate ?createdDate . "
+                  + "}"; //close the query
+            
+            qs += SparqlQuery.setOrderBy(sortProperty, order);
+            qs += SparqlQuery.setLimitOffset(page, size);
             
             TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
             ValueFactory fac = con.getValueFactory();

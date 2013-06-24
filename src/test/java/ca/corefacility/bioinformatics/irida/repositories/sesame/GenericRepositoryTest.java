@@ -298,6 +298,20 @@ public class GenericRepositoryTest {
     }
     
     @Test
+    public void testListFields_5args(){
+        Map<Identifier, Map<String, Object>> listFields = repo.listFields(ImmutableList.of("data","unannotatedData","intData"),0, 1, null, Order.ASCENDING);
+        
+        if(listFields.size() != 1){
+            fail();
+        }
+        
+        listFields = repo.listFields(ImmutableList.of("data","unannotatedData","intData"),0, 2, null, Order.ASCENDING);
+        if(listFields.size() != 2){
+            fail();
+        }
+    }
+    
+    @Test
     public void testListInvalidFields(){
         try{
             Map<Identifier, Map<String, Object>> listFields = repo.listFields(ImmutableList.of("baddata"));
