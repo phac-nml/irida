@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.FileCopyUtils;
@@ -155,8 +154,15 @@ public class ProjectSequenceFilesControllerTest {
         assertEquals(sf.getFile().toString(), resource.getFile());
         assertEquals(sf.getFile().getFileName().toString(), resource.getFileName());
         Link self = resource.getLink(PageLink.REL_SELF);
+        Link fasta = resource.getLink(ProjectSequenceFilesController.REL_PROJECT_SEQUENCE_FILE_FASTA);
 
-        assertEquals("http://localhost/projects/" + projectId + "/sequenceFiles/" + sf.getIdentifier().getIdentifier(), self.getHref());
+        String sequenceFileLocation = "http://localhost/projects/" + projectId + "/sequenceFiles/"
+                + sf.getIdentifier().getIdentifier();
+
+        assertNotNull(self);
+        assertEquals(sequenceFileLocation, self.getHref());
+        assertNotNull(fasta);
+        assertEquals(sequenceFileLocation + ".fasta", fasta.getHref());
     }
 
     @Test
@@ -181,9 +187,16 @@ public class ProjectSequenceFilesControllerTest {
         SequenceFileResource r = (SequenceFileResource) modelMap.get(GenericController.RESOURCE_NAME);
         Link self = r.getLink(PageLink.REL_SELF);
         Link project = r.getLink(ProjectsController.REL_PROJECT);
+        Link fasta = r.getLink(ProjectSequenceFilesController.REL_PROJECT_SEQUENCE_FILE_FASTA);
+        String projectLocation = "http://localhost/projects/" + projectId;
+        String sequenceFileLocation = projectLocation + "/sequenceFiles/" + sequenceFileId;
 
-        assertEquals("http://localhost/projects/" + projectId + "/sequenceFiles/" + sequenceFileId, self.getHref());
-        assertEquals("http://localhost/projects/" + projectId, project.getHref());
+        assertNotNull(self);
+        assertEquals(sequenceFileLocation, self.getHref());
+        assertNotNull(project);
+        assertEquals(projectLocation, project.getHref());
+        assertNotNull(fasta);
+        assertEquals(sequenceFileLocation + ".fasta", fasta.getHref());
     }
 
     /**

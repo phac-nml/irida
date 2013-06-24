@@ -16,6 +16,7 @@ import com.google.common.net.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +24,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -51,6 +53,10 @@ public class ProjectSequenceFilesController {
      * rel used for accessing a specific sequence file associated with a project.
      */
     public static final String REL_PROJECT_SEQUENCE_FILE = "project/sequenceFile";
+    /**
+     * rel used for downloading a sequence file in fasta format.
+     */
+    public static final String REL_PROJECT_SEQUENCE_FILE_FASTA = "project/sequenceFile/fasta";
     /**
      * logger.
      */
@@ -186,10 +192,15 @@ public class ProjectSequenceFilesController {
 
         for (Relationship r : relationships) {
             SequenceFile sequenceFile = sequenceFileService.read(r.getObject());
+            String sequenceFileId = sequenceFile.getIdentifier().getIdentifier();
             SequenceFileResource sr = new SequenceFileResource();
             sr.setResource(sequenceFile);
             sr.add(linkTo(methodOn(ProjectSequenceFilesController.class).
-                    getProjectSequenceFile(projectId, sequenceFile.getIdentifier().getIdentifier())).withSelfRel());
+                    getProjectSequenceFile(projectId, sequenceFileId)).withSelfRel());
+            Link fastaLink = linkTo(methodOn(ProjectSequenceFilesController.class).getProjectSequenceFile(projectId,
+                    sequenceFileId)).withRel(ProjectSequenceFilesController.REL_PROJECT_SEQUENCE_FILE_FASTA);
+            // we need to add the fasta suffix manually to the end, so that web-based clients can find the file.
+            sr.add(new Link(fastaLink.getHref() + ".fasta", ProjectSequenceFilesController.REL_PROJECT_SEQUENCE_FILE_FASTA));
             sampleResources.add(sr);
         }
 
@@ -219,6 +230,10 @@ public class ProjectSequenceFilesController {
         sfr.add(linkTo(methodOn(ProjectSequenceFilesController.class)
                 .getProjectSequenceFile(projectId, sequenceFileId)).withSelfRel());
         sfr.add(linkTo(ProjectsController.class).slash(projectId).withRel(ProjectsController.REL_PROJECT));
+        Link fastaLink = linkTo(methodOn(ProjectSequenceFilesController.class).getProjectSequenceFile(projectId,
+                sequenceFileId)).withRel(ProjectSequenceFilesController.REL_PROJECT_SEQUENCE_FILE_FASTA);
+        // we need to add the fasta suffix manually to the end, so that web-based clients can find the file.
+        sfr.add(new Link(fastaLink.getHref() + ".fasta", ProjectSequenceFilesController.REL_PROJECT_SEQUENCE_FILE_FASTA));
 
         modelMap.addAttribute(GenericController.RESOURCE_NAME, sfr);
 
