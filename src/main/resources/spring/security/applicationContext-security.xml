@@ -6,11 +6,12 @@
 http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <sec:http create-session="stateless" authentication-manager-ref="authenticationManager">
+    <sec:http create-session="stateless" authentication-manager-ref="authenticationManager"
+              entry-point-ref="authenticationEntryPoint">
         <sec:intercept-url pattern="/**" access="IS_AUTHENTICATED_REMEMBERED"/>
-        <sec:http-basic entry-point-ref="authenticationEntryPoint"/>
-        <sec:custom-filter ref="basicAuthenticationFilter" before="BASIC_AUTH_FILTER"/>
-        <sec:remember-me services-ref="rememberMeServices" />
+        <!-- we're using our own BASIC_AUTH_FILTER because we want to enable rememberMeServices -->
+        <sec:custom-filter ref="basicAuthenticationFilter" position="BASIC_AUTH_FILTER"/>
+        <sec:remember-me services-ref="rememberMeServices"/>
     </sec:http>
 
 
@@ -18,7 +19,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
         <sec:authentication-provider user-service-ref="userService">
             <sec:password-encoder ref="passwordEncoder"/>
         </sec:authentication-provider>
-        <sec:authentication-provider ref="rememberMeAuthenticationProvider" />
+        <sec:authentication-provider ref="rememberMeAuthenticationProvider"/>
     </sec:authentication-manager>
 
     <!--
@@ -41,7 +42,8 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
         <constructor-arg ref="userService"/>
         <property name="alwaysRemember" value="true"/>
     </bean>
-    <bean id="rememberMeAuthenticationProvider" class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
-        <constructor-arg value="YGg5uw382TVLdutPZbWsg94Fnjni3feZ6MsNSvW30z5K3nwcLkih9nbAoZQTzSPa" />
+    <bean id="rememberMeAuthenticationProvider"
+          class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
+        <constructor-arg value="YGg5uw382TVLdutPZbWsg94Fnjni3feZ6MsNSvW30z5K3nwcLkih9nbAoZQTzSPa"/>
     </bean>
 </beans>
