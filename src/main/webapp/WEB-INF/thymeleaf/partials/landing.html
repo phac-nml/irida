@@ -22,33 +22,44 @@
         </div>
         <div class="main" ui-view=""></div>
     </div>
-    <script type="text/javascript">(function () {
-        var e = "176", a = g("nav-main"), d = document.getElementsByClassName("outer")[0], c = document.getElementsByClassName("sidebar")[0], b = document.getElementsByClassName("main")[0];
-        window.onresize = f;
-        function f() {
-            var j = window.innerHeight - a;
-            var i = window.innerWidth;
-            d.style.width = i + "px";
-            d.style.height = j + "px";
-            c.style.height = j + "px";
-            c.style.width = e + "px";
-            b.style.height = j + "px";
-            b.style.width = i - e + "px"
-        }
+    <script type="text/javascript">
+        (function () {
+            var SIDEBAR_W = '176',
+                    MAINNAV_H = getTotalHeight('nav-main'),
+                    OUTER = document.getElementsByClassName('outer')[0],
+                    SIDEBAR = document.getElementsByClassName('sidebar')[0],
+                    CONTENT = document.getElementsByClassName('main')[0];
 
-        function g(h) {
-            var j, i;
-            if (document.all) {
-                j = parseInt(document.getElementById(h).currentStyle.height, 10);
-                i = parseInt(document.getElementById(h).currentStyle.marginTop, 10) + parseInt(document.getElementById(h).currentStyle.marginBottom, 10)
-            } else {
-                j = parseInt(document.defaultView.getComputedStyle(document.getElementById(h), "").getPropertyValue("height"), 10);
-                i = parseInt(document.defaultView.getComputedStyle(document.getElementById(h), "").getPropertyValue("margin-top")) + parseInt(document.defaultView.getComputedStyle(document.getElementById(h), "").getPropertyValue("margin-bottom"))
+            window.onresize = adjustWindow;
+
+            function adjustWindow() {
+                var h = window.innerHeight - MAINNAV_H;
+                var w = window.innerWidth;
+
+                OUTER.style.width = w + 'px';
+                OUTER.style.height = h + 'px';
+
+                SIDEBAR.style.height = h + 'px';
+                SIDEBAR.style.width = SIDEBAR_W + 'px';
+
+                CONTENT.style.height = h + 'px';
+                CONTENT.style.width = w - SIDEBAR_W + 'px';
             }
-            return j + i
-        }
 
-        f()
-    })();
+            function getTotalHeight(elmID) {
+                var elmHeight, elmMargin;
+                if (document.all) { // IE
+                    elmHeight = parseInt(document.getElementById(elmID).currentStyle.height, 10);
+                    elmMargin = parseInt(document.getElementById(elmID).currentStyle.marginTop, 10) + parseInt(document.getElementById(elmID).currentStyle.marginBottom, 10);
+                }
+                else { // Mozilla
+                    elmHeight = parseInt(document.defaultView.getComputedStyle(document.getElementById(elmID), '').getPropertyValue('height'), 10);
+                    elmMargin = parseInt(document.defaultView.getComputedStyle(document.getElementById(elmID), '').getPropertyValue('margin-top')) + parseInt(document.defaultView.getComputedStyle(document.getElementById(elmID), '').getPropertyValue('margin-bottom'));
+                }
+                return elmHeight + elmMargin;
+            }
+
+            adjustWindow();
+        })();
     </script>
 </div>
