@@ -32,7 +32,7 @@
 //      };
 
       $scope.addFilesToSample = function (s) {
-        var fileIndexes = angular.element('input[name="selectedFiles"]:checked');
+        var fileIndexes = ng.element('input[name="selectedFiles"]:checked');
         // Get sample information
         if (fileIndexes) {
 
@@ -50,7 +50,7 @@
 
       function addSequenceFileToSample(sample, fileIndexes) {
         var link = sample.data.resource.links['sample/sequenceFiles'];
-        angular.forEach(fileIndexes, function (value) {
+        ng.forEach(fileIndexes, function (value) {
           var index = $(value).val();
           ajaxService.create(link, {
             'sequenceFileId': $scope.project.sequenceFiles[index].identifier
@@ -123,23 +123,26 @@
       };
 
       $scope.checkForAllSelected = function (type) {
-        var t = angular.element("input[name='" + type +"']").length;
-        var c = angular.element("input[name='" + type +"']:checked").length;
+        var t = ng.element("input[name='" + type +"']").length;
+        var c = ng.element("input[name='" + type +"']:checked").length;
+
         $scope.display[type].checkedCount = c;
         if(t === c){
-          $scope.display[type].allCheckboxes = true;
+          $scope.display[type].mainCB = true;
         }
         else {
-          $scope.display[type].allCheckboxes = false;}
+          $scope.display[type].mainCB = false;}
       };
 
       $scope.display = {
         files: {
           allCheckboxes: false,
+          mainCB: false,
           checkedCount: 0
         },
         users: {
           allCheckboxes: false,
+          mainCB: false,
           checkedCount: 0
         }
       };
@@ -147,11 +150,29 @@
       $scope.modifyDisplayOptions = function (type) {
         $scope.display[type].allCheckboxes = !$scope.display[type].allCheckboxes;
         if ($scope.display[type].allCheckboxes) {
+          $scope.display[type].mainCB = true;
           $scope.display[type].checkedCount = 100;
         }
         else {
+          $scope.display[type].mainCB = false;
           $scope.display[type].checkedCount = 0;
         }
+      };
+
+      $scope.removeItemFromProject = function(type) {
+        var l = ng.element("input[name='" + type +"']:checked");
+        ng.forEach(l, function(item) {
+          var index = $(item).val();
+          ajaxService.deleteItem($scope.project.users[index].links.relationship).then(function () {
+            $scope.project.users.splice(index, 1);
+          });
+        });
+      };
+
+      $scope.gotoUser = function (e, user) {
+        e.preventDefault();
+        var u = user.match(/\/users\/(.*)/);
+        $location.path("/users/" + u[1]);
       };
     }
   ]);

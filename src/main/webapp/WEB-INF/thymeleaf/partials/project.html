@@ -3,8 +3,9 @@
     <div class="row-fluid">
         <div class="span12">
             <h1>{{project.name}}
-                <button data-ng-click="deleteProject()" class="btn btn-danger pull-right">Delete</button>
+                <button data-ng-click="deleteProject()" class="btn btn-danger pull-right">Delete Project</button>
             </h1>
+            <h3>{{project.date | date: 'mediumDate'}}</h3>
         </div>
     </div>
 
@@ -15,7 +16,7 @@
                     <div class="card card__droppable" data-ng-repeat="s in project.samples">
                         <div class="card--text">
                             <h4>{{s.label}}</h4>
-                            <span>{{s.dateCreated | date:'mediumDate'}}</span></div>
+                            <span>{{s.dateCreated | angularMoment}}</span></div>
                         <div class="folder">
                             <div class="folder--back"></div>
                             <div class="folder--front">
@@ -31,7 +32,7 @@
                     <div class="span12 button-bar">
                         <div class="btn-group">
                             <button class="btn" data-ng-click="modifyDisplayOptions('files')">
-                                <div class="cb" data-ng-class="{true: 'cb--checked'}[display.files.allCheckboxes]"></div>
+                                <div class="cb" data-ng-class="{true: 'cb--checked'}[display.files.mainCB]"></div>
                             </button>
                             <a class="btn dropdown-toggle">
                                 <span class="caret"></span>
@@ -101,7 +102,7 @@
                 <div class="button-bar">
                     <div class="btn-group">
                         <button class="btn" data-ng-click="modifyDisplayOptions('users')">
-                            <div class="cb" data-ng-class="{true: 'cb--checked'}[display.users.allCheckboxes]"></div>
+                            <div class="cb" data-ng-class="{true: 'cb--checked'}[display.users.mainCB]"></div>
                         </button>
                         <a class="btn dropdown-toggle">
                             <span class="caret"></span>
@@ -111,13 +112,16 @@
                             <li><a href="" data-ng-click="display.users.allCheckboxes=false">Select None</a></li>
                         </ul>
                     </div>
+                    <div class="btn-group">
+                        <button class="btn btn-warning" data-ng-click="removeItemFromProject('users')" data-ng-show="display.users.checkedCount">Remove</button>
+                    </div>
                 </div>
                 <table class="table">
                     <tr data-ng-repeat="u in project.users">
                         <td class="file-select"><input class="cb" data-ng-click="checkForAllSelected('users')"
-                                                       data-ng-checked="allUsers" type="checkbox" value="{{$index}}"
+                                                       data-ng-checked="display.users.allCheckboxes" type="checkbox" value="{{$index}}"
                                                        name="users"/></td>
-                        <td><a data-ng-href="{{u.links.self}}">{{u.label}}</a></td>
+                        <td><a href="#" data-ng-click="gotoUser($event, u.links.self)">{{u.label}}</a></td>
                         <td class="file-date">{{u.createdDate | angularMoment }}</td>
                     </tr>
                 </table>
