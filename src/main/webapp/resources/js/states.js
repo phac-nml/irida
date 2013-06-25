@@ -49,6 +49,7 @@
         controller: function ($scope, $stateParams, data) {
           console.log(data);
           $scope.project = {
+            date: data.resource.dateCreated,
             id: $stateParams.projectId,
             name: data.resource.name,
             users: data.relatedResources.users.resources,
