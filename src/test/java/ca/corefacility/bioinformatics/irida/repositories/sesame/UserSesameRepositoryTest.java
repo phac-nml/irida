@@ -190,7 +190,7 @@ public class UserSesameRepositoryTest {
         u.setRole(new Role("ROLE_USER"));
         u = repo.create(u);
         
-        List<FieldMap> listFields = repo.listFields(ImmutableList.of("firstName","role"));
+        List<FieldMap> listFields = repo.listMappedFields(ImmutableList.of("firstName","role"));
         assertNotNull(listFields);
         
         boolean hasRole = false;

@@ -545,11 +545,11 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
      * @param fields The fields we want to select from the database
      * @return A Map<Identifier, Map<String,Object>> of object identifiers and key/value pairs of the selected fields
      */
-    public List<FieldMap> listFields(List<String> fields){
-        return listFields(fields,0, 0, null, null);
+    public List<FieldMap> listMappedFields(List<String> fields){
+        return listMappedFields(fields,0, 0, null, null);
     }
     
-    public List<FieldMap> listFields(List<String> fields,int page, int size, String sortProperty, Order order){
+    public List<FieldMap> listMappedFields(List<String> fields,int page, int size, String sortProperty, Order order){
         List<FieldMap> fieldList = new ArrayList<>();
 
         Map<String, String> fieldPredicates = getFieldPredicates(objectType);

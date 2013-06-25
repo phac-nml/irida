@@ -273,7 +273,7 @@ public class GenericRepositoryTest {
     public void testListFields(){
         
         try{
-            List<FieldMap> listFields = repo.listFields(ImmutableList.of("data","unannotatedData","intData"));
+            List<FieldMap> listFields = repo.listMappedFields(ImmutableList.of("data","unannotatedData","intData"));
             assertFalse(listFields.isEmpty());
             for(FieldMap idFields : listFields){
                 Map<String, Object> get = idFields.getFields();
@@ -286,7 +286,7 @@ public class GenericRepositoryTest {
             }
             
             List<String> of = ImmutableList.of();
-            List<FieldMap> noParamsList = repo.listFields(of);
+            List<FieldMap> noParamsList = repo.listMappedFields(of);
             assertFalse(noParamsList.isEmpty());
             for(FieldMap idFields : noParamsList){
                 Map<String, Object> get = idFields.getFields();
@@ -301,19 +301,19 @@ public class GenericRepositoryTest {
     
     @Test
     public void testListFields_5args(){
-        List<FieldMap> listFields = repo.listFields(ImmutableList.of("data","unannotatedData","intData"),0, 1, "data", Order.ASCENDING);
+        List<FieldMap> listFields = repo.listMappedFields(ImmutableList.of("data","unannotatedData","intData"),0, 1, "data", Order.ASCENDING);
         
         if(listFields.size() != 1){
             fail();
         }
         
-        listFields = repo.listFields(ImmutableList.of("data","unannotatedData","intData"),0, 2, "data", Order.DESCENDING);
+        listFields = repo.listMappedFields(ImmutableList.of("data","unannotatedData","intData"),0, 2, "data", Order.DESCENDING);
         if(listFields.size() != 2){
             fail();
         }
         
-        List<FieldMap> listFields1 = repo.listFields(ImmutableList.of("data","unannotatedData","intData"),0, 0, "data", Order.ASCENDING);
-        List<FieldMap> listFields2 = repo.listFields(ImmutableList.of("data","unannotatedData","intData"),0, 0, "data", Order.DESCENDING);
+        List<FieldMap> listFields1 = repo.listMappedFields(ImmutableList.of("data","unannotatedData","intData"),0, 0, "data", Order.ASCENDING);
+        List<FieldMap> listFields2 = repo.listMappedFields(ImmutableList.of("data","unannotatedData","intData"),0, 0, "data", Order.DESCENDING);
         
         FieldMap first = listFields1.get(0);
         FieldMap last = listFields2.get(listFields2.size()-1);
@@ -325,7 +325,7 @@ public class GenericRepositoryTest {
     @Test
     public void testListInvalidFields(){
         try{
-            List<FieldMap> listFields = repo.listFields(ImmutableList.of("bananna"));
+            List<FieldMap> listFields = repo.listMappedFields(ImmutableList.of("bananna"));
             fail();
         }
         catch(IllegalArgumentException ex){
