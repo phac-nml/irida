@@ -8,8 +8,6 @@
   'use strict';
   app.controller('ProjectCtrl', [ '$scope', '$rootScope', '$window', 'ajaxService', '$location',
     function ($scope, $rootScope, $window, ajaxService, $location) {
-      $scope.show = {sequenceOptions: 0}; // TODO: (Josh: 2013-06-24) Maybe rename this variable 
-//      $scope.allFiles = false;
       $scope.sample = {};
       $scope.samples = {};
 //      $scope.list2 = [ ];
@@ -61,6 +59,10 @@
               $scope.project.sequenceFiles.splice(index, 1);
             });
         });
+        var f = fileIndexes.length > 1 ? "s" : '';
+        $rootScope.$broadcast('NOTIFY', {
+          'msg': fileIndexes.length + ' file' + f + ' added to ' + sample.label
+        });
       }
 
 //      function getSequnceFilesForSample(url) {
@@ -110,6 +112,7 @@
               alert("THIS NEEDS TO BE IMPLEMENTED");
             }
           });
+
           $location.path('/landing');
         });
       };
@@ -119,18 +122,35 @@
         $window.open(fileObject.links[type], '_blank');
       };
 
-      $scope.checkSelectedFiles = function () {
-        $scope.show.sequenceOptions = angular.element('input[name=\'selectedFiles\']:checked').length;
-      };
-
-      $scope.modifyAllCbSelection = function () {
-        $scope.allFiles = !$scope.allFiles;
-//        $scope.show.sequenceOptions = angular.element('input[name=\'selectedFiles\']:checked').length;
-        if ($scope.allFiles) {
-          $scope.show.sequenceOptions = 100;
+      $scope.checkForAllSelected = function (type) {
+        var t = angular.element("input[name='" + type +"']").length;
+        var c = angular.element("input[name='" + type +"']:checked").length;
+        $scope.display[type].checkedCount = c;
+        if(t === c){
+          $scope.display[type].allCheckboxes = true;
         }
         else {
-          $scope.show.sequenceOptions = 0;
+          $scope.display[type].allCheckboxes = false;}
+      };
+
+      $scope.display = {
+        files: {
+          allCheckboxes: false,
+          checkedCount: 0
+        },
+        users: {
+          allCheckboxes: false,
+          checkedCount: 0
+        }
+      };
+
+      $scope.modifyDisplayOptions = function (type) {
+        $scope.display[type].allCheckboxes = !$scope.display[type].allCheckboxes;
+        if ($scope.display[type].allCheckboxes) {
+          $scope.display[type].checkedCount = 100;
+        }
+        else {
+          $scope.display[type].checkedCount = 0;
         }
       };
     }

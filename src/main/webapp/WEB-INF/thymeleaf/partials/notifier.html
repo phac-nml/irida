@@ -2,5 +2,5 @@
     <span class="pull-left">
         {{data.msg}}
     </span>
-    <a class="pull-right" ng-click="undo()">undo</a>
+    <a class="pull-right" data-ng-show="data.callback" data-ng-click="undo()">undo</a>
 </div>
