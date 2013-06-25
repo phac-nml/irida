@@ -590,7 +590,6 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
                 setListBinding(fields.get(i), fieldPredicates, "pred"+i, query, fac);
             }
                      
-            logger.debug(qs);
             TupleQueryResult evaluate = query.evaluate();     
             while(evaluate.hasNext()){
                 BindingSet bs = evaluate.next();
