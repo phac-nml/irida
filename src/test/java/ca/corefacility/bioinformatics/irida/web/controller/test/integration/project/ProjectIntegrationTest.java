@@ -85,14 +85,9 @@ public class ProjectIntegrationTest {
     @Test
     public void testGetProjects() {
         // first page shouldn't have prev link, default view returns 20 projects
-        String[] expectedProjectNames = new String[20];
-        for (int i = 0; i < expectedProjectNames.length; i++) {
-            expectedProjectNames[i] = "Project " + (i + 1);
-        }
         expect().body("resource.links.rel", hasItems("self", "first", "next", "last")).and()
                 .body("resource.links.rel", not(hasItem("prev"))).and()
-                .body("resource.totalResources", isA(Integer.class)).and()
-                .body("resource.resources.name", hasItems(expectedProjectNames)).when().get(PROJECTS);
+                .body("resource.totalResources", isA(Integer.class)).when().get(PROJECTS);
     }
 
     @Test
