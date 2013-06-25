@@ -59,12 +59,31 @@
           };
         }
       })
+      .state('projects.sample', {
+        url: 'projects/:projectId/samples/:sampleId',
+        templateUrl: '/partials/sample.html',
+        controller: function ($scope, $stateParams, data) {
+          $scope.data = {
+            sample: data.resource
+          };
+        },
+        resolve: {
+          data: function($q, $stateParams, ajaxService) {
+            var defer = $q.defer();
+            ajaxService.get('/api/projects/' + $stateParams.projectId + '/samples/' + $stateParams.sampleId).then(function (data) {
+              console.log(data);
+              defer.resolve(data);
+            });
+            return defer.promise;
+          }
+        }
+      })
       .state('projects.users', {
         url: 'users/:userId',
         templateUrl: '/partials/user.html',
         controller: function ($scope, $stateParams, data) {
           $scope.data = {
-            user: data.resource,
+            user: data.resource
           }
         },
         resolve: {
