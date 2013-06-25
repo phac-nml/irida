@@ -67,4 +67,13 @@ public class Role implements Comparable<Role>, GrantedAuthority {
     public String getAuthority() {
         return name;
     }
+    
+    /**
+     * Return a {@link Role} for the given string value
+     * @param value The string value to create a {@link Role} for
+     * @return A new {@link Role} instance for the given string value
+     */
+    public static Role valueOf(String value){
+        return new Role(value);
+    }
 }

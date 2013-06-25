@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SailStore;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.model.FieldMap;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -27,6 +28,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -179,6 +181,27 @@ public class UserSesameRepositoryTest {
         catch(InvalidPropertyException ex){
             fail(ex.getMessage());
         }
+    }
+    
+    @Test
+    public void listFieldsForUser(){
+        User u = new User("test", "testuser@test", "123456", "a", "test", "123-456-7890");
+
+        u.setRole(new Role("ROLE_USER"));
+        u = repo.create(u);
+        
+        List<FieldMap> listFields = repo.listMappedFields(ImmutableList.of("firstName","role"));
+        assertNotNull(listFields);
+        
+        boolean hasRole = false;
+        for(FieldMap field : listFields){
+            Map<String, Object> get = field.getFields();
+            assertTrue(get.containsKey("firstName"));
+            if(get.containsKey("role")){
+                hasRole = true;
+            }
+        }
+        assertTrue(hasRole);
     }
     
 }

@@ -17,10 +17,7 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.utils.Identified;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
-import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
-import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.StringIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SailStore;
 import org.junit.Before;
@@ -28,18 +25,10 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.*;
-import org.openrdf.model.URI;
-import org.openrdf.query.BindingSet;
 
 /**
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
@@ -78,9 +67,9 @@ public class RelationshipSesameRepositoryTest {
         pred = new RdfPredicate("irida", "identifiedRelationship");
         linksRepo.addRelationship(Identified.class, pred, Identified.class);
 
-        Identified i1 = repo.create(new Identified("first"));
-        Identified i2 = repo.create(new Identified("second"));
-        Identified i3 = repo.create(new Identified("third"));
+        Identified i1 = repo.create(new Identified("first",1,"udata1"));
+        Identified i2 = repo.create(new Identified("second",2,"udata2"));
+        Identified i3 = repo.create(new Identified("third",3,"udata3"));
 
         first = i1.getIdentifier();
         second = i2.getIdentifier();
@@ -97,7 +86,7 @@ public class RelationshipSesameRepositoryTest {
      */
     @Test
     public void testEmptyLinks() {
-        Identified withoutLabel = repo.create(new Identified("data"));
+        Identified withoutLabel = repo.create(new Identified("data",9,"newudata"));
         List<Relationship> relationships = linksRepo.getLinksForSubject(withoutLabel.getIdentifier(), Identified.class,
                 Identified.class);
         assertEquals(0, relationships.size());
@@ -108,8 +97,8 @@ public class RelationshipSesameRepositoryTest {
      */
     @Test
     public void testCreate_GenericType_GenericType() {
-        Identified i1 = repo.create(new Identified("first"));
-        Identified i2 = repo.create(new Identified("second"));
+        Identified i1 = repo.create(new Identified("first",1,"udata1"));
+        Identified i2 = repo.create(new Identified("second",2,"udata2"));
 
         Relationship create = linksRepo.create(i1, i2);
         assertNotNull(create);
@@ -121,8 +110,8 @@ public class RelationshipSesameRepositoryTest {
      */
     @Test
     public void testCreate_Relationship() {
-        Identified i1 = repo.create(new Identified("first"));
-        Identified i2 = repo.create(new Identified("second"));
+        Identified i1 = repo.create(new Identified("first",1,"udata1"));
+        Identified i2 = repo.create(new Identified("second",2,"udata2"));
 
         Relationship r = new Relationship(i1.getIdentifier(), pred, i2.getIdentifier());
 
@@ -235,8 +224,8 @@ public class RelationshipSesameRepositoryTest {
      */
     @Test
     public void testDelete_Identifier() {
-        Identified i1 = repo.create(new Identified("first"));
-        Identified i2 = repo.create(new Identified("second"));
+        Identified i1 = repo.create(new Identified("first",1,"udata1"));
+        Identified i2 = repo.create(new Identified("second",2,"udata2"));
         
         Relationship create = linksRepo.create(i1, i2);
         linksRepo.delete(create.getIdentifier());
@@ -249,8 +238,8 @@ public class RelationshipSesameRepositoryTest {
      */
     @Test
     public void testExists() {
-        Identified i1 = repo.create(new Identified("first"));
-        Identified i2 = repo.create(new Identified("second"));
+        Identified i1 = repo.create(new Identified("first",1,"udata1"));
+        Identified i2 = repo.create(new Identified("second",2,"udata2"));
         
         Relationship create = linksRepo.create(i1, i2);
         Boolean exists = linksRepo.exists(create.getIdentifier());

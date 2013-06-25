@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import ca.corefacility.bioinformatics.irida.model.FieldMap;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
@@ -539,31 +540,190 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         return users;
     }
     
-    private Collection<String> getFieldPredicates(Class c){
-        List<String> predicates = new ArrayList<>();
+    /**
+     * List objects of this type that have the given fields
+     * @param fields The fields we want to select from the database
+     * @return A Map<Identifier, Map<String,Object>> of object identifiers and key/value pairs of the selected fields
+     */
+    public List<FieldMap> listMappedFields(List<String> fields){
+        return listMappedFields(fields,0, 0, null, null);
+    }
+    
+    public List<FieldMap> listMappedFields(List<String> fields,int page, int size, String sortProperty, Order order){
+        List<FieldMap> fieldList = new ArrayList<>();
+
+        Map<String, String> fieldPredicates = getFieldPredicates(objectType);
+                
+        Map<String,String> bindingNames = new HashMap<>(); //get the names of the value bindings
+        
+        ObjectConnection con = store.getRepoConnection();
+                
+        int numPreds = fields.size();
+        try{
+            String qs = store.getPrefixes() + //get the prefixes
+                    "SELECT * WHERE {" +
+                    "?s a ?type . ";
+            
+            //create a statement for the values we want to list
+            for(int i=0;i<numPreds;i++){
+                qs += "OPTIONAL{ ?s ?pred"+i + " ?val"+i + " } . ";
+                bindingNames.put(fields.get(i),"val"+i);
+            }
+            
+            //get the audit and creation time for the object
+            qs += "?a irida:auditForResource ?s . "
+                  + "?a irida:createdDate ?createdDate . "
+                  + "}";
+            
+            qs += SparqlQuery.setOrderBy(bindingNames.get(sortProperty), order); //we ned to get the name of the binding value based on the property
+            qs += SparqlQuery.setLimitOffset(page, size);
+            
+            TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL, qs);
+            ValueFactory fac = con.getValueFactory();
+            
+            //set the type binding
+            URI type = fac.createURI(prefix, sType);
+            query.setBinding("type", type);
+            
+            //set the rest of the bindings for the object
+            for(int i=0;i<numPreds;i++){
+                setListBinding(fields.get(i), fieldPredicates, "pred"+i, query, fac);
+            }
+                     
+            logger.debug(qs);
+            TupleQueryResult evaluate = query.evaluate();     
+            while(evaluate.hasNext()){
+                BindingSet bs = evaluate.next();
+                Binding subjectBinding = bs.getBinding("s");
+                String subString = subjectBinding.getValue().toString();
+                
+                Identifier identiferForURI = idGen.getIdentiferForURI(fac.createURI(subString));
+                Map<String,String> values = new HashMap<>();
+                Map<String,Object> objValues = new HashMap<>();
+                for(int i=0;i<numPreds;i++){
+                    String fieldName = fields.get(i);
+                    String bindingName = "val"+i;
+                    if(bs.hasBinding(bindingName))
+                    {
+                        Binding binding = bs.getBinding("val"+i);
+                        String stringValue = binding.getValue().stringValue();
+
+                        //We have to get the value in its original format.  For this we need to use some reflection
+                        //first get the class of the field
+                        Class pClass = null;
+                        try{
+                            pClass = getFieldType(objectType, fieldName);
+                        }
+                        catch(NoSuchFieldException ex){
+                            throw new StorageException("Cannot read the field \"" + fieldName + "\" from class "+objectType.getCanonicalName());
+                        }
+
+                        Object value = null;
+
+                        //if the field is a string, we can add it as-is
+                        if(pClass.equals(String.class)){
+                            value = stringValue;
+                        }
+                        else //if it's not, we need to run valueOf on the string value
+                        {
+                            value = convertFromString(stringValue, pClass);
+                        }
+                        values.put(fields.get(i), stringValue);
+                        objValues.put(fields.get(i), value);
+                    }
+                }
+                fieldList.add(new FieldMap(identiferForURI, objValues));
+            }
+            
+            evaluate.close();
+                        
+        } catch (RepositoryException | MalformedQueryException | QueryEvaluationException ex) {
+            logger.error(ex.getMessage());
+            throw new StorageException("Couldn't list fields for type " + objectType.getCanonicalName());
+        }finally{
+            store.closeRepoConnection(con);
+        }
+        
+        return fieldList;
+                
+    }
+    
+    /**
+     * Convert to the given class type from a string.
+     * This method will just call valueOf for basic types.  It could be overridden for other types.
+     * @param stringValue The string value to convert
+     * @param pClass The class to convert to
+     * @return A new instance of an object of type pClass
+     */
+    protected Object convertFromString(String stringValue, Class pClass){
+        Object value = null;
+        try {
+            Method valueOf = pClass.getMethod("valueOf", String.class);
+            value = valueOf.invoke(pClass, stringValue);
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+            logger.debug("Could not run valueOf(String) on class " + pClass.getCanonicalName() + " : " + ex.getMessage());
+            throw new StorageException("Could not run valueOf(String) on class " + pClass.getCanonicalName());
+        }        
+        return value;
+    }
+    
+    /**
+     * Set a predicate binding for a {@link Query} based on a map of predicates
+     * @param fieldName The name of the field to set a binding for
+     * @param fieldPredicates A Map<String,String> of predicate URIs for the fields
+     * @param bindingName The name of the binding to set the predicate for 
+     * @param query The query to set the binding for
+     * @param fac A ValueVactory to use to create the URI
+     */
+    protected void setListBinding(String fieldName, Map<String, String> fieldPredicates, String bindingName, Query query, ValueFactory fac){
+        if(fieldPredicates.containsKey(fieldName)){
+            String predStr = fieldPredicates.get(fieldName);
+            URI pred = fac.createURI(predStr);
+            query.setBinding(bindingName, pred);
+        }
+        else{
+            throw new IllegalArgumentException("The object doesn't contain the field '" + fieldName + "'");
+        }        
+    }
+    
+    /**
+     * Get the type of the field for the given class
+     * @param c The class to check
+     * @param field The field to check
+     * @return The Class of the field in the given class
+     * @throws NoSuchFieldException
+     */
+    protected Class getFieldType(Class c, String field) throws NoSuchFieldException{
+        Field declaredField = c.getDeclaredField(field);
+        
+        return declaredField.getType();
+    }
+    
+    private Map<String,String> getFieldPredicates(Class c){
+        Map<String,String> predicates = new HashMap<>();
         if(c.getSuperclass() != null){
-            Collection<String> added = getFieldPredicates(c.getSuperclass());
-            predicates.addAll(added);
+            Map<String,String> added = getFieldPredicates(c.getSuperclass());
+            predicates.putAll(added);
         }
         
         if(c.getInterfaces() != null){
             for(Class inf : c.getInterfaces()){
-                Collection<String> added = getFieldPredicates(inf);
-                predicates.addAll(added);
+                Map<String,String> added = getFieldPredicates(inf);
+                predicates.putAll(added);
             }
         }
         
         for(Field f : c.getDeclaredFields()){
             Iri iri = f.getAnnotation(Iri.class);
             if(iri != null){
-                predicates.add(iri.value());
+                predicates.put(f.getName(), iri.value());
             }
         }
         
         for(Method m : c.getDeclaredMethods()){
             Iri iri = m.getAnnotation(Iri.class);
             if(iri != null){
-                predicates.add(iri.value());
+                predicates.put(m.getName(), iri.value()); 
             }
         }
         
@@ -573,14 +733,16 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     private Map<String,Value> getPredicateValues(Type obj){
         java.net.URI uriFromIdentifier = getUriFromIdentifier((Identifier) obj.getIdentifier());
         Map<String,Value> values = new HashMap<>();
-        Collection<String> preds = getFieldPredicates(obj.getClass());
+        Map<String,String> preds = getFieldPredicates(obj.getClass());
         
         ObjectConnection con = store.getRepoConnection();
         ValueFactory vf = con.getValueFactory();
         
         try{
             URI sub = vf.createURI(uriFromIdentifier.toString());
-            for(String predStr : preds){
+            Set<String> keySet = preds.keySet();
+            for(String fieldName : keySet){
+                String predStr = preds.get(fieldName);
                 URI pred = vf.createURI(predStr);
                 RepositoryResult<Statement> statements = con.getStatements(sub, pred, null);
                 if(statements.hasNext()){

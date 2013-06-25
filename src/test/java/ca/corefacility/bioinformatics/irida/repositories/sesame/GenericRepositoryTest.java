@@ -19,12 +19,17 @@ import ca.corefacility.bioinformatics.irida.utils.Identified;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.SailStore;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.FieldMap;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.TripleStore;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -49,6 +54,7 @@ public class GenericRepositoryTest {
     @Before
     public void setUp() throws NoSuchMethodException {
         SailStore store = new SailStore();
+        //TripleStore store = new TripleStore("http://localhost:8888/openrdf-sesame/", "test","http://bobloblaw:8888/");
         store.initialize();
         IdentifierGenerator<Identified> idGen = new IdentifierGenerator<>(store);
         IdentifierGenerator<IridaThing> auditIdGen = new IdentifierGenerator<>(store);
@@ -59,9 +65,9 @@ public class GenericRepositoryTest {
         repo = new IdentifiedRepo(store,auditRepo,linksRepo);
         repo.setIdGen(idGen);
         
-        repo.create(new Identified("data1"));
-        repo.create(new Identified("data2"));
-        repo.create(new Identified("data3"));
+        repo.create(new Identified("data1",1,"udata1"));
+        repo.create(new Identified("data2",2,"udata2"));
+        repo.create(new Identified("data3",3,"udata3"));
     }
     
     /**
@@ -79,7 +85,7 @@ public class GenericRepositoryTest {
      */
     @Test
     public void testCreate() {
-        Identified i = new Identified("newdata");
+        Identified i = new Identified("newdata",9,"newudata");
 
         try {
             i = repo.create(i);
@@ -104,12 +110,14 @@ public class GenericRepositoryTest {
      */
     @Test
     public void testRead() {
-        Identified i = new Identified("newdata");
+        Identified i = new Identified("newdata",9,"newudata");
 
         i = repo.create(i);
         try{
             i = repo.read(i.getIdentifier());
             assertNotNull(i);
+            assertNotNull(i.getData());
+            assertNotNull(i.getUnannotatedData());
         }
         catch(IllegalArgumentException e){
             System.err.println(e.getMessage());
@@ -163,7 +171,7 @@ public class GenericRepositoryTest {
      */
     @Test
     public void testDelete() {
-        Identified u = new Identified("newdata");
+        Identified u = new Identified("newdata",9,"newudata");
         u = repo.create(u);
         
         try{
@@ -193,7 +201,7 @@ public class GenericRepositoryTest {
      */
     @Test
     public void testExists() {
-        Identified u = new Identified("newdata");
+        Identified u = new Identified("newdata",9,"newudata");
         u = repo.create(u);
         
         try{
@@ -212,7 +220,7 @@ public class GenericRepositoryTest {
      */
     @Test
     public void testUpdate() {
-        Identified u = new Identified("newdata");
+        Identified u = new Identified("newdata",9,"newudata");
         u = repo.create(u);
         
         try{
@@ -230,17 +238,101 @@ public class GenericRepositoryTest {
             fail();
         }
     }
+    
+    @Test
+    public void testUpdateUnannotatedMember(){
+        Identified u = new Identified("newdata",9,"newudata");
+        u = repo.create(u);
+        
+        try{
+            String differentData = "different";
+            HashMap<String,Object> changes = new HashMap<>();
+            changes.put("unannotatedData", differentData);
+            u = repo.update(u.getIdentifier(), changes);
+            
+            Identified j = repo.read(u.getIdentifier());
+            assertNotNull(j);
+            assertEquals(j.getUnannotatedData(),differentData);
+        }
+        catch(IllegalArgumentException|InvalidPropertyException ex){
+            fail(ex.getMessage());
+        }        
+    }
         
     /**
      * Test of count method, of class GenericRepository.
      */
     @Test
     public void testCount() {
-        repo.create(new Identified("newdata"));
+        repo.create(new Identified("newdata",9,"newudata"));
         
         assertTrue(repo.count()> 0);
     }
+    
+    @Test
+    public void testListFields(){
+        
+        try{
+            List<FieldMap> listFields = repo.listMappedFields(ImmutableList.of("data","unannotatedData","intData"));
+            assertFalse(listFields.isEmpty());
+            for(FieldMap idFields : listFields){
+                Map<String, Object> get = idFields.getFields();
+                assertTrue(get.containsKey("data"));
+                assertNotNull(get.get("data"));
+                assertTrue(get.containsKey("unannotatedData"));
+                assertNotNull(get.get("unannotatedData"));
+                assertTrue(get.containsKey("intData"));
+                assertNotNull(get.get("intData"));
+            }
+            
+            List<String> of = ImmutableList.of();
+            List<FieldMap> noParamsList = repo.listMappedFields(of);
+            assertFalse(noParamsList.isEmpty());
+            for(FieldMap idFields : noParamsList){
+                Map<String, Object> get = idFields.getFields();
+                assertTrue(get.isEmpty());
+                assertNotNull(idFields.getIdentifier());
+            }          
+        }
+        catch(IllegalArgumentException ex){
+            fail(ex.getMessage());
+        }
+    }
+    
+    @Test
+    public void testListFields_5args(){
+        List<FieldMap> listFields = repo.listMappedFields(ImmutableList.of("data","unannotatedData","intData"),0, 1, "data", Order.ASCENDING);
+        
+        if(listFields.size() != 1){
+            fail();
+        }
+        
+        listFields = repo.listMappedFields(ImmutableList.of("data","unannotatedData","intData"),0, 2, "data", Order.DESCENDING);
+        if(listFields.size() != 2){
+            fail();
+        }
+        
+        List<FieldMap> listFields1 = repo.listMappedFields(ImmutableList.of("data","unannotatedData","intData"),0, 0, "data", Order.ASCENDING);
+        List<FieldMap> listFields2 = repo.listMappedFields(ImmutableList.of("data","unannotatedData","intData"),0, 0, "data", Order.DESCENDING);
+        
+        FieldMap first = listFields1.get(0);
+        FieldMap last = listFields2.get(listFields2.size()-1);
+        
+        assertEquals(first.getIdentifier().getIdentifier(), last.getIdentifier().getIdentifier());  //ensure the sorting works properly
+        
+    }
+    
+    @Test
+    public void testListInvalidFields(){
+        try{
+            List<FieldMap> listFields = repo.listMappedFields(ImmutableList.of("bananna"));
+            fail();
+        }
+        catch(IllegalArgumentException ex){
 
+        }        
+    }
+    
     /**
      * Test of generateNewIdentifier method, of class GenericRepository.
      

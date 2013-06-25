@@ -121,6 +121,27 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
     }
      
     /**
+     * Set a predicate binding for a {@link Query} based on a map of predicates.
+     * This override will use the method invocation "getStringRoles" for "role" and otherwise call super
+     * @param fieldName The name of the field to set a binding for
+     * @param fieldPredicates A Map<String,String> of predicate URIs for the fields
+     * @param bindingName The name of the binding to set the predicate for 
+     * @param query The query to set the binding for
+     * @param fac A ValueVactory to use to create the URI
+     */
+    @Override
+    protected void setListBinding(String fieldName, Map<String, String> fieldPredicates, String bindingName, Query query, ValueFactory fac){
+        if(fieldName.equals("role")){
+            String predStr = fieldPredicates.get("getStringRole");
+            URI pred = fac.createURI(predStr);
+            query.setBinding(bindingName, pred);
+        }
+        else{
+            super.setListBinding(fieldName, fieldPredicates, bindingName, query, fac);
+        }
+    }    
+    
+    /**
      * Update the role field for a User
      * @param id The {@link UserIdentifier} of the user to update
      * @param predicate The predicate to update from the @Iri annotation on the User class
