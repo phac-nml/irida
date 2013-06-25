@@ -32,9 +32,10 @@
 //      };
 
       $scope.addFilesToSample = function (s) {
-        var fileIndexes = ng.element('input[name="selectedFiles"]:checked');
+        debugger;
+        var fileIndexes = ng.element('input[name="files"]:checked');
         // Get sample information
-        if (fileIndexes) {
+        if (fileIndexes.length) {
 
           if (typeof s.data === 'undefined') {
             ajaxService.get(s.links.self).then(function (data) {
@@ -171,8 +172,14 @@
 
       $scope.gotoUser = function (e, user) {
         e.preventDefault();
-        var u = user.match(/\/users\/(.*)/);
-        $location.path("/users/" + u[1]);
+        var u = user.match(/\/users\/.*/);
+        $location.path(u[0]);
+      };
+
+      $scope.gotoProject = function (e, url) {
+        e.preventDefault();
+        var l = url.match(/\/projects\/.*/);
+        $location.path(l[0]);
       };
     }
   ]);
