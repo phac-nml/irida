@@ -32,7 +32,7 @@
 //      };
 
       $scope.addFilesToSample = function (s) {
-        var fileIndexes = angular.element('input[name="selectedFiles"]:checked');
+        var fileIndexes = ng.element('input[name="selectedFiles"]:checked');
         // Get sample information
         if (fileIndexes) {
 
@@ -50,7 +50,7 @@
 
       function addSequenceFileToSample(sample, fileIndexes) {
         var link = sample.data.resource.links['sample/sequenceFiles'];
-        angular.forEach(fileIndexes, function (value) {
+        ng.forEach(fileIndexes, function (value) {
           var index = $(value).val();
           ajaxService.create(link, {
             'sequenceFileId': $scope.project.sequenceFiles[index].identifier
@@ -123,8 +123,8 @@
       };
 
       $scope.checkForAllSelected = function (type) {
-        var t = angular.element("input[name='" + type +"']").length;
-        var c = angular.element("input[name='" + type +"']:checked").length;
+        var t = ng.element("input[name='" + type +"']").length;
+        var c = ng.element("input[name='" + type +"']:checked").length;
 
         $scope.display[type].checkedCount = c;
         if(t === c){
@@ -160,13 +160,19 @@
       };
 
       $scope.removeItemFromProject = function(type) {
-        var l = angular.element("input[name='" + type +"']:checked");
-        angular.forEach(l, function(item) {
+        var l = ng.element("input[name='" + type +"']:checked");
+        ng.forEach(l, function(item) {
           var index = $(item).val();
           ajaxService.deleteItem($scope.project.users[index].links.relationship).then(function () {
             $scope.project.users.splice(index, 1);
           });
         });
+      };
+
+      $scope.gotoUser = function (e, user) {
+        e.preventDefault();
+        var u = user.match(/\/users\/(.*)/);
+        $location.path("/users/" + u[1]);
       };
     }
   ]);

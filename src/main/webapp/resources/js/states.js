@@ -59,7 +59,25 @@
           };
         }
       })
-
+      .state('projects.users', {
+        url: 'users/:userId',
+        templateUrl: '/partials/user.html',
+        controller: function ($scope, $stateParams, data) {
+          $scope.data = {
+            user: data.resource,
+          }
+        },
+        resolve: {
+          data: function($q, $stateParams, ajaxService) {
+            var defer = $q.defer();
+            ajaxService.get('/api/users/' + $stateParams.userId).then(function (data) {
+              console.log(data);
+              defer.resolve(data);
+            });
+            return defer.promise;
+          }
+        }
+      })
       .state('login', {
         url: '/login',
         templateUrl: '/partials/login.html'

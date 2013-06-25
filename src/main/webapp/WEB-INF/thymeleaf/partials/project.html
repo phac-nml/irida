@@ -121,7 +121,7 @@
                         <td class="file-select"><input class="cb" data-ng-click="checkForAllSelected('users')"
                                                        data-ng-checked="display.users.allCheckboxes" type="checkbox" value="{{$index}}"
                                                        name="users"/></td>
-                        <td><a data-ng-href="{{u.links.self}}">{{u.label}}</a></td>
+                        <td><a href="#" data-ng-click="gotoUser($event, u.links.self)">{{u.label}}</a></td>
                         <td class="file-date">{{u.createdDate | angularMoment }}</td>
                     </tr>
                 </table>
