@@ -58,8 +58,6 @@ public class GenericControllerTest {
     private static final String RELATED_IDENTIFIABLE_TEST_ENTITY_KEY = "related";
     private GenericController<Identifier, IdentifiableTestEntity, IdentifiableTestResource> controller;
     private CRUDService<Identifier, IdentifiableTestEntity> crudService;
-    private RelationshipService relationshipService;
-    private EntityLinks entityLinks;
     private IdentifiableTestEntity entity;
     private Identifier id;
     private Map<String, Object> updatedFields;
@@ -68,8 +66,6 @@ public class GenericControllerTest {
     @SuppressWarnings("unchecked")
     public void setUp() {
         crudService = mock(CRUDService.class);
-        relationshipService = mock(RelationshipService.class);
-        entityLinks = mock(EntityLinks.class);
         id = new Identifier();
         entity = new IdentifiableTestEntity();
         entity.setIdentifier(id);
@@ -86,8 +82,6 @@ public class GenericControllerTest {
                         (Class<?>) IdentifiableTestEntity.class);
             }
         };
-        controller.setRelationshipService(relationshipService);
-        controller.setEntityLinks(entityLinks);
         updatedFields = new HashMap<>();
     }
 
