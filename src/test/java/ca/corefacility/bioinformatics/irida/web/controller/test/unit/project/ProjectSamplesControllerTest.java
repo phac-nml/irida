@@ -8,6 +8,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
@@ -28,8 +29,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -161,27 +160,61 @@ public class ProjectSamplesControllerTest {
         Project p = TestDataFactory.constructProject();
         Sample s = TestDataFactory.constructSample();
         SequenceFile sf = TestDataFactory.constructSequenceFile();
+        Relationship r = new Relationship();
+        r.setIdentifier(new Identifier());
+        r.setSubject(s.getIdentifier());
+        r.setObject(sf.getIdentifier());
+        Collection<Relationship> relationships = Sets.newHashSet(r);
+
+        String projectId = p.getIdentifier().getIdentifier();
+        String sampleId = s.getIdentifier().getIdentifier();
+        String sequenceFileId = sf.getIdentifier().getIdentifier();
 
         when(projectService.read(p.getIdentifier())).thenReturn(p);
         when(sampleService.getSampleForProject(p, s.getIdentifier())).thenReturn(s);
+        // mock out the service calls
+        when(relationshipService.getRelationshipsForEntity(s.getIdentifier(), Sample.class, SequenceFile.class))
+                .thenReturn(relationships);
 
         ModelMap modelMap = controller.getProjectSample(p.getIdentifier().getIdentifier(),
                 s.getIdentifier().getIdentifier());
 
-        verify(sampleService, times(1)).getSampleForProject(p, s.getIdentifier());
-        verify(projectService, times(1)).read(p.getIdentifier());
+        verify(sampleService).getSampleForProject(p, s.getIdentifier());
+        verify(projectService).read(p.getIdentifier());
+        verify(relationshipService).getRelationshipsForEntity(s.getIdentifier(), Sample.class, SequenceFile.class);
 
         Object o = modelMap.get(GenericController.RESOURCE_NAME);
         assertTrue(o instanceof SampleResource);
         SampleResource sr = (SampleResource) o;
-        Set<String> rels = Sets.newHashSet(PageLink.REL_SELF, SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES,
-                ProjectSamplesController.REL_PROJECT);
-        List<Link> links = sr.getLinks();
-        for (Link link : links) {
-            assertTrue(rels.contains(link.getRel()));
-            assertNotNull(rels.remove(link.getRel()));
-        }
-        assertTrue(rels.isEmpty());
+
+        Link selfLink = sr.getLink(PageLink.REL_SELF);
+        Link sequenceFilesLink = sr.getLink(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
+        Link projectLink = sr.getLink(ProjectSamplesController.REL_PROJECT);
+
+        String projectLocation = "http://localhost/projects/" + projectId;
+        String sampleLocation = projectLocation + "/samples/" + sampleId;
+
+        assertNotNull(selfLink);
+        assertEquals(sampleLocation, selfLink.getHref());
+
+        assertNotNull(sequenceFilesLink);
+        assertEquals(sampleLocation + "/sequenceFiles", sequenceFilesLink.getHref());
+
+        assertNotNull(projectLink);
+        assertEquals(projectLocation, projectLink.getHref());
+
+        // confirm that the sequence files were added as related resources
+        o = modelMap.get(GenericController.RELATED_RESOURCES_NAME);
+        assertTrue(o instanceof Map);
+        @SuppressWarnings("unchecked")
+        Map<String, ResourceCollection<LabelledRelationshipResource>> related =
+                (Map<String, ResourceCollection<LabelledRelationshipResource>>) o;
+        assertTrue(related.containsKey("sequenceFiles"));
+        ResourceCollection<LabelledRelationshipResource> sequenceFiles = related.get("sequenceFiles");
+        assertEquals(1, sequenceFiles.size());
+        LabelledRelationshipResource labelledRelationship = sequenceFiles.iterator().next();
+        Link sequenceFileLink = labelledRelationship.getLink(PageLink.REL_SELF);
+        assertEquals(sampleLocation + "/sequenceFiles/" + sequenceFileId, sequenceFileLink.getHref());
     }
 
     @Test
