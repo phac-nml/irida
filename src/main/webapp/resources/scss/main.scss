@@ -13,11 +13,6 @@
 //@import "fws/project";
 //@import "fws/spinner";
 
-//.main.top-bar, .top-bar-section ul li.active > a, .top-bar-section li a:not(.button)  {
-//  @include linear-gradient(lighten($color-phac-dark-blue, 5), $color-phac-dark-blue);
-//  margin-bottom: 0;
-//}
-
 // ============================================================================
 // GLOBAL AND BOX SETTINGS
 // ============================================================================
@@ -41,7 +36,6 @@ h1, h2, h3, h4 {
   font-weight: 600;
 }
 
-
 // Bootstrap Over-rides
 .nav-tabs li {
   cursor: pointer;
@@ -59,8 +53,6 @@ h1, h2, h3, h4 {
 .button-bar {
   margin-bottom: 1.5em;
 }
-
-
 
 // Login Page
 
