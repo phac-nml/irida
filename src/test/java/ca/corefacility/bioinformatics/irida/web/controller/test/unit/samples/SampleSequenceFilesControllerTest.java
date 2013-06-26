@@ -17,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController
 import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageLink;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
+import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
@@ -29,7 +30,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.FileCopyUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -60,9 +60,9 @@ public class SampleSequenceFilesControllerTest {
 
     @Test
     public void testGetSampleSequenceFiles() throws IOException {
-        Project p = constructProject();
-        Sample s = constructSample();
-        SequenceFile sf = constructSequenceFile();
+        Project p = TestDataFactory.constructProject();
+        Sample s = TestDataFactory.constructSample();
+        SequenceFile sf = TestDataFactory.constructSequenceFile();
         Relationship r = new Relationship();
         r.setIdentifier(new Identifier());
         r.setSubject(s.getIdentifier());
@@ -111,9 +111,9 @@ public class SampleSequenceFilesControllerTest {
 
     @Test
     public void testRemoveSequenceFileFromSample() throws IOException {
-        Project p = constructProject();
-        Sample s = constructSample();
-        SequenceFile sf = constructSequenceFile();
+        Project p = TestDataFactory.constructProject();
+        Sample s = TestDataFactory.constructSample();
+        SequenceFile sf = TestDataFactory.constructSequenceFile();
         Relationship r = new Relationship();
         r.setSubject(p.getIdentifier());
         r.setObject(sf.getIdentifier());
@@ -154,9 +154,9 @@ public class SampleSequenceFilesControllerTest {
 
     @Test
     public void testGetSequenceFileForSample() throws IOException {
-        Project p = constructProject();
-        Sample s = constructSample();
-        SequenceFile sf = constructSequenceFile();
+        Project p = TestDataFactory.constructProject();
+        Sample s = TestDataFactory.constructSample();
+        SequenceFile sf = TestDataFactory.constructSequenceFile();
 
         when(projectService.read(p.getIdentifier())).thenReturn(p);
         when(sampleService.read(s.getIdentifier())).thenReturn(s);
@@ -196,17 +196,17 @@ public class SampleSequenceFilesControllerTest {
 
     @Test
     public void testAddNewSequenceFileToSample() throws IOException {
-        Project p = constructProject();
-        Sample s = constructSample();
-        SequenceFile sf = constructSequenceFile();
+        Project p = TestDataFactory.constructProject();
+        Sample s = TestDataFactory.constructSample();
+        SequenceFile sf = TestDataFactory.constructSequenceFile();
         Relationship sampleSequenceFileRelationship = new Relationship(s.getIdentifier(), sf.getIdentifier());
         String projectId = p.getIdentifier().getIdentifier();
         String sampleId = s.getIdentifier().getIdentifier();
         String sequenceFileId = sf.getIdentifier().getIdentifier();
 
-        File f = Files.createTempFile(UUID.randomUUID().toString(), null).toFile();
-        f.deleteOnExit();
-        MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh", FileCopyUtils.copyToByteArray(f));
+        Path f = Files.createTempFile(null, null);
+        MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh",
+                FileCopyUtils.copyToByteArray(f.toFile()));
 
         when(sampleService.read(s.getIdentifier())).thenReturn(s);
         when(sequenceFileService.createSequenceFileWithOwner(any(SequenceFile.class), eq(Sample.class),
@@ -230,13 +230,15 @@ public class SampleSequenceFilesControllerTest {
         assertEquals(1, locations.size());
         assertEquals("http://localhost/projects/" + projectId + "/samples/" + sampleId
                 + "/sequenceFiles/" + sequenceFileId, locations.iterator().next());
+
+        Files.delete(f);
     }
 
     @Test
     public void testAddExistingSequenceFileToSample() throws IOException {
-        Project p = constructProject();
-        Sample s = constructSample();
-        SequenceFile sf = constructSequenceFile();
+        Project p = TestDataFactory.constructProject();
+        Sample s = TestDataFactory.constructSample();
+        SequenceFile sf = TestDataFactory.constructSequenceFile();
         Relationship sampleSequenceFileRelationship = new Relationship(s.getIdentifier(), sf.getIdentifier());
         String projectId = p.getIdentifier().getIdentifier();
         String sampleId = s.getIdentifier().getIdentifier();
@@ -279,51 +281,5 @@ public class SampleSequenceFilesControllerTest {
         } catch (Exception e) {
             fail();
         }
-    }
-
-    /**
-     * Construct a simple {@link ca.corefacility.bioinformatics.irida.model.Sample}.
-     *
-     * @return a sample with a name and identifier.
-     */
-    private Sample constructSample() {
-        String sampleId = UUID.randomUUID().toString();
-        Identifier sampleIdentifier = new Identifier();
-        sampleIdentifier.setIdentifier(sampleId);
-        String sampleName = "sampleName";
-        Sample s = new Sample();
-        s.setSampleName(sampleName);
-        s.setIdentifier(sampleIdentifier);
-        return s;
-    }
-
-    /**
-     * Construct a simple {@link SequenceFile}.
-     *
-     * @return a {@link SequenceFile} with identifier.
-     */
-    private SequenceFile constructSequenceFile() throws IOException {
-        String sequenceFileId = UUID.randomUUID().toString();
-        Identifier sequenceFileIdentifier = new Identifier();
-        Path f = Files.createTempFile(null, null);
-        sequenceFileIdentifier.setIdentifier(sequenceFileId);
-        SequenceFile sf = new SequenceFile();
-        sf.setIdentifier(sequenceFileIdentifier);
-        sf.setFile(f);
-        return sf;
-    }
-
-    /**
-     * Construct a simple {@link Project}.
-     *
-     * @return a project with a name and identifier.
-     */
-    private Project constructProject() {
-        String projectId = UUID.randomUUID().toString();
-        Identifier projectIdentifier = new Identifier();
-        projectIdentifier.setIdentifier(projectId);
-        Project p = new Project();
-        p.setIdentifier(projectIdentifier);
-        return p;
     }
 }

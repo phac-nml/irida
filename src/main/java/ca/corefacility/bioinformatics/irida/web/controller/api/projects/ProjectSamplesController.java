@@ -3,10 +3,12 @@ package ca.corefacility.bioinformatics.irida.web.controller.api.projects;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Sample;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
@@ -14,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
 import com.google.common.net.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -132,6 +136,7 @@ public class ProjectSamplesController {
         }
 
         sampleResources.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
+        sampleResources.setTotalResources(relationships.size());
 
         modelMap.addAttribute(GenericController.RESOURCE_NAME, sampleResources);
 
@@ -162,12 +167,36 @@ public class ProjectSamplesController {
 
         // add a link to: 1) self, 2) sequenceFiles, 3) project
         sr.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSample(projectId, sampleId)).withSelfRel());
-        sr.add(linkTo(methodOn(ProjectsController.class).getResource(projectId)).withRel(REL_PROJECT));
+        sr.add(linkTo(ProjectsController.class).slash(projectId).withRel(REL_PROJECT));
         sr.add(linkTo(methodOn(SampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
                 .withRel(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
 
         // add the sample resource to the response
         modelMap.addAttribute(GenericController.RESOURCE_NAME, sr);
+
+        // get some related sequence files for the sample
+        Collection<Relationship> relationships = relationshipService
+                .getRelationshipsForEntity(sampleIdentifier, Sample.class, SequenceFile.class);
+        ResourceCollection<LabelledRelationshipResource> sequenceFileResources =
+                new ResourceCollection<>(relationships.size());
+
+        for (Relationship r : relationships) {
+            Identifier sequenceFileIdentifier = r.getObject();
+            LabelledRelationshipResource resource = new LabelledRelationshipResource(sequenceFileIdentifier.getLabel(), r);
+            resource.add(linkTo(methodOn(SampleSequenceFilesController.class).getSequenceFileForSample(projectId,
+                    sampleId, sequenceFileIdentifier.getIdentifier())).withSelfRel());
+            Link fastaLink = linkTo(methodOn(SampleSequenceFilesController.class).getSequenceFileForSample(projectId,
+                    sampleId, sequenceFileIdentifier.getIdentifier())).withRel(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_FASTA);
+            // we need to add the fasta suffix manually to the end, so that web-based clients can find the file.
+            resource.add(new Link(fastaLink.getHref() + ".fasta", SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_FASTA));
+            sequenceFileResources.add(resource);
+        }
+
+        sequenceFileResources.add(linkTo(methodOn(SampleSequenceFilesController.class)
+                .getSampleSequenceFiles(projectId, sampleId)).withSelfRel());
+        Map<String, ResourceCollection<LabelledRelationshipResource>> relatedResources = new HashMap<>();
+        relatedResources.put("sequenceFiles", sequenceFileResources);
+        modelMap.addAttribute(GenericController.RELATED_RESOURCES_NAME, relatedResources);
 
         return modelMap;
     }

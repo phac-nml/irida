@@ -21,20 +21,17 @@ import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
-import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.exception.GenericsException;
-import ca.corefacility.bioinformatics.irida.web.controller.api.links.LabelledRelationshipResource;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageableControllerLinkBuilder;
 import ca.corefacility.bioinformatics.irida.web.controller.api.support.SortProperty;
 import com.google.common.base.Strings;
 import com.google.common.net.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.EntityLinks;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
@@ -100,20 +97,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * The type of identifier used by <code>Type</code> in the database.
      */
     private Class<IdentifierType> identifierType;
-    /**
-     * The type of class that the generic controller is exposing.
-     */
-    private Class<Type> type;
-    /**
-     * Reference to EntityLinks for generating links between resources.
-     */
-    @Autowired
-    private EntityLinks entityLinks;
-    /**
-     * Reference to {@link RelationshipService} for getting relationships between resources.
-     */
-    @Autowired
-    private RelationshipService relationshipService;
+
 
     protected GenericController() {
     }
@@ -131,7 +115,6 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         this.crudService = crudService;
         this.resourceType = resourceType;
         this.identifierType = identifierType;
-        this.type = type;
     }
 
     /**
@@ -433,23 +416,5 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         modelMap.addAttribute(RESOURCE_NAME, rootResource);
         // respond to the client
         return modelMap;
-    }
-
-    /**
-     * Set a reference to the {@link RelationshipService}.
-     *
-     * @param relationshipService a reference to the {@link RelationshipService}.
-     */
-    public void setRelationshipService(RelationshipService relationshipService) {
-        this.relationshipService = relationshipService;
-    }
-
-    /**
-     * Set a reference to the {@link EntityLinks} service.
-     *
-     * @param entityLinks a reference to the {@link EntityLinks} service.
-     */
-    public void setEntityLinks(EntityLinks entityLinks) {
-        this.entityLinks = entityLinks;
     }
 }

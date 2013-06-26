@@ -188,7 +188,7 @@ public class ProjectSequenceFilesController {
 
         Collection<Relationship> relationships = relationshipService.
                 getRelationshipsForEntity(id, Project.class, SequenceFile.class);
-        ResourceCollection<SequenceFileResource> sampleResources = new ResourceCollection<>(relationships.size());
+        ResourceCollection<SequenceFileResource> sequenceFileResources = new ResourceCollection<>(relationships.size());
 
         for (Relationship r : relationships) {
             SequenceFile sequenceFile = sequenceFileService.read(r.getObject());
@@ -201,10 +201,12 @@ public class ProjectSequenceFilesController {
                     sequenceFileId)).withRel(ProjectSequenceFilesController.REL_PROJECT_SEQUENCE_FILE_FASTA);
             // we need to add the fasta suffix manually to the end, so that web-based clients can find the file.
             sr.add(new Link(fastaLink.getHref() + ".fasta", ProjectSequenceFilesController.REL_PROJECT_SEQUENCE_FILE_FASTA));
-            sampleResources.add(sr);
+            sequenceFileResources.add(sr);
         }
 
-        modelMap.addAttribute(GenericController.RESOURCE_NAME, sampleResources);
+        sequenceFileResources.setTotalResources(relationships.size());
+
+        modelMap.addAttribute(GenericController.RESOURCE_NAME, sequenceFileResources);
 
         return modelMap;
     }
