@@ -28,7 +28,7 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.UsersController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.links.LabelledRelationshipResource;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
@@ -201,7 +201,7 @@ public class ProjectsController extends GenericController<Identifier, Project, P
     }
 
     /**
-     * Get the users for this project as a collection of {@link ca.corefacility.bioinformatics.irida.web.controller.api.links.LabelledRelationshipResource}.
+     * Get the users for this project as a collection of {@link ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource}.
      *
      * @param project the project to get the users for.
      * @return labels and identifiers for the users attached to the project.

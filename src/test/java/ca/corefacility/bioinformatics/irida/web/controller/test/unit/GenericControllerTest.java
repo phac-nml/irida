@@ -16,17 +16,13 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
-import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.exception.GenericsException;
-import ca.corefacility.bioinformatics.irida.web.controller.api.links.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageLink;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.support.IdentifiableTestEntity;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.support.IdentifiableTestResource;
@@ -34,7 +30,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.net.HttpHeaders;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.hateoas.EntityLinks;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
