@@ -41,6 +41,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
         <constructor-arg value="YGg5uw382TVLdutPZbWsg94Fnjni3feZ6MsNSvW30z5K3nwcLkih9nbAoZQTzSPa"/>
         <constructor-arg ref="userService"/>
         <property name="alwaysRemember" value="true"/>
+        <property name="cookieName" value="IRIDA_REMEMBER_ME"/>
     </bean>
     <bean id="rememberMeAuthenticationProvider"
           class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
