@@ -14,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserReso
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectUsersController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
+import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.net.HttpHeaders;
 import org.junit.Before;
@@ -83,8 +84,8 @@ public class ProjectUsersControllerTest {
 
     @Test
     public void testAddUserToProject() {
-        Project p = constructProject();
-        User u = constructUser();
+        Project p = TestDataFactory.constructProject();
+        User u = TestDataFactory.constructUser();
 
         when(projectService.read(p.getIdentifier())).thenReturn(p);
         when(userService.getUserByUsername(u.getUsername())).thenReturn(u);
@@ -111,8 +112,8 @@ public class ProjectUsersControllerTest {
 
     @Test
     public void testRemoveUserFromProject() {
-        Project p = constructProject();
-        User u = constructUser();
+        Project p = TestDataFactory.constructProject();
+        User u = TestDataFactory.constructUser();
 
         String projectId = p.getIdentifier().getIdentifier();
 
@@ -139,33 +140,4 @@ public class ProjectUsersControllerTest {
         assertEquals("http://localhost/projects/" + projectId + "/users", projectUsersLink.getHref());
     }
 
-    /**
-     * Construct a simple {@link User}.
-     *
-     * @return a {@link User} with identifier.
-     */
-    private User constructUser() {
-        User u = new User();
-        String username = "fbristow";
-        UserIdentifier uid = new UserIdentifier();
-        uid.setIdentifier(username);
-        u.setIdentifier(uid);
-        u.setUsername(username);
-
-        return u;
-    }
-
-    /**
-     * Construct a simple {@link Project}.
-     *
-     * @return a project with a name and identifier.
-     */
-    private Project constructProject() {
-        String projectId = UUID.randomUUID().toString();
-        Identifier projectIdentifier = new Identifier();
-        projectIdentifier.setIdentifier(projectId);
-        Project p = new Project();
-        p.setIdentifier(projectIdentifier);
-        return p;
-    }
 }

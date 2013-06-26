@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.unit.project;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Sample;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RelationshipService;
@@ -15,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageLink;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
+import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
@@ -25,6 +27,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -49,8 +54,8 @@ public class ProjectSamplesControllerTest {
 
     @Test
     public void testAddSampleToProject() {
-        Sample s = constructSample();
-        Project p = constructProject();
+        Sample s = TestDataFactory.constructSample();
+        Project p = TestDataFactory.constructProject();
         String projectId = p.getIdentifier().getIdentifier();
 
         SampleResource sr = new SampleResource();
@@ -77,8 +82,8 @@ public class ProjectSamplesControllerTest {
 
     @Test
     public void testRemoveSampleFromProject() {
-        Project p = constructProject();
-        Sample s = constructSample();
+        Project p = TestDataFactory.constructProject();
+        Sample s = TestDataFactory.constructSample();
 
         String projectId = p.getIdentifier().getIdentifier();
         String sampleId = s.getIdentifier().getIdentifier();
@@ -111,8 +116,8 @@ public class ProjectSamplesControllerTest {
 
     @Test
     public void testGetProjectSamples() {
-        Project p = constructProject();
-        Sample s = constructSample();
+        Project p = TestDataFactory.constructProject();
+        Sample s = TestDataFactory.constructSample();
         Relationship r = new Relationship();
         r.setSubject(p.getIdentifier());
         r.setObject(s.getIdentifier());
@@ -152,9 +157,10 @@ public class ProjectSamplesControllerTest {
     }
 
     @Test
-    public void testGetIndividualSample() {
-        Project p = constructProject();
-        Sample s = constructSample();
+    public void testGetIndividualSample() throws IOException {
+        Project p = TestDataFactory.constructProject();
+        Sample s = TestDataFactory.constructSample();
+        SequenceFile sf = TestDataFactory.constructSequenceFile();
 
         when(projectService.read(p.getIdentifier())).thenReturn(p);
         when(sampleService.getSampleForProject(p, s.getIdentifier())).thenReturn(s);
@@ -180,8 +186,8 @@ public class ProjectSamplesControllerTest {
 
     @Test
     public void testUpdateSample() {
-        Project p = constructProject();
-        Sample s = constructSample();
+        Project p = TestDataFactory.constructProject();
+        Sample s = TestDataFactory.constructSample();
         Relationship r = new Relationship(p.getIdentifier(), s.getIdentifier());
         Map<String, Object> updatedFields = ImmutableMap.of("sampleName", (Object) "some new name");
         String projectId = p.getIdentifier().getIdentifier();
@@ -216,35 +222,5 @@ public class ProjectSamplesControllerTest {
         }
 
         return linksMap;
-    }
-
-    /**
-     * Construct a simple {@link Sample}.
-     *
-     * @return a sample with a name and identifier.
-     */
-    private Sample constructSample() {
-        String sampleId = UUID.randomUUID().toString();
-        Identifier sampleIdentifier = new Identifier();
-        sampleIdentifier.setIdentifier(sampleId);
-        String sampleName = "sampleName";
-        Sample s = new Sample();
-        s.setSampleName(sampleName);
-        s.setIdentifier(sampleIdentifier);
-        return s;
-    }
-
-    /**
-     * Construct a simple {@link Project}.
-     *
-     * @return a project with a name and identifier.
-     */
-    private Project constructProject() {
-        String projectId = UUID.randomUUID().toString();
-        Identifier projectIdentifier = new Identifier();
-        projectIdentifier.setIdentifier(projectId);
-        Project p = new Project();
-        p.setIdentifier(projectIdentifier);
-        return p;
     }
 }

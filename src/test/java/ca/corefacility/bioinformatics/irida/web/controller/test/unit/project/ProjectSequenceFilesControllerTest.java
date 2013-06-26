@@ -14,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController
 import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageLink;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
+import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
 import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
 import org.junit.Before;
@@ -68,8 +69,8 @@ public class ProjectSequenceFilesControllerTest {
         f.deleteOnExit();
         MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh", FileCopyUtils.copyToByteArray(new FileInputStream(f)));
 
-        SequenceFile sf = constructSequenceFile();
-        Project p = constructProject();
+        SequenceFile sf = TestDataFactory.constructSequenceFile();
+        Project p = TestDataFactory.constructProject();
         Relationship r = new Relationship(p.getIdentifier(), sf.getIdentifier());
         String projectId = p.getIdentifier().getIdentifier();
 
@@ -92,8 +93,8 @@ public class ProjectSequenceFilesControllerTest {
 
     @Test
     public void testRemoveSequenceFileFromProject() throws IOException {
-        Project p = constructProject();
-        SequenceFile sf = constructSequenceFile();
+        Project p = TestDataFactory.constructProject();
+        SequenceFile sf = TestDataFactory.constructSequenceFile();
 
         String projectId = p.getIdentifier().getIdentifier();
         String sequenceFileId = sf.getIdentifier().getIdentifier();
@@ -127,8 +128,8 @@ public class ProjectSequenceFilesControllerTest {
 
     @Test
     public void testGetSequenceFilesForProject() throws IOException {
-        Project p = constructProject();
-        SequenceFile sf = constructSequenceFile();
+        Project p = TestDataFactory.constructProject();
+        SequenceFile sf = TestDataFactory.constructSequenceFile();
         Relationship r = new Relationship();
         r.setSubject(p.getIdentifier());
         r.setObject(sf.getIdentifier());
@@ -167,8 +168,8 @@ public class ProjectSequenceFilesControllerTest {
 
     @Test
     public void testGetSequenceFileForProject() throws IOException {
-        Project p = constructProject();
-        SequenceFile sf = constructSequenceFile();
+        Project p = TestDataFactory.constructProject();
+        SequenceFile sf = TestDataFactory.constructSequenceFile();
         String sequenceFileId = sf.getIdentifier().getIdentifier();
         String projectId = p.getIdentifier().getIdentifier();
 
@@ -197,36 +198,5 @@ public class ProjectSequenceFilesControllerTest {
         assertEquals(projectLocation, project.getHref());
         assertNotNull(fasta);
         assertEquals(sequenceFileLocation + ".fasta", fasta.getHref());
-    }
-
-    /**
-     * Construct a simple {@link Project}.
-     *
-     * @return a project with a name and identifier.
-     */
-    private Project constructProject() {
-        String projectId = UUID.randomUUID().toString();
-        Identifier projectIdentifier = new Identifier();
-        projectIdentifier.setIdentifier(projectId);
-        Project p = new Project();
-        p.setIdentifier(projectIdentifier);
-        return p;
-    }
-
-    /**
-     * Construct a simple {@link SequenceFile}.
-     *
-     * @return a {@link SequenceFile} with identifier.
-     */
-    private SequenceFile constructSequenceFile() throws IOException {
-        String sequenceFileId = UUID.randomUUID().toString();
-        Identifier sequenceFileIdentifier = new Identifier();
-        Path f = Files.createTempFile(null, null);
-        Files.write(f, "This is some pretty unique content.".getBytes());
-        sequenceFileIdentifier.setIdentifier(sequenceFileId);
-        SequenceFile sf = new SequenceFile();
-        sf.setIdentifier(sequenceFileIdentifier);
-        sf.setFile(f);
-        return sf;
     }
 }
