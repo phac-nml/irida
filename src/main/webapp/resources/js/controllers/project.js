@@ -166,6 +166,9 @@
           var index = $(item).val();
           ajaxService.deleteItem($scope.project.users[index].links.relationship).then(function () {
             $scope.project.users.splice(index, 1);
+            $rootScope.$broadcast('NOTIFY', {
+              'msg': 'Deleted ' + type
+            });
           });
         });
       };

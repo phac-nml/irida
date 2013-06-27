@@ -10,8 +10,8 @@
     <div class="outer">
         <div class="sidebar">
             <div class="sidebar--projects" data-ng-controller="ProjectsListCtrl">
-                <ul data-ng-repeat="p in projects">
-                    <li data-ng-click="gotoProject(p.links.self)">
+                <ul>
+                    <li data-ng-repeat="p in projects" data-ng-click="gotoProject($event, p.links.self)">
                         <div>
                             <i class="icon-folder-close"></i>&nbsp;
                             <span>{{p.name}}</span>
@@ -50,7 +50,7 @@
                 var elmHeight, elmMargin;
                 if (document.all) { // IE
                     elmHeight = parseInt(document.getElementById(elmID).currentStyle.height, 10);
-                    elmMargin = parseInt(document.getElementById(elmID).currentStyle.marginTop, 10) + parseInt(document.getElementById(elmID).currentStyle.marginBottom, 10);
+                    elmMargin = parseInt(document.getElementById(elmID).currentStyle.marginTop, 10);
                 }
                 else { // Mozilla
                     elmHeight = parseInt(document.defaultView.getComputedStyle(document.getElementById(elmID), '').getPropertyValue('height'), 10);

@@ -19,13 +19,19 @@
 //        }
 //      }
 //    });
+    var active;
 
     $scope.createProject = function () {
       alert('You are creating a project');
       // TODO: (Josh: 2013-06-14) Create modal window to facilitate new project. 
     };
 
-    $scope.gotoProject = function (url) {
+    $scope.gotoProject = function (e, url) {
+      if(active){
+        active.removeClass('active');
+      }
+      active = ng.element(e.currentTarget);
+      active.addClass('active');
       $location.path(url.match(/\/projects\/.*$/)[0]);
     };
 

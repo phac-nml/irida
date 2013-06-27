@@ -64,7 +64,8 @@
         templateUrl: '/partials/sample.html',
         controller: function ($scope, $stateParams, data) {
           $scope.data = {
-            sample: data.resource
+            sample: data.resource,
+            sequenceFiles: data.relatedResources.sequenceFiles.resources
           };
         },
         resolve: {

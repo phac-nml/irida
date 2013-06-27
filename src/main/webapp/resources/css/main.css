@@ -194,7 +194,7 @@ html {
 body {
   height: 100%;
   width: 100%;
-  background-color: #ffffff; }
+  background-color: #e3e4e5; }
 
 /* line 35, ../scss/main.scss */
 h1, h2, h3, h4 {
@@ -228,10 +228,6 @@ h1, h2, h3, h4 {
   background-color: #ecf0f1;
   border-radius: 3px; }
 
-/* line 73, ../scss/main.scss */
-#nav-main {
-  margin-bottom: 10px; }
-
 /* line 77, ../scss/main.scss */
 .outer {
   display: block;
@@ -242,7 +238,10 @@ h1, h2, h3, h4 {
 
 /* line 85, ../scss/main.scss */
 .sidebar {
-  background-color: #ffffff;
+  background: #5a6066 url("/css/img/sidebar-gradient.png") repeat-y top right;
+  background-clip: border-box;
+  color: #e1e1e1;
+  text-shadow: 0px 2px 1px rgba(0, 0, 0, 0.4);
   display: block;
   float: left;
   font-family: arial, sans-serif;
@@ -251,14 +250,35 @@ h1, h2, h3, h4 {
   min-height: 1px;
   position: relative;
   width: 0; }
+  /* line 100, ../scss/main.scss */
+  .sidebar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0; }
+  /* line 105, ../scss/main.scss */
+  .sidebar li {
+    margin: 0;
+    padding: 4px 0 4px 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.04706);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.18039); }
+    /* line 110, ../scss/main.scss */
+    .sidebar li:hover {
+      color: #ffffff;
+      cursor: pointer; }
+    /* line 114, ../scss/main.scss */
+    .sidebar li.active {
+      background-image: -webkit-linear-gradient(top, #2d2f30 0%, #333537 10%, #333537 90%, #2d2f30 100%);
+      background-origin: padding-box;
+      border-bottom: 1px solid #2b2c2e;
+      border-top: 1px solid #262729;
+      background-color: #42474b; }
 
-/* line 97, ../scss/main.scss */
+/* line 125, ../scss/main.scss */
 .main {
-  background-color: #ffffff;
   float: left;
   min-width: 1px; }
 
-/* line 103, ../scss/main.scss */
+/* line 130, ../scss/main.scss */
 .login {
   height: 300px;
   width: 300px;
@@ -269,7 +289,7 @@ h1, h2, h3, h4 {
   margin-top: -150px;
   background-color: #ffffff; }
 
-/* line 114, ../scss/main.scss */
+/* line 141, ../scss/main.scss */
 .sidebar--projects {
   -moz-user-select: none;
   -webkit-user-select: none;
@@ -278,25 +298,12 @@ h1, h2, h3, h4 {
   position: relative;
   overflow-x: hidden;
   overflow-y: auto; }
-  /* line 124, ../scss/main.scss */
-  .sidebar--projects ul {
-    list-style: none;
-    margin: 0;
-    padding: 0; }
-  /* line 130, ../scss/main.scss */
-  .sidebar--projects li {
-    margin: 0;
-    padding: 4px 0 4px 10px; }
-    /* line 133, ../scss/main.scss */
-    .sidebar--projects li:hover {
-      cursor: pointer;
-      background-color: #eeeeee; }
 
-/* line 162, ../scss/main.scss */
+/* line 174, ../scss/main.scss */
 .row--btn {
   padding-bottom: 10px; }
 
-/* line 166, ../scss/main.scss */
+/* line 178, ../scss/main.scss */
 .cb {
   -webkit-appearance: none;
   background-color: #fafafa;
@@ -306,22 +313,22 @@ h1, h2, h3, h4 {
   display: inline-block;
   position: relative; }
 
-/* line 177, ../scss/main.scss */
+/* line 189, ../scss/main.scss */
 input.cb--btn {
   margin: -3px 0 0 0; }
 
-/* line 181, ../scss/main.scss */
+/* line 193, ../scss/main.scss */
 input.cb:active, .cb:checked:active, .cb--checked {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px 1px 3px rgba(0, 0, 0, 0.1); }
 
-/* line 185, ../scss/main.scss */
+/* line 197, ../scss/main.scss */
 input.cb:checked, .cb--checked {
   background-color: #e9ecee;
   border: 1px solid #adb8c0;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05), inset 15px 10px -12px rgba(255, 255, 255, 0.1);
   color: #99a1a7; }
 
-/* line 192, ../scss/main.scss */
+/* line 204, ../scss/main.scss */
 input.cb:checked:after, .cb--checked:after {
   content: '\2714';
   font-size: 12px;
@@ -330,17 +337,17 @@ input.cb:checked:after, .cb--checked:after {
   left: 1px;
   color: #222; }
 
-/* line 201, ../scss/main.scss */
+/* line 213, ../scss/main.scss */
 .cb--checked:after {
   top: -6px; }
 
-/* line 206, ../scss/main.scss */
+/* line 218, ../scss/main.scss */
 td.file-select {
   width: 13px; }
-  /* line 208, ../scss/main.scss */
+  /* line 220, ../scss/main.scss */
   td.file-select input.cb {
     margin-top: 0; }
 
-/* line 213, ../scss/main.scss */
+/* line 225, ../scss/main.scss */
 td.file-date {
   text-align: right; }

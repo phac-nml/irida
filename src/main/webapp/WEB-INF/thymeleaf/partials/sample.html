@@ -1,6 +1,19 @@
-<div data-ng-controller="SampleCtrl">
+<div class="container-fluid" data-ng-controller="SampleCtrl">
     <div class="row-fluid">
         <h1>{{data.sample.sampleName}}</h1>
-        <h3>{{data.sample.dateCreated | angularMoment}}</h3>
+
+        <h3>Date Created: {{data.sample.dateCreated | angularMoment}}</h3>
+    </div>
+    <div class="row-fluid">
+        <div class="span12">
+            <table class="table">
+                <tbody>
+                <tr data-ng-repeat="f in data.sequenceFiles">
+                    <td>{{f.label}}</td>
+                    <td class="file-date">{{f.dateCreated | angularMoment}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
