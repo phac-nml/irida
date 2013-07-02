@@ -698,6 +698,13 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
         return declaredField.getType();
     }
     
+    /**
+     * Get the predicates for the @Iri annotated fields for the given class.
+     * This method will search over locally annotated fields, then run 
+     * recursively into superclasses and interfaces.
+     * @param c The class to search for annotations
+     * @return A Map<String,String> of the field names and predicates
+     */
     private Map<String,String> getFieldPredicates(Class c){
         Map<String,String> predicates = new HashMap<>();
         if(c.getSuperclass() != null){
