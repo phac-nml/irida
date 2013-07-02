@@ -44,6 +44,10 @@ h1, h2, h3, h4 {
 .tab-content {
   min-height: 250px;
 }
+.container-fluid .navbar {
+  margin-top: 1.3em;
+}
+
 
 
 /* ==========================================================================
@@ -93,7 +97,6 @@ h1, h2, h3, h4 {
 
 .main {
   background-color: #ffffff;
-  padding-top: 1em;
   float: left;
   min-width: 1px;
 }
