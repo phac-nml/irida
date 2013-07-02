@@ -229,10 +229,6 @@ h1, h2, h3, h4 {
   border-radius: 3px; }
 
 /* line 73, ../scss/main.scss */
-#nav-main {
-  margin-bottom: 10px; }
-
-/* line 77, ../scss/main.scss */
 .outer {
   display: block;
   float: left;
@@ -240,9 +236,10 @@ h1, h2, h3, h4 {
   width: 100%;
   background-color: #ffffff; }
 
-/* line 85, ../scss/main.scss */
+/* line 81, ../scss/main.scss */
 .sidebar {
-  background-color: #ffffff;
+  background-color: #222;
+  color: #919191;
   display: block;
   float: left;
   font-family: arial, sans-serif;
@@ -252,13 +249,14 @@ h1, h2, h3, h4 {
   position: relative;
   width: 0; }
 
-/* line 97, ../scss/main.scss */
+/* line 94, ../scss/main.scss */
 .main {
   background-color: #ffffff;
+  padding-top: 1em;
   float: left;
   min-width: 1px; }
 
-/* line 103, ../scss/main.scss */
+/* line 101, ../scss/main.scss */
 .login {
   height: 300px;
   width: 300px;
@@ -269,7 +267,7 @@ h1, h2, h3, h4 {
   margin-top: -150px;
   background-color: #ffffff; }
 
-/* line 114, ../scss/main.scss */
+/* line 112, ../scss/main.scss */
 .sidebar--projects {
   -moz-user-select: none;
   -webkit-user-select: none;
@@ -278,25 +276,25 @@ h1, h2, h3, h4 {
   position: relative;
   overflow-x: hidden;
   overflow-y: auto; }
-  /* line 124, ../scss/main.scss */
+  /* line 122, ../scss/main.scss */
   .sidebar--projects ul {
     list-style: none;
     margin: 0;
     padding: 0; }
-  /* line 130, ../scss/main.scss */
+  /* line 128, ../scss/main.scss */
   .sidebar--projects li {
     margin: 0;
     padding: 4px 0 4px 10px; }
-    /* line 133, ../scss/main.scss */
+    /* line 131, ../scss/main.scss */
     .sidebar--projects li:hover {
       cursor: pointer;
-      background-color: #eeeeee; }
+      background-color: #2f2f2f; }
 
-/* line 162, ../scss/main.scss */
+/* line 160, ../scss/main.scss */
 .row--btn {
   padding-bottom: 10px; }
 
-/* line 166, ../scss/main.scss */
+/* line 164, ../scss/main.scss */
 .cb {
   -webkit-appearance: none;
   background-color: #fafafa;
@@ -306,22 +304,22 @@ h1, h2, h3, h4 {
   display: inline-block;
   position: relative; }
 
-/* line 177, ../scss/main.scss */
+/* line 175, ../scss/main.scss */
 input.cb--btn {
   margin: -3px 0 0 0; }
 
-/* line 181, ../scss/main.scss */
+/* line 179, ../scss/main.scss */
 input.cb:active, .cb:checked:active, .cb--checked {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px 1px 3px rgba(0, 0, 0, 0.1); }
 
-/* line 185, ../scss/main.scss */
+/* line 183, ../scss/main.scss */
 input.cb:checked, .cb--checked {
   background-color: #e9ecee;
   border: 1px solid #adb8c0;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05), inset 15px 10px -12px rgba(255, 255, 255, 0.1);
   color: #99a1a7; }
 
-/* line 192, ../scss/main.scss */
+/* line 190, ../scss/main.scss */
 input.cb:checked:after, .cb--checked:after {
   content: '\2714';
   font-size: 12px;
@@ -330,17 +328,17 @@ input.cb:checked:after, .cb--checked:after {
   left: 1px;
   color: #222; }
 
-/* line 201, ../scss/main.scss */
+/* line 199, ../scss/main.scss */
 .cb--checked:after {
   top: -6px; }
 
-/* line 206, ../scss/main.scss */
+/* line 204, ../scss/main.scss */
 td.file-select {
   width: 13px; }
-  /* line 208, ../scss/main.scss */
+  /* line 206, ../scss/main.scss */
   td.file-select input.cb {
     margin-top: 0; }
 
-/* line 213, ../scss/main.scss */
+/* line 211, ../scss/main.scss */
 td.file-date {
   text-align: right; }

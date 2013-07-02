@@ -8,6 +8,7 @@
   'use strict';
   app.controller('ProjectCtrl', [ '$scope', '$rootScope', '$window', 'ajaxService', '$location',
     function ($scope, $rootScope, $window, ajaxService, $location) {
+      $scope.data.view = 'samples';
       $scope.sample = {};
       $scope.samples = {};
 //      $scope.list2 = [ ];

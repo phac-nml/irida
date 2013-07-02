@@ -70,10 +70,6 @@ h1, h2, h3, h4 {
   border-radius: $default-border-radius;
 }
 
-#nav-main {
-  margin-bottom: 10px;
-}
-
 .outer {
   display: block;
   float: left;
@@ -83,7 +79,8 @@ h1, h2, h3, h4 {
 }
 
 .sidebar {
-  background-color: #ffffff;
+  background-color: #222;
+  color: #919191;
   display: block;
   float: left;
   font-family: arial, sans-serif;
@@ -96,6 +93,7 @@ h1, h2, h3, h4 {
 
 .main {
   background-color: #ffffff;
+  padding-top: 1em;
   float: left;
   min-width: 1px;
 }
@@ -132,7 +130,7 @@ h1, h2, h3, h4 {
     padding: 4px 0 4px 10px;
     &:hover {
       cursor: pointer;
-      background-color: #eeeeee;
+      background-color: lighten(#222, 5);
     }
   }
 }
