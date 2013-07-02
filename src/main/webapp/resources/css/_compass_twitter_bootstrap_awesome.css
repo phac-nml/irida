@@ -4722,7 +4722,7 @@ input[type="submit"].btn {
 
 /* line 21, ../scss/compass_twitter_bootstrap/_navbar.scss */
 .navbar-inner {
-  min-height: 27px;
+  min-height: 40px;
   padding-left: 20px;
   padding-right: 20px;
   background-color: #fafafa;
@@ -4763,7 +4763,7 @@ input[type="submit"].btn {
 .navbar .brand {
   float: left;
   display: block;
-  padding: 3.5px 20px 3.5px;
+  padding: 10px 20px 10px;
   margin-left: -20px;
   font-size: 20px;
   font-weight: 200;
@@ -4776,7 +4776,7 @@ input[type="submit"].btn {
 /* line 66, ../scss/compass_twitter_bootstrap/_navbar.scss */
 .navbar-text {
   margin-bottom: 0;
-  line-height: 27px;
+  line-height: 40px;
   color: #777777; }
 
 /* line 74, ../scss/compass_twitter_bootstrap/_navbar.scss */
@@ -4788,7 +4788,7 @@ input[type="submit"].btn {
 
 /* line 83, ../scss/compass_twitter_bootstrap/_navbar.scss */
 .navbar .divider-vertical {
-  height: 27px;
+  height: 40px;
   margin: 0 9px;
   border-left: 1px solid #f2f2f2;
   border-right: 1px solid white; }
@@ -4796,7 +4796,7 @@ input[type="submit"].btn {
 /* line 93, ../scss/compass_twitter_bootstrap/_navbar.scss */
 .navbar .btn,
 .navbar .btn-group {
-  margin-top: -1.5px; }
+  margin-top: 5px; }
 
 /* line 98, ../scss/compass_twitter_bootstrap/_navbar.scss */
 .navbar .btn-group .btn,
@@ -4821,7 +4821,7 @@ input[type="submit"].btn {
   .navbar-form select,
   .navbar-form .radio,
   .navbar-form .checkbox {
-    margin-top: -1.5px; }
+    margin-top: 5px; }
   /* line 115, ../scss/compass_twitter_bootstrap/_navbar.scss */
   .navbar-form input,
   .navbar-form select,
@@ -4847,7 +4847,7 @@ input[type="submit"].btn {
 .navbar-search {
   position: relative;
   float: left;
-  margin-top: -1.5px;
+  margin-top: 5px;
   margin-bottom: 0; }
   /* line 141, ../scss/compass_twitter_bootstrap/_navbar.scss */
   .navbar-search .search-query {
@@ -4944,7 +4944,7 @@ input[type="submit"].btn {
 /* line 238, ../scss/compass_twitter_bootstrap/_navbar.scss */
 .navbar .nav > li > a {
   float: none;
-  padding: 3.5px 15px 3.5px;
+  padding: 10px 15px 10px;
   color: #777777;
   text-decoration: none;
   text-shadow: 0 1px 0 white; }
