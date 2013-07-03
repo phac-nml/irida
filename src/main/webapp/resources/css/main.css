@@ -211,16 +211,16 @@ h1, h2, h3, h4 {
 /* ==========================================================================
    Modules
    ========================================================================== */
-/* line 53, ../scss/main.scss */
+/* line 52, ../scss/main.scss */
 .button-bar {
   margin-bottom: 1.5em; }
 
-/* line 59, ../scss/main.scss */
+/* line 58, ../scss/main.scss */
 .login__outer {
   height: 100%;
   width: 100%; }
 
-/* line 64, ../scss/main.scss */
+/* line 63, ../scss/main.scss */
 .login__inner {
   height: 300px;
   padding: 1em;
@@ -228,7 +228,7 @@ h1, h2, h3, h4 {
   background-color: #ecf0f1;
   border-radius: 3px; }
 
-/* line 73, ../scss/main.scss */
+/* line 72, ../scss/main.scss */
 .outer {
   display: block;
   float: left;
@@ -236,7 +236,7 @@ h1, h2, h3, h4 {
   width: 100%;
   background-color: #ffffff; }
 
-/* line 81, ../scss/main.scss */
+/* line 80, ../scss/main.scss */
 .sidebar {
   background: #222222 url("/css/img/sidebar-gradient.png") repeat-y top right;
   background-clip: border-box;
@@ -249,23 +249,23 @@ h1, h2, h3, h4 {
   min-height: 1px;
   position: relative;
   width: 0; }
-  /* line 95, ../scss/main.scss */
+  /* line 94, ../scss/main.scss */
   .sidebar ul {
     list-style: none;
     margin: 0;
     padding: 0; }
-  /* line 100, ../scss/main.scss */
+  /* line 99, ../scss/main.scss */
   .sidebar li {
     line-height: 2em;
     margin: 0;
     padding: 4px 0 4px 10px;
     border-top: 1px solid #2c2c2c;
     border-bottom: 1px solid #181818; }
-    /* line 106, ../scss/main.scss */
+    /* line 105, ../scss/main.scss */
     .sidebar li:hover {
       color: #ffffff;
       cursor: pointer; }
-    /* line 110, ../scss/main.scss */
+    /* line 109, ../scss/main.scss */
     .sidebar li.active {
       background-image: -webkit-linear-gradient(top, #2d2f30 0%, #333537 10%, #333537 90%, #2d2f30 100%);
       background-origin: padding-box;
@@ -273,16 +273,16 @@ h1, h2, h3, h4 {
       border-top: 1px solid #262729;
       background-color: #090909; }
 
-/* line 121, ../scss/main.scss */
+/* line 120, ../scss/main.scss */
 .main {
   float: left;
   min-width: 1px; }
 
-/* line 126, ../scss/main.scss */
+/* line 125, ../scss/main.scss */
 .container-fluid .navbar {
   margin-top: 1.4em; }
 
-/* line 130, ../scss/main.scss */
+/* line 129, ../scss/main.scss */
 .login {
   height: 300px;
   width: 300px;
@@ -293,7 +293,7 @@ h1, h2, h3, h4 {
   margin-top: -150px;
   background-color: #ffffff; }
 
-/* line 141, ../scss/main.scss */
+/* line 140, ../scss/main.scss */
 .sidebar--projects {
   -moz-user-select: none;
   -webkit-user-select: none;
@@ -303,11 +303,11 @@ h1, h2, h3, h4 {
   overflow-x: hidden;
   overflow-y: auto; }
 
-/* line 152, ../scss/main.scss */
+/* line 151, ../scss/main.scss */
 .row--btn {
   padding-bottom: 10px; }
 
-/* line 156, ../scss/main.scss */
+/* line 155, ../scss/main.scss */
 .cb {
   -webkit-appearance: none;
   background-color: #fafafa;
@@ -317,22 +317,22 @@ h1, h2, h3, h4 {
   display: inline-block;
   position: relative; }
 
-/* line 167, ../scss/main.scss */
+/* line 166, ../scss/main.scss */
 input.cb--btn {
   margin: -3px 0 0 0; }
 
-/* line 171, ../scss/main.scss */
+/* line 170, ../scss/main.scss */
 input.cb:active, .cb:checked:active, .cb--checked {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px 1px 3px rgba(0, 0, 0, 0.1); }
 
-/* line 175, ../scss/main.scss */
+/* line 174, ../scss/main.scss */
 input.cb:checked, .cb--checked {
   background-color: #e9ecee;
   border: 1px solid #adb8c0;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05), inset 15px 10px -12px rgba(255, 255, 255, 0.1);
   color: #99a1a7; }
 
-/* line 182, ../scss/main.scss */
+/* line 181, ../scss/main.scss */
 input.cb:checked:after, .cb--checked:after {
   content: '\2714';
   font-size: 12px;
@@ -341,17 +341,17 @@ input.cb:checked:after, .cb--checked:after {
   left: 1px;
   color: #222; }
 
-/* line 191, ../scss/main.scss */
+/* line 190, ../scss/main.scss */
 .cb--checked:after {
   top: -6px; }
 
-/* line 196, ../scss/main.scss */
+/* line 195, ../scss/main.scss */
 td.file-select {
   width: 13px; }
-  /* line 198, ../scss/main.scss */
+  /* line 197, ../scss/main.scss */
   td.file-select input.cb {
     margin-top: 0; }
 
-/* line 203, ../scss/main.scss */
+/* line 202, ../scss/main.scss */
 td.file-date {
   text-align: right; }
