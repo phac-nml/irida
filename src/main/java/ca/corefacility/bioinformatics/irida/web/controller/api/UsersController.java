@@ -12,7 +12,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.projects.Projects
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.stereotype.Controller;
@@ -34,7 +33,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Controller
-@ExposesResourceFor(User.class)
 @RequestMapping(value = "/users")
 public class UsersController extends GenericController<UserIdentifier, User, UserResource> {
 
