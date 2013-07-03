@@ -203,8 +203,8 @@ textarea {
 /* line 9, ../scss/compass_twitter_bootstrap/_scaffolding.scss */
 body {
   margin: 0;
-  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 14px;
+  font-family: "Open Sans Condensed", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
   line-height: 20px;
   color: #333333;
   background-color: white; }
@@ -578,7 +578,7 @@ p {
 /* line 12, ../scss/compass_twitter_bootstrap/_type.scss */
 .lead {
   margin-bottom: 20px;
-  font-size: 21px;
+  font-size: 24px;
   font-weight: 200;
   line-height: 30px; }
 
@@ -660,43 +660,43 @@ h3 {
 
 /* line 68, ../scss/compass_twitter_bootstrap/_type.scss */
 h1 {
-  font-size: 38.5px; }
+  font-size: 44px; }
 
 /* line 69, ../scss/compass_twitter_bootstrap/_type.scss */
 h2 {
-  font-size: 31.5px; }
+  font-size: 36px; }
 
 /* line 70, ../scss/compass_twitter_bootstrap/_type.scss */
 h3 {
-  font-size: 24.5px; }
+  font-size: 28px; }
 
 /* line 71, ../scss/compass_twitter_bootstrap/_type.scss */
 h4 {
-  font-size: 17.5px; }
+  font-size: 20px; }
 
 /* line 72, ../scss/compass_twitter_bootstrap/_type.scss */
 h5 {
-  font-size: 14px; }
+  font-size: 16px; }
 
 /* line 73, ../scss/compass_twitter_bootstrap/_type.scss */
 h6 {
-  font-size: 11.9px; }
+  font-size: 13.6px; }
 
 /* line 75, ../scss/compass_twitter_bootstrap/_type.scss */
 h1 small {
-  font-size: 24.5px; }
+  font-size: 28px; }
 
 /* line 76, ../scss/compass_twitter_bootstrap/_type.scss */
 h2 small {
-  font-size: 17.5px; }
+  font-size: 20px; }
 
 /* line 77, ../scss/compass_twitter_bootstrap/_type.scss */
 h3 small {
-  font-size: 14px; }
+  font-size: 16px; }
 
 /* line 78, ../scss/compass_twitter_bootstrap/_type.scss */
 h4 small {
-  font-size: 14px; }
+  font-size: 16px; }
 
 /* line 84, ../scss/compass_twitter_bootstrap/_type.scss */
 .page-header {
@@ -853,7 +853,7 @@ code,
 pre {
   padding: 0 3px 2px;
   font-family: Monaco, Menlo, Consolas, "Courier New", monospace;
-  font-size: 12px;
+  font-size: 14px;
   color: #333333;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
@@ -872,7 +872,7 @@ pre {
   display: block;
   padding: 9.5px;
   margin: 0 0 10px;
-  font-size: 13px;
+  font-size: 15px;
   line-height: 20px;
   word-break: break-all;
   word-wrap: break-word;
@@ -917,7 +917,7 @@ legend {
   width: 100%;
   padding: 0;
   margin-bottom: 20px;
-  font-size: 21px;
+  font-size: 24px;
   line-height: 40px;
   color: #333333;
   border: 0;
@@ -933,7 +933,7 @@ input,
 button,
 select,
 textarea {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: normal;
   line-height: 20px; }
 
@@ -942,7 +942,7 @@ input,
 button,
 select,
 textarea {
-  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif; }
+  font-family: "Open Sans Condensed", "Helvetica Neue", Helvetica, Arial, sans-serif; }
 
 /* line 55, ../scss/compass_twitter_bootstrap/_forms.scss */
 label {
@@ -971,7 +971,7 @@ input[type="color"],
   height: 20px;
   padding: 4px 6px;
   margin-bottom: 10px;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 20px;
   color: #555555;
   -webkit-border-radius: 4px;
@@ -1520,7 +1520,7 @@ select:focus:invalid {
   .input-prepend select,
   .input-prepend .uneditable-input,
   .input-prepend .dropdown-menu {
-    font-size: 14px; }
+    font-size: 16px; }
   /* line 439, ../scss/compass_twitter_bootstrap/_forms.scss */
   .input-append input,
   .input-append select,
@@ -1551,7 +1551,7 @@ select:focus:invalid {
     height: 20px;
     min-width: 16px;
     padding: 4px 5px;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: normal;
     line-height: 20px;
     text-align: center;
@@ -3652,7 +3652,7 @@ button.close {
   *zoom: 1;
   padding: 4px 12px;
   margin-bottom: 0;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 20px;
   text-align: center;
   vertical-align: middle;
@@ -3727,7 +3727,7 @@ button.close {
 /* line 72, ../scss/compass_twitter_bootstrap/_buttons.scss */
 .btn-large {
   padding: 11px 19px;
-  font-size: 17.5px;
+  font-size: 20px;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
   border-radius: 6px; }
@@ -3740,7 +3740,7 @@ button.close {
 /* line 83, ../scss/compass_twitter_bootstrap/_buttons.scss */
 .btn-small {
   padding: 2px 10px;
-  font-size: 11.9px;
+  font-size: 13.6px;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px; }
@@ -3758,7 +3758,7 @@ button.close {
 /* line 98, ../scss/compass_twitter_bootstrap/_buttons.scss */
 .btn-mini {
   padding: 0 6px;
-  font-size: 10.5px;
+  font-size: 12px;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px; }
@@ -4053,19 +4053,19 @@ input[type="submit"].btn {
 .btn-group > .btn,
 .btn-group > .dropdown-menu,
 .btn-group > .popover {
-  font-size: 14px; }
+  font-size: 16px; }
 
 /* line 49, ../scss/compass_twitter_bootstrap/_button-groups.scss */
 .btn-group > .btn-mini {
-  font-size: 10.5px; }
+  font-size: 12px; }
 
 /* line 52, ../scss/compass_twitter_bootstrap/_button-groups.scss */
 .btn-group > .btn-small {
-  font-size: 11.9px; }
+  font-size: 13.6px; }
 
 /* line 55, ../scss/compass_twitter_bootstrap/_button-groups.scss */
 .btn-group > .btn-large {
-  font-size: 17.5px; }
+  font-size: 20px; }
 
 /* line 60, ../scss/compass_twitter_bootstrap/_button-groups.scss */
 .btn-group > .btn:first-child {
@@ -4722,7 +4722,7 @@ input[type="submit"].btn {
 
 /* line 21, ../scss/compass_twitter_bootstrap/_navbar.scss */
 .navbar-inner {
-  min-height: 27px;
+  min-height: 45px;
   padding-left: 20px;
   padding-right: 20px;
   background-color: #fafafa;
@@ -4763,7 +4763,7 @@ input[type="submit"].btn {
 .navbar .brand {
   float: left;
   display: block;
-  padding: 3.5px 20px 3.5px;
+  padding: 12.5px 20px 12.5px;
   margin-left: -20px;
   font-size: 20px;
   font-weight: 200;
@@ -4776,7 +4776,7 @@ input[type="submit"].btn {
 /* line 66, ../scss/compass_twitter_bootstrap/_navbar.scss */
 .navbar-text {
   margin-bottom: 0;
-  line-height: 27px;
+  line-height: 45px;
   color: #777777; }
 
 /* line 74, ../scss/compass_twitter_bootstrap/_navbar.scss */
@@ -4788,7 +4788,7 @@ input[type="submit"].btn {
 
 /* line 83, ../scss/compass_twitter_bootstrap/_navbar.scss */
 .navbar .divider-vertical {
-  height: 27px;
+  height: 45px;
   margin: 0 9px;
   border-left: 1px solid #f2f2f2;
   border-right: 1px solid white; }
@@ -4796,7 +4796,7 @@ input[type="submit"].btn {
 /* line 93, ../scss/compass_twitter_bootstrap/_navbar.scss */
 .navbar .btn,
 .navbar .btn-group {
-  margin-top: -1.5px; }
+  margin-top: 7.5px; }
 
 /* line 98, ../scss/compass_twitter_bootstrap/_navbar.scss */
 .navbar .btn-group .btn,
@@ -4821,7 +4821,7 @@ input[type="submit"].btn {
   .navbar-form select,
   .navbar-form .radio,
   .navbar-form .checkbox {
-    margin-top: -1.5px; }
+    margin-top: 7.5px; }
   /* line 115, ../scss/compass_twitter_bootstrap/_navbar.scss */
   .navbar-form input,
   .navbar-form select,
@@ -4847,13 +4847,13 @@ input[type="submit"].btn {
 .navbar-search {
   position: relative;
   float: left;
-  margin-top: -1.5px;
+  margin-top: 7.5px;
   margin-bottom: 0; }
   /* line 141, ../scss/compass_twitter_bootstrap/_navbar.scss */
   .navbar-search .search-query {
     margin-bottom: 0;
     padding: 4px 14px;
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "Open Sans Condensed", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     font-weight: normal;
     line-height: 1;
@@ -4944,7 +4944,7 @@ input[type="submit"].btn {
 /* line 238, ../scss/compass_twitter_bootstrap/_navbar.scss */
 .navbar .nav > li > a {
   float: none;
-  padding: 3.5px 15px 3.5px;
+  padding: 12.5px 15px 12.5px;
   color: #777777;
   text-decoration: none;
   text-shadow: 0 1px 0 white; }
@@ -5342,7 +5342,7 @@ input[type="submit"].btn {
 .pagination-large ul > li > a,
 .pagination-large ul > li > span {
   padding: 11px 19px;
-  font-size: 17.5px; }
+  font-size: 20px; }
 /* line 84, ../scss/compass_twitter_bootstrap/_pagination.scss */
 .pagination-large ul > li:first-child > a,
 .pagination-large ul > li:first-child > span {
@@ -5389,13 +5389,13 @@ input[type="submit"].btn {
 .pagination-small ul > li > a,
 .pagination-small ul > li > span {
   padding: 2px 10px;
-  font-size: 11.9px; }
+  font-size: 13.6px; }
 
 /* line 117, ../scss/compass_twitter_bootstrap/_pagination.scss */
 .pagination-mini ul > li > a,
 .pagination-mini ul > li > span {
   padding: 0 6px;
-  font-size: 10.5px; }
+  font-size: 12px; }
 
 /* line 6, ../scss/compass_twitter_bootstrap/_pager.scss */
 .pager {
@@ -5829,7 +5829,7 @@ a.thumbnail:hover {
 .badge {
   display: inline-block;
   padding: 2px 4px;
-  font-size: 11.844px;
+  font-size: 13.536px;
   font-weight: bold;
   line-height: 14px;
   color: white;

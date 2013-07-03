@@ -70,10 +70,6 @@ h1, h2, h3, h4 {
   border-radius: $default-border-radius;
 }
 
-#nav-main {
-  //margin-bottom: 10px;
-}
-
 .outer {
   display: block;
   float: left;
@@ -83,14 +79,13 @@ h1, h2, h3, h4 {
 }
 
 .sidebar {
-  $sidebar-color: rgb(90, 96, 102);
+  $sidebar-color: #222222;
   background: $sidebar-color url("/css/img/sidebar-gradient.png") repeat-y top right;
   background-clip: border-box;
   color: rgb(225, 225, 225);
   text-shadow: 0px 2px 1px rgba(0, 0, 0, 0.4);
   display: block;
   float: left;
-  font-family: arial, sans-serif;
   height: 949px;
   margin-top: 0px;
   min-height: 1px;
@@ -103,10 +98,11 @@ h1, h2, h3, h4 {
     padding: 0;
   }
   li {
+    line-height: 2em;
     margin: 0;
     padding: 4px 0 4px 10px;
-    border-top: 1px solid rgba(255, 255, 255, 0.0470588);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.180392);
+    border-top: 1px solid lighten($sidebar-color, 4);
+    border-bottom: 1px solid darken($sidebar-color, 4);
     &:hover {
       color: #ffffff;
       cursor: pointer;
@@ -127,6 +123,10 @@ h1, h2, h3, h4 {
   min-width: 1px;
 }
 
+.container-fluid .navbar {
+  margin-top: 1.4em;
+}
+
 .login {
   height: 300px;
   width: 300px;
@@ -143,33 +143,11 @@ h1, h2, h3, h4 {
   -webkit-user-select: none;
   -ms-user-select: none;
 
-  height: 700px;
+  height: 100%;
   position: relative;
   overflow-x: hidden;
   overflow-y: auto;
 }
-
-//.detailed-content {
-//  // @extends
-//
-//  // Positioning (z-index, top, etc...)
-//
-//  // Dispay & Box Model (display, overflow, box-sizing, w, h, border, margin)
-//
-//  padding-top: 1rem;
-//  //width: 100%;
-//
-//  //margin-left: $width-sidebar;
-//
-//  // Other (colors, fonts, align)
-//
-//  // @includes
-//
-//  // Nested
-//  h3 {
-//    margin-top: 0;
-//  }
-//}
 
 .row--btn {
   padding-bottom: 10px;
