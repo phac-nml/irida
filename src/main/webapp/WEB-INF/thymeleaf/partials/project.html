@@ -110,7 +110,7 @@
                 </div>
             </div>
             <div data-ng-switch-when="users">
-                <div class="button-bar">
+                <div class="row-fluid button-bar">
                     <div class="btn-group">
                         <button class="btn" data-ng-click="modifyDisplayOptions('users')">
                             <div class="cb" data-ng-class="{true: 'cb--checked'}[display.users.mainCB]"></div>
@@ -123,8 +123,11 @@
                             <li><a href="" data-ng-click="display.users.allCheckboxes=false">Select None</a></li>
                         </ul>
                     </div>
-                    <div class="btn-group">
-                        <button class="btn">Add User</button>
+                    <div class="btn-group pull-right">
+                        <div class="input-append">
+                            <input class="span8" id="appendedInputButton" type="text"/>
+                            <button class="btn" type="button">Add User</button>
+                        </div>
                     </div>
                     <div class="btn-group">
                         <button class="btn btn-warning" data-ng-click="removeItemFromProject('users')"
