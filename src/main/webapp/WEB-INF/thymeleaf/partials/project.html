@@ -125,7 +125,7 @@
                     </div>
                     <div class="btn-group pull-right">
                         <div class="input-append">
-                            <input class="span8" id="appendedInputButton" type="text"/>
+                            <input class="span8" data-ng-model="data.newUser" type="text"  typeahead="user for user in data.users | filter:$viewValue"/>
                             <button class="btn" type="button">Add User</button>
                         </div>
                     </div>
