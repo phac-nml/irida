@@ -50,7 +50,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Controller
-@ExposesResourceFor(Project.class)
 @RequestMapping(value = "/projects")
 public class ProjectsController extends GenericController<Identifier, Project, ProjectResource> {
 

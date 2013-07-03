@@ -12,18 +12,19 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.projects.Projects
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
+import static org.springframework.hateoas.core.DummyInvocationUtils.methodOn;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 /**
@@ -34,10 +35,17 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Controller
-@ExposesResourceFor(User.class)
 @RequestMapping(value = "/users")
 public class UsersController extends GenericController<UserIdentifier, User, UserResource> {
 
+    /**
+     * rel for the first page of the users document.
+     */
+    public static final String REL_USERS_FIRST_PAGE = "users/pages/first";
+    /**
+     * rel for all users.
+     */
+    public static final String REL_ALL_USERS = "users/all";
     /**
      * logger
      */
@@ -68,6 +76,35 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
         this.projectService = projectService;
     }
 
+    protected UsersController() {
+        projectService = null;
+        userService = null;
+    }
+
+    /**
+     * Get all users in the application.
+     *
+     * @return
+     */
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    public ModelMap getAllUsers() {
+        List<User> users = userService.list();
+        ResourceCollection<UserResource> userResources = new ResourceCollection<>(users.size());
+        for (User u : users) {
+            UserResource ur = new UserResource(u);
+            ur.add(linkTo(UsersController.class).slash(u.getUsername()).withSelfRel());
+            userResources.add(ur);
+        }
+
+        userResources.add(linkTo(methodOn(UsersController.class).getAllUsers()).withSelfRel());
+        userResources.add(linkTo(UsersController.class).withRel(REL_USERS_FIRST_PAGE));
+        userResources.setTotalResources(users.size());
+
+        ModelMap model = new ModelMap();
+        model.addAttribute(GenericController.RESOURCE_NAME, userResources);
+        return model;
+    }
+
     /**
      * Get the collection of projects for a specific user.
      *
@@ -75,9 +112,9 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
      * @return a model containing the collection of projects for that user.
      */
     @RequestMapping(value = "/{username}/projects", method = RequestMethod.GET)
-    public ModelAndView getUserProjects(@PathVariable String username) {
+    public ModelMap getUserProjects(@PathVariable String username) {
         logger.debug("Loading projects for user [" + username + "]");
-        ModelAndView mav = new ModelAndView("users/user");
+        ModelMap mav = new ModelMap();
 
 
         // get the appropriate user from the database
@@ -96,7 +133,7 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
         }
 
         // add the resources to the response
-        mav.addObject("projectResources", resources);
+        mav.addAttribute("projectResources", resources);
 
         // respond to the user
         return mav;
@@ -109,7 +146,7 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
      * @return an instance of {@link User}.
      */
     @Override
-    public User mapResourceToType(UserResource ur) {
+    protected User mapResourceToType(UserResource ur) {
         return new User(ur.getUsername(), ur.getEmail(), ur.getPassword(),
                 ur.getFirstName(), ur.getLastName(), ur.getPhoneNumber());
     }
@@ -121,10 +158,24 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
      * @return the links for this {@link User}.
      */
     @Override
-    public Collection<Link> constructCustomResourceLinks(User u) {
+    protected Collection<Link> constructCustomResourceLinks(User u) {
         Collection<Link> links = new HashSet<>();
         links.add(linkTo(UsersController.class).slash(u.getUsername()).
                 slash("projects").withRel(USER_PROJECTS_REL));
+        return links;
+    }
+
+    /**
+     * A collection of custom links for the users resource collection.
+     *
+     * @return a collection of links for all users.
+     */
+    @Override
+    protected Collection<Link> constructCustomResourceCollectionLinks() {
+        Collection<Link> links = new HashSet<>();
+
+        links.add(linkTo(methodOn(UsersController.class).getAllUsers()).withRel(REL_ALL_USERS));
+
         return links;
     }
 }
