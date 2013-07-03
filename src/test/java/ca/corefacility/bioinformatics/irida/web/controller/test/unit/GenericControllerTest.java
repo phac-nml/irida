@@ -70,12 +70,6 @@ public class GenericControllerTest {
             public IdentifiableTestEntity mapResourceToType(IdentifiableTestResource representation) {
                 return entity;
             }
-
-            @Override
-            protected Map<String, Class<?>> getUniquelyRelatedClasses() {
-                return (Map<String, Class<?>>) ImmutableMap.of(RELATED_IDENTIFIABLE_TEST_ENTITY_KEY,
-                        (Class<?>) IdentifiableTestEntity.class);
-            }
         };
         updatedFields = new HashMap<>();
     }
