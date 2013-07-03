@@ -21,11 +21,11 @@ import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.exception.GenericsException;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageableControllerLinkBuilder;
 import ca.corefacility.bioinformatics.irida.web.controller.api.support.SortProperty;
 import com.google.common.base.Strings;
@@ -145,6 +145,17 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     }
 
     /**
+     * Construct a collection of {@link Link}s for a complete resource collection. Each resource collection may have
+     * have custom links that refer to other controllers (or themselves). This method is called by the
+     * <code>listResources</code> method.
+     *
+     * @return a collection of links.
+     */
+    protected Collection<Link> constructCustomResourceCollectionLinks() {
+        return Collections.emptySet();
+    }
+
+    /**
      * Construct a collection of {@link Link}s for a specific resource. Each resource may have custom links that refer
      * to other controllers, but not all will. This method is called by the <code>getResource</code> method.
      *
@@ -165,17 +176,6 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @return a collection of collections of related resources.
      */
     protected Map<String, ResourceCollection<LabelledRelationshipResource>> constructCustomRelatedResourceCollections(Type resource) {
-        return Collections.emptyMap();
-    }
-
-    /**
-     * Construct a collection of {@link Resource}s that are related to the specified resource uniquely. In other words,
-     * only one type of relationship exists between the two resource types, so each pair of resources on either side of
-     * the relationship type are distinct.
-     *
-     * @return The set of all classes uniquely related to this resource type.
-     */
-    protected Map<String, Class<?>> getUniquelyRelatedClasses() {
         return Collections.emptyMap();
     }
 
@@ -239,6 +239,8 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         resources.add(pageLinksFor(getClass(), page, size, totalEntities, sortProperty, sortOrder));
         // we should also tell the client how many resources of this type there are in total
         resources.setTotalResources(totalEntities);
+        // add any custom links for the resource collection.
+        resources.add(constructCustomResourceCollectionLinks());
 
         // finally, add the resource collection to the response
         model.addAttribute(RESOURCE_NAME, resources);

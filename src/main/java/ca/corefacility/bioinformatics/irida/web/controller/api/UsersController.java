@@ -43,6 +43,10 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
      */
     public static final String REL_USERS_FIRST_PAGE = "users/pages/first";
     /**
+     * rel for all users.
+     */
+    public static final String REL_ALL_USERS = "users/all";
+    /**
      * logger
      */
     private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
@@ -142,7 +146,7 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
      * @return an instance of {@link User}.
      */
     @Override
-    public User mapResourceToType(UserResource ur) {
+    protected User mapResourceToType(UserResource ur) {
         return new User(ur.getUsername(), ur.getEmail(), ur.getPassword(),
                 ur.getFirstName(), ur.getLastName(), ur.getPhoneNumber());
     }
@@ -154,10 +158,24 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
      * @return the links for this {@link User}.
      */
     @Override
-    public Collection<Link> constructCustomResourceLinks(User u) {
+    protected Collection<Link> constructCustomResourceLinks(User u) {
         Collection<Link> links = new HashSet<>();
         links.add(linkTo(UsersController.class).slash(u.getUsername()).
                 slash("projects").withRel(USER_PROJECTS_REL));
+        return links;
+    }
+
+    /**
+     * A collection of custom links for the users resource collection.
+     *
+     * @return a collection of links for all users.
+     */
+    @Override
+    protected Collection<Link> constructCustomResourceCollectionLinks() {
+        Collection<Link> links = new HashSet<>();
+
+        links.add(linkTo(methodOn(UsersController.class).getAllUsers()).withRel(REL_ALL_USERS));
+
         return links;
     }
 }
