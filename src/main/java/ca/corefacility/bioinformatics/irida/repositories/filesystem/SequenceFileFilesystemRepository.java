@@ -18,6 +18,7 @@ package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import ca.corefacility.bioinformatics.irida.model.FieldMap;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -197,5 +198,15 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Identifi
     @Override
     public Collection<SequenceFile> readMultiple(Collection<Identifier> idents) {
         throw new UnsupportedOperationException("Reading multiple files will not be supported.");
+    }
+
+    @Override
+    public List<FieldMap> listMappedFields(List<String> fields) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    @Override
+    public List<FieldMap> listMappedFields(List<String> fields, int page, int size, String sortProperty, Order order) {
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 }

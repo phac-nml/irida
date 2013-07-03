@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.repositories;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.model.FieldMap;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import java.util.Collection;
@@ -108,4 +109,22 @@ public interface CRUDRepository<IdentifierType, Type> {
      * @return the number of entities in the database.
      */
     public Integer count();
+
+    /**
+     * List objects of this type that have the given fields
+     * @param fields The fields we want to select from the database
+     * @return A Map<Identifier, Map<String,Object>> of object identifiers and key/value pairs of the selected fields
+     */    
+    public List<FieldMap> listMappedFields(List<String> fields);
+    
+    /**
+     * List objects of this type that have the given fields in a paged fashion
+     * @param fields The fields to select from the database
+     * @param page The page to list
+     * @param size The size of a page
+     * @param sortProperty The property to sort the items on
+     * @param order The order to sort in
+     * @return A List<{@link FieldMap}> of the requested fields
+     */    
+    public List<FieldMap> listMappedFields(List<String> fields,int page, int size, String sortProperty, Order order);
 }

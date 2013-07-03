@@ -17,6 +17,7 @@ package ca.corefacility.bioinformatics.irida.repositories.sesame;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import ca.corefacility.bioinformatics.irida.model.FieldMap;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
@@ -566,6 +567,16 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
     @Override
     public Collection<Relationship> readMultiple(Collection<Identifier> idents) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<FieldMap> listMappedFields(List<String> fields) {
+        throw new UnsupportedOperationException("Listing mapped fields will not be supported");
+    }
+
+    @Override
+    public List<FieldMap> listMappedFields(List<String> fields, int page, int size, String sortProperty, Order order) {
+        throw new UnsupportedOperationException("Listing mapped fields will not be supported");
     }
 
 }
