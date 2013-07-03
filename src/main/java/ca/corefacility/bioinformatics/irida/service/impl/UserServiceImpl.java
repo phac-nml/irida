@@ -1,28 +1,14 @@
-/*
- * Copyright 2013 Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.FieldMap;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.UserService;
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
@@ -35,10 +21,7 @@ import javax.annotation.PostConstruct;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Implementation of the {@link UserService}.
@@ -55,6 +38,18 @@ public class UserServiceImpl extends CRUDServiceImpl<UserIdentifier, User> imple
      * The property name to use for passwords on the {@link User} class.
      */
     private static final String PASSWORD_PROPERTY = "password";
+    /**
+     * The property name to use for username on the {@link User} class.
+     */
+    private static final String USERNAME_PROPERTY = "username";
+    /**
+     * The property name to use for first name on the {@link User} class.
+     */
+    private static final String FIRST_NAME_PROPERTY = "firstName";
+    /**
+     * The property name to use for last name on the {@link User} class.
+     */
+    private static final String LAST_NAME_PROPERTY = "lastName";
     /**
      * logger
      */
@@ -139,7 +134,7 @@ public class UserServiceImpl extends CRUDServiceImpl<UserIdentifier, User> imple
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        logger.debug("Loading user with username: [" + username + "].");
+        logger.trace("Loading user with username: [" + username + "].");
         org.springframework.security.core.userdetails.User userDetails = null;
         User u;
         try {
@@ -161,5 +156,26 @@ public class UserServiceImpl extends CRUDServiceImpl<UserIdentifier, User> imple
      */
     private Set<ConstraintViolation<User>> validatePassword(String password) {
         return validator.validateValue(User.class, PASSWORD_PROPERTY, password);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<User> list() {
+        // only list the username, first name and last name when listing all users in the system.
+        List<String> fieldNames = Lists.newArrayList(USERNAME_PROPERTY, FIRST_NAME_PROPERTY, LAST_NAME_PROPERTY);
+        List<FieldMap> fields = userRepository.listMappedFields(fieldNames);
+        List<User> users = new ArrayList<>(fields.size());
+        // map the returned values back to user objects.
+        for (FieldMap fm : fields) {
+            User u = new User();
+            u.setUsername(fm.get(USERNAME_PROPERTY).toString());
+            u.setFirstName(fm.get(FIRST_NAME_PROPERTY).toString());
+            u.setLastName(fm.get(LAST_NAME_PROPERTY).toString());
+            u.setIdentifier(new UserIdentifier(u.getUsername()));
+            users.add(u);
+        }
+        return users;
     }
 }
