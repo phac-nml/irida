@@ -3,3 +3,4 @@ target/*
 .DS_Store/
 node_modules/*
 irida-web.iml
+src/main/webapp/resources/.sass-cache
