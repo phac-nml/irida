@@ -8,7 +8,6 @@ var NGS = angular.module( 'NGS', [
     'ngCookies',
     'http-auth-interceptor',
     'ngResource',
-    'ui.state',
     'ngs-section',
     'filters',
     'ui.bootstrap',
@@ -24,6 +23,25 @@ NGS.config( [ '$locationProvider',
     $locationProvider.html5Mode( true );
   }
 ] );
+
+NGS.config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.
+        when('/', {
+            templateUrl: '/partials/landing.html',
+            controller: function($scope, data) {
+                $scope.projects = data.resource.resources;
+            },
+            resolve: {
+                data: function ($q, ajaxService) {
+                    var defer = $q.defer();
+                    ajaxService.get('/api/projects').then(function (data) {
+                        defer.resolve(data);
+                    });
+                    return defer.promise;
+                }
+            }
+        })
+}]);
 
 NGS.run( [ '$cookieStore', '$http',
   function ( $cookieStore, $http ) {

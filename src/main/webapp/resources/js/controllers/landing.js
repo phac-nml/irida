@@ -5,9 +5,9 @@
   'use strict';
 
   app
-    .controller('LandingCtrl', ['$state', function ($state) {
-      if ($state.current.name === 'projects') {
-        $state.transitionTo('projects.main');
-      }
+    .controller('LandingCtrl', [function() {
+//      if ($state.current.name === 'projects') {
+//        $state.transitionTo('projects.main');
+//      }
     }]);
 })(angular, NGS);
