@@ -6,8 +6,10 @@
  */
 (function (ng, app) {
   'use strict';
-  app.controller('ProjectCtrl', [ '$scope', '$rootScope', '$window', 'ajaxService', '$location',
-    function ($scope, $rootScope, $window, ajaxService, $location) {
+  app.controller('ProjectCtrl', [ '$scope', '$rootScope', '$window', 'ajaxService', '$location', 'projectService',
+    function ($scope, $rootScope, $window, ajaxService, $location, projectService) {
+        projectService.project = $scope.project;
+        console.log(projectService.project);
       $scope.data.view = 'samples';
       $scope.data.users = ['Josh Adam', 'Frankilin Bristow', 'Aaron Petkau', 'Heather Adam', 'Nathan Adam'];
       $scope.sample = {};

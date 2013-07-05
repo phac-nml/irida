@@ -1,3 +1,4 @@
+/* global angular, NGS */
 /**
  * User:    Josh Adam <josh.adam@phac-aspc.gc.ca>
  * Date:    2013-06-04
@@ -5,17 +6,16 @@
  * License: MIT
  */
 (function (ng, app) {
-  'use strict';
-  app.
-    controller('MainCtrl', ['$scope', '$location', 'loginService', function ($scope, $location, loginService) {
+    'use strict';
+    app.
+        controller('MainCtrl', ['$scope', '$location', 'loginService', function ($scope, $location, loginService) {
+            $scope.$on('event:auth-loginRequired', function () {
+                $location.path('/login');
+            });
 
-      $scope.$on('event:auth-loginRequired', function () {
-        $location.path('/login');
-      });
-
-      $scope.logout = function () {
-        loginService.deleteHeader();
-        $location.path('/login');
-      };
-    }]);
+            $scope.logout = function () {
+                loginService.deleteHeader();
+                $location.path('/login');
+            };
+        }]);
 })(angular, NGS);

@@ -279,7 +279,7 @@ h1, h2, h3, h4 {
   min-width: 1px; }
 
 /* line 125, ../scss/main.scss */
-.container-fluid .navbar {
+.container-fluid .navbar, .container-fluid .breadcrumb {
   margin-top: 1.4em; }
 
 /* line 129, ../scss/main.scss */

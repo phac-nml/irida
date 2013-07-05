@@ -67,6 +67,7 @@
             sample: data.resource,
             sequenceFiles: data.relatedResources.sequenceFiles.resources
           };
+            console.log($scope.data);
         },
         resolve: {
           data: function($q, $stateParams, ajaxService) {
