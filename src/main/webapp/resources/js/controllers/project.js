@@ -152,17 +152,25 @@
         }
       };
 
-      $scope.modifyDisplayOptions = function (type) {
-        $scope.display[type].allCheckboxes = !$scope.display[type].allCheckboxes;
-        if ($scope.display[type].allCheckboxes) {
-          $scope.display[type].mainCB = true;
-          $scope.display[type].checkedCount = 100;
-        }
-        else {
-          $scope.display[type].mainCB = false;
-          $scope.display[type].checkedCount = 0;
-        }
-      };
+        $scope.checkCount = function (type) {
+            return ng.element("input[name='" + type + "']:checked").length;
+        };
+
+        $scope.selectAllCheckboxes = funciton (type) {
+
+        };
+
+//      $scope.modifyDisplayOptions = function (type) {
+//        $scope.display[type].allCheckboxes = !$scope.display[type].allCheckboxes;
+//        if ($scope.display[type].allCheckboxes) {
+//          $scope.display[type].mainCB = true;
+//          $scope.display[type].checkedCount = 100;
+//        }
+//        else {
+//          $scope.display[type].mainCB = false;
+//          $scope.display[type].checkedCount = 0;
+//        }
+//      };
 
       $scope.removeItemFromProject = function(type) {
         var l = ng.element("input[name='" + type +"']:checked");
