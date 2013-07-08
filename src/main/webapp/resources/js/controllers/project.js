@@ -156,7 +156,7 @@
             return ng.element("input[name='" + type + "']:checked").length;
         };
 
-        $scope.selectAllCheckboxes = funciton (type) {
+        $scope.selectAllCheckboxes = function (type) {
 
         };
 

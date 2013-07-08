@@ -5,22 +5,28 @@
  * License: MIT
  */
 (function (ng, app) {
-  "use strict";
-  app.controller('UserCtrl', ['$scope', function ($scope) {
-    $scope.data.edit = false;
+    "use strict";
+    app.controller('UserCtrl', ['$rootScope', '$scope', '$location', 'ajaxService', function ($rootScope, $scope, $location, ajaxService) {
+        $scope.data.edit = false;
 
-    $scope.cancelEdit = function () {
-      alert('This needs to be finished');
-      $scope.data.edit = false;
-    };
+        $scope.cancelEdit = function () {
+            alert('This needs to be finished');
+            $scope.data.edit = false;
+        };
 
-    $scope.saveUser = function () {
-      alert('This needs to be finished');
-    };
+        $scope.saveUser = function () {
+            alert('This needs to be finished');
+        };
 
-    $scope.deleteUser = function () {
-      alert('This needs to be finished');
-    };
+        $scope.deleteUser = function () {
+            ajaxService.deleteItem($scope.data.user.links.self).then(function () {
+                    $rootScope.$broadcast('NOTIFY', {
+                        'msg': 'Deleted ' + $scope.data.user.username
+                    });
+                    $location.path("/landing");
+                }
+            );
+        };
 
-  }]);
+    }]);
 })(angular, NGS)
