@@ -27,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.IntegerIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -36,25 +37,65 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class ProjectRelationalRepository extends GenericRelationalRepository<Identifier, Project> implements ProjectRepository{
-    private RowMapper<Project> rowMapper = new ProjectRowMapper();
+//public class ProjectRelationalRepository extends GenericRelationalRepository<Identifier, Project> implements ProjectRepository{
+@Transactional
+@Repository
+public class ProjectRelationalRepository implements ProjectRepository{
     
+    private RowMapper<Project> rowMapper = new ProjectRowMapper();
+    protected JdbcTemplate jdbcTemplate;
+    
+    private SessionFactory sessionFactory;
     public ProjectRelationalRepository(){}
     
-    public ProjectRelationalRepository(DataSource dataSource){
-        super(dataSource);
+    public ProjectRelationalRepository(DataSource source){
+        this.jdbcTemplate = new JdbcTemplate(source);
+    }
+
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
+    @Transactional
+    @Override
+    public Project create(Project object) throws IllegalArgumentException {
+        Session session = sessionFactory.getCurrentSession();
+        Serializable save = session.save(object);        
+        
+        String toString = save.toString();
+        IntegerIdentifier id = new IntegerIdentifier(Integer.parseInt(toString));
+        object.setIdentifier(id);
+        return object;
     }
     
+    protected Project buildObject(Project p){
+        IntegerIdentifier id = new IntegerIdentifier(p.getId().intValue());
+        p.setIdentifier(id);
+        return p;
+    }
+    
+
     public class ProjectRowMapper implements RowMapper<Project>{
         @Override
         public Project mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -64,7 +105,19 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Ide
             return p;
         }
         
-    }    
+    }
+    
+    private static SessionFactory buildSessionFactory() {
+        try {
+            // Create the SessionFactory from hibernate.cfg.xml
+            return new Configuration().configure().buildSessionFactory();
+        }
+        catch (Throwable ex) {
+            // Make sure you log the exception, as it might be swallowed
+            System.err.println("Initial SessionFactory creation failed." + ex);
+            throw new ExceptionInInitializerError(ex);
+        }
+    }
     
     @Override
     public Collection<Project> getProjectsForUser(User user) {
@@ -81,7 +134,6 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Ide
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    @Override
     protected PreparedStatementCreator getStatementCreator(Project object) {
         return new ProjectStatementCreator(object);
     }
@@ -116,14 +168,13 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Ide
     public Project read(Identifier id) throws EntityNotFoundException {
         String identifier = id.getIdentifier();
         
-        String query = "SELECT id,name FROM project WHERE id=?";
-        List<Project> query1 = this.jdbcTemplate.query(query, rowMapper, identifier);
+        Session session = sessionFactory.getCurrentSession();
+        Project load = (Project) session.load(Project.class, Long.parseLong(identifier));
         
-        if(query1.size() >1){
-            throw new StorageException("Read query didn't return 1 result: " + query1.size());
-        }
+        IntegerIdentifier readId = new IntegerIdentifier(load.getId().intValue());
+        load.setIdentifier(readId);
         
-        return query1.get(0);
+        return load;
     }
 
     @Override
@@ -168,8 +219,10 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Ide
     @Override
     public List<Project> list(int page, int size, String sortProperty, Order order) {
         
+        Session session = sessionFactory.getCurrentSession();       
+        
         List<Project> query1;
-        String query = "SELECT id,name FROM project";
+        String query = "FROM Project";
         if(sortProperty != null){
             query += " ORDER BY ?";
             if(order == Order.ASCENDING){
@@ -178,12 +231,18 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Ide
             else if(order == Order.DESCENDING){
                 query += " DESC";
             }
-            query1 = this.jdbcTemplate.query(query, rowMapper,sortProperty);
+            Query createQuery = session.createQuery(query);
+            createQuery.setString(1, sortProperty);
+            query1 = createQuery.list();
         }
         else{
-             query1 = this.jdbcTemplate.query(query, rowMapper);
+            Query createQuery = session.createQuery(query);
+            query1 = createQuery.list();
         }
         
+        for(Project p : query1){
+            p = buildObject(p);
+        }        
         
         return query1;
     }
