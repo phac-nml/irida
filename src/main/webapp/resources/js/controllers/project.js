@@ -156,8 +156,11 @@
             return ng.element("input[name='" + type + "']:checked").length;
         };
 
-        $scope.selectAllCheckboxes = function (type) {
-
+        $scope.selectAllCheckboxes = function (type, value) {
+            ng.forEach(ng.element("input[name='" + type + "']"), function(el) {
+                $(el).prop("checked", value);
+            });
+            $scope.display[type].checkedCount = ng.element("input[name='" + type + "']:checked").length;
         };
 
 //      $scope.modifyDisplayOptions = function (type) {

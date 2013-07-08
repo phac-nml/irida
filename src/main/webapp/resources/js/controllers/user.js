@@ -29,4 +29,4 @@
         };
 
     }]);
-})(angular, NGS)
+})(angular, NGS);

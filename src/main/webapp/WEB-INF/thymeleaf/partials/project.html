@@ -45,16 +45,18 @@
                 <div class="row-fluid">
                     <div class="span12 button-bar">
                         <div class="btn-group">
-                            <button class="btn" data-ng-click="modifyDisplayOptions('files')">
-                                <div class="cb" data-ng-class="{true: 'cb--checked'}[display.files.mainCB]"></div>
-                            </button>
-                            <a class="btn dropdown-toggle">
-                                <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="" data-ng-click="display.files.allCheckboxes=true">Select All</a></li>
-                                <li><a href="" data-ng-click="display.files.allCheckboxes=false">Select None</a></li>
-                            </ul>
+                            <button class="btn" data-ng-click="selectAllCheckboxes('files', true)">Select All</button>
+                            <button class="btn" data-ng-click="selectAllCheckboxes('files', false)">Select None</button>
+                            <!--<button class="btn" data-ng-click="modifyDisplayOptions('files')">-->
+                                <!--<div class="cb" data-ng-class="{true: 'cb-checked'}[display.files.mainCB]"></div>-->
+                            <!--</button>-->
+                            <!--<a class="btn dropdown-toggle">-->
+                                <!--<span class="caret"></span>-->
+                            <!--</a>-->
+                            <!--<ul class="dropdown-menu">-->
+                                <!--<li><a href="" data-ng-click="display.files.allCheckboxes=true">Select All</a></li>-->
+                                <!--<li><a href="" data-ng-click="display.files.allCheckboxes=false">Select None</a></li>-->
+                            <!--</ul>-->
                         </div>
 
                         <div class="btn-group">
@@ -85,7 +87,7 @@
                         <table class="table">
                             <tbody>
                             <tr data-ng-repeat="s in project.sequenceFiles">
-                                <td class="file-select"><input class="cb" data-ng-click="checkForAllSelected('files')"
+                                <td class="file-select"><input data-ng-click="checkForAllSelected('files')"
                                                                data-ng-checked="display.files.allCheckboxes"
                                                                type="checkbox"
                                                                value="{{$index}}"
@@ -116,8 +118,8 @@
             <div data-ng-switch-when="users">
                 <div class="row-fluid button-bar">
                     <div class="btn-group">
-                        <button class="btn" data-ng-click="selectAllCheckboxes('users')">Select All</button>
-                        <button class="btn" data-ng-click="display.users.allCheckboxes=false">Select None</button>
+                        <button class="btn" data-ng-click="selectAllCheckboxes('users', true)">Select All</button>
+                        <button class="btn" data-ng-click="selectAllCheckboxes('users', false)">Select None</button>
                     </div>
                     <div class="btn-group pull-right">
                         <div class="input-append">
