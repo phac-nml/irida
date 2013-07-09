@@ -569,14 +569,5 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
-    public List<FieldMap> listMappedFields(List<String> fields) {
-        throw new UnsupportedOperationException("Listing mapped fields will not be supported");
-    }
-
-    @Override
-    public List<FieldMap> listMappedFields(List<String> fields, int page, int size, String sortProperty, Order order) {
-        throw new UnsupportedOperationException("Listing mapped fields will not be supported");
-    }
 
 }

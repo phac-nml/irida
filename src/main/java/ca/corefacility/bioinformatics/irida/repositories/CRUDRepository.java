@@ -110,21 +110,4 @@ public interface CRUDRepository<IdentifierType, Type> {
      */
     public Integer count();
 
-    /**
-     * List objects of this type that have the given fields
-     * @param fields The fields we want to select from the database
-     * @return A Map<Identifier, Map<String,Object>> of object identifiers and key/value pairs of the selected fields
-     */    
-    public List<FieldMap> listMappedFields(List<String> fields);
-    
-    /**
-     * List objects of this type that have the given fields in a paged fashion
-     * @param fields The fields to select from the database
-     * @param page The page to list
-     * @param size The size of a page
-     * @param sortProperty The property to sort the items on
-     * @param order The order to sort in
-     * @return A List<{@link FieldMap}> of the requested fields
-     */    
-    public List<FieldMap> listMappedFields(List<String> fields,int page, int size, String sortProperty, Order order);
 }

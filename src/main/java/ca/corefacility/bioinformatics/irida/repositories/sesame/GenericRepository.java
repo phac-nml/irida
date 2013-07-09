@@ -543,7 +543,6 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     /**
      * {@inheritDoc}
      */
-    @Override
     public List<FieldMap> listMappedFields(List<String> fields){
         return listMappedFields(fields,0, 0, null, null);
     }
@@ -551,7 +550,6 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
     /**
      * {@inheritDoc}
      */
-    @Override
     public List<FieldMap> listMappedFields(List<String> fields,int page, int size, String sortProperty, Order order){
         List<FieldMap> fieldList = new ArrayList<>();
 

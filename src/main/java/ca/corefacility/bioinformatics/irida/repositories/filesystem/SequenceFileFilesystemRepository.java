@@ -200,13 +200,4 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Identifi
         throw new UnsupportedOperationException("Reading multiple files will not be supported.");
     }
 
-    @Override
-    public List<FieldMap> listMappedFields(List<String> fields) {
-        throw new UnsupportedOperationException("Not supported yet."); 
-    }
-
-    @Override
-    public List<FieldMap> listMappedFields(List<String> fields, int page, int size, String sortProperty, Order order) {
-        throw new UnsupportedOperationException("Not supported yet."); 
-    }
 }

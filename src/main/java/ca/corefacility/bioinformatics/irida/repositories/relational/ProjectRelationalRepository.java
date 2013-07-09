@@ -99,16 +99,6 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-
-    @Override
-    public List<FieldMap> listMappedFields(List<String> fields) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<FieldMap> listMappedFields(List<String> fields, int page, int size, String sortProperty, Order order) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
     
     
 }

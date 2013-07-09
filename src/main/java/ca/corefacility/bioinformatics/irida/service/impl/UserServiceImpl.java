@@ -157,25 +157,4 @@ public class UserServiceImpl extends CRUDServiceImpl<UserIdentifier, User> imple
     private Set<ConstraintViolation<User>> validatePassword(String password) {
         return validator.validateValue(User.class, PASSWORD_PROPERTY, password);
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<User> list() {
-        // only list the username, first name and last name when listing all users in the system.
-        List<String> fieldNames = Lists.newArrayList(USERNAME_PROPERTY, FIRST_NAME_PROPERTY, LAST_NAME_PROPERTY);
-        List<FieldMap> fields = userRepository.listMappedFields(fieldNames);
-        List<User> users = new ArrayList<>(fields.size());
-        // map the returned values back to user objects.
-        for (FieldMap fm : fields) {
-            User u = new User();
-            u.setUsername(fm.get(USERNAME_PROPERTY).toString());
-            u.setFirstName(fm.get(FIRST_NAME_PROPERTY).toString());
-            u.setLastName(fm.get(LAST_NAME_PROPERTY).toString());
-            u.setIdentifier(new UserIdentifier(u.getUsername()));
-            users.add(u);
-        }
-        return users;
-    }
 }
