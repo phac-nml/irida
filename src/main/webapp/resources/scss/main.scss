@@ -9,7 +9,7 @@
 
 //@import "fws/accordian";
 //@import "fws/sidebar";
-@import "fws/cards";
+//@import "fws/cards";
 //@import "fws/project";
 //@import "fws/spinner";
 
@@ -152,53 +152,49 @@ h1, h2, h3, h4 {
   padding-bottom: 10px;
 }
 
-.cb {
-  -webkit-appearance: none;
-  background-color: #fafafa;
-  border: 1px solid #cacece;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05);
-  padding: 4px;
-  //border-radius: 3px;
+// Displaying Sample Folders
+.sample {
+  $count: 2; // Default for small screen
+
+  border-radius: 4px;
+  cursor: pointer;
   display: inline-block;
-  position: relative;
-}
+  float: left;
 
-table input[type='checkbox'] {
+  margin-right: 10%/$count;
+  margin-top: 10%/($count*2);
+  width: 90%/$count;
 
-}
+  @media only screen and (min-width: 1100px) {
+    $count: 4;
 
-input.cb--btn {
-  margin: -3px 0 0 0;
-}
+    float: left;
+    margin-right: 10%/$count;
+    margin-top: 10%/$count;
+    width: 90%/$count;
+  }
 
-input.cb:active, .cb:checked:active, .cb--checked {
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px 1px 3px rgba(0, 0, 0, 0.1);
-}
+  @media only screen and (min-width: 1280px) {
+    $count: 5;
 
-input.cb:checked, .cb--checked {
-  background-color: #e9ecee;
-  border: 1px solid #adb8c0;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05), inset 15px 10px -12px rgba(255, 255, 255, 0.1);
-  color: #99a1a7;
-}
+    float: left;
+    margin-right: 10%/$count;
+    margin-top: 10%/$count;
+    width: 90%/$count;
+  }
 
-input.cb:checked:after, .cb--checked:after {
-  content: '\2714';
-  font-size: 12px;
-  position: absolute;
-  top: -3px;
-  left: 1px;
-  color: #222;
-}
-
-.cb--checked:after {
-  top: -6px;
+  img {
+    float: left;
+  }
+  &:hover{
+    background-color: darken(rgba(255, 255, 255, 1.0), 5);
+  }
 }
 
 // SequenceFile Table
 td.file-select {
   width: 13px;
-  input.cb {
+  input {
     margin-top: 0;
   }
 }

@@ -1,13 +1,11 @@
 <div class="span12">
-    <div class="card card__droppable" data-ng-repeat="s in project.samples"
+    <div class="sample" data-ng-repeat="s in project.samples"
          data-ng-click="gotoProject($event, s.links.self)">
-        <div class="card--text">
+        <img src="/css/img/folder-sample.svg" alt="folder"/>
+
+        <div>
             <h4>{{s.label}}</h4>
-            <span>{{s.dateCreated | angularMoment}}</span></div>
-        <div class="folder">
-            <div class="folder--back"></div>
-            <div class="folder--front">
-            </div>
+            <span>{{s.dateCreated | angularMoment}}</span>
         </div>
     </div>
 </div>

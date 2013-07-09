@@ -62,26 +62,26 @@
             .state('projects.detail.samples', {
                 url: '/samples',
                 templateUrl: '/partials/projects.samples.html',
-                controller: function($scope){
+                controller: function ($scope) {
                     $scope.data.view = 'samples';
                 }
             })
             .state('projects.detail.files', {
                 url: '/files',
                 templateUrl: '/partials/projects.files.html',
-                controller: function($scope){
+                controller: function ($scope) {
                     $scope.data.view = 'files';
                 }
             })
             .state('projects.detail.users', {
                 url: '/users',
                 templateUrl: '/partials/projects.users.html',
-                controller: function($scope){
+                controller: function ($scope) {
                     $scope.data.view = 'users';
                 }
             })
-            .state('projects.sample', {
-                url: 'projects/:projectId/samples/:sampleId',
+            .state('projects.detail.sampleDetailed', {
+                url: '/samples/:sampleId',
                 templateUrl: '/partials/sample.html',
                 controller: function ($scope, $stateParams, data) {
                     $scope.data = {

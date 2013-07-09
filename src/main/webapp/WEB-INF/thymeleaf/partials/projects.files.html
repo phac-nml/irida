@@ -39,20 +39,9 @@
                                                value="{{$index}}"
                                                name="files"/></td>
                 <td>
-                    <div class="btn-group">
-                        <button class="btn"
-                                data-ng-click="downloadFile($event, s, 'project/sequenceFile/fasta')">
-                            {{s.label}}
-                        </button>
-                        <a class="btn dropdown-toggle">
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href=""
-                                   data-ng-click="downloadFile($event, s, 'project/sequenceFile/fasta')">Fasta</a>
-                            </li>
-                        </ul>
-                    </div>
+                    <a href="" data-ng-click="downloadFile($event, s, 'project/sequenceFile/fasta')">
+                        {{s.label}}
+                    </a>
                 </td>
                 <td class="file-date">{{s.createdDate | angularMoment }}</td>
             </tr>
