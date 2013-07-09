@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import javax.sql.DataSource;
+import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -48,7 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional
 @Repository
-public class ProjectRelationalRepository extends GenericRelationalRepository<Long, Project> implements ProjectRepository{
+public class ProjectRelationalRepository extends GenericRelationalRepository<Project> implements ProjectRepository{
 
 //public class ProjectRelationalRepository implements ProjectRepository{
     
@@ -56,7 +57,7 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Lon
     public ProjectRelationalRepository(){}
     
     public ProjectRelationalRepository(DataSource source){
-        super(source);
+        super(source,Project.class);
     }
 
 
@@ -72,23 +73,6 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Lon
         return object;
     }*/
     
-    protected Project addIdentifierToObject(Project p){
-        IntegerIdentifier id = new IntegerIdentifier(p.getId().intValue());
-        p.setIdentifier(id);
-        return p;
-    }
-    
-
-    public class ProjectRowMapper implements RowMapper<Project>{
-        @Override
-        public Project mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Project p = new Project(rs.getString("name"));
-            IntegerIdentifier id = new IntegerIdentifier(rs.getInt("id"));
-            p.setIdentifier(id);
-            return p;
-        }
-        
-    }
     
     @Override
     public Collection<Project> getProjectsForUser(User user) {
@@ -105,16 +89,15 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Lon
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /*
     @Override
     public Project read(Long id) throws EntityNotFoundException {
         
         Session session = sessionFactory.getCurrentSession();
         Project load = (Project) session.load(Project.class, id);
-        
-        load = addIdentifierToObject(load);
-        
+                
         return load;
-    }
+    }*/
 
     @Override
     public Collection<Project> readMultiple(Collection<Identifier> idents) {
@@ -178,11 +161,7 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Lon
         else{
             Query createQuery = session.createQuery(query);
             query1 = createQuery.list();
-        }
-        
-        for(Project p : query1){
-            p = addIdentifierToObject(p);
-        }        
+        }    
         
         return query1;
     }

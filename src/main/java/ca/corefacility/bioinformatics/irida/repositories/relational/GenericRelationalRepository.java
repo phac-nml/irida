@@ -42,15 +42,17 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional
 @Repository
-public abstract class GenericRelationalRepository<Long, Type extends IridaThing> implements CRUDRepository<Long, Type> {
+public abstract class GenericRelationalRepository<Type extends IridaThing> implements CRUDRepository<Long, Type> {
     private String tableName;
     protected JdbcTemplate jdbcTemplate;
-    
     protected SessionFactory sessionFactory;
+    private Class classType;
+    
     public GenericRelationalRepository(){}
     
-    public GenericRelationalRepository(DataSource source){
+    public GenericRelationalRepository(DataSource source,Class classType){
         this.jdbcTemplate = new JdbcTemplate(source);
+        this.classType = classType;
     }
 
     public SessionFactory getSessionFactory() {
@@ -75,7 +77,11 @@ public abstract class GenericRelationalRepository<Long, Type extends IridaThing>
     
     @Override
     public Type read(Long id) throws EntityNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        Session session = sessionFactory.getCurrentSession();
+        Type load = (Type) session.get(classType, id);
+                
+        return load;    
     }
 
     @Override
