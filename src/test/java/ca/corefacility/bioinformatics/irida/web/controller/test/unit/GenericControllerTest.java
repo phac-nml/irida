@@ -50,12 +50,7 @@ public class GenericControllerTest {
         entity = new IdentifiableTestEntity();
         entity.setIdentifier(id);
         controller = new GenericController<Identifier, IdentifiableTestEntity, IdentifiableTestResource>(crudService,
-                IdentifiableTestEntity.class, Identifier.class, IdentifiableTestResource.class) {
-            @Override
-            public IdentifiableTestEntity mapResourceToType(IdentifiableTestResource representation) {
-                return entity;
-            }
-        };
+                IdentifiableTestEntity.class, Identifier.class, IdentifiableTestResource.class){};
         updatedFields = new HashMap<>();
     }
 

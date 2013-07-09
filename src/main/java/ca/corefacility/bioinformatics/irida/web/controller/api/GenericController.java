@@ -103,15 +103,6 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     }
 
     /**
-     * Map a representation of a resource to a concrete version of the resource so that we can store it in the
-     * database.
-     *
-     * @param resourceType the representation to map.
-     * @return the concrete version of the representation.
-     */
-    protected abstract Type mapResourceToType(ResourceType resourceType);
-
-    /**
      * Get the default sort property, <code>SortProperty.DEFAULT</code> by default.
      *
      * @return the default sort property for this class.
@@ -302,7 +293,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
     public ResponseEntity<String> create(@RequestBody ResourceType representation) {
         // ask the subclass to map the de-serialized request to a concrete
         // instance of the type managed by this controller.
-        Type resource = mapResourceToType(representation);
+        Type resource = representation.getResource();
 
         // persist the resource to the database.
         resource = crudService.create(resource);

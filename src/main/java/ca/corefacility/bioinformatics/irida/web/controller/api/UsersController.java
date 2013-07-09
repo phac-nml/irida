@@ -222,17 +222,4 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
         // respond to the user
         return mav;
     }
-    
-
-    /**
-     * Map an instance of {@link UserResource} to {@link User}.
-     *
-     * @param ur the {@link UserResource} to map.
-     * @return an instance of {@link User}.
-     */
-    @Override
-    protected User mapResourceToType(UserResource ur) {
-        return new User(ur.getUsername(), ur.getEmail(), ur.getPassword(),
-                ur.getFirstName(), ur.getLastName(), ur.getPhoneNumber());
-    }
 }

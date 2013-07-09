@@ -96,19 +96,6 @@ public class ProjectsController extends GenericController<Identifier, Project, P
     }
 
     /**
-     * Map a {@link ProjectResource} to a {@link Project}.
-     *
-     * @param pr the resource to map.
-     * @return an instance of {@link Project}.
-     */
-    @Override
-    protected Project mapResourceToType(ProjectResource pr) {
-        Project p = new Project();
-        p.setName(pr.getName());
-        return p;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
