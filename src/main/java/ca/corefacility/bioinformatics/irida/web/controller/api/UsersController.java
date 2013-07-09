@@ -1,14 +1,14 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api;
 
-import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.UserService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +20,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-
-import static org.springframework.hateoas.core.DummyInvocationUtils.methodOn;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.Relationship;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.RelationshipService;
+import ca.corefacility.bioinformatics.irida.service.UserService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
+import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
 
 /**
  * Controller for managing users.
@@ -39,21 +47,25 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 public class UsersController extends GenericController<UserIdentifier, User, UserResource> {
 
     /**
-     * rel for the first page of the users document.
+     * logger
      */
-    public static final String REL_USERS_FIRST_PAGE = "users/pages/first";
+    private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
     /**
      * rel for all users.
      */
     public static final String REL_ALL_USERS = "users/all";
     /**
-     * logger
+     * rel for the first page of the users document.
      */
-    private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
+    public static final String REL_USERS_FIRST_PAGE = "users/pages/first";
     /**
      * a rel for getting a handle on the projects that a user belongs to.
      */
-    private static final String USER_PROJECTS_REL = "user/projects";
+    public static final String REL_USER_PROJECTS = "user/projects";
+    /**
+     * a map label for the projects associated with a user.
+     */
+    public static final String USER_PROJECTS_MAP_LABEL = "projects";
     /**
      * Reference to the {@link ProjectService}.
      */
@@ -62,6 +74,16 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
      * Reference to the {@link UserService}
      */
     private final UserService userService;
+    /**
+     * Reference to the {@link RelationshipService}
+     */
+    private final RelationshipService relationshipService;
+
+    protected UsersController() {
+        this.projectService = null;
+        this.userService = null;
+        this.relationshipService = null;
+    }
 
     /**
      * Constructor, requires a reference to a {@link UserService} and a {@link ProjectService}.
@@ -70,15 +92,51 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
      * @param projectService the {@link ProjectService} that this controller uses.
      */
     @Autowired
-    public UsersController(UserService userService, ProjectService projectService) {
+    public UsersController(UserService userService, ProjectService projectService, RelationshipService relationshipService) {
         super(userService, User.class, UserIdentifier.class, UserResource.class);
         this.userService = userService;
         this.projectService = projectService;
+        this.relationshipService = relationshipService;
     }
 
-    protected UsersController() {
-        projectService = null;
-        userService = null;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Map<String, ResourceCollection<LabelledRelationshipResource>> constructCustomRelatedResourceCollections(User user) {
+        Map<String, ResourceCollection<LabelledRelationshipResource>> resources = new HashMap<>();
+
+        resources.put(USER_PROJECTS_MAP_LABEL, getProjectsForUser(user));
+
+        return resources;
+    }
+
+    /**
+     * A collection of custom links for the users resource collection.
+     *
+     * @return a collection of links for all users.
+     */
+    @Override
+    protected Collection<Link> constructCustomResourceCollectionLinks() {
+        Collection<Link> links = new HashSet<>();
+
+        links.add(linkTo(methodOn(UsersController.class).getAllUsers()).withRel(REL_ALL_USERS));
+
+        return links;
+    }
+
+    /**
+     * A collection of custom links for a specific {@link User}.
+     *
+     * @param u the {@link User} to create links for.
+     * @return the links for this {@link User}.
+     */
+    @Override
+    protected Collection<Link> constructCustomResourceLinks(User u) {
+        Collection<Link> links = new HashSet<>();
+        links.add(linkTo(UsersController.class).slash(u.getUsername()).
+                slash("projects").withRel(REL_USER_PROJECTS));
+        return links;
     }
 
     /**
@@ -105,6 +163,32 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
         return model;
     }
 
+    /**
+     * Get the {@link SequenceFile} entities related to this {@link Project}.
+     *
+     * @param project the {@link Project} to load {@link SequenceFile} entities for.
+     * @return labelled relationships
+     */
+    private ResourceCollection<LabelledRelationshipResource> getProjectsForUser(User user) {
+    	
+    	Collection<Relationship> relationships = relationshipService.getRelationshipsForEntity(user.getIdentifier(), User.class, Project.class);
+    	ResourceCollection<LabelledRelationshipResource> projectResources = new ResourceCollection<>(relationships.size());
+    	
+    	String userId = user.getIdentifier().getIdentifier();
+    	
+    	for (Relationship r : relationships) {
+    		Identifier projectId = r.getObject();
+    		LabelledRelationshipResource resource = new LabelledRelationshipResource(projectId.getLabel(), r);
+    		resource.add(linkTo(ProjectsController.class).slash(projectId.getIdentifier()).withSelfRel());
+    		projectResources.add(resource);
+    	}
+    			
+    	projectResources.add(linkTo(methodOn(UsersController.class).getUserProjects(userId)).withRel(REL_USER_PROJECTS));
+    	projectResources.setTotalResources(relationships.size());
+
+        return projectResources;
+    }
+    
     /**
      * Get the collection of projects for a specific user.
      *
@@ -138,6 +222,7 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
         // respond to the user
         return mav;
     }
+    
 
     /**
      * Map an instance of {@link UserResource} to {@link User}.
@@ -149,33 +234,5 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
     protected User mapResourceToType(UserResource ur) {
         return new User(ur.getUsername(), ur.getEmail(), ur.getPassword(),
                 ur.getFirstName(), ur.getLastName(), ur.getPhoneNumber());
-    }
-
-    /**
-     * A collection of custom links for a specific {@link User}.
-     *
-     * @param u the {@link User} to create links for.
-     * @return the links for this {@link User}.
-     */
-    @Override
-    protected Collection<Link> constructCustomResourceLinks(User u) {
-        Collection<Link> links = new HashSet<>();
-        links.add(linkTo(UsersController.class).slash(u.getUsername()).
-                slash("projects").withRel(USER_PROJECTS_REL));
-        return links;
-    }
-
-    /**
-     * A collection of custom links for the users resource collection.
-     *
-     * @return a collection of links for all users.
-     */
-    @Override
-    protected Collection<Link> constructCustomResourceCollectionLinks() {
-        Collection<Link> links = new HashSet<>();
-
-        links.add(linkTo(methodOn(UsersController.class).getAllUsers()).withRel(REL_ALL_USERS));
-
-        return links;
     }
 }
