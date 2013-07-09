@@ -118,6 +118,10 @@
 //        }
 //      };
 
+        $scope.changeProjectView = function(view) {
+            $location.path('/projects/' + $scope.project.id + '/' + view);
+        };
+
       $scope.removeItemFromProject = function(type) {
         var l = ng.element("input[name='" + type +"']:checked");
         ng.forEach(l, function(item) {

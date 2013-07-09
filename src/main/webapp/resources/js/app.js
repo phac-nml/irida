@@ -7,7 +7,7 @@
  LICENSE:  MIT
  ========================================================================= */
 var NGS = angular.module('NGS', [ 'ngCookies', 'http-auth-interceptor',
-		'ngResource', 'ngs-section', 'filters', 'ui.bootstrap', 'ngDragDrop' ]);
+		'ngResource', 'ngs-section', 'filters', 'ui.state', 'ui.bootstrap', 'ngDragDrop' ]);
 
 /**
  * Allows for the use of URLs without the !# in it
@@ -15,28 +15,6 @@ var NGS = angular.module('NGS', [ 'ngCookies', 'http-auth-interceptor',
 NGS.config([ '$locationProvider', function($locationProvider) {
 	'use strict';
 	$locationProvider.html5Mode(true);
-} ]);
-
-NGS.config([ '$routeProvider', function($routeProvider) {
-	/**
-	 * Landing page.
-	 */
-	$routeProvider.when('/', {
-		templateUrl : '/partials/landing.hml',
-		controller : function($scope, data) {
-			console.log(data);
-			$scope.projects = data.resource.resources;
-		},
-		resolve : {
-			data : function($q, ajaxService) {
-				var defer = $q.defer();
-				ajaxService.get('/api/projects').then(function(data) {
-					defer.resolve(data);
-				});
-				return defer.promise;
-			}
-		}
-	});
 } ]);
 
 NGS.run([

@@ -23,7 +23,7 @@
       }
       active = ng.element(e.currentTarget);
       active.addClass('active');
-      $location.path(url.match(/\/projects\/.*$/)[0]);
+      $location.path(url.match(/\/projects\/.*$/)[0] + "/samples");
     };
 
   }]);
