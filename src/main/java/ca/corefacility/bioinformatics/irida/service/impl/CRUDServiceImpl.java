@@ -28,7 +28,7 @@ import java.util.Map.Entry;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class CRUDServiceImpl<KeyType extends Identifier, ValueType extends Comparable<ValueType> & Auditable<Audit>>
+public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType> & Auditable<Audit>>
         implements CRUDService<KeyType, ValueType> {
 
     private static final Logger logger = LoggerFactory.getLogger(CRUDServiceImpl.class);

@@ -10,7 +10,7 @@ import java.util.Collection;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public interface ProjectService extends CRUDService<Identifier, Project> {
+public interface ProjectService extends CRUDService<Long, Project> {
 
     /**
      * Add the specified {@link User} to the {@link Project} with a {@link Role}. If the {@link User} is a

@@ -28,7 +28,7 @@ import java.util.Collection;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public interface ProjectRepository extends CRUDRepository<Identifier, Project> {
+public interface ProjectRepository extends CRUDRepository<Long, Project> {
 
     /**
      * Get all {@link Project}s associated with a particular {@link User}.

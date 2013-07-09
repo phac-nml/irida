@@ -48,7 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional
 @Repository
-public class ProjectRelationalRepository extends GenericRelationalRepository<Identifier, Project> implements ProjectRepository{
+public class ProjectRelationalRepository extends GenericRelationalRepository<Long, Project> implements ProjectRepository{
 
 //public class ProjectRelationalRepository implements ProjectRepository{
     
@@ -106,11 +106,10 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Ide
     }
 
     @Override
-    public Project read(Identifier id) throws EntityNotFoundException {
-        String identifier = id.getIdentifier();
+    public Project read(Long id) throws EntityNotFoundException {
         
         Session session = sessionFactory.getCurrentSession();
-        Project load = (Project) session.load(Project.class, Long.parseLong(identifier));
+        Project load = (Project) session.load(Project.class, id);
         
         load = addIdentifierToObject(load);
         
@@ -124,7 +123,7 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Ide
 
     @Transactional
     @Override
-    public Project update(Identifier id, Map<String, Object> updatedFields) throws InvalidPropertyException {
+    public Project update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
         String update = "UPDATE project SET ";
        
         List<String> args = new ArrayList<>();
@@ -135,7 +134,7 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Ide
         }
         update += " WHERE id=?";
         
-        args.add(id.getIdentifier());
+        args.add(id.toString());
         
         this.jdbcTemplate.update(update,args.toArray());
         
@@ -143,13 +142,13 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Ide
     }
 
     @Override
-    public void delete(Identifier id) throws EntityNotFoundException {
+    public void delete(Long id) throws EntityNotFoundException {
         if(!exists(id)){
-            throw new StorageException("Entity with id " + id.getIdentifier() + " cannot be deleted because it doesn't exists");
+            throw new StorageException("Entity with id " + id + " cannot be deleted because it doesn't exists");
         }
         String update = "DELETE FROM project WHERE id=?";
         
-        this.jdbcTemplate.update(update,id.getIdentifier());
+        this.jdbcTemplate.update(update,id);
     }
 
     @Override
@@ -189,9 +188,9 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Ide
     }
 
     @Override
-    public Boolean exists(Identifier id) {
+    public Boolean exists(Long id) {
         String query = "SELECT count(id) FROM project WHERE id=?";
-        Integer queryForObject = this.jdbcTemplate.queryForObject(query, Integer.class,id.getIdentifier());
+        Long queryForObject = this.jdbcTemplate.queryForObject(query, Long.class,id);
         
         return queryForObject > 0;
     }

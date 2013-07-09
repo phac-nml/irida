@@ -25,7 +25,7 @@ import java.util.Set;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class ProjectServiceImpl extends CRUDServiceImpl<Identifier, Project> implements ProjectService {
+public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implements ProjectService {
 
     private static final Logger logger = LoggerFactory.getLogger(ProjectServiceImpl.class);
     private RelationshipRepository relationshipRepository;

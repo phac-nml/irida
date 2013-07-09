@@ -30,7 +30,8 @@ import java.util.List;
 /**
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class ProjectSesameRepository extends GenericRepository<Identifier, Project> implements ProjectRepository {
+//public class ProjectSesameRepository extends GenericRepository<Identifier, Project> implements ProjectRepository {
+public class ProjectSesameRepository extends GenericRepository<Identifier, Project>{
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProjectSesameRepository.class);
     private static final RdfPredicate hasProject = new RdfPredicate("irida", "hasProject");
@@ -45,7 +46,7 @@ public class ProjectSesameRepository extends GenericRepository<Identifier, Proje
     /**
      * {@inheritDoc}
      */
-    @Override
+    //@Override
     public Collection<Project> getProjectsForUser(User user) {
         List<Identifier> projIds = linksRepo.listObjects(user.getIdentifier(), hasProject);
 
@@ -62,7 +63,7 @@ public class ProjectSesameRepository extends GenericRepository<Identifier, Proje
     /**
      * {@inheritDoc}
      */
-    @Override
+    //@Override
     public Relationship addUserToProject(Project p, User user) {
         Relationship l = new Relationship();
         l.setSubject(user.getIdentifier());
@@ -76,7 +77,7 @@ public class ProjectSesameRepository extends GenericRepository<Identifier, Proje
     /**
      * {@inheritDoc}
      */
-    @Override
+    //@Override
     public void removeUserFromProject(Project project, User user) {
         //throw new UnsupportedOperationException("not implemented.");
         

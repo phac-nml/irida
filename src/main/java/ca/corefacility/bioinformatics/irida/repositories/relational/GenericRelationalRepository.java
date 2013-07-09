@@ -42,7 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional
 @Repository
-public abstract class GenericRelationalRepository<IDType extends Identifier, Type extends IridaThing> implements CRUDRepository<IDType, Type> {
+public abstract class GenericRelationalRepository<Long, Type extends IridaThing> implements CRUDRepository<Long, Type> {
     private String tableName;
     protected JdbcTemplate jdbcTemplate;
     
@@ -74,7 +74,7 @@ public abstract class GenericRelationalRepository<IDType extends Identifier, Typ
     }
     
     @Override
-    public Type read(IDType id) throws EntityNotFoundException {
+    public Type read(Long id) throws EntityNotFoundException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -84,12 +84,12 @@ public abstract class GenericRelationalRepository<IDType extends Identifier, Typ
     }
 
     @Override
-    public Type update(IDType id, Map<String, Object> updatedFields) throws InvalidPropertyException {
+    public Type update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void delete(IDType id) throws EntityNotFoundException {
+    public void delete(Long id) throws EntityNotFoundException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -104,7 +104,7 @@ public abstract class GenericRelationalRepository<IDType extends Identifier, Typ
     }
 
     @Override
-    public Boolean exists(IDType id) {
+    public Boolean exists(Long id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

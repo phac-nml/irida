@@ -20,7 +20,7 @@ import java.util.Map;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public interface CRUDService<IdentifierType extends Identifier, Type extends Comparable<Type> & Auditable<Audit>> {
+public interface CRUDService<IdentifierType, Type extends Comparable<Type> & Auditable<Audit>> {
 
     /**
      * Create a new object in the persistence store.
