@@ -18,24 +18,38 @@ package ca.corefacility.bioinformatics.irida.utils;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 /**
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
+@Entity
+@Table(name="identifiable")
 public class IdentifiableTestEntity implements IridaThing<IdentifiableTestEntity,Audit,Identifier>, Comparable<IdentifiableTestEntity> {
 
-    private Identifier id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    
+    @Transient
+    private Identifier identifier;
     @NotNull
     private String nonNull;
     private Integer integerValue;
     @NotNull
+    @Transient
     private Audit audit;
     private String label;
 
     public IdentifiableTestEntity() {
-        this.id = new Identifier();
+        this.identifier = new Identifier();
         this.audit = new Audit();
     }
 
@@ -44,6 +58,14 @@ public class IdentifiableTestEntity implements IridaThing<IdentifiableTestEntity
         StringBuilder builder = new StringBuilder();
         builder.append("created: ").append(audit.getCreated());
         return builder.toString();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNonNull() {
@@ -56,12 +78,12 @@ public class IdentifiableTestEntity implements IridaThing<IdentifiableTestEntity
 
     @Override
     public Identifier getIdentifier() {
-        return this.id;
+        return this.identifier;
     }
 
     @Override
     public void setIdentifier(Identifier identifier) {
-        this.id = identifier;
+        this.identifier = identifier;
     }
 
     @Override
