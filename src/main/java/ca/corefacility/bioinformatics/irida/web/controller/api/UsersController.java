@@ -55,10 +55,6 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
      */
     public static final String REL_ALL_USERS = "users/all";
     /**
-     * rel for the first page of the users document.
-     */
-    public static final String REL_USERS_FIRST_PAGE = "users/pages/first";
-    /**
      * a rel for getting a handle on the projects that a user belongs to.
      */
     public static final String REL_USER_PROJECTS = "user/projects";
@@ -120,7 +116,7 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
     protected Collection<Link> constructCustomResourceCollectionLinks() {
         Collection<Link> links = new HashSet<>();
 
-        links.add(linkTo(methodOn(UsersController.class).getAllUsers()).withRel(REL_ALL_USERS));
+        links.add(linkTo(methodOn(UsersController.class).listAllResources()).withRel(REL_ALL_USERS));
 
         return links;
     }
@@ -137,30 +133,6 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
         links.add(linkTo(UsersController.class).slash(u.getUsername()).
                 slash("projects").withRel(REL_USER_PROJECTS));
         return links;
-    }
-
-    /**
-     * Get all users in the application.
-     *
-     * @return
-     */
-    @RequestMapping(value = "/all", method = RequestMethod.GET)
-    public ModelMap getAllUsers() {
-        List<User> users = userService.list();
-        ResourceCollection<UserResource> userResources = new ResourceCollection<>(users.size());
-        for (User u : users) {
-            UserResource ur = new UserResource(u);
-            ur.add(linkTo(UsersController.class).slash(u.getUsername()).withSelfRel());
-            userResources.add(ur);
-        }
-
-        userResources.add(linkTo(methodOn(UsersController.class).getAllUsers()).withSelfRel());
-        userResources.add(linkTo(UsersController.class).withRel(REL_USERS_FIRST_PAGE));
-        userResources.setTotalResources(users.size());
-
-        ModelMap model = new ModelMap();
-        model.addAttribute(GenericController.RESOURCE_NAME, userResources);
-        return model;
     }
 
     /**

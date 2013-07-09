@@ -4,6 +4,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
@@ -106,10 +107,11 @@ public class UserControllerTest {
         String username = "fbristow";
         User u = new User();
         u.setUsername(username);
+        u.setIdentifier(new UserIdentifier(username));
         List<User> users = Lists.newArrayList(u);
         when(userService.list()).thenReturn(users);
 
-        ModelMap output = controller.getAllUsers();
+        ModelMap output = controller.listAllResources();
 
         @SuppressWarnings("unchecked")
 		ResourceCollection<UserResource> usersCollection = (ResourceCollection<UserResource>) output.get(

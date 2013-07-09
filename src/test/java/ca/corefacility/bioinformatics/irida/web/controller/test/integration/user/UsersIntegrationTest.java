@@ -15,7 +15,7 @@ public class UsersIntegrationTest {
 
     @Test
     public void testGetAllUsers() {
-        expect().body("resource.links.rel", hasItems("self", "users/pages/first")).and()
+        expect().body("resource.links.rel", hasItems("self", "collection/pages/first")).and()
                 .body("resource.resources.username", hasItem("fbristow")).when().get("/users/all");
     }
 }

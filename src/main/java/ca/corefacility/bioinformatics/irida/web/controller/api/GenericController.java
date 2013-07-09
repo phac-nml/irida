@@ -1,5 +1,30 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api;
 
+import static ca.corefacility.bioinformatics.irida.web.controller.api.links.PageableControllerLinkBuilder.pageLinksFor;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
 import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
@@ -13,28 +38,9 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.exception.GenericsException;
 import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageableControllerLinkBuilder;
 import ca.corefacility.bioinformatics.irida.web.controller.api.support.SortProperty;
+
 import com.google.common.base.Strings;
 import com.google.common.net.HttpHeaders;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static ca.corefacility.bioinformatics.irida.web.controller.api.links.PageableControllerLinkBuilder.pageLinksFor;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 /**
  * A controller that can serve any model from the database.
@@ -66,6 +72,10 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * Link back to the collection after deletion of a resource.
      */
     public static final String REL_COLLECTION = "collection";
+    /**
+     * rel for the first page of the users document.
+     */
+    public static final String REL_COLLECTION_FIRST_PAGE = "collection/pages/first";
     /**
      * logger.
      */
@@ -171,7 +181,7 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_PROPERTY,
                     required = false) String sortProperty,
             @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER,
-                    required = false) Order sortOrder) throws InstantiationException, IllegalAccessException {
+                    required = false) Order sortOrder) {
         ModelMap model = new ModelMap();
         List<Type> entities;
         ControllerLinkBuilder linkBuilder = linkTo(getClass());
@@ -203,11 +213,15 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
 
         // for each entity returned by the service, construct a new instance of the
         // resource type and add a self-rel using the linkBuilder.
-        for (Type entity : entities) {
-            ResourceType resource = resourceType.newInstance();
-            resource.setResource(entity);
-            resource.add(linkBuilder.slash(entity.getIdentifier().getIdentifier()).withSelfRel());
-            resources.add(resource);
+        try {
+	        for (Type entity : entities) {
+	            ResourceType resource = resourceType.newInstance();
+	            resource.setResource(entity);
+	            resource.add(linkBuilder.slash(entity.getIdentifier().getIdentifier()).withSelfRel());
+	            resources.add(resource);
+	        }
+        } catch (InstantiationException | IllegalAccessException e) {
+        	throw new GenericsException("Could not initialize resourceType: [" + resourceType + "]");
         }
 
         // the server will respond with only one page worth of entities, so we should tell
@@ -224,16 +238,43 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         // send the response back to the client.
         return model;
     }
+    
+
+
+    /**
+     * Get all resources in the application.
+     *
+     * @return a model containing all resources of the specified type in the application.
+     */
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    public ModelMap listAllResources() {
+        List<Type> entities = crudService.list();
+        ResourceCollection<ResourceType> resources = new ResourceCollection<>(entities.size());
+        try {
+	        for (Type entity : entities) {
+	        	ResourceType resource = resourceType.newInstance();
+	        	resource.setResource(entity);
+	        	resource.add(linkTo(getClass()).slash(entity.getIdentifier().getIdentifier()).withSelfRel());
+	            resources.add(resource);
+	        }
+        } catch (InstantiationException | IllegalAccessException e) {
+        	throw new GenericsException("Could not initialize resourceType: [" + resourceType + "]");
+        }
+        
+        resources.add(linkTo(getClass()).slash("all").withSelfRel());
+        resources.add(linkTo(getClass()).withRel(REL_COLLECTION_FIRST_PAGE));
+        resources.setTotalResources(entities.size());
+
+        ModelMap model = new ModelMap();
+        model.addAttribute(GenericController.RESOURCE_NAME, resources);
+        return model;
+    }
 
     /**
      * Retrieve and serialize an individual instance of a resource by identifier.
      *
      * @param resourceId the identifier of the resource to retrieve from the database.
      * @return the model and view for the individual resource.
-     * @throws InstantiationException if the method fails to invoke the constructor for either
-     *                                <code>IdentifierType</code> or <code>ResourceType</code>.
-     * @throws IllegalAccessException if the constructor for either <code>IdentifierType</code> or
-     *                                <code>ResourceType</code> is marked <code>private</code>.
      */
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
     public ModelMap getResource(@PathVariable String resourceId) {
@@ -322,8 +363,6 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      *
      * @param resourceId the identifier that should be deleted from the database.
      * @return a response indicating that the resource was deleted.
-     * @throws InstantiationException if the constructor for {@link IdentifierType} fails.
-     * @throws IllegalAccessException if the constructor for {@link IdentifierType} is not public.
      */
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.DELETE)
     public ModelMap delete(@PathVariable String resourceId) {
@@ -357,13 +396,10 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      * @param resourceId     the identifier of the resource to be updated.
      * @param representation the properties to be updated and their new values.
      * @return a response indicating that the resource was updated.
-     * @throws InstantiationException if the constructor for {@link IdentifierType} failed.
-     * @throws IllegalAccessException if the constructor for {@link IdentifierType} is not marked public.
      */
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.PATCH,
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ModelMap update(@PathVariable String resourceId, @RequestBody Map<String, Object> representation) {
-
         // construct a new instance of an identifier as specified by the client
         IdentifierType identifier = null;
 
