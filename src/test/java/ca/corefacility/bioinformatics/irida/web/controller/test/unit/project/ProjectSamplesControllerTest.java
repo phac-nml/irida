@@ -100,7 +100,6 @@ public class ProjectSamplesControllerTest {
         // confirm that the response looks right.
         Object o = modelMap.get(GenericController.RESOURCE_NAME);
         assertTrue(o instanceof RootResource);
-        @SuppressWarnings("unchecked")
         RootResource resource = (RootResource) o;
         List<Link> links = resource.getLinks();
 
@@ -221,7 +220,6 @@ public class ProjectSamplesControllerTest {
     public void testUpdateSample() {
         Project p = TestDataFactory.constructProject();
         Sample s = TestDataFactory.constructSample();
-        Relationship r = new Relationship(p.getIdentifier(), s.getIdentifier());
         Map<String, Object> updatedFields = ImmutableMap.of("sampleName", (Object) "some new name");
         String projectId = p.getIdentifier().getIdentifier();
         String sampleId = s.getIdentifier().getIdentifier();

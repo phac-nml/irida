@@ -1,19 +1,24 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.integration.project;
 
-import com.google.common.net.HttpHeaders;
-import com.jayway.restassured.response.Response;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
+import static com.jayway.restassured.RestAssured.expect;
+import static com.jayway.restassured.RestAssured.get;
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.path.json.JsonPath.from;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.jayway.restassured.RestAssured.*;
-import static com.jayway.restassured.path.json.JsonPath.from;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import org.junit.Test;
+import org.springframework.http.HttpStatus;
+
+import com.google.common.net.HttpHeaders;
+import com.jayway.restassured.response.Response;
 
 /**
  * Integration tests for project samples.
@@ -21,7 +26,6 @@ import static org.junit.Assert.*;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class ProjectSamplesIntegrationTest {
-    private static final Logger logger = LoggerFactory.getLogger(ProjectSamplesIntegrationTest.class);
 
     @Test
     public void testAddSampleToProject() {

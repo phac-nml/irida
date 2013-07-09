@@ -1,5 +1,30 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.samples;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
@@ -16,29 +41,8 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSequenceFilesController;
+
 import com.google.common.net.HttpHeaders;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Link;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Map;
-
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  * Controller for managing relationships between {@link Sample} and {@link SequenceFile}.
@@ -63,10 +67,6 @@ public class SampleSequenceFilesController {
      * The key used in the request to add an existing {@link SequenceFile} to a {@link Sample}.
      */
     public static final String SEQUENCE_FILE_ID_KEY = "sequenceFileId";
-    /**
-     * logger
-     */
-    private static final Logger logger = LoggerFactory.getLogger(SampleSequenceFilesController.class);
     /**
      * Reference to the {@link SequenceFileService}.
      */
@@ -156,7 +156,7 @@ public class SampleSequenceFilesController {
         sampleService.getSampleForProject(p, sampleIdentifier);
 
         // load the sample from the database
-        Sample s = sampleService.read(sampleIdentifier);
+        sampleService.read(sampleIdentifier);
 
         // prepare a new sequence file using the multipart file supplied by the caller
         Path temp = Files.createTempDirectory(null);

@@ -1,7 +1,10 @@
 target/*
 .idea/*
 .DS_Store/
-node_modules/*
+node_modules
 irida-web.iml
 src/main/webapp/resources/.sass-cache
 /target
+.classpath
+.project
+.settings

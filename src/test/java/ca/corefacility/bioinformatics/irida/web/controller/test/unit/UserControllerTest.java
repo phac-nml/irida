@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
@@ -27,7 +28,9 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserReso
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.UsersController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageLink;
+
 import com.google.common.collect.Lists;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.Link;
@@ -55,12 +58,14 @@ public class UserControllerTest {
     private UsersController controller;
     private UserService userService;
     private ProjectService projectService;
+    private RelationshipService relationshipService;
 
     @Before
     public void setUp() {
         userService = mock(UserService.class);
         projectService = mock(ProjectService.class);
-        controller = new UsersController(userService, projectService);
+        relationshipService = mock(RelationshipService.class);
+        controller = new UsersController(userService, projectService, relationshipService);
 
         // fake out the servlet response so that the URI builder will work.
         RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
@@ -121,7 +126,8 @@ public class UserControllerTest {
 
         ModelMap output = controller.getAllUsers();
 
-        ResourceCollection<UserResource> usersCollection = (ResourceCollection<UserResource>) output.get(
+        @SuppressWarnings("unchecked")
+		ResourceCollection<UserResource> usersCollection = (ResourceCollection<UserResource>) output.get(
                 GenericController.RESOURCE_NAME);
         assertEquals("user resource collection total resources is wrong.", 1, usersCollection.getTotalResources());
         assertEquals("users collection is the wrong size.", 1, usersCollection.size());

@@ -1,5 +1,34 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.project;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.hateoas.Link;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.ui.ModelMap;
+import org.springframework.util.FileCopyUtils;
+
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
@@ -15,31 +44,9 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageLink;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
+
 import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.hateoas.Link;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.ui.ModelMap;
-import org.springframework.util.FileCopyUtils;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link ProjectSequenceFilesController}
@@ -113,7 +120,6 @@ public class ProjectSequenceFilesControllerTest {
         // confirm that the response looks right.
         Object o = modelMap.get(GenericController.RESOURCE_NAME);
         assertTrue(o instanceof RootResource);
-        @SuppressWarnings("unchecked")
         RootResource resource = (RootResource) o;
         List<Link> links = resource.getLinks();
 
