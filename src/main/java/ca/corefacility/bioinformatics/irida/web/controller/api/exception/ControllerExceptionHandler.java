@@ -35,7 +35,6 @@ public class ControllerExceptionHandler {
      * @param e the exception as thrown by the service.
      * @return an appropriate HTTP response.
      */
-    @SuppressWarnings("unused")
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleAllOtherExceptions(Exception e) {
         logger.error("An exception happened at " + new Date() + ". The stack trace follows: ", e);
@@ -50,7 +49,7 @@ public class ControllerExceptionHandler {
      */
     @ExceptionHandler(InvalidPropertyException.class)
     public ResponseEntity<String> handleInvalidPropertyException(InvalidPropertyException e) {
-        logger.info("A client attempted to update a resource with an" +
+        logger.error("A client attempted to update a resource with an" +
                 " invalid property at " + new Date() + ". The stack trace follows: ", e);
         return new ResponseEntity<>("Cannot update resource with supplied properties.", HttpStatus.BAD_REQUEST);
     }
@@ -63,7 +62,7 @@ public class ControllerExceptionHandler {
      */
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<String> handleNotFoundException(EntityNotFoundException e) {
-        logger.info("A client attempted to retrieve a resource with an identifier" +
+        logger.error("A client attempted to retrieve a resource with an identifier" +
                 " that does not exist at " + new Date() + ". The stack trace follows: ", e);
         return new ResponseEntity<>("No such resource found.", HttpStatus.NOT_FOUND);
     }
@@ -74,7 +73,6 @@ public class ControllerExceptionHandler {
      * @param e the exception as thrown by the service.
      * @return an appropriate HTTP response.
      */
-    @SuppressWarnings("unchecked")
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<String> handleConstraintViolations(ConstraintViolationException e) {
         Set<ConstraintViolation<?>> constraintViolations = new HashSet<>();
@@ -91,7 +89,6 @@ public class ControllerExceptionHandler {
      * @param e the exception as thrown by the service.
      * @return an appropriate HTTP response.
      */
-    @SuppressWarnings("unused")
     @ExceptionHandler(EntityExistsException.class)
     public ResponseEntity<String> handleExistsException(EntityExistsException e) {
         logger.info("A client attempted to create a new resource with an identifier that exists, " +
@@ -99,10 +96,16 @@ public class ControllerExceptionHandler {
         return new ResponseEntity<>("An entity already exists with that identifier.", HttpStatus.CONFLICT);
     }
 
-    @SuppressWarnings("unused")
-    @ExceptionHandler(org.springframework.web.HttpRequestMethodNotSupportedException.class)
+    /**
+     * Handle {@link HttpRequestMethodNotSupportedException}.
+     * 
+     * @param e the exception as thrown by Spring.
+     * @return an appropriate HTTP response.
+     */
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<String> handleMethodNotSupportedException(HttpRequestMethodNotSupportedException e){
-        logger.debug("FUCK OFF");
+        logger.error("A client attempted to issue a request against an endpoint with an unsupported "
+        		+ "method: [" + e.getMethod() + "]");
         return new ResponseEntity<>("This method is not supported at this endpoint.", HttpStatus.METHOD_NOT_ALLOWED);
     }
 
@@ -112,7 +115,6 @@ public class ControllerExceptionHandler {
      * @param e the exception as thrown by the JSON parser.
      * @return an appropriate HTTP response.
      */
-    @SuppressWarnings("unused")
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<String> handleInvalidJsonException(HttpMessageNotReadableException e) {
         String message = "Your request could not be parsed.";

@@ -63,7 +63,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 @Controller
 @RequestMapping("/generic")
 public abstract class GenericController<IdentifierType extends Identifier, Type extends Identifiable<IdentifierType>
-        & Auditable<Audit> & Comparable<Type>, ResourceType extends Resource> {
+        & Auditable<Audit> & Comparable<Type>, ResourceType extends Resource<IdentifierType, Type>> {
 
     /**
      * name of objects sent back to the client for all generic resources.

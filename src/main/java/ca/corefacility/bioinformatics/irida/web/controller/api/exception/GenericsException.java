@@ -7,7 +7,10 @@ package ca.corefacility.bioinformatics.irida.web.controller.api.exception;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class GenericsException extends RuntimeException {
-    public GenericsException(String message) {
+
+	private static final long serialVersionUID = 7337013431300992746L;
+
+	public GenericsException(String message) {
         super(message);
     }
 }

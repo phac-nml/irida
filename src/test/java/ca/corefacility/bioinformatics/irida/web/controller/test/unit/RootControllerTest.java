@@ -35,7 +35,7 @@ public class RootControllerTest {
 
     @Test
     public void testGetLinks() {
-        Map<String, Class> controllers = RootController.CONTROLLERS;
+        Map<String, Class<?>> controllers = RootController.CONTROLLERS;
         ModelMap map = controller.getLinks();
         Object o = map.get(GenericController.RESOURCE_NAME);
         assertNotNull(o);

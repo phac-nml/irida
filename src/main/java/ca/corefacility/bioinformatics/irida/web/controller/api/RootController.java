@@ -46,7 +46,7 @@ public class RootController {
     /**
      * A collection of the controllers in our system.
      */
-    public static final Map<String, Class> CONTROLLERS = new ConcurrentHashMap<>();
+    public static final Map<String, Class<?>> CONTROLLERS = new ConcurrentHashMap<>();
     /**
      * logger
      */
@@ -73,7 +73,7 @@ public class RootController {
         List<Link> links = new ArrayList<>();
 
         // create a link to all of the controllers defined in our set, then add the link to the list of links.
-        for (Entry<String, Class> entry : CONTROLLERS.entrySet()) {
+        for (Entry<String, Class<?>> entry : CONTROLLERS.entrySet()) {
             Link link = linkTo(entry.getValue()).withRel(entry.getKey());
             links.add(link);
         }

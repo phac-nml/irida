@@ -27,7 +27,9 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserReso
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.UsersController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageLink;
+
 import com.google.common.collect.Lists;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.Link;
@@ -121,7 +123,8 @@ public class UserControllerTest {
 
         ModelMap output = controller.getAllUsers();
 
-        ResourceCollection<UserResource> usersCollection = (ResourceCollection<UserResource>) output.get(
+        @SuppressWarnings("unchecked")
+		ResourceCollection<UserResource> usersCollection = (ResourceCollection<UserResource>) output.get(
                 GenericController.RESOURCE_NAME);
         assertEquals("user resource collection total resources is wrong.", 1, usersCollection.getTotalResources());
         assertEquals("users collection is the wrong size.", 1, usersCollection.size());
