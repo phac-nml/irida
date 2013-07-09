@@ -1,3 +1,4 @@
+/*global angular, NGS */
 /**
  * User:    Josh Adam <josh.adam@phac-aspc.gc.ca>
  * Date:    2013-06-04
@@ -9,34 +10,12 @@
   app.controller('ProjectCtrl', [ '$scope', '$rootScope', '$window', 'ajaxService', '$location', 'projectService',
     function ($scope, $rootScope, $window, ajaxService, $location, projectService) {
         projectService.project = $scope.project;
-        console.log(projectService.project);
+
       $scope.data.view = 'samples';
       $scope.data.users = ['Josh Adam', 'Frankilin Bristow', 'Aaron Petkau', 'Heather Adam', 'Nathan Adam'];
-      $scope.sample = {};
-      $scope.samples = {};
-//      $scope.list2 = [ ];
-//      var detailFileDrag = false;
 
-//      $scope.addFileToSample = function (evt, ui, url) {
-//        $scope.dragOverOut(evt);
-//        addSequenceFileToSample(url);
-//      };
-//
-//      $scope.addFileToDetailSample = function (evt, ui) {
-//        // Need to know if this is a drop to self list
-//        if (detailFileDrag) {
-//          $scope.sample.sequenceFiles = $scope.sample.sequenceFiles2.slice(0);
-//          detailFileDrag = false;
-//        }
-//        else {
-//          addSequenceFileToSample($scope.sample.addUrl, function () {
-//            getSequnceFilesForSample($scope.sample.addUrl);
-//          });
-//        }
-//      };
 
       $scope.addFilesToSample = function (s) {
-        debugger;
         var fileIndexes = ng.element('input[name="files"]:checked');
         // Get sample information
         if (fileIndexes.length) {
@@ -70,51 +49,15 @@
         });
       }
 
-//      function getSequnceFilesForSample(url) {
-//        ajaxService.get(url).then(function (data) {
-//          $scope.sample.sequenceFiles = data.resource.resources;
-//          $scope.sample.sequenceFiles2 = data.resource.resources;
-//        });
-//      }
-
-//      $scope.getSequenceFiles = function (sample) {
-//        // TODO: (Josh: 2013-06-18) Add loading spinner!
-//        $scope.sample = {
-//          name: sample.label,
-//          addUrl: sample.links['sample/sequenceFiles'],
-//          sequenceFiles: [],
-//          sequenceFiles2: [],
-//          details: true
-//        };
-//
-//        getSequnceFilesForSample(sample.links['sample/sequenceFiles']);
-//      };
-
-//      $scope.fileDrag = function (evt) {
-//        $(evt.target).toggleClass('project__file--drag');
-//      };
-//
-//      $scope.dragOverOut = function (evt) {
-//        $(evt.target).find('.folder').toggleClass('folder--draghover');
-//      };
-//
-//      $scope.detailFileDrag = function (evt, ui, file) {
-//        detailFileDrag = true;
-//      };
-
-//      $scope.detailFileDrop = function () {
-////        detailFileDrag = false;
-//      };
-
       /**
        * Delete the currently viewed project
        */
       $scope.deleteProject = function () {
-        ajaxService.deleteItem($scope.project.links.self).then(function (data) {
+        ajaxService.deleteItem($scope.project.links.self).then(function () {
           $rootScope.$broadcast('NOTIFY', {
             'msg': 'Deleted ' + $scope.project.name,
             'callback': function () {
-              alert("THIS NEEDS TO BE IMPLEMENTED");
+              // TODO: Once undo is set up on the server.
             }
           });
 
@@ -174,6 +117,10 @@
 //          $scope.display[type].checkedCount = 0;
 //        }
 //      };
+
+        $scope.changeProjectView = function(view) {
+            $location.path('/projects/' + $scope.project.id + '/' + view);
+        };
 
       $scope.removeItemFromProject = function(type) {
         var l = ng.element("input[name='" + type +"']:checked");
