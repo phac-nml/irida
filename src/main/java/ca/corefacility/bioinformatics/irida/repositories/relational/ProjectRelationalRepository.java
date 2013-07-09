@@ -27,17 +27,21 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.IntegerIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.sql.DataSource;
 import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -104,25 +108,25 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /*
     @Transactional
     @Override
     public Project update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
-        String update = "UPDATE project SET ";
+        Session session = sessionFactory.getCurrentSession();
+        Project base = (Project) session.get(Project.class, id);        
+        
+        DirectFieldAccessor fieldAccessor = new DirectFieldAccessor(base);
        
-        List<String> args = new ArrayList<>();
         for(String key : updatedFields.keySet()){
             Object value = updatedFields.get(key);
-            update += " "+key+"=? ";
-            args.add(value.toString());
+
+            fieldAccessor.setPropertyValue(key, value);
         }
-        update += " WHERE id=?";
         
-        args.add(id.toString());
+        session.save(base);
         
-        this.jdbcTemplate.update(update,args.toArray());
-        
-        return this.read(id);
-    }
+        return base;
+    }*/
 
     @Override
     public void delete(Long id) throws EntityNotFoundException {

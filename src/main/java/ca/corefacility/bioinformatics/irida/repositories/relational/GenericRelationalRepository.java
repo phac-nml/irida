@@ -30,6 +30,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -89,9 +90,23 @@ public abstract class GenericRelationalRepository<Type extends IridaThing> imple
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Transactional
     @Override
     public Type update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session session = sessionFactory.getCurrentSession();
+        Type base = (Type) session.get(classType, id);     
+        
+        DirectFieldAccessor fieldAccessor = new DirectFieldAccessor(base);
+       
+        for(String key : updatedFields.keySet()){
+            Object value = updatedFields.get(key);
+
+            fieldAccessor.setPropertyValue(key, value);
+        }
+        
+        session.save(base);
+        
+        return base;
     }
 
     @Override
