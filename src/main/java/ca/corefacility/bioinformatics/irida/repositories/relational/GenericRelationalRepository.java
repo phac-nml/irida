@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import javax.sql.DataSource;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.DirectFieldAccessor;
@@ -125,12 +126,34 @@ public abstract class GenericRelationalRepository<Type extends IridaThing> imple
 
     @Override
     public List<Type> list() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return list(0, 20, null, Order.NONE);
     }
 
     @Override
     public List<Type> list(int page, int size, String sortProperty, Order order) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session session = sessionFactory.getCurrentSession();
+        
+        String name = classType.getName();
+        List<Type> results;
+        String query = "FROM "+name;
+        if(sortProperty != null){
+            query += " ORDER BY ?";
+            if(order == Order.ASCENDING){
+                query += " ASC";
+            }
+            else if(order == Order.DESCENDING){
+                query += " DESC";
+            }
+            Query createQuery = session.createQuery(query);
+            createQuery.setString(1, sortProperty);
+            results = createQuery.list();
+        }
+        else{
+            Query createQuery = session.createQuery(query);
+            results = createQuery.list();
+        }    
+        
+        return results;
     }
 
     @Override

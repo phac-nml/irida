@@ -141,6 +141,7 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
         session.delete(read);
     }*/
 
+    /*
     @Override
     public List<Project> list() {
         return list(0, 20, null, Order.NONE);
@@ -151,8 +152,9 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
         
         Session session = sessionFactory.getCurrentSession();
         
+        String name = Project.class.getName();
         List<Project> query1;
-        String query = "FROM Project";
+        String query = "FROM "+name;
         if(sortProperty != null){
             query += " ORDER BY ?";
             if(order == Order.ASCENDING){
@@ -171,7 +173,7 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
         }    
         
         return query1;
-    }
+    }*/
 
     @Override
     public Boolean exists(Long id) {
