@@ -23,43 +23,56 @@ import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.IntegerIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import javax.sql.DataSource;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
+@Transactional
+@Repository
 public abstract class GenericRelationalRepository<IDType extends Identifier, Type extends IridaThing> implements CRUDRepository<IDType, Type> {
     private String tableName;
     protected JdbcTemplate jdbcTemplate;
     
+    protected SessionFactory sessionFactory;
     public GenericRelationalRepository(){}
     
-    public GenericRelationalRepository(DataSource dataSource){
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    public GenericRelationalRepository(DataSource source){
+        this.jdbcTemplate = new JdbcTemplate(source);
+    }
+
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
     
+    @Transactional
     @Override
     public Type create(Type object) throws IllegalArgumentException {                
-        GeneratedKeyHolder holder = new GeneratedKeyHolder();
-        PreparedStatementCreator psc = getStatementCreator(object);
-        this.jdbcTemplate.update(psc,holder);
-        Number key = holder.getKey();
+        Session session = sessionFactory.getCurrentSession();
+        Serializable save = session.save(object);        
         
-        IntegerIdentifier id = new IntegerIdentifier(key.intValue());
+        String toString = save.toString();
+        IntegerIdentifier id = new IntegerIdentifier(Integer.parseInt(toString));
         object.setIdentifier(id);
-        
         return object;
     }
     
-    protected abstract PreparedStatementCreator getStatementCreator(Type object);
-
     @Override
     public Type read(IDType id) throws EntityNotFoundException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

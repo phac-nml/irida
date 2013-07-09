@@ -22,30 +22,22 @@ import ca.corefacility.bioinformatics.irida.model.FieldMap;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.IntegerIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,30 +46,21 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-//public class ProjectRelationalRepository extends GenericRelationalRepository<Identifier, Project> implements ProjectRepository{
 @Transactional
 @Repository
-public class ProjectRelationalRepository implements ProjectRepository{
+public class ProjectRelationalRepository extends GenericRelationalRepository<Identifier, Project> implements ProjectRepository{
+
+//public class ProjectRelationalRepository implements ProjectRepository{
     
-    private RowMapper<Project> rowMapper = new ProjectRowMapper();
-    protected JdbcTemplate jdbcTemplate;
     
-    private SessionFactory sessionFactory;
     public ProjectRelationalRepository(){}
     
     public ProjectRelationalRepository(DataSource source){
-        this.jdbcTemplate = new JdbcTemplate(source);
+        super(source);
     }
 
-    public SessionFactory getSessionFactory() {
-        return sessionFactory;
-    }
 
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-
-    @Transactional
+    /*@Transactional
     @Override
     public Project create(Project object) throws IllegalArgumentException {
         Session session = sessionFactory.getCurrentSession();
@@ -87,9 +70,9 @@ public class ProjectRelationalRepository implements ProjectRepository{
         IntegerIdentifier id = new IntegerIdentifier(Integer.parseInt(toString));
         object.setIdentifier(id);
         return object;
-    }
+    }*/
     
-    protected Project buildObject(Project p){
+    protected Project addIdentifierToObject(Project p){
         IntegerIdentifier id = new IntegerIdentifier(p.getId().intValue());
         p.setIdentifier(id);
         return p;
@@ -107,18 +90,6 @@ public class ProjectRelationalRepository implements ProjectRepository{
         
     }
     
-    private static SessionFactory buildSessionFactory() {
-        try {
-            // Create the SessionFactory from hibernate.cfg.xml
-            return new Configuration().configure().buildSessionFactory();
-        }
-        catch (Throwable ex) {
-            // Make sure you log the exception, as it might be swallowed
-            System.err.println("Initial SessionFactory creation failed." + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
-    }
-    
     @Override
     public Collection<Project> getProjectsForUser(User user) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -133,36 +104,6 @@ public class ProjectRelationalRepository implements ProjectRepository{
     public void removeUserFromProject(Project project, User user) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    protected PreparedStatementCreator getStatementCreator(Project object) {
-        return new ProjectStatementCreator(object);
-    }
-    
-    public class ProjectStatementCreator implements PreparedStatementCreator{
-        private Project project;
-        
-        public ProjectStatementCreator(Project project){
-            this.project = project;
-        }
-
-        public Project getObject() {
-            return project;
-        }
-
-        public void setObject(Project project) {
-            this.project = project;
-        }
-        
-        @Override
-        public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-                final String insert = "INSERT INTO project (name) VALUES (?)";
-                PreparedStatement stmt = con.prepareStatement(insert,Statement.RETURN_GENERATED_KEYS);
-                stmt.setString(1, project.getName());
-                
-                return stmt;
-        }
-    
-    }
 
     @Override
     public Project read(Identifier id) throws EntityNotFoundException {
@@ -171,8 +112,7 @@ public class ProjectRelationalRepository implements ProjectRepository{
         Session session = sessionFactory.getCurrentSession();
         Project load = (Project) session.load(Project.class, Long.parseLong(identifier));
         
-        IntegerIdentifier readId = new IntegerIdentifier(load.getId().intValue());
-        load.setIdentifier(readId);
+        load = addIdentifierToObject(load);
         
         return load;
     }
@@ -182,6 +122,7 @@ public class ProjectRelationalRepository implements ProjectRepository{
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Transactional
     @Override
     public Project update(Identifier id, Map<String, Object> updatedFields) throws InvalidPropertyException {
         String update = "UPDATE project SET ";
@@ -219,7 +160,7 @@ public class ProjectRelationalRepository implements ProjectRepository{
     @Override
     public List<Project> list(int page, int size, String sortProperty, Order order) {
         
-        Session session = sessionFactory.getCurrentSession();       
+        Session session = sessionFactory.getCurrentSession();
         
         List<Project> query1;
         String query = "FROM Project";
@@ -241,7 +182,7 @@ public class ProjectRelationalRepository implements ProjectRepository{
         }
         
         for(Project p : query1){
-            p = buildObject(p);
+            p = addIdentifierToObject(p);
         }        
         
         return query1;
