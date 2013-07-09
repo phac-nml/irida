@@ -17,6 +17,7 @@ package ca.corefacility.bioinformatics.irida.repositories.relational;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.FieldMap;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
@@ -94,7 +95,7 @@ public abstract class GenericRelationalRepository<Type extends IridaThing> imple
     @Override
     public Type update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
         Session session = sessionFactory.getCurrentSession();
-        Type base = (Type) session.get(classType, id);     
+        Type base = read(id);
         
         DirectFieldAccessor fieldAccessor = new DirectFieldAccessor(base);
        
@@ -109,9 +110,17 @@ public abstract class GenericRelationalRepository<Type extends IridaThing> imple
         return base;
     }
 
+    @Transactional
     @Override
     public void delete(Long id) throws EntityNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session session = sessionFactory.getCurrentSession();
+
+        if(!exists(id)){
+            throw new StorageException("Entity with id " + id + " cannot be deleted because it doesn't exists");
+        }
+        
+        Type read = read(id);
+        session.delete(read);
     }
 
     @Override

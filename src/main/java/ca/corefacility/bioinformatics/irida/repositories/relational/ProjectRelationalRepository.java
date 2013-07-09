@@ -128,15 +128,18 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
         return base;
     }*/
 
+    /*
     @Override
     public void delete(Long id) throws EntityNotFoundException {
+        Session session = sessionFactory.getCurrentSession();
+
         if(!exists(id)){
             throw new StorageException("Entity with id " + id + " cannot be deleted because it doesn't exists");
         }
-        String update = "DELETE FROM project WHERE id=?";
         
-        this.jdbcTemplate.update(update,id);
-    }
+        Project read = read(id);
+        session.delete(read);
+    }*/
 
     @Override
     public List<Project> list() {
