@@ -83,6 +83,11 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
         
         Session session = sessionFactory.getCurrentSession();
         Type load = (Type) session.get(classType, id);
+        
+        if(load == null){
+            throw new EntityNotFoundException("Entity " + id + " couldn't be found in the database.");
+        }
+        
                 
         return load;    
     }
@@ -97,6 +102,10 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
     public Type update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
         Session session = sessionFactory.getCurrentSession();
         Type base = read(id);
+        
+        if(!exists(id)){
+            throw new EntityNotFoundException("Entity " + id + " couldn't be found in the database so it cannot be updated.");
+        }
         
         DirectFieldAccessor fieldAccessor = new DirectFieldAccessor(base);
        
@@ -117,7 +126,7 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
         Session session = sessionFactory.getCurrentSession();
 
         if(!exists(id)){
-            throw new StorageException("Entity with id " + id + " cannot be deleted because it doesn't exists");
+            throw new EntityNotFoundException("Entity with id " + id + " cannot be deleted because it doesn't exists");
         }
         
         Type read = read(id);

@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.relational;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
@@ -101,6 +102,20 @@ public class GenericRelationalRepositoryTest {
         assertNotNull(read.getId());
         assertEquals(read.getId(),new Long(0));
     }
+    
+    @Test
+    public void testRead_invalid() {
+        try{
+            IdentifiableTestEntity read = repo.read(new Long(54545));
+            fail();
+        }
+        catch(EntityNotFoundException ex){
+            
+        }
+        
+    }
+    
+    
 
     /**
      * Test of readMultiple method, of class GenericRelationalRepository.
