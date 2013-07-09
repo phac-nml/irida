@@ -15,36 +15,13 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.relational;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
-import ca.corefacility.bioinformatics.irida.model.FieldMap;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.IntegerIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.sql.DataSource;
-import org.hibernate.LockOptions;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Projections;
-import org.springframework.beans.DirectFieldAccessor;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,19 +41,6 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
     public ProjectRelationalRepository(DataSource source){
         super(source,Project.class);
     }
-
-
-    /*@Transactional
-    @Override
-    public Project create(Project object) throws IllegalArgumentException {
-        Session session = sessionFactory.getCurrentSession();
-        Serializable save = session.save(object);        
-        
-        String toString = save.toString();
-        IntegerIdentifier id = new IntegerIdentifier(Integer.parseInt(toString));
-        object.setIdentifier(id);
-        return object;
-    }*/
     
     
     @Override
