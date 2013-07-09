@@ -175,13 +175,16 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
         return query1;
     }*/
 
+    /*
     @Override
     public Boolean exists(Long id) {
-        String query = "SELECT count(id) FROM project WHERE id=?";
-        Long queryForObject = this.jdbcTemplate.queryForObject(query, Long.class,id);
-        
-        return queryForObject > 0;
-    }
+        Session session = sessionFactory.getCurrentSession();
+        String name = Project.class.getName();
+        String queryStr = "SELECT 1 FROM "+name+" WHERE id = :id";
+        Query query = session.createQuery(queryStr);
+        query.setLong("id", id );
+        return (query.uniqueResult() != null);
+    }*/
 
     @Override
     public Integer count() {

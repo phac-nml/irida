@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.FieldMap;
+import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -158,7 +159,12 @@ public abstract class GenericRelationalRepository<Type extends IridaThing> imple
 
     @Override
     public Boolean exists(Long id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session session = sessionFactory.getCurrentSession();
+        String name = Project.class.getName();
+        String queryStr = "SELECT 1 FROM "+name+" WHERE id = :id";
+        Query query = session.createQuery(queryStr);
+        query.setLong("id", id );
+        return (query.uniqueResult() != null);    
     }
 
     @Override
