@@ -41,6 +41,7 @@ import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -93,106 +94,11 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    /*
-    @Override
-    public Project read(Long id) throws EntityNotFoundException {
-        
-        Session session = sessionFactory.getCurrentSession();
-        Project load = (Project) session.load(Project.class, id);
-                
-        return load;
-    }*/
-
     @Override
     public Collection<Project> readMultiple(Collection<Identifier> idents) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    /*
-    @Transactional
-    @Override
-    public Project update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
-        Session session = sessionFactory.getCurrentSession();
-        Project base = (Project) session.get(Project.class, id);        
-        
-        DirectFieldAccessor fieldAccessor = new DirectFieldAccessor(base);
-       
-        for(String key : updatedFields.keySet()){
-            Object value = updatedFields.get(key);
-
-            fieldAccessor.setPropertyValue(key, value);
-        }
-        
-        session.save(base);
-        
-        return base;
-    }*/
-
-    /*
-    @Override
-    public void delete(Long id) throws EntityNotFoundException {
-        Session session = sessionFactory.getCurrentSession();
-
-        if(!exists(id)){
-            throw new StorageException("Entity with id " + id + " cannot be deleted because it doesn't exists");
-        }
-        
-        Project read = read(id);
-        session.delete(read);
-    }*/
-
-    /*
-    @Override
-    public List<Project> list() {
-        return list(0, 20, null, Order.NONE);
-    }
-
-    @Override
-    public List<Project> list(int page, int size, String sortProperty, Order order) {
-        
-        Session session = sessionFactory.getCurrentSession();
-        
-        String name = Project.class.getName();
-        List<Project> query1;
-        String query = "FROM "+name;
-        if(sortProperty != null){
-            query += " ORDER BY ?";
-            if(order == Order.ASCENDING){
-                query += " ASC";
-            }
-            else if(order == Order.DESCENDING){
-                query += " DESC";
-            }
-            Query createQuery = session.createQuery(query);
-            createQuery.setString(1, sortProperty);
-            query1 = createQuery.list();
-        }
-        else{
-            Query createQuery = session.createQuery(query);
-            query1 = createQuery.list();
-        }    
-        
-        return query1;
-    }*/
-
-    /*
-    @Override
-    public Boolean exists(Long id) {
-        Session session = sessionFactory.getCurrentSession();
-        String name = Project.class.getName();
-        String queryStr = "SELECT 1 FROM "+name+" WHERE id = :id";
-        Query query = session.createQuery(queryStr);
-        query.setLong("id", id );
-        return (query.uniqueResult() != null);
-    }*/
-
-    @Override
-    public Integer count() {
-        String query = "SELECT count(id) FROM project";
-        Integer queryForObject = this.jdbcTemplate.queryForObject(query, Integer.class);
-        
-        return queryForObject;   
-    }
 
     @Override
     public List<FieldMap> listMappedFields(List<String> fields) {

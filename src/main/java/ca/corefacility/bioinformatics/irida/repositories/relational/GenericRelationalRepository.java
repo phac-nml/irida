@@ -19,7 +19,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.FieldMap;
-import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
@@ -33,10 +32,9 @@ import javax.sql.DataSource;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -160,7 +158,7 @@ public abstract class GenericRelationalRepository<Type extends IridaThing> imple
     @Override
     public Boolean exists(Long id) {
         Session session = sessionFactory.getCurrentSession();
-        String name = Project.class.getName();
+        String name = classType.getName();
         String queryStr = "SELECT 1 FROM "+name+" WHERE id = :id";
         Query query = session.createQuery(queryStr);
         query.setLong("id", id );
@@ -169,7 +167,13 @@ public abstract class GenericRelationalRepository<Type extends IridaThing> imple
 
     @Override
     public Integer count() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session session = sessionFactory.getCurrentSession();
+        String name = classType.getName();
+        
+        Number uniqueResult = (Number) session.createCriteria(name).setProjection(Projections.rowCount()).uniqueResult();
+        int intValue = uniqueResult.intValue();
+        
+        return intValue; 
     }
 
     @Override
