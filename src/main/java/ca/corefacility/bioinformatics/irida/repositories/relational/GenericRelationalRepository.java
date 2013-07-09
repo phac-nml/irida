@@ -18,17 +18,18 @@ package ca.corefacility.bioinformatics.irida.repositories.relational;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
-import ca.corefacility.bioinformatics.irida.model.FieldMap;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.IntegerIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import javax.sql.DataSource;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -44,7 +45,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional
 @Repository
-public abstract class GenericRelationalRepository<Type extends IridaThing> implements CRUDRepository<Long, Type> {
+public class GenericRelationalRepository<Type extends IridaThing> implements CRUDRepository<Long, Type> {
     private String tableName;
     protected JdbcTemplate jdbcTemplate;
     protected SessionFactory sessionFactory;
@@ -132,25 +133,30 @@ public abstract class GenericRelationalRepository<Type extends IridaThing> imple
     public List<Type> list(int page, int size, String sortProperty, Order order) {
         Session session = sessionFactory.getCurrentSession();
         
-        String name = classType.getName();
+        Criteria crit = session.createCriteria(classType.getName());
+
+        
         List<Type> results;
-        String query = "FROM "+name;
+        
+        
         if(sortProperty != null){
-            query += " ORDER BY ?";
             if(order == Order.ASCENDING){
-                query += " ASC";
+                crit.addOrder(org.hibernate.criterion.Order.asc(sortProperty));
             }
             else if(order == Order.DESCENDING){
-                query += " DESC";
+                crit.addOrder(org.hibernate.criterion.Order.desc(sortProperty));
             }
-            Query createQuery = session.createQuery(query);
-            createQuery.setString(1, sortProperty);
-            results = createQuery.list();
         }
-        else{
-            Query createQuery = session.createQuery(query);
-            results = createQuery.list();
-        }    
+        
+        if(size > 0){
+            crit.setMaxResults(size);
+        }
+        if(page > 0){
+            int offset = page * size;
+            crit.setFirstResult(offset);
+        }
+        
+        results = crit.list();
         
         return results;
     }
