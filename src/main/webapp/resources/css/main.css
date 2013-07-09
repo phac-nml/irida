@@ -52,138 +52,6 @@
     .notifier a:hover {
       background-color: #ebe399; }
 
-/* line 3, ../scss/fws/_cards.scss */
-.cardholder__after {
-  clear: both; }
-
-/* line 7, ../scss/fws/_cards.scss */
-.folder {
-  -webkit-perspective: 800px;
-  -moz-perspective: 800px;
-  perspective: 800px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 0;
-  display: inline-block;
-  width: 0;
-  height: 60px;
-  -webkit-transition: all 0.25s ease-in;
-  -moz-transition: all 0.25s ease-in;
-  transition: all 0.25s ease-in; }
-  /* line 23, ../scss/fws/_cards.scss */
-  .folder div {
-    width: 75px;
-    height: 57px;
-    background-color: #93bad8;
-    /* Enabling 3d space for the transforms */
-    -webkit-transform-style: preserve-3d;
-    -moz-transform-style: preserve-3d;
-    transform-style: preserve-3d;
-    /* Enabling a smooth animated transition */
-    -webkit-transition: 0.5s;
-    -moz-transition: 0.5s;
-    transition: 0.5s;
-    /* Disable text seleltion on the folder */
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    user-select: none;
-    position: absolute;
-    top: 0; }
-
-/* line 51, ../scss/fws/_cards.scss */
-.folder--front {
-  border-radius: 5px 5px 0 0;
-  -moz-transform: rotateX(-30deg);
-  -webkit-transform: rotateX(-30deg);
-  transform: rotateX(-30deg);
-  -moz-transform-origin: 50% 100%;
-  -webkit-transform-origin: 50% 100%;
-  transform-origin: 50% 100%;
-  background-image: -moz-linear-gradient(top, #93bad8 0%, #6c9dc0 85%, #628faf 100%);
-  background-image: -webkit-linear-gradient(top, #93bad8 0%, #6c9dc0 85%, #628faf 100%);
-  background-image: linear, top, #93bad8 0%, #6c9dc0 85%, #628faf 100%;
-  box-shadow: 0 -2px 2px rgba(0, 0, 0, 0.1), 0 1px rgba(255, 255, 255, 0.35) inset;
-  z-index: 10; }
-
-/* line 71, ../scss/fws/_cards.scss */
-.folder--back {
-  background-image: -webkit-linear-gradient(top, #93bad8 0%, #89afcc 10%, #5985a5 60%);
-  background-image: -moz-linear-gradient(top, #93bad8 0%, #89afcc 10%, #5985a5 60%);
-  background-image: linear, top, #93bad8 0%, #89afcc 10%, #5985a5 60%;
-  border-radius: 0 5px 0 0;
-  box-shadow: 0 -1px 1px rgba(0, 0, 0, 0.15); }
-  /* line 79, ../scss/fws/_cards.scss */
-  .folder--back:before {
-    content: '';
-    width: 30px;
-    height: 5px;
-    border-radius: 4px 4px 0 0;
-    background-color: #93bad8;
-    position: absolute;
-    top: -5px;
-    left: 0px;
-    box-shadow: 0 -1px 1px rgba(0, 0, 0, 0.15); }
-  /* line 91, ../scss/fws/_cards.scss */
-  .folder--back:after {
-    content: '';
-    width: 100%;
-    height: 4px;
-    border-radius: 5px;
-    position: absolute;
-    bottom: 5px;
-    left: 0px;
-    box-shadow: 0 4px 8px #333; }
-
-/* line 103, ../scss/fws/_cards.scss */
-.folder--draghover {
-  -webkit-perspective: 300px;
-  -moz-perspective: 300px;
-  perspective: 300px;
-  height: 0px; }
-
-/* line 110, ../scss/fws/_cards.scss */
-.card {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-  float: left;
-  height: 60px;
-  margin-right: 5%;
-  margin-top: 2.5%;
-  width: 45%; }
-  @media only screen and (min-width: 1100px) {
-    /* line 110, ../scss/fws/_cards.scss */
-    .card {
-      float: left;
-      margin-right: 2.5%;
-      margin-top: 2.5%;
-      width: 22.5%; } }
-  @media only screen and (min-width: 1280px) {
-    /* line 110, ../scss/fws/_cards.scss */
-    .card {
-      float: left;
-      margin-right: 2%;
-      margin-top: 2%;
-      width: 18%; } }
-  /* line 174, ../scss/fws/_cards.scss */
-  .card:hover {
-    border-radius: 3px;
-    background-color: #dfe2e2; }
-
-/* line 180, ../scss/fws/_cards.scss */
-.card--text {
-  margin-left: 80px; }
-  /* line 183, ../scss/fws/_cards.scss */
-  .card--text h4 {
-    font-size: 0.9em;
-    margin: 0;
-    white-space: nowrap;
-    text-overflow: ellipsis; }
-  /* line 190, ../scss/fws/_cards.scss */
-  .card--text span {
-    font-size: .8em; }
-
 /* line 20, ../scss/main.scss */
 html {
   height: 100%;
@@ -307,51 +175,43 @@ h1, h2, h3, h4 {
 .row--btn {
   padding-bottom: 10px; }
 
-/* line 155, ../scss/main.scss */
-.cb {
-  -webkit-appearance: none;
-  background-color: #fafafa;
-  border: 1px solid #cacece;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05);
-  padding: 4px;
+/* line 156, ../scss/main.scss */
+.sample {
+  border-radius: 4px;
+  cursor: pointer;
   display: inline-block;
-  position: relative; }
+  float: left;
+  margin-right: 5%;
+  margin-top: 2.5%;
+  width: 45%; }
+  @media only screen and (min-width: 1100px) {
+    /* line 156, ../scss/main.scss */
+    .sample {
+      float: left;
+      margin-right: 2.5%;
+      margin-top: 2.5%;
+      width: 22.5%; } }
+  @media only screen and (min-width: 1280px) {
+    /* line 156, ../scss/main.scss */
+    .sample {
+      float: left;
+      margin-right: 2%;
+      margin-top: 2%;
+      width: 18%; } }
+  /* line 186, ../scss/main.scss */
+  .sample img {
+    float: left; }
+  /* line 189, ../scss/main.scss */
+  .sample:hover {
+    background-color: #f2f2f2; }
 
-/* line 170, ../scss/main.scss */
-input.cb--btn {
-  margin: -3px 0 0 0; }
-
-/* line 174, ../scss/main.scss */
-input.cb:active, .cb:checked:active, .cb--checked {
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px 1px 3px rgba(0, 0, 0, 0.1); }
-
-/* line 178, ../scss/main.scss */
-input.cb:checked, .cb--checked {
-  background-color: #e9ecee;
-  border: 1px solid #adb8c0;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05), inset 15px 10px -12px rgba(255, 255, 255, 0.1);
-  color: #99a1a7; }
-
-/* line 185, ../scss/main.scss */
-input.cb:checked:after, .cb--checked:after {
-  content: '\2714';
-  font-size: 12px;
-  position: absolute;
-  top: -3px;
-  left: 1px;
-  color: #222; }
-
-/* line 194, ../scss/main.scss */
-.cb--checked:after {
-  top: -6px; }
-
-/* line 199, ../scss/main.scss */
+/* line 195, ../scss/main.scss */
 td.file-select {
   width: 13px; }
-  /* line 201, ../scss/main.scss */
-  td.file-select input.cb {
+  /* line 197, ../scss/main.scss */
+  td.file-select input {
     margin-top: 0; }
 
-/* line 206, ../scss/main.scss */
+/* line 202, ../scss/main.scss */
 td.file-date {
   text-align: right; }

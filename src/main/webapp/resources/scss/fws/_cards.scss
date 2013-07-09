@@ -5,47 +5,49 @@ $block-grid-media-queries: false;
 }
 
 .folder {
-  -webkit-perspective: 800px;
-  -moz-perspective: 800px;
-  perspective: 800px;
-
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 0;
-
-  display: inline-block;
-
-  width: 0;
-  height: 60px;
-  @include transition(all .25s ease-in);
-
-  div {
-    width: 75px;
-    height: 57px;
-
-    background-color: #93bad8;
-
-    /* Enabling 3d space for the transforms */
-    -webkit-transform-style: preserve-3d;
-    -moz-transform-style: preserve-3d;
-    transform-style: preserve-3d;
-
-    /* Enabling a smooth animated transition */
-    -webkit-transition: 0.5s;
-    -moz-transition: 0.5s;
-    transition: 0.5s;
-
-    /* Disable text seleltion on the folder */
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    user-select: none;
-
-    position: absolute;
-    top: 0;
-    //left:50%;
-    //margin-left:-75px;
-  }
+  //background: url("/css/img/folder-sample.svg") no-repeat top left;
+  //background-size: 256px 256px;
+  //-webkit-perspective: 800px;
+  //-moz-perspective: 800px;
+  //perspective: 800px;
+  //
+  //position: absolute;
+  //top: 0;
+  //left: 0;
+  //z-index: 0;
+  //
+  //display: inline-block;
+  //
+  //width: 0;
+  //height: 60px;
+  //@include transition(all .25s ease-in);
+  //
+  //div {
+  //  width: 75px;
+  //  height: 57px;
+  //
+  //  background-color: #93bad8;
+  //
+  //  /* Enabling 3d space for the transforms */
+  //  -webkit-transform-style: preserve-3d;
+  //  -moz-transform-style: preserve-3d;
+  //  transform-style: preserve-3d;
+  //
+  //  /* Enabling a smooth animated transition */
+  //  -webkit-transition: 0.5s;
+  //  -moz-transition: 0.5s;
+  //  transition: 0.5s;
+  //
+  //  /* Disable text seleltion on the folder */
+  //  -webkit-user-select: none;
+  //  -moz-user-select: none;
+  //  user-select: none;
+  //
+  //  position: absolute;
+  //  top: 0;
+  //  //left:50%;
+  //  //margin-left:-75px;
+  //}
 }
 
 .folder--front {
