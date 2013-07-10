@@ -33,6 +33,7 @@
 				<value>ca.corefacility.bioinformatics.irida.model.Project</value>
                                 <value>ca.corefacility.bioinformatics.irida.model.User</value>
                                 <value>ca.corefacility.bioinformatics.irida.model.Sample</value>
+                                <value>ca.corefacility.bioinformatics.irida.model.SequenceFile</value>
                                 <value>ca.corefacility.bioinformatics.irida.model.Role</value>
                                 <value>ca.corefacility.bioinformatics.irida.model.roles.impl.Audit</value>
 			</list>

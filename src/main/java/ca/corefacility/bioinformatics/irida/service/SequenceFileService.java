@@ -12,7 +12,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public interface SequenceFileService extends CRUDService<Identifier, SequenceFile> {
+public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
     /**
      * Persist the {@link SequenceFile} to the database and create a new relationship between the {@link SequenceFile}
      * and some other entity identified by the {@link Identifier}.
@@ -24,7 +24,7 @@ public interface SequenceFileService extends CRUDService<Identifier, SequenceFil
      *         {@link Identifier} is that of the owner and the object {@link Identifier} is that of the
      *         {@link SequenceFile}.
      */
-    public Relationship createSequenceFileWithOwner(SequenceFile sequenceFile, Class ownerType, Identifier owner);
+    public Relationship createSequenceFileWithOwner(SequenceFile sequenceFile, Class ownerType, Long owner);
 
     /**
      * Get a {@link SequenceFile} that is associated with a specific {@Link Project}. If the {@link SequenceFile} is
@@ -37,7 +37,7 @@ public interface SequenceFileService extends CRUDService<Identifier, SequenceFil
      * @throws EntityNotFoundException when the {@link Identifier} specified does not exist, or is not associated with
      *                                 the supplied {@link Project}.
      */
-    public SequenceFile getSequenceFileFromProject(Project project, Identifier sequenceFileId) throws EntityNotFoundException;
+    public SequenceFile getSequenceFileFromProject(Project project, Long sequenceFileId) throws EntityNotFoundException;
 
     /**
      * Get a {@link SequenceFile} that is associated with a specific {@link Sample}. If the {@link SequenceFile} is not
@@ -51,5 +51,5 @@ public interface SequenceFileService extends CRUDService<Identifier, SequenceFil
      * @throws EntityNotFoundException when the {@link Identifier} specified does not exist, or is not associated with
      *                                 the supplied {@link Sample}.
      */
-    public SequenceFile getSequenceFileFromSample(Project project, Sample sample, Identifier sequenceFileId) throws EntityNotFoundException;
+    public SequenceFile getSequenceFileFromSample(Project project, Sample sample, Long sequenceFileId) throws EntityNotFoundException;
 }

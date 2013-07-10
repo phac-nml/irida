@@ -18,14 +18,13 @@ package ca.corefacility.bioinformatics.irida.repositories;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import java.util.List;
 
 /**
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public interface SequenceFileRepository extends CRUDRepository<Identifier, SequenceFile>{
+public interface SequenceFileRepository extends CRUDRepository<Long, SequenceFile>{
     public List<SequenceFile> getFilesForProject(Project project);
     public List<SequenceFile> getFilesForSample(Sample sample);   
     public void addFileToProject(Project project, SequenceFile file);

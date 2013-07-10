@@ -23,7 +23,19 @@ import org.openrdf.annotations.Iri;
 
 import javax.validation.constraints.NotNull;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.PostLoad;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * A file that may be stored somewhere on the file system and belongs to a
@@ -32,16 +44,39 @@ import java.util.Objects;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
+@Entity
+@Table(name="sequence_file")
 @Iri(SequenceFile.PREFIX + SequenceFile.TYPE)
 public class SequenceFile implements IridaThing<SequenceFile, Audit, Identifier>, Comparable<SequenceFile> {
     public static final String PREFIX = "http://corefacility.ca/irida/";
     public static final String TYPE = "SequenceFile";
-    private Identifier id;
-    @NotNull
-    private Audit audit;
-    @NotNull
     
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    
+    @Transient
+    private Identifier identifier;
+    
+    @NotNull
+    @OneToOne
+    @JoinColumn(name="audit")    
+    private Audit audit;
+    
+    @NotNull
+    @Transient
     private Path file;
+    
+    @Column(name="filePath")
+    private String stringPath;
+    
+    public void setStringPath(){
+        stringPath = file.toFile().toString();
+    }
+    
+    public void setRealPath(){
+        file = Paths.get(stringPath);
+    }
 
     public SequenceFile() {
     }
@@ -53,7 +88,7 @@ public class SequenceFile implements IridaThing<SequenceFile, Audit, Identifier>
 
     public SequenceFile(Identifier id, Path sampleFile) {
         this(sampleFile);
-        this.id = id;
+        this.identifier = id;
     }
 
     @Override
@@ -96,12 +131,12 @@ public class SequenceFile implements IridaThing<SequenceFile, Audit, Identifier>
 
     @Override
     public Identifier getIdentifier() {
-        return id;
+        return identifier;
     }
 
     @Override
     public void setIdentifier(Identifier identifier) {
-        this.id = identifier;
+        this.identifier = identifier;
     }
 
     @Override
@@ -123,6 +158,10 @@ public class SequenceFile implements IridaThing<SequenceFile, Audit, Identifier>
 
     @Override
     public Long getId() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return id;
+    }
+    
+    public void setId(Long id){
+        this.id = id;
     }
 }

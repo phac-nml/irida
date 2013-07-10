@@ -57,7 +57,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class SequenceFileSesameRepository extends GenericRepository<Identifier, SequenceFile> implements SequenceFileRepository{
+//public class SequenceFileSesameRepository extends GenericRepository<Identifier, SequenceFile> implements SequenceFileRepository{
+public class SequenceFileSesameRepository extends GenericRepository<Identifier, SequenceFile>{
     
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SequenceFileSesameRepository.class);
     
@@ -230,7 +231,6 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
         }
     }    
     
-    @Override
     public List<SequenceFile> getFilesForProject(Project project){
         String uri = project.getIdentifier().getUri().toString();
         return getFilesForContainer(uri,Project.class);
@@ -240,13 +240,11 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
         return linksRepo.listObjects(project.getIdentifier(), hasFile);
     }
     
-    @Override
     public List<SequenceFile> getFilesForSample(Sample sample){
         String uri = sample.getIdentifier().getUri().toString();
         return getFilesForContainer(uri,Sample.class);    
     }    
     
-    @Override
     public void addFileToProject(Project project, SequenceFile file){
         
         /*java.net.URI pNetUri = projectRepo.buildURI(project.getIdentifier().getIdentifier());
@@ -264,7 +262,6 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
         
     }
     
-    @Override
     public void addFileToSample(Sample sample, SequenceFile file){
         
         /*java.net.URI pNetUri = sampleRepo.buildURI(sample.getIdentifier().getIdentifier());

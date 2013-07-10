@@ -39,7 +39,7 @@ import java.util.Map;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class SequenceFileServiceImpl extends CRUDServiceImpl<Identifier, SequenceFile> implements SequenceFileService {
+public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile> implements SequenceFileService {
 
     /**
      * A reference to the file system repository.
@@ -84,7 +84,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Identifier, Sequenc
 
         Map<String, Object> changed = new HashMap<>();
         changed.put("file", sequenceFile.getFile());
-        sequenceFile = super.update(sequenceFile.getIdentifier(), changed);
+        sequenceFile = super.update(sequenceFile.getId(), changed);
 
         return sequenceFile;
     }
@@ -93,11 +93,12 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Identifier, Sequenc
      * {@inheritDoc}
      */
     @Override
-    public SequenceFile update(Identifier id, Map<String, Object> updatedFields) throws InvalidPropertyException {
+    public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
         SequenceFile updated = super.update(id, updatedFields);
 
         if (updatedFields.containsKey("file")) {
-            updated = fileRepository.update(id, updatedFields);
+            //TODO - re-implement the update
+            //updated = fileRepository.update(id, updatedFields);
             updated = super.update(id, ImmutableMap.of("file",
                     (Object) updated.getFile()));
         }
@@ -109,10 +110,13 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Identifier, Sequenc
      * {@inheritDoc}
      */
     @Override
-    public Relationship createSequenceFileWithOwner(SequenceFile sequenceFile, Class ownerType, Identifier owner) {
+    public Relationship createSequenceFileWithOwner(SequenceFile sequenceFile, Class ownerType, Long owner) {
         SequenceFile created = create(sequenceFile);
-        Relationship relationship = relationshipRepository.create(ownerType, owner,
-                SequenceFile.class, created.getIdentifier());
+        
+        Relationship relationship = null;
+        /*TODO - re-implement the relationship creation
+         * Relationship relationship = relationshipRepository.create(ownerType, owner,
+                SequenceFile.class, created.getIdentifier());*/
         return relationship;
     }
 
@@ -120,16 +124,17 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Identifier, Sequenc
      * {@inheritDoc}
      */
     @Override
-    public SequenceFile getSequenceFileFromProject(Project project, Identifier sequenceFileId) throws EntityNotFoundException {
-        String noSuchSequenceFileMessage = "No sequence file exists with identifier [" + sequenceFileId.getIdentifier() + "]";
+    public SequenceFile getSequenceFileFromProject(Project project, Long sequenceFileId) throws EntityNotFoundException {
+        String noSuchSequenceFileMessage = "No sequence file exists with identifier [" + sequenceFileId + "]";
         // verify that the sequence file exists
         if (!sequenceFileRepository.exists(sequenceFileId)) {
             throw new EntityNotFoundException(noSuchSequenceFileMessage);
         }
 
         // verify that a relationship between project and sequence file exists
-        verifyNonEmptyRelationships(relationshipRepository
-                .getLinks(project.getIdentifier(), RdfPredicate.ANY, sequenceFileId));
+        /*TODO - re-implement the non-empty relationship
+         * verifyNonEmptyRelationships(relationshipRepository
+                .getLinks(project.getIdentifier(), RdfPredicate.ANY, sequenceFileId));*/
 
         // read the sequence file
         SequenceFile sf = sequenceFileRepository.read(sequenceFileId);
@@ -142,8 +147,8 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Identifier, Sequenc
      * {@inheritDoc}
      */
     @Override
-    public SequenceFile getSequenceFileFromSample(Project project, Sample sample, Identifier sequenceFileId) throws EntityNotFoundException {
-        String noSuchSequenceFileMessage = "No sequence file exists with identifier [" + sequenceFileId.getIdentifier() + "]";
+    public SequenceFile getSequenceFileFromSample(Project project, Sample sample, Long sequenceFileId) throws EntityNotFoundException {
+        String noSuchSequenceFileMessage = "No sequence file exists with identifier [" + sequenceFileId + "]";
 
         //verify that the sequence file exists
         if (!sequenceFileRepository.exists(sequenceFileId)) {
@@ -155,7 +160,8 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Identifier, Sequenc
                 .getLinks(project.getIdentifier(), RdfPredicate.ANY, sample.getIdentifier()));
 
         // verify that a relationship exists between sample and sequence file
-        verifyNonEmptyRelationships(relationshipRepository.getLinks(sample.getIdentifier(), RdfPredicate.ANY, sequenceFileId));
+        //TODO - re-implement the verification
+        //verifyNonEmptyRelationships(relationshipRepository.getLinks(sample.getIdentifier(), RdfPredicate.ANY, sequenceFileId));
 
         // read the sequence file
         SequenceFile sf = sequenceFileRepository.read(sequenceFileId);

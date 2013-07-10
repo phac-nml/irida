@@ -28,6 +28,11 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
     
+    <bean id="sequencefileRelRepository" class="ca.corefacility.bioinformatics.irida.repositories.relational.SequenceFileRelationalRepository">
+        <constructor-arg ref="dataSource"/>
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>    
+    
     <bean id="auditRelRepository" class="ca.corefacility.bioinformatics.irida.repositories.relational.AuditRelationalRepository">
         <constructor-arg ref="dataSource"/>
         <property name="sessionFactory" ref="sessionFactory"/>

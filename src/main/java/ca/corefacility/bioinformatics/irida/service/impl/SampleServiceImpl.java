@@ -60,7 +60,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Identifier, Sample> imple
             throw new IllegalArgumentException("Sample must be persisted before adding a sequence file.");
         }
 
-        if (!sequenceFileRepository.exists(sampleFile.getIdentifier())) {
+        if (!sequenceFileRepository.exists(sampleFile.getId())) {
             throw new IllegalArgumentException("Sequence file must be persisted before adding to sample.");
         }
 

@@ -42,7 +42,7 @@ import java.util.Map;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class SequenceFileFilesystemRepository implements CRUDRepository<Identifier, SequenceFile> {
+public class SequenceFileFilesystemRepository implements CRUDRepository<Long, SequenceFile> {
 
     private static final Logger logger = LoggerFactory.getLogger(SequenceFileFilesystemRepository.class);
     private final Path BASE_DIRECTORY;
@@ -61,8 +61,8 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Identifi
      * @param id the {@link Identifier} of the {@link SequenceFile}.
      * @return the {@link Path} for the {@link SequenceFile}.
      */
-    private Path getSequenceFileDir(Identifier id) {
-        return BASE_DIRECTORY.resolve(id.getIdentifier());
+    private Path getSequenceFileDir(Long id) {
+        return BASE_DIRECTORY.resolve(id.toString());
     }
 
     /**
@@ -81,7 +81,7 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Identifi
                 || Strings.isNullOrEmpty(object.getIdentifier().getIdentifier())) {
             throw new IllegalArgumentException("Identifier is required.");
         }
-        Path sequenceFileDir = getSequenceFileDir(object.getIdentifier());
+        Path sequenceFileDir = getSequenceFileDir(object.getId());
         Path target = sequenceFileDir.resolve(object.getFile().getFileName());
         try {
             Files.createDirectory(sequenceFileDir);
@@ -105,13 +105,13 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Identifi
      * @see ca.corefacility.bioinformatics.irida.repositories.sesame.SequenceFileSesameRepository
      */
     @Override
-    public SequenceFile read(Identifier id) throws EntityNotFoundException {
+    public SequenceFile read(Long id) throws EntityNotFoundException {
         throw new UnsupportedOperationException("SequenceFile file reference "
                 + "should be populated by SequenceFileSesameRepository.");
     }
 
-    private Path updateFilesystemFile(Identifier id, Path object) throws IllegalArgumentException {
-        if (id == null || Strings.isNullOrEmpty(id.getIdentifier())) {
+    private Path updateFilesystemFile(Long id, Path object) throws IllegalArgumentException {
+        if (id == null) {
             throw new IllegalArgumentException("Identifier is required.");
         }
 
@@ -169,7 +169,7 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Identifi
      * {@inheritDoc}
      */
     @Override
-    public SequenceFile update(Identifier id, Map<String, Object> updatedFields) throws InvalidPropertyException, SecurityException {
+    public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException, SecurityException {
         SequenceFile file = new SequenceFile();
         if (updatedFields.containsKey("file")) {
             Path updatedFile = (Path) updatedFields.get("file");
@@ -181,13 +181,13 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Identifi
     }
 
     @Override
-    public void delete(Identifier id) throws EntityNotFoundException {
+    public void delete(Long id) throws EntityNotFoundException {
         throw new UnsupportedOperationException("Files cannot be deleted.");
 
     }
 
     @Override
-    public Boolean exists(Identifier id) {
+    public Boolean exists(Long id) {
         throw new UnsupportedOperationException("SequenceFile file exists "
                 + "should be populated by SequenceFileSesameRepository.");
     }

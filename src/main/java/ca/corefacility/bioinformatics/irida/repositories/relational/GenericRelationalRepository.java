@@ -75,6 +75,14 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
         return object;
     }
     
+    /**
+     * Perform operations on an object after it's been loaded, but before returning
+     * @param object The object to perform operations on
+     */
+    protected void postLoad(Type object){
+        //In this default case, nothing needs done
+    }
+    
     @Override
     public Type read(Long id) throws EntityNotFoundException {
         
@@ -85,6 +93,7 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
             throw new EntityNotFoundException("Entity " + id + " couldn't be found in the database.");
         }
         
+        postLoad(load);
                 
         return load;    
     }
@@ -163,6 +172,10 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
         }
         
         results = crit.list();
+        
+        for(Type t : results){
+            postLoad(t);
+        }
         
         return results;
     }
