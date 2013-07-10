@@ -6,8 +6,8 @@
  COMMENTS: Runs all the angular scripts for the project.
  LICENSE:  MIT
  ========================================================================= */
-var NGS = angular.module('NGS', [ 'ngCookies', 'http-auth-interceptor',
-		'ngResource', 'ngs-section', 'filters', 'ui.state', 'ui.bootstrap', 'ngDragDrop' ]);
+var NGS = angular.module('NGS', [ 'ngCookies', 'http-auth-interceptor', 'user-settings',
+		'ngResource', 'filters', 'ui.state', 'ui.bootstrap', 'ngDragDrop' ]);
 
 /**
  * Allows for the use of URLs without the !# in it

@@ -6,7 +6,8 @@
     'use strict';
     app.factory('projectService', [function () {
         return {
-            project: {}
+            project: {},
+            user: {}
         }
     }]);
 })(angular, NGS);

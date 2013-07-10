@@ -9,7 +9,7 @@
             <table class="table">
                 <tbody>
                 <tr data-ng-repeat="f in data.sequenceFiles">
-                    <td><a href="" data-ng-click="downloadFile($event, f, 'sample/sequenceFile/fasta')">{{f.label}}</a></td>
+                    <td><a href="" data-ng-click="downloadFile($event, f, 'sample/sequenceFile/fasta')">{{f.label}}&nbsp;&nbsp;<i class="icon-download-alt"></i></a></td>
                     <td class="file-date">{{f.dateCreated | angularMoment}}</td>
                 </tr>
                 </tbody>

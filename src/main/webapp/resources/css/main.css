@@ -68,27 +68,19 @@ body {
 h1, h2, h3, h4 {
   font-weight: 600; }
 
-/* line 40, ../scss/main.scss */
-.nav-tabs li {
-  cursor: pointer; }
-
-/* line 44, ../scss/main.scss */
-.tab-content {
-  min-height: 250px; }
-
 /* ==========================================================================
    Modules
    ========================================================================== */
-/* line 52, ../scss/main.scss */
+/* line 43, ../scss/main.scss */
 .button-bar {
   margin-bottom: 1.5em; }
 
-/* line 58, ../scss/main.scss */
+/* line 49, ../scss/main.scss */
 .login__outer {
   height: 100%;
   width: 100%; }
 
-/* line 63, ../scss/main.scss */
+/* line 54, ../scss/main.scss */
 .login__inner {
   height: 300px;
   padding: 1em;
@@ -96,19 +88,18 @@ h1, h2, h3, h4 {
   background-color: #ecf0f1;
   border-radius: 3px; }
 
-/* line 72, ../scss/main.scss */
+/* line 63, ../scss/main.scss */
 .outer {
   display: block;
   float: left;
   height: 100%;
-  width: 100%;
-  background-color: #ffffff; }
+  width: 100%; }
 
-/* line 80, ../scss/main.scss */
+/* line 70, ../scss/main.scss */
 .sidebar {
-  background: #222222 url("/css/img/sidebar-gradient.png") repeat-y top right;
+  background-color: #414243;
   background-clip: border-box;
-  color: #e1e1e1;
+  color: #dfdfde;
   text-shadow: 0px 2px 1px rgba(0, 0, 0, 0.4);
   display: block;
   float: left;
@@ -117,40 +108,41 @@ h1, h2, h3, h4 {
   min-height: 1px;
   position: relative;
   width: 0; }
-  /* line 94, ../scss/main.scss */
+  /* line 84, ../scss/main.scss */
   .sidebar ul {
     list-style: none;
     margin: 0;
     padding: 0; }
-  /* line 99, ../scss/main.scss */
+  /* line 89, ../scss/main.scss */
   .sidebar li {
     line-height: 2em;
     margin: 0;
     padding: 4px 0 4px 10px;
-    border-top: 1px solid #2c2c2c;
-    border-bottom: 1px solid #181818; }
-    /* line 105, ../scss/main.scss */
+    border-top: 1px solid #4b4c4d;
+    border-bottom: 1px solid #373839; }
+    /* line 95, ../scss/main.scss */
     .sidebar li:hover {
       color: #ffffff;
       cursor: pointer; }
-    /* line 109, ../scss/main.scss */
+    /* line 99, ../scss/main.scss */
     .sidebar li.active {
       background-image: -webkit-linear-gradient(top, #2d2f30 0%, #333537 10%, #333537 90%, #2d2f30 100%);
       background-origin: padding-box;
       border-bottom: 1px solid #2b2c2e;
       border-top: 1px solid #262729;
-      background-color: #090909; }
+      background-color: #282929; }
 
-/* line 120, ../scss/main.scss */
+/* line 110, ../scss/main.scss */
 .main {
   float: left;
-  min-width: 1px; }
+  min-width: 1px;
+  z-index: 777; }
 
-/* line 125, ../scss/main.scss */
+/* line 116, ../scss/main.scss */
 .container-fluid .navbar, .container-fluid .breadcrumb {
   margin-top: 1.4em; }
 
-/* line 129, ../scss/main.scss */
+/* line 120, ../scss/main.scss */
 .login {
   height: 300px;
   width: 300px;
@@ -158,10 +150,9 @@ h1, h2, h3, h4 {
   left: 50%;
   top: 50%;
   margin-left: -150px;
-  margin-top: -150px;
-  background-color: #ffffff; }
+  margin-top: -150px; }
 
-/* line 140, ../scss/main.scss */
+/* line 130, ../scss/main.scss */
 .sidebar--projects {
   -moz-user-select: none;
   -webkit-user-select: none;
@@ -169,13 +160,38 @@ h1, h2, h3, h4 {
   height: 100%;
   position: relative;
   overflow-x: hidden;
-  overflow-y: auto; }
+  overflow-y: auto;
+  -webkit-box-shadow: inset -3px -1px 10px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: inset -3px -1px 10px 3px rgba(0, 0, 0, 0.2); }
 
-/* line 151, ../scss/main.scss */
+/* line 143, ../scss/main.scss */
+#sidebar-bottom {
+  height: 60px;
+  text-align: center;
+  background-color: #3c3d3e;
+  border-top: 1px solid #4e4f50; }
+  /* line 148, ../scss/main.scss */
+  #sidebar-bottom h4 {
+    margin: 0;
+    line-height: 1.5em;
+    border-bottom: 1px solid #323333; }
+  /* line 153, ../scss/main.scss */
+  #sidebar-bottom span {
+    cursor: pointer;
+    border-top: 1px solid #414243;
+    border-right: 1px solid #414243;
+    border-left: 1px solid #323333;
+    line-height: 1.6em;
+    display: inline-block;
+    text-align: center;
+    float: left;
+    width: 48%; }
+
+/* line 166, ../scss/main.scss */
 .row--btn {
   padding-bottom: 10px; }
 
-/* line 156, ../scss/main.scss */
+/* line 171, ../scss/main.scss */
 .sample {
   border-radius: 4px;
   cursor: pointer;
@@ -185,33 +201,33 @@ h1, h2, h3, h4 {
   margin-top: 2.5%;
   width: 45%; }
   @media only screen and (min-width: 1100px) {
-    /* line 156, ../scss/main.scss */
+    /* line 171, ../scss/main.scss */
     .sample {
       float: left;
       margin-right: 2.5%;
       margin-top: 2.5%;
       width: 22.5%; } }
   @media only screen and (min-width: 1280px) {
-    /* line 156, ../scss/main.scss */
+    /* line 171, ../scss/main.scss */
     .sample {
       float: left;
       margin-right: 2%;
       margin-top: 2%;
       width: 18%; } }
-  /* line 186, ../scss/main.scss */
+  /* line 201, ../scss/main.scss */
   .sample img {
     float: left; }
-  /* line 189, ../scss/main.scss */
+  /* line 204, ../scss/main.scss */
   .sample:hover {
     background-color: #f2f2f2; }
 
-/* line 195, ../scss/main.scss */
+/* line 210, ../scss/main.scss */
 td.file-select {
   width: 13px; }
-  /* line 197, ../scss/main.scss */
+  /* line 212, ../scss/main.scss */
   td.file-select input {
     margin-top: 0; }
 
-/* line 202, ../scss/main.scss */
+/* line 217, ../scss/main.scss */
 td.file-date {
   text-align: right; }

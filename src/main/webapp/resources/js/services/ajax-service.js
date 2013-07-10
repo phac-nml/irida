@@ -162,20 +162,6 @@
                     return deferred.promise;
                 }
                 return false;
-            },
-
-            downloadItem: function (url) {
-                if(url){
-                    var deferred = $q.defer();
-
-                    $http({
-                        method: 'GET',
-                        url: url,
-                        headers: {
-                            'Content-Disposition': 'attachment'
-                        }
-                    });
-                }
             }
         };
     }]);

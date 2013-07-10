@@ -14,19 +14,19 @@
          */
             .state('projects', {
                 url: '/',
-                templateUrl: '/partials/landing.html',
-                resolve: {
-                    data: function ($q, ajaxService) {
-                        var defer = $q.defer();
-                        ajaxService.get('/api/projects').then(function (data) {
-                            defer.resolve(data);
-                        });
-                        return defer.promise;
-                    }
-                },
-                controller: function ($scope, data) {
-                    $scope.projects = data.resource.resources;
-                }
+                templateUrl: '/partials/landing.html'
+//                resolve: {
+//                    data: function ($q, ajaxService) {
+//                        var defer = $q.defer();
+//                        ajaxService.get('/api/projects/all').then(function (data) {
+//                            defer.resolve(data);
+//                        });
+//                        return defer.promise;
+//                    }
+//                },
+//                controller: function ($scope, data) {
+//                    $scope.projects = data.resource.resources;
+//                }
             })
             .state('projects.main', {
                 url: 'landing',

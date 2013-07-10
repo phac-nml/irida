@@ -1,12 +1,12 @@
 <div data-ng-controller="LandingCtrl">
-    <div id="nav-main" class="navbar navbar-static-top navbar-inverse">
-        <div class="navbar-inner">
-            <a class="brand" href="/landing">NGS Archive</a>
-            <ul class="nav pull-right">
-                <li><a class="logoutBtn" href="#" data-ng-click="logout()">Logout</a></li>
-            </ul>
-        </div>
-    </div>
+    <!--<div id="nav-main" class="navbar navbar-static-top navbar-inverse">-->
+        <!--<div class="navbar-inner">-->
+            <!--<a class="brand" href="/landing">NGS Archive</a>-->
+            <!--<ul class="nav pull-right">-->
+                <!--<li><a class="logoutBtn" href="#" data-ng-click="logout()">Logout</a></li>-->
+            <!--</ul>-->
+        <!--</div>-->
+    <!--</div>-->
     <div class="outer">
         <div class="sidebar">
             <div class="sidebar--projects" data-ng-controller="ProjectsListCtrl">
@@ -19,21 +19,28 @@
                     </li>
                 </ul>
             </div>
+            <div id="sidebar-bottom">
+                <h4>Josh Adam</h4>
+                <span><i class="icon-cog"></i>&nbsp;Settings</span>
+                <span data-ng-click="logout()"><i class="icon-off"></i>&nbsp;Logout</span>
+            </div>
         </div>
         <div class="main" ui-view=""></div>
     </div>
     <script type="text/javascript">
         (function () {
             var SIDEBAR_W = '176',
-                    MAINNAV_H = getTotalHeight('nav-main'),
+//                    MAINNAV_H = getTotalHeight('nav-main'),
                     OUTER = document.getElementsByClassName('outer')[0],
                     SIDEBAR = document.getElementsByClassName('sidebar')[0],
-                    CONTENT = document.getElementsByClassName('main')[0];
+                    CONTENT = document.getElementsByClassName('main')[0],
+                    SIDEBAR_BODY = document.getElementsByClassName('sidebar--projects')[0],
+                    SIDEBAR_BOTTOM_H = getTotalHeight('sidebar-bottom');
 
             window.onresize = adjustWindow;
 
             function adjustWindow() {
-                var h = window.innerHeight - MAINNAV_H;
+                var h = window.innerHeight;
                 var w = window.innerWidth;
 
                 OUTER.style.width = w + 'px';
@@ -41,6 +48,7 @@
 
                 SIDEBAR.style.height = h + 'px';
                 SIDEBAR.style.width = SIDEBAR_W + 'px';
+                SIDEBAR_BODY.style.height = h - SIDEBAR_BOTTOM_H + 'px';
 
                 CONTENT.style.height = h + 'px';
                 CONTENT.style.width = w - SIDEBAR_W + 'px';
