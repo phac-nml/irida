@@ -28,7 +28,7 @@ import java.util.*;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class UserServiceImpl extends CRUDServiceImpl<UserIdentifier, User> implements UserService {
+public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements UserService {
 
     /**
      * A set containing only a reference to a "USER" role.
@@ -99,7 +99,7 @@ public class UserServiceImpl extends CRUDServiceImpl<UserIdentifier, User> imple
      * {@inheritDoc}
      */
     @Override
-    public User update(UserIdentifier uid, Map<String, Object> properties) {
+    public User update(Long uid, Map<String, Object> properties) {
         if (properties.containsKey(PASSWORD_PROPERTY)) {
             String password = properties.get(PASSWORD_PROPERTY).toString();
             Set<ConstraintViolation<User>> violations = validatePassword(password);

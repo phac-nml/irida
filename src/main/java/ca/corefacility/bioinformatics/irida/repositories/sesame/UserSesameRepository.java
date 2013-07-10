@@ -53,7 +53,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class UserSesameRepository extends GenericRepository<UserIdentifier, User> implements UserRepository {
+//public class UserSesameRepository extends GenericRepository<UserIdentifier, User> implements UserRepository {
+public class UserSesameRepository extends GenericRepository<UserIdentifier, User> {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(UserSesameRepository.class);
     private static final RdfPredicate hasUser = new RdfPredicate("irida", "hasUser");
@@ -185,7 +186,7 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
     /**
      * {@inheritDoc}
      */
-    @Override
+    //@Override
     public User getUserByUsername(String username) throws EntityNotFoundException {
 
         User ret = null;
@@ -280,7 +281,7 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
     /**
      * {@inheritDoc}
      */    
-    @Override
+    //@Override
     public Collection<Relationship> getUsersForProject(Identifier project){
         return linksRepo.getLinks(project, hasUser, null);
     }

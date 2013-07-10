@@ -72,9 +72,6 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
         Session session = sessionFactory.getCurrentSession();
         Serializable save = session.save(object);        
         
-        String toString = save.toString();
-        IntegerIdentifier id = new IntegerIdentifier(Integer.parseInt(toString));
-        object.setIdentifier(id);
         return object;
     }
     

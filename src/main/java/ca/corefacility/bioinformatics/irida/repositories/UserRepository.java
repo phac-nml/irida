@@ -19,7 +19,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import java.util.Collection;
 
 /**
@@ -27,7 +26,7 @@ import java.util.Collection;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public interface UserRepository extends CRUDRepository<UserIdentifier, User> {
+public interface UserRepository extends CRUDRepository<Long, User> {
 
     /**
      * Get a user from the database with the supplied username.

@@ -30,7 +30,7 @@ import java.util.Collection;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public interface UserService extends CRUDService<UserIdentifier, User>, UserDetailsService {
+public interface UserService extends CRUDService<Long, User>, UserDetailsService {
 
     /**
      * Get a user from the database with the supplied username.
