@@ -127,7 +127,20 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
-            <version>3.2.2.RELEASE</version>
+            <version>${spring.version}</version>
+            <type>jar</type>
+        </dependency>       
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+            <type>jar</type>
+        </dependency> 
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring.version}</version>
             <type>jar</type>
         </dependency>        
         
@@ -175,12 +188,7 @@
             <version>${openrdf.alibaba.version}</version>
             <type>jar</type>
         </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <version>3.2.3.RELEASE</version>
-            <type>jar</type>
-        </dependency>
+
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -202,13 +210,7 @@
             <artifactId>hsqldb</artifactId>
             <version>2.2.8</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>3.2.2.RELEASE</version>
-            <scope>test</scope>
-            <type>jar</type>
-        </dependency>
+
     </dependencies>
     <build>
         <finalName>irida-api</finalName>
