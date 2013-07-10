@@ -127,7 +127,8 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
-            <version>${spring.version}</version>
+            <version>3.2.2.RELEASE</version>
+            <type>jar</type>
         </dependency>        
         
         <!-- Spring Security -->

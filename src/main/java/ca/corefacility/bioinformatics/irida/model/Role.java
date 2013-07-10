@@ -1,9 +1,25 @@
 package ca.corefacility.bioinformatics.irida.model;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.usertype.UserType;
 
 /**
  * Roles for authorization in the application.
@@ -11,8 +27,15 @@ import java.util.Objects;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
+@Entity
+@Table(name="system_role")
 public class Role implements Comparable<Role>, GrantedAuthority {
-
+    
+    @Id
+    @Column(name="id")
+    Long id;
+    
+    @NotNull
     private String name;
     @NotNull
     private String description;
@@ -76,4 +99,5 @@ public class Role implements Comparable<Role>, GrantedAuthority {
     public static Role valueOf(String value){
         return new Role(value);
     }
+
 }

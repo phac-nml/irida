@@ -14,6 +14,21 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 import java.util.Set;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import org.openrdf.annotations.Iri;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,12 +40,19 @@ import org.springframework.security.core.userdetails.UserDetails;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
+@Entity
+@Table(name="user")
 @Iri(User.PREFIX + User.TYPE)
 public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<User>, UserDetails {
     public static final String PREFIX = "http://xmlns.com/foaf/0.1/";
     public static final String TYPE = "Person";
     
-    private UserIdentifier id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    
+    @Transient
+    private UserIdentifier identifier;
     @NotNull(message = "{user.username.notnull}")
     @Size(min = 3, message = "{user.username.size}")
     @Iri(PREFIX + "nick")
@@ -62,8 +84,12 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
     @Iri(PREFIX + "phone")
     private String phoneNumber;
     @NotNull
+    @Transient
     private Audit audit;
-    private Role role;
+    
+    @ManyToOne
+    @JoinColumn(name="system_role")
+    private Role system_role;
 
     /**
      * Construct an instance of {@link User} with no properties set.
@@ -105,7 +131,7 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
      */
     public User(UserIdentifier id, String username, String email, String password, String firstName, String lastName, String phoneNumber) {
         this(username, email, password, firstName, lastName, phoneNumber);
-        this.id = id;
+        this.identifier = id;
     }
 
     /**
@@ -113,7 +139,7 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
      */
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, email, password, firstName, lastName, phoneNumber);
+        return Objects.hash(identifier, username, email, password, firstName, lastName, phoneNumber);
     }
 
     /**
@@ -123,7 +149,7 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
     public boolean equals(Object other) {
         if (other instanceof User) {
             User u = (User) other;
-            return Objects.equals(id, u.id)
+            return Objects.equals(identifier, u.identifier)
                     && Objects.equals(username, u.username)
                     && Objects.equals(email, u.email)
                     && Objects.equals(password, u.password)
@@ -133,6 +159,14 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
         }
 
         return false;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     /**
@@ -217,12 +251,12 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
 
     @Override
     public UserIdentifier getIdentifier() {
-        return id;
+        return identifier;
     }
 
     @Override
     public void setIdentifier(UserIdentifier identifier) {
-        this.id = identifier;
+        this.identifier = identifier;
     }
 
     @Override
@@ -250,16 +284,16 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         ArrayList<Role> roles = new ArrayList<>();
-        roles.add(role);
+        roles.add(system_role);
         return roles;
     }
     
     public Role getRole(){
-        return role;
+        return system_role;
     }
     
     public void setRole(Role role){
-        this.role = role;
+        this.system_role = role;
     }
     
     /**
@@ -269,8 +303,8 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
      */
     @Iri("http://corefacility.ca/irida/systemRole")
     public String getStringRole(){
-        if(role != null){
-            return role.getName();    
+        if(system_role != null){
+            return system_role.getName();    
         }
         else{
             return null;
