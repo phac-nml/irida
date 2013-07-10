@@ -9,7 +9,10 @@
     <!--</div>-->
     <div class="outer">
         <div class="sidebar">
-            <div class="sidebar--projects" data-ng-controller="ProjectsListCtrl">
+            <div id="sidebar-top">
+                <p>NGS Archive</p>
+            </div>
+            <div class="sidebar-inner" data-ng-controller="ProjectsListCtrl">
                 <ul>
                     <li data-ng-repeat="p in projects" data-ng-click="gotoProject($event, p.links.self)">
                         <div>
@@ -30,15 +33,16 @@
     <script type="text/javascript">
         (function () {
             var SIDEBAR_W = '176',
-//                    MAINNAV_H = getTotalHeight('nav-main'),
+
                     OUTER = document.getElementsByClassName('outer')[0],
                     SIDEBAR = document.getElementsByClassName('sidebar')[0],
                     CONTENT = document.getElementsByClassName('main')[0],
-                    SIDEBAR_BODY = document.getElementsByClassName('sidebar--projects')[0],
+                    SIDEBAR_TOP_H = getTotalHeight('sidebar-top'),
+                    SIDEBAR_BODY = document.getElementsByClassName('sidebar-inner')[0],
                     SIDEBAR_BOTTOM_H = getTotalHeight('sidebar-bottom');
 
-            window.onresize = adjustWindow;
 
+            window.onresize = adjustWindow;
             function adjustWindow() {
                 var h = window.innerHeight;
                 var w = window.innerWidth;
@@ -48,7 +52,7 @@
 
                 SIDEBAR.style.height = h + 'px';
                 SIDEBAR.style.width = SIDEBAR_W + 'px';
-                SIDEBAR_BODY.style.height = h - SIDEBAR_BOTTOM_H + 'px';
+                SIDEBAR_BODY.style.height = ( h - SIDEBAR_BOTTOM_H - SIDEBAR_TOP_H ) + 'px';
 
                 CONTENT.style.height = h + 'px';
                 CONTENT.style.width = w - SIDEBAR_W + 'px';

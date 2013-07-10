@@ -17,6 +17,8 @@
 // GLOBAL AND BOX SETTINGS
 // ============================================================================
 
+* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+
 html {
   height: 100%;
   width: 100%;
@@ -67,6 +69,14 @@ h1, h2, h3, h4 {
   width: 100%;
 }
 
+.large-container {
+  background-color: #ffffff;
+  border-radius: 4px;
+  padding: 1em;
+  -webkit-box-shadow:  0px 1px 1px 1px rgba(0, 0, 0, .15);
+  box-shadow:  0px 1px 1px 1px rgba(0, 0, 0, .15);
+}
+
 .sidebar {
   //background: $color-sidebar url("/css/img/sidebar-gradient.png") repeat-y top right;
   background-color: $color-sidebar;
@@ -80,6 +90,8 @@ h1, h2, h3, h4 {
   min-height: 1px;
   position: relative;
   width: 0;
+
+
 
   ul {
     list-style: none;
@@ -107,27 +119,19 @@ h1, h2, h3, h4 {
   }
 }
 
-.main {
-  float: left;
-  min-width: 1px;
-  z-index: 777;
+#sidebar-top {
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  background-color: darken($color-sidebar, 2);
+  border-bottom: 1px solid rgb(43, 44, 46);
+  p {
+    font-weight: 600;
+    font-size: 1.2em;
+  }
 }
 
-.container-fluid .navbar, .container-fluid .breadcrumb {
-  margin-top: 1.4em;
-}
-
-.login {
-  height: 300px;
-  width: 300px;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  margin-left: -150px;
-  margin-top: -150px;
-}
-
-.sidebar--projects {
+.sidebar-inner {
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
@@ -159,8 +163,28 @@ h1, h2, h3, h4 {
     display: inline-block;
     text-align: center;
     float: left;
-    width: 48%;
+    width: 50%;
   }
+}
+
+.main {
+  float: left;
+  min-width: 1px;
+  z-index: 777;
+}
+
+.container-fluid .navbar, .container-fluid .breadcrumb {
+  margin-top: 1.4em;
+}
+
+.login {
+  height: 300px;
+  width: 300px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: -150px;
+  margin-top: -150px;
 }
 
 .row--btn {
@@ -168,41 +192,53 @@ h1, h2, h3, h4 {
 }
 
 // Displaying Sample Folders
-.sample {
-  $count: 2; // Default for small screen
+//.sample {
+//  $count: 2; // Default for small screen
+//
+//  border-radius: 4px;
+//  cursor: pointer;
+//  display: inline-block;
+//  float: left;
+//
+//  margin-right: 10%/$count;
+//  margin-top: 10%/($count*2);
+//  width: 90%/$count;
+//
+//  @media only screen and (min-width: 1100px) {
+//    $count: 4;
+//
+//    float: left;
+//    margin-right: 10%/$count;
+//    margin-top: 10%/$count;
+//    width: 90%/$count;
+//  }
+//
+//  @media only screen and (min-width: 1280px) {
+//    $count: 5;
+//
+//    float: left;
+//    margin-right: 10%/$count;
+//    margin-top: 10%/$count;
+//    width: 90%/$count;
+//  }
+//
+//  img {
+//    float: left;
+//  }
+//  &:hover{
+//    background-color: darken(rgba(255, 255, 255, 1.0), 5);
+//  }
+//}
 
-  border-radius: 4px;
-  cursor: pointer;
-  display: inline-block;
-  float: left;
-
-  margin-right: 10%/$count;
-  margin-top: 10%/($count*2);
-  width: 90%/$count;
-
-  @media only screen and (min-width: 1100px) {
-    $count: 4;
-
-    float: left;
-    margin-right: 10%/$count;
-    margin-top: 10%/$count;
-    width: 90%/$count;
-  }
-
-  @media only screen and (min-width: 1280px) {
-    $count: 5;
-
-    float: left;
-    margin-right: 10%/$count;
-    margin-top: 10%/$count;
-    width: 90%/$count;
-  }
-
-  img {
-    float: left;
-  }
-  &:hover{
-    background-color: darken(rgba(255, 255, 255, 1.0), 5);
+.sample-table {
+  tr {
+    cursor: pointer;
+    @include transition (all 0.25s ease-in-out);
+    &:hover {
+      @include transition (all 0.25s ease-in-out);
+      background-color: $color-highlight;
+      color: $color-light-gray;
+    }
   }
 }
 

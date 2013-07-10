@@ -1,11 +1,19 @@
-<div class="span12">
-    <div class="sample" data-ng-repeat="s in project.samples"
-         data-ng-click="gotoProject($event, s.links.self)">
-        <img src="/css/img/folder-sample.svg" alt="folder"/>
+<div>
+    <div class="span12 large-container">
+        <!--<div class="sample" data-ng-repeat="s in project.samples"-->
+        <!--data-ng-click="gotoProject($event, s.links.self)">-->
+        <!--<img src="/css/img/folder-sample.svg" alt="folder"/>-->
 
-        <div>
-            <h4>{{s.label}}</h4>
-            <span>{{s.dateCreated | angularMoment}}</span>
-        </div>
+        <!--<div>-->
+        <!--<h4>{{s.label}}</h4>-->
+        <!--<span>{{s.dateCreated | angularMoment}}</span>-->
+        <!--</div>-->
+        <!--</div>-->
+        <table class="sample-table table">
+            <tr data-ng-repeat="s in project.samples" data-ng-click="gotoProject($event, s.links.self)">
+                <td>{{ s.label }}</td>
+                <td>{{ s.dateCreated | angularMoment }}</td>
+            </tr>
+        </table>
     </div>
 </div>

@@ -9,10 +9,9 @@ $color-white: rgba(236, 240, 241,1.0);
 $color-light-gray: #DFE2E2;
 $color-slate-gray: #494d4e;
 $color-red: #f00;
-$color-hightlight: lighten($color-phac-dark-blue, 10);
-$color-sidebar: rgba(65, 66, 67, 1.0);
+$color-highlight: lighten($color-phac-dark-blue, 10);
 
-$color-card-hover: $color-hightlight;
+$color-sidebar: #222222;
 
 $color-body-font: #222222;
 $color-header: rgba(0, 0, 0, .1);
