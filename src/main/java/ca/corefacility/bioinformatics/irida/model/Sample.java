@@ -23,6 +23,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
@@ -48,7 +50,8 @@ public class Sample implements IridaThing<Sample,Audit,Identifier>, Comparable<S
     @Transient
     private Identifier identifier;
     @NotNull
-    @Transient
+    @OneToOne
+    @JoinColumn(name="audit")
     private Audit audit;
     @NotNull
     @Size(min = 3)

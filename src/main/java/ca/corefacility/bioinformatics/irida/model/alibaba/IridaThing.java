@@ -33,4 +33,6 @@ public interface IridaThing<DataType extends IridaThing,AuditType extends Audit,
     public String getLabel();
  
     public DataType copy();
+    
+    public Long getId();
 }

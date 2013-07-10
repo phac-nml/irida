@@ -120,4 +120,9 @@ public class SequenceFile implements IridaThing<SequenceFile, Audit, Identifier>
         f.setFile(getIoFile().toPath());
         return f;
     }
+
+    @Override
+    public Long getId() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

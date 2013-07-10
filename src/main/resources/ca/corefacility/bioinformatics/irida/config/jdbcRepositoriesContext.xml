@@ -27,5 +27,10 @@
         <constructor-arg value="ca.corefacility.bioinformatics.irida.model.Sample"/>
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
+    
+    <bean id="auditRelRepository" class="ca.corefacility.bioinformatics.irida.repositories.relational.AuditRelationalRepository">
+        <constructor-arg ref="dataSource"/>
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>    
         
 </beans>

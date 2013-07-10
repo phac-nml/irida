@@ -84,7 +84,9 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
     @Iri(PREFIX + "phone")
     private String phoneNumber;
     @NotNull
-    @Transient
+    
+    @OneToOne
+    @JoinColumn(name="audit")
     private Audit audit;
     
     @ManyToOne
