@@ -21,5 +21,11 @@
         <constructor-arg ref="dataSource"/>
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
+    
+    <bean id="sampleRelRepository" class="ca.corefacility.bioinformatics.irida.repositories.relational.GenericRelationalRepository">
+        <constructor-arg ref="dataSource"/>
+        <constructor-arg value="ca.corefacility.bioinformatics.irida.model.Sample"/>
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
         
 </beans>

@@ -19,6 +19,12 @@ import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.openrdf.annotations.Iri;
@@ -29,13 +35,20 @@ import org.openrdf.annotations.Iri;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
+@Entity
+@Table(name="sample")
 @Iri(Sample.PREFIX + Sample.TYPE)
 public class Sample implements IridaThing<Sample,Audit,Identifier>, Comparable<Sample> {
     public static final String PREFIX = "http://corefacility.ca/irida/";
     public static final String TYPE = "Sample";
     
-    private Identifier id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    @Transient
+    private Identifier identifier;
     @NotNull
+    @Transient
     private Audit audit;
     @NotNull
     @Size(min = 3)
@@ -48,7 +61,7 @@ public class Sample implements IridaThing<Sample,Audit,Identifier>, Comparable<S
 
     public Sample(Identifier id) {
         this();
-        this.id = id;
+        this.identifier = id;
     }
 
     @Override
@@ -66,6 +79,14 @@ public class Sample implements IridaThing<Sample,Audit,Identifier>, Comparable<S
         return audit.compareTo(other.audit);
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getSampleName() {
         return sampleName;
     }
@@ -81,12 +102,12 @@ public class Sample implements IridaThing<Sample,Audit,Identifier>, Comparable<S
 
     @Override
     public Identifier getIdentifier() {
-        return id;
+        return identifier;
     }
 
     @Override
     public void setIdentifier(Identifier identifier) {
-        this.id = identifier;
+        this.identifier = identifier;
     }
 
     @Override

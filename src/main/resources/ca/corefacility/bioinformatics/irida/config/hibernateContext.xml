@@ -32,6 +32,7 @@
 			<list>
 				<value>ca.corefacility.bioinformatics.irida.model.Project</value>
                                 <value>ca.corefacility.bioinformatics.irida.model.User</value>
+                                <value>ca.corefacility.bioinformatics.irida.model.Sample</value>
                                 <value>ca.corefacility.bioinformatics.irida.model.Role</value>
 			</list>
 		</property>
