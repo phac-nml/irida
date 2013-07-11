@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -193,5 +195,13 @@ public class UsersController extends GenericController<UserIdentifier, User, Use
 
         // respond to the user
         return mav;
+    }
+    
+    @RequestMapping(value = "/current", method = RequestMethod.GET)
+    public ModelMap getCurrentUser() {
+    	String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    	logger.debug("Getting currently logged-in user: [" + username + "].");
+
+    	return getResource(username);
     }
 }
