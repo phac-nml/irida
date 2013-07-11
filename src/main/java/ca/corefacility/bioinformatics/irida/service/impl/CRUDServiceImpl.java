@@ -319,7 +319,7 @@ public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType> & 
      * {@inheritDoc}
      */
     @Override
-    public Collection<ValueType> readMultiple(Collection<Identifier> idents) {
+    public Collection<ValueType> readMultiple(Collection<KeyType> idents) {
         return repository.readMultiple(idents);
     }
 

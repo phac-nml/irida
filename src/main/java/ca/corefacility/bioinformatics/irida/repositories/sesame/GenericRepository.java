@@ -220,7 +220,7 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
      * {@inheritDoc}
      */
     @Override
-    public Collection<Type> readMultiple(Collection<Identifier> idents) {
+    public Collection<Type> readMultiple(Collection<IDType> idents) {
         List<Type> projects = new ArrayList<>();
         ObjectConnection con = store.getRepoConnection();
 

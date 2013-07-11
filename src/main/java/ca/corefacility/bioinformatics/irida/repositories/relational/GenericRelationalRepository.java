@@ -111,7 +111,7 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
     }
 
     @Override
-    public Collection<Type> readMultiple(Collection<Identifier> idents) {
+    public Collection<Type> readMultiple(Collection<Long> idents) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

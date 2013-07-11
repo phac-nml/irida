@@ -196,7 +196,7 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Long, Se
      * Reading multiple files will not be supported
      */
     @Override
-    public Collection<SequenceFile> readMultiple(Collection<Identifier> idents) {
+    public Collection<SequenceFile> readMultiple(Collection<Long> idents) {
         throw new UnsupportedOperationException("Reading multiple files will not be supported.");
     }
 

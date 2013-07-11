@@ -77,11 +77,6 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
         
     }
 
-    @Override
-    public Collection<Project> readMultiple(Collection<Identifier> idents) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
     
     
 }

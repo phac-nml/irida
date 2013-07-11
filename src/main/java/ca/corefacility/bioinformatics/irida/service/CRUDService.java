@@ -51,7 +51,7 @@ public interface CRUDService<IdentifierType, Type extends Comparable<Type> & Aud
      * @param idents The unique identifiers of the objects to read
      * @return A collection of the requested objects
      */
-    public Collection<Type> readMultiple(Collection<Identifier> idents);
+    public Collection<Type> readMultiple(Collection<IdentifierType> idents);
 
     /**
      * Update the specified object in the database. The object <b>must</b> have
