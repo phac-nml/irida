@@ -35,6 +35,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.DirectFieldAccessor;
@@ -112,7 +113,12 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
 
     @Override
     public Collection<Type> readMultiple(Collection<Long> idents) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session session = sessionFactory.getCurrentSession();
+        Criteria crit = session.createCriteria(classType);
+        crit.add(Restrictions.in("id", idents));
+        List<Type> list = crit.list();
+        
+        return list;
     }
 
     @Transactional
