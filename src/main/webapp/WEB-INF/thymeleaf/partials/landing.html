@@ -34,41 +34,28 @@
         (function () {
             var SIDEBAR_W = '176',
 
-                    OUTER = document.getElementsByClassName('outer')[0],
-                    SIDEBAR = document.getElementsByClassName('sidebar')[0],
-                    CONTENT = document.getElementsByClassName('main')[0],
-                    SIDEBAR_TOP_H = getTotalHeight('sidebar-top'),
-                    SIDEBAR_BODY = document.getElementsByClassName('sidebar-inner')[0],
-                    SIDEBAR_BOTTOM_H = getTotalHeight('sidebar-bottom');
+                    OUTER = $('.outer'), //document.getElementsByClassName('outer')[0],
+                    SIDEBAR = $('.sidebar'), //document.getElementsByClassName('sidebar')[0],
+                    CONTENT = $('.main'), //document.getElementsByClassName('main')[0],
+                    SIDEBAR_TOP_H = $('#sidebar-top').outerHeight(),
+                    SIDEBAR_BODY = $('.sidebar-inner'), //document.getElementsByClassName('sidebar-inner')[0],
+                    SIDEBAR_BOTTOM_H = $('#sidebar-bottom').outerHeight();
 
 
             window.onresize = adjustWindow;
             function adjustWindow() {
+                SIDEBAR.width(SIDEBAR_W);// + 'px';
                 var h = window.innerHeight;
                 var w = window.innerWidth;
 
-                OUTER.style.width = w + 'px';
-                OUTER.style.height = h + 'px';
+                OUTER.width(w); // + 'px';
 
-                SIDEBAR.style.height = h + 'px';
-                SIDEBAR.style.width = SIDEBAR_W + 'px';
-                SIDEBAR_BODY.style.height = ( h - SIDEBAR_BOTTOM_H - SIDEBAR_TOP_H ) + 'px';
+                SIDEBAR.height(h);// + 'px';
+                SIDEBAR_BODY.height( h - SIDEBAR_BOTTOM_H - SIDEBAR_TOP_H );// + 'px';
+                CONTENT.width(w - SIDEBAR_W);// + 'px';
 
-                CONTENT.style.height = h + 'px';
-                CONTENT.style.width = w - SIDEBAR_W + 'px';
-            }
-
-            function getTotalHeight(elmID) {
-                var elmHeight, elmMargin;
-                if (document.all) { // IE
-                    elmHeight = parseInt(document.getElementById(elmID).currentStyle.height, 10);
-                    elmMargin = parseInt(document.getElementById(elmID).currentStyle.marginTop, 10);
-                }
-                else { // Mozilla
-                    elmHeight = parseInt(document.defaultView.getComputedStyle(document.getElementById(elmID), '').getPropertyValue('height'), 10);
-                    elmMargin = parseInt(document.defaultView.getComputedStyle(document.getElementById(elmID), '').getPropertyValue('margin-top')) + parseInt(document.defaultView.getComputedStyle(document.getElementById(elmID), '').getPropertyValue('margin-bottom'));
-                }
-                return elmHeight + elmMargin;
+                CONTENT.height(h);// + 'px';
+                OUTER.height(h); // + 'px';
             }
 
             adjustWindow();
