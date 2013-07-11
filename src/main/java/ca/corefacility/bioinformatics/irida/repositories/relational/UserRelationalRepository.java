@@ -59,7 +59,16 @@ public class UserRelationalRepository extends GenericRelationalRepository<User> 
 
     @Override
     public User getUserByUsername(String username) throws EntityNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session session = this.sessionFactory.getCurrentSession();
+        Criteria crit = session.createCriteria(User.class);
+        crit.add(Restrictions.like("username", username));
+        User u = (User) crit.uniqueResult();
+        
+        if(u == null){
+            throw new EntityNotFoundException("User "+username+" doesn't exist in the database");
+        }
+        
+        return u;
     }
 
     @Override
