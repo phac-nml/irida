@@ -46,5 +46,5 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
      * @param project the project to get users for.
      * @return the users associated with the project.
      */
-    public Collection<Relationship> getUsersForProject(Identifier project);
+    public Collection<User> getUsersForProject(Project project);
 }

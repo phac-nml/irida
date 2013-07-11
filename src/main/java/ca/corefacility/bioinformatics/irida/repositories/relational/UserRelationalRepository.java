@@ -16,14 +16,17 @@
 package ca.corefacility.bioinformatics.irida.repositories.relational;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import java.util.Collection;
+import java.util.List;
 import javax.sql.DataSource;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,7 +75,14 @@ public class UserRelationalRepository extends GenericRelationalRepository<User> 
     }
 
     @Override
-    public Collection<Relationship> getUsersForProject(Identifier project) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Collection<User> getUsersForProject(Project project) {
+        Session session = sessionFactory.getCurrentSession();
+        String qs = "SELECT u.* FROM user u, project_user pu WHERE pu.user=u.id AND pu.project = :pid";
+        Query query = session.createSQLQuery(qs).addEntity(User.class);
+        query.setLong("pid", project.getId());
+        
+        List<User> list = query.list();
+        
+        return list;    
     }
 }
