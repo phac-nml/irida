@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.relational;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
@@ -34,6 +35,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -46,10 +49,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Repository
 public class GenericRelationalRepository<Type extends IridaThing> implements CRUDRepository<Long, Type> {
-    private String tableName;
     protected JdbcTemplate jdbcTemplate;
     protected SessionFactory sessionFactory;
     private Class classType;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(
+            GenericRelationalRepository.class); //Logger to use for this repository    
     
     public GenericRelationalRepository(){}
     
@@ -68,7 +72,15 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
     
     @Transactional
     @Override
-    public Type create(Type object) throws IllegalArgumentException {                
+    public Type create(Type object) throws IllegalArgumentException {
+        if (object == null) {
+            throw new IllegalArgumentException("Object is null");
+        }
+        
+        if(object.getId() != null && exists(object.getId())) {
+            throw new EntityExistsException("Object " + object + " already exists in the database");
+        }
+        
         Session session = sessionFactory.getCurrentSession();
         Serializable save = session.save(object);        
         
@@ -118,7 +130,13 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
         for(String key : updatedFields.keySet()){
             Object value = updatedFields.get(key);
 
-            fieldAccessor.setPropertyValue(key, value);
+            try{
+                fieldAccessor.setPropertyValue(key, value);
+            }
+            catch(BeansException ex){
+                logger.error(ex.getMessage());
+                throw new InvalidPropertyException("Couldn't update property "+key+": "+ex.getMessage());
+            }
         }
         
         session.save(base);
