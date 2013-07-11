@@ -15,13 +15,17 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.relational;
 
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import java.util.Collection;
+import java.util.List;
 import javax.sql.DataSource;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,10 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional
 @Repository
-public class ProjectRelationalRepository extends GenericRelationalRepository<Project> implements ProjectRepository{
-
-//public class ProjectRelationalRepository implements ProjectRepository{
-    
+public class ProjectRelationalRepository extends GenericRelationalRepository<Project> implements ProjectRepository{    
     
     public ProjectRelationalRepository(){}
     
@@ -42,20 +43,38 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
         super(source,Project.class);
     }
     
-    
+    @Transactional
     @Override
     public Collection<Project> getProjectsForUser(User user) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session session = sessionFactory.getCurrentSession();
+        String qs = "SELECT p.* FROM project p, project_user pu WHERE pu.project=p.id AND pu.user = :uid";
+        Query query = session.createSQLQuery(qs).addEntity(Project.class);
+        query.setLong("uid", user.getId());
+        
+        List<Project> list = query.list();
+        
+        return list;
     }
 
+    @Transactional
     @Override
     public Relationship addUserToProject(Project project, User user) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String addUser = "INSERT INTO project_user (project,user) VALUES (?,?)";
+        this.jdbcTemplate.update(addUser,project.getId(),user.getId());
+        
+        return null;
     }
 
+    @Transactional
     @Override
     public void removeUserFromProject(Project project, User user) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String query = "DELETE FROM project_user WHERE project=? AND user=?";
+        int update = this.jdbcTemplate.update(query,project.getId(),user.getId());
+        
+        if(update != 1){
+            throw new StorageException("Removing user from project affected more than 1 row.");
+        }
+        
     }
 
     @Override
