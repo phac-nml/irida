@@ -35,7 +35,11 @@ body {
 }
 
 h1, h2, h3, h4 {
-  font-weight: 600;
+  font-weight: 700;
+}
+
+a {
+  color: $color-phac-dark-blue;
 }
 
 /* ==========================================================================
@@ -123,7 +127,7 @@ h1, h2, h3, h4 {
   height: 30px;
   line-height: 30px;
   text-align: center;
-  background-color: darken($color-sidebar, 2);
+  background-color: darken($color-sidebar, 6);
   border-bottom: 1px solid rgb(43, 44, 46);
   p {
     font-weight: 600;
@@ -252,4 +256,15 @@ td.file-select {
 
 td.file-date {
   text-align: right;
+}
+
+.ngs-pills > li > a {
+  font-weight: 700;
+}
+.ngs-pills > li.active > a {
+  background-color: $color-phac-dark-blue;
+  &:hover {
+    background-color: $color-phac-dark-blue;
+    cursor: default;
+  }
 }

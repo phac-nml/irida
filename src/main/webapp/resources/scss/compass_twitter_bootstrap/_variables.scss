@@ -44,7 +44,7 @@ $linkColorHover:        darken($linkColor, 15%) !default;
 
 // Typography
 // -------------------------
-$sansFontFamily:        'Open Sans Condensed', "Helvetica Neue", Helvetica, Arial, sans-serif !default;
+$sansFontFamily:        'Open Sans', "Helvetica Neue", Helvetica, Arial, sans-serif !default;
 $serifFontFamily:       Georgia, "Times New Roman", Times, serif !default;
 $monoFontFamily:        Monaco, Menlo, Consolas, "Courier New", monospace !default;
 
@@ -182,7 +182,7 @@ $navbarCollapseDesktopWidth:      $navbarCollapseWidth + 1 !default;
 
 $navbarHeight:                    45px !default;
 $navbarBackgroundHighlight:       #ffffff !default;
-$navbarBackground:                darken($navbarBackgroundHighlight, 5%) !default;
+$navbarBackground:                darken($navbarBackgroundHighlight, 2%) !default;
 $navbarBorder:                    darken($navbarBackground, 12%) !default;
 
 $navbarText:                      #777 !default;
