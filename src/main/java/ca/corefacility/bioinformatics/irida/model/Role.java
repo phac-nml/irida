@@ -19,6 +19,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.envers.Audited;
 import org.hibernate.usertype.UserType;
 
 /**
@@ -29,6 +30,7 @@ import org.hibernate.usertype.UserType;
  */
 @Entity
 @Table(name="system_role")
+@Audited
 public class Role implements Comparable<Role>, GrantedAuthority {
     
     @Id

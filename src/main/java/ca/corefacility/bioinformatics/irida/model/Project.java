@@ -8,11 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import org.hibernate.envers.Audited;
 import org.openrdf.annotations.Iri;
 
 /**
@@ -23,6 +22,7 @@ import org.openrdf.annotations.Iri;
  */
 @Entity
 @Table(name="project")
+@Audited
 @Iri(Project.PREFIX + Project.TYPE)
 public class Project implements IridaThing<Project,Audit,Identifier>, Comparable<Project> {
     public static final String PREFIX = "http://corefacility.ca/irida/";
@@ -39,8 +39,7 @@ public class Project implements IridaThing<Project,Audit,Identifier>, Comparable
     private String name;
     
     @NotNull
-    @OneToOne
-    @JoinColumn(name="audit")
+    @Transient
     private Audit audit;
 
     public Project() {

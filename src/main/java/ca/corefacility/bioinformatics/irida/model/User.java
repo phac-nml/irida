@@ -6,29 +6,21 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.validators.Patterns;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import org.hibernate.validator.constraints.Email;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Objects;
-import java.util.Set;
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import org.hibernate.envers.Audited;
 import org.openrdf.annotations.Iri;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -42,6 +34,7 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 @Entity
 @Table(name="user")
+@Audited
 @Iri(User.PREFIX + User.TYPE)
 public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<User>, UserDetails {
     public static final String PREFIX = "http://xmlns.com/foaf/0.1/";
@@ -85,8 +78,9 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
     private String phoneNumber;
     @NotNull
     
-    @OneToOne
-    @JoinColumn(name="audit")
+    //@OneToOne
+    //@JoinColumn(name="audit")
+    @Transient
     private Audit audit;
     
     @ManyToOne
