@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.relational;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
@@ -52,23 +53,7 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
     @Override
     public Collection<ProjectUserJoin> getProjectsForUser(User user) {
         Session session = sessionFactory.getCurrentSession();
-        /*String qs = "SELECT p.*,rl.* FROM project p, project_user pu, relationship rl WHERE pu.project=p.id AND pu.relationship=rl.id AND pu.user = :uid";
-        SQLQuery query = session.createSQLQuery(qs);
-        query.addEntity("project", Project.class);
-        query.addEntity("relationship",Relationship.class);
-        query.setLong("uid", user.getId());
-        
-        List list = query.list();
-        
-        List<Relationship> res = new ArrayList<>();
-        for(Object result : list){
-            Object arr[] = (Object[]) result;
-            Project p = (Project) arr[0];
-            Relationship r = (Relationship) arr[1];
-            r.setSubject(user);
-            r.setObject(p);
-            res.add(r);
-        }*/
+
         Criteria crit = session.createCriteria(ProjectUserJoin.class);
         crit.add(Restrictions.eq("user", user));
         List<ProjectUserJoin> list = crit.list();
@@ -91,14 +76,17 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
 
     @Transactional
     @Override
-    public void removeUserFromProject(Project project, User user) {
-        String query = "DELETE FROM project_user WHERE project=? AND user=?";
-        int update = this.jdbcTemplate.update(query,project.getId(),user.getId());
+    public void removeUserFromProject(Project project, User user) {        
+        Session session = sessionFactory.getCurrentSession();
+        Criteria crit = session.createCriteria(ProjectUserJoin.class);
+        crit.add(Restrictions.eq("project", project));
+        crit.add(Restrictions.eq("user", user));
         
-        if(update != 1){
-            throw new StorageException("Removing user from project affected more than 1 row.");
+        ProjectUserJoin join = (ProjectUserJoin) crit.uniqueResult();
+        if(join == null){
+            throw new EntityNotFoundException("A join between this user and project was not found");
         }
-        
+        session.delete(join);
     }
 
     
