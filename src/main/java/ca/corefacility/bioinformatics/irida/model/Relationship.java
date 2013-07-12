@@ -16,10 +16,15 @@
 package ca.corefacility.bioinformatics.irida.model;
 
 import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
-import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * Modeling a relationship between two different entities in the database.
@@ -27,52 +32,56 @@ import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class Relationship implements Auditable<Audit>, Identifiable<Identifier>, Comparable<Relationship> {
+//public class Relationship<SubjectType extends IridaThing,ObjectType extends IridaThing> implements Auditable<Audit>, Comparable<Relationship> {
+@Entity
+@Table(name="relationship")
+public class Relationship implements Auditable<Audit>, Comparable<Relationship> {
 
-    Identifier identifier;
-    Identifier subject;
-    RdfPredicate predicate;
-    Identifier object;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    
+    @Transient
+    private Object subject;
+    @Transient
+    private Object object;
+    
+    @OneToOne
+    @JoinColumn(name="audit")
     private Audit audit;
 
     public Relationship() {
         audit = new Audit();
     }
 
-    public Relationship(Identifier subject, Identifier object) {
+    public Relationship(Object subject, Object object) {
         this();
         this.subject = subject;
-        this.object = object;
-    }
-    
-    public Relationship(Identifier subject, RdfPredicate predicate, Identifier object) {
-        this();
-        this.subject = subject;
-        this.predicate = predicate;
         this.object = object;
     }
 
-    public Identifier getSubject() {
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Object getSubject() {
         return subject;
     }
 
-    public void setSubject(Identifier subject) {
+    public void setSubject(Object subject) {
         this.subject = subject;
     }
 
-    public RdfPredicate getPredicate() {
-        return predicate;
-    }
 
-    public void setPredicate(RdfPredicate relationship) {
-        this.predicate = relationship;
-    }
-
-    public Identifier getObject() {
+    public Object getObject() {
         return object;
     }
 
-    public void setObject(Identifier object) {
+    public void setObject(Object object) {
         this.object = object;
     }
 
@@ -84,16 +93,6 @@ public class Relationship implements Auditable<Audit>, Identifiable<Identifier>,
     @Override
     public void setAuditInformation(Audit audit) {
         this.audit = audit;
-    }
-
-    @Override
-    public Identifier getIdentifier() {
-        return identifier;
-    }
-
-    @Override
-    public void setIdentifier(Identifier identifier) {
-        this.identifier = identifier;
     }
 
     @Override

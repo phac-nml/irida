@@ -91,7 +91,7 @@ public class SequenceFileFilesystemRepositoryTest {
     @Test
     public void testReadFile() {
         try {
-            repository.read(new Identifier());
+            repository.read(new Long(9999));
             fail();
         } catch (UnsupportedOperationException e) {
         } catch (Exception e) {
@@ -103,7 +103,7 @@ public class SequenceFileFilesystemRepositoryTest {
     public void testUpdateFileMissingIdentifier() throws IOException {
         SequenceFile s = new SequenceFile(getTempFile());
         try {
-            repository.update(s.getIdentifier(), ImmutableMap.of("file", (Object) s.getFile()));
+            repository.update(s.getId(), ImmutableMap.of("file", (Object) s.getFile()));
             fail();
         } catch (IllegalArgumentException e) {
         } catch (Exception e) {
@@ -118,7 +118,7 @@ public class SequenceFileFilesystemRepositoryTest {
         SequenceFile s = new SequenceFile(id, f);
 
         try {
-            repository.update(s.getIdentifier(), ImmutableMap.of("file", (Object) f));
+            repository.update(s.getId(), ImmutableMap.of("file", (Object) f));
             fail();
         } catch (IllegalArgumentException e) {
         } catch (Exception e) {
@@ -149,7 +149,7 @@ public class SequenceFileFilesystemRepositoryTest {
 
         sf.setFile(newFile);
         // now try updating the file:
-        sf = repository.update(sf.getIdentifier(), ImmutableMap.of("file", (Object) newFile));
+        sf = repository.update(sf.getId(), ImmutableMap.of("file", (Object) newFile));
 
         // the filename should be the same as before:
         Path updated = sf.getFile();
@@ -178,12 +178,13 @@ public class SequenceFileFilesystemRepositoryTest {
     @Test
     public void testUpdate() throws IOException {
         Identifier id = new Identifier();
+        Long lId = new Long(9999);
         Path originalFile = getTempFile();
         SequenceFile sf = new SequenceFile(id, originalFile);
         sf = repository.create(sf);
         Path updatedFile = getTempFile();
         sf.setFile(updatedFile);
-        sf = repository.update(id, ImmutableMap.of("file", (Object) updatedFile));
+        sf = repository.update(lId, ImmutableMap.of("file", (Object) updatedFile));
         assertEquals(updatedFile.getFileName(), sf.getFile().getFileName());
 
         Set<String> filenames = new HashSet<>();
@@ -201,7 +202,7 @@ public class SequenceFileFilesystemRepositoryTest {
     @Test
     public void testDelete() {
         try {
-            repository.delete(new Identifier());
+            repository.delete(new Long(9999));
             fail();
         } catch (UnsupportedOperationException e) {
         } catch (Exception e) {

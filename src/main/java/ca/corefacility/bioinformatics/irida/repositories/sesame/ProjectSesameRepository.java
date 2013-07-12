@@ -67,7 +67,7 @@ public class ProjectSesameRepository extends GenericRepository<Identifier, Proje
     public Relationship addUserToProject(Project p, User user) {
         Relationship l = new Relationship();
         l.setSubject(user.getIdentifier());
-        l.setPredicate(hasProject);
+        //l.setPredicate(hasProject);
         l.setObject(p.getIdentifier());
         Relationship create = linksRepo.create(l);
 
@@ -83,7 +83,8 @@ public class ProjectSesameRepository extends GenericRepository<Identifier, Proje
         
         List<Relationship> links = linksRepo.getLinks(user.getIdentifier(), hasProject, project.getIdentifier());
         for(Relationship r : links){
-            linksRepo.delete(r.getIdentifier());
+            //TODO: actually delete links
+            //linksRepo.delete(r.getIdentifier());
         }
     }
 }

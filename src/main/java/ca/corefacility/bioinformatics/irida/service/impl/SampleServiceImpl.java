@@ -72,7 +72,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Identifier, Sample> imple
         }
         Relationship projectSequenceFileRelationship = projectSequenceFileRelationships.iterator().next();
         // remove the existing relationship
-        relationshipRepository.delete(projectSequenceFileRelationship.getIdentifier());
+        
+        //TODO: re-implement removing this relationship
+        //relationshipRepository.delete(projectSequenceFileRelationship.getIdentifier());
 
         Relationship r = relationshipRepository.create(Sample.class, sample.getIdentifier(),
                 SequenceFile.class, sampleFile.getIdentifier());
@@ -112,7 +114,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Identifier, Sample> imple
         Relationship r = relationships.iterator().next();
 
         // delete the relationship between sample and sequence file
-        relationshipRepository.delete(r.getIdentifier());
+        
+        //TODO: Re-implement remvoin this relationship
+        //relationshipRepository.delete(r.getIdentifier());
 
         // add a new relationship between project and sequence file
         Relationship created = relationshipRepository.create(project, sequenceFile);

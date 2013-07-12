@@ -47,6 +47,8 @@ public class IdentifiableTestEntity implements IridaThing<IdentifiableTestEntity
     @Transient
     private Audit audit;
     private String label;
+    
+    private Boolean valid;
 
     public IdentifiableTestEntity() {
         this.identifier = new Identifier();
@@ -125,4 +127,14 @@ public class IdentifiableTestEntity implements IridaThing<IdentifiableTestEntity
         copy.setLabel(getLabel());
         return copy;
    }
+
+    @Override
+    public Boolean isValid() {
+        return valid;
+    }
+
+    @Override
+    public void setValid(Boolean valid) {
+        this.valid = valid;
+    }
 }

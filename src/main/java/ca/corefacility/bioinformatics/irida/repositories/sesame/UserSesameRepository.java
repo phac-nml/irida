@@ -273,9 +273,9 @@ public class UserSesameRepository extends GenericRepository<UserIdentifier, User
     public Collection<User> getUsersForProject(Project  project) {
         List<Identifier> userIds = linksRepo.listSubjects(project.getIdentifier(), hasProject);
         
-        Collection<User> users = readMultiple(userIds);
-        
-        return users;
+        //Collection<User> users = readMultiple(userIds);
+        //TODO: uncomment and fix this
+        return null;
     }
     
     /**

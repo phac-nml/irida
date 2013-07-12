@@ -127,9 +127,10 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
         RdfPredicate predicate = linkList.getLink(subjectType, objectType);
         Relationship link = new Relationship();
 
-        link.setSubject(subject);
+        /*TODO: implement create
+         * link.setSubject(subject);
         link.setPredicate(predicate);
-        link.setObject(object);
+        link.setObject(object);*/
 
         return create(link);
     }
@@ -139,7 +140,8 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
      */
     @Override
     public Relationship create(Relationship link) {
-        Identifier subject = link.getSubject();
+        /*TODO: implement create
+         * Identifier subject = link.getSubject();
         Identifier object = link.getObject();
         RdfPredicate predicate = link.getPredicate();
 
@@ -193,7 +195,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             throw new StorageException("Failed to create relationship.");
         } finally {
             store.closeRepoConnection(con);
-        }
+        }*/
 
         return link;
     }
@@ -353,7 +355,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
 
                 Identifier linkId = buildLinkIdentifier(uri, identifiedBy);
                 Relationship link = buildLinkfromBindingSet(bs, con);
-                link.setIdentifier(linkId);
+                //link.setIdentifier(linkId);
                 Audit audit = auditRepo.getAudit(uri.toString());
                 link.setAuditInformation(audit);
 
@@ -391,10 +393,10 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
         Identifier subId = idGen.getIdentiferForURI(subURI);
         Identifier objId = idGen.getIdentiferForURI(objURI);
         Relationship l = new Relationship();
-        l.setSubject(subId);
-        l.setObject(objId);
+        //l.setSubject(subId);
+        //l.setObject(objId);
 
-        l.setPredicate(pred);
+        //l.setPredicate(pred);
 
         return l;
     }
@@ -430,7 +432,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
 
                 Identifier linkId = buildLinkIdentifier(uri, identifiedBy);
                 ret = buildLinkfromBindingSet(bs, con);
-                ret.setIdentifier(linkId);
+                //ret.setIdentifier(linkId);
                 Audit audit = auditRepo.getAudit(uri.toString());
                 ret.setAuditInformation(audit);
             }
@@ -460,7 +462,7 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
         }
         logger.trace("Deleting " + links.size() + " relationships.");
         for (Relationship r : links) {
-            delete(r.getIdentifier());
+            //delete(r.getIdentifier());
         }
     }
 
@@ -485,14 +487,14 @@ public class RelationshipSesameRepository extends SesameRepository implements Re
             con.begin();
             //first we'll remove the predicate between the subject and object.
             Relationship relationship = read(id);
-            java.net.URI subNetURI = getUriFromIdentifier(relationship.getSubject());
-            java.net.URI objNetURI = getUriFromIdentifier(relationship.getObject());
-            RdfPredicate predicate = relationship.getPredicate();
-            URI subURI = vf.createURI(subNetURI.toString());
-            URI objURI = vf.createURI(objNetURI.toString());
+            //java.net.URI subNetURI = getUriFromIdentifier(relationship.getSubject());
+            //java.net.URI objNetURI = getUriFromIdentifier(relationship.getObject());
+            //RdfPredicate predicate = relationship.getPredicate();
+            //URI subURI = vf.createURI(subNetURI.toString());
+            //URI objURI = vf.createURI(objNetURI.toString());
 
-            URI pred = predicate.getPredicateURI(con);
-            con.remove(subURI, pred, objURI);
+            //URI pred = predicate.getPredicateURI(con);
+            //con.remove(subURI, pred, objURI);
 
             //then we'll remove the relationship object
             con.remove(objecturi, null, null);

@@ -68,6 +68,8 @@ public class ProjectSesameRepositoryTest {
 
     }
     
+    /*
+     * TODO: Reimplement this test
     @Test
     public void testAddUserToProject() throws MalformedQueryException, RepositoryException, QueryEvaluationException{
         Project project = repo.create(new Project("a new project"));
@@ -88,7 +90,7 @@ public class ProjectSesameRepositoryTest {
         boolean evaluate = query.evaluate();
         assertTrue(evaluate);
         con.close();
-    }
+    }*/
     
     /*
      * Doesn't work as expected right now because we can't list relationships without inference from OWLIM right now.  hopefully updated soon

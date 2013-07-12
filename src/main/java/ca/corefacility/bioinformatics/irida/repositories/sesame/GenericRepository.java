@@ -467,10 +467,11 @@ public class GenericRepository<IDType extends Identifier, Type extends IridaThin
 
         try {
             //Remove all things linking to this resource
-            List<Relationship> links = linksRepo.getLinks(id, null, (Identifier) null);
+            /*TODO: Revisit this and see if we need to delete links
+             * List<Relationship> links = linksRepo.getLinks(id, null, (Identifier) null);
             for(Relationship r : links){
                 linksRepo.delete(r.getIdentifier());
-            }
+            }*/
             
             con.remove(objecturi, null, null);
             

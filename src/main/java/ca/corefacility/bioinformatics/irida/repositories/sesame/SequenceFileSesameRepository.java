@@ -255,9 +255,9 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
         auditRepo.audit(project.getAuditInformation(), pNetUri.toString());*/
         
         Relationship l = new Relationship();
-        l.setSubject(project.getIdentifier());
-        l.setObject(file.getIdentifier());
-        l.setPredicate(hasFile);
+        l.setSubject(project);
+        l.setObject(file);
+        //l.setPredicate(hasFile);
         linksRepo.create(l);
         
     }
@@ -272,9 +272,9 @@ public class SequenceFileSesameRepository extends GenericRepository<Identifier, 
         auditRepo.audit(sample.getAuditInformation(), pNetUri.toString());*/
         
         Relationship l = new Relationship();
-        l.setSubject(sample.getIdentifier());
-        l.setObject(file.getIdentifier());
-        l.setPredicate(hasFile);
+        l.setSubject(sample);
+        l.setObject(file);
+        //l.setPredicate(hasFile);
         linksRepo.create(l);        
     }    
     
