@@ -20,7 +20,7 @@
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
  
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://localhost:3306/irida" />
+		<property name="url" value="jdbc:mysql://localhost:3306/irida_test" />
 		<property name="username" value="test" />
 		<property name="password" value="test" />
 	</bean>    
@@ -49,6 +49,7 @@
                             <!--Join Classes-->
                             <value>ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin</value>
                             <value>ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileSampleJoin</value>
+                            <value>ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileProjectJoin</value>
                     </list>
             </property>            
             <!--property name="packagesToScan" value="net.top.*.entity.*" /-->

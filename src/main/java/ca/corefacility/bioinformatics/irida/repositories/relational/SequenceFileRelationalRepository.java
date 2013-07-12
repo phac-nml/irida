@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileSampleJoin;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import java.io.File;
@@ -58,8 +59,13 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
     }
 
     @Override
-    public List<SequenceFile> getFilesForProject(Project project) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<SequenceFileProjectJoin> getFilesForProject(Project project) {
+        Session session = sessionFactory.getCurrentSession();
+        Criteria crit = session.createCriteria(SequenceFileProjectJoin.class);
+        crit.add(Restrictions.eq("project", project));
+        List<SequenceFileProjectJoin> list = crit.list();
+        
+        return list;        
     }
 
     @Override
@@ -73,8 +79,13 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
     }
 
     @Override
-    public void addFileToProject(Project project, SequenceFile file) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public SequenceFileProjectJoin addFileToProject(Project project, SequenceFile file) {
+        Session session = sessionFactory.getCurrentSession();
+
+        SequenceFileProjectJoin ujoin = new SequenceFileProjectJoin(file, project);
+        session.save(ujoin);
+        
+        return ujoin;    
     }
 
     @Override
