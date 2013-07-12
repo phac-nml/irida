@@ -61,6 +61,8 @@ public class Sample implements IridaThing<Sample,Audit,Identifier>, Comparable<S
     @Size(min = 3)
     @Iri(PREFIX + "sampleName")
     private String sampleName;
+    
+    private Boolean valid = true;
 
     public Sample() {
         audit = new Audit();
@@ -133,4 +135,13 @@ public class Sample implements IridaThing<Sample,Audit,Identifier>, Comparable<S
         s.setSampleName(getSampleName());
         return s;
     }
+
+    @Override
+    public Boolean isValid() {
+        return valid;
+    }
+    
+    public void setValid(Boolean valid) {
+        this.valid = valid;
+    }    
 }

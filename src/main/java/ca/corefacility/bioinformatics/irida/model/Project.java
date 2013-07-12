@@ -41,6 +41,8 @@ public class Project implements IridaThing<Project,Audit,Identifier>, Comparable
     @NotNull
     @Transient
     private Audit audit;
+    
+    private Boolean valid = true;
 
     public Project() {
         audit = new Audit();
@@ -125,5 +127,16 @@ public class Project implements IridaThing<Project,Audit,Identifier>, Comparable
         p.setName(getName());
         return p;
     }
+
+    @Override
+    public Boolean isValid() {
+        return valid;
+    }
+
+    @Override
+    public void setValid(Boolean valid) {
+        this.valid = valid;
+    }
+    
     
 }

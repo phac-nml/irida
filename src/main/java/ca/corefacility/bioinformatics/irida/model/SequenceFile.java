@@ -68,6 +68,8 @@ public class SequenceFile implements IridaThing<SequenceFile, Audit, Identifier>
     @Transient
     private Path file;
     
+    private Boolean valid = true;
+    
     @Column(name="filePath")
     private String stringPath;
     
@@ -165,4 +167,13 @@ public class SequenceFile implements IridaThing<SequenceFile, Audit, Identifier>
     public void setId(Long id){
         this.id = id;
     }
+
+    @Override
+    public Boolean isValid() {
+        return valid;
+    }
+    
+    public void setValid(Boolean valid) {
+        this.valid = valid;
+    }    
 }

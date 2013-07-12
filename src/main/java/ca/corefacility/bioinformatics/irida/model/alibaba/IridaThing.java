@@ -35,4 +35,7 @@ public interface IridaThing<DataType extends IridaThing,AuditType extends Audit,
     public DataType copy();
     
     public Long getId();
+    
+    public Boolean isValid();
+    public void setValid(Boolean valid);
 }

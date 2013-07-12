@@ -78,6 +78,8 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
     private String phoneNumber;
     @NotNull
     
+    private Boolean valid = true;
+    
     //@OneToOne
     //@JoinColumn(name="audit")
     @Transient
@@ -327,4 +329,13 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
     public boolean isEnabled() {
         return true;
     }
+
+    @Override
+    public Boolean isValid() {
+        return valid;
+    }
+    
+    public void setValid(Boolean valid) {
+        this.valid = valid;
+    }    
 }

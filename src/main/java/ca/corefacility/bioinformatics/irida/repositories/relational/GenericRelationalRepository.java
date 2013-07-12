@@ -160,7 +160,9 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
         }
         
         Type read = read(id);
-        session.delete(read);
+        read.setValid(false);
+        session.save(read);
+        //session.delete(read);
     }
 
     @Override
@@ -172,7 +174,7 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
     public List<Type> list(int page, int size, String sortProperty, Order order) {
         Session session = sessionFactory.getCurrentSession();
         
-        Criteria crit = session.createCriteria(classType.getName());
+        Criteria crit = session.createCriteria(classType.getName()).add(Restrictions.eq("valid", true));
 
         
         List<Type> results;
