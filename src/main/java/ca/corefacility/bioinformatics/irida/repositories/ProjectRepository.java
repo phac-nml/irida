@@ -18,6 +18,8 @@ package ca.corefacility.bioinformatics.irida.repositories;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 
 import java.util.Collection;
@@ -36,7 +38,7 @@ public interface ProjectRepository extends CRUDRepository<Long, Project> {
      * @param user the user to get projects for.
      * @return the projects associated with the user.
      */
-    public Collection<Project> getProjectsForUser(User user);
+    public Collection<ProjectUserJoin> getProjectsForUser(User user);
 
     /**
      * Add a user to a project
@@ -45,7 +47,7 @@ public interface ProjectRepository extends CRUDRepository<Long, Project> {
      * @param user    The user to add
      * @return A {@link Relationship} object describing the project/user link
      */
-    public Relationship addUserToProject(Project project, User user);
+    public ProjectUserJoin addUserToProject(Project project, User user);
 
     /**
      * Remove a {@link User} from a {@link Project}.

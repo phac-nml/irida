@@ -5,6 +5,8 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import ca.corefacility.bioinformatics.irida.model.*;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
@@ -44,7 +46,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
      * {@inheritDoc}
      */
     @Override
-    public Relationship addUserToProject(Project project, User user, Role role) {
+    public Join addUserToProject(Project project, User user, Role role) {
         return projectRepository.addUserToProject(project, user);
     }
 
@@ -93,7 +95,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
     }
 
     @Override
-    public Collection<Project> getProjectsForUser(User user) {
+    public Collection<ProjectUserJoin> getProjectsForUser(User user) {
         return projectRepository.getProjectsForUser(user);
     }
 }

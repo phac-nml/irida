@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.service;
 
 import ca.corefacility.bioinformatics.irida.model.*;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 
 import java.util.Collection;
@@ -22,7 +24,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
      * @param role    the role that the user plays on the {@link Project}.
      * @return a reference to the relationship resource created between the two entities.
      */
-    public Relationship addUserToProject(Project project, User user, Role role);
+    public Join addUserToProject(Project project, User user, Role role);
 
     /**
      * Remove the specified {@link User} from the {@link Project}.
@@ -66,5 +68,5 @@ public interface ProjectService extends CRUDService<Long, Project> {
      * @param user the user to get projects for.
      * @return the projects associated with the user.
      */
-    public Collection<Project> getProjectsForUser(User user);
+    public Collection<ProjectUserJoin> getProjectsForUser(User user);
 }
