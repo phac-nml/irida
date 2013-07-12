@@ -25,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntity;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -120,18 +121,21 @@ public class GenericRelationalRepositoryTest {
 
     /**
      * Test of readMultiple method, of class GenericRelationalRepository.
-     
+     */
     @Test
     public void testReadMultiple() {
-        System.out.println("readMultiple");
-        Collection<Identifier> idents = null;
-        GenericRelationalRepository instance = new GenericRelationalRepositoryImpl();
-        Collection expResult = null;
-        Collection result = instance.readMultiple(idents);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }*/
+        List<Long> ids = new ArrayList<>();
+        ids.add(new Long(0));
+        ids.add(new Long(1));
+        
+        Collection<IdentifiableTestEntity> read = repo.readMultiple(ids);
+        assertFalse(read.isEmpty());
+        for(IdentifiableTestEntity ent : read){
+            assertNotNull(ent);
+            assertNotNull(ent.getId());
+            assertNotNull(ent.getNonNull());
+        }
+    }
 
     /**
      * Test of update method, of class GenericRelationalRepository.
