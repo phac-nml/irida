@@ -36,6 +36,7 @@ import javax.persistence.PostLoad;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import org.hibernate.envers.Audited;
 
 /**
  * A file that may be stored somewhere on the file system and belongs to a
@@ -47,6 +48,7 @@ import javax.persistence.Transient;
 @Entity
 @Table(name="sequence_file")
 @Iri(SequenceFile.PREFIX + SequenceFile.TYPE)
+@Audited
 public class SequenceFile implements IridaThing<SequenceFile, Audit, Identifier>, Comparable<SequenceFile> {
     public static final String PREFIX = "http://corefacility.ca/irida/";
     public static final String TYPE = "SequenceFile";
