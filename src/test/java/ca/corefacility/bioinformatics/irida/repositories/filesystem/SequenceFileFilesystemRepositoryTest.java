@@ -74,15 +74,17 @@ public class SequenceFileFilesystemRepositoryTest {
     @Test
     public void testCreateFile() throws IOException {
         Identifier id = new Identifier();
+        Long lid = new Long(1111);
         Path f = getTempFile();
         String filename = f.getFileName().toString();
         SequenceFile s = new SequenceFile(id, f);
+        s.setId(lid);
 
         s = repository.create(s);
 
         // the created file should reside in the base directory within a new directory using the sequence file's identifier.
         Path p = FileSystems.getDefault().getPath(baseDirectory.toString(),
-                id.getIdentifier(), filename);
+                lid.toString(), filename);
         assertEquals(p, s.getFile());
         assertTrue(Files.exists(p));
         Files.delete(p);
@@ -131,9 +133,11 @@ public class SequenceFileFilesystemRepositoryTest {
         String originalText = "old text.";
         String updatedText = "new text.";
         Identifier id = new Identifier();
+        Long lid = new Long(1111);
         Path oldFile = getTempFile();
         Files.write(oldFile, originalText.getBytes());
         SequenceFile sf = new SequenceFile(id, oldFile);
+        sf.setId(lid);
         // create the directory and put the file into it.
         // so call create instead of rewriting the logic:
         sf = repository.create(sf);
@@ -181,6 +185,7 @@ public class SequenceFileFilesystemRepositoryTest {
         Long lId = new Long(9999);
         Path originalFile = getTempFile();
         SequenceFile sf = new SequenceFile(id, originalFile);
+        sf.setId(lId);
         sf = repository.create(sf);
         Path updatedFile = getTempFile();
         sf.setFile(updatedFile);
