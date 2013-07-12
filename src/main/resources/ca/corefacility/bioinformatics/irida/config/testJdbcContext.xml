@@ -60,9 +60,9 @@
 		<property name="sessionFactory" ref="sessionFactory"/>
 	</bean>
         
-        <bean id="identifiedRepository" class="ca.corefacility.bioinformatics.irida.repositories.relational.GenericRelationalRepository">
+        <!--bean id="identifiedRepository" class="ca.corefacility.bioinformatics.irida.repositories.relational.GenericRelationalRepository"-->
+        <bean id="identifiedRepository" class="ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntityRepoImpl">
             <constructor-arg ref="dataSource"/>
-            <constructor-arg value="ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntity"/>
             <property name="sessionFactory" ref="sessionFactory"/>
         </bean>        
         

@@ -23,6 +23,8 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntity;
+import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntityRepo;
+import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntityRepoImpl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -52,7 +54,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class GenericRelationalRepositoryTest {
     
     @Autowired
-    private CRUDRepository<Long, IdentifiableTestEntity> repo;
+    private IdentifiableTestEntityRepo repo;
     
     @Autowired
     private DataSource dataSource;
