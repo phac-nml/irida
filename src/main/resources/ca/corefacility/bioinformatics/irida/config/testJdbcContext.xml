@@ -14,30 +14,13 @@
               http://www.springframework.org/schema/context/spring-context.xsd">
 	
 
-	<!--import resource="jdbcRepositoriesContext.xml"/-->
+	<import resource="jdbcRepositoriesContext.xml"/>
         
         <jdbc:embedded-database id="dataSource">
                 <jdbc:script location="classpath:ca/corefacility/bioinformatics/irida/sql/test-schema.sql"/>
                 <jdbc:script location="classpath:ca/corefacility/bioinformatics/irida/sql/test-data.sql"/>
         </jdbc:embedded-database>
 
-	<!-- A Hibernate SessionFactory for mapping Accounts and Restaurants from object to relation tables -->
-	<!--bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-		<property name="dataSource" ref="dataSource"/>
-		<property name="annotatedClasses">
-			<list>
-				<value>ca.corefacility.bioinformatics.irida.model.Project</value>
-                                <value>ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntity</value>
-			</list>
-		</property>
-		<property name="hibernateProperties">
-			<value>
-				hibernate.format_sql=true
-				hibernate.show_sql=true
-                                hibernate.dialect=org.hibernate.dialect.HSQLDialect
-			</value>
-		</property>
-	</bean-->
         
         <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
             <property name="dataSource" ref="dataSource" />
