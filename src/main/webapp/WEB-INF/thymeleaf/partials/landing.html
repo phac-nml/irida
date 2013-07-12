@@ -1,20 +1,15 @@
 <div data-ng-controller="LandingCtrl">
-    <!--<div id="nav-main" class="navbar navbar-static-top navbar-inverse">-->
-        <!--<div class="navbar-inner">-->
-            <!--<a class="brand" href="/landing">NGS Archive</a>-->
-            <!--<ul class="nav pull-right">-->
-                <!--<li><a class="logoutBtn" href="#" data-ng-click="logout()">Logout</a></li>-->
-            <!--</ul>-->
-        <!--</div>-->
-    <!--</div>-->
     <div class="outer">
         <div class="sidebar">
             <div id="sidebar-top">
                 <p>NGS Archive</p>
+                <div class="">
+                    <input type="search" class="sidebar-search" data-ng-model="search.project" placeholder="project search" />
+                </div>
             </div>
             <div class="sidebar-inner" data-ng-controller="ProjectsListCtrl">
                 <ul>
-                    <li data-ng-repeat="p in projects" data-ng-click="gotoProject($event, p.links.self)">
+                    <li data-ng-repeat="p in projects | filter:{name: search.project}" data-ng-click="gotoProject($event, p.links.self)">
                         <div>
                             <i class="icon-tasks"></i>&nbsp;
                             <span>{{p.name}}</span>
@@ -24,7 +19,12 @@
             </div>
             <div id="sidebar-bottom">
                 <h4>{{ user.firstName }} {{ user.lastName }}</h4>
-                <span><i class="icon-cog"></i>&nbsp;Settings</span>
+                <span class="dropup" data-ng-click="settings.toggleSettings()">
+                    <a class="dropdown-toggle"><i class="icon-cog"></i>&nbsp;Settings</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="">Link</a></li>
+                    </ul>
+                </span>
                 <span data-ng-click="logout()"><i class="icon-off"></i>&nbsp;Logout</span>
             </div>
         </div>
@@ -32,33 +32,21 @@
     </div>
     <script type="text/javascript">
         (function () {
-            var SIDEBAR_W = '176',
-
-                    OUTER = $('.outer'), //document.getElementsByClassName('outer')[0],
-                    SIDEBAR = $('.sidebar'), //document.getElementsByClassName('sidebar')[0],
-                    CONTENT = $('.main'), //document.getElementsByClassName('main')[0],
-                    SIDEBAR_TOP_H = $('#sidebar-top').outerHeight(),
-                    SIDEBAR_BODY = $('.sidebar-inner'), //document.getElementsByClassName('sidebar-inner')[0],
-                    SIDEBAR_BOTTOM_H = $('#sidebar-bottom').outerHeight();
-
-
-            window.onresize = adjustWindow;
-            function adjustWindow() {
-                SIDEBAR.width(SIDEBAR_W);// + 'px';
-                var h = window.innerHeight;
-                var w = window.innerWidth;
-
-                OUTER.width(w); // + 'px';
-
-                SIDEBAR.height(h);// + 'px';
-                SIDEBAR_BODY.height( h - SIDEBAR_BOTTOM_H - SIDEBAR_TOP_H );// + 'px';
-                CONTENT.width(w - SIDEBAR_W);// + 'px';
-
-                CONTENT.height(h);// + 'px';
-                OUTER.height(h); // + 'px';
+            var f = "176", e = $(".outer"), d = $(".sidebar"), a = $(".main"), h = $("#sidebar-top").outerHeight(), c = $(".sidebar-inner"), b = $("#sidebar-bottom").outerHeight();
+            window.onresize = g;
+            function g() {
+                d.width(f);
+                var j = window.innerHeight;
+                var i = window.innerWidth;
+                e.width(i);
+                d.height(j);
+                c.height(j - b - h);
+                a.width(i - f);
+                a.height(j);
+                e.height(j)
             }
 
-            adjustWindow();
+            g()
         })();
     </script>
 </div>

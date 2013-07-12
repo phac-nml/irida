@@ -11,7 +11,7 @@ $color-slate-gray: #494d4e;
 $color-red: #f00;
 $color-highlight: lighten($color-phac-dark-blue, 10);
 
-$color-sidebar: #222222;
+$color-sidebar: $color-phac-dark-blue; //#222222;
 
 $color-body-font: #222222;
 $color-header: rgba(0, 0, 0, .1);
