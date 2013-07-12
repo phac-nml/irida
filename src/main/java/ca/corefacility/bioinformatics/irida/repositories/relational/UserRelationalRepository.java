@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.relational;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
@@ -46,6 +47,13 @@ public class UserRelationalRepository extends GenericRelationalRepository<User> 
     @Override
     public User create(User object) throws IllegalArgumentException {
         Session session = this.sessionFactory.getCurrentSession();
+        
+        Criteria crit = session.createCriteria(User.class);
+        crit.add(Restrictions.like("username", object.getUsername()));
+        User u = (User) crit.uniqueResult();
+        if(u != null){
+            throw new EntityExistsException("A user with this username already exists");
+        }
         
         Role role = object.getRole();
         Criteria roleQuery = session.createCriteria(Role.class);
