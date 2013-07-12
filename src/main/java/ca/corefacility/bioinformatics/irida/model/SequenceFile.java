@@ -61,8 +61,7 @@ public class SequenceFile implements IridaThing<SequenceFile, Audit, Identifier>
     private Identifier identifier;
     
     @NotNull
-    @OneToOne
-    @JoinColumn(name="audit")    
+    @Transient 
     private Audit audit;
     
     @NotNull

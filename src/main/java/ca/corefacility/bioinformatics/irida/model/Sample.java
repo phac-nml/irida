@@ -52,8 +52,10 @@ public class Sample implements IridaThing<Sample,Audit,Identifier>, Comparable<S
     @Transient
     private Identifier identifier;
     @NotNull
-    @OneToOne
-    @JoinColumn(name="audit")
+    
+    //@OneToOne
+    //@JoinColumn(name="audit")
+    @Transient
     private Audit audit;
     @NotNull
     @Size(min = 3)
