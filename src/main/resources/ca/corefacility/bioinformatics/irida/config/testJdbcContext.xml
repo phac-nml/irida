@@ -22,7 +22,7 @@
         </jdbc:embedded-database>
 
 	<!-- A Hibernate SessionFactory for mapping Accounts and Restaurants from object to relation tables -->
-	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+	<!--bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource"/>
 		<property name="annotatedClasses">
 			<list>
@@ -37,7 +37,40 @@
                                 hibernate.dialect=org.hibernate.dialect.HSQLDialect
 			</value>
 		</property>
-	</bean>
+	</bean-->
+        
+        <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+            <property name="dataSource" ref="dataSource" />
+            <property name="hibernateProperties">
+                <props>
+                    <prop key="hibernate.hbm2ddl.auto">update</prop>
+                    <prop key="hibernate.show_sql">true</prop>
+                    <prop key="hibernate.format_sql">true</prop>
+                    <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+                    <!--prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop-->
+                    <!--prop key="hibernate.cache.provider_configuration_file_resource_path">ehcache/ehcache-hibernate-local.xml</prop-->
+                </props>
+            </property>
+            <property name="annotatedClasses">
+                    <list>
+                            <value>ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntity</value>
+                            <value>ca.corefacility.bioinformatics.irida.model.Project</value>
+                            <value>ca.corefacility.bioinformatics.irida.model.User</value>
+                            <value>ca.corefacility.bioinformatics.irida.model.Sample</value>
+                            <value>ca.corefacility.bioinformatics.irida.model.SequenceFile</value>
+                            <value>ca.corefacility.bioinformatics.irida.model.Role</value>
+                            <value>ca.corefacility.bioinformatics.irida.model.roles.impl.Audit</value>
+                            <value>ca.corefacility.bioinformatics.irida.repositories.relational.auditing.UserRevEntity</value>
+                            
+                            <!--Join Classes-->
+                            <value>ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin</value>
+                            <value>ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileSampleJoin</value>
+                            <value>ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileProjectJoin</value>
+                    </list>
+            </property>            
+            <!--property name="packagesToScan" value="net.top.*.entity.*" /-->
+
+        </bean>         
 
 	<!-- A transaction manager for working with Hibernate SessionFactories -->
 	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">

@@ -72,6 +72,7 @@ public class GenericRelationalRepositoryTest {
             entity.setNonNull(rs.getString("nonNull"));
             entity.setIntegerValue(rs.getInt("integerValue"));
             entity.setLabel(rs.getString("label"));
+            entity.setValid(rs.getBoolean("valid"));
             
             return entity;
         }
@@ -148,7 +149,7 @@ public class GenericRelationalRepositoryTest {
             assertNotNull(updated);
             assertEquals(differentData,updated.getNonNull());
             
-            List<IdentifiableTestEntity> query = jdbcTemplate.query("SELECT id,nonNull,integerValue,label FROM identifiable WHERE id=0", rowMapper);
+            List<IdentifiableTestEntity> query = jdbcTemplate.query("SELECT id,nonNull,integerValue,label,valid FROM identifiable WHERE id=0", rowMapper);
             IdentifiableTestEntity entity = query.get(0);
             assertEquals(entity.getNonNull(),differentData);
         }
@@ -173,8 +174,10 @@ public class GenericRelationalRepositoryTest {
         
         Long id = created.getId();
         repo.delete(id);
-        List<IdentifiableTestEntity> query = jdbcTemplate.query("SELECT id,nonNull,integerValue,label FROM identifiable WHERE id=?", rowMapper,id);
-        assertTrue(query.isEmpty());
+        List<IdentifiableTestEntity> query = jdbcTemplate.query("SELECT id,nonNull,integerValue,label,valid FROM identifiable WHERE id=?", rowMapper,id);
+        for(IdentifiableTestEntity ent : query){
+            assertFalse(ent.isValid());
+        }
 
     }
 
