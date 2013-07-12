@@ -59,12 +59,6 @@ public class GenericRelationalRepositoryTest {
     
     private IdentifiableRowMapper rowMapper = new IdentifiableRowMapper();
     
-    /*@BeforeClass
-    public static void before(){
-        jdbcTemplate = new JdbcTemplate(dataSource);
-    }*/
-    
-    
     public class IdentifiableRowMapper implements RowMapper<IdentifiableTestEntity>{
         @Override
         public IdentifiableTestEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
