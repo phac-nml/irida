@@ -18,6 +18,8 @@ package ca.corefacility.bioinformatics.irida.repositories;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileSampleJoin;
 import java.util.List;
 
 /**
@@ -26,7 +28,7 @@ import java.util.List;
  */
 public interface SequenceFileRepository extends CRUDRepository<Long, SequenceFile>{
     public List<SequenceFile> getFilesForProject(Project project);
-    public List<SequenceFile> getFilesForSample(Sample sample);   
+    public List<SequenceFileSampleJoin> getFilesForSample(Sample sample);   
     public void addFileToProject(Project project, SequenceFile file);
-    public void addFileToSample(Sample sample, SequenceFile file);   
+    public Join addFileToSample(Sample sample, SequenceFile file);   
 }

@@ -18,11 +18,16 @@ package ca.corefacility.bioinformatics.irida.repositories.relational;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileSampleJoin;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import javax.sql.DataSource;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,8 +63,13 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
     }
 
     @Override
-    public List<SequenceFile> getFilesForSample(Sample sample) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<SequenceFileSampleJoin> getFilesForSample(Sample sample) {
+        Session session = sessionFactory.getCurrentSession();
+        Criteria crit = session.createCriteria(SequenceFileSampleJoin.class);
+        crit.add(Restrictions.eq("sample", sample));
+        List<SequenceFileSampleJoin> list = crit.list();
+        
+        return list;
     }
 
     @Override
@@ -68,8 +78,13 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
     }
 
     @Override
-    public void addFileToSample(Sample sample, SequenceFile file) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public SequenceFileSampleJoin addFileToSample(Sample sample, SequenceFile file) {
+        Session session = sessionFactory.getCurrentSession();
+
+        SequenceFileSampleJoin ujoin = new SequenceFileSampleJoin(file, sample);
+        session.save(ujoin);
+        
+        return ujoin;
     }
     
 }
