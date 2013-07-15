@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.relational;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
@@ -96,6 +97,20 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
         session.save(ujoin);
         
         return ujoin;
+    }
+
+    @Override
+    public void removeFileFromProject(Project project, SequenceFile file) {
+        Session session = sessionFactory.getCurrentSession();
+        Criteria crit = session.createCriteria(SequenceFileProjectJoin.class);
+        crit.add(Restrictions.eq("project", project));
+        crit.add(Restrictions.eq("sequenceFile", file));
+        
+        SequenceFileProjectJoin join = (SequenceFileProjectJoin) crit.uniqueResult();
+        if(join == null){
+            throw new EntityNotFoundException("A join between this file and project was not found");
+        }
+        session.delete(join);    
     }
     
 }

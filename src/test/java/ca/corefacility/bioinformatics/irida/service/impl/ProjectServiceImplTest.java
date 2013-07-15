@@ -45,7 +45,6 @@ import static org.mockito.Mockito.*;
 public class ProjectServiceImplTest {
     private ProjectService projectService;
     private ProjectRepository projectRepository;
-    private RelationshipRepository relationshipRepository;
     private CRUDRepository<Long, Sample> sampleRepository;
     private Validator validator;
 
@@ -54,9 +53,8 @@ public class ProjectServiceImplTest {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
         projectRepository = mock(ProjectRepository.class);
-        relationshipRepository = mock(RelationshipRepository.class);
         sampleRepository = mock(CRUDRepository.class);
-        projectService = new ProjectServiceImpl(projectRepository, relationshipRepository, sampleRepository, validator);
+        projectService = new ProjectServiceImpl(projectRepository, sampleRepository, validator);
     }
 
     @Test

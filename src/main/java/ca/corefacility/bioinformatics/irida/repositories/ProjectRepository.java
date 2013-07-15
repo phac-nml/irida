@@ -18,6 +18,7 @@ package ca.corefacility.bioinformatics.irida.repositories;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Sample;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -64,4 +65,7 @@ public interface ProjectRepository extends CRUDRepository<Long, Project> {
     public Collection<ProjectSampleJoin> getProjectForSample(Sample sample);
     
     public void removeSampleFromProject(Project project, Sample sample);
+    
+    public void removeFileFromProject(Project project, SequenceFile file);
+
 }

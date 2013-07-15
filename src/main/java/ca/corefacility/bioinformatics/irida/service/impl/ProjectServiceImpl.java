@@ -8,10 +8,8 @@ import ca.corefacility.bioinformatics.irida.model.*;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
-import ca.corefacility.bioinformatics.irida.repositories.RelationshipRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,15 +29,13 @@ import java.util.Set;
 public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implements ProjectService {
 
     private static final Logger logger = LoggerFactory.getLogger(ProjectServiceImpl.class);
-    private RelationshipRepository relationshipRepository;
     private ProjectRepository projectRepository;
     private CRUDRepository<Long, Sample> sampleRepository;
 
-    public ProjectServiceImpl(ProjectRepository projectRepository, RelationshipRepository relationshipRepository,
+    public ProjectServiceImpl(ProjectRepository projectRepository,
                               CRUDRepository<Long, Sample> sampleRepository, Validator validator) {
         super(projectRepository, validator, Project.class);
         this.projectRepository = projectRepository;
-        this.relationshipRepository = relationshipRepository;
         this.sampleRepository = sampleRepository;
     }
 
@@ -77,9 +73,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
             }
         }
         
-        return projectRepository.addSampleToProject(project, sample);
-        
-        //return relationshipRepository.create(project, sample);
+        return projectRepository.addSampleToProject(project, sample);        
     }
 
     /**
@@ -87,7 +81,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
      */
     @Override
     public void removeSampleFromProject(Project project, Sample sample) {
-        //relationshipRepository.delete(project, sample);
         projectRepository.removeSampleFromProject(project, sample);
     }
 
@@ -96,9 +89,12 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
      */
     @Override
     public void removeSequenceFileFromProject(Project project, SequenceFile sf) {
-        relationshipRepository.delete(project, sf);
+        projectRepository.removeFileFromProject(project, sf);
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Collection<ProjectUserJoin> getProjectsForUser(User user) {
         return projectRepository.getProjectsForUser(user);
