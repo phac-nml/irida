@@ -96,23 +96,19 @@ public class UserServiceImplTest {
         }
     }
 
-    /*
-     * TODO: reimplement this test
-     
     @Test
     public void testBadPasswordUpdate() {
         // a user should not be persisted with a bad password (like password1)
         String username = "fbristow";
         String password = "password1";
         String passwordEncoded = "$2a$10$vMzhJFdyM72NnnWIoMSbUecHRxZDtCE1fdiPfjfjT1WD0fISDXOX2";
-        UserIdentifier uid = new UserIdentifier();
-        uid.setIdentifier(username);
+        Long luid = new Long(1111);
         Map<String, Object> properties = new HashMap<>();
         properties.put("password", password);
 
         when(passwordEncoder.encode(password)).thenReturn(passwordEncoded);
         try {
-            userService.update(uid, properties);
+            userService.update(luid, properties);
             fail();
         } catch (ConstraintViolationException e) {
             Set<ConstraintViolation<?>> violationSet = e.getConstraintViolations();
@@ -122,7 +118,7 @@ public class UserServiceImplTest {
         } catch (Exception e) {
             fail();
         }
-    }*/
+    }
 
     @Test
     public void testLoadUserByUsername() {
@@ -132,9 +128,7 @@ public class UserServiceImplTest {
         String firstName = "Franklin";
         String lastName = "Bristow";
         String phoneNumber = "7029";
-        UserIdentifier uid = new UserIdentifier();
-        uid.setIdentifier(username);
-        User user = new User(uid, username, email, password, firstName, lastName, phoneNumber);
+        User user = new User(username, email, password, firstName, lastName, phoneNumber);
 
         when(userRepository.getUserByUsername(username)).thenReturn(user);
 
