@@ -62,4 +62,6 @@ public interface ProjectRepository extends CRUDRepository<Long, Project> {
     public ProjectSampleJoin addSampleToProject(Project project, Sample sample);
     
     public Collection<ProjectSampleJoin> getProjectForSample(Sample sample);
+    
+    public void removeSampleFromProject(Project project, Sample sample);
 }

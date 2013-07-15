@@ -110,6 +110,20 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
         
         return list;    
     }
+
+    @Override
+    public void removeSampleFromProject(Project project, Sample sample) {
+        Session session = sessionFactory.getCurrentSession();
+        Criteria crit = session.createCriteria(ProjectUserJoin.class);
+        crit.add(Restrictions.eq("project", project));
+        crit.add(Restrictions.eq("sample", sample));
+        
+        ProjectSampleJoin join = (ProjectSampleJoin) crit.uniqueResult();
+        if(join == null){
+            throw new EntityNotFoundException("A join between this sample and project was not found");
+        }
+        session.delete(join);        
+    }
     
     
 }
