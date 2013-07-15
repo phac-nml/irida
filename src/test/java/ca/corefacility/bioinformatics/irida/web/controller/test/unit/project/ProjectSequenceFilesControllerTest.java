@@ -40,7 +40,6 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageLink;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
@@ -160,7 +159,7 @@ public class ProjectSequenceFilesControllerTest {
         SequenceFileResource resource = samples.iterator().next();
         assertEquals(sf.getFile().toString(), resource.getFile());
         assertEquals(sf.getFile().getFileName().toString(), resource.getFileName());
-        Link self = resource.getLink(PageLink.REL_SELF);
+        Link self = resource.getLink(Link.REL_SELF);
         Link fasta = resource.getLink(ProjectSequenceFilesController.REL_PROJECT_SEQUENCE_FILE_FASTA);
 
         String sequenceFileLocation = "http://localhost/projects/" + projectId + "/sequenceFiles/"
@@ -192,7 +191,7 @@ public class ProjectSequenceFilesControllerTest {
         // the sequence file should contain links to itself, the relationship between the project and the sequence file,
         // and a reference to the project.
         SequenceFileResource r = (SequenceFileResource) modelMap.get(GenericController.RESOURCE_NAME);
-        Link self = r.getLink(PageLink.REL_SELF);
+        Link self = r.getLink(Link.REL_SELF);
         Link project = r.getLink(ProjectsController.REL_PROJECT);
         Link fasta = r.getLink(ProjectSequenceFilesController.REL_PROJECT_SEQUENCE_FILE_FASTA);
         String projectLocation = "http://localhost/projects/" + projectId;

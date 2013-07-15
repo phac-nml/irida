@@ -8,7 +8,6 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.exception.GenericsException;
-import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageLink;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.support.IdentifiableTestEntity;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.support.IdentifiableTestResource;
 import com.google.common.collect.ImmutableMap;
@@ -118,7 +117,7 @@ public class GenericControllerTest {
 
         assertTrue(model.containsKey("resource"));
         IdentifiableTestResource resource = (IdentifiableTestResource) model.get("resource");
-        assertTrue(resource.getLink(PageLink.REL_SELF).getHref().endsWith(id.getIdentifier()));
+        assertTrue(resource.getLink(Link.REL_SELF).getHref().endsWith(id.getIdentifier()));
     }
 
     @Test
@@ -137,7 +136,7 @@ public class GenericControllerTest {
         when(crudService.update(id, updatedFields)).thenReturn(entity);
         ModelMap response = controller.update(id.getIdentifier(), updatedFields);
         RootResource r = (RootResource) response.get(GenericController.RESOURCE_NAME);
-        assertNotNull(r.getLink(PageLink.REL_SELF));
+        assertNotNull(r.getLink(Link.REL_SELF));
         assertNotNull(r.getLink(GenericController.REL_COLLECTION));
     }
 
@@ -184,7 +183,7 @@ public class GenericControllerTest {
 
         for (IdentifiableTestResource r : collection) {
             assertEquals(1, r.getLinks().size());
-            Link link = r.getLink(PageLink.REL_SELF);
+            Link link = r.getLink(Link.REL_SELF);
             assertTrue(link.getHref().endsWith(entity.getIdentifier().getIdentifier()));
         }
     }
@@ -207,7 +206,7 @@ public class GenericControllerTest {
 
         for (IdentifiableTestResource r : collection) {
             assertEquals(1, r.getLinks().size());
-            Link link = r.getLink(PageLink.REL_SELF);
+            Link link = r.getLink(Link.REL_SELF);
             assertTrue(link.getHref().endsWith(entity.getIdentifier().getIdentifier()));
         }
 

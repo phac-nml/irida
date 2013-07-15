@@ -13,7 +13,6 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageLink;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
@@ -146,7 +145,7 @@ public class ProjectSamplesControllerTest {
         SampleResource resource = samples.iterator().next();
         assertEquals(s.getSampleName(), resource.getSampleName());
         List<Link> links = resource.getLinks();
-        Set<String> rels = Sets.newHashSet(PageLink.REL_SELF);
+        Set<String> rels = Sets.newHashSet(Link.REL_SELF);
         for (Link link : links) {
             assertTrue(rels.contains(link.getRel()));
             assertNotNull(rels.remove(link.getRel()));
@@ -186,7 +185,7 @@ public class ProjectSamplesControllerTest {
         assertTrue(o instanceof SampleResource);
         SampleResource sr = (SampleResource) o;
 
-        Link selfLink = sr.getLink(PageLink.REL_SELF);
+        Link selfLink = sr.getLink(Link.REL_SELF);
         Link sequenceFilesLink = sr.getLink(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
         Link projectLink = sr.getLink(ProjectSamplesController.REL_PROJECT);
 
@@ -212,7 +211,7 @@ public class ProjectSamplesControllerTest {
         ResourceCollection<LabelledRelationshipResource> sequenceFiles = related.get("sequenceFiles");
         assertEquals(1, sequenceFiles.size());
         LabelledRelationshipResource labelledRelationship = sequenceFiles.iterator().next();
-        Link sequenceFileLink = labelledRelationship.getLink(PageLink.REL_SELF);
+        Link sequenceFileLink = labelledRelationship.getLink(Link.REL_SELF);
         assertEquals(sampleLocation + "/sequenceFiles/" + sequenceFileId, sequenceFileLink.getHref());
     }
 
@@ -237,7 +236,7 @@ public class ProjectSamplesControllerTest {
         assertTrue(o instanceof RootResource);
         RootResource resource = (RootResource) o;
         Map<String, String> links = linksToMap(resource.getLinks());
-        String self = links.get(PageLink.REL_SELF);
+        String self = links.get(Link.REL_SELF);
         assertEquals("http://localhost/projects/" + projectId + "/samples/" + sampleId, self);
         String sequenceFiles = links.get(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
         assertEquals("http://localhost/projects/" + projectId + "/samples/" + sampleId + "/sequenceFiles", sequenceFiles);

@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageLink;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
@@ -88,7 +87,7 @@ public class SampleSequenceFilesControllerTest {
         assertNotNull(resources);
         assertEquals(1, resources.size());
 
-        Link selfCollection = resources.getLink(PageLink.REL_SELF);
+        Link selfCollection = resources.getLink(Link.REL_SELF);
         Link sample = resources.getLink(SampleSequenceFilesController.REL_SAMPLE);
         String sampleLocation = "http://localhost/projects/" + p.getIdentifier().getIdentifier() +
                 "/samples/" + s.getIdentifier().getIdentifier();
@@ -99,7 +98,7 @@ public class SampleSequenceFilesControllerTest {
 
         // confirm that the self rel for an individual sequence file exists
         SequenceFileResource sfr = resources.iterator().next();
-        Link self = sfr.getLink(PageLink.REL_SELF);
+        Link self = sfr.getLink(Link.REL_SELF);
         assertEquals(sequenceFileLocation, self.getHref());
         assertEquals(sf.getFile().toString(), sfr.getFile());
 
@@ -175,7 +174,7 @@ public class SampleSequenceFilesControllerTest {
         SequenceFileResource sfr = (SequenceFileResource) o;
         assertEquals(sf.getFile().toString(), sfr.getFile());
 
-        Link self = sfr.getLink(PageLink.REL_SELF);
+        Link self = sfr.getLink(Link.REL_SELF);
         Link sampleSequenceFiles = sfr.getLink(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
         Link sample = sfr.getLink(SampleSequenceFilesController.REL_SAMPLE);
         Link selfFasta = sfr.getLink(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_FASTA);

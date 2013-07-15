@@ -13,7 +13,6 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.Proje
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.UsersController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageLink;
 
 import com.google.common.collect.Lists;
 
@@ -84,7 +83,7 @@ public class UserControllerTest {
         assertEquals(projectName, resource.getName());
         assertEquals(1, resource.getLinks().size());
         Link link = resource.getLinks().get(0);
-        assertEquals(PageLink.REL_SELF, link.getRel());
+        assertEquals(Link.REL_SELF, link.getRel());
         assertTrue(link.getHref().contains(p.getIdentifier().getUUID().toString()));
     }
 

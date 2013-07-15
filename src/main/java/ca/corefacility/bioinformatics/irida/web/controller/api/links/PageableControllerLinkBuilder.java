@@ -38,7 +38,7 @@ public abstract class PageableControllerLinkBuilder {
     private static final Logger logger = LoggerFactory.getLogger(PageableControllerLinkBuilder.class);
 
     /**
-     * Get a collection of page {@link Link} objects to add to a collection of resources.
+     * Get a collection of page {@link Link} objects to add to a collection of resources. Page rels are named according to RFC5005.
      *
      * @param controller    the controller that you want to generate the links for.
      * @param page          the current page.
@@ -73,21 +73,21 @@ public abstract class PageableControllerLinkBuilder {
         }
 
         // add all of the links to the collection
-        links.add(new Link(baseUrl + pageParams(firstPage, size, sortColumn, sortOrder), PageLink.REL_FIRST));
+        links.add(new Link(baseUrl + pageParams(firstPage, size, sortColumn, sortOrder), Link.REL_FIRST));
 
         // only add the previous page link if you're not on the first page
         if (page > 1) {
-            links.add(new Link(baseUrl + pageParams(prevPage, size, sortColumn, sortOrder), PageLink.REL_PREV));
+            links.add(new Link(baseUrl + pageParams(prevPage, size, sortColumn, sortOrder), Link.REL_PREVIOUS));
         }
 
         // only add the next page link if you're not on the last page
         if (page < lastPage) {
-            links.add(new Link(baseUrl + pageParams(nextPage, size, sortColumn, sortOrder), PageLink.REL_NEXT));
+            links.add(new Link(baseUrl + pageParams(nextPage, size, sortColumn, sortOrder), Link.REL_NEXT));
         }
 
         // add the first and last page links
-        links.add(new Link(baseUrl + pageParams(lastPage, size, sortColumn, sortOrder), PageLink.REL_LAST));
-        links.add(new Link(baseUrl + pageParams(page, size, sortColumn, sortOrder), PageLink.REL_SELF));
+        links.add(new Link(baseUrl + pageParams(lastPage, size, sortColumn, sortOrder), Link.REL_LAST));
+        links.add(new Link(baseUrl + pageParams(page, size, sortColumn, sortOrder), Link.REL_SELF));
 
         return links;
     }
