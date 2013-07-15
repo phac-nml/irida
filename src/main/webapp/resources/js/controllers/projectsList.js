@@ -117,8 +117,14 @@
         };
         $scope.createProject = function () {
             dialog.close();
-            ajaxService.create('/api/projects', {name:$scope.project.name}).then(function (data) {
-                $rootScope.$broadcast('PROJECT_CREATED', {name:$scope.project.name});
+            ajaxService.create('/api/projects', {name:$scope.project.name}).then(function (uri) {
+                var msg = {
+                    name: $scope.project.name,
+                    links: {
+                        self: uri
+                    }
+                };
+                $rootScope.$broadcast('PROJECT_CREATED', msg);
             });
         };
     });
