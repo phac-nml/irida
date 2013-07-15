@@ -2,10 +2,6 @@
 @import "fws/variables";
 @import "fws/notifier";
 
-// Positioning
-// Display & Box Model
-// Other
-
 // ============================================================================
 // GLOBAL AND BOX SETTINGS
 // ============================================================================
@@ -25,7 +21,7 @@ html {
 body {
   height: 100%;
   width: 100%;
-  background-color: #e3e4e5;
+  background-color: $color-body;
 }
 
 h1, h2, h3, h4 {
@@ -34,6 +30,16 @@ h1, h2, h3, h4 {
 
 a {
   color: $color-phac-dark-blue;
+}
+
+// ============================================================================
+// BOOTSTRAP OVERRIDES
+// ============================================================================
+.ngs-pills li {
+  margin-right: .5em;
+  &.pull-right{
+    margin-right: 0;
+  }
 }
 
 // ============================================================================
@@ -110,7 +116,7 @@ a {
   min-height: 1px;
   width: 0;
   // Color
-  background: url("/css/img/sidebar-gradient.png") repeat-y top right;
+  //background: url("/css/img/sidebar-gradient.png") repeat-y top right;
   background-clip: border-box;
   background-color: $color-sidebar;
   color: rgba(223, 223, 222, 1.0);
@@ -168,30 +174,30 @@ a {
   // Other
   outline: none;
 
-  &:focus {
-    @include transition (all .5s ease-in-out);
-    background-color: lighten($color-sidebar, 2%);
-    background-image: url("/css/img/search_light.svg");
-    background-position: 1em center;
-    background-repeat: no-repeat;
-    -webkit-background-size: 16px;
-    -moz-background-size: 16px;
-    background-size: 16px;
-  }
-  &::-webkit-search-cancel-button,
-  &::-webkit-search-decoration {
-    margin-right: 5px;
-  }
-  &:focus::-webkit-input-placeholder,
-  &:focus::-webkit-input-placeholder {
-    color: #c6c8c8;
-  }
+  //&:focus {
+  //  @include transition (all .5s ease-in-out);
+  //  background-color: lighten($color-sidebar, 2%);
+  //  background-image: url("/css/img/search_light.svg");
+  //  background-position: 1em center;
+  //  background-repeat: no-repeat;
+  //  -webkit-background-size: 16px;
+  //  -moz-background-size: 16px;
+  //  background-size: 16px;
+  //}
+  //&::-webkit-search-cancel-button,
+  //&::-webkit-search-decoration {
+  //  margin-right: 5px;
+  //}
+  //&:focus::-webkit-input-placeholder,
+  //&:focus::-webkit-input-placeholder {
+  //  color: #c6c8c8;
+  //}
 }
 
 .sidebar-inner {
   // Extends
   // Includes
-  @include box-shadow(inset -3px -1px 10px 3px rgba(0, 0, 0, .2));
+  @include box-shadow(inset -5px -1px 15px 2px rgba(0,0,0,0.4));
   // Positioning
   position: relative;
   // Display & Box Model
@@ -219,7 +225,10 @@ a {
       // Color
       // Text
       // Other
-
+      a{
+        color: $color-light-gray;
+        text-decoration: none;
+      }
       &:hover {
         color: #ffffff;
         cursor: pointer;
@@ -265,6 +274,9 @@ a {
       color: $color-light-gray;
       text-decoration: none;
     }
+  }
+  .dropdown-menu {
+    text-shadow: none;
   }
 }
 
