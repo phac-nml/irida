@@ -16,6 +16,9 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import ca.corefacility.bioinformatics.irida.model.*;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
@@ -43,7 +46,7 @@ public class ProjectServiceImplTest {
     private ProjectService projectService;
     private ProjectRepository projectRepository;
     private RelationshipRepository relationshipRepository;
-    private CRUDRepository<Identifier, Sample> sampleRepository;
+    private CRUDRepository<Long, Sample> sampleRepository;
     private Validator validator;
 
     @Before
@@ -56,79 +59,77 @@ public class ProjectServiceImplTest {
         projectService = new ProjectServiceImpl(projectRepository, relationshipRepository, sampleRepository, validator);
     }
 
-    /*
-     * TODO: Reimplement this test    
     @Test
     public void testAddSampleToProject() {
         Sample s = new Sample();
         s.setSampleName("sample");
         s.setIdentifier(new Identifier());
+        s.setId(new Long(2222));
         Project p = new Project();
         p.setName("project");
         p.setIdentifier(new Identifier());
+        p.setId(new Long(1111));
 
-        when(relationshipRepository.create(p, s))
-                .thenReturn(new Relationship(p.getIdentifier(), new RdfPredicate("irida", "hasSample"), s.getIdentifier()));
+        when(projectRepository.addSampleToProject(p, s))
+                .thenReturn(new ProjectSampleJoin(p, s));
+        
+        ProjectSampleJoin rel = projectService.addSampleToProject(p, s);
 
-        Relationship rel = projectService.addSampleToProject(p, s);
-
-        verify(relationshipRepository).create(p, s);
+        verify(projectRepository).addSampleToProject(p, s);
         verifyZeroInteractions(sampleRepository);
 
         assertNotNull(rel);
-        assertEquals(rel.getSubject(), p.getIdentifier());
-        assertEquals(rel.getObject(), s.getIdentifier());
+        assertEquals(rel.getSubject(), p);
+        assertEquals(rel.getObject(), s);
 
     }
-    */ 
-
-    /*
-     * TODO: Reimplement this test    
+     
     @Test
     public void testAddSampleToProjectNotPersisted() {
         Sample s = new Sample();
         s.setSampleName("sample");
         Sample withId = new Sample();
         withId.setSampleName("sample");
-        withId.setIdentifier(new Identifier());
+        withId.setId(new Long(1111));
+        
         Project p = new Project();
         p.setName("project");
-        p.setIdentifier(new Identifier());
+        p.setId(new Long(2222));
 
-        when(relationshipRepository.create(p, s))
-                .thenReturn(new Relationship(p.getIdentifier(), new RdfPredicate("irida", "hasSample"), withId.getIdentifier()));
+        when(projectRepository.addSampleToProject(p, s)).thenReturn(new ProjectSampleJoin(p, withId));
         when(sampleRepository.create(s)).thenReturn(withId);
+        
+        ProjectSampleJoin rel = projectService.addSampleToProject(p, s);
 
-        Relationship rel = projectService.addSampleToProject(p, s);
-
-        verify(relationshipRepository).create(p, s);
+        verify(projectRepository).addSampleToProject(p, s);
         verify(sampleRepository).create(s);
 
         assertNotNull(rel);
-        assertEquals(rel.getSubject(), p.getIdentifier());
-        assertEquals(rel.getObject(), withId.getIdentifier());
+        assertEquals(rel.getSubject(), p);
+        assertEquals(rel.getObject(), withId);
     }
-    */ 
+     
     
-    /*
-     * TODO: Reimplement this test
     @Test
     public void testAddUserToProject() {
         User u = new User("test", "test@nowhere.com", "PASSWOD!1", "Test", "User", "1234");
+        u.setId(new Long(1111));
         Project p = new Project("project");
+        p.setId(new Long(2222));
         Role r = new Role("ROLE_USER");
 
         when(projectRepository.addUserToProject(p, u))
-                .thenReturn(new Relationship(p.getIdentifier(), new RdfPredicate("irida", "hasUser"), u.getIdentifier()));
-
-        Relationship rel = projectService.addUserToProject(p, u, r);
+                .thenReturn(new ProjectUserJoin(p, u));
+        
+        Join rel = projectService.addUserToProject(p, u, r);
+        
         assertNotNull(rel);
-        assertEquals(rel.getSubject(), p.getIdentifier());
-        assertEquals(rel.getObject(), u.getIdentifier());
+        assertEquals(rel.getSubject(), p);
+        assertEquals(rel.getObject(), u);
 
         verify(projectRepository).addUserToProject(p, u);
     }
-    */ 
+    
 
     /**
      * Test of removeSampleFromProject method, of class ProjectServiceImpl.

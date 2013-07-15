@@ -6,6 +6,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import ca.corefacility.bioinformatics.irida.model.*;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
@@ -32,10 +33,10 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
     private static final Logger logger = LoggerFactory.getLogger(ProjectServiceImpl.class);
     private RelationshipRepository relationshipRepository;
     private ProjectRepository projectRepository;
-    private CRUDRepository<Identifier, Sample> sampleRepository;
+    private CRUDRepository<Long, Sample> sampleRepository;
 
     public ProjectServiceImpl(ProjectRepository projectRepository, RelationshipRepository relationshipRepository,
-                              CRUDRepository<Identifier, Sample> sampleRepository, Validator validator) {
+                              CRUDRepository<Long, Sample> sampleRepository, Validator validator) {
         super(projectRepository, validator, Project.class);
         this.projectRepository = projectRepository;
         this.relationshipRepository = relationshipRepository;
@@ -62,10 +63,10 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
      * {@inheritDoc}
      */
     @Override
-    public Relationship addSampleToProject(Project project, Sample sample) {
+    public ProjectSampleJoin addSampleToProject(Project project, Sample sample) {
         logger.trace("Adding sample to project.");
         // the sample hasn't been persisted before, persist it before calling the relationshipRepository.
-        if (sample.getIdentifier() == null) {
+        if (sample.getId() == null) {
             logger.trace("Going to validate and persist sample prior to creating relationship.");
             // validate the sample, then persist it:
             Set<ConstraintViolation<Sample>> constraintViolations = validator.validate(sample);
@@ -75,7 +76,10 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
                 throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(constraintViolations));
             }
         }
-        return relationshipRepository.create(project, sample);
+        
+        return projectRepository.addSampleToProject(project, sample);
+        
+        //return relationshipRepository.create(project, sample);
     }
 
     /**
@@ -83,7 +87,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
      */
     @Override
     public void removeSampleFromProject(Project project, Sample sample) {
-        relationshipRepository.delete(project, sample);
+        //relationshipRepository.delete(project, sample);
+        projectRepository.removeSampleFromProject(project, sample);
     }
 
     /**
