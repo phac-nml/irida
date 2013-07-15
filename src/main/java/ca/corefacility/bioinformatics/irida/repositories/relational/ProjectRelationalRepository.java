@@ -19,7 +19,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
+import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
@@ -58,7 +60,6 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
         crit.add(Restrictions.eq("user", user));
         List<ProjectUserJoin> list = crit.list();
         
-        
         return list;
     }
 
@@ -89,6 +90,26 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
         session.delete(join);
     }
 
+    @Override
+    public ProjectSampleJoin addSampleToProject(Project project, Sample sample) {
+        Session session = sessionFactory.getCurrentSession();
+
+        ProjectSampleJoin ujoin = new ProjectSampleJoin(project, sample);
+        session.save(ujoin);
+        
+        return ujoin;        
+    }
+
+    @Override
+    public Collection<ProjectSampleJoin> getProjectForSample(Sample sample) {
+        Session session = sessionFactory.getCurrentSession();
+
+        Criteria crit = session.createCriteria(ProjectUserJoin.class);
+        crit.add(Restrictions.eq("sample", sample));
+        List<ProjectSampleJoin> list = crit.list();
+        
+        return list;    
+    }
     
     
 }

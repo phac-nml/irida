@@ -17,8 +17,10 @@ package ca.corefacility.bioinformatics.irida.repositories;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
+import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 
@@ -56,4 +58,8 @@ public interface ProjectRepository extends CRUDRepository<Long, Project> {
      * @param user    the {@link User} to remove from the {@link Project}.
      */
     public void removeUserFromProject(Project project, User user);
+    
+    public ProjectSampleJoin addSampleToProject(Project project, Sample sample);
+    
+    public Collection<ProjectSampleJoin> getProjectForSample(Sample sample);
 }
