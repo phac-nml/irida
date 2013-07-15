@@ -50,8 +50,8 @@ public class UserRelationalRepository extends GenericRelationalRepository<User> 
         
         Criteria crit = session.createCriteria(User.class);
         crit.add(Restrictions.like("username", object.getUsername()));
-        User u = (User) crit.uniqueResult();
-        if(u != null){
+        List list = crit.list();
+        if(!list.isEmpty()){
             throw new EntityExistsException("A user with this username already exists");
         }
         
