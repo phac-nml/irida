@@ -29,17 +29,20 @@
   position: absolute;
   width: 300px;
   top: 13px;
+  text-align: center;
+  line-height: 20px;
+  height: 20px;
   border: 1px solid #e6dd7f;
   border-radius: 3px;
   background-color: palegoldenrod;
   z-index: 999; }
-  /* line 44, ../scss/fws/notifier.scss */
+  /* line 47, ../scss/fws/notifier.scss */
   .notifier span {
     padding: 0.3em;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden; }
-  /* line 51, ../scss/fws/notifier.scss */
+  /* line 54, ../scss/fws/notifier.scss */
   .notifier a {
     cursor: pointer;
     text-decoration: none;
@@ -48,46 +51,53 @@
     width: 60px;
     text-align: center;
     display: inline-block; }
-    /* line 59, ../scss/fws/notifier.scss */
+    /* line 62, ../scss/fws/notifier.scss */
     .notifier a:hover {
       background-color: #ebe399; }
 
-/* line 13, ../scss/main.scss */
+/* line 9, ../scss/main.scss */
 * {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box; }
 
-/* line 19, ../scss/main.scss */
+/* line 15, ../scss/main.scss */
 html {
   height: 100%;
   width: 100%;
   -webkit-font-smoothing: subpixel-antialiased !important; }
 
-/* line 25, ../scss/main.scss */
+/* line 21, ../scss/main.scss */
 body {
   height: 100%;
   width: 100%;
   background-color: #e3e4e5; }
 
-/* line 31, ../scss/main.scss */
+/* line 27, ../scss/main.scss */
 h1, h2, h3, h4 {
   font-weight: 700; }
 
-/* line 35, ../scss/main.scss */
+/* line 31, ../scss/main.scss */
 a {
   color: #133b54; }
 
-/* line 43, ../scss/main.scss */
+/* line 38, ../scss/main.scss */
+.ngs-pills li {
+  margin-right: .5em; }
+  /* line 40, ../scss/main.scss */
+  .ngs-pills li.pull-right {
+    margin-right: 0; }
+
+/* line 49, ../scss/main.scss */
 .button-bar {
   margin-bottom: 1.5em; }
 
-/* line 50, ../scss/main.scss */
+/* line 56, ../scss/main.scss */
 .login__outer {
   height: 100%;
   width: 100%; }
 
-/* line 55, ../scss/main.scss */
+/* line 61, ../scss/main.scss */
 .login__inner {
   height: 300px;
   padding: 1em;
@@ -95,21 +105,21 @@ a {
   background-color: #ecf0f1;
   border-radius: 3px; }
 
-/* line 72, ../scss/main.scss */
+/* line 78, ../scss/main.scss */
 .outer {
   float: left;
   display: block;
   height: 100%;
   width: 100%; }
 
-/* line 89, ../scss/main.scss */
+/* line 95, ../scss/main.scss */
 .large-container {
   box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, 0.15);
   padding: 1em;
   background-color: #ffffff;
   border-radius: 4px; }
 
-/* line 102, ../scss/main.scss */
+/* line 108, ../scss/main.scss */
 .sidebar {
   float: left;
   position: relative;
@@ -118,26 +128,25 @@ a {
   margin-top: 0px;
   min-height: 1px;
   width: 0;
-  background: url("/css/img/sidebar-gradient.png") repeat-y top right;
   background-clip: border-box;
   background-color: #133b54;
   color: #dfdfde;
   text-shadow: 0px 2px 1px rgba(0, 0, 0, 0.4); }
 
-/* line 122, ../scss/main.scss */
+/* line 128, ../scss/main.scss */
 #sidebar-top {
   border-bottom: 1px solid #0f2f43;
   height: 80px;
   background-color: #11354c;
   text-align: center; }
-  /* line 134, ../scss/main.scss */
+  /* line 140, ../scss/main.scss */
   #sidebar-top p {
     line-height: 30px;
     font-weight: 700;
     font-size: 1.2em;
     margin-bottom: 4px; }
 
-/* line 142, ../scss/main.scss */
+/* line 148, ../scss/main.scss */
 .sidebar-search {
   box-shadow: inset 0 1px #0a1e2a;
   -webkit-transition: all 0.5s ease-in-out;
@@ -161,38 +170,20 @@ a {
   font: inherit;
   font-weight: 300;
   outline: none; }
-  /* line 171, ../scss/main.scss */
-  .sidebar-search:focus {
-    -webkit-transition: all 0.5s ease-in-out;
-    -moz-transition: all 0.5s ease-in-out;
-    transition: all 0.5s ease-in-out;
-    background-color: #15415c;
-    background-image: url("/css/img/search_light.svg");
-    background-position: 1em center;
-    background-repeat: no-repeat;
-    -webkit-background-size: 16px;
-    -moz-background-size: 16px;
-    background-size: 16px; }
-  /* line 182, ../scss/main.scss */
-  .sidebar-search::-webkit-search-cancel-button, .sidebar-search::-webkit-search-decoration {
-    margin-right: 5px; }
-  /* line 186, ../scss/main.scss */
-  .sidebar-search:focus::-webkit-input-placeholder, .sidebar-search:focus::-webkit-input-placeholder {
-    color: #c6c8c8; }
 
-/* line 191, ../scss/main.scss */
+/* line 197, ../scss/main.scss */
 .sidebar-inner {
-  box-shadow: inset -3px -1px 10px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: inset -5px -1px 15px 2px rgba(0, 0, 0, 0.4);
   position: relative;
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto; }
-  /* line 205, ../scss/main.scss */
+  /* line 211, ../scss/main.scss */
   .sidebar-inner > ul {
     margin: 0;
     padding: 0;
     list-style: none; }
-    /* line 209, ../scss/main.scss */
+    /* line 215, ../scss/main.scss */
     .sidebar-inner > ul li {
       -webkit-transition: all 0.25s ease-in-out;
       -moz-transition: all 0.25s ease-in-out;
@@ -202,11 +193,15 @@ a {
       line-height: 2em;
       margin: 0;
       padding: 4px 0 4px 10px; }
-      /* line 223, ../scss/main.scss */
+      /* line 228, ../scss/main.scss */
+      .sidebar-inner > ul li a {
+        color: #dfe2e2;
+        text-decoration: none; }
+      /* line 232, ../scss/main.scss */
       .sidebar-inner > ul li:hover {
         color: #ffffff;
         cursor: pointer; }
-      /* line 227, ../scss/main.scss */
+      /* line 236, ../scss/main.scss */
       .sidebar-inner > ul li.active {
         -webkit-transition: all 0.25s ease-in-out;
         -moz-transition: all 0.25s ease-in-out;
@@ -216,19 +211,19 @@ a {
         border-bottom: 1px solid #2b2c2e;
         border-top: 1px solid #262729; }
 
-/* line 238, ../scss/main.scss */
+/* line 247, ../scss/main.scss */
 #sidebar-bottom {
   border-top: 1px solid #174765;
   height: 60px;
   background-color: #11354c;
   text-align: center; }
-  /* line 248, ../scss/main.scss */
+  /* line 257, ../scss/main.scss */
   #sidebar-bottom h4 {
     font-weight: 300;
     margin: 0;
     line-height: 1.5em;
     border-bottom: 1px solid #0f2f43; }
-  /* line 254, ../scss/main.scss */
+  /* line 263, ../scss/main.scss */
   #sidebar-bottom span {
     cursor: pointer;
     border-top: 1px solid #133b54;
@@ -239,18 +234,21 @@ a {
     text-align: center;
     float: left;
     width: 50%; }
-    /* line 264, ../scss/main.scss */
+    /* line 273, ../scss/main.scss */
     #sidebar-bottom span > a {
       color: #dfe2e2;
       text-decoration: none; }
+  /* line 278, ../scss/main.scss */
+  #sidebar-bottom .dropdown-menu {
+    text-shadow: none; }
 
-/* line 271, ../scss/main.scss */
+/* line 283, ../scss/main.scss */
 .main {
   float: left;
   min-width: 1px;
   z-index: 777; }
 
-/* line 277, ../scss/main.scss */
+/* line 289, ../scss/main.scss */
 .login {
   height: 300px;
   width: 300px;
@@ -260,17 +258,17 @@ a {
   margin-left: -150px;
   margin-top: -150px; }
 
-/* line 287, ../scss/main.scss */
+/* line 299, ../scss/main.scss */
 .row--btn {
   padding-bottom: 10px; }
 
-/* line 292, ../scss/main.scss */
+/* line 304, ../scss/main.scss */
 .sample-table tr {
   cursor: pointer;
   -webkit-transition: all 0.25s ease-in-out;
   -moz-transition: all 0.25s ease-in-out;
   transition: all 0.25s ease-in-out; }
-  /* line 295, ../scss/main.scss */
+  /* line 307, ../scss/main.scss */
   .sample-table tr:hover {
     -webkit-transition: all 0.25s ease-in-out;
     -moz-transition: all 0.25s ease-in-out;
@@ -278,25 +276,25 @@ a {
     background-color: #1c587e;
     color: #dfe2e2; }
 
-/* line 304, ../scss/main.scss */
+/* line 316, ../scss/main.scss */
 td.file-select {
   width: 13px; }
-  /* line 306, ../scss/main.scss */
+  /* line 318, ../scss/main.scss */
   td.file-select input {
     margin-top: 0; }
 
-/* line 311, ../scss/main.scss */
+/* line 323, ../scss/main.scss */
 td.file-date {
   text-align: right; }
 
-/* line 315, ../scss/main.scss */
+/* line 327, ../scss/main.scss */
 .ngs-pills > li > a {
   font-weight: 700; }
 
-/* line 319, ../scss/main.scss */
+/* line 331, ../scss/main.scss */
 .ngs-pills > li.active > a {
   background-color: #133b54; }
-  /* line 321, ../scss/main.scss */
+  /* line 333, ../scss/main.scss */
   .ngs-pills > li.active > a:hover {
     background-color: #133b54;
     cursor: default; }

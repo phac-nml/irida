@@ -1,28 +1,34 @@
 <div data-ng-controller="LandingCtrl">
     <div class="outer">
-        <div class="sidebar">
+        <div class="sidebar" data-ng-controller="ProjectsListCtrl">
             <div id="sidebar-top">
                 <p>NGS Archive</p>
+
                 <div class="">
-                    <input type="search" class="sidebar-search" data-ng-model="search.project" placeholder="project search" />
+                    <input type="search" class="sidebar-search" data-ng-model="search.project"
+                           placeholder="project search"/>
                 </div>
             </div>
-            <div class="sidebar-inner" data-ng-controller="ProjectsListCtrl">
+            <div class="sidebar-inner">
                 <ul>
-                    <li data-ng-repeat="p in projects | filter:{name: search.project}" data-ng-click="gotoProject($event, p.links.self)">
-                        <div>
-                            <i class="icon-tasks"></i>&nbsp;
-                            <span>{{p.name}}</span>
-                        </div>
+                    <li data-ng-repeat="p in projects | filter:{name: search.project}"
+                        data-ng-click="gotoProject($event, p.links.self)">
+                        <a>
+                            <div>
+                                <i class="icon-tasks"></i>&nbsp;
+                                <span>{{p.name}}</span>
+                            </div>
+                        </a>
                     </li>
                 </ul>
             </div>
             <div id="sidebar-bottom">
                 <h4>{{ user.firstName }} {{ user.lastName }}</h4>
-                <span class="dropup" data-ng-click="settings.toggleSettings()">
-                    <a class="dropdown-toggle"><i class="icon-cog"></i>&nbsp;Settings</a>
+                <span class="dropup">
+                    <a class="dropdown-toggle"><i class="icon-cogs"></i>&nbsp;Settings</a>
                     <ul class="dropdown-menu">
-                        <li><a href="">Link</a></li>
+                        <li><a href="" data-ng-click="projectModal.openDialog()"><i class="icon-tasks"></i>&nbsp;New
+                            Project</a></li>
                     </ul>
                 </span>
                 <span data-ng-click="logout()"><i class="icon-off"></i>&nbsp;Logout</span>
@@ -30,6 +36,7 @@
         </div>
         <div class="main" ui-view=""></div>
     </div>
+
     <script type="text/javascript">
         (function () {
             var f = "176", e = $(".outer"), d = $(".sidebar"), a = $(".main"), h = $("#sidebar-top").outerHeight(), c = $(".sidebar-inner"), b = $("#sidebar-bottom").outerHeight();
