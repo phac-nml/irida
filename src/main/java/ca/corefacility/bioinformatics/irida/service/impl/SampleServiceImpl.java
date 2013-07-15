@@ -27,11 +27,7 @@ import java.util.List;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements SampleService {
-
-    /**
-     * Reference to {@link RelationshipRepository}.
-     */
-    private RelationshipRepository relationshipRepository;
+    
     /**
      * Reference to {@link CRUDRepository} for managing {@link Sample}.
      */
@@ -40,9 +36,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
      * Reference to {@link SequenceFileRepository} for managing {@link SequenceFile}.
      */
     private SequenceFileRepository sequenceFileRepository;
-    
-    private ProjectRepository projectRepository;
-    
+        
     /**
      * Constructor.
      *
@@ -50,11 +44,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
      * @param validator        validator.
      */
     public SampleServiceImpl(SampleRepository sampleRepository,
-                             RelationshipRepository relationshipRepository,
                              SequenceFileRepository sequenceFileRepository, Validator validator) {
         super(sampleRepository, validator, Sample.class);
         this.sampleRepository = sampleRepository;
-        this.relationshipRepository = relationshipRepository;
         this.sequenceFileRepository = sequenceFileRepository;
     }
 
@@ -121,26 +113,27 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
      * {@inheritDoc}
      */
     @Override
-    public Relationship removeSequenceFileFromSample(Project project, Sample sample, SequenceFile sequenceFile) {
-        // confirm that project and sample have a relationship
-        relationshipRepository.getLinks(project.getIdentifier(), RdfPredicate.ANY, sample.getIdentifier());
-
-        // confirm that sample and sequence file have a relationship
-        List<Relationship> relationships = relationshipRepository.getLinks(sample.getIdentifier(), RdfPredicate.ANY,
-                sequenceFile.getIdentifier());
-        if (relationships.size() > 1) {
-            throw new IllegalStateException("More than one type of relationship between sample [" +
-                    sample.getIdentifier() + "] and sequenceFile [" + sequenceFile.getIdentifier() + "]");
+    public SequenceFileProjectJoin removeSequenceFileFromSample(Project project, Sample sample, SequenceFile sequenceFile) {
+        // get the existing relationship between the sample and sequence file
+        boolean sampleHasFile = false;
+        List<SequenceFileSampleJoin> filesForSample = sequenceFileRepository.getFilesForSample(sample);
+        for(SequenceFileSampleJoin join : filesForSample){
+            if(join.getSubject().equals(sequenceFile)){
+                sampleHasFile = true;
+            }
         }
-        Relationship r = relationships.iterator().next();
 
-        // delete the relationship between sample and sequence file
-        
-        //TODO: Re-implement remvoin this relationship
-        //relationshipRepository.delete(r.getIdentifier());
-
+        // remove the existing relationship
+        if(sampleHasFile){
+            sequenceFileRepository.removeFileFromSample(sample, sequenceFile);
+        }
+        else{
+            throw new EntityNotFoundException("This file is not associated with this project");
+        }
+        // call the relationship repository to create the relationship between the two entities.        
+        // confirm that project and sample have a relationship
         // add a new relationship between project and sequence file
-        Relationship created = relationshipRepository.create(project, sequenceFile);
+        SequenceFileProjectJoin created = sequenceFileRepository.addFileToProject(project, sequenceFile);
 
         // return the relationship
         return created;

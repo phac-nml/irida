@@ -33,5 +33,6 @@ public interface SequenceFileRepository extends CRUDRepository<Long, SequenceFil
     public SequenceFileProjectJoin addFileToProject(Project project, SequenceFile file);
     public SequenceFileSampleJoin addFileToSample(Sample sample, SequenceFile file);
     public void removeFileFromProject(Project project, SequenceFile file);
+    public void removeFileFromSample(Sample sample, SequenceFile file);
 
 }

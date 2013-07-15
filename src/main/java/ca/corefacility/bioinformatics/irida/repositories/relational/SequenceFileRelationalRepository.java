@@ -112,5 +112,19 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
         }
         session.delete(join);    
     }
+
+    @Override
+    public void removeFileFromSample(Sample sample, SequenceFile file) {
+        Session session = sessionFactory.getCurrentSession();
+        Criteria crit = session.createCriteria(SequenceFileProjectJoin.class);
+        crit.add(Restrictions.eq("sample", sample));
+        crit.add(Restrictions.eq("sequenceFile", file));
+        
+        SequenceFileSampleJoin join = (SequenceFileSampleJoin) crit.uniqueResult();
+        if(join == null){
+            throw new EntityNotFoundException("A join between this file and project was not found");
+        }
+        session.delete(join);     
+    }
     
 }

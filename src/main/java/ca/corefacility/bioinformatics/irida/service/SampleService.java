@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 
@@ -60,5 +61,5 @@ public interface SampleService extends CRUDService<Long, Sample> {
      * @param sequenceFile the {@link SequenceFile} that we're moving.
      * @return the new relationship between the {@link Project} and {@link SequenceFile}.
      */
-    public Relationship removeSequenceFileFromSample(Project project, Sample sample, SequenceFile sequenceFile);
+    public SequenceFileProjectJoin removeSequenceFileFromSample(Project project, Sample sample, SequenceFile sequenceFile);
 }

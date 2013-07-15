@@ -37,23 +37,18 @@ public class SampleServiceImplTest {
 
     private SampleService sampleService;
     private SampleRepository sampleRepository;
-    private RelationshipRepository relationshipRepository;
     private SequenceFileRepository sequenceFileRepository;
     private Validator validator;
 
     @Before
     public void setUp() {
         sampleRepository = mock(SampleRepository.class);
-        relationshipRepository = mock(RelationshipRepository.class);
         sequenceFileRepository = mock(SequenceFileRepository.class);
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
-        sampleService = new SampleServiceImpl(sampleRepository, relationshipRepository, sequenceFileRepository, validator);
+        sampleService = new SampleServiceImpl(sampleRepository, sequenceFileRepository, validator);
     }
 
-    /*
-     * TODO: Reimplement this test
-     */
     @Test
     public void testGetSampleForProject() {
         Project p = new Project();
@@ -106,34 +101,28 @@ public class SampleServiceImplTest {
 
     /*
      * TODO: Reimplement this test
+     * */
     @Test
     public void testRemoveSequenceFileFromSample() {
         Sample s = new Sample();
-        s.setIdentifier(new Identifier());
+        s.setId(new Long(1111));
         SequenceFile sf = new SequenceFile();
-        sf.setIdentifier(new Identifier());
+        sf.setId(new Long(2222));
         Project p = new Project();
-        p.setIdentifier(new Identifier());
-        Relationship r = new Relationship(p.getIdentifier(), sf.getIdentifier());
-        Relationship sampleSequenceFile = new Relationship(s.getIdentifier(), sf.getIdentifier());
-        sampleSequenceFile.setIdentifier(new Identifier());
-        List<Relationship> relationships = new ArrayList<>();
-        relationships.add(sampleSequenceFile);
+        p.setId(new Long(3333));
 
-        when(relationshipRepository.getLinks(p.getIdentifier(), RdfPredicate.ANY, s.getIdentifier()))
-                .thenReturn(new ArrayList<Relationship>());
-        when(relationshipRepository.getLinks(s.getIdentifier(), RdfPredicate.ANY, sf.getIdentifier()))
-                .thenReturn(relationships);
-        when(relationshipRepository.create(p, sf)).thenReturn(r);
+        SequenceFileSampleJoin oldJoin = new SequenceFileSampleJoin(sf, s);
+        when(sequenceFileRepository.getFilesForSample(s)).thenReturn(Lists.newArrayList(oldJoin));
+        SequenceFileProjectJoin newJoin = new SequenceFileProjectJoin(sf, p);
+        when(sequenceFileRepository.addFileToProject(p, sf)).thenReturn(newJoin);
 
-        Relationship created = sampleService.removeSequenceFileFromSample(p, s, sf);
+        SequenceFileProjectJoin created = sampleService.removeSequenceFileFromSample(p, s, sf);
+        
+        verify(sequenceFileRepository).getFilesForSample(s);
+        verify(sequenceFileRepository).addFileToProject(p, sf);
 
-        verify(relationshipRepository).getLinks(p.getIdentifier(), RdfPredicate.ANY, s.getIdentifier());
-        verify(relationshipRepository).getLinks(s.getIdentifier(), RdfPredicate.ANY, sf.getIdentifier());
-        verify(relationshipRepository).delete(sampleSequenceFile.getIdentifier());
-        verify(relationshipRepository).create(p, sf);
-
-        assertEquals(created, r);
+        assertNotNull(created);
+        assertEquals(created, newJoin);
     }
-    */ 
+     
 }
