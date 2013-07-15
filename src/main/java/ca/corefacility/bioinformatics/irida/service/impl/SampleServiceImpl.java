@@ -5,10 +5,14 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileProjectJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.RelationshipRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.relational.ProjectRelationalRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
 
@@ -20,7 +24,7 @@ import java.util.List;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class SampleServiceImpl extends CRUDServiceImpl<Identifier, Sample> implements SampleService {
+public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements SampleService {
 
     /**
      * Reference to {@link RelationshipRepository}.
@@ -29,19 +33,19 @@ public class SampleServiceImpl extends CRUDServiceImpl<Identifier, Sample> imple
     /**
      * Reference to {@link CRUDRepository} for managing {@link Sample}.
      */
-    private CRUDRepository<Identifier, Sample> sampleRepository;
+    private CRUDRepository<Long, Sample> sampleRepository;
     /**
      * Reference to {@link SequenceFileRepository} for managing {@link SequenceFile}.
      */
     private SequenceFileRepository sequenceFileRepository;
-
+    
     /**
      * Constructor.
      *
      * @param sampleRepository the sample repository.
      * @param validator        validator.
      */
-    public SampleServiceImpl(CRUDRepository<Identifier, Sample> sampleRepository,
+    public SampleServiceImpl(CRUDRepository<Long, Sample> sampleRepository,
                              RelationshipRepository relationshipRepository,
                              SequenceFileRepository sequenceFileRepository, Validator validator) {
         super(sampleRepository, validator, Sample.class);
@@ -54,33 +58,34 @@ public class SampleServiceImpl extends CRUDServiceImpl<Identifier, Sample> imple
      * {@inheritDoc}
      */
     @Override
-    public Relationship addSequenceFileToSample(Project project, Sample sample, SequenceFile sampleFile) {
+    public SequenceFileSampleJoin addSequenceFileToSample(Project project, Sample sample, SequenceFile sampleFile) {
         // confirm that both the sample and sequence file exist already, fail fast if either don't exist
-        if (!sampleRepository.exists(sample.getIdentifier())) {
+        if (!sampleRepository.exists(sample.getId())) {
             throw new IllegalArgumentException("Sample must be persisted before adding a sequence file.");
         }
 
         if (!sequenceFileRepository.exists(sampleFile.getId())) {
             throw new IllegalArgumentException("Sequence file must be persisted before adding to sample.");
         }
-
-        // get the existing relationship between the project and sequence file
-        List<Relationship> projectSequenceFileRelationships = relationshipRepository.getLinks(project.getIdentifier(),
-                RdfPredicate.ANY, sampleFile.getIdentifier());
-        if (projectSequenceFileRelationships.size() != 1) {
-            throw new IllegalArgumentException("Project and SequenceFile must be related.");
-        }
-        Relationship projectSequenceFileRelationship = projectSequenceFileRelationships.iterator().next();
-        // remove the existing relationship
         
-        //TODO: re-implement removing this relationship
-        //relationshipRepository.delete(projectSequenceFileRelationship.getIdentifier());
-
-        Relationship r = relationshipRepository.create(Sample.class, sample.getIdentifier(),
-                SequenceFile.class, sampleFile.getIdentifier());
-
+        // get the existing relationship between the project and sequence file
+        boolean projectHasFile = false;
+        List<SequenceFileProjectJoin> filesForProject = sequenceFileRepository.getFilesForProject(project);
+        for(SequenceFileProjectJoin join : filesForProject){
+            if(join.getSubject().equals(sampleFile)){
+                projectHasFile = true;
+            }
+        }
+        
+        // remove the existing relationship
+        if(projectHasFile){
+            sequenceFileRepository.removeFileFromProject(project, sampleFile);
+        }
         // call the relationship repository to create the relationship between the two entities.
-        return r;
+
+        SequenceFileSampleJoin addFileToSample = sequenceFileRepository.addFileToSample(sample, sampleFile);
+
+        return addFileToSample;
     }
 
     /**
@@ -91,7 +96,10 @@ public class SampleServiceImpl extends CRUDServiceImpl<Identifier, Sample> imple
         // confirm that the link between project and this identifier exists
         relationshipRepository.getLinks(project.getIdentifier(), RdfPredicate.ANY, identifier);
         // load the sample from the database
-        Sample s = sampleRepository.read(identifier);
+        
+        //TODO: read this properly
+        //Sample s = sampleRepository.read(identifier);
+        Sample s = null;
         // return sample to the caller
         return s;
     }

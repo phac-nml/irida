@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 
 /**
@@ -27,7 +28,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public interface SampleService extends CRUDService<Identifier, Sample> {
+public interface SampleService extends CRUDService<Long, Sample> {
 
     /**
      * Add a {@link SequenceFile} to a {@link Sample}.
@@ -37,7 +38,7 @@ public interface SampleService extends CRUDService<Identifier, Sample> {
      * @param sampleFile the {@link SequenceFile} that we're adding.
      * @return the {@link Relationship} created between the two entities.
      */
-    public Relationship addSequenceFileToSample(Project project, Sample sample, SequenceFile sampleFile);
+    public SequenceFileSampleJoin addSequenceFileToSample(Project project, Sample sample, SequenceFile sampleFile);
 
     /**
      * Get a specific instance of a {@link Sample} that belongs to a {@link Project}. If the {@link Sample} is not

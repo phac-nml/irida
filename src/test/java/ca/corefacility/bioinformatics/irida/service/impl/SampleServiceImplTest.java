@@ -4,6 +4,8 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileProjectJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.RelationshipRepository;
@@ -21,7 +23,7 @@ import javax.validation.ValidatorFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -32,7 +34,7 @@ import static org.mockito.Mockito.*;
 public class SampleServiceImplTest {
 
     private SampleService sampleService;
-    private CRUDRepository<Identifier, Sample> sampleRepository;
+    private CRUDRepository<Long, Sample> sampleRepository;
     private RelationshipRepository relationshipRepository;
     private SequenceFileRepository sequenceFileRepository;
     private Validator validator;
@@ -68,37 +70,38 @@ public class SampleServiceImplTest {
         verify(sampleRepository).read(s.getIdentifier());
     }*/
 
-    /*
-     * TODO: Reimplement this test
     @Test
     public void testAddExistingSequenceFileToSample() {
         Sample s = new Sample();
-        s.setIdentifier(new Identifier());
+        s.setId(new Long(1111));
         SequenceFile sf = new SequenceFile();
-        sf.setIdentifier(new Identifier());
-        Relationship r = new Relationship(s.getIdentifier(), sf.getIdentifier());
+        sf.setId(new Long(2222));
+        
         Project p = new Project();
-        p.setIdentifier(new Identifier());
-        Relationship projectSequenceFile = new Relationship(p.getIdentifier(), sf.getIdentifier());
-        projectSequenceFile.setIdentifier(new Identifier());
-        List<Relationship> relationships = Lists.newArrayList(projectSequenceFile);
+        p.setId(new Long(3333));
+        //Relationship projectSequenceFile = new Relationship(p.getIdentifier(), sf.getIdentifier());
 
-        when(sampleRepository.exists(s.getIdentifier())).thenReturn(Boolean.TRUE);
-        when(sequenceFileRepository.exists(sf.getIdentifier())).thenReturn(Boolean.TRUE);
-        when(relationshipRepository.create(Sample.class, s.getIdentifier(), SequenceFile.class, sf.getIdentifier())).thenReturn(r);
-        when(relationshipRepository.getLinks(p.getIdentifier(), RdfPredicate.ANY, sf.getIdentifier())).thenReturn(relationships);
+        List<SequenceFileProjectJoin> filesForProject = Lists.newArrayList(new SequenceFileProjectJoin(sf, p));
 
-        Relationship created = sampleService.addSequenceFileToSample(p, s, sf);
+        when(sampleRepository.exists(s.getId())).thenReturn(Boolean.TRUE);
+        when(sequenceFileRepository.exists(sf.getId())).thenReturn(Boolean.TRUE);
+        when(sequenceFileRepository.addFileToSample(s, sf)).thenReturn(new SequenceFileSampleJoin(sf, s));
+        when(sequenceFileRepository.getFilesForProject(p)).thenReturn(filesForProject);
 
-        verify(sampleRepository).exists(s.getIdentifier());
-        verify(sequenceFileRepository).exists(sf.getIdentifier());
-        verify(relationshipRepository).create(Sample.class, s.getIdentifier(), SequenceFile.class, sf.getIdentifier());
-        verify(relationshipRepository).getLinks(p.getIdentifier(), RdfPredicate.ANY, sf.getIdentifier());
-        verify(relationshipRepository).delete(projectSequenceFile.getIdentifier());
+        
+        SequenceFileSampleJoin addSequenceFileToSample = sampleService.addSequenceFileToSample(p, s, sf);
 
-        assertEquals(r, created);
+        verify(sampleRepository).exists(s.getId());
+        verify(sequenceFileRepository).exists(sf.getId());
+        verify(sequenceFileRepository).getFilesForProject(p);
+        verify(sequenceFileRepository).addFileToSample(s, sf);
+        verify(sequenceFileRepository).removeFileFromProject(p, sf);
+
+        assertNotNull(addSequenceFileToSample);
+        assertEquals(addSequenceFileToSample.getSubject(), sf);
+        assertEquals(addSequenceFileToSample.getObject(), s);
     }
-    */
+    
 
     /*
      * TODO: Reimplement this test
