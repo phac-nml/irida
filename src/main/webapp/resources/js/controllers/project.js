@@ -171,12 +171,6 @@
                 var u = user.match(/\/users\/.*/);
                 $location.path(u[0]);
             };
-
-            $scope.gotoProject = function (e, url) {
-                e.preventDefault();
-                var l = url.match(/\/projects\/.*/);
-                $location.path(l[0]);
-            };
         }
     ]);
 })(angular, NGS);
