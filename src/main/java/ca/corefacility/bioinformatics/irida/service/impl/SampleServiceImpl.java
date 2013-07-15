@@ -5,12 +5,14 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.RelationshipRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.relational.ProjectRelationalRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
@@ -33,11 +35,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
     /**
      * Reference to {@link CRUDRepository} for managing {@link Sample}.
      */
-    private CRUDRepository<Long, Sample> sampleRepository;
+    private SampleRepository sampleRepository;
     /**
      * Reference to {@link SequenceFileRepository} for managing {@link SequenceFile}.
      */
     private SequenceFileRepository sequenceFileRepository;
+    
+    private ProjectRepository projectRepository;
     
     /**
      * Constructor.
@@ -45,7 +49,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
      * @param sampleRepository the sample repository.
      * @param validator        validator.
      */
-    public SampleServiceImpl(CRUDRepository<Long, Sample> sampleRepository,
+    public SampleServiceImpl(SampleRepository sampleRepository,
                              RelationshipRepository relationshipRepository,
                              SequenceFileRepository sequenceFileRepository, Validator validator) {
         super(sampleRepository, validator, Sample.class);
@@ -92,14 +96,23 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
      * {@inheritDoc}
      */
     @Override
-    public Sample getSampleForProject(Project project, Identifier identifier) throws EntityNotFoundException {
-        // confirm that the link between project and this identifier exists
-        relationshipRepository.getLinks(project.getIdentifier(), RdfPredicate.ANY, identifier);
-        // load the sample from the database
-        
-        //TODO: read this properly
-        //Sample s = sampleRepository.read(identifier);
+    public Sample getSampleForProject(Project project, Long identifier) throws EntityNotFoundException {
+
         Sample s = null;
+        
+        // confirm that the link between project and this identifier exists
+        List<ProjectSampleJoin> samplesForProject = sampleRepository.getSamplesForProject(project);
+        for(ProjectSampleJoin join : samplesForProject){
+            if(join.getObject().getId().equals(identifier)){
+                // load the sample from the database
+                s=read(identifier);
+            }
+        }
+        
+        if(s == null){
+            throw new EntityNotFoundException("Join between the project and this identifier doesn't exist");
+        }
+
         // return sample to the caller
         return s;
     }
@@ -132,4 +145,5 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
         // return the relationship
         return created;
     }
+            
 }

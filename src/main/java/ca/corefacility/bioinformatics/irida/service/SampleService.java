@@ -50,7 +50,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
      * @return the {@link Sample} as requested
      * @throws EntityNotFoundException if no {@link Relationship} exists between {@link Sample} and {@link Project}.
      */
-    public Sample getSampleForProject(Project project, Identifier identifier) throws EntityNotFoundException;
+    public Sample getSampleForProject(Project project, Long identifier) throws EntityNotFoundException;
 
     /**
      * Move an instance of a {@link SequenceFile} associated with a {@link Sample} to its parent {@link Project}.

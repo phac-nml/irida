@@ -4,11 +4,13 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.RelationshipRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
@@ -34,14 +36,14 @@ import static org.mockito.Mockito.*;
 public class SampleServiceImplTest {
 
     private SampleService sampleService;
-    private CRUDRepository<Long, Sample> sampleRepository;
+    private SampleRepository sampleRepository;
     private RelationshipRepository relationshipRepository;
     private SequenceFileRepository sequenceFileRepository;
     private Validator validator;
 
     @Before
     public void setUp() {
-        sampleRepository = mock(CRUDRepository.class);
+        sampleRepository = mock(SampleRepository.class);
         relationshipRepository = mock(RelationshipRepository.class);
         sequenceFileRepository = mock(SequenceFileRepository.class);
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -51,24 +53,23 @@ public class SampleServiceImplTest {
 
     /*
      * TODO: Reimplement this test
-     
+     */
     @Test
     public void testGetSampleForProject() {
         Project p = new Project();
-        p.setIdentifier(new Identifier());
+        p.setId(new Long(1111));
         Sample s = new Sample();
-        s.setIdentifier(new Identifier());
-        Relationship r = new Relationship(p.getIdentifier(), s.getIdentifier());
-        r.setIdentifier(new Identifier());
-        List<Relationship> relationships = new ArrayList<>(Sets.newHashSet(r));
-        when(relationshipRepository.getLinks(p.getIdentifier(), RdfPredicate.ANY, s.getIdentifier())).thenReturn(relationships);
-        when(sampleRepository.read(s.getIdentifier())).thenReturn(s);
+        s.setId(new Long(2222));
+        
+        ProjectSampleJoin join = new ProjectSampleJoin(p, s);
+        when(sampleRepository.getSamplesForProject(p)).thenReturn(Lists.newArrayList(join));
+        when(sampleRepository.read(s.getId())).thenReturn(s);
 
-        sampleService.getSampleForProject(p, s.getIdentifier());
+        sampleService.getSampleForProject(p, s.getId());
 
-        verify(relationshipRepository).getLinks(p.getIdentifier(), RdfPredicate.ANY, s.getIdentifier());
-        verify(sampleRepository).read(s.getIdentifier());
-    }*/
+        verify(sampleRepository).getSamplesForProject(p);
+        verify(sampleRepository).read(s.getId());
+    }
 
     @Test
     public void testAddExistingSequenceFileToSample() {
