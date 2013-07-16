@@ -29,20 +29,17 @@
   position: absolute;
   width: 300px;
   top: 13px;
-  text-align: center;
-  line-height: 20px;
-  height: 20px;
   border: 1px solid #e6dd7f;
   border-radius: 3px;
   background-color: palegoldenrod;
   z-index: 999; }
-  /* line 47, ../scss/fws/notifier.scss */
+  /* line 45, ../scss/fws/notifier.scss */
   .notifier span {
     padding: 0.3em;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden; }
-  /* line 54, ../scss/fws/notifier.scss */
+  /* line 52, ../scss/fws/notifier.scss */
   .notifier a {
     cursor: pointer;
     text-decoration: none;
@@ -51,7 +48,7 @@
     width: 60px;
     text-align: center;
     display: inline-block; }
-    /* line 62, ../scss/fws/notifier.scss */
+    /* line 60, ../scss/fws/notifier.scss */
     .notifier a:hover {
       background-color: #ebe399; }
 
@@ -147,7 +144,7 @@ a {
     margin-bottom: 4px; }
 
 /* line 148, ../scss/main.scss */
-.sidebar-search {
+input.sidebar-search {
   box-shadow: inset 0 1px #0a1e2a;
   -webkit-transition: all 0.5s ease-in-out;
   -moz-transition: all 0.5s ease-in-out;
@@ -156,8 +153,8 @@ a {
   border: 1px solid rgba(0, 0, 0, 0.36);
   border-radius: 30px;
   height: 2.2rem;
-  padding: 0 0 0 1.9em;
-  width: 75%;
+  padding: 0 0 0 2.3em;
+  width: 90%;
   background-color: #0e2c3f;
   background-image: url("/css/img/search_light.svg");
   background-position: 1em center;
@@ -170,6 +167,24 @@ a {
   font: inherit;
   font-weight: 300;
   outline: none; }
+  /* line 177, ../scss/main.scss */
+  input.sidebar-search:focus {
+    -webkit-transition: all 0.5s ease-in-out;
+    -moz-transition: all 0.5s ease-in-out;
+    transition: all 0.5s ease-in-out;
+    background-color: #15415c;
+    background-image: url("/css/img/search_light.svg");
+    background-position: 1em center;
+    background-repeat: no-repeat;
+    -webkit-background-size: 16px;
+    -moz-background-size: 16px;
+    background-size: 16px; }
+  /* line 188, ../scss/main.scss */
+  input.sidebar-search::-webkit-search-cancel-button, input.sidebar-search::-webkit-search-decoration {
+    margin-right: 5px; }
+  /* line 192, ../scss/main.scss */
+  input.sidebar-search:focus::-webkit-input-placeholder, input.sidebar-search:focus::-webkit-input-placeholder {
+    color: #c6c8c8; }
 
 /* line 197, ../scss/main.scss */
 .sidebar-inner {
