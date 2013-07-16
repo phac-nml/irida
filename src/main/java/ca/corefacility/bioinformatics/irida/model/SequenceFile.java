@@ -23,6 +23,7 @@ import java.io.File;
 import javax.validation.constraints.NotNull;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,6 +31,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import org.hibernate.envers.Audited;
 
@@ -49,18 +52,14 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     
-    @Transient
-    private Identifier identifier;
-    
-    @NotNull
-    @Transient 
-    private Audit audit;
-    
     @NotNull
     @Transient
     private Path file;
     
     private Boolean valid = true;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdDate;
     
     @Column(name="filePath")
     private String stringPath;
@@ -74,23 +73,18 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
     }
 
     public SequenceFile() {
+        createdDate = new Date();
     }
     
     public SequenceFile(Path sampleFile) {
-        this.audit = new Audit();
         this.file = sampleFile;
-    }
-
-    public SequenceFile(Identifier id, Path sampleFile) {
-        this(sampleFile);
-        this.identifier = id;
     }
 
     @Override
     public boolean equals(Object other) {
         if (other instanceof SequenceFile) {
             SequenceFile sampleFile = (SequenceFile) other;
-            return Objects.equals(file, sampleFile.file);
+            return Objects.equals(file, sampleFile.file) && Objects.equals(createdDate, sampleFile.createdDate);
         }
 
         return false;
@@ -98,12 +92,13 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(file);
+        return Objects.hash(file,createdDate);
     }
+
 
     @Override
     public int compareTo(SequenceFile other) {
-        return audit.compareTo(other.audit);
+        return createdDate.compareTo(other.createdDate);
     }
 
     public Path getFile() {
@@ -112,16 +107,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
     public void setFile(Path file) {
         this.file = file;
-    }
-
-    @Override
-    public Audit getAuditInformation() {
-        return audit;
-    }
-
-    @Override
-    public void setAuditInformation(Audit audit) {
-        this.audit = audit;
     }
 
     @Override
@@ -143,7 +128,18 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
         return valid;
     }
     
+    @Override
     public void setValid(Boolean valid) {
         this.valid = valid;
     }    
+
+    @Override
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    @Override
+    public void setCreatedDate(Date date) {
+        this.createdDate = date;
+    }
 }

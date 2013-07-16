@@ -77,7 +77,7 @@ public class SequenceFileFilesystemRepositoryTest {
         Long lid = new Long(1111);
         Path f = getTempFile();
         String filename = f.getFileName().toString();
-        SequenceFile s = new SequenceFile(id, f);
+        SequenceFile s = new SequenceFile(f);
         s.setId(lid);
 
         s = repository.create(s);
@@ -117,7 +117,7 @@ public class SequenceFileFilesystemRepositoryTest {
     public void testUpdateMissingDirectory() throws IOException {
         Identifier id = new Identifier();
         Path f = getTempFile();
-        SequenceFile s = new SequenceFile(id, f);
+        SequenceFile s = new SequenceFile(f);
 
         try {
             repository.update(s.getId(), ImmutableMap.of("file", (Object) f));
@@ -136,7 +136,7 @@ public class SequenceFileFilesystemRepositoryTest {
         Long lid = new Long(1111);
         Path oldFile = getTempFile();
         Files.write(oldFile, originalText.getBytes());
-        SequenceFile sf = new SequenceFile(id, oldFile);
+        SequenceFile sf = new SequenceFile(oldFile);
         sf.setId(lid);
         // create the directory and put the file into it.
         // so call create instead of rewriting the logic:
@@ -184,7 +184,7 @@ public class SequenceFileFilesystemRepositoryTest {
         Identifier id = new Identifier();
         Long lId = new Long(9999);
         Path originalFile = getTempFile();
-        SequenceFile sf = new SequenceFile(id, originalFile);
+        SequenceFile sf = new SequenceFile(originalFile);
         sf.setId(lId);
         sf = repository.create(sf);
         Path updatedFile = getTempFile();

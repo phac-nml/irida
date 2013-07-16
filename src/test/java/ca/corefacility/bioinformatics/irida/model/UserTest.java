@@ -199,9 +199,12 @@ public class UserTest {
         a2.setCreated(sf.parse("2012-01-01"));
         a3.setCreated(sf.parse("2013-01-01"));
 
-        u2.setAuditInformation(a1);
-        u1.setAuditInformation(a2);
-        u3.setAuditInformation(a3);
+        u2.setCreatedDate(sf.parse("2011-01-01"));
+        u1.setCreatedDate(sf.parse("2012-01-01"));
+        u3.setCreatedDate(sf.parse("2013-01-01"));
+        //u2.setAuditInformation(a1);
+        //u1.setAuditInformation(a2);
+        //u3.setAuditInformation(a3);
 
         // users are in the wrong order
         users.add(u3);
@@ -212,23 +215,20 @@ public class UserTest {
 
         User curr = users.get(0);
         for (int i = 1; i < users.size(); i++) {
-            assertTrue(curr.getAuditInformation()
-                    .getCreated()
-                    .compareTo(users.get(i).getAuditInformation().getCreated()) < 0);
+            assertTrue(curr.getCreatedDate().compareTo(users.get(i).getCreatedDate()) < 0);
         }
     }
 
     @Test
     public void testEquals() {
-        User u1 = new User(new UserIdentifier("username"), "username", "email", "password", "firstName", "lastName",
-                "phoneNumber");
-        u1.setId(new Long(1111));        
-        User u2 = new User(new UserIdentifier("username"), "username", "email", "password", "firstName", "lastName",
-                "phoneNumber");
-        // the two users DO NOT share the same identifier, and should therefore be different
+        Date created = new Date(1);
+        User u1 = new User( "username", "email", "password", "firstName", "lastName","phoneNumber");
+        u1.setCreatedDate(created);
+        User u2 = new User( "username", "email", "password", "firstName", "lastName","phoneNumber");
+        // the two users DO NOT share the same created date, and should therefore be different
         assertFalse(u1.equals(u2));
 
-        u2.setId(u1.getId());
+        u2.setCreatedDate(created);
         // now the two users share the same identifier, and should therefore be the same
         assertTrue(u1.equals(u2));
     }

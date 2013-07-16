@@ -6,6 +6,7 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.validators.Patterns;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import org.hibernate.validator.constraints.Email;
 
 import javax.validation.constraints.NotNull;
@@ -19,6 +20,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import org.hibernate.envers.Audited;
 import org.springframework.security.core.GrantedAuthority;
@@ -40,8 +43,6 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     
-    @Transient
-    private UserIdentifier identifier;
     @NotNull(message = "{user.username.notnull}")
     @Size(min = 3, message = "{user.username.size}")
     private String username;
@@ -70,20 +71,19 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
     
     private Boolean valid = true;
     
-    //@OneToOne
-    //@JoinColumn(name="audit")
-    @Transient
-    private Audit audit;
     
     @ManyToOne
     @JoinColumn(name="system_role")
     private Role system_role;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdDate;
 
     /**
      * Construct an instance of {@link User} with no properties set.
      */
     public User() {
-        audit = new Audit();
+        createdDate = new Date();
     }
 
     /**
@@ -117,9 +117,9 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
      * @param lastName    the last name of this {@link User}.
      * @param phoneNumber the phone number of this {@link User}.
      */
-    public User(UserIdentifier id, String username, String email, String password, String firstName, String lastName, String phoneNumber) {
+    public User(Long id, String username, String email, String password, String firstName, String lastName, String phoneNumber) {
         this(username, email, password, firstName, lastName, phoneNumber);
-        this.identifier = id;
+        this.id = id;
     }
 
     /**
@@ -127,7 +127,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(identifier, username, email, password, firstName, lastName, phoneNumber);
+        return Objects.hash(username, email, password, firstName, lastName, phoneNumber,createdDate);
     }
 
     /**
@@ -137,18 +137,19 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
     public boolean equals(Object other) {
         if (other instanceof User) {
             User u = (User) other;
-            return Objects.equals(id, u.id)
-                    && Objects.equals(username, u.username)
+            return Objects.equals(username, u.username)
                     && Objects.equals(email, u.email)
                     && Objects.equals(password, u.password)
                     && Objects.equals(firstName, u.firstName)
                     && Objects.equals(lastName, u.lastName)
-                    && Objects.equals(phoneNumber, u.phoneNumber);
+                    && Objects.equals(phoneNumber, u.phoneNumber)
+                    && Objects.equals(createdDate, u.createdDate);
         }
 
         return false;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
@@ -162,7 +163,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
      */
     @Override
     public int compareTo(User u) {
-        return audit.compareTo(u.audit);
+        return createdDate.compareTo(u.createdDate);
     }
 
     /**
@@ -179,6 +180,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
                 .toString();
     }
 
+    @Override
     public String getUsername() {
         return username;
     }
@@ -195,6 +197,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
         this.email = email;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
@@ -228,16 +231,6 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
     }
 
     @Override
-    public Audit getAuditInformation() {
-        return audit;
-    }
-
-    @Override
-    public void setAuditInformation(Audit audit) {
-        this.audit = audit;
-    }
-
-    @Override
     public String getLabel() {
         return firstName + " " + lastName;
     }
@@ -257,20 +250,6 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
         this.system_role = role;
     }
     
-    /**
-     * Get the system roles of this user as string values.
-     * Helper method for Alibaba
-     * @return a Set<String> of role names
-     */
-    public String getStringRole(){
-        if(system_role != null){
-            return system_role.getName();    
-        }
-        else{
-            return null;
-        }
-        
-    }
 
     @Override
     public boolean isAccountNonExpired() {
@@ -300,4 +279,14 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
     public void setValid(Boolean valid) {
         this.valid = valid;
     }    
+
+    @Override
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    @Override
+    public void setCreatedDate(Date date) {
+        this.createdDate = date;
+    }
 }

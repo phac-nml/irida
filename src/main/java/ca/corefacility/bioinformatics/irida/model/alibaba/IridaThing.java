@@ -15,15 +15,14 @@
  */
 package ca.corefacility.bioinformatics.irida.model.alibaba;
 
-import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
+import java.util.Date;
 import javax.validation.constraints.NotNull;
 
 /**
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public interface IridaThing extends Auditable<Audit>{
+public interface IridaThing{
     @NotNull
     public String getLabel();
      
@@ -31,4 +30,7 @@ public interface IridaThing extends Auditable<Audit>{
     
     public Boolean isValid();
     public void setValid(Boolean valid);
+    
+    public Date getCreatedDate();
+    public void setCreatedDate(Date date);
 }

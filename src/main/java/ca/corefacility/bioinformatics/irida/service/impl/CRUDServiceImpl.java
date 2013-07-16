@@ -27,7 +27,7 @@ import java.util.Map.Entry;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType> & Auditable<Audit>>
+public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType> >
         implements CRUDService<KeyType, ValueType> {
 
     private static final Logger logger = LoggerFactory.getLogger(CRUDServiceImpl.class);
@@ -48,7 +48,7 @@ public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType> & 
     public ValueType create(ValueType object) throws ConstraintViolationException, EntityExistsException {
         // the audit information must be initialized by the crud service:
         Audit audit = new Audit();
-        object.setAuditInformation(audit);
+        //object.setAuditInformation(audit);
 
         Set<ConstraintViolation<ValueType>> constraintViolations = validator.validate(object);
         if (constraintViolations.isEmpty()) {

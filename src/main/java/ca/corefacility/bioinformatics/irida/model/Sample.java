@@ -18,6 +18,7 @@ package ca.corefacility.bioinformatics.irida.model;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import java.util.Date;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,6 +27,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -45,44 +48,46 @@ public class Sample implements IridaThing, Comparable<Sample> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Transient
-    private Identifier identifier;
-    @NotNull
-    
-    //@OneToOne
-    //@JoinColumn(name="audit")
-    @Transient
-    private Audit audit;
+
     @NotNull
     @Size(min = 3)
     private String sampleName;
     
     private Boolean valid = true;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdDate;
 
     public Sample() {
-        audit = new Audit();
+        createdDate = new Date();
     }
 
-    public Sample(Identifier id) {
-        this();
-        this.identifier = id;
+    public Sample(String sampleName) {
+        this.sampleName = sampleName;
     }
 
     @Override
     public boolean equals(Object other) {
         if (other instanceof Sample) {
             Sample sample = (Sample) other;
-            return Objects.equals(sampleName, sample.sampleName);
+            return Objects.equals(createdDate, sample.createdDate) 
+                    && Objects.equals(sampleName, sample.sampleName);
         }
 
         return false;
     }
 
     @Override
-    public int compareTo(Sample other) {
-        return audit.compareTo(other.audit);
+    public int hashCode() {
+        return Objects.hash(createdDate,sampleName);
     }
 
+    @Override
+    public int compareTo(Sample other) {
+        return createdDate.compareTo(other.createdDate);
+    }
+
+    @Override
     public Long getId() {
         return id;
     }
@@ -100,17 +105,6 @@ public class Sample implements IridaThing, Comparable<Sample> {
     }
 
     @Override
-    public Audit getAuditInformation() {
-        return audit;
-    }
-
-
-    @Override
-    public void setAuditInformation(Audit audit) {
-        this.audit = audit;
-    }
-
-    @Override
     public String getLabel() {
         return sampleName;
     }
@@ -120,7 +114,18 @@ public class Sample implements IridaThing, Comparable<Sample> {
         return valid;
     }
     
+    @Override
     public void setValid(Boolean valid) {
         this.valid = valid;
     }    
+
+    @Override
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    @Override
+    public void setCreatedDate(Date date) {
+        this.createdDate = date;
+    }
 }

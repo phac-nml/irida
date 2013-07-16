@@ -246,22 +246,20 @@ public class TestCRUDServiceImpl {
         final int LIST_SIZE = 15;
         List<IdentifiableTestEntity> created = new ArrayList<>(LIST_SIZE);
         for (int i = 1; i < LIST_SIZE + 1; i++) {
-            Audit audit = new Audit();
             IdentifiableTestEntity entity = new IdentifiableTestEntity();
             StringBuilder date = new StringBuilder("2013-04-");
             if (i < 10) {
                 date.append("0");
             }
             date.append(i);
-            audit.setCreated(dateFormatter.parse(date.toString()));
-            entity.setAuditInformation(audit);
+            entity.setCreatedDate(dateFormatter.parse(date.toString()));
             created.add(entity);
         }
 
-        when(crudRepository.list(2, 15, "auditInformation", Order.ASCENDING)).thenReturn(created);
+        when(crudRepository.list(2, 15, "createdDate", Order.ASCENDING)).thenReturn(created);
 
         // page 2 with 15 items should return a list of size 15
-        List<IdentifiableTestEntity> list = crudService.list(2, 15, "auditInformation", Order.ASCENDING);
+        List<IdentifiableTestEntity> list = crudService.list(2, 15, "createdDate", Order.ASCENDING);
 
         assertEquals(15, list.size());
 
@@ -300,15 +298,13 @@ public class TestCRUDServiceImpl {
         final int LIST_SIZE = 15;
         List<IdentifiableTestEntity> created = new ArrayList<>(LIST_SIZE);
         for (int i = 1; i < LIST_SIZE + 1; i++) {
-            Audit audit = new Audit();
             IdentifiableTestEntity entity = new IdentifiableTestEntity();
             StringBuilder date = new StringBuilder("2013-04-");
             if (i < 10) {
                 date.append("0");
             }
             date.append(i);
-            audit.setCreated(dateFormatter.parse(date.toString()));
-            entity.setAuditInformation(audit);
+            entity.setCreatedDate(dateFormatter.parse(date.toString()));
             created.add(entity);
         }
 
@@ -330,22 +326,20 @@ public class TestCRUDServiceImpl {
         final int LIST_SIZE = 15;
         List<IdentifiableTestEntity> created = new ArrayList<>(LIST_SIZE);
         for (int i = 1; i < LIST_SIZE + 1; i++) {
-            Audit audit = new Audit();
             IdentifiableTestEntity entity = new IdentifiableTestEntity();
             StringBuilder date = new StringBuilder("2013-04-");
             if (i < 10) {
                 date.append("0");
             }
             date.append(i);
-            audit.setCreated(dateFormatter.parse(date.toString()));
-            entity.setAuditInformation(audit);
+            entity.setCreatedDate(dateFormatter.parse(date.toString()));
             created.add(entity);
         }
 
-        when(crudRepository.list(2, 15, "auditInformation", Order.DESCENDING)).thenReturn(created);
+        when(crudRepository.list(2, 15, "createdDate", Order.DESCENDING)).thenReturn(created);
 
         // page 2 with 15 items should return a list of size 15
-        List<IdentifiableTestEntity> list = crudService.list(2, 15, "auditInformation", Order.DESCENDING);
+        List<IdentifiableTestEntity> list = crudService.list(2, 15, "createdDate", Order.DESCENDING);
 
         assertEquals(LIST_SIZE, list.size());
 
@@ -367,8 +361,8 @@ public class TestCRUDServiceImpl {
                 date.append("0");
             }
             date.append(i);
-            audit.setCreated(dateFormatter.parse(date.toString()));
-            entity.setAuditInformation(audit);
+            //audit.setCreated(dateFormatter.parse(date.toString()));
+            entity.setCreatedDate(dateFormatter.parse(date.toString()));
             created.add(entity);
         }
 
@@ -385,46 +379,5 @@ public class TestCRUDServiceImpl {
         }
     }
 
-    /**
-     * Audit information must be created by the service class just before being inserted into the database. We cannot
-     * rely on the class to manage that information itself.
-     */
-    @Test
-    public void testSetAuditInformation() {
-        IdentifiableTestEntity e = new IdentifiableTestEntity();
-        e.setNonNull("Not null");
-        e.setLabel("labelled");
-        e.setAuditInformation(null);
-        when(crudRepository.create(e)).thenReturn(e);
 
-        e = crudService.create(e);
-
-        assertNotNull(e.getAuditInformation());
-        assertTrue(e.getAuditInformation().getCreated().compareTo(new Date()) <= 0);
-
-        verify(crudRepository).create(e);
-    }
-
-    //@Test
-    public void testUpdateSetAuditInformation() throws NoSuchFieldException {
-        Long id = new Long(1);
-        IdentifiableTestEntity e = new IdentifiableTestEntity();
-        e.setId(id);
-        e.setNonNull("Not null");
-        e.setAuditInformation(new Audit());
-
-        ImmutableMap<String, Object> changed = ImmutableMap.of("nonNull", (Object) "another not null");
-        when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
-        when(crudRepository.read(id)).thenReturn(e);
-        when(crudRepository.update(id, changed)).thenReturn(e);
-
-        e = crudService.update(id, changed);
-
-        assertNotNull(e.getAuditInformation().getUpdated());
-        assertTrue(e.getAuditInformation().getUpdated().compareTo(new Date()) <= 0);
-
-        verify(crudRepository).exists(id);
-        verify(crudRepository).read(id);
-        verify(crudRepository).update(id, changed);
-    }
 }

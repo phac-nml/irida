@@ -18,6 +18,7 @@ package ca.corefacility.bioinformatics.irida.utils;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -37,31 +38,28 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
-    @Transient
-    private Identifier identifier;
+
     @NotNull
     private String nonNull;
     private Integer integerValue;
-    @NotNull
-    @Transient
-    private Audit audit;
+
     private String label;
     
     private Boolean valid;
+    
+    private Date createdDate;
 
     public IdentifiableTestEntity() {
-        this.identifier = new Identifier();
-        this.audit = new Audit();
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("created: ").append(audit.getCreated());
+        builder.append("created: ").append(createdDate);
         return builder.toString();
     }
 
+    @Override
     public Long getId() {
         return id;
     }
@@ -79,18 +77,8 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
     }
 
     @Override
-    public Audit getAuditInformation() {
-        return audit;
-    }
-
-    @Override
-    public void setAuditInformation(Audit audit) {
-        this.audit = audit;
-    }
-
-    @Override
     public int compareTo(IdentifiableTestEntity o) {
-        return audit.compareTo(o.audit);
+        return createdDate.compareTo(o.createdDate);
     }
 
     public Integer getIntegerValue() {
@@ -118,5 +106,15 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
     @Override
     public void setValid(Boolean valid) {
         this.valid = valid;
+    }
+
+    @Override
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    @Override
+    public void setCreatedDate(Date date) {
+        this.createdDate = date;
     }
 }

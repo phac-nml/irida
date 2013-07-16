@@ -3,12 +3,15 @@ package ca.corefacility.bioinformatics.irida.model;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import java.util.Date;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import org.hibernate.envers.Audited;
@@ -33,14 +36,13 @@ public class Project implements IridaThing, Comparable<Project> {
     @NotNull(message = "{project.name.notnull}")
     private String name;
     
-    @NotNull
-    @Transient
-    private Audit audit;
-    
     private Boolean valid = true;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdDate;
 
     public Project() {
-        audit = new Audit();
+        createdDate = new Date();
     }
 
     public Project(Identifier id) {
@@ -66,7 +68,7 @@ public class Project implements IridaThing, Comparable<Project> {
     public boolean equals(Object other) {
         if (other instanceof Project) {
             Project p = (Project) other;
-            return Objects.equals(identifier, p.identifier)
+            return Objects.equals(createdDate, p.createdDate)
                     && Objects.equals(name, p.name);
         }
 
@@ -75,7 +77,7 @@ public class Project implements IridaThing, Comparable<Project> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(identifier, name);
+        return Objects.hash(createdDate,name);
     }
 
     public String getName() {
@@ -88,18 +90,7 @@ public class Project implements IridaThing, Comparable<Project> {
 
     @Override
     public int compareTo(Project p) {
-        return audit.compareTo(p.audit);
-    }
-
-    @Override
-    public Audit getAuditInformation() {
-        return audit;
-    }
-
-
-    @Override
-    public void setAuditInformation(Audit audit) {
-        this.audit = audit;
+        return createdDate.compareTo(p.createdDate);
     }
 
     @Override
@@ -115,6 +106,16 @@ public class Project implements IridaThing, Comparable<Project> {
     @Override
     public void setValid(Boolean valid) {
         this.valid = valid;
+    }
+
+    @Override
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    @Override
+    public void setCreatedDate(Date date) {
+        this.createdDate = date;
     }
     
     

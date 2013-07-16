@@ -79,9 +79,7 @@ public class UserServiceImplTest {
         String firstName = "Franklin";
         String lastName = "Bristow";
         String phoneNumber = "7029";
-        UserIdentifier uid = new UserIdentifier();
-        uid.setIdentifier(username);
-        User user = new User(uid, username, email, password, firstName, lastName, phoneNumber);
+        User user = new User(username, email, password, firstName, lastName, phoneNumber);
         when(passwordEncoder.encode(password)).thenReturn(passwordEncoded);
         try {
             userService.create(user);
