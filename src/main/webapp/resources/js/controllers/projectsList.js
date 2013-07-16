@@ -19,11 +19,21 @@
      */
     app.controller('ProjectsListCtrl', ['$rootScope', '$scope', 'ajaxService', '$location', '$dialog', function ($rootScope, $scope, ajaxService, $location, $dialog) {
 
+        /**
+         * Load the initial list of projects into the sidebar.
+         */
+        ajaxService.get('/api/projects/all').then(function (data) {
+            $scope.projects = data.resource.resources;
+        });
+
         var active = '';
 
         $scope.$on('PROJECT_CREATED', function (event, msg) {
-           $scope.projects.unshift(msg);
-            $rootScope.$broadcast('NOTIFY', {msg:msg.name + " created."});
+            $scope.projects.unshift(msg);
+            var deferred = $q.defer();
+            setActivePorject($('.sidebar-inner li')[0]);  // TODO:  need to handle this after previous call.
+            setLocationPath(msg.links.self);
+            $rootScope.$broadcast('NOTIFY', {msg: msg.name + " created."});
         });
 
         // DOM
@@ -62,10 +72,6 @@
 //                }
 //        });
 
-        ajaxService.get('/api/projects/all').then(function (data) {
-            $scope.projects = data.resource.resources;
-        });
-
         /**
          * Loads the selected project into the ui-view section.
          *
@@ -74,13 +80,22 @@
          * @param {String} uri - the uri for the project.
          */
         $scope.gotoProject = function (e, uri) {
+            setActivePorject(e.currentTarget);
+            setLocationPath(uri);
+        };
+
+
+        function setLocationPath(uri) {
+            $location.path(uri.match(/\/projects\/.*$/)[0] + "/samples");
+        }
+
+        function setActivePorject(el) {
             if (active) {
                 active.removeClass('active');
             }
-            active = $(e.currentTarget);
+            active = $(el);
             active.addClass('active');
-            $location.path(uri.match(/\/projects\/.*$/)[0] + "/samples");
-        };
+        }
 
         /**
          * New Project Stuff
@@ -100,10 +115,10 @@
 
         var opts = {
             backdrop: true,
-                keyboard: true,
-                backdropClick: true,
-                template: t,
-                controller: 'NewProjectCtrl'
+            keyboard: true,
+            backdropClick: true,
+            template: t,
+            controller: 'NewProjectCtrl'
         };
 
         $scope.projectModal = {
@@ -125,7 +140,7 @@
 
         $scope.createProject = function () {
             dialog.close();
-            ajaxService.create('/api/projects', {name:$scope.project.name}).then(function (uri) {
+            ajaxService.create('/api/projects', {name: $scope.project.name}).then(function (uri) {
                 var msg = {
                     name: $scope.project.name,
                     links: {
