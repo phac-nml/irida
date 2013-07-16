@@ -178,8 +178,27 @@ public class GenericControllerTest {
         assertTrue(o instanceof ResourceCollection);
         @SuppressWarnings("unchecked")
         ResourceCollection<IdentifiableTestResource> collection = (ResourceCollection<IdentifiableTestResource>) o;
-        assertEquals(5, collection.getLinks().size());
         assertEquals(totalResources, collection.getTotalResources());
+        
+        Link self = collection.getLink(Link.REL_SELF);
+        assertEquals("self rel is not correct on paged collection", "http://localhost/generic?page=2&size=20&sortProperty=nonNull&sortOrder=DESCENDING", self.getHref());
+        
+        Link next = collection.getLink(Link.REL_NEXT);
+        assertEquals("next rel is not correct on paged collection", "http://localhost/generic?page=3&size=20&sortProperty=nonNull&sortOrder=DESCENDING", next.getHref());
+        
+        Link prev = collection.getLink(Link.REL_PREVIOUS);
+        assertEquals("previous is not correct on paged collection", "http://localhost/generic?page=1&size=20&sortProperty=nonNull&sortOrder=DESCENDING", prev.getHref());
+        
+        Link first = collection.getLink(Link.REL_FIRST);
+        assertEquals("first page rel is not correct on paged collection", "http://localhost/generic?page=1&size=20&sortProperty=nonNull&sortOrder=DESCENDING", first.getHref());
+        
+        Link last = collection.getLink(Link.REL_LAST);
+        assertEquals("last page rel is not correct on paged collection", "http://localhost/generic?page=20&size=20&sortProperty=nonNull&sortOrder=DESCENDING", last.getHref());
+        
+        Link all = collection.getLink(GenericController.REL_ALL);
+        assertNotNull("all rel is not present on paged collection", all);
+        assertEquals("all rel is not correct on paged collection", "http://localhost/generic/all", all.getHref());
+        
 
         for (IdentifiableTestResource r : collection) {
             assertEquals(1, r.getLinks().size());
@@ -201,8 +220,26 @@ public class GenericControllerTest {
         assertTrue(o instanceof ResourceCollection);
         @SuppressWarnings("unchecked")
         ResourceCollection<IdentifiableTestResource> collection = (ResourceCollection<IdentifiableTestResource>) o;
-        assertEquals(5, collection.getLinks().size());
         assertEquals(totalResources, collection.getTotalResources());
+        
+        Link self = collection.getLink(Link.REL_SELF);
+        assertEquals("self rel is not correct on paged collection", "http://localhost/generic?page=2&size=20&sortOrder=DESCENDING", self.getHref());
+        
+        Link next = collection.getLink(Link.REL_NEXT);
+        assertEquals("next rel is not correct on paged collection", "http://localhost/generic?page=3&size=20&sortOrder=DESCENDING", next.getHref());
+        
+        Link prev = collection.getLink(Link.REL_PREVIOUS);
+        assertEquals("previous is not correct on paged collection", "http://localhost/generic?page=1&size=20&sortOrder=DESCENDING", prev.getHref());
+        
+        Link first = collection.getLink(Link.REL_FIRST);
+        assertEquals("first page rel is not correct on paged collection", "http://localhost/generic?page=1&size=20&sortOrder=DESCENDING", first.getHref());
+        
+        Link last = collection.getLink(Link.REL_LAST);
+        assertEquals("last page rel is not correct on paged collection", "http://localhost/generic?page=20&size=20&sortOrder=DESCENDING", last.getHref());
+        
+        Link all = collection.getLink(GenericController.REL_ALL);
+        assertNotNull("all rel is not present on paged collection", all);
+        assertEquals("all rel is not correct on paged collection", "http://localhost/generic/all", all.getHref());
 
         for (IdentifiableTestResource r : collection) {
             assertEquals(1, r.getLinks().size());
