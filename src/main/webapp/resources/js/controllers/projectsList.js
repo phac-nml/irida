@@ -17,7 +17,7 @@
      * @param {Object} ajaxService
      * @param {Object} $location
      */
-    app.controller('ProjectsListCtrl', ['$rootScope', '$scope', 'ajaxService', '$location', '$dialog', function ($rootScope, $scope, ajaxService, $location, $dialog) {
+    app.controller('ProjectsListCtrl', ['$rootScope', '$scope', 'ajaxService', '$location', '$dialog', '$q', function ($rootScope, $scope, ajaxService, $location, $dialog, $q) {
 
         /**
          * Load the initial list of projects into the sidebar.
@@ -30,11 +30,12 @@
 
         $scope.$on('PROJECT_CREATED', function (event, msg) {
             $scope.projects.unshift(msg);
-            var deferred = $q.defer();
-            setActivePorject($('.sidebar-inner li')[0]);  // TODO:  need to handle this after previous call.
             setLocationPath(msg.links.self);
             $rootScope.$broadcast('NOTIFY', {msg: msg.name + " created."});
+            setActivePorject($('.sidebar-inner li')[0]);
         });
+
+
 
         // DOM
 //        var DOM_TOP_BOTTOM = $('#sidebar-top').height();
@@ -125,7 +126,7 @@
             openDialog: function () {
                 var d = $dialog.dialog(opts);
                 d.open();
-            },
+            }
         };
     }]);
 
