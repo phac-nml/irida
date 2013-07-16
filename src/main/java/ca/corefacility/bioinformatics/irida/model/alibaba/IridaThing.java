@@ -16,9 +16,7 @@
 package ca.corefacility.bioinformatics.irida.model.alibaba;
 
 import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
-import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import javax.validation.constraints.NotNull;
 
 /**
