@@ -77,6 +77,10 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
      */
     public static final String REL_COLLECTION_FIRST_PAGE = "collection/pages/first";
     /**
+     * rel for the complete collection instead of the paged collection.
+     */
+    public static final String REL_ALL = "collection/all";
+    /**
      * logger.
      */
     private static final Logger logger = LoggerFactory.getLogger(GenericController.class);
@@ -227,6 +231,8 @@ public abstract class GenericController<IdentifierType extends Identifier, Type 
         // the server will respond with only one page worth of entities, so we should tell
         // the client how to get more pages of results by constructing a series of page links.
         resources.add(pageLinksFor(getClass(), page, size, totalEntities, sortProperty, sortOrder));
+        // add a link to the "all" collection:
+        resources.add(linkTo(getClass()).slash("/all").withRel(REL_ALL));
         // we should also tell the client how many resources of this type there are in total
         resources.setTotalResources(totalEntities);
         // add any custom links for the resource collection.
