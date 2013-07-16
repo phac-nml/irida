@@ -8,7 +8,6 @@ import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sesame.AuditRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +34,6 @@ public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType> & 
     protected final CRUDRepository<KeyType, ValueType> repository;
     protected final Validator validator;
     protected final Class<ValueType> valueType;
-    protected AuditRepository auditRepository;
 
     public CRUDServiceImpl(CRUDRepository<KeyType, ValueType> repository, Validator validator, Class<ValueType> valueType) {
         this.repository = repository;
