@@ -1,27 +1,30 @@
-<div class="span12 large-container"><div class="row-fluid button-bar">
-    <div class="btn-group">
-        <button class="btn" data-ng-click="selectAllCheckboxes('users', true)">Select All</button>
-        <button class="btn" data-ng-click="selectAllCheckboxes('users', false)">Select None</button>
-    </div>
-    <div class="btn-group pull-right">
-        <div class="input-append">
-            <input class="span8" data-ng-model="data.newUser" type="text"  typeahead="user for user in data.users | filter:$viewValue"/>
-            <button class="btn" type="button">Add User</button>
+<div class="span12 large-container" data-ng-controller="ProjectUsersCtrl">
+    <div class="row-fluid button-bar">
+        <div class="btn-group">
+            <button class="btn" data-ng-click="selectAllCheckboxes('users', true)">Select All</button>
+            <button class="btn" data-ng-click="selectAllCheckboxes('users', false)">Select None</button>
+        </div>
+        <div class="btn-group pull-right">
+            <div class="input-append">
+                <input class="span8" data-ng-model="data.newUser" type="text"
+                       typeahead="user for user in data.users | filter:$viewValue"/>
+                <button class="btn" type="button" data-ng-click="addUserToProject($event)">Add User</button>
+            </div>
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-warning" data-ng-click="removeItemFromProject('users')"
+                    data-ng-show="checkCount('users')">Remove
+            </button>
         </div>
     </div>
-    <div class="btn-group">
-        <button class="btn btn-warning" data-ng-click="removeItemFromProject('users')"
-                data-ng-show="checkCount('users')">Remove
-        </button>
-    </div>
+    <table class="table">
+        <tr data-ng-repeat="u in project.users">
+            <td class="file-select"><input data-ng-click="checkForAllSelected('users')"
+                                           data-ng-checked="display.users.allCheckboxes" type="checkbox"
+                                           value="{{$index}}"
+                                           name="users"/></td>
+            <td><a href="#" data-ng-click="gotoUser($event, u.links.self)">{{u.label}}</a></td>
+            <td class="file-date">{{u.createdDate | angularMoment }}</td>
+        </tr>
+    </table>
 </div>
-<table class="table">
-    <tr data-ng-repeat="u in project.users">
-        <td class="file-select"><input data-ng-click="checkForAllSelected('users')"
-                                       data-ng-checked="display.users.allCheckboxes" type="checkbox"
-                                       value="{{$index}}"
-                                       name="users"/></td>
-        <td><a href="#" data-ng-click="gotoUser($event, u.links.self)">{{u.label}}</a></td>
-        <td class="file-date">{{u.createdDate | angularMoment }}</td>
-    </tr>
-</table></div>
