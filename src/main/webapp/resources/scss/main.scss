@@ -45,31 +45,31 @@ a {
 // ============================================================================
 // MODULES
 // ============================================================================
-
 .button-bar {
   margin-bottom: 1.5em;
 }
 
 // Login Page
 // ============================================================================
-
-.login__outer {
-  height: 100%;
+.login-outer {
   width: 100%;
+  height: 100%;
+  background-color: chartreuse;
+}
+.login {
+  height: 300px;
+  width: 300px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: -150px;
+  margin-top: -150px;
+  background-color: orange;
+  text-align: center;
 }
 
-.login__inner {
-  // Positioning
-  // Display & Box Model
-  height: 300px;
-  padding: 1em;
-  width: 400px;
-  // Color
-  background-color: $color-white;
-  // Text
-  // Other
-  border-radius: $default-border-radius;
-
+input[type='text'], input[type='password'     ] {
+  height:  auto;
 }
 
 // Index Page & General Page Styles
@@ -94,7 +94,7 @@ a {
 // ============================================================================
 .large-container {
   // Includes
-  @include box-shadow(0px 1px 1px 1px rgba(0, 0, 0, .15));
+  @include box-shadow($box-shadow);
   // Positioning
   // Display & Box Model
   padding: 1em;
@@ -118,7 +118,7 @@ a {
   // Color
   //background: url("/css/img/sidebar-gradient.png") repeat-y top right;
   background-clip: border-box;
-  background-color: $color-sidebar;
+  background-color: $color-phac-dark-blue;
   color: rgba(223, 223, 222, 1.0);
   // Text
   text-shadow: 0px 2px 1px rgba(0, 0, 0, 0.4);
@@ -284,16 +284,7 @@ input.sidebar-search {
   float: left;
   min-width: 1px;
   z-index: 777;
-}
-
-.login {
-  height: 300px;
-  width: 300px;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  margin-left: -150px;
-  margin-top: -150px;
+  background: url('/css/img/noisy-texture.png');
 }
 
 .row--btn {

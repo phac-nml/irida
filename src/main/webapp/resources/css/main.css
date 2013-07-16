@@ -85,22 +85,31 @@ a {
   .ngs-pills li.pull-right {
     margin-right: 0; }
 
-/* line 49, ../scss/main.scss */
+/* line 48, ../scss/main.scss */
 .button-bar {
   margin-bottom: 1.5em; }
 
-/* line 56, ../scss/main.scss */
-.login__outer {
+/* line 54, ../scss/main.scss */
+.login-outer {
+  width: 100%;
   height: 100%;
-  width: 100%; }
+  background-color: chartreuse; }
 
-/* line 61, ../scss/main.scss */
-.login__inner {
+/* line 59, ../scss/main.scss */
+.login {
   height: 300px;
-  padding: 1em;
-  width: 400px;
-  background-color: #ecf0f1;
-  border-radius: 3px; }
+  width: 300px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: -150px;
+  margin-top: -150px;
+  background-color: orange;
+  text-align: center; }
+
+/* line 71, ../scss/main.scss */
+input[type='text'], input[type='password'] {
+  height: auto; }
 
 /* line 78, ../scss/main.scss */
 .outer {
@@ -261,29 +270,20 @@ input.sidebar-search {
 .main {
   float: left;
   min-width: 1px;
-  z-index: 777; }
+  z-index: 777;
+  background: url("/css/img/noisy-texture.png"); }
 
-/* line 289, ../scss/main.scss */
-.login {
-  height: 300px;
-  width: 300px;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  margin-left: -150px;
-  margin-top: -150px; }
-
-/* line 299, ../scss/main.scss */
+/* line 290, ../scss/main.scss */
 .row--btn {
   padding-bottom: 10px; }
 
-/* line 304, ../scss/main.scss */
+/* line 295, ../scss/main.scss */
 .sample-table tr {
   cursor: pointer;
   -webkit-transition: all 0.25s ease-in-out;
   -moz-transition: all 0.25s ease-in-out;
   transition: all 0.25s ease-in-out; }
-  /* line 307, ../scss/main.scss */
+  /* line 298, ../scss/main.scss */
   .sample-table tr:hover {
     -webkit-transition: all 0.25s ease-in-out;
     -moz-transition: all 0.25s ease-in-out;
@@ -291,25 +291,25 @@ input.sidebar-search {
     background-color: #1c587e;
     color: #dfe2e2; }
 
-/* line 316, ../scss/main.scss */
+/* line 307, ../scss/main.scss */
 td.file-select {
   width: 13px; }
-  /* line 318, ../scss/main.scss */
+  /* line 309, ../scss/main.scss */
   td.file-select input {
     margin-top: 0; }
 
-/* line 323, ../scss/main.scss */
+/* line 314, ../scss/main.scss */
 td.file-date {
   text-align: right; }
 
-/* line 327, ../scss/main.scss */
+/* line 318, ../scss/main.scss */
 .ngs-pills > li > a {
   font-weight: 700; }
 
-/* line 331, ../scss/main.scss */
+/* line 322, ../scss/main.scss */
 .ngs-pills > li.active > a {
   background-color: #133b54; }
-  /* line 333, ../scss/main.scss */
+  /* line 324, ../scss/main.scss */
   .ngs-pills > li.active > a:hover {
     background-color: #133b54;
     cursor: default; }
