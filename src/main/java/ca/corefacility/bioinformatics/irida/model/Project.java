@@ -22,7 +22,7 @@ import org.hibernate.envers.Audited;
 @Entity
 @Table(name="project")
 @Audited
-public class Project implements IridaThing<Project,Audit,Identifier>, Comparable<Project> {
+public class Project implements IridaThing, Comparable<Project> {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -96,15 +96,6 @@ public class Project implements IridaThing<Project,Audit,Identifier>, Comparable
         return audit;
     }
 
-    @Override
-    public Identifier getIdentifier() {
-        return identifier;
-    }
-
-    @Override
-    public void setIdentifier(Identifier identifier) {
-        this.identifier = identifier;
-    }
 
     @Override
     public void setAuditInformation(Audit audit) {
@@ -114,13 +105,6 @@ public class Project implements IridaThing<Project,Audit,Identifier>, Comparable
     @Override
     public String getLabel() {
         return name;
-    }
-
-    @Override
-    public Project copy() {
-        Project p = new Project();
-        p.setName(getName());
-        return p;
     }
 
     @Override

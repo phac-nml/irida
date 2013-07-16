@@ -34,7 +34,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Entity
 @Table(name="user")
 @Audited
-public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<User>, UserDetails {
+public class User implements IridaThing, Comparable<User>, UserDetails {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -137,7 +137,7 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
     public boolean equals(Object other) {
         if (other instanceof User) {
             User u = (User) other;
-            return Objects.equals(identifier, u.identifier)
+            return Objects.equals(id, u.id)
                     && Objects.equals(username, u.username)
                     && Objects.equals(email, u.email)
                     && Objects.equals(password, u.password)
@@ -238,35 +238,8 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
     }
 
     @Override
-    public UserIdentifier getIdentifier() {
-        return identifier;
-    }
-
-    @Override
-    public void setIdentifier(UserIdentifier identifier) {
-        this.identifier = identifier;
-    }
-
-    @Override
     public String getLabel() {
         return firstName + " " + lastName;
-    }
-
-    @Override
-    public User copy() {
-        User u = new User();
-        u.setUsername(getUsername());
-        u.setEmail(getEmail());
-        u.setFirstName(getFirstName());
-        u.setLastName(getLastName());
-        u.setPassword(getPassword());
-        u.setPhoneNumber(getPhoneNumber());
-        
-        //have to recreate the roles fancily
-        String stringRole = getStringRole();
-        u.setRole(new Role(stringRole));
-        
-        return u;        
     }
 
     @Override

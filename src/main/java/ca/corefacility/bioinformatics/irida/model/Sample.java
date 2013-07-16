@@ -40,7 +40,7 @@ import org.hibernate.envers.Audited;
 @Entity
 @Table(name="sample")
 @Audited
-public class Sample implements IridaThing<Sample,Audit,Identifier>, Comparable<Sample> {
+public class Sample implements IridaThing, Comparable<Sample> {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -104,15 +104,6 @@ public class Sample implements IridaThing<Sample,Audit,Identifier>, Comparable<S
         return audit;
     }
 
-    @Override
-    public Identifier getIdentifier() {
-        return identifier;
-    }
-
-    @Override
-    public void setIdentifier(Identifier identifier) {
-        this.identifier = identifier;
-    }
 
     @Override
     public void setAuditInformation(Audit audit) {
@@ -122,13 +113,6 @@ public class Sample implements IridaThing<Sample,Audit,Identifier>, Comparable<S
     @Override
     public String getLabel() {
         return sampleName;
-    }
-
-    @Override
-    public Sample copy() {
-        Sample s = new Sample();
-        s.setSampleName(getSampleName());
-        return s;
     }
 
     @Override

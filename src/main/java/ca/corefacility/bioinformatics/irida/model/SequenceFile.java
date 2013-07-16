@@ -43,7 +43,7 @@ import org.hibernate.envers.Audited;
 @Entity
 @Table(name="sequence_file")
 @Audited
-public class SequenceFile implements IridaThing<SequenceFile, Audit, Identifier>, Comparable<SequenceFile> {
+public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -125,29 +125,8 @@ public class SequenceFile implements IridaThing<SequenceFile, Audit, Identifier>
     }
 
     @Override
-    public Identifier getIdentifier() {
-        return identifier;
-    }
-
-    @Override
-    public void setIdentifier(Identifier identifier) {
-        this.identifier = identifier;
-    }
-
-    @Override
     public String getLabel() {
         return file.getFileName().toString();
-    }
-    
-    public File getIoFile(){
-        return file.toFile();
-    }    
-
-    @Override
-    public SequenceFile copy() {
-        SequenceFile f = new SequenceFile();
-        f.setFile(getIoFile().toPath());
-        return f;
     }
 
     @Override

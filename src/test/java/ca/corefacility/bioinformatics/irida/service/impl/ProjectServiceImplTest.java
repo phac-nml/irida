@@ -56,11 +56,9 @@ public class ProjectServiceImplTest {
     public void testAddSampleToProject() {
         Sample s = new Sample();
         s.setSampleName("sample");
-        s.setIdentifier(new Identifier());
         s.setId(new Long(2222));
         Project p = new Project();
         p.setName("project");
-        p.setIdentifier(new Identifier());
         p.setId(new Long(1111));
 
         when(projectRepository.addSampleToProject(p, s))

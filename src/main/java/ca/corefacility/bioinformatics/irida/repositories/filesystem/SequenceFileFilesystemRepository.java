@@ -76,8 +76,7 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Long, Se
      */
     @Override
     public SequenceFile create(SequenceFile object) throws IllegalArgumentException {
-        if (object.getIdentifier() == null
-                || Strings.isNullOrEmpty(object.getIdentifier().getIdentifier())) {
+        if (object.getId()== null) {
             throw new IllegalArgumentException("Identifier is required.");
         }
         Path sequenceFileDir = getSequenceFileDir(object.getId());

@@ -25,12 +25,10 @@ import javax.validation.constraints.NotNull;
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public interface IridaThing<DataType extends IridaThing,AuditType extends Audit,IDType extends Identifier> extends Auditable<AuditType>, Identifiable<IDType>{
+public interface IridaThing extends Auditable<Audit>{
     @NotNull
     public String getLabel();
- 
-    public DataType copy();
-    
+     
     public Long getId();
     
     public Boolean isValid();

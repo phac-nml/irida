@@ -32,7 +32,7 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name="identifiable")
-public class IdentifiableTestEntity implements IridaThing<IdentifiableTestEntity,Audit,Identifier>, Comparable<IdentifiableTestEntity> {
+public class IdentifiableTestEntity implements IridaThing, Comparable<IdentifiableTestEntity> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -79,16 +79,6 @@ public class IdentifiableTestEntity implements IridaThing<IdentifiableTestEntity
     }
 
     @Override
-    public Identifier getIdentifier() {
-        return this.identifier;
-    }
-
-    @Override
-    public void setIdentifier(Identifier identifier) {
-        this.identifier = identifier;
-    }
-
-    @Override
     public Audit getAuditInformation() {
         return audit;
     }
@@ -119,14 +109,6 @@ public class IdentifiableTestEntity implements IridaThing<IdentifiableTestEntity
     public void setLabel(String label){
         this.label = label;
     }
-
-    @Override
-    public IdentifiableTestEntity copy() {
-        IdentifiableTestEntity copy = new IdentifiableTestEntity(); 
-        copy.setNonNull(getNonNull());
-        copy.setLabel(getLabel());
-        return copy;
-   }
 
     @Override
     public Boolean isValid() {
