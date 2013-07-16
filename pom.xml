@@ -59,12 +59,6 @@
             <organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
         </developer>
     </developers>
-    <repositories>
-        <repository>
-            <id>aduna-opensource.releases</id>
-            <url>http://repo.aduna-software.org/maven2/releases</url>
-        </repository>
-    </repositories>
     <dependencies>
         <!-- JUnit -->
         <dependency>
