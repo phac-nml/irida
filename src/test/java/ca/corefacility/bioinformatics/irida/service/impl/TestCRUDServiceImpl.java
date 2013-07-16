@@ -20,7 +20,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import com.google.common.collect.ImmutableMap;
@@ -42,8 +41,8 @@ import static org.mockito.Mockito.*;
  */
 public class TestCRUDServiceImpl {
 
-    private CRUDService<Identifier, IdentifiableTestEntity> crudService;
-    private CRUDRepository<Identifier, IdentifiableTestEntity> crudRepository;
+    private CRUDService<Long, IdentifiableTestEntity> crudService;
+    private CRUDRepository<Long, IdentifiableTestEntity> crudRepository;
     private Validator validator;
     private SimpleDateFormat dateFormatter;
 
@@ -101,7 +100,7 @@ public class TestCRUDServiceImpl {
 
     @Test
     public void testUpdateMissingEntity() {
-        Identifier id = new Identifier();
+        Long id = new Long(1);
         Map<String, Object> updatedProperties = new HashMap<>();
         when(crudRepository.exists(id)).thenReturn(Boolean.FALSE);
         try {
@@ -116,24 +115,26 @@ public class TestCRUDServiceImpl {
     @Test
     public void testUpdateWithBadPropertyName() {
         IdentifiableTestEntity entity = new IdentifiableTestEntity();
+        entity.setId(new Long(1));
         Map<String, Object> updatedProperties = new HashMap<>();
         updatedProperties.put("noSuchField", new Object());
         try {
-            crudService.update(entity.getIdentifier(), updatedProperties);
+            crudService.update(entity.getId(), updatedProperties);
             fail();
         } catch (InvalidPropertyException e) {
         } catch (Exception e) {
             fail();
         }
     }
-
+    
     @Test
     public void testUpdateWithBadPropertyType() {
         IdentifiableTestEntity entity = new IdentifiableTestEntity();
+        entity.setId(new Long(1));
         Map<String, Object> updatedProperties = new HashMap<>();
         updatedProperties.put("integerValue", new Object());
         try {
-            crudService.update(entity.getIdentifier(), updatedProperties);
+            crudService.update(entity.getId(), updatedProperties);
             fail();
         } catch (InvalidPropertyException e) {
         } catch (Exception e) {
@@ -146,8 +147,8 @@ public class TestCRUDServiceImpl {
         IdentifiableTestEntity i = new IdentifiableTestEntity();
         i.setNonNull("Definitely not null.");
         i.setIntegerValue(Integer.MIN_VALUE);
-        Identifier id = new Identifier();
-        i.setIdentifier(id);
+        Long id = new Long(1);
+        i.setId(id);
         when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
         when(crudRepository.read(id)).thenReturn(i);
 
@@ -164,15 +165,17 @@ public class TestCRUDServiceImpl {
         }
     }
 
+
     @Test
     public void testRead() {
         IdentifiableTestEntity i = new IdentifiableTestEntity();
+        i.setId(new Long(1));
         i.setNonNull("Definitely not null");
 
-        when(crudRepository.read(i.getIdentifier())).thenReturn(i);
+        when(crudRepository.read(i.getId())).thenReturn(i);
 
         try {
-            i = crudService.read(i.getIdentifier());
+            i = crudService.read(i.getId());
             assertNotNull(i);
         } catch (IllegalArgumentException e) {
             fail();
@@ -196,26 +199,28 @@ public class TestCRUDServiceImpl {
     @Test
     public void testExists() {
         IdentifiableTestEntity i = new IdentifiableTestEntity();
-        when(crudRepository.exists(i.getIdentifier())).thenReturn(Boolean.TRUE);
-        assertTrue(crudService.exists(i.getIdentifier()));
+        i.setId(new Long(1));
+        when(crudRepository.exists(i.getId())).thenReturn(Boolean.TRUE);
+        assertTrue(crudService.exists(i.getId()));
     }
-
+    
     @Test
     public void testValidDelete() {
         IdentifiableTestEntity i = new IdentifiableTestEntity();
+        i.setId(new Long(1));
 
-        when(crudService.exists(i.getIdentifier())).thenReturn(Boolean.TRUE);
+        when(crudService.exists(i.getId())).thenReturn(Boolean.TRUE);
 
         try {
-            crudService.delete(i.getIdentifier());
+            crudService.delete(i.getId());
         } catch (EntityNotFoundException e) {
             fail();
         }
     }
-
+    
     @Test
     public void testInvalidDelete() {
-        Identifier id = new Identifier();
+        Long id = new Long(1);
         when(crudRepository.exists(id)).thenReturn(Boolean.FALSE);
         try {
             crudService.delete(id);
@@ -225,6 +230,7 @@ public class TestCRUDServiceImpl {
             fail();
         }
     }
+    
 
     @Test
     public void testPagedResultsBadProperty() {
@@ -264,10 +270,13 @@ public class TestCRUDServiceImpl {
             assertEquals(created.get(i), list.get(i));
         }
     }
-
+    
+    /*
+     * TODO Reimplement this test
+     * */
     @Test
     public void testGetMissingEntity() {
-        Identifier id = new Identifier();
+        Long id = new Long(1);
         when(crudRepository.read(id)).thenThrow(new EntityNotFoundException("not found"));
         try {
             crudService.read(id);
@@ -277,6 +286,7 @@ public class TestCRUDServiceImpl {
             fail();
         }
     }
+    
 
     @Test
     public void testCount() {
@@ -397,9 +407,9 @@ public class TestCRUDServiceImpl {
 
     //@Test
     public void testUpdateSetAuditInformation() throws NoSuchFieldException {
-        Identifier id = new Identifier();
+        Long id = new Long(1);
         IdentifiableTestEntity e = new IdentifiableTestEntity();
-        e.setIdentifier(id);
+        e.setId(id);
         e.setNonNull("Not null");
         e.setAuditInformation(new Audit());
 
