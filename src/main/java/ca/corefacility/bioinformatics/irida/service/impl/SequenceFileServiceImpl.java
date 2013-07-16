@@ -18,20 +18,16 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileSampleJoin;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
-import ca.corefacility.bioinformatics.irida.repositories.RelationshipRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sesame.dao.RdfPredicate;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import com.google.common.collect.ImmutableMap;
 
 import javax.validation.Validator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,15 +40,12 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
     /**
      * A reference to the file system repository.
      */
-    private CRUDRepository<Identifier, SequenceFile> fileRepository;
+    private CRUDRepository<Long, SequenceFile> fileRepository;
     /**
      * A reference to the data store repository.
      */
     private SequenceFileRepository sequenceFileRepository;
-    /**
-     * A reference to the {@link RelationshipRepository}.
-     */
-    private RelationshipRepository relationshipRepository;
+
 
     /**
      * Constructor.
@@ -62,12 +55,10 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
      */
     public SequenceFileServiceImpl(
             SequenceFileRepository sequenceFileRepository,
-            CRUDRepository<Identifier, SequenceFile> fileRepository,
-            RelationshipRepository relationshipRepository,
+            CRUDRepository<Long, SequenceFile> fileRepository,
             Validator validator) {
         super(sequenceFileRepository, validator, SequenceFile.class);
         this.sequenceFileRepository = sequenceFileRepository;
-        this.relationshipRepository = relationshipRepository;
         this.fileRepository = fileRepository;
     }
 
@@ -97,8 +88,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
         SequenceFile updated = super.update(id, updatedFields);
 
         if (updatedFields.containsKey("file")) {
-            //TODO - re-implement the update
-            //updated = fileRepository.update(id, updatedFields);
+            updated = fileRepository.update(id, updatedFields);
             updated = super.update(id, ImmutableMap.of("file",
                     (Object) updated.getFile()));
         }
@@ -110,14 +100,11 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
      * {@inheritDoc}
      */
     @Override
-    public Relationship createSequenceFileWithOwner(SequenceFile sequenceFile, Class ownerType, Long owner) {
+    public SequenceFileSampleJoin createSequenceFileInSample(SequenceFile sequenceFile, Sample sample) {
         SequenceFile created = create(sequenceFile);
+        SequenceFileSampleJoin addFileToSample = sequenceFileRepository.addFileToSample(sample, created);
         
-        Relationship relationship = null;
-        /*TODO - re-implement the relationship creation
-         * Relationship relationship = relationshipRepository.create(ownerType, owner,
-                SequenceFile.class, created.getIdentifier());*/
-        return relationship;
+        return addFileToSample;
     }
 
     /**
@@ -125,22 +112,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
      */
     @Override
     public SequenceFile getSequenceFileFromProject(Project project, Long sequenceFileId) throws EntityNotFoundException {
-        String noSuchSequenceFileMessage = "No sequence file exists with identifier [" + sequenceFileId + "]";
-        // verify that the sequence file exists
-        if (!sequenceFileRepository.exists(sequenceFileId)) {
-            throw new EntityNotFoundException(noSuchSequenceFileMessage);
-        }
-
-        // verify that a relationship between project and sequence file exists
-        /*TODO - re-implement the non-empty relationship
-         * verifyNonEmptyRelationships(relationshipRepository
-                .getLinks(project.getIdentifier(), RdfPredicate.ANY, sequenceFileId));*/
-
-        // read the sequence file
-        SequenceFile sf = sequenceFileRepository.read(sequenceFileId);
-
-        // return to caller.
-        return sf;
+        throw new UnsupportedOperationException("Files association with projects is no longer supported");
     }
 
     /**
@@ -148,31 +120,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
      */
     @Override
     public SequenceFile getSequenceFileFromSample(Project project, Sample sample, Long sequenceFileId) throws EntityNotFoundException {
-        String noSuchSequenceFileMessage = "No sequence file exists with identifier [" + sequenceFileId + "]";
-
-        //verify that the sequence file exists
-        if (!sequenceFileRepository.exists(sequenceFileId)) {
-            throw new EntityNotFoundException(noSuchSequenceFileMessage);
-        }
-
-        // verify that a relationship exists between project and sample
-        verifyNonEmptyRelationships(relationshipRepository
-                .getLinks(project.getIdentifier(), RdfPredicate.ANY, sample.getIdentifier()));
-
-        // verify that a relationship exists between sample and sequence file
-        //TODO - re-implement the verification
-        //verifyNonEmptyRelationships(relationshipRepository.getLinks(sample.getIdentifier(), RdfPredicate.ANY, sequenceFileId));
-
-        // read the sequence file
-        SequenceFile sf = sequenceFileRepository.read(sequenceFileId);
-
-        // return to caller
-        return sf;
+        throw new UnsupportedOperationException("Files will always be associated with samples.  Just call read(Long sequenceFileId)");
     }
 
-    private void verifyNonEmptyRelationships(List<Relationship> relationships) {
-        if (relationships == null || relationships.isEmpty()) {
-            throw new EntityNotFoundException("No relationship exists between the specified entities.");
-        }
-    }
 }

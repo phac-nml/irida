@@ -2,10 +2,10 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileSampleJoin;
 
 /**
  * Service for managing {@link SequenceFile} entities.
@@ -15,21 +15,19 @@ import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
     /**
      * Persist the {@link SequenceFile} to the database and create a new relationship between the {@link SequenceFile}
-     * and some other entity identified by the {@link Identifier}.
+     * and a {@link Sample}
      *
      * @param sequenceFile the {@link SequenceFile} to be persisted.
-     * @param ownerType    the type of the owner.
-     * @param owner        the {@link Identifier} of the owning entity.
-     * @return the {@link Relationship} between the {@link SequenceFile} and its owner where the subject
-     *         {@link Identifier} is that of the owner and the object {@link Identifier} is that of the
-     *         {@link SequenceFile}.
+     * @param sample The sample to add the file to
+     * @return the {@link Join} between the {@link SequenceFile} and its {@link Sample}.
      */
-    public Relationship createSequenceFileWithOwner(SequenceFile sequenceFile, Class ownerType, Long owner);
+    public SequenceFileSampleJoin createSequenceFileInSample(SequenceFile sequenceFile, Sample sample);
 
     /**
      * Get a {@link SequenceFile} that is associated with a specific {@Link Project}. If the {@link SequenceFile} is
      * not associated with the {@link Project}, or no {@link SequenceFile} with the specified {@link Identifier} exists,
      * then an {@link EntityNotFoundException} will be thrown.
+     * @deprecated 
      *
      * @param project        the {@link Project} to get the {@link SequenceFile} from.
      * @param sequenceFileId the {@link Identifier} of the {@link SequenceFile}.
@@ -43,6 +41,7 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
      * Get a {@link SequenceFile} that is associated with a specific {@link Sample}. If the {@link SequenceFile} is not
      * associated with the {@link Sample}, or no {@link SequenceFile} with the specified {@link Identifier} exists, then
      * an {@link EntityNotFoundException} will be thrown.
+     * @deprecated 
      *
      * @param project        the {@link Project} to get the {@link Sample} from.
      * @param sample         the {@link Sample} to get the {@link SequenceFile} from.
