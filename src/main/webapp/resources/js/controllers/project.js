@@ -12,8 +12,6 @@
             projectService.project = $scope.project;
 
             $scope.data.view = 'samples';
-            $scope.data.users = ['Josh Adam', 'Frankilin Bristow', 'Aaron Petkau', 'Heather Adam', 'Nathan Adam'];
-
 
             $scope.addFilesToSample = function (s) {
                 var fileIndexes = ng.element('input[name="files"]:checked');
@@ -137,17 +135,6 @@
                 $scope.display[type].checkedCount = ng.element("input[name='" + type + "']:checked").length;
             };
 
-//      $scope.modifyDisplayOptions = function (type) {
-//        $scope.display[type].allCheckboxes = !$scope.display[type].allCheckboxes;
-//        if ($scope.display[type].allCheckboxes) {
-//          $scope.display[type].mainCB = true;
-//          $scope.display[type].checkedCount = 100;
-//        }
-//        else {
-//          $scope.display[type].mainCB = false;
-//          $scope.display[type].checkedCount = 0;
-//        }
-//      };
 
             $scope.changeProjectView = function (view) {
                 $location.path('/projects/' + $scope.project.id + '/' + view);
