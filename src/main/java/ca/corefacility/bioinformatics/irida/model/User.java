@@ -21,7 +21,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import org.hibernate.envers.Audited;
-import org.openrdf.annotations.Iri;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -35,10 +34,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Entity
 @Table(name="user")
 @Audited
-@Iri(User.PREFIX + User.TYPE)
 public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<User>, UserDetails {
-    public static final String PREFIX = "http://xmlns.com/foaf/0.1/";
-    public static final String TYPE = "Person";
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -48,12 +44,10 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
     private UserIdentifier identifier;
     @NotNull(message = "{user.username.notnull}")
     @Size(min = 3, message = "{user.username.size}")
-    @Iri(PREFIX + "nick")
     private String username;
     @NotNull(message = "{user.email.notnull}")
     @Size(min = 5, message = "{user.email.size}")
     @Email(message = "{user.email.invalid}")
-    @Iri(PREFIX + "mbox")
     private String email;
     @NotNull(message = "{user.password.notnull}")
     @Size(min = 6, message = "{user.password.size}") // passwords must be at least six characters long
@@ -62,19 +56,15 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
                     message = "{user.password.uppercase}"), // passwords must contain an upper-case letter
             @Pattern(regexp = "^.*[0-9].*$", message = "{user.password.number}") // passwords must contain a number
     })
-    @Iri(PREFIX + "password")
     private String password;
     @NotNull(message = "{user.firstName.notnull}")
     @Size(min = 2, message = "{user.firstName.size}")
-    @Iri(PREFIX + "firstName")
     private String firstName;
     @NotNull(message = "{user.lastName.notnull}")
     @Size(min = 2, message = "{user.lastName.size}")
-    @Iri(PREFIX + "lastName")
     private String lastName;
     @NotNull(message = "{user.phoneNumber.notnull}")
     @Size(min = 4, message = "{user.phoneNumber.size}")
-    @Iri(PREFIX + "phone")
     private String phoneNumber;
     @NotNull
     
@@ -299,7 +289,6 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
      * Helper method for Alibaba
      * @return a Set<String> of role names
      */
-    @Iri("http://corefacility.ca/irida/systemRole")
     public String getStringRole(){
         if(system_role != null){
             return system_role.getName();    

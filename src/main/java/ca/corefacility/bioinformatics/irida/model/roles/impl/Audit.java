@@ -28,7 +28,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import org.openrdf.annotations.Iri;
 
 /**
  * Information that can be used to audit any object persisted to the database.
@@ -37,24 +36,19 @@ import org.openrdf.annotations.Iri;
  */
 @Entity
 @Table(name="audit")
-@Iri(Audit.TYPE)
 public class Audit implements Comparable<Audit> {
-    public static final String TYPE = "http://corefacility.ca/irida/Audit";
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
     @NotNull
-    @Iri("http://corefacility.ca/irida/createdDate")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
     //@NotNull
-    //@Iri("http://corefacility.ca/IRIDA/Audit/createdBy")
     @Transient
     private User createdBy;
     
     @Temporal(TemporalType.TIMESTAMP)
-    @Iri("http://corefacility.ca/irida/updatedDate")
     private Date updated;
     
     @Transient

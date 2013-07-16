@@ -1,13 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.validation.constraints.NotNull;
@@ -16,11 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.envers.Audited;
-import org.hibernate.usertype.UserType;
 
 /**
  * Roles for authorization in the application.

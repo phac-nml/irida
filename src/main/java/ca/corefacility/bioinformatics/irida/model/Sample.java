@@ -30,7 +30,6 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.hibernate.envers.Audited;
-import org.openrdf.annotations.Iri;
 
 /**
  * A biological sample. Each sample may correspond to many files.
@@ -40,11 +39,8 @@ import org.openrdf.annotations.Iri;
  */
 @Entity
 @Table(name="sample")
-@Iri(Sample.PREFIX + Sample.TYPE)
 @Audited
 public class Sample implements IridaThing<Sample,Audit,Identifier>, Comparable<Sample> {
-    public static final String PREFIX = "http://corefacility.ca/irida/";
-    public static final String TYPE = "Sample";
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -59,7 +55,6 @@ public class Sample implements IridaThing<Sample,Audit,Identifier>, Comparable<S
     private Audit audit;
     @NotNull
     @Size(min = 3)
-    @Iri(PREFIX + "sampleName")
     private String sampleName;
     
     private Boolean valid = true;

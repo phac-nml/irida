@@ -19,7 +19,6 @@ import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import java.io.File;
-import org.openrdf.annotations.Iri;
 
 import javax.validation.constraints.NotNull;
 import java.nio.file.Path;
@@ -30,10 +29,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.PostLoad;
-import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import org.hibernate.envers.Audited;
@@ -47,11 +42,8 @@ import org.hibernate.envers.Audited;
  */
 @Entity
 @Table(name="sequence_file")
-@Iri(SequenceFile.PREFIX + SequenceFile.TYPE)
 @Audited
 public class SequenceFile implements IridaThing<SequenceFile, Audit, Identifier>, Comparable<SequenceFile> {
-    public static final String PREFIX = "http://corefacility.ca/irida/";
-    public static final String TYPE = "SequenceFile";
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -147,7 +139,6 @@ public class SequenceFile implements IridaThing<SequenceFile, Audit, Identifier>
         return file.getFileName().toString();
     }
     
-    @Iri(PREFIX + "File")
     public File getIoFile(){
         return file.toFile();
     }    

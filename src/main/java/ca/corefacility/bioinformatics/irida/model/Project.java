@@ -12,7 +12,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import org.hibernate.envers.Audited;
-import org.openrdf.annotations.Iri;
 
 /**
  * A project object.
@@ -23,10 +22,7 @@ import org.openrdf.annotations.Iri;
 @Entity
 @Table(name="project")
 @Audited
-@Iri(Project.PREFIX + Project.TYPE)
 public class Project implements IridaThing<Project,Audit,Identifier>, Comparable<Project> {
-    public static final String PREFIX = "http://corefacility.ca/irida/";
-    public static final String TYPE = "Project";
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -35,7 +31,6 @@ public class Project implements IridaThing<Project,Audit,Identifier>, Comparable
     @Transient
     private Identifier identifier;
     @NotNull(message = "{project.name.notnull}")
-    @Iri(PREFIX + "projectName")
     private String name;
     
     @NotNull

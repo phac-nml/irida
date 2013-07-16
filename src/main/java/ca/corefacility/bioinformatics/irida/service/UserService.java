@@ -17,10 +17,7 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.Collection;
