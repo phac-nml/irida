@@ -93,21 +93,24 @@
             '<p>Project Name: <input ng-model="project.name" /></p>' +
             '</div>' +
             '<div class="modal-footer">' +
+            '<button data-ng-click="closeModal()" class="btn" >Cancel</button>' +
             '<button ng-click="createProject()" class="btn btn-primary" >Create</button>' +
             '</div>';
 
-        $scope.projectModal = {
-            openDialog: function () {
-                var d = $dialog.dialog(this.opts);
-                d.open();
-            },
-            opts: {
-                backdrop: true,
+
+        var opts = {
+            backdrop: true,
                 keyboard: true,
                 backdropClick: true,
                 template: t,
                 controller: 'NewProjectCtrl'
-            }
+        };
+
+        $scope.projectModal = {
+            openDialog: function () {
+                var d = $dialog.dialog(opts);
+                d.open();
+            },
         };
     }]);
 
@@ -115,6 +118,11 @@
         $scope.project = {
             name: ''
         };
+        $scope.closeModal = function () {
+            dialog.close();
+            $scope.project.name = '';
+        };
+
         $scope.createProject = function () {
             dialog.close();
             ajaxService.create('/api/projects', {name:$scope.project.name}).then(function (uri) {
