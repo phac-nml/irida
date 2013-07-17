@@ -15,23 +15,25 @@
 	
 
 	<import resource="jdbcRepositoriesContext.xml"/>
+        <context:property-placeholder location="classpath:ca/corefacility/bioinformatics/irida/config/jdbc.properties"/>      
         
         <bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
  
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://localhost:3306/irida_test" />
-		<property name="username" value="test" />
-		<property name="password" value="test" />
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
 	</bean>    
         
         <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
             <property name="dataSource" ref="dataSource" />
             <property name="hibernateProperties">
                 <props>
-                    <prop key="hibernate.hbm2ddl.auto">update</prop>
+                    <prop key="hibernate.hbm2ddl.auto">create</prop>
                     <prop key="hibernate.show_sql">true</prop>
                     <prop key="hibernate.format_sql">true</prop>
+                    <prop key="hibernate.hbm2ddl.import_files">/ca/corefacility/bioinformatics/irida/sql/required-data.sql</prop>
                     <!--prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop-->
                     <!--prop key="hibernate.cache.provider_configuration_file_resource_path">ehcache/ehcache-hibernate-local.xml</prop-->
                 </props>
@@ -44,12 +46,14 @@
                             <value>ca.corefacility.bioinformatics.irida.model.SequenceFile</value>
                             <value>ca.corefacility.bioinformatics.irida.model.Role</value>
                             <value>ca.corefacility.bioinformatics.irida.model.roles.impl.Audit</value>
-                            <value>ca.corefacility.bioinformatics.irida.repositories.relational.auditing.UserRevEntity</value>
                             
                             <!--Join Classes-->
                             <value>ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin</value>
                             <value>ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileSampleJoin</value>
                             <value>ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileProjectJoin</value>
+                            
+                            <!--Revision Entity-->
+                            <value>ca.corefacility.bioinformatics.irida.repositories.relational.auditing.UserRevEntity</value>                            
                     </list>
             </property>            
             <!--property name="packagesToScan" value="net.top.*.entity.*" /-->

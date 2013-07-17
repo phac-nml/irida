@@ -1,0 +1,1 @@
+INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_USER','A basic user in the system');

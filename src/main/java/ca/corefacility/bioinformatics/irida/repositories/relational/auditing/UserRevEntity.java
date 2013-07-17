@@ -27,6 +27,7 @@ import org.hibernate.envers.RevisionEntity;
  */
 @Entity
 @RevisionEntity(UserRevListener.class)
+@Table(name="Revisions")
 //@Table(name="REVINFO")
 public class UserRevEntity extends DefaultRevisionEntity{
     
