@@ -31,6 +31,7 @@
                     <prop key="hibernate.show_sql">true</prop>
                     <prop key="hibernate.format_sql">true</prop>
                     <prop key="hibernate.hbm2ddl.import_files">/ca/corefacility/bioinformatics/irida/sql/required-data.sql</prop>
+                    <prop key="hibernate.dialect">${hibernate.dialect}</prop>
                     <!--prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop-->
                     <!--prop key="hibernate.cache.provider_configuration_file_resource_path">ehcache/ehcache-hibernate-local.xml</prop-->
                 </props>
@@ -42,7 +43,6 @@
                             <value>ca.corefacility.bioinformatics.irida.model.Sample</value>
                             <value>ca.corefacility.bioinformatics.irida.model.SequenceFile</value>
                             <value>ca.corefacility.bioinformatics.irida.model.Role</value>
-                            <value>ca.corefacility.bioinformatics.irida.model.roles.impl.Audit</value>
                             
                             <!--Join Classes-->
                             <value>ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin</value>
