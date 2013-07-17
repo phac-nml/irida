@@ -6,7 +6,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -14,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -39,169 +37,181 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.projects.Projects
 
 /**
  * Controller for managing users.
- *
+ * 
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Controller
 @RequestMapping(value = "/users")
-public class UsersController extends GenericController<UserIdentifier, User, UserResource> {
+public class UsersController extends
+		GenericController<UserIdentifier, User, UserResource> {
 
-    /**
-     * logger
-     */
-    private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
-    /**
-     * rel for all users.
-     */
-    public static final String REL_ALL_USERS = "users/all";
-    /**
-     * a rel for getting a handle on the projects that a user belongs to.
-     */
-    public static final String REL_USER_PROJECTS = "user/projects";
-    /**
-     * a map label for the projects associated with a user.
-     */
-    public static final String USER_PROJECTS_MAP_LABEL = "projects";
-    /**
-     * Reference to the {@link ProjectService}.
-     */
-    private final ProjectService projectService;
-    /**
-     * Reference to the {@link UserService}
-     */
-    private final UserService userService;
-    /**
-     * Reference to the {@link RelationshipService}
-     */
-    private final RelationshipService relationshipService;
+	/**
+	 * logger
+	 */
+	private static final Logger logger = LoggerFactory
+			.getLogger(UsersController.class);
+	/**
+	 * a rel for getting a handle on the projects that a user belongs to.
+	 */
+	public static final String REL_USER_PROJECTS = "user/projects";
+	/**
+	 * a map label for the projects associated with a user.
+	 */
+	public static final String USER_PROJECTS_MAP_LABEL = "projects";
+	/**
+	 * Reference to the {@link ProjectService}.
+	 */
+	private final ProjectService projectService;
+	/**
+	 * Reference to the {@link UserService}
+	 */
+	private final UserService userService;
+	/**
+	 * Reference to the {@link RelationshipService}
+	 */
+	private final RelationshipService relationshipService;
 
-    protected UsersController() {
-        this.projectService = null;
-        this.userService = null;
-        this.relationshipService = null;
-    }
+	protected UsersController() {
+		this.projectService = null;
+		this.userService = null;
+		this.relationshipService = null;
+	}
 
-    /**
-     * Constructor, requires a reference to a {@link UserService} and a {@link ProjectService}.
-     *
-     * @param userService    the {@link UserService} that this controller uses.
-     * @param projectService the {@link ProjectService} that this controller uses.
-     */
-    @Autowired
-    public UsersController(UserService userService, ProjectService projectService, RelationshipService relationshipService) {
-        super(userService, User.class, UserIdentifier.class, UserResource.class);
-        this.userService = userService;
-        this.projectService = projectService;
-        this.relationshipService = relationshipService;
-    }
+	/**
+	 * Constructor, requires a reference to a {@link UserService} and a
+	 * {@link ProjectService}.
+	 * 
+	 * @param userService
+	 *            the {@link UserService} that this controller uses.
+	 * @param projectService
+	 *            the {@link ProjectService} that this controller uses.
+	 */
+	@Autowired
+	public UsersController(UserService userService,
+			ProjectService projectService,
+			RelationshipService relationshipService) {
+		super(userService, User.class, UserIdentifier.class, UserResource.class);
+		this.userService = userService;
+		this.projectService = projectService;
+		this.relationshipService = relationshipService;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Map<String, ResourceCollection<LabelledRelationshipResource>> constructCustomRelatedResourceCollections(User user) {
-        Map<String, ResourceCollection<LabelledRelationshipResource>> resources = new HashMap<>();
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected Map<String, ResourceCollection<LabelledRelationshipResource>> constructCustomRelatedResourceCollections(
+			User user) {
+		Map<String, ResourceCollection<LabelledRelationshipResource>> resources = new HashMap<>();
 
-        resources.put(USER_PROJECTS_MAP_LABEL, getProjectsForUser(user));
+		resources.put(USER_PROJECTS_MAP_LABEL, getProjectsForUser(user));
 
-        return resources;
-    }
+		return resources;
+	}
 
-    /**
-     * A collection of custom links for the users resource collection.
-     *
-     * @return a collection of links for all users.
-     */
-    @Override
-    protected Collection<Link> constructCustomResourceCollectionLinks() {
-        Collection<Link> links = new HashSet<>();
+	/**
+	 * A collection of custom links for a specific {@link User}.
+	 * 
+	 * @param u
+	 *            the {@link User} to create links for.
+	 * @return the links for this {@link User}.
+	 */
+	@Override
+	protected Collection<Link> constructCustomResourceLinks(User u) {
+		Collection<Link> links = new HashSet<>();
+		links.add(linkTo(UsersController.class).slash(u.getUsername())
+				.slash("projects").withRel(REL_USER_PROJECTS));
+		return links;
+	}
 
-        links.add(linkTo(methodOn(UsersController.class).listAllResources()).withRel(REL_ALL_USERS));
+	/**
+	 * Get the {@link SequenceFile} entities related to this {@link Project}.
+	 * 
+	 * @param project
+	 *            the {@link Project} to load {@link SequenceFile} entities for.
+	 * @return labelled relationships
+	 */
+	private ResourceCollection<LabelledRelationshipResource> getProjectsForUser(
+			User user) {
 
-        return links;
-    }
+		Collection<Relationship> relationships = relationshipService
+				.getRelationshipsForEntity(user.getIdentifier(), User.class,
+						Project.class);
+		ResourceCollection<LabelledRelationshipResource> projectResources = new ResourceCollection<>(
+				relationships.size());
 
-    /**
-     * A collection of custom links for a specific {@link User}.
-     *
-     * @param u the {@link User} to create links for.
-     * @return the links for this {@link User}.
-     */
-    @Override
-    protected Collection<Link> constructCustomResourceLinks(User u) {
-        Collection<Link> links = new HashSet<>();
-        links.add(linkTo(UsersController.class).slash(u.getUsername()).
-                slash("projects").withRel(REL_USER_PROJECTS));
-        return links;
-    }
+		String userId = user.getIdentifier().getIdentifier();
 
-    /**
-     * Get the {@link SequenceFile} entities related to this {@link Project}.
-     *
-     * @param project the {@link Project} to load {@link SequenceFile} entities for.
-     * @return labelled relationships
-     */
-    private ResourceCollection<LabelledRelationshipResource> getProjectsForUser(User user) {
-    	
-    	Collection<Relationship> relationships = relationshipService.getRelationshipsForEntity(user.getIdentifier(), User.class, Project.class);
-    	ResourceCollection<LabelledRelationshipResource> projectResources = new ResourceCollection<>(relationships.size());
-    	
-    	String userId = user.getIdentifier().getIdentifier();
-    	
-    	for (Relationship r : relationships) {
-    		Identifier projectId = r.getObject();
-    		LabelledRelationshipResource resource = new LabelledRelationshipResource(projectId.getLabel(), r);
-    		resource.add(linkTo(ProjectsController.class).slash(projectId.getIdentifier()).withSelfRel());
-    		projectResources.add(resource);
-    	}
-    			
-    	projectResources.add(linkTo(methodOn(UsersController.class).getUserProjects(userId)).withRel(REL_USER_PROJECTS));
-    	projectResources.setTotalResources(relationships.size());
+		for (Relationship r : relationships) {
+			Identifier projectId = r.getObject();
+			LabelledRelationshipResource resource = new LabelledRelationshipResource(
+					projectId.getLabel(), r);
+			resource.add(linkTo(ProjectsController.class).slash(
+					projectId.getIdentifier()).withSelfRel());
+			projectResources.add(resource);
+		}
 
-        return projectResources;
-    }
-    
-    /**
-     * Get the collection of projects for a specific user.
-     *
-     * @param username the username for the desired user.
-     * @return a model containing the collection of projects for that user.
-     */
-    @RequestMapping(value = "/{username}/projects", method = RequestMethod.GET)
-    public ModelMap getUserProjects(@PathVariable String username) {
-        logger.debug("Loading projects for user [" + username + "]");
-        ModelMap mav = new ModelMap();
+		projectResources.add(linkTo(
+				methodOn(UsersController.class).getUserProjects(userId))
+				.withRel(REL_USER_PROJECTS));
+		projectResources.setTotalResources(relationships.size());
 
+		return projectResources;
+	}
 
-        // get the appropriate user from the database
-        User u = userService.getUserByUsername(username);
+	/**
+	 * Get the collection of projects for a specific user.
+	 * 
+	 * @param username
+	 *            the username for the desired user.
+	 * @return a model containing the collection of projects for that user.
+	 */
+	@RequestMapping(value = "/{username}/projects", method = RequestMethod.GET)
+	public ModelMap getUserProjects(@PathVariable String username) {
+		logger.debug("Loading projects for user [" + username + "]");
+		ModelMap mav = new ModelMap();
 
-        // get all of the projects that this user belongs to
-        ResourceCollection<ProjectResource> resources = new ResourceCollection<>();
-        Collection<Project> projects = projectService.getProjectsForUser(u);
-        ControllerLinkBuilder linkBuilder = linkTo(ProjectsController.class);
+		// get the appropriate user from the database
+		User u = userService.getUserByUsername(username);
 
-        // add the project and a self-rel link to the project representation
-        for (Project project : projects) {
-            ProjectResource resource = new ProjectResource(project);
-            resource.add(linkBuilder.slash(project.getIdentifier().getUUID()).withSelfRel());
-            resources.add(resource);
-        }
+		// get all of the projects that this user belongs to
+		ResourceCollection<ProjectResource> resources = new ResourceCollection<>();
+		Collection<Project> projects = projectService.getProjectsForUser(u);
+		ControllerLinkBuilder linkBuilder = linkTo(ProjectsController.class);
 
-        // add the resources to the response
-        mav.addAttribute("projectResources", resources);
+		// add the project and a self-rel link to the project representation
+		for (Project project : projects) {
+			ProjectResource resource = new ProjectResource(project);
+			resource.add(linkBuilder.slash(project.getIdentifier().getUUID())
+					.withSelfRel());
+			resources.add(resource);
+		}
 
-        // respond to the user
-        return mav;
-    }
-    
-    @RequestMapping(value = "/current", method = RequestMethod.GET)
-    public ModelMap getCurrentUser() {
-    	String username = SecurityContextHolder.getContext().getAuthentication().getName();
-    	logger.debug("Getting currently logged-in user: [" + username + "].");
+		// add the resources to the response
+		mav.addAttribute("projectResources", resources);
 
-    	return getResource(username);
-    }
+		// respond to the user
+		return mav;
+	}
+
+	/**
+	 * Get the user account that is currently logged in. This is here so that a
+	 * user interface client to the REST API can display more details about the
+	 * current user than just username. This endpoint is *not* documented in the
+	 * REST API.
+	 * 
+	 * @return a representation of the currently logged in user.
+	 */
+	@RequestMapping(value = "/current", method = RequestMethod.GET)
+	public ModelMap getCurrentUser() {
+		// get the current user from Spring Security.
+		String username = SecurityContextHolder.getContext()
+				.getAuthentication().getName();
+		logger.debug("Getting currently logged-in user: [" + username + "].");
+
+		// get the user from the database.
+		return getResource(username);
+	}
 }
