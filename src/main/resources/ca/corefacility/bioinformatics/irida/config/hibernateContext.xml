@@ -12,10 +12,7 @@
               http://www.springframework.org/schema/tx/spring-tx.xsd
               http://www.springframework.org/schema/context
               http://www.springframework.org/schema/context/spring-context.xsd">
-	
-
-	<import resource="jdbcRepositoriesContext.xml"/>
-        <context:property-placeholder location="classpath:ca/corefacility/bioinformatics/irida/config/jdbc.properties"/>      
+	     
         
         <bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">

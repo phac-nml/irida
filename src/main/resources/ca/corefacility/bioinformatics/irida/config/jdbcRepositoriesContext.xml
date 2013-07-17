@@ -11,31 +11,33 @@
               http://www.springframework.org/schema/context
               http://www.springframework.org/schema/context/spring-context.xsd">
 	
-        
-    <bean id="projectRelRepository" class="ca.corefacility.bioinformatics.irida.repositories.relational.ProjectRelationalRepository">
+    <import resource="hibernateContext.xml"/>
+    <context:property-placeholder location="classpath:ca/corefacility/bioinformatics/irida/config/jdbc.properties,classpath:ca/corefacility/bioinformatics/irida/config/filesystem.properties"/> 
+    
+    
+    <bean id="projectRepository" class="ca.corefacility.bioinformatics.irida.repositories.relational.ProjectRelationalRepository">
         <constructor-arg ref="dataSource"/>
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
     
-    <bean id="userRelRepository" class="ca.corefacility.bioinformatics.irida.repositories.relational.UserRelationalRepository">
+    <bean id="userRepository" class="ca.corefacility.bioinformatics.irida.repositories.relational.UserRelationalRepository">
         <constructor-arg ref="dataSource"/>
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
     
-    <bean id="sampleRelRepository" class="ca.corefacility.bioinformatics.irida.repositories.relational.GenericRelationalRepository">
+    <bean id="sampleRepository" class="ca.corefacility.bioinformatics.irida.repositories.relational.SampleRelationalRepository">
         <constructor-arg ref="dataSource"/>
-        <constructor-arg value="ca.corefacility.bioinformatics.irida.model.Sample"/>
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
     
-    <bean id="sequencefileRelRepository" class="ca.corefacility.bioinformatics.irida.repositories.relational.SequenceFileRelationalRepository">
+    <bean id="sequenceFileRepository" class="ca.corefacility.bioinformatics.irida.repositories.relational.SequenceFileRelationalRepository">
         <constructor-arg ref="dataSource"/>
         <property name="sessionFactory" ref="sessionFactory"/>
-    </bean>    
+    </bean>
     
-    <bean id="auditRelRepository" class="ca.corefacility.bioinformatics.irida.repositories.relational.AuditRelationalRepository">
-        <constructor-arg ref="dataSource"/>
-        <property name="sessionFactory" ref="sessionFactory"/>
+    <bean id="sequenceFileFilesystemRepository"
+          class="ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileFilesystemRepository">
+        <constructor-arg value="${sequence.file.base.directory}"/>
     </bean>    
         
 </beans>

@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import java.util.List;
+import javax.sql.DataSource;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -35,6 +36,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class SampleRelationalRepository extends GenericRelationalRepository<Sample> implements SampleRepository{
 
+    public SampleRelationalRepository(){}
+    
+    public SampleRelationalRepository(DataSource source){
+        super(source, Sample.class);
+    }
     @Override
     public List<ProjectSampleJoin> getSamplesForProject(Project project) {
         Session session = sessionFactory.getCurrentSession();

@@ -7,7 +7,7 @@
         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
         ">
 
-    <import resource="repositoriesContext.xml"/>
+    <import resource="jdbcRepositoriesContext.xml"/>
 
     <!-- Enable method-level security -->
     <security:global-method-security jsr250-annotations="enabled" secured-annotations="enabled"/>
@@ -24,14 +24,12 @@
 
     <bean id="projectService" class="ca.corefacility.bioinformatics.irida.service.impl.ProjectServiceImpl">
         <constructor-arg ref="projectRepository"/>
-        <constructor-arg ref="linksRepository"/>
         <constructor-arg ref="sampleRepository"/>
         <constructor-arg ref="validator"/>
     </bean>
 
     <bean id="sampleService" class="ca.corefacility.bioinformatics.irida.service.impl.SampleServiceImpl">
         <constructor-arg ref="sampleRepository"/>
-        <constructor-arg ref="linksRepository"/>
         <constructor-arg ref="sequenceFileRepository"/>
         <constructor-arg ref="validator"/>
     </bean>
@@ -39,12 +37,6 @@
     <bean id="sequenceFileService" class="ca.corefacility.bioinformatics.irida.service.impl.SequenceFileServiceImpl">
         <constructor-arg ref="sequenceFileRepository"/>
         <constructor-arg ref="sequenceFileFilesystemRepository"/>
-        <constructor-arg ref="linksRepository"/>
-        <constructor-arg ref="validator"/>
-    </bean>
-
-    <bean id="linkService" class="ca.corefacility.bioinformatics.irida.service.impl.RelationshipServiceImpl">
-        <constructor-arg ref="linksRepository"/>
         <constructor-arg ref="validator"/>
     </bean>
 
