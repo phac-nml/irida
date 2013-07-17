@@ -21,7 +21,7 @@ public interface CRUDRepository<IdentifierType, Type> {
      *
      * @param object The object to persist.
      * @return The object as it was persisted in the database. May modify the
-     * identifier of the object when returned.
+     * id of the object when returned
      * @throws IllegalArgumentException If the object to persist does not pass
      * validation, then an argument will be thrown with a reason for failure.
      */

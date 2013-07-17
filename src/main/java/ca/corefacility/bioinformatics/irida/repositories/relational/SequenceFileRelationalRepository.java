@@ -19,12 +19,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileSampleJoin;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
-import java.io.File;
-import java.nio.file.Path;
 import java.util.List;
 import javax.sql.DataSource;
 import org.hibernate.Criteria;
@@ -55,8 +52,9 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
     }
 
     @Override
-    protected void postLoad(SequenceFile object) {
+    protected SequenceFile postLoad(SequenceFile object) {
         object.setRealPath();
+        return object;
     }
 
     @Override

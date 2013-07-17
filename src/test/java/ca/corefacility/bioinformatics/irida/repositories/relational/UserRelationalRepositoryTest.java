@@ -92,9 +92,9 @@ public class UserRelationalRepositoryTest {
         user = repo.create(user);
 
         try{
-            User get = repo.getUserByUsername("tom");
+            User get = repo.getUserByUsername("tom2");
             assertNotNull(get);
-            assertEquals(get.getUsername(),"tom");
+            assertEquals(get.getUsername(),"tom2");
         }
         catch(EntityNotFoundException ex){
             fail();

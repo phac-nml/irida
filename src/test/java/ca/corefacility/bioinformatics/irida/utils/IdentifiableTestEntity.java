@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import java.util.Date;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -117,4 +118,23 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
     public void setCreatedDate(Date date) {
         this.createdDate = date;
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nonNull,integerValue,createdDate);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof IdentifiableTestEntity) {
+            IdentifiableTestEntity u = (IdentifiableTestEntity) other;
+            return Objects.equals(nonNull,u.nonNull)
+                    && Objects.equals(integerValue, u.integerValue)
+                    && Objects.equals(createdDate, u.createdDate);
+        }
+
+        return false;
+    }
+    
+    
 }

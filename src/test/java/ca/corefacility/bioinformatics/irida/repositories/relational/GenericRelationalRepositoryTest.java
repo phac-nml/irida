@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.relational;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.Project;
@@ -25,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntity;
 import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntityRepo;
 import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntityRepoImpl;
+import com.google.common.collect.Maps;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -88,6 +90,35 @@ public class GenericRelationalRepositoryTest {
         IdentifiableTestEntity created = repo.create(p);
         assertNotNull(created);
         assertNotNull(created.getId());
+    }
+    
+    @Test
+    public void testCreateNullObject(){
+        try{
+            IdentifiableTestEntity create = repo.create(null);
+            fail();
+        }
+        catch(IllegalArgumentException ex){
+            
+        }
+    }
+    
+    @Test
+    public void testCreateDuplicate(){
+        IdentifiableTestEntity p = new IdentifiableTestEntity();
+        p.setIntegerValue(5);
+        p.setNonNull("not null");
+        p.setLabel("a label");
+        
+        IdentifiableTestEntity created = repo.create(p);
+        try{
+            created = repo.create(created);
+            fail();
+        }
+        catch(EntityExistsException ex){
+            
+        }
+        
     }
 
     /**
@@ -157,6 +188,25 @@ public class GenericRelationalRepositoryTest {
             fail();
         }
     }
+    
+    @Test
+    public void testUpdateInvalidField(){
+        IdentifiableTestEntity p = new IdentifiableTestEntity();
+        p.setIntegerValue(5);
+        p.setNonNull("not null");
+        p.setLabel("a label");
+        
+        IdentifiableTestEntity created = repo.create(p);        
+        try{
+            Map<String,Object> bad = new HashMap<>();
+            bad.put("notAProperty", null);
+            repo.update(created.getId(), bad);
+            fail();
+        }
+        catch(InvalidPropertyException ex){
+            
+        }
+    }
 
     /**
      * Test of delete method, of class GenericRelationalRepository.
@@ -177,6 +227,17 @@ public class GenericRelationalRepositoryTest {
         List<IdentifiableTestEntity> query = jdbcTemplate.query("SELECT id,nonNull,integerValue,label,valid FROM identifiable WHERE id=?", rowMapper,id);
         for(IdentifiableTestEntity ent : query){
             assertFalse(ent.isValid());
+        }
+    }
+    
+    @Test
+    public void testDeleteInvalid(){
+        try{
+            repo.delete(new Long(-1));
+            fail();
+        }
+        catch(EntityNotFoundException ex){
+            
         }
 
     }
@@ -208,6 +269,16 @@ public class GenericRelationalRepositoryTest {
         assertNotNull(list2);
         int maxEle = list2.size() - 1;
         assertEquals(list1.get(0).getId(),list2.get(maxEle).getId());   
+    }
+    
+    @Test
+    public void testListPaged(){
+        List<IdentifiableTestEntity> list1 = repo.list(0, 2, "nonNull", Order.ASCENDING);
+        List<IdentifiableTestEntity> list2 = repo.list(1, 1, "nonNull", Order.ASCENDING);
+        assertFalse(list1.isEmpty());
+        assertFalse(list2.isEmpty());
+        
+        assertEquals(list1.get(1), list2.get(0));
     }
 
     /**

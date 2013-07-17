@@ -18,14 +18,10 @@ package ca.corefacility.bioinformatics.irida.repositories.relational;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.IntegerIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +67,9 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
         this.sessionFactory = sessionFactory;
     }
     
+    /**
+     * {@inheritDoc }
+     */
     @Transactional
     @Override
     public Type create(Type object) throws IllegalArgumentException {
@@ -89,13 +88,17 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
     }
     
     /**
-     * Perform operations on an object after it's been loaded, but before returning
+     * Perform operations on an object after it's been loaded, but before returning.
+     * In this default case, nothing will be done.  Can be overridden to perform other operations
      * @param object The object to perform operations on
      */
-    protected void postLoad(Type object){
-        //In this default case, nothing needs done
+    protected Type postLoad(Type object){
+        return object;
     }
     
+    /**
+     * {@inheritDoc }
+     */    
     @Override
     public Type read(Long id) throws EntityNotFoundException {
         
@@ -110,7 +113,10 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
                 
         return load;    
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Collection<Type> readMultiple(Collection<Long> idents) {
         Session session = sessionFactory.getCurrentSession();
@@ -120,16 +126,16 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
         
         return list;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Transactional
     @Override
     public Type update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
         Session session = sessionFactory.getCurrentSession();
-        Type base = read(id);
         
-        if(!exists(id)){
-            throw new EntityNotFoundException("Entity " + id + " couldn't be found in the database so it cannot be updated.");
-        }
+        Type base = read(id);
         
         DirectFieldAccessor fieldAccessor = new DirectFieldAccessor(base);
        
@@ -149,7 +155,10 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
         
         return base;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Transactional
     @Override
     public void delete(Long id) throws EntityNotFoundException {
@@ -164,12 +173,18 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
         session.save(read);
         //session.delete(read);
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public List<Type> list() {
         return list(0, 20, null, Order.NONE);
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public List<Type> list(int page, int size, String sortProperty, Order order) {
         Session session = sessionFactory.getCurrentSession();
@@ -205,7 +220,10 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
         
         return results;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Boolean exists(Long id) {
         Session session = sessionFactory.getCurrentSession();
@@ -215,7 +233,10 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
         query.setLong("id", id );
         return (query.uniqueResult() != null);    
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Integer count() {
         Session session = sessionFactory.getCurrentSession();
