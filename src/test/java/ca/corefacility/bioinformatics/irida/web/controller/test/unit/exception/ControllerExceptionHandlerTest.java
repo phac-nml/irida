@@ -42,7 +42,7 @@ public class ControllerExceptionHandlerTest {
         ResponseEntity<String> response = controller.handleConstraintViolations(
                 new ConstraintViolationException(constraintViolations));
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("{\"nonNull\":[\"may not be null\"]}", response.getBody());
+        assertEquals("{\"label\":[\"may not be null\"]}", response.getBody());
     }
 
     @Test

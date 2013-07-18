@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.unit;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
@@ -35,21 +34,21 @@ import static org.mockito.Mockito.*;
 public class GenericControllerTest {
 
     private static final String RELATED_IDENTIFIABLE_TEST_ENTITY_KEY = "related";
-    private GenericController<Identifier, IdentifiableTestEntity, IdentifiableTestResource> controller;
-    private CRUDService<Identifier, IdentifiableTestEntity> crudService;
+    private GenericController<IdentifiableTestEntity, IdentifiableTestResource> controller;
+    private CRUDService<Long, IdentifiableTestEntity> crudService;
     private IdentifiableTestEntity entity;
-    private Identifier id;
     private Map<String, Object> updatedFields;
+    private Long identifier;
 
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() {
         crudService = mock(CRUDService.class);
-        id = new Identifier();
         entity = new IdentifiableTestEntity();
-        entity.setIdentifier(id);
-        controller = new GenericController<Identifier, IdentifiableTestEntity, IdentifiableTestResource>(crudService,
-                IdentifiableTestEntity.class, Identifier.class, IdentifiableTestResource.class){};
+        identifier = 1L;
+        entity.setId(identifier);
+        controller = new GenericController<IdentifiableTestEntity, IdentifiableTestResource>(crudService,
+                IdentifiableTestEntity.class, IdentifiableTestResource.class){};
         updatedFields = new HashMap<>();
     }
 
@@ -77,12 +76,12 @@ public class GenericControllerTest {
         ResponseEntity<String> mav = controller.create(resource);
         assertEquals(HttpStatus.CREATED, mav.getStatusCode());
         assertTrue(mav.getHeaders().getFirst(HttpHeaders.LOCATION).
-                endsWith(id.getIdentifier()));
+                endsWith(identifier.toString()));
     }
 
     @Test
     public void testDeleteEntity() throws InstantiationException, IllegalAccessException {
-        ModelMap modelMap = controller.delete(UUID.randomUUID().toString());
+        ModelMap modelMap = controller.delete(2L);
         RootResource rootResource = (RootResource) modelMap.get(GenericController.RESOURCE_NAME);
         Link l = rootResource.getLink(GenericController.REL_COLLECTION);
         assertNotNull(l);
@@ -91,13 +90,10 @@ public class GenericControllerTest {
 
     @Test
     public void testDeleteInvalidEntity() {
-        String uuid = UUID.randomUUID().toString();
-        Identifier identifier = new Identifier();
-        identifier.setIdentifier(uuid);
-        doThrow(new EntityNotFoundException("not found")).when(crudService).delete(identifier);
+        doThrow(new EntityNotFoundException("not found")).when(crudService).delete(2L);
 
         try {
-            controller.delete(uuid);
+            controller.delete(2L);
         } catch (EntityNotFoundException e) {
         } catch (Exception e) {
             fail();
@@ -106,25 +102,25 @@ public class GenericControllerTest {
 
     @Test
     public void testGetResource() {
-        when(crudService.read(id)).thenReturn(entity);
+        when(crudService.read(identifier)).thenReturn(entity);
         ModelMap model = null;
 
         try {
-            model = controller.getResource(id.getIdentifier());
+            model = controller.getResource(identifier);
         } catch (GenericsException e) {
             fail();
         }
 
         assertTrue(model.containsKey("resource"));
         IdentifiableTestResource resource = (IdentifiableTestResource) model.get("resource");
-        assertTrue(resource.getLink(Link.REL_SELF).getHref().endsWith(id.getIdentifier()));
+        assertTrue(resource.getLink(Link.REL_SELF).getHref().endsWith(identifier.toString()));
     }
 
     @Test
     public void testGetBadResource() {
-        when(crudService.read(id)).thenThrow(new EntityNotFoundException("not found"));
+        when(crudService.read(identifier)).thenThrow(new EntityNotFoundException("not found"));
         try {
-            controller.getResource(id.getIdentifier());
+            controller.getResource(identifier);
         } catch (EntityNotFoundException e) {
         } catch (Exception e) {
             fail();
@@ -133,8 +129,8 @@ public class GenericControllerTest {
 
     @Test
     public void testUpdate() throws InstantiationException, IllegalAccessException {
-        when(crudService.update(id, updatedFields)).thenReturn(entity);
-        ModelMap response = controller.update(id.getIdentifier(), updatedFields);
+        when(crudService.update(identifier, updatedFields)).thenReturn(entity);
+        ModelMap response = controller.update(identifier, updatedFields);
         RootResource r = (RootResource) response.get(GenericController.RESOURCE_NAME);
         assertNotNull(r.getLink(Link.REL_SELF));
         assertNotNull(r.getLink(GenericController.REL_COLLECTION));
@@ -142,9 +138,9 @@ public class GenericControllerTest {
 
     @Test
     public void testUpdateBadResource() throws InstantiationException, IllegalAccessException {
-        when(crudService.update(id, updatedFields)).thenThrow(new EntityNotFoundException("not found"));
+        when(crudService.update(identifier, updatedFields)).thenThrow(new EntityNotFoundException("not found"));
         try {
-            controller.update(id.getIdentifier(), updatedFields);
+            controller.update(identifier, updatedFields);
             fail();
         } catch (EntityNotFoundException e) {
         } catch (Exception e) {
@@ -154,10 +150,10 @@ public class GenericControllerTest {
 
     @Test
     public void testUpdateFailsConstraints() throws InstantiationException, IllegalAccessException {
-        when(crudService.update(id, updatedFields)).thenThrow(
+        when(crudService.update(identifier, updatedFields)).thenThrow(
                 new ConstraintViolationException(new HashSet<ConstraintViolation<?>>()));
         try {
-            controller.update(id.getIdentifier(), updatedFields);
+            controller.update(identifier, updatedFields);
             fail();
         } catch (ConstraintViolationException e) {
         } catch (Exception e) {
@@ -203,7 +199,7 @@ public class GenericControllerTest {
         for (IdentifiableTestResource r : collection) {
             assertEquals(1, r.getLinks().size());
             Link link = r.getLink(Link.REL_SELF);
-            assertTrue(link.getHref().endsWith(entity.getIdentifier().getIdentifier()));
+            assertTrue(link.getHref().endsWith(entity.getId().toString()));
         }
     }
 
@@ -244,7 +240,7 @@ public class GenericControllerTest {
         for (IdentifiableTestResource r : collection) {
             assertEquals(1, r.getLinks().size());
             Link link = r.getLink(Link.REL_SELF);
-            assertTrue(link.getHref().endsWith(entity.getIdentifier().getIdentifier()));
+            assertTrue(link.getHref().endsWith(entity.getId().toString()));
         }
 
         verify(crudService).list(2, 20, Order.DESCENDING);

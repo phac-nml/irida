@@ -1,11 +1,10 @@
 package ca.corefacility.bioinformatics.irida.web.assembler.resource.project;
 
-import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.IdentifiableResource;
 
 /**
  * A resource for {@link Project}s.
@@ -13,7 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @XmlRootElement(name = "project")
-public class ProjectResource extends Resource<Identifier, Project> {
+public class ProjectResource extends IdentifiableResource<Project> {
 
     public ProjectResource() {
         super(new Project());

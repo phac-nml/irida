@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.type.IdentifierType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.Link;
@@ -25,11 +26,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
-import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
-import ca.corefacility.bioinformatics.irida.model.roles.Identifiable;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
@@ -44,397 +42,400 @@ import com.google.common.net.HttpHeaders;
 
 /**
  * A controller that can serve any model from the database.
- *
- * @param <IdentifierType> the type used to identify the resource served by this controller in the database.
- * @param <Type>           the type that this controller is working with.
- * @param <ResourceType>   the type that this controller uses to serialize and de-serialize the <code>Type</code> to the
- *                         client.
+ * 
+ * @param <IdentifierType>
+ *            the type used to identify the resource served by this controller
+ *            in the database.
+ * @param <Type>
+ *            the type that this controller is working with.
+ * @param <ResourceType>
+ *            the type that this controller uses to serialize and de-serialize
+ *            the <code>Type</code> to the client.
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Controller
 @RequestMapping("/generic")
-public abstract class GenericController<IdentifierType extends Identifier, Type extends Identifiable<IdentifierType>
-        & Auditable<Audit> & Comparable<Type>, ResourceType extends Resource<IdentifierType, Type>> {
+public abstract class GenericController<Type extends IridaThing & Comparable<Type>, ResourceType extends Resource<Type>> {
 
-    /**
-     * name of objects sent back to the client for all generic resources.
-     */
-    public static final String RESOURCE_NAME = "resource";
-    /**
-     * name of related resources sent back to the client.
-     */
-    public static final String RELATED_RESOURCES_NAME = "relatedResources";
-    /**
-     * Rel used for terminating a relationship between resources.
-     */
-    public static final String REL_RELATIONSHIP = "relationship";
-    /**
-     * Link back to the collection after deletion of a resource.
-     */
-    public static final String REL_COLLECTION = "collection";
-    /**
-     * rel for the first page of the users document.
-     */
-    public static final String REL_COLLECTION_FIRST_PAGE = "collection/pages/first";
-    /**
-     * rel for the complete collection instead of the paged collection.
-     */
-    public static final String REL_ALL = "collection/all";
-    /**
-     * logger.
-     */
-    private static final Logger logger = LoggerFactory.getLogger(GenericController.class);
-    /**
-     * service used for working with classes in the database.
-     */
-    protected CRUDService<IdentifierType, Type> crudService;
-    /**
-     * The type used to serialize/de-serialize the <code>Type</code> to the client.
-     */
-    private Class<ResourceType> resourceType;
-    /**
-     * The type of identifier used by <code>Type</code> in the database.
-     */
-    private Class<IdentifierType> identifierType;
+	/**
+	 * name of objects sent back to the client for all generic resources.
+	 */
+	public static final String RESOURCE_NAME = "resource";
+	/**
+	 * name of related resources sent back to the client.
+	 */
+	public static final String RELATED_RESOURCES_NAME = "relatedResources";
+	/**
+	 * Rel used for terminating a relationship between resources.
+	 */
+	public static final String REL_RELATIONSHIP = "relationship";
+	/**
+	 * Link back to the collection after deletion of a resource.
+	 */
+	public static final String REL_COLLECTION = "collection";
+	/**
+	 * rel for the first page of the users document.
+	 */
+	public static final String REL_COLLECTION_FIRST_PAGE = "collection/pages/first";
+	/**
+	 * rel for the complete collection instead of the paged collection.
+	 */
+	public static final String REL_ALL = "collection/all";
+	/**
+	 * logger.
+	 */
+	private static final Logger logger = LoggerFactory.getLogger(GenericController.class);
+	/**
+	 * service used for working with classes in the database.
+	 */
+	protected CRUDService<Long, Type> crudService;
+	/**
+	 * The type used to serialize/de-serialize the <code>Type</code> to the
+	 * client.
+	 */
+	private Class<ResourceType> resourceType;
 
+	protected GenericController() {
+	}
 
-    protected GenericController() {
-    }
+	/**
+	 * Construct an instance of {@link GenericController}.
+	 * {@link GenericController} is an abstract type, and should only be used as
+	 * a super-class.
+	 * 
+	 * @param crudService
+	 *            the service used to manage resources in the database.
+	 * @param identifierType
+	 *            the type of identifier used by the type that this controller
+	 *            manages.
+	 * @param resourceType
+	 *            the type used to serialize/de-serialize the type to the
+	 *            client.
+	 */
+	protected GenericController(CRUDService<Long, Type> crudService, Class<Type> type, Class<ResourceType> resourceType) {
+		this.crudService = crudService;
+		this.resourceType = resourceType;
+	}
 
-    /**
-     * Construct an instance of {@link GenericController}. {@link GenericController} is an abstract type, and should
-     * only be used as a super-class.
-     *
-     * @param crudService    the service used to manage resources in the database.
-     * @param identifierType the type of identifier used by the type that this controller manages.
-     * @param resourceType   the type used to serialize/de-serialize the type to the client.
-     */
-    protected GenericController(CRUDService<IdentifierType, Type> crudService, Class<Type> type,
-                                Class<IdentifierType> identifierType, Class<ResourceType> resourceType) {
-        this.crudService = crudService;
-        this.resourceType = resourceType;
-        this.identifierType = identifierType;
-    }
+	/**
+	 * Get the default sort property, <code>SortProperty.DEFAULT</code> by
+	 * default.
+	 * 
+	 * @return the default sort property for this class.
+	 */
+	protected SortProperty getDefaultSortProperty() {
+		return SortProperty.DEFAULT;
+	}
 
-    /**
-     * Get the default sort property, <code>SortProperty.DEFAULT</code> by default.
-     *
-     * @return the default sort property for this class.
-     */
-    protected SortProperty getDefaultSortProperty() {
-        return SortProperty.DEFAULT;
-    }
+	/**
+	 * Get the default sort order for this class, <code>Order.ASCENDING</code>
+	 * by default.
+	 * 
+	 * @return the default sort order for this class.
+	 */
+	protected Order getDefaultSortOrder() {
+		return Order.ASCENDING;
+	}
 
-    /**
-     * Get the default sort order for this class, <code>Order.ASCENDING</code> by default.
-     *
-     * @return the default sort order for this class.
-     */
-    protected Order getDefaultSortOrder() {
-        return Order.ASCENDING;
-    }
+	/**
+	 * Construct a collection of {@link Link}s for a complete resource
+	 * collection. Each resource collection may have have custom links that
+	 * refer to other controllers (or themselves). This method is called by the
+	 * <code>listResources</code> method.
+	 * 
+	 * @return a collection of links.
+	 */
+	protected Collection<Link> constructCustomResourceCollectionLinks() {
+		return Collections.emptySet();
+	}
 
-    /**
-     * Construct a collection of {@link Link}s for a complete resource collection. Each resource collection may have
-     * have custom links that refer to other controllers (or themselves). This method is called by the
-     * <code>listResources</code> method.
-     *
-     * @return a collection of links.
-     */
-    protected Collection<Link> constructCustomResourceCollectionLinks() {
-        return Collections.emptySet();
-    }
+	/**
+	 * Construct a collection of {@link Link}s for a specific resource. Each
+	 * resource may have custom links that refer to other controllers, but not
+	 * all will. This method is called by the <code>getResource</code> method.
+	 * 
+	 * @param resource
+	 *            the resource to generate the links for.
+	 * @return a collection of links.
+	 */
+	protected Collection<Link> constructCustomResourceLinks(Type resource) {
+		return Collections.emptySet();
+	}
 
-    /**
-     * Construct a collection of {@link Link}s for a specific resource. Each resource may have custom links that refer
-     * to other controllers, but not all will. This method is called by the <code>getResource</code> method.
-     *
-     * @param resource the resource to generate the links for.
-     * @return a collection of links.
-     */
-    protected Collection<Link> constructCustomResourceLinks(Type resource) {
-        return Collections.emptySet();
-    }
+	/**
+	 * Construct a collection of {@link Resource}s that relate to the specified
+	 * resource. Use this method to inject composite resources into the response
+	 * *instead* of calling <code>constructCustomResourceLinks</code>. This
+	 * method is required to generate a collection of collections because the
+	 * implementing type may have more than one related type. This method is
+	 * called by <code>getResource</code>.
+	 * 
+	 * @param resource
+	 *            the resource to generate related collections for.
+	 * @return a collection of collections of related resources.
+	 */
+	protected <RelatedType extends IridaThing> Map<String, ResourceCollection<LabelledRelationshipResource<Type, RelatedType>>> constructCustomRelatedResourceCollections(Type resource) {
+		return Collections.emptyMap();
+	}
 
-    /**
-     * Construct a collection of {@link Resource}s that relate to the specified resource. Use this method to inject
-     * composite resources into the response *instead* of calling <code>constructCustomResourceLinks</code>. This method
-     * is required to generate a collection of collections because the implementing type may have more than one related
-     * type. This method is called by <code>getResource</code>.
-     *
-     * @param resource the resource to generate related collections for.
-     * @return a collection of collections of related resources.
-     */
-    protected Map<String, ResourceCollection<LabelledRelationshipResource>> constructCustomRelatedResourceCollections(Type resource) {
-        return Collections.emptyMap();
-    }
+	/**
+	 * Retrieve and construct a response with a collection of resources.
+	 * 
+	 * @param page
+	 *            the current page of the list of resources that the client
+	 *            wants.
+	 * @param size
+	 *            the size of the page that the client wants to see.
+	 * @param sortProperty
+	 *            the property that the resources should be sorted by.
+	 * @param sortOrder
+	 *            the order of the sort.
+	 * @return a model and view containing the collection of resources.
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelMap listResources(
+			@RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_PAGE, defaultValue = "1") int page,
+			@RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SIZE, defaultValue = "20") int size,
+			@RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_PROPERTY, required = false) String sortProperty,
+			@RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER, required = false) Order sortOrder) {
+		ModelMap model = new ModelMap();
+		List<Type> entities;
+		ControllerLinkBuilder linkBuilder = linkTo(getClass());
+		int totalEntities = crudService.count();
+		ResourceCollection<ResourceType> resources = new ResourceCollection<>();
 
-    /**
-     * Retrieve and construct a response with a collection of resources.
-     *
-     * @param page         the current page of the list of resources that the client wants.
-     * @param size         the size of the page that the client wants to see.
-     * @param sortProperty the property that the resources should be sorted by.
-     * @param sortOrder    the order of the sort.
-     * @return a model and view containing the collection of resources.
-     */
-    @RequestMapping(method = RequestMethod.GET)
-    public ModelMap listResources(
-            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_PAGE, defaultValue = "1") int page,
-            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SIZE, defaultValue = "20") int size,
-            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_PROPERTY,
-                    required = false) String sortProperty,
-            @RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER,
-                    required = false) Order sortOrder) {
-        ModelMap model = new ModelMap();
-        List<Type> entities;
-        ControllerLinkBuilder linkBuilder = linkTo(getClass());
-        int totalEntities = crudService.count();
-        ResourceCollection<ResourceType> resources = new ResourceCollection<>();
+		// if the client did not specify a sort property via parameters,
+		// try to get a default sort property from the subclass.
+		if (Strings.isNullOrEmpty(sortProperty) && !SortProperty.DEFAULT.equals(getDefaultSortProperty())) {
+			sortProperty = getDefaultSortProperty().getSortProperty();
+		}
 
-        // if the client did not specify a sort property via parameters,
-        // try to get a default sort property from the subclass.
-        if (Strings.isNullOrEmpty(sortProperty) && !SortProperty.DEFAULT.equals(getDefaultSortProperty())) {
-            sortProperty = getDefaultSortProperty().getSortProperty();
-        }
+		// if the client did not specify a sort order via parameters,
+		// try to get the default sort order from the subclass.
+		if (sortOrder == null && !Order.NONE.equals(getDefaultSortOrder())) {
+			sortOrder = getDefaultSortOrder();
+		}
 
-        // if the client did not specify a sort order via parameters,
-        // try to get the default sort order from the subclass.
-        if (sortOrder == null && !Order.NONE.equals(getDefaultSortOrder())) {
-            sortOrder = getDefaultSortOrder();
-        }
+		logger.debug("Sort property: [" + sortProperty + "], sort order: [" + sortOrder + "]");
 
-        logger.debug("Sort property: [" + sortProperty + "], sort order: [" + sortOrder + "]");
+		// if no sort property is supplied by parameters, then the default sort
+		// property
+		// should be used by calling the service without specifying a property
+		// to sort by.
+		// Otherwise, call the service with the sort property supplied by the
+		// client.
+		if (Strings.isNullOrEmpty(sortProperty)) {
+			entities = crudService.list(page, size, sortOrder);
+		} else {
+			entities = crudService.list(page, size, sortProperty, sortOrder);
+		}
 
-        // if no sort property is supplied by parameters, then the default sort property
-        // should be used by calling the service without specifying a property to sort by.
-        // Otherwise, call the service with the sort property supplied by the client.
-        if (Strings.isNullOrEmpty(sortProperty)) {
-            entities = crudService.list(page, size, sortOrder);
-        } else {
-            entities = crudService.list(page, size, sortProperty, sortOrder);
-        }
+		// for each entity returned by the service, construct a new instance of
+		// the
+		// resource type and add a self-rel using the linkBuilder.
+		try {
+			for (Type entity : entities) {
+				ResourceType resource = resourceType.newInstance();
+				resource.setResource(entity);
+				resource.add(linkBuilder.slash(entity.getId()).withSelfRel());
+				resources.add(resource);
+			}
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new GenericsException("Could not initialize resourceType: [" + resourceType + "]");
+		}
 
-        // for each entity returned by the service, construct a new instance of the
-        // resource type and add a self-rel using the linkBuilder.
-        try {
-	        for (Type entity : entities) {
-	            ResourceType resource = resourceType.newInstance();
-	            resource.setResource(entity);
-	            resource.add(linkBuilder.slash(entity.getIdentifier().getIdentifier()).withSelfRel());
-	            resources.add(resource);
-	        }
-        } catch (InstantiationException | IllegalAccessException e) {
-        	throw new GenericsException("Could not initialize resourceType: [" + resourceType + "]");
-        }
+		// the server will respond with only one page worth of entities, so we
+		// should tell
+		// the client how to get more pages of results by constructing a series
+		// of page links.
+		resources.add(pageLinksFor(getClass(), page, size, totalEntities, sortProperty, sortOrder));
+		// add a link to the "all" collection:
+		resources.add(linkTo(getClass()).slash("/all").withRel(REL_ALL));
+		// we should also tell the client how many resources of this type there
+		// are in total
+		resources.setTotalResources(totalEntities);
+		// add any custom links for the resource collection.
+		resources.add(constructCustomResourceCollectionLinks());
 
-        // the server will respond with only one page worth of entities, so we should tell
-        // the client how to get more pages of results by constructing a series of page links.
-        resources.add(pageLinksFor(getClass(), page, size, totalEntities, sortProperty, sortOrder));
-        // add a link to the "all" collection:
-        resources.add(linkTo(getClass()).slash("/all").withRel(REL_ALL));
-        // we should also tell the client how many resources of this type there are in total
-        resources.setTotalResources(totalEntities);
-        // add any custom links for the resource collection.
-        resources.add(constructCustomResourceCollectionLinks());
+		// finally, add the resource collection to the response
+		model.addAttribute(RESOURCE_NAME, resources);
 
-        // finally, add the resource collection to the response
-        model.addAttribute(RESOURCE_NAME, resources);
+		// send the response back to the client.
+		return model;
+	}
 
-        // send the response back to the client.
-        return model;
-    }
-    
+	/**
+	 * Get all resources in the application.
+	 * 
+	 * @return a model containing all resources of the specified type in the
+	 *         application.
+	 */
+	@RequestMapping(value = "/all", method = RequestMethod.GET)
+	public ModelMap listAllResources() {
+		List<Type> entities = crudService.list();
+		ResourceCollection<ResourceType> resources = new ResourceCollection<>(entities.size());
+		try {
+			for (Type entity : entities) {
+				ResourceType resource = resourceType.newInstance();
+				resource.setResource(entity);
+				resource.add(linkTo(getClass()).slash(entity.getId()).withSelfRel());
+				resources.add(resource);
+			}
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new GenericsException("Could not initialize resourceType: [" + resourceType + "]");
+		}
 
+		resources.add(linkTo(getClass()).slash("all").withSelfRel());
+		resources.add(linkTo(getClass()).withRel(REL_COLLECTION_FIRST_PAGE));
+		resources.setTotalResources(entities.size());
 
-    /**
-     * Get all resources in the application.
-     *
-     * @return a model containing all resources of the specified type in the application.
-     */
-    @RequestMapping(value = "/all", method = RequestMethod.GET)
-    public ModelMap listAllResources() {
-        List<Type> entities = crudService.list();
-        ResourceCollection<ResourceType> resources = new ResourceCollection<>(entities.size());
-        try {
-	        for (Type entity : entities) {
-	        	ResourceType resource = resourceType.newInstance();
-	        	resource.setResource(entity);
-	        	resource.add(linkTo(getClass()).slash(entity.getIdentifier().getIdentifier()).withSelfRel());
-	            resources.add(resource);
-	        }
-        } catch (InstantiationException | IllegalAccessException e) {
-        	throw new GenericsException("Could not initialize resourceType: [" + resourceType + "]");
-        }
-        
-        resources.add(linkTo(getClass()).slash("all").withSelfRel());
-        resources.add(linkTo(getClass()).withRel(REL_COLLECTION_FIRST_PAGE));
-        resources.setTotalResources(entities.size());
+		ModelMap model = new ModelMap();
+		model.addAttribute(GenericController.RESOURCE_NAME, resources);
+		return model;
+	}
 
-        ModelMap model = new ModelMap();
-        model.addAttribute(GenericController.RESOURCE_NAME, resources);
-        return model;
-    }
+	/**
+	 * Retrieve and serialize an individual instance of a resource by
+	 * identifier.
+	 * 
+	 * @param identifier
+	 *            the identifier of the resource to retrieve from the database.
+	 * @return the model and view for the individual resource.
+	 */
+	@RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
+	public ModelMap getResource(@PathVariable Long identifier) {
+		ModelMap model = new ModelMap();
 
-    /**
-     * Retrieve and serialize an individual instance of a resource by identifier.
-     *
-     * @param resourceId the identifier of the resource to retrieve from the database.
-     * @return the model and view for the individual resource.
-     */
-    @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
-    public ModelMap getResource(@PathVariable String resourceId) {
-        ModelMap model = new ModelMap();
+		logger.debug("Getting resource with id [" + identifier + "]");
+		// construct a new instance of an identifier as specified by the client
+		
+		// try to retrieve a resource from the database using the identifier
+		// supplied by the client.
+		Type t = crudService.read(identifier);
 
-        logger.debug("Getting resource with id [" + resourceId + "]");
-        // construct a new instance of an identifier as specified by the client
-        IdentifierType identifier = null;
+		// prepare the resource for serialization to the client.
+		ResourceType resource = null;
+		try {
+			resource = resourceType.newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new GenericsException("Failed to construct an instance of ResourceType for [" + getClass() + "]");
+		}
+		resource.setResource(t);
 
-        try {
-            identifier = identifierType.newInstance();
-            identifier.setIdentifier(resourceId);
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new GenericsException("Failed to construct an instance of Identifier for [" + getClass() + "]");
-        }
+		// add any custom links for the specific resource type that we're
+		// serving
+		// right now (implemented in the class that extends GenericController).
+		resource.add(constructCustomResourceLinks(t));
+		// add a self-rel to this resource
+		resource.add(linkTo(getClass()).slash(identifier).withSelfRel());
 
-        // try to retrieve a resource from the database using the identifier supplied by the client.
-        Type t = crudService.read(identifier);
+		// add the resource to the model
+		model.addAttribute(RESOURCE_NAME, resource);
+		// get a set of uniquely related resources for this resource
+		Map<String, ResourceCollection<LabelledRelationshipResource<Type, IridaThing>>> 
+				relatedResources = constructCustomRelatedResourceCollections(t);
+		// add any related resources to the model
+		model.addAttribute(RELATED_RESOURCES_NAME, relatedResources);
 
-        // prepare the resource for serialization to the client.
-        ResourceType resource = null;
-        try {
-            resource = resourceType.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new GenericsException("Failed to construct an instance of ResourceType for [" + getClass() + "]");
-        }
-        resource.setResource(t);
+		// send the response back to the client.
+		return model;
+	}
 
-        // add any custom links for the specific resource type that we're serving
-        // right now (implemented in the class that extends GenericController).
-        resource.add(constructCustomResourceLinks(t));
-        // add a self-rel to this resource
-        resource.add(linkTo(getClass()).slash(resourceId).withSelfRel());
+	/**
+	 * Create a new instance of {@link Type} in the database, then respond to
+	 * the client with the location of the resource.
+	 * 
+	 * @param representation
+	 *            the {@link ResourceType} that we should de-serialize to get an
+	 *            instance of {@link Type} to persist.
+	 * @return a response containing the location of the newly persisted
+	 *         resource.
+	 */
+	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity<String> create(@RequestBody ResourceType representation) {
+		// ask the subclass to map the de-serialized request to a concrete
+		// instance of the type managed by this controller.
+		Type resource = representation.getResource();
 
-        // add the resource to the model
-        model.addAttribute(RESOURCE_NAME, resource);
-        // get a set of uniquely related resources for this resource
-        Map<String, ResourceCollection<LabelledRelationshipResource>> relatedResources =
-                constructCustomRelatedResourceCollections(t);
-        // add any related resources to the model
-        model.addAttribute(RELATED_RESOURCES_NAME, relatedResources);
+		// persist the resource to the database.
+		resource = crudService.create(resource);
 
-        // send the response back to the client.
-        return model;
-    }
+		// the persisted resource is assigned an identifier by the
+		// service/database
+		// layer. We'll use this identifier to tell the client where to find the
+		// persisted resource.
+		Long id = resource.getId();
+		logger.debug("Created resource with ID [" + resource.getId() + "]");
 
-    /**
-     * Create a new instance of {@link Type} in the database, then respond to the client with the location of the
-     * resource.
-     *
-     * @param representation the {@link ResourceType} that we should de-serialize to get an instance of {@link Type} to
-     *                       persist.
-     * @return a response containing the location of the newly persisted resource.
-     */
-    @RequestMapping(method = RequestMethod.POST,
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<String> create(@RequestBody ResourceType representation) {
-        // ask the subclass to map the de-serialized request to a concrete
-        // instance of the type managed by this controller.
-        Type resource = representation.getResource();
+		// the location of the new resource is relative to this class (i.e.,
+		// linkTo(getClass())) with the identifier appended.
+		String location = linkTo(getClass()).slash(id).withSelfRel().getHref();
 
-        // persist the resource to the database.
-        resource = crudService.create(resource);
+		// construct a set of headers that we can add to the response,
+		// including the location header.
+		MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
+		responseHeaders.add(HttpHeaders.LOCATION, location);
 
-        // the persisted resource is assigned an identifier by the service/database
-        // layer. We'll use this identifier to tell the client where to find the
-        // persisted resource.
-        String id = resource.getIdentifier().getIdentifier();
-        logger.debug("Created resource with ID [" + resource.getIdentifier().getIdentifier() + "]");
+		// send the response back to the client.
+		return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
+	}
 
-        // the location of the new resource is relative to this class (i.e.,
-        // linkTo(getClass())) with the identifier appended.
-        String location = linkTo(getClass()).slash(id).withSelfRel().getHref();
+	/**
+	 * Delete the instance of the resource identified by a specific identifier.
+	 * 
+	 * @param identifier
+	 *            the identifier that should be deleted from the database.
+	 * @return a response indicating that the resource was deleted.
+	 */
+	@RequestMapping(value = "/{resourceId}", method = RequestMethod.DELETE)
+	public ModelMap delete(@PathVariable Long identifier) {
+		ModelMap modelMap = new ModelMap();
 
-        // construct a set of headers that we can add to the response,
-        // including the location header.
-        MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
-        responseHeaders.add(HttpHeaders.LOCATION, location);
+		// ask the service to delete the resource specified by the identifier
+		crudService.delete(identifier);
 
-        // send the response back to the client.
-        return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
-    }
+		RootResource rootResource = new RootResource();
+		rootResource.add(linkTo(getClass()).withRel(REL_COLLECTION));
 
-    /**
-     * Delete the instance of the resource identified by a specific identifier.
-     *
-     * @param resourceId the identifier that should be deleted from the database.
-     * @return a response indicating that the resource was deleted.
-     */
-    @RequestMapping(value = "/{resourceId}", method = RequestMethod.DELETE)
-    public ModelMap delete(@PathVariable String resourceId) {
-        ModelMap modelMap = new ModelMap();
-        // construct a new instance of an identifier as specified by the client
-        IdentifierType identifier = null;
+		modelMap.addAttribute(RESOURCE_NAME, rootResource);
 
-        try {
-            identifier = identifierType.newInstance();
-            identifier.setIdentifier(resourceId);
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new GenericsException("Failed to construct an instance of Identifier for [" + getClass() + "]");
-        }
+		// respond to the client with a successful message
+		return modelMap;
+	}
 
-        // ask the service to delete the resource specified by the identifier
-        crudService.delete(identifier);
+	/**
+	 * Update some of the fields of an individual resource in the database. The
+	 * client should only send the key-value pairs for the properties that are
+	 * to be updated in the database.
+	 * 
+	 * @param identifier
+	 *            the identifier of the resource to be updated.
+	 * @param representation
+	 *            the properties to be updated and their new values.
+	 * @return a response indicating that the resource was updated.
+	 */
+	@RequestMapping(value = "/{resourceId}", method = RequestMethod.PATCH, consumes = {
+			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	public ModelMap update(@PathVariable Long identifier, @RequestBody Map<String, Object> representation) {
+		// update the resource specified by the client. clients *may* be able
+		// to update the identifier of some resources, and so we should get a
+		// handle on the updated resource so that we can respond with a
+		// possibly updated location.
+		Type resource = crudService.update(identifier, representation);
+		Long id = resource.getId();
+		logger.debug("Updated resource with ID [" + resource.getId() + "]");
 
-        RootResource rootResource = new RootResource();
-        rootResource.add(linkTo(getClass()).withRel(REL_COLLECTION));
+		// construct the possibly updated location of the resource using the id
+		// of the resource as returned by the service after updating.
 
-        modelMap.addAttribute(RESOURCE_NAME, rootResource);
-
-        // respond to the client with a successful message
-        return modelMap;
-    }
-
-    /**
-     * Update some of the fields of an individual resource in the database. The client should only send the key-value
-     * pairs for the properties that are to be updated in the database.
-     *
-     * @param resourceId     the identifier of the resource to be updated.
-     * @param representation the properties to be updated and their new values.
-     * @return a response indicating that the resource was updated.
-     */
-    @RequestMapping(value = "/{resourceId}", method = RequestMethod.PATCH,
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ModelMap update(@PathVariable String resourceId, @RequestBody Map<String, Object> representation) {
-        // construct a new instance of an identifier as specified by the client
-        IdentifierType identifier = null;
-
-        try {
-            identifier = identifierType.newInstance();
-            identifier.setIdentifier(resourceId);
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new GenericsException("Failed to construct an instance of Identifier for [" + getClass() + "]");
-        }
-
-        // update the resource specified by the client. clients *may* be able
-        // to update the identifier of some resources, and so we should get a
-        // handle on the updated resource so that we can respond with a
-        // possibly updated location.
-        Type resource = crudService.update(identifier, representation);
-        String id = resource.getIdentifier().getIdentifier();
-        logger.debug("Updated resource with ID [" + resource.getIdentifier().getIdentifier() + "]");
-
-        // construct the possibly updated location of the resource using the id
-        // of the resource as returned by the service after updating.
-
-
-        // create a response including the new location.
-        ModelMap modelMap = new ModelMap();
-        RootResource rootResource = new RootResource();
-        rootResource.add(linkTo(getClass()).slash(id).withSelfRel());
-        rootResource.add(linkTo(getClass()).withRel(REL_COLLECTION));
-        modelMap.addAttribute(RESOURCE_NAME, rootResource);
-        // respond to the client
-        return modelMap;
-    }
+		// create a response including the new location.
+		ModelMap modelMap = new ModelMap();
+		RootResource rootResource = new RootResource();
+		rootResource.add(linkTo(getClass()).slash(id).withSelfRel());
+		rootResource.add(linkTo(getClass()).withRel(REL_COLLECTION));
+		modelMap.addAttribute(RESOURCE_NAME, rootResource);
+		// respond to the client
+		return modelMap;
+	}
 }

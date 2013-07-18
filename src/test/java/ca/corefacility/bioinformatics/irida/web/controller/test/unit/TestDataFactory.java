@@ -1,16 +1,13 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.UUID;
 
 /**
  * Generates test data for unit tests.
@@ -27,9 +24,7 @@ public final class TestDataFactory {
     public static User constructUser() {
         User u = new User();
         String username = "fbristow";
-        UserIdentifier uid = new UserIdentifier();
-        uid.setIdentifier(username);
-        u.setIdentifier(uid);
+        u.setId(1L);
         u.setUsername(username);
 
         return u;
@@ -41,13 +36,10 @@ public final class TestDataFactory {
      * @return a sample with a name and identifier.
      */
     public static Sample constructSample() {
-        String sampleId = UUID.randomUUID().toString();
-        Identifier sampleIdentifier = new Identifier();
-        sampleIdentifier.setIdentifier(sampleId);
         String sampleName = "sampleName";
         Sample s = new Sample();
         s.setSampleName(sampleName);
-        s.setIdentifier(sampleIdentifier);
+        s.setId(1L);
         return s;
     }
 
@@ -57,12 +49,9 @@ public final class TestDataFactory {
      * @return a {@link ca.corefacility.bioinformatics.irida.model.SequenceFile} with identifier.
      */
     public static SequenceFile constructSequenceFile() throws IOException {
-        String sequenceFileId = UUID.randomUUID().toString();
-        Identifier sequenceFileIdentifier = new Identifier();
         Path f = Files.createTempFile(null, null);
-        sequenceFileIdentifier.setIdentifier(sequenceFileId);
         SequenceFile sf = new SequenceFile();
-        sf.setIdentifier(sequenceFileIdentifier);
+        sf.setId(1L);
         sf.setFile(f);
         return sf;
     }
@@ -73,11 +62,8 @@ public final class TestDataFactory {
      * @return a project with a name and identifier.
      */
     public static Project constructProject() {
-        String projectId = UUID.randomUUID().toString();
-        Identifier projectIdentifier = new Identifier();
-        projectIdentifier.setIdentifier(projectId);
         Project p = new Project();
-        p.setIdentifier(projectIdentifier);
+        p.setId(1L);
         return p;
     }
 }

@@ -1,10 +1,9 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.projects;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
@@ -12,7 +11,9 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.UsersController;
+
 import com.google.common.net.HttpHeaders;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -72,20 +73,21 @@ public class ProjectUsersController {
      * @return a model with a collection of user resources.
      */
     @RequestMapping(value = "/projects/{projectId}/users", method = RequestMethod.GET)
-    public ModelMap getUsersForProject(@PathVariable String projectId) {
+    public ModelMap getUsersForProject(@PathVariable Long projectId) {
         ResourceCollection<UserResource> resources = new ResourceCollection<>();
 
         // get all of the users belonging to this project
-        Collection<Relationship> relationships = userService.getUsersForProject(new Identifier(projectId));
+        Project p = projectService.read(projectId);
+        Collection<Join<Project, User>> relationships = userService.getUsersForProject(p);
 
         // for each of those relationships, retrieve the complete user object
         // and convert to a resource suitable for sending back to the client.
-        for (Relationship r : relationships) {
-            User u = userService.getUserByUsername(r.getSubject().getIdentifier());
+        for (Join<Project, User> r : relationships) {
+            User u = r.getObject();
             UserResource ur = new UserResource(u);
-            ur.add(linkTo(UsersController.class).slash(u.getIdentifier().getIdentifier()).withSelfRel());
+            ur.add(linkTo(UsersController.class).slash(u.getUsername()).withSelfRel());
             ur.add(linkTo(methodOn(ProjectUsersController.class).removeUserFromProject(projectId,
-                    r.getSubject().getIdentifier())).withRel(GenericController.REL_RELATIONSHIP));
+                    u.getUsername())).withRel(GenericController.REL_RELATIONSHIP));
 
             resources.add(ur);
         }
@@ -109,10 +111,10 @@ public class ProjectUsersController {
      * @return a response indicating that the collection was modified.
      */
     @RequestMapping(value = "/projects/{projectId}/users", method = RequestMethod.POST)
-    public ResponseEntity<String> addUserToProject(@PathVariable String projectId,
+    public ResponseEntity<String> addUserToProject(@PathVariable Long projectId,
                                                    @RequestBody Map<String, String> representation) {
         // first, get the project
-        Project p = projectService.read(new Identifier(projectId));
+        Project p = projectService.read(projectId);
 
         String username = representation.get(USER_ID_KEY);
 
@@ -140,9 +142,9 @@ public class ProjectUsersController {
      *         the {@link Project}.
      */
     @RequestMapping(value = "/projects/{projectId}/users/{userId}", method = RequestMethod.DELETE)
-    public ModelMap removeUserFromProject(@PathVariable String projectId, @PathVariable String userId) {
+    public ModelMap removeUserFromProject(@PathVariable Long projectId, @PathVariable String userId) {
         // Read the project and user from the database
-        Project p = projectService.read(new Identifier(projectId));
+        Project p = projectService.read(projectId);
         User u = userService.getUserByUsername(userId);
 
         // ask the project service to remove the user from the project

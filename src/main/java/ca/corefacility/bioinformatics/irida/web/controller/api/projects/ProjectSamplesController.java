@@ -1,20 +1,21 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.projects;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
+
 import com.google.common.net.HttpHeaders;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
@@ -29,8 +30,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -60,19 +61,19 @@ public class ProjectSamplesController {
      */
     private SampleService sampleService;
     /**
-     * Reference to {@link RelationshipService}.
+     * Reference to {@link SequenceFileService}.
      */
-    private RelationshipService relationshipService;
+    private SequenceFileService sequenceFileService;
+
 
     protected ProjectSamplesController() {
     }
 
     @Autowired
-    public ProjectSamplesController(ProjectService projectService, SampleService sampleService,
-                                    RelationshipService relationshipService) {
+    public ProjectSamplesController(ProjectService projectService, SampleService sampleService, SequenceFileService sequenceFileService) {
         this.projectService = projectService;
         this.sampleService = sampleService;
-        this.relationshipService = relationshipService;
+        this.sequenceFileService = sequenceFileService;
     }
 
     /**
@@ -83,21 +84,18 @@ public class ProjectSamplesController {
      * @return a response indicating that the sample was created and appropriate location information.
      */
     @RequestMapping(value = "/projects/{projectId}/samples", method = RequestMethod.POST)
-    public ResponseEntity<String> addSampleToProject(@PathVariable String projectId, @RequestBody SampleResource sample) {
-        Identifier id = new Identifier();
-        id.setIdentifier(projectId);
-
+    public ResponseEntity<String> addSampleToProject(@PathVariable Long projectId, @RequestBody SampleResource sample) {
         // load the project that we're adding to
-        Project p = projectService.read(id);
+        Project p = projectService.read(projectId);
 
         // construct the sample that we're going to create
         Sample s = sample.getResource();
 
         // add the sample to the project
-        Relationship r = projectService.addSampleToProject(p, s);
+        Join<Project, Sample> r = projectService.addSampleToProject(p, s);
 
         // construct a link to the sample itself on the samples controller
-        String sampleId = r.getObject().getIdentifier();
+        Long sampleId = r.getObject().getId();
         String location = linkTo(methodOn(ProjectSamplesController.class)
                 .getProjectSample(projectId, sampleId)).withSelfRel().getHref();
 
@@ -116,22 +114,19 @@ public class ProjectSamplesController {
      * @return the list of {@link Sample}s associated with this {@link Project}.
      */
     @RequestMapping(value = "/projects/{projectId}/samples", method = RequestMethod.GET)
-    public ModelMap getProjectSamples(@PathVariable String projectId) {
+    public ModelMap getProjectSamples(@PathVariable Long projectId) {
         ModelMap modelMap = new ModelMap();
+        Project p = projectService.read(projectId);
+        List<Join<Project, Sample>> relationships = sampleService.getSamplesForProject(p);
 
-        Identifier id = new Identifier();
-        id.setIdentifier(projectId);
-
-        Collection<Relationship> relationships = relationshipService.
-                getRelationshipsForEntity(id, Project.class, Sample.class);
         ResourceCollection<SampleResource> sampleResources = new ResourceCollection<>(relationships.size());
 
-        for (Relationship r : relationships) {
-            Sample sample = sampleService.read(r.getObject());
+        for (Join<Project, Sample> r : relationships) {
+            Sample sample = r.getObject();
             SampleResource sr = new SampleResource();
             sr.setResource(sample);
             sr.add(linkTo(methodOn(ProjectSamplesController.class).
-                    getProjectSample(projectId, sample.getIdentifier().getIdentifier())).withSelfRel());
+                    getProjectSample(projectId, sample.getId())).withSelfRel());
             sampleResources.add(sr);
         }
 
@@ -151,15 +146,12 @@ public class ProjectSamplesController {
      * @return a representation of the specific sample.
      */
     @RequestMapping(value = "/projects/{projectId}/samples/{sampleId}", method = RequestMethod.GET)
-    public ModelMap getProjectSample(@PathVariable String projectId, @PathVariable String sampleId) {
+    public ModelMap getProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
         ModelMap modelMap = new ModelMap();
-        Identifier projectIdentifier = new Identifier(projectId);
-        Identifier sampleIdentifier = new Identifier(sampleId);
-
         // load the project
-        Project p = projectService.read(projectIdentifier);
+        Project p = projectService.read(projectId);
         // get the sample for the project.
-        Sample s = sampleService.getSampleForProject(p, sampleIdentifier);
+        Sample s = sampleService.getSampleForProject(p, sampleId);
 
         // prepare the sample for serializing to the client
         SampleResource sr = new SampleResource();
@@ -175,18 +167,17 @@ public class ProjectSamplesController {
         modelMap.addAttribute(GenericController.RESOURCE_NAME, sr);
 
         // get some related sequence files for the sample
-        Collection<Relationship> relationships = relationshipService
-                .getRelationshipsForEntity(sampleIdentifier, Sample.class, SequenceFile.class);
-        ResourceCollection<LabelledRelationshipResource> sequenceFileResources =
+        List<Join<Sample, SequenceFile>> relationships = sequenceFileService.getSequenceFilesForSample(s);
+        ResourceCollection<LabelledRelationshipResource<Sample, SequenceFile>> sequenceFileResources =
                 new ResourceCollection<>(relationships.size());
 
-        for (Relationship r : relationships) {
-            Identifier sequenceFileIdentifier = r.getObject();
-            LabelledRelationshipResource resource = new LabelledRelationshipResource(sequenceFileIdentifier.getLabel(), r);
+        for (Join<Sample, SequenceFile> r : relationships) {
+            SequenceFile sf = r.getObject();
+            LabelledRelationshipResource<Sample, SequenceFile> resource = new LabelledRelationshipResource<>(sf.getLabel(), r);
             resource.add(linkTo(methodOn(SampleSequenceFilesController.class).getSequenceFileForSample(projectId,
-                    sampleId, sequenceFileIdentifier.getIdentifier())).withSelfRel());
+                    sampleId, sf.getId())).withSelfRel());
             Link fastaLink = linkTo(methodOn(SampleSequenceFilesController.class).getSequenceFileForSample(projectId,
-                    sampleId, sequenceFileIdentifier.getIdentifier())).withRel(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_FASTA);
+                    sampleId, sf.getId())).withRel(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_FASTA);
             // we need to add the fasta suffix manually to the end, so that web-based clients can find the file.
             resource.add(new Link(fastaLink.getHref() + ".fasta", SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_FASTA));
             sequenceFileResources.add(resource);
@@ -194,7 +185,7 @@ public class ProjectSamplesController {
 
         sequenceFileResources.add(linkTo(methodOn(SampleSequenceFilesController.class)
                 .getSampleSequenceFiles(projectId, sampleId)).withSelfRel());
-        Map<String, ResourceCollection<LabelledRelationshipResource>> relatedResources = new HashMap<>();
+        Map<String, ResourceCollection<LabelledRelationshipResource<Sample, SequenceFile>>> relatedResources = new HashMap<>();
         relatedResources.put("sequenceFiles", sequenceFileResources);
         modelMap.addAttribute(GenericController.RELATED_RESOURCES_NAME, relatedResources);
 
@@ -209,17 +200,12 @@ public class ProjectSamplesController {
      * @return a response including links back to the specific {@link Project} and collection of {@link Sample}.
      */
     @RequestMapping(value = "/projects/{projectId}/samples/{sampleId}", method = RequestMethod.DELETE)
-    public ModelMap removeSampleFromProject(@PathVariable String projectId, @PathVariable String sampleId) {
+    public ModelMap removeSampleFromProject(@PathVariable Long projectId, @PathVariable Long sampleId) {
         ModelMap modelMap = new ModelMap();
-        Identifier projectIdentifier = new Identifier();
-        projectIdentifier.setIdentifier(projectId);
-
-        Identifier sampleIdentifier = new Identifier();
-        sampleIdentifier.setIdentifier(sampleId);
 
         // load the sample and project
-        Project p = projectService.read(projectIdentifier);
-        Sample s = sampleService.read(sampleIdentifier);
+        Project p = projectService.read(projectId);
+        Sample s = sampleService.read(sampleId);
 
         // remove the relationship.
         projectService.removeSampleFromProject(p, s);
@@ -247,17 +233,16 @@ public class ProjectSamplesController {
      */
     @RequestMapping(value = "/projects/{projectId}/samples/{sampleId}", method = RequestMethod.PATCH,
             consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public ModelMap updateSample(@PathVariable String projectId, @PathVariable String sampleId,
+    public ModelMap updateSample(@PathVariable Long projectId, @PathVariable Long sampleId,
                                  @RequestBody Map<String, Object> updatedFields) {
         ModelMap modelMap = new ModelMap();
-        Identifier projectIdentifier = new Identifier(projectId);
-        Identifier sampleIdentifier = new Identifier(sampleId);
+
         // confirm that the project is related to the sample
-        Project p = projectService.read(projectIdentifier);
-        sampleService.getSampleForProject(p, sampleIdentifier);
+        Project p = projectService.read(projectId);
+        sampleService.getSampleForProject(p, sampleId);
 
         // issue an update request
-        sampleService.update(sampleIdentifier, updatedFields);
+        sampleService.update(sampleId, updatedFields);
 
         // respond to the client with a link to self, sequence files collection and project.
         RootResource resource = new RootResource();

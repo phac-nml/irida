@@ -6,6 +6,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -21,13 +22,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.Relationship;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.RelationshipService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
@@ -44,14 +43,12 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.projects.Projects
  */
 @Controller
 @RequestMapping(value = "/users")
-public class UsersController extends
-		GenericController<UserIdentifier, User, UserResource> {
+public class UsersController extends GenericController<User, UserResource> {
 
 	/**
 	 * logger
 	 */
-	private static final Logger logger = LoggerFactory
-			.getLogger(UsersController.class);
+	private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
 	/**
 	 * a rel for getting a handle on the projects that a user belongs to.
 	 */
@@ -68,15 +65,10 @@ public class UsersController extends
 	 * Reference to the {@link UserService}
 	 */
 	private final UserService userService;
-	/**
-	 * Reference to the {@link RelationshipService}
-	 */
-	private final RelationshipService relationshipService;
 
 	protected UsersController() {
 		this.projectService = null;
 		this.userService = null;
-		this.relationshipService = null;
 	}
 
 	/**
@@ -89,22 +81,18 @@ public class UsersController extends
 	 *            the {@link ProjectService} that this controller uses.
 	 */
 	@Autowired
-	public UsersController(UserService userService,
-			ProjectService projectService,
-			RelationshipService relationshipService) {
-		super(userService, User.class, UserIdentifier.class, UserResource.class);
+	public UsersController(UserService userService, ProjectService projectService) {
+		super(userService, User.class, UserResource.class);
 		this.userService = userService;
 		this.projectService = projectService;
-		this.relationshipService = relationshipService;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected Map<String, ResourceCollection<LabelledRelationshipResource>> constructCustomRelatedResourceCollections(
-			User user) {
-		Map<String, ResourceCollection<LabelledRelationshipResource>> resources = new HashMap<>();
+	protected Map<String, ResourceCollection<?>> constructCustomRelatedResourceCollections(User user) {
+		Map<String, ResourceCollection<?>> resources = new HashMap<>();
 
 		resources.put(USER_PROJECTS_MAP_LABEL, getProjectsForUser(user));
 
@@ -121,8 +109,7 @@ public class UsersController extends
 	@Override
 	protected Collection<Link> constructCustomResourceLinks(User u) {
 		Collection<Link> links = new HashSet<>();
-		links.add(linkTo(UsersController.class).slash(u.getUsername())
-				.slash("projects").withRel(REL_USER_PROJECTS));
+		links.add(linkTo(UsersController.class).slash(u.getUsername()).slash("projects").withRel(REL_USER_PROJECTS));
 		return links;
 	}
 
@@ -133,30 +120,22 @@ public class UsersController extends
 	 *            the {@link Project} to load {@link SequenceFile} entities for.
 	 * @return labelled relationships
 	 */
-	private ResourceCollection<LabelledRelationshipResource> getProjectsForUser(
-			User user) {
+	private ResourceCollection<LabelledRelationshipResource<Project, User>> getProjectsForUser(User user) {
+		List<Join<Project, User>> userProjects = projectService.getProjectsForUser(user);
+		ResourceCollection<LabelledRelationshipResource<Project, User>> projectResources = new ResourceCollection<>(
+				userProjects.size());
 
-		Collection<Relationship> relationships = relationshipService
-				.getRelationshipsForEntity(user.getIdentifier(), User.class,
-						Project.class);
-		ResourceCollection<LabelledRelationshipResource> projectResources = new ResourceCollection<>(
-				relationships.size());
-
-		String userId = user.getIdentifier().getIdentifier();
-
-		for (Relationship r : relationships) {
-			Identifier projectId = r.getObject();
-			LabelledRelationshipResource resource = new LabelledRelationshipResource(
-					projectId.getLabel(), r);
-			resource.add(linkTo(ProjectsController.class).slash(
-					projectId.getIdentifier()).withSelfRel());
+		for (Join<Project, User> r : userProjects) {
+			Project p = r.getSubject();
+			LabelledRelationshipResource<Project, User> resource = new LabelledRelationshipResource<Project, User>(
+					p.getLabel(), r);
+			resource.add(linkTo(ProjectsController.class).slash(p.getId()).withSelfRel());
 			projectResources.add(resource);
 		}
 
-		projectResources.add(linkTo(
-				methodOn(UsersController.class).getUserProjects(userId))
-				.withRel(REL_USER_PROJECTS));
-		projectResources.setTotalResources(relationships.size());
+		projectResources.add(linkTo(methodOn(UsersController.class).getUserProjects(user.getUsername())).withRel(
+				REL_USER_PROJECTS));
+		projectResources.setTotalResources(userProjects.size());
 
 		return projectResources;
 	}
@@ -178,14 +157,14 @@ public class UsersController extends
 
 		// get all of the projects that this user belongs to
 		ResourceCollection<ProjectResource> resources = new ResourceCollection<>();
-		Collection<Project> projects = projectService.getProjectsForUser(u);
+		List<Join<Project, User>> projects = projectService.getProjectsForUser(u);
 		ControllerLinkBuilder linkBuilder = linkTo(ProjectsController.class);
 
 		// add the project and a self-rel link to the project representation
-		for (Project project : projects) {
+		for (Join<Project, User> join : projects) {
+			Project project = join.getSubject();
 			ProjectResource resource = new ProjectResource(project);
-			resource.add(linkBuilder.slash(project.getIdentifier().getUUID())
-					.withSelfRel());
+			resource.add(linkBuilder.slash(project.getId()).withSelfRel());
 			resources.add(resource);
 		}
 
@@ -207,11 +186,11 @@ public class UsersController extends
 	@RequestMapping(value = "/current", method = RequestMethod.GET)
 	public ModelMap getCurrentUser() {
 		// get the current user from Spring Security.
-		String username = SecurityContextHolder.getContext()
-				.getAuthentication().getName();
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		logger.debug("Getting currently logged-in user: [" + username + "].");
 
+		User u = userService.getUserByUsername(username);
 		// get the user from the database.
-		return getResource(username);
+		return getResource(u.getId());
 	}
 }
