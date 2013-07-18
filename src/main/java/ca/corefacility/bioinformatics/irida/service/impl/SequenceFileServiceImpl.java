@@ -20,14 +20,19 @@ import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+
 import com.google.common.collect.ImmutableMap;
 
 import javax.validation.Validator;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -123,4 +128,8 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
         throw new UnsupportedOperationException("Files will always be associated with samples.  Just call read(Long sequenceFileId)");
     }
 
+    public List<Join<Sample, SequenceFile>> getSequenceFilesForSample(Sample sample) {
+    	List<SampleSequenceFileJoin> joins = sequenceFileRepository.getFilesForSample(sample);
+    	return new ArrayList<Join<Sample, SequenceFile>>(joins);
+    }
 }

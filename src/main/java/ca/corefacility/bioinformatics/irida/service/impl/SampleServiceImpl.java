@@ -4,6 +4,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
@@ -13,6 +14,8 @@ import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
 
 import javax.validation.Validator;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -96,5 +99,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
     public void removeSequenceFileFromSample(Sample sample, SequenceFile sequenceFile) {
         sequenceFileRepository.removeFileFromSample(sample, sequenceFile);
     }
-            
+    /**
+     * {@inheritDoc}
+     */
+    public List<Join<Project, Sample>> getSamplesForProject(Project p) {
+    	List<Join<Project, Sample>> joins = new ArrayList<>();
+    	List<ProjectSampleJoin> actualJoins = sampleRepository.getSamplesForProject(p);
+    	joins.addAll(actualJoins);
+    	return joins;
+    }
 }
