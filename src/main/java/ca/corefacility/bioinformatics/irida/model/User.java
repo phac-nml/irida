@@ -45,7 +45,9 @@ public class User implements IridaThing<User,Audit,UserIdentifier>, Comparable<U
     @Patterns({
             @Pattern(regexp = "^.*[A-Z].*$",
                     message = "{user.password.uppercase}"), // passwords must contain an upper-case letter
-            @Pattern(regexp = "^.*[0-9].*$", message = "{user.password.number}") // passwords must contain a number
+            @Pattern(regexp = "^.*[0-9].*$", message = "{user.password.number}"), // passwords must contain a number
+            @Pattern(regexp = "^.*[a-z].*$",
+            		message = "{user.password.lowercase}")
     })
     @Iri(PREFIX + "password")
     private String password;

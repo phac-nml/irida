@@ -33,211 +33,255 @@ import static org.junit.Assert.*;
 
 /**
  * Testing the validation for user objects.
- *
+ * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class UserTest {
 
-    private static final String MESSAGES_BASENAME = "ca.corefacility.bioinformatics.irida.validation.ValidationMessages";
-    private Validator validator;
-    private ResourceBundle b;
+	private static final String MESSAGES_BASENAME = "ca.corefacility.bioinformatics.irida.validation.ValidationMessages";
+	private Validator validator;
+	private ResourceBundle b;
 
-    @Before
-    @SuppressWarnings("deprecated")
-    public void setUp() {
-        b = ResourceBundle.getBundle(MESSAGES_BASENAME);
-        Configuration<?> configuration = Validation.byDefaultProvider().configure();
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setBasename(MESSAGES_BASENAME);
-        configuration.messageInterpolator(
-                new ResourceBundleMessageInterpolator(new PlatformResourceBundleLocator(MESSAGES_BASENAME)));
-        ValidatorFactory factory = configuration.buildValidatorFactory();
-        validator = factory.getValidator();
+	@Before
+	@SuppressWarnings("deprecated")
+	public void setUp() {
+		b = ResourceBundle.getBundle(MESSAGES_BASENAME);
+		Configuration<?> configuration = Validation.byDefaultProvider()
+				.configure();
+		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+		messageSource.setBasename(MESSAGES_BASENAME);
+		configuration
+				.messageInterpolator(new ResourceBundleMessageInterpolator(
+						new PlatformResourceBundleLocator(MESSAGES_BASENAME)));
+		ValidatorFactory factory = configuration.buildValidatorFactory();
+		validator = factory.getValidator();
 
-    }
+	}
 
-    @Test
-    public void testNullUsername() {
-        User u = new User();
-        u.setUsername(null);
+	@Test
+	public void testNullUsername() {
+		User u = new User();
+		u.setUsername(null);
 
-        Set<ConstraintViolation<User>> constraintViolations = validator.validateProperty(u, "username");
+		Set<ConstraintViolation<User>> constraintViolations = validator
+				.validateProperty(u, "username");
 
-        assertEquals(1, constraintViolations.size());
-        assertEquals(b.getString("user.username.notnull"), constraintViolations.iterator().next().getMessage());
-    }
+		assertEquals(1, constraintViolations.size());
+		assertEquals(b.getString("user.username.notnull"), constraintViolations
+				.iterator().next().getMessage());
+	}
 
-    @Test
-    public void testEmptyUsername() {
-        User u = new User();
-        u.setUsername("");
-        Set<ConstraintViolation<User>> constraintViolations = validator.validateProperty(u, "username");
+	@Test
+	public void testEmptyUsername() {
+		User u = new User();
+		u.setUsername("");
+		Set<ConstraintViolation<User>> constraintViolations = validator
+				.validateProperty(u, "username");
 
-        assertEquals(1, constraintViolations.size());
-        assertEquals(b.getString("user.username.size"), constraintViolations.iterator().next().getMessage());
-    }
+		assertEquals(1, constraintViolations.size());
+		assertEquals(b.getString("user.username.size"), constraintViolations
+				.iterator().next().getMessage());
+	}
 
-    @Test
-    public void testValidUsername() {
-        User u = new User();
-        u.setUsername("fbristow");
-        Set<ConstraintViolation<User>> constraintViolations = validator.validateProperty(u, "username");
+	@Test
+	public void testValidUsername() {
+		User u = new User();
+		u.setUsername("fbristow");
+		Set<ConstraintViolation<User>> constraintViolations = validator
+				.validateProperty(u, "username");
 
-        assertTrue(constraintViolations.isEmpty());
-    }
+		assertTrue(constraintViolations.isEmpty());
+	}
 
-    @Test
-    public void testShortPassword() {
-        User u = new User();
-        u.setPassword("Sma11");
-        Set<ConstraintViolation<User>> constraintViolations = validator.validateProperty(u, "password");
+	@Test
+	public void testShortPassword() {
+		User u = new User();
+		u.setPassword("Sma11");
+		Set<ConstraintViolation<User>> constraintViolations = validator
+				.validateProperty(u, "password");
 
-        assertEquals(1, constraintViolations.size());
-        assertEquals(b.getString("user.password.size"), constraintViolations.iterator().next().getMessage());
-    }
+		assertEquals(1, constraintViolations.size());
+		assertEquals(b.getString("user.password.size"), constraintViolations
+				.iterator().next().getMessage());
+	}
 
-    @Test
-    public void testWeakLowercasePassword() {
-        User u = new User();
-        u.setPassword("a11-1owercase");
+	@Test
+	public void testWeakLowercasePassword() {
+		User u = new User();
+		u.setPassword("a11-1owercase");
 
-        Set<ConstraintViolation<User>> constraintViolations = validator.validateProperty(u, "password");
+		Set<ConstraintViolation<User>> constraintViolations = validator
+				.validateProperty(u, "password");
 
-        assertEquals(1, constraintViolations.size());
-        assertEquals(b.getString("user.password.uppercase"), constraintViolations.iterator().next().getMessage());
-    }
+		assertEquals(1, constraintViolations.size());
+		assertEquals(b.getString("user.password.uppercase"),
+				constraintViolations.iterator().next().getMessage());
+	}
 
-    @Test
-    public void testWeakNoNumbersPassword() {
-        User u = new User();
-        u.setPassword("NoNumbers");
-        Set<ConstraintViolation<User>> constraintViolations = validator.validateProperty(u, "password");
+	@Test
+	public void testWeakNoNumbersPassword() {
+		User u = new User();
+		u.setPassword("NoNumbers");
+		Set<ConstraintViolation<User>> constraintViolations = validator
+				.validateProperty(u, "password");
 
-        assertEquals(1, constraintViolations.size());
-        assertEquals(b.getString("user.password.number"), constraintViolations.iterator().next().getMessage());
-    }
+		assertEquals(1, constraintViolations.size());
+		assertEquals(b.getString("user.password.number"), constraintViolations
+				.iterator().next().getMessage());
+	}
 
-    @Test
-    public void testWeakPassword() {
-        User u = new User();
-        u.setPassword("weak");
-        Set<ConstraintViolation<User>> constraintViolations = validator.validateProperty(u, "password");
-        Set<String> messages = new HashSet<>();
-        messages.add(b.getString("user.password.size"));
-        messages.add(b.getString("user.password.uppercase"));
-        messages.add(b.getString("user.password.number"));
+	@Test
+	public void testWeakPassword() {
+		User u = new User();
+		u.setPassword("weak");
+		Set<ConstraintViolation<User>> constraintViolations = validator
+				.validateProperty(u, "password");
+		Set<String> messages = new HashSet<>();
+		messages.add(b.getString("user.password.size"));
+		messages.add(b.getString("user.password.uppercase"));
+		messages.add(b.getString("user.password.number"));
 
-        assertEquals(3, constraintViolations.size());
-        for (ConstraintViolation violation : constraintViolations) {
-            assertTrue(messages.contains(violation.getMessage()));
-            messages.remove(violation.getMessage());
-        }
-        assertTrue(messages.isEmpty());
-    }
+		assertEquals(3, constraintViolations.size());
+		for (ConstraintViolation violation : constraintViolations) {
+			assertTrue(messages.contains(violation.getMessage()));
+			messages.remove(violation.getMessage());
+		}
+		assertTrue(messages.isEmpty());
+	}
 
-    @Test
-    public void testNullEmail() {
-        User u = new User();
-        u.setEmail(null);
-        Set<ConstraintViolation<User>> constraintViolations = validator.validateProperty(u, "email");
+	@Test
+	public void testNullEmail() {
+		User u = new User();
+		u.setEmail(null);
+		Set<ConstraintViolation<User>> constraintViolations = validator
+				.validateProperty(u, "email");
 
-        assertEquals(1, constraintViolations.size());
-        assertEquals(b.getString("user.email.notnull"), constraintViolations.iterator().next().getMessage());
-    }
+		assertEquals(1, constraintViolations.size());
+		assertEquals(b.getString("user.email.notnull"), constraintViolations
+				.iterator().next().getMessage());
+	}
 
-    @Test
-    public void testShortEmail() {
-        User u = new User();
-        u.setEmail("s@s"); // technically valid, too short
-        Set<ConstraintViolation<User>> constraintViolations = validator.validateProperty(u, "email");
+	@Test
+	public void testShortEmail() {
+		User u = new User();
+		u.setEmail("s@s"); // technically valid, too short
+		Set<ConstraintViolation<User>> constraintViolations = validator
+				.validateProperty(u, "email");
 
-        assertEquals(1, constraintViolations.size());
-        assertEquals(b.getString("user.email.size"), constraintViolations.iterator().next().getMessage());
-    }
+		assertEquals(1, constraintViolations.size());
+		assertEquals(b.getString("user.email.size"), constraintViolations
+				.iterator().next().getMessage());
+	}
 
-    @Test
-    public void testInvalidEmail() {
-        User u = new User();
-        u.setEmail("a stunningly incorrect e-mail address.");
-        Set<ConstraintViolation<User>> constraintViolations = validator.validateProperty(u, "email");
+	@Test
+	public void testInvalidEmail() {
+		User u = new User();
+		u.setEmail("a stunningly incorrect e-mail address.");
+		Set<ConstraintViolation<User>> constraintViolations = validator
+				.validateProperty(u, "email");
 
-        assertEquals(1, constraintViolations.size());
-        assertEquals(b.getString("user.email.invalid"), constraintViolations.iterator().next().getMessage());
-    }
+		assertEquals(1, constraintViolations.size());
+		assertEquals(b.getString("user.email.invalid"), constraintViolations
+				.iterator().next().getMessage());
+	}
 
-    @Test
-    public void testValidUser() {
-        User u = new User();
-        u.setUsername("fbristow");
-        u.setEmail("franklin.bristow+plusSymbolsAREValid@phac-aspc.gc.ca");
-        u.setPassword("SuperVa1idP4ssw0rd");
-        u.setFirstName("Franklin");
-        u.setLastName("Bristow");
-        u.setPhoneNumber("7029");
+	@Test
+	public void testValidUser() {
+		User u = new User();
+		u.setUsername("fbristow");
+		u.setEmail("franklin.bristow+plusSymbolsAREValid@phac-aspc.gc.ca");
+		u.setPassword("SuperVa1idP4ssw0rd");
+		u.setFirstName("Franklin");
+		u.setLastName("Bristow");
+		u.setPhoneNumber("7029");
 
-        Set<ConstraintViolation<User>> constraintViolations = validator.validate(u);
+		Set<ConstraintViolation<User>> constraintViolations = validator
+				.validate(u);
 
-        assertTrue(constraintViolations.isEmpty());
-    }
+		assertTrue(constraintViolations.isEmpty());
+	}
 
-    @Test
-    public void testCompareTo() throws ParseException {
-        // should be able to sort users in ascending order of their creation date
-        List<User> users = new ArrayList<>();
+	@Test
+	public void testPasswordNoLowerCase() {
+		User u = new User();
+		u.setUsername("fbristow");
+		u.setPassword("NOLOWERCASES12");
+		u.setEmail("fbristow@example.com");
+		u.setFirstName("Franklin");
+		u.setLastName("Bristow");
+		u.setPhoneNumber("7029");
 
-        User u1 = new User();
-        User u2 = new User();
-        User u3 = new User();
+		Set<ConstraintViolation<User>> constraintViolations = validator
+				.validate(u);
+		assertEquals("wrong number of constraint violations.", 1,
+				constraintViolations.size());
+		ConstraintViolation<User> passwordViolation = constraintViolations
+				.iterator().next();
+		assertTrue("constraint violation is not on password", passwordViolation
+				.getPropertyPath().toString().endsWith("password"));
+	}
 
-        Audit a1 = new Audit();
-        Audit a2 = new Audit();
-        Audit a3 = new Audit();
+	@Test
+	public void testCompareTo() throws ParseException {
+		// should be able to sort users in ascending order of their creation
+		// date
+		List<User> users = new ArrayList<>();
 
-        DateFormat sf = new SimpleDateFormat("YYYY-MM-dd");
+		User u1 = new User();
+		User u2 = new User();
+		User u3 = new User();
 
-        a1.setCreated(sf.parse("2011-01-01"));
-        a2.setCreated(sf.parse("2012-01-01"));
-        a3.setCreated(sf.parse("2013-01-01"));
+		Audit a1 = new Audit();
+		Audit a2 = new Audit();
+		Audit a3 = new Audit();
 
-        u2.setAuditInformation(a1);
-        u1.setAuditInformation(a2);
-        u3.setAuditInformation(a3);
+		DateFormat sf = new SimpleDateFormat("YYYY-MM-dd");
 
-        // users are in the wrong order
-        users.add(u3);
-        users.add(u1);
-        users.add(u2);
+		a1.setCreated(sf.parse("2011-01-01"));
+		a2.setCreated(sf.parse("2012-01-01"));
+		a3.setCreated(sf.parse("2013-01-01"));
 
-        Collections.sort(users);
+		u2.setAuditInformation(a1);
+		u1.setAuditInformation(a2);
+		u3.setAuditInformation(a3);
 
-        User curr = users.get(0);
-        for (int i = 1; i < users.size(); i++) {
-            assertTrue(curr.getAuditInformation()
-                    .getCreated()
-                    .compareTo(users.get(i).getAuditInformation().getCreated()) < 0);
-        }
-    }
+		// users are in the wrong order
+		users.add(u3);
+		users.add(u1);
+		users.add(u2);
 
-    @Test
-    public void testEquals() {
-        User u1 = new User(new UserIdentifier("username"), "username", "email", "password", "firstName", "lastName",
-                "phoneNumber");
-        User u2 = new User(new UserIdentifier("username"), "username", "email", "password", "firstName", "lastName",
-                "phoneNumber");
-        // the two users DO NOT share the same identifier, and should therefore be different
-        assertFalse(u1.equals(u2));
+		Collections.sort(users);
 
-        u2.setIdentifier(u1.getIdentifier());
-        // now the two users share the same identifier, and should therefore be the same
-        assertTrue(u1.equals(u2));
-    }
+		User curr = users.get(0);
+		for (int i = 1; i < users.size(); i++) {
+			assertTrue(curr.getAuditInformation().getCreated()
+					.compareTo(users.get(i).getAuditInformation().getCreated()) < 0);
+		}
+	}
 
-    @Test
-    public void testEqualsFields() {
-        User u1 = new User(new UserIdentifier("username"), "username", "email", "password", "firstName", "lastName",
-                "phoneNumber");
-        User u2 = new User(u1.getIdentifier(), "username", "email", "password", "firstName", "notequal", "phoneNumber");
+	@Test
+	public void testEquals() {
+		User u1 = new User(new UserIdentifier("username"), "username", "email",
+				"password", "firstName", "lastName", "phoneNumber");
+		User u2 = new User(new UserIdentifier("username"), "username", "email",
+				"password", "firstName", "lastName", "phoneNumber");
+		// the two users DO NOT share the same identifier, and should therefore
+		// be different
+		assertFalse(u1.equals(u2));
 
-        assertFalse(u1.equals(u2));
-    }
+		u2.setIdentifier(u1.getIdentifier());
+		// now the two users share the same identifier, and should therefore be
+		// the same
+		assertTrue(u1.equals(u2));
+	}
+
+	@Test
+	public void testEqualsFields() {
+		User u1 = new User(new UserIdentifier("username"), "username", "email",
+				"password", "firstName", "lastName", "phoneNumber");
+		User u2 = new User(u1.getIdentifier(), "username", "email", "password",
+				"firstName", "notequal", "phoneNumber");
+
+		assertFalse(u1.equals(u2));
+	}
 }
