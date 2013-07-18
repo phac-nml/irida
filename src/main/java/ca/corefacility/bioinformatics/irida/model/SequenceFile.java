@@ -15,16 +15,11 @@
  */
 package ca.corefacility.bioinformatics.irida.model;
 
-import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
-import java.io.File;
-
-import javax.validation.constraints.NotNull;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -34,7 +29,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.envers.Audited;
+
+import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 
 /**
  * A file that may be stored somewhere on the file system and belongs to a

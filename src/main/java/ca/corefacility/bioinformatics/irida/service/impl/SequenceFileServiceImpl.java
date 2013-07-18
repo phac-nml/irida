@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -100,9 +100,9 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
      * {@inheritDoc}
      */
     @Override
-    public SequenceFileSampleJoin createSequenceFileInSample(SequenceFile sequenceFile, Sample sample) {
+    public SampleSequenceFileJoin createSequenceFileInSample(SequenceFile sequenceFile, Sample sample) {
         SequenceFile created = create(sequenceFile);
-        SequenceFileSampleJoin addFileToSample = sequenceFileRepository.addFileToSample(sample, created);
+        SampleSequenceFileJoin addFileToSample = sequenceFileRepository.addFileToSample(sample, created);
         
         return addFileToSample;
     }

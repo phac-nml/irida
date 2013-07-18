@@ -17,11 +17,14 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+
 import com.google.common.collect.ImmutableMap;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -30,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -156,9 +160,9 @@ public class SequenceFileServiceImplTest {
         when(crudRepository.update(any(Long.class), any(Map.class))).thenReturn(sf);
         when(crudRepository.exists(sf.getId())).thenReturn(true);
         when(fileRepository.create(sf)).thenReturn(sf);
-        when(crudRepository.addFileToSample(owner, sf)).thenReturn(new SequenceFileSampleJoin(sf, owner));
+        when(crudRepository.addFileToSample(owner, sf)).thenReturn(new SampleSequenceFileJoin(owner, sf));
         
-        SequenceFileSampleJoin created = sequenceFileService.createSequenceFileInSample(sf, owner);
+        Join<Sample, SequenceFile> created = sequenceFileService.createSequenceFileInSample(sf, owner);
 
         verify(crudRepository).create(sf);
         verify(crudRepository).update(any(Long.class), any(Map.class));
@@ -167,8 +171,8 @@ public class SequenceFileServiceImplTest {
         verify(crudRepository).addFileToSample(owner, sf);
 
         assertNotNull(created);
-        assertEquals(owner, created.getObject());
-        assertEquals(sf, created.getSubject());
+        assertEquals(sf, created.getObject());
+        assertEquals(owner, created.getSubject());
 
         Files.delete(file);
     }

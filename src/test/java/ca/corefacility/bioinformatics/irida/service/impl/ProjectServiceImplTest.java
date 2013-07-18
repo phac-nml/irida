@@ -19,7 +19,6 @@ import ca.corefacility.bioinformatics.irida.model.*;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -64,7 +63,7 @@ public class ProjectServiceImplTest {
         when(projectRepository.addSampleToProject(p, s))
                 .thenReturn(new ProjectSampleJoin(p, s));
         
-        ProjectSampleJoin rel = projectService.addSampleToProject(p, s);
+        Join<Project, Sample> rel = projectService.addSampleToProject(p, s);
 
         verify(projectRepository).addSampleToProject(p, s);
         verifyZeroInteractions(sampleRepository);
@@ -90,7 +89,7 @@ public class ProjectServiceImplTest {
         when(projectRepository.addSampleToProject(p, s)).thenReturn(new ProjectSampleJoin(p, withId));
         when(sampleRepository.create(s)).thenReturn(withId);
         
-        ProjectSampleJoin rel = projectService.addSampleToProject(p, s);
+        Join<Project, Sample> rel = projectService.addSampleToProject(p, s);
 
         verify(projectRepository).addSampleToProject(p, s);
         verify(sampleRepository).create(s);
@@ -112,7 +111,7 @@ public class ProjectServiceImplTest {
         when(projectRepository.addUserToProject(p, u))
                 .thenReturn(new ProjectUserJoin(p, u));
         
-        Join rel = projectService.addUserToProject(p, u, r);
+        Join<Project, User> rel = projectService.addUserToProject(p, u, r);
         
         assertNotNull(rel);
         assertEquals(rel.getSubject(), p);

@@ -4,7 +4,6 @@ import ca.corefacility.bioinformatics.irida.model.*;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 
 import java.util.Collection;
 
@@ -25,7 +24,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
      * @param role    the role that the user plays on the {@link Project}.
      * @return a reference to the relationship resource created between the two entities.
      */
-    public Join addUserToProject(Project project, User user, Role role);
+    public Join<Project, User> addUserToProject(Project project, User user, Role role);
 
     /**
      * Remove the specified {@link User} from the {@link Project}.
@@ -43,7 +42,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
      *                previously been persisted, the service will persist the {@link Sample}.
      * @return a reference to the relationship resource created between the two entities.
      */
-    public ProjectSampleJoin addSampleToProject(Project project, Sample sample);
+    public Join<Project, Sample> addSampleToProject(Project project, Sample sample);
 
     /**
      * Remove the specified {@link Sample} from the {@link Project}. The {@link Sample} will also be deleted from the

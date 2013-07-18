@@ -31,66 +31,66 @@ import javax.persistence.TemporalType;
 import org.hibernate.envers.Audited;
 
 /**
- *
+ * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Entity
-@Table(name="sequencefile_sample")
+@Table(name = "sequencefile_sample")
 @Audited
-public class SequenceFileSampleJoin implements Join<SequenceFile,Sample>{
-    
-    public SequenceFileSampleJoin(){
-        created = new Date();
-    }
-    
-    public SequenceFileSampleJoin(SequenceFile subject, Sample object){
-        this.sequenceFile=subject;
-        this.sample=object;
-        created = new Date();
-    }
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
-    
-    @ManyToOne
-    @JoinColumn(name="sequencefile_id")
-    private SequenceFile sequenceFile;
-    
-    @ManyToOne
-    @JoinColumn(name="sample_id")
-    private Sample sample;
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date created;
-    
-    @Override
-    public SequenceFile getSubject() {
-        return sequenceFile;
-    }
+public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 
-    @Override
-    public void setSubject(SequenceFile subject) {
-        this.sequenceFile=subject;
-    }
+	public SampleSequenceFileJoin() {
+		created = new Date();
+	}
 
-    @Override
-    public Sample getObject() {
-        return sample;
-    }
+	public SampleSequenceFileJoin(Sample subject, SequenceFile object) {
+		this.sequenceFile = object;
+		this.sample = subject;
+		created = new Date();
+	}
 
-    @Override
-    public void setObject(Sample object) {
-        this.sample=object;
-    }
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	Long id;
 
-    @Override
-    public Date getTimestamp() {
-        return created;
-    }
+	@ManyToOne
+	@JoinColumn(name = "sequencefile_id")
+	private SequenceFile sequenceFile;
 
-    @Override
-    public void setTimestamp(Date timestamp) {
-        this.created=timestamp;
-    }    
+	@ManyToOne
+	@JoinColumn(name = "sample_id")
+	private Sample sample;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date created;
+
+	@Override
+	public Sample getSubject() {
+		return sample;
+	}
+
+	@Override
+	public void setSubject(Sample subject) {
+		this.sample = subject;
+	}
+
+	@Override
+	public SequenceFile getObject() {
+		return sequenceFile;
+	}
+
+	@Override
+	public void setObject(SequenceFile object) {
+		this.sequenceFile = object;
+	}
+
+	@Override
+	public Date getTimestamp() {
+		return created;
+	}
+
+	@Override
+	public void setTimestamp(Date timestamp) {
+		this.created = timestamp;
+	}
 }

@@ -1,18 +1,10 @@
 package ca.corefacility.bioinformatics.irida.model;
 
-import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
-import ca.corefacility.bioinformatics.irida.validators.Patterns;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import org.hibernate.validator.constraints.Email;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.util.Objects;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,9 +14,17 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.Email;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
+import ca.corefacility.bioinformatics.irida.validators.Patterns;
 
 
 /**
@@ -54,7 +54,9 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
     @Patterns({
             @Pattern(regexp = "^.*[A-Z].*$",
                     message = "{user.password.uppercase}"), // passwords must contain an upper-case letter
-            @Pattern(regexp = "^.*[0-9].*$", message = "{user.password.number}") // passwords must contain a number
+            @Pattern(regexp = "^.*[0-9].*$", message = "{user.password.number}"), // passwords must contain a number
+            @Pattern(regexp = "^.*[a-z].*$",
+            		message = "{user.password.lowercase}")
     })
     private String password;
     @NotNull(message = "{user.firstName.notnull}")

@@ -23,6 +23,7 @@ import javax.validation.constraints.NotNull;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public interface IridaThing{
+	//TODO: this should not be in the alibaba package.
     @NotNull
     public String getLabel();
      

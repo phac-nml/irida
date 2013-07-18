@@ -5,7 +5,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 
 /**
  * Service for managing {@link SequenceFile} entities.
@@ -21,7 +21,7 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
      * @param sample The sample to add the file to
      * @return the {@link Join} between the {@link SequenceFile} and its {@link Sample}.
      */
-    public SequenceFileSampleJoin createSequenceFileInSample(SequenceFile sequenceFile, Sample sample);
+    public Join<Sample, SequenceFile> createSequenceFileInSample(SequenceFile sequenceFile, Sample sample);
 
     /**
      * Get a {@link SequenceFile} that is associated with a specific {@Link Project}. If the {@link SequenceFile} is

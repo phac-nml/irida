@@ -46,7 +46,7 @@ public class UserRelationalRepositoryTest {
     
     @Test
     public void testCreate(){
-        User user = new User("anon1", "anon@nowhere.com", "PASSWOD!1", "Anon", "Guy", "1234");
+        User user = new User("anon1", "anon@nowhere.com", "PASSWoD!1", "Anon", "Guy", "1234");
         user.setRole(new Role("ROLE_USER"));
         try{
             user = repo.create(user);
@@ -72,9 +72,9 @@ public class UserRelationalRepositoryTest {
     
     @Test
     public void testCreateDuplicateName(){
-        User user = new User("tom", "anon@nowhere.com", "PASSWOD!1", "Anon", "Guy", "1234");
+        User user = new User("tom", "anon@nowhere.com", "PASSWoD!1", "Anon", "Guy", "1234");
         user.setRole(new Role("ROLE_USER"));
-        User user2 = new User("tom", "anon@nowhere.com", "PASSWOD!1", "Anon", "Guy", "1234");
+        User user2 = new User("tom", "anon@nowhere.com", "PASSWoD!1", "Anon", "Guy", "1234");
         user2.setRole(new Role("ROLE_USER"));
         user2 = repo.create(user2);
         try{
@@ -87,7 +87,7 @@ public class UserRelationalRepositoryTest {
     
     @Test
     public void testGetByUsername(){
-        User user = new User("tom2", "anon@nowhere.com", "PASSWOD!1", "Anon", "Guy", "1234");
+        User user = new User("tom2", "anon@nowhere.com", "PASSWoD!1", "Anon", "Guy", "1234");
         user.setRole(new Role("ROLE_USER"));
         user = repo.create(user);
 

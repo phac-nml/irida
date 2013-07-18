@@ -15,8 +15,6 @@
  */
 package ca.corefacility.bioinformatics.irida.model;
 
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
 import org.hibernate.validator.resourceloading.PlatformResourceBundleLocator;
 import org.junit.Before;
@@ -33,7 +31,7 @@ import static org.junit.Assert.*;
 
 /**
  * Testing the validation for user objects.
- *
+ * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class UserTest {
@@ -180,6 +178,26 @@ public class UserTest {
         assertTrue(constraintViolations.isEmpty());
     }
 
+	@Test
+	public void testPasswordNoLowerCase() {
+		User u = new User();
+		u.setUsername("fbristow");
+		u.setPassword("NOLOWERCASES12");
+		u.setEmail("fbristow@example.com");
+		u.setFirstName("Franklin");
+		u.setLastName("Bristow");
+		u.setPhoneNumber("7029");
+
+		Set<ConstraintViolation<User>> constraintViolations = validator
+				.validate(u);
+		assertEquals("wrong number of constraint violations.", 1,
+				constraintViolations.size());
+		ConstraintViolation<User> passwordViolation = constraintViolations
+				.iterator().next();
+		assertTrue("constraint violation is not on password", passwordViolation
+				.getPropertyPath().toString().endsWith("password"));
+	}
+
     @Test
     public void testCompareTo() throws ParseException {
         // should be able to sort users in ascending order of their creation date
@@ -189,22 +207,11 @@ public class UserTest {
         User u2 = new User();
         User u3 = new User();
 
-        Audit a1 = new Audit();
-        Audit a2 = new Audit();
-        Audit a3 = new Audit();
-
         DateFormat sf = new SimpleDateFormat("YYYY-MM-dd");
-
-        a1.setCreated(sf.parse("2011-01-01"));
-        a2.setCreated(sf.parse("2012-01-01"));
-        a3.setCreated(sf.parse("2013-01-01"));
 
         u2.setCreatedDate(sf.parse("2011-01-01"));
         u1.setCreatedDate(sf.parse("2012-01-01"));
         u3.setCreatedDate(sf.parse("2013-01-01"));
-        //u2.setAuditInformation(a1);
-        //u1.setAuditInformation(a2);
-        //u3.setAuditInformation(a3);
 
         // users are in the wrong order
         users.add(u3);

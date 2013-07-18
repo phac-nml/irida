@@ -42,13 +42,12 @@
                             <value>ca.corefacility.bioinformatics.irida.model.Sample</value>
                             <value>ca.corefacility.bioinformatics.irida.model.SequenceFile</value>
                             <value>ca.corefacility.bioinformatics.irida.model.Role</value>
-                            <value>ca.corefacility.bioinformatics.irida.model.roles.impl.Audit</value>
                             <value>ca.corefacility.bioinformatics.irida.repositories.relational.auditing.UserRevEntity</value>
                             
                             <!--Join Classes-->
                             <value>ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin</value>
-                            <value>ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileSampleJoin</value>
-                            <value>ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileProjectJoin</value>
+                            <value>ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin</value>
+                            <value>ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSequenceFileJoin</value>
                     </list>
             </property>            
             <!--property name="packagesToScan" value="net.top.*.entity.*" /-->
