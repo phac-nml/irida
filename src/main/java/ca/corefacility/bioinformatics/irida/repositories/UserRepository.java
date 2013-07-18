@@ -18,6 +18,7 @@ package ca.corefacility.bioinformatics.irida.repositories;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import java.util.Collection;
 
 /**
@@ -46,5 +47,5 @@ public interface UserRepository extends CRUDRepository<Long, User> {
      * @param project the project to get the users for.
      * @return the collection of relationships describing users for this project
      */
-    public Collection<User> getUsersForProject(Project project);
+    public Collection<Join<Project,User>> getUsersForProject(Project project);
 }

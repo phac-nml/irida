@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 import org.slf4j.Logger;
@@ -121,7 +122,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
      * {@inheritDoc}
      */
     @Override
-    public Collection<User> getUsersForProject(Project project) {
+    public Collection<Join<Project,User>> getUsersForProject(Project project) {
         return userRepository.getUsersForProject(project);
     }
 

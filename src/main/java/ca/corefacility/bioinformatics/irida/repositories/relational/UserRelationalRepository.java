@@ -20,6 +20,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import java.util.Collection;
 import java.util.List;
@@ -79,16 +81,15 @@ public class UserRelationalRepository extends GenericRelationalRepository<User> 
         
         return u;
     }
-
+    
     @Override
-    public Collection<User> getUsersForProject(Project project) {
+    public Collection<Join<Project,User>> getUsersForProject(Project project){
         Session session = sessionFactory.getCurrentSession();
-        String qs = "SELECT u.* FROM user u, project_user pu WHERE pu.user=u.id AND pu.project = :pid";
-        Query query = session.createSQLQuery(qs).addEntity(User.class);
-        query.setLong("pid", project.getId());
+
+        Criteria crit = session.createCriteria(ProjectUserJoin.class);
+        crit.add(Restrictions.eq("project", project));
+        List<Join<Project,User>> list = crit.list();
         
-        List<User> list = query.list();
-        
-        return list;    
+        return list;  
     }
 }
