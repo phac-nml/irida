@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service;
 
+import java.util.List;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
@@ -51,4 +53,12 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
      *                                 the supplied {@link Sample}.
      */
     public SequenceFile getSequenceFileFromSample(Project project, Sample sample, Long sequenceFileId) throws EntityNotFoundException;
+    
+    /**
+     * Get a {@link List} of {@link SequenceFile} references for a specific {@link Sample}.
+     * 
+     * @param sample the {@link Sample} to get the {@link SequenceFile} references from.
+     * @return the references to {@link SequenceFile}.
+     */
+    public List<Join<Sample, SequenceFile>> getSequenceFilesForSample(Sample sample);
 }
