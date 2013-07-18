@@ -9,3 +9,7 @@ irida-api.iml
 /src/main/java/a/
 /src/main/java/ca/corefacility/bioinformatics/irida/repositories/sesame/TextSearch.java
 /src/main/resources/ca/corefacility/bioinformatics/irida/rdf/catalog-v001.xml
+
+.classpath
+.project
+.settings
