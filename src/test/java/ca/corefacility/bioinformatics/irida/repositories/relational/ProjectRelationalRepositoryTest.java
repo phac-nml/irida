@@ -54,7 +54,7 @@ public class ProjectRelationalRepositoryTest {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
         Project project = repo.create(new Project("a new project"));
-        User user = new User("anon", "anon@nowhere.com", "PASSWOD!1", "Anon", "Guy", "1234");
+        User user = new User("anon", "anon@nowhere.com", "PASSWoD!1", "Anon", "Guy", "1234");
         user.setRole(new Role("ROLE_USER"));
         user = urepo.create(user);
         
@@ -77,7 +77,7 @@ public class ProjectRelationalRepositoryTest {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
         Project project = repo.create(new Project("a new project"));
-        User user = new User("anon5", "anon@nowhere.com", "PASSWOD!1", "Anon", "Guy", "1234");
+        User user = new User("anon5", "anon@nowhere.com", "PASSWoD!1", "Anon", "Guy", "1234");
         user.setRole(new Role("ROLE_USER"));
         user = urepo.create(user);
         
