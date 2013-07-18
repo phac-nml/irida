@@ -16,15 +16,12 @@
 package ca.corefacility.bioinformatics.irida.utils;
 
 import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 /**

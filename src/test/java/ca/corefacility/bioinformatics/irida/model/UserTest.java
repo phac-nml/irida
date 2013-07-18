@@ -15,8 +15,6 @@
  */
 package ca.corefacility.bioinformatics.irida.model;
 
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
 import org.hibernate.validator.resourceloading.PlatformResourceBundleLocator;
 import org.junit.Before;
@@ -209,22 +207,11 @@ public class UserTest {
         User u2 = new User();
         User u3 = new User();
 
-        Audit a1 = new Audit();
-        Audit a2 = new Audit();
-        Audit a3 = new Audit();
-
         DateFormat sf = new SimpleDateFormat("YYYY-MM-dd");
-
-        a1.setCreated(sf.parse("2011-01-01"));
-        a2.setCreated(sf.parse("2012-01-01"));
-        a3.setCreated(sf.parse("2013-01-01"));
 
         u2.setCreatedDate(sf.parse("2011-01-01"));
         u1.setCreatedDate(sf.parse("2012-01-01"));
         u3.setCreatedDate(sf.parse("2013-01-01"));
-        //u2.setAuditInformation(a1);
-        //u1.setAuditInformation(a2);
-        //u3.setAuditInformation(a3);
 
         // users are in the wrong order
         users.add(u3);

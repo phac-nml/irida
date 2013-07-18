@@ -17,7 +17,6 @@ package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 import com.google.common.collect.ImmutableMap;
 import org.junit.After;
 import org.junit.Before;
@@ -73,7 +72,6 @@ public class SequenceFileFilesystemRepositoryTest {
 
     @Test
     public void testCreateFile() throws IOException {
-        Identifier id = new Identifier();
         Long lid = new Long(1111);
         Path f = getTempFile();
         String filename = f.getFileName().toString();
@@ -115,7 +113,6 @@ public class SequenceFileFilesystemRepositoryTest {
 
     @Test
     public void testUpdateMissingDirectory() throws IOException {
-        Identifier id = new Identifier();
         Path f = getTempFile();
         SequenceFile s = new SequenceFile(f);
 
@@ -132,7 +129,6 @@ public class SequenceFileFilesystemRepositoryTest {
     public void testUpdateExistingFilename() throws IOException {
         String originalText = "old text.";
         String updatedText = "new text.";
-        Identifier id = new Identifier();
         Long lid = new Long(1111);
         Path oldFile = getTempFile();
         Files.write(oldFile, originalText.getBytes());
@@ -181,7 +177,6 @@ public class SequenceFileFilesystemRepositoryTest {
 
     @Test
     public void testUpdate() throws IOException {
-        Identifier id = new Identifier();
         Long lId = new Long(9999);
         Path originalFile = getTempFile();
         SequenceFile sf = new SequenceFile(originalFile);

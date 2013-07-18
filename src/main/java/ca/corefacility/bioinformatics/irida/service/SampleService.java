@@ -21,7 +21,6 @@ import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 
 /**
  * A service class for working with samples.

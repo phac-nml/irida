@@ -4,7 +4,6 @@ import ca.corefacility.bioinformatics.irida.model.*;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 
 import java.util.Collection;
 

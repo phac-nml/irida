@@ -19,7 +19,6 @@ import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntity;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import com.google.common.collect.ImmutableMap;
@@ -354,7 +353,6 @@ public class TestCRUDServiceImpl {
         final int LIST_SIZE = 15;
         List<IdentifiableTestEntity> created = new ArrayList<>(LIST_SIZE);
         for (int i = 1; i < LIST_SIZE + 1; i++) {
-            Audit audit = new Audit();
             IdentifiableTestEntity entity = new IdentifiableTestEntity();
             StringBuilder date = new StringBuilder("2013-04-");
             if (i < 10) {

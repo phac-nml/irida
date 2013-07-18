@@ -17,7 +17,6 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.UserIdentifier;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 import org.junit.Before;

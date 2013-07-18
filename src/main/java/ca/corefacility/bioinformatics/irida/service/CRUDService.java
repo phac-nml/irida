@@ -4,9 +4,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
-import ca.corefacility.bioinformatics.irida.model.roles.Auditable;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Audit;
-import ca.corefacility.bioinformatics.irida.model.roles.impl.Identifier;
 
 import javax.validation.ConstraintViolationException;
 import java.util.Collection;
