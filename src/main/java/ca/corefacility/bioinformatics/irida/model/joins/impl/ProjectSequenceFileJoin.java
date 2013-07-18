@@ -31,66 +31,66 @@ import javax.persistence.TemporalType;
 import org.hibernate.envers.Audited;
 
 /**
- *
+ * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Entity
-@Table(name="sequencefile_project")
+@Table(name = "sequencefile_project")
 @Audited
-public class SequenceFileProjectJoin implements Join<SequenceFile,Project>{
-    
-    public SequenceFileProjectJoin(){
-        created = new Date();
-    }
-    
-    public SequenceFileProjectJoin(SequenceFile subject, Project object){
-        this.sequenceFile=subject;
-        this.project=object;
-        created = new Date();
-    }
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
-    
-    @ManyToOne
-    @JoinColumn(name="sequencefile_id")
-    private SequenceFile sequenceFile;
-    
-    @ManyToOne
-    @JoinColumn(name="project_id")
-    private Project project;
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date created;
-    
-    @Override
-    public SequenceFile getSubject() {
-        return sequenceFile;
-    }
+public class ProjectSequenceFileJoin implements Join<Project, SequenceFile> {
 
-    @Override
-    public void setSubject(SequenceFile subject) {
-        this.sequenceFile=subject;
-    }
+	public ProjectSequenceFileJoin() {
+		created = new Date();
+	}
 
-    @Override
-    public Project getObject() {
-        return project;
-    }
+	public ProjectSequenceFileJoin(Project subject, SequenceFile object) {
+		this.sequenceFile = object;
+		this.project = subject;
+		created = new Date();
+	}
 
-    @Override
-    public void setObject(Project object) {
-        this.project=object;
-    }
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	Long id;
 
-    @Override
-    public Date getTimestamp() {
-        return created;
-    }
+	@ManyToOne
+	@JoinColumn(name = "sequencefile_id")
+	private SequenceFile sequenceFile;
 
-    @Override
-    public void setTimestamp(Date timestamp) {
-        this.created=timestamp;
-    }        
+	@ManyToOne
+	@JoinColumn(name = "project_id")
+	private Project project;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date created;
+
+	@Override
+	public Project getSubject() {
+		return project;
+	}
+
+	@Override
+	public void setSubject(Project subject) {
+		this.project = subject;
+	}
+
+	@Override
+	public SequenceFile getObject() {
+		return sequenceFile;
+	}
+
+	@Override
+	public void setObject(SequenceFile object) {
+		this.sequenceFile = object;
+	}
+
+	@Override
+	public Date getTimestamp() {
+		return created;
+	}
+
+	@Override
+	public void setTimestamp(Date timestamp) {
+		this.created = timestamp;
+	}
 }

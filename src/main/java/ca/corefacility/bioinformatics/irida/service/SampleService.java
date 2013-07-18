@@ -19,8 +19,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileProjectJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 
 /**
  * A service class for working with samples.
@@ -32,12 +33,11 @@ public interface SampleService extends CRUDService<Long, Sample> {
     /**
      * Add a {@link SequenceFile} to a {@link Sample}.
      *
-     * @param project    the {@Project} to move the {@link SequenceFile} from.
      * @param sample     the {@link Sample} that the {@link SequenceFile} belongs to.
      * @param sampleFile the {@link SequenceFile} that we're adding.
      * @return the {@link Relationship} created between the two entities.
      */
-    public SequenceFileSampleJoin addSequenceFileToSample(Project project, Sample sample, SequenceFile sampleFile);
+    public Join<Sample, SequenceFile> addSequenceFileToSample(Sample sample, SequenceFile sampleFile);
 
     /**
      * Get a specific instance of a {@link Sample} that belongs to a {@link Project}. If the {@link Sample} is not
@@ -54,10 +54,9 @@ public interface SampleService extends CRUDService<Long, Sample> {
     /**
      * Move an instance of a {@link SequenceFile} associated with a {@link Sample} to its parent {@link Project}.
      *
-     * @param project      the {@link Project} to which we're moving the {@link SequenceFile}.
      * @param sample       the {@link Sample} from which we're moving the {@link SequenceFile}.
      * @param sequenceFile the {@link SequenceFile} that we're moving.
      * @return the new relationship between the {@link Project} and {@link SequenceFile}.
      */
-    public SequenceFileProjectJoin removeSequenceFileFromSample(Project project, Sample sample, SequenceFile sequenceFile);
+    public void removeSequenceFileFromSample(Sample sample, SequenceFile sequenceFile);
 }
