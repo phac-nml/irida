@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.relational;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
@@ -63,6 +64,13 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
     @Override
     public ProjectUserJoin addUserToProject(Project project, User user) {
         Session session = sessionFactory.getCurrentSession();
+        
+        Criteria query = session.createCriteria(ProjectUserJoin.class).add(Restrictions.eq("user", user)).add(Restrictions.eq("project", project));
+        
+        List list = query.list();
+        if(!list.isEmpty()){
+            throw new EntityExistsException("This user already belongs to this project");
+        }
 
         ProjectUserJoin ujoin = new ProjectUserJoin(project, user);
         session.save(ujoin);

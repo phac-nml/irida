@@ -15,12 +15,16 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.relational;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import java.util.List;
 import java.util.Map;
 import javax.sql.DataSource;
@@ -31,6 +35,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.junit.Assert.*;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 /**
  *
@@ -38,6 +44,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 @ContextConfiguration(locations = {"classpath:/ca/corefacility/bioinformatics/irida/config/testJdbcContext.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 public class ProjectRelationalRepositoryTest {
     
     @Autowired
@@ -50,14 +57,13 @@ public class ProjectRelationalRepositoryTest {
     private DataSource dataSource;
     
     @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+    @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")    
     public void testAddUserToProject(){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-
-        Project project = repo.create(new Project("a new project"));
-        User user = new User("anon", "anon@nowhere.com", "PASSWoD!1", "Anon", "Guy", "1234");
-        user.setRole(new Role("ROLE_USER"));
-        user = urepo.create(user);
         
+        User user = urepo.read(5L);
+        Project project = repo.read(1L);
         
         ProjectUserJoin addUserToProject = repo.addUserToProject(project, user);
         assertNotNull(addUserToProject);
@@ -71,18 +77,33 @@ public class ProjectRelationalRepositoryTest {
         assertEquals(map.get("PROJECT_ID"),project.getId());
         assertEquals(map.get("USER_ID"),user.getId());
     }
-    
-    @Test
-    public void testRemoveUserFromProject(){
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-        Project project = repo.create(new Project("a new project"));
-        User user = new User("anon5", "anon@nowhere.com", "PASSWoD!1", "Anon", "Guy", "1234");
-        user.setRole(new Role("ROLE_USER"));
-        user = urepo.create(user);
+    @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+    @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")    
+    public void testAddUserToProjectTwice(){        
+        User user = urepo.read(5L);
+        Project project = repo.read(1L);
         
         ProjectUserJoin addUserToProject = repo.addUserToProject(project, user);
-        assertNotNull(addUserToProject);
+        try{
+        
+            ProjectUserJoin addUserToProject2 = repo.addUserToProject(project, user);
+            fail();
+        }
+        catch(EntityExistsException ex){
+            
+        }
+    }    
+    
+    @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+    @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")        
+    public void testRemoveUserFromProject(){
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        
+        User user = urepo.getUserByUsername("tom");
+        Project project = repo.read(1L);
         
         repo.removeUserFromProject(project, user);
         
