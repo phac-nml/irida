@@ -134,8 +134,8 @@ public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType> >
             if (!methodAvailable(field.getKey(), MethodType.SETTER, field.getValue())) {
                 throw new InvalidPropertyException("Cannot set property [" + field.getKey() + "].");
             }
-        }
-
+                }
+            
         // now that you know all of the requested methods exist, validate the supplied values
         Set<ConstraintViolation<ValueType>> constraintViolations = new HashSet<>();
 
@@ -216,7 +216,7 @@ public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType> >
             return false;
         }
     }
-
+    
     /**
      * Gets the method that we can invoke to get or set a property.
      *

@@ -53,10 +53,10 @@ public class Sample implements IridaThing, Comparable<Sample> {
     private Boolean valid = true;
     
     @Temporal(TemporalType.TIMESTAMP)
-    private Date timestamp;
+    private Date createdDate;
 
     public Sample() {
-        timestamp = new Date();
+        createdDate = new Date();
     }
 
     public Sample(String sampleName) {
@@ -67,7 +67,7 @@ public class Sample implements IridaThing, Comparable<Sample> {
     public boolean equals(Object other) {
         if (other instanceof Sample) {
             Sample sample = (Sample) other;
-            return Objects.equals(timestamp, sample.timestamp) 
+            return Objects.equals(createdDate, sample.createdDate) 
                     && Objects.equals(sampleName, sample.sampleName);
         }
 
@@ -76,12 +76,12 @@ public class Sample implements IridaThing, Comparable<Sample> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(timestamp,sampleName);
+        return Objects.hash(createdDate,sampleName);
     }
 
     @Override
     public int compareTo(Sample other) {
-        return timestamp.compareTo(other.timestamp);
+        return createdDate.compareTo(other.createdDate);
     }
 
     @Override
@@ -118,11 +118,11 @@ public class Sample implements IridaThing, Comparable<Sample> {
 
     @Override
     public Date getTimestamp() {
-        return timestamp;
+        return createdDate;
     }
 
     @Override
     public void setTimestamp(Date date) {
-        this.timestamp = date;
+        this.createdDate = date;
     }
 }

@@ -36,10 +36,10 @@ public class Project implements IridaThing, Comparable<Project> {
     private Boolean valid = true;
     
     @Temporal(TemporalType.TIMESTAMP)
-    private Date timestamp;
+    private Date createdDate;
 
     public Project() {
-        timestamp = new Date();
+        createdDate = new Date();
     }
 
     public Project(String name) {
@@ -60,7 +60,7 @@ public class Project implements IridaThing, Comparable<Project> {
     public boolean equals(Object other) {
         if (other instanceof Project) {
             Project p = (Project) other;
-            return Objects.equals(timestamp, p.timestamp)
+            return Objects.equals(createdDate, p.createdDate)
                     && Objects.equals(name, p.name);
         }
 
@@ -69,7 +69,7 @@ public class Project implements IridaThing, Comparable<Project> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(timestamp,name);
+        return Objects.hash(createdDate,name);
     }
 
     public String getName() {
@@ -82,7 +82,7 @@ public class Project implements IridaThing, Comparable<Project> {
 
     @Override
     public int compareTo(Project p) {
-        return timestamp.compareTo(p.timestamp);
+        return createdDate.compareTo(p.createdDate);
     }
 
     @Override
@@ -102,12 +102,12 @@ public class Project implements IridaThing, Comparable<Project> {
 
     @Override
     public Date getTimestamp() {
-        return timestamp;
+        return createdDate;
     }
 
     @Override
     public void setTimestamp(Date date) {
-        this.timestamp = date;
+        this.createdDate = date;
     }
     
     

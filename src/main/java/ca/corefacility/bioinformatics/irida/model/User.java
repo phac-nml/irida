@@ -77,13 +77,13 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
     private Role system_role;
     
     @Temporal(TemporalType.TIMESTAMP)
-    private Date timestamp;
+    private Date createdDate;
 
     /**
      * Construct an instance of {@link User} with no properties set.
      */
     public User() {
-        timestamp = new Date();
+        createdDate = new Date();
     }
 
     /**
@@ -127,7 +127,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(username, email, password, firstName, lastName, phoneNumber,timestamp);
+        return Objects.hash(username, email, password, firstName, lastName, phoneNumber,createdDate);
     }
 
     /**
@@ -143,7 +143,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
                     && Objects.equals(firstName, u.firstName)
                     && Objects.equals(lastName, u.lastName)
                     && Objects.equals(phoneNumber, u.phoneNumber)
-                    && Objects.equals(timestamp, u.timestamp);
+                    && Objects.equals(createdDate, u.createdDate);
         }
 
         return false;
@@ -163,7 +163,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
      */
     @Override
     public int compareTo(User u) {
-        return timestamp.compareTo(u.timestamp);
+        return createdDate.compareTo(u.createdDate);
     }
 
     /**
@@ -282,11 +282,11 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 
     @Override
     public Date getTimestamp() {
-        return timestamp;
+        return createdDate;
     }
 
     @Override
     public void setTimestamp(Date date) {
-        this.timestamp = date;
+        this.createdDate = date;
     }
 }
