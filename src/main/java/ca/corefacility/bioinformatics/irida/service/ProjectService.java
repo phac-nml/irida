@@ -6,6 +6,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * A specialized service layer for projects.
@@ -68,5 +69,5 @@ public interface ProjectService extends CRUDService<Long, Project> {
      * @param user the user to get projects for.
      * @return the projects associated with the user.
      */
-    public Collection<ProjectUserJoin> getProjectsForUser(User user);
+    public List<Join<Project, User>> getProjectsForUser(User user);
 }
