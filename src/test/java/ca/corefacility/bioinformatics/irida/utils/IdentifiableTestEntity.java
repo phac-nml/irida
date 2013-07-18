@@ -45,7 +45,7 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
     
     private Boolean valid;
     
-    private Date timestamp;
+    private Date createdDate;
 
     public IdentifiableTestEntity() {
     }
@@ -53,7 +53,7 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("created: ").append(timestamp);
+        builder.append("created: ").append(createdDate);
         return builder.toString();
     }
 
@@ -76,7 +76,7 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
 
     @Override
     public int compareTo(IdentifiableTestEntity o) {
-        return timestamp.compareTo(o.timestamp);
+        return createdDate.compareTo(o.createdDate);
     }
 
     public Integer getIntegerValue() {
@@ -108,17 +108,17 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
 
     @Override
     public Date getTimestamp() {
-        return timestamp;
+        return createdDate;
     }
 
     @Override
     public void setTimestamp(Date date) {
-        this.timestamp = date;
+        this.createdDate = date;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(nonNull,integerValue,timestamp);
+        return Objects.hash(nonNull,integerValue,createdDate);
     }
 
     @Override
@@ -127,7 +127,7 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
             IdentifiableTestEntity u = (IdentifiableTestEntity) other;
             return Objects.equals(nonNull,u.nonNull)
                     && Objects.equals(integerValue, u.integerValue)
-                    && Objects.equals(timestamp, u.timestamp);
+                    && Objects.equals(createdDate, u.createdDate);
         }
 
         return false;

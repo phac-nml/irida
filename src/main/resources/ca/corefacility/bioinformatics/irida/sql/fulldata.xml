@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+  <system_role id="1" description="A basic user in the system" name="ROLE_USER"/>
+  <user id="1" createdDate="2013-07-18 14:20:19.0" email="tom@gfd.ca" firstName="tom" lastName="matthews" password="fdafdas1A!" phoneNumber="456-457-1176" username="tom" valid="true" system_role="1"/>
+  <user id="2" createdDate="2013-07-18 14:20:48.0" email="user@gfd.ca" firstName="User" lastName="number1" password="fdafdas1A!" phoneNumber="123-456-7891" username="user1" valid="true" system_role="1"/>
+  <user id="3" createdDate="2013-07-18 14:20:48.0" email="user@gfd.ca" firstName="User" lastName="number2" password="fdafdas1A!" phoneNumber="123-456-7892" username="user2" valid="true" system_role="1"/>
+  <user id="4" createdDate="2013-07-18 14:20:48.0" email="user@gfd.ca" firstName="User" lastName="number3" password="fdafdas1A!" phoneNumber="123-456-7893" username="user3" valid="true" system_role="1"/>
+  <user id="5" createdDate="2013-07-18 14:20:48.0" email="user@gfd.ca" firstName="User" lastName="number4" password="fdafdas1A!" phoneNumber="123-456-7894" username="user4" valid="true" system_role="1"/>
+  <user id="6" createdDate="2013-07-18 14:20:48.0" email="user@gfd.ca" firstName="User" lastName="number5" password="fdafdas1A!" phoneNumber="123-456-7895" username="user5" valid="true" system_role="1"/>
+  <user id="7" createdDate="2013-07-18 14:20:48.0" email="user@gfd.ca" firstName="User" lastName="number6" password="fdafdas1A!" phoneNumber="123-456-7896" username="user6" valid="true" system_role="1"/>
+  <user id="8" createdDate="2013-07-18 14:20:49.0" email="user@gfd.ca" firstName="User" lastName="number7" password="fdafdas1A!" phoneNumber="123-456-7897" username="user7" valid="true" system_role="1"/>
+  <user id="9" createdDate="2013-07-18 14:20:49.0" email="user@gfd.ca" firstName="User" lastName="number8" password="fdafdas1A!" phoneNumber="123-456-7898" username="user8" valid="true" system_role="1"/>
+  <user id="10" createdDate="2013-07-18 14:20:49.0" email="user@gfd.ca" firstName="User" lastName="number9" password="fdafdas1A!" phoneNumber="123-456-7899" username="user9" valid="true" system_role="1"/>
+  <user id="11" createdDate="2013-07-18 14:20:49.0" email="user@gfd.ca" firstName="User" lastName="number10" password="fdafdas1A!" phoneNumber="123-456-78910" username="user10" valid="true" system_role="1"/>
+  <project id="1" createdDate="2013-07-18 14:20:48.0" name="Project number 1" valid="true"/>
+  <project id="2" createdDate="2013-07-18 14:20:48.0" name="Project number 2" valid="true"/>
+  <project id="3" createdDate="2013-07-18 14:20:48.0" name="Project number 3" valid="true"/>
+  <project id="4" createdDate="2013-07-18 14:20:48.0" name="Project number 4" valid="true"/>
+  <project id="5" createdDate="2013-07-18 14:20:48.0" name="Project number 5" valid="true"/>
+  <project id="6" createdDate="2013-07-18 14:20:48.0" name="Project number 6" valid="true"/>
+  <project id="7" createdDate="2013-07-18 14:20:49.0" name="Project number 7" valid="true"/>
+  <project id="8" createdDate="2013-07-18 14:20:49.0" name="Project number 8" valid="true"/>
+  <project id="9" createdDate="2013-07-18 14:20:49.0" name="Project number 9" valid="true"/>
+  <project id="10" createdDate="2013-07-18 14:20:49.0" name="Project number 10" valid="true"/>
+  <project_user id="1" created="2013-07-18 14:20:48.0" project_id="1" user_id="1"/>
+  <project_user id="2" created="2013-07-18 14:20:48.0" project_id="1" user_id="2"/>
+  <project_user id="3" created="2013-07-18 14:20:48.0" project_id="2" user_id="1"/>
+  <project_user id="4" created="2013-07-18 14:20:48.0" project_id="2" user_id="3"/>
+  <project_user id="5" created="2013-07-18 14:20:48.0" project_id="3" user_id="1"/>
+  <project_user id="6" created="2013-07-18 14:20:48.0" project_id="3" user_id="4"/>
+  <project_user id="7" created="2013-07-18 14:20:48.0" project_id="4" user_id="1"/>
+  <project_user id="8" created="2013-07-18 14:20:48.0" project_id="4" user_id="5"/>
+  <project_user id="9" created="2013-07-18 14:20:48.0" project_id="5" user_id="1"/>
+  <project_user id="10" created="2013-07-18 14:20:48.0" project_id="5" user_id="6"/>
+  <project_user id="11" created="2013-07-18 14:20:48.0" project_id="6" user_id="1"/>
+  <project_user id="12" created="2013-07-18 14:20:49.0" project_id="6" user_id="7"/>
+  <project_user id="13" created="2013-07-18 14:20:49.0" project_id="7" user_id="1"/>
+  <project_user id="14" created="2013-07-18 14:20:49.0" project_id="7" user_id="8"/>
+  <project_user id="15" created="2013-07-18 14:20:49.0" project_id="8" user_id="1"/>
+  <project_user id="16" created="2013-07-18 14:20:49.0" project_id="8" user_id="9"/>
+  <project_user id="17" created="2013-07-18 14:20:49.0" project_id="9" user_id="1"/>
+  <project_user id="18" created="2013-07-18 14:20:49.0" project_id="9" user_id="10"/>
+  <project_user id="19" created="2013-07-18 14:20:49.0" project_id="10" user_id="1"/>
+  <project_user id="20" created="2013-07-18 14:20:49.0" project_id="10" user_id="11"/>
+  </dataset>

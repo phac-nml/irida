@@ -21,6 +21,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntity;
 import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntityRepo;
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -36,7 +39,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 /**
  *
@@ -44,6 +49,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @ContextConfiguration(locations = {"classpath:/ca/corefacility/bioinformatics/irida/config/testJdbcContext.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 public class GenericRelationalRepositoryTest {
     
     @Autowired
@@ -72,6 +78,7 @@ public class GenericRelationalRepositoryTest {
      * Test of create method, of class GenericRelationalRepository.
      */
     @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")        
     public void testCreate() {
         IdentifiableTestEntity p = new IdentifiableTestEntity();
         p.setIntegerValue(5);
@@ -84,6 +91,7 @@ public class GenericRelationalRepositoryTest {
     }
     
     @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")        
     public void testCreateNullObject(){
         try{
             IdentifiableTestEntity create = repo.create(null);
@@ -95,15 +103,17 @@ public class GenericRelationalRepositoryTest {
     }
     
     @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
+    @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
     public void testCreateDuplicate(){
         IdentifiableTestEntity p = new IdentifiableTestEntity();
         p.setIntegerValue(5);
         p.setNonNull("not null");
         p.setLabel("a label");
+        p.setId(new Long(1));
         
-        IdentifiableTestEntity created = repo.create(p);
         try{
-            created = repo.create(created);
+            p = repo.create(p);
             fail();
         }
         catch(EntityExistsException ex){
@@ -116,17 +126,23 @@ public class GenericRelationalRepositoryTest {
      * Test of read method, of class GenericRelationalRepository.
      */
     @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
+    @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
     public void testRead() {
-        IdentifiableTestEntity read = repo.read(new Long(0));
+        IdentifiableTestEntity read = repo.read(new Long(1));
         assertNotNull(read);
         assertNotNull(read.getId());
-        assertEquals(read.getId(),new Long(0));
+        assertEquals(read.getId(),new Long(1));
     }
     
+    /**
+     * Test of reading an invalid id.  No data is added here so there will be no valid ids
+     */
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")    
     @Test
     public void testRead_invalid() {
         try{
-            IdentifiableTestEntity read = repo.read(new Long(54545));
+            IdentifiableTestEntity read = repo.read(new Long(1111));
             fail();
         }
         catch(EntityNotFoundException ex){
@@ -140,11 +156,13 @@ public class GenericRelationalRepositoryTest {
     /**
      * Test of readMultiple method, of class GenericRelationalRepository.
      */
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
+    @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/ident.xml") 
     @Test
     public void testReadMultiple() {
         List<Long> ids = new ArrayList<>();
-        ids.add(new Long(0));
         ids.add(new Long(1));
+        ids.add(new Long(2));
         
         Collection<IdentifiableTestEntity> read = repo.readMultiple(ids);
         assertFalse(read.isEmpty());
@@ -159,6 +177,8 @@ public class GenericRelationalRepositoryTest {
      * Test of update method, of class GenericRelationalRepository.
      */
     @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
+    @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/ident.xml")    
     public void testUpdate() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         
@@ -166,12 +186,12 @@ public class GenericRelationalRepositoryTest {
             String differentData = "different";
             HashMap<String,Object> changes = new HashMap<>();
             changes.put("nonNull", differentData);
-            IdentifiableTestEntity updated = repo.update(new Long(0), changes);
+            IdentifiableTestEntity updated = repo.update(new Long(1), changes);
             
             assertNotNull(updated);
             assertEquals(differentData,updated.getNonNull());
             
-            List<IdentifiableTestEntity> query = jdbcTemplate.query("SELECT id,nonNull,integerValue,label,valid FROM identifiable WHERE id=0", rowMapper);
+            List<IdentifiableTestEntity> query = jdbcTemplate.query("SELECT id,nonNull,integerValue,label,valid FROM identifiable WHERE id=1", rowMapper);
             IdentifiableTestEntity entity = query.get(0);
             assertEquals(entity.getNonNull(),differentData);
         }
@@ -181,6 +201,7 @@ public class GenericRelationalRepositoryTest {
     }
     
     @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")    
     public void testUpdateInvalidField(){
         IdentifiableTestEntity p = new IdentifiableTestEntity();
         p.setIntegerValue(5);
@@ -203,17 +224,12 @@ public class GenericRelationalRepositoryTest {
      * Test of delete method, of class GenericRelationalRepository.
      */
     @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
+    @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/ident.xml")    
     public void testDelete() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-        IdentifiableTestEntity p = new IdentifiableTestEntity();
-        p.setIntegerValue(5);
-        p.setNonNull("not null");
-        p.setLabel("a label");
-        
-        IdentifiableTestEntity created = repo.create(p);
-        
-        Long id = created.getId();
+        Long id = new Long(1);
         repo.delete(id);
         List<IdentifiableTestEntity> query = jdbcTemplate.query("SELECT id,nonNull,integerValue,label,valid FROM identifiable WHERE id=?", rowMapper,id);
         for(IdentifiableTestEntity ent : query){
@@ -222,6 +238,7 @@ public class GenericRelationalRepositoryTest {
     }
     
     @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")    
     public void testDeleteInvalid(){
         try{
             repo.delete(new Long(-1));
@@ -237,6 +254,8 @@ public class GenericRelationalRepositoryTest {
      * Test of list method, of class GenericRelationalRepository.
      */
     @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
+    @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/ident.xml")    
     public void testList_0args() {
         List<IdentifiableTestEntity> list = repo.list();
         assertFalse(list.isEmpty());
@@ -250,12 +269,14 @@ public class GenericRelationalRepositoryTest {
      * Test of list method, of class GenericRelationalRepository.
      */
     @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
+    @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/ident.xml")    
     public void testList_4args() {
         List<IdentifiableTestEntity> list1 = repo.list(0, 2, "nonNull", Order.ASCENDING);
         assertFalse(list1.isEmpty());
         assertEquals(list1.size(),2);
         
-        List<IdentifiableTestEntity> list2 = repo.list(0, 5, "nonNull", Order.DESCENDING);
+        List<IdentifiableTestEntity> list2 = repo.list(0, 20, "nonNull", Order.DESCENDING);
         
         assertNotNull(list2);
         int maxEle = list2.size() - 1;
@@ -263,6 +284,8 @@ public class GenericRelationalRepositoryTest {
     }
     
     @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
+    @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/ident.xml")    
     public void testListPaged(){
         List<IdentifiableTestEntity> list1 = repo.list(0, 2, "nonNull", Order.ASCENDING);
         List<IdentifiableTestEntity> list2 = repo.list(1, 1, "nonNull", Order.ASCENDING);
@@ -275,7 +298,8 @@ public class GenericRelationalRepositoryTest {
     /**
      * Test of exists method, of class GenericRelationalRepository.
      */
-    @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
+    @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/ident.xml")    @Test
     public void testExists() {
         assertTrue(repo.exists(new Long(0)));
         assertFalse(repo.exists(new Long(5000)));
@@ -285,6 +309,8 @@ public class GenericRelationalRepositoryTest {
      * Test of count method, of class GenericRelationalRepository.
      */
     @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
+    @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
     public void testCount() {
         Integer count = repo.count();
         assertNotNull(count);

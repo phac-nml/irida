@@ -16,10 +16,13 @@
 
 	<import resource="jdbcRepositoriesContext.xml"/>
         
-        <jdbc:embedded-database id="dataSource">
-                <jdbc:script location="classpath:ca/corefacility/bioinformatics/irida/sql/test-schema.sql"/>
-                <jdbc:script location="classpath:ca/corefacility/bioinformatics/irida/sql/test-data.sql"/>
-        </jdbc:embedded-database>
+	<bean id="dataSource"
+            class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+            <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+            <property name="url" value="jdbc:hsqldb:mem:paging" />
+            <property name="username" value="sa" />
+            <property name="password" value="" />
+	</bean>        
 
         
         <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
@@ -30,6 +33,7 @@
                     <prop key="hibernate.show_sql">true</prop>
                     <prop key="hibernate.format_sql">true</prop>
                     <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+                    <prop key="jpaDialect">org.springframework.orm.jpa.vendor.HibernateJpaDialect</prop>
                     <!--prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop-->
                     <!--prop key="hibernate.cache.provider_configuration_file_resource_path">ehcache/ehcache-hibernate-local.xml</prop-->
                 </props>

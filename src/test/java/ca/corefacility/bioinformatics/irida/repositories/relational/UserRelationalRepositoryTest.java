@@ -20,6 +20,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import javax.sql.DataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +32,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 /**
  *
@@ -36,6 +41,7 @@ import org.junit.BeforeClass;
  */
 @ContextConfiguration(locations = {"classpath:/ca/corefacility/bioinformatics/irida/config/testJdbcContext.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 public class UserRelationalRepositoryTest {
     
     @Autowired
@@ -45,8 +51,10 @@ public class UserRelationalRepositoryTest {
     private DataSource dataSource;
     
     @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+    @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
     public void testCreate(){
-        User user = new User("anon1", "anon@nowhere.com", "PASSWoD!1", "Anon", "Guy", "1234");
+        User user = new User("anon", "anon@nowhere.com", "PASSWoD!1", "Anon", "Guy", "1234");
         user.setRole(new Role("ROLE_USER"));
         try{
             user = repo.create(user);
@@ -59,8 +67,10 @@ public class UserRelationalRepositoryTest {
     }
     
     @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+    @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")    
     public void testCreateInvalidRole(){
-        User user = new User("anon2", "anon@nowhere.com", "PASSWOD!1", "Anon", "Guy", "1234");
+        User user = new User("anon", "anon@nowhere.com", "PASSWOD!1", "Anon", "Guy", "1234");
         user.setRole(new Role("A_FAKE_ROLE"));
         try{
             user = repo.create(user);
@@ -71,13 +81,12 @@ public class UserRelationalRepositoryTest {
     }
     
     @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+    @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")    
     public void testCreateDuplicateName(){
-        User user = new User("tom", "anon@nowhere.com", "PASSWoD!1", "Anon", "Guy", "1234");
-        user.setRole(new Role("ROLE_USER"));
-        User user2 = new User("tom", "anon@nowhere.com", "PASSWoD!1", "Anon", "Guy", "1234");
-        user2.setRole(new Role("ROLE_USER"));
-        user2 = repo.create(user2);
         try{
+            User user = new User("tom", "anon@nowhere.com", "PASSWoD!1", "Anon", "Guy", "1234");
+            user.setRole(new Role("ROLE_USER"));            
             user = repo.create(user);
             fail("Should have caught duplicate username");
         }
@@ -86,15 +95,13 @@ public class UserRelationalRepositoryTest {
     } 
     
     @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+    @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")    
     public void testGetByUsername(){
-        User user = new User("tom2", "anon@nowhere.com", "PASSWoD!1", "Anon", "Guy", "1234");
-        user.setRole(new Role("ROLE_USER"));
-        user = repo.create(user);
-
         try{
-            User get = repo.getUserByUsername("tom2");
+            User get = repo.getUserByUsername("tom");
             assertNotNull(get);
-            assertEquals(get.getUsername(),"tom2");
+            assertEquals(get.getUsername(),"tom");
         }
         catch(EntityNotFoundException ex){
             fail();
@@ -102,6 +109,8 @@ public class UserRelationalRepositoryTest {
     }  
     
     @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+    @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")    
     public void testGetByInvalidUsername(){
 
         try{

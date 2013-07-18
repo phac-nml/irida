@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+  <identifiable id="0" createdDate="2013-07-18 14:20:18.0" nonNull="notNull 0" integerValue="0" label="a label" valid="1"/>
+  <identifiable id="1" createdDate="2013-07-18 14:20:19.0" nonNull="notNull 1" integerValue="1" label="a label" valid="1"/>
+  <identifiable id="2" createdDate="2013-07-18 14:20:49.0" nonNull="notNull 2" integerValue="2" label="a label" valid="1"/>
+  <identifiable id="3" createdDate="2013-07-18 14:20:50.0" nonNull="notNull 3" integerValue="3" label="a label" valid="1"/>
+  <identifiable id="4" createdDate="2013-07-18 14:20:51.0" nonNull="notNull 4" integerValue="4" label="a label" valid="1"/>
+  <identifiable id="5" createdDate="2013-07-18 14:20:52.0" nonNull="notNull 5" integerValue="5" label="a label" valid="1"/>
+  <identifiable id="6" createdDate="2013-07-18 14:20:53.0" nonNull="notNull 6" integerValue="6" label="a label" valid="1"/>
+  <identifiable id="7" createdDate="2013-07-18 14:20:54.0" nonNull="notNull 7" integerValue="7" label="a label" valid="1"/>
+  <identifiable id="8" createdDate="2013-07-18 14:20:55.0" nonNull="notNull 8" integerValue="8" label="a label" valid="1"/>
+  <identifiable id="9" createdDate="2013-07-18 14:20:56.0" nonNull="notNull 9" integerValue="9" label="a label" valid="1"/>
+  <identifiable id="10" createdDate="2013-07-18 14:20:57.0" nonNull="notNull 10" integerValue="10" label="a label" valid="1"/>
+  <identifiable id="11" createdDate="2013-07-18 14:20:58.0" nonNull="notNull 11" integerValue="11" label="a label" valid="1"/>
+</dataset>
