@@ -100,7 +100,7 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
     public Collection<ProjectSampleJoin> getProjectForSample(Sample sample) {
         Session session = sessionFactory.getCurrentSession();
 
-        Criteria crit = session.createCriteria(ProjectUserJoin.class);
+        Criteria crit = session.createCriteria(ProjectSampleJoin.class);
         crit.add(Restrictions.eq("sample", sample));
         List<ProjectSampleJoin> list = crit.list();
         
