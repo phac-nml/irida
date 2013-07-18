@@ -54,7 +54,9 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
     @Patterns({
             @Pattern(regexp = "^.*[A-Z].*$",
                     message = "{user.password.uppercase}"), // passwords must contain an upper-case letter
-            @Pattern(regexp = "^.*[0-9].*$", message = "{user.password.number}") // passwords must contain a number
+            @Pattern(regexp = "^.*[0-9].*$", message = "{user.password.number}"), // passwords must contain a number
+            @Pattern(regexp = "^.*[a-z].*$",
+            		message = "{user.password.lowercase}")
     })
     private String password;
     @NotNull(message = "{user.firstName.notnull}")

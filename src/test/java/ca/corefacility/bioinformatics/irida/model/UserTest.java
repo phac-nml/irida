@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 
 /**
  * Testing the validation for user objects.
- *
+ * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class UserTest {
@@ -179,6 +179,26 @@ public class UserTest {
 
         assertTrue(constraintViolations.isEmpty());
     }
+
+	@Test
+	public void testPasswordNoLowerCase() {
+		User u = new User();
+		u.setUsername("fbristow");
+		u.setPassword("NOLOWERCASES12");
+		u.setEmail("fbristow@example.com");
+		u.setFirstName("Franklin");
+		u.setLastName("Bristow");
+		u.setPhoneNumber("7029");
+
+		Set<ConstraintViolation<User>> constraintViolations = validator
+				.validate(u);
+		assertEquals("wrong number of constraint violations.", 1,
+				constraintViolations.size());
+		ConstraintViolation<User> passwordViolation = constraintViolations
+				.iterator().next();
+		assertTrue("constraint violation is not on password", passwordViolation
+				.getPropertyPath().toString().endsWith("password"));
+	}
 
     @Test
     public void testCompareTo() throws ParseException {
