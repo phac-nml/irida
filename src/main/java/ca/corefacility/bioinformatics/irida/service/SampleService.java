@@ -15,6 +15,8 @@
  */
 package ca.corefacility.bioinformatics.irida.service;
 
+import java.util.List;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
@@ -50,6 +52,14 @@ public interface SampleService extends CRUDService<Long, Sample> {
      * @throws EntityNotFoundException if no {@link Relationship} exists between {@link Sample} and {@link Project}.
      */
     public Sample getSampleForProject(Project project, Long identifier) throws EntityNotFoundException;
+    
+    /**
+     * Get the list of {@link Sample} that belongs to a specific project.
+     * 
+     * @param p the {@link Project} to get samples for.
+     * @return the collection of samples for the {@link Project}.
+     */
+    public List<Join<Project, Sample>> getSamplesForProject(Project p);
 
     /**
      * Move an instance of a {@link SequenceFile} associated with a {@link Sample} to its parent {@link Project}.
