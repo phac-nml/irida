@@ -15,7 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.utils;
 
-import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import java.util.Date;
 import java.util.Objects;
 import javax.persistence.Entity;
@@ -45,7 +45,7 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
     
     private Boolean valid;
     
-    private Date createdDate;
+    private Date timestamp;
 
     public IdentifiableTestEntity() {
     }
@@ -53,7 +53,7 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("created: ").append(createdDate);
+        builder.append("created: ").append(timestamp);
         return builder.toString();
     }
 
@@ -76,7 +76,7 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
 
     @Override
     public int compareTo(IdentifiableTestEntity o) {
-        return createdDate.compareTo(o.createdDate);
+        return timestamp.compareTo(o.timestamp);
     }
 
     public Integer getIntegerValue() {
@@ -107,18 +107,18 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
     }
 
     @Override
-    public Date getCreatedDate() {
-        return createdDate;
+    public Date getTimestamp() {
+        return timestamp;
     }
 
     @Override
-    public void setCreatedDate(Date date) {
-        this.createdDate = date;
+    public void setTimestamp(Date date) {
+        this.timestamp = date;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(nonNull,integerValue,createdDate);
+        return Objects.hash(nonNull,integerValue,timestamp);
     }
 
     @Override
@@ -127,7 +127,7 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
             IdentifiableTestEntity u = (IdentifiableTestEntity) other;
             return Objects.equals(nonNull,u.nonNull)
                     && Objects.equals(integerValue, u.integerValue)
-                    && Objects.equals(createdDate, u.createdDate);
+                    && Objects.equals(timestamp, u.timestamp);
         }
 
         return false;

@@ -30,7 +30,6 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
 
-import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 
 /**
  * A biological sample. Each sample may correspond to many files.
@@ -54,10 +53,10 @@ public class Sample implements IridaThing, Comparable<Sample> {
     private Boolean valid = true;
     
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate;
+    private Date timestamp;
 
     public Sample() {
-        createdDate = new Date();
+        timestamp = new Date();
     }
 
     public Sample(String sampleName) {
@@ -68,7 +67,7 @@ public class Sample implements IridaThing, Comparable<Sample> {
     public boolean equals(Object other) {
         if (other instanceof Sample) {
             Sample sample = (Sample) other;
-            return Objects.equals(createdDate, sample.createdDate) 
+            return Objects.equals(timestamp, sample.timestamp) 
                     && Objects.equals(sampleName, sample.sampleName);
         }
 
@@ -77,12 +76,12 @@ public class Sample implements IridaThing, Comparable<Sample> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(createdDate,sampleName);
+        return Objects.hash(timestamp,sampleName);
     }
 
     @Override
     public int compareTo(Sample other) {
-        return createdDate.compareTo(other.createdDate);
+        return timestamp.compareTo(other.timestamp);
     }
 
     @Override
@@ -118,12 +117,12 @@ public class Sample implements IridaThing, Comparable<Sample> {
     }    
 
     @Override
-    public Date getCreatedDate() {
-        return createdDate;
+    public Date getTimestamp() {
+        return timestamp;
     }
 
     @Override
-    public void setCreatedDate(Date date) {
-        this.createdDate = date;
+    public void setTimestamp(Date date) {
+        this.timestamp = date;
     }
 }

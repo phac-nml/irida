@@ -209,9 +209,9 @@ public class UserTest {
 
         DateFormat sf = new SimpleDateFormat("YYYY-MM-dd");
 
-        u2.setCreatedDate(sf.parse("2011-01-01"));
-        u1.setCreatedDate(sf.parse("2012-01-01"));
-        u3.setCreatedDate(sf.parse("2013-01-01"));
+        u2.setTimestamp(sf.parse("2011-01-01"));
+        u1.setTimestamp(sf.parse("2012-01-01"));
+        u3.setTimestamp(sf.parse("2013-01-01"));
 
         // users are in the wrong order
         users.add(u3);
@@ -222,7 +222,7 @@ public class UserTest {
 
         User curr = users.get(0);
         for (int i = 1; i < users.size(); i++) {
-            assertTrue(curr.getCreatedDate().compareTo(users.get(i).getCreatedDate()) < 0);
+            assertTrue(curr.getTimestamp().compareTo(users.get(i).getTimestamp()) < 0);
         }
     }
 
@@ -230,12 +230,12 @@ public class UserTest {
     public void testEquals() {
         Date created = new Date(1);
         User u1 = new User( "username", "email", "password", "firstName", "lastName","phoneNumber");
-        u1.setCreatedDate(created);
+        u1.setTimestamp(created);
         User u2 = new User( "username", "email", "password", "firstName", "lastName","phoneNumber");
         // the two users DO NOT share the same created date, and should therefore be different
         assertFalse(u1.equals(u2));
 
-        u2.setCreatedDate(created);
+        u2.setTimestamp(created);
         // now the two users share the same identifier, and should therefore be the same
         assertTrue(u1.equals(u2));
     }

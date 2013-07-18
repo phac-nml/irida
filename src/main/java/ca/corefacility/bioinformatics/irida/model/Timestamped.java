@@ -13,25 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ca.corefacility.bioinformatics.irida.model.alibaba;
+package ca.corefacility.bioinformatics.irida.model;
 
 import java.util.Date;
-import javax.validation.constraints.NotNull;
 
 /**
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public interface IridaThing{
-	//TODO: this should not be in the alibaba package.
-    @NotNull
-    public String getLabel();
-     
-    public Long getId();
-    
-    public Boolean isValid();
-    public void setValid(Boolean valid);
-    
-    public Date getCreatedDate();
-    public void setCreatedDate(Date date);
+public interface Timestamped {
+    public Date getTimestamp();
+    public void setTimestamp(Date timestamp);
 }

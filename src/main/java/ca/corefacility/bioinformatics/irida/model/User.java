@@ -23,7 +23,6 @@ import org.hibernate.validator.constraints.Email;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 import ca.corefacility.bioinformatics.irida.validators.Patterns;
 
 
@@ -78,13 +77,13 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
     private Role system_role;
     
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate;
+    private Date timestamp;
 
     /**
      * Construct an instance of {@link User} with no properties set.
      */
     public User() {
-        createdDate = new Date();
+        timestamp = new Date();
     }
 
     /**
@@ -128,7 +127,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(username, email, password, firstName, lastName, phoneNumber,createdDate);
+        return Objects.hash(username, email, password, firstName, lastName, phoneNumber,timestamp);
     }
 
     /**
@@ -144,7 +143,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
                     && Objects.equals(firstName, u.firstName)
                     && Objects.equals(lastName, u.lastName)
                     && Objects.equals(phoneNumber, u.phoneNumber)
-                    && Objects.equals(createdDate, u.createdDate);
+                    && Objects.equals(timestamp, u.timestamp);
         }
 
         return false;
@@ -164,7 +163,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
      */
     @Override
     public int compareTo(User u) {
-        return createdDate.compareTo(u.createdDate);
+        return timestamp.compareTo(u.timestamp);
     }
 
     /**
@@ -282,12 +281,12 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
     }    
 
     @Override
-    public Date getCreatedDate() {
-        return createdDate;
+    public Date getTimestamp() {
+        return timestamp;
     }
 
     @Override
-    public void setCreatedDate(Date date) {
-        this.createdDate = date;
+    public void setTimestamp(Date date) {
+        this.timestamp = date;
     }
 }

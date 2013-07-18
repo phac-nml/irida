@@ -14,7 +14,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
-import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 
 /**
  * A project object.
@@ -37,10 +36,10 @@ public class Project implements IridaThing, Comparable<Project> {
     private Boolean valid = true;
     
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate;
+    private Date timestamp;
 
     public Project() {
-        createdDate = new Date();
+        timestamp = new Date();
     }
 
     public Project(String name) {
@@ -61,7 +60,7 @@ public class Project implements IridaThing, Comparable<Project> {
     public boolean equals(Object other) {
         if (other instanceof Project) {
             Project p = (Project) other;
-            return Objects.equals(createdDate, p.createdDate)
+            return Objects.equals(timestamp, p.timestamp)
                     && Objects.equals(name, p.name);
         }
 
@@ -70,7 +69,7 @@ public class Project implements IridaThing, Comparable<Project> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(createdDate,name);
+        return Objects.hash(timestamp,name);
     }
 
     public String getName() {
@@ -83,7 +82,7 @@ public class Project implements IridaThing, Comparable<Project> {
 
     @Override
     public int compareTo(Project p) {
-        return createdDate.compareTo(p.createdDate);
+        return timestamp.compareTo(p.timestamp);
     }
 
     @Override
@@ -102,13 +101,13 @@ public class Project implements IridaThing, Comparable<Project> {
     }
 
     @Override
-    public Date getCreatedDate() {
-        return createdDate;
+    public Date getTimestamp() {
+        return timestamp;
     }
 
     @Override
-    public void setCreatedDate(Date date) {
-        this.createdDate = date;
+    public void setTimestamp(Date date) {
+        this.timestamp = date;
     }
     
     

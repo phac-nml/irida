@@ -33,7 +33,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
-import ca.corefacility.bioinformatics.irida.model.alibaba.IridaThing;
 
 /**
  * A file that may be stored somewhere on the file system and belongs to a
@@ -58,7 +57,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
     private Boolean valid = true;
     
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate;
+    private Date timestamp;
     
     @Column(name="filePath")
     private String stringPath;
@@ -72,7 +71,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
     }
 
     public SequenceFile() {
-        createdDate = new Date();
+        timestamp = new Date();
     }
     
     public SequenceFile(Path sampleFile) {
@@ -83,7 +82,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
     public boolean equals(Object other) {
         if (other instanceof SequenceFile) {
             SequenceFile sampleFile = (SequenceFile) other;
-            return Objects.equals(file, sampleFile.file) && Objects.equals(createdDate, sampleFile.createdDate);
+            return Objects.equals(file, sampleFile.file) && Objects.equals(timestamp, sampleFile.timestamp);
         }
 
         return false;
@@ -91,13 +90,13 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(file,createdDate);
+        return Objects.hash(file,timestamp);
     }
 
 
     @Override
     public int compareTo(SequenceFile other) {
-        return createdDate.compareTo(other.createdDate);
+        return timestamp.compareTo(other.timestamp);
     }
 
     public Path getFile() {
@@ -133,12 +132,12 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
     }    
 
     @Override
-    public Date getCreatedDate() {
-        return createdDate;
+    public Date getTimestamp() {
+        return timestamp;
     }
 
     @Override
-    public void setCreatedDate(Date date) {
-        this.createdDate = date;
+    public void setTimestamp(Date date) {
+        this.timestamp = date;
     }
 }

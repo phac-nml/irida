@@ -13,22 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ca.corefacility.bioinformatics.irida.model.joins;
+package ca.corefacility.bioinformatics.irida.model;
 
 import ca.corefacility.bioinformatics.irida.model.Timestamped;
-import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import java.util.Date;
+import javax.validation.constraints.NotNull;
 
 /**
- * Interface that the join classes should extend.  Classes that extend this can add additional fields that can be persisted in the database.
- * Implementations will have a "subject" and "object" that are the 2 fields being joined, then a creation timestamp.
+ *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public interface Join<SubjectType extends IridaThing, ObjectType extends IridaThing> extends Timestamped {
-    public SubjectType getSubject();
-    public void setSubject(SubjectType subject);
+public interface IridaThing extends Timestamped{
+    @NotNull
+    public String getLabel();
+     
+    public Long getId();
     
-    public ObjectType getObject();
-    public void setObject(ObjectType object);
+    public Boolean isValid();
+    public void setValid(Boolean valid);
     
 }
