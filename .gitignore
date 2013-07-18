@@ -8,3 +8,6 @@ src/main/webapp/resources/.sass-cache
 .classpath
 .project
 .settings
+npm-debug.log
+src/main/main.iml
+src/test/test.iml

@@ -31,29 +31,58 @@
                             Project</a></li>
                     </ul>
                 </span>
-                <span data-ng-click="logout()"><i class="icon-off"></i>&nbsp;Logout</span>
+                <span data-ng-click="logout()"><i class="icon-signout"></i>&nbsp;Logout</span>
             </div>
         </div>
         <div class="main" ui-view=""></div>
     </div>
 
     <script type="text/javascript">
+        var NGS_SPACE = {
+            resizePageSection: function (h) {
+                var top = $("#section-top");
+                var base = (h - top.offset().top)/2;
+                var bottom = $('#section-bottom');
+                console.log("HEIGHT: " + top.innerHeight());
+                top.innerHeight(base);
+                if (bottom.length) {
+                    bottom.innerHeight(base);
+                }
+
+            },
+            resizeSideBar: function () {
+
+            },
+            main_el: $(".main"),
+            outer_el: $(".outer"),
+            sidebar: {
+                inner_el: $(".sidebar-inner"),
+                top_height: $("#sidebar-top").outerHeight(),
+                bottom_height: $("#sidebar-bottom").outerHeight(),
+                width: $('.sidebar').width()
+            }
+        };
+
         (function () {
-            var f = "176", e = $(".outer"), d = $(".sidebar"), a = $(".main"), h = $("#sidebar-top").outerHeight(), c = $(".sidebar-inner"), b = $("#sidebar-bottom").outerHeight();
-            window.onresize = g;
-            function g() {
-                d.width(f);
-                var j = window.innerHeight;
-                var i = window.innerWidth;
-                e.width(i);
-                d.height(j);
-                c.height(j - b - h);
-                a.width(i - f);
-                a.height(j);
-                e.height(j)
+
+            function g(h, w) {
+                NGS_SPACE.sidebar.inner_el.height(h - NGS_SPACE.sidebar.top_height - NGS_SPACE.sidebar.bottom_height);
+                NGS_SPACE.main_el.width(w - NGS_SPACE.sidebar.width);
+                NGS_SPACE.outer_el.height(h);
             }
 
-            g()
+            $(window).resize(function () {
+                var h = window.innerHeight;
+                var w = window.innerWidth;
+                g(h , w);
+                NGS_SPACE.resizePageSection(h - 35);
+            });
+
+            $(document).ready(function () {
+                var h = window.innerHeight;
+                var w = window.innerWidth;
+                g(h , w);
+            });
         })();
     </script>
 </div>

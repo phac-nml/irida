@@ -66,24 +66,11 @@
                     $scope.data.view = 'samples';
                 }
             })
-            .state('projects.detail.files', {
-                url: '/files',
-                templateUrl: '/partials/projects.files.html',
-                controller: function ($scope) {
-                    $scope.data.view = 'files';
-                }
-            })
-            .state('projects.detail.users', {
-                url: '/users',
-                templateUrl: '/partials/projects.users.html',
-                controller: function ($scope) {
-                    $scope.data.view = 'users';
-                }
-            })
-            .state('projects.detail.sampleDetailed', {
-                url: '/samples/:sampleId',
+            .state('projects.detail.samples.details', {
+                url: '/:sampleId',
                 templateUrl: '/partials/sample.html',
                 controller: function ($scope, $stateParams, data) {
+                    console.log(data);
                     $scope.data = {
                         sample: data.resource,
                         sequenceFiles: data.relatedResources.sequenceFiles.resources
@@ -97,6 +84,20 @@
                         });
                         return defer.promise;
                     }
+                }
+            })
+            .state('projects.detail.files', {
+                url: '/files',
+                templateUrl: '/partials/projects.files.html',
+                controller: function ($scope) {
+                    $scope.data.view = 'files';
+                }
+            })
+            .state('projects.detail.users', {
+                url: '/users',
+                templateUrl: '/partials/projects.users.html',
+                controller: function ($scope) {
+                    $scope.data.view = 'users';
                 }
             })
             .state('projects.users', {

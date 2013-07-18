@@ -1,19 +1,23 @@
-<div data-ng-controller="SampleCtrl">
-    <div class="row-fluid">
-        <h1>{{data.sample.sampleName}}</h1>
+<div id="section-bottom" class="large-container" data-ng-controller="SampleCtrl">
+    <div class="details-head row-fluid">
+        <div class="span8 depth"><h2>{{data.sample.sampleName}}</h2></div>
 
-        <h3>Date Created: {{data.sample.dateCreated | angularMoment}}</h3>
+        <div class="span4"><h4>Created: {{data.sample.dateCreated | angularMoment}}</h4></div>
+        <div class="span4"><h4>Files: {{ data.sequenceFiles.length }}</h4></div>
     </div>
-    <div class="row-fluid">
-        <div class="span12">
-            <table class="table">
-                <tbody>
-                <tr data-ng-repeat="f in data.sequenceFiles">
-                    <td><a href="" data-ng-click="downloadFile($event, f, 'sample/sequenceFile/fasta')">{{f.label}}&nbsp;&nbsp;<i class="icon-download-alt"></i></a></td>
-                    <td class="file-date">{{f.dateCreated | angularMoment}}</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <table class="table">
+        <tbody>
+        <tr data-ng-repeat="f in data.sequenceFiles">
+            <td><a href=""
+                   data-ng-click="downloadFile($event, f, 'sample/sequenceFile/fasta')">{{f.label}}&nbsp;&nbsp;<i
+                    class="icon-download-alt"></i></a></td>
+            <td class="file-date">{{f.dateCreated | angularMoment}}</td>
+        </tr>
+        </tbody>
+    </table>
 </div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        NGS_SPACE.resizePageSection($(window).innerHeight() - 40);
+    });
+</script>

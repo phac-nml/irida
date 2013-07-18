@@ -25,7 +25,6 @@
         ajaxService.get('/api/projects/all').then(function (data) {
             $scope.projects = data.resource.resources;
         });
-
         var active = '';
 
         $scope.$on('PROJECT_CREATED', function (event, msg) {

@@ -12,46 +12,50 @@
             projectService.project = $scope.project;
 
             $scope.data.view = 'samples';
-
-            $scope.addFilesToSample = function (s) {
-                var fileIndexes = ng.element('input[name="files"]:checked');
-                // Get sample information
-                if (fileIndexes.length) {
-
-                    if (typeof s.data === 'undefined') {
-                        ajaxService.get(s.links.self).then(function (data) {
-                            s.data = data;
-                            addSequenceFileToSample(s, fileIndexes);
-                        });
-                    }
-                    else {
-                        addSequenceFileToSample(s, fileIndexes);
-                    }
-                }
+            $scope.data.show = {
+              sampleDetails: false
             };
 
-            function addSequenceFileToSample(sample, fileIndexes) {
-                var link = sample.data.resource.links['sample/sequenceFiles'];
-                ng.forEach(fileIndexes, function (value) {
-                    var index = $(value).val();
-                    ajaxService.create(link, {
-                        'sequenceFileId': $scope.project.sequenceFiles[index].identifier
-                    }).then(function () {
-                            // Remove from sequenceFile list
-                            $scope.project.sequenceFiles.splice(index, 1);
-                        });
-                });
-                var f = fileIndexes.length > 1 ? "s" : '';
-                $rootScope.$broadcast('NOTIFY', {
-                    'msg': fileIndexes.length + ' file' + f + ' added to ' + sample.label
-                });
-            }
+//            $scope.addFilesToSample = function (s) {
+//                var fileIndexes = ng.element('input[name="files"]:checked');
+//                // Get sample information
+//                if (fileIndexes.length) {
+//
+//                    if (typeof s.data === 'undefined') {
+//                        ajaxService.get(s.links.self).then(function (data) {
+//                            s.data = data;
+//                            addSequenceFileToSample(s, fileIndexes);
+//                        });
+//                    }
+//                    else {
+//                        addSequenceFileToSample(s, fileIndexes);
+//                    }
+//                }
+//            };
+
+//            function addSequenceFileToSample(sample, fileIndexes) {
+//                var link = sample.data.resource.links['sample/sequenceFiles'];
+//                ng.forEach(fileIndexes, function (value) {
+//                    var index = $(value).val();
+//                    ajaxService.create(link, {
+//                        'sequenceFileId': $scope.project.sequenceFiles[index].identifier
+//                    }).then(function () {
+//                            // Remove from sequenceFile list
+//                            $scope.project.sequenceFiles.splice(index, 1);
+//                        });
+//                });
+//                var f = fileIndexes.length > 1 ? "s" : '';
+//                $rootScope.$broadcast('NOTIFY', {
+//                    'msg': fileIndexes.length + ' file' + f + ' added to ' + sample.label
+//                });
+//            }
 
             /**
              * Delete the currently viewed project
              */
             $scope.deleteProject = function () {
                 ajaxService.deleteItem($scope.project.links.self).then(function () {
+                    $scope.data.show.sampleDetails = false;
                     $rootScope.$broadcast('NOTIFY', {
                         'msg': 'Deleted ' + $scope.project.name,
                         'callback': function () {
