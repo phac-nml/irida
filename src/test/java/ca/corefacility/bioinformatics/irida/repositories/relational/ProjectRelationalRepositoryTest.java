@@ -62,10 +62,7 @@ public class ProjectRelationalRepositoryTest {
     private UserRepository urepo;
     
     @Autowired
-    private SampleRepository srepo;
-    
-    @Autowired
-    private SampleRepository srepo;    
+    private SampleRepository srepo;   
     
     @Autowired
     private DataSource dataSource;
