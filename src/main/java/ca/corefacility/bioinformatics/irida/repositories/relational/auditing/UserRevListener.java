@@ -32,9 +32,11 @@ public class UserRevListener implements RevisionListener{
         UserRevEntity rev = (UserRevEntity) revisionEntity;
         
         try{
-            User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        	UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        	//TODO: get user from the database by username
             if(principal != null){
-                rev.setUserId(principal.getId());
+                //rev.setUserId(principal.getId());
+            	rev.setUserId(1L);
             }            
         }
         catch(NullPointerException ex){
