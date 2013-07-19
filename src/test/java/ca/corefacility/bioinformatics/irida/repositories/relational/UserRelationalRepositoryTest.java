@@ -17,12 +17,17 @@ package ca.corefacility.bioinformatics.irida.repositories.relational;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import java.util.Collection;
 import javax.sql.DataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,6 +51,9 @@ public class UserRelationalRepositoryTest {
     
     @Autowired
     private UserRepository repo;
+    
+    @Autowired
+    private ProjectRepository prepo;
     
     @Autowired
     private DataSource dataSource;
@@ -119,5 +127,19 @@ public class UserRelationalRepositoryTest {
         }
         catch(EntityNotFoundException ex){
         }  
-    }     
+    }
+    
+    @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")    
+    public void testGetUsersForProject(){
+        Project read = prepo.read(1L);
+        
+        Collection<Join<Project, User>> projectsForUser = repo.getUsersForProject(read);
+        assertFalse(projectsForUser.isEmpty());
+        
+        for(Join<Project, User> join : projectsForUser){
+            assertTrue(join.getSubject().equals(read));
+            assertNotNull(join.getSubject());
+        }        
+    }
 }
