@@ -46,12 +46,12 @@ public class ProjectSamplesIntegrationTest {
         String location = r.getHeader(HttpHeaders.LOCATION);
 
         assertNotNull(location);
-        assertTrue(location.matches("^http://localhost:8080/api/projects/[a-f0-9\\-]+/samples/[a-f0-9\\-]+$"));
+        assertTrue(location.matches("^http://localhost:8080/api/projects/[0-9]+/samples/[0-9]+$"));
     }
 
     @Test
     public void testDeleteSampleFromProject() {
-        String projectUri = "http://localhost:8080/api/projects/270116df-1d19-468f-ab6c-801a5b535e88";
+        String projectUri = "http://localhost:8080/api/projects/4";
 
         // load the project
         String projectJson = get(projectUri).asString();
@@ -77,8 +77,8 @@ public class ProjectSamplesIntegrationTest {
 
     @Test
     public void testUpdateProjectSample() {
-        String projectUri = "http://localhost:8080/api/projects/64a16089-a7ac-4cd7-aab9-8138db8f93a0";
-        String projectSampleUri = projectUri + "/samples/07ac0624-8f04-43ba-b45f-e6d65a8bd6ba";
+        String projectUri = "http://localhost:8080/api/projects/5";
+        String projectSampleUri = projectUri + "/samples/1";
         Map<String, String> updatedFields = new HashMap<>();
         String updatedName = "Totally different sample name.";
         updatedFields.put("sampleName", updatedName);
