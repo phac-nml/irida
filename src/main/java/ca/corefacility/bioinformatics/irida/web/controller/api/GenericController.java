@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.type.IdentifierType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.Link;
@@ -29,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
@@ -174,7 +172,7 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 	 *            the resource to generate related collections for.
 	 * @return a collection of collections of related resources.
 	 */
-	protected <RelatedType extends IridaThing> Map<String, ResourceCollection<LabelledRelationshipResource<Type, RelatedType>>> constructCustomRelatedResourceCollections(Type resource) {
+	protected Map<String, ResourceCollection<?>> constructCustomRelatedResourceCollections(Type resource) {
 		return Collections.emptyMap();
 	}
 
@@ -332,7 +330,7 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 		// add the resource to the model
 		model.addAttribute(RESOURCE_NAME, resource);
 		// get a set of uniquely related resources for this resource
-		Map<String, ResourceCollection<LabelledRelationshipResource<Type, IridaThing>>> 
+		Map<String, ResourceCollection<?>> 
 				relatedResources = constructCustomRelatedResourceCollections(t);
 		// add any related resources to the model
 		model.addAttribute(RELATED_RESOURCES_NAME, relatedResources);

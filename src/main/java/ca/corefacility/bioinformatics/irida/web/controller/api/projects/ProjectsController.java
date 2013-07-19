@@ -1,27 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.projects;
 
-import ca.corefacility.bioinformatics.irida.model.IridaThing;
-import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.Sample;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.model.enums.Order;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SampleService;
-import ca.corefacility.bioinformatics.irida.service.UserService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.UsersController;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Link;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -29,8 +9,25 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.Sample;
+import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.enums.Order;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SampleService;
+import ca.corefacility.bioinformatics.irida.service.UserService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
+import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.UsersController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
 
 /**
  * Controller for managing {@link Project}s in the database.
@@ -57,10 +54,6 @@ public class ProjectsController extends GenericController<Project, ProjectResour
      * A label that's used to list the samples associated with a project.
      */
     private static final String PROJECT_SAMPLES_MAP_LABEL = "samples";
-    /**
-     * A label that's used to list the sequence files associated with a project.
-     */
-    private static final String PROJECT_SEQUENCE_FILES_MAP_LABEL = "sequenceFiles";
     /**
      * Reference to {@link UserService} for getting users associated with a project.
      */
@@ -102,11 +95,11 @@ public class ProjectsController extends GenericController<Project, ProjectResour
      * {@inheritDoc}
      */
     @Override
-    protected <RelatedType extends IridaThing> Map<String, ResourceCollection<LabelledRelationshipResource<Project, RelatedType>>> constructCustomRelatedResourceCollections(Project project) {
-        Map<String, ResourceCollection<LabelledRelationshipResource<Project, RelatedType>>> resources = new HashMap<>();
+    protected Map<String, ResourceCollection<?>> constructCustomRelatedResourceCollections(Project project) {
+        Map<String, ResourceCollection<?>> resources = new HashMap<>();
 
-        //resources.put(PROJECT_USERS_MAP_LABEL, getUsersForProject(project));
-        //resources.put(PROJECT_SAMPLES_MAP_LABEL, getSamplesForProject(project));
+        resources.put(PROJECT_USERS_MAP_LABEL, getUsersForProject(project));
+        resources.put(PROJECT_SAMPLES_MAP_LABEL, getSamplesForProject(project));
 
         return resources;
     }
