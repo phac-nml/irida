@@ -103,9 +103,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
      * {@inheritDoc}
      */
     public List<Join<Project, Sample>> getSamplesForProject(Project p) {
-    	List<Join<Project, Sample>> joins = new ArrayList<>();
-    	List<ProjectSampleJoin> actualJoins = sampleRepository.getSamplesForProject(p);
-    	joins.addAll(actualJoins);
-    	return joins;
+    	return new ArrayList<Join<Project, Sample>>(sampleRepository.getSamplesForProject(p));
     }
 }

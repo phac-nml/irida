@@ -11,14 +11,18 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -96,7 +100,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
      * {@inheritDoc}
      */
     @Override
-    public Collection<ProjectUserJoin> getProjectsForUser(User user) {
-        return projectRepository.getProjectsForUser(user);
+    public List<Join<Project, User>> getProjectsForUser(User user) {
+        return new ArrayList<Join<Project, User>>(projectRepository.getProjectsForUser(user));
     }
 }
