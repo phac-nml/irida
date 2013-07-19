@@ -65,7 +65,7 @@ public class ProjectIntegrationTest {
         Response r = given().body(project).post(PROJECTS);
         String location = r.getHeader(HttpHeaders.LOCATION);
         expect().body("resource.name", equalTo(projectName)).and()
-                .body("resource.links.rel", hasItems("self", "project/users", "project/samples", "project/sequenceFiles"))
+                .body("resource.links.rel", hasItems("self", "project/users", "project/samples"))
                 .when().get(location);
     }
 
@@ -92,7 +92,7 @@ public class ProjectIntegrationTest {
 
     @Test
     public void testDeleteProject() {
-        String projectUri = "http://localhost:8080/api/projects/b241a0b9-1a33-4c04-a22f-35853bea2488";
+        String projectUri = "http://localhost:8080/api/projects/1";
         expect().body("resource.links.rel", hasItems("collection")).and()
                 .body("resource.links.href", hasItems("http://localhost:8080/api/projects")).when().delete(projectUri);
     }
@@ -100,10 +100,9 @@ public class ProjectIntegrationTest {
     @Test
     public void verifyRelatedResources() {
         // project should have the following related resource names: samples, users, sequenceFiles
-        String projectUri = "http://localhost:8080/api/projects/731ba863-3291-4b5a-8b6f-a44365f5c533";
+        String projectUri = "http://localhost:8080/api/projects/2";
         expect().body("relatedResources.samples.links.rel", hasItem("project/samples")).and()
-                .body("relatedResources.users.links.rel", hasItem("project/users")).and()
-                .body("relatedResources.sequenceFiles.links.rel", hasItem("project/sequenceFiles")).when().get(projectUri);
+                .body("relatedResources.users.links.rel", hasItem("project/users")).when().get(projectUri);
     }
 
     /**
@@ -112,9 +111,8 @@ public class ProjectIntegrationTest {
      */
     @Test
     public void verifyExistenceOfProjectWithHEAD() {
-        String projectUri = "http://localhost:8080/projects/731ba863-3291-4b5a-8b6f-a44365f5c533";
+        String projectUri = "http://localhost:8080/api/projects/3";
         expect().statusCode(HttpStatus.OK.value()).when().head(projectUri);
-        projectUri = "http://localhost:8080/api/projects/731ba863-3291-4b5a-8b6f-a44365f5c533";
         given().header("Accept", MediaType.JSON_UTF_8.toString()).expect()
                 .statusCode(HttpStatus.OK.value()).when().head(projectUri);
     }
