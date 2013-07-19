@@ -1,6 +1,13 @@
 <div class="container-fluid" data-ng-controller="ProjectCtrl">
-    <h2>{{ project.name }}</h2>
-    <h4>{{ project.dateCreated | angularMoment }}</h4>
+    <div class="row-fluid project-top">
+        <div class="span8">
+            <h2 class="depth" title="{{ project.name }}">{{ project.name }}</h2>
+        </div>
+        <div class="span4">
+            <h4 class="depth">Created: {{ project.date | angularMoment }}</h4>
+            <h4>Project Members: {{ project.users.length }}</h4>
+        </div>
+    </div>
 
     <div class="row-fluid">
         <div class="span12">
@@ -15,7 +22,7 @@
                                                                               data-ng-click="changeProjectView('users')">Users</a>
                 </li>
                 <li class="dropdown active psettings pull-right"><a class="dropdown-toggle" href=""><i
-                        class="icon-cog"></i> Settings</a>
+                        class="icon-double-angle-down"></i> Actions</a>
                     <ul class="dropdown-menu">
                         <li><a href=""><i class="icon-copy"></i> Duplicate Project</a></li>
                         <li><a href=""><i class="icon-trash"></i> Delete Project</a></li>
@@ -24,7 +31,5 @@
             </ul>
         </div>
     </div>
-    <div class="row-fluid">
-        <div ui-view=""></div>
-    </div>
+    <div ui-view=""></div>
 </div>

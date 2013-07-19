@@ -10,7 +10,6 @@
                 project: ''
             };
             ajaxService.get('/api/users/current').then(function (data) {
-                console.log(data);
                 $scope.user = data.resource;
             });
         }]);

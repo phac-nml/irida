@@ -1,7 +1,10 @@
 angular.module('filters', []).
-  filter('angularMoment', function () {
-    "use strict";
-    return  function (date) {
-      return moment(date).calendar();
-      }
-  });
+    filter('angularMoment', function () {
+        "use strict";
+        return  function (date) {
+            if (date) {
+                return moment(date).calendar();
+            }
+
+        }
+    });
