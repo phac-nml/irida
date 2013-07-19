@@ -17,19 +17,27 @@ package ca.corefacility.bioinformatics.irida.repositories.relational;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
+import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+
 import java.util.List;
 import java.util.Map;
+
 import javax.sql.DataSource;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import static org.junit.Assert.*;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
@@ -45,6 +53,9 @@ public class ProjectRelationalRepositoryTest {
     
     @Autowired
     private UserRepository urepo;
+    
+    @Autowired
+    private SampleRepository srepo;
     
     @Autowired
     private DataSource dataSource;
@@ -92,5 +103,27 @@ public class ProjectRelationalRepositoryTest {
         assertTrue(list.isEmpty());
 
     }    
+    
+    @Test
+    public void testRemoveSampleFromProject() {
+    	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+    	Project project = repo.create(new Project("aww yiss"));
+    	Sample sample = new Sample();
+    	sample.setSampleName("breadcrumbs");
+    	
+    	sample = srepo.create(sample);
+    	
+    	// add it
+    	ProjectSampleJoin addSampleToProject = repo.addSampleToProject(project, sample);
+    	assertNotNull(addSampleToProject);
+    	
+    	// then remove it
+    	repo.removeSampleFromProject(project, sample);
+    	
+    	String qs = "select * from project_sample where project_id=? and sample_id=?";
+    	List<Map<String, Object>> list = jdbcTemplate.queryForList(qs, project.getId(), sample.getId());
+    	assertNotNull(list);
+    	assertTrue("relationship between project and sample not deleted.", list.isEmpty());
+    }
     
 }
