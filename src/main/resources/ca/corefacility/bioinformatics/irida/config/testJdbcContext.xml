@@ -52,6 +52,7 @@
                             <value>ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin</value>
                             <value>ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin</value>
                             <value>ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSequenceFileJoin</value>
+                            <value>ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin</value>
                     </list>
             </property>            
             <!--property name="packagesToScan" value="net.top.*.entity.*" /-->

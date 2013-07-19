@@ -12,6 +12,7 @@
   <user id="9" createdDate="2013-07-18 14:20:49.0" email="user@gfd.ca" firstName="User" lastName="number8" password="fdafdas1A!" phoneNumber="123-456-7898" username="user8" valid="true" system_role="1"/>
   <user id="10" createdDate="2013-07-18 14:20:49.0" email="user@gfd.ca" firstName="User" lastName="number9" password="fdafdas1A!" phoneNumber="123-456-7899" username="user9" valid="true" system_role="1"/>
   <user id="11" createdDate="2013-07-18 14:20:49.0" email="user@gfd.ca" firstName="User" lastName="number10" password="fdafdas1A!" phoneNumber="123-456-78910" username="user10" valid="true" system_role="1"/>
+
   <project id="1" createdDate="2013-07-18 14:20:48.0" name="Project number 1" valid="true"/>
   <project id="2" createdDate="2013-07-18 14:20:48.0" name="Project number 2" valid="true"/>
   <project id="3" createdDate="2013-07-18 14:20:48.0" name="Project number 3" valid="true"/>
@@ -22,6 +23,24 @@
   <project id="8" createdDate="2013-07-18 14:20:49.0" name="Project number 8" valid="true"/>
   <project id="9" createdDate="2013-07-18 14:20:49.0" name="Project number 9" valid="true"/>
   <project id="10" createdDate="2013-07-18 14:20:49.0" name="Project number 10" valid="true"/>
+  
+  <sample id="1" createdDate="2013-07-18 14:20:49.0" sampleName="Sample number 1" valid="true"/>
+  <sample id="2" createdDate="2013-07-18 14:20:50.0" sampleName="Sample number 2" valid="true"/>
+  <sample id="3" createdDate="2013-07-18 14:20:51.0" sampleName="Sample number 3" valid="true"/>
+  <sample id="4" createdDate="2013-07-18 14:20:52.0" sampleName="Sample number 4" valid="true"/>
+  <sample id="5" createdDate="2013-07-18 14:20:53.0" sampleName="Sample number 5" valid="true"/>
+  <sample id="6" createdDate="2013-07-18 14:20:54.0" sampleName="Sample number 6" valid="true"/>
+  <sample id="7" createdDate="2013-07-18 14:20:55.0" sampleName="Sample number 7" valid="true"/>
+  <sample id="8" createdDate="2013-07-18 14:20:56.0" sampleName="Sample number 8" valid="true"/>
+  <sample id="9" createdDate="2013-07-18 14:20:57.0" sampleName="Sample number 9" valid="true"/>
+  <sample id="10" createdDate="2013-07-18 14:20:58.0" sampleName="Sample number 10" valid="true"/>
+  
+  <sequence_file id="1" createdDate="2013-07-18 14:20:48.0" filePath="/tmp/1" valid="true"/>
+  <sequence_file id="2" createdDate="2013-07-18 14:20:49.0" filePath="/tmp/2" valid="true"/>
+  <sequence_file id="3" createdDate="2013-07-18 14:20:50.0" filePath="/tmp/3" valid="true"/>
+  <sequence_file id="4" createdDate="2013-07-18 14:20:51.0" filePath="/tmp/4" valid="true"/>
+  <sequence_file id="5" createdDate="2013-07-18 14:20:52.0" filePath="/tmp/5" valid="true"/>
+
   <project_user id="1" created="2013-07-18 14:20:48.0" project_id="1" user_id="1"/>
   <project_user id="2" created="2013-07-18 14:20:48.0" project_id="1" user_id="2"/>
   <project_user id="3" created="2013-07-18 14:20:48.0" project_id="2" user_id="1"/>
@@ -42,4 +61,11 @@
   <project_user id="18" created="2013-07-18 14:20:49.0" project_id="9" user_id="10"/>
   <project_user id="19" created="2013-07-18 14:20:49.0" project_id="10" user_id="1"/>
   <project_user id="20" created="2013-07-18 14:20:49.0" project_id="10" user_id="11"/>
-  </dataset>
+
+  <project_sample id="1" created="2013-07-18 14:20:49.0" project_id="1" sample_id="1"/>
+  <project_sample id="2" created="2013-07-18 14:20:49.0" project_id="1" sample_id="2"/>
+  <project_sample id="3" created="2013-07-18 14:20:49.0" project_id="2" sample_id="3"/>
+  <project_sample id="4" created="2013-07-18 14:20:49.0" project_id="2" sample_id="4"/>
+  <project_sample id="5" created="2013-07-18 14:20:49.0" project_id="3" sample_id="5"/>
+  <project_sample id="6" created="2013-07-18 14:20:49.0" project_id="3" sample_id="6"/>
+</dataset>

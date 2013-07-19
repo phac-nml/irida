@@ -118,7 +118,7 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
     @Override
     public void removeSampleFromProject(Project project, Sample sample) {
         Session session = sessionFactory.getCurrentSession();
-        Criteria crit = session.createCriteria(ProjectUserJoin.class);
+        Criteria crit = session.createCriteria(ProjectSampleJoin.class);
         crit.add(Restrictions.eq("project", project));
         crit.add(Restrictions.eq("sample", sample));
         
