@@ -68,4 +68,10 @@
   <project_sample id="4" created="2013-07-18 14:20:49.0" project_id="2" sample_id="4"/>
   <project_sample id="5" created="2013-07-18 14:20:49.0" project_id="3" sample_id="5"/>
   <project_sample id="6" created="2013-07-18 14:20:49.0" project_id="3" sample_id="6"/>
+
+  <sequencefile_sample id="1" created="2013-07-18 14:20:49.0" sequencefile_id="1" sample_id="1"/>
+  <sequencefile_sample id="2" created="2013-07-18 14:20:49.0" sequencefile_id="2" sample_id="1"/>
+  <sequencefile_sample id="3" created="2013-07-18 14:20:49.0" sequencefile_id="3" sample_id="2"/>
+  <sequencefile_sample id="4" created="2013-07-18 14:20:49.0" sequencefile_id="4" sample_id="2"/>
+  <sequencefile_sample id="5" created="2013-07-18 14:20:49.0" sequencefile_id="5" sample_id="3"/>
 </dataset>

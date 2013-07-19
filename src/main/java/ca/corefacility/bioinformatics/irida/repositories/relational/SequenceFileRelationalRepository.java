@@ -115,7 +115,7 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
     @Override
     public void removeFileFromSample(Sample sample, SequenceFile file) {
         Session session = sessionFactory.getCurrentSession();
-        Criteria crit = session.createCriteria(ProjectSequenceFileJoin.class);
+        Criteria crit = session.createCriteria(SampleSequenceFileJoin.class);
         crit.add(Restrictions.eq("sample", sample));
         crit.add(Restrictions.eq("sequenceFile", file));
         
