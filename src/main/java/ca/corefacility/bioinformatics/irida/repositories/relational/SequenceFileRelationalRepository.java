@@ -32,7 +32,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- *
+ * A repository for storing information about a {@link SequenceFile} in a relational database.
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Repository
@@ -44,6 +44,9 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
         super(source,SequenceFile.class);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Transactional
     @Override
     public SequenceFile create(SequenceFile object) throws IllegalArgumentException {
@@ -57,7 +60,10 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
         object.setRealPath();
         return object;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public List<ProjectSequenceFileJoin> getFilesForProject(Project project) {
         Session session = sessionFactory.getCurrentSession();
@@ -67,7 +73,10 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
         
         return list;        
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public List<SampleSequenceFileJoin> getFilesForSample(Sample sample) {
         Session session = sessionFactory.getCurrentSession();
@@ -77,7 +86,10 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
         
         return list;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public ProjectSequenceFileJoin addFileToProject(Project project, SequenceFile file) {
         Session session = sessionFactory.getCurrentSession();
@@ -87,7 +99,10 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
         
         return ujoin;    
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public SampleSequenceFileJoin addFileToSample(Sample sample, SequenceFile file) {
         Session session = sessionFactory.getCurrentSession();
@@ -97,7 +112,10 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
         
         return ujoin;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void removeFileFromProject(Project project, SequenceFile file) {
         Session session = sessionFactory.getCurrentSession();
@@ -111,7 +129,10 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
         }
         session.delete(join);    
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void removeFileFromSample(Sample sample, SequenceFile file) {
         Session session = sessionFactory.getCurrentSession();
