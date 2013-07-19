@@ -31,13 +31,17 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
 import javax.sql.DataSource;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import static org.junit.Assert.*;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
@@ -56,6 +60,9 @@ public class ProjectRelationalRepositoryTest {
     
     @Autowired
     private UserRepository urepo;
+    
+    @Autowired
+    private SampleRepository srepo;
     
     @Autowired
     private SampleRepository srepo;    
