@@ -1,1 +1,1 @@
-INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_USER','A basic user in the system');
+INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_USER','A basic user in the system');INSERT INTO user (`createdDate`, `email`, `firstName`, `lastName`, `password`, `phoneNumber`, `username`, `valid`, `system_role`) VALUES (now(), 'fbristow@phac-aspc.gc.ca', 'Franklin', 'Bristow', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '7029', 'fbristow', 1, 1);
