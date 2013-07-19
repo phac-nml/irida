@@ -34,23 +34,13 @@
                     <!--prop key="hibernate.cache.provider_configuration_file_resource_path">ehcache/ehcache-hibernate-local.xml</prop-->
                 </props>
             </property>
-            <property name="annotatedClasses">
+             <property name="packagesToScan">
                     <list>
-                            <value>ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntity</value>
-                            <value>ca.corefacility.bioinformatics.irida.model.Project</value>
-                            <value>ca.corefacility.bioinformatics.irida.model.User</value>
-                            <value>ca.corefacility.bioinformatics.irida.model.Sample</value>
-                            <value>ca.corefacility.bioinformatics.irida.model.SequenceFile</value>
-                            <value>ca.corefacility.bioinformatics.irida.model.Role</value>
-                            <value>ca.corefacility.bioinformatics.irida.repositories.relational.auditing.UserRevEntity</value>
-                            
-                            <!--Join Classes-->
-                            <value>ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin</value>
-                            <value>ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin</value>
-                            <value>ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSequenceFileJoin</value>
+                            <value>ca.corefacility.bioinformatics.irida.model</value>
+                            <value>ca.corefacility.bioinformatics.irida.utils</value>
+                            <value>ca.corefacility.bioinformatics.irida.repositories.relational.auditing</value>
                     </list>
-            </property>            
-            <!--property name="packagesToScan" value="net.top.*.entity.*" /-->
+            </property>
 
         </bean>         
 
