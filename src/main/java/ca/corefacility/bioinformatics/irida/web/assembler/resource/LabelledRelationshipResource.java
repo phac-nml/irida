@@ -17,7 +17,7 @@ public class LabelledRelationshipResource<Owner extends IridaThing, Child extend
 	private String label;
 
 	public LabelledRelationshipResource(String label, Join<Owner, Child> r) {
-		super(null);
+		super(r);
 		this.label = label;
 	}
 
