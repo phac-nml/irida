@@ -154,4 +154,12 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
     private Set<ConstraintViolation<User>> validatePassword(String password) {
         return validator.validateValue(User.class, PASSWORD_PROPERTY, password);
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<User> getUsersAvailableForProject(Project project) {
+        return userRepository.getUsersAvailableForProject(project);
+    }
 }

@@ -92,4 +92,18 @@ public class UserRelationalRepository extends GenericRelationalRepository<User> 
         
         return list;  
     }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<User> getUsersAvailableForProject(Project project){
+        Session session = sessionFactory.getCurrentSession();
+        String qs = "SELECT * from user WHERE id NOT IN (select u.id from project_user p INNER JOIN user u ON p.user_id=u.id WHERE p.project_id=:pid)";
+        
+        Query setLong = session.createSQLQuery(qs).addEntity(User.class).setLong("pid", project.getId());
+        List<User> list = setLong.list();
+        
+        return list;
+    }    
 }

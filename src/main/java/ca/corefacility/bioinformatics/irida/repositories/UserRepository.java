@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Specialized repository for {@link User}.
@@ -48,4 +49,13 @@ public interface UserRepository extends CRUDRepository<Long, User> {
      * @return the collection of relationships describing users for this project
      */
     public Collection<Join<Project,User>> getUsersForProject(Project project);
+    
+    /**
+     * Get the list of {@link User}s that are not associated with the current project.
+     * This is a convenience method for the front end to see what users can be added to the project.
+     * @param project The project we want to list the available users for
+     * @return A List of {@link User}s that are not associated with the project.
+     */
+    public List<User> getUsersAvailableForProject(Project project);
+
 }
