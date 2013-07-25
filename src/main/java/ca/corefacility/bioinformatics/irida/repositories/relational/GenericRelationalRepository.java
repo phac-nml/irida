@@ -82,7 +82,7 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
         }
         
         Session session = sessionFactory.getCurrentSession();
-        Serializable save = session.save(object);        
+        session.persist(object);        
         
         return object;
     }
@@ -151,7 +151,7 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
             }
         }
         
-        session.save(base);
+        session.update(base);
         
         return base;
     }
@@ -170,8 +170,7 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
         
         Type read = read(id);
         read.setValid(false);
-        session.save(read);
-        //session.delete(read);
+        session.update(read);
     }
     
     /**
