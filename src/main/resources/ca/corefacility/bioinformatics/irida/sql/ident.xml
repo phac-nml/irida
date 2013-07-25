@@ -12,4 +12,10 @@
   <identifiable id="9" createdDate="2013-07-18 14:20:56.0" nonNull="notNull 9" integerValue="9" label="a label" valid="1"/>
   <identifiable id="10" createdDate="2013-07-18 14:20:57.0" nonNull="notNull 10" integerValue="10" label="a label" valid="1"/>
   <identifiable id="11" createdDate="2013-07-18 14:20:58.0" nonNull="notNull 11" integerValue="11" label="a label" valid="1"/>
+  
+  <Revisions id="1" timestamp="1374780377995" />
+  <Revisions id="2" timestamp="1374780383834" />
+  <identifiable_AUD id="0" REV="1" REVTYPE="0" createdDate="2013-07-18 14:20:18.0" nonNull="notNull 0" integerValue="0" label="a label" valid="1"/>
+  <identifiable_AUD id="0" REV="2" REVTYPE="1" createdDate="2013-07-18 14:20:18.0" nonNull="different not null" integerValue="0" label="a label" valid="1"/>
+
 </dataset>

@@ -24,6 +24,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import org.hibernate.envers.Audited;
 
 /**
  *
@@ -31,6 +32,7 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name="identifiable")
+@Audited
 public class IdentifiableTestEntity implements IridaThing, Comparable<IdentifiableTestEntity> {
 
     @Id
