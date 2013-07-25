@@ -27,7 +27,9 @@ import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.Lists;
 import java.util.Collection;
+import java.util.List;
 import javax.sql.DataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -141,5 +143,18 @@ public class UserRelationalRepositoryTest {
             assertTrue(join.getSubject().equals(read));
             assertNotNull(join.getSubject());
         }        
+    }
+    
+    @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")        
+    public void testGetUsersAvailableForProject(){
+        Project read = prepo.read(1L);
+        
+        List<User> usersAvailableForProject = repo.getUsersAvailableForProject(read);
+        assertFalse(usersAvailableForProject.isEmpty());
+        List<Long> ids = Lists.newArrayList(1L,2L);
+        for(User u : usersAvailableForProject){
+            assertFalse(ids.contains(u.getId()));
+        }
     }
 }
