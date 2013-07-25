@@ -63,6 +63,7 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
     
     /**
      * {@inheritDoc }
+     * @deprecated 
      */
     @Override
     public List<ProjectSequenceFileJoin> getFilesForProject(Project project) {
@@ -89,6 +90,7 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
     
     /**
      * {@inheritDoc }
+     * @deprecated 
      */
     @Override
     public ProjectSequenceFileJoin addFileToProject(Project project, SequenceFile file) {
@@ -115,6 +117,7 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
     
     /**
      * {@inheritDoc }
+     * @deprecated 
      */
     @Override
     public void removeFileFromProject(Project project, SequenceFile file) {
@@ -142,7 +145,7 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
         
         SampleSequenceFileJoin join = (SampleSequenceFileJoin) crit.uniqueResult();
         if(join == null){
-            throw new EntityNotFoundException("A join between this file and project was not found");
+            throw new EntityNotFoundException("A join between this file and sample was not found");
         }
         session.delete(join);     
     }
