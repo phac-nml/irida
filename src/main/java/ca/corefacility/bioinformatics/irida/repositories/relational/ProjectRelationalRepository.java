@@ -73,7 +73,7 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
         }
 
         ProjectUserJoin ujoin = new ProjectUserJoin(project, user);
-        session.save(ujoin);
+        session.persist(ujoin);
         
         
         return ujoin;
@@ -99,7 +99,7 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
         Session session = sessionFactory.getCurrentSession();
 
         ProjectSampleJoin ujoin = new ProjectSampleJoin(project, sample);
-        session.save(ujoin);
+        session.persist(ujoin);
         
         return ujoin;        
     }

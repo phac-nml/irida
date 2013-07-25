@@ -95,7 +95,7 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
         Session session = sessionFactory.getCurrentSession();
 
         ProjectSequenceFileJoin ujoin = new ProjectSequenceFileJoin(project, file);
-        session.save(ujoin);
+        session.persist(ujoin);
         
         return ujoin;    
     }
@@ -108,7 +108,7 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
         Session session = sessionFactory.getCurrentSession();
 
         SampleSequenceFileJoin ujoin = new SampleSequenceFileJoin(sample, file);
-        session.save(ujoin);
+        session.persist(ujoin);
         
         return ujoin;
     }
