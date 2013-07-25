@@ -38,6 +38,8 @@
     <bean id="sequenceFileFilesystemRepository"
           class="ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileFilesystemRepository">
         <constructor-arg value="${sequence.file.base.directory}"/>
-    </bean>    
-        
+    </bean>  
+    
+    <bean id="revisionListener" init-method="initialize" class="ca.corefacility.bioinformatics.irida.repositories.relational.auditing.UserRevListener"/>
+                
 </beans>

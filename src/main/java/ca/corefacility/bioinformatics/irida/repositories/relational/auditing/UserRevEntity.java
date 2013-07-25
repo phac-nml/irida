@@ -15,8 +15,12 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.relational.auditing;
 
+import ca.corefacility.bioinformatics.irida.model.User;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionEntity;
@@ -28,16 +32,18 @@ import org.hibernate.envers.RevisionEntity;
 @Entity
 @RevisionEntity(UserRevListener.class)
 @Table(name="Revisions")
-//@Table(name="REVINFO")
 public class UserRevEntity extends DefaultRevisionEntity{
+        
+    @OneToOne
+    @JoinColumn(name="user_id")
+    User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
     
-    Long userId;
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
 }
