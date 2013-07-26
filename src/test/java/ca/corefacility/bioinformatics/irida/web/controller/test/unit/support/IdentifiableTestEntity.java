@@ -50,13 +50,13 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
 
 
 	@Override
-	public Boolean isValid() {
+	public boolean isEnabled() {
 		// TODO Auto-generated method stub
-		return null;
+		return true;
 	}
 
 	@Override
-	public void setValid(Boolean valid) {
+	public void setEnabled(boolean valid) {
 		// TODO Auto-generated method stub
 
 	}
