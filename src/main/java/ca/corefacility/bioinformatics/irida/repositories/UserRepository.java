@@ -40,13 +40,10 @@ public interface UserRepository extends CRUDRepository<Long, User> {
     public User getUserByUsername(String username) throws EntityNotFoundException;
 
     /**
-     * Get all users associated with a project.
-     * NOTE: In the returned Relationship object, the User identifiers will be 
-     * the subject of the relationship as the user/project relationship is
-     * User :hasProject Project
+     * Get all {@link User}s associated with a project.
      *
-     * @param project the project to get the users for.
-     * @return the collection of relationships describing users for this project
+     * @param project the {@link Project} to get {@link User}s for.
+     * @return A Collection of {@link Join<Project,User>}s describing users for this project
      */
     public Collection<Join<Project,User>> getUsersForProject(Project project);
     

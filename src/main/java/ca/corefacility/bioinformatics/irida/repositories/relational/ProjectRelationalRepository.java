@@ -48,6 +48,9 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
         super(source,Project.class);
     }
     
+    /**
+     * {@inheritDoc }
+     */
     @Transactional
     @Override
     public Collection<ProjectUserJoin> getProjectsForUser(User user) {
@@ -60,6 +63,9 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
         return list;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Transactional
     @Override
     public ProjectUserJoin addUserToProject(Project project, User user) {
@@ -79,6 +85,9 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
         return ujoin;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Transactional
     @Override
     public void removeUserFromProject(Project project, User user) {        
@@ -94,6 +103,9 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
         session.delete(join);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public ProjectSampleJoin addSampleToProject(Project project, Sample sample) {
         Session session = sessionFactory.getCurrentSession();
@@ -104,6 +116,9 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
         return ujoin;        
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Collection<ProjectSampleJoin> getProjectForSample(Sample sample) {
         Session session = sessionFactory.getCurrentSession();
@@ -115,8 +130,11 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
         return list;    
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public void removeSampleFromProject(Project project, Sample sample) {
+    public void removeSampleFromProject(Project project, Sample sample) throws EntityNotFoundException{
         Session session = sessionFactory.getCurrentSession();
         Criteria crit = session.createCriteria(ProjectSampleJoin.class);
         crit.add(Restrictions.eq("project", project));
@@ -129,6 +147,10 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
         session.delete(join);        
     }
 
+    /**
+     * {@inheritDoc }
+     * @deprecated 
+     */
     @Override
     public void removeFileFromProject(Project project, SequenceFile file) {
         Session session = sessionFactory.getCurrentSession();

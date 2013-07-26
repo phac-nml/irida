@@ -21,10 +21,15 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import java.util.List;
 
 /**
- *
+ * A repository for storing Sample objects
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public interface SampleRepository extends CRUDRepository<Long, Sample>{
     
-    public List<ProjectSampleJoin> getSamplesForProject(Project p);
+    /**
+     * Get the {@link Sample}s associated with a {@link Project}
+     * @param project The {@link Project} to get {@link Sample}s from
+     * @return A List of {@link ProjectSampleJoin}s describing the project/sample relationship
+     */
+    public List<ProjectSampleJoin> getSamplesForProject(Project project);
 }

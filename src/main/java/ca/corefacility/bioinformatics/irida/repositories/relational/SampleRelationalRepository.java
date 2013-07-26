@@ -41,6 +41,10 @@ public class SampleRelationalRepository extends GenericRelationalRepository<Samp
     public SampleRelationalRepository(DataSource source){
         super(source, Sample.class);
     }
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public List<ProjectSampleJoin> getSamplesForProject(Project project) {
         Session session = sessionFactory.getCurrentSession();

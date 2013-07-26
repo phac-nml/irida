@@ -185,7 +185,7 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Long, Se
     @Override
     public Boolean exists(Long id) {
         throw new UnsupportedOperationException("SequenceFile file exists "
-                + "should be populated by SequenceFileSesameRepository.");
+                + "should be populated by SequenceFileRelationalRepository.");
     }
 
     /**

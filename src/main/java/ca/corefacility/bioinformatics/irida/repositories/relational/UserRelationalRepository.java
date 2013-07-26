@@ -43,6 +43,9 @@ public class UserRelationalRepository extends GenericRelationalRepository<User> 
         super(source,User.class);
     }    
 
+    /**
+     * {@inheritDoc }
+     */
     @Transactional
     @Override
     public User create(User object) throws IllegalArgumentException {
@@ -68,6 +71,9 @@ public class UserRelationalRepository extends GenericRelationalRepository<User> 
         return super.create(object); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public User getUserByUsername(String username) throws EntityNotFoundException {
         Session session = this.sessionFactory.getCurrentSession();
@@ -82,6 +88,9 @@ public class UserRelationalRepository extends GenericRelationalRepository<User> 
         return u;
     }
     
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Collection<Join<Project,User>> getUsersForProject(Project project){
         Session session = sessionFactory.getCurrentSession();

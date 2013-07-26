@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
@@ -36,7 +37,7 @@ public interface ProjectRepository extends CRUDRepository<Long, Project> {
      * Get all {@link Project}s associated with a particular {@link User}.
      *
      * @param user the user to get projects for.
-     * @return the projects associated with the user.
+     * @return A collection of {@link ProjectUserJoin}s describing the projects associated with the user.
      */
     public Collection<ProjectUserJoin> getProjectsForUser(User user);
 
@@ -45,7 +46,7 @@ public interface ProjectRepository extends CRUDRepository<Long, Project> {
      *
      * @param project The project to add the user to
      * @param user    The user to add
-     * @return A {@link Relationship} object describing the project/user link
+     * @return A {@link ProjectUserJoin} object describing the project/user link
      */
     public ProjectUserJoin addUserToProject(Project project, User user);
 
@@ -57,12 +58,34 @@ public interface ProjectRepository extends CRUDRepository<Long, Project> {
      */
     public void removeUserFromProject(Project project, User user);
     
+    /**
+     * Add a {@link Sample} to a {@link Project}.
+     * @param project The {@link Project} to add a {@link Sample} to
+     * @param sample The {@link Sample} to add to a {@link Project}
+     * @return A {@link ProjectSampleJoin} describing the project/sample link.
+     */
     public ProjectSampleJoin addSampleToProject(Project project, Sample sample);
     
+    /**
+     * Get a collection of the {@link Project}s related to a {@link Sample}
+     * @param sample The {@link Sample} to get the projects for
+     * @return A collection of {@link ProjectSampleJoin}s describing the project/sample link
+     */
     public Collection<ProjectSampleJoin> getProjectForSample(Sample sample);
     
-    public void removeSampleFromProject(Project project, Sample sample);
+    /**
+     * Remove a {@link Sample} from a {@link Project}
+     * @param project The {@link Project} to remove from
+     * @param sample The {@link Sample} to remove
+     */
+    public void removeSampleFromProject(Project project, Sample sample) throws EntityNotFoundException;
     
+    /**
+     * Remove a {@link SequenceFile} from a {@link Project}
+     * @param project The project to remove from
+     * @param file The file to remove
+     * @deprecated 
+     */
     public void removeFileFromProject(Project project, SequenceFile file);
 
 }
