@@ -54,7 +54,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
     @Transient
     private Path file;
     
-    private Boolean valid = true;
+    private Boolean enabled = true;
     
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
@@ -122,13 +122,13 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
     }
 
     @Override
-    public Boolean isValid() {
-        return valid;
+    public boolean isEnabled() {
+        return enabled;
     }
     
     @Override
-    public void setValid(Boolean valid) {
-        this.valid = valid;
+    public void setEnabled(boolean valid) {
+        this.enabled = valid;
     }    
 
     @Override

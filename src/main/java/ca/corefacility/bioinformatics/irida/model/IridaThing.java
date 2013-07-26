@@ -27,7 +27,7 @@ public interface IridaThing extends Timestamped{
      
     public Long getId();
     
-    public Boolean isValid();
-    public void setValid(Boolean valid);
+    public boolean isEnabled();
+    public void setEnabled(boolean valid);
     
 }

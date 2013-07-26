@@ -33,7 +33,7 @@ public class Project implements IridaThing, Comparable<Project> {
     @NotNull(message = "{project.name.notnull}")
     private String name;
     
-    private Boolean valid = true;
+    private Boolean enabled = true;
     
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
@@ -91,13 +91,13 @@ public class Project implements IridaThing, Comparable<Project> {
     }
 
     @Override
-    public Boolean isValid() {
-        return valid;
+    public boolean isEnabled() {
+        return enabled;
     }
 
     @Override
-    public void setValid(Boolean valid) {
-        this.valid = valid;
+    public void setEnabled(boolean valid) {
+        this.enabled = valid;
     }
 
     @Override

@@ -68,7 +68,7 @@ public class GenericRelationalRepositoryTest {
             entity.setNonNull(rs.getString("nonNull"));
             entity.setIntegerValue(rs.getInt("integerValue"));
             entity.setLabel(rs.getString("label"));
-            entity.setValid(rs.getBoolean("valid"));
+            entity.setEnabled(rs.getBoolean("enabled"));
             
             return entity;
         }
@@ -136,11 +136,11 @@ public class GenericRelationalRepositoryTest {
     }
     
     /**
-     * Test of reading an invalid id.  No data is added here so there will be no valid ids
+     * Test of reading an inenabled id.  No data is added here so there will be no enabled ids
      */
     @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")    
     @Test
-    public void testRead_invalid() {
+    public void testRead_inenabled() {
         try{
             IdentifiableTestEntity read = repo.read(new Long(1111));
             fail();
@@ -191,7 +191,7 @@ public class GenericRelationalRepositoryTest {
             assertNotNull(updated);
             assertEquals(differentData,updated.getNonNull());
             
-            List<IdentifiableTestEntity> query = jdbcTemplate.query("SELECT id,nonNull,integerValue,label,valid FROM identifiable WHERE id=1", rowMapper);
+            List<IdentifiableTestEntity> query = jdbcTemplate.query("SELECT id,nonNull,integerValue,label,enabled FROM identifiable WHERE id=1", rowMapper);
             IdentifiableTestEntity entity = query.get(0);
             assertEquals(entity.getNonNull(),differentData);
         }
@@ -202,7 +202,7 @@ public class GenericRelationalRepositoryTest {
     
     @Test
     @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")    
-    public void testUpdateInvalidField(){
+    public void testUpdateInenabledField(){
         IdentifiableTestEntity p = new IdentifiableTestEntity();
         p.setIntegerValue(5);
         p.setNonNull("not null");
@@ -231,15 +231,15 @@ public class GenericRelationalRepositoryTest {
 
         Long id = new Long(1);
         repo.delete(id);
-        List<IdentifiableTestEntity> query = jdbcTemplate.query("SELECT id,nonNull,integerValue,label,valid FROM identifiable WHERE id=?", rowMapper,id);
+        List<IdentifiableTestEntity> query = jdbcTemplate.query("SELECT id,nonNull,integerValue,label,enabled FROM identifiable WHERE id=?", rowMapper,id);
         for(IdentifiableTestEntity ent : query){
-            assertFalse(ent.isValid());
+            assertFalse(ent.isEnabled());
         }
     }
     
     @Test
     @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")    
-    public void testDeleteInvalid(){
+    public void testDeleteInenabled(){
         try{
             repo.delete(new Long(-1));
             fail();

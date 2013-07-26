@@ -69,7 +69,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
     private String phoneNumber;
     @NotNull
     
-    private Boolean valid = true;
+    private Boolean enabled = true;
     
     
     @ManyToOne
@@ -268,16 +268,13 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 
-    @Override
-    public Boolean isValid() {
-        return valid;
-    }
     
-    public void setValid(Boolean valid) {
-        this.valid = valid;
+    @Override
+    public void setEnabled(boolean valid) {
+        this.enabled = valid;
     }    
 
     @Override

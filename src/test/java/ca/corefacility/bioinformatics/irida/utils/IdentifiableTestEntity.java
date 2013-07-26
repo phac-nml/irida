@@ -45,7 +45,7 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
 
     private String label;
     
-    private Boolean valid;
+    private Boolean enabled;
     
     private Date createdDate;
 
@@ -99,13 +99,13 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
     }
 
     @Override
-    public Boolean isValid() {
-        return valid;
+    public boolean isEnabled() {
+        return enabled;
     }
 
     @Override
-    public void setValid(Boolean valid) {
-        this.valid = valid;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     @Override

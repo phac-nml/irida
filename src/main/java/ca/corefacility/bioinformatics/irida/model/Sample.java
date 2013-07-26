@@ -50,7 +50,7 @@ public class Sample implements IridaThing, Comparable<Sample> {
     @Size(min = 3)
     private String sampleName;
     
-    private Boolean valid = true;
+    private Boolean enabled = true;
     
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
@@ -107,13 +107,13 @@ public class Sample implements IridaThing, Comparable<Sample> {
     }
 
     @Override
-    public Boolean isValid() {
-        return valid;
+    public boolean isEnabled() {
+        return enabled;
     }
     
     @Override
-    public void setValid(Boolean valid) {
-        this.valid = valid;
+    public void setEnabled(boolean valid) {
+        this.enabled = valid;
     }    
 
     @Override
