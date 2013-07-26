@@ -11,17 +11,17 @@ The IRIDA-api project uses Hibernate and hbm2ddl.auto to manage entities in the 
 Setting up the IRIDA schema
 ----------------------------
 1. Open mysql as the root user 
-1. * mysql -u root -p
+   * mysql -u root -p
 2. Create a schema named irida_test
-2. * CREATE DATABASE irida_test;
+   * CREATE DATABASE irida_test;
 
 Creating the IRIDA test user
 -----------------------------
 1. Open mysql as the root user 
-1. * mysql -u root -p
+   * mysql -u root -p
 2. Create a user named "test"
-2. * CREATE USER 'test'@'localhost' IDENTIFIED BY 'test';
+   * CREATE USER 'test'@'localhost' IDENTIFIED BY 'test';
 3. Grant privileges to the test user
-3. * GRANT ALL PRIVILEGES ON irida_test.* to 'test'@'%';
+   * GRANT ALL PRIVILEGES ON irida_test.* to 'test'@'%';
 
 The irida-api package should now be able to run.
