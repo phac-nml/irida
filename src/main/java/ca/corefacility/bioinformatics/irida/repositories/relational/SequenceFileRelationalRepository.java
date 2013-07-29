@@ -87,6 +87,10 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
         crit.createCriteria("sequenceFile").add(Restrictions.eq("enabled", true));
         List<SampleSequenceFileJoin> list = crit.list();
         
+        for(SampleSequenceFileJoin join : list){
+            join.getObject().setRealPath();
+        }
+        
         return list;
     }
     

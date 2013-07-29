@@ -93,6 +93,7 @@ public class SequenceFileRelationalRepositoryTest {
         for(SampleSequenceFileJoin join : res){
             assertTrue(join.getSubject().equals(read));
             assertNotNull(join.getObject());
+            assertNotNull(join.getObject().getFile());
         }
     }
 
