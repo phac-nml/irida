@@ -70,6 +70,7 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
         Session session = sessionFactory.getCurrentSession();
         Criteria crit = session.createCriteria(ProjectSequenceFileJoin.class);
         crit.add(Restrictions.eq("project", project));
+        crit.createCriteria("sequenceFile").add(Restrictions.eq("enabled", true));
         List<ProjectSequenceFileJoin> list = crit.list();
         
         return list;        
@@ -83,6 +84,7 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
         Session session = sessionFactory.getCurrentSession();
         Criteria crit = session.createCriteria(SampleSequenceFileJoin.class);
         crit.add(Restrictions.eq("sample", sample));
+        crit.createCriteria("sequenceFile").add(Restrictions.eq("enabled", true));
         List<SampleSequenceFileJoin> list = crit.list();
         
         return list;
