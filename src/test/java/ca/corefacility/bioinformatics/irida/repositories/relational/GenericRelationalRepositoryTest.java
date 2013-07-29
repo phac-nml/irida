@@ -287,8 +287,8 @@ public class GenericRelationalRepositoryTest {
     @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
     @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/ident.xml")    
     public void testListPaged(){
-        List<IdentifiableTestEntity> list1 = repo.list(0, 2, "nonNull", Order.ASCENDING);
-        List<IdentifiableTestEntity> list2 = repo.list(1, 1, "nonNull", Order.ASCENDING);
+        List<IdentifiableTestEntity> list1 = repo.list(1, 2, "nonNull", Order.ASCENDING);
+        List<IdentifiableTestEntity> list2 = repo.list(2, 1, "nonNull", Order.ASCENDING);
         assertFalse(list1.isEmpty());
         assertFalse(list2.isEmpty());
         

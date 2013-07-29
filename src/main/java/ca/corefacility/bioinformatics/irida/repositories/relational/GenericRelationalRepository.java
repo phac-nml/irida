@@ -206,8 +206,8 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
         if(size > 0){
             crit.setMaxResults(size);
         }
-        if(page > 0){
-            int offset = page * size;
+        if(page > 1){
+            int offset = (page-1) * size;
             crit.setFirstResult(offset);
         }
         
