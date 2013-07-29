@@ -80,8 +80,10 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Long, Se
         Path sequenceFileDir = getSequenceFileDir(object.getId());
         Path target = sequenceFileDir.resolve(object.getFile().getFileName());
         try {
-            Files.createDirectory(sequenceFileDir);
-            logger.debug("Created directory: [" + sequenceFileDir.toString() + "]");
+        	if (!Files.exists(sequenceFileDir)) {
+        		Files.createDirectory(sequenceFileDir);
+                logger.debug("Created directory: [" + sequenceFileDir.toString() + "]");
+        	}
             Files.move(object.getFile(), target);
         } catch (IOException e) {
             e.printStackTrace();
