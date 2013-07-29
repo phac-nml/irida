@@ -97,6 +97,7 @@ public class UserRelationalRepository extends GenericRelationalRepository<User> 
 
         Criteria crit = session.createCriteria(ProjectUserJoin.class);
         crit.add(Restrictions.eq("project", project));
+        crit.createCriteria("user").add(Restrictions.eq("enabled", true));
         List<Join<Project,User>> list = crit.list();
         
         return list;  
@@ -108,7 +109,7 @@ public class UserRelationalRepository extends GenericRelationalRepository<User> 
     @Override
     public List<User> getUsersAvailableForProject(Project project){
         Session session = sessionFactory.getCurrentSession();
-        String qs = "SELECT * from user WHERE id NOT IN (select u.id from project_user p INNER JOIN user u ON p.user_id=u.id WHERE p.project_id=:pid)";
+        String qs = "SELECT * from user WHERE id NOT IN (select u.id from project_user p INNER JOIN user u ON p.user_id=u.id WHERE p.project_id=:pid) AND enabled=1";
         
         Query setLong = session.createSQLQuery(qs).addEntity(User.class).setLong("pid", project.getId());
         List<User> list = setLong.list();
