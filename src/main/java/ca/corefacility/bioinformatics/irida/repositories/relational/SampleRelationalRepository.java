@@ -51,6 +51,7 @@ public class SampleRelationalRepository extends GenericRelationalRepository<Samp
 
         Criteria crit = session.createCriteria(ProjectSampleJoin.class);
         crit.add(Restrictions.eq("project", project));
+        crit.createCriteria("sample").add(Restrictions.eq("enabled", true));
         List<ProjectSampleJoin> list = crit.list();
         
         return list;   
