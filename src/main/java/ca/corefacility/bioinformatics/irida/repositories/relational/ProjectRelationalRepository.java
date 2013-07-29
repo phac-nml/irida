@@ -27,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSequenceFile
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import java.util.Collection;
 import java.util.List;
+import javax.persistence.criteria.Root;
 import javax.sql.DataSource;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -58,6 +59,7 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
 
         Criteria crit = session.createCriteria(ProjectUserJoin.class);
         crit.add(Restrictions.eq("user", user));
+        crit.createCriteria("project").add(Restrictions.eq("enabled", true));
         List<ProjectUserJoin> list = crit.list();
         
         return list;
@@ -125,6 +127,7 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
 
         Criteria crit = session.createCriteria(ProjectSampleJoin.class);
         crit.add(Restrictions.eq("sample", sample));
+        crit.createCriteria("project").add(Restrictions.eq("enabled", true));
         List<ProjectSampleJoin> list = crit.list();
         
         return list;    
