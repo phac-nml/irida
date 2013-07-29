@@ -97,8 +97,7 @@ public class SampleSequenceFilesIntegrationTest {
     @Test
     public void testRemoveSequenceFileFromSample() throws IOException {
         // for now, add a sequence file to the sample so that we can remove it
-        String projectUri = "http://localhost:8080/api/projects/c4893f30-b054-46e5-8ebe-ed1b295dfa38";
-        String sampleUri = projectUri + "/samples/07ac0624-8f04-43ba-b45f-e6d65a8bd6ba";
+        String sampleUri = "http://localhost:8080/api/projects/5/samples/1";
         Response response = expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
         String sampleBody = response.getBody().asString();
         String sequenceFileUri = from(sampleBody).getString("resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
@@ -111,17 +110,12 @@ public class SampleSequenceFilesIntegrationTest {
                 .when().post(sequenceFileUri);
 
         String location = r.getHeader(HttpHeaders.LOCATION);
-        String identifier = location.substring(location.lastIndexOf('/') + 1);
 
         r = expect().statusCode(HttpStatus.OK.value()).when().delete(location);
         String responseBody = r.getBody().asString();
         String sampleLocation = from(responseBody).getString("resource.links.find{it.rel == 'sample'}.href");
-        String sequenceFileLocation = from(responseBody).getString("resource.links.find{it.rel == 'project/sequenceFile'}.href");
 
         assertNotNull(sampleLocation);
         assertEquals(sampleUri, sampleLocation);
-
-        assertNotNull(sequenceFileLocation);
-        assertEquals(projectUri + "/sequenceFiles/" + identifier, sequenceFileLocation);
     }
 }
