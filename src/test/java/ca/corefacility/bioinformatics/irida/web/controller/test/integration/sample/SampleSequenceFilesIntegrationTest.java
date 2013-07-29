@@ -59,11 +59,10 @@ public class SampleSequenceFilesIntegrationTest {
     @Test
     public void testAddExistingSequenceFileToSample() throws IOException {
         // for now, add a sequence file to another sample
-        String projectUri = "http://localhost:8080/api/projects/c4893f30-b054-46e5-8ebe-ed1b295dfa38";
-        String sampleUri = projectUri + "/samples/07ac0624-8f04-43ba-b45f-e6d65a8bd6ba";
-        Response response = expect().statusCode(HttpStatus.OK.value()).when().get(projectUri);
+        String sampleUri = "http://localhost:8080/api/projects/5/samples/1";
+        Response response = expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
         String projectBody = response.getBody().asString();
-        String sequenceFileUri = from(projectBody).getString("resource.links.find{it.rel == 'project/sequenceFiles'}.href");
+        String sequenceFileUri = from(projectBody).getString("resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
         // prepare a file for sending to the server
         Path sequenceFile = Files.createTempFile(null, null);
         Files.write(sequenceFile, ">test read\nACGTACTCATG".getBytes());
@@ -88,11 +87,11 @@ public class SampleSequenceFilesIntegrationTest {
         location = r.getHeader(HttpHeaders.LOCATION);
 
         assertNotNull(location);
-        assertTrue(location.matches("http://localhost:8080/api/projects/[a-f0-9\\-]+/samples/[a-f0-9\\-]+/sequenceFiles/[a-f0-9\\-]+"));
+        assertTrue(location.matches("http://localhost:8080/api/projects/[0-9]+/samples/[0-9]+/sequenceFiles/[0-9]+"));
 
         // confirm that the sequence file was removed from the project
         expect().body("relatedResources.sequenceFiles.identifier", not(hasItem(identifier)))
-                .when().get(projectUri).getBody().asString();
+                .when().get(sampleUri).getBody().asString();
     }
 
     @Test
