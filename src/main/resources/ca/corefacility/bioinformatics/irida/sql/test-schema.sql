@@ -3,7 +3,7 @@ drop table project if exists;
 
 CREATE TABLE audit (id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY, resource integer , createdBy varchar(45) , created timestamp NULL );
 CREATE TABLE project (id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY, audit integer , name varchar(100));
-CREATE TABLE identifiable (id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY, audit integer , nonNull varchar(100), integerValue integer, label varchar(100), valid TINYINT );
+CREATE TABLE identifiable (id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY, audit integer , nonNull varchar(100), integerValue integer, label varchar(100), enabled TINYINT );
 CREATE TABLE system_role (id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,  description varchar(255) NOT NULL,  name varchar(255) NOT NULL);
 
 ALTER TABLE project ADD CONSTRAINT fk_project_audit FOREIGN KEY (audit) REFERENCES audit(id) ON DELETE CASCADE ON UPDATE CASCADE;
