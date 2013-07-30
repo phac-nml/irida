@@ -14,6 +14,8 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
 	Long id;
 
 	private Date createdDate;
+        
+        private Date modifiedDate;
 
 	public IdentifiableTestEntity() {
 
@@ -60,4 +62,12 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
 		// TODO Auto-generated method stub
 
 	}
+        
+        public Date getModifiedDate() {
+            return modifiedDate;
+        }
+
+        public void setModifiedDate(Date modifiedDate) {
+            this.modifiedDate = modifiedDate;
+        }        
 }
