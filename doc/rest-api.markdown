@@ -5,7 +5,7 @@ This document describes the REST API for the IRIDA NGS Archive.
 
 We cover the following topics:
 
-  * Format of outputs produced by the REST API.
+  * Format of outputs produced and accepted by the REST API.
   * Authentication.
 
 Formats
@@ -15,26 +15,21 @@ The IRIDA NGS Archive REST API follows a standard output format, regardless of t
   1. As an individual resource,
   2. As part of a resource collection.
 
-Both XML and JSON are valid output formats for all resources. Some resources (notably resources representing files produced by a sequencer stored on the file-system) support output in FASTA format.
+Both XML and JSON are valid output formats for all resources. Some resources (notably resources representing files produced by a sequencer stored on the file-system) support output in FASTA or FASTQ format.
 
 ### Output Format Selection
 
-The REST API honours output selection in two ways: 
-
-  1. Using the `Accept` header (preferred), and
-  2. Appending a suffix to the URL (should only be used when working with a web browser).
-
-Consult the table below for the list of possible output formats, their `Accept` header, and their URL suffix.
+As a REST API, clients must specify their preferred output format using the `Accept` header. Consult the table below for the list of possible output formats and the corresponding `Accept` header.
   
 <table border="1">
     <thead>
-        <tr><th>Format</th><th><code>Accept</code> header</th><th>URL suffix</th></tr>
+        <tr><th>Format</th><th><code>Accept</code> header</th></tr>
     </thead>
     <tbody>
-        <tr><td>JSON</td><td>application/json</td><td>.json</td></tr>
-        <tr><td>XML</td><td>application/xml</td><td>.xml</td></tr>
-        <tr><td>FASTA</td><td>application/fasta</td><td>.fasta</td></tr>
-        <tr><td>FASTQ</td><td>application/fastq</td><td>.fastq</td></tr>
+        <tr><td>JSON</td><td>application/json</td></tr>
+        <tr><td>XML</td><td>application/xml</td></tr>
+        <tr><td>FASTA</td><td>application/fasta</td></tr>
+        <tr><td>FASTQ</td><td>application/fastq</td></tr>
     </tbody>
 </table>
 
@@ -78,7 +73,7 @@ Resources requested in JSON format will always have the following structure:
         }
     }
 
-The entire response consists of two objects: the `resource` object and the `relatedResources` object. The `resource` object contains links related to the current resource as well as the properties of the resource. The `relatedResources` section contains a collection of labelled, related resources. The purpose of the `relatedResources` section is to reduce the chatty nature of REST APIs by providing the client with *some* information about resources related to the current resource instead of obligating the client to make multiple requests. The `relatedResources` section is included mostly for the sake of web browser clients.
+The entire response consists of two objects: the `resource` object and the `relatedResources` object. The `resource` object contains links related to the current resource as well as the properties of the resource. The `relatedResources` section contains a collection of labelled, related resources.
 
 The `resource` section contains an array of link objects under the `links` key. Each link has a `rel` and an `href`. In addition to the `links` section, the `resource` section contains all properties associated with the resource.
 
@@ -201,3 +196,9 @@ Each resource in the collection has a link to itself (`self`) and a link to a li
 ### Project collection
 #### URI
 https://archive.irida.ca/projects
+
+#### Description
+`GET` this URI to get the first page of projects. The first page contains 20 projects by default and is sorted by project creation date. `POST` this URI to create a new project. The body of the `POST` request should include a JSON or XML representation of the required properties of a project object (as above).
+
+#### Links
+As a collection of resources, this resource contains links to other pages (i.e., `first`, `previous`, `next`, `last`, and `self`) and a link to **all** resources of this type (`collection/all`).
