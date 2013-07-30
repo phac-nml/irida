@@ -84,9 +84,6 @@
         <org.springframework.security.version>3.1.4.RELEASE</org.springframework.security.version>
         <org.springframework.plugin.version>0.8.0.RELEASE</org.springframework.plugin.version>
 
-        <!-- Thymeleaf -->
-        <thymeleaf.version>2.0.16</thymeleaf.version>
-
         <!-- Test -->
         <junit.version>4.11</junit.version>
 
@@ -163,19 +160,7 @@
             <version>${org.springframework.plugin.version}</version>
         </dependency>
 
-        <!-- THYMELEAF -->
-        <dependency>
-            <groupId>org.thymeleaf</groupId>
-            <artifactId>thymeleaf</artifactId>
-            <version>${thymeleaf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.thymeleaf</groupId>
-            <artifactId>thymeleaf-spring3</artifactId>
-            <version>${thymeleaf.version}</version>
-        </dependency>
-
-        <!-- Test -->
+       <!-- Test -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -353,23 +338,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-
-            <!-- maven karma plugin (javascript unit testing) -->
-            <plugin>
-                <groupId>com.kelveden</groupId>
-                <artifactId>maven-karma-plugin</artifactId>
-                <version>${plugin.maven.karma.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>start</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <browsers>PhantomJS</browsers>
-                </configuration>
             </plugin>
 
             <!-- maven jacoco plugin (code coverage for testing) -->

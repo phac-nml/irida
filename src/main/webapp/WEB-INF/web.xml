@@ -16,7 +16,7 @@
 
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
-        <url-pattern>/api/*</url-pattern>
+        <url-pattern>/*</url-pattern>
         <!--
             the security filter chain should be applied both when a raw request is made (i.e., directly to the server
             AND when a request is forwarded to a protected URL by some other component. This happens in
@@ -63,24 +63,6 @@
 
     <servlet-mapping>
         <servlet-name>irida-rest</servlet-name>
-        <url-pattern>/api/*</url-pattern>
-    </servlet-mapping>
-
-    <!--
-    - Servlet that dispatches request to registered handlers (Controller implementations).
-    -->
-    <servlet>
-        <servlet-name>irida-thymeleaf</servlet-name>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <init-param>
-            <param-name>contextConfigLocation</param-name>
-            <param-value>classpath:spring/thymeleaf/applicationContext-thymeleaf.xml</param-value>
-        </init-param>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>irida-thymeleaf</servlet-name>
-        <url-pattern>/</url-pattern>
+        <url-pattern>/*</url-pattern>
     </servlet-mapping>
 </web-app>
