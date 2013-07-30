@@ -100,7 +100,8 @@ public interface CRUDService<IdentifierType, Type extends Comparable<Type> > {
      * @throws IllegalArgumentException If the <code>Type</code> has no public
      *                                  property <code>sortProperty</code>.
      */
-    public List<Type> list(int page, int size, String sortProperty, Order order);
+    public List<Type> list(int page, int size, String sortProperty, Order order) 
+            throws IllegalArgumentException;
 
     /**
      * List objects of

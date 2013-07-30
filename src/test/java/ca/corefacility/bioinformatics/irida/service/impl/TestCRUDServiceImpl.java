@@ -255,10 +255,10 @@ public class TestCRUDServiceImpl {
             created.add(entity);
         }
 
-        when(crudRepository.list(2, 15, "timestamp", Order.ASCENDING)).thenReturn(created);
+        when(crudRepository.list(2, 15, "createdDate", Order.ASCENDING)).thenReturn(created);
 
         // page 2 with 15 items should return a list of size 15
-        List<IdentifiableTestEntity> list = crudService.list(2, 15, "timestamp", Order.ASCENDING);
+        List<IdentifiableTestEntity> list = crudService.list(2, 15, "createdDate", Order.ASCENDING);
 
         assertEquals(15, list.size());
 
@@ -332,10 +332,10 @@ public class TestCRUDServiceImpl {
             created.add(entity);
         }
 
-        when(crudRepository.list(2, 15, "timestamp", Order.DESCENDING)).thenReturn(created);
+        when(crudRepository.list(2, 15, "createdDate", Order.DESCENDING)).thenReturn(created);
 
         // page 2 with 15 items should return a list of size 15
-        List<IdentifiableTestEntity> list = crudService.list(2, 15, "timestamp", Order.DESCENDING);
+        List<IdentifiableTestEntity> list = crudService.list(2, 15, "createdDate", Order.DESCENDING);
 
         assertEquals(LIST_SIZE, list.size());
 
