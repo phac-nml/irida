@@ -23,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.sql.DataSource;
@@ -150,6 +151,8 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
                 throw new InvalidPropertyException("Couldn't update property "+key+": "+ex.getMessage());
             }
         }
+        
+        base.setModifiedDate(new Date());
         
         session.update(base);
         

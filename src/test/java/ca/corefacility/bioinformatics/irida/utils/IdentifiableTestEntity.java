@@ -48,6 +48,8 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
     private Boolean enabled;
     
     private Date createdDate;
+    
+    private Date modifiedDate;
 
     public IdentifiableTestEntity() {
     }
@@ -134,6 +136,13 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
 
         return false;
     }
-    
+
+    public Date getModifiedDate() {
+        return modifiedDate;
+    }
+
+    public void setModifiedDate(Date modifiedDate) {
+        this.modifiedDate = modifiedDate;
+    }
     
 }

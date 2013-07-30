@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.model;
 
+import java.util.Date;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -29,5 +30,9 @@ public interface IridaThing extends Timestamped{
     
     public boolean isEnabled();
     public void setEnabled(boolean valid);
+    
+    public Date getModifiedDate();
+    
+    public void setModifiedDate(Date modifiedDate);
     
 }

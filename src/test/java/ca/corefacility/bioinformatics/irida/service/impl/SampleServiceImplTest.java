@@ -90,9 +90,6 @@ public class SampleServiceImplTest {
     }
     
 
-    /*
-     * TODO: Reimplement this test
-     * */
     @Test
     public void testRemoveSequenceFileFromSample() {
         Sample s = new Sample();

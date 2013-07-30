@@ -177,9 +177,6 @@ public class SequenceFileServiceImplTest {
         Files.delete(file);
     }
 
-    /*
-     * TODO: Reimplement this test
-     */
     @Test
     public void testGetSequenceFileFromProject() throws IOException {
         try{
@@ -191,9 +188,6 @@ public class SequenceFileServiceImplTest {
         }
     }
 
-    /*
-     * TODO: Reimplement this test
-     */
     @Test
     public void testGetSequenceFileFromSample() throws IOException {
         try{

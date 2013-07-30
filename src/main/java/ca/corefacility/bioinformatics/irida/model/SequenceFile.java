@@ -59,6 +59,9 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
     
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date modifiedDate;    
+    
     @Column(name="filePath")
     private String stringPath;
     
@@ -72,6 +75,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
     public SequenceFile() {
         createdDate = new Date();
+        modifiedDate = createdDate;
     }
     
     public SequenceFile(Path sampleFile) {
@@ -82,7 +86,9 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
     public boolean equals(Object other) {
         if (other instanceof SequenceFile) {
             SequenceFile sampleFile = (SequenceFile) other;
-            return Objects.equals(file, sampleFile.file) && Objects.equals(createdDate, sampleFile.createdDate);
+            return Objects.equals(file, sampleFile.file) 
+                    && Objects.equals(createdDate, sampleFile.createdDate)
+                    && Objects.equals(modifiedDate, sampleFile.modifiedDate);
         }
 
         return false;
@@ -90,13 +96,13 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(file,createdDate);
+        return Objects.hash(file,createdDate,modifiedDate);
     }
 
 
     @Override
     public int compareTo(SequenceFile other) {
-        return createdDate.compareTo(other.createdDate);
+        return modifiedDate.compareTo(other.modifiedDate);
     }
 
     public Path getFile() {
@@ -140,4 +146,14 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
     public void setTimestamp(Date date) {
         this.createdDate = date;
     }
+    
+    @Override
+    public Date getModifiedDate() {
+        return modifiedDate;
+    }
+
+    @Override
+    public void setModifiedDate(Date modifiedDate) {
+        this.modifiedDate = modifiedDate;
+    }        
 }

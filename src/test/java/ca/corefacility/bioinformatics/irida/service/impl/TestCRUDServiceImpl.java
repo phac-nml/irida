@@ -268,9 +268,6 @@ public class TestCRUDServiceImpl {
         }
     }
     
-    /*
-     * TODO Reimplement this test
-     * */
     @Test
     public void testGetMissingEntity() {
         Long id = new Long(1);

@@ -40,13 +40,13 @@ import org.hibernate.envers.Audited;
 public class ProjectSequenceFileJoin implements Join<Project, SequenceFile> {
 
 	public ProjectSequenceFileJoin() {
-		created = new Date();
+		createdDate = new Date();
 	}
 
 	public ProjectSequenceFileJoin(Project subject, SequenceFile object) {
 		this.sequenceFile = object;
 		this.project = subject;
-		created = new Date();
+		createdDate = new Date();
 	}
 
 	@Id
@@ -62,7 +62,7 @@ public class ProjectSequenceFileJoin implements Join<Project, SequenceFile> {
 	private Project project;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
+	private Date createdDate;
 
 	@Override
 	public Project getSubject() {
@@ -86,11 +86,11 @@ public class ProjectSequenceFileJoin implements Join<Project, SequenceFile> {
 
 	@Override
 	public Date getTimestamp() {
-		return created;
+		return createdDate;
 	}
 
 	@Override
 	public void setTimestamp(Date timestamp) {
-		this.created = timestamp;
+		this.createdDate = timestamp;
 	}
 }

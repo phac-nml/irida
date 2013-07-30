@@ -40,13 +40,13 @@ import org.hibernate.envers.Audited;
 public class ProjectSampleJoin implements Join<Project,Sample>{
 
     public ProjectSampleJoin(){
-        created = new Date();
+        createdDate = new Date();
     }
     
     public ProjectSampleJoin(Project subject, Sample object){
         this.project=subject;
         this.sample=object;
-        created = new Date();
+        createdDate = new Date();
     }
     
     @Id
@@ -62,7 +62,7 @@ public class ProjectSampleJoin implements Join<Project,Sample>{
     private Sample sample;
     
     @Temporal(TemporalType.TIMESTAMP)
-    private Date created;
+    private Date createdDate;
     
     @Override
     public Project getSubject() {
@@ -86,11 +86,11 @@ public class ProjectSampleJoin implements Join<Project,Sample>{
 
     @Override
     public Date getTimestamp() {
-        return created;
+        return createdDate;
     }
 
     @Override
     public void setTimestamp(Date timestamp) {
-        this.created=timestamp;
+        this.createdDate=timestamp;
     }    
 }

@@ -200,7 +200,7 @@ public class UserTest {
 
     @Test
     public void testCompareTo() throws ParseException {
-        // should be able to sort users in ascending order of their creation date
+        // should be able to sort users in ascending order of their modified date
         List<User> users = new ArrayList<>();
 
         User u1 = new User();
@@ -209,9 +209,9 @@ public class UserTest {
 
         DateFormat sf = new SimpleDateFormat("YYYY-MM-dd");
 
-        u2.setTimestamp(sf.parse("2011-01-01"));
-        u1.setTimestamp(sf.parse("2012-01-01"));
-        u3.setTimestamp(sf.parse("2013-01-01"));
+        u2.setModifiedDate(sf.parse("2011-01-01"));
+        u1.setModifiedDate(sf.parse("2012-01-01"));
+        u3.setModifiedDate(sf.parse("2013-01-01"));
 
         // users are in the wrong order
         users.add(u3);
@@ -222,7 +222,7 @@ public class UserTest {
 
         User curr = users.get(0);
         for (int i = 1; i < users.size(); i++) {
-            assertTrue(curr.getTimestamp().compareTo(users.get(i).getTimestamp()) < 0);
+            assertTrue(curr.compareTo(users.get(i)) < 0);
         }
     }
 
