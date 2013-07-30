@@ -54,7 +54,7 @@ public class ProjectIntegrationTest {
                 .statusCode(HttpStatus.CREATED.value()).when().post(PROJECTS);
         String location = r.getHeader(HttpHeaders.LOCATION);
         assertNotNull(location);
-        assertTrue(location.startsWith("http://localhost:8080/api/projects/"));
+        assertTrue(location.startsWith("http://localhost:8080/projects/"));
     }
 
     @Test
@@ -92,15 +92,15 @@ public class ProjectIntegrationTest {
 
     @Test
     public void testDeleteProject() {
-        String projectUri = "http://localhost:8080/api/projects/1";
+        String projectUri = "http://localhost:8080/projects/1";
         expect().body("resource.links.rel", hasItems("collection")).and()
-                .body("resource.links.href", hasItems("http://localhost:8080/api/projects")).when().delete(projectUri);
+                .body("resource.links.href", hasItems("http://localhost:8080/projects")).when().delete(projectUri);
     }
 
     @Test
     public void verifyRelatedResources() {
         // project should have the following related resource names: samples, users, sequenceFiles
-        String projectUri = "http://localhost:8080/api/projects/2";
+        String projectUri = "http://localhost:8080/projects/2";
         expect().body("relatedResources.samples.links.rel", hasItem("project/samples")).and()
                 .body("relatedResources.users.links.rel", hasItem("project/users")).when().get(projectUri);
     }
@@ -111,7 +111,7 @@ public class ProjectIntegrationTest {
      */
     @Test
     public void verifyExistenceOfProjectWithHEAD() {
-        String projectUri = "http://localhost:8080/api/projects/3";
+        String projectUri = "http://localhost:8080/projects/3";
         expect().statusCode(HttpStatus.OK.value()).when().head(projectUri);
         given().header("Accept", MediaType.JSON_UTF_8.toString()).expect()
                 .statusCode(HttpStatus.OK.value()).when().head(projectUri);
