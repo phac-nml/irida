@@ -7,20 +7,22 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 import ca.corefacility.bioinformatics.irida.model.*;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,19 +37,35 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
     private static final Logger logger = LoggerFactory.getLogger(ProjectServiceImpl.class);
     private ProjectRepository projectRepository;
     private CRUDRepository<Long, Sample> sampleRepository;
+    private UserRepository userRepository;
 
     public ProjectServiceImpl(ProjectRepository projectRepository,
-                              CRUDRepository<Long, Sample> sampleRepository, Validator validator) {
+                              CRUDRepository<Long, Sample> sampleRepository,
+                              UserRepository userRepository, Validator validator) {
         super(projectRepository, validator, Project.class);
         this.projectRepository = projectRepository;
         this.sampleRepository = sampleRepository;
+        this.userRepository = userRepository;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public Project create(Project p) {
+    	Project project = super.create(p);
+    	UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    	User user = userRepository.getUserByUsername(userDetails.getUsername());
+    	addUserToProject(project, user, null);
+    	return project;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Join addUserToProject(Project project, User user, Role role) {
+    public Join<Project, User> addUserToProject(Project project, User user, Role role) {
         return projectRepository.addUserToProject(project, user);
     }
 
@@ -100,6 +118,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public List<Join<Project, User>> getProjectsForUser(User user) {
         return new ArrayList<Join<Project, User>>(projectRepository.getProjectsForUser(user));
     }
