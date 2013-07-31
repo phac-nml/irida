@@ -33,6 +33,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import org.junit.After;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -59,6 +60,11 @@ public class ProjectServiceImplTest {
 		projectService = new ProjectServiceImpl(projectRepository,
 				sampleRepository, userRepository, validator);
 	}
+        
+        @After
+        public void tearDown(){
+            SecurityContextHolder.getContext().setAuthentication(null);
+        }
 	
 	@Test
 	public void testCreateProject() {
