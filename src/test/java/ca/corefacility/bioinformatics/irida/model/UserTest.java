@@ -157,10 +157,11 @@ public class UserTest {
         u.setFirstName("Franklin");
         u.setLastName("Bristow");
         u.setPhoneNumber("7029");
+        u.setRole(new Role("ROLE_USER"));
 
         Set<ConstraintViolation<User>> constraintViolations = validator.validate(u);
 
-        assertTrue(constraintViolations.isEmpty());
+        assertTrue("user is not valid, but must be valid.", constraintViolations.isEmpty());
     }
 
 	@Test
@@ -172,6 +173,7 @@ public class UserTest {
 		u.setFirstName("Franklin");
 		u.setLastName("Bristow");
 		u.setPhoneNumber("7029");
+		u.setSystemRole(new Role("ROLE_USER"));
 
 		Set<ConstraintViolation<User>> constraintViolations = validator
 				.validate(u);

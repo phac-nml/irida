@@ -1,15 +1,18 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.UserService;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.*;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -110,6 +113,7 @@ public class UserServiceImplTest {
         String lastName = "Bristow";
         String phoneNumber = "7029";
         User user = new User(username, email, password, firstName, lastName, phoneNumber);
+        user.setSystemRole(new Role("ROLE_USER"));
 
         when(userRepository.getUserByUsername(username)).thenReturn(user);
 
