@@ -1,54 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:security="http://www.springframework.org/schema/security"
-       xsi:schemaLocation="
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="
         http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
         ">
 
-    <import resource="hibernateContext.xml"/>
+	<import resource="hibernateContext.xml" />
+	<import resource="applicationContext-security.xml" />
 
-    <!-- Enable method-level security -->
-    <security:global-method-security jsr250-annotations="enabled" secured-annotations="enabled"/>
+	<bean id="userService"
+		class="ca.corefacility.bioinformatics.irida.service.impl.UserServiceImpl">
+		<constructor-arg ref="userRepository" />
+		<constructor-arg ref="passwordEncoder" />
+		<constructor-arg ref="validator" />
+	</bean>
 
-    <!-- Passwords should be encoded using the BCrypt algorithm -->
-    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+	<bean id="projectService"
+		class="ca.corefacility.bioinformatics.irida.service.impl.ProjectServiceImpl">
+		<constructor-arg ref="projectRepository" />
+		<constructor-arg ref="sampleRepository" />
+		<constructor-arg ref="userRepository" />
+		<constructor-arg ref="validator" />
+	</bean>
 
-    <bean id="userService" class="ca.corefacility.bioinformatics.irida.service.impl.UserServiceImpl">
-        <constructor-arg ref="userRepository"/>
-        <constructor-arg ref="passwordEncoder"/>
-        <constructor-arg ref="validator"/>
-    </bean>
+	<bean id="sampleService"
+		class="ca.corefacility.bioinformatics.irida.service.impl.SampleServiceImpl">
+		<constructor-arg ref="sampleRepository" />
+		<constructor-arg ref="sequenceFileRepository" />
+		<constructor-arg ref="validator" />
+	</bean>
 
-    <bean id="projectService" class="ca.corefacility.bioinformatics.irida.service.impl.ProjectServiceImpl">
-        <constructor-arg ref="projectRepository"/>
-        <constructor-arg ref="sampleRepository"/>
-        <constructor-arg ref="userRepository" />
-        <constructor-arg ref="validator"/>
-    </bean>
+	<bean id="sequenceFileService"
+		class="ca.corefacility.bioinformatics.irida.service.impl.SequenceFileServiceImpl">
+		<constructor-arg ref="sequenceFileRepository" />
+		<constructor-arg ref="sequenceFileFilesystemRepository" />
+		<constructor-arg ref="validator" />
+	</bean>
 
-    <bean id="sampleService" class="ca.corefacility.bioinformatics.irida.service.impl.SampleServiceImpl">
-        <constructor-arg ref="sampleRepository"/>
-        <constructor-arg ref="sequenceFileRepository"/>
-        <constructor-arg ref="validator"/>
-    </bean>
+	<!-- validator beans -->
+	<bean id="validator"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="validationMessageSource" ref="validationBundleLocator" />
+	</bean>
+	<bean
+		class="org.springframework.validation.beanvalidation.MethodValidationPostProcessor" />
 
-    <bean id="sequenceFileService" class="ca.corefacility.bioinformatics.irida.service.impl.SequenceFileServiceImpl">
-        <constructor-arg ref="sequenceFileRepository"/>
-        <constructor-arg ref="sequenceFileFilesystemRepository"/>
-        <constructor-arg ref="validator"/>
-    </bean>
-
-    <!-- validator beans -->
-    <bean id="validator"
-          class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
-        <property name="validationMessageSource" ref="validationBundleLocator"/>
-    </bean>
-    <bean class="org.springframework.validation.beanvalidation.MethodValidationPostProcessor"/>
-
-    <bean id="validationBundleLocator" class="org.springframework.context.support.ResourceBundleMessageSource">
-        <property name="basename" value="ca.corefacility.bioinformatics.irida.validation.ValidationMessages"/>
-    </bean>
+	<bean id="validationBundleLocator"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename"
+			value="ca.corefacility.bioinformatics.irida.validation.ValidationMessages" />
+	</bean>
 
 </beans>
