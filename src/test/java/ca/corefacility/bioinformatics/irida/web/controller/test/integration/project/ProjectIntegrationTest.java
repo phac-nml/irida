@@ -1,9 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.integration.project;
 
 import static com.jayway.restassured.RestAssured.expect;
-import static com.jayway.restassured.RestAssured.get;
 import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
@@ -17,8 +15,6 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
-
-import ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener;
 
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;

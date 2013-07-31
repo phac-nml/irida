@@ -17,7 +17,6 @@ public class IdentifiableTestResource extends Resource<IdentifiableTestEntity> {
 
 	@Override
 	public String getIdentifier() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

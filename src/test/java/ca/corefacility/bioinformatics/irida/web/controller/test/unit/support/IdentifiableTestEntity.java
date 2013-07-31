@@ -4,8 +4,6 @@ import java.util.Date;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
@@ -14,8 +12,8 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
 	Long id;
 
 	private Date createdDate;
-        
-        private Date modifiedDate;
+
+	private Date modifiedDate;
 
 	public IdentifiableTestEntity() {
 
@@ -46,28 +44,24 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
 
 	@Override
 	public String getLabel() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-
 	@Override
 	public boolean isEnabled() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public void setEnabled(boolean valid) {
-		// TODO Auto-generated method stub
 
 	}
-        
-        public Date getModifiedDate() {
-            return modifiedDate;
-        }
 
-        public void setModifiedDate(Date modifiedDate) {
-            this.modifiedDate = modifiedDate;
-        }        
+	public Date getModifiedDate() {
+		return modifiedDate;
+	}
+
+	public void setModifiedDate(Date modifiedDate) {
+		this.modifiedDate = modifiedDate;
+	}
 }

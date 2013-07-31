@@ -6,7 +6,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -235,7 +234,7 @@ public class SampleSequenceFilesController {
                                                  @PathVariable Long sequenceFileId) {
         ModelMap modelMap = new ModelMap();
         // load the project, sample and sequence file from the database
-        Project p = projectService.read(projectId);
+        projectService.read(projectId);
         Sample s = sampleService.read(sampleId);
         SequenceFile sf = sequenceFileService.read(sequenceFileId);
 
@@ -268,8 +267,8 @@ public class SampleSequenceFilesController {
     public ModelMap getSequenceFileForSample(@PathVariable Long projectId, @PathVariable Long sampleId,
                                              @PathVariable Long sequenceFileId) {
         ModelMap modelMap = new ModelMap();
-        Project p = projectService.read(projectId);
-        Sample s = sampleService.read(sampleId);
+        projectService.read(projectId);
+        sampleService.read(sampleId);
 
         // if the relationships exist, load the sequence file from the database and prepare for serialization.
         SequenceFile sf = sequenceFileService.read(sequenceFileId);
