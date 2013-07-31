@@ -7,7 +7,7 @@
         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
         ">
 
-    <import resource="jdbcRepositoriesContext.xml"/>
+    <import resource="hibernateContext.xml"/>
 
     <!-- Enable method-level security -->
     <security:global-method-security jsr250-annotations="enabled" secured-annotations="enabled"/>
