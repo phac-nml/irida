@@ -36,18 +36,6 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
      */
     private static final String PASSWORD_PROPERTY = "password";
     /**
-     * The property name to use for username on the {@link User} class.
-     */
-    private static final String USERNAME_PROPERTY = "username";
-    /**
-     * The property name to use for first name on the {@link User} class.
-     */
-    private static final String FIRST_NAME_PROPERTY = "firstName";
-    /**
-     * The property name to use for last name on the {@link User} class.
-     */
-    private static final String LAST_NAME_PROPERTY = "lastName";
-    /**
      * logger
      */
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);

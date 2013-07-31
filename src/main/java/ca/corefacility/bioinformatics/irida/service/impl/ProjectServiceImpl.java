@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import ca.corefacility.bioinformatics.irida.model.*;
@@ -109,7 +105,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
     /**
      * {@inheritDoc}
      */
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public void removeSequenceFileFromProject(Project project, SequenceFile sf) {
         projectRepository.removeFileFromProject(project, sf);
     }

@@ -1,19 +1,25 @@
-/*
- * Copyright 2013 Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package ca.corefacility.bioinformatics.irida.service.impl;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
+
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
@@ -25,177 +31,177 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 import com.google.common.collect.ImmutableMap;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Map;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
 /**
  * Tests for {@link SequenceFileServiceImpl}.
- *
+ * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class SequenceFileServiceImplTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(SequenceFileServiceImplTest.class);
-    private SequenceFileService sequenceFileService;
-    private SequenceFileRepository crudRepository;
-    private CRUDRepository<Long, SequenceFile> fileRepository;
-    private Validator validator;
+	private SequenceFileService sequenceFileService;
+	private SequenceFileRepository crudRepository;
+	private CRUDRepository<Long, SequenceFile> fileRepository;
+	private Validator validator;
 
-    @Before
-    @SuppressWarnings("unchecked")
-    public void setUp() {
+	@Before
+	@SuppressWarnings("unchecked")
+	public void setUp() {
 
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-        crudRepository = mock(SequenceFileRepository.class);
-        fileRepository = mock(CRUDRepository.class);
-        sequenceFileService = new SequenceFileServiceImpl(crudRepository, fileRepository, validator);
-    }
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		validator = factory.getValidator();
+		crudRepository = mock(SequenceFileRepository.class);
+		fileRepository = mock(CRUDRepository.class);
+		sequenceFileService = new SequenceFileServiceImpl(crudRepository,
+				fileRepository, validator);
+	}
 
-    @Test
-    public void testCreateFile() throws IOException, NoSuchFieldException {
-        Path f = Files.createTempFile(null, null);
+	@Test
+	public void testCreateFile() throws IOException, NoSuchFieldException {
+		Path f = Files.createTempFile(null, null);
 
-        SequenceFile sf = new SequenceFile(f);
-        SequenceFile withIdentifier = new SequenceFile(f);
-        withIdentifier.setId(new Long(1111));
-        when(crudRepository.create(sf)).thenReturn(withIdentifier);
-        when(fileRepository.create(withIdentifier)).thenReturn(withIdentifier);
-        when(crudRepository.update(withIdentifier.getId(),
-                ImmutableMap.of("file", (Object) withIdentifier.getFile()))).thenReturn(withIdentifier);
+		SequenceFile sf = new SequenceFile(f);
+		SequenceFile withIdentifier = new SequenceFile(f);
+		withIdentifier.setId(new Long(1111));
+		when(crudRepository.create(sf)).thenReturn(withIdentifier);
+		when(fileRepository.create(withIdentifier)).thenReturn(withIdentifier);
+		when(
+				crudRepository.update(
+						withIdentifier.getId(),
+						ImmutableMap.of("file",
+								(Object) withIdentifier.getFile())))
+				.thenReturn(withIdentifier);
 
-        when(crudRepository.exists(withIdentifier.getId())).thenReturn(Boolean.TRUE);
+		when(crudRepository.exists(withIdentifier.getId())).thenReturn(
+				Boolean.TRUE);
 
-        SequenceFile created = sequenceFileService.create(sf);
+		SequenceFile created = sequenceFileService.create(sf);
 
-        assertEquals(created, withIdentifier);
+		assertEquals(created, withIdentifier);
 
-        verify(crudRepository).create(sf);
-        verify(fileRepository).create(withIdentifier);
-        verify(crudRepository).update(withIdentifier.getId(),
-                ImmutableMap.of("file", (Object) withIdentifier.getFile()));
-        verify(crudRepository).exists(withIdentifier.getId());
-        Files.delete(f);
-    }
+		verify(crudRepository).create(sf);
+		verify(fileRepository).create(withIdentifier);
+		verify(crudRepository).update(withIdentifier.getId(),
+				ImmutableMap.of("file", (Object) withIdentifier.getFile()));
+		verify(crudRepository).exists(withIdentifier.getId());
+		Files.delete(f);
+	}
 
-    @Test
-    public void testUpdateWithoutFile() throws IOException, NoSuchFieldException {
-        Long updatedId = new Long(1111);
-        Long originalId = new Long(2222);
-        Path f = Files.createTempFile(null, null);
-        SequenceFile sf = new SequenceFile(f);
-        sf.setId(originalId);
-        SequenceFile updatedSf = new SequenceFile(f);
-        updatedSf.setId(updatedId);
+	@Test
+	public void testUpdateWithoutFile() throws IOException,
+			NoSuchFieldException {
+		Long updatedId = new Long(1111);
+		Long originalId = new Long(2222);
+		Path f = Files.createTempFile(null, null);
+		SequenceFile sf = new SequenceFile(f);
+		sf.setId(originalId);
+		SequenceFile updatedSf = new SequenceFile(f);
+		updatedSf.setId(updatedId);
 
-        ImmutableMap<String, Object> updatedMap = ImmutableMap.of("id", (Object) updatedId);
+		ImmutableMap<String, Object> updatedMap = ImmutableMap.of("id",
+				(Object) updatedId);
 
-        when(crudRepository.exists(originalId)).thenReturn(Boolean.TRUE);
-        when(crudRepository.update(sf.getId(), updatedMap)).thenReturn(updatedSf);
+		when(crudRepository.exists(originalId)).thenReturn(Boolean.TRUE);
+		when(crudRepository.update(sf.getId(), updatedMap)).thenReturn(
+				updatedSf);
 
-        sf = sequenceFileService.update(originalId, updatedMap);
+		sf = sequenceFileService.update(originalId, updatedMap);
 
-        assertEquals(updatedId, sf.getId());
+		assertEquals(updatedId, sf.getId());
 
-        verify(crudRepository).exists(originalId);
-        verify(crudRepository).update(originalId, updatedMap);
-        verify(fileRepository, times(0)).update(sf.getId(), updatedMap);
-        Files.delete(f);
-    }
+		verify(crudRepository).exists(originalId);
+		verify(crudRepository).update(originalId, updatedMap);
+		verify(fileRepository, times(0)).update(sf.getId(), updatedMap);
+		Files.delete(f);
+	}
 
-    @Test
-    public void testUpdateWithFile() throws IOException, NoSuchFieldException {
-        Long id = new Long(1111);
-        Path originalFile = Files.createTempFile(null, null);
-        Path updatedFile = Files.createTempFile(null, null);
-        SequenceFile sf = new SequenceFile(originalFile);
-        sf.setId(id);
-        SequenceFile updatedSf = new SequenceFile(updatedFile);
-        updatedSf.setId(id);
+	@Test
+	public void testUpdateWithFile() throws IOException, NoSuchFieldException {
+		Long id = new Long(1111);
+		Path originalFile = Files.createTempFile(null, null);
+		Path updatedFile = Files.createTempFile(null, null);
+		SequenceFile sf = new SequenceFile(originalFile);
+		sf.setId(id);
+		SequenceFile updatedSf = new SequenceFile(updatedFile);
+		updatedSf.setId(id);
 
-        ImmutableMap<String, Object> updatedMap = ImmutableMap.of("file", (Object) updatedFile);
+		ImmutableMap<String, Object> updatedMap = ImmutableMap.of("file",
+				(Object) updatedFile);
 
-        when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
-        when(crudRepository.update(sf.getId(), updatedMap)).thenReturn(updatedSf);
-        when(fileRepository.update(sf.getId(), updatedMap)).thenReturn(updatedSf);
+		when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
+		when(crudRepository.update(sf.getId(), updatedMap)).thenReturn(
+				updatedSf);
+		when(fileRepository.update(sf.getId(), updatedMap)).thenReturn(
+				updatedSf);
 
-        sf = sequenceFileService.update(id, updatedMap);
+		sf = sequenceFileService.update(id, updatedMap);
 
-        assertEquals(updatedFile, sf.getFile());
+		assertEquals(updatedFile, sf.getFile());
 
-        // each is called twice, once to update other possible fields, once
-        // again after an updated file has been dropped into the appropriate
-        // directory
-        verify(crudRepository, times(2)).exists(id);
-        verify(crudRepository, times(2)).update(sf.getId(), updatedMap);
-        verify(fileRepository).update(sf.getId(), updatedMap);
+		// each is called twice, once to update other possible fields, once
+		// again after an updated file has been dropped into the appropriate
+		// directory
+		verify(crudRepository, times(2)).exists(id);
+		verify(crudRepository, times(2)).update(sf.getId(), updatedMap);
+		verify(fileRepository).update(sf.getId(), updatedMap);
 
-        Files.delete(originalFile);
-        Files.delete(updatedFile);
-    }
+		Files.delete(originalFile);
+		Files.delete(updatedFile);
+	}
 
-    @Test
-    public void testAddSequenceFileToSample() throws IOException {
-        Path file = Files.createTempFile(null, null);
-        SequenceFile sf = new SequenceFile(file);
-        sf.setId(new Long(1111));
-        Sample owner = new Sample();
-        owner.setId(new Long(2222));
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testAddSequenceFileToSample() throws IOException {
+		Path file = Files.createTempFile(null, null);
+		SequenceFile sf = new SequenceFile(file);
+		sf.setId(new Long(1111));
+		Sample owner = new Sample();
+		owner.setId(new Long(2222));
 
-        when(crudRepository.create(sf)).thenReturn(sf);
-        when(crudRepository.update(any(Long.class), any(Map.class))).thenReturn(sf);
-        when(crudRepository.exists(sf.getId())).thenReturn(true);
-        when(fileRepository.create(sf)).thenReturn(sf);
-        when(crudRepository.addFileToSample(owner, sf)).thenReturn(new SampleSequenceFileJoin(owner, sf));
-        
-        Join<Sample, SequenceFile> created = sequenceFileService.createSequenceFileInSample(sf, owner);
+		when(crudRepository.create(sf)).thenReturn(sf);
+		when(crudRepository.update(any(Long.class), any(Map.class)))
+				.thenReturn(sf);
+		when(crudRepository.exists(sf.getId())).thenReturn(true);
+		when(fileRepository.create(sf)).thenReturn(sf);
+		when(crudRepository.addFileToSample(owner, sf)).thenReturn(
+				new SampleSequenceFileJoin(owner, sf));
 
-        verify(crudRepository).create(sf);
-        verify(crudRepository).update(any(Long.class), any(Map.class));
-        verify(crudRepository).exists(sf.getId());
-        verify(fileRepository).create(sf);
-        verify(crudRepository).addFileToSample(owner, sf);
+		Join<Sample, SequenceFile> created = sequenceFileService
+				.createSequenceFileInSample(sf, owner);
 
-        assertNotNull(created);
-        assertEquals(sf, created.getObject());
-        assertEquals(owner, created.getSubject());
+		verify(crudRepository).create(sf);
+		verify(crudRepository).update(any(Long.class), any(Map.class));
+		verify(crudRepository).exists(sf.getId());
+		verify(fileRepository).create(sf);
+		verify(crudRepository).addFileToSample(owner, sf);
 
-        Files.delete(file);
-    }
+		assertNotNull(created);
+		assertEquals(sf, created.getObject());
+		assertEquals(owner, created.getSubject());
 
-    @Test
-    public void testGetSequenceFileFromProject() throws IOException {
-        try{
-            sequenceFileService.getSequenceFileFromProject(null, Long.MIN_VALUE);
-            fail("This operation should not be supported");
-        }
-        catch(UnsupportedOperationException ex){
-            
-        }
-    }
+		Files.delete(file);
+	}
 
-    @Test
-    public void testGetSequenceFileFromSample() throws IOException {
-        try{
-            sequenceFileService.getSequenceFileFromSample(null, null, Long.MIN_VALUE);
-            fail("This operation should not be supported");
-        }
-        catch(UnsupportedOperationException ex){
-            
-        }
-    }
+	@SuppressWarnings("deprecation")
+	@Test
+	public void testGetSequenceFileFromProject() throws IOException {
+		try {
+			sequenceFileService
+					.getSequenceFileFromProject(null, Long.MIN_VALUE);
+			fail("This operation should not be supported");
+		} catch (UnsupportedOperationException ex) {
+
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	@Test
+	public void testGetSequenceFileFromSample() throws IOException {
+		try {
+			sequenceFileService.getSequenceFileFromSample(null, null,
+					Long.MIN_VALUE);
+			fail("This operation should not be supported");
+		} catch (UnsupportedOperationException ex) {
+
+		}
+	}
 }

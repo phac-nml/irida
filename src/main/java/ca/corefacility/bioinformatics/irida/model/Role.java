@@ -14,83 +14,85 @@ import org.hibernate.envers.Audited;
 
 /**
  * Roles for authorization in the application.
- *
+ * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Entity
-@Table(name="system_role")
+@Table(name = "system_role")
 @Audited
 public class Role implements Comparable<Role>, GrantedAuthority {
-    
-    @Id
-    @Column(name="id")
-    @GeneratedValue(strategy = GenerationType.AUTO)            
-    Long id;
-    
-    @NotNull
-    private String name;
-    @NotNull
-    private String description;
+	private static final long serialVersionUID = 7595149386708058927L;
 
-    public Role() {
-    }
+	@Id
+	@Column(name = "id")
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	Long id;
 
+	@NotNull
+	private String name;
+	@NotNull
+	private String description;
 
-    public Role(String name) {
-        this();
-        this.name = name;
-    }
+	public Role() {
+	}
 
-    @Override
-    public int compareTo(Role r) {
-        return name.compareTo(r.name);
-    }
+	public Role(String name) {
+		this();
+		this.name = name;
+	}
 
-    @Override
-    public boolean equals(Object other) {
-        if (other instanceof Role) {
-            Role r = (Role) other;
-            return Objects.equals(name, r.name)
-                    && Objects.equals(description, r.description);
-        }
+	@Override
+	public int compareTo(Role r) {
+		return name.compareTo(r.name);
+	}
 
-        return false;
-    }
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof Role) {
+			Role r = (Role) other;
+			return Objects.equals(name, r.name)
+					&& Objects.equals(description, r.description);
+		}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, description);
-    }
+		return false;
+	}
 
-    public String getName() {
-        return name;
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, description);
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    @Override
-    public String getAuthority() {
-        return name;
-    }
-    
-    /**
-     * Return a {@link Role} for the given string value
-     * @param value The string value to create a {@link Role} for
-     * @return A new {@link Role} instance for the given string value
-     */
-    public static Role valueOf(String value){
-        return new Role(value);
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	@Override
+	public String getAuthority() {
+		return name;
+	}
+
+	/**
+	 * Return a {@link Role} for the given string value
+	 * 
+	 * @param value
+	 *            The string value to create a {@link Role} for
+	 * @return A new {@link Role} instance for the given string value
+	 */
+	public static Role valueOf(String value) {
+		return new Role(value);
+	}
 
 }

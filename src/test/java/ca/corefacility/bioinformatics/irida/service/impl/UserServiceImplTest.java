@@ -1,18 +1,3 @@
-/*
- * Copyright 2013 Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -96,7 +81,6 @@ public class UserServiceImplTest {
     @Test
     public void testBadPasswordUpdate() {
         // a user should not be persisted with a bad password (like password1)
-        String username = "fbristow";
         String password = "password1";
         String passwordEncoded = "$2a$10$vMzhJFdyM72NnnWIoMSbUecHRxZDtCE1fdiPfjfjT1WD0fISDXOX2";
         Long luid = new Long(1111);

@@ -1,32 +1,12 @@
-/*
- * Copyright 2013 Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package ca.corefacility.bioinformatics.irida.repositories.relational;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.model.IridaThing;
-import ca.corefacility.bioinformatics.irida.model.enums.Order;
-import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
 import javax.sql.DataSource;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -40,6 +20,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.enums.Order;
+import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+
 /**
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
@@ -49,13 +36,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class GenericRelationalRepository<Type extends IridaThing> implements CRUDRepository<Long, Type> {
     protected JdbcTemplate jdbcTemplate;
     protected SessionFactory sessionFactory;
-    private Class classType;
+    private Class<Type> classType;
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(
             GenericRelationalRepository.class); //Logger to use for this repository    
     
     public GenericRelationalRepository(){}
     
-    public GenericRelationalRepository(DataSource source,Class classType){
+    public GenericRelationalRepository(DataSource source,Class<Type> classType){
         this.jdbcTemplate = new JdbcTemplate(source);
         this.classType = classType;
     }
@@ -104,7 +91,8 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
     public Type read(Long id) throws EntityNotFoundException {
         
         Session session = sessionFactory.getCurrentSession();
-        Type load = (Type) session.get(classType, id);
+        @SuppressWarnings("unchecked")
+		Type load = (Type) session.get(classType, id);
         
         if(load == null){
             throw new EntityNotFoundException("Entity " + id + " couldn't be found in the database.");
@@ -123,7 +111,8 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
         Session session = sessionFactory.getCurrentSession();
         Criteria crit = session.createCriteria(classType);
         crit.add(Restrictions.in("id", idents));
-        List<Type> list = crit.list();
+        @SuppressWarnings("unchecked")
+		List<Type> list = crit.list();
         
         return list;
     }
@@ -187,7 +176,8 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
     /**
      * {@inheritDoc }
      */
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public List<Type> list(int page, int size, String sortProperty, Order order) {
         Session session = sessionFactory.getCurrentSession();
         

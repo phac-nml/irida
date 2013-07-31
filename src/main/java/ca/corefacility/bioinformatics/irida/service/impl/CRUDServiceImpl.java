@@ -6,8 +6,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 
 import javax.validation.ConstraintViolation;
@@ -27,8 +25,6 @@ import org.springframework.beans.TypeMismatchException;
  */
 public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType> >
         implements CRUDService<KeyType, ValueType> {
-
-    private static final Logger logger = LoggerFactory.getLogger(CRUDServiceImpl.class);
     protected final CRUDRepository<KeyType, ValueType> repository;
     protected final Validator validator;
     protected final Class<ValueType> valueType;

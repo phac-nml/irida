@@ -1,12 +1,13 @@
 package ca.corefacility.bioinformatics.irida.service;
 
-import ca.corefacility.bioinformatics.irida.model.*;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-
-import java.util.Collection;
 import java.util.List;
+
+import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.Role;
+import ca.corefacility.bioinformatics.irida.model.Sample;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 
 /**
  * A specialized service layer for projects.

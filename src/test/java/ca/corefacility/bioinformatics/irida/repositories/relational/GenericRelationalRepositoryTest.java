@@ -1,18 +1,3 @@
-/*
- * Copyright 2013 Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package ca.corefacility.bioinformatics.irida.repositories.relational;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -94,7 +79,7 @@ public class GenericRelationalRepositoryTest {
     @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")        
     public void testCreateNullObject(){
         try{
-            IdentifiableTestEntity create = repo.create(null);
+            repo.create(null);
             fail();
         }
         catch(IllegalArgumentException ex){
@@ -142,7 +127,7 @@ public class GenericRelationalRepositoryTest {
     @Test
     public void testRead_inenabled() {
         try{
-            IdentifiableTestEntity read = repo.read(new Long(1111));
+            repo.read(new Long(1111));
             fail();
         }
         catch(EntityNotFoundException ex){

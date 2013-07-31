@@ -36,8 +36,10 @@ import ca.corefacility.bioinformatics.irida.validators.Patterns;
 @Table(name="user")
 @Audited
 public class User implements IridaThing, Comparable<User>, UserDetails {
-    
-    @Id
+
+	private static final long serialVersionUID = -7516211470008791995L;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     

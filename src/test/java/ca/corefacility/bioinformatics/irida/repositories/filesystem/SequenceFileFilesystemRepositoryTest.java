@@ -1,39 +1,26 @@
-/*
- * Copyright 2013 Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.enums.Order;
-import com.google.common.collect.ImmutableMap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.enums.Order;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Tests for {@link SequenceFileFilesystemRepository}.
@@ -42,7 +29,6 @@ import static org.junit.Assert.*;
  */
 public class SequenceFileFilesystemRepositoryTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(SequenceFileFilesystemRepositoryTest.class);
     private static final String MISSING_FILE_NAME = "This file definitely doesn't exist.";
     private static final String TEMP_FILE_PREFIX = UUID.randomUUID().toString().replaceAll("-", "");
     private SequenceFileFilesystemRepository repository;
@@ -172,6 +158,7 @@ public class SequenceFileFilesystemRepositoryTest {
                 assertEquals(updatedText, sc.nextLine());
             }
         }
+        sc.close();
         assertEquals(2, children);
     }
 
@@ -240,24 +227,6 @@ public class SequenceFileFilesystemRepositoryTest {
         } catch (UnsupportedOperationException e) {
         } catch (Exception e) {
             fail();
-        }
-    }
-
-    private static class DeleteDirVisitor extends SimpleFileVisitor<Path> {
-
-        @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            Files.delete(file);
-            return FileVisitResult.CONTINUE;
-        }
-
-        @Override
-        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-            if (exc == null) {
-                Files.delete(dir);
-                return FileVisitResult.CONTINUE;
-            }
-            throw exc;
         }
     }
 }
