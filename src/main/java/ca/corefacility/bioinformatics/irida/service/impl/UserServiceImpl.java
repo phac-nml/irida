@@ -1,24 +1,28 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
-import javax.annotation.PostConstruct;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
-import java.util.*;
 
 /**
  * Implementation of the {@link UserService}.
@@ -26,11 +30,6 @@ import java.util.*;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements UserService {
-
-    /**
-     * A set containing only a reference to a "USER" role.
-     */
-    private static final Set<GrantedAuthority> USER_ONLY_SET = new HashSet<>();
     /**
      * The property name to use for passwords on the {@link User} class.
      */
@@ -60,15 +59,11 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
         this.passwordEncoder = passwordEncoder;
     }
 
-    @PostConstruct
-    public void initializeRoles() {
-        USER_ONLY_SET.add(new SimpleGrantedAuthority("ROLE_USER"));
-    }
-
     /**
      * {@inheritDoc}
      */
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public User create(User u) {
         Set<ConstraintViolation<User>> violations = validatePassword(u.getPassword());
         if (violations.isEmpty()) {
@@ -126,7 +121,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
             u = userRepository.getUserByUsername(username);
 
             userDetails = new org.springframework.security.core.userdetails.User(u.getUsername(), u.getPassword(),
-                    USER_ONLY_SET);
+                    u.getAuthorities());
         } catch (EntityNotFoundException e) {
             throw new UsernameNotFoundException(e.getMessage());
         }
