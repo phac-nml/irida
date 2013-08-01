@@ -86,6 +86,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public User update(Long uid, Map<String, Object> properties) {
 		if (properties.containsKey(PASSWORD_PROPERTY)) {
 			String password = properties.get(PASSWORD_PROPERTY).toString();
