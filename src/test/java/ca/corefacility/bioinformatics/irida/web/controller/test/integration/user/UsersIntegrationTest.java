@@ -33,6 +33,19 @@ public class UsersIntegrationTest {
 
 	@Test
 	public void testCreateUserFail() {
+		// doesn't matter what the user is, we should fail here when trying to
+		// create a user because the current user doesn't have permission to
+		// create users.
+		given().body(createUser()).expect().response().statusCode(HttpStatus.SC_FORBIDDEN).when().post("/users");
+	}
+
+	@Test
+	public void testCreateUserSucceed() {
+		given().body(createUser()).and().auth().basic("admin", "password1").expect().response()
+				.statusCode(HttpStatus.SC_CREATED).when().post("/users");
+	}
+
+	private Map<String, String> createUser() {
 		Map<String, String> user = new HashMap<>();
 		user.put("username", "franklin");
 		user.put("password", "Password1");
@@ -40,9 +53,6 @@ public class UsersIntegrationTest {
 		user.put("firstName", "Franklin");
 		user.put("lastName", "Bristow");
 		user.put("phoneNumber", "7029");
-		// doesn't matter what the user is, we should fail here when trying to
-		// create a user because the current user doesn't have permission to
-		// create users.
-		given().body(user).expect().response().statusCode(HttpStatus.SC_FORBIDDEN).when().post("/users");
+		return user;
 	}
 }
