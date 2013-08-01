@@ -45,6 +45,11 @@ public class UsersIntegrationTest {
 				.statusCode(HttpStatus.SC_CREATED).when().post("/users");
 	}
 
+	@Test
+	public void testUpdateOtherAccountFail() {
+		given().body(createUser()).expect().response().statusCode(HttpStatus.SC_FORBIDDEN).when().patch("/users/2");
+	}
+
 	private Map<String, String> createUser() {
 		Map<String, String> user = new HashMap<>();
 		user.put("username", "franklin");
