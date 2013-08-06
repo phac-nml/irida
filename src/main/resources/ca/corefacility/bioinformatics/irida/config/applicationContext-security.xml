@@ -8,8 +8,7 @@
 
 	<!-- Enable method-level security -->
 	<sec:global-method-security
-		jsr250-annotations="enabled" pre-post-annotations="enabled"
-		secured-annotations="enabled">
+		pre-post-annotations="enabled">
 		<sec:expression-handler ref="expressionHandler" />
 	</sec:global-method-security>
 
@@ -28,6 +27,17 @@
 	<bean id="expressionHandler"
 		class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
 		<property name="permissionEvaluator" ref="permissionEvaluator" />
+		<property name="roleHierarchy">
+			<bean
+				class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl">
+				<property name="hierarchy">
+					<value>
+						ROLE_ADMIN > ROLE_USER
+						ROLE_USER > ROLE_CLIENT
+					</value>
+				</property>
+			</bean>
+		</property>
 	</bean>
 
 	<bean id="permissionEvaluator"
