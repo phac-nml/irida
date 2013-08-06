@@ -7,8 +7,10 @@
         ">
 
 	<!-- Enable method-level security -->
-	<sec:global-method-security pre-post-annotations="enabled"
-		jsr250-annotations="enabled" secured-annotations="enabled" />
+	<sec:global-method-security
+		pre-post-annotations="enabled">
+		<sec:expression-handler ref="expressionHandler" />
+	</sec:global-method-security>
 
 	<!-- Passwords should be encoded using the BCrypt algorithm -->
 	<bean id="passwordEncoder"
@@ -20,4 +22,34 @@
 			<sec:password-encoder ref="passwordEncoder" />
 		</sec:authentication-provider>
 	</sec:authentication-manager>
+
+	<!-- custom expression handler that uses our own permission evaluator -->
+	<bean id="expressionHandler"
+		class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
+		<property name="permissionEvaluator" ref="permissionEvaluator" />
+		<property name="roleHierarchy">
+			<bean
+				class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl">
+				<property name="hierarchy">
+					<value>
+						ROLE_ADMIN > ROLE_USER
+						ROLE_USER > ROLE_CLIENT
+					</value>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="permissionEvaluator"
+		class="ca.corefacility.bioinformatics.irida.security.permissions.evaluators.IridaPermissionEvaluator"
+		init-method="init">
+		<constructor-arg>
+			<list>
+				<bean
+					class="ca.corefacility.bioinformatics.irida.security.permissions.evaluators.UpdateUserPermission" />
+				<bean
+					class="ca.corefacility.bioinformatics.irida.security.permissions.evaluators.ReadProjectPermission" />
+			</list>
+		</constructor-arg>
+	</bean>
 </beans>

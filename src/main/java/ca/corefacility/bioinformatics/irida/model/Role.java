@@ -24,6 +24,19 @@ import org.hibernate.envers.Audited;
 public class Role implements Comparable<Role>, GrantedAuthority {
 	private static final long serialVersionUID = 7595149386708058927L;
 
+	/**
+	 * Constant reference for administrative role.
+	 */
+	public static final Role ROLE_ADMIN = new Role("ROLE_ADMIN");
+	/**
+	 * Constant reference for user role.
+	 */
+	public static final Role ROLE_USER = new Role("ROLE_USER");
+	/**
+	 * Constant reference for client role.
+	 */
+	public static final Role ROLE_CLIENT = new Role("ROLE_CLIENT");
+
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -51,8 +64,7 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 	public boolean equals(Object other) {
 		if (other instanceof Role) {
 			Role r = (Role) other;
-			return Objects.equals(name, r.name)
-					&& Objects.equals(description, r.description);
+			return Objects.equals(name, r.name) && Objects.equals(description, r.description);
 		}
 
 		return false;

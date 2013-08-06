@@ -86,6 +86,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#uid, 'canUpdateUser')")
 	public User update(Long uid, Map<String, Object> properties) {
 		if (properties.containsKey(PASSWORD_PROPERTY)) {
 			String password = properties.get(PASSWORD_PROPERTY).toString();
@@ -98,6 +99,12 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 		}
 
 		return super.update(uid, properties);
+	}
+
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void delete(Long id) {
+		super.delete(id);
 	}
 
 	/**

@@ -1,21 +1,28 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
+
+import org.hibernate.PropertyAccessException;
+import org.springframework.beans.DirectFieldAccessor;
+import org.springframework.beans.NotWritablePropertyException;
+import org.springframework.beans.TypeMismatchException;
+import org.springframework.transaction.annotation.Transactional;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
-import org.springframework.cache.annotation.Cacheable;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
-import java.util.*;
-import org.hibernate.PropertyAccessException;
-import org.springframework.beans.DirectFieldAccessor;
-import org.springframework.beans.NotWritablePropertyException;
-import org.springframework.beans.TypeMismatchException;
 
 /**
  * A universal CRUD service for all types. Specialized services should extend this class to get basic CRUD methods for
@@ -39,6 +46,7 @@ public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType> >
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public ValueType create(ValueType object) throws ConstraintViolationException, EntityExistsException {
 
         Set<ConstraintViolation<ValueType>> constraintViolations = validator.validate(object);
@@ -54,6 +62,7 @@ public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType> >
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public ValueType read(KeyType id) throws EntityNotFoundException {
         return repository.read(id);
     }
@@ -62,6 +71,7 @@ public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType> >
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void delete(KeyType id) throws EntityNotFoundException {
         if (!exists(id)) {
             throw new EntityNotFoundException("No such identifier exists in the database.");
@@ -74,6 +84,7 @@ public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType> >
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public List<ValueType> list() {
         return repository.list();
     }
@@ -82,6 +93,7 @@ public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType> >
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public Boolean exists(KeyType id) {
         return repository.exists(id);
     }
@@ -90,7 +102,7 @@ public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType> >
      * {@inheritDoc}
      */
     @Override
-    @Cacheable("cached")
+    @Transactional(readOnly = true)
     public List<ValueType> list(int page, int size, final String sortProperty, final Order order)
         throws IllegalArgumentException {
 
@@ -111,6 +123,7 @@ public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType> >
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public Integer count() {
         return repository.count();
     }
@@ -119,6 +132,7 @@ public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType> >
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public ValueType update(KeyType id, Map<String, Object> updatedFields)
             throws ConstraintViolationException, EntityExistsException, InvalidPropertyException {
         // check if you can actually update the properties requested
@@ -175,6 +189,7 @@ public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType> >
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public List<ValueType> list(int page, int size, Order order) {
         List<ValueType> values = repository.list(page, size, null, order);
 
@@ -191,6 +206,7 @@ public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType> >
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public Collection<ValueType> readMultiple(Collection<KeyType> idents) {
         return repository.readMultiple(idents);
     }
