@@ -24,7 +24,11 @@
 		<property name="password" value="${jdbc.password}" />
                 <property name="initialSize" value="${jdbc.pool.initialSize}" />
                 <property name="maxActive" value="${jdbc.pool.maxActive}" />
-                <property name="maxWait" value="${jdbc.pool.maxWait}" />                
+                <property name="maxWait" value="${jdbc.pool.maxWait}" />
+                <property name="testOnBorrow" value="true"/>
+                <property name="testOnReturn" value="true"/>
+                <property name="testWhileIdle" value="true"/>
+                <property name="validationQuery" value="select 1"/>
 	</bean>    
         
         <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
