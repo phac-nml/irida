@@ -25,6 +25,7 @@ public class UpdateUserPermission implements Permission, ApplicationContextAware
 	private static final Logger logger = LoggerFactory.getLogger(UpdateUserPermission.class);
 
 	private ApplicationContext applicationContext;
+	private UserService userService;
 
 	public void setApplicationContext(ApplicationContext context) {
 		this.applicationContext = context;
@@ -33,16 +34,17 @@ public class UpdateUserPermission implements Permission, ApplicationContextAware
 	@Override
 	public boolean isAllowed(Authentication authentication, Object targetDomainObject) {
 		logger.trace("Checking if [" + authentication + "] can modify [" + targetDomainObject + "]");
+		this.userService = applicationContext.getBean(UserService.class);
 
 		// really quick check: if the principle is of ROLE_CLIENT, they should
 		// be rejected immediately.
-		if (authentication.getAuthorities().contains(new Role("ROLE_CLIENT"))) {
+		if (authentication.getAuthorities().contains(Role.ROLE_CLIENT)) {
 			logger.trace("Tool attempting to modify itself: [" + authentication + "], attempt rejected.");
 			return false;
 		}
 
 		User u;
-		boolean isAdmin = authentication.getAuthorities().contains(new Role("ROLE_ADMIN"));
+		boolean isAdmin = authentication.getAuthorities().contains(Role.ROLE_ADMIN);
 		boolean isOwnAccount = false;
 		// business rules specify that the authenticated user must have a
 		// role of administrator, or the user is trying to modify their own
@@ -50,7 +52,6 @@ public class UpdateUserPermission implements Permission, ApplicationContextAware
 
 		if (!isAdmin) {
 			logger.trace("User is not admin, checking if user is trying to modify own account.");
-			UserService userService = (UserService) applicationContext.getBean("userService");
 
 			// we can be passed either a long (which is the user id) or a user
 			// object

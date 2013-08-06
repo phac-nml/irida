@@ -47,6 +47,8 @@
 			<list>
 				<bean
 					class="ca.corefacility.bioinformatics.irida.security.permissions.evaluators.UpdateUserPermission" />
+				<bean
+					class="ca.corefacility.bioinformatics.irida.security.permissions.evaluators.ReadProjectPermission" />
 			</list>
 		</constructor-arg>
 	</bean>
