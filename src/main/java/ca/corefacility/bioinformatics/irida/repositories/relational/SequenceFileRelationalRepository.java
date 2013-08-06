@@ -31,20 +31,15 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
         super(source,SequenceFile.class);
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Transactional
-    @Override
-    public SequenceFile create(SequenceFile object) throws IllegalArgumentException {
-        object.setStringPath(); //we need to make sure the string path is populated here.  a bit of a pain
-        
-        return super.create(object);
-    }
-
     @Override
     protected SequenceFile postLoad(SequenceFile object) {
         object.setRealPath();
+        return object;
+    }
+    
+    @Override
+    protected SequenceFile preSave(SequenceFile object){
+        object.setStringPath();
         return object;
     }
     
