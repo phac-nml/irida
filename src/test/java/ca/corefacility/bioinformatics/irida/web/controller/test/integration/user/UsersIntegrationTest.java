@@ -1,16 +1,18 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.integration.user;
 
+import static com.jayway.restassured.RestAssured.expect;
+import static com.jayway.restassured.RestAssured.get;
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.path.json.JsonPath.from;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.is;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.HttpStatus;
 import org.junit.Test;
-
-import static com.jayway.restassured.RestAssured.expect;
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.is;
 
 /**
  * Integration tests for users.
@@ -48,6 +50,14 @@ public class UsersIntegrationTest {
 	@Test
 	public void testUpdateOtherAccountFail() {
 		given().body(createUser()).expect().response().statusCode(HttpStatus.SC_FORBIDDEN).when().patch("/users/2");
+	}
+
+	@Test
+	public void testUpdateOwnAccountSucceed() {
+		// figure out what the uri is for the current user
+		String responseBody = get("/users/current").asString();
+		String location = from(responseBody).getString("resource.links.find{it.rel == 'self'}.href");
+		given().body(createUser()).expect().response().statusCode(HttpStatus.SC_OK).when().patch(location);
 	}
 
 	private Map<String, String> createUser() {
