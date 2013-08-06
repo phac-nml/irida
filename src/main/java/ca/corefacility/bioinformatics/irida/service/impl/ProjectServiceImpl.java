@@ -10,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -56,6 +57,24 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		User user = userRepository.getUserByUsername(userDetails.getUsername());
 		addUserToProject(project, user, null);
 		return project;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadProject')")
+	public Project read(Long id) {
+		return super.read(id);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PostFilter("hasPermission(filterObject, 'canReadProject')")
+	public List<Project> list() {
+		return super.list();
 	}
 
 	/**
