@@ -57,7 +57,11 @@ public class UsersIntegrationTest {
 		// figure out what the uri is for the current user
 		String responseBody = get("/users/current").asString();
 		String location = from(responseBody).getString("resource.links.find{it.rel == 'self'}.href");
-		given().body(createUser()).expect().response().statusCode(HttpStatus.SC_OK).when().patch(location);
+		Map<String, String> user = new HashMap<>();
+		String phoneNumber = "867-5309";
+		user.put("phoneNumber", phoneNumber);
+		given().body(user).expect().response().statusCode(HttpStatus.SC_OK).when().patch(location);
+		expect().body("resource.phoneNumber", is(phoneNumber)).when().get("/users/current");
 	}
 
 	private Map<String, String> createUser() {
