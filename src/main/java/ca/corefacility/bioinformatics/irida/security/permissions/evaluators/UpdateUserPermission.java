@@ -33,32 +33,43 @@ public class UpdateUserPermission implements Permission, ApplicationContextAware
 	@Override
 	public boolean isAllowed(Authentication authentication, Object targetDomainObject) {
 		logger.trace("Checking if [" + authentication + "] can modify [" + targetDomainObject + "]");
-		// we can be passed either a long (which is the user id) or a user
-		// object
-		User u;
 
-		UserService userService = (UserService) applicationContext.getBean("userService");
-
-		if (targetDomainObject instanceof Long) {
-			u = userService.read((Long) targetDomainObject);
-		} else if (targetDomainObject instanceof User) {
-			u = (User) targetDomainObject;
-		} else {
-			throw new IllegalArgumentException("Parameter to " + getClass().getName()
-					+ " must be of type Long or User.");
+		// really quick check: if the principle is of ROLE_CLIENT, they should
+		// be rejected immediately.
+		if (authentication.getAuthorities().contains(new Role("ROLE_CLIENT"))) {
+			logger.trace("Tool attempting to modify itself: [" + authentication + "], attempt rejected.");
+			return false;
 		}
 
-		// business rules specify that the authenticated user must have a role
-		// of administrator, or the user is trying to modify their own account.
+		User u;
 		boolean isAdmin = authentication.getAuthorities().contains(new Role("ROLE_ADMIN"));
 		boolean isOwnAccount = false;
+		// business rules specify that the authenticated user must have a
+		// role of administrator, or the user is trying to modify their own
+		// account.
+
 		if (!isAdmin) {
 			logger.trace("User is not admin, checking if user is trying to modify own account.");
+			UserService userService = (UserService) applicationContext.getBean("userService");
+
+			// we can be passed either a long (which is the user id) or a user
+			// object
+			if (targetDomainObject instanceof Long) {
+				u = userService.read((Long) targetDomainObject);
+			} else if (targetDomainObject instanceof User) {
+				u = (User) targetDomainObject;
+			} else {
+				throw new IllegalArgumentException("Parameter to " + getClass().getName()
+						+ " must be of type Long or User.");
+			}
+
 			User authenticated = userService.getUserByUsername(authentication.getName());
 			isOwnAccount = authenticated.equals(u);
 			logger.trace("User is trying to modify own account: [" + isOwnAccount + "].");
 		}
 
+		logger.trace("Allowing modification of user account based on authenticated principle? ["
+				+ (isAdmin || isOwnAccount) + "]");
 		return isAdmin || isOwnAccount;
 	}
 
