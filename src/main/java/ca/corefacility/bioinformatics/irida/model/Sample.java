@@ -47,7 +47,11 @@ public class Sample implements IridaThing, Comparable<Sample> {
         createdDate = new Date();
         modifiedDate = createdDate;
     }
-
+    
+    /**
+     * Create a new {@link Sample} with the given name
+     * @param name The name of the sample
+     */
     public Sample(String sampleName) {
         this.sampleName = sampleName;
     }

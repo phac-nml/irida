@@ -46,11 +46,16 @@ public class Project implements IridaThing, Comparable<Project> {
         modifiedDate = createdDate;
     }
 
+    /**
+     * Create a new {@link Project} with the given name
+     * @param name The name of the project
+     */
     public Project(String name) {
         this();
         this.name = name;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
