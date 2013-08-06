@@ -7,8 +7,11 @@
         ">
 
 	<!-- Enable method-level security -->
-	<sec:global-method-security pre-post-annotations="enabled"
-		jsr250-annotations="enabled" secured-annotations="enabled" />
+	<sec:global-method-security
+		jsr250-annotations="enabled" pre-post-annotations="enabled"
+		secured-annotations="enabled">
+		<sec:expression-handler ref="expressionHandler" />
+	</sec:global-method-security>
 
 	<!-- Passwords should be encoded using the BCrypt algorithm -->
 	<bean id="passwordEncoder"
@@ -20,4 +23,21 @@
 			<sec:password-encoder ref="passwordEncoder" />
 		</sec:authentication-provider>
 	</sec:authentication-manager>
+
+	<!-- custom expression handler that uses our own permission evaluator -->
+	<bean id="expressionHandler"
+		class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
+		<property name="permissionEvaluator" ref="permissionEvaluator" />
+	</bean>
+
+	<bean id="permissionEvaluator"
+		class="ca.corefacility.bioinformatics.irida.security.permissions.evaluators.IridaPermissionEvaluator"
+		init-method="init">
+		<constructor-arg>
+			<list>
+				<bean
+					class="ca.corefacility.bioinformatics.irida.security.permissions.evaluators.UpdateUserPermission" />
+			</list>
+		</constructor-arg>
+	</bean>
 </beans>

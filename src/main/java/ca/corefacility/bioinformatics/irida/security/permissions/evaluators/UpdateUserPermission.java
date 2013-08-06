@@ -1,0 +1,70 @@
+package ca.corefacility.bioinformatics.irida.security.permissions.evaluators;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.security.core.Authentication;
+
+import ca.corefacility.bioinformatics.irida.model.Role;
+import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.security.permissions.evaluators.IridaPermissionEvaluator.Permission;
+import ca.corefacility.bioinformatics.irida.service.UserService;
+
+/**
+ * Confirms that the authenticated user is allowed to modify another (or their
+ * own) user account.
+ * 
+ * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ * 
+ */
+public class UpdateUserPermission implements Permission, ApplicationContextAware {
+
+	private static final String PERMISSION_PROVIDED = "canUpdateUser";
+
+	private static final Logger logger = LoggerFactory.getLogger(UpdateUserPermission.class);
+
+	private ApplicationContext applicationContext;
+
+	public void setApplicationContext(ApplicationContext context) {
+		this.applicationContext = context;
+	}
+
+	@Override
+	public boolean isAllowed(Authentication authentication, Object targetDomainObject) {
+		logger.trace("Checking if [" + authentication + "] can modify [" + targetDomainObject + "]");
+		// we can be passed either a long (which is the user id) or a user
+		// object
+		User u;
+
+		UserService userService = (UserService) applicationContext.getBean("userService");
+
+		if (targetDomainObject instanceof Long) {
+			u = userService.read((Long) targetDomainObject);
+		} else if (targetDomainObject instanceof User) {
+			u = (User) targetDomainObject;
+		} else {
+			throw new IllegalArgumentException("Parameter to " + getClass().getName()
+					+ " must be of type Long or User.");
+		}
+
+		// business rules specify that the authenticated user must have a role
+		// of administrator, or the user is trying to modify their own account.
+		boolean isAdmin = authentication.getAuthorities().contains(new Role("ROLE_ADMIN"));
+		boolean isOwnAccount = false;
+		if (!isAdmin) {
+			logger.trace("User is not admin, checking if user is trying to modify own account.");
+			User authenticated = userService.getUserByUsername(authentication.getName());
+			isOwnAccount = authenticated.equals(u);
+			logger.trace("User is trying to modify own account: [" + isOwnAccount + "].");
+		}
+
+		return isAdmin || isOwnAccount;
+	}
+
+	@Override
+	public String getPermissionProvided() {
+		return PERMISSION_PROVIDED;
+	}
+
+}
