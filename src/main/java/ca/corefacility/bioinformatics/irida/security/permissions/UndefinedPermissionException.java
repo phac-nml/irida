@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.security.permissions.evaluators;
+package ca.corefacility.bioinformatics.irida.security.permissions;
 
 /**
  * Thrown when the {@link IridaPermissionEvaluator} is asked to test a

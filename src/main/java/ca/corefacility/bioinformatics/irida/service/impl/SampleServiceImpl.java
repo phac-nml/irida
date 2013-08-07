@@ -66,6 +66,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public SampleSequenceFileJoin addSequenceFileToSample(Sample sample, SequenceFile sampleFile) {
 		// confirm that both the sample and sequence file exist already, fail
 		// fast if either don't exist
@@ -89,6 +90,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Sample getSampleForProject(Project project, Long identifier) throws EntityNotFoundException {
 
 		Sample s = null;
@@ -115,6 +117,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public void removeSequenceFileFromSample(Sample sample, SequenceFile sequenceFile) {
 		sequenceFileRepository.removeFileFromSample(sample, sequenceFile);
 	}
@@ -123,7 +126,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Transactional(readOnly = true)
-	public List<Join<Project, Sample>> getSamplesForProject(Project p) {
-		return new ArrayList<Join<Project, Sample>>(sampleRepository.getSamplesForProject(p));
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	public List<Join<Project, Sample>> getSamplesForProject(Project project) {
+		return new ArrayList<Join<Project, Sample>>(sampleRepository.getSamplesForProject(project));
 	}
 }

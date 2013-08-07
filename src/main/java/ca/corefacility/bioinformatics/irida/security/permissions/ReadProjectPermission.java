@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.security.permissions.evaluators;
+package ca.corefacility.bioinformatics.irida.security.permissions;
 
 import java.util.Collection;
 
@@ -13,7 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.evaluators.IridaPermissionEvaluator.Permission;
+import ca.corefacility.bioinformatics.irida.security.permissions.IridaPermissionEvaluator.Permission;
 
 /**
  * Confirms that the authenticated user is allowed to read a project.

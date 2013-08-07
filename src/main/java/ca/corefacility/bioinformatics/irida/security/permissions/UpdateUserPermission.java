@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.security.permissions.evaluators;
+package ca.corefacility.bioinformatics.irida.security.permissions;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +9,7 @@ import org.springframework.security.core.Authentication;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.evaluators.IridaPermissionEvaluator.Permission;
+import ca.corefacility.bioinformatics.irida.security.permissions.IridaPermissionEvaluator.Permission;
 
 /**
  * Confirms that the authenticated user is allowed to modify another (or their

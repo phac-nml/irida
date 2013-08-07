@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.security.permissions.evaluators;
+package ca.corefacility.bioinformatics.irida.security.permissions;
 
 import java.io.Serializable;
 import java.util.Collection;

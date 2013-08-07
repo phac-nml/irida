@@ -41,14 +41,16 @@
 	</bean>
 
 	<bean id="permissionEvaluator"
-		class="ca.corefacility.bioinformatics.irida.security.permissions.evaluators.IridaPermissionEvaluator"
+		class="ca.corefacility.bioinformatics.irida.security.permissions.IridaPermissionEvaluator"
 		init-method="init">
 		<constructor-arg>
 			<list>
 				<bean
-					class="ca.corefacility.bioinformatics.irida.security.permissions.evaluators.UpdateUserPermission" />
+					class="ca.corefacility.bioinformatics.irida.security.permissions.UpdateUserPermission" />
 				<bean
-					class="ca.corefacility.bioinformatics.irida.security.permissions.evaluators.ReadProjectPermission" />
+					class="ca.corefacility.bioinformatics.irida.security.permissions.ReadProjectPermission" />
+				<bean
+					class="ca.corefacility.bioinformatics.irida.security.permissions.ReadSamplePermission" />
 			</list>
 		</constructor-arg>
 	</bean>
