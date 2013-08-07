@@ -33,7 +33,6 @@
 				<property name="hierarchy">
 					<value>
 						ROLE_ADMIN > ROLE_USER
-						ROLE_USER > ROLE_CLIENT
 					</value>
 				</property>
 			</bean>
