@@ -94,18 +94,6 @@ public class ReadProjectPermissionTest {
 
 	@Test
 	public void testPermitAdmin() {
-		String username = "fbristow";
-		User u = new User();
-		u.setUsername(username);
-		u.setRole(Role.ROLE_ADMIN);
-		Project p = new Project();
-		Collection<Join<Project, User>> projectUsers = new ArrayList<>();
-		projectUsers.add(new ProjectUserJoin(p, new User()));
-
-		when(userRepository.getUserByUsername(username)).thenReturn(u);
-		when(projectRepository.read(1l)).thenReturn(p);
-		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
-
 		Collection<GrantedAuthority> roles = new ArrayList<>();
 		roles.add(Role.ROLE_ADMIN);
 
