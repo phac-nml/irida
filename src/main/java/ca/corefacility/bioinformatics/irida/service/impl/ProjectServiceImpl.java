@@ -82,6 +82,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Join<Project, User> addUserToProject(Project project, User user, Role role) {
 		return projectRepository.addUserToProject(project, user);
 	}
@@ -91,6 +92,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public void removeUserFromProject(Project project, User user) {
 		projectRepository.removeUserFromProject(project, user);
 	}
@@ -100,6 +102,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public ProjectSampleJoin addSampleToProject(Project project, Sample sample) {
 		logger.trace("Adding sample to project.");
 		// the sample hasn't been persisted before, persist it before calling
@@ -123,6 +126,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public void removeSampleFromProject(Project project, Sample sample) {
 		projectRepository.removeSampleFromProject(project, sample);
 	}
@@ -141,6 +145,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("isAuthenticated()")
 	public List<Join<Project, User>> getProjectsForUser(User user) {
 		return new ArrayList<Join<Project, User>>(projectRepository.getProjectsForUser(user));
 	}
