@@ -33,8 +33,7 @@ public class ProjectSamplesIntegrationTest {
         sample.put("sampleName", "sample 1");
 
         // load a project
-        String projectsJson = get("/projects").asString();
-        String projectUri = from(projectsJson).get("resource.resources[0].links[0].href");
+        String projectUri = "/projects/1";
         // get the uri for creating samples associated with the project.
         String projectJson = get(projectUri).asString();
         String samplesUri = from(projectJson).get("resource.links.find{it.rel == 'project/samples'}.href");

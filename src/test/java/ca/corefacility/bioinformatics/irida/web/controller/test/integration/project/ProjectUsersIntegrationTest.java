@@ -22,9 +22,9 @@ import static org.junit.Assert.assertNotNull;
 public class ProjectUsersIntegrationTest {
     @Test
     public void testAddExistingUserToProject() {
-        String username = "fbristow";
-        String name = "Franklin Bristow";
-        String projectUri = "http://localhost:8080/projects/1";
+        String username = "tom";
+        String name = "Tom Matthews";
+        String projectUri = "http://localhost:8080/projects/100";
         Map<String, String> users = new HashMap<>();
         users.put("userId", username);
 
@@ -33,7 +33,7 @@ public class ProjectUsersIntegrationTest {
         // get the uri for adding users to the project
         String usersUri = from(projectJson).get("resource.links.find{it.rel == 'project/users'}.href");
 
-        // post the users uri to add aaron to the project
+        // post the users uri to add tom to the project
         Response r = given().body(users).expect().statusCode(HttpStatus.CREATED.value()).when().post(usersUri);
 
         // check that the locations make sense
@@ -42,13 +42,13 @@ public class ProjectUsersIntegrationTest {
         assertNotNull(location);
         assertEquals(projectUri + "/users/" + username, location);
 
-        // confirm that franklin is part of the project now
+        // confirm that tom is part of the project now
         expect().body("relatedResources.users.resources.label", hasItem(name)).when().get(projectUri);
     }
 
     @Test
     public void testRemoveUserFromProject() {
-        String name = "Franklin Bristow";
+        String name = "Josh Adam";
         String projectUri = "http://localhost:8080/projects/2";
 
         // get the project
