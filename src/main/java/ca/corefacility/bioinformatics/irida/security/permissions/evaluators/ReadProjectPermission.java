@@ -11,9 +11,9 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.security.permissions.evaluators.IridaPermissionEvaluator.Permission;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.UserService;
 
 /**
  * Confirms that the authenticated user is allowed to read a project.
@@ -26,8 +26,8 @@ public class ReadProjectPermission implements Permission, ApplicationContextAwar
 	private static final String PERMISSION_PROVIDED = "canReadProject";
 
 	private ApplicationContext applicationContext;
-	private ProjectService projectService;
-	private UserService userService;
+	private ProjectRepository projectService;
+	private UserRepository userService;
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -41,8 +41,8 @@ public class ReadProjectPermission implements Permission, ApplicationContextAwar
 			return true;
 		}
 
-		this.projectService = applicationContext.getBean(ProjectService.class);
-		this.userService = applicationContext.getBean(UserService.class);
+		this.projectService = applicationContext.getBean(ProjectRepository.class);
+		this.userService = applicationContext.getBean(UserRepository.class);
 
 		Project p;
 

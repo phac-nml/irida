@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.security.permissions.evaluators.IridaPermissionEvaluator.Permission;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 
@@ -25,7 +26,7 @@ public class UpdateUserPermission implements Permission, ApplicationContextAware
 	private static final Logger logger = LoggerFactory.getLogger(UpdateUserPermission.class);
 
 	private ApplicationContext applicationContext;
-	private UserService userService;
+	private UserRepository userService;
 
 	public void setApplicationContext(ApplicationContext context) {
 		this.applicationContext = context;
@@ -34,7 +35,7 @@ public class UpdateUserPermission implements Permission, ApplicationContextAware
 	@Override
 	public boolean isAllowed(Authentication authentication, Object targetDomainObject) {
 		logger.trace("Checking if [" + authentication + "] can modify [" + targetDomainObject + "]");
-		this.userService = applicationContext.getBean(UserService.class);
+		this.userService = applicationContext.getBean(UserRepository.class);
 
 		// really quick check: if the principle is of ROLE_CLIENT, they should
 		// be rejected immediately.
