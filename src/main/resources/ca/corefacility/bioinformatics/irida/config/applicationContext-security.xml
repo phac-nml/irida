@@ -51,6 +51,8 @@
 					class="ca.corefacility.bioinformatics.irida.security.permissions.ReadProjectPermission" />
 				<bean
 					class="ca.corefacility.bioinformatics.irida.security.permissions.ReadSamplePermission" />
+				<bean
+					class="ca.corefacility.bioinformatics.irida.security.permissions.ReadSequenceFilePermission" />
 			</list>
 		</constructor-arg>
 	</bean>

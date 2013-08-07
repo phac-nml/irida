@@ -79,6 +79,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	@Override
 	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadSequenceFile')")
 	public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
 		SequenceFile updated = super.update(id, updatedFields);
 
@@ -95,6 +96,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	@Override
 	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public SampleSequenceFileJoin createSequenceFileInSample(SequenceFile sequenceFile, Sample sample) {
 		SequenceFile created = create(sequenceFile);
 		SampleSequenceFileJoin addFileToSample = sequenceFileRepository.addFileToSample(sample, created);
@@ -106,6 +108,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public SequenceFile getSequenceFileFromProject(Project project, Long sequenceFileId) throws EntityNotFoundException {
 		throw new UnsupportedOperationException("Files association with projects is no longer supported");
 	}
@@ -114,6 +117,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public SequenceFile getSequenceFileFromSample(Project project, Sample sample, Long sequenceFileId)
 			throws EntityNotFoundException {
 		throw new UnsupportedOperationException(
@@ -125,6 +129,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public List<Join<Sample, SequenceFile>> getSequenceFilesForSample(Sample sample) {
 		List<SampleSequenceFileJoin> joins = sequenceFileRepository.getFilesForSample(sample);
 		return new ArrayList<Join<Sample, SequenceFile>>(joins);
