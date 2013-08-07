@@ -223,6 +223,7 @@ public class UserTest {
         assertFalse(u1.equals(u2));
 
         u2.setTimestamp(created);
+        u2.setId(u1.getId());
         // now the two users share the same identifier, and should therefore be the same
         assertTrue(u1.equals(u2));
     }
