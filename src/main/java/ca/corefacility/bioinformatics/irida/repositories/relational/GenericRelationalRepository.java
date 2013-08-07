@@ -70,6 +70,9 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
         }
         
         Session session = sessionFactory.getCurrentSession();
+        
+        object = preSave(object);
+        
         session.persist(object);        
         
         return object;
@@ -81,6 +84,15 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
      * @param object The object to perform operations on
      */
     protected Type postLoad(Type object){
+        return object;
+    }
+
+    /**
+     * Perform operations on an object before it's saved to the database.
+     * In this default case, nothing will be done.  Can be overridden to perform other operations
+     * @param object The object to perform operations on
+     */    
+    protected Type preSave(Type object){
         return object;
     }
     
@@ -142,6 +154,8 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
         }
         
         base.setModifiedDate(new Date());
+        
+        base = preSave(base);
         
         session.update(base);
         

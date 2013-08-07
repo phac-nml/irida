@@ -63,6 +63,10 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
         modifiedDate = createdDate;
     }
     
+    /**
+     * Create a new {@link SequenceFile} with the given file Path
+     * @param sampleFile The Path to a {@link SequenceFile}
+     */
     public SequenceFile(Path sampleFile) {
         this.file = sampleFile;
     }
