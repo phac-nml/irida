@@ -48,15 +48,18 @@ public class IridaPermissionEvaluator implements PermissionEvaluator {
 	 */
 	@Override
 	public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
-		logger.debug("in first hasPermission method: authentication [" + authentication + "], targetDomainObject ["
-				+ targetDomainObject + "], permission [" + permission + "]");
-
 		if (!namedPermissionMap.containsKey(permission.toString())) {
 			throw new UndefinedPermissionException("The permission [" + permission.toString()
 					+ "] is not registered with " + getClass().getName() + ".");
 		}
 
-		return namedPermissionMap.get(permission.toString()).isAllowed(authentication, targetDomainObject);
+		Permission permissionEvaluator = namedPermissionMap.get(permission.toString());
+		boolean allowed = permissionEvaluator.isAllowed(authentication, targetDomainObject);
+
+		logger.trace("Permission request for access to [" + targetDomainObject + "] with permission [" + permission
+				+ "] by [" + authentication + "]. Granted? [" + allowed + "]");
+
+		return allowed;
 	}
 
 	/**
@@ -65,8 +68,6 @@ public class IridaPermissionEvaluator implements PermissionEvaluator {
 	@Override
 	public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType,
 			Object permission) {
-		logger.debug("in second hasPermission method: authentication [" + authentication + "], targetId [" + targetId
-				+ "], targetType [" + targetType + "], permission [" + permission + "]");
 		return false;
 	}
 
