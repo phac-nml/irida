@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -179,29 +178,5 @@ public class SequenceFileServiceImplTest {
 		assertEquals(owner, created.getSubject());
 
 		Files.delete(file);
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test
-	public void testGetSequenceFileFromProject() throws IOException {
-		try {
-			sequenceFileService
-					.getSequenceFileFromProject(null, Long.MIN_VALUE);
-			fail("This operation should not be supported");
-		} catch (UnsupportedOperationException ex) {
-
-		}
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test
-	public void testGetSequenceFileFromSample() throws IOException {
-		try {
-			sequenceFileService.getSequenceFileFromSample(null, null,
-					Long.MIN_VALUE);
-			fail("This operation should not be supported");
-		} catch (UnsupportedOperationException ex) {
-
-		}
 	}
 }

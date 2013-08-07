@@ -89,8 +89,7 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Long, Se
      */
     @Override
     public SequenceFile read(Long id) throws EntityNotFoundException {
-        throw new UnsupportedOperationException("SequenceFile file reference "
-                + "should be populated by SequenceFileSesameRepository.");
+        throw new UnsupportedOperationException("Files should be loaded by relational repository.");
     }
 
     private Path updateFilesystemFile(Long id, Path object) throws IllegalArgumentException {
