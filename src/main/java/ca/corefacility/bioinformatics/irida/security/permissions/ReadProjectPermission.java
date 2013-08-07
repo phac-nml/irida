@@ -26,8 +26,6 @@ public class ReadProjectPermission implements Permission, ApplicationContextAwar
 	private static final String PERMISSION_PROVIDED = "canReadProject";
 
 	private ApplicationContext applicationContext;
-	private ProjectRepository projectService;
-	private UserRepository userService;
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -41,14 +39,14 @@ public class ReadProjectPermission implements Permission, ApplicationContextAwar
 			return true;
 		}
 
-		this.projectService = applicationContext.getBean(ProjectRepository.class);
-		this.userService = applicationContext.getBean(UserRepository.class);
+		ProjectRepository projectRepository = applicationContext.getBean(ProjectRepository.class);
+		UserRepository userRepository = applicationContext.getBean(UserRepository.class);
 
 		Project p;
 
 		// get the project from the database (if necessary)
 		if (targetDomainObject instanceof Long) {
-			p = projectService.read((Long) targetDomainObject);
+			p = projectRepository.read((Long) targetDomainObject);
 		} else if (targetDomainObject instanceof Project) {
 			p = (Project) targetDomainObject;
 		} else {
@@ -58,8 +56,8 @@ public class ReadProjectPermission implements Permission, ApplicationContextAwar
 
 		// if not an administrator, then we need to figure out if the
 		// authenticated user is participating in the project.
-		User u = userService.getUserByUsername(authentication.getName());
-		Collection<Join<Project, User>> projectUsers = userService.getUsersForProject(p);
+		User u = userRepository.getUserByUsername(authentication.getName());
+		Collection<Join<Project, User>> projectUsers = userRepository.getUsersForProject(p);
 
 		for (Join<Project, User> projectUser : projectUsers) {
 			if (projectUser.getObject().equals(u)) {
