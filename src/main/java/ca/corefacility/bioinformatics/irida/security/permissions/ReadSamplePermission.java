@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.security.core.Authentication;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -35,6 +36,11 @@ public class ReadSamplePermission implements Permission, ApplicationContextAware
 
 	@Override
 	public boolean isAllowed(Authentication authentication, Object targetDomainObject) {
+		if (authentication.getAuthorities().contains(Role.ROLE_ADMIN)) {
+			// fast pass if the user is an administrative user.
+			return true;
+		}
+
 		UserRepository userRepository = applicationContext.getBean(UserRepository.class);
 		ProjectRepository projectRepository = applicationContext.getBean(ProjectRepository.class);
 		SampleRepository sampleRepository = applicationContext.getBean(SampleRepository.class);
