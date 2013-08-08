@@ -51,33 +51,11 @@ Resources requested in JSON format will always have the following structure:
             "resourceProperty2" : "resourceValue",
             ...
         },
-        "relatedResources" : {
-            "relatedResourceType1" : {
-                "links" : [ {
-                    "rel" : "self",
-                    "href" : "http://www.example.com/related/"
-                }, ...
-                ],
-                "resources" : [ {
-                    "links" : [ {
-                        "rel" : "self",
-                        "href" : "http://www.example.com/related/1"
-                    }, ...
-                    ],
-                    "label" : "Related resource label",
-                    "identifier" : "related resource identifier",
-                    "dateCreated" : 1369949485268
-                }, ...
-                ]
-            }, ...
-        }
     }
 
-The entire response consists of two objects: the `resource` object and the `relatedResources` object. The `resource` object contains links related to the current resource as well as the properties of the resource. The `relatedResources` section contains a collection of labelled, related resources.
+The entire response consists of the `resource` object. The `resource` object contains links related to the current resource as well as the properties of the resource.
 
 The `resource` section contains an array of link objects under the `links` key. Each link has a `rel` and an `href`. In addition to the `links` section, the `resource` section contains all properties associated with the resource.
-
-The `relatedResources` section is a collection of collections. Each resource may have 0 or more related resource types. For each related resource type, the resource contains a set of links and a collection of labelled relationships. Each individual labelled relationship will contain a collection of links, a label, an identifier, and the date that the relationship between the two resources was created. The array of resources in a related resource collection may be empty, but the links array will still be populated with links at which you can create new resources.
 
 #### Resource Collection
 Resource collections requested in JSON format will always have the following structure:
