@@ -45,7 +45,7 @@ public class ReadProjectPermissionTest {
 		readProjectPermission.setApplicationContext(applicationContext);
 
 		when(applicationContext.getBean(UserRepository.class)).thenReturn(userRepository);
-		when(applicationContext.getBean(ProjectRepository.class)).thenReturn(projectRepository);
+		when(applicationContext.getBean("projectRepository")).thenReturn(projectRepository);
 	}
 
 	@Test

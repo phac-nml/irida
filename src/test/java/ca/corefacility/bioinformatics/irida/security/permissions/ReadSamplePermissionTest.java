@@ -51,7 +51,7 @@ public class ReadSamplePermissionTest {
 
 		when(applicationContext.getBean(UserRepository.class)).thenReturn(userRepository);
 		when(applicationContext.getBean(ProjectRepository.class)).thenReturn(projectRepository);
-		when(applicationContext.getBean(SampleRepository.class)).thenReturn(sampleRepository);
+		when(applicationContext.getBean("sampleRepository")).thenReturn(sampleRepository);
 	}
 
 	@Test
