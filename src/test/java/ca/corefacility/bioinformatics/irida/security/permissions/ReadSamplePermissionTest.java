@@ -81,6 +81,33 @@ public class ReadSamplePermissionTest {
 	}
 
 	@Test
+	public void testGrantPermissionWithDomainObject() {
+		String username = "fbristow";
+		User u = new User();
+		u.setUsername(username);
+		Project p = new Project();
+		Sample s = new Sample();
+		Collection<Join<Project, User>> projectUsers = new ArrayList<>();
+		projectUsers.add(new ProjectUserJoin(p, u));
+		ProjectSampleJoin projectSample = new ProjectSampleJoin(p, s);
+
+		when(userRepository.getUserByUsername(username)).thenReturn(u);
+		when(projectRepository.getProjectForSample(s)).thenReturn(projectSample);
+		when(sampleRepository.read(1l)).thenReturn(s);
+		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
+
+		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
+
+		assertTrue("permission was not granted.", readSamplePermission.isAllowed(auth, s));
+
+		verify(userRepository).getUserByUsername(username);
+		verify(projectRepository).getProjectForSample(s);
+		verify(userRepository).getUsersForProject(p);
+		// we didn't need to load the domain object for this test.
+		verifyZeroInteractions(sampleRepository);
+	}
+
+	@Test
 	public void testRejectPermission() {
 		String username = "fbristow";
 		User u = new User();
