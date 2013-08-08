@@ -16,7 +16,7 @@ import static com.jayway.restassured.RestAssured.preemptive;
  */
 public class IntegrationTestListener extends RunListener {
 
-    private static final String USERNAME = "fbristow";
+    public static final String USERNAME = "fbristow";
     private static final String PASSWORD = "password1";
     private static final Logger logger = LoggerFactory.getLogger(IntegrationTestListener.class);
 

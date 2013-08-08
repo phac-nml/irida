@@ -1,13 +1,10 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
@@ -87,18 +82,6 @@ public class UsersController extends GenericController<User, UserResource> {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected Map<String, ResourceCollection<?>> constructCustomRelatedResourceCollections(User user) {
-		Map<String, ResourceCollection<?>> resources = new HashMap<>();
-
-		resources.put(USER_PROJECTS_MAP_LABEL, getProjectsForUser(user));
-
-		return resources;
-	}
-
-	/**
 	 * A collection of custom links for a specific {@link User}.
 	 * 
 	 * @param u
@@ -110,33 +93,6 @@ public class UsersController extends GenericController<User, UserResource> {
 		Collection<Link> links = new HashSet<>();
 		links.add(linkTo(UsersController.class).slash(u.getUsername()).slash("projects").withRel(REL_USER_PROJECTS));
 		return links;
-	}
-
-	/**
-	 * Get the {@link SequenceFile} entities related to this {@link Project}.
-	 * 
-	 * @param project
-	 *            the {@link Project} to load {@link SequenceFile} entities for.
-	 * @return labelled relationships
-	 */
-	private ResourceCollection<LabelledRelationshipResource<Project, User>> getProjectsForUser(User user) {
-		List<Join<Project, User>> userProjects = projectService.getProjectsForUser(user);
-		ResourceCollection<LabelledRelationshipResource<Project, User>> projectResources = new ResourceCollection<>(
-				userProjects.size());
-
-		for (Join<Project, User> r : userProjects) {
-			Project p = r.getSubject();
-			LabelledRelationshipResource<Project, User> resource = new LabelledRelationshipResource<Project, User>(
-					p.getLabel(), r);
-			resource.add(linkTo(ProjectsController.class).slash(p.getId()).withSelfRel());
-			projectResources.add(resource);
-		}
-
-		projectResources.add(linkTo(methodOn(UsersController.class).getUserProjects(user.getUsername())).withRel(
-				REL_USER_PROJECTS));
-		projectResources.setTotalResources(userProjects.size());
-
-		return projectResources;
 	}
 
 	/**

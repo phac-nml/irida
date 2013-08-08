@@ -159,23 +159,7 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 	protected Collection<Link> constructCustomResourceLinks(Type resource) {
 		return Collections.emptySet();
 	}
-
-	/**
-	 * Construct a collection of {@link Resource}s that relate to the specified
-	 * resource. Use this method to inject composite resources into the response
-	 * *instead* of calling <code>constructCustomResourceLinks</code>. This
-	 * method is required to generate a collection of collections because the
-	 * implementing type may have more than one related type. This method is
-	 * called by <code>getResource</code>.
-	 * 
-	 * @param resource
-	 *            the resource to generate related collections for.
-	 * @return a collection of collections of related resources.
-	 */
-	protected Map<String, ResourceCollection<?>> constructCustomRelatedResourceCollections(Type resource) {
-		return Collections.emptyMap();
-	}
-
+	
 	/**
 	 * Retrieve and construct a response with a collection of resources.
 	 * 
@@ -329,11 +313,6 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 
 		// add the resource to the model
 		model.addAttribute(RESOURCE_NAME, resource);
-		// get a set of uniquely related resources for this resource
-		Map<String, ResourceCollection<?>> 
-				relatedResources = constructCustomRelatedResourceCollections(t);
-		// add any related resources to the model
-		model.addAttribute(RELATED_RESOURCES_NAME, relatedResources);
 
 		// send the response back to the client.
 		return model;

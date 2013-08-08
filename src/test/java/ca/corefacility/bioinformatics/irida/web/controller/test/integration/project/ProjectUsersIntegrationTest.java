@@ -16,51 +16,52 @@ import static org.junit.Assert.assertNotNull;
 
 /**
  * Integration test for project and user.
- *
+ * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class ProjectUsersIntegrationTest {
-    @Test
-    public void testAddExistingUserToProject() {
-        String username = "tom";
-        String name = "Tom Matthews";
-        String projectUri = "http://localhost:8080/projects/100";
-        Map<String, String> users = new HashMap<>();
-        users.put("userId", username);
+	@Test
+	public void testAddExistingUserToProject() {
+		String username = "tom";
+		String projectUri = "http://localhost:8080/projects/100";
+		Map<String, String> users = new HashMap<>();
+		users.put("userId", username);
 
-        // get the project
-        String projectJson = get(projectUri).asString();
-        // get the uri for adding users to the project
-        String usersUri = from(projectJson).get("resource.links.find{it.rel == 'project/users'}.href");
+		// get the project
+		String projectJson = get(projectUri).asString();
+		// get the uri for adding users to the project
+		String usersUri = from(projectJson).get("resource.links.find{it.rel == 'project/users'}.href");
 
-        // post the users uri to add tom to the project
-        Response r = given().body(users).expect().statusCode(HttpStatus.CREATED.value()).when().post(usersUri);
+		// post the users uri to add tom to the project
+		Response r = given().body(users).expect().statusCode(HttpStatus.CREATED.value()).when().post(usersUri);
 
-        // check that the locations make sense
-        String location = r.getHeader(HttpHeaders.LOCATION);
+		// check that the locations make sense
+		String location = r.getHeader(HttpHeaders.LOCATION);
 
-        assertNotNull(location);
-        assertEquals(projectUri + "/users/" + username, location);
+		assertNotNull(location);
+		assertEquals(projectUri + "/users/" + username, location);
 
-        // confirm that tom is part of the project now
-        expect().body("relatedResources.users.resources.label", hasItem(name)).when().get(projectUri);
-    }
+		// confirm that tom is part of the project now
+		expect().body("resource.resources.username", hasItem(username)).when().get(usersUri);
+	}
 
-    @Test
-    public void testRemoveUserFromProject() {
-        String name = "Josh Adam";
-        String projectUri = "http://localhost:8080/projects/2";
+	@Test
+	public void testRemoveUserFromProject() {
+		String name = "Josh";
+		String projectUri = "http://localhost:8080/projects/2";
 
-        // get the project
-        String projectJson = get(projectUri).asString();
-        String userRelationshipUri = from(projectJson).get("relatedResources.users.resources.find{it.label == '"
-                + name + "'}.links.find{it.rel == 'relationship'}.href");
+		// get the project
+		String projectJson = get(projectUri).asString();
+		String projectUsersUri = from(projectJson).get("resource.links.find{it.rel=='project/users'}.href");
+		String projectUsersJson = get(projectUsersUri).asString();
+		String userRelationshipUri = from(projectUsersJson).get(
+				"resource.resources.find{it.firstName == '" + name + "'}.links.find{it.rel == 'relationship'}.href");
 
-        // delete the user relationship
-        expect().body("resource.links.rel", hasItems("project", "project/users"))
-                .when().delete(userRelationshipUri);
+		// delete the user relationship
+		expect().body("resource.links.rel", hasItems("project", "project/users")).when().delete(userRelationshipUri);
 
-        // get the project again and confirm that tom isn't part of the project anymore
-        expect().body("relatedResources.users.resources.label", not(hasItem(name))).when().get(projectUri);
-    }
+		// get the project again and confirm that josh isn't part of the project
+		// anymore
+		expect().body("resource.resources.firstName", not(hasItem(name))).when().get(projectUsersUri);
+	}
 }
