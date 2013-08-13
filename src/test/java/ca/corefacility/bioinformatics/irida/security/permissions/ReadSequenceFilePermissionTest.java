@@ -1,12 +1,5 @@
 package ca.corefacility.bioinformatics.irida.security.permissions;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -20,38 +13,51 @@ import org.springframework.security.core.GrantedAuthority;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.Sample;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 /**
- * Tests for {@link ReadSamplePermission}.
+ * Tests for {@link ReadSequenceFilePermission}.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
-public class ReadSamplePermissionTest {
-	private ReadSamplePermission readSamplePermission;
+public class ReadSequenceFilePermissionTest {
+	private ReadSequenceFilePermission readSequenceFilePermission;
 	private UserRepository userRepository;
-	private ProjectRepository projectRepository;
 	private SampleRepository sampleRepository;
+	private ProjectRepository projectRepository;
+	private SequenceFileRepository sequenceFileRepository;
 
 	@Before
 	public void setUp() {
 		ApplicationContext applicationContext = mock(ApplicationContext.class);
 		userRepository = mock(UserRepository.class);
-		projectRepository = mock(ProjectRepository.class);
 		sampleRepository = mock(SampleRepository.class);
-		readSamplePermission = new ReadSamplePermission();
-		readSamplePermission.setApplicationContext(applicationContext);
+		projectRepository = mock(ProjectRepository.class);
+		sequenceFileRepository = mock(SequenceFileRepository.class);
+
+		readSequenceFilePermission = new ReadSequenceFilePermission();
+		readSequenceFilePermission.setApplicationContext(applicationContext);
 
 		when(applicationContext.getBean(UserRepository.class)).thenReturn(userRepository);
+		when(applicationContext.getBean(SampleRepository.class)).thenReturn(sampleRepository);
 		when(applicationContext.getBean(ProjectRepository.class)).thenReturn(projectRepository);
-		when(applicationContext.getBean("sampleRepository")).thenReturn(sampleRepository);
+		when(applicationContext.getBean("sequenceFileRepository")).thenReturn(sequenceFileRepository);
 	}
 
 	@Test
@@ -64,47 +70,24 @@ public class ReadSamplePermissionTest {
 		Collection<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, u));
 		ProjectSampleJoin projectSample = new ProjectSampleJoin(p, s);
+		SequenceFile sf = new SequenceFile();
+		SampleSequenceFileJoin sampleSequenceFile = new SampleSequenceFileJoin(s, sf);
 
 		when(userRepository.getUserByUsername(username)).thenReturn(u);
 		when(projectRepository.getProjectForSample(s)).thenReturn(projectSample);
-		when(sampleRepository.read(1l)).thenReturn(s);
+		when(sequenceFileRepository.read(1l)).thenReturn(sf);
 		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
+		when(sampleRepository.getSampleForSequenceFile(sf)).thenReturn(sampleSequenceFile);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
-		assertTrue("permission was not granted.", readSamplePermission.isAllowed(auth, 1l));
+		assertTrue("permission was not granted.", readSequenceFilePermission.isAllowed(auth, 1l));
 
 		verify(userRepository).getUserByUsername(username);
-		verify(sampleRepository).read(1l);
+		verify(sequenceFileRepository).read(1l);
 		verify(projectRepository).getProjectForSample(s);
 		verify(userRepository).getUsersForProject(p);
-	}
-
-	@Test
-	public void testGrantPermissionWithDomainObject() {
-		String username = "fbristow";
-		User u = new User();
-		u.setUsername(username);
-		Project p = new Project();
-		Sample s = new Sample();
-		Collection<Join<Project, User>> projectUsers = new ArrayList<>();
-		projectUsers.add(new ProjectUserJoin(p, u));
-		ProjectSampleJoin projectSample = new ProjectSampleJoin(p, s);
-
-		when(userRepository.getUserByUsername(username)).thenReturn(u);
-		when(projectRepository.getProjectForSample(s)).thenReturn(projectSample);
-		when(sampleRepository.read(1l)).thenReturn(s);
-		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
-
-		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
-
-		assertTrue("permission was not granted.", readSamplePermission.isAllowed(auth, s));
-
-		verify(userRepository).getUserByUsername(username);
-		verify(projectRepository).getProjectForSample(s);
-		verify(userRepository).getUsersForProject(p);
-		// we didn't need to load the domain object for this test.
-		verifyZeroInteractions(sampleRepository);
+		verify(sampleRepository).getSampleForSequenceFile(sf);
 	}
 
 	@Test
@@ -114,24 +97,27 @@ public class ReadSamplePermissionTest {
 		u.setUsername(username);
 		Project p = new Project();
 		Sample s = new Sample();
-		ProjectSampleJoin projectSample = new ProjectSampleJoin(p, s);
-
 		Collection<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, new User()));
+		ProjectSampleJoin projectSample = new ProjectSampleJoin(p, s);
+		SequenceFile sf = new SequenceFile();
+		SampleSequenceFileJoin sampleSequenceFile = new SampleSequenceFileJoin(s, sf);
 
 		when(userRepository.getUserByUsername(username)).thenReturn(u);
 		when(projectRepository.getProjectForSample(s)).thenReturn(projectSample);
-		when(sampleRepository.read(1l)).thenReturn(s);
+		when(sequenceFileRepository.read(1l)).thenReturn(sf);
 		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
+		when(sampleRepository.getSampleForSequenceFile(sf)).thenReturn(sampleSequenceFile);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
-		assertFalse("permission was granted.", readSamplePermission.isAllowed(auth, 1l));
+		assertFalse("permission was granted.", readSequenceFilePermission.isAllowed(auth, 1l));
 
 		verify(userRepository).getUserByUsername(username);
-		verify(sampleRepository).read(1l);
+		verify(sequenceFileRepository).read(1l);
 		verify(projectRepository).getProjectForSample(s);
 		verify(userRepository).getUsersForProject(p);
+		verify(sampleRepository).getSampleForSequenceFile(sf);
 	}
 
 	@Test
@@ -141,12 +127,13 @@ public class ReadSamplePermissionTest {
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
 
-		assertTrue("permission was not granted to admin.", readSamplePermission.isAllowed(auth, 1l));
+		assertTrue("permission was not granted to admin.", readSequenceFilePermission.isAllowed(auth, 1l));
 
 		// we should fast pass through to permission granted for administrators.
 		verifyZeroInteractions(userRepository);
 		verifyZeroInteractions(projectRepository);
 		verifyZeroInteractions(userRepository);
 		verifyZeroInteractions(sampleRepository);
+		verifyZeroInteractions(sequenceFileRepository);
 	}
 }

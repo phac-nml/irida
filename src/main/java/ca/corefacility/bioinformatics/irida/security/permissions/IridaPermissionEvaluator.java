@@ -26,17 +26,17 @@ public class IridaPermissionEvaluator implements PermissionEvaluator {
 
 	private static final Logger logger = LoggerFactory.getLogger(IridaPermissionEvaluator.class);
 
-	private Collection<Permission> permissions;
-	private Map<String, Permission> namedPermissionMap;
+	private Collection<BasePermission<?>> permissions;
+	private Map<String, BasePermission<?>> namedPermissionMap;
 
-	public IridaPermissionEvaluator(Collection<Permission> permissions) {
+	public IridaPermissionEvaluator(Collection<BasePermission<?>> permissions) {
 		this.permissions = permissions;
 		this.namedPermissionMap = new HashMap<>();
 	}
 
 	@PostConstruct
 	public void init() {
-		for (Permission p : permissions) {
+		for (BasePermission<?> p : permissions) {
 			logger.debug("Registering permission [" + p.getPermissionProvided() + "] with class ["
 					+ p.getClass().getName() + "]");
 			namedPermissionMap.put(p.getPermissionProvided(), p);
@@ -53,7 +53,7 @@ public class IridaPermissionEvaluator implements PermissionEvaluator {
 					+ "] is not registered with " + getClass().getName() + ".");
 		}
 
-		Permission permissionEvaluator = namedPermissionMap.get(permission.toString());
+		BasePermission<?> permissionEvaluator = namedPermissionMap.get(permission.toString());
 		boolean allowed = permissionEvaluator.isAllowed(authentication, targetDomainObject);
 
 		logger.trace("Permission request for access to [" + targetDomainObject + "] with permission [" + permission
@@ -69,32 +69,5 @@ public class IridaPermissionEvaluator implements PermissionEvaluator {
 	public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType,
 			Object permission) {
 		return false;
-	}
-
-	/**
-	 * Generic interface to test whether or not an authenticated user is allowed
-	 * to perform some action on a specific target domain object.
-	 * 
-	 * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
-	 */
-	interface Permission {
-		/**
-		 * Is the authenticated user allowed to perform some action on the
-		 * target domain object?
-		 * 
-		 * @param authentication
-		 *            the authenticated user.
-		 * @param targetDomainObject
-		 *            the object the user is requesting to perform an action on.
-		 * @return true if the action is allowed, false otherwise.
-		 */
-		public boolean isAllowed(Authentication authentication, Object targetDomainObject);
-
-		/**
-		 * Get the name of the permission that this class provides.
-		 * 
-		 * @return the name of the permission that this class provides.
-		 */
-		public String getPermissionProvided();
 	}
 }
