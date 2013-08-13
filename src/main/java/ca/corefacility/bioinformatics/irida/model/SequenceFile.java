@@ -68,6 +68,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
      * @param sampleFile The Path to a {@link SequenceFile}
      */
     public SequenceFile(Path sampleFile) {
+        this();
         this.file = sampleFile;
     }
 
