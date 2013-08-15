@@ -49,6 +49,10 @@ public class MiseqRun implements IridaThing, Comparable<MiseqRun>{
     @Temporal(TemporalType.TIMESTAMP)
     private Date modifiedDate;
 
+    public MiseqRun(){
+        createdDate = new Date();
+        modifiedDate = createdDate;
+    }
     @Override
     public Long getId() {
         return id;
@@ -58,32 +62,64 @@ public class MiseqRun implements IridaThing, Comparable<MiseqRun>{
         this.id = id;
     }
 
+    public String getInvestigatorName() {
+        return investigatorName;
+    }
+
     public void setInvestigatorName(String investigatorName) {
         this.investigatorName = investigatorName;
+    }
+
+    public String getProjectName() {
+        return projectName;
     }
 
     public void setProjectName(String projectName) {
         this.projectName = projectName;
     }
 
+    public String getExperimentName() {
+        return experimentName;
+    }
+
     public void setExperimentName(String experimentName) {
         this.experimentName = experimentName;
+    }
+
+    public String getWorkflow() {
+        return workflow;
     }
 
     public void setWorkflow(String workflow) {
         this.workflow = workflow;
     }
 
+    public String getApplication() {
+        return application;
+    }
+
     public void setApplication(String application) {
         this.application = application;
+    }
+
+    public String getAssay() {
+        return assay;
     }
 
     public void setAssay(String assay) {
         this.assay = assay;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getChemistry() {
+        return chemistry;
     }
 
     public void setChemistry(String chemistry) {
