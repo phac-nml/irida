@@ -37,6 +37,11 @@
 		<constructor-arg ref="sequenceFileFilesystemRepository" />
 		<constructor-arg ref="validator" />
 	</bean>
+        
+        <bean id="miseqRunService" class="ca.corefacility.bioinformatics.irida.service.impl.MiseqRunServiceImpl">
+            <constructor-arg ref="miseqRunRepository"/>
+            <constructor-arg ref="validator"/>
+        </bean>
 
 	<!-- validator beans -->
 	<bean id="validator"
