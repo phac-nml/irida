@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:jdbc="http://www.springframework.org/schema/jdbc"
@@ -11,8 +12,8 @@
               http://www.springframework.org/schema/context
               http://www.springframework.org/schema/context/spring-context.xsd">
 	
-    <context:property-placeholder location="classpath:ca/corefacility/bioinformatics/irida/config/jdbc.properties,classpath:ca/corefacility/bioinformatics/irida/config/filesystem.properties"/> 
-    
+    <!--context:property-placeholder location="classpath:ca/corefacility/bioinformatics/irida/config/jdbc.properties,classpath:ca/corefacility/bioinformatics/irida/config/filesystem.properties"/--> 
+    <import resource="properties.xml"/>
     
     <bean id="projectRepository" class="ca.corefacility.bioinformatics.irida.repositories.relational.ProjectRelationalRepository">
         <constructor-arg ref="dataSource"/>
