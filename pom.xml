@@ -263,6 +263,7 @@
                     <scanIntervalSeconds>0</scanIntervalSeconds>
                     <stopPort>8995</stopPort>
                     <stopKey>STOP</stopKey>
+                    <jvmArgs>-Dspring.profiles.active=dev</jvmArgs>
                 </configuration>
                 <executions>
                     <execution>
