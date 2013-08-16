@@ -31,15 +31,6 @@
     </filter-mapping>
 
     <!--
-    - Location of the XML file that defines the root application context.
-    - Applied by ContextLoaderServlet.
-    -->
-    <context-param>
-        <param-name>spring.profiles.active</param-name>
-        <param-value>dev</param-value>
-    </context-param>
-
-    <!--
     - Servlet that dispatches request to registered handlers (Controller implementations).
     -->
     <servlet>
