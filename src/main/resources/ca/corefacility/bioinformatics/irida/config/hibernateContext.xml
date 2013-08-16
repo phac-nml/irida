@@ -35,10 +35,10 @@
             <property name="dataSource" ref="dataSource" />
             <property name="hibernateProperties">
                 <props>
-                    <prop key="hibernate.hbm2ddl.auto">create</prop>
+                    <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
 		    <prop key="hibernate.show_sql">false</prop>
                     <prop key="hibernate.format_sql">true</prop>
-                    <prop key="hibernate.hbm2ddl.import_files">/ca/corefacility/bioinformatics/irida/sql/required-data.sql</prop>
+                    <prop key="hibernate.hbm2ddl.import_files">${hibernate.hbm2ddl.import_files}</prop>
                     <prop key="hibernate.dialect">${hibernate.dialect}</prop>
                     <!--prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop-->
                     <!--prop key="hibernate.cache.provider_configuration_file_resource_path">ehcache/ehcache-hibernate-local.xml</prop-->
