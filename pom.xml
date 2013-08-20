@@ -259,6 +259,11 @@
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty.version}</version>
+		<configuration>
+		    <scanIntervalSeconds>1</scanIntervalSeconds>
+		    <stopPort>8995</stopPort>
+		    <stopKey>STOP</stopKey>
+		</configuration>
                 <executions>
                     <execution>
                         <id>start-jetty</id>
