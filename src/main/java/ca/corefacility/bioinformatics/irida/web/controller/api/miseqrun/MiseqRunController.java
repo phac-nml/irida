@@ -33,5 +33,5 @@ public class MiseqRunController extends GenericController<MiseqRun, MiseqRunReso
         super(service, MiseqRun.class, MiseqRunResource.class);
 
     }
-
+    
 }
