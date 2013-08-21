@@ -42,7 +42,12 @@
 	<bean id="fileProcessorChain"
 		class="ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain">
 		<constructor-arg>
-			<list></list>
+			<list>
+				<bean
+					class="ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor">
+					<constructor-arg ref="sequenceFileRepository" />
+				</bean>
+			</list>
 		</constructor-arg>
 	</bean>
 
