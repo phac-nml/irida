@@ -1,0 +1,75 @@
+
+package ca.corefacility.bioinformatics.irida.model.joins.impl;
+
+import ca.corefacility.bioinformatics.irida.model.MiseqRun;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import java.util.Date;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+/**
+ *
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ */
+public class MiseqRunSequenceFileJoin implements Join<MiseqRun, SequenceFile>{
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    Long id;
+    
+    @ManyToOne
+    @JoinColumn(name="miseqRun_id")
+    private MiseqRun miseqRun;
+    
+    @ManyToOne
+    @JoinColumn(name="sequenceFile_id")
+    private SequenceFile sequenceFile;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdDate;
+    
+    public MiseqRunSequenceFileJoin(){
+        createdDate = new Date();
+    }
+    
+    public MiseqRunSequenceFileJoin(MiseqRun subject, SequenceFile object){
+        this();
+        this.miseqRun=subject;
+        this.sequenceFile=object;
+    }
+    @Override
+    public MiseqRun getSubject() {
+        return miseqRun;
+    }
+
+    @Override
+    public void setSubject(MiseqRun subject) {
+        this.miseqRun = subject;
+    }
+
+    @Override
+    public SequenceFile getObject() {
+        return sequenceFile;
+    }
+
+    @Override
+    public void setObject(SequenceFile object) {
+        this.sequenceFile = object;
+    }
+
+    @Override
+    public Date getTimestamp() {
+        return createdDate;
+    }
+
+    @Override
+    public void setTimestamp(Date timestamp) {
+        this.createdDate = timestamp;
+    }
+
+}
