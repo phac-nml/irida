@@ -3,8 +3,10 @@ package ca.corefacility.bioinformatics.irida.repositories.relational;
 
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.MiseqRunRepository;
 import javax.sql.DataSource;
+import org.hibernate.Session;
 
 /**
  *
@@ -19,8 +21,14 @@ public class MiseqRunRelationalRepository extends GenericRelationalRepository<Mi
     }
 
     @Override
-    public void addSequenceFileToMiseqRun(MiseqRun run, SequenceFile file) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public MiseqRunSequenceFileJoin addSequenceFileToMiseqRun(MiseqRun run, SequenceFile file) {
+        Session session = sessionFactory.getCurrentSession();
+
+        MiseqRunSequenceFileJoin miseqRunSequenceFileJoin = new MiseqRunSequenceFileJoin(run, file);
+
+        session.persist(miseqRunSequenceFileJoin);
+
+        return miseqRunSequenceFileJoin;
     }
 
 }
