@@ -15,6 +15,7 @@
  */
 package ca.corefacility.bioinformatics.irida.repositories.relational;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
@@ -60,9 +61,34 @@ public class MiseqRunRelationalRepositoryTest {
         SequenceFile seqfile = seqrepo.read(5L);
         MiseqRun run = repo.read(3L);
         
-        MiseqRunSequenceFileJoin addSequenceFileToMiseqRun = repo.addSequenceFileToMiseqRun(run, seqfile);
+        MiseqRunSequenceFileJoin addSequenceFileToMiseqRun = null;
+        try{
+            addSequenceFileToMiseqRun = repo.addSequenceFileToMiseqRun(run, seqfile);
+        }
+        catch(EntityExistsException ex){
+            fail();
+        }
+        
         assertNotNull(addSequenceFileToMiseqRun);
         assertEquals(addSequenceFileToMiseqRun.getSubject(), run);
         assertEquals(addSequenceFileToMiseqRun.getObject(), seqfile);
     }
+    
+    @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+    @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")    
+    public void testAddSequenceFileToMultipleMiseqRun() {
+        SequenceFile seqfile = seqrepo.read(1L);
+        MiseqRun run = repo.read(3L);
+        
+        MiseqRunSequenceFileJoin addSequenceFileToMiseqRun = null;
+        try{
+            addSequenceFileToMiseqRun = repo.addSequenceFileToMiseqRun(run, seqfile);
+            fail();
+        }
+        catch(EntityExistsException ex){
+            
+        }
+    }
+    
 }
