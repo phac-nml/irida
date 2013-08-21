@@ -16,6 +16,8 @@
 package ca.corefacility.bioinformatics.irida.repositories.relational;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
@@ -81,9 +83,8 @@ public class MiseqRunRelationalRepositoryTest {
         SequenceFile seqfile = seqrepo.read(1L);
         MiseqRun run = repo.read(3L);
         
-        MiseqRunSequenceFileJoin addSequenceFileToMiseqRun = null;
         try{
-            addSequenceFileToMiseqRun = repo.addSequenceFileToMiseqRun(run, seqfile);
+            MiseqRunSequenceFileJoin addSequenceFileToMiseqRun = repo.addSequenceFileToMiseqRun(run, seqfile);
             fail();
         }
         catch(EntityExistsException ex){
@@ -91,4 +92,35 @@ public class MiseqRunRelationalRepositoryTest {
         }
     }
     
+    @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+    public void testGetMiseqRunForSequenceFile(){
+        SequenceFile file = seqrepo.read(1L);
+        MiseqRunSequenceFileJoin miseqRun = null;
+        try{
+             miseqRun = repo.getMiseqRunForSequenceFile(file);
+        }
+        catch(EntityNotFoundException | StorageException ex){
+            fail(ex.getMessage());
+        }
+        
+        assertNotNull(miseqRun);
+        assertEquals(miseqRun.getObject().getId(), file.getId());
+        assertTrue(miseqRun.getSubject().getId() == 1L);
+    }
+    
+    @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+    public void testGetInvalidMiseqRunForSequenceFile(){
+        SequenceFile file = seqrepo.read(5L);
+        MiseqRunSequenceFileJoin miseqRun = null;
+        try{
+             miseqRun = repo.getMiseqRunForSequenceFile(file);
+             fail();
+        }
+        catch(EntityNotFoundException ex){
+        }
+
+    }
+
 }

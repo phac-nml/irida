@@ -64,7 +64,7 @@ public class MiseqRunRelationalRepository extends GenericRelationalRepository<Mi
             logger.error("No miseq run found for sequence file" + file.getId());
             throw new EntityNotFoundException("No miseq run found for sequence file " + file.getId());
         }
-        else if(list.size() > 0){
+        else if(list.size() > 1){
             logger.error("Multiple miseq runs found for sequence file.");
             throw new StorageException("Multiple miseq runs found for sequence file " + file.getId());
         }
