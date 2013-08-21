@@ -5,18 +5,24 @@ import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import java.util.Date;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import org.hibernate.envers.Audited;
 
 /**
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
+@Entity
+@Table(name="miseqrun_sequencefile")
+@Audited
 public class MiseqRunSequenceFileJoin implements Join<MiseqRun, SequenceFile>{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
