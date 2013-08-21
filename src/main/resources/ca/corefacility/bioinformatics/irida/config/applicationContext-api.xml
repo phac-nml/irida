@@ -36,6 +36,14 @@
 		<constructor-arg ref="sequenceFileRepository" />
 		<constructor-arg ref="sequenceFileFilesystemRepository" />
 		<constructor-arg ref="validator" />
+		<constructor-arg ref="fileProcessorChain" />
+	</bean>
+
+	<bean id="fileProcessorChain"
+		class="ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain">
+		<constructor-arg>
+			<list></list>
+		</constructor-arg>
 	</bean>
 
 	<!-- validator beans -->

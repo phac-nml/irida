@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -40,6 +41,7 @@ public class SequenceFileServiceImplTest {
 	private SequenceFileService sequenceFileService;
 	private SequenceFileRepository crudRepository;
 	private CRUDRepository<Long, SequenceFile> fileRepository;
+	private FileProcessingChain fileProcessingChain;
 	private Validator validator;
 
 	@Before
@@ -50,8 +52,9 @@ public class SequenceFileServiceImplTest {
 		validator = factory.getValidator();
 		crudRepository = mock(SequenceFileRepository.class);
 		fileRepository = mock(CRUDRepository.class);
-		sequenceFileService = new SequenceFileServiceImpl(crudRepository,
-				fileRepository, validator);
+		fileProcessingChain = mock(FileProcessingChain.class);
+		sequenceFileService = new SequenceFileServiceImpl(crudRepository, fileRepository, validator,
+				fileProcessingChain);
 	}
 
 	@Test
@@ -63,15 +66,10 @@ public class SequenceFileServiceImplTest {
 		withIdentifier.setId(new Long(1111));
 		when(crudRepository.create(sf)).thenReturn(withIdentifier);
 		when(fileRepository.create(withIdentifier)).thenReturn(withIdentifier);
-		when(
-				crudRepository.update(
-						withIdentifier.getId(),
-						ImmutableMap.of("file",
-								(Object) withIdentifier.getFile())))
+		when(crudRepository.update(withIdentifier.getId(), ImmutableMap.of("file", (Object) withIdentifier.getFile())))
 				.thenReturn(withIdentifier);
 
-		when(crudRepository.exists(withIdentifier.getId())).thenReturn(
-				Boolean.TRUE);
+		when(crudRepository.exists(withIdentifier.getId())).thenReturn(Boolean.TRUE);
 
 		SequenceFile created = sequenceFileService.create(sf);
 
@@ -82,12 +80,12 @@ public class SequenceFileServiceImplTest {
 		verify(crudRepository).update(withIdentifier.getId(),
 				ImmutableMap.of("file", (Object) withIdentifier.getFile()));
 		verify(crudRepository).exists(withIdentifier.getId());
+		verify(fileProcessingChain).launchChain(withIdentifier);
 		Files.delete(f);
 	}
 
 	@Test
-	public void testUpdateWithoutFile() throws IOException,
-			NoSuchFieldException {
+	public void testUpdateWithoutFile() throws IOException, NoSuchFieldException {
 		Long updatedId = new Long(1111);
 		Long originalId = new Long(2222);
 		Path f = Files.createTempFile(null, null);
@@ -96,12 +94,10 @@ public class SequenceFileServiceImplTest {
 		SequenceFile updatedSf = new SequenceFile(f);
 		updatedSf.setId(updatedId);
 
-		ImmutableMap<String, Object> updatedMap = ImmutableMap.of("id",
-				(Object) updatedId);
+		ImmutableMap<String, Object> updatedMap = ImmutableMap.of("id", (Object) updatedId);
 
 		when(crudRepository.exists(originalId)).thenReturn(Boolean.TRUE);
-		when(crudRepository.update(sf.getId(), updatedMap)).thenReturn(
-				updatedSf);
+		when(crudRepository.update(sf.getId(), updatedMap)).thenReturn(updatedSf);
 
 		sf = sequenceFileService.update(originalId, updatedMap);
 
@@ -110,6 +106,7 @@ public class SequenceFileServiceImplTest {
 		verify(crudRepository).exists(originalId);
 		verify(crudRepository).update(originalId, updatedMap);
 		verify(fileRepository, times(0)).update(sf.getId(), updatedMap);
+		verify(fileProcessingChain, times(0)).launchChain(updatedSf);
 		Files.delete(f);
 	}
 
@@ -123,14 +120,11 @@ public class SequenceFileServiceImplTest {
 		SequenceFile updatedSf = new SequenceFile(updatedFile);
 		updatedSf.setId(id);
 
-		ImmutableMap<String, Object> updatedMap = ImmutableMap.of("file",
-				(Object) updatedFile);
+		ImmutableMap<String, Object> updatedMap = ImmutableMap.of("file", (Object) updatedFile);
 
 		when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
-		when(crudRepository.update(sf.getId(), updatedMap)).thenReturn(
-				updatedSf);
-		when(fileRepository.update(sf.getId(), updatedMap)).thenReturn(
-				updatedSf);
+		when(crudRepository.update(sf.getId(), updatedMap)).thenReturn(updatedSf);
+		when(fileRepository.update(sf.getId(), updatedMap)).thenReturn(updatedSf);
 
 		sf = sequenceFileService.update(id, updatedMap);
 
@@ -142,6 +136,7 @@ public class SequenceFileServiceImplTest {
 		verify(crudRepository, times(2)).exists(id);
 		verify(crudRepository, times(2)).update(sf.getId(), updatedMap);
 		verify(fileRepository).update(sf.getId(), updatedMap);
+		verify(fileProcessingChain).launchChain(updatedSf);
 
 		Files.delete(originalFile);
 		Files.delete(updatedFile);
@@ -157,15 +152,12 @@ public class SequenceFileServiceImplTest {
 		owner.setId(new Long(2222));
 
 		when(crudRepository.create(sf)).thenReturn(sf);
-		when(crudRepository.update(any(Long.class), any(Map.class)))
-				.thenReturn(sf);
+		when(crudRepository.update(any(Long.class), any(Map.class))).thenReturn(sf);
 		when(crudRepository.exists(sf.getId())).thenReturn(true);
 		when(fileRepository.create(sf)).thenReturn(sf);
-		when(crudRepository.addFileToSample(owner, sf)).thenReturn(
-				new SampleSequenceFileJoin(owner, sf));
+		when(crudRepository.addFileToSample(owner, sf)).thenReturn(new SampleSequenceFileJoin(owner, sf));
 
-		Join<Sample, SequenceFile> created = sequenceFileService
-				.createSequenceFileInSample(sf, owner);
+		Join<Sample, SequenceFile> created = sequenceFileService.createSequenceFileInSample(sf, owner);
 
 		verify(crudRepository).create(sf);
 		verify(crudRepository).update(any(Long.class), any(Map.class));

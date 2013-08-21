@@ -15,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -36,6 +37,10 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 * A reference to the data store repository.
 	 */
 	private SequenceFileRepository sequenceFileRepository;
+	/**
+	 * A reference to the chain of file processors.
+	 */
+	private FileProcessingChain fileProcessingChain;
 
 	/**
 	 * Constructor.
@@ -46,10 +51,12 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 *            validator.
 	 */
 	public SequenceFileServiceImpl(SequenceFileRepository sequenceFileRepository,
-			CRUDRepository<Long, SequenceFile> fileRepository, Validator validator) {
+			CRUDRepository<Long, SequenceFile> fileRepository, Validator validator,
+			FileProcessingChain fileProcessingChain) {
 		super(sequenceFileRepository, validator, SequenceFile.class);
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.fileRepository = fileRepository;
+		this.fileProcessingChain = fileProcessingChain;
 	}
 
 	/**
@@ -69,6 +76,8 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		changed.put("file", sequenceFile.getFile());
 		sequenceFile = super.update(sequenceFile.getId(), changed);
 
+		fileProcessingChain.launchChain(sequenceFile);
+
 		return sequenceFile;
 	}
 
@@ -84,6 +93,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		if (updatedFields.containsKey("file")) {
 			updated = fileRepository.update(id, updatedFields);
 			updated = super.update(id, ImmutableMap.of("file", (Object) updated.getFile()));
+			fileProcessingChain.launchChain(updated);
 		}
 
 		return updated;
