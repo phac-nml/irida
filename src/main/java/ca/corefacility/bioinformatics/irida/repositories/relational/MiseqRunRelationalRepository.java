@@ -2,6 +2,8 @@
 package ca.corefacility.bioinformatics.irida.repositories.relational;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
@@ -26,6 +28,9 @@ public class MiseqRunRelationalRepository extends GenericRelationalRepository<Mi
         super(source, MiseqRun.class);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public MiseqRunSequenceFileJoin addSequenceFileToMiseqRun(MiseqRun run, SequenceFile file) throws EntityExistsException{
         Session session = sessionFactory.getCurrentSession();
@@ -43,6 +48,28 @@ public class MiseqRunRelationalRepository extends GenericRelationalRepository<Mi
         session.persist(miseqRunSequenceFileJoin);
 
         return miseqRunSequenceFileJoin;
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public MiseqRunSequenceFileJoin getMiseqRunForSequenceFile(SequenceFile file){
+        Session session = sessionFactory.getCurrentSession();
+        Criteria query = session.createCriteria(MiseqRunSequenceFileJoin.class).add(Restrictions.eq("sequenceFile", file));
+        
+        List<MiseqRunSequenceFileJoin> list = query.list();
+        
+        if(list.isEmpty()){
+            logger.error("No miseq run found for sequence file" + file.getId());
+            throw new EntityNotFoundException("No miseq run found for sequence file " + file.getId());
+        }
+        else if(list.size() > 0){
+            logger.error("Multiple miseq runs found for sequence file.");
+            throw new StorageException("Multiple miseq runs found for sequence file " + file.getId());
+        }
+        
+        return list.get(0);
     }
 
 }
