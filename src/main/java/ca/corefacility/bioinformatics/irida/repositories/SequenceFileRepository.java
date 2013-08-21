@@ -1,8 +1,10 @@
 package ca.corefacility.bioinformatics.irida.repositories;
 
+import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import java.util.List;
@@ -62,5 +64,13 @@ public interface SequenceFileRepository extends CRUDRepository<Long, SequenceFil
      * @param file The file to remove
      */    
     public void removeFileFromSample(Sample sample, SequenceFile file);
+    
+    /**
+     * Get the {@link SequenceFile}s associated with a {@link MiseqRun}
+     *
+     * @param run The {@link MiseqRun} to get the files for
+     * @return a list of {@link MiseqRunSequenceFileJoin} objects
+     */    
+    public List<MiseqRunSequenceFileJoin> getFilesForMiseqRun(MiseqRun run);
 
 }

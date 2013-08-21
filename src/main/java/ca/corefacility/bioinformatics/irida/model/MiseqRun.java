@@ -2,6 +2,7 @@
 package ca.corefacility.bioinformatics.irida.model;
 
 import java.util.Date;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -165,5 +166,38 @@ public class MiseqRun implements IridaThing, Comparable<MiseqRun>{
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(createdDate,modifiedDate,application,assay,chemistry,description,experimentName,investigatorName,projectName,workflow);
+    }    
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MiseqRun other = (MiseqRun) obj;
+        if (Objects.equals(this.investigatorName, other.investigatorName)
+                && Objects.equals(this.projectName, other.projectName) 
+                && Objects.equals(this.experimentName, other.experimentName)
+                && Objects.equals(this.workflow, other.workflow)
+                && Objects.equals(this.application, other.application)
+                && Objects.equals(this.assay, other.assay)
+                && Objects.equals(this.description, other.description)
+                && Objects.equals(this.chemistry, other.chemistry)
+                && Objects.equals(this.createdDate, other.createdDate)
+                && Objects.equals(this.modifiedDate, other.modifiedDate)) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    
+    
 
 }

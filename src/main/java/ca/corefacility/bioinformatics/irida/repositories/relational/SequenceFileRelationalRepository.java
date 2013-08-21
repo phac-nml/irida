@@ -11,9 +11,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
@@ -138,6 +140,21 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
             throw new EntityNotFoundException("A join between this file and sample was not found");
         }
         session.delete(join);     
+    }
+    
+    public List<MiseqRunSequenceFileJoin> getFilesForMiseqRun(MiseqRun run){
+        Session session = sessionFactory.getCurrentSession();
+
+        Criteria crit = session.createCriteria(MiseqRunSequenceFileJoin.class);
+        crit.add(Restrictions.eq("miseqRun", run));
+        
+        List<MiseqRunSequenceFileJoin> list = crit.list();
+        for(MiseqRunSequenceFileJoin join : list){
+            join.getObject().setRealPath();
+        }
+        
+        return list;
+
     }
     
 }

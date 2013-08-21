@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.relational;
 
+import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -23,7 +24,9 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.repositories.MiseqRunRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 
@@ -45,6 +48,9 @@ public class SequenceFileRelationalRepositoryTest {
     
     @Autowired
     private SampleRepository srepo;
+    
+    @Autowired
+    private MiseqRunRepository mrepo;
     
     @Autowired
     private DataSource dataSource;    
@@ -142,5 +148,19 @@ public class SequenceFileRelationalRepositoryTest {
         List<Map<String, Object>> list = jdbcTemplate.queryForList(qs,  sample.getId(),file.getId());
         assertNotNull(list);
         assertTrue(list.isEmpty());
+    }
+    
+    @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")    
+    public void testGetFilesForMiseqRun(){
+        MiseqRun run = mrepo.read(1L);
+        
+        List<MiseqRunSequenceFileJoin> filesForMiseqRun = repo.getFilesForMiseqRun(run);
+        
+        assertTrue(filesForMiseqRun.size() == 2);
+        for(MiseqRunSequenceFileJoin join : filesForMiseqRun){
+            assertEquals(join.getSubject(), run);
+            assertNotNull(join.getObject().getFile());
+        }
     }
 }
