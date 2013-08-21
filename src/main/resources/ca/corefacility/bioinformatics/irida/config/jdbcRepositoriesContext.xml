@@ -35,9 +35,8 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
     
-    <bean id="miseqRunRepository" class="ca.corefacility.bioinformatics.irida.repositories.relational.GenericRelationalRepository">
+    <bean id="miseqRunRepository" class="ca.corefacility.bioinformatics.irida.repositories.relational.MiseqRunRelationalRepository">
         <constructor-arg ref="dataSource"/>
-        <constructor-arg type="java.lang.Class" value="ca.corefacility.bioinformatics.irida.model.MiseqRun"/>
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>    
     
