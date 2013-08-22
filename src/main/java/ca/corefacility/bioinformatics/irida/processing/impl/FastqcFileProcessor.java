@@ -1,14 +1,21 @@
 package ca.corefacility.bioinformatics.irida.processing.impl;
 
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.DirectFieldAccessor;
 
+import uk.ac.babraham.FastQC.Graphs.QualityBoxPlot;
 import uk.ac.babraham.FastQC.Modules.BasicStats;
 import uk.ac.babraham.FastQC.Modules.PerBaseQualityScores;
 import uk.ac.babraham.FastQC.Modules.PerSequenceQualityScores;
@@ -20,6 +27,8 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Executes FastQC on a {@link SequenceFile} and stores the report in the
@@ -37,6 +46,13 @@ public class FastqcFileProcessor implements FileProcessor {
 
 	public FastqcFileProcessor(SequenceFileRepository sequenceFileRepository) {
 		this.sequenceFileRepository = sequenceFileRepository;
+	}
+
+	public static void main(String[] args) {
+		FastqcFileProcessor ffp = new FastqcFileProcessor(null);
+		Path file = Paths.get("/home/fbristow/27459_S1_L001_R1_001.fastq.gz");
+		SequenceFile sequenceFile = new SequenceFile(file);
+		ffp.process(sequenceFile);
 	}
 
 	/**
@@ -62,7 +78,7 @@ public class FastqcFileProcessor implements FileProcessor {
 			logger.debug("Finished FastQC analysis modules.");
 			Map<String, Object> updatedProperties = new HashMap<>();
 			updatedProperties.putAll(handleBasicStats(basicStats));
-			handlePerBaseQualityScores(pbqs, sequenceFile);
+			updatedProperties.putAll(handlePerBaseQualityScores(pbqs));
 			handlePerSequenceQualityScores(psqs, sequenceFile);
 
 			sequenceFile = sequenceFileRepository.update(sequenceFile.getId(), updatedProperties);
@@ -78,8 +94,7 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * 
 	 * @param stats
 	 *            the {@link BasicStats} computed by fastqc.
-	 * @param sequenceFile
-	 *            the file uploaded from the sequencer.
+	 * @return properties suitable for updating a {@link SequenceFile}.
 	 */
 	private Map<String, Object> handleBasicStats(BasicStats stats) {
 		DirectFieldAccessor dfa = new DirectFieldAccessor(stats);
@@ -116,11 +131,18 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * 
 	 * @param scores
 	 *            the {@link PerBaseQualityScores} computed by fastqc.
-	 * @param sequenceFile
-	 *            the file uploaded from the sequencer.
 	 */
-	private void handlePerBaseQualityScores(PerBaseQualityScores scores, SequenceFile sequenceFile) {
+	private Map<String, Object> handlePerBaseQualityScores(PerBaseQualityScores scores) throws IOException {
 
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		QualityBoxPlot bp = (QualityBoxPlot) scores.getResultsPanel();
+		BufferedImage b = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
+		Graphics g = b.getGraphics();
+		bp.paint(g, b.getWidth(), b.getHeight());
+
+		ImageIO.write(b, "PNG", os);
+		byte[] image = os.toByteArray();
+		return ImmutableMap.of("perBaseQualityScoreChart", (Object) image);
 	}
 
 	/**

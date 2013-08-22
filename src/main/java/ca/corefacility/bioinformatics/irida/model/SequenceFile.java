@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -57,6 +58,10 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	private Integer minLength;
 	private Integer maxLength;
 	private Short gcContent;
+	@Lob
+	private byte[] perBaseQualityScoreChart;
+	@Lob
+	private byte[] perSequenceQualityScoreChart;
 
 	public SequenceFile() {
 		createdDate = new Date();
@@ -93,6 +98,34 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	@Override
 	public int compareTo(SequenceFile other) {
 		return modifiedDate.compareTo(other.modifiedDate);
+	}
+
+	/**
+	 * Box and whisker plot showing per-base quality scores as a PNG-formatted
+	 * image in a byte array.
+	 * 
+	 * @return
+	 */
+	public byte[] getPerBaseQualityScoreChart() {
+		return perBaseQualityScoreChart;
+	}
+
+	public void setPerBaseQualityScoreChart(byte[] perBaseQualityScoreChart) {
+		this.perBaseQualityScoreChart = perBaseQualityScoreChart;
+	}
+
+	/**
+	 * Box and whisker plot showing per-sequence quality scores as a
+	 * PNG-formatted image in a byte array.
+	 * 
+	 * @return
+	 */
+	public byte[] getPerSequenceQualityScoreChart() {
+		return perSequenceQualityScoreChart;
+	}
+
+	public void setPerSequenceQualityScoreChart(byte[] perSequenceQualityScoreChart) {
+		this.perSequenceQualityScoreChart = perSequenceQualityScoreChart;
 	}
 
 	public Boolean getEnabled() {

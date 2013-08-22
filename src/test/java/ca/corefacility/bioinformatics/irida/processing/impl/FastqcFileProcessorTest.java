@@ -1,17 +1,19 @@
 package ca.corefacility.bioinformatics.irida.processing.impl;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
@@ -54,21 +56,15 @@ public class FastqcFileProcessorTest {
 		Files.deleteIfExists(fasta);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testHandleFastqFile() throws IOException {
 		// fastqc shouldn't barf on a fastq file.
 		Path fastq = Files.createTempFile(null, null);
 		Files.write(fastq, FASTQ_FILE_CONTENTS.getBytes());
-		Map<String, Object> expectedPropertyUpdates = new HashMap<>();
-		
-		// gcContent stored as a short.
-		expectedPropertyUpdates.put("gcContent", (short) 50);
-		expectedPropertyUpdates.put("filteredSequences", 0);
-		expectedPropertyUpdates.put("fileType", "Conventional base calls");
-		expectedPropertyUpdates.put("maxLength", 8);
-		expectedPropertyUpdates.put("minLength", 8);
-		expectedPropertyUpdates.put("totalSequences", 1);
-		expectedPropertyUpdates.put("encoding", "Illumina <1.3");
+
+		@SuppressWarnings("rawtypes")
+		ArgumentCaptor<Map> argument = ArgumentCaptor.forClass(Map.class);
 
 		SequenceFile sf = new SequenceFile(fastq);
 		sf.setId(1L);
@@ -78,7 +74,15 @@ public class FastqcFileProcessorTest {
 			fail();
 		}
 
-		verify(sequenceFileRepository).update(1L, expectedPropertyUpdates);
+		verify(sequenceFileRepository).update(eq(1L), argument.capture());
+		Map<String, Object> updatedProperties = argument.getValue();
+		assertEquals((short) 50, updatedProperties.get("gcContent"));
+		assertEquals(0, updatedProperties.get("filteredSequences"));
+		assertEquals("Conventional base calls", updatedProperties.get("fileType"));
+		assertEquals(8, updatedProperties.get("maxLength"));
+		assertEquals(8, updatedProperties.get("minLength"));
+		assertEquals(1, updatedProperties.get("totalSequences"));
+		assertEquals("Illumina <1.3", updatedProperties.get("encoding"));
 
 		Files.deleteIfExists(fastq);
 	}
