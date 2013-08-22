@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.DirectFieldAccessor;
 
+import uk.ac.babraham.FastQC.Graphs.LineGraph;
 import uk.ac.babraham.FastQC.Graphs.QualityBoxPlot;
 import uk.ac.babraham.FastQC.Modules.BasicStats;
 import uk.ac.babraham.FastQC.Modules.PerBaseQualityScores;
@@ -79,7 +80,7 @@ public class FastqcFileProcessor implements FileProcessor {
 			Map<String, Object> updatedProperties = new HashMap<>();
 			updatedProperties.putAll(handleBasicStats(basicStats));
 			updatedProperties.putAll(handlePerBaseQualityScores(pbqs));
-			handlePerSequenceQualityScores(psqs, sequenceFile);
+			updatedProperties.putAll(handlePerSequenceQualityScores(psqs));
 
 			sequenceFile = sequenceFileRepository.update(sequenceFile.getId(), updatedProperties);
 		} catch (Exception e) {
@@ -131,9 +132,10 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * 
 	 * @param scores
 	 *            the {@link PerBaseQualityScores} computed by fastqc.
+	 * @return a map with a single key containing a byte array, png-formatted
+	 *         chart.
 	 */
 	private Map<String, Object> handlePerBaseQualityScores(PerBaseQualityScores scores) throws IOException {
-
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		QualityBoxPlot bp = (QualityBoxPlot) scores.getResultsPanel();
 		BufferedImage b = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
@@ -150,11 +152,19 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * 
 	 * @param scores
 	 *            the {@link PerSequenceQualityScores} computed by fastqc.
-	 * @param sequenceFile
-	 *            the file uploaded from the sequencer.
+	 * @return a map with a single key containing a byte array, png-formatted
+	 *         chart.
 	 */
-	private void handlePerSequenceQualityScores(PerSequenceQualityScores scores, SequenceFile sequenceFile) {
+	private Map<String, Object> handlePerSequenceQualityScores(PerSequenceQualityScores scores) throws IOException {
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		LineGraph lg = (LineGraph) scores.getResultsPanel();
+		BufferedImage b = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
+		Graphics g = b.getGraphics();
+		lg.paint(g, b.getWidth(), b.getHeight());
 
+		ImageIO.write(b, "PNG", os);
+		byte[] image = os.toByteArray();
+		return ImmutableMap.of("perSequenceQualityScoreChart", (Object) image);
 	}
 
 	/**
