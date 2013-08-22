@@ -48,7 +48,9 @@
 					<constructor-arg ref="sequenceFileRepository" />
 				</bean>
 				<bean
-					class="ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor" />
+					class="ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor">
+					<constructor-arg ref="sequenceFileRepository" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>
