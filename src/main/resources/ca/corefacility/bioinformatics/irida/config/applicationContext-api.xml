@@ -47,6 +47,8 @@
 					class="ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor">
 					<constructor-arg ref="sequenceFileRepository" />
 				</bean>
+				<bean
+					class="ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor" />
 			</list>
 		</constructor-arg>
 	</bean>
