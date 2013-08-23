@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
+import ca.corefacility.bioinformatics.irida.utils.SecurityUser;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -39,6 +40,7 @@ public class SampleRelationalRepositoryTest {
     private ProjectRepository prepo;   
     
     public SampleRelationalRepositoryTest() {
+        SecurityUser.setUser();
     }
 
     /**

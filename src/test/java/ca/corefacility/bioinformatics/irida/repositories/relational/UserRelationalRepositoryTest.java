@@ -27,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.utils.SecurityUser;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -50,6 +51,10 @@ public class UserRelationalRepositoryTest {
     
     @Autowired
     private DataSource dataSource;
+    
+    public UserRelationalRepositoryTest(){
+        SecurityUser.setUser();
+    }
     
     @Test
     @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
