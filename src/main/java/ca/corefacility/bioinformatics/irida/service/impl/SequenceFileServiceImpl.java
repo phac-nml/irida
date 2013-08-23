@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.validation.Validator;
 
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +44,11 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	private FileProcessingChain fileProcessingChain;
 
 	/**
+	 * Task executor for running asynchronous jobs.
+	 */
+	private TaskExecutor taskExecutor;
+
+	/**
 	 * Constructor.
 	 * 
 	 * @param sequenceFileRepository
@@ -52,11 +58,12 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	public SequenceFileServiceImpl(SequenceFileRepository sequenceFileRepository,
 			CRUDRepository<Long, SequenceFile> fileRepository, Validator validator,
-			FileProcessingChain fileProcessingChain) {
+			FileProcessingChain fileProcessingChain, TaskExecutor taskExecutor) {
 		super(sequenceFileRepository, validator, SequenceFile.class);
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.fileRepository = fileRepository;
 		this.fileProcessingChain = fileProcessingChain;
+		this.taskExecutor = taskExecutor;
 	}
 
 	/**
@@ -74,11 +81,11 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 
 		Map<String, Object> changed = new HashMap<>();
 		changed.put("file", sequenceFile.getFile());
-		sequenceFile = super.update(sequenceFile.getId(), changed);
+		final SequenceFile updatedSequenceFile = super.update(sequenceFile.getId(), changed);
 
-		fileProcessingChain.launchChain(sequenceFile);
+		taskExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, updatedSequenceFile));
 
-		return sequenceFile;
+		return updatedSequenceFile;
 	}
 
 	/**
@@ -92,8 +99,9 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 
 		if (updatedFields.containsKey("file")) {
 			updated = fileRepository.update(id, updatedFields);
-			updated = super.update(id, ImmutableMap.of("file", (Object) updated.getFile()));
-			fileProcessingChain.launchChain(updated);
+			final SequenceFile updatedSequenceFile = super.update(id,
+					ImmutableMap.of("file", (Object) updated.getFile()));
+			taskExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, updatedSequenceFile));
 		}
 
 		return updated;
@@ -121,5 +129,28 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	public List<Join<Sample, SequenceFile>> getSequenceFilesForSample(Sample sample) {
 		List<SampleSequenceFileJoin> joins = sequenceFileRepository.getFilesForSample(sample);
 		return new ArrayList<Join<Sample, SequenceFile>>(joins);
+	}
+
+	/**
+	 * Executes {@link FileProcessingChain} asynchronously in a
+	 * {@link TaskExecutor}.
+	 * 
+	 * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+	 * 
+	 */
+	private static final class SequenceFileProcessorLauncher implements Runnable {
+		private final FileProcessingChain fileProcessingChain;
+		private final SequenceFile sequenceFile;
+
+		public SequenceFileProcessorLauncher(FileProcessingChain fileProcessingChain, SequenceFile sequenceFile) {
+			this.fileProcessingChain = fileProcessingChain;
+			this.sequenceFile = sequenceFile;
+		}
+
+		@Override
+		public void run() {
+			fileProcessingChain.launchChain(sequenceFile);
+		}
+
 	}
 }

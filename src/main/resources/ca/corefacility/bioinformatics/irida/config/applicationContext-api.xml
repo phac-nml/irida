@@ -37,6 +37,12 @@
 		<constructor-arg ref="sequenceFileFilesystemRepository" />
 		<constructor-arg ref="validator" />
 		<constructor-arg ref="fileProcessorChain" />
+		<constructor-arg>
+			<bean
+				class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+				<property name="corePoolSize" value="4" />
+			</bean>
+		</constructor-arg>
 	</bean>
 
 	<bean id="fileProcessorChain"

@@ -19,6 +19,8 @@ import javax.validation.ValidatorFactory;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.core.task.SyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
@@ -43,6 +45,7 @@ public class SequenceFileServiceImplTest {
 	private CRUDRepository<Long, SequenceFile> fileRepository;
 	private FileProcessingChain fileProcessingChain;
 	private Validator validator;
+	private TaskExecutor taskExecutor;
 
 	@Before
 	@SuppressWarnings("unchecked")
@@ -53,8 +56,9 @@ public class SequenceFileServiceImplTest {
 		crudRepository = mock(SequenceFileRepository.class);
 		fileRepository = mock(CRUDRepository.class);
 		fileProcessingChain = mock(FileProcessingChain.class);
+		taskExecutor = new SyncTaskExecutor();
 		sequenceFileService = new SequenceFileServiceImpl(crudRepository, fileRepository, validator,
-				fileProcessingChain);
+				fileProcessingChain, taskExecutor);
 	}
 
 	@Test
