@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.repositories.relational;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -47,6 +49,26 @@ public class SampleRelationalRepository extends GenericRelationalRepository<Samp
 
 		return list;
 	}
+        
+        /**
+	 * {@inheritDoc}
+	 */
+        @Override
+        public Sample getSampleBySampleId(String sampleId){
+            Session session = sessionFactory.getCurrentSession();
+            Criteria crit = session.createCriteria(Sample.class);
+            crit.add(Restrictions.eq("sampleId", sampleId));
+            
+            List<Sample> list = crit.list();
+            if(list.isEmpty()){
+                throw new EntityNotFoundException("Sample with id " + sampleId + " not found");
+            }
+            else if(list.size() > 1){
+                throw new StorageException("Multiple samples found with id "+ sampleId);
+            }
+            
+            return list.get(0);
+        }
 
 	/**
 	 * {@inheritDoc}

@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model;
 
 import java.util.Date;
 import java.util.Objects;
+import javax.persistence.Column;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,7 +32,9 @@ public class Sample implements IridaThing, Comparable<Sample> {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    
+    @NotNull
+    @Size(min = 3)
+    @Column(unique = true)
     private String sampleId;
     
     @NotNull
@@ -60,10 +63,20 @@ public class Sample implements IridaThing, Comparable<Sample> {
     
     /**
      * Create a new {@link Sample} with the given name
-     * @param name The name of the sample
+     * @param sampleName The name of the sample
      */
     public Sample(String sampleName) {
         this.sampleName = sampleName;
+    }
+    
+    /**
+     * Create a new {@link Sample} with the given name and ID
+     * @param name The sampleName of the sample
+     * @param sampleId The ID of the sample
+     */
+    public Sample(String sampleName, String sampleId) {
+        this.sampleName = sampleName;
+        this.sampleId = sampleId;
     }
 
     @Override

@@ -111,6 +111,15 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		// return sample to the caller
 		return s;
 	}
+        
+        /**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+        public Sample getSampleBySampleId(String sampleId){
+            return sampleRepository.getSampleBySampleId(sampleId);
+        }
 
 	/**
 	 * {@inheritDoc}
