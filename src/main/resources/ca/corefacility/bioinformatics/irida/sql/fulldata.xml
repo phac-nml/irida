@@ -40,7 +40,6 @@
   <sequence_file id="3" createdDate="2013-07-18 14:20:50.0" modifiedDate="2013-07-18 14:20:50.0" filePath="/tmp/3" enabled="true"/>
   <sequence_file id="4" createdDate="2013-07-18 14:20:51.0" modifiedDate="2013-07-18 14:20:51.0" filePath="/tmp/4" enabled="true"/>
   <sequence_file id="5" createdDate="2013-07-18 14:20:52.0" modifiedDate="2013-07-18 14:20:52.0" filePath="/tmp/5" enabled="true"/>
-  <sequence_file_AUD/>
   
   <miseqRun id="1" createdDate="2013-07-18 14:20:48.0" modifiedDate="2013-07-18 14:20:48.0" investigatorName="Tom" projectName="project 1" experimentName="experiment 1"
     workflow="workflow 1" application="application 1" assay="assay 1" description="description 1" chemistry="chemistry 1" enabled="true"/>
@@ -48,7 +47,7 @@
     workflow="workflow 2" application="application 2" assay="assay 2" description="description 2" chemistry="chemistry 2" enabled="true"/>
   <miseqRun id="3" createdDate="2013-07-18 14:20:48.0" modifiedDate="2013-07-18 14:20:48.0" investigatorName="Franklin" projectName="project 3" experimentName="experiment 3"
     workflow="workflow 3" application="application 3" assay="assay 3" description="description 3" chemistry="chemistry 3" enabled="true"/>
-  <miseqRun_AUD/>
+  
   
   <project_user id="1" createdDate="2013-07-18 14:20:48.0" project_id="1" user_id="1"/>
   <project_user id="2" createdDate="2013-07-18 14:20:48.0" project_id="1" user_id="2"/>
@@ -84,6 +83,11 @@
   <sequencefile_sample id="4" createdDate="2013-07-18 14:20:49.0" sequencefile_id="4" sample_id="2"/>
   <sequencefile_sample id="5" createdDate="2013-07-18 14:20:49.0" sequencefile_id="5" sample_id="3"/>
   
+  <miseqrun_sequencefile id="1" createdDate="2013-07-18 14:20:49.0" miseqrun_id="1" sequencefile_id="1"/>
+  <miseqrun_sequencefile id="2" createdDate="2013-07-18 14:20:49.0" miseqrun_id="1" sequencefile_id="2"/>
+  <miseqrun_sequencefile id="3" createdDate="2013-07-18 14:20:49.0" miseqrun_id="2" sequencefile_id="3"/>
+  <miseqrun_sequencefile id="4" createdDate="2013-07-18 14:20:49.0" miseqrun_id="2" sequencefile_id="4"/>
+  
   <Revisions/>
   <IDENTIFIABLE_AUD/>
   <USER_AUD/>
@@ -93,10 +97,8 @@
   <project_user_AUD/>
   <project_sample_AUD/>
   <sequencefile_sample_AUD/>
-  
-  <miseqrun_sequencefile id="1" createdDate="2013-07-18 14:20:49.0" miseqrun_id="1" sequencefile_id="1"/>
-  <miseqrun_sequencefile id="2" createdDate="2013-07-18 14:20:49.0" miseqrun_id="1" sequencefile_id="2"/>
-  <miseqrun_sequencefile id="3" createdDate="2013-07-18 14:20:49.0" miseqrun_id="2" sequencefile_id="3"/>
-  <miseqrun_sequencefile id="4" createdDate="2013-07-18 14:20:49.0" miseqrun_id="2" sequencefile_id="4"/>
   <miseqrun_sequencefile_AUD/>
+  <miseqRun_AUD/>
+  <sequence_file_AUD/>
+  
 </dataset>
