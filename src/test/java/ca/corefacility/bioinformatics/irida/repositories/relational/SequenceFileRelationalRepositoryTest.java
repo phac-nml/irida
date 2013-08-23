@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJ
 import ca.corefacility.bioinformatics.irida.repositories.MiseqRunRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.utils.SecurityUser;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -54,6 +55,10 @@ public class SequenceFileRelationalRepositoryTest {
     
     @Autowired
     private DataSource dataSource;    
+    
+    public SequenceFileRelationalRepositoryTest(){
+        SecurityUser.setUser();
+    }
 
     /**
      * Test of create method, of class SequenceFileRelationalRepository.
