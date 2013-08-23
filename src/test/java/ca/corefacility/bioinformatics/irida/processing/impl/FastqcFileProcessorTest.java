@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.processing.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -83,6 +85,11 @@ public class FastqcFileProcessorTest {
 		assertEquals(8, updatedProperties.get("minLength"));
 		assertEquals(1, updatedProperties.get("totalSequences"));
 		assertEquals("Illumina <1.3", updatedProperties.get("encoding"));
+		assertNotNull(updatedProperties.get("perBaseQualityScoreChart"));
+		assertTrue(((byte[]) updatedProperties.get("perBaseQualityScoreChart")).length > 0);
+
+		assertNotNull(updatedProperties.get("perSequenceQualityScoreChart"));
+		assertTrue(((byte[]) updatedProperties.get("perSequenceQualityScoreChart")).length > 0);
 
 		Files.deleteIfExists(fastq);
 	}
