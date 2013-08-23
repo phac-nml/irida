@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.repositories.relational;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
@@ -11,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -106,5 +108,34 @@ public class UserRelationalRepository extends GenericRelationalRepository<User> 
 		List<User> list = setLong.list();
         
         return list;
-    }    
+    }
+
+    /**
+     * Update a {@link User} object.
+     * This override checks if the User.systemRole field is being updated, and will get the appropriate persisted instance if necessary.
+     * 
+     * @param id The ID of the user object to update
+     * @param updatedFields The fields on the object to update
+     * @return The updated {@link User}
+     * @throws InvalidPropertyException 
+     */
+    @Override
+    public User update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
+        
+        if(updatedFields.containsKey("systemRole")){
+            Session session = this.sessionFactory.getCurrentSession();
+            Role role = (Role) updatedFields.get("systemRole");
+            Criteria roleQuery = session.createCriteria(Role.class);
+            roleQuery.add(Restrictions.like("name", role.getName()));
+            Role retRole = (Role) roleQuery.uniqueResult();
+            if(retRole == null){
+                throw new IllegalArgumentException("Role " + role.getName() + " doesn't exist in the database.  User cannot be updated");
+            }
+            updatedFields.put("systemRole", retRole);
+        }
+        
+        return super.update(id, updatedFields); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    
 }
