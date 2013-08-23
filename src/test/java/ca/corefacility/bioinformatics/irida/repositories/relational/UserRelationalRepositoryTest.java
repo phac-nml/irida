@@ -21,6 +21,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
@@ -33,6 +34,8 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.Lists;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -152,5 +155,44 @@ public class UserRelationalRepositoryTest {
         for(User u : usersAvailableForProject){
             assertFalse(ids.contains(u.getId()));
         }
+    }
+    
+    @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+    @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml") 
+    public void testUpdateUserRole(){
+        Role r = new Role("ROLE_ADMIN");
+        
+        Map<String,Object> changes = new HashMap<>();
+        changes.put("systemRole", r);
+        
+        User update = null;
+        try{
+            update = repo.update(1L, changes);
+        }
+        catch(IllegalArgumentException ex){
+            fail();
+        }
+        
+        assertEquals(r.getName(), update.getSystemRole().getName());
+    }
+    
+    @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+    @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml") 
+    public void testUpdateInvalidUserRole(){
+        Role r = new Role("ROLE_IS_NOT_A_ROLE");
+        
+        Map<String,Object> changes = new HashMap<>();
+        changes.put("systemRole", r);
+        
+        User update = null;
+        try{
+            update = repo.update(1L, changes);
+            fail();
+        }
+        catch(IllegalArgumentException ex){
+            
+        }        
     }
 }
