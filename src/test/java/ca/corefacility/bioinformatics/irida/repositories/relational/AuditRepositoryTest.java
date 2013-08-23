@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.repositories.relational;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
@@ -16,10 +17,16 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.UserRevEntity;
 import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntity;
 import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntityRepo;
+import ca.corefacility.bioinformatics.irida.utils.SecurityUser;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import org.hibernate.AssertionFailure;
+import org.junit.Before;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  *
@@ -36,6 +43,11 @@ public class AuditRepositoryTest {
     private AuditRepository arepo;
     
     public AuditRepositoryTest() {
+    }
+    
+    @Before
+    public void setUp(){
+        SecurityUser.setUser();
     }
 
 
@@ -67,4 +79,22 @@ public class AuditRepositoryTest {
         assertNotNull(revisions);
         assertEquals(revisions.size(), 2);
     }
+    
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
+    @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/ident.xml")    
+    @Test
+    public void testNotLoggedIn(){
+        SecurityContextHolder.getContext().setAuthentication(null);
+        
+        IdentifiableTestEntity ent = new IdentifiableTestEntity();
+        ent.setNonNull("notnull");
+        ent.setIntegerValue(5);
+        ent.setLabel("bleh");
+        try{
+            IdentifiableTestEntity create = repo.create(ent);
+            fail();
+        }catch(AssertionFailure ex){
+        }
+    }
+    
 }

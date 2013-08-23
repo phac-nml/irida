@@ -6,6 +6,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntity;
 import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntityRepo;
+import ca.corefacility.bioinformatics.irida.utils.SecurityUser;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
@@ -44,6 +45,10 @@ public class GenericRelationalRepositoryTest {
     private DataSource dataSource;
     
     private IdentifiableRowMapper rowMapper = new IdentifiableRowMapper();
+    
+    public GenericRelationalRepositoryTest(){
+        SecurityUser.setUser();
+    }
     
     public class IdentifiableRowMapper implements RowMapper<IdentifiableTestEntity>{
         @Override

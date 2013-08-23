@@ -35,8 +35,8 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
             logger.trace("Revision created by user " + userByUsername.getUsername());
         }
         catch(NullPointerException ex){
-            logger.warn("Warning: No user is set in the session so it cannot be added to the revision.");
-            rev.setUser(null);
+            logger.error("No user is set in the session so it cannot be added to the revision.");
+            throw new IllegalStateException("The database cannot be modified if a user is not logged in.");
         }
         
         
