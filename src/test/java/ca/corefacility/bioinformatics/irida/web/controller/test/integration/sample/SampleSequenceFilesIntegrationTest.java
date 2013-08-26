@@ -26,6 +26,8 @@ import static org.junit.Assert.*;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class SampleSequenceFilesIntegrationTest {
+	
+	private static final byte[] FASTQ_FILE_CONTENTS = "@testread\nACGTACGT\n+\n????????".getBytes();
 
     @Test
     public void testAddSequenceFileToSample() throws IOException {
@@ -35,7 +37,7 @@ public class SampleSequenceFilesIntegrationTest {
         String sequenceFileUri = from(sampleBody).getString("resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
         // prepare a file for sending to the server
         Path sequenceFile = Files.createTempFile(null, null);
-        Files.write(sequenceFile, ">test read\nACGTACTCATG".getBytes());
+        Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
 
         Response r = given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                 .multiPart("file", sequenceFile.toFile()).expect().statusCode(HttpStatus.CREATED.value())
@@ -65,7 +67,7 @@ public class SampleSequenceFilesIntegrationTest {
         String sequenceFileUri = from(projectBody).getString("resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
         // prepare a file for sending to the server
         Path sequenceFile = Files.createTempFile(null, null);
-        Files.write(sequenceFile, ">test read\nACGTACTCATG".getBytes());
+        Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
 
         Response r = given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                 .multiPart("file", sequenceFile.toFile()).expect().statusCode(HttpStatus.CREATED.value())
@@ -103,7 +105,7 @@ public class SampleSequenceFilesIntegrationTest {
         String sequenceFileUri = from(sampleBody).getString("resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
         // prepare a file for sending to the server
         Path sequenceFile = Files.createTempFile(null, null);
-        Files.write(sequenceFile, ">test read\nACGTACTCATG".getBytes());
+        Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
 
         Response r = given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                 .multiPart("file", sequenceFile.toFile()).expect().statusCode(HttpStatus.CREATED.value())
