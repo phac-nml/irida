@@ -74,7 +74,7 @@ public class ProjectsController extends GenericController<Project, ProjectResour
         links.add(linkTo(ProjectsController.class).
                 slash(p.getId()).slash("users").
                 withRel(PROJECT_USERS_REL));
-        links.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSamples(projectId))
+        links.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSamples(projectId,null))
                 .withRel(ProjectSamplesController.REL_PROJECT_SAMPLES));
         return links;
     }

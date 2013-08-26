@@ -125,7 +125,7 @@ public class ProjectSamplesControllerTest {
         when(sampleService.getSamplesForProject(p)).thenReturn(relationships);
         when(projectService.read(p.getId())).thenReturn(p);
 
-        ModelMap modelMap = controller.getProjectSamples(p.getId());
+        ModelMap modelMap = controller.getProjectSamples(p.getId(),null);
 
         verify(sampleService, times(1)).getSamplesForProject(p);
         verify(projectService, times(1)).read(p.getId());
@@ -139,7 +139,7 @@ public class ProjectSamplesControllerTest {
         assertEquals(1, resourceLinks.size());
         Link self = resourceLinks.iterator().next();
         assertEquals("self", self.getRel());
-        assertEquals("http://localhost/projects/" + p.getId() + "/samples", self.getHref());
+        assertEquals("http://localhost/projects/" + p.getId() + "/samples" + "?sampleId", self.getHref());
         SampleResource resource = samples.iterator().next();
         assertEquals(s.getSampleName(), resource.getSampleName());
         List<Link> links = resource.getLinks();

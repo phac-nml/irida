@@ -36,6 +36,7 @@ import java.util.Map;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Controller for managing relationships between {@link Project} and {@link Sample}.
@@ -114,29 +115,63 @@ public class ProjectSamplesController {
      * @return the list of {@link Sample}s associated with this {@link Project}.
      */
     @RequestMapping(value = "/projects/{projectId}/samples", method = RequestMethod.GET)
-    public ModelMap getProjectSamples(@PathVariable Long projectId) {
+    public ModelMap getProjectSamples(@PathVariable Long projectId, @RequestParam(required = false) String sampleId) {
+        
+        if(sampleId == null || sampleId.isEmpty()){
+            ModelMap modelMap = new ModelMap();
+            Project p = projectService.read(projectId);
+            List<Join<Project, Sample>> relationships = sampleService.getSamplesForProject(p);
+
+            ResourceCollection<SampleResource> sampleResources = new ResourceCollection<>(relationships.size());
+
+            for (Join<Project, Sample> r : relationships) {
+                Sample sample = r.getObject();
+                SampleResource sr = new SampleResource();
+                sr.setResource(sample);
+                sr.add(linkTo(methodOn(ProjectSamplesController.class).
+                        getProjectSample(projectId, sample.getId())).withSelfRel());
+                sampleResources.add(sr);
+            }
+
+            sampleResources.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSamples(projectId,null)).withSelfRel());
+            sampleResources.setTotalResources(relationships.size());
+
+            modelMap.addAttribute(GenericController.RESOURCE_NAME, sampleResources);
+
+            return modelMap;
+        }
+        else
+        {
+            return getProjectSamplesById(projectId, sampleId);
+        }
+    }
+    
+    /**
+     * Get the list of {@link Sample} associated with this {@link Project} that have the given sampleId
+     *
+     * @param projectId the identifier of the {@link Project} to get the {@link Sample}s for.
+     * @return the list of {@link Sample}s associated with this {@link Project}.
+     */
+    public ModelMap getProjectSamplesById( Long projectId, String sampleId) {
         ModelMap modelMap = new ModelMap();
         Project p = projectService.read(projectId);
-        List<Join<Project, Sample>> relationships = sampleService.getSamplesForProject(p);
+        
+        Sample sampleBySampleId = sampleService.getSampleBySampleId(sampleId);
 
-        ResourceCollection<SampleResource> sampleResources = new ResourceCollection<>(relationships.size());
+        ResourceCollection<SampleResource> sampleResources = new ResourceCollection<>(1);
+        SampleResource sr = new SampleResource();
+        sr.setResource(sampleBySampleId);
+        sr.add(linkTo(methodOn(ProjectSamplesController.class).
+                    getProjectSample(projectId, sampleBySampleId.getId())).withSelfRel());
+        sampleResources.add(sr);
 
-        for (Join<Project, Sample> r : relationships) {
-            Sample sample = r.getObject();
-            SampleResource sr = new SampleResource();
-            sr.setResource(sample);
-            sr.add(linkTo(methodOn(ProjectSamplesController.class).
-                    getProjectSample(projectId, sample.getId())).withSelfRel());
-            sampleResources.add(sr);
-        }
-
-        sampleResources.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
-        sampleResources.setTotalResources(relationships.size());
+        sampleResources.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSamples(projectId,sampleId)).withSelfRel());
+        sampleResources.setTotalResources(1);
 
         modelMap.addAttribute(GenericController.RESOURCE_NAME, sampleResources);
 
         return modelMap;
-    }
+    }    
 
     /**
      * Get the representation of a specific sample that's associated with the project.
@@ -214,7 +249,7 @@ public class ProjectSamplesController {
         RootResource resource = new RootResource();
         // add links back to the collection of samples and to the project itself.
         resource.add(linkTo(methodOn(ProjectSamplesController.class)
-                .getProjectSamples(projectId)).withRel(REL_PROJECT_SAMPLES));
+                .getProjectSamples(projectId,null)).withRel(REL_PROJECT_SAMPLES));
         resource.add(linkTo(ProjectsController.class).slash(projectId).withRel(ProjectsController.REL_PROJECT));
 
         // add the links to the response.
