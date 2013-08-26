@@ -10,12 +10,21 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 
 /**
  * Aspect that handles post-processing of {@link SequenceFile} after a
  * transaction has been committed.
+ * 
+ * This aspect should be executed *after* a transaction has been committed. Note
+ * that this aspect is annotated with an {@link Order} that is lower than the
+ * {@link Order} specified by the transaction manager. See:
+ * http://www.coderanch.com/t/607422/Spring/Spring-Aspects-advices-transactions
+ * and http://forum.springsource.org/showthread.php?85082-Aspect-Order for more
+ * information.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
@@ -32,22 +41,20 @@ public class FileProcessorAspect {
 		this.taskExecutor = taskExecutor;
 	}
 
-	@AfterReturning(value = "execution(* ca.corefacility.bioinformatics.irida.service..*SequenceFileService*.*(..))")
-	public void postProcess(JoinPoint jp) {
-		SequenceFile sf = null;
-		logger.debug("JoinPoint [" + jp.toString() + "]");
-		logger.debug("\tTarget [" + jp.getTarget().toString() + "]");
-		logger.debug("\tArgs [" + jp.getArgs() + "]");
-		logger.debug("\tThis [" + jp.getThis() + "]");
-		// logger.debug("SequenceFile [" + sequenceFile + "]");
-		for (Object o : jp.getArgs()) {
-			if (o instanceof SequenceFile) {
-				sf = (SequenceFile) o;
-				break;
-			}
-		}
+	@AfterReturning(value = "execution(* ca.corefacility.bioinformatics.irida.service..*SequenceFileService*.*(..))", returning = "sequenceFileJoin")
+	public void postProcess(JoinPoint jp, Join<Sample, SequenceFile> sequenceFileJoin) {
+		logger.debug("Executing afterReturning advice for creating a new sequence file in a sample.");
+		executeProcessor(sequenceFileJoin.getObject());
+	}
 
-		taskExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, sf, SecurityContextHolder
+	@AfterReturning(value = "execution(* ca.corefacility.bioinformatics.irida.service..*SequenceFileService*.*(..))", returning = "sequenceFile")
+	public void postProcess(JoinPoint jp, SequenceFile sequenceFile) {
+		logger.debug("Executing afterReturning advice for creating or updating a sequence file.");
+		executeProcessor(sequenceFile);
+	}
+
+	private void executeProcessor(SequenceFile sequenceFile) {
+		taskExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, sequenceFile, SecurityContextHolder
 				.getContext()));
 	}
 
@@ -72,7 +79,6 @@ public class FileProcessorAspect {
 
 		@Override
 		public void run() {
-			logger.debug("Inside thread: " + Thread.currentThread().toString());
 			SecurityContextHolder.setContext(securityContext);
 			fileProcessingChain.launchChain(sequenceFile);
 			SecurityContextHolder.clearContext();
