@@ -32,3 +32,9 @@ Creating the IRIDA test user
    * GRANT ALL PRIVILEGES ON irida_test.* to 'test'@'%';
 
 The irida-api package should now be able to run.
+
+Miscellaneous Doodads
+=====================
+Installing the API project *without* executing tests:
+
+    mvn clean install -Dmaven.test.skip=true
