@@ -19,14 +19,11 @@ import javax.validation.ValidatorFactory;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.core.task.SyncTaskExecutor;
-import org.springframework.core.task.TaskExecutor;
 
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
-import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -43,9 +40,7 @@ public class SequenceFileServiceImplTest {
 	private SequenceFileService sequenceFileService;
 	private SequenceFileRepository crudRepository;
 	private CRUDRepository<Long, SequenceFile> fileRepository;
-	private FileProcessingChain fileProcessingChain;
 	private Validator validator;
-	private TaskExecutor taskExecutor;
 
 	@Before
 	@SuppressWarnings("unchecked")
@@ -55,10 +50,7 @@ public class SequenceFileServiceImplTest {
 		validator = factory.getValidator();
 		crudRepository = mock(SequenceFileRepository.class);
 		fileRepository = mock(CRUDRepository.class);
-		fileProcessingChain = mock(FileProcessingChain.class);
-		taskExecutor = new SyncTaskExecutor();
-		sequenceFileService = new SequenceFileServiceImpl(crudRepository, fileRepository, validator,
-				fileProcessingChain, taskExecutor);
+		sequenceFileService = new SequenceFileServiceImpl(crudRepository, fileRepository, validator);
 	}
 
 	@Test
@@ -84,7 +76,6 @@ public class SequenceFileServiceImplTest {
 		verify(crudRepository).update(withIdentifier.getId(),
 				ImmutableMap.of("file", (Object) withIdentifier.getFile()));
 		verify(crudRepository).exists(withIdentifier.getId());
-		verify(fileProcessingChain).launchChain(withIdentifier);
 		Files.delete(f);
 	}
 
@@ -110,7 +101,6 @@ public class SequenceFileServiceImplTest {
 		verify(crudRepository).exists(originalId);
 		verify(crudRepository).update(originalId, updatedMap);
 		verify(fileRepository, times(0)).update(sf.getId(), updatedMap);
-		verify(fileProcessingChain, times(0)).launchChain(updatedSf);
 		Files.delete(f);
 	}
 
@@ -140,7 +130,6 @@ public class SequenceFileServiceImplTest {
 		verify(crudRepository, times(2)).exists(id);
 		verify(crudRepository, times(2)).update(sf.getId(), updatedMap);
 		verify(fileRepository).update(sf.getId(), updatedMap);
-		verify(fileProcessingChain).launchChain(updatedSf);
 
 		Files.delete(originalFile);
 		Files.delete(updatedFile);

@@ -240,6 +240,18 @@
 			<artifactId>fastqc</artifactId>
 			<version>${fastqc.version}</version>
 		</dependency>
+		
+		<!-- aspectj -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+			<version>${aspectj.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>${aspectj.version}</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>irida-api</finalName>
@@ -320,6 +332,7 @@
 		<dbunit.version>2.4.9</dbunit.version>
 		<commons.dbcp.version>1.4</commons.dbcp.version>
 		<fastqc.version>0.10.1</fastqc.version>
+		<aspectj.version>1.7.3</aspectj.version>
 
 		<!-- stuck on an older version of hibernate validator until spring upgrades 
 			support -->

@@ -7,7 +7,8 @@ import java.util.Map;
 
 import javax.validation.Validator;
 
-import org.springframework.core.task.TaskExecutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
-import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -30,6 +30,8 @@ import com.google.common.collect.ImmutableMap;
  */
 public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile> implements SequenceFileService {
 
+	private static final Logger logger = LoggerFactory.getLogger(SequenceFileServiceImpl.class);
+
 	/**
 	 * A reference to the file system repository.
 	 */
@@ -38,15 +40,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 * A reference to the data store repository.
 	 */
 	private SequenceFileRepository sequenceFileRepository;
-	/**
-	 * A reference to the chain of file processors.
-	 */
-	private FileProcessingChain fileProcessingChain;
-
-	/**
-	 * Task executor for running asynchronous jobs.
-	 */
-	private TaskExecutor taskExecutor;
 
 	/**
 	 * Constructor.
@@ -57,21 +50,18 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 *            validator.
 	 */
 	public SequenceFileServiceImpl(SequenceFileRepository sequenceFileRepository,
-			CRUDRepository<Long, SequenceFile> fileRepository, Validator validator,
-			FileProcessingChain fileProcessingChain, TaskExecutor taskExecutor) {
+			CRUDRepository<Long, SequenceFile> fileRepository, Validator validator) {
 		super(sequenceFileRepository, validator, SequenceFile.class);
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.fileRepository = fileRepository;
-		this.fileProcessingChain = fileProcessingChain;
-		this.taskExecutor = taskExecutor;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional
 	@PreAuthorize("hasAnyRole('ROLE_CLIENT', 'ROLE_USER')")
+	@Transactional
 	public SequenceFile create(SequenceFile sequenceFile) {
 		// Send the file to the database repository to be stored (in super)
 		sequenceFile = super.create(sequenceFile);
@@ -83,7 +73,8 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		changed.put("file", sequenceFile.getFile());
 		final SequenceFile updatedSequenceFile = super.update(sequenceFile.getId(), changed);
 
-		taskExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, updatedSequenceFile));
+		logger.debug("Outside thread: " + Thread.currentThread().toString() + " with sequence file ["
+				+ updatedSequenceFile.getId() + "]");
 
 		return updatedSequenceFile;
 	}
@@ -99,9 +90,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 
 		if (updatedFields.containsKey("file")) {
 			updated = fileRepository.update(id, updatedFields);
-			final SequenceFile updatedSequenceFile = super.update(id,
-					ImmutableMap.of("file", (Object) updated.getFile()));
-			taskExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, updatedSequenceFile));
+			super.update(id, ImmutableMap.of("file", (Object) updated.getFile()));
 		}
 
 		return updated;
@@ -129,28 +118,5 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	public List<Join<Sample, SequenceFile>> getSequenceFilesForSample(Sample sample) {
 		List<SampleSequenceFileJoin> joins = sequenceFileRepository.getFilesForSample(sample);
 		return new ArrayList<Join<Sample, SequenceFile>>(joins);
-	}
-
-	/**
-	 * Executes {@link FileProcessingChain} asynchronously in a
-	 * {@link TaskExecutor}.
-	 * 
-	 * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
-	 * 
-	 */
-	private static final class SequenceFileProcessorLauncher implements Runnable {
-		private final FileProcessingChain fileProcessingChain;
-		private final SequenceFile sequenceFile;
-
-		public SequenceFileProcessorLauncher(FileProcessingChain fileProcessingChain, SequenceFile sequenceFile) {
-			this.fileProcessingChain = fileProcessingChain;
-			this.sequenceFile = sequenceFile;
-		}
-
-		@Override
-		public void run() {
-			fileProcessingChain.launchChain(sequenceFile);
-		}
-
 	}
 }
