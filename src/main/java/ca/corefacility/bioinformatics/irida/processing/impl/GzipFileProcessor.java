@@ -1,11 +1,12 @@
 package ca.corefacility.bioinformatics.irida.processing.impl;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.zip.GZIPInputStream;
-import java.util.zip.ZipException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,27 +54,27 @@ public class GzipFileProcessor implements FileProcessor {
 		}
 
 		try {
-			file = addExtensionToFilename(file, GZIP_EXTENSION);
-			GZIPInputStream zippedInputStream = new GZIPInputStream(Files.newInputStream(file));
+			if (isCompressed(file)) {
+				file = addExtensionToFilename(file, GZIP_EXTENSION);
 
-			logger.debug("Handling gzip compressed file.");
+				try (GZIPInputStream zippedInputStream = new GZIPInputStream(Files.newInputStream(file))) {
+					logger.debug("Handling gzip compressed file.");
 
-			Path target = Paths.get(nameWithoutExtension);
-			logger.debug("Writing uncompressed file to [" + target + "]");
+					Path target = Paths.get(nameWithoutExtension);
+					logger.debug("Writing uncompressed file to [" + target + "]");
 
-			Files.copy(zippedInputStream, target);
+					Files.copy(zippedInputStream, target);
 
-			// if the new name is different from the name before, update the
-			// file name in the database.
-			if (!nameWithoutExtension.equals(originalFilename)) {
-				sequenceFile = sequenceFileRepository.update(sequenceFile.getId(),
-						ImmutableMap.of("file", (Object) target));
+					// if the new name is different from the name before, update
+					// the file name in the database.
+					if (!nameWithoutExtension.equals(originalFilename)) {
+						sequenceFile = sequenceFileRepository.update(sequenceFile.getId(),
+								ImmutableMap.of("file", (Object) target));
+					}
+				}
 			}
-		} catch (ZipException e) {
-			// the file isn't gzip formatted, so just proceed; don't throw an
-			// exception, don't process the file.
 		} catch (Exception e) {
-			logger.debug("Failed to process the input file [" + sequenceFile + "]; stack trace follows.", e);
+			logger.error("Failed to process the input file [" + sequenceFile + "]; stack trace follows.", e);
 			throw new FileProcessorException("Failed to process input file [" + sequenceFile + "].");
 		}
 
@@ -104,5 +105,27 @@ public class GzipFileProcessor implements FileProcessor {
 	@Override
 	public Boolean modifiesFile() {
 		return true;
+	}
+
+	/*
+	 * Determines if a byte array is compressed. Adapted from stackoverflow
+	 * answer:
+	 * 
+	 * @see
+	 * http://stackoverflow.com/questions/4818468/how-to-check-if-inputstream
+	 * -is-gzipped#answer-8620778
+	 * 
+	 * @param bytes an array of bytes
+	 * 
+	 * @return true if the array is compressed or false otherwise
+	 * 
+	 * @throws java.io.IOException if the byte array couldn't be read
+	 */
+	private boolean isCompressed(Path file) throws IOException {
+		try (InputStream is = Files.newInputStream(file, StandardOpenOption.READ)) {
+			byte[] bytes = new byte[2];
+			is.read(bytes);
+			return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC)) && (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)));
+		}
 	}
 }
