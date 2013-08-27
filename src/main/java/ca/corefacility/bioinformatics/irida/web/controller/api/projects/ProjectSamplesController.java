@@ -1,5 +1,25 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.projects;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
@@ -14,29 +34,10 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.Sample
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
 
-import com.google.common.net.HttpHeaders;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Link;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import org.springframework.web.bind.annotation.RequestParam;
+import com.google.common.net.HttpHeaders;
 
 /**
  * Controller for managing relationships between {@link Project} and {@link Sample}.
@@ -211,10 +212,6 @@ public class ProjectSamplesController {
             LabelledRelationshipResource<Sample, SequenceFile> resource = new LabelledRelationshipResource<>(sf.getLabel(), r);
             resource.add(linkTo(methodOn(SampleSequenceFilesController.class).getSequenceFileForSample(projectId,
                     sampleId, sf.getId())).withSelfRel());
-            Link fastaLink = linkTo(methodOn(SampleSequenceFilesController.class).getSequenceFileForSample(projectId,
-                    sampleId, sf.getId())).withRel(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_FASTA);
-            // we need to add the fasta suffix manually to the end, so that web-based clients can find the file.
-            resource.add(new Link(fastaLink.getHref() + ".fasta", SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_FASTA));
             sequenceFileResources.add(resource);
         }
 
