@@ -6,9 +6,12 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
+import org.hibernate.AssertionFailure;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -22,11 +25,6 @@ import ca.corefacility.bioinformatics.irida.utils.SecurityUser;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import org.hibernate.AssertionFailure;
-import org.junit.Before;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  *
@@ -91,7 +89,7 @@ public class AuditRepositoryTest {
         ent.setIntegerValue(5);
         ent.setLabel("bleh");
         try{
-            IdentifiableTestEntity create = repo.create(ent);
+            repo.create(ent);
             fail();
         }catch(AssertionFailure ex){
         }
