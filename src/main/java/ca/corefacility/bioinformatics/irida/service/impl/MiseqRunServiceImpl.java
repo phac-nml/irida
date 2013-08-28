@@ -9,11 +9,14 @@ import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.MiseqRunRepository;
 import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
 import javax.validation.Validator;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
+@Service
 public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> implements MiseqRunService {
 
     private MiseqRunRepository miseqRepo;
@@ -27,6 +30,7 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
      * {@inheritDoc }
      */
     @Override
+    @Transactional
     public Join<MiseqRun, SequenceFile> addSequenceFileToMiseqRun(MiseqRun run, SequenceFile file) {
         return miseqRepo.addSequenceFileToMiseqRun(run, file);
     }
@@ -35,6 +39,7 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
      * {@inheritDoc }
      */
     @Override
+    @Transactional(readOnly = true)
     public Join<MiseqRun, SequenceFile> getMiseqRunForSequenceFile(SequenceFile file) {
         return miseqRepo.getMiseqRunForSequenceFile(file);
     }
