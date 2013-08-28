@@ -23,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.MiseqRunRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.utils.SecurityUser;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
@@ -51,6 +52,7 @@ public class MiseqRunRelationalRepositoryTest {
     private SequenceFileRepository seqrepo;
     
     public MiseqRunRelationalRepositoryTest() {
+        SecurityUser.setUser();
     }
 
     /**
