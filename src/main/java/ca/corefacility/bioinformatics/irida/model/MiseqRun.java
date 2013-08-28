@@ -196,8 +196,10 @@ public class MiseqRun implements IridaThing, Comparable<MiseqRun>{
         
         return false;
     }
-    
-    
-    
+
+    @Override
+    public String toString() {
+        return "MiseqRun{" + "id=" + id + ", investigatorName=" + investigatorName + ", projectName=" + projectName + ", description=" + description + ", createdDate=" + createdDate + '}';
+    }
 
 }
