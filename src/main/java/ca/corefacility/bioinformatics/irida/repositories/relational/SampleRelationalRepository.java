@@ -31,7 +31,7 @@ public class SampleRelationalRepository extends GenericRelationalRepository<Samp
 	}
 
 	public SampleRelationalRepository(DataSource source) {
-		super(source, Sample.class);
+            super(source, Sample.class);
 	}
 
 	/**
@@ -39,15 +39,15 @@ public class SampleRelationalRepository extends GenericRelationalRepository<Samp
 	 */
 	@Override
 	public List<ProjectSampleJoin> getSamplesForProject(Project project) {
-		Session session = sessionFactory.getCurrentSession();
+            Session session = sessionFactory.getCurrentSession();
 
-		Criteria crit = session.createCriteria(ProjectSampleJoin.class);
-		crit.add(Restrictions.eq("project", project));
-		crit.createCriteria("sample").add(Restrictions.eq("enabled", true));
-		@SuppressWarnings("unchecked")
-		List<ProjectSampleJoin> list = crit.list();
+            Criteria crit = session.createCriteria(ProjectSampleJoin.class);
+            crit.add(Restrictions.eq("project", project));
+            crit.createCriteria("sample").add(Restrictions.eq("enabled", true));
+            @SuppressWarnings("unchecked")
+            List<ProjectSampleJoin> list = crit.list();
 
-		return list;
+            return list;
 	}
         
         /**
@@ -59,15 +59,12 @@ public class SampleRelationalRepository extends GenericRelationalRepository<Samp
             Criteria crit = session.createCriteria(Sample.class);
             crit.add(Restrictions.eq("sampleId", sampleId));
             
-            List<Sample> list = crit.list();
-            if(list.isEmpty()){
+            Sample sample = (Sample) crit.uniqueResult();
+            if(sample == null){
                 throw new EntityNotFoundException("Sample with id " + sampleId + " not found");
             }
-            else if(list.size() > 1){
-                throw new StorageException("Multiple samples found with id "+ sampleId);
-            }
             
-            return list.get(0);
+            return sample;
         }
 
 	/**
@@ -75,12 +72,12 @@ public class SampleRelationalRepository extends GenericRelationalRepository<Samp
 	 */
 	@Override
 	public SampleSequenceFileJoin getSampleForSequenceFile(SequenceFile sf) {
-		Session session = sessionFactory.getCurrentSession();
-		Criteria crit = session.createCriteria(SampleSequenceFileJoin.class);
-		crit.add(Restrictions.eq("sequenceFile", sf));
-		crit.createCriteria("sample").add(Restrictions.eq("enabled", true));
+            Session session = sessionFactory.getCurrentSession();
+            Criteria crit = session.createCriteria(SampleSequenceFileJoin.class);
+            crit.add(Restrictions.eq("sequenceFile", sf));
+            crit.createCriteria("sample").add(Restrictions.eq("enabled", true));
 
-		return (SampleSequenceFileJoin) crit.uniqueResult();
-	}
+            return (SampleSequenceFileJoin) crit.uniqueResult();
+        }
 
 }
