@@ -14,6 +14,11 @@ import org.springframework.security.config.annotation.method.configuration.Globa
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.Sample;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.IridaPermissionEvaluator;
 import ca.corefacility.bioinformatics.irida.security.permissions.ReadProjectPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.ReadSamplePermission;
@@ -55,8 +60,28 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	@Bean(initMethod = "init")
 	public PermissionEvaluator permissionEvaluator() {
-		IridaPermissionEvaluator permissionEvaluator = new IridaPermissionEvaluator(new UpdateUserPermission(),
-				new ReadProjectPermission(), new ReadSamplePermission(), new ReadSequenceFilePermission());
+		IridaPermissionEvaluator permissionEvaluator = new IridaPermissionEvaluator(updateUserPermission(),
+				readProjectPermission(), readSamplePermission(), readSequenceFilePermission());
 		return permissionEvaluator;
+	}
+
+	@Bean
+	public BasePermission<User> updateUserPermission() {
+		return new UpdateUserPermission();
+	}
+
+	@Bean
+	public BasePermission<Project> readProjectPermission() {
+		return new ReadProjectPermission();
+	}
+
+	@Bean
+	public BasePermission<Sample> readSamplePermission() {
+		return new ReadSamplePermission();
+	}
+
+	@Bean
+	public BasePermission<SequenceFile> readSequenceFilePermission() {
+		return new ReadSequenceFilePermission();
 	}
 }
