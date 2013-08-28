@@ -46,8 +46,7 @@
 		<property name="packagesToScan">
 			<list>
 				<value>ca.corefacility.bioinformatics.irida.model</value>
-				<value>ca.corefacility.bioinformatics.irida.repositories.relational.auditing
-				</value>
+				<value>ca.corefacility.bioinformatics.irida.repositories.relational.auditing</value>
 			</list>
 		</property>
 	</bean>
