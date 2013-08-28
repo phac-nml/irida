@@ -81,6 +81,9 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 
     private String locale;
 
+    @NotNull
+    private boolean credentialsNonExpired;
+
     /**
      * Construct an instance of {@link User} with no properties set.
      */
@@ -88,6 +91,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
             createdDate = new Date();
             modifiedDate = createdDate;
             locale = "en";
+            credentialsNonExpired = true;
     }
 
     /**
@@ -273,7 +277,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-            return true;
+            return credentialsNonExpired;
     }
 
     @Override
@@ -321,5 +325,8 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
     public void setLocale(String locale) {
         this.locale = locale;
     }
-        
+
+    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+        this.credentialsNonExpired = credentialsNonExpired;
+    }
 }
