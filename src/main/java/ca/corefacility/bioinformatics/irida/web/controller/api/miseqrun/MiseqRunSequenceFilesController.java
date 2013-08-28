@@ -61,7 +61,7 @@ public class MiseqRunSequenceFilesController {
         // then, get the miseq run
         MiseqRun run = miseqRunService.read(miseqrunId);
         // then add the user to the project with the specified role.
-        MiseqRunSequenceFileJoin addSequenceFileToMiseqRun = miseqRunService.addSequenceFileToMiseqRun(run, file);
+        Join<MiseqRun, SequenceFile> addSequenceFileToMiseqRun = miseqRunService.addSequenceFileToMiseqRun(run, file);
 
         String location = linkTo(MiseqRunController.class).slash(miseqrunId).slash("sequenceFiles").slash(seqId).withSelfRel().getHref();
 
