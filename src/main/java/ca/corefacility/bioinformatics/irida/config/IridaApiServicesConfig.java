@@ -5,6 +5,7 @@ import javax.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,8 +38,8 @@ import ca.corefacility.bioinformatics.irida.service.impl.UserServiceImpl;
  */
 @Configuration
 @ImportResource({ "classpath:/ca/corefacility/bioinformatics/irida/config/hibernateContext.xml",
-		"classpath:/ca/corefacility/bioinformatics/irida/config/applicationContext-security.xml",
 		"classpath:/ca/corefacility/bioinformatics/irida/config/applicationContext-aspects.xml" })
+@Import(IridaApiSecurityConfig.class)
 public class IridaApiServicesConfig {
 
 	@Autowired
