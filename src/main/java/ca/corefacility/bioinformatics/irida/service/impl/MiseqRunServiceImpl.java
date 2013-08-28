@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.MiseqRunRepository;
@@ -22,13 +23,19 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
         this.miseqRepo = repository;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public MiseqRunSequenceFileJoin addSequenceFileToMiseqRun(MiseqRun run, SequenceFile file) {
+    public Join<MiseqRun, SequenceFile> addSequenceFileToMiseqRun(MiseqRun run, SequenceFile file) {
         return miseqRepo.addSequenceFileToMiseqRun(run, file);
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public MiseqRunSequenceFileJoin getMiseqRunForSequenceFile(SequenceFile file) {
+    public Join<MiseqRun, SequenceFile> getMiseqRunForSequenceFile(SequenceFile file) {
         return miseqRepo.getMiseqRunForSequenceFile(file);
     }
     
