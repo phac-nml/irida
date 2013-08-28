@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.repositories.relational;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
@@ -14,11 +13,15 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
+@Transactional
+@Repository
 public class MiseqRunRelationalRepository extends GenericRelationalRepository<MiseqRun> implements MiseqRunRepository{
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(MiseqRunRelationalRepository.class); 
 
@@ -58,18 +61,14 @@ public class MiseqRunRelationalRepository extends GenericRelationalRepository<Mi
         Session session = sessionFactory.getCurrentSession();
         Criteria query = session.createCriteria(MiseqRunSequenceFileJoin.class).add(Restrictions.eq("sequenceFile", file));
         
-        List<MiseqRunSequenceFileJoin> list = query.list();
-        
-        if(list.isEmpty()){
+        MiseqRunSequenceFileJoin uniqueResult = (MiseqRunSequenceFileJoin) query.uniqueResult();
+
+        if(uniqueResult == null){
             logger.error("No miseq run found for sequence file" + file.getId());
             throw new EntityNotFoundException("No miseq run found for sequence file " + file.getId());
         }
-        else if(list.size() > 1){
-            logger.error("Multiple miseq runs found for sequence file.");
-            throw new StorageException("Multiple miseq runs found for sequence file " + file.getId());
-        }
         
-        return list.get(0);
+        return uniqueResult;
     }
 
 }
