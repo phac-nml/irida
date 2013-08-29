@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.validation.Validator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,8 @@ import com.google.common.collect.ImmutableMap;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile> implements SequenceFileService {
+
+	private static final Logger logger = LoggerFactory.getLogger(SequenceFileServiceImpl.class);
 
 	/**
 	 * A reference to the file system repository.
@@ -56,8 +60,8 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional
 	@PreAuthorize("hasAnyRole('ROLE_CLIENT', 'ROLE_USER')")
+	@Transactional
 	public SequenceFile create(SequenceFile sequenceFile) {
 		// Send the file to the database repository to be stored (in super)
 		sequenceFile = super.create(sequenceFile);
@@ -67,9 +71,12 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 
 		Map<String, Object> changed = new HashMap<>();
 		changed.put("file", sequenceFile.getFile());
-		sequenceFile = super.update(sequenceFile.getId(), changed);
+		final SequenceFile updatedSequenceFile = super.update(sequenceFile.getId(), changed);
 
-		return sequenceFile;
+		logger.debug("Outside thread: " + Thread.currentThread().toString() + " with sequence file ["
+				+ updatedSequenceFile.getId() + "]");
+
+		return updatedSequenceFile;
 	}
 
 	/**
@@ -83,7 +90,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 
 		if (updatedFields.containsKey("file")) {
 			updated = fileRepository.update(id, updatedFields);
-			updated = super.update(id, ImmutableMap.of("file", (Object) updated.getFile()));
+			super.update(id, ImmutableMap.of("file", (Object) updated.getFile()));
 		}
 
 		return updated;
@@ -95,7 +102,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Override
 	@Transactional
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT') or hasPermission(#sample, 'canReadSample')")
-	public SampleSequenceFileJoin createSequenceFileInSample(SequenceFile sequenceFile, Sample sample) {
+	public Join<Sample, SequenceFile> createSequenceFileInSample(SequenceFile sequenceFile, Sample sample) {
 		SequenceFile created = create(sequenceFile);
 		SampleSequenceFileJoin addFileToSample = sequenceFileRepository.addFileToSample(sample, created);
 

@@ -50,8 +50,7 @@ public class SequenceFileServiceImplTest {
 		validator = factory.getValidator();
 		crudRepository = mock(SequenceFileRepository.class);
 		fileRepository = mock(CRUDRepository.class);
-		sequenceFileService = new SequenceFileServiceImpl(crudRepository,
-				fileRepository, validator);
+		sequenceFileService = new SequenceFileServiceImpl(crudRepository, fileRepository, validator);
 	}
 
 	@Test
@@ -63,15 +62,10 @@ public class SequenceFileServiceImplTest {
 		withIdentifier.setId(new Long(1111));
 		when(crudRepository.create(sf)).thenReturn(withIdentifier);
 		when(fileRepository.create(withIdentifier)).thenReturn(withIdentifier);
-		when(
-				crudRepository.update(
-						withIdentifier.getId(),
-						ImmutableMap.of("file",
-								(Object) withIdentifier.getFile())))
+		when(crudRepository.update(withIdentifier.getId(), ImmutableMap.of("file", (Object) withIdentifier.getFile())))
 				.thenReturn(withIdentifier);
 
-		when(crudRepository.exists(withIdentifier.getId())).thenReturn(
-				Boolean.TRUE);
+		when(crudRepository.exists(withIdentifier.getId())).thenReturn(Boolean.TRUE);
 
 		SequenceFile created = sequenceFileService.create(sf);
 
@@ -86,8 +80,7 @@ public class SequenceFileServiceImplTest {
 	}
 
 	@Test
-	public void testUpdateWithoutFile() throws IOException,
-			NoSuchFieldException {
+	public void testUpdateWithoutFile() throws IOException, NoSuchFieldException {
 		Long updatedId = new Long(1111);
 		Long originalId = new Long(2222);
 		Path f = Files.createTempFile(null, null);
@@ -96,12 +89,10 @@ public class SequenceFileServiceImplTest {
 		SequenceFile updatedSf = new SequenceFile(f);
 		updatedSf.setId(updatedId);
 
-		ImmutableMap<String, Object> updatedMap = ImmutableMap.of("id",
-				(Object) updatedId);
+		ImmutableMap<String, Object> updatedMap = ImmutableMap.of("id", (Object) updatedId);
 
 		when(crudRepository.exists(originalId)).thenReturn(Boolean.TRUE);
-		when(crudRepository.update(sf.getId(), updatedMap)).thenReturn(
-				updatedSf);
+		when(crudRepository.update(sf.getId(), updatedMap)).thenReturn(updatedSf);
 
 		sf = sequenceFileService.update(originalId, updatedMap);
 
@@ -123,14 +114,11 @@ public class SequenceFileServiceImplTest {
 		SequenceFile updatedSf = new SequenceFile(updatedFile);
 		updatedSf.setId(id);
 
-		ImmutableMap<String, Object> updatedMap = ImmutableMap.of("file",
-				(Object) updatedFile);
+		ImmutableMap<String, Object> updatedMap = ImmutableMap.of("file", (Object) updatedFile);
 
 		when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
-		when(crudRepository.update(sf.getId(), updatedMap)).thenReturn(
-				updatedSf);
-		when(fileRepository.update(sf.getId(), updatedMap)).thenReturn(
-				updatedSf);
+		when(crudRepository.update(sf.getId(), updatedMap)).thenReturn(updatedSf);
+		when(fileRepository.update(sf.getId(), updatedMap)).thenReturn(updatedSf);
 
 		sf = sequenceFileService.update(id, updatedMap);
 
@@ -157,15 +145,12 @@ public class SequenceFileServiceImplTest {
 		owner.setId(new Long(2222));
 
 		when(crudRepository.create(sf)).thenReturn(sf);
-		when(crudRepository.update(any(Long.class), any(Map.class)))
-				.thenReturn(sf);
+		when(crudRepository.update(any(Long.class), any(Map.class))).thenReturn(sf);
 		when(crudRepository.exists(sf.getId())).thenReturn(true);
 		when(fileRepository.create(sf)).thenReturn(sf);
-		when(crudRepository.addFileToSample(owner, sf)).thenReturn(
-				new SampleSequenceFileJoin(owner, sf));
+		when(crudRepository.addFileToSample(owner, sf)).thenReturn(new SampleSequenceFileJoin(owner, sf));
 
-		Join<Sample, SequenceFile> created = sequenceFileService
-				.createSequenceFileInSample(sf, owner);
+		Join<Sample, SequenceFile> created = sequenceFileService.createSequenceFileInSample(sf, owner);
 
 		verify(crudRepository).create(sf);
 		verify(crudRepository).update(any(Long.class), any(Map.class));

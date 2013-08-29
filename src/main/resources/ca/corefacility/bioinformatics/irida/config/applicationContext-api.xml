@@ -8,6 +8,7 @@
 
 	<import resource="hibernateContext.xml" />
 	<import resource="applicationContext-security.xml" />
+	<import resource="applicationContext-aspects.xml" />
 
 	<bean id="userService"
 		class="ca.corefacility.bioinformatics.irida.service.impl.UserServiceImpl">
@@ -36,6 +37,23 @@
 		<constructor-arg ref="sequenceFileRepository" />
 		<constructor-arg ref="sequenceFileFilesystemRepository" />
 		<constructor-arg ref="validator" />
+
+	</bean>
+
+	<bean id="fileProcessorChain"
+		class="ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain">
+		<constructor-arg>
+			<list>
+				<bean
+					class="ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor">
+					<constructor-arg ref="sequenceFileRepository" />
+				</bean>
+				<bean
+					class="ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor">
+					<constructor-arg ref="sequenceFileRepository" />
+				</bean>
+			</list>
+		</constructor-arg>
 	</bean>
 
 	<!-- validator beans -->
