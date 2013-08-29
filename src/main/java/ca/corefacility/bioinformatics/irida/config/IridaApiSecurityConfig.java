@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +32,8 @@ import ca.corefacility.bioinformatics.irida.service.UserService;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
+	private static final Logger logger = LoggerFactory.getLogger(IridaApiSecurityConfig.class);
+
 	@Autowired
 	private UserService userService;
 
@@ -39,6 +43,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	}
 
 	@Override
+	@Bean
 	protected MethodSecurityExpressionHandler expressionHandler() {
 		DefaultMethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler();
 		handler.setPermissionEvaluator(permissionEvaluator());
@@ -50,6 +55,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	@Bean
 	public AuthenticationManager authenticationManager() throws Exception {
+		logger.debug("Returning authentication manager [" + super.authenticationManager() + "] from API.");
 		return super.authenticationManager();
 	}
 

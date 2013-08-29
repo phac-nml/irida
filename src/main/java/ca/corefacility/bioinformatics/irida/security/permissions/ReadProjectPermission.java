@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.security.permissions;
 
 import java.util.Collection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
@@ -17,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
  */
 public class ReadProjectPermission extends BasePermission<Project> {
 
+	private static final Logger logger = LoggerFactory.getLogger(ReadProjectPermission.class);
 	private static final String PERMISSION_PROVIDED = "canReadProject";
 
 	/**
@@ -31,6 +34,7 @@ public class ReadProjectPermission extends BasePermission<Project> {
 	 */
 	@Override
 	public boolean customPermissionAllowed(Authentication authentication, Project p) {
+		logger.trace("Testing permission for [" + authentication + "] on project [" + p + "]");
 		UserRepository userRepository = getApplicationContext().getBean(UserRepository.class);
 
 		// if not an administrator, then we need to figure out if the
@@ -40,11 +44,13 @@ public class ReadProjectPermission extends BasePermission<Project> {
 
 		for (Join<Project, User> projectUser : projectUsers) {
 			if (projectUser.getObject().equals(u)) {
+				logger.trace("Permission GRANTED for [" + authentication + "] on project [" + p + "]");
 				// this user is participating in the project.
 				return true;
 			}
 		}
-
+		
+		logger.trace("Permission DENIED for [" + authentication + "] on project [" + p + "]");
 		return false;
 	}
 
