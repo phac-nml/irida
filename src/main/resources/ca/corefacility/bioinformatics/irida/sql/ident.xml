@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
   <system_role id="1" description="A basic user in the system" name="ROLE_USER"/>
-  <user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0" email="tom@gfd.ca" firstName="tom" lastName="matthews" password="fdafdas1A!" phoneNumber="456-457-1176" username="tom" enabled="true" system_role="1"/>
+  <user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0" email="tom@gfd.ca" firstName="tom" lastName="matthews" password="fdafdas1A!" phoneNumber="456-457-1176" username="tom" enabled="true" system_role="1"  credentialsNonExpired="true"/>
   <project_user/>
   <identifiable id="0" createdDate="2013-07-18 14:20:18.0" modifiedDate="2013-07-18 14:20:18.0" nonNull="notNull 0" integerValue="0" label="a label" enabled="1"/>
   <identifiable id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0" nonNull="notNull 1" integerValue="1" label="a label" enabled="1"/>
