@@ -152,7 +152,8 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(username, email, password, firstName, lastName, phoneNumber, createdDate, modifiedDate);
+		return Objects.hash(username, email, password, firstName, lastName, phoneNumber, createdDate, modifiedDate,
+				credentialsNonExpired);
 	}
 
 	/**
@@ -165,7 +166,8 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 			return Objects.equals(username, u.username) && Objects.equals(email, u.email)
 					&& Objects.equals(password, u.password) && Objects.equals(firstName, u.firstName)
 					&& Objects.equals(lastName, u.lastName) && Objects.equals(phoneNumber, u.phoneNumber)
-					&& Objects.equals(createdDate, u.createdDate) && Objects.equals(modifiedDate, u.modifiedDate);
+					&& Objects.equals(createdDate, u.createdDate) && Objects.equals(modifiedDate, u.modifiedDate)
+					&& Objects.equals(credentialsNonExpired, u.credentialsNonExpired);
 		}
 
 		return false;
