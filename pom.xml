@@ -1,366 +1,374 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>ca.corefacility.bioinformatics.irida</groupId>
-    <artifactId>irida-web</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>ca.corefacility.bioinformatics.irida</groupId>
+	<artifactId>irida-web</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
 
-    <name>irida-web</name>
-    <url>http://gitlab.corefacility.ca/irida/irida-web</url>
+	<name>irida-web</name>
+	<url>http://gitlab.corefacility.ca/irida/irida-web</url>
 
-    <issueManagement>
-        <system>GitLab</system>
-        <url>http://gitlab.corefacility.ca/irida/irida-web/issues</url>
-    </issueManagement>
+	<issueManagement>
+		<system>GitLab</system>
+		<url>http://gitlab.corefacility.ca/irida/irida-web/issues</url>
+	</issueManagement>
 
-    <scm>
-        <connection>scm:git:http://gitlab.corefacility.ca/irida/irida-web.git</connection>
-        <developerConnection>scm:git:ssh://git@gitlab.corefacility.ca/irida/irida-web.git</developerConnection>
-        <url>http://gitlab.corefacility.ca/irida/irida-web</url>
-    </scm>
+	<scm>
+		<connection>scm:git:http://gitlab.corefacility.ca/irida/irida-web.git</connection>
+		<developerConnection>scm:git:ssh://git@gitlab.corefacility.ca/irida/irida-web.git</developerConnection>
+		<url>http://gitlab.corefacility.ca/irida/irida-web</url>
+	</scm>
 
-    <inceptionYear>2013</inceptionYear>
+	<inceptionYear>2013</inceptionYear>
 
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>manual</distribution>
-        </license>
-    </licenses>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>manual</distribution>
+		</license>
+	</licenses>
 
-    <developers>
-        <developer>
-            <id>aaron</id>
-            <name>Aaron Petkau</name>
-            <email>aaron.petkau@phac-aspc.gc.ca</email>
-            <organization>Public Health Agency of Canada</organization>
-            <organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
-        </developer>
-        <developer>
-            <id>josh</id>
-            <name>Josh Adam</name>
-            <email>josh.adam@phac-aspc.gc.ca</email>
-            <organization>Public Health Agency of Canada</organization>
-            <organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
-        </developer>
-        <developer>
-            <id>tom</id>
-            <name>Thomas Matthews</name>
-            <email>thomas.matthews@phac-aspc.gc.ca</email>
-            <organization>Public Health Agency of Canada</organization>
-            <organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
-        </developer>
-        <developer>
-            <id>franklin</id>
-            <name>Franklin Bristow</name>
-            <email>franklin.bristow@phac-aspc.gc.ca</email>
-            <organization>Public Health Agency of Canada</organization>
-            <organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
-        </developer>
-    </developers>
+	<developers>
+		<developer>
+			<id>aaron</id>
+			<name>Aaron Petkau</name>
+			<email>aaron.petkau@phac-aspc.gc.ca</email>
+			<organization>Public Health Agency of Canada</organization>
+			<organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
+		</developer>
+		<developer>
+			<id>josh</id>
+			<name>Josh Adam</name>
+			<email>josh.adam@phac-aspc.gc.ca</email>
+			<organization>Public Health Agency of Canada</organization>
+			<organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
+		</developer>
+		<developer>
+			<id>tom</id>
+			<name>Thomas Matthews</name>
+			<email>thomas.matthews@phac-aspc.gc.ca</email>
+			<organization>Public Health Agency of Canada</organization>
+			<organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
+		</developer>
+		<developer>
+			<id>franklin</id>
+			<name>Franklin Bristow</name>
+			<email>franklin.bristow@phac-aspc.gc.ca</email>
+			<organization>Public Health Agency of Canada</organization>
+			<organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
+		</developer>
+	</developers>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!-- Java -->
-        <java.version>1.7</java.version>
+		<!-- Java -->
+		<java.version>1.7</java.version>
 
-        <!-- irida-api -->
-        <irida.api.version>0.0.1-SNAPSHOT</irida.api.version>
+		<!-- irida-api -->
+		<irida.api.version>0.0.1-SNAPSHOT</irida.api.version>
 
-        <!-- Jackson -->
-        <jackson.version>2.1.4</jackson.version>
+		<!-- Jackson -->
+		<jackson.version>2.1.4</jackson.version>
 
-        <!-- Jetty -->
-        <jetty.version>9.0.2.v20130417</jetty.version>
+		<!-- Jetty -->
+		<jetty.version>9.0.2.v20130417</jetty.version>
 
-        <!-- Spring -->
-        <spring-framework.version>3.2.2.RELEASE</spring-framework.version>
-        <org.springframework.hateoas.version>0.5.0.RELEASE</org.springframework.hateoas.version>
-        <spring-framework-security-oauth2.version>1.0.4.RELEASE</spring-framework-security-oauth2.version>
-        <org.springframework.security.version>3.1.4.RELEASE</org.springframework.security.version>
-        <org.springframework.plugin.version>0.8.0.RELEASE</org.springframework.plugin.version>
+		<!-- Spring -->
+		<spring-framework.version>3.2.2.RELEASE</spring-framework.version>
+		<org.springframework.hateoas.version>0.5.0.RELEASE</org.springframework.hateoas.version>
+		<spring-framework-security-oauth2.version>1.0.4.RELEASE</spring-framework-security-oauth2.version>
+		<org.springframework.security.version>3.2.0.M2</org.springframework.security.version>
+		<org.springframework.plugin.version>0.8.0.RELEASE</org.springframework.plugin.version>
 
-        <!-- Test -->
-        <junit.version>4.11</junit.version>
+		<!-- Test -->
+		<junit.version>4.11</junit.version>
 
-        <!-- Logging -->
-        <slf4j.version>1.7.2</slf4j.version>
+		<!-- Logging -->
+		<slf4j.version>1.7.2</slf4j.version>
 
-        <!-- Gson -->
-        <gson.version>2.2.2</gson.version>
+		<!-- Gson -->
+		<gson.version>2.2.2</gson.version>
 
-        <!-- JavaEE web API version -->
-        <javax.servlet.version>3.1</javax.servlet.version>
+		<!-- JavaEE web API version -->
+		<javax.servlet.version>3.1</javax.servlet.version>
 
-        <!-- REST-assured -->
-        <rest.assured.version>1.8.0</rest.assured.version>
+		<!-- REST-assured -->
+		<rest.assured.version>1.8.0</rest.assured.version>
 
-        <!-- mockito -->
-        <mockito.version>1.9.5</mockito.version>
+		<!-- mockito -->
+		<mockito.version>1.9.5</mockito.version>
 
-        <!-- commons file upload -->
-        <commons.fileupload.version>1.3</commons.fileupload.version>
+		<!-- commons file upload -->
+		<commons.fileupload.version>1.3</commons.fileupload.version>
 
-        <!-- jaxb -->
-        <jaxb-api.version>2.2.7</jaxb-api.version>
-        <jaxb-impl.version>2.2.7-b53</jaxb-impl.version>
+		<!-- jaxb -->
+		<jaxb-api.version>2.2.7</jaxb-api.version>
+		<jaxb-impl.version>2.2.7-b53</jaxb-impl.version>
 
-        <!-- plugins -->
-        <plugin.maven.compiler.version>2.3.2</plugin.maven.compiler.version>
-        <plugin.maven.war.version>2.1.1</plugin.maven.war.version>
-        <plugin.maven.dependency.version>2.1</plugin.maven.dependency.version>
-        <plugin.maven.failsafe.version>2.13</plugin.maven.failsafe.version>
-        <plugin.maven.surefire.version>2.13</plugin.maven.surefire.version>
-        <plugin.maven.jacoco.version>0.6.2.201302030002</plugin.maven.jacoco.version>
-        <plugin.maven.karma.version>1.0</plugin.maven.karma.version>
-    </properties>
+		<!-- plugins -->
+		<plugin.maven.compiler.version>2.3.2</plugin.maven.compiler.version>
+		<plugin.maven.war.version>2.1.1</plugin.maven.war.version>
+		<plugin.maven.dependency.version>2.1</plugin.maven.dependency.version>
+		<plugin.maven.failsafe.version>2.13</plugin.maven.failsafe.version>
+		<plugin.maven.surefire.version>2.13</plugin.maven.surefire.version>
+		<plugin.maven.jacoco.version>0.6.2.201302030002</plugin.maven.jacoco.version>
+		<plugin.maven.karma.version>1.0</plugin.maven.karma.version>
+	</properties>
 
-    <dependencies>
-        <!-- IRIDA-API -->
-        <dependency>
-            <groupId>ca.corefacility.bioinformatics</groupId>
-            <artifactId>irida-api</artifactId>
-            <version>${irida.api.version}</version>
-        </dependency>
+	<repositories>
+		<repository>
+			<id>repo.springsource.org</id>
+			<name>repo.springsource.org-releases</name>
+			<url>http://repo.springsource.org/libs-milestone-local</url>
+		</repository>
+	</repositories>
 
-        <!-- Spring -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>${spring-framework.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-oxm</artifactId>
-            <version>${spring-framework.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-lang</groupId>
-                    <artifactId>commons-lang</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.hateoas</groupId>
-            <artifactId>spring-hateoas</artifactId>
-            <version>${org.springframework.hateoas.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
-            <version>${org.springframework.security.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.plugin</groupId>
-            <artifactId>spring-plugin-core</artifactId>
-            <version>${org.springframework.plugin.version}</version>
-        </dependency>
+	<dependencies>
+		<!-- IRIDA-API -->
+		<dependency>
+			<groupId>ca.corefacility.bioinformatics</groupId>
+			<artifactId>irida-api</artifactId>
+			<version>${irida.api.version}</version>
+		</dependency>
 
-       <!-- Test -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- mockito -->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>${mockito.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- rest-assured -->
-        <dependency>
-            <groupId>com.jayway.restassured</groupId>
-            <artifactId>rest-assured</artifactId>
-            <version>${rest.assured.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- used by Spring MVC Test framework -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>${spring-framework.version}</version>
-            <scope>test</scope>
-        </dependency>
+		<!-- Spring -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring-framework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-oxm</artifactId>
+			<version>${spring-framework.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-lang</groupId>
+					<artifactId>commons-lang</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.hateoas</groupId>
+			<artifactId>spring-hateoas</artifactId>
+			<version>${org.springframework.hateoas.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${org.springframework.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.plugin</groupId>
+			<artifactId>spring-plugin-core</artifactId>
+			<version>${org.springframework.plugin.version}</version>
+		</dependency>
 
-        <!-- logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
+		<!-- Test -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- mockito -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- rest-assured -->
+		<dependency>
+			<groupId>com.jayway.restassured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>${rest.assured.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- used by Spring MVC Test framework -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring-framework.version}</version>
+			<scope>test</scope>
+		</dependency>
 
-        <!-- Jackson -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
+		<!-- logging -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
 
-        <!-- Gson -->
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>${gson.version}</version>
-        </dependency>
+		<!-- Jackson -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+
+		<!-- Gson -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>${gson.version}</version>
+		</dependency>
 
 
-        <!-- glassfish java ee 6 implementation -->
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.servlet</artifactId>
-            <version>${javax.servlet.version}</version>
-            <scope>provided</scope>
-        </dependency>
+		<!-- glassfish java ee 6 implementation -->
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.servlet</artifactId>
+			<version>${javax.servlet.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
-        <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
-            <version>${commons.fileupload.version}</version>
-        </dependency>
-    </dependencies>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>${commons.fileupload.version}</version>
+		</dependency>
+	</dependencies>
 
-    <build>
-        <plugins>
-            <!-- Maven compiler plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${plugin.maven.compiler.version}</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                </configuration>
-            </plugin>
+	<build>
+		<plugins>
+			<!-- Maven compiler plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${plugin.maven.compiler.version}</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
 
-            <!-- Maven WAR plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>${plugin.maven.war.version}</version>
-                <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
-                </configuration>
-            </plugin>
+			<!-- Maven WAR plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>${plugin.maven.war.version}</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
+			</plugin>
 
-            <!-- Jetty plugin -->
-            <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>${jetty.version}</version>
-		<configuration>
-		    <scanIntervalSeconds>1</scanIntervalSeconds>
-		    <stopPort>8995</stopPort>
-		    <stopKey>STOP</stopKey>
-		</configuration>
-                <executions>
-                    <execution>
-                        <id>start-jetty</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <scanIntervalSeconds>0</scanIntervalSeconds>
-                            <daemon>true</daemon>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>stop-jetty</id>
-                        <phase>post-integration-test</phase>
-                        <goals>
-                            <goal>stop</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+			<!-- Jetty plugin -->
+			<plugin>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>${jetty.version}</version>
+				<configuration>
+					<scanIntervalSeconds>1</scanIntervalSeconds>
+					<stopPort>8995</stopPort>
+					<stopKey>STOP</stopKey>
+				</configuration>
+				<executions>
+					<execution>
+						<id>start-jetty</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<scanIntervalSeconds>0</scanIntervalSeconds>
+							<daemon>true</daemon>
+						</configuration>
+					</execution>
+					<execution>
+						<id>stop-jetty</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
-            <!-- maven failsafe plugin (integration testing) -->
-            <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${plugin.maven.failsafe.version}</version>
-                <configuration>
-                    <includes>
-                        <include>**/test/integration/**/*Test.java</include>
-                    </includes>
-                    <encoding>UTF-8</encoding>
-                    <properties>
-                        <property>
-                            <name>listener</name>
-                            <value>
-                                ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener
-                            </value>
-                        </property>
-                    </properties>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+			<!-- maven failsafe plugin (integration testing) -->
+			<plugin>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>${plugin.maven.failsafe.version}</version>
+				<configuration>
+					<includes>
+						<include>**/test/integration/**/*Test.java</include>
+					</includes>
+					<encoding>UTF-8</encoding>
+					<properties>
+						<property>
+							<name>listener</name>
+							<value>
+								ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener
+							</value>
+						</property>
+					</properties>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
-            <!-- maven surefire plugin (unit testing) -->
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${plugin.maven.surefire.version}</version>
-                <configuration>
-                    <includes>
-                        <include>**/test/unit/**/*Test.java</include>
-                    </includes>
-                    <properties>
-                        <property>
-                            <name>listener</name>
-                            <value>
-                                ca.corefacility.bioinformatics.irida.web.controller.test.listeners.UnitTestListener
-                            </value>
-                        </property>
-                    </properties>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+			<!-- maven surefire plugin (unit testing) -->
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${plugin.maven.surefire.version}</version>
+				<configuration>
+					<includes>
+						<include>**/test/unit/**/*Test.java</include>
+					</includes>
+					<properties>
+						<property>
+							<name>listener</name>
+							<value>
+								ca.corefacility.bioinformatics.irida.web.controller.test.listeners.UnitTestListener
+							</value>
+						</property>
+					</properties>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
-            <!-- maven jacoco plugin (code coverage for testing) -->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${plugin.maven.jacoco.version}</version>
-                <executions>
-                    <execution>
-                        <id>jacoco-initialize</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>jacoco-site</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+			<!-- maven jacoco plugin (code coverage for testing) -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${plugin.maven.jacoco.version}</version>
+				<executions>
+					<execution>
+						<id>jacoco-initialize</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>jacoco-site</id>
+						<phase>package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
