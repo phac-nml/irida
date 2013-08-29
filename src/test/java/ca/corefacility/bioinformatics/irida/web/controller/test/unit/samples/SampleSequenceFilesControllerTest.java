@@ -184,6 +184,7 @@ public class SampleSequenceFilesControllerTest {
 		Sample s = TestDataFactory.constructSample();
 		SequenceFile sf = TestDataFactory.constructSequenceFile();
 		Join<Sample, SequenceFile> r = new SampleSequenceFileJoin(s, sf);
+		SequenceFileResource resource = new SequenceFileResource();
 
 		Path f = Files.createTempFile(null, null);
 		MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh", FileCopyUtils.copyToByteArray(f
@@ -193,8 +194,8 @@ public class SampleSequenceFilesControllerTest {
 		when(sequenceFileService.createSequenceFileInSample(Matchers.any(SequenceFile.class), Matchers.eq(s)))
 				.thenReturn(r);
 		when(projectService.read(p.getId())).thenReturn(p);
-
-		ResponseEntity<String> response = controller.addNewSequenceFileToSample(p.getId(), s.getId(), mmf);
+		
+		ResponseEntity<String> response = controller.addNewSequenceFileToSample(p.getId(), s.getId(), mmf,resource);
 
 		verify(sampleService).getSampleForProject(p, s.getId());
 		verify(projectService).read(p.getId());
