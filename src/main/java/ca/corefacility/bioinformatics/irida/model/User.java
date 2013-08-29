@@ -15,7 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -85,6 +84,8 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 
 	private String locale;
 
+	private boolean credentialsNonExpired;
+
 	/**
 	 * Construct an instance of {@link User} with no properties set.
 	 */
@@ -92,6 +93,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 		createdDate = new Date();
 		modifiedDate = createdDate;
 		locale = "en";
+		credentialsNonExpired = true;
 	}
 
 	/**
@@ -277,7 +279,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 
 	@Override
 	public boolean isCredentialsNonExpired() {
-		return true;
+		return credentialsNonExpired;
 	}
 
 	@Override
@@ -314,8 +316,8 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 		return systemRole;
 	}
 
-	public void setSystemRole(Role systemRole) {
-		this.systemRole = systemRole;
+	public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+		this.credentialsNonExpired = credentialsNonExpired;
 	}
 
 	public String getLocale() {
@@ -326,4 +328,23 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 		this.locale = locale;
 	}
 
+	public Boolean getEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public void setSystemRole(Role systemRole) {
+		this.systemRole = systemRole;
+	}
 }
