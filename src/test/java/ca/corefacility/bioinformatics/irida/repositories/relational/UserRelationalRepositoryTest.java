@@ -16,11 +16,15 @@ import javax.sql.DataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import ca.corefacility.bioinformatics.irida.config.IridaApiRepositoriesConfig;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
@@ -40,9 +44,12 @@ import com.google.common.collect.Lists;
  * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-@ContextConfiguration(locations = { "classpath:/ca/corefacility/bioinformatics/irida/config/testJdbcContext.xml" })
 @RunWith(SpringJUnit4ClassRunner.class)
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {
+		IridaApiRepositoriesConfig.class, IridaApiTestDataSourceConfig.class })
+@ActiveProfiles("test")
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
+		DbUnitTestExecutionListener.class })
 public class UserRelationalRepositoryTest {
 
 	@Autowired

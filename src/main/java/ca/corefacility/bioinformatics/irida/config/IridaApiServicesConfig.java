@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
@@ -37,8 +36,8 @@ import ca.corefacility.bioinformatics.irida.service.impl.UserServiceImpl;
  * 
  */
 @Configuration
-@ImportResource({ "classpath:/ca/corefacility/bioinformatics/irida/config/hibernateContext.xml" })
-@Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class })
+@Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class,
+		IridaApiRepositoriesConfig.class })
 public class IridaApiServicesConfig {
 
 	@Autowired
@@ -61,29 +60,34 @@ public class IridaApiServicesConfig {
 
 	@Bean
 	public ProjectService projectService() {
-		return new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, validator());
+		return new ProjectServiceImpl(projectRepository, sampleRepository,
+				userRepository, validator());
 	}
 
 	@Bean
 	public SampleService sampleService() {
-		return new SampleServiceImpl(sampleRepository, sequenceFileRepository, validator());
+		return new SampleServiceImpl(sampleRepository, sequenceFileRepository,
+				validator());
 	}
 
 	@Bean
 	public SequenceFileService sequenceFileService() {
-		return new SequenceFileServiceImpl(sequenceFileRepository, sequenceFileFilesystemRepository, validator());
+		return new SequenceFileServiceImpl(sequenceFileRepository,
+				sequenceFileFilesystemRepository, validator());
 	}
 
 	@Bean
 	public FileProcessingChain fileProcessorChain() {
-		return new DefaultFileProcessingChain(new GzipFileProcessor(sequenceFileRepository), new FastqcFileProcessor(
+		return new DefaultFileProcessingChain(new GzipFileProcessor(
+				sequenceFileRepository), new FastqcFileProcessor(
 				sequenceFileRepository));
 	}
 
 	@Bean
 	public Validator validator() {
 		ResourceBundleMessageSource validatorMessageSource = new ResourceBundleMessageSource();
-		validatorMessageSource.setBasename("ca.corefacility.bioinformatics.irida.validation.ValidationMessages");
+		validatorMessageSource
+				.setBasename("ca.corefacility.bioinformatics.irida.validation.ValidationMessages");
 		LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
 		validator.setValidationMessageSource(validatorMessageSource);
 		return validator;
