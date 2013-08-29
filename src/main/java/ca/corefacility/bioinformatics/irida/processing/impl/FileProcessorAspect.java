@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.processing.impl;
 
+import java.util.Map;
+
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -47,9 +49,19 @@ public class FileProcessorAspect {
 		executeProcessor(sequenceFileJoin.getObject());
 	}
 
-	@AfterReturning(value = "execution(* ca.corefacility.bioinformatics.irida.service..*SequenceFileService*.*(..))", returning = "sequenceFile")
+	@AfterReturning(value = "execution(* ca.corefacility.bioinformatics.irida.service..*SequenceFileService*.update(..)) && args(id, updatedFields)", returning = "sequenceFile")
+	public void postProcess(JoinPoint jp, SequenceFile sequenceFile, Long id, Map<String, Object> updatedFields) {
+		logger.debug("Executing afterReturning advice for updating a sequence file.");
+
+		if (updatedFields.containsKey("file")) {
+			executeProcessor(sequenceFile);
+		}
+	}
+
+	@AfterReturning(value = "execution(* ca.corefacility.bioinformatics.irida.service..*SequenceFileService*.create(..))", returning = "sequenceFile")
 	public void postProcess(JoinPoint jp, SequenceFile sequenceFile) {
-		logger.debug("Executing afterReturning advice for creating or updating a sequence file.");
+		logger.debug("Executing afterReturning advice for creating a sequence file.");
+
 		executeProcessor(sequenceFile);
 	}
 
