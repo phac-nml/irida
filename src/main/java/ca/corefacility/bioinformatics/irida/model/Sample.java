@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -40,6 +41,8 @@ public class Sample implements IridaThing, Comparable<Sample> {
     @NotNull
     @Size(min = 3)
     private String sampleName;
+	
+	@Lob
     private String description;
     
     private Boolean enabled = true;
