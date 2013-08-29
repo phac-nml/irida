@@ -37,9 +37,8 @@ import ca.corefacility.bioinformatics.irida.service.impl.UserServiceImpl;
  * 
  */
 @Configuration
-@ImportResource({ "classpath:/ca/corefacility/bioinformatics/irida/config/hibernateContext.xml",
-		"classpath:/ca/corefacility/bioinformatics/irida/config/applicationContext-aspects.xml" })
-@Import(IridaApiSecurityConfig.class)
+@ImportResource({ "classpath:/ca/corefacility/bioinformatics/irida/config/hibernateContext.xml" })
+@Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class })
 public class IridaApiServicesConfig {
 
 	@Autowired
