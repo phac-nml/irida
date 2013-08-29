@@ -23,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  * A universal CRUD service for all types. Specialized services should extend this class to get basic CRUD methods for
@@ -210,5 +211,14 @@ public class CRUDServiceImpl<KeyType, ValueType extends Comparable<ValueType> >
     public Collection<ValueType> readMultiple(Collection<KeyType> idents) {
         return repository.readMultiple(idents);
     }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<ValueType> listAll() {
+		return repository.listAll();
+	}
 
 }

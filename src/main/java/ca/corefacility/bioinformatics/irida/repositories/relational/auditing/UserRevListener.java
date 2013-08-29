@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.repositories.relational.auditing;
 
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
-import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.UserRevEntity;
 import org.hibernate.envers.RevisionListener;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -30,6 +29,9 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
             
             if(userByUsername != null){
                 rev.setUser(userByUsername);
+            }
+            else{
+                throw new IllegalStateException("User could not be read by username so revision could not be created");
             }
             
             logger.trace("Revision created by user " + userByUsername.getUsername());

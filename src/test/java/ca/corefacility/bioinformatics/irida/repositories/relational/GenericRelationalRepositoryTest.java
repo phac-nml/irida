@@ -306,5 +306,25 @@ public class GenericRelationalRepositoryTest {
         assertNotNull(count);
         assertTrue(count > 2);
     }
+	
+    /**
+     * Test of count method, of class GenericRelationalRepository.
+     */
+    @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
+    @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
+    public void testListAll() {
+		List<IdentifiableTestEntity> listAll = repo.listAll();
+		assertFalse(listAll.isEmpty());
+		boolean disabled = false;
+		for(IdentifiableTestEntity ent : listAll){
+			if(!ent.isEnabled()){
+				disabled = true;
+			}
+		}
+		
+		assertTrue("Test if we found a disabled entity", disabled);
+    }	
+	
 
 }

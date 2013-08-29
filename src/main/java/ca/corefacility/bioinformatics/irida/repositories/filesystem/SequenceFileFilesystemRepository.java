@@ -182,4 +182,9 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Long, Se
         throw new UnsupportedOperationException("Reading multiple files will not be supported.");
     }
 
+	@Override
+	public List<SequenceFile> listAll() {
+		throw new UnsupportedOperationException("Files cannot be listed independently.");
+	}
+
 }
