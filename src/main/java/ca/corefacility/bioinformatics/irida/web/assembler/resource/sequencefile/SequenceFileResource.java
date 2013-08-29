@@ -17,62 +17,117 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @XmlRootElement(name = "sequenceFile")
 public class SequenceFileResource extends IdentifiableResource<SequenceFile> {
+   
+    public SequenceFileResource() {
+            super(new SequenceFile());
+    }
 
-	public SequenceFileResource() {
-		super(new SequenceFile());
-	}
+    public SequenceFileResource(SequenceFile sequenceFile) {
+            super(sequenceFile);
+    }
 
-	public SequenceFileResource(SequenceFile sequenceFile) {
-		super(sequenceFile);
-	}
+    @XmlElement
+    public String getFile() {
+            return resource.getFile().toString();
+    }
 
+    @XmlElement
+    public String getFileName() {
+            return resource.getFile().getFileName().toString();
+    }
+
+    @XmlElement
+    public String getFileType() {
+            return resource.getFileType();
+    }
+
+    @XmlElement
+    public String getEncoding() {
+            return resource.getEncoding();
+    }
+
+    @XmlElement
+    public Integer getTotalSequences() {
+            return resource.getTotalSequences();
+    }
+
+    @XmlElement
+    public Integer getFilteredSequences() {
+            return resource.getFilteredSequences();
+    }
+
+    @XmlElement
+    public Integer getMinLength() {
+            return resource.getMinLength();
+    }
+
+    @XmlElement
+    public Integer getMaxLength() {
+            return resource.getMaxLength();
+    }
+
+    @XmlElement
+    public Short getGcContent() {
+            return resource.getGcContent();
+    }
+
+    @JsonIgnore
+    public Path getPath() {
+            return resource.getFile();
+    }
+	
 	@XmlElement
-	public String getFile() {
-		return resource.getFile().toString();
-	}
+    public String getSamplePlate() {
+        return resource.getSamplePlate();
+    }
 
-	@XmlElement
-	public String getFileName() {
-		return resource.getFile().getFileName().toString();
-	}
+    public void setSamplePlate(String samplePlate) {
+        resource.setSamplePlate(samplePlate);
+    }
 
-	@XmlElement
-	public String getFileType() {
-		return resource.getFileType();
-	}
+    @XmlElement
+    public String getSampleWell() {
+        return resource.getSampleWell();
+    }
 
-	@XmlElement
-	public String getEncoding() {
-		return resource.getEncoding();
-	}
+    public void setSampleWell(String sampleWell) {
+        resource.setSampleWell(sampleWell);
+    }
 
-	@XmlElement
-	public Integer getTotalSequences() {
-		return resource.getTotalSequences();
-	}
+    @XmlElement
+    public String getI7IndexId() {
+        return resource.getI7IndexId();
+    }
 
-	@XmlElement
-	public Integer getFilteredSequences() {
-		return resource.getFilteredSequences();
-	}
+    public void setI7IndexId(String i7IndexId) {
+        resource.setI7IndexId(i7IndexId);
+    }
 
-	@XmlElement
-	public Integer getMinLength() {
-		return resource.getMinLength();
-	}
+    @XmlElement
+    public String getI7Index() {
+        return resource.getI7Index();
+    }
 
-	@XmlElement
-	public Integer getMaxLength() {
-		return resource.getMaxLength();
-	}
+    public void setI7Index(String i7Index) {
+        resource.setI7Index(i7Index);
+    }
 
-	@XmlElement
-	public Short getGcContent() {
-		return resource.getGcContent();
-	}
+    @XmlElement
+    public String getI5IndexId() {
+        return resource.getI5IndexId();
+    }
 
-	@JsonIgnore
-	public Path getPath() {
-		return resource.getFile();
-	}
+    public void setI5IndexId(String i5IndexId) {
+        resource.setI5IndexId(i5IndexId);
+    }
+
+    @XmlElement
+    public String getI5Index() {
+        return resource.getI5Index();
+    }
+
+    public void setI5Index(String i5Index) {
+        resource.setI5Index(i5Index);
+    }
+
 }
