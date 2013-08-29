@@ -115,6 +115,14 @@ public interface CRUDService<IdentifierType, Type extends Comparable<Type> > {
      * @return the list of users within the specified range.
      */
     public List<Type> list(int page, int size, Order order);
+	
+	/**
+     * List all objects of
+     * <code>Type</code> in the database including disabled elements.
+     *
+     * @return All objects of the specified <code>Type</code> in the database.
+     */
+    public List<Type> listAll();
 
     /**
      * Check to see if an identifier for

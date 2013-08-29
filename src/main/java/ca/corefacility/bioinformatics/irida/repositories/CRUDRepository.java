@@ -89,6 +89,13 @@ public interface CRUDRepository<IdentifierType, Type> {
      * property <code>sortProperty</code>.
      */
     public List<Type> list(int page, int size, String sortProperty, Order order);
+	
+	/**
+	 * List all objects in the database of <code>Type</code>.
+	 * This method will also return elements with a false value for enabled
+	 * @return A list of all <code>Type</code> elements in the database
+	 */
+	public List<Type> listAll();
 
     /**
      * Check to see if an identifier for
