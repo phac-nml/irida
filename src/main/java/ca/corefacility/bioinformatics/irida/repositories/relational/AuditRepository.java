@@ -2,8 +2,6 @@ package ca.corefacility.bioinformatics.irida.repositories.relational;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -25,17 +23,11 @@ import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.Use
 public class AuditRepository {
     
     private SessionFactory sessionFactory;
-    public AuditRepository(){}
     
-    public AuditRepository(DataSource dataSource){
-    }
-
-    public SessionFactory getSessionFactory() {
-        return sessionFactory;
-    }
-
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    public AuditRepository() {};
+    
+    public AuditRepository(SessionFactory sessionFactory){
+    	this.sessionFactory = sessionFactory;
     }
         
     public <Type extends IridaThing> Type getVersion(Long id, Integer revision, Class<Type> classType){

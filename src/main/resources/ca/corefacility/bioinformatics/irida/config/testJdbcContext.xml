@@ -14,7 +14,7 @@
               http://www.springframework.org/schema/context/spring-context.xsd">
 	
 
-	<import resource="jdbcRepositoriesContext.xml"/>
+	<bean class="ca.corefacility.bioinformatics.irida.config.IridaApiRepositoriesConfig" />
         
 	<bean id="dataSource"
             class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -56,7 +56,7 @@
         <!--bean id="identifiedRepository" class="ca.corefacility.bioinformatics.irida.repositories.relational.GenericRelationalRepository"-->
         <bean id="identifiedRepository" class="ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntityRepoImpl">
             <constructor-arg ref="dataSource"/>
-            <property name="sessionFactory" ref="sessionFactory"/>
+            <constructor-arg ref="sessionFactory" />
         </bean>        
         
         <tx:annotation-driven transaction-manager="transactionManager" />

@@ -1,6 +1,34 @@
 package ca.corefacility.bioinformatics.irida.config;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import javax.sql.DataSource;
+
+import org.hibernate.SessionFactory;
+import org.hibernate.envers.RevisionListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileFilesystemRepository;
+import ca.corefacility.bioinformatics.irida.repositories.relational.AuditRepository;
+import ca.corefacility.bioinformatics.irida.repositories.relational.ProjectRelationalRepository;
+import ca.corefacility.bioinformatics.irida.repositories.relational.SampleRelationalRepository;
+import ca.corefacility.bioinformatics.irida.repositories.relational.SequenceFileRelationalRepository;
+import ca.corefacility.bioinformatics.irida.repositories.relational.UserRelationalRepository;
+import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.UserRevListener;
 
 /**
  * Configuration for repository/data storage classes.
@@ -9,6 +37,58 @@ import org.springframework.context.annotation.Configuration;
  * 
  */
 @Configuration
+@Import(IridaApiPropertyPlaceholderConfig.class)
 public class IridaApiRepositoriesConfig {
 
+	private static final Logger logger = LoggerFactory
+			.getLogger(IridaApiRepositoriesConfig.class);
+
+	@Autowired
+	private DataSource dataSource;
+	@Autowired
+	private SessionFactory sessionFactory;
+
+	private @Value("${sequence.file.base.directory}")
+	String sequenceFileBaseDirectory;
+
+	@Bean
+	public ProjectRepository projectRepository() {
+		return new ProjectRelationalRepository(dataSource, sessionFactory);
+	}
+
+	@Bean
+	public UserRepository userRepository() {
+		return new UserRelationalRepository(dataSource, sessionFactory);
+	}
+
+	@Bean
+	public SampleRepository sampleRepository() {
+		return new SampleRelationalRepository(dataSource, sessionFactory);
+	}
+
+	@Bean
+	public SequenceFileRepository sequenceFileRepository() {
+		return new SequenceFileRelationalRepository(dataSource, sessionFactory);
+	}
+
+	@Bean
+	public CRUDRepository<Long, SequenceFile> sequenceFileFilesystemRepository() {
+		Path baseDirectory = Paths.get(sequenceFileBaseDirectory);
+		if (!Files.exists(baseDirectory)) {
+			logger.error("Storage directory [" + sequenceFileBaseDirectory
+					+ "] for SequenceFiles does not exist!");
+			System.exit(1);
+		}
+		return new SequenceFileFilesystemRepository(baseDirectory);
+	}
+	
+	@Bean
+	public AuditRepository auditRepository() {
+		return new AuditRepository(sessionFactory);
+	}
+	
+	@Bean(initMethod = "initialize")
+	public RevisionListener revisionListener() {
+		return new UserRevListener();
+	}
 }

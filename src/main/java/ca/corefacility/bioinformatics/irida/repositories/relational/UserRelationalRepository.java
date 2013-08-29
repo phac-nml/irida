@@ -19,6 +19,7 @@ import javax.sql.DataSource;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,8 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserRelationalRepository extends GenericRelationalRepository<User> implements UserRepository{
     public UserRelationalRepository(){}
     
-    public UserRelationalRepository(DataSource source){
-        super(source,User.class);
+    public UserRelationalRepository(DataSource source, SessionFactory sessionFactory){
+        super(source, sessionFactory, User.class);
     }    
 
     /**
