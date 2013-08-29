@@ -3,6 +3,7 @@
   <system_role id="1" description="A basic user in the system" name="ROLE_USER"/>
   <system_role id="2" description="An administrator" name="ROLE_ADMIN"/>
   <user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0" email="tom@gfd.ca" firstName="tom" lastName="matthews" password="fdafdas1A!" phoneNumber="456-457-1176" username="tom" enabled="true" system_role="1" credentialsNonExpired="true"/>
+
   <user id="2" createdDate="2013-07-18 14:20:48.0" modifiedDate="2013-07-18 14:20:48.0" email="user@gfd.ca" firstName="User" lastName="number1" password="fdafdas1A!" phoneNumber="123-456-7891" username="user1" enabled="true" system_role="1" credentialsNonExpired="true"/>
     <user id="3" createdDate="2013-07-18 14:20:48.0" modifiedDate="2013-07-18 14:20:48.0" email="user@gfd.ca" firstName="User" lastName="number2" password="fdafdas1A!" phoneNumber="123-456-7892" username="user2" enabled="true" system_role="1" credentialsNonExpired="true"/>
     <user id="4" createdDate="2013-07-18 14:20:48.0" modifiedDate="2013-07-18 14:20:48.0" email="user@gfd.ca" firstName="User" lastName="number3" password="fdafdas1A!" phoneNumber="123-456-7893" username="user3" enabled="true" system_role="1" credentialsNonExpired="true"/>
