@@ -140,7 +140,7 @@ public class SampleSequenceFilesController {
 	 */
 	@RequestMapping(value = "/projects/{projectId}/samples/{sampleId}/sequenceFiles", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<String> addNewSequenceFileToSample(@PathVariable Long projectId, @PathVariable Long sampleId,
-			@RequestPart("file") MultipartFile file, @RequestPart("parameters")SequenceFileResource metadata) throws IOException {
+			@RequestPart("file") MultipartFile file, @RequestPart(value="parameters",required=false) SequenceFileResource metadata) throws IOException {
 
 		Project p = projectService.read(projectId);
 		// confirm that a relationship exists between the project and the sample
@@ -155,7 +155,13 @@ public class SampleSequenceFilesController {
 		Path target = temp.resolve(file.getOriginalFilename());
 
 		target = Files.write(target, file.getBytes());
-		SequenceFile sf = metadata.getResource();
+		SequenceFile sf;
+		if(metadata != null){
+			sf = metadata.getResource();
+		}
+		else{
+			sf = new SequenceFile();
+		}
 		sf.setFile(target);
 
 		//SequenceFile sf = new SequenceFile(target);
