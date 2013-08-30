@@ -18,6 +18,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import ca.corefacility.bioinformatics.irida.config.data.DataConfig;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
@@ -40,11 +41,10 @@ import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.Use
  */
 @Configuration
 @EnableTransactionManagement(order = 1000)
-@Import(IridaApiPropertyPlaceholderConfig.class)
+@Import({ IridaApiPropertyPlaceholderConfig.class, IridaApiJdbcDataSourceConfig.class })
 public class IridaApiRepositoriesConfig {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(IridaApiRepositoriesConfig.class);
+	private static final Logger logger = LoggerFactory.getLogger(IridaApiRepositoriesConfig.class);
 
 	@Autowired
 	private DataConfig dataConfig;
@@ -56,34 +56,29 @@ public class IridaApiRepositoriesConfig {
 
 	@Bean
 	public ProjectRepository projectRepository() {
-		return new ProjectRelationalRepository(dataConfig.dataSource(),
-				sessionFactory);
+		return new ProjectRelationalRepository(dataConfig.dataSource(), sessionFactory);
 	}
 
 	@Bean
 	public UserRepository userRepository() {
-		return new UserRelationalRepository(dataConfig.dataSource(),
-				sessionFactory);
+		return new UserRelationalRepository(dataConfig.dataSource(), sessionFactory);
 	}
 
 	@Bean
 	public SampleRepository sampleRepository() {
-		return new SampleRelationalRepository(dataConfig.dataSource(),
-				sessionFactory);
+		return new SampleRelationalRepository(dataConfig.dataSource(), sessionFactory);
 	}
 
 	@Bean
 	public SequenceFileRepository sequenceFileRepository() {
-		return new SequenceFileRelationalRepository(dataConfig.dataSource(),
-				sessionFactory);
+		return new SequenceFileRelationalRepository(dataConfig.dataSource(), sessionFactory);
 	}
 
 	@Bean
 	public CRUDRepository<Long, SequenceFile> sequenceFileFilesystemRepository() {
 		Path baseDirectory = Paths.get(sequenceFileBaseDirectory);
 		if (!Files.exists(baseDirectory)) {
-			logger.error("Storage directory [" + sequenceFileBaseDirectory
-					+ "] for SequenceFiles does not exist!");
+			logger.error("Storage directory [" + sequenceFileBaseDirectory + "] for SequenceFiles does not exist!");
 			System.exit(1);
 		}
 		return new SequenceFileFilesystemRepository(baseDirectory);

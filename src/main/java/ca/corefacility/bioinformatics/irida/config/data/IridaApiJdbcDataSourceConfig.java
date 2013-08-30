@@ -14,7 +14,7 @@ import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 
 @Configuration
 @Profile("dev")
-public class IridaApiDevDataSourceConfig implements DataConfig {
+public class IridaApiJdbcDataSourceConfig implements DataConfig {
 	private @Value("${jdbc.driver}")
 	String driverClassName;
 	private @Value("${jdbc.url}")
