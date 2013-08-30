@@ -21,6 +21,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -42,14 +43,6 @@ public class UserRelationalRepository extends GenericRelationalRepository<User> 
     public User create(User object) throws IllegalArgumentException {
         Session session = this.sessionFactory.getCurrentSession();
         
-        Criteria crit = session.createCriteria(User.class);
-        crit.add(Restrictions.like("username", object.getUsername()));
-        @SuppressWarnings("unchecked")
-		List<User> list = crit.list();
-        if(!list.isEmpty()){
-            throw new EntityExistsException("A user with this username already exists");
-        }
-        
         Role role = object.getRole();
         Criteria roleQuery = session.createCriteria(Role.class);
         roleQuery.add(Restrictions.like("name", role.getName()));
@@ -59,8 +52,18 @@ public class UserRelationalRepository extends GenericRelationalRepository<User> 
         }
         
         object.setRole(retRole);
+		
+		User create;
+		try{
+			create = super.create(object); 
+		}
+		catch(ConstraintViolationException ex){
+			String constraintName = ex.getConstraintName();
+			String fieldName = EntityExistsException.parseConstraintName(constraintName, "user");
+			throw new EntityExistsException("Could not create user as a duplicate field exists: "+fieldName, fieldName);
+		}
         
-        return super.create(object); //To change body of generated methods, choose Tools | Templates.
+        return create;
     }
 
     /**

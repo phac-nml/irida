@@ -47,11 +47,10 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {
-		IridaApiRepositoriesConfig.class, IridaApiTestDataSourceConfig.class })
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiRepositoriesConfig.class,
+		IridaApiTestDataSourceConfig.class })
 @ActiveProfiles("test")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-		DbUnitTestExecutionListener.class })
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 public class GenericRelationalRepositoryTest {
 
 	@Autowired
@@ -66,11 +65,9 @@ public class GenericRelationalRepositoryTest {
 		SecurityUser.setUser();
 	}
 
-	public class IdentifiableRowMapper implements
-			RowMapper<IdentifiableTestEntity> {
+	public class IdentifiableRowMapper implements RowMapper<IdentifiableTestEntity> {
 		@Override
-		public IdentifiableTestEntity mapRow(ResultSet rs, int rowNum)
-				throws SQLException {
+		public IdentifiableTestEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
 			IdentifiableTestEntity entity = new IdentifiableTestEntity();
 			entity.setId(rs.getLong("id"));
 			entity.setNonNull(rs.getString("nonNull"));
@@ -195,9 +192,8 @@ public class GenericRelationalRepositoryTest {
 			assertNotNull(updated);
 			assertEquals(differentData, updated.getNonNull());
 
-			List<IdentifiableTestEntity> query = jdbcTemplate
-					.query("SELECT id,nonNull,integerValue,label,enabled FROM identifiable WHERE id=1",
-							rowMapper);
+			List<IdentifiableTestEntity> query = jdbcTemplate.query(
+					"SELECT id,nonNull,integerValue,label,enabled FROM identifiable WHERE id=1", rowMapper);
 			IdentifiableTestEntity entity = query.get(0);
 			assertEquals(entity.getNonNull(), differentData);
 		} catch (IllegalArgumentException | InvalidPropertyException ex) {
@@ -235,9 +231,8 @@ public class GenericRelationalRepositoryTest {
 
 		Long id = new Long(1);
 		repo.delete(id);
-		List<IdentifiableTestEntity> query = jdbcTemplate
-				.query("SELECT id,nonNull,integerValue,label,enabled FROM identifiable WHERE id=?",
-						rowMapper, id);
+		List<IdentifiableTestEntity> query = jdbcTemplate.query(
+				"SELECT id,nonNull,integerValue,label,enabled FROM identifiable WHERE id=?", rowMapper, id);
 		for (IdentifiableTestEntity ent : query) {
 			assertFalse(ent.isEnabled());
 		}
@@ -277,13 +272,11 @@ public class GenericRelationalRepositoryTest {
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
 	public void testList_4args() {
-		List<IdentifiableTestEntity> list1 = repo.list(0, 2, "nonNull",
-				Order.ASCENDING);
+		List<IdentifiableTestEntity> list1 = repo.list(0, 2, "nonNull", Order.ASCENDING);
 		assertFalse(list1.isEmpty());
 		assertEquals(list1.size(), 2);
 
-		List<IdentifiableTestEntity> list2 = repo.list(0, 20, "nonNull",
-				Order.DESCENDING);
+		List<IdentifiableTestEntity> list2 = repo.list(0, 20, "nonNull", Order.DESCENDING);
 
 		assertNotNull(list2);
 		int maxEle = list2.size() - 1;
@@ -294,10 +287,8 @@ public class GenericRelationalRepositoryTest {
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
 	public void testListPaged() {
-		List<IdentifiableTestEntity> list1 = repo.list(1, 2, "nonNull",
-				Order.ASCENDING);
-		List<IdentifiableTestEntity> list2 = repo.list(2, 1, "nonNull",
-				Order.ASCENDING);
+		List<IdentifiableTestEntity> list1 = repo.list(1, 2, "nonNull", Order.ASCENDING);
+		List<IdentifiableTestEntity> list2 = repo.list(2, 1, "nonNull", Order.ASCENDING);
 		assertFalse(list1.isEmpty());
 		assertFalse(list2.isEmpty());
 
@@ -327,4 +318,22 @@ public class GenericRelationalRepositoryTest {
 		assertTrue(count > 2);
 	}
 
+	/**
+	 * Test of count method, of class GenericRelationalRepository.
+	 */
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
+	public void testListAll() {
+		List<IdentifiableTestEntity> listAll = repo.listAll();
+		assertFalse(listAll.isEmpty());
+		boolean disabled = false;
+		for (IdentifiableTestEntity ent : listAll) {
+			if (!ent.isEnabled()) {
+				disabled = true;
+			}
+		}
+
+		assertTrue("Test if we found a disabled entity", disabled);
+	}
 }

@@ -103,8 +103,27 @@ public class UserRelationalRepositoryTest {
 			user = repo.create(user);
 			fail("Should have caught duplicate username");
 		} catch (EntityExistsException ex) {
+			String fieldName = ex.getFieldName();
+			fieldName = fieldName.toLowerCase();
+			assertEquals(fieldName,"username");
 		}
 	}
+	
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+	public void testCreateDuplicateEmail() {
+		try {
+			User user = new User("newUser", "tom@gfd.ca", "PASSWoD!1", "Anon", "Guy", "1234");
+			user.setRole(new Role("ROLE_USER"));
+			user = repo.create(user);
+			fail("Should have caught duplicate email");
+		} catch (EntityExistsException ex) {
+			String fieldName = ex.getFieldName();
+			fieldName = fieldName.toLowerCase();
+			assertEquals(fieldName,"email");
+		}
+	}	
 
 	@Test
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")

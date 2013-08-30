@@ -219,6 +219,22 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
         
         return results;
     }
+	
+	public List<Type> listAll(){
+        Session session = sessionFactory.getCurrentSession();
+        
+        Criteria crit = session.createCriteria(classType.getName());
+        
+        List<Type> results;
+        
+        results = crit.list();
+        
+        for(Type t : results){
+            postLoad(t);
+        }
+        
+        return results;		
+	}
     
     /**
      * {@inheritDoc }

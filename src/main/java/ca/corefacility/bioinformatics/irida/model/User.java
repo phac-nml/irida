@@ -25,6 +25,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import ca.corefacility.bioinformatics.irida.validators.Patterns;
+import javax.persistence.UniqueConstraint;
 
 /**
  * A user object.
@@ -33,7 +34,8 @@ import ca.corefacility.bioinformatics.irida.validators.Patterns;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Entity
-@Table(name = "user")
+@Table(name = "user",uniqueConstraints = {@UniqueConstraint(name = "user_email_constraint",columnNames = "email"),
+	@UniqueConstraint(name = "user_username_constraint",columnNames = "username")})
 @Audited
 public class User implements IridaThing, Comparable<User>, UserDetails {
 
@@ -45,12 +47,12 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 
 	@NotNull(message = "{user.username.notnull}")
 	@Size(min = 3, message = "{user.username.size}")
-	@Column(unique = true)
+	//@Column(unique = true)
 	private String username;
 	@NotNull(message = "{user.email.notnull}")
 	@Size(min = 5, message = "{user.email.size}")
 	@Email(message = "{user.email.invalid}")
-	@Column(unique = true)
+	//@Column(unique = true)
 	private String email;
 	@NotNull(message = "{user.password.notnull}")
 	@Size(min = 6, message = "{user.password.size}")
@@ -152,7 +154,8 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(username, email, password, firstName, lastName, phoneNumber, createdDate, modifiedDate);
+		return Objects.hash(username, email, password, firstName, lastName, phoneNumber, createdDate, modifiedDate,
+				credentialsNonExpired);
 	}
 
 	/**
@@ -165,7 +168,8 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 			return Objects.equals(username, u.username) && Objects.equals(email, u.email)
 					&& Objects.equals(password, u.password) && Objects.equals(firstName, u.firstName)
 					&& Objects.equals(lastName, u.lastName) && Objects.equals(phoneNumber, u.phoneNumber)
-					&& Objects.equals(createdDate, u.createdDate) && Objects.equals(modifiedDate, u.modifiedDate);
+					&& Objects.equals(createdDate, u.createdDate) && Objects.equals(modifiedDate, u.modifiedDate)
+					&& Objects.equals(credentialsNonExpired, u.credentialsNonExpired);
 		}
 
 		return false;
