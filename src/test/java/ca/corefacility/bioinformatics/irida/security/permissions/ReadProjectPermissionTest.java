@@ -17,6 +17,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
+import com.google.common.collect.ImmutableList;
+
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
@@ -99,11 +101,24 @@ public class ReadProjectPermissionTest {
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
 
-		assertTrue("permission was not granted to admin.", readProjectPermission.isAllowed(auth, 1l));
+		assertTrue("permission should be granted to admin.", readProjectPermission.isAllowed(auth, 1l));
 
 		// we should fast pass through to permission granted for administrators.
 		verifyZeroInteractions(userRepository);
 		verifyZeroInteractions(projectRepository);
+	}
+
+	@Test
+	public void testPermitAdminWithoutDescription() {
+		// Collection<GrantedAuthority> roles = new ArrayList<>();
+		Collection<GrantedAuthority> roles = ImmutableList.of((GrantedAuthority) new Role("ROLE_ADMIN",
+				"Aww yiss, administrator privileges."));
+		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
+
+		assertTrue("permission should be granted to admin.", readProjectPermission.isAllowed(auth, 1l));
+
+		// we should fast pass through permission granted for administrators.
 		verifyZeroInteractions(userRepository);
+		verifyZeroInteractions(projectRepository);
 	}
 }

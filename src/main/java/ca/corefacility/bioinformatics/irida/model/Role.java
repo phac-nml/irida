@@ -43,6 +43,7 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 	Long id;
 
 	@NotNull
+	@Column(unique = true)
 	private String name;
 	@NotNull
 	private String description;
@@ -55,6 +56,11 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 		this.name = name;
 	}
 
+	public Role(String name, String description) {
+		this(name);
+		this.description = description;
+	}
+
 	@Override
 	public int compareTo(Role r) {
 		return name.compareTo(r.name);
@@ -64,7 +70,7 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 	public boolean equals(Object other) {
 		if (other instanceof Role) {
 			Role r = (Role) other;
-			return Objects.equals(name, r.name) && Objects.equals(description, r.description);
+			return Objects.equals(name, r.name);
 		}
 
 		return false;
@@ -72,7 +78,7 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, description);
+		return Objects.hash(name);
 	}
 
 	public String getName() {
