@@ -116,9 +116,9 @@ public class ProjectSamplesController {
      * @return the list of {@link Sample}s associated with this {@link Project}.
      */
     @RequestMapping(value = "/projects/{projectId}/samples", method = RequestMethod.GET)
-    public ModelMap getProjectSamples(@PathVariable Long projectId, @RequestParam(required = false) String sampleId) {
+    public ModelMap getProjectSamples(@PathVariable Long projectId, @RequestParam(required = false) String externalSampleId) {
         
-        if(sampleId == null || sampleId.isEmpty()){
+        if(externalSampleId == null || externalSampleId.isEmpty()){
             ModelMap modelMap = new ModelMap();
             Project p = projectService.read(projectId);
             List<Join<Project, Sample>> relationships = sampleService.getSamplesForProject(p);
@@ -143,7 +143,7 @@ public class ProjectSamplesController {
         }
         else
         {
-            return getProjectSamplesById(projectId, sampleId);
+            return getProjectSamplesById(projectId, externalSampleId);
         }
     }
     

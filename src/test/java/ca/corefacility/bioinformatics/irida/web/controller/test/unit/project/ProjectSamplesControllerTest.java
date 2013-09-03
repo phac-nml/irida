@@ -139,7 +139,7 @@ public class ProjectSamplesControllerTest {
         assertEquals(1, resourceLinks.size());
         Link self = resourceLinks.iterator().next();
         assertEquals("self", self.getRel());
-        assertEquals("http://localhost/projects/" + p.getId() + "/samples" + "?sampleId", self.getHref());
+        assertEquals("http://localhost/projects/" + p.getId() + "/samples" + "?externalSampleId", self.getHref());
         SampleResource resource = samples.iterator().next();
         assertEquals(s.getSampleName(), resource.getSampleName());
         List<Link> links = resource.getLinks();

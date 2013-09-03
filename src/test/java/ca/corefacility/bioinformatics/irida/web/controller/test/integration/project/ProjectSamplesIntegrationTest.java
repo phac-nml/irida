@@ -32,7 +32,7 @@ public class ProjectSamplesIntegrationTest {
 	public void testAddSampleToProject() {
 		Map<String, String> sample = new HashMap<>();
 		sample.put("sampleName", "sample 1");
-                sample.put("sampleId", "sample 1");
+                sample.put("externalSampleId", "sample 1");
 
 		// load a project
 		String projectUri = "/projects/1";
@@ -74,7 +74,7 @@ public class ProjectSamplesIntegrationTest {
 
 		String samplesUri = from(responseBody).get("resource.links.find{it.rel == 'project/samples'}.href");
 		assertNotNull(samplesUri);
-		assertEquals(projectUri + "/samples?sampleId", samplesUri);
+		assertEquals(projectUri + "/samples?externalSampleId", samplesUri);
 
 		// now confirm that the sample is not there anymore
 		expect().body("resource.resources.sampleName", not(hasItem(sampleLabel))).when().get(projectSamplesUri);

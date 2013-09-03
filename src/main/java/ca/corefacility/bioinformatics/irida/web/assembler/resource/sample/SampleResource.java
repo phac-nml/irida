@@ -31,11 +31,11 @@ public class SampleResource extends IdentifiableResource<Sample> {
     }
     
     @XmlElement
-    public String getSampleId(){
-        return resource.getSampleId();
+    public String getExternalSampleId(){
+        return resource.getExternalSampleId();
     }
-    public void setSampleId(String sampleId){
-        resource.setSampleId(sampleId);
+    public void setExternalSampleId(String sampleId){
+        resource.setExternalSampleId(sampleId);
     }
 
     @XmlElement
