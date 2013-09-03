@@ -99,7 +99,7 @@ public class ProjectServiceImplTest {
 	public void testAddSampleToProjectNotPersisted() {
 		Sample s = new Sample();
 		s.setSampleName("sample");
-                s.setSampleId("newsample");
+                s.setExternalSampleId("newsample");
 		Sample withId = new Sample();
 		withId.setSampleName("sample");
 		withId.setId(new Long(1111));

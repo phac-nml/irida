@@ -57,7 +57,7 @@ public class SampleRelationalRepository extends GenericRelationalRepository<Samp
         public Sample getSampleBySampleId(String sampleId){
             Session session = sessionFactory.getCurrentSession();
             Criteria crit = session.createCriteria(Sample.class);
-            crit.add(Restrictions.eq("sampleId", sampleId));
+            crit.add(Restrictions.eq("externalSampleId", sampleId));
             
             Sample sample = (Sample) crit.uniqueResult();
             if(sample == null){

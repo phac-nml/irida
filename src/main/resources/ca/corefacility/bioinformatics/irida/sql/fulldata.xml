@@ -5,7 +5,7 @@
   <user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0" email="tom@gfd.ca" firstName="tom" lastName="matthews" password="fdafdas1A!" phoneNumber="456-457-1176" username="tom" enabled="true" system_role="1" credentialsNonExpired="true"/>
 
   <user id="2" createdDate="2013-07-18 14:20:48.0" modifiedDate="2013-07-18 14:20:48.0" email="user@gfd.ca" firstName="User" lastName="number1" password="fdafdas1A!" phoneNumber="123-456-7891" username="user1" enabled="true" system_role="1" credentialsNonExpired="true"/>
-    <user id="3" createdDate="2013-07-18 14:20:48.0" modifiedDate="2013-07-18 14:20:48.0" email="user1@gfd.ca" firstName="User" lastName="number2" password="fdafdas1A!" phoneNumber="123-456-7892" username="user2" enabled="true" system_role="1" credentialsNonExpired="true"/>
+	<user id="3" createdDate="2013-07-18 14:20:48.0" modifiedDate="2013-07-18 14:20:48.0" email="user1@gfd.ca" firstName="User" lastName="number2" password="fdafdas1A!" phoneNumber="123-456-7892" username="user2" enabled="true" system_role="1" credentialsNonExpired="true"/>
     <user id="4" createdDate="2013-07-18 14:20:48.0" modifiedDate="2013-07-18 14:20:48.0" email="user2@gfd.ca" firstName="User" lastName="number3" password="fdafdas1A!" phoneNumber="123-456-7893" username="user3" enabled="true" system_role="1" credentialsNonExpired="true"/>
     <user id="5" createdDate="2013-07-18 14:20:48.0" modifiedDate="2013-07-18 14:20:48.0" email="user3@gfd.ca" firstName="User" lastName="number4" password="fdafdas1A!" phoneNumber="123-456-7894" username="user4" enabled="true" system_role="1" credentialsNonExpired="true"/>
     <user id="6" createdDate="2013-07-18 14:20:48.0" modifiedDate="2013-07-18 14:20:48.0" email="user4@gfd.ca" firstName="User" lastName="number5" password="fdafdas1A!" phoneNumber="123-456-7895" username="user5" enabled="true" system_role="1" credentialsNonExpired="true"/>
@@ -27,16 +27,16 @@
   <project id="9" createdDate="2013-07-18 14:20:49.0" modifiedDate="2013-07-18 14:20:49.0" name="Project number 9" enabled="true"/>
   <project id="10" createdDate="2013-07-18 14:20:49.0" modifiedDate="2013-07-18 14:20:49.0" name="Project number 10" enabled="true"/>
   
-  <sample id="1" createdDate="2013-07-18 14:20:49.0" modifiedDate="2013-07-18 14:20:49.0" sampleName="Sample number 1" sampleId="sam1" enabled="true"/>
-  <sample id="2" createdDate="2013-07-18 14:20:50.0" modifiedDate="2013-07-18 14:20:50.0" sampleName="Sample number 2" sampleId="sam2" enabled="true"/>
-  <sample id="3" createdDate="2013-07-18 14:20:51.0" modifiedDate="2013-07-18 14:20:51.0" sampleName="Sample number 3" sampleId="sam3" enabled="true"/>
-  <sample id="4" createdDate="2013-07-18 14:20:52.0" modifiedDate="2013-07-18 14:20:52.0" sampleName="Sample number 4" sampleId="sam4" enabled="true"/>
-  <sample id="5" createdDate="2013-07-18 14:20:53.0" modifiedDate="2013-07-18 14:20:53.0" sampleName="Sample number 5" sampleId="sam5" enabled="true"/>
-  <sample id="6" createdDate="2013-07-18 14:20:54.0" modifiedDate="2013-07-18 14:20:54.0" sampleName="Sample number 6" sampleId="sam6" enabled="true"/>
-  <sample id="7" createdDate="2013-07-18 14:20:55.0" modifiedDate="2013-07-18 14:20:55.0" sampleName="Sample number 7" sampleId="sam7" enabled="true"/>
-  <sample id="8" createdDate="2013-07-18 14:20:56.0" modifiedDate="2013-07-18 14:20:56.0" sampleName="Sample number 8" sampleId="sam8" enabled="true"/>
-  <sample id="9" createdDate="2013-07-18 14:20:57.0" modifiedDate="2013-07-18 14:20:57.0" sampleName="Sample number 9" sampleId="sam9" enabled="true"/>
-  <sample id="10" createdDate="2013-07-18 14:20:58.0" modifiedDate="2013-07-18 14:20:58.0" sampleName="Sample number 10" sampleId="sam10" enabled="true"/>
+  <sample id="1" createdDate="2013-07-18 14:20:49.0" modifiedDate="2013-07-18 14:20:49.0" sampleName="Sample number 1" externalSampleId="sam1" enabled="true"/>
+  <sample id="2" createdDate="2013-07-18 14:20:50.0" modifiedDate="2013-07-18 14:20:50.0" sampleName="Sample number 2" externalSampleId="sam2" enabled="true"/>
+  <sample id="3" createdDate="2013-07-18 14:20:51.0" modifiedDate="2013-07-18 14:20:51.0" sampleName="Sample number 3" externalSampleId="sam3" enabled="true"/>
+  <sample id="4" createdDate="2013-07-18 14:20:52.0" modifiedDate="2013-07-18 14:20:52.0" sampleName="Sample number 4" externalSampleId="sam4" enabled="true"/>
+  <sample id="5" createdDate="2013-07-18 14:20:53.0" modifiedDate="2013-07-18 14:20:53.0" sampleName="Sample number 5" externalSampleId="sam5" enabled="true"/>
+  <sample id="6" createdDate="2013-07-18 14:20:54.0" modifiedDate="2013-07-18 14:20:54.0" sampleName="Sample number 6" externalSampleId="sam6" enabled="true"/>
+  <sample id="7" createdDate="2013-07-18 14:20:55.0" modifiedDate="2013-07-18 14:20:55.0" sampleName="Sample number 7" externalSampleId="sam7" enabled="true"/>
+  <sample id="8" createdDate="2013-07-18 14:20:56.0" modifiedDate="2013-07-18 14:20:56.0" sampleName="Sample number 8" externalSampleId="sam8" enabled="true"/>
+  <sample id="9" createdDate="2013-07-18 14:20:57.0" modifiedDate="2013-07-18 14:20:57.0" sampleName="Sample number 9" externalSampleId="sam9" enabled="true"/>
+  <sample id="10" createdDate="2013-07-18 14:20:58.0" modifiedDate="2013-07-18 14:20:58.0" sampleName="Sample number 10" externalSampleId="sam10" enabled="true"/>
   
   <sequence_file id="1" createdDate="2013-07-18 14:20:48.0" modifiedDate="2013-07-18 14:20:48.0" filePath="/tmp/1" enabled="true"
 	i5Index="AAAAAAAA" i5IndexId="S0001" i7Index="GGGGGGGG" i7IndexId="N0001" samplePlate="1000" sampleWell="A01" />

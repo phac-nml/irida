@@ -36,7 +36,7 @@ public class Sample implements IridaThing, Comparable<Sample> {
     @NotNull
     @Size(min = 3)
     @Column(unique = true)
-    private String sampleId;
+    private String externalSampleId;
     
     @NotNull
     @Size(min = 3)
@@ -73,7 +73,7 @@ public class Sample implements IridaThing, Comparable<Sample> {
      */
     public Sample(String sampleName, String sampleId) {
         this.sampleName = sampleName;
-        this.sampleId = sampleId;
+        this.externalSampleId = sampleId;
     }
 
     @Override
@@ -115,12 +115,12 @@ public class Sample implements IridaThing, Comparable<Sample> {
         this.sampleName = sampleName;
     }
 
-    public String getSampleId() {
-        return sampleId;
+    public String getExternalSampleId() {
+        return externalSampleId;
     }
 
-    public void setSampleId(String sampleId) {
-        this.sampleId = sampleId;
+    public void setExternalSampleId(String sampleId) {
+        this.externalSampleId = sampleId;
     }
 
     public String getDescription() {
