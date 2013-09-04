@@ -54,7 +54,7 @@ public class SampleRelationalRepository extends GenericRelationalRepository<Samp
 	 * {@inheritDoc}
 	 */
         @Override
-        public Sample getSampleBySampleId(String sampleId){
+        public Sample getSampleByExternalSampleId(String sampleId){
             Session session = sessionFactory.getCurrentSession();
             Criteria crit = session.createCriteria(Sample.class);
             crit.add(Restrictions.eq("externalSampleId", sampleId));

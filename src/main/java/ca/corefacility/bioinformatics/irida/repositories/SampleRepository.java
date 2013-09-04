@@ -38,9 +38,9 @@ public interface SampleRepository extends CRUDRepository<Long, Sample> {
         
     /**
      * Get a {@link Sample} with the given string sample identifier
-     * @param sampleId The string sample identifier for a sample
+     * @param externalSampleId The string sample identifier for a sample
      * @return The {@link Sample} for this identifier
      * @throws EntityNotFoundException if a sample with this identifier doesn't exist
      */
-    public Sample getSampleBySampleId(String sampleId) throws EntityNotFoundException;
+    public Sample getSampleByExternalSampleId(String externalSampleId )throws EntityNotFoundException;
 }

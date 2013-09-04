@@ -49,7 +49,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
      * @param sampleId The id for the requested sample
      * @return A {@link Sample} with the given ID
      */
-    public Sample getSampleBySampleId(String sampleId);
+    public Sample getSampleByExternalSampleId(String sampleId);
 
     /**
      * Move an instance of a {@link SequenceFile} associated with a {@link Sample} to its parent {@link Project}.
