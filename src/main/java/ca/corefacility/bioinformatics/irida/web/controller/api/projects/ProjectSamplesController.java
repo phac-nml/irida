@@ -157,7 +157,7 @@ public class ProjectSamplesController {
         ModelMap modelMap = new ModelMap();
         Project p = projectService.read(projectId);
         
-        Sample sampleBySampleId = sampleService.getSampleBySampleId(sampleId);
+        Sample sampleBySampleId = sampleService.getSampleByExternalSampleId(sampleId);
 
         ResourceCollection<SampleResource> sampleResources = new ResourceCollection<>(1);
         SampleResource sr = new SampleResource();
