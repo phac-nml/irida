@@ -25,10 +25,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -73,17 +75,22 @@ public class SampleSequenceFilesController {
 	/**
 	 * Reference to the {@link ProjectService}.
 	 */
-	private ProjectService projectService;
+	private ProjectService projectService;	
+	/**
+	 * Reference to the {@link MiseqRunService}
+	 */
+	private MiseqRunService miseqRunService;
 
 	protected SampleSequenceFilesController() {
 	}
 
 	@Autowired
 	public SampleSequenceFilesController(SequenceFileService sequenceFileService, SampleService sampleService,
-			ProjectService projectService) {
+			ProjectService projectService, MiseqRunService miseqRunService) {
 		this.sequenceFileService = sequenceFileService;
 		this.sampleService = sampleService;
 		this.projectService = projectService;
+		this.miseqRunService = miseqRunService;
 	}
 
 	/**
@@ -140,7 +147,7 @@ public class SampleSequenceFilesController {
 	 */
 	@RequestMapping(value = "/projects/{projectId}/samples/{sampleId}/sequenceFiles", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<String> addNewSequenceFileToSample(@PathVariable Long projectId, @PathVariable Long sampleId,
-			@RequestPart("file") MultipartFile file, @RequestPart(value="parameters",required=false) SequenceFileResource metadata) throws IOException {
+			@RequestPart("file") MultipartFile file, @RequestPart(value="parameters",required=false) SequenceFileResource fileResource) throws IOException {
 
 		Project p = projectService.read(projectId);
 		// confirm that a relationship exists between the project and the sample
@@ -156,8 +163,13 @@ public class SampleSequenceFilesController {
 
 		target = Files.write(target, file.getBytes());
 		SequenceFile sf;
-		if(metadata != null){
-			sf = metadata.getResource();
+		MiseqRun miseqRun = null;
+		
+		if(fileResource != null){
+			sf = fileResource.getResource();
+			
+			Long miseqRunId = fileResource.getMiseqRunId();
+			miseqRun = miseqRunService.read(miseqRunId);
 		}
 		else{
 			sf = new SequenceFile();
@@ -167,6 +179,11 @@ public class SampleSequenceFilesController {
 		// persist the changes by calling the sample service
 		Join<Sample, SequenceFile> sampleSequenceFileRelationship = sequenceFileService.createSequenceFileInSample(sf,
 				sample);
+		
+		Join<MiseqRun, SequenceFile> miseqRunSequenceFileRelationship = null;
+		if(miseqRun != null){
+			miseqRunSequenceFileRelationship = miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
+		}
 
 		// clean up the temporary files.
 		Files.deleteIfExists(target);

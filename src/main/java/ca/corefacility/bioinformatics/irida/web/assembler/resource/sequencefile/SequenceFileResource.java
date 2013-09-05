@@ -9,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.IdentifiableResource;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Resource wrapper for {@link SequenceFile}.
@@ -17,6 +18,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @XmlRootElement(name = "sequenceFile")
 public class SequenceFileResource extends IdentifiableResource<SequenceFile> {
+	
+	private Long miseqRunId;
    
     public SequenceFileResource() {
             super(new SequenceFile());
@@ -129,5 +132,15 @@ public class SequenceFileResource extends IdentifiableResource<SequenceFile> {
     public void setI5Index(String i5Index) {
         resource.setI5Index(i5Index);
     }
+
+	@JsonIgnore
+	public Long getMiseqRunId() {
+		return miseqRunId;
+	}
+	
+	@JsonProperty
+	public void setMiseqRunId(Long miseqRunId) {
+		this.miseqRunId = miseqRunId;
+	}
 
 }
