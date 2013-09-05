@@ -164,8 +164,6 @@ public class SampleSequenceFilesController {
 		}
 		sf.setFile(target);
 
-		//SequenceFile sf = new SequenceFile(target);
-
 		// persist the changes by calling the sample service
 		Join<Sample, SequenceFile> sampleSequenceFileRelationship = sequenceFileService.createSequenceFileInSample(sf,
 				sample);
