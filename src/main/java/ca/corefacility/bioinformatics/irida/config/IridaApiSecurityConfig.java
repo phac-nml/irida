@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
@@ -43,13 +42,16 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	}
 
 	@Override
-	@Bean
 	protected MethodSecurityExpressionHandler expressionHandler() {
 		DefaultMethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler();
-		handler.setPermissionEvaluator(permissionEvaluator());
+		IridaPermissionEvaluator permissionEvaluator = new IridaPermissionEvaluator(updateUserPermission(),
+				readProjectPermission(), readSamplePermission(), readSequenceFilePermission());
+		permissionEvaluator.init();
+		handler.setPermissionEvaluator(permissionEvaluator);
 		RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
 		roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_USER");
 		handler.setRoleHierarchy(roleHierarchy);
+		logger.debug("Returning custom expression handler [" + handler + "]");
 		return handler;
 	}
 
@@ -62,13 +64,6 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
-	}
-
-	@Bean(initMethod = "init")
-	public PermissionEvaluator permissionEvaluator() {
-		IridaPermissionEvaluator permissionEvaluator = new IridaPermissionEvaluator(updateUserPermission(),
-				readProjectPermission(), readSamplePermission(), readSequenceFilePermission());
-		return permissionEvaluator;
 	}
 
 	@Bean
