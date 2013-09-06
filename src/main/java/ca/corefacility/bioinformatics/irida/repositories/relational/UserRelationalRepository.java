@@ -96,7 +96,7 @@ public class UserRelationalRepository extends GenericRelationalRepository<User> 
 	 * {@inheritDoc }
 	 */
 	@Override
-	public User getUserByUsername(String username) throws EntityNotFoundException {
+	public User loadUserByUsername(String username) throws EntityNotFoundException {
 		Session session = this.sessionFactory.getCurrentSession();
 		Criteria crit = session.createCriteria(User.class);
 		crit.add(Restrictions.like("username", username));
@@ -107,6 +107,13 @@ public class UserRelationalRepository extends GenericRelationalRepository<User> 
 		}
 
 		return u;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public User getUserByUsername(String username) throws EntityNotFoundException {
+		return loadUserByUsername(username);
 	}
 
 	/**

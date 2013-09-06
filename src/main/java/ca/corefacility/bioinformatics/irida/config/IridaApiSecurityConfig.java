@@ -19,13 +19,13 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.IridaPermissionEvaluator;
 import ca.corefacility.bioinformatics.irida.security.permissions.ReadProjectPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.ReadSamplePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.ReadSequenceFilePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.UpdateUserPermission;
-import ca.corefacility.bioinformatics.irida.service.UserService;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -34,18 +34,18 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	private static final Logger logger = LoggerFactory.getLogger(IridaApiSecurityConfig.class);
 
 	@Autowired
-	private UserService userService;
+	private UserRepository userRepository;
 
 	@Override
 	protected void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
+		auth.userDetailsService(userRepository).passwordEncoder(passwordEncoder());
 	}
 
 	@Override
 	protected MethodSecurityExpressionHandler expressionHandler() {
 		DefaultMethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler();
-		IridaPermissionEvaluator permissionEvaluator = new IridaPermissionEvaluator(updateUserPermission(),
-				readProjectPermission(), readSamplePermission(), readSequenceFilePermission());
+		IridaPermissionEvaluator permissionEvaluator = new IridaPermissionEvaluator(readProjectPermission(),
+				readSamplePermission(), readSequenceFilePermission(), updateUserPermission());
 		permissionEvaluator.init();
 		handler.setPermissionEvaluator(permissionEvaluator);
 		RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
