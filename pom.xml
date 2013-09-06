@@ -77,10 +77,10 @@
 		<jetty.version>9.0.2.v20130417</jetty.version>
 
 		<!-- Spring -->
-		<spring-framework.version>3.2.2.RELEASE</spring-framework.version>
+		<spring-framework.version>3.2.4.RELEASE</spring-framework.version>
 		<org.springframework.hateoas.version>0.5.0.RELEASE</org.springframework.hateoas.version>
 		<spring-framework-security-oauth2.version>1.0.4.RELEASE</spring-framework-security-oauth2.version>
-		<org.springframework.security.version>3.2.0.M2</org.springframework.security.version>
+		<org.springframework.security.version>3.2.0.RC1</org.springframework.security.version>
 		<org.springframework.plugin.version>0.8.0.RELEASE</org.springframework.plugin.version>
 
 		<!-- Test -->
