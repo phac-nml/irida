@@ -169,7 +169,9 @@ public class SampleSequenceFilesController {
 			sf = fileResource.getResource();
 			
 			Long miseqRunId = fileResource.getMiseqRunId();
-			miseqRun = miseqRunService.read(miseqRunId);
+			if(miseqRunId != null){
+				miseqRun = miseqRunService.read(miseqRunId);
+			}
 		}
 		else{
 			sf = new SequenceFile();
