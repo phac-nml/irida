@@ -74,7 +74,7 @@ public class ProjectSamplesIntegrationTest {
 
 		String samplesUri = from(responseBody).get("resource.links.find{it.rel == 'project/samples'}.href");
 		assertNotNull(samplesUri);
-		assertEquals(projectUri + "/samples?externalSampleId", samplesUri);
+		assertEquals(projectUri + "/samples", samplesUri);
 
 		// now confirm that the sample is not there anymore
 		expect().body("resource.resources.sampleName", not(hasItem(sampleLabel))).when().get(projectSamplesUri);
