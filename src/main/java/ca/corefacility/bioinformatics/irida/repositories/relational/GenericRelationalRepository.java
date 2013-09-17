@@ -220,6 +220,7 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
         return results;
     }
 	
+	@SuppressWarnings("unchecked")
 	public List<Type> listAll(){
         Session session = sessionFactory.getCurrentSession();
         
