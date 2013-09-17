@@ -340,7 +340,7 @@
 		<spring.test.dbunit.version>1.0.0</spring.test.dbunit.version>
 		<dbunit.version>2.4.9</dbunit.version>
 		<commons.dbcp.version>1.4</commons.dbcp.version>
-		<fastqc.version>0.10.1</fastqc.version>
+		<fastqc.version>0.10.1-nml-custom</fastqc.version>
 		<aspectj.version>1.7.3</aspectj.version>
 
 		<!-- stuck on an older version of hibernate validator until spring upgrades 
