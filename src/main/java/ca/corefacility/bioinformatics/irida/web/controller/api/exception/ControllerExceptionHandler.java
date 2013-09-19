@@ -11,9 +11,11 @@ import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,6 +34,10 @@ import java.util.*;
 public class ControllerExceptionHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
+
+	private static final MediaType[] ACCEPTABLE_MEDIA_TYPES_ARRAY = new MediaType[] { MediaType.APPLICATION_JSON,
+			MediaType.APPLICATION_XML };
+	private static final String ACCEPTABLE_MEDIA_TYPES = Arrays.toString(ACCEPTABLE_MEDIA_TYPES_ARRAY);
 
 	/**
 	 * Handle {@link Exception}.
@@ -120,9 +126,17 @@ public class ControllerExceptionHandler {
 	 */
 	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
 	public ResponseEntity<String> handleMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
-		logger.error("A client attempted to issue a request against an endpoint with an unsupported " + "method: ["
+		logger.error("A client attempted to issue a request against an endpoint with an unsupported method: ["
 				+ e.getMethod() + "]");
 		return new ResponseEntity<>("This method is not supported at this endpoint.", HttpStatus.METHOD_NOT_ALLOWED);
+	}
+
+	@ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+	public ResponseEntity<String> handleMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException e) {
+		logger.error("A client attempted to issue a data submission against an endpoint with an unsupported "
+				+ "media type: [" + e.getContentType() + "]");
+		return new ResponseEntity<>("The content type you provided is not supported by this resource."
+				+ " Resources generally support " + ACCEPTABLE_MEDIA_TYPES, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
 	}
 
 	/**

@@ -11,6 +11,7 @@ import static org.hamcrest.CoreMatchers.is;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 
@@ -43,7 +44,9 @@ public class UsersIntegrationTest {
 
 	@Test
 	public void testCreateUserSucceed() {
-		given().body(createUser()).and().auth().basic("admin", "password1").expect().response()
+		Map<String, String> user = createUser();
+		System.out.println(user);
+		given().body(user).and().auth().basic("admin", "password1").expect().response()
 				.statusCode(HttpStatus.SC_CREATED).when().post("/users");
 	}
 
@@ -65,10 +68,12 @@ public class UsersIntegrationTest {
 	}
 
 	private Map<String, String> createUser() {
+		String username = RandomStringUtils.randomAlphanumeric(20);
+		String email = RandomStringUtils.randomAlphanumeric(20) + "@" + RandomStringUtils.randomAlphanumeric(5) + ".ca";
 		Map<String, String> user = new HashMap<>();
-		user.put("username", "franklin");
+		user.put("username", username);
 		user.put("password", "Password1");
-		user.put("email", "fbristow@phac-aspc.gc.ca");
+		user.put("email", email);
 		user.put("firstName", "Franklin");
 		user.put("lastName", "Bristow");
 		user.put("phoneNumber", "7029");
