@@ -33,7 +33,7 @@ public class OverrepresentedSequence implements IridaThing {
 	@NotNull
 	private String sequence;
 	@NotNull
-	private int count;
+	private int overrepresentedSequenceCount;
 	@NotNull
 	private BigDecimal percentage;
 	@NotNull
@@ -48,27 +48,29 @@ public class OverrepresentedSequence implements IridaThing {
 
 	public OverrepresentedSequence(String sequence, int count, BigDecimal percentage, String possibleSource) {
 		this.sequence = sequence;
-		this.count = count;
+		this.overrepresentedSequenceCount = count;
 		this.percentage = percentage;
 		this.possibleSource = possibleSource;
+		this.createdDate = new Date();
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(sequence, count, percentage, possibleSource);
+		return Objects.hash(sequence, overrepresentedSequenceCount, percentage, possibleSource);
 	}
 
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof OverrepresentedSequence) {
 			OverrepresentedSequence s = (OverrepresentedSequence) o;
-			return Objects.equals(sequence, s.sequence) && Objects.equals(count, s.count)
+			return Objects.equals(sequence, s.sequence)
+					&& Objects.equals(overrepresentedSequenceCount, s.overrepresentedSequenceCount)
 					&& Objects.equals(percentage, s.percentage) && Objects.equals(possibleSource, s.possibleSource);
 		}
 
 		return false;
 	}
-	
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
@@ -78,8 +80,24 @@ public class OverrepresentedSequence implements IridaThing {
 		return sequence;
 	}
 
-	public int getCount() {
-		return count;
+	public int getOverrepresentedSequenceCount() {
+		return overrepresentedSequenceCount;
+	}
+
+	public void setSequence(String sequence) {
+		this.sequence = sequence;
+	}
+
+	public void setOverrepresentedSequenceCount(int overrepresentedSequenceCount) {
+		this.overrepresentedSequenceCount = overrepresentedSequenceCount;
+	}
+
+	public void setPercentage(BigDecimal percentage) {
+		this.percentage = percentage;
+	}
+
+	public void setPossibleSource(String possibleSource) {
+		this.possibleSource = possibleSource;
 	}
 
 	public BigDecimal getPercentage() {

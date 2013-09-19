@@ -115,7 +115,7 @@ public class FastqcFileProcessorTest {
 				overrepresentedSequenceCaptor.capture());
 		OverrepresentedSequence overrepresentedSequence = overrepresentedSequenceCaptor.getValue();
 		assertEquals("Sequence was not the correct sequence.", SEQUENCE, overrepresentedSequence.getSequence());
-		assertEquals("The count was not correct.", 2, overrepresentedSequence.getCount());
+		assertEquals("The count was not correct.", 2, overrepresentedSequence.getOverrepresentedSequenceCount());
 		assertEquals("The percent was not correct.", BigDecimal.valueOf(100.), overrepresentedSequence.getPercentage());
 
 		Files.deleteIfExists(fastq);

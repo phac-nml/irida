@@ -77,7 +77,7 @@
   <sequencefile_sample id="3" createdDate="2013-07-18 14:20:49.0" sequencefile_id="3" sample_id="2"/>
   <sequencefile_sample id="4" createdDate="2013-07-18 14:20:49.0" sequencefile_id="4" sample_id="2"/>
   <sequencefile_sample id="5" createdDate="2013-07-18 14:20:49.0" sequencefile_id="5" sample_id="3"/>
-  
+   
   <Revisions/>
   <IDENTIFIABLE_AUD/>
   <USER_AUD/>
@@ -87,5 +87,9 @@
   <project_user_AUD/>
   <project_sample_AUD/>
   <sequencefile_sample_AUD/>
+  <overrepresented_sequence />
+  <overrepresented_sequence_AUD/>
+  <sequencefile_overrepresentedsequence />
+  <sequencefile_overrepresentedsequence_AUD />
   
 </dataset>

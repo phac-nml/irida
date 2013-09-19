@@ -8,6 +8,8 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +34,8 @@ import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 @Transactional
 public class SequenceFileRelationalRepository extends GenericRelationalRepository<SequenceFile> implements
 		SequenceFileRepository {
+	
+	private static final Logger logger = LoggerFactory.getLogger(SequenceFileRelationalRepository.class);
 	public SequenceFileRelationalRepository() {
 	}
 
@@ -151,16 +155,22 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
 		session.delete(join);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Join<SequenceFile, OverrepresentedSequence> addOverrepresentedSequenceToSequenceFile(
 			SequenceFile sequenceFile, OverrepresentedSequence sequence) {
 		Session s = sessionFactory.getCurrentSession();
+		logger.trace("Checking to see if sequence was previously persisted.");
 		if (!s.contains(sequence)) {
+			logger.trace("Persisting sequence.");
 			s.persist(sequence);
 		}
-		SequenceFileOverrepresentedSequenceJoin join = new SequenceFileOverrepresentedSequenceJoin();
-		join.setObject(sequence);
-		join.setSubject(sequenceFile);
+		SequenceFileOverrepresentedSequenceJoin join = new SequenceFileOverrepresentedSequenceJoin(sequenceFile,
+				sequence);
+		logger.trace("Persisting join.");
+		s.persist(join);
 		return join;
 	}
 
