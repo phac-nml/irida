@@ -33,9 +33,9 @@ import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 public class FastqcFileProcessorTest {
 	private FastqcFileProcessor fileProcessor;
 	private SequenceFileRepository sequenceFileRepository;
-	private static final String SEQUENCE = "ACGTACGT";
-	private static final String FASTQ_FILE_CONTENTS = "@testread\n" + SEQUENCE + "\n+\n????????\n@testread2\n"
-			+ SEQUENCE + "\n+\n????????";
+	private static final String SEQUENCE = "ACGTACGTN";
+	private static final String FASTQ_FILE_CONTENTS = "@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
+			+ SEQUENCE + "\n+\n?????????";
 	private static final String FASTA_FILE_CONTENTS = ">test read\n" + SEQUENCE;
 
 	@Before
@@ -87,10 +87,13 @@ public class FastqcFileProcessorTest {
 		assertEquals("GC Content was not set correctly.", (short) 50, updatedProperties.get("gcContent"));
 		assertEquals("Filtered sequences was not 0.", 0, updatedProperties.get("filteredSequences"));
 		assertEquals("File type was not correct.", "Conventional base calls", updatedProperties.get("fileType"));
-		assertEquals("Max length was not correct.", 8, updatedProperties.get("maxLength"));
-		assertEquals("Min length was not correct.", 8, updatedProperties.get("minLength"));
+		assertEquals("Max length was not correct.", SEQUENCE.length(), updatedProperties.get("maxLength"));
+		assertEquals("Min length was not correct.", SEQUENCE.length(), updatedProperties.get("minLength"));
 		assertEquals("Total sequences was not correct.", 2, updatedProperties.get("totalSequences"));
 		assertEquals("Encoding was not correct.", "Illumina <1.3", updatedProperties.get("encoding"));
+		assertEquals("Total number of bases was not correct.", Long.valueOf(SEQUENCE.length() * 2),
+				updatedProperties.get("totalBases"));
+
 		assertNotNull("Per-base quality score chart was not created.",
 				updatedProperties.get("perBaseQualityScoreChart"));
 		assertTrue("Per-base quality score chart was created, but was empty.",

@@ -123,6 +123,8 @@ public class FastqcFileProcessor implements FileProcessor {
 		updatedProperties.put("totalSequences", stats.getActualCount());
 		updatedProperties.put("filteredSequences", stats.getFilteredCount());
 		updatedProperties.put("gcContent", stats.getGCContent());
+		updatedProperties.put("totalBases",
+				stats.getACount() + stats.getGCount() + stats.getCCount() + stats.getTCount() + stats.getNCount());
 
 		return updatedProperties;
 	}

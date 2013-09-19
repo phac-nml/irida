@@ -55,6 +55,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	private String encoding;
 	private Integer totalSequences;
 	private Integer filteredSequences;
+	private Long totalBases;
 	private Integer minLength;
 	private Integer maxLength;
 	private Short gcContent;
@@ -222,6 +223,14 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
 	public void setGcContent(Short gcContent) {
 		this.gcContent = gcContent;
+	}
+
+	public Long getTotalBases() {
+		return totalBases;
+	}
+
+	public void setTotalBases(Long totalBases) {
+		this.totalBases = totalBases;
 	}
 
 	public void setStringPath() {
