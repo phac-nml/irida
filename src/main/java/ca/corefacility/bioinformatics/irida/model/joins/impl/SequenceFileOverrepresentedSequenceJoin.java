@@ -37,6 +37,11 @@ public class SequenceFileOverrepresentedSequenceJoin implements Join<SequenceFil
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date timestamp;
 
+	public SequenceFileOverrepresentedSequenceJoin(SequenceFile s, OverrepresentedSequence os) {
+		this.sequenceFile = s;
+		this.sequence = os;
+	}
+	
 	@Override
 	public Date getTimestamp() {
 		return timestamp;
