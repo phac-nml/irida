@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import uk.ac.babraham.FastQC.Graphs.LineGraph;
 import uk.ac.babraham.FastQC.Graphs.QualityBoxPlot;
 import uk.ac.babraham.FastQC.Modules.BasicStats;
+import uk.ac.babraham.FastQC.Modules.DuplicationLevel;
 import uk.ac.babraham.FastQC.Modules.OverRepresentedSeqs;
 import uk.ac.babraham.FastQC.Modules.OverRepresentedSeqs.OverrepresentedSeq;
 import uk.ac.babraham.FastQC.Modules.PerBaseQualityScores;
@@ -90,6 +91,7 @@ public class FastqcFileProcessor implements FileProcessor {
 			updatedProperties.putAll(handleBasicStats(basicStats));
 			updatedProperties.putAll(handlePerBaseQualityScores(pbqs));
 			updatedProperties.putAll(handlePerSequenceQualityScores(psqs));
+			updatedProperties.putAll(handleDuplicationLevel(overRep.duplicationLevelModule()));
 
 			sequenceFile = sequenceFileRepository.update(sequenceFile.getId(), updatedProperties);
 
@@ -166,6 +168,25 @@ public class FastqcFileProcessor implements FileProcessor {
 	}
 
 	/**
+	 * Handle writing the {@link DuplicationLevel} to the database.
+	 * 
+	 * @param duplicationLevel
+	 * @return
+	 * @throws IOException
+	 */
+	private Map<String, Object> handleDuplicationLevel(DuplicationLevel duplicationLevel) throws IOException {
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		LineGraph lg = (LineGraph) duplicationLevel.getResultsPanel();
+		BufferedImage b = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
+		Graphics g = b.getGraphics();
+		lg.paint(g, b.getWidth(), b.getHeight());
+
+		ImageIO.write(b, "PNG", os);
+		byte[] image = os.toByteArray();
+		return ImmutableMap.of("duplicationLevelChart", (Object) image);
+	}
+
+	/**
 	 * Handle getting over represented sequences from fastqc.
 	 * 
 	 * @param seqs
@@ -175,7 +196,7 @@ public class FastqcFileProcessor implements FileProcessor {
 	 */
 	private Collection<OverrepresentedSequence> handleOverRepresentedSequences(OverRepresentedSeqs seqs) {
 		// force FastQC to calculate the over-represented sequences
-		//seqs.raisesError();
+		// seqs.raisesError();
 		OverrepresentedSeq[] sequences = seqs.getOverrepresentedSequences();
 		if (sequences == null) {
 			return Collections.emptyList();

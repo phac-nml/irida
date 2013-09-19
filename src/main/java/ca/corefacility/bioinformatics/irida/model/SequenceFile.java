@@ -62,6 +62,8 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	private byte[] perBaseQualityScoreChart;
 	@Lob
 	private byte[] perSequenceQualityScoreChart;
+	@Lob
+	private byte[] duplicationLevelChart;
 
 	public SequenceFile() {
 		createdDate = new Date();
@@ -115,8 +117,8 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	}
 
 	/**
-	 * Box and whisker plot showing per-sequence quality scores as a
-	 * PNG-formatted image in a byte array.
+	 * Line chartshowing per-sequence quality scores as a PNG-formatted image in
+	 * a byte array.
 	 * 
 	 * @return
 	 */
@@ -126,6 +128,20 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
 	public void setPerSequenceQualityScoreChart(byte[] perSequenceQualityScoreChart) {
 		this.perSequenceQualityScoreChart = perSequenceQualityScoreChart;
+	}
+
+	/**
+	 * Line chartshowing duplication-level as a PNG-formatted image in a byte
+	 * array.
+	 * 
+	 * @return
+	 */
+	public byte[] getDuplicationLevelChart() {
+		return duplicationLevelChart;
+	}
+
+	public void setDuplicationLevelChart(byte[] duplicationLevelChart) {
+		this.duplicationLevelChart = duplicationLevelChart;
 	}
 
 	public Boolean getEnabled() {

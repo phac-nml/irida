@@ -101,6 +101,10 @@ public class FastqcFileProcessorTest {
 		assertTrue("Per-sequence quality score chart was created, but was empty.",
 				((byte[]) updatedProperties.get("perSequenceQualityScoreChart")).length > 0);
 
+		assertNotNull("Duplication level chart was not created.", updatedProperties.get("duplicationLevelChart"));
+		assertTrue("Duplication level chart was not created.",
+				((byte[]) updatedProperties.get("duplicationLevelChart")).length > 0);
+
 		ArgumentCaptor<OverrepresentedSequence> overrepresentedSequenceCaptor = ArgumentCaptor
 				.forClass(OverrepresentedSequence.class);
 
@@ -108,7 +112,7 @@ public class FastqcFileProcessorTest {
 				overrepresentedSequenceCaptor.capture());
 		OverrepresentedSequence overrepresentedSequence = overrepresentedSequenceCaptor.getValue();
 		assertEquals("Sequence was not the correct sequence.", SEQUENCE, overrepresentedSequence.getSequence());
-		assertEquals("The count was not correct.", 2, overrepresentedSequence.getCount()); 
+		assertEquals("The count was not correct.", 2, overrepresentedSequence.getCount());
 		assertEquals("The percent was not correct.", BigDecimal.valueOf(100.), overrepresentedSequence.getPercentage());
 
 		Files.deleteIfExists(fastq);
