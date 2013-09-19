@@ -261,6 +261,13 @@
 			<artifactId>aspectjweaver</artifactId>
 			<version>${aspectj.version}</version>
 		</dependency>
+		
+		<!-- apache commons -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commons.lang.version}</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>irida-api</finalName>
@@ -342,6 +349,7 @@
 		<commons.dbcp.version>1.4</commons.dbcp.version>
 		<fastqc.version>0.10.1-nml-custom</fastqc.version>
 		<aspectj.version>1.7.3</aspectj.version>
+		<commons.lang.version>3.1</commons.lang.version>
 
 		<!-- stuck on an older version of hibernate validator until spring upgrades 
 			support -->

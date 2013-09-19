@@ -4,8 +4,12 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,17 +17,19 @@ import javax.imageio.ImageIO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.DirectFieldAccessor;
 
 import uk.ac.babraham.FastQC.Graphs.LineGraph;
 import uk.ac.babraham.FastQC.Graphs.QualityBoxPlot;
 import uk.ac.babraham.FastQC.Modules.BasicStats;
+import uk.ac.babraham.FastQC.Modules.OverRepresentedSeqs;
+import uk.ac.babraham.FastQC.Modules.OverRepresentedSeqs.OverrepresentedSeq;
 import uk.ac.babraham.FastQC.Modules.PerBaseQualityScores;
 import uk.ac.babraham.FastQC.Modules.PerSequenceQualityScores;
 import uk.ac.babraham.FastQC.Modules.QCModule;
 import uk.ac.babraham.FastQC.Sequence.Sequence;
 import uk.ac.babraham.FastQC.Sequence.SequenceFactory;
 import uk.ac.babraham.FastQC.Sequence.QualityEncoding.PhredEncoding;
+import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
@@ -68,7 +74,9 @@ public class FastqcFileProcessor implements FileProcessor {
 			BasicStats basicStats = new BasicStats();
 			PerBaseQualityScores pbqs = new PerBaseQualityScores();
 			PerSequenceQualityScores psqs = new PerSequenceQualityScores();
-			QCModule[] moduleList = new QCModule[] { basicStats, pbqs, psqs };
+			OverRepresentedSeqs overRep = new OverRepresentedSeqs();
+			QCModule[] moduleList = new QCModule[] { basicStats, pbqs, psqs, overRep };
+
 			logger.debug("Launching FastQC analysis modules on all sequences.");
 			while (fastQCSequenceFile.hasNext()) {
 				Sequence sequence = fastQCSequenceFile.next();
@@ -76,6 +84,7 @@ public class FastqcFileProcessor implements FileProcessor {
 					module.processSequence(sequence);
 				}
 			}
+
 			logger.debug("Finished FastQC analysis modules.");
 			Map<String, Object> updatedProperties = new HashMap<>();
 			updatedProperties.putAll(handleBasicStats(basicStats));
@@ -83,6 +92,11 @@ public class FastqcFileProcessor implements FileProcessor {
 			updatedProperties.putAll(handlePerSequenceQualityScores(psqs));
 
 			sequenceFile = sequenceFileRepository.update(sequenceFile.getId(), updatedProperties);
+
+			Collection<OverrepresentedSequence> overrepresentedSequences = handleOverRepresentedSequences(overRep);
+			for (OverrepresentedSequence sequence : overrepresentedSequences) {
+				sequenceFileRepository.addOverrepresentedSequenceToSequenceFile(sequenceFile, sequence);
+			}
 		} catch (Exception e) {
 			logger.error("FastQC failed to process the sequence file. Stack trace follows.", e);
 			throw new FileProcessorException("FastQC failed to parse the sequence file.");
@@ -98,31 +112,15 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * @return properties suitable for updating a {@link SequenceFile}.
 	 */
 	private Map<String, Object> handleBasicStats(BasicStats stats) {
-		DirectFieldAccessor dfa = new DirectFieldAccessor(stats);
-		String fileType = (String) dfa.getPropertyValue("fileType");
-		Character lowestChar = (Character) dfa.getPropertyValue("lowestChar");
-		Integer minLength = (Integer) dfa.getPropertyValue("minLength");
-		Integer maxLength = (Integer) dfa.getPropertyValue("maxLength");
-		Integer totalSequences = (Integer) dfa.getPropertyValue("actualCount");
-		Integer filteredSequences = (Integer) dfa.getPropertyValue("filteredCount");
-		String encoding = PhredEncoding.getFastQEncodingOffset(lowestChar).name();
-
-		Long aCount = (Long) dfa.getPropertyValue("aCount");
-		Long cCount = (Long) dfa.getPropertyValue("cCount");
-		Long gCount = (Long) dfa.getPropertyValue("gCount");
-		Long tCount = (Long) dfa.getPropertyValue("tCount");
-
-		Short gcContent = (short) (((gCount + cCount) * 100) / (aCount + cCount + gCount + tCount));
-
 		Map<String, Object> updatedProperties = new HashMap<>();
 
-		updatedProperties.put("fileType", fileType);
-		updatedProperties.put("encoding", encoding);
-		updatedProperties.put("minLength", minLength);
-		updatedProperties.put("maxLength", maxLength);
-		updatedProperties.put("totalSequences", totalSequences);
-		updatedProperties.put("filteredSequences", filteredSequences);
-		updatedProperties.put("gcContent", gcContent);
+		updatedProperties.put("fileType", stats.getFileType());
+		updatedProperties.put("encoding", PhredEncoding.getFastQEncodingOffset(stats.getLowestChar()).name());
+		updatedProperties.put("minLength", stats.getMinLength());
+		updatedProperties.put("maxLength", stats.getMaxLength());
+		updatedProperties.put("totalSequences", stats.getActualCount());
+		updatedProperties.put("filteredSequences", stats.getFilteredCount());
+		updatedProperties.put("gcContent", stats.getGCContent());
 
 		return updatedProperties;
 	}
@@ -165,6 +163,35 @@ public class FastqcFileProcessor implements FileProcessor {
 		ImageIO.write(b, "PNG", os);
 		byte[] image = os.toByteArray();
 		return ImmutableMap.of("perSequenceQualityScoreChart", (Object) image);
+	}
+
+	/**
+	 * Handle getting over represented sequences from fastqc.
+	 * 
+	 * @param seqs
+	 *            overrepresented sequences.
+	 * @return a collection of {@link OverrepresentedSequence} corresponding to
+	 *         the FastQC {@link OverRepresentedSeqs}.
+	 */
+	private Collection<OverrepresentedSequence> handleOverRepresentedSequences(OverRepresentedSeqs seqs) {
+		// force FastQC to calculate the over-represented sequences
+		//seqs.raisesError();
+		OverrepresentedSeq[] sequences = seqs.getOverrepresentedSequences();
+		if (sequences == null) {
+			return Collections.emptyList();
+		}
+
+		Collection<OverrepresentedSequence> overrepresentedSequences = new ArrayList<>(sequences.length);
+
+		for (OverrepresentedSeq s : sequences) {
+			String sequenceString = s.seq();
+			int count = s.count();
+			BigDecimal percent = BigDecimal.valueOf(s.percentage());
+			String possibleSource = s.contaminantHit();
+
+			overrepresentedSequences.add(new OverrepresentedSequence(sequenceString, count, percent, possibleSource));
+		}
+		return overrepresentedSequences;
 	}
 
 	/**
