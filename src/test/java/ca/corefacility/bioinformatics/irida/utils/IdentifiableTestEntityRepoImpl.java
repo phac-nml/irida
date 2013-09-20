@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.utils;
 
 import javax.sql.DataSource;
 
+import org.hibernate.SessionFactory;
+
 import ca.corefacility.bioinformatics.irida.repositories.relational.GenericRelationalRepository;
 
 /**
@@ -10,7 +12,7 @@ import ca.corefacility.bioinformatics.irida.repositories.relational.GenericRelat
  */
 public class IdentifiableTestEntityRepoImpl extends GenericRelationalRepository<IdentifiableTestEntity> implements IdentifiableTestEntityRepo{
     
-    public IdentifiableTestEntityRepoImpl(DataSource source){
-        super(source,IdentifiableTestEntity.class);
+    public IdentifiableTestEntityRepoImpl(DataSource source, SessionFactory sessionFactory){
+        super(source, sessionFactory, IdentifiableTestEntity.class);
     }
 }

@@ -5,6 +5,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,14 +17,22 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import ca.corefacility.bioinformatics.irida.config.IridaApiRepositoriesConfig;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
@@ -40,8 +52,10 @@ import com.google.common.collect.Lists;
  * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-@ContextConfiguration(locations = { "classpath:/ca/corefacility/bioinformatics/irida/config/testJdbcContext.xml" })
 @RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiRepositoriesConfig.class,
+		IridaApiTestDataSourceConfig.class })
+@ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 public class UserRelationalRepositoryTest {
 
@@ -98,10 +112,10 @@ public class UserRelationalRepositoryTest {
 		} catch (EntityExistsException ex) {
 			String fieldName = ex.getFieldName();
 			fieldName = fieldName.toLowerCase();
-			assertEquals(fieldName,"username");
+			assertEquals(fieldName, "username");
 		}
 	}
-	
+
 	@Test
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
@@ -114,9 +128,9 @@ public class UserRelationalRepositoryTest {
 		} catch (EntityExistsException ex) {
 			String fieldName = ex.getFieldName();
 			fieldName = fieldName.toLowerCase();
-			assertEquals(fieldName,"email");
+			assertEquals(fieldName, "email");
 		}
-	}	
+	}
 
 	@Test
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
@@ -203,6 +217,64 @@ public class UserRelationalRepositoryTest {
 			fail();
 		} catch (IllegalArgumentException ex) {
 
+		}
+	}
+
+	@Test
+	public void testThrowsConstraintViolationExceptionWithoutConstraintName() {
+		DataSource dataSource = mock(DataSource.class);
+		SessionFactory sessionFactory = mock(SessionFactory.class);
+		Session session = mock(Session.class);
+		ConstraintViolationException exToThrow = new ConstraintViolationException(null, null, null);
+		User u = new User();
+		u.setRole(Role.ROLE_USER);
+		Criteria c = mock(Criteria.class);
+
+		when(sessionFactory.getCurrentSession()).thenReturn(session);
+		doThrow(exToThrow).when(session).persist(any());
+		when(session.createCriteria(Role.class)).thenReturn(c);
+		when(c.uniqueResult()).thenReturn(Role.ROLE_USER);
+
+		UserRepository userRepository = new UserRelationalRepository(dataSource, sessionFactory);
+		try {
+			userRepository.create(u);
+			fail("Should have thrown an EntityExistsException.");
+		} catch (EntityExistsException e) {
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Should have thrown an EntityExistsException, not [" + e.getClass()
+					+ "]; stack trace precedes ^^^^^^.");
+		}
+	}
+
+	@Test
+	public void testThrowsConstraintViolationExceptionWithConstraintName() {
+		DataSource dataSource = mock(DataSource.class);
+		SessionFactory sessionFactory = mock(SessionFactory.class);
+		Session session = mock(Session.class);
+		ConstraintViolationException exToThrow = new ConstraintViolationException(null, null, "USER_EMAIL_CONSTRAINT");
+		User u = new User();
+		u.setRole(Role.ROLE_USER);
+		Criteria c = mock(Criteria.class);
+
+		when(sessionFactory.getCurrentSession()).thenReturn(session);
+		doThrow(exToThrow).when(session).persist(any());
+		when(session.createCriteria(Role.class)).thenReturn(c);
+		when(c.uniqueResult()).thenReturn(Role.ROLE_USER);
+		UserRepository userRepository = new UserRelationalRepository(dataSource, sessionFactory);
+
+		try {
+			userRepository.create(u);
+			fail("Should have thrown EntityExistsException.");
+		} catch (EntityExistsException e) {
+			// confirm that the exception contains the constraint name, as
+			// expected
+			assertEquals("constraint name should be e-mail", "email", e.getFieldName());
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Should have thrown an EntityExistsException, not [" + e.getClass()
+					+ "]; stack trace precedes ^^^^^^.");
 		}
 	}
 }

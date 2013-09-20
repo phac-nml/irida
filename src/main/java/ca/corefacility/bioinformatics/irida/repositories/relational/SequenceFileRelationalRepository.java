@@ -6,6 +6,7 @@ import javax.sql.DataSource;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,8 +30,8 @@ import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 public class SequenceFileRelationalRepository extends GenericRelationalRepository<SequenceFile> implements SequenceFileRepository{
     public SequenceFileRelationalRepository(){}
     
-    public SequenceFileRelationalRepository(DataSource source){
-        super(source,SequenceFile.class);
+    public SequenceFileRelationalRepository(DataSource source, SessionFactory sessionFactory){
+        super(source, sessionFactory, SequenceFile.class);
     }
 
     @Override

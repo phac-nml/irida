@@ -1,0 +1,95 @@
+package ca.corefacility.bioinformatics.irida.config;
+
+import javax.validation.Validator;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
+import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
+import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
+import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
+import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SampleService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.UserService;
+import ca.corefacility.bioinformatics.irida.service.impl.ProjectServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.impl.SampleServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.impl.SequenceFileServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.impl.UserServiceImpl;
+
+/**
+ * Configuration for the IRIDA platform.
+ * 
+ * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ * 
+ */
+@Configuration
+@Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class,
+		IridaApiRepositoriesConfig.class })
+public class IridaApiServicesConfig {
+
+	@Autowired
+	private UserRepository userRepository;
+	@Autowired
+	private ProjectRepository projectRepository;
+	@Autowired
+	private SampleRepository sampleRepository;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	@Autowired
+	private SequenceFileRepository sequenceFileRepository;
+	@Autowired
+	private CRUDRepository<Long, SequenceFile> sequenceFileFilesystemRepository;
+
+	@Bean
+	public UserService userService() {
+		return new UserServiceImpl(userRepository, passwordEncoder, validator());
+	}
+
+	@Bean
+	public ProjectService projectService() {
+		return new ProjectServiceImpl(projectRepository, sampleRepository,
+				userRepository, validator());
+	}
+
+	@Bean
+	public SampleService sampleService() {
+		return new SampleServiceImpl(sampleRepository, sequenceFileRepository,
+				validator());
+	}
+
+	@Bean
+	public SequenceFileService sequenceFileService() {
+		return new SequenceFileServiceImpl(sequenceFileRepository,
+				sequenceFileFilesystemRepository, validator());
+	}
+
+	@Bean
+	public FileProcessingChain fileProcessorChain() {
+		return new DefaultFileProcessingChain(new GzipFileProcessor(
+				sequenceFileRepository), new FastqcFileProcessor(
+				sequenceFileRepository));
+	}
+
+	@Bean
+	public Validator validator() {
+		ResourceBundleMessageSource validatorMessageSource = new ResourceBundleMessageSource();
+		validatorMessageSource
+				.setBasename("ca.corefacility.bioinformatics.irida.validation.ValidationMessages");
+		LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
+		validator.setValidationMessageSource(validatorMessageSource);
+		return validator;
+	}
+}

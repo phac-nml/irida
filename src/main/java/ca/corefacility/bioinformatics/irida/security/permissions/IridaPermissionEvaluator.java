@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.security.permissions;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +29,10 @@ public class IridaPermissionEvaluator implements PermissionEvaluator {
 
 	private Collection<BasePermission<?>> permissions;
 	private Map<String, BasePermission<?>> namedPermissionMap;
+
+	public IridaPermissionEvaluator(BasePermission<?>... permissions) {
+		this(Arrays.asList(permissions));
+	}
 
 	public IridaPermissionEvaluator(Collection<BasePermission<?>> permissions) {
 		this.permissions = permissions;

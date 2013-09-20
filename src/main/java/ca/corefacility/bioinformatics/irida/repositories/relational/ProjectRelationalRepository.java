@@ -7,6 +7,7 @@ import javax.sql.DataSource;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +34,8 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
 	public ProjectRelationalRepository() {
 	}
 
-	public ProjectRelationalRepository(DataSource source) {
-		super(source, Project.class);
+	public ProjectRelationalRepository(DataSource source, SessionFactory sessionFactory) {
+		super(source, sessionFactory, Project.class);
 	}
 
 	/**

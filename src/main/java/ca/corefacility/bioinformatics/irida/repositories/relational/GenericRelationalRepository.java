@@ -42,17 +42,10 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
     
     public GenericRelationalRepository(){}
     
-    public GenericRelationalRepository(DataSource source,Class<Type> classType){
+    public GenericRelationalRepository(DataSource source, SessionFactory sessionFactory, Class<Type> classType){
         this.jdbcTemplate = new JdbcTemplate(source);
-        this.classType = classType;
-    }
-
-    public SessionFactory getSessionFactory() {
-        return sessionFactory;
-    }
-
-    public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
+        this.classType = classType;
     }
     
     /**
@@ -227,6 +220,7 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
         return results;
     }
 	
+	@SuppressWarnings("unchecked")
 	public List<Type> listAll(){
         Session session = sessionFactory.getCurrentSession();
         
