@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -40,6 +41,27 @@ public class Project implements IridaThing, Comparable<Project> {
     
     @Temporal(TemporalType.TIMESTAMP)
     private Date modifiedDate;
+	
+	@Temporal(TemporalType.DATE)
+	private Date anticipatedStartDate;
+	
+	@Lob
+	private String projectDescription;
+	
+	@Lob
+	private String projectDesign;
+	
+	@Lob
+	private String dataAnalysisRequirements;
+	
+	@Lob
+	private String additionalCoreWork;
+	
+	@Lob
+	private String supplyRequirements;
+	
+	@Lob
+	private String additionalCosts;
 
     public Project() {
         createdDate = new Date();
@@ -129,5 +151,61 @@ public class Project implements IridaThing, Comparable<Project> {
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
+
+	public Date getAnticipatedStartDate() {
+		return anticipatedStartDate;
+	}
+
+	public void setAnticipatedStartDate(Date anticipatedStartDate) {
+		this.anticipatedStartDate = anticipatedStartDate;
+	}
+
+	public String getProjectDescription() {
+		return projectDescription;
+	}
+
+	public void setProjectDescription(String projectDescription) {
+		this.projectDescription = projectDescription;
+	}
+
+	public String getProjectDesign() {
+		return projectDesign;
+	}
+
+	public void setProjectDesign(String projectDesign) {
+		this.projectDesign = projectDesign;
+	}
+
+	public String getDataAnalysisRequirements() {
+		return dataAnalysisRequirements;
+	}
+
+	public void setDataAnalysisRequirements(String dataAnalysisRequirements) {
+		this.dataAnalysisRequirements = dataAnalysisRequirements;
+	}
+
+	public String getAdditionalCoreWork() {
+		return additionalCoreWork;
+	}
+
+	public void setAdditionalCoreWork(String additionalCoreWork) {
+		this.additionalCoreWork = additionalCoreWork;
+	}
+
+	public String getSupplyRequirements() {
+		return supplyRequirements;
+	}
+
+	public void setSupplyRequirements(String supplyRequirements) {
+		this.supplyRequirements = supplyRequirements;
+	}
+
+	public String getAdditionalCosts() {
+		return additionalCosts;
+	}
+
+	public void setAdditionalCosts(String additionalCosts) {
+		this.additionalCosts = additionalCosts;
+	}
     
 }
