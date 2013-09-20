@@ -16,14 +16,17 @@ import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessin
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import ca.corefacility.bioinformatics.irida.repositories.MiseqRunRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
+import ca.corefacility.bioinformatics.irida.service.impl.MiseqRunServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.ProjectServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.SampleServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.SequenceFileServiceImpl;
@@ -51,6 +54,8 @@ public class IridaApiServicesConfig {
 	@Autowired
 	private SequenceFileRepository sequenceFileRepository;
 	@Autowired
+	private MiseqRunRepository miseqRunRepository;
+	@Autowired
 	private CRUDRepository<Long, SequenceFile> sequenceFileFilesystemRepository;
 
 	@Bean
@@ -74,6 +79,11 @@ public class IridaApiServicesConfig {
 	public SequenceFileService sequenceFileService() {
 		return new SequenceFileServiceImpl(sequenceFileRepository,
 				sequenceFileFilesystemRepository, validator());
+	}
+	
+	@Bean
+	public MiseqRunService miseqRunService(){
+		return new MiseqRunServiceImpl(miseqRunRepository, validator());
 	}
 
 	@Bean

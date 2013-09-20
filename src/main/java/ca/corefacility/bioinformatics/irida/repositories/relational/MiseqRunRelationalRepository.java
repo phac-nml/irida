@@ -11,6 +11,7 @@ import java.util.List;
 import javax.sql.DataSource;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -27,8 +28,8 @@ public class MiseqRunRelationalRepository extends GenericRelationalRepository<Mi
 
     public MiseqRunRelationalRepository(){}
     
-    public MiseqRunRelationalRepository(DataSource source){
-        super(source, MiseqRun.class);
+    public MiseqRunRelationalRepository(DataSource source, SessionFactory sessionFactory){
+		super(source, sessionFactory, MiseqRun.class);
     }
 
     /**
