@@ -36,6 +36,11 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 	 * Constant reference for client role.
 	 */
 	public static final Role ROLE_CLIENT = new Role("ROLE_CLIENT");
+	
+	/**
+	 * Constant reference for the manager role
+	 */
+	public static final Role ROLE_MANAGER = new Role("ROLE_MANAGER");
 
 	@Id
 	@Column(name = "id")

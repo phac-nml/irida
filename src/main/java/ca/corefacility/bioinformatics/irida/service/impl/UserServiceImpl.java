@@ -12,7 +12,10 @@ import javax.validation.Validator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -71,11 +74,25 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	public User create(User u) {
 		Set<ConstraintViolation<User>> violations = validatePassword(u.getPassword());
 		if (violations.isEmpty()) {
+			// encode the user password
 			String password = u.getPassword();
 			u.setPassword(passwordEncoder.encode(password));
+
+			// if the system role is null, set it to the default role type
 			if (u.getSystemRole() == null) {
-				u.setSystemRole(new Role("ROLE_USER"));
+				u.setSystemRole(Role.ROLE_USER);
 			}
+
+			if (u.getSystemRole().equals(Role.ROLE_MANAGER)) {
+				// only administrators are allowed to create a user with the
+				// manager role.
+				Authentication creator = (Authentication) SecurityContextHolder.getContext().getAuthentication();
+				if (!creator.getAuthorities().contains(Role.ROLE_ADMIN)) {
+					throw new AccessDeniedException(
+							"Only administrators are allowed to create users with a manager role.");
+				}
+			}
+
 			return super.create(u);
 		}
 
