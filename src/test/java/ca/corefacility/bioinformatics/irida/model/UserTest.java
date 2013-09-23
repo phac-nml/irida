@@ -157,7 +157,7 @@ public class UserTest {
 		u.setFirstName("Franklin");
 		u.setLastName("Bristow");
 		u.setPhoneNumber("7029");
-		u.setRole(new Role("ROLE_USER"));
+		u.setSystemRole(new Role("ROLE_USER"));
 
 		Set<ConstraintViolation<User>> constraintViolations = validator.validate(u);
 

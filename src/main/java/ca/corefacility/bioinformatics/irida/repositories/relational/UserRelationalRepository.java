@@ -55,7 +55,7 @@ public class UserRelationalRepository extends GenericRelationalRepository<User> 
 	public User create(User object) throws IllegalArgumentException {
 		Session session = this.sessionFactory.getCurrentSession();
 
-		Role role = object.getRole();
+		Role role = object.getSystemRole();
 		Criteria roleQuery = session.createCriteria(Role.class);
 		roleQuery.add(Restrictions.like("name", role.getName()));
 		Role retRole = (Role) roleQuery.uniqueResult();
@@ -64,7 +64,7 @@ public class UserRelationalRepository extends GenericRelationalRepository<User> 
 					+ " doesn't exist in the database.  User cannot be created");
 		}
 
-		object.setRole(retRole);
+		object.setSystemRole(retRole);
 
 		User create;
 		try {
