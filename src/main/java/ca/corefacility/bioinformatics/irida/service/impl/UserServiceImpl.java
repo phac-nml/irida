@@ -67,7 +67,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
 	public User create(User u) {
 		Set<ConstraintViolation<User>> violations = validatePassword(u.getPassword());
 		if (violations.isEmpty()) {
@@ -86,7 +86,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#uid, 'canUpdateUser')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER') or hasPermission(#uid, 'canUpdateUser')")
 	public User update(Long uid, Map<String, Object> properties) {
 		if (properties.containsKey(PASSWORD_PROPERTY)) {
 			String password = properties.get(PASSWORD_PROPERTY).toString();
@@ -102,7 +102,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
 	public void delete(Long id) {
 		super.delete(id);
 	}
