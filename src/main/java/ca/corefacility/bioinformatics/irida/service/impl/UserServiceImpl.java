@@ -177,4 +177,10 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	public Collection<Join<Project, User>> getUsersForProjectByRole(Project project, ProjectRole projectRole) {
 		return userRepository.getUsersForProjectByRole(project, projectRole);
 	}
+	
+	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public List<User> listAll() {
+		return repository.listAll();
+	}
 }
