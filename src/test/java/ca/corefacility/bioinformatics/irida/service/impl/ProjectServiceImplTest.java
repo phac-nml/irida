@@ -131,8 +131,8 @@ public class ProjectServiceImplTest {
 		p.setId(new Long(2222));
 		ProjectRole r = ProjectRole.PROJECT_USER;
 
-		when(projectRepository.addUserToProject(p, u)).thenReturn(
-				new ProjectUserJoin(p, u));
+		when(projectRepository.addUserToProject(p, u,r)).thenReturn(
+				new ProjectUserJoin(p, u,r));
 
 		Join<Project, User> rel = projectService.addUserToProject(p, u, r);
 
@@ -140,6 +140,6 @@ public class ProjectServiceImplTest {
 		assertEquals(rel.getSubject(), p);
 		assertEquals(rel.getObject(), u);
 
-		verify(projectRepository).addUserToProject(p, u);
+		verify(projectRepository).addUserToProject(p, u,r);
 	}
 }

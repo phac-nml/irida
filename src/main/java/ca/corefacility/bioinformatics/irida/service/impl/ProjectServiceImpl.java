@@ -85,7 +85,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Join<Project, User> addUserToProject(Project project, User user, ProjectRole role) {
-		return projectRepository.addUserToProject(project, user);
+		return projectRepository.addUserToProject(project, user,role);
 	}
 
 	/**
