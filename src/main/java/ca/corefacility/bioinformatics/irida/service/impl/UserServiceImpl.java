@@ -179,7 +179,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	}
 	
 	@Override
-	@PreAuthorize("hasRole('ROLE_USER')")
+	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_MANAGER')")
 	public List<User> listAll() {
 		return repository.listAll();
 	}
