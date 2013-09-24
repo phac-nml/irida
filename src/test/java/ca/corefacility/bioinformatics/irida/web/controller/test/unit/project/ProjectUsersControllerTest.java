@@ -22,6 +22,7 @@ import org.springframework.ui.ModelMap;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -101,7 +102,7 @@ public class ProjectUsersControllerTest {
         ResponseEntity<String> response = controller.addUserToProject(p.getId(), user);
 
         // confirm that the service method was called
-        verify(projectService, times(1)).addUserToProject(p, u, new Role("ROLE_USER"));
+        verify(projectService, times(1)).addUserToProject(p, u, ProjectRole.PROJECT_USER);
         verify(projectService, times(1)).read(p.getId());
         verify(userService, times(1)).getUserByUsername(u.getUsername());
 
