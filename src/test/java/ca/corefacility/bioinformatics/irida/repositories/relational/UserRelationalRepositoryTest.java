@@ -38,6 +38,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
@@ -276,5 +277,20 @@ public class UserRelationalRepositoryTest {
 			fail("Should have thrown an EntityExistsException, not [" + e.getClass()
 					+ "]; stack trace precedes ^^^^^^.");
 		}
+	}
+	
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+	public void testGetUsersForProjectByRole(){
+		Project read = prepo.read(1L);
+		
+		Collection<Join<Project, User>> usersForProjectByRole = repo.getUsersForProjectByRole(read, ProjectRole.PROJECT_OWNER);
+		assertEquals(usersForProjectByRole.size(),1);
+		Join<Project, User> next = usersForProjectByRole.iterator().next();
+		assertNotNull(next);
+		User u = next.getObject();
+		assertNotNull(u);
+		assertEquals(u.getUsername(), "tom");
 	}
 }

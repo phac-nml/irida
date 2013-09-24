@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.UserService;
@@ -166,5 +167,14 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	@Transactional(readOnly = true)
 	public List<User> getUsersAvailableForProject(Project project) {
 		return userRepository.getUsersAvailableForProject(project);
+	}
+
+	/**
+	 * {@inheritDoc }
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public Collection<Join<Project, User>> getUsersForProjectByRole(Project project, ProjectRole projectRole) {
+		return userRepository.getUsersForProjectByRole(project, projectRole);
 	}
 }

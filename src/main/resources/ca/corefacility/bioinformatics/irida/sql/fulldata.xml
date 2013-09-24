@@ -44,7 +44,7 @@
   <sequence_file id="4" createdDate="2013-07-18 14:20:51.0" modifiedDate="2013-07-18 14:20:51.0" filePath="/tmp/4" enabled="true"/>
   <sequence_file id="5" createdDate="2013-07-18 14:20:52.0" modifiedDate="2013-07-18 14:20:52.0" filePath="/tmp/5" enabled="true"/>
    
-  <project_user id="1" createdDate="2013-07-18 14:20:48.0" project_id="1" user_id="1" projectRole="PROJECT_USER"/>
+  <project_user id="1" createdDate="2013-07-18 14:20:48.0" project_id="1" user_id="1" projectRole="PROJECT_OWNER"/>
   <project_user id="2" createdDate="2013-07-18 14:20:48.0" project_id="1" user_id="2" projectRole="PROJECT_USER"/>
   <project_user id="3" createdDate="2013-07-18 14:20:48.0" project_id="2" user_id="1" projectRole="PROJECT_USER"/>
   <project_user id="4" createdDate="2013-07-18 14:20:48.0" project_id="2" user_id="3" projectRole="PROJECT_USER"/>
