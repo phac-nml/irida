@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import ca.corefacility.bioinformatics.irida.model.*;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -128,7 +129,7 @@ public class ProjectServiceImplTest {
 		u.setId(new Long(1111));
 		Project p = new Project("project");
 		p.setId(new Long(2222));
-		Role r = new Role("ROLE_USER");
+		ProjectRole r = ProjectRole.PROJECT_USER;
 
 		when(projectRepository.addUserToProject(p, u)).thenReturn(
 				new ProjectUserJoin(p, u));
