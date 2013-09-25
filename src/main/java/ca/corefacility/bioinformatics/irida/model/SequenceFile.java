@@ -55,6 +55,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	private String encoding;
 	private Integer totalSequences;
 	private Integer filteredSequences;
+	private Long totalBases;
 	private Integer minLength;
 	private Integer maxLength;
 	private Short gcContent;
@@ -121,8 +122,8 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	}
 
 	/**
-	 * Box and whisker plot showing per-sequence quality scores as a
-	 * PNG-formatted image in a byte array.
+	 * Line chartshowing per-sequence quality scores as a PNG-formatted image in
+	 * a byte array.
 	 * 
 	 * @return
 	 */
@@ -132,6 +133,20 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
 	public void setPerSequenceQualityScoreChart(byte[] perSequenceQualityScoreChart) {
 		this.perSequenceQualityScoreChart = perSequenceQualityScoreChart;
+	}
+
+	/**
+	 * Line chartshowing duplication-level as a PNG-formatted image in a byte
+	 * array.
+	 * 
+	 * @return
+	 */
+	public byte[] getDuplicationLevelChart() {
+		return duplicationLevelChart;
+	}
+
+	public void setDuplicationLevelChart(byte[] duplicationLevelChart) {
+		this.duplicationLevelChart = duplicationLevelChart;
 	}
 
 	public Boolean getEnabled() {
@@ -212,6 +227,14 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
 	public void setGcContent(Short gcContent) {
 		this.gcContent = gcContent;
+	}
+
+	public Long getTotalBases() {
+		return totalBases;
+	}
+
+	public void setTotalBases(Long totalBases) {
+		this.totalBases = totalBases;
 	}
 
 	public void setStringPath() {

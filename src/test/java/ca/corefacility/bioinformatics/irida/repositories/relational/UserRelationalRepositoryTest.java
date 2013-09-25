@@ -38,6 +38,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
@@ -77,7 +78,7 @@ public class UserRelationalRepositoryTest {
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
 	public void testCreate() {
 		User user = new User("anon", "anon@nowhere.com", "PASSWoD!1", "Anon", "Guy", "1234");
-		user.setRole(new Role("ROLE_USER"));
+		user.setSystemRole(new Role("ROLE_USER"));
 		try {
 			user = repo.create(user);
 			assertNotNull(user);
@@ -92,7 +93,7 @@ public class UserRelationalRepositoryTest {
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
 	public void testCreateInvalidRole() {
 		User user = new User("anon", "anon@nowhere.com", "PASSWOD!1", "Anon", "Guy", "1234");
-		user.setRole(new Role("A_FAKE_ROLE"));
+		user.setSystemRole(new Role("A_FAKE_ROLE"));
 		try {
 			user = repo.create(user);
 			fail();
@@ -106,7 +107,7 @@ public class UserRelationalRepositoryTest {
 	public void testCreateDuplicateName() {
 		try {
 			User user = new User("tom", "anon@nowhere.com", "PASSWoD!1", "Anon", "Guy", "1234");
-			user.setRole(new Role("ROLE_USER"));
+			user.setSystemRole(new Role("ROLE_USER"));
 			user = repo.create(user);
 			fail("Should have caught duplicate username");
 		} catch (EntityExistsException ex) {
@@ -122,7 +123,7 @@ public class UserRelationalRepositoryTest {
 	public void testCreateDuplicateEmail() {
 		try {
 			User user = new User("newUser", "tom@gfd.ca", "PASSWoD!1", "Anon", "Guy", "1234");
-			user.setRole(new Role("ROLE_USER"));
+			user.setSystemRole(new Role("ROLE_USER"));
 			user = repo.create(user);
 			fail("Should have caught duplicate email");
 		} catch (EntityExistsException ex) {
@@ -227,7 +228,7 @@ public class UserRelationalRepositoryTest {
 		Session session = mock(Session.class);
 		ConstraintViolationException exToThrow = new ConstraintViolationException(null, null, null);
 		User u = new User();
-		u.setRole(Role.ROLE_USER);
+		u.setSystemRole(Role.ROLE_USER);
 		Criteria c = mock(Criteria.class);
 
 		when(sessionFactory.getCurrentSession()).thenReturn(session);
@@ -255,7 +256,7 @@ public class UserRelationalRepositoryTest {
 		Session session = mock(Session.class);
 		ConstraintViolationException exToThrow = new ConstraintViolationException(null, null, "USER_EMAIL_CONSTRAINT");
 		User u = new User();
-		u.setRole(Role.ROLE_USER);
+		u.setSystemRole(Role.ROLE_USER);
 		Criteria c = mock(Criteria.class);
 
 		when(sessionFactory.getCurrentSession()).thenReturn(session);
@@ -276,5 +277,20 @@ public class UserRelationalRepositoryTest {
 			fail("Should have thrown an EntityExistsException, not [" + e.getClass()
 					+ "]; stack trace precedes ^^^^^^.");
 		}
+	}
+	
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+	public void testGetUsersForProjectByRole(){
+		Project read = prepo.read(1L);
+		
+		Collection<Join<Project, User>> usersForProjectByRole = repo.getUsersForProjectByRole(read, ProjectRole.PROJECT_OWNER);
+		assertEquals(usersForProjectByRole.size(),1);
+		Join<Project, User> next = usersForProjectByRole.iterator().next();
+		assertNotNull(next);
+		User u = next.getObject();
+		assertNotNull(u);
+		assertEquals(u.getUsername(), "tom");
 	}
 }

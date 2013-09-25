@@ -5,6 +5,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 
@@ -33,7 +34,7 @@ public interface ProjectRepository extends CRUDRepository<Long, Project> {
      * @param user    The user to add
      * @return A {@link ProjectUserJoin} object describing the project/user link
      */
-    public ProjectUserJoin addUserToProject(Project project, User user);
+    public ProjectUserJoin addUserToProject(Project project, User user, ProjectRole projectRole);
 
     /**
      * Remove a {@link User} from a {@link Project}.

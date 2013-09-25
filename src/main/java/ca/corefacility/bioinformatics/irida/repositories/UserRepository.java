@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.repositories;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 
 import java.util.Collection;
@@ -60,5 +61,13 @@ public interface UserRepository extends CRUDRepository<Long, User>, UserDetailsS
 	 * @return A List of {@link User}s that are not associated with the project.
 	 */
 	public List<User> getUsersAvailableForProject(Project project);
+	
+	/**
+	 * Get {@link User}s for a {@link Project} that have a particular role
+	 * @param project The project to find users for
+	 * @param projectRole The {@link ProjectRole} a user needs to have to be returned
+	 * @return A Collection of {@link Join<Project,User>}s that have the given role
+	 */
+	public Collection<Join<Project,User>> getUsersForProjectByRole(Project project, ProjectRole projectRole);
 
 }

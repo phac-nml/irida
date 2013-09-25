@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
@@ -77,7 +78,7 @@ public class ProjectRelationalRepositoryTest {
 		User user = urepo.read(5L);
 		Project project = repo.read(1L);
 
-		ProjectUserJoin addUserToProject = repo.addUserToProject(project, user);
+		ProjectUserJoin addUserToProject = repo.addUserToProject(project, user,ProjectRole.PROJECT_USER);
 		assertNotNull(addUserToProject);
 		assertEquals(addUserToProject.getSubject(), project);
 		assertEquals(addUserToProject.getObject(), user);
@@ -88,6 +89,7 @@ public class ProjectRelationalRepositoryTest {
 		assertFalse(map.isEmpty());
 		assertEquals(map.get("PROJECT_ID"), project.getId());
 		assertEquals(map.get("USER_ID"), user.getId());
+		assertEquals(map.get("PROJECTROLE"), ProjectRole.PROJECT_USER.toString());
 	}
 
 	@Test
@@ -97,10 +99,10 @@ public class ProjectRelationalRepositoryTest {
 		User user = urepo.read(5L);
 		Project project = repo.read(1L);
 
-		repo.addUserToProject(project, user);
+		repo.addUserToProject(project, user,ProjectRole.PROJECT_USER);
 		try {
 
-			repo.addUserToProject(project, user);
+			repo.addUserToProject(project, user,ProjectRole.PROJECT_USER);
 			fail();
 		} catch (EntityExistsException ex) {
 

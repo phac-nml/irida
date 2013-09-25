@@ -7,6 +7,7 @@ import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 
 /**
@@ -26,7 +27,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
      * @param role    the role that the user plays on the {@link Project}.
      * @return a reference to the relationship resource created between the two entities.
      */
-    public Join<Project, User> addUserToProject(Project project, User user, Role role);
+    public Join<Project, User> addUserToProject(Project project, User user, ProjectRole role);
 
     /**
      * Remove the specified {@link User} from the {@link Project}.

@@ -55,28 +55,27 @@
     workflow="workflow 2" application="application 2" assay="assay 2" description="description 2" chemistry="chemistry 2" enabled="true"/>
   <miseqRun id="3" createdDate="2013-07-18 14:20:48.0" modifiedDate="2013-07-18 14:20:48.0" investigatorName="Franklin" projectName="project 3" experimentName="experiment 3"
     workflow="workflow 3" application="application 3" assay="assay 3" description="description 3" chemistry="chemistry 3" enabled="true"/>
-  
-  
-  <project_user id="1" createdDate="2013-07-18 14:20:48.0" project_id="1" user_id="1"/>
-  <project_user id="2" createdDate="2013-07-18 14:20:48.0" project_id="1" user_id="2"/>
-  <project_user id="3" createdDate="2013-07-18 14:20:48.0" project_id="2" user_id="1"/>
-  <project_user id="4" createdDate="2013-07-18 14:20:48.0" project_id="2" user_id="3"/>
-  <project_user id="5" createdDate="2013-07-18 14:20:48.0" project_id="3" user_id="1"/>
-  <project_user id="6" createdDate="2013-07-18 14:20:48.0" project_id="3" user_id="4"/>
-  <project_user id="7" createdDate="2013-07-18 14:20:48.0" project_id="4" user_id="1"/>
-  <project_user id="8" createdDate="2013-07-18 14:20:48.0" project_id="4" user_id="5"/>
-  <project_user id="9" createdDate="2013-07-18 14:20:48.0" project_id="5" user_id="1"/>
-  <project_user id="10" createdDate="2013-07-18 14:20:48.0" project_id="5" user_id="6"/>
-  <project_user id="11" createdDate="2013-07-18 14:20:48.0" project_id="6" user_id="1"/>
-  <project_user id="12" createdDate="2013-07-18 14:20:49.0" project_id="6" user_id="7"/>
-  <project_user id="13" createdDate="2013-07-18 14:20:49.0" project_id="7" user_id="1"/>
-  <project_user id="14" createdDate="2013-07-18 14:20:49.0" project_id="7" user_id="8"/>
-  <project_user id="15" createdDate="2013-07-18 14:20:49.0" project_id="8" user_id="1"/>
-  <project_user id="16" createdDate="2013-07-18 14:20:49.0" project_id="8" user_id="9"/>
-  <project_user id="17" createdDate="2013-07-18 14:20:49.0" project_id="9" user_id="1"/>
-  <project_user id="18" createdDate="2013-07-18 14:20:49.0" project_id="9" user_id="10"/>
-  <project_user id="19" createdDate="2013-07-18 14:20:49.0" project_id="10" user_id="1"/>
-  <project_user id="20" createdDate="2013-07-18 14:20:49.0" project_id="10" user_id="11"/>
+   
+  <project_user id="1" createdDate="2013-07-18 14:20:48.0" project_id="1" user_id="1" projectRole="PROJECT_OWNER"/>
+  <project_user id="2" createdDate="2013-07-18 14:20:48.0" project_id="1" user_id="2" projectRole="PROJECT_USER"/>
+  <project_user id="3" createdDate="2013-07-18 14:20:48.0" project_id="2" user_id="1" projectRole="PROJECT_USER"/>
+  <project_user id="4" createdDate="2013-07-18 14:20:48.0" project_id="2" user_id="3" projectRole="PROJECT_USER"/>
+  <project_user id="5" createdDate="2013-07-18 14:20:48.0" project_id="3" user_id="1" projectRole="PROJECT_USER"/>
+  <project_user id="6" createdDate="2013-07-18 14:20:48.0" project_id="3" user_id="4" projectRole="PROJECT_USER"/>
+  <project_user id="7" createdDate="2013-07-18 14:20:48.0" project_id="4" user_id="1" projectRole="PROJECT_USER"/>
+  <project_user id="8" createdDate="2013-07-18 14:20:48.0" project_id="4" user_id="5" projectRole="PROJECT_USER"/>
+  <project_user id="9" createdDate="2013-07-18 14:20:48.0" project_id="5" user_id="1" projectRole="PROJECT_USER"/>
+  <project_user id="10" createdDate="2013-07-18 14:20:48.0" project_id="5" user_id="6" projectRole="PROJECT_USER"/>
+  <project_user id="11" createdDate="2013-07-18 14:20:48.0" project_id="6" user_id="1" projectRole="PROJECT_USER"/>
+  <project_user id="12" createdDate="2013-07-18 14:20:49.0" project_id="6" user_id="7" projectRole="PROJECT_USER"/>
+  <project_user id="13" createdDate="2013-07-18 14:20:49.0" project_id="7" user_id="1" projectRole="PROJECT_USER"/>
+  <project_user id="14" createdDate="2013-07-18 14:20:49.0" project_id="7" user_id="8" projectRole="PROJECT_USER"/>
+  <project_user id="15" createdDate="2013-07-18 14:20:49.0" project_id="8" user_id="1" projectRole="PROJECT_USER"/>
+  <project_user id="16" createdDate="2013-07-18 14:20:49.0" project_id="8" user_id="9" projectRole="PROJECT_USER"/>
+  <project_user id="17" createdDate="2013-07-18 14:20:49.0" project_id="9" user_id="1" projectRole="PROJECT_USER"/>
+  <project_user id="18" createdDate="2013-07-18 14:20:49.0" project_id="9" user_id="10" projectRole="PROJECT_USER"/>
+  <project_user id="19" createdDate="2013-07-18 14:20:49.0" project_id="10" user_id="1" projectRole="PROJECT_USER"/>
+  <project_user id="20" createdDate="2013-07-18 14:20:49.0" project_id="10" user_id="11" projectRole="PROJECT_USER"/>
     
   <project_sample id="1" createdDate="2013-07-18 14:20:49.0" project_id="1" sample_id="1"/>
   <project_sample id="2" createdDate="2013-07-18 14:20:49.0" project_id="1" sample_id="2"/>
@@ -108,5 +107,9 @@
   <miseqrun_sequencefile_AUD/>
   <miseqRun_AUD/>
   <sequence_file_AUD/>
+  <overrepresented_sequence />
+  <overrepresented_sequence_AUD/>
+  <sequencefile_overrepresentedsequence />
+  <sequencefile_overrepresentedsequence_AUD />
   
 </dataset>

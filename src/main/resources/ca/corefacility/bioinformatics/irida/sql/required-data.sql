@@ -1,6 +1,7 @@
 INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_USER','A basic user in the system.');
 INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_ADMIN','An administrative user in the system.');
 INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_CLIENT','A client tool in the system.');
+INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_MANAGER','A manager role in the system.');
 
 -- user account required for integration tests
 INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , 'franklin.bristow@phac-aspc.gc.ca', 'Franklin', 'Bristow', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '7029', 'fbristow', 1, 1, 1);
@@ -9,6 +10,7 @@ INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName
 INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , 'admin@nowhere.ca', 'Admin', 'Admin', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '0000', 'admin', 1, 2, 1);
 INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , 'test@nowhere.ca', 'Test', 'User', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '1234', 'test', 1, 1, 1);
 INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , 'disabled-guy@nowhere.ca', 'Disabled', 'Guy', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '0000', 'disabledguy', 0, 1, 1);
+INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , 'manager@nowhere.ca', 'Mr.', 'Manager', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '1234', 'manager', 1, 2, 1);
 
 -- projects required for integration tests
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `enabled`) VALUES (now(), now() , 'Project 1', 1);
@@ -113,40 +115,40 @@ INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `enabled`) VALUES (n
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `enabled`) VALUES (now(), now() , 'Project 100', 1);
 
 -- relationship between projects and users
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 1, 2);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 2, 2);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 3, 2);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 4, 2);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 5, 2);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 6, 2);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 7, 2);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 8, 2);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 9, 2);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 10, 2);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 11, 2);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 12, 2);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 13, 2);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 14, 2);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 1, 5);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 2, 5);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 3, 5);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 4, 5);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 5, 5);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 6, 5);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 7, 5);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 8, 5);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 9, 5);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 10, 5);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 11, 5);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 12, 5);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 13, 5);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 14, 5);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 1, 1);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 2, 1);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 3, 1);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 4, 1);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 5, 1);
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`) VALUES (now(), 100, 1);
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 1, 2, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 2, 2, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 3, 2, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 4, 2, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 5, 2, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 6, 2, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 7, 2, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 8, 2, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 9, 2, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 10, 2, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 11, 2, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 12, 2, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 13, 2, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 14, 2, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 1, 5, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 2, 5, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 3, 5, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 4, 5, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 5, 5, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 6, 5, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 7, 5, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 8, 5, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 9, 5, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 10, 5, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 11, 5, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 12, 5, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 13, 5, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 14, 5, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 1, 1, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 2, 1, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 3, 1, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 4, 1, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 5, 1, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 100, 1, 'PROJECT_USER');
 
 -- samples
 INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `externalSampleId`, `enabled`, `description`) VALUES (now(), now() , 'Sample 1', 'sample1', 1, 'The first sample');

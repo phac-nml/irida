@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -40,6 +41,9 @@ public class Project implements IridaThing, Comparable<Project> {
     
     @Temporal(TemporalType.TIMESTAMP)
     private Date modifiedDate;
+	
+	@Lob
+	private String projectDescription;
 
     public Project() {
         createdDate = new Date();
@@ -129,5 +133,13 @@ public class Project implements IridaThing, Comparable<Project> {
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
+
+	public String getProjectDescription() {
+		return projectDescription;
+	}
+
+	public void setProjectDescription(String projectDescription) {
+		this.projectDescription = projectDescription;
+	}
     
 }

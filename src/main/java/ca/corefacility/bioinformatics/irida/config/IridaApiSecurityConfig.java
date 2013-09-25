@@ -49,7 +49,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 		permissionEvaluator.init();
 		handler.setPermissionEvaluator(permissionEvaluator);
 		RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-		roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_USER");
+		roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_MANAGER > ROLE_USER");
 		handler.setRoleHierarchy(roleHierarchy);
 		logger.debug("Returning custom expression handler [" + handler + "]");
 		return handler;
