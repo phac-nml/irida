@@ -63,6 +63,8 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	private byte[] perBaseQualityScoreChart;
 	@Lob
 	private byte[] perSequenceQualityScoreChart;
+	@Lob
+	private byte[] duplicationLevelChart;
 	private String samplePlate;
     private String sampleWell;
     private String i7IndexId;
