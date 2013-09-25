@@ -191,6 +191,7 @@ public class UserRelationalRepository extends GenericRelationalRepository<User> 
 		crit.add(Restrictions.eq("project", project));
 		crit.add(Restrictions.eq("projectRole", projectRole));
 		
+		@SuppressWarnings("unchecked")
 		List<Join<Project,User>> list = crit.list();
 		
 		return list;

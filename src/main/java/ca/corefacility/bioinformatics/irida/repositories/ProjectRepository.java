@@ -1,15 +1,14 @@
 package ca.corefacility.bioinformatics.irida.repositories;
 
+import java.util.Collection;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-
-import java.util.Collection;
 
 /**
  * Specialized repository for {@link Project}.
@@ -65,13 +64,4 @@ public interface ProjectRepository extends CRUDRepository<Long, Project> {
      * @param sample The {@link Sample} to remove
      */
     public void removeSampleFromProject(Project project, Sample sample) throws EntityNotFoundException;
-    
-    /**
-     * Remove a {@link SequenceFile} from a {@link Project}
-     * @param project The project to remove from
-     * @param file The file to remove
-     * @deprecated 
-     */
-    public void removeFileFromProject(Project project, SequenceFile file);
-
 }

@@ -135,15 +135,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings("deprecation")
-	@Override
-	public void removeSequenceFileFromProject(Project project, SequenceFile sf) {
-		projectRepository.removeFileFromProject(project, sf);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	@Transactional(readOnly = true)
 	@PreAuthorize("isAuthenticated()")

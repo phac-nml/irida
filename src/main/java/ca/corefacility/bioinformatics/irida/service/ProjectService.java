@@ -5,7 +5,6 @@ import java.util.List;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.Sample;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -55,15 +54,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
      * @param sample  the {@link Sample} to remove.
      */
     public void removeSampleFromProject(Project project, Sample sample);
-
-    /**
-     * Remove the specified {@link SequenceFile} from the {@link Project}. If the {@link SequenceFile} is not associated
-     * with any other {@link Project}s, then as a side-effect, the {@link SequenceFile} will be deleted from the system.
-     *
-     * @param project the {@link Project} from which to remove the file.
-     * @param sf      the {@link SequenceFile} to remove.
-     */
-    public void removeSequenceFileFromProject(Project project, SequenceFile sf);
 
     /**
      * Get all {@link Project}s associated with a particular {@link User}.
