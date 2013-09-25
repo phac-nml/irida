@@ -3,9 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
@@ -20,14 +18,8 @@ import javax.validation.ValidatorFactory;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import com.google.common.collect.ImmutableList;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Role;
@@ -131,48 +123,6 @@ public class UserServiceImplTest {
 
 		assertEquals(username, userDetails.getUsername());
 		assertEquals(password, userDetails.getPassword());
-	}
-
-	@Test
-	public void testAdministratorCreateManager() {
-		User user = user();
-		user.setSystemRole(Role.ROLE_MANAGER);
-		// put an administrator in the auth field so that we can make a new
-		// manager
-		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1",
-				ImmutableList.of(Role.ROLE_ADMIN));
-		SecurityContextHolder.getContext().setAuthentication(auth);
-
-		when(userRepository.create(user)).thenReturn(user);
-		when(passwordEncoder.encode(any(String.class))).thenReturn("PASSWOrD1!");
-		try {
-			userService.create(user);
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Administrator was not allowed to create user with manager role.");
-		}
-		verify(userRepository).create(user);
-	}
-
-	@Test
-	public void testManagerCreateManagerFail() {
-		User user = user();
-		user.setSystemRole(Role.ROLE_MANAGER);
-		// put an administrator in the auth field so that we can make a new
-		// manager
-		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1",
-				ImmutableList.of(Role.ROLE_MANAGER));
-		SecurityContextHolder.getContext().setAuthentication(auth);
-
-		when(userRepository.create(user)).thenReturn(user);
-		when(passwordEncoder.encode(any(String.class))).thenReturn("PASSWOrD1!");
-		try {
-			userService.create(user);
-			fail("Manager was allowed to create a user account.");
-		} catch (AccessDeniedException e) {
-		} catch (Exception e) {
-			fail("Test failed for unspecified reasons.");
-		}
 	}
 
 	private User user() {

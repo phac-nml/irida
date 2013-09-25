@@ -12,10 +12,7 @@ import javax.validation.Validator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -54,6 +51,21 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * passwords.
 	 */
 	private PasswordEncoder passwordEncoder;
+	/**
+	 * If a user is an administrator, they are permitted to create a user
+	 * account with any role. If a user is a manager, then they are only
+	 * permitted to create user accounts with a ROLE_USER role.
+	 */
+	private static final String CREATE_USER_PERMISSIONS = "hasRole('ROLE_ADMIN') or "
+			+ "((#u.getSystemRole() == T(ca.corefacility.bioinformatics.irida.model.Role).ROLE_USER) and hasRole('ROLE_MANAGER'))";
+	/**
+	 * If a user is an administrator, they are permitted to update any user
+	 * property. If a manager or user is updating an account, they should not be
+	 * permitted to change the role of the user (only administrators can create
+	 * users with role other than Role.ROLE_USER).
+	 */
+	private static final String UPDATE_USER_PERMISSIONS = "hasRole('ROLE_ADMIN') or "
+			+ "(!#properties.containsKey('systemRole') and (hasRole('ROLE_MANAGER') or hasPermission(#uid, canUpdateUser)))";
 
 	/**
 	 * Constructor, requires a handle on a validator and a repository.
@@ -73,7 +85,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
+	@PreAuthorize(CREATE_USER_PERMISSIONS)
 	public User create(User u) {
 		Set<ConstraintViolation<User>> violations = validatePassword(u.getPassword());
 		if (violations.isEmpty()) {
@@ -86,16 +98,6 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 				u.setSystemRole(Role.ROLE_USER);
 			}
 
-			if (u.getSystemRole().equals(Role.ROLE_MANAGER)) {
-				// only administrators are allowed to create a user with the
-				// manager role.
-				Authentication creator = (Authentication) SecurityContextHolder.getContext().getAuthentication();
-				if (!creator.getAuthorities().contains(Role.ROLE_ADMIN)) {
-					throw new AccessDeniedException(
-							"Only administrators are allowed to create users with a manager role.");
-				}
-			}
-
 			return super.create(u);
 		}
 
@@ -106,7 +108,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER') or hasPermission(#uid, 'canUpdateUser')")
+	@PreAuthorize(UPDATE_USER_PERMISSIONS)
 	public User update(Long uid, Map<String, Object> properties) {
 		if (properties.containsKey(PASSWORD_PROPERTY)) {
 			String password = properties.get(PASSWORD_PROPERTY).toString();
@@ -194,7 +196,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	public Collection<Join<Project, User>> getUsersForProjectByRole(Project project, ProjectRole projectRole) {
 		return userRepository.getUsersForProjectByRole(project, projectRole);
 	}
-	
+
 	@Override
 	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_MANAGER')")
 	public List<User> listAll() {
