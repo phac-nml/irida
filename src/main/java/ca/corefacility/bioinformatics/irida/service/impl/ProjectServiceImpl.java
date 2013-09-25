@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import ca.corefacility.bioinformatics.irida.model.*;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
@@ -83,8 +84,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
-	public Join<Project, User> addUserToProject(Project project, User user, Role role) {
-		return projectRepository.addUserToProject(project, user);
+	public Join<Project, User> addUserToProject(Project project, User user, ProjectRole role) {
+		return projectRepository.addUserToProject(project, user,role);
 	}
 
 	/**

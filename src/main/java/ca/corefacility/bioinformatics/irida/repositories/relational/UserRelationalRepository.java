@@ -6,6 +6,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
@@ -55,7 +56,7 @@ public class UserRelationalRepository extends GenericRelationalRepository<User> 
 	public User create(User object) throws IllegalArgumentException {
 		Session session = this.sessionFactory.getCurrentSession();
 
-		Role role = object.getRole();
+		Role role = object.getSystemRole();
 		Criteria roleQuery = session.createCriteria(Role.class);
 		roleQuery.add(Restrictions.like("name", role.getName()));
 		Role retRole = (Role) roleQuery.uniqueResult();
@@ -64,7 +65,7 @@ public class UserRelationalRepository extends GenericRelationalRepository<User> 
 					+ " doesn't exist in the database.  User cannot be created");
 		}
 
-		object.setRole(retRole);
+		object.setSystemRole(retRole);
 
 		User create;
 		try {
@@ -178,6 +179,21 @@ public class UserRelationalRepository extends GenericRelationalRepository<User> 
 		return super.update(id, updatedFields); // To change body of generated
 												// methods, choose Tools |
 												// Templates.
+	}
+
+	/**
+	 * {@inheritDoc }
+	 */
+	@Override
+	public Collection<Join<Project, User>> getUsersForProjectByRole(Project project, ProjectRole projectRole) {
+		Session session = sessionFactory.getCurrentSession();
+		Criteria crit = session.createCriteria(ProjectUserJoin.class);
+		crit.add(Restrictions.eq("project", project));
+		crit.add(Restrictions.eq("projectRole", projectRole));
+		
+		List<Join<Project,User>> list = crit.list();
+		
+		return list;
 	}
 
 }

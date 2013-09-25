@@ -24,15 +24,18 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.UserService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of the {@link UserService}.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
+@Transactional
 public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements UserService {
 	/**
 	 * The property name to use for passwords on the {@link User} class.
@@ -128,6 +131,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public User getUserByUsername(String username) throws EntityNotFoundException {
 		return userRepository.getUserByUsername(username);
 	}
@@ -136,6 +140,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public Collection<Join<Project, User>> getUsersForProject(Project project) {
 		return userRepository.getUsersForProject(project);
 	}
@@ -144,6 +149,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		logger.trace("Loading user with username: [" + username + "].");
 		org.springframework.security.core.userdetails.User userDetails = null;
@@ -175,7 +181,23 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * {@inheritDoc }
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List<User> getUsersAvailableForProject(Project project) {
 		return userRepository.getUsersAvailableForProject(project);
+	}
+
+	/**
+	 * {@inheritDoc }
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public Collection<Join<Project, User>> getUsersForProjectByRole(Project project, ProjectRole projectRole) {
+		return userRepository.getUsersForProjectByRole(project, projectRole);
+	}
+	
+	@Override
+	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_MANAGER')")
+	public List<User> listAll() {
+		return repository.listAll();
 	}
 }

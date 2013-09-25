@@ -264,14 +264,6 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 		return roles;
 	}
 
-	public Role getRole() {
-		return systemRole;
-	}
-
-	public void setRole(Role role) {
-		this.systemRole = role;
-	}
-
 	@Override
 	public boolean isAccountNonExpired() {
 		return true;
