@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.web.controller.api.projects;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
@@ -120,7 +121,7 @@ public class ProjectUsersController {
 
         // then, get the user
         User u = userService.getUserByUsername(username);
-        Role r = new Role("ROLE_USER");
+        ProjectRole r = ProjectRole.PROJECT_USER;
 
         // then add the user to the project with the specified role.
         projectService.addUserToProject(p, u, r);
