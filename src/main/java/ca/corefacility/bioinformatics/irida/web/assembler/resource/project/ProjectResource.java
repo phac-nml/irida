@@ -5,7 +5,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.IdentifiableResource;
-import java.util.Date;
 
 /**
  * A resource for {@link Project}s.

@@ -1,19 +1,10 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.projects;
 
-import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.Role;
-import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.UserService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.UsersController;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-import com.google.common.net.HttpHeaders;
+import java.util.Collection;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,11 +18,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.Collection;
-import java.util.Map;
+import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.UserService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
+import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.UsersController;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import com.google.common.net.HttpHeaders;
 
 /**
  * Controller for managing relationships between {@link Project} and {@link User}.

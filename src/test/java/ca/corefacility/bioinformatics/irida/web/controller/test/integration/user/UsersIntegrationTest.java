@@ -43,10 +43,17 @@ public class UsersIntegrationTest {
 	}
 
 	@Test
-	public void testCreateUserSucceed() {
+	public void testCreateUserAsAdminSucceed() {
 		Map<String, String> user = createUser();
-		System.out.println(user);
+
 		given().body(user).and().auth().basic("admin", "password1").expect().response()
+				.statusCode(HttpStatus.SC_CREATED).when().post("/users");
+	}
+
+	@Test
+	public void testCreateUserAsManagerSucceed() {
+		Map<String, String> user = createUser();
+		given().body(user).and().auth().basic("manager", "password1").expect().response()
 				.statusCode(HttpStatus.SC_CREATED).when().post("/users");
 	}
 
