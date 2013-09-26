@@ -97,6 +97,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 		modifiedDate = createdDate;
 		locale = "en";
 		credentialsNonExpired = true;
+		this.systemRole = Role.ROLE_USER;
 	}
 
 	/**
