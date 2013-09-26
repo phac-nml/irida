@@ -42,6 +42,14 @@ public interface SampleService extends CRUDService<Long, Sample> {
      * @return the collection of samples for the {@link Project}.
      */
     public List<Join<Project, Sample>> getSamplesForProject(Project p);
+    
+    /**
+     * Get the {@link Sample} for the given ID
+     * 
+     * @param sampleId The id for the requested sample
+     * @return A {@link Sample} with the given ID
+     */
+    public Sample getSampleByExternalSampleId(String sampleId);
 
     /**
      * Move an instance of a {@link SequenceFile} associated with a {@link Sample} to its parent {@link Project}.

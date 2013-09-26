@@ -65,6 +65,12 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	private byte[] perSequenceQualityScoreChart;
 	@Lob
 	private byte[] duplicationLevelChart;
+	private String samplePlate;
+    private String sampleWell;
+    private String i7IndexId;
+    private String i7Index;
+    private String i5IndexId;
+    private String i5Index;
 
 	public SequenceFile() {
 		createdDate = new Date();
@@ -292,4 +298,53 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
 	}
+
+public String getSamplePlate() {
+        return samplePlate;
+    }
+
+    public void setSamplePlate(String samplePlate) {
+        this.samplePlate = samplePlate;
+    }
+
+    public String getSampleWell() {
+        return sampleWell;
+    }
+
+    public void setSampleWell(String sampleWell) {
+        this.sampleWell = sampleWell;
+    }
+
+    public String getI7IndexId() {
+        return i7IndexId;
+    }
+
+    public void setI7IndexId(String i7IndexId) {
+        this.i7IndexId = i7IndexId;
+    }
+
+    public String getI7Index() {
+        return i7Index;
+    }
+
+    public void setI7Index(String i7Index) {
+        this.i7Index = i7Index;
+    }
+
+    public String getI5IndexId() {
+        return i5IndexId;
+    }
+
+    public void setI5IndexId(String i5IndexId) {
+        this.i5IndexId = i5IndexId;
+    }
+
+    public String getI5Index() {
+        return i5Index;
+    }
+
+    public void setI5Index(String i5Index) {
+        this.i5Index = i5Index;
+    }
+    
 }

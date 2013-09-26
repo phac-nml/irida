@@ -14,9 +14,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileOverrepresentedSequenceJoin;
@@ -71,6 +73,38 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
 
 		return list;
 	}
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void removeFileFromSample(Sample sample, SequenceFile file) {
+        Session session = sessionFactory.getCurrentSession();
+        Criteria crit = session.createCriteria(SampleSequenceFileJoin.class);
+        crit.add(Restrictions.eq("sample", sample));
+        crit.add(Restrictions.eq("sequenceFile", file));
+        
+        SampleSequenceFileJoin join = (SampleSequenceFileJoin) crit.uniqueResult();
+        if(join == null){
+            throw new EntityNotFoundException("A join between this file and sample was not found");
+        }
+        session.delete(join);     
+    }
+    
+    public List<MiseqRunSequenceFileJoin> getFilesForMiseqRun(MiseqRun run){
+        Session session = sessionFactory.getCurrentSession();
+
+        Criteria crit = session.createCriteria(MiseqRunSequenceFileJoin.class);
+        crit.add(Restrictions.eq("miseqRun", run));
+        
+        List<MiseqRunSequenceFileJoin> list = crit.list();
+        for(MiseqRunSequenceFileJoin join : list){
+            join.getObject().setRealPath();
+        }
+        
+        return list;
+
+    }
 
 	/**
 	 * {@inheritDoc }
@@ -83,23 +117,6 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
 		session.persist(ujoin);
 
 		return ujoin;
-	}
-
-	/**
-	 * {@inheritDoc }
-	 */
-	@Override
-	public void removeFileFromSample(Sample sample, SequenceFile file) {
-		Session session = sessionFactory.getCurrentSession();
-		Criteria crit = session.createCriteria(SampleSequenceFileJoin.class);
-		crit.add(Restrictions.eq("sample", sample));
-		crit.add(Restrictions.eq("sequenceFile", file));
-
-		SampleSequenceFileJoin join = (SampleSequenceFileJoin) crit.uniqueResult();
-		if (join == null) {
-			throw new EntityNotFoundException("A join between this file and sample was not found");
-		}
-		session.delete(join);
 	}
 
 	/**

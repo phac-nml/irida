@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.relational;
 
+import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -29,7 +30,9 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.repositories.MiseqRunRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.utils.SecurityUser;
@@ -48,19 +51,22 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 public class SequenceFileRelationalRepositoryTest {
-
-	@Autowired
-	private SequenceFileRepository repo;
-
-	@Autowired
-	private SampleRepository srepo;
-
-	@Autowired
-	private DataSource dataSource;
-
-	public SequenceFileRelationalRepositoryTest() {
-		SecurityUser.setUser();
-	}
+    
+    @Autowired
+    private SequenceFileRepository repo;
+    
+    @Autowired
+    private SampleRepository srepo;
+    
+    @Autowired
+    private MiseqRunRepository mrepo;
+    
+    @Autowired
+    private DataSource dataSource;    
+    
+    public SequenceFileRelationalRepositoryTest(){
+        SecurityUser.setUser();
+    }
 
 	/**
 	 * Test of create method, of class SequenceFileRelationalRepository.
@@ -94,21 +100,28 @@ public class SequenceFileRelationalRepositoryTest {
 
 		Collection<SampleSequenceFileJoin> res = repo.getFilesForSample(read);
 		assertFalse(res.isEmpty());
-
+		
 		for (SampleSequenceFileJoin join : res) {
 			assertTrue(join.getSubject().equals(read));
 			assertNotNull(join.getObject());
 			assertNotNull(join.getObject().getFile());
 		}
 	}
+    
+    @Test
+    @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")    
+    public void testGetFilesForMiseqRun(){
+        MiseqRun run = mrepo.read(1L);
+        
+        List<MiseqRunSequenceFileJoin> filesForMiseqRun = repo.getFilesForMiseqRun(run);
+        
+        assertTrue(filesForMiseqRun.size() == 2);
+        for(MiseqRunSequenceFileJoin join : filesForMiseqRun){
+            assertEquals(join.getSubject(), run);
+            assertNotNull(join.getObject().getFile());
+        }
+    }
 
-	/**
-	 * Test of addFileToProject method, of class
-	 * SequenceFileRelationalRepository.
-	 */
-	public void testAddFileToProject() {
-
-	}
 
 	/**
 	 * Test of addFileToSample method, of class
@@ -133,14 +146,6 @@ public class SequenceFileRelationalRepositoryTest {
 		assertFalse(map.isEmpty());
 		assertEquals(map.get("SAMPLE_ID"), sample.getId());
 		assertEquals(map.get("SEQUENCEFILE_ID"), file.getId());
-	}
-
-	/**
-	 * Test of removeFileFromProject method, of class
-	 * SequenceFileRelationalRepository.
-	 */
-	public void testRemoveFileFromProject() {
-
 	}
 
 	/**

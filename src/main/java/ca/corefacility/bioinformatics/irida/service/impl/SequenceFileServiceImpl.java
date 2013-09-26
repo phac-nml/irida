@@ -13,9 +13,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
@@ -119,4 +121,9 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		List<SampleSequenceFileJoin> joins = sequenceFileRepository.getFilesForSample(sample);
 		return new ArrayList<Join<Sample, SequenceFile>>(joins);
 	}
+        
+        public List<Join<MiseqRun,SequenceFile>> getSequenceFilesForMiseqRun(MiseqRun miseqRun){
+            List<MiseqRunSequenceFileJoin> filesForMiseqRun = sequenceFileRepository.getFilesForMiseqRun(miseqRun);
+            return new ArrayList<Join<MiseqRun,SequenceFile>>(filesForMiseqRun);
+        }
 }

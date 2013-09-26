@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service;
 
+import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.Sample;
@@ -29,4 +30,12 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
      * @return the references to {@link SequenceFile}.
      */
     public List<Join<Sample, SequenceFile>> getSequenceFilesForSample(Sample sample);
+    
+    /**
+     * Get a {@link List} of {@link SequenceFile} references for a specific {@link MiseqRun}.
+     * 
+     * @param miseqRun the {@link MiseqRun} to get the {@link SequenceFile} references from.
+     * @return the references to {@link SequenceFile}.
+     */    
+    public List<Join<MiseqRun,SequenceFile>> getSequenceFilesForMiseqRun(MiseqRun miseqRun);
 }

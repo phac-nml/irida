@@ -1,14 +1,15 @@
 INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_USER','A basic user in the system.');
-INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_MANAGER','A manager role in the system.');
 INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_ADMIN','An administrative user in the system.');
 INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_CLIENT','A client tool in the system.');
+INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_MANAGER','A manager role in the system.');
 
 -- user account required for integration tests
 INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , 'franklin.bristow@phac-aspc.gc.ca', 'Franklin', 'Bristow', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '7029', 'fbristow', 1, 1, 1);
 INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , 'josh.adam@phac-aspc.gc.ca', 'Josh', 'Adam', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '7418', 'josh', 1, 1, 1);
-INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , 'thomas.matthews@phac-aspc.gc.ca', 'Tom', 'Matthews', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '7418', 'tom', 1, 2, 1);
-INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , 'admin@nowhere.ca', 'Admin', 'Admin', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '0000', 'admin', 1, 3, 1);
+INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , 'thomas.matthews@phac-aspc.gc.ca', 'Tom', 'Matthews', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '7418', 'tom', 1, 1, 1);
+INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , 'admin@nowhere.ca', 'Admin', 'Admin', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '0000', 'admin', 1, 2, 1);
 INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , 'test@nowhere.ca', 'Test', 'User', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '1234', 'test', 1, 1, 1);
+INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , 'disabled-guy@nowhere.ca', 'Disabled', 'Guy', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '0000', 'disabledguy', 0, 1, 1);
 INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , 'manager@nowhere.ca', 'Mr.', 'Manager', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '1234', 'manager', 1, 2, 1);
 
 -- projects required for integration tests
@@ -150,11 +151,11 @@ INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`)
 INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 100, 1, 'PROJECT_USER');
 
 -- samples
-INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `enabled`) VALUES (now(), now() , 'Sample 1', 1);
-INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `enabled`) VALUES (now(), now() , 'Sample 2', 1);
-INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `enabled`) VALUES (now(), now() , 'Sample 3', 1);
-INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `enabled`) VALUES (now(), now() , 'Sample 4', 1);
-INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `enabled`) VALUES (now(), now() , 'Sample 5', 1);
+INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `externalSampleId`, `enabled`, `description`) VALUES (now(), now() , 'Sample 1', 'sample1', 1, 'The first sample');
+INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `externalSampleId`, `enabled`, `description`) VALUES (now(), now() , 'Sample 2', 'sample2', 1, 'The second sample');
+INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `externalSampleId`, `enabled`, `description`) VALUES (now(), now() , 'Sample 3', 'sample3', 1, 'The third sample');
+INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `externalSampleId`, `enabled`, `description`) VALUES (now(), now() , 'Sample 4', 'sample4', 1, 'The fourth sample');
+INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `externalSampleId`, `enabled`, `description`) VALUES (now(), now() , 'Sample 5', 'sample5', 1, 'The fifth sample');
 -- sample relationship
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES (now(), 5, 1);
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES (now(), 4, 2);

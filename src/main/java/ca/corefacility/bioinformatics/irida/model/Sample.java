@@ -2,11 +2,13 @@ package ca.corefacility.bioinformatics.irida.model;
 
 import java.util.Date;
 import java.util.Objects;
+import javax.persistence.Column;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -33,7 +35,15 @@ public class Sample implements IridaThing, Comparable<Sample> {
 
     @NotNull
     @Size(min = 3)
+    @Column(unique = true)
+    private String externalSampleId;
+    
+    @NotNull
+    @Size(min = 3)
     private String sampleName;
+	
+	@Lob
+    private String description;
     
     private Boolean enabled = true;
     
@@ -50,10 +60,20 @@ public class Sample implements IridaThing, Comparable<Sample> {
     
     /**
      * Create a new {@link Sample} with the given name
-     * @param name The name of the sample
+     * @param sampleName The name of the sample
      */
     public Sample(String sampleName) {
         this.sampleName = sampleName;
+    }
+    
+    /**
+     * Create a new {@link Sample} with the given name and ID
+     * @param name The sampleName of the sample
+     * @param sampleId The ID of the sample
+     */
+    public Sample(String sampleName, String sampleId) {
+        this.sampleName = sampleName;
+        this.externalSampleId = sampleId;
     }
 
     @Override
@@ -93,6 +113,22 @@ public class Sample implements IridaThing, Comparable<Sample> {
 
     public void setSampleName(String sampleName) {
         this.sampleName = sampleName;
+    }
+
+    public String getExternalSampleId() {
+        return externalSampleId;
+    }
+
+    public void setExternalSampleId(String sampleId) {
+        this.externalSampleId = sampleId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
