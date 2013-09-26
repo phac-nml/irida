@@ -16,16 +16,15 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.UserService;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of the {@link UserService}.
@@ -65,7 +64,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * users with role other than Role.ROLE_USER).
 	 */
 	private static final String UPDATE_USER_PERMISSIONS = "hasRole('ROLE_ADMIN') or "
-			+ "(!#properties.containsKey('systemRole') and (hasRole('ROLE_MANAGER') or hasPermission(#uid, canUpdateUser)))";
+			+ "(!#properties.containsKey('systemRole') and (hasRole('ROLE_MANAGER') or hasPermission(#uid, 'canUpdateUser')))";
 
 	/**
 	 * Constructor, requires a handle on a validator and a repository.
@@ -92,12 +91,6 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 			// encode the user password
 			String password = u.getPassword();
 			u.setPassword(passwordEncoder.encode(password));
-
-			// if the system role is null, set it to the default role type
-			if (u.getSystemRole() == null) {
-				u.setSystemRole(Role.ROLE_USER);
-			}
-
 			return super.create(u);
 		}
 
