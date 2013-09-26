@@ -16,12 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
-import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileOverrepresentedSequenceJoin;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
@@ -55,23 +53,6 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
 	protected SequenceFile preSave(SequenceFile object) {
 		object.setStringPath();
 		return object;
-	}
-
-	/**
-	 * {@inheritDoc }
-	 * 
-	 * @deprecated
-	 */
-	@Override
-	public List<ProjectSequenceFileJoin> getFilesForProject(Project project) {
-		Session session = sessionFactory.getCurrentSession();
-		Criteria crit = session.createCriteria(ProjectSequenceFileJoin.class);
-		crit.add(Restrictions.eq("project", project));
-		crit.createCriteria("sequenceFile").add(Restrictions.eq("enabled", true));
-		@SuppressWarnings("unchecked")
-		List<ProjectSequenceFileJoin> list = crit.list();
-
-		return list;
 	}
 
 	/**
@@ -147,21 +128,6 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
 
 	/**
 	 * {@inheritDoc }
-	 * 
-	 * @deprecated
-	 */
-	@Override
-	public ProjectSequenceFileJoin addFileToProject(Project project, SequenceFile file) {
-		Session session = sessionFactory.getCurrentSession();
-
-		ProjectSequenceFileJoin ujoin = new ProjectSequenceFileJoin(project, file);
-		session.persist(ujoin);
-
-		return ujoin;
-	}
-
-	/**
-	 * {@inheritDoc }
 	 */
 	@Override
 	public SampleSequenceFileJoin addFileToSample(Sample sample, SequenceFile file) {
@@ -173,6 +139,22 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
 		return ujoin;
 	}
 
+	/**
+	 * {@inheritDoc }
+	 */
+	@Override
+	public void removeFileFromSample(Sample sample, SequenceFile file) {
+		Session session = sessionFactory.getCurrentSession();
+		Criteria crit = session.createCriteria(SampleSequenceFileJoin.class);
+		crit.add(Restrictions.eq("sample", sample));
+		crit.add(Restrictions.eq("sequenceFile", file));
+
+		SampleSequenceFileJoin join = (SampleSequenceFileJoin) crit.uniqueResult();
+		if (join == null) {
+			throw new EntityNotFoundException("A join between this file and sample was not found");
+		}
+		session.delete(join);
+	}
 
 	/**
 	 * {@inheritDoc}
