@@ -76,24 +76,6 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
     
     /**
      * {@inheritDoc }
-     * @deprecated 
-     */
-    @Override
-    public void removeFileFromProject(Project project, SequenceFile file) {
-        Session session = sessionFactory.getCurrentSession();
-        Criteria crit = session.createCriteria(ProjectSequenceFileJoin.class);
-        crit.add(Restrictions.eq("project", project));
-        crit.add(Restrictions.eq("sequenceFile", file));
-        
-        ProjectSequenceFileJoin join = (ProjectSequenceFileJoin) crit.uniqueResult();
-        if(join == null){
-            throw new EntityNotFoundException("A join between this file and project was not found");
-        }
-        session.delete(join);    
-    }
-    
-    /**
-     * {@inheritDoc }
      */
     @Override
     public void removeFileFromSample(Sample sample, SequenceFile file) {
@@ -123,8 +105,6 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
         return list;
 
     }
-    
-
 
 	/**
 	 * {@inheritDoc }
@@ -137,23 +117,6 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
 		session.persist(ujoin);
 
 		return ujoin;
-	}
-
-	/**
-	 * {@inheritDoc }
-	 */
-	@Override
-	public void removeFileFromSample(Sample sample, SequenceFile file) {
-		Session session = sessionFactory.getCurrentSession();
-		Criteria crit = session.createCriteria(SampleSequenceFileJoin.class);
-		crit.add(Restrictions.eq("sample", sample));
-		crit.add(Restrictions.eq("sequenceFile", file));
-
-		SampleSequenceFileJoin join = (SampleSequenceFileJoin) crit.uniqueResult();
-		if (join == null) {
-			throw new EntityNotFoundException("A join between this file and sample was not found");
-		}
-		session.delete(join);
 	}
 
 	/**
