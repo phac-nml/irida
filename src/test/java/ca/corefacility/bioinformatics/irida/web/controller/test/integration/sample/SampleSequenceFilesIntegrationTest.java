@@ -40,7 +40,11 @@ public class SampleSequenceFilesIntegrationTest {
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
 
+		Map<String,String> fileParams = new HashMap<>();
+		fileParams.put("description", "some file");
+		
 		Response r = given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE).multiPart("file", sequenceFile.toFile())
+				.multiPart("parameters",fileParams, MediaType.APPLICATION_JSON_VALUE)
 				.expect().statusCode(HttpStatus.CREATED.value()).when().post(sequenceFileUri);
 
 		// check that the location and link headers were created:

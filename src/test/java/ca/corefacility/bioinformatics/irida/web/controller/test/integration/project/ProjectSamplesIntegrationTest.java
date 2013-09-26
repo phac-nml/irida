@@ -32,6 +32,7 @@ public class ProjectSamplesIntegrationTest {
 	public void testAddSampleToProject() {
 		Map<String, String> sample = new HashMap<>();
 		sample.put("sampleName", "sample 1");
+                sample.put("externalSampleId", "sample 1");
 
 		// load a project
 		String projectUri = "/projects/1";

@@ -29,4 +29,21 @@ public class SampleResource extends IdentifiableResource<Sample> {
     public void setSampleName(String sampleName) {
         resource.setSampleName(sampleName);
     }
+    
+    @XmlElement
+    public String getExternalSampleId(){
+        return resource.getExternalSampleId();
+    }
+    public void setExternalSampleId(String sampleId){
+        resource.setExternalSampleId(sampleId);
+    }
+
+    @XmlElement
+    public String getDescription() {
+        return resource.getDescription();
+    }
+
+    public void setDescription(String description) {
+        resource.setDescription(description);
+    }
 }

@@ -25,10 +25,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -39,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSamplesController;
 
 import com.google.common.net.HttpHeaders;
+import org.springframework.web.bind.annotation.RequestPart;
 
 /**
  * Controller for managing relationships between {@link Sample} and
@@ -72,17 +75,22 @@ public class SampleSequenceFilesController {
 	/**
 	 * Reference to the {@link ProjectService}.
 	 */
-	private ProjectService projectService;
+	private ProjectService projectService;	
+	/**
+	 * Reference to the {@link MiseqRunService}
+	 */
+	private MiseqRunService miseqRunService;
 
 	protected SampleSequenceFilesController() {
 	}
 
 	@Autowired
 	public SampleSequenceFilesController(SequenceFileService sequenceFileService, SampleService sampleService,
-			ProjectService projectService) {
+			ProjectService projectService, MiseqRunService miseqRunService) {
 		this.sequenceFileService = sequenceFileService;
 		this.sampleService = sampleService;
 		this.projectService = projectService;
+		this.miseqRunService = miseqRunService;
 	}
 
 	/**
@@ -139,7 +147,7 @@ public class SampleSequenceFilesController {
 	 */
 	@RequestMapping(value = "/projects/{projectId}/samples/{sampleId}/sequenceFiles", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<String> addNewSequenceFileToSample(@PathVariable Long projectId, @PathVariable Long sampleId,
-			@RequestParam("file") MultipartFile file) throws IOException {
+			@RequestPart("file") MultipartFile file, @RequestPart(value="parameters",required=false) SequenceFileResource fileResource) throws IOException {
 
 		Project p = projectService.read(projectId);
 		// confirm that a relationship exists between the project and the sample
@@ -154,12 +162,30 @@ public class SampleSequenceFilesController {
 		Path target = temp.resolve(file.getOriginalFilename());
 
 		target = Files.write(target, file.getBytes());
-
-		SequenceFile sf = new SequenceFile(target);
+		SequenceFile sf;
+		MiseqRun miseqRun = null;
+		
+		if(fileResource != null){
+			sf = fileResource.getResource();
+			
+			Long miseqRunId = fileResource.getMiseqRunId();
+			if(miseqRunId != null){
+				miseqRun = miseqRunService.read(miseqRunId);
+			}
+		}
+		else{
+			sf = new SequenceFile();
+		}
+		sf.setFile(target);
 
 		// persist the changes by calling the sample service
 		Join<Sample, SequenceFile> sampleSequenceFileRelationship = sequenceFileService.createSequenceFileInSample(sf,
 				sample);
+		
+		Join<MiseqRun, SequenceFile> miseqRunSequenceFileRelationship = null;
+		if(miseqRun != null){
+			miseqRunSequenceFileRelationship = miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
+		}
 
 		// clean up the temporary files.
 		Files.deleteIfExists(target);
@@ -314,4 +340,38 @@ public class SampleSequenceFilesController {
 
 		return modelMap;
 	}
+	
+	/**
+     * Update a {@link SequenceFile} details.
+     *
+     * @param projectId     the identifier of the {@link Project} that the {@link Sample} belongs to.
+     * @param sampleId      the identifier of the {@link Sample}.
+     * @param updatedFields the updated fields of the {@link Sample}.
+     * @return a response including links to the {@link Project} and {@link Sample}.
+     */
+    @RequestMapping(value = "/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.PATCH,
+            consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ModelMap updateSequenceFile(@PathVariable Long projectId, @PathVariable Long sampleId,
+			@PathVariable Long sequenceFileId, @RequestBody Map<String, Object> updatedFields) {
+        ModelMap modelMap = new ModelMap();
+
+        // confirm that the project is related to the sample
+        Project p = projectService.read(projectId);
+        sampleService.getSampleForProject(p, sampleId);
+
+        // issue an update request
+		sequenceFileService.update(sequenceFileId, updatedFields);
+
+        // respond to the client with a link to self, sequence files collection and project.
+        RootResource resource = new RootResource();
+        resource.add(linkTo(methodOn(SampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId, sequenceFileId))
+                .withSelfRel());
+        resource.add(linkTo(methodOn(SampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
+                .withRel(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
+        resource.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSample(projectId, sampleId)).withRel(ProjectSamplesController.REL_PROJECT_SAMPLES));
+
+        modelMap.addAttribute(GenericController.RESOURCE_NAME, resource);
+
+        return modelMap;
+    }
 }

@@ -34,7 +34,13 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.Sample
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import org.springframework.web.bind.annotation.RequestParam;
 import com.google.common.net.HttpHeaders;
+import org.springframework.hateoas.Link;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * Controller for managing relationships between {@link Project} and {@link Sample}.
@@ -114,28 +120,55 @@ public class ProjectSamplesController {
      */
     @RequestMapping(value = "/projects/{projectId}/samples", method = RequestMethod.GET)
     public ModelMap getProjectSamples(@PathVariable Long projectId) {
-        ModelMap modelMap = new ModelMap();
-        Project p = projectService.read(projectId);
-        List<Join<Project, Sample>> relationships = sampleService.getSamplesForProject(p);
+        
+		ModelMap modelMap = new ModelMap();
+		Project p = projectService.read(projectId);
+		List<Join<Project, Sample>> relationships = sampleService.getSamplesForProject(p);
 
-        ResourceCollection<SampleResource> sampleResources = new ResourceCollection<>(relationships.size());
+		ResourceCollection<SampleResource> sampleResources = new ResourceCollection<>(relationships.size());
 
-        for (Join<Project, Sample> r : relationships) {
-            Sample sample = r.getObject();
-            SampleResource sr = new SampleResource();
-            sr.setResource(sample);
-            sr.add(linkTo(methodOn(ProjectSamplesController.class).
-                    getProjectSample(projectId, sample.getId())).withSelfRel());
-            sampleResources.add(sr);
-        }
+		for (Join<Project, Sample> r : relationships) {
+			Sample sample = r.getObject();
+			SampleResource sr = new SampleResource();
+			sr.setResource(sample);
+			sr.add(linkTo(methodOn(ProjectSamplesController.class).
+					getProjectSample(projectId, sample.getId())).withSelfRel());
+			sampleResources.add(sr);
+		}
 
-        sampleResources.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
-        sampleResources.setTotalResources(relationships.size());
+		sampleResources.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
+		sampleResources.setTotalResources(relationships.size());
 
-        modelMap.addAttribute(GenericController.RESOURCE_NAME, sampleResources);
+		modelMap.addAttribute(GenericController.RESOURCE_NAME, sampleResources);
 
-        return modelMap;
+		return modelMap;
+
+
     }
+	
+	@RequestMapping(value = "/projects/{projectId}/samples/byExternalId/{externalSampleId}", method = RequestMethod.GET)
+	public ModelAndView getProjectSampleByExternalId(@PathVariable Long projectId, @PathVariable String externalSampleId){
+		ModelMap modelMap = new ModelMap();
+        Project p = projectService.read(projectId);
+        
+        Sample sampleBySampleId = sampleService.getSampleByExternalSampleId(externalSampleId);
+
+        ResourceCollection<SampleResource> sampleResources = new ResourceCollection<>(1);
+        SampleResource sr = new SampleResource();
+        sr.setResource(sampleBySampleId);
+		
+		Link withSelfRel = linkTo(methodOn(ProjectSamplesController.class).
+									   getProjectSample(projectId, sampleBySampleId.getId())).withSelfRel();
+		String rel = withSelfRel.getRel();
+		String href = withSelfRel.getHref();
+		String str = withSelfRel.toString();
+		
+		System.out.println("rel: "+rel + "\nhref: "+ href + "\nstr: "+str);
+		
+		RedirectView redirectView = new RedirectView(href);
+
+        return new ModelAndView(redirectView);
+	}  
 
     /**
      * Get the representation of a specific sample that's associated with the project.

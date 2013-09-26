@@ -33,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -55,14 +56,16 @@ public class SampleSequenceFilesControllerTest {
 	private SequenceFileService sequenceFileService;
 	private SampleService sampleService;
 	private ProjectService projectService;
+	private MiseqRunService miseqRunService;
 
 	@Before
 	public void setUp() {
 		sampleService = mock(SampleService.class);
 		sequenceFileService = mock(SequenceFileService.class);
 		projectService = mock(ProjectService.class);
+		miseqRunService= mock(MiseqRunService.class);
 
-		controller = new SampleSequenceFilesController(sequenceFileService, sampleService, projectService);
+		controller = new SampleSequenceFilesController(sequenceFileService, sampleService, projectService,miseqRunService);
 	}
 
 	@Test
@@ -184,6 +187,7 @@ public class SampleSequenceFilesControllerTest {
 		Sample s = TestDataFactory.constructSample();
 		SequenceFile sf = TestDataFactory.constructSequenceFile();
 		Join<Sample, SequenceFile> r = new SampleSequenceFileJoin(s, sf);
+		SequenceFileResource resource = new SequenceFileResource();
 
 		Path f = Files.createTempFile(null, null);
 		MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh", FileCopyUtils.copyToByteArray(f
@@ -193,8 +197,8 @@ public class SampleSequenceFilesControllerTest {
 		when(sequenceFileService.createSequenceFileInSample(Matchers.any(SequenceFile.class), Matchers.eq(s)))
 				.thenReturn(r);
 		when(projectService.read(p.getId())).thenReturn(p);
-
-		ResponseEntity<String> response = controller.addNewSequenceFileToSample(p.getId(), s.getId(), mmf);
+		
+		ResponseEntity<String> response = controller.addNewSequenceFileToSample(p.getId(), s.getId(), mmf,resource);
 
 		verify(sampleService).getSampleForProject(p, s.getId());
 		verify(projectService).read(p.getId());
