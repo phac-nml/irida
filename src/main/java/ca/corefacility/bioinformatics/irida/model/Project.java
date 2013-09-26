@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
 
@@ -32,6 +33,7 @@ public class Project implements IridaThing, Comparable<Project> {
     private Long id;
 
     @NotNull(message = "{project.name.notnull}")
+	@Size(min = 5, message = "{project.name.size}")
     private String name;
     
     private Boolean enabled = true;
