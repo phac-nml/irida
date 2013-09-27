@@ -115,7 +115,7 @@ public class ProjectServiceImplTest {
 
 		Join<Project, Sample> rel = projectService.addSampleToProject(p, s);
 
-		verify(projectRepository).addSampleToProject(p, s);
+		verify(projectRepository).addSampleToProject(eq(p), any(Sample.class));
 		verify(sampleRepository).create(s);
 
 		assertNotNull(rel);
