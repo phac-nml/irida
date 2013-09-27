@@ -9,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import javax.validation.ConstraintViolationException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +23,7 @@ import javax.validation.ValidatorFactory;
 import org.junit.After;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
@@ -72,6 +74,28 @@ public class ProjectServiceImplTest {
 		verify(projectRepository).create(p);
 		verify(userRepository).getUserByUsername(username);
 	}
+	
+	@Test
+	public void testCreateProjectInvalidURL(){
+		Project p = new Project();
+		p.setName("Project");
+		p.setRemoteURL("this is not a URL");
+		String username = "fbristow";
+		User u = new User();
+		u.setUsername(username);
+		
+		Authentication auth = new UsernamePasswordAuthenticationToken(u, null);
+		SecurityContextHolder.getContext().setAuthentication(auth);
+		
+		try{
+			projectService.create(p);
+			fail();
+		}
+		catch(ConstraintViolationException ex)
+		{	
+		}
+		
+	}	
 
 	@Test
 	public void testAddSampleToProject() {

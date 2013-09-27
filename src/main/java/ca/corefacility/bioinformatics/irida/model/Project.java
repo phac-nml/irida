@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.URL;
 
 
 /**
@@ -46,6 +47,9 @@ public class Project implements IridaThing, Comparable<Project> {
 	
 	@Lob
 	private String projectDescription;
+	
+	@URL(message = "{project.remoteURL.url")
+	private String remoteURL;
 
     public Project() {
         createdDate = new Date();
@@ -143,5 +147,12 @@ public class Project implements IridaThing, Comparable<Project> {
 	public void setProjectDescription(String projectDescription) {
 		this.projectDescription = projectDescription;
 	}
-    
+
+	public String getRemoteURL() {
+		return remoteURL;
+	}
+
+	public void setRemoteURL(String remoteURL) {
+		this.remoteURL = remoteURL;
+	}
 }
