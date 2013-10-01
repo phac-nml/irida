@@ -97,7 +97,8 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
         Criteria crit = session.createCriteria(MiseqRunSequenceFileJoin.class);
         crit.add(Restrictions.eq("miseqRun", run));
         
-        List<MiseqRunSequenceFileJoin> list = crit.list();
+        @SuppressWarnings("unchecked")
+		List<MiseqRunSequenceFileJoin> list = crit.list();
         for(MiseqRunSequenceFileJoin join : list){
             join.getObject().setRealPath();
         }

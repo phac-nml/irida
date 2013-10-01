@@ -7,8 +7,11 @@ import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.MiseqRunRepository;
+
 import java.util.List;
+
 import javax.sql.DataSource;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -41,7 +44,8 @@ public class MiseqRunRelationalRepository extends GenericRelationalRepository<Mi
         
         Criteria query = session.createCriteria(MiseqRunSequenceFileJoin.class).add(Restrictions.eq("sequenceFile", file));
         
-        List<MiseqRunSequenceFileJoin> list = query.list();
+        @SuppressWarnings("unchecked")
+		List<MiseqRunSequenceFileJoin> list = query.list();
         if (!list.isEmpty()) {
             logger.error("Cannot add sequence file to miseq run because it already exists in a run");
             throw new EntityExistsException("This sequence file already belongs to a miseq run");

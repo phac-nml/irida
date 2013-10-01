@@ -92,7 +92,7 @@ public class MiseqRunRelationalRepositoryTest {
         MiseqRun run = repo.read(3L);
         
         try{
-            MiseqRunSequenceFileJoin addSequenceFileToMiseqRun = repo.addSequenceFileToMiseqRun(run, seqfile);
+            repo.addSequenceFileToMiseqRun(run, seqfile);
             fail();
         }
         catch(EntityExistsException ex){
@@ -121,9 +121,8 @@ public class MiseqRunRelationalRepositoryTest {
     @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
     public void testGetInvalidMiseqRunForSequenceFile(){
         SequenceFile file = seqrepo.read(5L);
-        MiseqRunSequenceFileJoin miseqRun = null;
         try{
-             miseqRun = repo.getMiseqRunForSequenceFile(file);
+             repo.getMiseqRunForSequenceFile(file);
              fail();
         }
         catch(EntityNotFoundException ex){
