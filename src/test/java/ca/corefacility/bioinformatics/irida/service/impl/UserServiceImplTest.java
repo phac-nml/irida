@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
@@ -27,6 +29,8 @@ import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 
+import com.google.common.collect.ImmutableMap;
+
 /**
  * Testing the behavior of {@link UserServiceImpl}
  * 
@@ -48,26 +52,19 @@ public class UserServiceImplTest {
 		userService = new UserServiceImpl(userRepository, passwordEncoder, validator);
 	}
 
-	@Test
+	@Test(expected = EntityNotFoundException.class)
 	// should throw the exception to the caller instead of swallowing it.
 	public void testBadUsername() {
 		String username = "superwrongusername";
 		when(userRepository.getUserByUsername(username)).thenThrow(new EntityNotFoundException("not found"));
-		try {
-			userService.getUserByUsername(username);
-			fail();
-		} catch (EntityNotFoundException e) {
-		} catch (Throwable e) {
-			fail();
-		}
+		userService.getUserByUsername(username);
 	}
 
-	@Test
 	public void testBadPasswordCreate() {
 		// a user should not be persisted with a bad password (like password1)
 		String username = "fbristow";
 		String password = "password1";
-		String passwordEncoded = "$2a$10$vMzhJFdyM72NnnWIoMSbUecHRxZDtCE1fdiPfjfjT1WD0fISDXOX2";
+		String passwordEncoded = "ENCODED_password1";
 		String email = "fbristow@gmail.com";
 		String firstName = "Franklin";
 		String lastName = "Bristow";
@@ -92,7 +89,7 @@ public class UserServiceImplTest {
 		// a user should not be persisted with a bad password (like password1)
 		String password = "password1";
 		String passwordEncoded = "$2a$10$vMzhJFdyM72NnnWIoMSbUecHRxZDtCE1fdiPfjfjT1WD0fISDXOX2";
-		Long luid = new Long(1111);
+		Long luid = 1111l;
 		Map<String, Object> properties = new HashMap<>();
 		properties.put("password", password);
 
@@ -108,6 +105,61 @@ public class UserServiceImplTest {
 		} catch (Exception e) {
 			fail();
 		}
+	}
+
+	@Test
+	public void testPasswordUpdate() {
+		final String password = "Password1";
+		final String encodedPassword = "ENCODED_" + password;
+		final Long id = 1l;
+		final User persisted = user();
+
+		Map<String, Object> properties = new HashMap<>();
+		properties.put("password", (Object) password);
+		Map<String, Object> encodedPasswordProperties = ImmutableMap.of("password", (Object) encodedPassword);
+
+		when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
+		when(userRepository.update(id, properties)).thenReturn(persisted);
+		when(userRepository.exists(1l)).thenReturn(true);
+
+		User u = userService.update(id, properties);
+		assertEquals("User-type was not returned.", persisted, u);
+
+		verify(passwordEncoder).encode(password);
+		verify(userRepository).update(1l, encodedPasswordProperties);
+	}
+
+	@Test
+	public void updateNoPassword() {
+		Map<String, Object> properties = ImmutableMap.of("username", (Object) "updated");
+
+		when(userRepository.exists(1l)).thenReturn(true);
+		userService.update(1l, properties);
+		verifyZeroInteractions(passwordEncoder);
+	}
+	
+	@Test(expected = ConstraintViolationException.class)
+	public void testCreateBadPassword() {
+		User u = user();
+		u.setPassword("not a good password");
+		
+		userService.create(u);
+	}
+	
+	@Test
+	public void testCreateGoodPassword() {
+		final User u = user();
+		final String password = u.getPassword();
+		final String encodedPassword = "ENCODED_"+password;
+		
+		when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
+		when(userRepository.create(u)).thenReturn(u);
+		
+		userService.create(u);
+		assertEquals("User password was not encoded.", encodedPassword, u.getPassword());
+		
+		verify(passwordEncoder).encode(password);
+		verify(userRepository).create(u);
 	}
 
 	@Test
