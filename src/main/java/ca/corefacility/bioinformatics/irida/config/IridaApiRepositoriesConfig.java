@@ -19,16 +19,20 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import ca.corefacility.bioinformatics.irida.config.data.DataConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.MiseqRunRepository;
+import ca.corefacility.bioinformatics.irida.repositories.OverrepresentedSequenceRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileFilesystemRepository;
 import ca.corefacility.bioinformatics.irida.repositories.relational.AuditRepository;
+import ca.corefacility.bioinformatics.irida.repositories.relational.GenericRelationalRepository;
 import ca.corefacility.bioinformatics.irida.repositories.relational.MiseqRunRelationalRepository;
+import ca.corefacility.bioinformatics.irida.repositories.relational.OverrepresentedSequenceRelationalRepository;
 import ca.corefacility.bioinformatics.irida.repositories.relational.ProjectRelationalRepository;
 import ca.corefacility.bioinformatics.irida.repositories.relational.SampleRelationalRepository;
 import ca.corefacility.bioinformatics.irida.repositories.relational.SequenceFileRelationalRepository;
@@ -89,6 +93,11 @@ public class IridaApiRepositoriesConfig {
 			System.exit(1);
 		}
 		return new SequenceFileFilesystemRepository(baseDirectory);
+	}
+	
+	@Bean
+	public OverrepresentedSequenceRepository overrepresentedSequenceRepository(){
+		return new OverrepresentedSequenceRelationalRepository(dataConfig.dataSource(), sessionFactory);
 	}
 
 	@Bean
