@@ -17,16 +17,19 @@ import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.MiseqRunRepository;
+import ca.corefacility.bioinformatics.irida.repositories.OverrepresentedSequenceRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
+import ca.corefacility.bioinformatics.irida.service.OverrepresentedSequenceService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 import ca.corefacility.bioinformatics.irida.service.impl.MiseqRunServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.impl.OverrepresentedSequenceServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.ProjectServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.SampleServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.SequenceFileServiceImpl;
@@ -56,6 +59,8 @@ public class IridaApiServicesConfig {
 	@Autowired
 	private MiseqRunRepository miseqRunRepository;
 	@Autowired
+	private OverrepresentedSequenceRepository overrepresentedSequenceRepository;
+	@Autowired
 	private CRUDRepository<Long, SequenceFile> sequenceFileFilesystemRepository;
 
 	@Bean
@@ -84,6 +89,11 @@ public class IridaApiServicesConfig {
 	@Bean
 	public MiseqRunService miseqRunService(){
 		return new MiseqRunServiceImpl(miseqRunRepository, validator());
+	}
+	
+	@Bean
+	public OverrepresentedSequenceService overrepresentedSequenceService(){
+		return new OverrepresentedSequenceServiceImpl(overrepresentedSequenceRepository, validator());
 	}
 
 	@Bean
