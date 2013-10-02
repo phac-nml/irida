@@ -65,6 +65,11 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	private static final String UPDATE_USER_PERMISSIONS = "hasRole('ROLE_ADMIN') or "
 			+ "(!#properties.containsKey('systemRole') and (hasRole('ROLE_MANAGER') or hasPermission(#uid, 'canUpdateUser')))";
+	
+	protected UserServiceImpl() {
+		super(null, null, User.class);
+	}
+	
 
 	/**
 	 * Constructor, requires a handle on a validator and a repository.

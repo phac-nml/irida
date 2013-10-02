@@ -37,6 +37,10 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private ProjectRepository projectRepository;
 	private CRUDRepository<Long, Sample> sampleRepository;
 	private UserRepository userRepository;
+	
+	protected ProjectServiceImpl() {
+		super(null, null, Project.class);
+	}
 
 	public ProjectServiceImpl(ProjectRepository projectRepository, CRUDRepository<Long, Sample> sampleRepository,
 			UserRepository userRepository, Validator validator) {

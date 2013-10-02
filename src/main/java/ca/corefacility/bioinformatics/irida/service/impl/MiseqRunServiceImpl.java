@@ -21,6 +21,10 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 
     private MiseqRunRepository miseqRepo;
     
+    protected MiseqRunServiceImpl() {
+    	super(null, null, MiseqRun.class);
+    }
+    
     public MiseqRunServiceImpl(MiseqRunRepository repository, Validator validator){
         super(repository, validator, MiseqRun.class);
         this.miseqRepo = repository;

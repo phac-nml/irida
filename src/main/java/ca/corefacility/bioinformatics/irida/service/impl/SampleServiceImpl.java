@@ -36,6 +36,10 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@link SequenceFile}.
 	 */
 	private SequenceFileRepository sequenceFileRepository;
+	
+	protected SampleServiceImpl() {
+		super(null, null, Sample.class);
+	}
 
 	/**
 	 * Constructor.

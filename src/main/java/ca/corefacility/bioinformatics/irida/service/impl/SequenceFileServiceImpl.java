@@ -42,6 +42,10 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 * A reference to the data store repository.
 	 */
 	private SequenceFileRepository sequenceFileRepository;
+	
+	protected SequenceFileServiceImpl() {
+		super(null, null, SequenceFile.class);
+	}
 
 	/**
 	 * Constructor.
