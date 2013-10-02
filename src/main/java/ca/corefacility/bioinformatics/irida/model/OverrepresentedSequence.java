@@ -24,7 +24,7 @@ import org.hibernate.envers.Audited;
 @Entity
 @Table(name = "overrepresented_sequence")
 @Audited
-public class OverrepresentedSequence implements IridaThing {
+public class OverrepresentedSequence implements IridaThing, Comparable<OverrepresentedSequence> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -45,6 +45,8 @@ public class OverrepresentedSequence implements IridaThing {
 	private Date modifiedDate;
 	@NotNull
 	private boolean enabled;
+	
+	public OverrepresentedSequence(){}
 
 	public OverrepresentedSequence(String sequence, int count, BigDecimal percentage, String possibleSource) {
 		this.sequence = sequence;
@@ -69,6 +71,11 @@ public class OverrepresentedSequence implements IridaThing {
 		}
 
 		return false;
+	}
+	
+	@Override
+	public int compareTo(OverrepresentedSequence o) {
+		return modifiedDate.compareTo(o.modifiedDate);
 	}
 
 	@Override
