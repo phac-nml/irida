@@ -15,6 +15,10 @@ import javax.validation.Validator;
  */
 public class OverrepresentedSequenceServiceImpl extends CRUDServiceImpl<Long, OverrepresentedSequence>implements OverrepresentedSequenceService{
     OverrepresentedSequenceRepository orsRepo;
+    
+    protected OverrepresentedSequenceServiceImpl() {
+    	super(null, null, OverrepresentedSequence.class);
+    }
 	
 	public OverrepresentedSequenceServiceImpl(OverrepresentedSequenceRepository repository, Validator validator){
         super(repository, validator, OverrepresentedSequence.class);
