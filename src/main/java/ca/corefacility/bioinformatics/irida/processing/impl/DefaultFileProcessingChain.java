@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.processing.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -27,6 +28,10 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 	private List<FileProcessor> fileProcessors;
 
 	private Boolean fastFail = false;
+	
+	public DefaultFileProcessingChain() {
+		this.fileProcessors = Collections.emptyList();
+	}
 
 	public DefaultFileProcessingChain(FileProcessor... fileProcessors) {
 		this(Arrays.asList(fileProcessors));
