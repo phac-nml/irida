@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 
 @Configuration
-@Profile("dev")
+@Profile({"dev","prod"})
 public class IridaApiJdbcDataSourceConfig implements DataConfig {
 	private @Value("${jdbc.driver}")
 	String driverClassName;
