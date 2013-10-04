@@ -6,8 +6,11 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileOverrepresentedSequenceJoin;
 import ca.corefacility.bioinformatics.irida.repositories.OverrepresentedSequenceRepository;
+
 import java.util.List;
+
 import javax.sql.DataSource;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -30,6 +33,7 @@ public class OverrepresentedSequenceRelationalRepository extends GenericRelation
 		Criteria crit = session.createCriteria(SequenceFileOverrepresentedSequenceJoin.class);
 		crit.add(Restrictions.eq("sequenceFile", sequenceFile));
 		
+		@SuppressWarnings("unchecked")
 		List<Join<SequenceFile,OverrepresentedSequence>> list = crit.list();
 		return list;
 				
