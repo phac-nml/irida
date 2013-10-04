@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
 import java.util.Map;
 
 import org.junit.Before;
@@ -7,8 +10,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -28,8 +34,6 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-import static org.junit.Assert.*;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
 		IridaApiTestDataSourceConfig.class })
@@ -39,15 +43,18 @@ public class UserServiceImplIT {
 
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@Before
 	public void setUp() {
 		User u = new User();
 		u.setUsername("fbristow");
-		u.setPassword("password1");
+		u.setPassword(passwordEncoder.encode("Password1"));
 		u.setSystemRole(Role.ROLE_MANAGER);
-		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "password1",
+		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
 				ImmutableList.of(Role.ROLE_MANAGER));
+		auth.setDetails(u);
 		SecurityContextHolder.getContext().setAuthentication(auth);
 	}
 
@@ -123,6 +130,39 @@ public class UserServiceImplIT {
 		Map<String, Object> properties = ImmutableMap.of("phoneNumber", (Object) updatedPhoneNumber);
 		User updated = userService.update(1L, properties);
 		assertEquals("Phone number should be updated.", updatedPhoneNumber, updated.getPhoneNumber());
+	}
+
+	@Test(expected = AuthenticationCredentialsNotFoundException.class)
+	public void testUpdatePasswordWithoutLoginDetails() {
+		SecurityContextHolder.clearContext();
+		userService.changePassword(1l, "any password");
+	}
+
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	public void testUpdatePasswordWithCompleteLoginDetails() {
+		String updatedPassword = "NewPassword1";
+		User updated = userService.changePassword(1l, updatedPassword);
+		assertNotEquals("Password in user object should be encoded.", updated.getPassword(), updatedPassword);
+	}
+
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	public void testUpdatePasswordWithExpiredPassword() {
+		((User) SecurityContextHolder.getContext().getAuthentication().getDetails()).setCredentialsNonExpired(false);
+		SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
+		String updatedPassword = "NewPassword1";
+		User updated = userService.changePassword(1l, updatedPassword);
+		assertNotEquals("Password in user object should be encoded.", updated.getPassword(), updatedPassword);
+	}
+
+	@Test(expected = AccessDeniedException.class)
+	public void testUpdatePasswordWithAnonymousUser() {
+		SecurityContextHolder.getContext().setAuthentication(
+				new AnonymousAuthenticationToken("key", "anonymouse", ImmutableList.of(Role.ROLE_CLIENT)));
+		userService.changePassword(1l, "NewPassword1");
 	}
 
 	private UserServiceImplIT asUser() {

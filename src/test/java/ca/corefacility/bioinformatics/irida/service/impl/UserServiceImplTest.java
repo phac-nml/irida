@@ -60,6 +60,7 @@ public class UserServiceImplTest {
 		userService.getUserByUsername(username);
 	}
 
+	@Test
 	public void testBadPasswordCreate() {
 		// a user should not be persisted with a bad password (like password1)
 		String username = "fbristow";
@@ -137,27 +138,27 @@ public class UserServiceImplTest {
 		userService.update(1l, properties);
 		verifyZeroInteractions(passwordEncoder);
 	}
-	
+
 	@Test(expected = ConstraintViolationException.class)
 	public void testCreateBadPassword() {
 		User u = user();
 		u.setPassword("not a good password");
-		
+
 		userService.create(u);
 	}
-	
+
 	@Test
 	public void testCreateGoodPassword() {
 		final User u = user();
 		final String password = u.getPassword();
-		final String encodedPassword = "ENCODED_"+password;
-		
+		final String encodedPassword = "ENCODED_" + password;
+
 		when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
 		when(userRepository.create(u)).thenReturn(u);
-		
+
 		userService.create(u);
 		assertEquals("User password was not encoded.", encodedPassword, u.getPassword());
-		
+
 		verify(passwordEncoder).encode(password);
 		verify(userRepository).create(u);
 	}
@@ -175,6 +176,34 @@ public class UserServiceImplTest {
 
 		assertEquals(username, userDetails.getUsername());
 		assertEquals(password, userDetails.getPassword());
+	}
+
+	@Test
+	public void testUpdatePasswordGoodPassword() {
+		String password = "Password1";
+		String encodedPassword = password + "_ENCODED";
+
+		when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
+		when(userRepository.exists(1l)).thenReturn(true);
+
+		userService.changePassword(1l, password);
+
+		verify(userRepository).update(1l, ImmutableMap.of("password", (Object) encodedPassword));
+	}
+
+	@Test
+	public void testUpdatePasswordBadPassword() {
+		String password = "arguablynotagoodpassword";
+
+		try {
+			userService.changePassword(1l, password);
+			fail();
+		} catch (ConstraintViolationException e) {
+		} catch (Exception e) {
+			fail();
+		}
+
+		verifyZeroInteractions(userRepository, passwordEncoder);
 	}
 
 	private User user() {

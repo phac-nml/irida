@@ -26,6 +26,8 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 
+import com.google.common.collect.ImmutableMap;
+
 /**
  * Implementation of the {@link UserService}.
  * 
@@ -65,11 +67,20 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	private static final String UPDATE_USER_PERMISSIONS = "hasRole('ROLE_ADMIN') or "
 			+ "(!#properties.containsKey('systemRole') and (hasRole('ROLE_MANAGER') or hasPermission(#uid, 'canUpdateUser')))";
-	
+
+	/**
+	 * A user is permitted to change their own password if they did not
+	 * successfully log in, but the reason for the login failure is that their
+	 * credentials are expired. This permission checks to see that the user is
+	 * authenticated, or that the principle in the security context has an
+	 * expired password.
+	 */
+	private static final String CHANGE_PASSWORD_PERMISSIONS = "isFullyAuthenticated() or "
+			+ "(principal instanceof T(ca.corefacility.bioinformatics.irida.model.User) and !principal.isCredentialsNonExpired())";
+
 	protected UserServiceImpl() {
 		super(null, null, User.class);
 	}
-	
 
 	/**
 	 * Constructor, requires a handle on a validator and a repository.
@@ -83,6 +94,20 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 		super(userRepository, validator, User.class);
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize(CHANGE_PASSWORD_PERMISSIONS)
+	public User changePassword(Long userId, String password) {
+		Set<ConstraintViolation<User>> violations = validatePassword(password);
+		if (violations.isEmpty()) {
+			String encodedPassword = passwordEncoder.encode(password);
+			return super.update(userId, ImmutableMap.of(PASSWORD_PROPERTY, (Object) encodedPassword));
+		}
+
+		throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
 	}
 
 	/**

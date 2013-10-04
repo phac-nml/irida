@@ -6,7 +6,7 @@
 	<system_role id="3" description="A manager" name="ROLE_MANAGER" />
 	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
 		email="manager@nowhere.com" firstName="Mr." lastName="Manager"
-		password="fdafdas1A!" phoneNumber="867-5309" username="fbristow"
+		password="$2a$10$rgdnCrrAqN11Hz03mcGCg.R9gZehmEcyLC3kUGQJ1fEBlF9ld.4v." phoneNumber="867-5309" username="fbristow"
 		enabled="true" system_role="3" credentialsNonExpired="true" />
 	<Revisions />
 	<USER_AUD />
