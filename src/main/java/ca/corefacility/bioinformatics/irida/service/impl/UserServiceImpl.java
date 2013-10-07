@@ -40,6 +40,11 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	private static final String PASSWORD_PROPERTY = "password";
 	/**
+	 * The property name to use for expired credentials on the {@link User}
+	 * class.
+	 */
+	private static final String CREDENTIALS_NON_EXPIRED_PROPERTY = "credentialsNonExpired";
+	/**
 	 * logger
 	 */
 	private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
@@ -104,7 +109,8 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 		Set<ConstraintViolation<User>> violations = validatePassword(password);
 		if (violations.isEmpty()) {
 			String encodedPassword = passwordEncoder.encode(password);
-			return super.update(userId, ImmutableMap.of(PASSWORD_PROPERTY, (Object) encodedPassword));
+			return super.update(userId, ImmutableMap.of(PASSWORD_PROPERTY, (Object) encodedPassword,
+					CREDENTIALS_NON_EXPIRED_PROPERTY, true));
 		}
 
 		throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));

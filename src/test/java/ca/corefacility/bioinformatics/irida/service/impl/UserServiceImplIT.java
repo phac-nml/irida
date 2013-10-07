@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 
@@ -156,6 +157,7 @@ public class UserServiceImplIT {
 		String updatedPassword = "NewPassword1";
 		User updated = userService.changePassword(1l, updatedPassword);
 		assertNotEquals("Password in user object should be encoded.", updated.getPassword(), updatedPassword);
+		assertTrue("User should not have expired credentials anymore.", updated.isCredentialsNonExpired());
 	}
 
 	@Test(expected = AccessDeniedException.class)

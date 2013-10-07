@@ -188,7 +188,8 @@ public class UserServiceImplTest {
 
 		userService.changePassword(1l, password);
 
-		verify(userRepository).update(1l, ImmutableMap.of("password", (Object) encodedPassword));
+		verify(userRepository).update(1l,
+				ImmutableMap.of("password", (Object) encodedPassword, "credentialsNonExpired", true));
 	}
 
 	@Test
