@@ -23,7 +23,7 @@ import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
-import ca.corefacility.bioinformatics.irida.security.IgnoreExpiredCredentialsChecker;
+import ca.corefacility.bioinformatics.irida.security.IgnoreExpiredCredentialsForPasswordChangeChecker;
 import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.IridaPermissionEvaluator;
 import ca.corefacility.bioinformatics.irida.security.permissions.ReadProjectPermission;
@@ -57,7 +57,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	@Bean
 	public UserDetailsChecker postAuthenticationChecker() {
-		return new IgnoreExpiredCredentialsChecker();
+		return new IgnoreExpiredCredentialsForPasswordChangeChecker();
 	}
 
 	@Override
