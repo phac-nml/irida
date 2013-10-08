@@ -162,14 +162,15 @@
 
 		<!-- Validation API -->
 		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-			<version>${validation.api.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>${hibernate.validator.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jboss.logging</groupId>
+					<artifactId>jboss-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 
@@ -191,6 +192,12 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-envers</artifactId>
 			<version>${hibernate.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jboss.logging</groupId>
+					<artifactId>jboss-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -201,6 +208,7 @@
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<version>${hsqldb.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate.javax.persistence</groupId>
@@ -213,18 +221,6 @@
 			<version>${jsr250.api.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.codehaus.mojo</groupId>
-			<artifactId>dbunit-maven-plugin</artifactId>
-			<version>${maven.dbunit.plugin.version}</version>
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-simpl</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
 			<groupId>com.github.springtestdbunit</groupId>
 			<artifactId>spring-test-dbunit</artifactId>
 			<version>${spring.test.dbunit.version}</version>
@@ -235,6 +231,13 @@
 			<artifactId>dbunit</artifactId>
 			<version>${dbunit.version}</version>
 			<type>jar</type>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>commons-dbcp</groupId>
@@ -261,7 +264,7 @@
 			<artifactId>aspectjweaver</artifactId>
 			<version>${aspectj.version}</version>
 		</dependency>
-		
+
 		<!-- apache commons -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
