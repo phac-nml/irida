@@ -79,8 +79,8 @@ public class ControllerExceptionHandler {
 	 */
 	@ExceptionHandler(EntityNotFoundException.class)
 	public ResponseEntity<String> handleNotFoundException(EntityNotFoundException e) {
-		logger.error("A client attempted to retrieve a resource with an identifier" + " that does not exist at "
-				+ new Date() + ". The stack trace follows: ", e);
+		logger.info("A client attempted to retrieve a resource with an identifier that does not exist at "
+				+ new Date() + ".");
 		return new ResponseEntity<>("No such resource found.", HttpStatus.NOT_FOUND);
 	}
 
