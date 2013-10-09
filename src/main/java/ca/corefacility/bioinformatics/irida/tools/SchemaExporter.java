@@ -1,13 +1,18 @@
 package ca.corefacility.bioinformatics.irida.tools;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.jdbc.internal.FormatStyle;
 import org.hibernate.engine.jdbc.internal.Formatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
@@ -24,10 +29,11 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceCo
  * 
  */
 public class SchemaExporter {
+	private static final Logger logger = LoggerFactory.getLogger(SchemaExporter.class);
 
 	public static void main(String[] args) {
-		boolean drop = true;
-		boolean create = true;
+		boolean drop = false;
+		boolean create = false;
 		String outFile = null;
 		String delimiter = "";
 
@@ -60,30 +66,41 @@ public class SchemaExporter {
 		String[] dropSQL = hibernateConfiguration.generateDropSchemaScript(Dialect.getDialect(hibernateConfiguration
 				.getProperties()));
 
-		if (create)
-			export(outFile, delimiter, formatter, createSQL);
-		if (drop)
-			export(outFile, delimiter, formatter, dropSQL);
+		if (drop) {
+			logger.debug("Dumping SQL 'drop' statements.");
+			export(outFile, delimiter, formatter, dropSQL, StandardOpenOption.TRUNCATE_EXISTING);
+		}
+		if (create) {
+			OpenOption openOption;
+			if (drop) {
+				// if both drop and create are being used, we definitely want to
+				// append to the file
+				openOption = StandardOpenOption.APPEND;
+			} else {
+				openOption = StandardOpenOption.TRUNCATE_EXISTING;
+			}
+			logger.debug("Dumping SQL 'create' statements.");
+			export(outFile, delimiter, formatter, createSQL, openOption);
+		}
 
 		context.close();
 	}
 
-	private static void export(String outFile, String delimiter, Formatter formatter, String[] createSQL) {
-		PrintWriter writer = null;
-		try {
-			if (!StringUtils.isEmpty(outFile)) {
-				writer = new PrintWriter(outFile);
-			} else {
-				writer = new PrintWriter(System.out);
+	private static void export(String outFile, String delimiter, Formatter formatter, String[] createSQL,
+			OpenOption... options) {
+
+		if (!StringUtils.isEmpty(outFile)) {
+			try {
+				Files.write(Paths.get(outFile), (StringUtils.join(createSQL, delimiter + "\n") + "\n").getBytes(),
+						options);
+			} catch (IOException e) {
+				System.err.println(e);
 			}
+		} else {
 			for (String string : createSQL) {
-				writer.print(formatter.format(string) + "\n" + delimiter + "\n");
+				System.out.print(formatter.format(string) + "\n" + delimiter + "\n");
 			}
-		} catch (FileNotFoundException e) {
-			System.err.println(e);
-		} finally {
-			if (writer != null)
-				writer.close();
 		}
+
 	}
 }
