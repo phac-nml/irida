@@ -40,7 +40,13 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 	}
 
 	@Bean
+	@SuppressWarnings("deprecation")
 	public SessionFactory sessionFactory() {
+		return hibernateConfiguration().buildSessionFactory();
+	}
+
+	@Bean
+	public org.hibernate.cfg.Configuration hibernateConfiguration() {
 		LocalSessionFactoryBuilder builder = new LocalSessionFactoryBuilder(dataSource());
 
 		builder.scanPackages("ca.corefacility.bioinformatics.irida.model",
@@ -51,7 +57,6 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		properties.put("hibernate.hbm2ddl.import_files", environment.getProperty("hibernate.hbm2ddl.import_files"));
 		properties.put("hibernate.dialect", environment.getProperty("hibernate.dialect"));
 		builder.addProperties(properties);
-
-		return builder.buildSessionFactory();
+		return builder;
 	}
 }

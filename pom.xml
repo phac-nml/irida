@@ -334,6 +334,40 @@
 			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>generate-ddl</id>
+			<activation>
+				<property>
+					<name>generate-ddl</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>${maven.exec.plugin.version}</version>
+						<configuration>
+							<mainClass>ca.corefacility.bioinformatics.irida.tools.SchemaExporter</mainClass>
+							<arguments>
+								<argument>--create</argument>
+								<argument>--drop</argument>
+								<argument>--output=${generate-ddl.outputFile}</argument>
+							</arguments>
+						</configuration>
+						<dependencies>
+							<dependency>
+								<groupId>org.hibernate</groupId>
+								<artifactId>hibernate-entitymanager</artifactId>
+								<version>${hibernate.version}</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<properties>
 		<!-- Dependencies -->
 		<junit.version>4.11</junit.version>
@@ -366,6 +400,7 @@
 		<maven.jacoco.plugin.version>0.6.2.201302030002</maven.jacoco.plugin.version>
 		<maven.dbunit.plugin.version>1.0-beta-3</maven.dbunit.plugin.version>
 		<maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
+		<maven.exec.plugin.version>1.2.1</maven.exec.plugin.version>
 
 		<!-- project configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
