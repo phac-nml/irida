@@ -68,17 +68,14 @@ public class SchemaExporter {
 
 		if (drop) {
 			logger.debug("Dumping SQL 'drop' statements.");
-			export(outFile, delimiter, formatter, dropSQL, StandardOpenOption.TRUNCATE_EXISTING,
-					StandardOpenOption.CREATE);
+			export(outFile, delimiter, formatter, dropSQL, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
 		}
 		if (create) {
 			OpenOption[] openOption;
 			if (drop) {
-				// if both drop and create are being used, we definitely want to
-				// append to the file
-				openOption = new OpenOption[] { StandardOpenOption.APPEND };
+				openOption = new OpenOption[] {StandardOpenOption.APPEND};
 			} else {
-				openOption = new OpenOption[] { StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE };
+				openOption = new OpenOption[] {StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE};
 			}
 			logger.debug("Dumping SQL 'create' statements.");
 			export(outFile, delimiter, formatter, createSQL, openOption);
