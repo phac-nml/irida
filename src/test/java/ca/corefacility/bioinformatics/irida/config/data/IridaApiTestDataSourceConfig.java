@@ -31,7 +31,7 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 		Path baseDirectory = Paths.get("/tmp", "sequence-files");
 		if (!Files.exists(baseDirectory)) {
 			try {
-				Files.createDirectory(baseDirectory);
+				Files.createDirectories(baseDirectory);
 			} catch (IOException e) {
 				e.printStackTrace();
 				System.exit(1);
