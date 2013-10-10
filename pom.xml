@@ -68,7 +68,7 @@
 		<java.version>1.7</java.version>
 
 		<!-- irida-api -->
-		<irida.api.version>0.0.1-SNAPSHOT</irida.api.version>
+		<irida.api.version>1.0.0.beta</irida.api.version>
 
 		<!-- Jackson -->
 		<jackson.version>2.1.4</jackson.version>
