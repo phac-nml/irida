@@ -1,5 +1,9 @@
 package ca.corefacility.bioinformatics.irida.config.data;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -12,6 +16,9 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileFilesystemRepository;
 import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntityRepo;
 import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntityRepoImpl;
 
@@ -19,6 +26,20 @@ import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntityRepoImpl
 @Profile("test")
 public class IridaApiTestDataSourceConfig implements DataConfig {
 
+	@Bean
+	public CRUDRepository<Long, SequenceFile> sequenceFileFilesystemRepository() {
+		Path baseDirectory = Paths.get("/tmp", "sequence-files");
+		if (!Files.exists(baseDirectory)) {
+			try {
+				Files.createDirectory(baseDirectory);
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
+		}
+		return new SequenceFileFilesystemRepository(baseDirectory);
+	}
+	
 	@Bean
 	public DataSource dataSource() {
 		return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.HSQL)
