@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
@@ -34,13 +37,7 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.Sample
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-import org.springframework.web.bind.annotation.RequestParam;
 import com.google.common.net.HttpHeaders;
-import org.springframework.hateoas.Link;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * Controller for managing relationships between {@link Project} and {@link Sample}.
@@ -148,12 +145,10 @@ public class ProjectSamplesController {
 	
 	@RequestMapping(value = "/projects/{projectId}/samples/byExternalId/{externalSampleId}", method = RequestMethod.GET)
 	public ModelAndView getProjectSampleByExternalId(@PathVariable Long projectId, @PathVariable String externalSampleId){
-		ModelMap modelMap = new ModelMap();
         Project p = projectService.read(projectId);
         
-        Sample sampleBySampleId = sampleService.getSampleByExternalSampleId(externalSampleId);
+        Sample sampleBySampleId = sampleService.getSampleByExternalSampleId(p, externalSampleId);
 
-        ResourceCollection<SampleResource> sampleResources = new ResourceCollection<>(1);
         SampleResource sr = new SampleResource();
         sr.setResource(sampleBySampleId);
 		
