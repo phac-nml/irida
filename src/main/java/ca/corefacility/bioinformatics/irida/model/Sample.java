@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.model;
 
 import java.util.Date;
 import java.util.Objects;
-import javax.persistence.Column;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,152 +16,161 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
 
-
 /**
  * A biological sample. Each sample may correspond to many files.
- *
+ * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Entity
-@Table(name="sample")
+@Table(name = "sample")
 @Audited
 public class Sample implements IridaThing, Comparable<Sample> {
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
 
-    @NotNull
-    @Size(min = 3)
-    @Column(unique = true)
-    private String externalSampleId;
-    
-    @NotNull
-    @Size(min = 3)
-    private String sampleName;
-	
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
+
+	/**
+	 * Note: The unique constraint makes sense programmatically, however it does
+	 * not make sense to have a unique constraint for an external identifier
+	 * from the perspective of a user; especially since the external identifier
+	 * is provided entirely externally from the system.
+	 */
+	@NotNull
+	@Size(min = 3)
+	// @Column(unique = true)
+	private String externalSampleId;
+
+	@NotNull
+	@Size(min = 3)
+	private String sampleName;
+
 	@Lob
-    private String description;
-    
-    private Boolean enabled = true;
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate;
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date modifiedDate;    
+	private String description;
 
-    public Sample() {
-        createdDate = new Date();
-        modifiedDate = createdDate;
-    }
-    
-    /**
-     * Create a new {@link Sample} with the given name
-     * @param sampleName The name of the sample
-     */
-    public Sample(String sampleName) {
-        this.sampleName = sampleName;
-    }
-    
-    /**
-     * Create a new {@link Sample} with the given name and ID
-     * @param name The sampleName of the sample
-     * @param sampleId The ID of the sample
-     */
-    public Sample(String sampleName, String sampleId) {
-        this.sampleName = sampleName;
-        this.externalSampleId = sampleId;
-    }
+	private Boolean enabled = true;
 
-    @Override
-    public boolean equals(Object other) {
-        if (other instanceof Sample) {
-            Sample sample = (Sample) other;
-            return Objects.equals(createdDate, sample.createdDate) 
-                    && Objects.equals(modifiedDate, sample.modifiedDate) 
-                    && Objects.equals(sampleName, sample.sampleName);
-        }
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdDate;
 
-        return false;
-    }
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifiedDate;
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(createdDate,sampleName,modifiedDate);
-    }
+	public Sample() {
+		createdDate = new Date();
+		modifiedDate = createdDate;
+	}
 
-    @Override
-    public int compareTo(Sample other) {
-        return modifiedDate.compareTo(other.modifiedDate);
-    }
+	/**
+	 * Create a new {@link Sample} with the given name
+	 * 
+	 * @param sampleName
+	 *            The name of the sample
+	 */
+	public Sample(String sampleName) {
+		this.sampleName = sampleName;
+	}
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	/**
+	 * Create a new {@link Sample} with the given name and ID
+	 * 
+	 * @param name
+	 *            The sampleName of the sample
+	 * @param sampleId
+	 *            The ID of the sample
+	 */
+	public Sample(String sampleName, String sampleId) {
+		this.sampleName = sampleName;
+		this.externalSampleId = sampleId;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof Sample) {
+			Sample sample = (Sample) other;
+			return Objects.equals(createdDate, sample.createdDate) && Objects.equals(modifiedDate, sample.modifiedDate)
+					&& Objects.equals(sampleName, sample.sampleName);
+		}
 
-    public String getSampleName() {
-        return sampleName;
-    }
+		return false;
+	}
 
-    public void setSampleName(String sampleName) {
-        this.sampleName = sampleName;
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(createdDate, sampleName, modifiedDate);
+	}
 
-    public String getExternalSampleId() {
-        return externalSampleId;
-    }
+	@Override
+	public int compareTo(Sample other) {
+		return modifiedDate.compareTo(other.modifiedDate);
+	}
 
-    public void setExternalSampleId(String sampleId) {
-        this.externalSampleId = sampleId;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public String getSampleName() {
+		return sampleName;
+	}
 
-    @Override
-    public String getLabel() {
-        return sampleName;
-    }
+	public void setSampleName(String sampleName) {
+		this.sampleName = sampleName;
+	}
 
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-    
-    @Override
-    public void setEnabled(boolean valid) {
-        this.enabled = valid;
-    }    
+	public String getExternalSampleId() {
+		return externalSampleId;
+	}
 
-    @Override
-    public Date getTimestamp() {
-        return createdDate;
-    }
+	public void setExternalSampleId(String sampleId) {
+		this.externalSampleId = sampleId;
+	}
 
-    @Override
-    public void setTimestamp(Date date) {
-        this.createdDate = date;
-    }
-    
-    @Override
-    public Date getModifiedDate() {
-        return modifiedDate;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    @Override
-    public void setModifiedDate(Date modifiedDate) {
-        this.modifiedDate = modifiedDate;
-    }    
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	@Override
+	public String getLabel() {
+		return sampleName;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	@Override
+	public void setEnabled(boolean valid) {
+		this.enabled = valid;
+	}
+
+	@Override
+	public Date getTimestamp() {
+		return createdDate;
+	}
+
+	@Override
+	public void setTimestamp(Date date) {
+		this.createdDate = date;
+	}
+
+	@Override
+	public Date getModifiedDate() {
+		return modifiedDate;
+	}
+
+	@Override
+	public void setModifiedDate(Date modifiedDate) {
+		this.modifiedDate = modifiedDate;
+	}
 }
