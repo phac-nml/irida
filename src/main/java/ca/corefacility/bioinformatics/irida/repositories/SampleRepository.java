@@ -34,13 +34,18 @@ public interface SampleRepository extends CRUDRepository<Long, Sample> {
 	 * @return the {@link Sample} that owns the file.
 	 */
 	public SampleSequenceFileJoin getSampleForSequenceFile(SequenceFile sequenceFile);
-        
-        
-    /**
-     * Get a {@link Sample} with the given string sample identifier
-     * @param externalSampleId The string sample identifier for a sample
-     * @return The {@link Sample} for this identifier
-     * @throws EntityNotFoundException if a sample with this identifier doesn't exist
-     */
-    public Sample getSampleByExternalSampleId(String externalSampleId )throws EntityNotFoundException;
+
+	/**
+	 * Get a {@link Sample} with the given string sample identifier from a
+	 * specific project.
+	 * 
+	 * @param project
+	 *            The {@link Project} that the {@link Sample} belongs to.
+	 * @param externalSampleId
+	 *            The string sample identifier for a sample
+	 * @return The {@link Sample} for this identifier
+	 * @throws EntityNotFoundException
+	 *             if a sample with this identifier doesn't exist
+	 */
+	public Sample getSampleByExternalSampleId(Project p, String externalSampleId) throws EntityNotFoundException;
 }

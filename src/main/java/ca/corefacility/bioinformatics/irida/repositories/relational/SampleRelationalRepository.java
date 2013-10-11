@@ -5,6 +5,7 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -39,45 +40,47 @@ public class SampleRelationalRepository extends GenericRelationalRepository<Samp
 	 */
 	@Override
 	public List<ProjectSampleJoin> getSamplesForProject(Project project) {
-            Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession();
 
-            Criteria crit = session.createCriteria(ProjectSampleJoin.class);
-            crit.add(Restrictions.eq("project", project));
-            crit.createCriteria("sample").add(Restrictions.eq("enabled", true));
-            @SuppressWarnings("unchecked")
-            List<ProjectSampleJoin> list = crit.list();
+		Criteria crit = session.createCriteria(ProjectSampleJoin.class);
+		crit.add(Restrictions.eq("project", project));
+		crit.createCriteria("sample").add(Restrictions.eq("enabled", true));
+		@SuppressWarnings("unchecked")
+		List<ProjectSampleJoin> list = crit.list();
 
-            return list;
+		return list;
 	}
-        
-        /**
+
+	/**
 	 * {@inheritDoc}
 	 */
-        @Override
-        public Sample getSampleByExternalSampleId(String sampleId){
-            Session session = sessionFactory.getCurrentSession();
-            Criteria crit = session.createCriteria(Sample.class);
-            crit.add(Restrictions.eq("externalSampleId", sampleId));
-            
-            Sample sample = (Sample) crit.uniqueResult();
-            if(sample == null){
-                throw new EntityNotFoundException("Sample with id " + sampleId + " not found");
-            }
-            
-            return sample;
-        }
+	@Override
+	public Sample getSampleByExternalSampleId(Project p, String sampleId) {
+		Session session = sessionFactory.getCurrentSession();
+		Query q = session.createQuery("select ps.sample from ProjectSampleJoin ps where "
+				+ "ps.id = :projectId and ps.sample.externalSampleId = :externalSampleId");
+		q.setLong("projectId", p.getId());
+		q.setString("externalSampleId", sampleId);
+		
+		Sample sample = (Sample) q.uniqueResult();
+		if (sample == null) {
+			throw new EntityNotFoundException("Sample with id " + sampleId + " not found");
+		}
+
+		return sample;
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public SampleSequenceFileJoin getSampleForSequenceFile(SequenceFile sf) {
-            Session session = sessionFactory.getCurrentSession();
-            Criteria crit = session.createCriteria(SampleSequenceFileJoin.class);
-            crit.add(Restrictions.eq("sequenceFile", sf));
-            crit.createCriteria("sample").add(Restrictions.eq("enabled", true));
+		Session session = sessionFactory.getCurrentSession();
+		Criteria crit = session.createCriteria(SampleSequenceFileJoin.class);
+		crit.add(Restrictions.eq("sequenceFile", sf));
+		crit.createCriteria("sample").add(Restrictions.eq("enabled", true));
 
-            return (SampleSequenceFileJoin) crit.uniqueResult();
-        }
+		return (SampleSequenceFileJoin) crit.uniqueResult();
+	}
 
 }
