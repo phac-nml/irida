@@ -1,21 +1,13 @@
 package ca.corefacility.bioinformatics.irida.model;
 
-import java.util.Date;
-import java.util.Objects;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.URL;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.Date;
+import java.util.Objects;
 
 
 /**
@@ -48,7 +40,7 @@ public class Project implements IridaThing, Comparable<Project> {
 	@Lob
 	private String projectDescription;
 	
-	@URL(message = "{project.remoteURL.url")
+	@URL(message = "{project.remoteURL.url}")
 	private String remoteURL;
 
     public Project() {
