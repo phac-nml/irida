@@ -154,11 +154,7 @@ public class ProjectSamplesController {
 		
 		Link withSelfRel = linkTo(methodOn(ProjectSamplesController.class).
 									   getProjectSample(projectId, sampleBySampleId.getId())).withSelfRel();
-		String rel = withSelfRel.getRel();
 		String href = withSelfRel.getHref();
-		String str = withSelfRel.toString();
-		
-		System.out.println("rel: "+rel + "\nhref: "+ href + "\nstr: "+str);
 		
 		RedirectView redirectView = new RedirectView(href);
 
