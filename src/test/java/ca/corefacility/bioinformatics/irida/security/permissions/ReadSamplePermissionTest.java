@@ -27,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import com.google.common.collect.Lists;
 
 /**
  * Tests for {@link ReadSamplePermission}.
@@ -63,10 +64,10 @@ public class ReadSamplePermissionTest {
 		Sample s = new Sample();
 		Collection<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, u));
-		ProjectSampleJoin projectSample = new ProjectSampleJoin(p, s);
+		Collection<ProjectSampleJoin> projectSampleList = Lists.newArrayList(new ProjectSampleJoin(p, s));
 
 		when(userRepository.getUserByUsername(username)).thenReturn(u);
-		when(projectRepository.getProjectForSample(s)).thenReturn(projectSample);
+		when(projectRepository.getProjectForSample(s)).thenReturn(projectSampleList);
 		when(sampleRepository.read(1l)).thenReturn(s);
 		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
 
@@ -89,10 +90,11 @@ public class ReadSamplePermissionTest {
 		Sample s = new Sample();
 		Collection<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, u));
-		ProjectSampleJoin projectSample = new ProjectSampleJoin(p, s);
+		Collection<ProjectSampleJoin> projectSampleList = Lists.newArrayList(new ProjectSampleJoin(p, s));
+
 
 		when(userRepository.getUserByUsername(username)).thenReturn(u);
-		when(projectRepository.getProjectForSample(s)).thenReturn(projectSample);
+		when(projectRepository.getProjectForSample(s)).thenReturn(projectSampleList);
 		when(sampleRepository.read(1l)).thenReturn(s);
 		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
 
@@ -114,13 +116,14 @@ public class ReadSamplePermissionTest {
 		u.setUsername(username);
 		Project p = new Project();
 		Sample s = new Sample();
-		ProjectSampleJoin projectSample = new ProjectSampleJoin(p, s);
+		Collection<ProjectSampleJoin> projectSampleList = Lists.newArrayList(new ProjectSampleJoin(p, s));
+
 
 		Collection<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, new User()));
 
 		when(userRepository.getUserByUsername(username)).thenReturn(u);
-		when(projectRepository.getProjectForSample(s)).thenReturn(projectSample);
+		when(projectRepository.getProjectForSample(s)).thenReturn(projectSampleList);
 		when(sampleRepository.read(1l)).thenReturn(s);
 		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
 

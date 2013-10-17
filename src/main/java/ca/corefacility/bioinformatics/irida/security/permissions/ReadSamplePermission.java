@@ -8,6 +8,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 
@@ -39,12 +40,16 @@ public class ReadSamplePermission extends BasePermission<Sample> {
 		// samples are always associated with a project. for a user to be
 		// allowed to read a sample, the user must be part of the associated
 		// project.
-		Join<Project, Sample> projectSample = projectRepository.getProjectForSample(s);
-		Collection<Join<Project, User>> projectUsers = userRepository.getUsersForProject(projectSample.getSubject());
+		
 		User u = userRepository.getUserByUsername(authentication.getName());
-		for (Join<Project, User> projectUser : projectUsers) {
-			if (u.equals(projectUser.getObject())) {
-				return true;
+		
+		Collection<ProjectSampleJoin> projectForSample = projectRepository.getProjectForSample(s);
+		for(ProjectSampleJoin projectSample : projectForSample){
+			Collection<Join<Project, User>> projectUsers = userRepository.getUsersForProject(projectSample.getSubject());
+			for (Join<Project, User> projectUser : projectUsers) {
+				if (u.equals(projectUser.getObject())) {
+					return true;
+				}
 			}
 		}
 

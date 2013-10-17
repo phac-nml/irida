@@ -150,6 +150,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("isAuthenticated()")
 	public List<Join<Project, User>> getProjectsForUserWithRole(User user,ProjectRole role) {
 		return new ArrayList<Join<Project, User>>(projectRepository.getProjectsForUserWithRole(user,role));	
 	}

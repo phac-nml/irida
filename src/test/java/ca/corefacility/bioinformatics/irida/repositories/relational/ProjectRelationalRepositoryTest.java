@@ -159,10 +159,15 @@ public class ProjectRelationalRepositoryTest {
 	public void getProjectsForSample() {
 		Sample sample = srepo.read(1L);
 
-		ProjectSampleJoin join = repo.getProjectForSample(sample);
-		assertNotNull("projects for sample must be populated", join);
-		assertTrue("sample must be the object part of the join.", join.getObject().equals(sample));
-		assertNotNull("the project must be populated in the join", join.getSubject());
+		//ProjectSampleJoin join = repo.getProjectForSample(sample);
+		Collection<ProjectSampleJoin> projectForSample = repo.getProjectForSample(sample);
+		assertFalse("projects for sample must be populated", projectForSample.isEmpty());
+		
+		for(ProjectSampleJoin join : projectForSample){
+			assertTrue("sample must be the object part of the join.", join.getObject().equals(sample));
+			assertNotNull("the project must be populated in the join", join.getSubject());
+		}
+		
 	}
 
 	@Test

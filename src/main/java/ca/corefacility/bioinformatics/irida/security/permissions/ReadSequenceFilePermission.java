@@ -9,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
@@ -44,13 +45,16 @@ public class ReadSequenceFilePermission extends BasePermission<SequenceFile> {
 		UserRepository userRepository = getApplicationContext().getBean(UserRepository.class);
 
 		Join<Sample, SequenceFile> sampleSequenceFile = sampleRepository.getSampleForSequenceFile(sf);
-		Join<Project, Sample> projectSample = projectRepository.getProjectForSample(sampleSequenceFile.getSubject());
-		Collection<Join<Project, User>> projectUsers = userRepository.getUsersForProject(projectSample.getSubject());
-		User u = userRepository.getUserByUsername(authentication.getName());
+		Collection<ProjectSampleJoin> projectForSample = projectRepository.getProjectForSample(sampleSequenceFile.getSubject());
+		for(ProjectSampleJoin projectSample : projectForSample){
 
-		for (Join<Project, User> projectUser : projectUsers) {
-			if (u.equals(projectUser.getObject())) {
-				return true;
+			Collection<Join<Project, User>> projectUsers = userRepository.getUsersForProject(projectSample.getSubject());
+			User u = userRepository.getUserByUsername(authentication.getName());
+
+			for (Join<Project, User> projectUser : projectUsers) {
+				if (u.equals(projectUser.getObject())) {
+					return true;
+				}
 			}
 		}
 

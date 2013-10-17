@@ -64,7 +64,7 @@ public interface ProjectRepository extends CRUDRepository<Long, Project> {
      * @param sample The {@link Sample} to get the projects for
      * @return A collection of {@link ProjectSampleJoin}s describing the project/sample link
      */
-    public ProjectSampleJoin getProjectForSample(Sample sample);
+    public Collection<ProjectSampleJoin> getProjectForSample(Sample sample);
     
     /**
      * Remove a {@link Sample} from a {@link Project}
