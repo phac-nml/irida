@@ -62,4 +62,12 @@ public interface ProjectService extends CRUDService<Long, Project> {
      * @return the projects associated with the user.
      */
     public List<Join<Project, User>> getProjectsForUser(User user);
+	
+	/**
+	 * Get all {@link Project}s associated with a particular {@link User} where that user has a {@link ProjectRole}.PROJECT_OWNER role on the project.
+     * @param user the user to get projects for.
+	 * @param role the user's role on the project
+     * @return A collection of {@link ProjectUserJoin}s describing the projects associated with the user.
+	 */	
+	public List<Join<Project,User>> getProjectsForUserWithRole(User user,ProjectRole role);
 }

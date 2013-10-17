@@ -145,4 +145,12 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public List<Join<Project, User>> getProjectsForUser(User user) {
 		return new ArrayList<Join<Project, User>>(projectRepository.getProjectsForUser(user));
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<Join<Project, User>> getProjectsForUserWithRole(User user,ProjectRole role) {
+		return new ArrayList<Join<Project, User>>(projectRepository.getProjectsForUserWithRole(user,role));	
+	}
 }

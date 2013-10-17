@@ -25,6 +25,14 @@ public interface ProjectRepository extends CRUDRepository<Long, Project> {
      * @return A collection of {@link ProjectUserJoin}s describing the projects associated with the user.
      */
     public Collection<ProjectUserJoin> getProjectsForUser(User user);
+	
+	/**
+	 * Get all {@link Project}s associated with a particular {@link User} where that user has a {@link ProjectRole}.PROJECT_OWNER role on the project.
+     * @param user the user to get projects for.
+	 * @param role The user's role on the project
+     * @return A collection of {@link ProjectUserJoin}s describing the projects associated with the user.
+	 */
+	public Collection<ProjectUserJoin> getProjectsForUserWithRole(User user,ProjectRole role);
 
     /**
      * Add a user to a project

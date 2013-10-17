@@ -141,6 +141,18 @@ public class ProjectRelationalRepositoryTest {
 			assertNotNull(join.getSubject());
 		}
 	}
+	
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+	public void getProjectsForUserWhereManager(){
+		User user = urepo.getUserByUsername("tom");
+		
+		Collection<ProjectUserJoin> projectsForUserWhereManager = repo.getProjectsForUserWithRole(user, ProjectRole.PROJECT_OWNER);
+		assertEquals(projectsForUserWhereManager.size(), 1);
+		ProjectUserJoin next = projectsForUserWhereManager.iterator().next();
+		assertTrue(next.getSubject().getId() == 1L);
+	}
 
 	@Test
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")

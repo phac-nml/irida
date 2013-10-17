@@ -138,4 +138,21 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
 		}
 		session.delete(join);
 	}
+
+	/**
+	 * {@inheritDoc }
+	 */
+	@Override
+	public Collection<ProjectUserJoin> getProjectsForUserWithRole(User user,ProjectRole role) {
+		Session session = sessionFactory.getCurrentSession();
+
+		Criteria crit = session.createCriteria(ProjectUserJoin.class);
+		crit.add(Restrictions.eq("user", user));
+		crit.add(Restrictions.eq("projectRole", role));
+		crit.createCriteria("project").add(Restrictions.eq("enabled", true));
+		@SuppressWarnings("unchecked")
+		List<ProjectUserJoin> list = crit.list();
+
+		return list;	
+	}
 }
