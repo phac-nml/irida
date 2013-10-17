@@ -112,14 +112,14 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
 	 * {@inheritDoc }
 	 */
 	@Override
-	public ProjectSampleJoin getProjectForSample(Sample sample) {
+	public List<ProjectSampleJoin> getProjectForSample(Sample sample) {
 		Session session = sessionFactory.getCurrentSession();
 
 		Criteria crit = session.createCriteria(ProjectSampleJoin.class);
 		crit.add(Restrictions.eq("sample", sample));
 		crit.createCriteria("project").add(Restrictions.eq("enabled", true));
-
-		return (ProjectSampleJoin) crit.uniqueResult();
+		
+		return crit.list();
 	}
 
 	/**

@@ -23,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import com.google.common.collect.Lists;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -69,12 +70,14 @@ public class ReadSequenceFilePermissionTest {
 		Sample s = new Sample();
 		Collection<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, u));
-		ProjectSampleJoin projectSample = new ProjectSampleJoin(p, s);
+		Collection<ProjectSampleJoin> projectSampleList = Lists.newArrayList(new ProjectSampleJoin(p, s));
+
+		
 		SequenceFile sf = new SequenceFile();
 		SampleSequenceFileJoin sampleSequenceFile = new SampleSequenceFileJoin(s, sf);
 
 		when(userRepository.getUserByUsername(username)).thenReturn(u);
-		when(projectRepository.getProjectForSample(s)).thenReturn(projectSample);
+		when(projectRepository.getProjectForSample(s)).thenReturn(projectSampleList);
 		when(sequenceFileRepository.read(1l)).thenReturn(sf);
 		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
 		when(sampleRepository.getSampleForSequenceFile(sf)).thenReturn(sampleSequenceFile);
@@ -99,12 +102,12 @@ public class ReadSequenceFilePermissionTest {
 		Sample s = new Sample();
 		Collection<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, new User()));
-		ProjectSampleJoin projectSample = new ProjectSampleJoin(p, s);
+		Collection<ProjectSampleJoin> projectSampleList = Lists.newArrayList(new ProjectSampleJoin(p, s));
 		SequenceFile sf = new SequenceFile();
 		SampleSequenceFileJoin sampleSequenceFile = new SampleSequenceFileJoin(s, sf);
 
 		when(userRepository.getUserByUsername(username)).thenReturn(u);
-		when(projectRepository.getProjectForSample(s)).thenReturn(projectSample);
+		when(projectRepository.getProjectForSample(s)).thenReturn(projectSampleList);
 		when(sequenceFileRepository.read(1l)).thenReturn(sf);
 		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
 		when(sampleRepository.getSampleForSequenceFile(sf)).thenReturn(sampleSequenceFile);
