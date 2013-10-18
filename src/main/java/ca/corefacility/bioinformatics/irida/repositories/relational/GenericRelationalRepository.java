@@ -103,6 +103,10 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
             throw new EntityNotFoundException("Entity " + id + " couldn't be found in the database.");
         }
         
+        if (Boolean.FALSE.equals(load.isEnabled())) {
+        	throw new EntityNotFoundException("Entity " + id + " was deleted.");
+        }
+        
         postLoad(load);
                 
         return load;    

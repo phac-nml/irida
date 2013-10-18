@@ -121,33 +121,6 @@ public class ProjectServiceImplTest {
 	}
 
 	@Test
-	public void testAddSampleToProjectNotPersisted() {
-		Sample s = new Sample();
-		s.setSampleName("sample");
-                s.setExternalSampleId("newsample");
-		Sample withId = new Sample();
-		withId.setSampleName("sample");
-		withId.setId(new Long(1111));
-
-		Project p = new Project();
-		p.setName("project");
-		p.setId(new Long(2222));
-
-		when(projectRepository.addSampleToProject(p, s)).thenReturn(
-				new ProjectSampleJoin(p, withId));
-		when(sampleRepository.create(s)).thenReturn(withId);
-
-		Join<Project, Sample> rel = projectService.addSampleToProject(p, s);
-
-		verify(projectRepository).addSampleToProject(eq(p), any(Sample.class));
-		verify(sampleRepository).create(s);
-
-		assertNotNull(rel);
-		assertEquals(rel.getSubject(), p);
-		assertEquals(rel.getObject(), withId);
-	}
-
-	@Test
 	public void testAddUserToProject() {
 		User u = new User("test", "test@nowhere.com", "PASSWOD!1", "Test",
 				"User", "1234");

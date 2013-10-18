@@ -208,6 +208,7 @@ public class GenericRelationalRepositoryTest {
 		p.setIntegerValue(5);
 		p.setNonNull("not null");
 		p.setLabel("a label");
+		p.setEnabled(true);
 
 		IdentifiableTestEntity created = repo.create(p);
 		try {
