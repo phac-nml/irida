@@ -73,7 +73,8 @@ public class Project implements IridaThing, Comparable<Project> {
             Project p = (Project) other;
             return Objects.equals(createdDate, p.createdDate)
                     && Objects.equals(modifiedDate, p.modifiedDate)
-                    && Objects.equals(name, p.name);
+                    && Objects.equals(name, p.name)
+                    && Objects.equals(id, p.id);
         }
 
         return false;
@@ -81,7 +82,7 @@ public class Project implements IridaThing, Comparable<Project> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(createdDate,modifiedDate,name);
+        return Objects.hash(createdDate,modifiedDate,name, id);
     }
 
     public String getName() {
