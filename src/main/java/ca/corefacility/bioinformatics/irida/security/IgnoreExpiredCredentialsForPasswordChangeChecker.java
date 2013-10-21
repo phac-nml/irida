@@ -27,7 +27,7 @@ public class IgnoreExpiredCredentialsForPasswordChangeChecker implements UserDet
 			}
 		}
 
-		logger.debug("Proceeding with checking expired credentials; user is not trying to change their password.");
+		logger.trace("Proceeding with checking expired credentials; user is not trying to change their password.");
 		
 		if (!toCheck.isCredentialsNonExpired()) {
 			throw new CredentialsExpiredException("User credentials have exprired.");
