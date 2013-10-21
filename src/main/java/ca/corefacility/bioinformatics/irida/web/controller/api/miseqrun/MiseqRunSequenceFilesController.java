@@ -1,19 +1,11 @@
 
 package ca.corefacility.bioinformatics.irida.web.controller.api.miseqrun;
 
-import ca.corefacility.bioinformatics.irida.model.MiseqRun;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
-import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
-import com.google.common.net.HttpHeaders;
-import java.util.List;
-import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -23,6 +15,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import ca.corefacility.bioinformatics.irida.model.MiseqRun;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+
+import com.google.common.net.HttpHeaders;
 
 /**
  *
@@ -61,7 +60,7 @@ public class MiseqRunSequenceFilesController {
         // then, get the miseq run
         MiseqRun run = miseqRunService.read(miseqrunId);
         // then add the user to the project with the specified role.
-        Join<MiseqRun, SequenceFile> addSequenceFileToMiseqRun = miseqRunService.addSequenceFileToMiseqRun(run, file);
+        miseqRunService.addSequenceFileToMiseqRun(run, file);
 
         String location = linkTo(MiseqRunController.class).slash(miseqrunId).slash("sequenceFiles").slash(seqId).withSelfRel().getHref();
 
