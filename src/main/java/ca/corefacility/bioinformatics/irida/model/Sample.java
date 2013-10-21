@@ -90,7 +90,7 @@ public class Sample implements IridaThing, Comparable<Sample> {
 		if (other instanceof Sample) {
 			Sample sample = (Sample) other;
 			return Objects.equals(createdDate, sample.createdDate) && Objects.equals(modifiedDate, sample.modifiedDate)
-					&& Objects.equals(sampleName, sample.sampleName);
+					&& Objects.equals(sampleName, sample.sampleName) && Objects.equals(id, sample.id);
 		}
 
 		return false;
@@ -98,7 +98,7 @@ public class Sample implements IridaThing, Comparable<Sample> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(createdDate, sampleName, modifiedDate);
+		return Objects.hash(createdDate, sampleName, modifiedDate, id);
 	}
 
 	@Override

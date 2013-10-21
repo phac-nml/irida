@@ -10,4 +10,5 @@
 		enabled="true" system_role="3" credentialsNonExpired="true" />
 	<Revisions />
 	<USER_AUD />
+	<PROJECT_USER />
 </dataset>
