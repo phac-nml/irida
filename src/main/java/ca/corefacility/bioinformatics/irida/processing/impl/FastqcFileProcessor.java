@@ -6,7 +6,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -34,7 +33,7 @@ import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
-import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -50,17 +49,10 @@ import com.google.common.collect.ImmutableMap;
 public class FastqcFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessor.class);
 
-	private SequenceFileRepository sequenceFileRepository;
+	private SequenceFileService sequenceFileService;
 
-	public FastqcFileProcessor(SequenceFileRepository sequenceFileRepository) {
-		this.sequenceFileRepository = sequenceFileRepository;
-	}
-
-	public static void main(String[] args) {
-		FastqcFileProcessor ffp = new FastqcFileProcessor(null);
-		Path file = Paths.get("/home/fbristow/27459_S1_L001_R1_001.fastq.gz");
-		SequenceFile sequenceFile = new SequenceFile(file);
-		ffp.process(sequenceFile);
+	public FastqcFileProcessor(SequenceFileService sequenceFileService) {
+		this.sequenceFileService = sequenceFileService;
 	}
 
 	/**
@@ -93,11 +85,11 @@ public class FastqcFileProcessor implements FileProcessor {
 			updatedProperties.putAll(handlePerSequenceQualityScores(psqs));
 			updatedProperties.putAll(handleDuplicationLevel(overRep.duplicationLevelModule()));
 
-			sequenceFile = sequenceFileRepository.update(sequenceFile.getId(), updatedProperties);
+			sequenceFile = sequenceFileService.update(sequenceFile.getId(), updatedProperties);
 
 			Collection<OverrepresentedSequence> overrepresentedSequences = handleOverRepresentedSequences(overRep);
 			for (OverrepresentedSequence sequence : overrepresentedSequences) {
-				sequenceFileRepository.addOverrepresentedSequenceToSequenceFile(sequenceFile, sequence);
+				sequenceFileService.addOverrepresentedSequenceToSequenceFile(sequenceFile, sequence);
 			}
 		} catch (Exception e) {
 			logger.error("FastQC failed to process the sequence file. Stack trace follows.", e);

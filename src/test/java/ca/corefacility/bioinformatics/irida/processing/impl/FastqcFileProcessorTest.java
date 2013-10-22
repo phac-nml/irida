@@ -22,7 +22,7 @@ import org.mockito.ArgumentCaptor;
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
-import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 /**
  * Tests for {@link FastqcFileProcessor}.
@@ -32,7 +32,7 @@ import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
  */
 public class FastqcFileProcessorTest {
 	private FastqcFileProcessor fileProcessor;
-	private SequenceFileRepository sequenceFileRepository;
+	private SequenceFileService sequenceFileService;
 	private static final String SEQUENCE = "ACGTACGTN";
 	private static final String FASTQ_FILE_CONTENTS = "@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
 			+ SEQUENCE + "\n+\n?????????";
@@ -40,8 +40,8 @@ public class FastqcFileProcessorTest {
 
 	@Before
 	public void setUp() {
-		sequenceFileRepository = mock(SequenceFileRepository.class);
-		fileProcessor = new FastqcFileProcessor(sequenceFileRepository);
+		sequenceFileService = mock(SequenceFileService.class);
+		fileProcessor = new FastqcFileProcessor(sequenceFileService);
 	}
 
 	@Test
@@ -82,7 +82,7 @@ public class FastqcFileProcessorTest {
 			fail();
 		}
 
-		verify(sequenceFileRepository).update(eq(1L), argument.capture());
+		verify(sequenceFileService).update(eq(1L), argument.capture());
 		Map<String, Object> updatedProperties = argument.getValue();
 		assertEquals("GC Content was not set correctly.", (short) 50, updatedProperties.get("gcContent"));
 		assertEquals("Filtered sequences was not 0.", 0, updatedProperties.get("filteredSequences"));
@@ -111,7 +111,7 @@ public class FastqcFileProcessorTest {
 		ArgumentCaptor<OverrepresentedSequence> overrepresentedSequenceCaptor = ArgumentCaptor
 				.forClass(OverrepresentedSequence.class);
 
-		verify(sequenceFileRepository).addOverrepresentedSequenceToSequenceFile(any(SequenceFile.class),
+		verify(sequenceFileService).addOverrepresentedSequenceToSequenceFile(any(SequenceFile.class),
 				overrepresentedSequenceCaptor.capture());
 		OverrepresentedSequence overrepresentedSequence = overrepresentedSequenceCaptor.getValue();
 		assertEquals("Sequence was not the correct sequence.", SEQUENCE, overrepresentedSequence.getSequence());
