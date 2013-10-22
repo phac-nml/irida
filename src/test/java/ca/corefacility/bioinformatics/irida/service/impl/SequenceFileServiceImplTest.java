@@ -61,7 +61,7 @@ public class SequenceFileServiceImplTest {
 		SequenceFile sf = new SequenceFile(f);
 		SequenceFile withIdentifier = new SequenceFile(f);
 		withIdentifier.setId(new Long(1111));
-		when(crudRepository.create(sf)).thenReturn(withIdentifier);
+		when(crudRepository.save(sf)).thenReturn(withIdentifier);
 		when(fileRepository.create(withIdentifier)).thenReturn(withIdentifier);
 		when(crudRepository.update(withIdentifier.getId(), ImmutableMap.of("file", (Object) withIdentifier.getFile())))
 				.thenReturn(withIdentifier);
@@ -72,7 +72,7 @@ public class SequenceFileServiceImplTest {
 
 		assertEquals(created, withIdentifier);
 
-		verify(crudRepository).create(sf);
+		verify(crudRepository).save(sf);
 		verify(fileRepository).create(withIdentifier);
 		verify(crudRepository).update(withIdentifier.getId(),
 				ImmutableMap.of("file", (Object) withIdentifier.getFile()));
@@ -146,7 +146,7 @@ public class SequenceFileServiceImplTest {
 		Sample owner = new Sample();
 		owner.setId(new Long(2222));
 
-		when(crudRepository.create(sf)).thenReturn(sf);
+		when(crudRepository.save(sf)).thenReturn(sf);
 		when(crudRepository.update(any(Long.class), any(Map.class))).thenReturn(sf);
 		when(crudRepository.exists(sf.getId())).thenReturn(true);
 		when(fileRepository.create(sf)).thenReturn(sf);
@@ -154,7 +154,7 @@ public class SequenceFileServiceImplTest {
 
 		Join<Sample, SequenceFile> created = sequenceFileService.createSequenceFileInSample(sf, owner);
 
-		verify(crudRepository).create(sf);
+		verify(crudRepository).save(sf);
 		verify(crudRepository).update(any(Long.class), any(Map.class));
 		verify(crudRepository).exists(sf.getId());
 		verify(fileRepository).create(sf);

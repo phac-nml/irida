@@ -75,7 +75,7 @@ public class SequenceFileRelationalRepositoryTest {
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
 	public void testCreate() {
-		SequenceFile file = repo.create(new SequenceFile(Paths.get("/tmp/5")));
+		SequenceFile file = repo.save(new SequenceFile(Paths.get("/tmp/5")));
 		assertNotNull(file);
 		assertNotNull(file.getId());
 	}

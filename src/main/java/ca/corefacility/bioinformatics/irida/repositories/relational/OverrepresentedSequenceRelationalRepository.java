@@ -1,4 +1,3 @@
-
 package ca.corefacility.bioinformatics.irida.repositories.relational;
 
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
@@ -17,26 +16,28 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
 /**
- *
+ * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class OverrepresentedSequenceRelationalRepository extends GenericRelationalRepository<OverrepresentedSequence> implements OverrepresentedSequenceRepository{
+public class OverrepresentedSequenceRelationalRepository extends GenericRelationalRepository<OverrepresentedSequence>
+		implements OverrepresentedSequenceRepository {
 	public OverrepresentedSequenceRelationalRepository() {
 	}
 
 	public OverrepresentedSequenceRelationalRepository(DataSource source, SessionFactory sessionFactory) {
 		super(source, sessionFactory, OverrepresentedSequence.class);
 	}
-	
-	public List<Join<SequenceFile,OverrepresentedSequence>> getOverrepresentedSequencesForSequenceFile(SequenceFile sequenceFile){
+
+	public List<Join<SequenceFile, OverrepresentedSequence>> getOverrepresentedSequencesForSequenceFile(
+			SequenceFile sequenceFile) {
 		Session session = sessionFactory.getCurrentSession();
 		Criteria crit = session.createCriteria(SequenceFileOverrepresentedSequenceJoin.class);
 		crit.add(Restrictions.eq("sequenceFile", sequenceFile));
-		
+
 		@SuppressWarnings("unchecked")
-		List<Join<SequenceFile,OverrepresentedSequence>> list = crit.list();
+		List<Join<SequenceFile, OverrepresentedSequence>> list = crit.list();
 		return list;
-				
+
 	}
 
 }

@@ -154,13 +154,13 @@ public class UserServiceImplTest {
 		final String encodedPassword = "ENCODED_" + password;
 
 		when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
-		when(userRepository.create(u)).thenReturn(u);
+		when(userRepository.save(u)).thenReturn(u);
 
 		userService.create(u);
 		assertEquals("User password was not encoded.", encodedPassword, u.getPassword());
 
 		verify(passwordEncoder).encode(password);
-		verify(userRepository).create(u);
+		verify(userRepository).save(u);
 	}
 
 	@Test

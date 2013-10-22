@@ -80,7 +80,7 @@ public class UserRelationalRepositoryTest {
 		User user = new User("anon", "anon@nowhere.com", "PASSWoD!1", "Anon", "Guy", "1234");
 		user.setSystemRole(new Role("ROLE_USER"));
 		try {
-			user = repo.create(user);
+			user = repo.save(user);
 			assertNotNull(user);
 			assertNotNull(user.getId());
 		} catch (IllegalArgumentException | EntityExistsException ex) {
@@ -95,7 +95,7 @@ public class UserRelationalRepositoryTest {
 		User user = new User("anon", "anon@nowhere.com", "PASSWOD!1", "Anon", "Guy", "1234");
 		user.setSystemRole(new Role("A_FAKE_ROLE"));
 		try {
-			user = repo.create(user);
+			user = repo.save(user);
 			fail();
 		} catch (IllegalArgumentException ex) {
 		}
@@ -108,7 +108,7 @@ public class UserRelationalRepositoryTest {
 		try {
 			User user = new User("tom", "anon@nowhere.com", "PASSWoD!1", "Anon", "Guy", "1234");
 			user.setSystemRole(new Role("ROLE_USER"));
-			user = repo.create(user);
+			user = repo.save(user);
 			fail("Should have caught duplicate username");
 		} catch (EntityExistsException ex) {
 			String fieldName = ex.getFieldName();
@@ -124,7 +124,7 @@ public class UserRelationalRepositoryTest {
 		try {
 			User user = new User("newUser", "tom@gfd.ca", "PASSWoD!1", "Anon", "Guy", "1234");
 			user.setSystemRole(new Role("ROLE_USER"));
-			user = repo.create(user);
+			user = repo.save(user);
 			fail("Should have caught duplicate email");
 		} catch (EntityExistsException ex) {
 			String fieldName = ex.getFieldName();
@@ -238,7 +238,7 @@ public class UserRelationalRepositoryTest {
 
 		UserRepository userRepository = new UserRelationalRepository(dataSource, sessionFactory);
 		try {
-			userRepository.create(u);
+			userRepository.save(u);
 			fail("Should have thrown an EntityExistsException.");
 		} catch (EntityExistsException e) {
 
@@ -266,7 +266,7 @@ public class UserRelationalRepositoryTest {
 		UserRepository userRepository = new UserRelationalRepository(dataSource, sessionFactory);
 
 		try {
-			userRepository.create(u);
+			userRepository.save(u);
 			fail("Should have thrown EntityExistsException.");
 		} catch (EntityExistsException e) {
 			// confirm that the exception contains the constraint name, as

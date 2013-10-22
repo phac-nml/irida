@@ -50,14 +50,14 @@ public class UpdateUserPermissionTest {
 		u.setUsername(username);
 
 		when(userRepository.getUserByUsername(username)).thenReturn(u);
-		when(userRepository.read(1l)).thenReturn(u);
+		when(userRepository.findOne(1l)).thenReturn(u);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
 		assertTrue("permission was not granted.", updateUserPermission.isAllowed(auth, 1l));
 
 		verify(userRepository).getUserByUsername(username);
-		verify(userRepository).read(1l);
+		verify(userRepository).findOne(1l);
 	}
 
 	@Test
@@ -67,14 +67,14 @@ public class UpdateUserPermissionTest {
 		u.setUsername(username);
 
 		when(userRepository.getUserByUsername(username)).thenReturn(u);
-		when(userRepository.read(1l)).thenReturn(new User());
+		when(userRepository.findOne(1l)).thenReturn(new User());
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
 		assertFalse("permission was granted.", updateUserPermission.isAllowed(auth, 1l));
 
 		verify(userRepository).getUserByUsername(username);
-		verify(userRepository).read(1l);
+		verify(userRepository).findOne(1l);
 	}
 
 	@Test

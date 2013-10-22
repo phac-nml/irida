@@ -75,8 +75,8 @@ public class ProjectRelationalRepositoryTest {
 	public void testAddUserToProject() {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-		User user = urepo.read(5L);
-		Project project = repo.read(1L);
+		User user = urepo.findOne(5L);
+		Project project = repo.findOne(1L);
 
 		ProjectUserJoin addUserToProject = repo.addUserToProject(project, user,ProjectRole.PROJECT_USER);
 		assertNotNull(addUserToProject);
@@ -96,8 +96,8 @@ public class ProjectRelationalRepositoryTest {
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
 	public void testAddUserToProjectTwice() {
-		User user = urepo.read(5L);
-		Project project = repo.read(1L);
+		User user = urepo.findOne(5L);
+		Project project = repo.findOne(1L);
 
 		repo.addUserToProject(project, user,ProjectRole.PROJECT_USER);
 		try {
@@ -116,7 +116,7 @@ public class ProjectRelationalRepositoryTest {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
 		User user = urepo.getUserByUsername("tom");
-		Project project = repo.read(1L);
+		Project project = repo.findOne(1L);
 
 		repo.removeUserFromProject(project, user);
 
@@ -157,7 +157,7 @@ public class ProjectRelationalRepositoryTest {
 	@Test
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
 	public void getProjectsForSample() {
-		Sample sample = srepo.read(1L);
+		Sample sample = srepo.findOne(1L);
 
 		//ProjectSampleJoin join = repo.getProjectForSample(sample);
 		Collection<ProjectSampleJoin> projectForSample = repo.getProjectForSample(sample);
@@ -176,8 +176,8 @@ public class ProjectRelationalRepositoryTest {
 	public void testAddSampleToProject() {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-		Sample read = srepo.read(10L);
-		Project p = repo.read(10L);
+		Sample read = srepo.findOne(10L);
+		Project p = repo.findOne(10L);
 
 		ProjectSampleJoin addSampleToProject = repo.addSampleToProject(p, read);
 		assertNotNull(addSampleToProject);
@@ -197,8 +197,8 @@ public class ProjectRelationalRepositoryTest {
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
 	public void testAddSampleToProjectTwice() {
-		Sample read = srepo.read(10L);
-		Project p = repo.read(10L);
+		Sample read = srepo.findOne(10L);
+		Project p = repo.findOne(10L);
 
 		ProjectSampleJoin addSampleToProject = repo.addSampleToProject(p, read);
 		try{
@@ -216,8 +216,8 @@ public class ProjectRelationalRepositoryTest {
 	public void removeSampleFromProject() {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-		Sample read = srepo.read(1L);
-		Project p = repo.read(1L);
+		Sample read = srepo.findOne(1L);
+		Project p = repo.findOne(1L);
 
 		repo.removeSampleFromProject(p, read);
 
