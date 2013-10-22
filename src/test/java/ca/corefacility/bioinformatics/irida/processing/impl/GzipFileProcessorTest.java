@@ -18,7 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 /**
  * Tests for {@link GzipFileProcessor}.
@@ -29,12 +29,12 @@ import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 public class GzipFileProcessorTest {
 
 	private GzipFileProcessor fileProcessor;
-	private SequenceFileRepository sequenceFileRepository;
+	private SequenceFileService sequenceFileRepository;
 	private static final String FILE_CONTENTS = ">test read\nACGTACTCATG";
 
 	@Before
 	public void setUp() {
-		sequenceFileRepository = mock(SequenceFileRepository.class);
+		sequenceFileRepository = mock(SequenceFileService.class);
 		fileProcessor = new GzipFileProcessor(sequenceFileRepository);
 	}
 
