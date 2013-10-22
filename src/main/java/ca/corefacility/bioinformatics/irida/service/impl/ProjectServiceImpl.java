@@ -78,8 +78,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@PostFilter("hasPermission(filterObject, 'canReadProject')")
-	public List<Project> list() {
-		return super.list();
+	public List<Project> findAll() {
+		return super.findAll();
 	}
 
 	/**
