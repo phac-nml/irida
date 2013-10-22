@@ -1,14 +1,15 @@
 package ca.corefacility.bioinformatics.irida.service;
 
+import java.util.Map;
+
+import javax.validation.ConstraintViolationException;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort.Direction;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.model.enums.Order;
-
-import javax.validation.ConstraintViolationException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 /**
  * All Service interfaces should extend this interface to inherit common methods
@@ -48,7 +49,7 @@ public interface CRUDService<IdentifierType, Type extends Comparable<Type> > {
      * @param idents The unique identifiers of the objects to read
      * @return A collection of the requested objects
      */
-    public Collection<Type> readMultiple(Collection<IdentifierType> idents);
+    public Iterable<Type> readMultiple(Iterable<IdentifierType> idents);
 
     /**
      * Update the specified object in the database. The object <b>must</b> have
@@ -86,7 +87,7 @@ public interface CRUDService<IdentifierType, Type extends Comparable<Type> > {
      *
      * @return All objects of the specified <code>Type</code> in the database.
      */
-    public List<Type> list();
+    public Iterable<Type> findAll();
 
     /**
      * List objects of
@@ -94,13 +95,13 @@ public interface CRUDService<IdentifierType, Type extends Comparable<Type> > {
      *
      * @param page         the specific page to use.
      * @param size         the size of the pages used to compute the number of pages.
-     * @param sortProperty the property used to sort the collection.
+     * @param sortProperty the properties used to sort the collection.
      * @param order        the order of the sort.
      * @return the list of users within the specified range.
      * @throws IllegalArgumentException If the <code>Type</code> has no public
      *                                  property <code>sortProperty</code>.
      */
-    public List<Type> list(int page, int size, String sortProperty, Order order) 
+    public Page<Type> list(int page, int size, Direction order, String... sortProperty) 
             throws IllegalArgumentException;
 
     /**
@@ -114,15 +115,7 @@ public interface CRUDService<IdentifierType, Type extends Comparable<Type> > {
      * @param order the order of the sort.
      * @return the list of users within the specified range.
      */
-    public List<Type> list(int page, int size, Order order);
-	
-	/**
-     * List all objects of
-     * <code>Type</code> in the database including disabled elements.
-     *
-     * @return All objects of the specified <code>Type</code> in the database.
-     */
-    public List<Type> listAll();
+    public Page<Type> list(int page, int size, Direction order);
 
     /**
      * Check to see if an identifier for
@@ -140,5 +133,5 @@ public interface CRUDService<IdentifierType, Type extends Comparable<Type> > {
      *
      * @return the number of entities in the database.
      */
-    public Integer count();
+    public long count();
 }
