@@ -66,12 +66,12 @@ public class ProjectServiceImplTest {
 		Authentication auth = new UsernamePasswordAuthenticationToken(u, null);
 		SecurityContextHolder.getContext().setAuthentication(auth);
 		
-		when(projectRepository.create(p)).thenReturn(p);
+		when(projectRepository.save(p)).thenReturn(p);
 		when(userRepository.getUserByUsername(username)).thenReturn(u);
 		
 		projectService.create(p);
 		
-		verify(projectRepository).create(p);
+		verify(projectRepository).save(p);
 		verify(userRepository).getUserByUsername(username);
 	}
 	
