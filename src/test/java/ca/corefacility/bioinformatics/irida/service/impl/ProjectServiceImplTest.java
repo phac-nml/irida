@@ -1,31 +1,36 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import ca.corefacility.bioinformatics.irida.model.*;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
-import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
-import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import javax.validation.ConstraintViolationException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import org.junit.After;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.*;
+import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.Sample;
+import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
 /**
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
@@ -33,17 +38,16 @@ import static org.mockito.Mockito.*;
 public class ProjectServiceImplTest {
 	private ProjectService projectService;
 	private ProjectRepository projectRepository;
-	private CRUDRepository<Long, Sample> sampleRepository;
+	private SampleRepository sampleRepository;
 	private UserRepository userRepository;
 	private Validator validator;
 
-	@SuppressWarnings("unchecked")
 	@Before
 	public void setUp() {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
 		projectRepository = mock(ProjectRepository.class);
-		sampleRepository = (CRUDRepository<Long, Sample>) mock(CRUDRepository.class);
+		sampleRepository = mock(SampleRepository.class);
 		userRepository = mock(UserRepository.class);
 		projectService = new ProjectServiceImpl(projectRepository,
 				sampleRepository, userRepository, validator);
