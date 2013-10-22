@@ -1,12 +1,15 @@
 package ca.corefacility.bioinformatics.irida.repositories;
 
-import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import java.util.List;
+
+import org.springframework.data.repository.PagingAndSortingRepository;
+
+import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 
 /**
@@ -16,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJ
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 
-public interface SequenceFileRepository extends CRUDRepository<Long, SequenceFile> {
+public interface SequenceFileRepository extends PagingAndSortingRepository<SequenceFile, Long> {
 
 	/**
 	 * Get the {@link SequenceFile}s associated with a sample

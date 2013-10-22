@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.repositories;
 
 import java.util.Collection;
 
+import org.springframework.data.repository.PagingAndSortingRepository;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
@@ -16,7 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public interface ProjectRepository extends CRUDRepository<Long, Project> {
+public interface ProjectRepository extends PagingAndSortingRepository<Project, Long> {
 
     /**
      * Get all {@link Project}s associated with a particular {@link User}.
