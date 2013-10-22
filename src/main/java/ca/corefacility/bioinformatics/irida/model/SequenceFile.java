@@ -93,7 +93,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 		if (other instanceof SequenceFile) {
 			SequenceFile sampleFile = (SequenceFile) other;
 			return Objects.equals(file, sampleFile.file) && Objects.equals(createdDate, sampleFile.createdDate)
-					&& Objects.equals(modifiedDate, sampleFile.modifiedDate);
+					&& Objects.equals(modifiedDate, sampleFile.modifiedDate) && Objects.equals(id, sampleFile.id);
 		}
 
 		return false;
@@ -101,7 +101,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(file, createdDate, modifiedDate);
+		return Objects.hash(file, createdDate, modifiedDate, id);
 	}
 
 	@Override

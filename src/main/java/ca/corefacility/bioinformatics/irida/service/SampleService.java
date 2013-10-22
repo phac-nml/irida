@@ -77,4 +77,23 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *         {@link SequenceFile}.
 	 */
 	public void removeSequenceFileFromSample(Sample sample, SequenceFile sequenceFile);
+
+	/**
+	 * Merge multiple samples into one. Merging samples copies the
+	 * {@link SequenceFile} references from the set of samples into one sample.
+	 * The collection of samples in <code>toMerge</code> are marked as deleted.
+	 * All samples must be associated with the specified project. The
+	 * relationship between each sample in <code>toMerge</code> and the project
+	 * p will be deleted.
+	 * 
+	 * @param p
+	 *            the {@link Project} that all samples must belong to.
+	 * @param mergeInto
+	 *            the {@link Sample} to merge other samples into.
+	 * @param toMerge
+	 *            the collection of {@link Sample} to merge.
+	 * @return the completely merged {@link Sample} (the persisted version of
+	 *         <code>mergeInto</code>).
+	 */
+	public Sample mergeSamples(Project p, Sample mergeInto, Sample... toMerge);
 }

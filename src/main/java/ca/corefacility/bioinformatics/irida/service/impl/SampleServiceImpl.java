@@ -1,7 +1,10 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Validator;
 
@@ -16,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
@@ -36,7 +40,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@link SequenceFile}.
 	 */
 	private SequenceFileRepository sequenceFileRepository;
-	
+
+	private ProjectRepository projectRespository;
+
 	protected SampleServiceImpl() {
 		super(null, null, Sample.class);
 	}
@@ -50,8 +56,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 *            validator.
 	 */
 	public SampleServiceImpl(SampleRepository sampleRepository, SequenceFileRepository sequenceFileRepository,
-			Validator validator) {
+			ProjectRepository projectRepository, Validator validator) {
 		super(sampleRepository, validator, Sample.class);
+		this.projectRespository = projectRepository;
 		this.sampleRepository = sampleRepository;
 		this.sequenceFileRepository = sequenceFileRepository;
 	}
@@ -72,21 +79,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public SampleSequenceFileJoin addSequenceFileToSample(Sample sample, SequenceFile sampleFile) {
-		// confirm that both the sample and sequence file exist already, fail
-		// fast if either don't exist
-		if (!sampleRepository.exists(sample.getId())) {
-			throw new IllegalArgumentException("Sample must be persisted before adding a sequence file.");
-		}
-
-		if (!sequenceFileRepository.exists(sampleFile.getId())) {
-			throw new IllegalArgumentException("Sequence file must be persisted before adding to sample.");
-		}
-
 		// call the relationship repository to create the relationship between
 		// the two entities.
-		SampleSequenceFileJoin addFileToSample = sequenceFileRepository.addFileToSample(sample, sampleFile);
-
-		return addFileToSample;
+		return sequenceFileRepository.addFileToSample(sample, sampleFile);
 	}
 
 	/**
@@ -115,15 +110,15 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		// return sample to the caller
 		return s;
 	}
-        
-        /**
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	@Transactional(readOnly = true)
-        public Sample getSampleByExternalSampleId(Project p, String sampleId){
-            return sampleRepository.getSampleByExternalSampleId(p, sampleId);
-        }
+	public Sample getSampleByExternalSampleId(Project p, String sampleId) {
+		return sampleRepository.getSampleByExternalSampleId(p, sampleId);
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -142,5 +137,37 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public List<Join<Project, Sample>> getSamplesForProject(Project project) {
 		return new ArrayList<Join<Project, Sample>>(sampleRepository.getSamplesForProject(project));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Transactional
+	public Sample mergeSamples(Project project, Sample mergeInto, Sample... toMerge) {
+		// confirm that all samples are part of the same project:
+		confirmProjectSampleJoin(project, mergeInto);
+
+		for (Sample s : toMerge) {
+			confirmProjectSampleJoin(project, s);
+			List<SampleSequenceFileJoin> sequenceFiles = sequenceFileRepository.getFilesForSample(s);
+			for (SampleSequenceFileJoin sequenceFile : sequenceFiles) {
+				removeSequenceFileFromSample(s, sequenceFile.getObject());
+				addSequenceFileToSample(mergeInto, sequenceFile.getObject());
+			}
+			sampleRepository.delete(s.getId());
+		}
+		return mergeInto;
+	}
+
+	private void confirmProjectSampleJoin(Project project, Sample sample) {
+		Set<Project> projects = new HashSet<>();
+		Collection<ProjectSampleJoin> sampleProjects = projectRespository.getProjectForSample(sample);
+		for (ProjectSampleJoin p : sampleProjects) {
+			projects.add(p.getSubject());
+		}
+		if (!projects.contains(project)) {
+			throw new IllegalArgumentException("Cannot merge sample [" + sample.getId()
+					+ "] with other samples; the sample does not belong to project [" + project.getId() + "]");
+		}
 	}
 }

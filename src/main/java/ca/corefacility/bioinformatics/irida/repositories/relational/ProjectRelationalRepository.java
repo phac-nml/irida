@@ -120,6 +120,7 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
 	/**
 	 * {@inheritDoc }
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ProjectSampleJoin> getProjectForSample(Sample sample) {
 		Session session = sessionFactory.getCurrentSession();
