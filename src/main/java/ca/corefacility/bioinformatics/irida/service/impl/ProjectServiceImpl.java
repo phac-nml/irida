@@ -1,13 +1,13 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import ca.corefacility.bioinformatics.irida.model.*;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
-import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
-import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,14 +17,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.Sample;
+import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
 /**
  * A specialized service layer for projects.
@@ -35,14 +37,14 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 
 	private static final Logger logger = LoggerFactory.getLogger(ProjectServiceImpl.class);
 	private ProjectRepository projectRepository;
-	private CRUDRepository<Long, Sample> sampleRepository;
+	private SampleRepository sampleRepository;
 	private UserRepository userRepository;
 	
 	protected ProjectServiceImpl() {
 		super(null, null, Project.class);
 	}
 
-	public ProjectServiceImpl(ProjectRepository projectRepository, CRUDRepository<Long, Sample> sampleRepository,
+	public ProjectServiceImpl(ProjectRepository projectRepository, SampleRepository sampleRepository,
 			UserRepository userRepository, Validator validator) {
 		super(projectRepository, validator, Project.class);
 		this.projectRepository = projectRepository;
@@ -78,7 +80,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@PostFilter("hasPermission(filterObject, 'canReadProject')")
-	public List<Project> findAll() {
+	public Iterable<Project> findAll() {
 		return super.findAll();
 	}
 
@@ -117,7 +119,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			// validate the sample, then persist it:
 			Set<ConstraintViolation<Sample>> constraintViolations = validator.validate(sample);
 			if (constraintViolations.isEmpty()) {
-				sample = sampleRepository.create(sample);
+				sample = sampleRepository.save(sample);
 			} else {
 				throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(constraintViolations));
 			}

@@ -1,7 +1,7 @@
 
 package ca.corefacility.bioinformatics.irida.repositories;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -14,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFil
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public interface MiseqRunRepository extends CrudRepository<MiseqRun, Long>{
+public interface MiseqRunRepository extends PagingAndSortingRepository<MiseqRun, Long>{
     
     /**
      * Associate a {@link SequenceFile} with a {@link MiseqRun}
