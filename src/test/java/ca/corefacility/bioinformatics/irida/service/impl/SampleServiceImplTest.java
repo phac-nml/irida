@@ -57,12 +57,12 @@ public class SampleServiceImplTest {
 
 		ProjectSampleJoin join = new ProjectSampleJoin(p, s);
 		when(sampleRepository.getSamplesForProject(p)).thenReturn(Lists.newArrayList(join));
-		when(sampleRepository.read(s.getId())).thenReturn(s);
+		when(sampleRepository.findOne(s.getId())).thenReturn(s);
 
 		sampleService.getSampleForProject(p, s.getId());
 
 		verify(sampleRepository).getSamplesForProject(p);
-		verify(sampleRepository).read(s.getId());
+		verify(sampleRepository).findOne(s.getId());
 	}
 
 	@Test

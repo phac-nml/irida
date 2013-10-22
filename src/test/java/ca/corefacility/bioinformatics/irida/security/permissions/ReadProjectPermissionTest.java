@@ -60,7 +60,7 @@ public class ReadProjectPermissionTest {
 		projectUsers.add(new ProjectUserJoin(p, u));
 
 		when(userRepository.getUserByUsername(username)).thenReturn(u);
-		when(projectRepository.read(1l)).thenReturn(p);
+		when(projectRepository.findOne(1l)).thenReturn(p);
 		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
@@ -68,7 +68,7 @@ public class ReadProjectPermissionTest {
 		assertTrue("permission was not granted.", readProjectPermission.isAllowed(auth, 1l));
 
 		verify(userRepository).getUserByUsername(username);
-		verify(projectRepository).read(1l);
+		verify(projectRepository).findOne(1l);
 		verify(userRepository).getUsersForProject(p);
 	}
 
@@ -82,7 +82,7 @@ public class ReadProjectPermissionTest {
 		projectUsers.add(new ProjectUserJoin(p, new User()));
 
 		when(userRepository.getUserByUsername(username)).thenReturn(u);
-		when(projectRepository.read(1l)).thenReturn(p);
+		when(projectRepository.findOne(1l)).thenReturn(p);
 		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
@@ -90,7 +90,7 @@ public class ReadProjectPermissionTest {
 		assertFalse("permission was granted.", readProjectPermission.isAllowed(auth, 1l));
 
 		verify(userRepository).getUserByUsername(username);
-		verify(projectRepository).read(1l);
+		verify(projectRepository).findOne(1l);
 		verify(userRepository).getUsersForProject(p);
 	}
 

@@ -68,7 +68,7 @@ public class ReadSamplePermissionTest {
 
 		when(userRepository.getUserByUsername(username)).thenReturn(u);
 		when(projectRepository.getProjectForSample(s)).thenReturn(projectSampleList);
-		when(sampleRepository.read(1l)).thenReturn(s);
+		when(sampleRepository.findOne(1l)).thenReturn(s);
 		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
@@ -76,7 +76,7 @@ public class ReadSamplePermissionTest {
 		assertTrue("permission was not granted.", readSamplePermission.isAllowed(auth, 1l));
 
 		verify(userRepository).getUserByUsername(username);
-		verify(sampleRepository).read(1l);
+		verify(sampleRepository).findOne(1l);
 		verify(projectRepository).getProjectForSample(s);
 		verify(userRepository).getUsersForProject(p);
 	}
@@ -95,7 +95,7 @@ public class ReadSamplePermissionTest {
 
 		when(userRepository.getUserByUsername(username)).thenReturn(u);
 		when(projectRepository.getProjectForSample(s)).thenReturn(projectSampleList);
-		when(sampleRepository.read(1l)).thenReturn(s);
+		when(sampleRepository.findOne(1l)).thenReturn(s);
 		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
@@ -124,7 +124,7 @@ public class ReadSamplePermissionTest {
 
 		when(userRepository.getUserByUsername(username)).thenReturn(u);
 		when(projectRepository.getProjectForSample(s)).thenReturn(projectSampleList);
-		when(sampleRepository.read(1l)).thenReturn(s);
+		when(sampleRepository.findOne(1l)).thenReturn(s);
 		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
@@ -132,7 +132,7 @@ public class ReadSamplePermissionTest {
 		assertFalse("permission was granted.", readSamplePermission.isAllowed(auth, 1l));
 
 		verify(userRepository).getUserByUsername(username);
-		verify(sampleRepository).read(1l);
+		verify(sampleRepository).findOne(1l);
 		verify(projectRepository).getProjectForSample(s);
 		verify(userRepository).getUsersForProject(p);
 	}

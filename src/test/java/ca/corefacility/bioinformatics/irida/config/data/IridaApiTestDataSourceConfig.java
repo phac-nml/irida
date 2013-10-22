@@ -19,8 +19,6 @@ import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileFilesystemRepository;
-import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntityRepo;
-import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntityRepoImpl;
 
 @Configuration
 @Profile("test")
@@ -66,9 +64,4 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 		return builder.buildSessionFactory();
 	}
 
-	@Bean
-	public IdentifiableTestEntityRepo identifiedRepository() {
-		return new IdentifiableTestEntityRepoImpl(dataSource(),
-				sessionFactory());
-	}
 }
