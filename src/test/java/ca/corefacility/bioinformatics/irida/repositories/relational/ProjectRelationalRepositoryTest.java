@@ -192,6 +192,23 @@ public class ProjectRelationalRepositoryTest {
 		assertEquals(map.get("PROJECT_ID"), p.getId());
 		assertEquals(map.get("SAMPLE_ID"), read.getId());
 	}
+	
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+	public void testAddSampleToProjectTwice() {
+		Sample read = srepo.read(10L);
+		Project p = repo.read(10L);
+
+		ProjectSampleJoin addSampleToProject = repo.addSampleToProject(p, read);
+		try{
+			repo.addSampleToProject(p, read);
+			fail("Sample should not be able to be added to project twice");
+		}catch(EntityExistsException ex){
+			
+		}
+
+	}	
 
 	@Test
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")

@@ -101,7 +101,16 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
 	@Override
 	public ProjectSampleJoin addSampleToProject(Project project, Sample sample) {
 		Session session = sessionFactory.getCurrentSession();
+		
+		Criteria query = session.createCriteria(ProjectSampleJoin.class).add(Restrictions.eq("sample", sample))
+				.add(Restrictions.eq("project", project));
 
+		@SuppressWarnings("unchecked")
+		List<ProjectUserJoin> list = query.list();
+		if (!list.isEmpty()) {
+			throw new EntityExistsException("This sample already exists in project");
+		}
+		
 		ProjectSampleJoin ujoin = new ProjectSampleJoin(project, sample);
 		session.persist(ujoin);
 
