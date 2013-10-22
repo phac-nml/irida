@@ -111,7 +111,7 @@ public class SequenceFileRelationalRepositoryTest {
     @Test
     @DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")    
     public void testGetFilesForMiseqRun(){
-        MiseqRun run = mrepo.read(1L);
+        MiseqRun run = mrepo.findOne(1L);
         
         List<MiseqRunSequenceFileJoin> filesForMiseqRun = repo.getFilesForMiseqRun(run);
         
