@@ -172,8 +172,7 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
         }
         
         Type read = read(id);
-        read.setEnabled(false);
-        session.update(read);
+        session.delete(read);
     }
     
     /**
