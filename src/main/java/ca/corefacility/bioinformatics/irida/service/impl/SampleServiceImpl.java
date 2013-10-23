@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
 
 /**
@@ -45,6 +46,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	private ProjectSampleJoinRepository psjRepository;
 
+	/**
+	 * Reference to {@link SampleSequenceFileJoinRepository} for managing
+	 * {@link SampleSequenceFileJoin}.
+	 */
+	private SampleSequenceFileJoinRepository ssfRepository;
+
 	protected SampleServiceImpl() {
 		super(null, null, Sample.class);
 	}
@@ -58,11 +65,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 *            validator.
 	 */
 	public SampleServiceImpl(SampleRepository sampleRepository, SequenceFileRepository sequenceFileRepository,
-			ProjectSampleJoinRepository psjRepository, Validator validator) {
+			ProjectSampleJoinRepository psjRepository, SampleSequenceFileJoinRepository ssfRepository,
+			Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.psjRepository = psjRepository;
+		this.ssfRepository = ssfRepository;
 	}
 
 	/**
@@ -151,8 +160,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		for (Sample s : toMerge) {
 			confirmProjectSampleJoin(project, s);
-			List<SampleSequenceFileJoin> sequenceFiles = sequenceFileRepository.getFilesForSample(s);
-			for (SampleSequenceFileJoin sequenceFile : sequenceFiles) {
+			List<Join<Sample, SequenceFile>> sequenceFiles = ssfRepository.getFilesForSample(s);
+			for (Join<Sample, SequenceFile> sequenceFile : sequenceFiles) {
 				removeSequenceFileFromSample(s, sequenceFile.getObject());
 				addSequenceFileToSample(mergeInto, sequenceFile.getObject());
 			}
