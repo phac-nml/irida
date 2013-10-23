@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +28,8 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.ProjectUserJoinRepository;
+
 import com.google.common.collect.Lists;
 
 /**
@@ -40,6 +43,7 @@ public class ReadSamplePermissionTest {
 	private UserRepository userRepository;
 	private ProjectRepository projectRepository;
 	private SampleRepository sampleRepository;
+	private ProjectUserJoinRepository pujRepository;
 
 	@Before
 	public void setUp() {
@@ -47,11 +51,13 @@ public class ReadSamplePermissionTest {
 		userRepository = mock(UserRepository.class);
 		projectRepository = mock(ProjectRepository.class);
 		sampleRepository = mock(SampleRepository.class);
+		pujRepository = mock(ProjectUserJoinRepository.class);
 		readSamplePermission = new ReadSamplePermission();
 		readSamplePermission.setApplicationContext(applicationContext);
 
 		when(applicationContext.getBean(UserRepository.class)).thenReturn(userRepository);
 		when(applicationContext.getBean(ProjectRepository.class)).thenReturn(projectRepository);
+		when(applicationContext.getBean(ProjectUserJoinRepository.class)).thenReturn(pujRepository);
 		when(applicationContext.getBean("sampleRepository")).thenReturn(sampleRepository);
 	}
 
@@ -62,14 +68,14 @@ public class ReadSamplePermissionTest {
 		u.setUsername(username);
 		Project p = new Project();
 		Sample s = new Sample();
-		Collection<Join<Project, User>> projectUsers = new ArrayList<>();
+		List<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, u));
 		Collection<ProjectSampleJoin> projectSampleList = Lists.newArrayList(new ProjectSampleJoin(p, s));
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(projectRepository.getProjectForSample(s)).thenReturn(projectSampleList);
 		when(sampleRepository.findOne(1l)).thenReturn(s);
-		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
+		when(pujRepository.getUsersForProject(p)).thenReturn(projectUsers);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
@@ -78,7 +84,7 @@ public class ReadSamplePermissionTest {
 		verify(userRepository).loadUserByUsername(username);
 		verify(sampleRepository).findOne(1l);
 		verify(projectRepository).getProjectForSample(s);
-		verify(userRepository).getUsersForProject(p);
+		verify(pujRepository).getUsersForProject(p);
 	}
 
 	@Test
@@ -88,7 +94,7 @@ public class ReadSamplePermissionTest {
 		u.setUsername(username);
 		Project p = new Project();
 		Sample s = new Sample();
-		Collection<Join<Project, User>> projectUsers = new ArrayList<>();
+		List<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, u));
 		Collection<ProjectSampleJoin> projectSampleList = Lists.newArrayList(new ProjectSampleJoin(p, s));
 
@@ -96,7 +102,7 @@ public class ReadSamplePermissionTest {
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(projectRepository.getProjectForSample(s)).thenReturn(projectSampleList);
 		when(sampleRepository.findOne(1l)).thenReturn(s);
-		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
+		when(pujRepository.getUsersForProject(p)).thenReturn(projectUsers);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
@@ -104,7 +110,7 @@ public class ReadSamplePermissionTest {
 
 		verify(userRepository).loadUserByUsername(username);
 		verify(projectRepository).getProjectForSample(s);
-		verify(userRepository).getUsersForProject(p);
+		verify(pujRepository).getUsersForProject(p);
 		// we didn't need to load the domain object for this test.
 		verifyZeroInteractions(sampleRepository);
 	}
@@ -117,15 +123,13 @@ public class ReadSamplePermissionTest {
 		Project p = new Project();
 		Sample s = new Sample();
 		Collection<ProjectSampleJoin> projectSampleList = Lists.newArrayList(new ProjectSampleJoin(p, s));
-
-
-		Collection<Join<Project, User>> projectUsers = new ArrayList<>();
+		List<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, new User()));
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(projectRepository.getProjectForSample(s)).thenReturn(projectSampleList);
 		when(sampleRepository.findOne(1l)).thenReturn(s);
-		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
+		when(pujRepository.getUsersForProject(p)).thenReturn(projectUsers);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
@@ -134,7 +138,7 @@ public class ReadSamplePermissionTest {
 		verify(userRepository).loadUserByUsername(username);
 		verify(sampleRepository).findOne(1l);
 		verify(projectRepository).getProjectForSample(s);
-		verify(userRepository).getUsersForProject(p);
+		verify(pujRepository).getUsersForProject(p);
 	}
 
 	@Test

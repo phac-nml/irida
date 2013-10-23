@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.security.permissions;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.security.core.Authentication;
 
@@ -13,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.ProjectUserJoinRepository;
 
 /**
  * Evaluate whether or not an authenticated user can read a sequence file.
@@ -43,12 +45,13 @@ public class ReadSequenceFilePermission extends BasePermission<SequenceFile> {
 		ProjectRepository projectRepository = getApplicationContext().getBean(ProjectRepository.class);
 		SampleRepository sampleRepository = getApplicationContext().getBean(SampleRepository.class);
 		UserRepository userRepository = getApplicationContext().getBean(UserRepository.class);
+		ProjectUserJoinRepository pujRepository = getApplicationContext().getBean(ProjectUserJoinRepository.class);
 
 		Join<Sample, SequenceFile> sampleSequenceFile = sampleRepository.getSampleForSequenceFile(sf);
 		Collection<ProjectSampleJoin> projectForSample = projectRepository.getProjectForSample(sampleSequenceFile.getSubject());
 		for(ProjectSampleJoin projectSample : projectForSample){
 
-			Collection<Join<Project, User>> projectUsers = userRepository.getUsersForProject(projectSample.getSubject());
+			List<Join<Project, User>> projectUsers = pujRepository.getUsersForProject(projectSample.getSubject());
 			User u = userRepository.loadUserByUsername(authentication.getName());
 
 			for (Join<Project, User> projectUser : projectUsers) {

@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,8 +18,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
-import com.google.common.collect.ImmutableList;
-
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
@@ -26,6 +25,9 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.ProjectUserJoinRepository;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * Tests for {@link ReadProjectPermission}.
@@ -37,31 +39,36 @@ public class ReadProjectPermissionTest {
 	private ReadProjectPermission readProjectPermission;
 	private UserRepository userRepository;
 	private ProjectRepository projectRepository;
+	private ProjectUserJoinRepository pujRepository;
+	private ApplicationContext applicationContext;
 
 	@Before
 	public void setUp() {
-		ApplicationContext applicationContext = mock(ApplicationContext.class);
+		applicationContext = mock(ApplicationContext.class);
 		userRepository = mock(UserRepository.class);
 		projectRepository = mock(ProjectRepository.class);
+		pujRepository = mock(ProjectUserJoinRepository.class);
 		readProjectPermission = new ReadProjectPermission();
 		readProjectPermission.setApplicationContext(applicationContext);
 
 		when(applicationContext.getBean(UserRepository.class)).thenReturn(userRepository);
 		when(applicationContext.getBean("projectRepository")).thenReturn(projectRepository);
+		when(applicationContext.getBean(ProjectUserJoinRepository.class)).thenReturn(pujRepository);
+		
 	}
-
+	
 	@Test
 	public void testGrantPermission() {
 		String username = "fbristow";
 		User u = new User();
 		u.setUsername(username);
 		Project p = new Project();
-		Collection<Join<Project, User>> projectUsers = new ArrayList<>();
+		List<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, u));
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(projectRepository.findOne(1l)).thenReturn(p);
-		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
+		when(pujRepository.getUsersForProject(p)).thenReturn(projectUsers);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
@@ -69,7 +76,7 @@ public class ReadProjectPermissionTest {
 
 		verify(userRepository).loadUserByUsername(username);
 		verify(projectRepository).findOne(1l);
-		verify(userRepository).getUsersForProject(p);
+		verify(pujRepository).getUsersForProject(p);
 	}
 
 	@Test
@@ -78,12 +85,12 @@ public class ReadProjectPermissionTest {
 		User u = new User();
 		u.setUsername(username);
 		Project p = new Project();
-		Collection<Join<Project, User>> projectUsers = new ArrayList<>();
+		List<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, new User()));
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(projectRepository.findOne(1l)).thenReturn(p);
-		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
+		when(pujRepository.getUsersForProject(p)).thenReturn(projectUsers);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
@@ -91,7 +98,7 @@ public class ReadProjectPermissionTest {
 
 		verify(userRepository).loadUserByUsername(username);
 		verify(projectRepository).findOne(1l);
-		verify(userRepository).getUsersForProject(p);
+		verify(pujRepository).getUsersForProject(p);
 	}
 
 	@Test
