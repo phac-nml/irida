@@ -27,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJ
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sequencefile.MiseqRunSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sequencefile.SequenceFileOverrepresentedSequenceJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
@@ -44,6 +45,7 @@ public class SequenceFileServiceImplTest {
 	private CRUDRepository<Long, SequenceFile> fileRepository;
 	private SampleSequenceFileJoinRepository ssfRepository;
 	private SequenceFileOverrepresentedSequenceJoinRepository sfosRepository;
+	private MiseqRunSequenceFileJoinRepository mrsfRepository;
 	private Validator validator;
 
 	@Before
@@ -55,8 +57,9 @@ public class SequenceFileServiceImplTest {
 		fileRepository = mock(CRUDRepository.class);
 		ssfRepository = mock(SampleSequenceFileJoinRepository.class);
 		sfosRepository = mock(SequenceFileOverrepresentedSequenceJoinRepository.class);
+		mrsfRepository = mock(MiseqRunSequenceFileJoinRepository.class);
 		sequenceFileService = new SequenceFileServiceImpl(crudRepository, fileRepository, ssfRepository,
-				sfosRepository, validator);
+				sfosRepository, mrsfRepository, validator);
 	}
 
 	@Test
