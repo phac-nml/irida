@@ -56,6 +56,7 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		properties.put("hibernate.hbm2ddl.auto", environment.getProperty("hibernate.hbm2ddl.auto"));
 		properties.put("hibernate.hbm2ddl.import_files", environment.getProperty("hibernate.hbm2ddl.import_files"));
 		properties.put("hibernate.dialect", environment.getProperty("hibernate.dialect"));
+		properties.put("org.hibernate.envers.store_data_at_delete", environment.getProperty("org.hibernate.envers.store_data_at_delete"));
 		builder.addProperties(properties);
 		return builder;
 	}
