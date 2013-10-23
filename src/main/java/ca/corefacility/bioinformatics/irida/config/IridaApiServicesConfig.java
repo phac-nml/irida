@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.config;
 
 import javax.validation.Validator;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -49,24 +48,6 @@ import ca.corefacility.bioinformatics.irida.service.impl.UserServiceImpl;
 @Configuration
 @Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class })
 public class IridaApiServicesConfig {
-
-	@Autowired
-	private UserRepository userRepository;
-	@Autowired
-	private ProjectRepository projectRepository;
-	@Autowired
-	private SampleRepository sampleRepository;
-	@Autowired
-	private PasswordEncoder passwordEncoder;
-	@Autowired
-	private SequenceFileRepository sequenceFileRepository;
-	@Autowired
-	private MiseqRunRepository miseqRunRepository;
-	@Autowired
-	private OverrepresentedSequenceRepository overrepresentedSequenceRepository;
-	@Autowired
-	private CRUDRepository<Long, SequenceFile> sequenceFileFilesystemRepository;
-
 	@Bean
 	public UserService userService(UserRepository userRepository, ProjectUserJoinRepository pujRepository,
 			PasswordEncoder passwordEncoder, Validator validator) {
