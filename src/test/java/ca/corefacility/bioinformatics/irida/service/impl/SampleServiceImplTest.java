@@ -25,7 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.ProjectSampleJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
 
 import com.google.common.collect.Lists;

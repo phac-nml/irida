@@ -25,7 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.ProjectUserJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 
 import com.google.common.collect.ImmutableList;
 

@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.repositories.joins;
+package ca.corefacility.bioinformatics.irida.repositories.joins.project;
 
 import java.util.List;
 

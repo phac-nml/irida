@@ -27,8 +27,8 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.ProjectSampleJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.ProjectUserJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 
 /**
  * Tests for {@link ReadSamplePermission}.

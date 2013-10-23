@@ -11,8 +11,8 @@ import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.ProjectSampleJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.ProjectUserJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 
 /**
  * Evaluate whether or not an authenticated user can read a sequence file.
