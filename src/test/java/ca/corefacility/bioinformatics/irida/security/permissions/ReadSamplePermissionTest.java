@@ -66,7 +66,7 @@ public class ReadSamplePermissionTest {
 		projectUsers.add(new ProjectUserJoin(p, u));
 		Collection<ProjectSampleJoin> projectSampleList = Lists.newArrayList(new ProjectSampleJoin(p, s));
 
-		when(userRepository.getUserByUsername(username)).thenReturn(u);
+		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(projectRepository.getProjectForSample(s)).thenReturn(projectSampleList);
 		when(sampleRepository.findOne(1l)).thenReturn(s);
 		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
@@ -75,7 +75,7 @@ public class ReadSamplePermissionTest {
 
 		assertTrue("permission was not granted.", readSamplePermission.isAllowed(auth, 1l));
 
-		verify(userRepository).getUserByUsername(username);
+		verify(userRepository).loadUserByUsername(username);
 		verify(sampleRepository).findOne(1l);
 		verify(projectRepository).getProjectForSample(s);
 		verify(userRepository).getUsersForProject(p);
@@ -93,7 +93,7 @@ public class ReadSamplePermissionTest {
 		Collection<ProjectSampleJoin> projectSampleList = Lists.newArrayList(new ProjectSampleJoin(p, s));
 
 
-		when(userRepository.getUserByUsername(username)).thenReturn(u);
+		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(projectRepository.getProjectForSample(s)).thenReturn(projectSampleList);
 		when(sampleRepository.findOne(1l)).thenReturn(s);
 		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
@@ -102,7 +102,7 @@ public class ReadSamplePermissionTest {
 
 		assertTrue("permission was not granted.", readSamplePermission.isAllowed(auth, s));
 
-		verify(userRepository).getUserByUsername(username);
+		verify(userRepository).loadUserByUsername(username);
 		verify(projectRepository).getProjectForSample(s);
 		verify(userRepository).getUsersForProject(p);
 		// we didn't need to load the domain object for this test.
@@ -122,7 +122,7 @@ public class ReadSamplePermissionTest {
 		Collection<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, new User()));
 
-		when(userRepository.getUserByUsername(username)).thenReturn(u);
+		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(projectRepository.getProjectForSample(s)).thenReturn(projectSampleList);
 		when(sampleRepository.findOne(1l)).thenReturn(s);
 		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
@@ -131,7 +131,7 @@ public class ReadSamplePermissionTest {
 
 		assertFalse("permission was granted.", readSamplePermission.isAllowed(auth, 1l));
 
-		verify(userRepository).getUserByUsername(username);
+		verify(userRepository).loadUserByUsername(username);
 		verify(sampleRepository).findOne(1l);
 		verify(projectRepository).getProjectForSample(s);
 		verify(userRepository).getUsersForProject(p);

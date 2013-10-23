@@ -61,7 +61,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public Project create(Project p) {
 		Project project = super.create(p);
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		User user = userRepository.getUserByUsername(userDetails.getUsername());
+		User user = userRepository.loadUserByUsername(userDetails.getUsername());
 		addUserToProject(project, user, ProjectRole.PROJECT_OWNER);
 		return project;
 	}

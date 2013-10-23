@@ -39,7 +39,7 @@ public class ReadProjectPermission extends BasePermission<Project> {
 
 		// if not an administrator, then we need to figure out if the
 		// authenticated user is participating in the project.
-		User u = userRepository.getUserByUsername(authentication.getName());
+		User u = userRepository.loadUserByUsername(authentication.getName());
 		Collection<Join<Project, User>> projectUsers = userRepository.getUsersForProject(p);
 
 		for (Join<Project, User> projectUser : projectUsers) {

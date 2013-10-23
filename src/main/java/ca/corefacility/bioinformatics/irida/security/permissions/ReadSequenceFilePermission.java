@@ -49,7 +49,7 @@ public class ReadSequenceFilePermission extends BasePermission<SequenceFile> {
 		for(ProjectSampleJoin projectSample : projectForSample){
 
 			Collection<Join<Project, User>> projectUsers = userRepository.getUsersForProject(projectSample.getSubject());
-			User u = userRepository.getUserByUsername(authentication.getName());
+			User u = userRepository.loadUserByUsername(authentication.getName());
 
 			for (Join<Project, User> projectUser : projectUsers) {
 				if (u.equals(projectUser.getObject())) {

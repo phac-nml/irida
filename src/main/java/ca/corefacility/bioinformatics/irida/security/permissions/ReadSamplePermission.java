@@ -41,7 +41,7 @@ public class ReadSamplePermission extends BasePermission<Sample> {
 		// allowed to read a sample, the user must be part of the associated
 		// project.
 		
-		User u = userRepository.getUserByUsername(authentication.getName());
+		User u = userRepository.loadUserByUsername(authentication.getName());
 		
 		Collection<ProjectSampleJoin> projectForSample = projectRepository.getProjectForSample(s);
 		for(ProjectSampleJoin projectSample : projectForSample){

@@ -164,7 +164,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	@Override
 	@Transactional(readOnly = true)
 	public User getUserByUsername(String username) throws EntityNotFoundException {
-		return userRepository.getUserByUsername(username);
+		return userRepository.loadUserByUsername(username);
 	}
 
 	/**
@@ -186,7 +186,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 		org.springframework.security.core.userdetails.User userDetails = null;
 		User u;
 		try {
-			u = userRepository.getUserByUsername(username);
+			u = userRepository.loadUserByUsername(username);
 
 			userDetails = new org.springframework.security.core.userdetails.User(u.getUsername(), u.getPassword(),
 					u.getAuthorities());
