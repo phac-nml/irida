@@ -54,10 +54,10 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 		builder.scanPackages(
 				"ca.corefacility.bioinformatics.irida.model",
 				"ca.corefacility.bioinformatics.irida.repositories.relational.auditing",
-				"ca.corefacility.bioinformatics.irida.utils");
+				"ca.corefacility.bioinformatics.irida.utils.model");
 		Properties properties = new Properties();
 		properties.put("hibernate.show_sql", false);
-		properties.put("hibernate.hbm2ddl.auto", "create");
+		properties.put("hibernate.hbm2ddl.auto", "update");
 		properties
 				.put("hibernate.dialect", "org.hibernate.dialect.HSQLDialect");
 

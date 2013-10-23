@@ -37,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.utils.model.IdentifiableTestEntity;
 import ca.corefacility.bioinformatics.irida.utils.repositories.IdentifiableTestEntityRepo;
 import ca.corefacility.bioinformatics.irida.utils.SecurityUser;
+import ca.corefacility.bioinformatics.irida.utils.model.EntityJoin;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -338,5 +339,20 @@ public class GenericRelationalRepositoryTest {
 		}
 
 		assertTrue("Test if we found a disabled entity", disabled);
+	}
+	
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
+	public void testCascadeDelete(){
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+		String query = "SELECT * FROM entityjoin WHERE identifiableTestEntity_id=0";
+
+		List<Map<String, Object>> queryForList = jdbcTemplate.queryForList(query);
+		assertEquals("Test preconditions not met.  Database has changed", queryForList.size(),2);
+		repo.delete(0L);
+		
+		queryForList = jdbcTemplate.queryForList(query);
+		assertTrue(queryForList.isEmpty());
 	}
 }

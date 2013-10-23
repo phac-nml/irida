@@ -17,9 +17,21 @@
   <identifiable id="11" createdDate="2013-07-18 14:20:58.0" modifiedDate="2013-07-18 14:20:58.0" nonNull="notNull 11" integerValue="11" label="a label" enabled="1"/>
   <identifiable id="12" createdDate="2013-07-18 14:20:58.0" modifiedDate="2013-07-18 14:20:58.0" nonNull="disabled entity" integerValue="12" label="a label" enabled="0"/>
   
+  <otherEntity id="1" createdDate="2013-07-18 14:20:18.0" modifiedDate="2013-07-18 14:20:18.0" label="ent1" enabled="1"/>
+  <otherEntity id="2" createdDate="2013-07-18 14:20:18.0" modifiedDate="2013-07-18 14:20:18.0" label="ent2" enabled="1"/>
+  <otherEntity id="3" createdDate="2013-07-18 14:20:18.0" modifiedDate="2013-07-18 14:20:18.0" label="ent3" enabled="1"/>
+  
+  <entityjoin id="1" createdDate="2013-07-18 14:20:18.0" identifiableTestEntity_id="0" otherEntity_id="1"/>
+  <entityjoin id="2" createdDate="2013-07-18 14:20:18.0" identifiableTestEntity_id="0" otherEntity_id="2"/>
+  <entityjoin id="3" createdDate="2013-07-18 14:20:18.0" identifiableTestEntity_id="1" otherEntity_id="2"/>
+  <entityjoin id="4" createdDate="2013-07-18 14:20:18.0" identifiableTestEntity_id="2" otherEntity_id="3"/>
+  
+  
   <Revisions id="1" timestamp="1374780377995" />
   <Revisions id="2" timestamp="1374780383834" />
   <identifiable_AUD id="0" REV="1" REVTYPE="0" createdDate="2013-07-18 14:20:18.0" modifiedDate="2013-07-18 14:20:18.0" nonNull="notNull 0" integerValue="0" label="a label" enabled="1"/>
   <identifiable_AUD id="0" REV="2" REVTYPE="1" createdDate="2013-07-18 14:20:18.0" modifiedDate="2013-07-18 14:20:18.0" nonNull="different not null" integerValue="0" label="a label" enabled="1"/>
-
+  <entityjoin_AUD/>
+  <otherEntity_AUD/>
+  
 </dataset>

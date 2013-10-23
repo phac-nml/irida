@@ -1,3 +1,4 @@
+
 package ca.corefacility.bioinformatics.irida.utils.model;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
@@ -17,20 +18,15 @@ import org.hibernate.envers.Audited;
 
 /**
  *
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Entity
-@Table(name="identifiable")
+@Table(name="otherEntity")
 @Audited
-public class IdentifiableTestEntity implements IridaThing, Comparable<IdentifiableTestEntity> {
-
-    @Id
+public class OtherEntity implements IridaThing, Comparable<OtherEntity>{
+	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
-    @NotNull
-    private String nonNull;
-    private Integer integerValue;
 
     private String label;
     
@@ -40,10 +36,10 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
     
     private Date modifiedDate;
 	
-	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "identifiableTestEntity")
-	private List<EntityJoin> otherEntity;
+	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "otherEntity")
+	private List<EntityJoin> identified;
 
-    public IdentifiableTestEntity() {
+    public OtherEntity() {
     }
 
     @Override
@@ -62,25 +58,9 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
         this.id = id;
     }
 
-    public String getNonNull() {
-        return nonNull;
-    }
-
-    public void setNonNull(String nonNull) {
-        this.nonNull = nonNull;
-    }
-
     @Override
-    public int compareTo(IdentifiableTestEntity o) {
+    public int compareTo(OtherEntity o) {
         return createdDate.compareTo(o.createdDate);
-    }
-
-    public Integer getIntegerValue() {
-        return integerValue;
-    }
-
-    public void setIntegerValue(Integer integerValue) {
-        this.integerValue = integerValue;
     }
 
     @Override
@@ -114,16 +94,14 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
 
     @Override
     public int hashCode() {
-        return Objects.hash(nonNull,integerValue,createdDate);
+        return Objects.hash(createdDate);
     }
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof IdentifiableTestEntity) {
-            IdentifiableTestEntity u = (IdentifiableTestEntity) other;
-            return Objects.equals(nonNull,u.nonNull)
-                    && Objects.equals(integerValue, u.integerValue)
-                    && Objects.equals(createdDate, u.createdDate);
+        if (other instanceof OtherEntity) {
+            OtherEntity u = (OtherEntity) other;
+            return Objects.equals(createdDate, u.createdDate);
         }
 
         return false;
@@ -135,6 +113,5 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
 
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
-    }
-    
+	}
 }
