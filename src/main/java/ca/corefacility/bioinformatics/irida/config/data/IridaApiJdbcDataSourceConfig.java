@@ -12,6 +12,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.Database;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @Profile({ "dev", "prod" })
@@ -58,5 +64,31 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		properties.put("hibernate.dialect", environment.getProperty("hibernate.dialect"));
 		builder.addProperties(properties);
 		return builder;
+	}
+
+	@Bean
+	public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
+			JpaVendorAdapter jpaVendorAdapter) {
+		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
+		factory.setDataSource(dataSource);
+		factory.setJpaVendorAdapter(jpaVendorAdapter);
+		factory.setPackagesToScan("ca.corefacility.bioinformatics.irida.model",
+				"ca.corefacility.bioinformatics.irida.repositories.relational.auditing");
+
+		return factory;
+	}
+
+	@Bean
+	public JpaVendorAdapter jpaVendorAdapter() {
+		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
+		adapter.setShowSql(false);
+		adapter.setGenerateDdl(true);
+		adapter.setDatabase(Database.MYSQL);
+		return adapter;
+	}
+
+	@Bean
+	public PlatformTransactionManager transactionManager() {
+		return new JpaTransactionManager();
 	}
 }
