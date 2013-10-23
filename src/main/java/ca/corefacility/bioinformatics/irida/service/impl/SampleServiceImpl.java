@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -98,8 +97,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		Sample s = null;
 
 		// confirm that the link between project and this identifier exists
-		List<ProjectSampleJoin> samplesForProject = sampleRepository.getSamplesForProject(project);
-		for (ProjectSampleJoin join : samplesForProject) {
+		List<Join<Project, Sample>> samplesForProject = psjRepository.getSamplesForProject(project);
+		for (Join<Project, Sample> join : samplesForProject) {
 			if (join.getObject().getId().equals(identifier)) {
 				// load the sample from the database
 				s = read(identifier);
@@ -139,7 +138,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Transactional(readOnly = true)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public List<Join<Project, Sample>> getSamplesForProject(Project project) {
-		return new ArrayList<Join<Project, Sample>>(sampleRepository.getSamplesForProject(project));
+		return psjRepository.getSamplesForProject(project);
 	}
 
 	/**

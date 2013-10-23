@@ -39,4 +39,16 @@ public interface ProjectSampleJoinRepository extends CrudRepository<ProjectSampl
 	 */
 	@Query("delete from ProjectSampleJoin where j.project = ?1 and j.sample = ?2")
 	public void removeSampleFromProject(Project project, Sample sample);
+	
+
+	/**
+	 * Get the {@link Sample}s associated with a {@link Project}
+	 * 
+	 * @param project
+	 *            The {@link Project} to get {@link Sample}s from
+	 * @return A List of {@link ProjectSampleJoin}s describing the
+	 *         project/sample relationship
+	 */
+	@Query("select j from ProjectSampleJoin where j.project = ?1")
+	public List<Join<Project, Sample>> getSamplesForProject(Project project);
 }
