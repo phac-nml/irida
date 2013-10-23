@@ -37,4 +37,15 @@ public interface SampleSequenceFileJoinRepository extends CrudRepository<SampleS
 	 */
 	@Query("select j from SampleSequenceFileJoin j where j.sample = ?1")
 	public List<Join<Sample, SequenceFile>> getFilesForSample(Sample sample);
+	
+	/**
+	 * Remove a {@link SequenceFile} from a {@link Sample}
+	 * 
+	 * @param sample
+	 *            The sample to remove the file from
+	 * @param file
+	 *            The file to remove
+	 */
+	@Query("delete from SampleSequenceFileJoin j where j.sample = ?1 and j.sequenceFile = ?2")
+	public void removeFileFromSample(Sample sample, SequenceFile file);
 }

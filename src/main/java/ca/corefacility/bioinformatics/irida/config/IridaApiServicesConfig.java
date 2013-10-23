@@ -80,10 +80,9 @@ public class IridaApiServicesConfig {
 	}
 
 	@Bean
-	public SampleService sampleService(SampleRepository sampleRepository,
-			SequenceFileRepository sequenceFileRepository, ProjectSampleJoinRepository psjRepository,
+	public SampleService sampleService(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
 			SampleSequenceFileJoinRepository ssfRepository, Validator validator) {
-		return new SampleServiceImpl(sampleRepository, sequenceFileRepository, psjRepository, ssfRepository, validator);
+		return new SampleServiceImpl(sampleRepository, psjRepository, ssfRepository, validator);
 	}
 
 	@Bean

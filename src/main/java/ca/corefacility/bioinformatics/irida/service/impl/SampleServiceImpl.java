@@ -18,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
-import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
@@ -34,12 +33,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * Reference to {@link CRUDRepository} for managing {@link Sample}.
 	 */
 	private SampleRepository sampleRepository;
-	/**
-	 * Reference to {@link SequenceFileRepository} for managing
-	 * {@link SequenceFile}.
-	 */
-	private SequenceFileRepository sequenceFileRepository;
-
 	/**
 	 * Reference to {@link ProjectSampleJoinRepository} for managing
 	 * {@link ProjectSampleJoin}.
@@ -64,12 +57,10 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * @param validator
 	 *            validator.
 	 */
-	public SampleServiceImpl(SampleRepository sampleRepository, SequenceFileRepository sequenceFileRepository,
-			ProjectSampleJoinRepository psjRepository, SampleSequenceFileJoinRepository ssfRepository,
-			Validator validator) {
+	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
+			SampleSequenceFileJoinRepository ssfRepository, Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
-		this.sequenceFileRepository = sequenceFileRepository;
 		this.psjRepository = psjRepository;
 		this.ssfRepository = ssfRepository;
 	}
@@ -139,7 +130,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public void removeSequenceFileFromSample(Sample sample, SequenceFile sequenceFile) {
-		sequenceFileRepository.removeFileFromSample(sample, sequenceFile);
+		ssfRepository.removeFileFromSample(sample, sequenceFile);
 	}
 
 	/**
