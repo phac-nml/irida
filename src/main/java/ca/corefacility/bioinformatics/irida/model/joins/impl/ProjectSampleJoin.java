@@ -4,7 +4,9 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import java.util.Date;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,11 +40,11 @@ public class ProjectSampleJoin implements Join<Project,Sample>{
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.DETACH) 
     @JoinColumn(name="project_id")
     private Project project;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.DETACH) 
     @JoinColumn(name="sample_id")
     private Sample sample;
     

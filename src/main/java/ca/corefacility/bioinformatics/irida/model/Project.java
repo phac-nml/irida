@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model;
 
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.URL;
@@ -47,6 +48,9 @@ public class Project implements IridaThing, Comparable<Project> {
 	
 	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "project")
 	private List<ProjectUserJoin> users;
+	
+	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "project")
+	private List<ProjectSampleJoin> samples;
 
     public Project() {
         createdDate = new Date();
