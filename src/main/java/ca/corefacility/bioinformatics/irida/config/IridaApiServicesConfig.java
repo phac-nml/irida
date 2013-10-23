@@ -104,8 +104,10 @@ public class IridaApiServicesConfig {
 	}
 
 	@Bean
-	public OverrepresentedSequenceService overrepresentedSequenceService() {
-		return new OverrepresentedSequenceServiceImpl(overrepresentedSequenceRepository, validator());
+	public OverrepresentedSequenceService overrepresentedSequenceService(
+			OverrepresentedSequenceRepository osRepository,
+			SequenceFileOverrepresentedSequenceJoinRepository sfosRepository, Validator validator) {
+		return new OverrepresentedSequenceServiceImpl(osRepository, sfosRepository, validator);
 	}
 
 	@Bean
