@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -26,4 +28,21 @@ public interface MiseqRunSequenceFileJoinRepository extends CrudRepository<Miseq
 	 */
 	@Query("select j from MiseqRunSequenceFileJoin j where j.miseqRun = ?1")
 	public List<Join<MiseqRun, SequenceFile>> getFilesForMiseqRun(MiseqRun run);
+
+	/**
+	 * Get the {@link MiseqRun} associated with a {@link SequenceFile}
+	 * 
+	 * @param file
+	 *            The {@link SequenceFile} to find the run for
+	 * @return A {@link MiseqRunSequenceFileJoin} describing the relationship
+	 *         between the run and file
+	 * @throws EntityNotFoundException
+	 *             If the {@link SequenceFile} is not associated with a
+	 *             {@link MiseqRun}
+	 * @throws StorageException
+	 *             If the {@link SequenceFile} is associated with multiple
+	 *             {@link MiseqRun}s
+	 */
+	@Query("select j from MiseqRunSequenceFileJoin j where j.sequenceFile = ?1")
+	public Join<MiseqRun, SequenceFile> getMiseqRunForSequenceFile(SequenceFile file);
 }
