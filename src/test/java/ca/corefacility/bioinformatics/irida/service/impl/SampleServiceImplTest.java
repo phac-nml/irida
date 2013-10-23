@@ -24,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
-import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
@@ -38,7 +37,6 @@ public class SampleServiceImplTest {
 
 	private SampleService sampleService;
 	private SampleRepository sampleRepository;
-	private SequenceFileRepository sequenceFileRepository;
 	private ProjectSampleJoinRepository psjRepository;
 	private SampleSequenceFileJoinRepository ssfRepository;
 	private Validator validator;
@@ -46,13 +44,11 @@ public class SampleServiceImplTest {
 	@Before
 	public void setUp() {
 		sampleRepository = mock(SampleRepository.class);
-		sequenceFileRepository = mock(SequenceFileRepository.class);
 		psjRepository = mock(ProjectSampleJoinRepository.class);
 		ssfRepository = mock(SampleSequenceFileJoinRepository.class);
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
-		sampleService = new SampleServiceImpl(sampleRepository, sequenceFileRepository, psjRepository, ssfRepository,
-				validator);
+		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, ssfRepository, validator);
 	}
 
 	@Test
@@ -86,7 +82,6 @@ public class SampleServiceImplTest {
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s, sf);
 
 		when(sampleRepository.exists(s.getId())).thenReturn(Boolean.TRUE);
-		when(sequenceFileRepository.exists(sf.getId())).thenReturn(Boolean.TRUE);
 		when(ssfRepository.save(join)).thenReturn(join);
 
 		Join<Sample, SequenceFile> addSequenceFileToSample = sampleService.addSequenceFileToSample(s, sf);
@@ -106,7 +101,7 @@ public class SampleServiceImplTest {
 
 		sampleService.removeSequenceFileFromSample(s, sf);
 
-		verify(sequenceFileRepository).removeFileFromSample(s, sf);
+		verify(ssfRepository).removeFileFromSample(s, sf);
 	}
 
 	@Test
@@ -152,7 +147,7 @@ public class SampleServiceImplTest {
 		for (int i = 0; i < SIZE; i++) {
 			verify(ssfRepository).getFilesForSample(toMerge[i]);
 			verify(ssfRepository).save(s_sf_joins[i]);
-			verify(sequenceFileRepository).removeFileFromSample(toMerge[i], toMerge_sf[i]);
+			verify(ssfRepository).removeFileFromSample(toMerge[i], toMerge_sf[i]);
 			verify(sampleRepository).delete(toMerge[i].getId());
 			verify(psjRepository).getProjectForSample(toMerge[i]);
 		}

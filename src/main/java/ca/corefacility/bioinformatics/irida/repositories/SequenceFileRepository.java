@@ -6,7 +6,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
-import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
@@ -20,15 +19,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFil
  */
 
 public interface SequenceFileRepository extends PagingAndSortingRepository<SequenceFile, Long> {
-	/**
-	 * Remove a {@link SequenceFile} from a {@link Sample}
-	 * 
-	 * @param sample
-	 *            The sample to remove the file from
-	 * @param file
-	 *            The file to remove
-	 */
-	public void removeFileFromSample(Sample sample, SequenceFile file);
 
 	/**
 	 * Add an {@link OverrepresentedSequence} to a {@link SequenceFile}.
@@ -41,13 +31,14 @@ public interface SequenceFileRepository extends PagingAndSortingRepository<Seque
 	 */
 	public Join<SequenceFile, OverrepresentedSequence> addOverrepresentedSequenceToSequenceFile(
 			SequenceFile sequenceFile, OverrepresentedSequence sequence);
-	
+
 	/**
-     * Get the {@link SequenceFile}s associated with a {@link MiseqRun}
-     *
-     * @param run The {@link MiseqRun} to get the files for
-     * @return a list of {@link MiseqRunSequenceFileJoin} objects
-     */    
-    public List<MiseqRunSequenceFileJoin> getFilesForMiseqRun(MiseqRun run);
+	 * Get the {@link SequenceFile}s associated with a {@link MiseqRun}
+	 * 
+	 * @param run
+	 *            The {@link MiseqRun} to get the files for
+	 * @return a list of {@link MiseqRunSequenceFileJoin} objects
+	 */
+	public List<MiseqRunSequenceFileJoin> getFilesForMiseqRun(MiseqRun run);
 
 }
