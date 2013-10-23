@@ -20,6 +20,7 @@ import javax.validation.ValidatorFactory;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -117,17 +118,17 @@ public class UserServiceImplTest {
 
 		Map<String, Object> properties = new HashMap<>();
 		properties.put("password", (Object) password);
-		Map<String, Object> encodedPasswordProperties = ImmutableMap.of("password", (Object) encodedPassword);
+		//Map<String, Object> encodedPasswordProperties = ImmutableMap.of("password", (Object) encodedPassword);
 
 		when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
-		when(userRepository.update(id, properties)).thenReturn(persisted);
+		when(userRepository.save(persisted)).thenReturn(persisted);
 		when(userRepository.exists(1l)).thenReturn(true);
 
 		User u = userService.update(id, properties);
 		assertEquals("User-type was not returned.", persisted, u);
 
 		verify(passwordEncoder).encode(password);
-		verify(userRepository).update(1l, encodedPasswordProperties);
+		verify(userRepository).save(persisted);
 	}
 
 	@Test
@@ -188,8 +189,10 @@ public class UserServiceImplTest {
 
 		userService.changePassword(1l, password);
 
-		verify(userRepository).update(1l,
-				ImmutableMap.of("password", (Object) encodedPassword, "credentialsNonExpired", true));
+		ArgumentCaptor<User> argument = ArgumentCaptor.forClass(User.class);
+		verify(userRepository).save(argument.capture());
+		User saved = argument.getValue();
+		assertEquals("password field was not encoded.", encodedPassword, saved.getPassword());
 	}
 
 	@Test
