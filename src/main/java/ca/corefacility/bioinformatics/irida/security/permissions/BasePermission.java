@@ -3,10 +3,10 @@ package ca.corefacility.bioinformatics.irida.security.permissions;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.security.core.Authentication;
 
 import ca.corefacility.bioinformatics.irida.model.Role;
-import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 
 /**
  * Generic super-class for permission types to extend from.
@@ -89,12 +89,12 @@ public abstract class BasePermission<DomainObjectType> implements ApplicationCon
 
 		// load the domain object (if necessary) so that the subclass can
 		// evaluate access
-		CRUDRepository<Long, DomainObjectType> crudRepository = (CRUDRepository<Long, DomainObjectType>) applicationContext
+		CrudRepository<DomainObjectType, Long> crudRepository = (CrudRepository<DomainObjectType, Long>) applicationContext
 				.getBean(repositoryId);
 		DomainObjectType domainObject;
 
 		if (targetDomainObject instanceof Long) {
-			domainObject = crudRepository.read((Long) targetDomainObject);
+			domainObject = crudRepository.findOne((Long) targetDomainObject);
 		} else if (domainObjectType.isAssignableFrom(targetDomainObject.getClass())) {
 			// reflection replacement for instanceof
 			domainObject = (DomainObjectType) targetDomainObject;
