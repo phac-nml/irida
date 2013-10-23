@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model;
 
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.URL;
 
@@ -7,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -42,6 +44,9 @@ public class Project implements IridaThing, Comparable<Project> {
 	
 	@URL(message = "{project.remoteURL.url}")
 	private String remoteURL;
+	
+	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "project")
+	private List<ProjectUserJoin> users;
 
     public Project() {
         createdDate = new Date();

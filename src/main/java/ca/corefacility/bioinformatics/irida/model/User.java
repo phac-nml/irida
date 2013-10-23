@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model;
 
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -24,6 +25,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import ca.corefacility.bioinformatics.irida.validators.Patterns;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.UniqueConstraint;
 
 /**
@@ -88,6 +93,9 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	private String locale;
 
 	private boolean credentialsNonExpired;
+	
+	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "user")
+	private List<ProjectUserJoin> projects;
 
 	/**
 	 * Construct an instance of {@link User} with no properties set.

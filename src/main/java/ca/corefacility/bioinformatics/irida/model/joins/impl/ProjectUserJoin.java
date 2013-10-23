@@ -21,6 +21,8 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
 
 /**
  * A join table and class for users and projects.
@@ -51,11 +53,11 @@ public class ProjectUserJoin implements Join<Project,User>{
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.DETACH)
     @JoinColumn(name="project_id")
     private Project project;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.DETACH)
     @JoinColumn(name="user_id")
     private User user;
 	
