@@ -6,6 +6,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -64,8 +65,8 @@ public class SequenceFileServiceImplTest {
 		when(fileRepository.create(withIdentifier)).thenReturn(withIdentifier);
 		when(crudRepository.save(withIdentifier))
 				.thenReturn(withIdentifier);
-
 		when(crudRepository.exists(withIdentifier.getId())).thenReturn(Boolean.TRUE);
+		when(crudRepository.findOne(withIdentifier.getId())).thenReturn(withIdentifier);
 
 		SequenceFile created = sequenceFileService.create(sf);
 
@@ -75,6 +76,7 @@ public class SequenceFileServiceImplTest {
 		verify(fileRepository).create(withIdentifier);
 		verify(crudRepository).save(withIdentifier);
 		verify(crudRepository).exists(withIdentifier.getId());
+		verify(crudRepository).findOne(withIdentifier.getId());
 		Files.delete(f);
 	}
 
@@ -92,6 +94,7 @@ public class SequenceFileServiceImplTest {
 
 		when(crudRepository.exists(originalId)).thenReturn(Boolean.TRUE);
 		when(crudRepository.save(updatedSf)).thenReturn(updatedSf);
+		when(crudRepository.findOne(originalId)).thenReturn(updatedSf);
 
 		sf = sequenceFileService.update(originalId, updatedMap);
 
@@ -99,7 +102,8 @@ public class SequenceFileServiceImplTest {
 
 		verify(crudRepository).exists(originalId);
 		verify(crudRepository).save(updatedSf);
-		verify(fileRepository, times(0)).update(sf.getId(), updatedMap);
+		verify(crudRepository).findOne(originalId);
+		verifyZeroInteractions(fileRepository);
 		Files.delete(f);
 	}
 
@@ -119,6 +123,7 @@ public class SequenceFileServiceImplTest {
 		when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
 		when(crudRepository.save(updatedSf)).thenReturn(updatedSf);
 		when(fileRepository.update(sf.getId(), updatedMap)).thenReturn(updatedSf);
+		when(crudRepository.findOne(id)).thenReturn(updatedSf);
 
 		sf = sequenceFileService.update(id, updatedMap);
 
@@ -130,6 +135,7 @@ public class SequenceFileServiceImplTest {
 		verify(crudRepository, times(2)).exists(id);
 		verify(crudRepository, times(2)).save(updatedSf);
 		verify(fileRepository).update(sf.getId(), updatedMap);
+		verify(crudRepository, times(2)).findOne(id);
 
 		Files.delete(originalFile);
 		Files.delete(updatedFile);
@@ -148,14 +154,15 @@ public class SequenceFileServiceImplTest {
 		when(crudRepository.exists(sf.getId())).thenReturn(true);
 		when(fileRepository.create(sf)).thenReturn(sf);
 		when(crudRepository.addFileToSample(owner, sf)).thenReturn(new SampleSequenceFileJoin(owner, sf));
+		when(crudRepository.findOne(sf.getId())).thenReturn(sf);
 
 		Join<Sample, SequenceFile> created = sequenceFileService.createSequenceFileInSample(sf, owner);
 
-		verify(crudRepository).save(sf);
-		verify(crudRepository).save(any(SequenceFile.class));
+		verify(crudRepository, times(2)).save(any(SequenceFile.class));
 		verify(crudRepository).exists(sf.getId());
 		verify(fileRepository).create(sf);
 		verify(crudRepository).addFileToSample(owner, sf);
+		verify(crudRepository).findOne(sf.getId());
 
 		assertNotNull(created);
 		assertEquals(sf, created.getObject());
