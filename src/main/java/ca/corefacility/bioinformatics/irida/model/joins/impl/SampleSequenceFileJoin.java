@@ -4,7 +4,9 @@ import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import java.util.Date;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,11 +40,11 @@ public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	Long id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.DETACH) 
 	@JoinColumn(name = "sequencefile_id")
 	private SequenceFile sequenceFile;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.DETACH) 
 	@JoinColumn(name = "sample_id")
 	private Sample sample;
 

@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -64,6 +65,9 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	
 	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sample")
 	private List<ProjectSampleJoin> projects;
+	
+	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sample")
+	private List<SampleSequenceFileJoin> sequenceFiles;
 
 	public Sample() {
 		createdDate = new Date();
