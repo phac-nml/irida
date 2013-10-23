@@ -30,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
@@ -42,6 +43,7 @@ public class ProjectServiceImplTest {
 	private SampleRepository sampleRepository;
 	private UserRepository userRepository;
 	private ProjectUserJoinRepository pujRepository;
+	private ProjectSampleJoinRepository psjRepository;
 	private Validator validator;
 
 	@Before
@@ -52,8 +54,9 @@ public class ProjectServiceImplTest {
 		sampleRepository = mock(SampleRepository.class);
 		userRepository = mock(UserRepository.class);
 		pujRepository = mock(ProjectUserJoinRepository.class);
+		psjRepository = mock(ProjectSampleJoinRepository.class);
 		projectService = new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
-				validator);
+				psjRepository, validator);
 	}
 
 	@After
@@ -111,12 +114,14 @@ public class ProjectServiceImplTest {
 		Project p = new Project();
 		p.setName("project");
 		p.setId(new Long(1111));
+		
+		ProjectSampleJoin join = new ProjectSampleJoin(p, s);
 
-		when(projectRepository.addSampleToProject(p, s)).thenReturn(new ProjectSampleJoin(p, s));
+		when(psjRepository.save(join)).thenReturn(join);
 
 		Join<Project, Sample> rel = projectService.addSampleToProject(p, s);
 
-		verify(projectRepository).addSampleToProject(p, s);
+		verify(psjRepository).save(join);
 		verifyZeroInteractions(sampleRepository);
 
 		assertNotNull(rel);

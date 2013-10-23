@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,9 +18,9 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
-import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
 
 /**
@@ -41,7 +40,11 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	private SequenceFileRepository sequenceFileRepository;
 
-	private ProjectRepository projectRespository;
+	/**
+	 * Reference to {@link ProjectSampleJoinRepository} for managing
+	 * {@link ProjectSampleJoin}.
+	 */
+	private ProjectSampleJoinRepository psjRepository;
 
 	protected SampleServiceImpl() {
 		super(null, null, Sample.class);
@@ -56,11 +59,11 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 *            validator.
 	 */
 	public SampleServiceImpl(SampleRepository sampleRepository, SequenceFileRepository sequenceFileRepository,
-			ProjectRepository projectRepository, Validator validator) {
+			ProjectSampleJoinRepository psjRepository, Validator validator) {
 		super(sampleRepository, validator, Sample.class);
-		this.projectRespository = projectRepository;
 		this.sampleRepository = sampleRepository;
 		this.sequenceFileRepository = sequenceFileRepository;
+		this.psjRepository = psjRepository;
 	}
 
 	/**
@@ -161,8 +164,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 	private void confirmProjectSampleJoin(Project project, Sample sample) {
 		Set<Project> projects = new HashSet<>();
-		Collection<ProjectSampleJoin> sampleProjects = projectRespository.getProjectForSample(sample);
-		for (ProjectSampleJoin p : sampleProjects) {
+		List<Join<Project, Sample>> sampleProjects = psjRepository.getProjectForSample(sample);
+		for (Join<Project, Sample> p : sampleProjects) {
 			projects.add(p.getSubject());
 		}
 		if (!projects.contains(project)) {

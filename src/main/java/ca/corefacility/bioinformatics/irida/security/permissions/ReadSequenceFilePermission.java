@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.security.permissions;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
@@ -10,10 +9,9 @@ import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.ProjectUserJoinRepository;
 
 /**
@@ -42,14 +40,14 @@ public class ReadSequenceFilePermission extends BasePermission<SequenceFile> {
 		// similar to samples, an authenticated user can only read a sequence
 		// file if they are participating in the project owning the sample
 		// owning the sequence file.
-		ProjectRepository projectRepository = getApplicationContext().getBean(ProjectRepository.class);
 		SampleRepository sampleRepository = getApplicationContext().getBean(SampleRepository.class);
 		UserRepository userRepository = getApplicationContext().getBean(UserRepository.class);
 		ProjectUserJoinRepository pujRepository = getApplicationContext().getBean(ProjectUserJoinRepository.class);
+		ProjectSampleJoinRepository psjRepository = getApplicationContext().getBean(ProjectSampleJoinRepository.class);
 
 		Join<Sample, SequenceFile> sampleSequenceFile = sampleRepository.getSampleForSequenceFile(sf);
-		Collection<ProjectSampleJoin> projectForSample = projectRepository.getProjectForSample(sampleSequenceFile.getSubject());
-		for(ProjectSampleJoin projectSample : projectForSample){
+		List<Join<Project, Sample>> projectForSample = psjRepository.getProjectForSample(sampleSequenceFile.getSubject());
+		for(Join<Project, Sample> projectSample : projectForSample){
 
 			List<Join<Project, User>> projectUsers = pujRepository.getUsersForProject(projectSample.getSubject());
 			User u = userRepository.loadUserByUsername(authentication.getName());
