@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
@@ -37,8 +38,8 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implements ProjectService {
 
 	private static final Logger logger = LoggerFactory.getLogger(ProjectServiceImpl.class);
-	private ProjectRepository projectRepository;
 	private ProjectUserJoinRepository pujRepository;
+	private ProjectSampleJoinRepository psjRepository;
 	private SampleRepository sampleRepository;
 	private UserRepository userRepository;
 
@@ -47,12 +48,13 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	}
 
 	public ProjectServiceImpl(ProjectRepository projectRepository, SampleRepository sampleRepository,
-			UserRepository userRepository, ProjectUserJoinRepository pujRepository, Validator validator) {
+			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
+			ProjectSampleJoinRepository psjRepository, Validator validator) {
 		super(projectRepository, validator, Project.class);
-		this.projectRepository = projectRepository;
 		this.sampleRepository = sampleRepository;
 		this.userRepository = userRepository;
 		this.pujRepository = pujRepository;
+		this.psjRepository = psjRepository;
 	}
 
 	/**
@@ -129,7 +131,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			}
 		}
 
-		return projectRepository.addSampleToProject(project, sample);
+		ProjectSampleJoin join = new ProjectSampleJoin(project, sample);
+
+		return psjRepository.save(join);
 	}
 
 	/**
@@ -139,7 +143,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public void removeSampleFromProject(Project project, Sample sample) {
-		projectRepository.removeSampleFromProject(project, sample);
+		psjRepository.removeSampleFromProject(project, sample);
 	}
 
 	/**

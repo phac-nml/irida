@@ -1,13 +1,8 @@
 package ca.corefacility.bioinformatics.irida.repositories;
 
-import java.util.Collection;
-
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.Sample;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 
 /**
  * Specialized repository for {@link Project}.
@@ -16,34 +11,5 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public interface ProjectRepository extends PagingAndSortingRepository<Project, Long> {
-    /**
-     * Add a {@link Sample} to a {@link Project}.
-     * @param project The {@link Project} to add a {@link Sample} to
-     * @param sample The {@link Sample} to add to a {@link Project}
-     * @return A {@link ProjectSampleJoin} describing the project/sample link.
-     */
-    public ProjectSampleJoin addSampleToProject(Project project, Sample sample);
-    
-    /**
-     * Get a collection of the {@link Project}s related to a {@link Sample}
-     * @param sample The {@link Sample} to get the projects for
-     * @return A collection of {@link ProjectSampleJoin}s describing the project/sample link
-     */
-    public Collection<ProjectSampleJoin> getProjectForSample(Sample sample);
-    
-    /**
-     * Remove a {@link Sample} from a {@link Project}
-     * @param project The {@link Project} to remove from
-     * @param sample The {@link Sample} to remove
-     */
-    public void removeSampleFromProject(Project project, Sample sample) throws EntityNotFoundException;
-	
-	/**
-	 * Check if a {@link User} has a given {@link ProjectRole} on a {@link Project}
-	 * @param user The user to test
-	 * @param project The project to test
-	 * @param role The project role to test
-	 * @return true/false whether the user has the given role
-	 */
-	public boolean userHasProjectRole(User user, Project project, ProjectRole role);
+
 }

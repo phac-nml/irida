@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
 import ca.corefacility.bioinformatics.irida.service.OverrepresentedSequenceService;
@@ -71,13 +72,17 @@ public class IridaApiServicesConfig {
 
 	@Bean
 	public ProjectService projectService(ProjectRepository projectRepository, SampleRepository sampleRepository,
-			UserRepository userRepository, ProjectUserJoinRepository pujRepository, Validator validator) {
-		return new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository, validator);
+			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
+			ProjectSampleJoinRepository psjRepository, Validator validator) {
+		return new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
+				psjRepository, validator);
 	}
 
 	@Bean
-	public SampleService sampleService() {
-		return new SampleServiceImpl(sampleRepository, sequenceFileRepository, projectRepository, validator());
+	public SampleService sampleService(SampleRepository sampleRepository,
+			SequenceFileRepository sequenceFileRepository, ProjectSampleJoinRepository psjRepository,
+			Validator validator) {
+		return new SampleServiceImpl(sampleRepository, sequenceFileRepository, psjRepository, validator);
 	}
 
 	@Bean
