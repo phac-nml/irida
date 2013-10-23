@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -10,6 +11,7 @@ import ca.corefacility.bioinformatics.irida.model.Sample;
  * A repository for storing Sample objects
  * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public interface SampleRepository extends PagingAndSortingRepository<Sample, Long> {
 
@@ -25,5 +27,6 @@ public interface SampleRepository extends PagingAndSortingRepository<Sample, Lon
 	 * @throws EntityNotFoundException
 	 *             if a sample with this identifier doesn't exist
 	 */
+	@Query("select j.sample from ProjectSampleJoin j where j.project = ?1 and j.sample.externalSampleId = ?2")
 	public Sample getSampleByExternalSampleId(Project p, String externalSampleId) throws EntityNotFoundException;
 }
