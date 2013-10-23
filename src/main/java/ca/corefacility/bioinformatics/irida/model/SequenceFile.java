@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileOverrepresentedSequenceJoin;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
@@ -83,6 +84,9 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	
 	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sequenceFile")
 	private List<SampleSequenceFileJoin> samples;
+	
+	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sequenceFile")
+	private List<SequenceFileOverrepresentedSequenceJoin> overrepresentedSequences;
 
 	public SequenceFile() {
 		createdDate = new Date();
