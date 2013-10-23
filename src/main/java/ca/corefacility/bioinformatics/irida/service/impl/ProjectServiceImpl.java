@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,9 +22,11 @@ import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
 /**
@@ -37,19 +38,21 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 
 	private static final Logger logger = LoggerFactory.getLogger(ProjectServiceImpl.class);
 	private ProjectRepository projectRepository;
+	private ProjectUserJoinRepository pujRepository;
 	private SampleRepository sampleRepository;
 	private UserRepository userRepository;
-	
+
 	protected ProjectServiceImpl() {
 		super(null, null, Project.class);
 	}
 
 	public ProjectServiceImpl(ProjectRepository projectRepository, SampleRepository sampleRepository,
-			UserRepository userRepository, Validator validator) {
+			UserRepository userRepository, ProjectUserJoinRepository pujRepository, Validator validator) {
 		super(projectRepository, validator, Project.class);
 		this.projectRepository = projectRepository;
 		this.sampleRepository = sampleRepository;
 		this.userRepository = userRepository;
+		this.pujRepository = pujRepository;
 	}
 
 	/**
@@ -91,7 +94,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Join<Project, User> addUserToProject(Project project, User user, ProjectRole role) {
-		return projectRepository.addUserToProject(project, user,role);
+		ProjectUserJoin join = new ProjectUserJoin(project, user, role);
+		return pujRepository.save(join);
 	}
 
 	/**
@@ -101,7 +105,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public void removeUserFromProject(Project project, User user) {
-		projectRepository.removeUserFromProject(project, user);
+		pujRepository.removeUserFromProject(project, user);
 	}
 
 	/**
@@ -145,16 +149,16 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional(readOnly = true)
 	@PreAuthorize("isAuthenticated()")
 	public List<Join<Project, User>> getProjectsForUser(User user) {
-		return new ArrayList<Join<Project, User>>(projectRepository.getProjectsForUser(user));
+		return pujRepository.getProjectsForUser(user);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	@PreAuthorize("isAuthenticated()")
-	public List<Join<Project, User>> getProjectsForUserWithRole(User user,ProjectRole role) {
-		return new ArrayList<Join<Project, User>>(projectRepository.getProjectsForUserWithRole(user,role));	
+	public List<Join<Project, User>> getProjectsForUserWithRole(User user, ProjectRole role) {
+		return pujRepository.getProjectsForUserWithRole(user, role);
 	}
 
 	/**

@@ -66,12 +66,13 @@ public class IridaApiServicesConfig {
 	@Bean
 	public UserService userService(UserRepository userRepository, ProjectUserJoinRepository pujRepository,
 			PasswordEncoder passwordEncoder, Validator validator) {
-		return new UserServiceImpl(userRepository, pujRepository, passwordEncoder, validator());
+		return new UserServiceImpl(userRepository, pujRepository, passwordEncoder, validator);
 	}
 
 	@Bean
-	public ProjectService projectService() {
-		return new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, validator());
+	public ProjectService projectService(ProjectRepository projectRepository, SampleRepository sampleRepository,
+			UserRepository userRepository, ProjectUserJoinRepository pujRepository, Validator validator) {
+		return new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository, validator);
 	}
 
 	@Bean
