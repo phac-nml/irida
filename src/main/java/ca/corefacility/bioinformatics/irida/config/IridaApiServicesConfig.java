@@ -25,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sequencefile.SequenceFileOverrepresentedSequenceJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
 import ca.corefacility.bioinformatics.irida.service.OverrepresentedSequenceService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -88,9 +89,10 @@ public class IridaApiServicesConfig {
 	@Bean
 	public SequenceFileService sequenceFileService(SequenceFileRepository sequenceFileRepository,
 			CRUDRepository<Long, SequenceFile> sequenceFileFilesystemRepository,
-			SampleSequenceFileJoinRepository ssfRepository, Validator validator) {
+			SampleSequenceFileJoinRepository ssfRepository,
+			SequenceFileOverrepresentedSequenceJoinRepository sfosRepository, Validator validator) {
 		return new SequenceFileServiceImpl(sequenceFileRepository, sequenceFileFilesystemRepository, ssfRepository,
-				validator);
+				sfosRepository, validator);
 	}
 
 	@Bean
