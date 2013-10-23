@@ -5,9 +5,7 @@ import java.util.List;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
-import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
 
 /**
@@ -19,19 +17,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFil
  */
 
 public interface SequenceFileRepository extends PagingAndSortingRepository<SequenceFile, Long> {
-
-	/**
-	 * Add an {@link OverrepresentedSequence} to a {@link SequenceFile}.
-	 * 
-	 * @param sequenceFile
-	 *            the {@link SequenceFile}.
-	 * @param sequence
-	 *            the {@link OverrepresentedSequence}.
-	 * @return a {@link Join} representing the relationship.
-	 */
-	public Join<SequenceFile, OverrepresentedSequence> addOverrepresentedSequenceToSequenceFile(
-			SequenceFile sequenceFile, OverrepresentedSequence sequence);
-
 	/**
 	 * Get the {@link SequenceFile}s associated with a {@link MiseqRun}
 	 * 

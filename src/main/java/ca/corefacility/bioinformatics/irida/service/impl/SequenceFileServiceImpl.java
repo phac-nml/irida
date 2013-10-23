@@ -20,9 +20,11 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileOverrepresentedSequenceJoin;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sequencefile.SequenceFileOverrepresentedSequenceJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 import com.google.common.collect.ImmutableMap;
@@ -45,7 +47,12 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	private SequenceFileRepository sequenceFileRepository;
 
+	/**
+	 * Reference to {@link SampleSequenceFileJoinRepository}.
+	 */
 	private SampleSequenceFileJoinRepository ssfRepository;
+
+	private SequenceFileOverrepresentedSequenceJoinRepository sfosRepository;
 
 	protected SequenceFileServiceImpl() {
 		super(null, null, SequenceFile.class);
@@ -61,11 +68,12 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	public SequenceFileServiceImpl(SequenceFileRepository sequenceFileRepository,
 			CRUDRepository<Long, SequenceFile> fileRepository, SampleSequenceFileJoinRepository ssfRepository,
-			Validator validator) {
+			SequenceFileOverrepresentedSequenceJoinRepository sfosRepository, Validator validator) {
 		super(sequenceFileRepository, validator, SequenceFile.class);
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.fileRepository = fileRepository;
 		this.ssfRepository = ssfRepository;
+		this.sfosRepository = sfosRepository;
 	}
 
 	/**
@@ -139,14 +147,17 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		return ssfRepository.getFilesForSample(sample);
 	}
 
+	@Override
+	@Transactional(readOnly = true)
 	public List<Join<MiseqRun, SequenceFile>> getSequenceFilesForMiseqRun(MiseqRun miseqRun) {
 		List<MiseqRunSequenceFileJoin> filesForMiseqRun = sequenceFileRepository.getFilesForMiseqRun(miseqRun);
 		return new ArrayList<Join<MiseqRun, SequenceFile>>(filesForMiseqRun);
 	}
 
 	@Override
-	public void addOverrepresentedSequenceToSequenceFile(SequenceFile sequenceFile, OverrepresentedSequence sequence) {
-		// TODO Auto-generated method stub
-
+	@Transactional(readOnly = true)
+	public Join<SequenceFile, OverrepresentedSequence> addOverrepresentedSequenceToSequenceFile(
+			SequenceFile sequenceFile, OverrepresentedSequence sequence) {
+		return sfosRepository.save(new SequenceFileOverrepresentedSequenceJoin(sequenceFile, sequence));
 	}
 }

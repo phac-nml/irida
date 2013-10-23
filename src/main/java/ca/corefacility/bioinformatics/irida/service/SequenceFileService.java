@@ -56,5 +56,6 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 * @param sequenceFile
 	 * @param sequence
 	 */
-	public void addOverrepresentedSequenceToSequenceFile(SequenceFile sequenceFile, OverrepresentedSequence sequence);
+	public Join<SequenceFile, OverrepresentedSequence> addOverrepresentedSequenceToSequenceFile(
+			SequenceFile sequenceFile, OverrepresentedSequence sequence);
 }

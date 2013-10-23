@@ -27,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJ
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sequencefile.SequenceFileOverrepresentedSequenceJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 import com.google.common.collect.ImmutableMap;
@@ -43,6 +44,7 @@ public class SequenceFileServiceImplTest {
 	private SequenceFileRepository crudRepository;
 	private CRUDRepository<Long, SequenceFile> fileRepository;
 	private SampleSequenceFileJoinRepository ssfRepository;
+	private SequenceFileOverrepresentedSequenceJoinRepository sfosRepository;
 	private Validator validator;
 
 	@Before
@@ -53,7 +55,9 @@ public class SequenceFileServiceImplTest {
 		crudRepository = mock(SequenceFileRepository.class);
 		fileRepository = mock(CRUDRepository.class);
 		ssfRepository = mock(SampleSequenceFileJoinRepository.class);
-		sequenceFileService = new SequenceFileServiceImpl(crudRepository, fileRepository, ssfRepository, validator);
+		sfosRepository = mock(SequenceFileOverrepresentedSequenceJoinRepository.class);
+		sequenceFileService = new SequenceFileServiceImpl(crudRepository, fileRepository, ssfRepository,
+				sfosRepository, validator);
 	}
 
 	@Test
