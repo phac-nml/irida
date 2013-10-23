@@ -1,14 +1,11 @@
 package ca.corefacility.bioinformatics.irida.repositories;
 
-import java.util.List;
-
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 
 /**
@@ -18,15 +15,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJ
  */
 public interface SampleRepository extends PagingAndSortingRepository<Sample, Long> {
 
-	/**
-	 * Get the {@link Sample}s associated with a {@link Project}
-	 * 
-	 * @param project
-	 *            The {@link Project} to get {@link Sample}s from
-	 * @return A List of {@link ProjectSampleJoin}s describing the
-	 *         project/sample relationship
-	 */
-	public List<ProjectSampleJoin> getSamplesForProject(Project project);
 
 	/**
 	 * Get the {@link Sample} that owns the {@link SequenceFile}.
