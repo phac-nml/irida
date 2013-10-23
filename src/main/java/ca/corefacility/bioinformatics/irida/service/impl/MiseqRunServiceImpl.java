@@ -20,7 +20,6 @@ import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
 @Service
 public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> implements MiseqRunService {
 
-	private MiseqRunRepository miseqRepo;
 	private MiseqRunSequenceFileJoinRepository mrsfRepository;
 
 	protected MiseqRunServiceImpl() {
@@ -30,7 +29,6 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 	public MiseqRunServiceImpl(MiseqRunRepository repository, MiseqRunSequenceFileJoinRepository mrsfRepository,
 			Validator validator) {
 		super(repository, validator, MiseqRun.class);
-		this.miseqRepo = repository;
 		this.mrsfRepository = mrsfRepository;
 	}
 
@@ -50,7 +48,7 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 	@Override
 	@Transactional(readOnly = true)
 	public Join<MiseqRun, SequenceFile> getMiseqRunForSequenceFile(SequenceFile file) {
-		return miseqRepo.getMiseqRunForSequenceFile(file);
+		return mrsfRepository.getMiseqRunForSequenceFile(file);
 	}
 
 }
