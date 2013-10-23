@@ -19,8 +19,8 @@ import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileFilesystemRepository;
-import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntityRepo;
-import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntityRepoImpl;
+import ca.corefacility.bioinformatics.irida.utils.repositories.IdentifiableTestEntityRepo;
+import ca.corefacility.bioinformatics.irida.utils.repositories.IdentifiableTestEntityRepoImpl;
 
 @Configuration
 @Profile("test")

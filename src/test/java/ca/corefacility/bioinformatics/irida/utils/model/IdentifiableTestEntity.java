@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.utils;
+package ca.corefacility.bioinformatics.irida.utils.model;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import java.util.Date;

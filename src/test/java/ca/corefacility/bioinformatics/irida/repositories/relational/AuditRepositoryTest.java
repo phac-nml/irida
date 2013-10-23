@@ -22,8 +22,8 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.config.IridaApiRepositoriesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.UserRevEntity;
-import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntity;
-import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntityRepo;
+import ca.corefacility.bioinformatics.irida.utils.model.IdentifiableTestEntity;
+import ca.corefacility.bioinformatics.irida.utils.repositories.IdentifiableTestEntityRepo;
 import ca.corefacility.bioinformatics.irida.utils.SecurityUser;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;

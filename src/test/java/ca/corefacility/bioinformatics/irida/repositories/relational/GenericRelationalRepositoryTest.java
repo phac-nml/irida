@@ -34,8 +34,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
-import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntity;
-import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntityRepo;
+import ca.corefacility.bioinformatics.irida.utils.model.IdentifiableTestEntity;
+import ca.corefacility.bioinformatics.irida.utils.repositories.IdentifiableTestEntityRepo;
 import ca.corefacility.bioinformatics.irida.utils.SecurityUser;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;

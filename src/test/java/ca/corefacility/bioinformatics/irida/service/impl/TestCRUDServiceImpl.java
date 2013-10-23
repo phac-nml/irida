@@ -30,7 +30,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
-import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntity;
+import ca.corefacility.bioinformatics.irida.utils.model.IdentifiableTestEntity;
 
 /**
  * Testing the behavior of {@link CRUDServiceImpl}
