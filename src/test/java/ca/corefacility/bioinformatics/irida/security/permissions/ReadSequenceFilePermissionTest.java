@@ -76,7 +76,7 @@ public class ReadSequenceFilePermissionTest {
 		SequenceFile sf = new SequenceFile();
 		SampleSequenceFileJoin sampleSequenceFile = new SampleSequenceFileJoin(s, sf);
 
-		when(userRepository.getUserByUsername(username)).thenReturn(u);
+		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(projectRepository.getProjectForSample(s)).thenReturn(projectSampleList);
 		when(sequenceFileRepository.findOne(1l)).thenReturn(sf);
 		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
@@ -86,7 +86,7 @@ public class ReadSequenceFilePermissionTest {
 
 		assertTrue("permission was not granted.", readSequenceFilePermission.isAllowed(auth, 1l));
 
-		verify(userRepository).getUserByUsername(username);
+		verify(userRepository).loadUserByUsername(username);
 		verify(sequenceFileRepository).findOne(1l);
 		verify(projectRepository).getProjectForSample(s);
 		verify(userRepository).getUsersForProject(p);
@@ -106,7 +106,7 @@ public class ReadSequenceFilePermissionTest {
 		SequenceFile sf = new SequenceFile();
 		SampleSequenceFileJoin sampleSequenceFile = new SampleSequenceFileJoin(s, sf);
 
-		when(userRepository.getUserByUsername(username)).thenReturn(u);
+		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(projectRepository.getProjectForSample(s)).thenReturn(projectSampleList);
 		when(sequenceFileRepository.findOne(1l)).thenReturn(sf);
 		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
@@ -116,7 +116,7 @@ public class ReadSequenceFilePermissionTest {
 
 		assertFalse("permission was granted.", readSequenceFilePermission.isAllowed(auth, 1l));
 
-		verify(userRepository).getUserByUsername(username);
+		verify(userRepository).loadUserByUsername(username);
 		verify(sequenceFileRepository).findOne(1l);
 		verify(projectRepository).getProjectForSample(s);
 		verify(userRepository).getUsersForProject(p);

@@ -57,7 +57,7 @@ public class UserServiceImplTest {
 	// should throw the exception to the caller instead of swallowing it.
 	public void testBadUsername() {
 		String username = "superwrongusername";
-		when(userRepository.getUserByUsername(username)).thenThrow(new EntityNotFoundException("not found"));
+		when(userRepository.loadUserByUsername(username)).thenThrow(new EntityNotFoundException("not found"));
 		userService.getUserByUsername(username);
 	}
 
@@ -175,7 +175,7 @@ public class UserServiceImplTest {
 		String username = user.getUsername();
 		String password = user.getPassword();
 
-		when(userRepository.getUserByUsername(username)).thenReturn(user);
+		when(userRepository.loadUserByUsername(username)).thenReturn(user);
 
 		UserDetails userDetails = userService.loadUserByUsername(username);
 

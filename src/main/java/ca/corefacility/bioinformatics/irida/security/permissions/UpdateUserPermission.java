@@ -50,7 +50,7 @@ public class UpdateUserPermission extends BasePermission<User> {
 
 		logger.trace("User is not admin, checking if user is trying to modify own account.");
 
-		User authenticated = userService.getUserByUsername(authentication.getName());
+		User authenticated = userService.loadUserByUsername(authentication.getName());
 		
 		isOwnAccount = authenticated.equals(u);
 

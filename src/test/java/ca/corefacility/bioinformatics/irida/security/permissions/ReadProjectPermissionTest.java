@@ -59,7 +59,7 @@ public class ReadProjectPermissionTest {
 		Collection<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, u));
 
-		when(userRepository.getUserByUsername(username)).thenReturn(u);
+		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(projectRepository.findOne(1l)).thenReturn(p);
 		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
 
@@ -67,7 +67,7 @@ public class ReadProjectPermissionTest {
 
 		assertTrue("permission was not granted.", readProjectPermission.isAllowed(auth, 1l));
 
-		verify(userRepository).getUserByUsername(username);
+		verify(userRepository).loadUserByUsername(username);
 		verify(projectRepository).findOne(1l);
 		verify(userRepository).getUsersForProject(p);
 	}
@@ -81,7 +81,7 @@ public class ReadProjectPermissionTest {
 		Collection<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, new User()));
 
-		when(userRepository.getUserByUsername(username)).thenReturn(u);
+		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(projectRepository.findOne(1l)).thenReturn(p);
 		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
 
@@ -89,7 +89,7 @@ public class ReadProjectPermissionTest {
 
 		assertFalse("permission was granted.", readProjectPermission.isAllowed(auth, 1l));
 
-		verify(userRepository).getUserByUsername(username);
+		verify(userRepository).loadUserByUsername(username);
 		verify(projectRepository).findOne(1l);
 		verify(userRepository).getUsersForProject(p);
 	}

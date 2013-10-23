@@ -71,12 +71,12 @@ public class ProjectServiceImplTest {
 		SecurityContextHolder.getContext().setAuthentication(auth);
 		
 		when(projectRepository.save(p)).thenReturn(p);
-		when(userRepository.getUserByUsername(username)).thenReturn(u);
+		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		
 		projectService.create(p);
 		
 		verify(projectRepository).save(p);
-		verify(userRepository).getUserByUsername(username);
+		verify(userRepository).loadUserByUsername(username);
 	}
 	
 	@Test

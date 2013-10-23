@@ -25,7 +25,7 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
                 
         try{
             UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            User userByUsername = urepo.getUserByUsername(principal.getUsername());
+            User userByUsername = urepo.loadUserByUsername(principal.getUsername());
             
             if(userByUsername != null){
                 rev.setUser(userByUsername);
