@@ -125,9 +125,8 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT') or hasPermission(#sample, 'canReadSample')")
 	public Join<Sample, SequenceFile> createSequenceFileInSample(SequenceFile sequenceFile, Sample sample) {
 		SequenceFile created = create(sequenceFile);
-		SampleSequenceFileJoin addFileToSample = sequenceFileRepository.addFileToSample(sample, created);
-
-		return addFileToSample;
+		SampleSequenceFileJoin join = new SampleSequenceFileJoin(sample, created);
+		return ssfRepository.save(join);
 	}
 
 	/**

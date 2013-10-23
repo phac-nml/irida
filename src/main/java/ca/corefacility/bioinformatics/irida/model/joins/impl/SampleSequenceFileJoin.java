@@ -1,9 +1,8 @@
 package ca.corefacility.bioinformatics.irida.model.joins.impl;
 
-import ca.corefacility.bioinformatics.irida.model.Sample;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import java.util.Date;
+import java.util.Objects;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,7 +14,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 import org.hibernate.envers.Audited;
+
+import ca.corefacility.bioinformatics.irida.model.Sample;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 
 /**
  * 
@@ -25,16 +29,6 @@ import org.hibernate.envers.Audited;
 @Table(name = "sequencefile_sample")
 @Audited
 public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
-
-	public SampleSequenceFileJoin() {
-		createdDate = new Date();
-	}
-
-	public SampleSequenceFileJoin(Sample subject, SequenceFile object) {
-		this.sequenceFile = object;
-		this.sample = subject;
-		createdDate = new Date();
-	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -50,6 +44,30 @@ public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
+
+	public SampleSequenceFileJoin() {
+		createdDate = new Date();
+	}
+
+	public SampleSequenceFileJoin(Sample subject, SequenceFile object) {
+		this.sequenceFile = object;
+		this.sample = subject;
+		createdDate = new Date();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof SampleSequenceFileJoin) {
+			SampleSequenceFileJoin j = (SampleSequenceFileJoin) o;
+			return Objects.equals(sequenceFile, j.sequenceFile) && Objects.equals(sample, j.sample);
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(sequenceFile, sample);
+	}
 
 	@Override
 	public Sample getSubject() {

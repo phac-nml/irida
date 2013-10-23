@@ -149,12 +149,13 @@ public class SequenceFileServiceImplTest {
 		sf.setId(new Long(1111));
 		Sample owner = new Sample();
 		owner.setId(new Long(2222));
+		SampleSequenceFileJoin join = new SampleSequenceFileJoin(owner, sf);
 
 		when(crudRepository.save(sf)).thenReturn(sf);
 		when(crudRepository.save(any(SequenceFile.class))).thenReturn(sf);
 		when(crudRepository.exists(sf.getId())).thenReturn(true);
 		when(fileRepository.create(sf)).thenReturn(sf);
-		when(crudRepository.addFileToSample(owner, sf)).thenReturn(new SampleSequenceFileJoin(owner, sf));
+		when(ssfRepository.save(join)).thenReturn(join);
 		when(crudRepository.findOne(sf.getId())).thenReturn(sf);
 
 		Join<Sample, SequenceFile> created = sequenceFileService.createSequenceFileInSample(sf, owner);
@@ -162,7 +163,7 @@ public class SequenceFileServiceImplTest {
 		verify(crudRepository, times(2)).save(any(SequenceFile.class));
 		verify(crudRepository).exists(sf.getId());
 		verify(fileRepository).create(sf);
-		verify(crudRepository).addFileToSample(owner, sf);
+		verify(ssfRepository).save(join);
 		verify(crudRepository).findOne(sf.getId());
 
 		assertNotNull(created);
