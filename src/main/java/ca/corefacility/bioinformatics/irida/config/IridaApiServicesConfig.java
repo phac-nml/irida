@@ -98,8 +98,9 @@ public class IridaApiServicesConfig {
 	}
 
 	@Bean
-	public MiseqRunService miseqRunService() {
-		return new MiseqRunServiceImpl(miseqRunRepository, validator());
+	public MiseqRunService miseqRunService(MiseqRunRepository miseqRunRepository,
+			MiseqRunSequenceFileJoinRepository mrsfRepository, Validator validator) {
+		return new MiseqRunServiceImpl(miseqRunRepository, mrsfRepository, validator);
 	}
 
 	@Bean
