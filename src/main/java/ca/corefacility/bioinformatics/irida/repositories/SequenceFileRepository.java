@@ -10,7 +10,6 @@ import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 
 /**
  * A repository to store information about sequence files. This repository will
@@ -21,19 +20,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJ
  */
 
 public interface SequenceFileRepository extends PagingAndSortingRepository<SequenceFile, Long> {
-
-
-	/**
-	 * Add a {@link SequenceFile} to a {@link Sample}
-	 * 
-	 * @param sample
-	 *            The sample to add to
-	 * @param file
-	 *            The file to add to the project
-	 * @return a {@link SampleSequenceFileJoin} modeling the relationship
-	 */
-	public SampleSequenceFileJoin addFileToSample(Sample sample, SequenceFile file);
-
 	/**
 	 * Remove a {@link SequenceFile} from a {@link Sample}
 	 * 

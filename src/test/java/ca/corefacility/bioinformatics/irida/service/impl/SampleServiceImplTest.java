@@ -83,15 +83,14 @@ public class SampleServiceImplTest {
 
 		Project p = new Project();
 		p.setId(3333l);
-		// Relationship projectSequenceFile = new
-		// Relationship(p.getIdentifier(), sf.getIdentifier());
+		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s, sf);
 
 		when(sampleRepository.exists(s.getId())).thenReturn(Boolean.TRUE);
 		when(sequenceFileRepository.exists(sf.getId())).thenReturn(Boolean.TRUE);
-		when(sequenceFileRepository.addFileToSample(s, sf)).thenReturn(new SampleSequenceFileJoin(s, sf));
+		when(ssfRepository.save(join)).thenReturn(join);
 
 		Join<Sample, SequenceFile> addSequenceFileToSample = sampleService.addSequenceFileToSample(s, sf);
-		verify(sequenceFileRepository).addFileToSample(s, sf);
+		verify(ssfRepository).save(join);
 
 		assertNotNull(addSequenceFileToSample);
 		assertEquals(addSequenceFileToSample.getSubject(), s);
@@ -140,7 +139,7 @@ public class SampleServiceImplTest {
 			sampleSequenceFileJoins.add(s_sf_joins[p]);
 
 			when(ssfRepository.getFilesForSample(toMerge[p])).thenReturn(sampleSequenceFileJoins);
-			when(sequenceFileRepository.addFileToSample(s, toMerge_sf[p])).thenReturn(s_sf_joins[p]);
+			when(ssfRepository.save(s_sf_joins[p])).thenReturn(s_sf_joins[p]);
 			when(psjRepository.getProjectForSample(toMerge[p])).thenReturn(projectSampleJoins);
 		}
 		List<Join<Project, Sample>> joins = new ArrayList<>();
@@ -152,7 +151,7 @@ public class SampleServiceImplTest {
 		verify(psjRepository).getProjectForSample(s);
 		for (int i = 0; i < SIZE; i++) {
 			verify(ssfRepository).getFilesForSample(toMerge[i]);
-			verify(sequenceFileRepository).addFileToSample(s, toMerge_sf[i]);
+			verify(ssfRepository).save(s_sf_joins[i]);
 			verify(sequenceFileRepository).removeFileFromSample(toMerge[i], toMerge_sf[i]);
 			verify(sampleRepository).delete(toMerge[i].getId());
 			verify(psjRepository).getProjectForSample(toMerge[i]);

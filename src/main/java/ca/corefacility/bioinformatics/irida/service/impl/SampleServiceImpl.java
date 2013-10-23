@@ -92,7 +92,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public SampleSequenceFileJoin addSequenceFileToSample(Sample sample, SequenceFile sampleFile) {
 		// call the relationship repository to create the relationship between
 		// the two entities.
-		return sequenceFileRepository.addFileToSample(sample, sampleFile);
+		SampleSequenceFileJoin join = new SampleSequenceFileJoin(sample, sampleFile);
+		return ssfRepository.save(join);
 	}
 
 	/**
