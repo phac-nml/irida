@@ -28,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 
 import com.google.common.collect.ImmutableMap;
@@ -41,6 +42,7 @@ public class UserServiceImplTest {
 
 	private UserService userService;
 	private UserRepository userRepository;
+	private ProjectUserJoinRepository pujRepository;
 	private Validator validator;
 	private PasswordEncoder passwordEncoder;
 
@@ -50,7 +52,8 @@ public class UserServiceImplTest {
 		validator = factory.getValidator();
 		userRepository = mock(UserRepository.class);
 		passwordEncoder = mock(PasswordEncoder.class);
-		userService = new UserServiceImpl(userRepository, passwordEncoder, validator);
+		pujRepository = mock(ProjectUserJoinRepository.class);
+		userService = new UserServiceImpl(userRepository, pujRepository, passwordEncoder, validator);
 	}
 
 	@Test(expected = EntityNotFoundException.class)

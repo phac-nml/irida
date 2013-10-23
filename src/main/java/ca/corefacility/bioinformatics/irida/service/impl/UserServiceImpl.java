@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 
 import com.google.common.collect.ImmutableMap;
@@ -52,6 +53,10 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * A reference to the user repository used to manage users.
 	 */
 	private UserRepository userRepository;
+	/**
+	 * A reference to the project user join repository.
+	 */
+	private ProjectUserJoinRepository pujRepository;
 	/**
 	 * A reference to the password encoder used by the system for storing
 	 * passwords.
@@ -95,10 +100,12 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * @param validator
 	 *            the validator used to validate instances of {@link User}.
 	 */
-	public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, Validator validator) {
+	public UserServiceImpl(UserRepository userRepository, ProjectUserJoinRepository pujRepository,
+			PasswordEncoder passwordEncoder, Validator validator) {
 		super(userRepository, validator, User.class);
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
+		this.pujRepository = pujRepository;
 	}
 
 	/**
@@ -173,7 +180,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	@Override
 	@Transactional(readOnly = true)
 	public Collection<Join<Project, User>> getUsersForProject(Project project) {
-		return userRepository.getUsersForProject(project);
+		return pujRepository.getUsersForProject(project);
 	}
 
 	/**
@@ -223,7 +230,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	@Override
 	@Transactional(readOnly = true)
 	public Collection<Join<Project, User>> getUsersForProjectByRole(Project project, ProjectRole projectRole) {
-		return userRepository.getUsersForProjectByRole(project, projectRole);
+		return pujRepository.getUsersForProjectByRole(project, projectRole);
 	}
 
 	@Override

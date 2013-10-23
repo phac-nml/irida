@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.security.permissions;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +24,10 @@ import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.ProjectUserJoinRepository;
+
 import com.google.common.collect.Lists;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -43,6 +47,7 @@ public class ReadSequenceFilePermissionTest {
 	private SampleRepository sampleRepository;
 	private ProjectRepository projectRepository;
 	private SequenceFileRepository sequenceFileRepository;
+	private ProjectUserJoinRepository pujRepository;
 
 	@Before
 	public void setUp() {
@@ -51,6 +56,7 @@ public class ReadSequenceFilePermissionTest {
 		sampleRepository = mock(SampleRepository.class);
 		projectRepository = mock(ProjectRepository.class);
 		sequenceFileRepository = mock(SequenceFileRepository.class);
+		pujRepository = mock(ProjectUserJoinRepository.class);
 
 		readSequenceFilePermission = new ReadSequenceFilePermission();
 		readSequenceFilePermission.setApplicationContext(applicationContext);
@@ -58,6 +64,7 @@ public class ReadSequenceFilePermissionTest {
 		when(applicationContext.getBean(UserRepository.class)).thenReturn(userRepository);
 		when(applicationContext.getBean(SampleRepository.class)).thenReturn(sampleRepository);
 		when(applicationContext.getBean(ProjectRepository.class)).thenReturn(projectRepository);
+		when(applicationContext.getBean(ProjectUserJoinRepository.class)).thenReturn(pujRepository);
 		when(applicationContext.getBean("sequenceFileRepository")).thenReturn(sequenceFileRepository);
 	}
 
@@ -68,7 +75,7 @@ public class ReadSequenceFilePermissionTest {
 		u.setUsername(username);
 		Project p = new Project();
 		Sample s = new Sample();
-		Collection<Join<Project, User>> projectUsers = new ArrayList<>();
+		List<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, u));
 		Collection<ProjectSampleJoin> projectSampleList = Lists.newArrayList(new ProjectSampleJoin(p, s));
 
@@ -79,7 +86,7 @@ public class ReadSequenceFilePermissionTest {
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(projectRepository.getProjectForSample(s)).thenReturn(projectSampleList);
 		when(sequenceFileRepository.findOne(1l)).thenReturn(sf);
-		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
+		when(pujRepository.getUsersForProject(p)).thenReturn(projectUsers);
 		when(sampleRepository.getSampleForSequenceFile(sf)).thenReturn(sampleSequenceFile);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
@@ -89,7 +96,7 @@ public class ReadSequenceFilePermissionTest {
 		verify(userRepository).loadUserByUsername(username);
 		verify(sequenceFileRepository).findOne(1l);
 		verify(projectRepository).getProjectForSample(s);
-		verify(userRepository).getUsersForProject(p);
+		verify(pujRepository).getUsersForProject(p);
 		verify(sampleRepository).getSampleForSequenceFile(sf);
 	}
 
@@ -100,7 +107,7 @@ public class ReadSequenceFilePermissionTest {
 		u.setUsername(username);
 		Project p = new Project();
 		Sample s = new Sample();
-		Collection<Join<Project, User>> projectUsers = new ArrayList<>();
+		List<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, new User()));
 		Collection<ProjectSampleJoin> projectSampleList = Lists.newArrayList(new ProjectSampleJoin(p, s));
 		SequenceFile sf = new SequenceFile();
@@ -109,7 +116,7 @@ public class ReadSequenceFilePermissionTest {
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(projectRepository.getProjectForSample(s)).thenReturn(projectSampleList);
 		when(sequenceFileRepository.findOne(1l)).thenReturn(sf);
-		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
+		when(pujRepository.getUsersForProject(p)).thenReturn(projectUsers);
 		when(sampleRepository.getSampleForSequenceFile(sf)).thenReturn(sampleSequenceFile);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
@@ -119,7 +126,7 @@ public class ReadSequenceFilePermissionTest {
 		verify(userRepository).loadUserByUsername(username);
 		verify(sequenceFileRepository).findOne(1l);
 		verify(projectRepository).getProjectForSample(s);
-		verify(userRepository).getUsersForProject(p);
+		verify(pujRepository).getUsersForProject(p);
 		verify(sampleRepository).getSampleForSequenceFile(sf);
 	}
 

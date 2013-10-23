@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.security.permissions;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.ProjectUserJoinRepository;
 
 /**
  * Confirms that the authenticated user is allowed to read a project.
@@ -36,11 +37,12 @@ public class ReadProjectPermission extends BasePermission<Project> {
 	public boolean customPermissionAllowed(Authentication authentication, Project p) {
 		logger.trace("Testing permission for [" + authentication + "] on project [" + p + "]");
 		UserRepository userRepository = getApplicationContext().getBean(UserRepository.class);
+		ProjectUserJoinRepository pujRepository = getApplicationContext().getBean(ProjectUserJoinRepository.class);
 
 		// if not an administrator, then we need to figure out if the
 		// authenticated user is participating in the project.
 		User u = userRepository.loadUserByUsername(authentication.getName());
-		Collection<Join<Project, User>> projectUsers = userRepository.getUsersForProject(p);
+		List<Join<Project, User>> projectUsers = pujRepository.getUsersForProject(p);
 
 		for (Join<Project, User> projectUser : projectUsers) {
 			if (projectUser.getObject().equals(u)) {
