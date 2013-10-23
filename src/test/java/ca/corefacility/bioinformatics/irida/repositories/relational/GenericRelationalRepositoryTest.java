@@ -234,9 +234,11 @@ public class GenericRelationalRepositoryTest {
 		repo.delete(id);
 		List<IdentifiableTestEntity> query = jdbcTemplate.query(
 				"SELECT id,nonNull,integerValue,label,enabled FROM identifiable WHERE id=?", rowMapper, id);
-		for (IdentifiableTestEntity ent : query) {
-			assertFalse(ent.isEnabled());
-		}
+		assertTrue(query.isEmpty());
+		List<IdentifiableTestEntity> queryAud = jdbcTemplate.query(
+				"SELECT id,nonNull,integerValue,label,enabled FROM identifiable_AUD WHERE id=?", rowMapper, id);
+		assertTrue(queryAud.size() == 1);
+		assertEquals(queryAud.get(0).getId(),id);
 	}
 
 	@Test
