@@ -113,8 +113,8 @@ public class UserServiceImplTest {
 	public void testPasswordUpdate() {
 		final String password = "Password1";
 		final String encodedPassword = "ENCODED_" + password;
-		final Long id = 1l;
 		final User persisted = user();
+		final Long id = persisted.getId();
 
 		Map<String, Object> properties = new HashMap<>();
 		properties.put("password", (Object) password);
@@ -122,13 +122,16 @@ public class UserServiceImplTest {
 
 		when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
 		when(userRepository.save(persisted)).thenReturn(persisted);
-		when(userRepository.exists(1l)).thenReturn(true);
+		when(userRepository.findOne(id)).thenReturn(persisted);
+		when(userRepository.exists(id)).thenReturn(true);
 
 		User u = userService.update(id, properties);
 		assertEquals("User-type was not returned.", persisted, u);
 
 		verify(passwordEncoder).encode(password);
+		verify(userRepository).findOne(id);
 		verify(userRepository).save(persisted);
+		verify(userRepository).exists(id);
 	}
 
 	@Test
@@ -136,6 +139,7 @@ public class UserServiceImplTest {
 		Map<String, Object> properties = ImmutableMap.of("username", (Object) "updated");
 
 		when(userRepository.exists(1l)).thenReturn(true);
+		when(userRepository.findOne(1l)).thenReturn(user());
 		userService.update(1l, properties);
 		verifyZeroInteractions(passwordEncoder);
 	}
@@ -186,6 +190,7 @@ public class UserServiceImplTest {
 
 		when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
 		when(userRepository.exists(1l)).thenReturn(true);
+		when(userRepository.findOne(1l)).thenReturn(user());
 
 		userService.changePassword(1l, password);
 
