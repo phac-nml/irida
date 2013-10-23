@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
 import ca.corefacility.bioinformatics.irida.service.OverrepresentedSequenceService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -81,13 +82,16 @@ public class IridaApiServicesConfig {
 	@Bean
 	public SampleService sampleService(SampleRepository sampleRepository,
 			SequenceFileRepository sequenceFileRepository, ProjectSampleJoinRepository psjRepository,
-			Validator validator) {
-		return new SampleServiceImpl(sampleRepository, sequenceFileRepository, psjRepository, validator);
+			SampleSequenceFileJoinRepository ssfRepository, Validator validator) {
+		return new SampleServiceImpl(sampleRepository, sequenceFileRepository, psjRepository, ssfRepository, validator);
 	}
 
 	@Bean
-	public SequenceFileService sequenceFileService() {
-		return new SequenceFileServiceImpl(sequenceFileRepository, sequenceFileFilesystemRepository, validator());
+	public SequenceFileService sequenceFileService(SequenceFileRepository sequenceFileRepository,
+			CRUDRepository<Long, SequenceFile> sequenceFileFilesystemRepository,
+			SampleSequenceFileJoinRepository ssfRepository, Validator validator) {
+		return new SequenceFileServiceImpl(sequenceFileRepository, sequenceFileFilesystemRepository, ssfRepository,
+				validator);
 	}
 
 	@Bean
@@ -101,9 +105,9 @@ public class IridaApiServicesConfig {
 	}
 
 	@Bean
-	public FileProcessingChain fileProcessorChain() {
-		return new DefaultFileProcessingChain(new GzipFileProcessor(sequenceFileService()), new FastqcFileProcessor(
-				sequenceFileService()));
+	public FileProcessingChain fileProcessorChain(SequenceFileService sequenceFileService) {
+		return new DefaultFileProcessingChain(new GzipFileProcessor(sequenceFileService), new FastqcFileProcessor(
+				sequenceFileService));
 	}
 
 	@Bean

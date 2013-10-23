@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.repositories.joins.sample;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
@@ -24,4 +26,15 @@ public interface SampleSequenceFileJoinRepository extends CrudRepository<SampleS
 	 */
 	@Query("select j from SampleSequenceFileJoin j where j.sequenceFile = ?1")
 	public Join<Sample, SequenceFile> getSampleForSequenceFile(SequenceFile sequenceFile);
+	
+
+	/**
+	 * Get the {@link SequenceFile}s associated with a sample
+	 * 
+	 * @param sample
+	 *            The sample to get the files for
+	 * @return a list of {@link SampleSequenceFileJoin} objects
+	 */
+	@Query("select j from SampleSequenceFileJoin j where j.sample = ?1")
+	public List<Join<Sample, SequenceFile>> getFilesForSample(Sample sample);
 }

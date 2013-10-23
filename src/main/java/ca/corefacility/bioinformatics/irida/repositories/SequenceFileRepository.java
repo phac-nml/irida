@@ -17,18 +17,11 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJ
  * not directly store the file, just metadata
  * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 
 public interface SequenceFileRepository extends PagingAndSortingRepository<SequenceFile, Long> {
 
-	/**
-	 * Get the {@link SequenceFile}s associated with a sample
-	 * 
-	 * @param sample
-	 *            The sample to get the files for
-	 * @return a list of {@link SampleSequenceFileJoin} objects
-	 */
-	public List<SampleSequenceFileJoin> getFilesForSample(Sample sample);
 
 	/**
 	 * Add a {@link SequenceFile} to a {@link Sample}

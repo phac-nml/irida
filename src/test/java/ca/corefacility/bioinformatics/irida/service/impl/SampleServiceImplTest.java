@@ -26,9 +26,8 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJ
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
-
-import com.google.common.collect.Lists;
 
 /**
  * Unit tests for {@link SampleServiceImpl}.
@@ -41,6 +40,7 @@ public class SampleServiceImplTest {
 	private SampleRepository sampleRepository;
 	private SequenceFileRepository sequenceFileRepository;
 	private ProjectSampleJoinRepository psjRepository;
+	private SampleSequenceFileJoinRepository ssfRepository;
 	private Validator validator;
 
 	@Before
@@ -48,9 +48,11 @@ public class SampleServiceImplTest {
 		sampleRepository = mock(SampleRepository.class);
 		sequenceFileRepository = mock(SequenceFileRepository.class);
 		psjRepository = mock(ProjectSampleJoinRepository.class);
+		ssfRepository = mock(SampleSequenceFileJoinRepository.class);
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
-		sampleService = new SampleServiceImpl(sampleRepository, sequenceFileRepository, psjRepository, validator);
+		sampleService = new SampleServiceImpl(sampleRepository, sequenceFileRepository, psjRepository, ssfRepository,
+				validator);
 	}
 
 	@Test
@@ -132,12 +134,14 @@ public class SampleServiceImplTest {
 			toMerge_sf[p] = sf(i + 2);
 			s_sf_joins[p] = new SampleSequenceFileJoin(toMerge[p], toMerge_sf[p]);
 			p_s_joins[p] = new ProjectSampleJoin(project, toMerge[p]);
-			List<Join<Project, Sample>> joins = new ArrayList<>();
-			joins.add(p_s_joins[p]);
+			List<Join<Project, Sample>> projectSampleJoins = new ArrayList<>();
+			projectSampleJoins.add(p_s_joins[p]);
+			List<Join<Sample, SequenceFile>> sampleSequenceFileJoins = new ArrayList<>();
+			sampleSequenceFileJoins.add(s_sf_joins[p]);
 
-			when(sequenceFileRepository.getFilesForSample(toMerge[p])).thenReturn(Lists.newArrayList(s_sf_joins[p]));
+			when(ssfRepository.getFilesForSample(toMerge[p])).thenReturn(sampleSequenceFileJoins);
 			when(sequenceFileRepository.addFileToSample(s, toMerge_sf[p])).thenReturn(s_sf_joins[p]);
-			when(psjRepository.getProjectForSample(toMerge[p])).thenReturn(joins);
+			when(psjRepository.getProjectForSample(toMerge[p])).thenReturn(projectSampleJoins);
 		}
 		List<Join<Project, Sample>> joins = new ArrayList<>();
 		joins.add(new ProjectSampleJoin(project, s));
@@ -147,7 +151,7 @@ public class SampleServiceImplTest {
 
 		verify(psjRepository).getProjectForSample(s);
 		for (int i = 0; i < SIZE; i++) {
-			verify(sequenceFileRepository).getFilesForSample(toMerge[i]);
+			verify(ssfRepository).getFilesForSample(toMerge[i]);
 			verify(sequenceFileRepository).addFileToSample(s, toMerge_sf[i]);
 			verify(sequenceFileRepository).removeFileFromSample(toMerge[i], toMerge_sf[i]);
 			verify(sampleRepository).delete(toMerge[i].getId());
@@ -166,7 +170,7 @@ public class SampleServiceImplTest {
 		p1.setId(1l);
 		Project p2 = new Project();
 		p2.setId(2l);
-		
+
 		List<Join<Project, Sample>> p1_s1 = new ArrayList<>();
 		p1_s1.add(new ProjectSampleJoin(p1, s1));
 		List<Join<Project, Sample>> p2_s2 = new ArrayList<>();

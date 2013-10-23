@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFil
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 import com.google.common.collect.ImmutableMap;
@@ -44,6 +45,8 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	private SequenceFileRepository sequenceFileRepository;
 
+	private SampleSequenceFileJoinRepository ssfRepository;
+
 	protected SequenceFileServiceImpl() {
 		super(null, null, SequenceFile.class);
 	}
@@ -57,10 +60,12 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 *            validator.
 	 */
 	public SequenceFileServiceImpl(SequenceFileRepository sequenceFileRepository,
-			CRUDRepository<Long, SequenceFile> fileRepository, Validator validator) {
+			CRUDRepository<Long, SequenceFile> fileRepository, SampleSequenceFileJoinRepository ssfRepository,
+			Validator validator) {
 		super(sequenceFileRepository, validator, SequenceFile.class);
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.fileRepository = fileRepository;
+		this.ssfRepository = ssfRepository;
 	}
 
 	/**
@@ -123,8 +128,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Transactional(readOnly = true)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public List<Join<Sample, SequenceFile>> getSequenceFilesForSample(Sample sample) {
-		List<SampleSequenceFileJoin> joins = sequenceFileRepository.getFilesForSample(sample);
-		return new ArrayList<Join<Sample, SequenceFile>>(joins);
+		return ssfRepository.getFilesForSample(sample);
 	}
 
 	public List<Join<MiseqRun, SequenceFile>> getSequenceFilesForMiseqRun(MiseqRun miseqRun) {
