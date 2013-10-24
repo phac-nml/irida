@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.impl;
+package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -27,6 +27,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
+import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.utils.model.IdentifiableTestEntity;
 
 /**
@@ -34,7 +35,7 @@ import ca.corefacility.bioinformatics.irida.utils.model.IdentifiableTestEntity;
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class TestCRUDServiceImpl {
+public class CRUDServiceImplTest {
 
 	private CRUDService<Long, IdentifiableTestEntity> crudService;
 	private PagingAndSortingRepository<IdentifiableTestEntity, Long> crudRepository;
