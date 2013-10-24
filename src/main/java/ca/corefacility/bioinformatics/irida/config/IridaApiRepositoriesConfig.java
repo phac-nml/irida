@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.envers.repository.support.EnversRevisionRepositoryFactoryBean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -37,7 +38,7 @@ import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.Use
  */
 @Configuration
 @EnableTransactionManagement(order = 1000)
-@EnableJpaRepositories(basePackages = { "ca.corefacility.bioinformatics.irida.repositories" })
+@EnableJpaRepositories(basePackages = { "ca.corefacility.bioinformatics.irida.repositories" }, repositoryFactoryBeanClass = EnversRevisionRepositoryFactoryBean.class)
 @Import({ IridaApiPropertyPlaceholderConfig.class, IridaApiJdbcDataSourceConfig.class })
 public class IridaApiRepositoriesConfig {
 
