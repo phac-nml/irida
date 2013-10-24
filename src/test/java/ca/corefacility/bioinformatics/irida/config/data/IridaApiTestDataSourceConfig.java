@@ -15,6 +15,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.vendor.Database;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
@@ -36,6 +39,15 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 			}
 		}
 		return new SequenceFileFilesystemRepository(baseDirectory);
+	}
+
+	@Bean
+	public JpaVendorAdapter jpaVendorAdapter() {
+		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
+		adapter.setShowSql(false);
+		adapter.setGenerateDdl(true);
+		adapter.setDatabase(Database.HSQL);
+		return adapter;
 	}
 	
 	@Bean
