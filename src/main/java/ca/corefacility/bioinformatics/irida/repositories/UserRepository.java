@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.history.RevisionRepository;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -15,7 +16,8 @@ import ca.corefacility.bioinformatics.irida.model.User;
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public interface UserRepository extends PagingAndSortingRepository<User, Long>, UserDetailsService {
+public interface UserRepository extends PagingAndSortingRepository<User, Long>, UserDetailsService,
+		RevisionRepository<User, Long, Integer> {
 
 	/**
 	 * Get a user from the database with the supplied username.
@@ -28,8 +30,6 @@ public interface UserRepository extends PagingAndSortingRepository<User, Long>, 
 	 */
 	@Query("select u from User u where u.username = ?1")
 	public User loadUserByUsername(String username) throws EntityNotFoundException;
-
-	
 
 	/**
 	 * Get the list of {@link User}s that are not associated with the current

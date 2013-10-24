@@ -152,6 +152,11 @@
 			<artifactId>spring-data-jpa</artifactId>
 			<version>${spring.data.jpa.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-envers</artifactId>
+			<version>${spring.data.envers.version}</version>
+		</dependency>
 
 		<!-- Spring Security -->
 		<dependency>
@@ -382,6 +387,7 @@
 		<spring.version>3.2.4.RELEASE</spring.version>
 		<spring.security.version>3.2.0.RC1</spring.security.version>
 		<spring.data.jpa.version>1.4.1.RELEASE</spring.data.jpa.version>
+		<spring.data.envers.version>0.1.0.RELEASE</spring.data.envers.version>
 		<mockito.version>1.9.5</mockito.version>
 		<mysql.connector.version>5.1.26</mysql.connector.version>
 		<hibernate.version>4.2.6.Final</hibernate.version>
