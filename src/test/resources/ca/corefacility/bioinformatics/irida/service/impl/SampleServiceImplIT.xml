@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
-	<system_role id="3" description="A manager" name="ROLE_MANAGER" />
+	<system_role description="A manager" name="ROLE_MANAGER" />
 
 	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
 		email="manager@nowhere.com" firstName="Mr." lastName="Manager"
 		password="$2a$10$rgdnCrrAqN11Hz03mcGCg.R9gZehmEcyLC3kUGQJ1fEBlF9ld.4v."
-		phoneNumber="867-5309" username="fbristow" enabled="true" system_role="3"
+		phoneNumber="867-5309" username="fbristow" enabled="true" system_role="ROLE_MANAGER"
 		credentialsNonExpired="true" />
 
 	<project id="1" createdDate="2013-07-18 14:20:19.0"
