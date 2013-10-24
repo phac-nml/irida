@@ -27,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.config.data.DataConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileFilesystem;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileFilesystemImpl;
-import ca.corefacility.bioinformatics.irida.repositories.relational.AuditRepository;
 import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.UserRevListener;
 
 /**
@@ -77,11 +76,6 @@ public class IridaApiRepositoriesConfig {
 			System.exit(1);
 		}
 		return new SequenceFileFilesystemImpl(baseDirectory);
-	}
-
-	@Bean
-	public AuditRepository auditRepository() {
-		return new AuditRepository(sessionFactory);
 	}
 
 	@Bean(initMethod = "initialize")
