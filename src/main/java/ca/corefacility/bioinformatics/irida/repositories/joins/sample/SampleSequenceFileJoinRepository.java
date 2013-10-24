@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.repositories.joins.sample;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
@@ -46,6 +47,7 @@ public interface SampleSequenceFileJoinRepository extends CrudRepository<SampleS
 	 * @param file
 	 *            The file to remove
 	 */
+	@Modifying
 	@Query("delete from SampleSequenceFileJoin j where j.sample = ?1 and j.sequenceFile = ?2")
 	public void removeFileFromSample(Sample sample, SequenceFile file);
 }
