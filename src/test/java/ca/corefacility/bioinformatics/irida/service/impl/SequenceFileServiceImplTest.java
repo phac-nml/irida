@@ -24,7 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
-import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SequenceFileFilesystem;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sequencefile.MiseqRunSequenceFileJoinRepository;
@@ -43,19 +43,18 @@ public class SequenceFileServiceImplTest {
 
 	private SequenceFileService sequenceFileService;
 	private SequenceFileRepository crudRepository;
-	private CRUDRepository<Long, SequenceFile> fileRepository;
+	private SequenceFileFilesystem fileRepository;
 	private SampleSequenceFileJoinRepository ssfRepository;
 	private SequenceFileOverrepresentedSequenceJoinRepository sfosRepository;
 	private MiseqRunSequenceFileJoinRepository mrsfRepository;
 	private Validator validator;
 
 	@Before
-	@SuppressWarnings("unchecked")
 	public void setUp() {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
 		crudRepository = mock(SequenceFileRepository.class);
-		fileRepository = mock(CRUDRepository.class);
+		fileRepository = mock(SequenceFileFilesystem.class);
 		ssfRepository = mock(SampleSequenceFileJoinRepository.class);
 		sfosRepository = mock(SequenceFileOverrepresentedSequenceJoinRepository.class);
 		mrsfRepository = mock(MiseqRunSequenceFileJoinRepository.class);
@@ -71,7 +70,7 @@ public class SequenceFileServiceImplTest {
 		SequenceFile withIdentifier = new SequenceFile(f);
 		withIdentifier.setId(new Long(1111));
 		when(crudRepository.save(sf)).thenReturn(withIdentifier);
-		when(fileRepository.create(withIdentifier)).thenReturn(withIdentifier);
+		when(fileRepository.writeSequenceFileToDisk(withIdentifier)).thenReturn(withIdentifier);
 		when(crudRepository.save(withIdentifier)).thenReturn(withIdentifier);
 		when(crudRepository.exists(withIdentifier.getId())).thenReturn(Boolean.TRUE);
 		when(crudRepository.findOne(withIdentifier.getId())).thenReturn(withIdentifier);
@@ -81,7 +80,7 @@ public class SequenceFileServiceImplTest {
 		assertEquals(created, withIdentifier);
 
 		verify(crudRepository).save(sf);
-		verify(fileRepository).create(withIdentifier);
+		verify(fileRepository).writeSequenceFileToDisk(withIdentifier);
 		verify(crudRepository).save(withIdentifier);
 		verify(crudRepository).exists(withIdentifier.getId());
 		verify(crudRepository).findOne(withIdentifier.getId());
@@ -130,7 +129,7 @@ public class SequenceFileServiceImplTest {
 
 		when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
 		when(crudRepository.save(updatedSf)).thenReturn(updatedSf);
-		when(fileRepository.update(sf.getId(), updatedMap)).thenReturn(updatedSf);
+		when(fileRepository.updateSequenceFileOnDisk(sf.getId(), updatedFile)).thenReturn(updatedFile);
 		when(crudRepository.findOne(id)).thenReturn(updatedSf);
 
 		sf = sequenceFileService.update(id, updatedMap);
@@ -142,7 +141,7 @@ public class SequenceFileServiceImplTest {
 		// directory
 		verify(crudRepository, times(2)).exists(id);
 		verify(crudRepository, times(2)).save(updatedSf);
-		verify(fileRepository).update(sf.getId(), updatedMap);
+		verify(fileRepository).updateSequenceFileOnDisk(sf.getId(), updatedFile);
 		verify(crudRepository, times(2)).findOne(id);
 
 		Files.delete(originalFile);
@@ -161,7 +160,7 @@ public class SequenceFileServiceImplTest {
 		when(crudRepository.save(sf)).thenReturn(sf);
 		when(crudRepository.save(any(SequenceFile.class))).thenReturn(sf);
 		when(crudRepository.exists(sf.getId())).thenReturn(true);
-		when(fileRepository.create(sf)).thenReturn(sf);
+		when(fileRepository.writeSequenceFileToDisk(sf)).thenReturn(sf);
 		when(ssfRepository.save(join)).thenReturn(join);
 		when(crudRepository.findOne(sf.getId())).thenReturn(sf);
 
@@ -169,7 +168,7 @@ public class SequenceFileServiceImplTest {
 
 		verify(crudRepository, times(2)).save(any(SequenceFile.class));
 		verify(crudRepository).exists(sf.getId());
-		verify(fileRepository).create(sf);
+		verify(fileRepository).writeSequenceFileToDisk(sf);
 		verify(ssfRepository).save(join);
 		verify(crudRepository).findOne(sf.getId());
 

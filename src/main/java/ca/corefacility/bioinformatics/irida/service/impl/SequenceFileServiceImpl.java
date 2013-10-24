@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileOverrepresentedSequenceJoin;
-import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SequenceFileFilesystem;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sequencefile.MiseqRunSequenceFileJoinRepository;
@@ -40,7 +41,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	/**
 	 * A reference to the file system repository.
 	 */
-	private CRUDRepository<Long, SequenceFile> fileRepository;
+	private SequenceFileFilesystem fileRepository;
 	/**
 	 * Reference to {@link SampleSequenceFileJoinRepository}.
 	 */
@@ -67,7 +68,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 *            validator.
 	 */
 	public SequenceFileServiceImpl(SequenceFileRepository sequenceFileRepository,
-			CRUDRepository<Long, SequenceFile> fileRepository, SampleSequenceFileJoinRepository ssfRepository,
+			SequenceFileFilesystem fileRepository, SampleSequenceFileJoinRepository ssfRepository,
 			SequenceFileOverrepresentedSequenceJoinRepository sfosRepository,
 			MiseqRunSequenceFileJoinRepository mrsfRepository, Validator validator) {
 		super(sequenceFileRepository, validator, SequenceFile.class);
@@ -87,7 +88,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		// Send the file to the database repository to be stored (in super)
 		sequenceFile = super.create(sequenceFile);
 		// Then store the file in an appropriate directory
-		sequenceFile = fileRepository.create(sequenceFile);
+		sequenceFile = fileRepository.writeSequenceFileToDisk(sequenceFile);
 		// And finally, update the database with the stored file location
 
 		Map<String, Object> changed = new HashMap<>();
@@ -107,20 +108,23 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadSequenceFile')")
 	public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
-		if(updatedFields.containsKey("fileRevisionNumber")){
+		if (updatedFields.containsKey("fileRevisionNumber")) {
 			throw new InvalidPropertyException("File revision number cannot be updated manually.");
 		}
-		
+
 		SequenceFile updated = super.update(id, updatedFields);
-		
+
 		if (updatedFields.containsKey("file")) {
-			//need to read the sequence file to get the current file revision number
+			// need to read the sequence file to get the current file revision
+			// number
 			Long fileRevisionNumber = updated.getFileRevisionNumber();
 			fileRevisionNumber++;
 			updatedFields.put("fileRevisionNumber", fileRevisionNumber);
-			
-			updated = fileRepository.update(id, updatedFields);
-			super.update(id, ImmutableMap.of("file", (Object) updated.getFile(),"fileRevisionNumber", fileRevisionNumber));
+
+			Path fileLocation = (Path) updatedFields.get("file");
+			Path updatedLocation = fileRepository.updateSequenceFileOnDisk(id, fileLocation);
+			super.update(id,
+					ImmutableMap.of("file", (Object) updatedLocation, "fileRevisionNumber", fileRevisionNumber));
 		}
 
 		return updated;
