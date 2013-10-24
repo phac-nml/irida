@@ -24,9 +24,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import ca.corefacility.bioinformatics.irida.config.data.DataConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileFilesystemRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SequenceFileFilesystem;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileFilesystemImpl;
 import ca.corefacility.bioinformatics.irida.repositories.relational.AuditRepository;
 import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.UserRevListener;
 
@@ -38,7 +37,7 @@ import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.Use
  */
 @Configuration
 @EnableTransactionManagement(order = 1000)
-@EnableJpaRepositories(basePackages = {"ca.corefacility.bioinformatics.irida.repositories"})
+@EnableJpaRepositories(basePackages = { "ca.corefacility.bioinformatics.irida.repositories" })
 @Import({ IridaApiPropertyPlaceholderConfig.class, IridaApiJdbcDataSourceConfig.class })
 public class IridaApiRepositoriesConfig {
 
@@ -68,15 +67,15 @@ public class IridaApiRepositoriesConfig {
 	public PlatformTransactionManager transactionManager() {
 		return new JpaTransactionManager();
 	}
-	
+
 	@Bean
-	public CRUDRepository<Long, SequenceFile> sequenceFileFilesystemRepository() {
+	public SequenceFileFilesystem sequenceFileFilesystem() {
 		Path baseDirectory = Paths.get(sequenceFileBaseDirectory);
 		if (!Files.exists(baseDirectory)) {
 			logger.error("Storage directory [" + sequenceFileBaseDirectory + "] for SequenceFiles does not exist!");
 			System.exit(1);
 		}
-		return new SequenceFileFilesystemRepository(baseDirectory);
+		return new SequenceFileFilesystemImpl(baseDirectory);
 	}
 
 	@Bean

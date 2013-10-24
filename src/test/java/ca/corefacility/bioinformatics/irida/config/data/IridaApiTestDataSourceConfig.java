@@ -19,16 +19,15 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileFilesystemRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SequenceFileFilesystem;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileFilesystemImpl;
 
 @Configuration
 @Profile("test")
 public class IridaApiTestDataSourceConfig implements DataConfig {
 
 	@Bean
-	public CRUDRepository<Long, SequenceFile> sequenceFileFilesystemRepository() {
+	public SequenceFileFilesystem sequenceFileFilesystemRepository() {
 		Path baseDirectory = Paths.get("/tmp", "sequence-files");
 		if (!Files.exists(baseDirectory)) {
 			try {
@@ -38,7 +37,7 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 				System.exit(1);
 			}
 		}
-		return new SequenceFileFilesystemRepository(baseDirectory);
+		return new SequenceFileFilesystemImpl(baseDirectory);
 	}
 
 	@Bean

@@ -16,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
-import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
@@ -30,7 +29,7 @@ import ca.corefacility.bioinformatics.irida.service.SampleService;
 public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements SampleService {
 
 	/**
-	 * Reference to {@link CRUDRepository} for managing {@link Sample}.
+	 * Reference to {@link SampleRepository} for managing {@link Sample}.
 	 */
 	private SampleRepository sampleRepository;
 	/**

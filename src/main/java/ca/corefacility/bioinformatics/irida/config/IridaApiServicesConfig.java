@@ -9,16 +9,15 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
-import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.MiseqRunRepository;
 import ca.corefacility.bioinformatics.irida.repositories.OverrepresentedSequenceRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SequenceFileFilesystem;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
@@ -70,7 +69,7 @@ public class IridaApiServicesConfig {
 
 	@Bean
 	public SequenceFileService sequenceFileService(SequenceFileRepository sequenceFileRepository,
-			CRUDRepository<Long, SequenceFile> sequenceFileFilesystemRepository,
+			SequenceFileFilesystem sequenceFileFilesystemRepository,
 			SampleSequenceFileJoinRepository ssfRepository,
 			SequenceFileOverrepresentedSequenceJoinRepository sfosRepository,
 			MiseqRunSequenceFileJoinRepository mrsfRepository, Validator validator) {
