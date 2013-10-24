@@ -26,7 +26,7 @@ public interface ProjectSampleJoinRepository extends CrudRepository<ProjectSampl
 	 * @return A collection of {@link ProjectSampleJoin}s describing the
 	 *         project/sample link
 	 */
-	@Query("select j from ProjectSampleJoin where j.sample = ?1")
+	@Query("select j from ProjectSampleJoin j where j.sample = ?1")
 	public List<Join<Project, Sample>> getProjectForSample(Sample sample);
 
 	/**
@@ -37,7 +37,7 @@ public interface ProjectSampleJoinRepository extends CrudRepository<ProjectSampl
 	 * @param sample
 	 *            The {@link Sample} to remove
 	 */
-	@Query("delete from ProjectSampleJoin where j.project = ?1 and j.sample = ?2")
+	@Query("delete from ProjectSampleJoin j where j.project = ?1 and j.sample = ?2")
 	public void removeSampleFromProject(Project project, Sample sample);
 	
 
@@ -49,6 +49,6 @@ public interface ProjectSampleJoinRepository extends CrudRepository<ProjectSampl
 	 * @return A List of {@link ProjectSampleJoin}s describing the
 	 *         project/sample relationship
 	 */
-	@Query("select j from ProjectSampleJoin where j.project = ?1")
+	@Query("select j from ProjectSampleJoin j where j.project = ?1")
 	public List<Join<Project, Sample>> getSamplesForProject(Project project);
 }
