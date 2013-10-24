@@ -157,6 +157,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 				removeSequenceFileFromSample(s, sequenceFile.getObject());
 				addSequenceFileToSample(mergeInto, sequenceFile.getObject());
 			}
+			// have to remove the sample to be deleted from its project:
+			psjRepository.removeSampleFromProject(project, s);
 			sampleRepository.delete(s.getId());
 		}
 		return mergeInto;
