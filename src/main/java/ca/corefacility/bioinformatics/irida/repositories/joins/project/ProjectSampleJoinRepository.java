@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.repositories.joins.project;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
@@ -37,6 +38,7 @@ public interface ProjectSampleJoinRepository extends CrudRepository<ProjectSampl
 	 * @param sample
 	 *            The {@link Sample} to remove
 	 */
+	@Modifying
 	@Query("delete from ProjectSampleJoin j where j.project = ?1 and j.sample = ?2")
 	public void removeSampleFromProject(Project project, Sample sample);
 	
