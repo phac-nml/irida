@@ -12,6 +12,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.vendor.Database;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 @Configuration
 @Profile({ "dev", "prod" })
@@ -37,6 +40,15 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		basicDataSource.setValidationQuery(environment.getProperty("jdbc.pool.validationQuery"));
 
 		return basicDataSource;
+	}
+
+	@Bean
+	public JpaVendorAdapter jpaVendorAdapter() {
+		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
+		adapter.setShowSql(true);
+		adapter.setGenerateDdl(true);
+		adapter.setDatabase(Database.MYSQL);
+		return adapter;
 	}
 
 	@Bean
