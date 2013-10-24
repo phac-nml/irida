@@ -34,7 +34,7 @@ import ca.corefacility.bioinformatics.irida.service.SampleService;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class SampleServiceImplTest {
-
+	
 	private SampleService sampleService;
 	private SampleRepository sampleRepository;
 	private ProjectSampleJoinRepository psjRepository;
@@ -126,12 +126,12 @@ public class SampleServiceImplTest {
 			int p = (int) i;
 			toMerge[p] = s(i + 2);
 			toMerge_sf[p] = sf(i + 2);
-			s_sf_joins[p] = new SampleSequenceFileJoin(toMerge[p], toMerge_sf[p]);
+			s_sf_joins[p] = new SampleSequenceFileJoin(s, toMerge_sf[p]);
 			p_s_joins[p] = new ProjectSampleJoin(project, toMerge[p]);
 			List<Join<Project, Sample>> projectSampleJoins = new ArrayList<>();
 			projectSampleJoins.add(p_s_joins[p]);
 			List<Join<Sample, SequenceFile>> sampleSequenceFileJoins = new ArrayList<>();
-			sampleSequenceFileJoins.add(s_sf_joins[p]);
+			sampleSequenceFileJoins.add(new SampleSequenceFileJoin(toMerge[p], toMerge_sf[p]));
 
 			when(ssfRepository.getFilesForSample(toMerge[p])).thenReturn(sampleSequenceFileJoins);
 			when(ssfRepository.save(s_sf_joins[p])).thenReturn(s_sf_joins[p]);
