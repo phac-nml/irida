@@ -1,17 +1,13 @@
 package ca.corefacility.bioinformatics.irida.config.data;
 
-import java.util.Properties;
-
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
-import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -49,26 +45,5 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		adapter.setGenerateDdl(true);
 		adapter.setDatabase(Database.MYSQL);
 		return adapter;
-	}
-
-	@Bean
-	@SuppressWarnings("deprecation")
-	public SessionFactory sessionFactory() {
-		return hibernateConfiguration().buildSessionFactory();
-	}
-
-	@Bean
-	public org.hibernate.cfg.Configuration hibernateConfiguration() {
-		LocalSessionFactoryBuilder builder = new LocalSessionFactoryBuilder(dataSource());
-
-		builder.scanPackages("ca.corefacility.bioinformatics.irida.model",
-				"ca.corefacility.bioinformatics.irida.repositories.relational.auditing");
-		Properties properties = new Properties();
-		properties.put("hibernate.show_sql", Boolean.valueOf(environment.getProperty("hibernate.show_sql")));
-		properties.put("hibernate.hbm2ddl.auto", environment.getProperty("hibernate.hbm2ddl.auto"));
-		properties.put("hibernate.hbm2ddl.import_files", environment.getProperty("hibernate.hbm2ddl.import_files"));
-		properties.put("hibernate.dialect", environment.getProperty("hibernate.dialect"));
-		builder.addProperties(properties);
-		return builder;
 	}
 }

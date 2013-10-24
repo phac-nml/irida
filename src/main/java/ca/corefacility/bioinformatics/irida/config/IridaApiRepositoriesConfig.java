@@ -6,7 +6,6 @@ import java.nio.file.Paths;
 
 import javax.sql.DataSource;
 
-import org.hibernate.SessionFactory;
 import org.hibernate.envers.RevisionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +44,6 @@ public class IridaApiRepositoriesConfig {
 
 	@Autowired
 	private DataConfig dataConfig;
-	@Autowired
-	private SessionFactory sessionFactory;
 
 	private @Value("${sequence.file.base.directory}")
 	String sequenceFileBaseDirectory;
