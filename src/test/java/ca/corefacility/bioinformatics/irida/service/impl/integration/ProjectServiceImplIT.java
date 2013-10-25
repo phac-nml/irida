@@ -196,6 +196,17 @@ public class ProjectServiceImplIT {
 		Collection<Join<Project, Sample>> samples = asRole(Role.ROLE_ADMIN).sampleService.getSamplesForProject(p);
 		assertTrue("Sample should be part of collection.", samples.contains(join));
 	}
+	
+	@Test(expected = EntityExistsException.class)
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	public void testAddSampleToProjectTwice() {
+		Sample s = asRole(Role.ROLE_ADMIN).sampleService.read(1L);
+		Project p = asRole(Role.ROLE_ADMIN).projectService.read(1L);
+
+		asRole(Role.ROLE_ADMIN).projectService.addSampleToProject(p, s);
+		asRole(Role.ROLE_ADMIN).projectService.addSampleToProject(p, s);
+	}
 
 	private Project p() {
 		Project p = new Project();
