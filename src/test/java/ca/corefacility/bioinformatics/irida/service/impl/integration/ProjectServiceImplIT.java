@@ -28,10 +28,12 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
+import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SampleService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -50,6 +52,8 @@ public class ProjectServiceImplIT {
 	private ProjectService projectService;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private SampleService sampleService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
@@ -138,6 +142,59 @@ public class ProjectServiceImplIT {
 			assertTrue("No such user on project.", users.remove(user.getObject()));
 		}
 		assertEquals("Too many users on project", 0, users.size());
+	}
+
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	public void testRemoveUserFromProject() {
+		User u = asRole(Role.ROLE_ADMIN).userService.read(3l);
+		Project p = asRole(Role.ROLE_ADMIN).projectService.read(2l);
+
+		asRole(Role.ROLE_ADMIN).projectService.removeUserFromProject(p, u);
+
+		Collection<Join<Project, User>> usersOnProject = asRole(Role.ROLE_ADMIN).userService.getUsersForProject(p);
+		assertTrue("No users should be on the project.", usersOnProject.isEmpty());
+	}
+
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	public void testGetProjectsForUser() {
+		User u = asRole(Role.ROLE_ADMIN).userService.read(3l);
+
+		Collection<Join<Project, User>> projects = asRole(Role.ROLE_ADMIN).projectService.getProjectsForUser(u);
+
+		assertEquals("User should have one project.", 1, projects.size());
+		assertEquals("User should be on project 2.", Long.valueOf(2l), projects.iterator().next().getSubject().getId());
+	}
+
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	public void testGetProjectsManagedBy() {
+		User u = asRole(Role.ROLE_ADMIN).userService.read(3l);
+
+		Collection<Join<Project, User>> projects = asRole(Role.ROLE_ADMIN).projectService.getProjectsForUserWithRole(u,
+				ProjectRole.PROJECT_OWNER);
+
+		assertEquals("User should have one project.", 1, projects.size());
+		assertEquals("User should be on project 2.", Long.valueOf(2l), projects.iterator().next().getSubject().getId());
+	}
+	
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	public void testAddSampleToProject() {
+		Sample s = asRole(Role.ROLE_ADMIN).sampleService.read(1L);
+		Project p = asRole(Role.ROLE_ADMIN).projectService.read(1L);
+
+		Join<Project, Sample> join = asRole(Role.ROLE_ADMIN).projectService.addSampleToProject(p, s);
+		assertEquals("Project should equal original project.", p, join.getSubject());
+		assertEquals("Sample should equal orginal sample.", s, join.getObject());
+		
+		Collection<Join<Project, Sample>> samples = asRole(Role.ROLE_ADMIN).sampleService.getSamplesForProject(p);
+		assertTrue("Sample should be part of collection.", samples.contains(join));
 	}
 
 	private Project p() {
