@@ -178,6 +178,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	public boolean userHasProjectRole(User user, Project project, ProjectRole projectRole) {
-		return projectRepository.userHasProjectRole(user, project, projectRole);
+		List<Join<Project, User>> projects = getProjectsForUserWithRole(user, projectRole);
+		return projects.contains(new ProjectUserJoin(project, user));
 	}
 }
