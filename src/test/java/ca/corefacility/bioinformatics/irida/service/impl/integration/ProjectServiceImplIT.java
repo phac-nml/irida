@@ -181,7 +181,7 @@ public class ProjectServiceImplIT {
 		assertEquals("User should have one project.", 1, projects.size());
 		assertEquals("User should be on project 2.", Long.valueOf(2l), projects.iterator().next().getSubject().getId());
 	}
-	
+
 	@Test
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
@@ -192,11 +192,11 @@ public class ProjectServiceImplIT {
 		Join<Project, Sample> join = asRole(Role.ROLE_ADMIN).projectService.addSampleToProject(p, s);
 		assertEquals("Project should equal original project.", p, join.getSubject());
 		assertEquals("Sample should equal orginal sample.", s, join.getObject());
-		
+
 		Collection<Join<Project, Sample>> samples = asRole(Role.ROLE_ADMIN).sampleService.getSamplesForProject(p);
 		assertTrue("Sample should be part of collection.", samples.contains(join));
 	}
-	
+
 	@Test(expected = EntityExistsException.class)
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
@@ -206,6 +206,19 @@ public class ProjectServiceImplIT {
 
 		asRole(Role.ROLE_ADMIN).projectService.addSampleToProject(p, s);
 		asRole(Role.ROLE_ADMIN).projectService.addSampleToProject(p, s);
+	}
+
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	public void testRemoveSampleFromProject() {
+		Sample s = asRole(Role.ROLE_ADMIN).sampleService.read(1L);
+		Project p = asRole(Role.ROLE_ADMIN).projectService.read(2L);
+
+		asRole(Role.ROLE_ADMIN).projectService.removeSampleFromProject(p, s);
+		
+		Collection<Join<Project, Sample>> samples = asRole(Role.ROLE_ADMIN).sampleService.getSamplesForProject(p);
+		assertTrue("No samples should be assigned to project.", samples.isEmpty());
 	}
 
 	private Project p() {
