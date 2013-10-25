@@ -140,7 +140,12 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 
 		ProjectSampleJoin join = new ProjectSampleJoin(project, sample);
 
-		return psjRepository.save(join);
+		try {
+			return psjRepository.save(join);
+		} catch (DataIntegrityViolationException e) {
+			throw new EntityExistsException("Sample [" + sample.getId() + "] has already been added to project ["
+					+ project.getId() + "]");
+		}
 	}
 
 	/**
