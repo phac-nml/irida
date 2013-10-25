@@ -10,12 +10,14 @@ import javax.validation.Validator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.User;
@@ -96,8 +98,13 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Join<Project, User> addUserToProject(Project project, User user, ProjectRole role) {
-		ProjectUserJoin join = new ProjectUserJoin(project, user, role);
-		return pujRepository.save(join);
+		try {
+			ProjectUserJoin join = pujRepository.save(new ProjectUserJoin(project, user, role));
+			return join;
+		} catch (DataIntegrityViolationException e) {
+			throw new EntityExistsException("The user [" + user.getId() + "] already belongs to project ["
+					+ project.getId() + "]");
+		}
 	}
 
 	/**

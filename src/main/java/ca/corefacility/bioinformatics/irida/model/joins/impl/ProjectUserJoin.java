@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -29,9 +30,28 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Entity
-@Table(name = "project_user")
+@Table(name = "project_user", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id", "user_id" }))
 @Audited
 public class ProjectUserJoin implements Join<Project, User> {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	Long id;
+
+	@ManyToOne
+	@JoinColumn(name = "project_id")
+	private Project project;
+
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private User user;
+
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private ProjectRole projectRole;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdDate;
 
 	public ProjectUserJoin() {
 		createdDate = new Date();
@@ -63,25 +83,6 @@ public class ProjectUserJoin implements Join<Project, User> {
 	public int hashCode() {
 		return Objects.hash(project, user, projectRole);
 	}
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	Long id;
-
-	@ManyToOne
-	@JoinColumn(name = "project_id")
-	private Project project;
-
-	@ManyToOne
-	@JoinColumn(name = "user_id")
-	private User user;
-
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	private ProjectRole projectRole;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
 
 	@Override
 	public Project getSubject() {

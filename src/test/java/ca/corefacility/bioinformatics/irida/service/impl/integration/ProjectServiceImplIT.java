@@ -1,6 +1,13 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,15 +25,20 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.UserService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
@@ -37,8 +49,10 @@ public class ProjectServiceImplIT {
 	@Autowired
 	private ProjectService projectService;
 	@Autowired
+	private UserService userService;
+	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
+
 	@Test
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
@@ -52,7 +66,7 @@ public class ProjectServiceImplIT {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Test
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
@@ -66,7 +80,7 @@ public class ProjectServiceImplIT {
 			fail("Failed for unknown reason, stack trace precedes ^^^^");
 		}
 	}
-	
+
 	@Test
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
@@ -80,7 +94,52 @@ public class ProjectServiceImplIT {
 			e.printStackTrace();
 		}
 	}
-	
+
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	public void testAddUserToProject() {
+		Project p = projectService.read(1L);
+		User u = userService.read(1L);
+		Join<Project, User> join = asRole(Role.ROLE_ADMIN).projectService.addUserToProject(p, u,
+				ProjectRole.PROJECT_OWNER);
+		assertNotNull("Join was not populated.", join);
+		assertEquals("Join has wrong project.", p, join.getSubject());
+		assertEquals("Join has wrong user.", u, join.getObject());
+
+		List<Join<Project, User>> projects = asRole(Role.ROLE_ADMIN).projectService.getProjectsForUser(u);
+		assertEquals("User is not part of project.", p, projects.iterator().next().getSubject());
+	}
+
+	@Test(expected = EntityExistsException.class)
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	public void testAddUserToProjectTwice() {
+		Project p = projectService.read(1L);
+		User u = userService.read(1L);
+		asRole(Role.ROLE_ADMIN).projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
+		asRole(Role.ROLE_ADMIN).projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
+	}
+
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	public void testAddTwoUsersToProject() {
+		Project p = projectService.read(1L);
+		User u1 = userService.read(1L);
+		User u2 = userService.read(2L);
+		asRole(Role.ROLE_ADMIN).projectService.addUserToProject(p, u1, ProjectRole.PROJECT_OWNER);
+		asRole(Role.ROLE_ADMIN).projectService.addUserToProject(p, u2, ProjectRole.PROJECT_OWNER);
+
+		Collection<Join<Project, User>> usersOnProject = asRole(Role.ROLE_ADMIN).userService.getUsersForProject(p);
+		assertEquals("Wrong number of users on project.", 2, usersOnProject.size());
+		Set<User> users = Sets.newHashSet(u1, u2);
+		for (Join<Project, User> user : usersOnProject) {
+			assertTrue("No such user on project.", users.remove(user.getObject()));
+		}
+		assertEquals("Too many users on project", 0, users.size());
+	}
+
 	private Project p() {
 		Project p = new Project();
 		p.setName("Project name");
@@ -88,7 +147,7 @@ public class ProjectServiceImplIT {
 		p.setRemoteURL("http://google.com");
 		return p;
 	}
-	
+
 	private ProjectServiceImplIT asRole(Role r) {
 		User u = new User();
 		u.setUsername("fbristow");
