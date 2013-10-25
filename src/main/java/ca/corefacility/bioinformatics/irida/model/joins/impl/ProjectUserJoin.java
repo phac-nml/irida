@@ -3,9 +3,11 @@ package ca.corefacility.bioinformatics.irida.model.joins.impl;
 import java.util.Date;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -22,8 +25,6 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import javax.persistence.CascadeType;
-import javax.persistence.FetchType;
 
 /**
  * A join table and class for users and projects.
@@ -31,9 +32,28 @@ import javax.persistence.FetchType;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Entity
-@Table(name = "project_user")
+@Table(name = "project_user", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id", "user_id" }))
 @Audited
 public class ProjectUserJoin implements Join<Project, User> {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	Long id;
+
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "project_id")
+	private Project project;
+
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "user_id")
+	private User user;
+
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private ProjectRole projectRole;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdDate;
 
 	public ProjectUserJoin() {
 		createdDate = new Date();
@@ -51,18 +71,6 @@ public class ProjectUserJoin implements Join<Project, User> {
 		this.projectRole = projectRole;
 	}
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	Long id;
-
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "project_id")
-	private Project project;
-
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "user_id")
-	private User user;
-
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof ProjectUserJoin) {
@@ -77,13 +85,6 @@ public class ProjectUserJoin implements Join<Project, User> {
 	public int hashCode() {
 		return Objects.hash(project, user, projectRole);
 	}
-
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	private ProjectRole projectRole;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
 
 	@Override
 	public Project getSubject() {
