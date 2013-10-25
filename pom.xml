@@ -243,7 +243,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
@@ -337,40 +337,38 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>de.juplo</groupId>
+				<artifactId>hibernate4-maven-plugin</artifactId>
+				<version>${maven.hibernate4.plugin.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>export</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<hibernateProperties>${external.hibernate.properties}</hibernateProperties>
+					<target>SCRIPT</target>
+					<envers>true</envers>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<profiles>
 		<profile>
-			<id>generate-ddl</id>
 			<activation>
+				<activeByDefault>true</activeByDefault>
 				<property>
-					<name>generate-ddl</name>
+					<name>!external.hibernate.properties</name>
 				</property>
 			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<version>${maven.exec.plugin.version}</version>
-						<configuration>
-							<mainClass>ca.corefacility.bioinformatics.irida.tools.SchemaExporter</mainClass>
-							<arguments>
-								<argument>--create</argument>
-								<argument>--output=${generate-ddl.outputFile}</argument>
-								<argument>--delimiter=;</argument>
-							</arguments>
-						</configuration>
-						<dependencies>
-							<dependency>
-								<groupId>org.hibernate</groupId>
-								<artifactId>hibernate-entitymanager</artifactId>
-								<version>${hibernate.version}</version>
-							</dependency>
-						</dependencies>
-					</plugin>
-				</plugins>
-			</build>
+			<properties>
+				<external.hibernate.properties>
+					${project.basedir}/src/main/resources/ca/corefacility/bioinformatics/irida/config/hibernate.hbm2ddl.properties
+				</external.hibernate.properties>
+			</properties>
 		</profile>
 	</profiles>
 	<properties>
@@ -408,6 +406,7 @@
 		<maven.dbunit.plugin.version>1.0-beta-3</maven.dbunit.plugin.version>
 		<maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
 		<maven.exec.plugin.version>1.2.1</maven.exec.plugin.version>
+		<maven.hibernate4.plugin.version>1.0.3</maven.hibernate4.plugin.version>
 
 		<!-- project configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
