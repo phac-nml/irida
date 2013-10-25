@@ -103,8 +103,8 @@ public class ProjectServiceImplIT {
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	public void testAddUserToProject() {
-		Project p = projectService.read(1L);
-		User u = userService.read(1L);
+		Project p = asRole(Role.ROLE_ADMIN).projectService.read(1L);
+		User u = asRole(Role.ROLE_ADMIN).userService.read(1L);
 		Join<Project, User> join = asRole(Role.ROLE_ADMIN).projectService.addUserToProject(p, u,
 				ProjectRole.PROJECT_OWNER);
 		assertNotNull("Join was not populated.", join);
@@ -119,8 +119,8 @@ public class ProjectServiceImplIT {
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	public void testAddUserToProjectTwice() {
-		Project p = projectService.read(1L);
-		User u = userService.read(1L);
+		Project p = asRole(Role.ROLE_ADMIN).projectService.read(1L);
+		User u = asRole(Role.ROLE_ADMIN).userService.read(1L);
 		asRole(Role.ROLE_ADMIN).projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
 		asRole(Role.ROLE_ADMIN).projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
 	}
@@ -129,9 +129,9 @@ public class ProjectServiceImplIT {
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	public void testAddTwoUsersToProject() {
-		Project p = projectService.read(1L);
-		User u1 = userService.read(1L);
-		User u2 = userService.read(2L);
+		Project p = asRole(Role.ROLE_ADMIN).projectService.read(1L);
+		User u1 = asRole(Role.ROLE_ADMIN).userService.read(1L);
+		User u2 = asRole(Role.ROLE_ADMIN).userService.read(2L);
 		asRole(Role.ROLE_ADMIN).projectService.addUserToProject(p, u1, ProjectRole.PROJECT_OWNER);
 		asRole(Role.ROLE_ADMIN).projectService.addUserToProject(p, u2, ProjectRole.PROJECT_OWNER);
 
