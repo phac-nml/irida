@@ -154,4 +154,13 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public List<Join<Project, User>> getProjectsForUserWithRole(User user,ProjectRole role) {
 		return new ArrayList<Join<Project, User>>(projectRepository.getProjectsForUserWithRole(user,role));	
 	}
+
+	/**
+	 * {@inheritDoc }
+	 */
+	@Override
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
+	public boolean userHasProjectRole(User user, Project project, ProjectRole projectRole) {
+		return projectRepository.userHasProjectRole(user, project, projectRole);
+	}
 }
