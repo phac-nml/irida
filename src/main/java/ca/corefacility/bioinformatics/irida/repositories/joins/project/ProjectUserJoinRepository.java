@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.repositories.joins.project;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
@@ -75,6 +76,7 @@ public interface ProjectUserJoinRepository extends CrudRepository<ProjectUserJoi
 	 * @param user
 	 *            the {@link User} to remove from the {@link Project}.
 	 */
+	@Modifying
 	@Query("delete from ProjectUserJoin j where j.project = ?1 and j.user = ?2")
 	public void removeUserFromProject(Project project, User user);
 }
