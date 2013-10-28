@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
@@ -41,7 +41,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSamplesController;
 
 import com.google.common.net.HttpHeaders;
-import org.springframework.web.bind.annotation.RequestPart;
 
 /**
  * Controller for managing relationships between {@link Sample} and
@@ -182,9 +181,8 @@ public class SampleSequenceFilesController {
 		Join<Sample, SequenceFile> sampleSequenceFileRelationship = sequenceFileService.createSequenceFileInSample(sf,
 				sample);
 		
-		Join<MiseqRun, SequenceFile> miseqRunSequenceFileRelationship = null;
 		if(miseqRun != null){
-			miseqRunSequenceFileRelationship = miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
+			miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
 		}
 
 		// clean up the temporary files.
