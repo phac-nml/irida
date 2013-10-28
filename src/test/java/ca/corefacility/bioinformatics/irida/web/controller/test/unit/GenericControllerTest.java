@@ -9,7 +9,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController
 import ca.corefacility.bioinformatics.irida.web.controller.api.exception.GenericsException;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.support.IdentifiableTestEntity;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.support.IdentifiableTestResource;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.net.HttpHeaders;
 import org.junit.Before;
 import org.junit.Test;
