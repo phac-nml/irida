@@ -31,13 +31,11 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.config.IridaApiRepositoriesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.utils.model.IdentifiableTestEntity;
 import ca.corefacility.bioinformatics.irida.utils.repositories.IdentifiableTestEntityRepo;
 import ca.corefacility.bioinformatics.irida.utils.SecurityUser;
-import ca.corefacility.bioinformatics.irida.utils.model.EntityJoin;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
