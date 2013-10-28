@@ -344,4 +344,12 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	public void setSystemRole(Role systemRole) {
 		this.systemRole = systemRole;
 	}
+
+	public List<ProjectUserJoin> getProjects() {
+		return projects;
+	}
+
+	public void setProjects(List<ProjectUserJoin> projects) {
+		this.projects = projects;
+	}
 }

@@ -342,5 +342,28 @@ public String getSamplePlate() {
     public void setI5Index(String i5Index) {
         this.i5Index = i5Index;
     }
-    
+
+	public List<MiseqRunSequenceFileJoin> getMiseqRuns() {
+		return miseqRuns;
+	}
+
+	public void setMiseqRuns(List<MiseqRunSequenceFileJoin> miseqRuns) {
+		this.miseqRuns = miseqRuns;
+	}
+
+	public List<SampleSequenceFileJoin> getSamples() {
+		return samples;
+	}
+
+	public void setSamples(List<SampleSequenceFileJoin> samples) {
+		this.samples = samples;
+	}
+
+	public List<SequenceFileOverrepresentedSequenceJoin> getOverrepresentedSequences() {
+		return overrepresentedSequences;
+	}
+
+	public void setOverrepresentedSequences(List<SequenceFileOverrepresentedSequenceJoin> overrepresentedSequences) {
+		this.overrepresentedSequences = overrepresentedSequences;
+	}
 }

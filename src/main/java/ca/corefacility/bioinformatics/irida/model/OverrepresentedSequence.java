@@ -152,4 +152,12 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 		this.createdDate = timestamp;
 	}
 
+	public List<SequenceFileOverrepresentedSequenceJoin> getSquenceFiles() {
+		return squenceFiles;
+	}
+
+	public void setSquenceFiles(List<SequenceFileOverrepresentedSequenceJoin> squenceFiles) {
+		this.squenceFiles = squenceFiles;
+	}
+
 }

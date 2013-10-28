@@ -173,4 +173,20 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
 	}
+
+	public List<ProjectSampleJoin> getProjects() {
+		return projects;
+	}
+
+	public void setProjects(List<ProjectSampleJoin> projects) {
+		this.projects = projects;
+	}
+
+	public List<SampleSequenceFileJoin> getSequenceFiles() {
+		return sequenceFiles;
+	}
+
+	public void setSequenceFiles(List<SampleSequenceFileJoin> sequenceFiles) {
+		this.sequenceFiles = sequenceFiles;
+	}
 }
