@@ -70,4 +70,13 @@ public interface ProjectService extends CRUDService<Long, Project> {
      * @return A collection of {@link ProjectUserJoin}s describing the projects associated with the user.
 	 */	
 	public List<Join<Project,User>> getProjectsForUserWithRole(User user,ProjectRole role);
+	
+	/**
+	 * Check if a {@link User} has a given {@link ProjectRole} on a {@link Project}
+	 * @param user The user to test
+	 * @param project The project to test
+	 * @param role The project role to test
+	 * @return true/false whether the user has the given role
+	 */
+	public boolean userHasProjectRole(User user, Project project, ProjectRole projectRole);
 }

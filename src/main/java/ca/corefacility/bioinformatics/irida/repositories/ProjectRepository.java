@@ -72,4 +72,13 @@ public interface ProjectRepository extends CRUDRepository<Long, Project> {
      * @param sample The {@link Sample} to remove
      */
     public void removeSampleFromProject(Project project, Sample sample) throws EntityNotFoundException;
+	
+	/**
+	 * Check if a {@link User} has a given {@link ProjectRole} on a {@link Project}
+	 * @param user The user to test
+	 * @param project The project to test
+	 * @param role The project role to test
+	 * @return true/false whether the user has the given role
+	 */
+	public boolean userHasProjectRole(User user, Project project, ProjectRole role);
 }

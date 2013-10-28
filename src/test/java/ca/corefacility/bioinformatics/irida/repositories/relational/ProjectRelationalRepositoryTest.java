@@ -226,4 +226,19 @@ public class ProjectRelationalRepositoryTest {
 		assertNotNull(list);
 		assertTrue(list.isEmpty());
 	}
+	
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/fulldata.xml")
+	public void testUserHasProjectRole(){
+		Project p1 = repo.read(1L);
+		Project p2 = repo.read(2L);
+		User user = urepo.read(1L);
+		
+		boolean test1 = repo.userHasProjectRole(user, p1, ProjectRole.PROJECT_OWNER);
+		assertTrue(test1);		
+		boolean test2 = repo.userHasProjectRole(user, p2, ProjectRole.PROJECT_OWNER);
+		assertFalse(test2);
+		
+	}
 }
