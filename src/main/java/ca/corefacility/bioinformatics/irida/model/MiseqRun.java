@@ -49,9 +49,7 @@ public class MiseqRun implements IridaThing, Comparable<MiseqRun>{
     private String description;
     
     private String chemistry;
-    
-    private Boolean enabled = true;
-    
+        
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
     
@@ -146,16 +144,6 @@ public class MiseqRun implements IridaThing, Comparable<MiseqRun>{
     @Override
     public String getLabel() {
         return projectName;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void setEnabled(boolean valid) {
-        this.enabled = valid;
     }
 
     @Override

@@ -55,8 +55,6 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	@Lob
 	private String description;
 
-	private Boolean enabled = true;
-
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
 
@@ -154,16 +152,6 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	@Override
 	public String getLabel() {
 		return sampleName;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	@Override
-	public void setEnabled(boolean valid) {
-		this.enabled = valid;
 	}
 
 	@Override

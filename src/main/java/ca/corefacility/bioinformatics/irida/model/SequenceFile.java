@@ -46,8 +46,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	@Transient
 	private Path file;
 
-	private Boolean enabled = true;
-
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
 
@@ -167,14 +165,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 		this.duplicationLevelChart = duplicationLevelChart;
 	}
 
-	public Boolean getEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
-	}
-
 	public Date getCreatedDate() {
 		return createdDate;
 	}
@@ -283,16 +273,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	@Override
-	public void setEnabled(boolean valid) {
-		this.enabled = valid;
 	}
 
 	@Override

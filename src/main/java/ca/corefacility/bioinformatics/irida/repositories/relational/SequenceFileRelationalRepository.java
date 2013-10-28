@@ -63,7 +63,6 @@ public class SequenceFileRelationalRepository extends GenericRelationalRepositor
 		Session session = sessionFactory.getCurrentSession();
 		Criteria crit = session.createCriteria(SampleSequenceFileJoin.class);
 		crit.add(Restrictions.eq("sample", sample));
-		crit.createCriteria("sequenceFile").add(Restrictions.eq("enabled", true));
 		@SuppressWarnings("unchecked")
 		List<SampleSequenceFileJoin> list = crit.list();
 

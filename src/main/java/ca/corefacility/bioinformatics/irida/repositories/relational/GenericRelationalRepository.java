@@ -103,10 +103,6 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
             throw new EntityNotFoundException("Entity " + id + " couldn't be found in the database.");
         }
         
-        if (Boolean.FALSE.equals(load.isEnabled())) {
-        	throw new EntityNotFoundException("Entity " + id + " was deleted.");
-        }
-        
         postLoad(load);
                 
         return load;    
@@ -191,7 +187,7 @@ public class GenericRelationalRepository<Type extends IridaThing> implements CRU
     public List<Type> list(int page, int size, String sortProperty, Order order) {
         Session session = sessionFactory.getCurrentSession();
         
-        Criteria crit = session.createCriteria(classType.getName()).add(Restrictions.eq("enabled", true));
+        Criteria crit = session.createCriteria(classType.getName());
 
         
         List<Type> results;

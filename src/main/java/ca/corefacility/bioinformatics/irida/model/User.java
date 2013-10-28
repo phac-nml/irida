@@ -77,7 +77,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	@Size(min = 4, message = "{user.phoneNumber.size}")
 	private String phoneNumber;
 	@NotNull
-	private Boolean enabled = true;
+	private boolean enabled = true;
 
 	@ManyToOne
 	@JoinColumn(name = "system_role")
@@ -293,7 +293,6 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 		return enabled;
 	}
 
-	@Override
 	public void setEnabled(boolean valid) {
 		this.enabled = valid;
 	}
@@ -332,14 +331,6 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 
 	public void setLocale(String locale) {
 		this.locale = locale;
-	}
-
-	public Boolean getEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
 	}
 
 	public Date getCreatedDate() {

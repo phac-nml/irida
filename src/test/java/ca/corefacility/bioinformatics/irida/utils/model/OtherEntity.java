@@ -29,9 +29,7 @@ public class OtherEntity implements IridaThing, Comparable<OtherEntity>{
     private Long id;
 
     private String label;
-    
-    private Boolean enabled;
-    
+        
     private Date createdDate;
     
     private Date modifiedDate;
@@ -70,16 +68,6 @@ public class OtherEntity implements IridaThing, Comparable<OtherEntity>{
     
     public void setLabel(String label){
         this.label = label;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 
     @Override

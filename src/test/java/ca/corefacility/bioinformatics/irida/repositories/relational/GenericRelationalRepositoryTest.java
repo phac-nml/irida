@@ -74,7 +74,6 @@ public class GenericRelationalRepositoryTest {
 			entity.setNonNull(rs.getString("nonNull"));
 			entity.setIntegerValue(rs.getInt("integerValue"));
 			entity.setLabel(rs.getString("label"));
-			entity.setEnabled(rs.getBoolean("enabled"));
 
 			return entity;
 		}
@@ -140,22 +139,6 @@ public class GenericRelationalRepositoryTest {
 	}
 
 	/**
-	 * Test of reading an inenabled id. No data is added here so there will be
-	 * no enabled ids
-	 */
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
-	@Test
-	public void testRead_inenabled() {
-		try {
-			repo.read(new Long(1111));
-			fail();
-		} catch (EntityNotFoundException ex) {
-
-		}
-
-	}
-
-	/**
 	 * Test of readMultiple method, of class GenericRelationalRepository.
 	 */
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
@@ -194,31 +177,11 @@ public class GenericRelationalRepositoryTest {
 			assertEquals(differentData, updated.getNonNull());
 
 			List<IdentifiableTestEntity> query = jdbcTemplate.query(
-					"SELECT id,nonNull,integerValue,label,enabled FROM identifiable WHERE id=1", rowMapper);
+					"SELECT id,nonNull,integerValue,label FROM identifiable WHERE id=1", rowMapper);
 			IdentifiableTestEntity entity = query.get(0);
 			assertEquals(entity.getNonNull(), differentData);
 		} catch (IllegalArgumentException | InvalidPropertyException ex) {
 			fail();
-		}
-	}
-
-	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
-	public void testUpdateInenabledField() {
-		IdentifiableTestEntity p = new IdentifiableTestEntity();
-		p.setIntegerValue(5);
-		p.setNonNull("not null");
-		p.setLabel("a label");
-		p.setEnabled(true);
-
-		IdentifiableTestEntity created = repo.create(p);
-		try {
-			Map<String, Object> bad = new HashMap<>();
-			bad.put("notAProperty", null);
-			repo.update(created.getId(), bad);
-			fail();
-		} catch (InvalidPropertyException ex) {
-
 		}
 	}
 
@@ -234,24 +197,12 @@ public class GenericRelationalRepositoryTest {
 		Long id = new Long(1);
 		repo.delete(id);
 		List<IdentifiableTestEntity> query = jdbcTemplate.query(
-				"SELECT id,nonNull,integerValue,label,enabled FROM identifiable WHERE id=?", rowMapper, id);
+				"SELECT id,nonNull,integerValue,label FROM identifiable WHERE id=?", rowMapper, id);
 		assertTrue(query.isEmpty());
 		List<IdentifiableTestEntity> queryAud = jdbcTemplate.query(
-				"SELECT id,nonNull,integerValue,label,enabled FROM identifiable_AUD WHERE id=?", rowMapper, id);
+				"SELECT id,nonNull,integerValue,label FROM identifiable_AUD WHERE id=?", rowMapper, id);
 		assertTrue(queryAud.size() == 1);
 		assertEquals(queryAud.get(0).getId(),id);
-	}
-
-	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
-	public void testDeleteInenabled() {
-		try {
-			repo.delete(new Long(-1));
-			fail();
-		} catch (EntityNotFoundException ex) {
-
-		}
-
 	}
 
 	/**
@@ -320,25 +271,6 @@ public class GenericRelationalRepositoryTest {
 		Integer count = repo.count();
 		assertNotNull(count);
 		assertTrue(count > 2);
-	}
-
-	/**
-	 * Test of count method, of class GenericRelationalRepository.
-	 */
-	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/sql/ident.xml")
-	public void testListAll() {
-		List<IdentifiableTestEntity> listAll = repo.listAll();
-		assertFalse(listAll.isEmpty());
-		boolean disabled = false;
-		for (IdentifiableTestEntity ent : listAll) {
-			if (!ent.isEnabled()) {
-				disabled = true;
-			}
-		}
-
-		assertTrue("Test if we found a disabled entity", disabled);
 	}
 	
 	@Test

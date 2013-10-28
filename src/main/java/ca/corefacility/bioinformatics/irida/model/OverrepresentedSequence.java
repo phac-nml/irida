@@ -48,8 +48,6 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 	private Date createdDate;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
-	@NotNull
-	private boolean enabled;
 	
 	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sequence")
 	private List<SequenceFileOverrepresentedSequenceJoin> squenceFiles;
@@ -142,14 +140,6 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
-	}
-
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
 	}
 
 	@Override
