@@ -47,6 +47,16 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
 		return null;
 	}
 
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
+
+	@Override
+	public void setEnabled(boolean valid) {
+
+	}
+
 	public Date getModifiedDate() {
 		return modifiedDate;
 	}
