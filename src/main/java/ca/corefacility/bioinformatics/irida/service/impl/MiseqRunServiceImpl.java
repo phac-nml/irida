@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import javax.validation.Validator;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +38,7 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 	 */
 	@Override
 	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Join<MiseqRun, SequenceFile> addSequenceFileToMiseqRun(MiseqRun run, SequenceFile file) {
 		MiseqRunSequenceFileJoin join = new MiseqRunSequenceFileJoin(run, file);
 		return mrsfRepository.save(join);
