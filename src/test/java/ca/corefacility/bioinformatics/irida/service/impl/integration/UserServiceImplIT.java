@@ -146,6 +146,7 @@ public class UserServiceImplIT {
 		String updatedPassword = "NewPassword1";
 		User updated = userService.changePassword(1l, updatedPassword);
 		assertNotEquals("Password in user object should be encoded.", updated.getPassword(), updatedPassword);
+		assertTrue("Password is encoded correctly.", passwordEncoder.matches(updatedPassword, updated.getPassword()));
 	}
 
 	@Test
@@ -158,6 +159,7 @@ public class UserServiceImplIT {
 		User updated = userService.changePassword(1l, updatedPassword);
 		assertNotEquals("Password in user object should be encoded.", updated.getPassword(), updatedPassword);
 		assertTrue("User should not have expired credentials anymore.", updated.isCredentialsNonExpired());
+		assertTrue("Password is encoded correctly.", passwordEncoder.matches(updatedPassword, updated.getPassword()));
 	}
 
 	@Test(expected = AccessDeniedException.class)
@@ -168,8 +170,13 @@ public class UserServiceImplIT {
 	}
 
 	private UserServiceImplIT asUser() {
-		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("fbristow", "password1",
+		User u = new User();
+		u.setUsername("fbristow");
+		u.setPassword(passwordEncoder.encode("Password1"));
+		u.setSystemRole(Role.ROLE_USER);
+		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
 				ImmutableList.of(Role.ROLE_USER));
+		auth.setDetails(u);
 		SecurityContextHolder.getContext().setAuthentication(auth);
 		return this;
 	}
