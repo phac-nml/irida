@@ -157,7 +157,7 @@ public class UserTest {
 		u.setFirstName("Franklin");
 		u.setLastName("Bristow");
 		u.setPhoneNumber("7029");
-		u.setSystemRole(new Role("ROLE_USER"));
+		u.setSystemRole(Role.ROLE_USER);
 
 		Set<ConstraintViolation<User>> constraintViolations = validator.validate(u);
 
@@ -173,7 +173,7 @@ public class UserTest {
 		u.setFirstName("Franklin");
 		u.setLastName("Bristow");
 		u.setPhoneNumber("7029");
-		u.setSystemRole(new Role("ROLE_USER"));
+		u.setSystemRole(Role.ROLE_USER);
 
 		Set<ConstraintViolation<User>> constraintViolations = validator.validate(u);
 		assertEquals("wrong number of constraint violations.", 1, constraintViolations.size());

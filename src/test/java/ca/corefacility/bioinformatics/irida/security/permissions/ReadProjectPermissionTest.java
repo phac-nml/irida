@@ -118,8 +118,7 @@ public class ReadProjectPermissionTest {
 	@Test
 	public void testPermitAdminWithoutDescription() {
 		// Collection<GrantedAuthority> roles = new ArrayList<>();
-		Collection<GrantedAuthority> roles = ImmutableList.of((GrantedAuthority) new Role("ROLE_ADMIN",
-				"Aww yiss, administrator privileges."));
+		Collection<GrantedAuthority> roles = ImmutableList.of((GrantedAuthority) Role.ROLE_ADMIN);
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
 
 		assertTrue("permission should be granted to admin.", readProjectPermission.isAllowed(auth, 1l));
