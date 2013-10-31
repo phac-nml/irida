@@ -20,6 +20,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
@@ -82,6 +83,16 @@ public class MiseqServiceImplIT {
 		SequenceFile sf = asRole(Role.ROLE_USER).sequenceFileService.read(1l);
 		MiseqRun miseqRun = asRole(Role.ROLE_USER).miseqRunService.read(1l);
 		asRole(Role.ROLE_USER).miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
+	}
+	
+	@Test(expected = EntityExistsException.class)
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
+	public void testAddSequenceFileToMiseqRunMultiple() {
+		SequenceFile sf = asRole(Role.ROLE_ADMIN).sequenceFileService.read(1l);
+		MiseqRun miseqRun = asRole(Role.ROLE_ADMIN).miseqRunService.read(1l);
+		asRole(Role.ROLE_ADMIN).miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
+		asRole(Role.ROLE_ADMIN).miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
 	}
 
 	private MiseqServiceImplIT asRole(Role r) {
