@@ -2,10 +2,12 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import javax.validation.Validator;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -40,8 +42,13 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Join<MiseqRun, SequenceFile> addSequenceFileToMiseqRun(MiseqRun run, SequenceFile file) {
-		MiseqRunSequenceFileJoin join = new MiseqRunSequenceFileJoin(run, file);
-		return mrsfRepository.save(join);
+		try {
+			MiseqRunSequenceFileJoin join = new MiseqRunSequenceFileJoin(run, file);
+			return mrsfRepository.save(join);
+		} catch (DataIntegrityViolationException e) {
+			throw new EntityExistsException("Sequence file [" + file.getId() + "] has already been added to MiseqRun ["
+					+ run.getId() + "]");
+		}
 	}
 
 	/**
