@@ -18,9 +18,10 @@ import org.hibernate.envers.Audited;
 /**
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Entity
-@Table(name="miseqRun")
+@Table(name="miseq_run")
 @Audited
 public class MiseqRun implements IridaThing, Comparable<MiseqRun>{
     
