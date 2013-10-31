@@ -10,8 +10,12 @@
 		credentialsNonExpired="true" />
 
 	<sequence_file id="1" enabled="true" />
+	<sequence_file id="2" enabled="true" />
 
 	<miseq_run id="1" enabled="true" />
+	<miseq_run id="2" enabled="true" />
+	
+	<miseqrun_sequencefile id="1" miseqRun_id="2" sequenceFile_id="2" />
 
 	<Revisions />
 	<USER_AUD />
