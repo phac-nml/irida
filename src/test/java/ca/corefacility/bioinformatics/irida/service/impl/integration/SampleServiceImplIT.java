@@ -103,6 +103,15 @@ public class SampleServiceImplIT {
 		sampleService.mergeSamples(p, mergeInto, sampleService.read(4l));
 	}
 
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
+	public void testgetSampleByExternalIdDuplicates() {
+		Project p = projectService.read(1l);
+		Sample s = sampleService.getSampleByExternalSampleId(p, "external");
+		assertEquals("Should have retrieved sample with ID 1L.", Long.valueOf(1l), s.getId());
+	}
+
 	private void assertSampleNotFound(Long id) {
 		try {
 			sampleService.read(id);
