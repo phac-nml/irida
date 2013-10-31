@@ -112,6 +112,14 @@ public class SampleServiceImplIT {
 		assertEquals("Should have retrieved sample with ID 1L.", Long.valueOf(1l), s.getId());
 	}
 
+	@Test(expected = EntityNotFoundException.class)
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
+	public void testgetSampleByExternalNotFound() {
+		Project p = projectService.read(1l);
+		sampleService.getSampleByExternalSampleId(p, "garbage");
+	}
+
 	private void assertSampleNotFound(Long id) {
 		try {
 			sampleService.read(id);

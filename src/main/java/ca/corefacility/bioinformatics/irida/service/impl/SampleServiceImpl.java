@@ -119,7 +119,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Override
 	@Transactional(readOnly = true)
 	public Sample getSampleByExternalSampleId(Project p, String sampleId) {
-		return sampleRepository.getSampleByExternalSampleId(p, sampleId);
+		Sample s = sampleRepository.getSampleByExternalSampleId(p, sampleId);
+		if (s != null) {
+			return s;
+		} else {
+			throw new EntityNotFoundException("No sample with external id [" + sampleId + "] in project [" + p.getId()
+					+ "]");
+		}
 	}
 
 	/**
