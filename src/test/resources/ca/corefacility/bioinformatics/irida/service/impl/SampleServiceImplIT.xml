@@ -18,13 +18,13 @@
 		projectRole="PROJECT_OWNER" project_id="2" user_id="1" />
 
 	<sample id="1" createdDate="2013-07-18 14:20:19.0" description="description1"
-		enabled="true" externalSampleId="sample1" sampleName="sample1" />
+		enabled="true" externalSampleId="external" sampleName="sample1" />
 	<sample id="2" createdDate="2013-07-18 14:20:19.0" description="description2"
-		enabled="true" externalSampleId="sample2" sampleName="sample2" />
+		enabled="true" externalSampleId="external2" sampleName="sample2" />
 	<sample id="3" createdDate="2013-07-18 14:20:19.0" description="description3"
-		enabled="true" externalSampleId="sample3" sampleName="sample3" />
+		enabled="true" externalSampleId="external3" sampleName="sample3" />
 	<sample id="4" createdDate="2013-07-18 14:20:19.0" description="description4"
-		enabled="true" externalSampleId="sample4" sampleName="sample4" />
+		enabled="true" externalSampleId="external" sampleName="sample4" />
 
 	<project_sample id="1" createdDate="2013-07-18 14:20:19.0"
 		project_id="1" sample_id="1" />
