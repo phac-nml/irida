@@ -46,15 +46,15 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 	@NotNull
 	private String description;
 
-	public Role() {
+	private Role() {
 	}
 
-	public Role(String name) {
+	private Role(String name) {
 		this();
 		this.name = name;
 	}
 
-	public Role(String name, String description) {
+	private Role(String name, String description) {
 		this(name);
 		this.description = description;
 	}
