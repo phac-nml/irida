@@ -16,14 +16,18 @@ import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.pipeline.workflow.WorkflowSubmissionException;
 
-public class WorkflowSubmitterGalaxyTest
+import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
+import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
+import com.sun.jersey.api.client.ClientHandlerException;
+
+public class WorkflowRESTAPIGalaxyTest
 {
-	@Mock private WorkflowRESTAPIGalaxy workflowAPIGalaxy;
+	@Mock private WorkflowsClient workflowsClient;
+	@Mock private GalaxyInstance galaxyInstance;
+	@Mock private com.github.jmchilton.blend4j.galaxy.beans.Workflow blendWorkflow;
 	
-	private WorkflowSubmitterGalaxy workflowSubmitter;
-	private ExecutableWorkflowGalaxy goodWorkflow;
+	private WorkflowRESTAPIGalaxy workflowRESTAPI;
 	private String goodWorkflowString;
-	private ExecutableWorkflowGalaxy badWorkflow;
 	private String badWorkflowString;
 	
 	@Before
@@ -38,30 +42,30 @@ public class WorkflowSubmitterGalaxyTest
 		
 		goodWorkflowString = goodWorkflowScanner.useDelimiter("\\Z").next();
 		goodWorkflowScanner.close();
-		goodWorkflow = new ExecutableWorkflowGalaxy(goodWorkflowString);
 		
 		badWorkflowString = badWorkflowScanner.useDelimiter("\\Z").next();
 		badWorkflowScanner.close();
-		badWorkflow = new ExecutableWorkflowGalaxy(badWorkflowString);
-						
-		workflowSubmitter = new WorkflowSubmitterGalaxy(workflowAPIGalaxy);
+		
+		when(galaxyInstance.getWorkflowsClient()).thenReturn(workflowsClient);
+		
+		workflowRESTAPI = new WorkflowRESTAPIGalaxy(galaxyInstance);
 	}
 	
 	@Test
 	public void testSubmitWorkflowGood() throws WorkflowSubmissionException
 	{
-		when(workflowAPIGalaxy.importWorkflow(goodWorkflow)).thenReturn("id");
+		when(workflowsClient.importWorkflow(goodWorkflowString)).thenReturn(blendWorkflow);
+		when(blendWorkflow.getId()).thenReturn("id");
 		
-		assertTrue(workflowSubmitter.submitWorkflow(new WorkflowImpl(goodWorkflowString)));
-		verify(workflowAPIGalaxy).importWorkflow(goodWorkflow);
+		assertEquals("id", workflowRESTAPI.importWorkflow(new ExecutableWorkflowGalaxy(goodWorkflowString)));
+		verify(workflowsClient).importWorkflow(goodWorkflowString);
 	}
 	
 	@Test(expected=WorkflowSubmissionException.class)
 	public void testSubmitWorkflowBad() throws WorkflowSubmissionException
 	{	
-		when(workflowAPIGalaxy.importWorkflow(badWorkflow)).thenThrow(new WorkflowSubmissionException("null"));
+		when(workflowsClient.importWorkflow(badWorkflowString)).thenThrow(new ClientHandlerException());
 		
-		assertFalse(workflowSubmitter.submitWorkflow(new WorkflowImpl(badWorkflowString)));
-		verify(workflowAPIGalaxy).importWorkflow(badWorkflow);
+		workflowRESTAPI.importWorkflow(new ExecutableWorkflowGalaxy(badWorkflowString));
 	}
 }
