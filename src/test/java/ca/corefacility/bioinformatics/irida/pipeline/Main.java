@@ -34,7 +34,7 @@ public class Main
 			WorkflowSubmitterGalaxy workflowSubmitter = new WorkflowSubmitterGalaxy(galaxyURL, apiKey);
 			if (workflowSubmitter.submitWorkflow(workflow))
 			{		
-				System.out.println("Successfully submitted workflow represented by: " + workflowJson);
+				System.out.println("Successfully submitted workflow");
 			}
 			else
 			{

@@ -3,9 +3,9 @@ package ca.corefacility.bioinformatics.irida.pipeline.workflow.impl;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
+import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 
-import ca.corefacility.bioinformatics.irida.pipeline.workflow.Workflow;
 import ca.corefacility.bioinformatics.irida.pipeline.workflow.WorkflowSubmitter;
 
 public class WorkflowSubmitterGalaxy implements WorkflowSubmitter
@@ -46,18 +46,34 @@ public class WorkflowSubmitterGalaxy implements WorkflowSubmitter
 	}
 	
 	@Override
-	public boolean submitWorkflow(Workflow workflow)
+	public boolean submitWorkflow(ca.corefacility.bioinformatics.irida.pipeline.workflow.Workflow workflow)
 	{
 		if (workflow == null)
 		{
 			throw new IllegalArgumentException("executableWorkflow is null");
 		}
 		
+		com.github.jmchilton.blend4j.galaxy.beans.Workflow blendWorkflow = null;
+		
 		ExecutableWorkflowGalaxy workflowGalaxy = workflowGenerator.generateExecutableWorkflow(workflow);
 		
-		WorkflowsClient workflowsClient = galaxyInstance.getWorkflowsClient();
-		ClientResponse response = workflowsClient.importWorkflowResponse(workflowGalaxy.getJson());
+		try
+		{
+			blendWorkflow = importWorkflow(workflowGalaxy);
+		}
+		catch (ClientHandlerException e)
+		{
+			e.printStackTrace();
+		}
 		
-		return response.getClientResponseStatus() == ClientResponse.Status.OK;
-	}	
+		return blendWorkflow != null;
+	}
+	
+	private com.github.jmchilton.blend4j.galaxy.beans.Workflow importWorkflow(ExecutableWorkflowGalaxy workflowGalaxy) throws ClientHandlerException
+	{
+		WorkflowsClient workflowsClient = galaxyInstance.getWorkflowsClient();
+		com.github.jmchilton.blend4j.galaxy.beans.Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowGalaxy.getJson());
+		
+		return galaxyWorkflow;
+	}
 }
