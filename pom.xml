@@ -271,6 +271,11 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>${commons.lang.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.github.jmchilton.blend4j</groupId>
+			<artifactId>blend4j</artifactId>
+			<version>0.1-alpha-1</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>irida-api</finalName>
