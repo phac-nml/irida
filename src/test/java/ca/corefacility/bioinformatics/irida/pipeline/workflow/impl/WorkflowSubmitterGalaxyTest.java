@@ -58,7 +58,7 @@ public class WorkflowSubmitterGalaxyTest
 		when(workflowsClient.importWorkflowResponse(goodWorkflowString)).thenReturn(clientResponseOk);
 		
 		assertTrue(workflowSubmitter.submitWorkflow(new WorkflowImpl(goodWorkflowString)));
-		//verify(workflowsClient.importWorkflowResponse(goodWorkflowString));
+		verify(workflowsClient).importWorkflowResponse(goodWorkflowString);
 	}
 	
 	@Test
@@ -67,6 +67,6 @@ public class WorkflowSubmitterGalaxyTest
 		when(workflowsClient.importWorkflowResponse(badWorkflowString)).thenReturn(clientResponseNotOk);
 		
 		assertFalse(workflowSubmitter.submitWorkflow(new WorkflowImpl(badWorkflowString)));
-		//verify(workflowsClient.importWorkflowResponse(badWorkflowString));
+		verify(workflowsClient).importWorkflowResponse(badWorkflowString);
 	}
 }
