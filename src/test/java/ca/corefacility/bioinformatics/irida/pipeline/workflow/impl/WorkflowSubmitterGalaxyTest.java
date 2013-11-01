@@ -22,8 +22,7 @@ public class WorkflowSubmitterGalaxyTest
 	private WorkflowsClient workflowsClient;
 	private String goodWorkflowString;
 	private String badWorkflowString;
-	private ClientResponse clientResponseOk;
-	private ClientResponse clientResponseNotOk;
+	private com.github.jmchilton.blend4j.galaxy.beans.Workflow blendWorkflow;
 	
 	@Before
 	public void setup() throws FileNotFoundException, URISyntaxException
@@ -41,11 +40,8 @@ public class WorkflowSubmitterGalaxyTest
 		
 		GalaxyInstance galaxyInstance = mock(GalaxyInstance.class);
 		workflowsClient = mock(WorkflowsClient.class);
-		clientResponseOk = mock(ClientResponse.class);
-		clientResponseNotOk = mock(ClientResponse.class);
 		
-		when(clientResponseOk.getClientResponseStatus()).thenReturn(ClientResponse.Status.OK);
-		when(clientResponseNotOk.getClientResponseStatus()).thenReturn(ClientResponse.Status.UNAUTHORIZED);
+		blendWorkflow = mock(com.github.jmchilton.blend4j.galaxy.beans.Workflow.class);
 		
 		when(galaxyInstance.getWorkflowsClient()).thenReturn(workflowsClient);
 		
@@ -55,18 +51,18 @@ public class WorkflowSubmitterGalaxyTest
 	@Test
 	public void testSubmitWorkflowGood()
 	{
-		when(workflowsClient.importWorkflowResponse(goodWorkflowString)).thenReturn(clientResponseOk);
+		when(workflowsClient.importWorkflow(goodWorkflowString)).thenReturn(blendWorkflow);
 		
 		assertTrue(workflowSubmitter.submitWorkflow(new WorkflowImpl(goodWorkflowString)));
-		verify(workflowsClient).importWorkflowResponse(goodWorkflowString);
+		verify(workflowsClient).importWorkflow(goodWorkflowString);
 	}
 	
 	@Test
 	public void testSubmitWorkflowBad()
 	{	
-		when(workflowsClient.importWorkflowResponse(badWorkflowString)).thenReturn(clientResponseNotOk);
+		when(workflowsClient.importWorkflowResponse(badWorkflowString)).thenReturn(null);
 		
 		assertFalse(workflowSubmitter.submitWorkflow(new WorkflowImpl(badWorkflowString)));
-		verify(workflowsClient).importWorkflowResponse(badWorkflowString);
+		verify(workflowsClient).importWorkflow(badWorkflowString);
 	}
 }
