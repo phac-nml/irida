@@ -12,8 +12,11 @@ import java.util.Scanner;
 import org.junit.Before;
 import org.junit.Test;
 
+import ca.corefacility.bioinformatics.irida.pipeline.workflow.WorkflowSubmissionException;
+
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
+import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 
 public class WorkflowSubmitterGalaxyTest
@@ -49,7 +52,7 @@ public class WorkflowSubmitterGalaxyTest
 	}
 	
 	@Test
-	public void testSubmitWorkflowGood()
+	public void testSubmitWorkflowGood() throws WorkflowSubmissionException
 	{
 		when(workflowsClient.importWorkflow(goodWorkflowString)).thenReturn(blendWorkflow);
 		
@@ -57,10 +60,10 @@ public class WorkflowSubmitterGalaxyTest
 		verify(workflowsClient).importWorkflow(goodWorkflowString);
 	}
 	
-	@Test
-	public void testSubmitWorkflowBad()
+	@Test(expected=WorkflowSubmissionException.class)
+	public void testSubmitWorkflowBad() throws WorkflowSubmissionException
 	{	
-		when(workflowsClient.importWorkflowResponse(badWorkflowString)).thenReturn(null);
+		when(workflowsClient.importWorkflow(badWorkflowString)).thenThrow(new ClientHandlerException());
 		
 		assertFalse(workflowSubmitter.submitWorkflow(new WorkflowImpl(badWorkflowString)));
 		verify(workflowsClient).importWorkflow(badWorkflowString);

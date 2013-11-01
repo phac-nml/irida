@@ -4,8 +4,8 @@ import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.sun.jersey.api.client.ClientHandlerException;
-import com.sun.jersey.api.client.ClientResponse;
 
+import ca.corefacility.bioinformatics.irida.pipeline.workflow.WorkflowSubmissionException;
 import ca.corefacility.bioinformatics.irida.pipeline.workflow.WorkflowSubmitter;
 
 public class WorkflowSubmitterGalaxy implements WorkflowSubmitter
@@ -47,6 +47,7 @@ public class WorkflowSubmitterGalaxy implements WorkflowSubmitter
 	
 	@Override
 	public boolean submitWorkflow(ca.corefacility.bioinformatics.irida.pipeline.workflow.Workflow workflow)
+		throws WorkflowSubmissionException
 	{
 		if (workflow == null)
 		{
@@ -60,10 +61,11 @@ public class WorkflowSubmitterGalaxy implements WorkflowSubmitter
 		try
 		{
 			blendWorkflow = importWorkflow(workflowGalaxy);
+			
 		}
 		catch (ClientHandlerException e)
 		{
-			e.printStackTrace();
+			throw new WorkflowSubmissionException(e);
 		}
 		
 		return blendWorkflow != null;
