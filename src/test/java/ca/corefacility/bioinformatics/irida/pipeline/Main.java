@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 import ca.corefacility.bioinformatics.irida.pipeline.workflow.Workflow;
+import ca.corefacility.bioinformatics.irida.pipeline.workflow.WorkflowSubmissionException;
 import ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.WorkflowImpl;
 import ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.WorkflowSubmitterGalaxy;
 
@@ -41,7 +42,7 @@ public class Main
 				System.err.println("Error submitting workflow");
 			}
 		}
-		catch (FileNotFoundException | URISyntaxException e)
+		catch (FileNotFoundException | URISyntaxException | WorkflowSubmissionException e)
 		{
 			e.printStackTrace();
 		}
