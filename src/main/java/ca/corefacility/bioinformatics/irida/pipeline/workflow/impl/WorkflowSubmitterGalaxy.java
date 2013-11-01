@@ -1,17 +1,23 @@
 package ca.corefacility.bioinformatics.irida.pipeline.workflow.impl;
 
-import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
-import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
-import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
-import com.sun.jersey.api.client.ClientHandlerException;
-
 import ca.corefacility.bioinformatics.irida.pipeline.workflow.WorkflowSubmissionException;
 import ca.corefacility.bioinformatics.irida.pipeline.workflow.WorkflowSubmitter;
 
 public class WorkflowSubmitterGalaxy implements WorkflowSubmitter
 {
-	private GalaxyInstance galaxyInstance;
+	private WorkflowRESTAPIGalaxy workflowAPIGalaxy;
 	private GalaxyExecutableWorkflowGenerator workflowGenerator;
+	
+	public WorkflowSubmitterGalaxy(WorkflowRESTAPIGalaxy workflowAPIGalaxy)
+	{
+		if (workflowAPIGalaxy == null)
+		{
+			throw new IllegalArgumentException("galaxyURL is null");
+		}
+		
+		this.workflowAPIGalaxy = workflowAPIGalaxy;
+		workflowGenerator = new GalaxyExecutableWorkflowGenerator();
+	}
 	
 	public WorkflowSubmitterGalaxy(String galaxyURL, String apiKey)
 	{
@@ -24,24 +30,7 @@ public class WorkflowSubmitterGalaxy implements WorkflowSubmitter
 			throw new IllegalArgumentException("apiKey is null");			
 		}
 		
-		galaxyInstance = GalaxyInstanceFactory.get(galaxyURL, apiKey);
-		workflowGenerator = new GalaxyExecutableWorkflowGenerator();
-		
-		if (galaxyInstance == null)
-		{
-			throw new RuntimeException("Could not create GalaxyInstance with URL=" + 
-						galaxyURL + ", apiKey=" + apiKey);
-		}
-	}
-	
-	public WorkflowSubmitterGalaxy(GalaxyInstance galaxyInstance)
-	{
-		if (galaxyInstance == null)
-		{
-			throw new IllegalArgumentException("galaxyInstance is null");
-		}
-		
-		this.galaxyInstance = galaxyInstance;
+		workflowAPIGalaxy = new WorkflowRESTAPIGalaxy(galaxyURL, apiKey);
 		workflowGenerator = new GalaxyExecutableWorkflowGenerator();
 	}
 	
@@ -54,28 +43,10 @@ public class WorkflowSubmitterGalaxy implements WorkflowSubmitter
 			throw new IllegalArgumentException("executableWorkflow is null");
 		}
 		
-		com.github.jmchilton.blend4j.galaxy.beans.Workflow blendWorkflow = null;
-		
 		ExecutableWorkflowGalaxy workflowGalaxy = workflowGenerator.generateExecutableWorkflow(workflow);
 		
-		try
-		{
-			blendWorkflow = importWorkflow(workflowGalaxy);
-			
-		}
-		catch (ClientHandlerException e)
-		{
-			throw new WorkflowSubmissionException(e);
-		}
+		String workflowId = workflowAPIGalaxy.importWorkflow(workflowGalaxy);
 		
-		return blendWorkflow != null;
-	}
-	
-	private com.github.jmchilton.blend4j.galaxy.beans.Workflow importWorkflow(ExecutableWorkflowGalaxy workflowGalaxy) throws ClientHandlerException
-	{
-		WorkflowsClient workflowsClient = galaxyInstance.getWorkflowsClient();
-		com.github.jmchilton.blend4j.galaxy.beans.Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowGalaxy.getJson());
-		
-		return galaxyWorkflow;
+		return workflowId != null;
 	}
 }
