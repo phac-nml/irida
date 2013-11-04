@@ -191,7 +191,11 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	@Override
 	@Transactional(readOnly = true)
 	public User getUserByUsername(String username) throws EntityNotFoundException {
-		return userRepository.loadUserByUsername(username);
+		User u = userRepository.loadUserByUsername(username);
+		if (u == null) {
+			throw new EntityNotFoundException("User could not be found.");
+		}
+		return u;
 	}
 
 	/**
