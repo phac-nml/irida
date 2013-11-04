@@ -26,6 +26,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.service.UserService;
@@ -169,7 +170,7 @@ public class UserServiceImplIT {
 				new AnonymousAuthenticationToken("key", "anonymouse", ImmutableList.of(Role.ROLE_CLIENT)));
 		userService.changePassword(1l, "NewPassword1");
 	}
-	
+
 	@Test(expected = EntityExistsException.class)
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
@@ -178,7 +179,7 @@ public class UserServiceImplIT {
 		u.setSystemRole(Role.ROLE_USER);
 		userService.create(u);
 	}
-	
+
 	@Test(expected = EntityExistsException.class)
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
@@ -188,6 +189,15 @@ public class UserServiceImplIT {
 		userService.create(u);
 	}
 
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	public void testGetUserByUsername() {
+		String username = "fbristow";
+		User u = userService.getUserByUsername(username);
+		assertEquals("Username is wrong.", username, u.getUsername());
+	}
+	
 	private UserServiceImplIT asUser() {
 		User u = new User();
 		u.setUsername("fbristow");
