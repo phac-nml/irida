@@ -25,6 +25,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.service.UserService;
@@ -167,6 +168,15 @@ public class UserServiceImplIT {
 		SecurityContextHolder.getContext().setAuthentication(
 				new AnonymousAuthenticationToken("key", "anonymouse", ImmutableList.of(Role.ROLE_CLIENT)));
 		userService.changePassword(1l, "NewPassword1");
+	}
+	
+	@Test(expected = EntityExistsException.class)
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	public void testCreateDuplicateEmail() {
+		User u = new User("user", "manager@nowhere.com", "Password1", "User", "User", "7029");
+		u.setSystemRole(Role.ROLE_USER);
+		userService.create(u);
 	}
 
 	private UserServiceImplIT asUser() {

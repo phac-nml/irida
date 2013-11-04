@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -12,12 +14,15 @@ import javax.validation.Validator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
@@ -88,6 +93,13 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	private static final String CHANGE_PASSWORD_PERMISSIONS = "isFullyAuthenticated() or "
 			+ "(principal instanceof T(ca.corefacility.bioinformatics.irida.model.User) and !principal.isCredentialsNonExpired())";
 
+	private static final Pattern USER_CONSTRAINT_PATTERN;
+
+	static {
+		String regex = "^USER_(.*)_CONSTRAINT$";
+		USER_CONSTRAINT_PATTERN = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+	}
+
 	protected UserServiceImpl() {
 		super(null, null, User.class);
 	}
@@ -134,7 +146,15 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 			// encode the user password
 			String password = u.getPassword();
 			u.setPassword(passwordEncoder.encode(password));
-			return super.create(u);
+			try {
+				return super.create(u);
+			} catch (DataIntegrityViolationException e) {
+				if (e.getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
+					RuntimeException translated = translateConstraintViolationException((org.hibernate.exception.ConstraintViolationException) e
+							.getCause());
+					throw translated;
+				}
+			}
 		}
 
 		throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
@@ -237,5 +257,26 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_MANAGER')")
 	public Iterable<User> findAll() {
 		return repository.findAll();
+	}
+
+	private RuntimeException translateConstraintViolationException(
+			org.hibernate.exception.ConstraintViolationException e) {
+		String constraintName = e.getConstraintName();
+
+		if (StringUtils.isEmpty(constraintName)) {
+			return new EntityExistsException(
+					"Could not create user as a duplicate fields exists; however the duplicate field was not included in "
+							+ "the ConstraintViolationException, the original cause is included.", e);
+		}
+		Matcher matcher = USER_CONSTRAINT_PATTERN.matcher(constraintName);
+		if (matcher.groupCount() != 1) {
+			return new IllegalArgumentException("Couldn't parse field name from constraint violation: "
+					+ constraintName);
+		}
+
+		matcher.find();
+		String fieldName = matcher.group(1).toLowerCase();
+
+		return new EntityExistsException("Could not create user as a duplicate field exists: " + fieldName, fieldName);
 	}
 }
