@@ -175,7 +175,7 @@ public class UserServiceImplTest {
 	@Test
 	public void testLoadUserByUsername() {
 		User user = user();
-		user.setSystemRole(new Role("ROLE_USER"));
+		user.setSystemRole(Role.ROLE_USER);
 		String username = user.getUsername();
 		String password = user.getPassword();
 
