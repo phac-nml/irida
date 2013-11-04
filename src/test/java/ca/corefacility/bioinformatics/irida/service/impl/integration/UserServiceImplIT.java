@@ -178,6 +178,15 @@ public class UserServiceImplIT {
 		u.setSystemRole(Role.ROLE_USER);
 		userService.create(u);
 	}
+	
+	@Test(expected = EntityExistsException.class)
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	public void testCreateDuplicateUsername() {
+		User u = new User("fbristow", "distinct@nowhere.com", "Password1", "User", "User", "7029");
+		u.setSystemRole(Role.ROLE_USER);
+		userService.create(u);
+	}
 
 	private UserServiceImplIT asUser() {
 		User u = new User();
