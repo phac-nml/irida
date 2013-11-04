@@ -198,6 +198,14 @@ public class UserServiceImplIT {
 		assertEquals("Username is wrong.", username, u.getUsername());
 	}
 	
+	@Test(expected = EntityNotFoundException.class)
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	public void testGetUserByInvalidUsername() {
+		String username = "random garbage";
+		userService.getUserByUsername(username);
+	}
+
 	private UserServiceImplIT asUser() {
 		User u = new User();
 		u.setUsername("fbristow");
