@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.junit.Before;
@@ -27,8 +28,11 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -46,6 +50,8 @@ public class UserServiceImplIT {
 
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private ProjectService projectService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
@@ -204,6 +210,18 @@ public class UserServiceImplIT {
 	public void testGetUserByInvalidUsername() {
 		String username = "random garbage";
 		userService.getUserByUsername(username);
+	}
+	
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	public void testGetUsersForProject() {
+		Project p = projectService.read(1L);
+		Collection<Join<Project, User>> projectUsers = userService.getUsersForProject(p);
+		assertEquals("Wrong number of users.", 1, projectUsers.size());
+		Join<Project, User> projectUser = projectUsers.iterator().next();
+		assertEquals("Wrong project.", p, projectUser.getSubject());
+		assertEquals("Wrong user.", "fbristow", projectUser.getObject().getUsername());
 	}
 
 	private UserServiceImplIT asUser() {
