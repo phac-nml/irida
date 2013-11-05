@@ -60,9 +60,9 @@ public class SampleServiceImplIT {
 		User u = new User();
 		u.setUsername("fbristow");
 		u.setPassword(passwordEncoder.encode("Password1"));
-		u.setSystemRole(Role.ROLE_MANAGER);
+		u.setSystemRole(Role.ROLE_ADMIN);
 		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
-				ImmutableList.of(Role.ROLE_MANAGER));
+				ImmutableList.of(Role.ROLE_ADMIN));
 		auth.setDetails(u);
 		SecurityContextHolder.getContext().setAuthentication(auth);
 	}
@@ -104,9 +104,9 @@ public class SampleServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
-	public void testgetSampleByExternalIdDuplicates() {
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT_duplicateSampleIds.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT_duplicateSampleIds.xml")
+	public void testGetSampleByExternalIdDuplicates() {
 		Project p = projectService.read(1l);
 		Sample s = sampleService.getSampleByExternalSampleId(p, "external");
 		assertEquals("Should have retrieved sample with ID 1L.", Long.valueOf(1l), s.getId());

@@ -6,14 +6,14 @@
 	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
 		email="manager@nowhere.com" firstName="Mr." lastName="Manager"
 		password="$2a$10$rgdnCrrAqN11Hz03mcGCg.R9gZehmEcyLC3kUGQJ1fEBlF9ld.4v."
-		phoneNumber="867-5309" username="fbristow" enabled="true" system_role="ROLE_ADMIN"
-		credentialsNonExpired="true" />
+		phoneNumber="867-5309" username="fbristow" system_role="ROLE_ADMIN"
+		credentialsNonExpired="true" enabled="true" />
 
-	<sequence_file id="1" enabled="true" />
-	<sequence_file id="2" enabled="true" />
+	<sequence_file id="1" />
+	<sequence_file id="2" />
 
-	<miseq_run id="1" enabled="true" />
-	<miseq_run id="2" enabled="true" />
+	<miseq_run id="1" />
+	<miseq_run id="2" />
 	
 	<miseqrun_sequencefile id="1" miseqRun_id="2" sequenceFile_id="2" />
 
@@ -22,4 +22,8 @@
 	<MISEQRUN_SEQUENCEFILE_AUD />
 	<MISEQRUN_SEQUENCEFILE />
 	<SEQUENCEFILE_SAMPLE />
+	<PROJECT_USER />
+	<PROJECT_USER_AUD />
+	<MISEQ_RUN_AUD />
+	<SEQUENCE_FILE_AUD />
 </dataset>

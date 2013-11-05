@@ -33,7 +33,9 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.impl.SequenceFileServiceImpl;
 
 import com.google.common.collect.ImmutableMap;
+
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Tests for {@link SequenceFileServiceImpl}.
