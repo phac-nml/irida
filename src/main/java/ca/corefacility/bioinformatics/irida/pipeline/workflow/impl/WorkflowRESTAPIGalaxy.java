@@ -41,6 +41,12 @@ public class WorkflowRESTAPIGalaxy
 		this.galaxyInstance = galaxyInstance;
 	}
 	
+	/**
+	 * Imports the passed workflow into Galaxy.
+	 * @param workflowGalaxy  The Galaxy Workflow to import.
+	 * @return  The ID of the Galaxy Workflow, or null if not successfully imported.
+	 * @throws WorkflowSubmissionException  If an error occurred while importing the workflow.
+	 */
 	public String importWorkflow(ExecutableWorkflowGalaxy workflowGalaxy) throws WorkflowSubmissionException
 	{
 		WorkflowsClient workflowsClient = galaxyInstance.getWorkflowsClient();
@@ -61,5 +67,16 @@ public class WorkflowRESTAPIGalaxy
 		}
 		
 		return galaxyWorkflow.getId();
+	}
+	
+	/**
+	 * Imports the files used within the given workflow to Galaxy.
+	 * @param workflowGalaxy  The workflow containing the files to import.
+	 * @return  An ID of the data library containing the files.
+	 */
+	public String importWorkflowFiles(ExecutableWorkflowGalaxy workflowGalaxy)
+		throws WorkflowSubmissionException
+	{
+		return null;
 	}
 }

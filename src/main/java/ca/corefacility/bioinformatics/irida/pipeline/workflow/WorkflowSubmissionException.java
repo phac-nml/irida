@@ -7,6 +7,11 @@ public class WorkflowSubmissionException extends Exception
 		super(message, cause);
 	}
 
+	public WorkflowSubmissionException()
+	{
+		super();
+	}
+
 	public WorkflowSubmissionException(String message)
 	{
 		super(message);
