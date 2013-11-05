@@ -13,9 +13,6 @@ public interface IridaThing extends Timestamped{
      
     public Long getId();
     
-    public boolean isEnabled();
-    public void setEnabled(boolean valid);
-    
     public Date getModifiedDate();
     
     public void setModifiedDate(Date modifiedDate);

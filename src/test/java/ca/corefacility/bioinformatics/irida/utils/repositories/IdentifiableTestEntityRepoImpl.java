@@ -1,10 +1,11 @@
-package ca.corefacility.bioinformatics.irida.utils;
+package ca.corefacility.bioinformatics.irida.utils.repositories;
 
 import javax.sql.DataSource;
 
 import org.hibernate.SessionFactory;
 
 import ca.corefacility.bioinformatics.irida.repositories.relational.GenericRelationalRepository;
+import ca.corefacility.bioinformatics.irida.utils.model.IdentifiableTestEntity;
 
 /**
  *

@@ -8,9 +8,9 @@
 		phoneNumber="867-5309" username="fbristow" enabled="true" system_role="3"
 		credentialsNonExpired="true" />
 
-	<project id="1" createdDate="2013-07-18 14:20:19.0" enabled="true"
+	<project id="1" createdDate="2013-07-18 14:20:19.0"
 		name="project" projectDescription="description" remoteURL="somewhere" />
-	<project id="2" createdDate="2013-07-18 14:20:19.0" enabled="true"
+	<project id="2" createdDate="2013-07-18 14:20:19.0" 
 		name="project2" projectDescription="description2" remoteURL="somewhere" />
 	<project_user id="1" createdDate="2013-07-18 14:20:19.0"
 		projectRole="PROJECT_OWNER" project_id="1" user_id="1" />
@@ -18,13 +18,13 @@
 		projectRole="PROJECT_OWNER" project_id="2" user_id="1" />
 
 	<sample id="1" createdDate="2013-07-18 14:20:19.0" description="description1"
-		enabled="true" externalSampleId="sample1" sampleName="sample1" />
+		externalSampleId="sample1" sampleName="sample1" />
 	<sample id="2" createdDate="2013-07-18 14:20:19.0" description="description2"
-		enabled="true" externalSampleId="sample2" sampleName="sample2" />
+		externalSampleId="sample2" sampleName="sample2" />
 	<sample id="3" createdDate="2013-07-18 14:20:19.0" description="description3"
-		enabled="true" externalSampleId="sample3" sampleName="sample3" />
+		externalSampleId="sample3" sampleName="sample3" />
 	<sample id="4" createdDate="2013-07-18 14:20:19.0" description="description4"
-		enabled="true" externalSampleId="sample4" sampleName="sample4" />
+		externalSampleId="sample4" sampleName="sample4" />
 
 	<project_sample id="1" createdDate="2013-07-18 14:20:19.0"
 		project_id="1" sample_id="1" />
@@ -36,11 +36,11 @@
 		project_id="2" sample_id="4" />
 
 	<sequence_file id="1" createdDate="2013-07-18 14:20:19.0"
-		enabled="true" filePath="/" />
+		filePath="/" />
 	<sequence_file id="2" createdDate="2013-07-18 14:20:19.0"
-		enabled="true" filePath="/" />
+		filePath="/" />
 	<sequence_file id="3" createdDate="2013-07-18 14:20:19.0"
-		enabled="true" filePath="/" />
+		filePath="/" />
 
 	<sequencefile_sample id="1" createdDate="2013-07-18 14:20:19.0"
 		sample_id="1" sequencefile_id="1" />

@@ -1,16 +1,23 @@
 package ca.corefacility.bioinformatics.irida.model;
 
+import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileOverrepresentedSequenceJoin;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -38,8 +45,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	@NotNull
 	@Transient
 	private Path file;
-
-	private Boolean enabled = true;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
@@ -72,6 +77,15 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
     private String i5IndexId;
     private String i5Index;
 	private Long fileRevisionNumber; //the filesystem file revision number
+	
+	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sequenceFile")
+	private List<MiseqRunSequenceFileJoin> miseqRuns;
+	
+	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sequenceFile")
+	private List<SampleSequenceFileJoin> samples;
+	
+	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sequenceFile")
+	private List<SequenceFileOverrepresentedSequenceJoin> overrepresentedSequences;
 
 	public SequenceFile() {
 		createdDate = new Date();
@@ -151,14 +165,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
 	public void setDuplicationLevelChart(byte[] duplicationLevelChart) {
 		this.duplicationLevelChart = duplicationLevelChart;
-	}
-
-	public Boolean getEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
 	}
 
 	public Date getCreatedDate() {
@@ -272,16 +278,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	}
 
 	@Override
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	@Override
-	public void setEnabled(boolean valid) {
-		this.enabled = valid;
-	}
-
-	@Override
 	public Date getTimestamp() {
 		return createdDate;
 	}
@@ -355,5 +351,29 @@ public String getSamplePlate() {
 
 	public void setFileRevisionNumber(Long fileRevisionNumber) {
 		this.fileRevisionNumber = fileRevisionNumber;
+	}
+	
+	public List<MiseqRunSequenceFileJoin> getMiseqRuns() {
+		return miseqRuns;
+	}
+
+	public void setMiseqRuns(List<MiseqRunSequenceFileJoin> miseqRuns) {
+		this.miseqRuns = miseqRuns;
+	}
+
+	public List<SampleSequenceFileJoin> getSamples() {
+		return samples;
+	}
+
+	public void setSamples(List<SampleSequenceFileJoin> samples) {
+		this.samples = samples;
+	}
+
+	public List<SequenceFileOverrepresentedSequenceJoin> getOverrepresentedSequences() {
+		return overrepresentedSequences;
+	}
+
+	public void setOverrepresentedSequences(List<SequenceFileOverrepresentedSequenceJoin> overrepresentedSequences) {
+		this.overrepresentedSequences = overrepresentedSequences;
 	}
 }

@@ -5,7 +5,9 @@ import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import java.util.Date;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,12 +30,12 @@ public class MiseqRunSequenceFileJoin implements Join<MiseqRun, SequenceFile>{
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.DETACH)
     @JoinColumn(name="miseqRun_id")
     private MiseqRun miseqRun;
     
-    @ManyToOne
-    @JoinColumn(name="sequenceFile_id")
+	@ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.DETACH)    
+	@JoinColumn(name="sequenceFile_id")
     private SequenceFile sequenceFile;
     
     @Temporal(TemporalType.TIMESTAMP)

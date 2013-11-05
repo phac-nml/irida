@@ -37,7 +37,7 @@ public class SequenceFileOverrepresentedSequenceJoin implements Join<SequenceFil
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date timestamp;
 
-	private SequenceFileOverrepresentedSequenceJoin() {
+	public SequenceFileOverrepresentedSequenceJoin() {
 		timestamp = new Date();
 	}
 	

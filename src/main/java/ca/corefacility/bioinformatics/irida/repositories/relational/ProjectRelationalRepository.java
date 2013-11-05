@@ -47,7 +47,6 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
 
 		Criteria crit = session.createCriteria(ProjectUserJoin.class);
 		crit.add(Restrictions.eq("user", user));
-		crit.createCriteria("project").add(Restrictions.eq("enabled", true));
 		@SuppressWarnings("unchecked")
 		List<ProjectUserJoin> list = crit.list();
 
@@ -127,7 +126,6 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
 
 		Criteria crit = session.createCriteria(ProjectSampleJoin.class);
 		crit.add(Restrictions.eq("sample", sample));
-		crit.createCriteria("project").add(Restrictions.eq("enabled", true));
 		
 		return crit.list();
 	}
@@ -159,7 +157,6 @@ public class ProjectRelationalRepository extends GenericRelationalRepository<Pro
 		Criteria crit = session.createCriteria(ProjectUserJoin.class);
 		crit.add(Restrictions.eq("user", user));
 		crit.add(Restrictions.eq("projectRole", role));
-		crit.createCriteria("project").add(Restrictions.eq("enabled", true));
 		@SuppressWarnings("unchecked")
 		List<ProjectUserJoin> list = crit.list();
 

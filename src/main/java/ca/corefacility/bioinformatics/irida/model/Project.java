@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model;
 
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.URL;
 
@@ -7,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -28,9 +31,7 @@ public class Project implements IridaThing, Comparable<Project> {
     @NotNull(message = "{project.name.notnull}")
 	@Size(min = 5, message = "{project.name.size}")
     private String name;
-    
-    private Boolean enabled = true;
-    
+        
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
     
@@ -42,6 +43,12 @@ public class Project implements IridaThing, Comparable<Project> {
 	
 	@URL(message = "{project.remoteURL.url}")
 	private String remoteURL;
+	
+	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "project")
+	private List<ProjectUserJoin> users;
+	
+	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "project")
+	private List<ProjectSampleJoin> samples;
 
     public Project() {
         createdDate = new Date();
@@ -104,16 +111,6 @@ public class Project implements IridaThing, Comparable<Project> {
     }
 
     @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void setEnabled(boolean valid) {
-        this.enabled = valid;
-    }
-
-    @Override
     public Date getTimestamp() {
         return createdDate;
     }
@@ -147,5 +144,21 @@ public class Project implements IridaThing, Comparable<Project> {
 
 	public void setRemoteURL(String remoteURL) {
 		this.remoteURL = remoteURL;
+	}
+
+	public List<ProjectUserJoin> getUsers() {
+		return users;
+	}
+
+	public void setUsers(List<ProjectUserJoin> users) {
+		this.users = users;
+	}
+
+	public List<ProjectSampleJoin> getSamples() {
+		return samples;
+	}
+
+	public void setSamples(List<ProjectSampleJoin> samples) {
+		this.samples = samples;
 	}
 }

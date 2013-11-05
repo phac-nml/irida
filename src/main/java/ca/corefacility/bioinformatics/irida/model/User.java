@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model;
 
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -24,6 +25,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import ca.corefacility.bioinformatics.irida.validators.Patterns;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.UniqueConstraint;
 
 /**
@@ -72,7 +77,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	@Size(min = 4, message = "{user.phoneNumber.size}")
 	private String phoneNumber;
 	@NotNull
-	private Boolean enabled = true;
+	private boolean enabled = true;
 
 	@ManyToOne
 	@JoinColumn(name = "system_role")
@@ -88,6 +93,9 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	private String locale;
 
 	private boolean credentialsNonExpired;
+	
+	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "user")
+	private List<ProjectUserJoin> projects;
 
 	/**
 	 * Construct an instance of {@link User} with no properties set.
@@ -285,7 +293,6 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 		return enabled;
 	}
 
-	@Override
 	public void setEnabled(boolean valid) {
 		this.enabled = valid;
 	}
@@ -326,14 +333,6 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 		this.locale = locale;
 	}
 
-	public Boolean getEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
-	}
-
 	public Date getCreatedDate() {
 		return createdDate;
 	}
@@ -344,5 +343,13 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 
 	public void setSystemRole(Role systemRole) {
 		this.systemRole = systemRole;
+	}
+
+	public List<ProjectUserJoin> getProjects() {
+		return projects;
+	}
+
+	public void setProjects(List<ProjectUserJoin> projects) {
+		this.projects = projects;
 	}
 }
