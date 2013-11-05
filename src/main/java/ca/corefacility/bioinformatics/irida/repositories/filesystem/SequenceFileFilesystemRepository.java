@@ -46,6 +46,10 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Long, Se
     private Path getSequenceFileDir(Long id) {
         return BASE_DIRECTORY.resolve(id.toString());
     }
+	
+	private Path getSequenceFileDirWithRevision(Path sequenceBaseDir, Long fileRevisionNumber){
+		return sequenceBaseDir.resolve(fileRevisionNumber.toString());
+	}
 
     /**
      * The {@link SequenceFile} *must* have an identifier before being passed to
@@ -63,11 +67,16 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Long, Se
             throw new IllegalArgumentException("Identifier is required.");
         }
         Path sequenceFileDir = getSequenceFileDir(object.getId());
-        Path target = sequenceFileDir.resolve(object.getFile().getFileName());
+		Path sequenceFileDirWithRevision = getSequenceFileDirWithRevision(sequenceFileDir, object.getFileRevisionNumber());
+        Path target = sequenceFileDirWithRevision.resolve(object.getFile().getFileName());
         try {
-        	if (!Files.exists(sequenceFileDir)) {
-        		Files.createDirectory(sequenceFileDir);
+			if(!Files.exists(sequenceFileDir)){
+				Files.createDirectory(sequenceFileDir);
                 logger.debug("Created directory: [" + sequenceFileDir.toString() + "]");
+			}
+        	if (!Files.exists(sequenceFileDirWithRevision)) {
+        		Files.createDirectory(sequenceFileDirWithRevision);
+                logger.debug("Created directory: [" + sequenceFileDirWithRevision.toString() + "]");
         	}
             Files.move(object.getFile(), target);
         } catch (IOException e) {
@@ -92,7 +101,7 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Long, Se
         throw new UnsupportedOperationException("Files should be loaded by relational repository.");
     }
 
-    private Path updateFilesystemFile(Long id, Path object) throws IllegalArgumentException {
+    private Path updateFilesystemFile(Long id, Path object, Long fileRevisionNumber) throws IllegalArgumentException {
         if (id == null) {
             throw new IllegalArgumentException("Identifier is required.");
         }
@@ -100,30 +109,23 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Long, Se
         // the sequence file directory must previously exist, if not, then
         // we're doing something very weird.
         Path sequenceFileDir = getSequenceFileDir(id);
+		Path sequenceFileDirWithRevision = getSequenceFileDirWithRevision(sequenceFileDir, fileRevisionNumber);
+
         if (!Files.exists(sequenceFileDir)) {
             throw new IllegalArgumentException("The directory for this "
                     + "SequenceFile does not exist, has it been persisted "
                     + "before?");
         }
+		
+		if(Files.exists(sequenceFileDirWithRevision)){
+			throw new IllegalArgumentException("The directory for this sequence file revision already exists.");
+		}
 
-        // the directory exists. does the target file exist? if so, we don't
-        // want to overwrite the file. We'll rename the existing file with the
-        // current date appended to the end so that we're retaining existing
-        // file names.
-        Path target = sequenceFileDir.resolve(object.getFileName());
-        if (Files.exists(target)) {
-            String destination = target.getFileName().toString() + "-" + new Date().getTime();
-
-            // rename the existing file
-            try {
-                Files.move(target, target.resolveSibling(destination));
-            } catch (IOException e) {
-                throw new StorageException("Couldn't rename existing file.");
-            }
-        }
+        Path target = sequenceFileDirWithRevision.resolve(object.getFileName());
 
         // now handle storing the file as before:
         try {
+			Files.createDirectory(sequenceFileDirWithRevision);
             Files.move(object, target);
         } catch (IOException e) {
             throw new StorageException("Couldn't move updated file to existing directory.");
@@ -153,9 +155,16 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Long, Se
     @Override
     public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException, SecurityException {
         SequenceFile file = new SequenceFile();
+		
+		if(!updatedFields.containsKey("fileRevisionNumber")){
+			throw new IllegalArgumentException("Cannot update of sequence file without file revision number");
+		}
+		
+		Long fileRevisionNumber = (Long) updatedFields.get("fileRevisionNumber");
+		
         if (updatedFields.containsKey("file")) {
             Path updatedFile = (Path) updatedFields.get("file");
-            Path target = updateFilesystemFile(id, updatedFile);
+            Path target = updateFilesystemFile(id, updatedFile,fileRevisionNumber);
             file.setFile(target);
         }
 

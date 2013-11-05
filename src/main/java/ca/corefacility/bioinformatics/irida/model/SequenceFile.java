@@ -76,6 +76,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
     private String i7Index;
     private String i5IndexId;
     private String i5Index;
+	private Long fileRevisionNumber; //the filesystem file revision number
 	
 	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sequenceFile")
 	private List<MiseqRunSequenceFileJoin> miseqRuns;
@@ -89,6 +90,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	public SequenceFile() {
 		createdDate = new Date();
 		modifiedDate = createdDate;
+		fileRevisionNumber = 1L;
 	}
 
 	/**
@@ -343,6 +345,14 @@ public String getSamplePlate() {
         this.i5Index = i5Index;
     }
 
+	public Long getFileRevisionNumber() {
+		return fileRevisionNumber;
+	}
+
+	public void setFileRevisionNumber(Long fileRevisionNumber) {
+		this.fileRevisionNumber = fileRevisionNumber;
+	}
+	
 	public List<MiseqRunSequenceFileJoin> getMiseqRuns() {
 		return miseqRuns;
 	}

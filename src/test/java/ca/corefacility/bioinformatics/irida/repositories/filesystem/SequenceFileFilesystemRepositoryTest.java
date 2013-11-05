@@ -68,7 +68,7 @@ public class SequenceFileFilesystemRepositoryTest {
 
         // the created file should reside in the base directory within a new directory using the sequence file's identifier.
         Path p = FileSystems.getDefault().getPath(baseDirectory.toString(),
-                lid.toString(), filename);
+                lid.toString(), s.getFileRevisionNumber().toString(), filename);
         assertEquals(p, s.getFile());
         assertTrue(Files.exists(p));
         Files.delete(p);
@@ -123,6 +123,8 @@ public class SequenceFileFilesystemRepositoryTest {
         // create the directory and put the file into it.
         // so call create instead of rewriting the logic:
         sf = repository.create(sf);
+		
+		Path originalFile = sf.getFile();
 
         // now create a new temp file with the same name
         Path newFile = getTempFile();
@@ -135,55 +137,38 @@ public class SequenceFileFilesystemRepositoryTest {
 
         sf.setFile(newFile);
         // now try updating the file:
-        sf = repository.update(sf.getId(), ImmutableMap.of("file", (Object) newFile));
-
+        sf = repository.update(sf.getId(), ImmutableMap.of("file", (Object) newFile,"fileRevisionNumber",2L));
+		
         // the filename should be the same as before:
-        Path updated = sf.getFile();
-        assertEquals(updated.getFileName(), oldFile.getFileName());
+        Path updatedFile = sf.getFile();
+        assertEquals(updatedFile.getFileName(), oldFile.getFileName());
         // the contents of the file should be different:
-        Scanner sc = new Scanner(updated);
+        Scanner sc = new Scanner(updatedFile);
         assertEquals(updatedText, sc.nextLine());
-        // we should also have a two files in the directory:
-        Path parentDirectory = sf.getFile().getParent();
-        DirectoryStream<Path> directory = Files.newDirectoryStream(parentDirectory);
-        int children = 0;
-        // check that the contents of both files still exists:
-        for (Path f : directory) {
-            children++;
-            assertTrue(f.getFileName().toString().startsWith(sf.getFile().getFileName().toString()));
-            sc = new Scanner(f);
-            if (f.getFileName().toString().contains("-")) {
-                assertEquals(originalText, sc.nextLine());
-            } else {
-                assertEquals(updatedText, sc.nextLine());
-            }
-        }
-        sc.close();
-        assertEquals(2, children);
+		
+		sc = new Scanner(originalFile);
+        assertEquals(originalText, sc.nextLine());
     }
 
     @Test
     public void testUpdate() throws IOException {
         Long lId = new Long(9999);
-        Path originalFile = getTempFile();
-        SequenceFile sf = new SequenceFile(originalFile);
-        sf.setId(lId);
-        sf = repository.create(sf);
-        Path updatedFile = getTempFile();
-        sf.setFile(updatedFile);
-        sf = repository.update(lId, ImmutableMap.of("file", (Object) updatedFile));
-        assertEquals(updatedFile.getFileName(), sf.getFile().getFileName());
-
-        Set<String> filenames = new HashSet<>();
-        filenames.add(originalFile.getFileName().toString());
-        filenames.add(updatedFile.getFileName().toString());
+        
+		//create the original file
+		Path originalFile = getTempFile();
+        SequenceFile original = new SequenceFile(originalFile);
+        original.setId(lId);
+        original = repository.create(original);
+        
+		//update with a new file
+		Path updatedFile = getTempFile();
+		SequenceFile updated = repository.update(lId, ImmutableMap.of("file", (Object) updatedFile,"fileRevisionNumber",2L));
+        
+		assertEquals(updatedFile.getFileName(), updated.getFile().getFileName()); //ensure the new file is what was updated
+		
         // make sure that the other file is still there:
-        Path parentDirectory = sf.getFile().getParent();
-        DirectoryStream<Path> children = Files.newDirectoryStream(parentDirectory);
-        for (Path f : children) {
-            filenames.remove(f.getFileName().toString());
-        }
-        assertTrue(filenames.isEmpty());
+		Path file = original.getFile();
+		assertTrue(Files.exists(file));
     }
 
     @Test
