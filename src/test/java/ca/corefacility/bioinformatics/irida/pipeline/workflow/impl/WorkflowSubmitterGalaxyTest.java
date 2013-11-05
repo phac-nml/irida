@@ -25,6 +25,8 @@ public class WorkflowSubmitterGalaxyTest
 	private String goodWorkflowString;
 	private ExecutableWorkflowGalaxy badWorkflow;
 	private String badWorkflowString;
+	private ExecutableWorkflowGalaxy badFilesWorkflow;
+	private String badFilesWorkflowString;
 	
 	@Before
 	public void setup() throws FileNotFoundException, URISyntaxException
@@ -43,6 +45,9 @@ public class WorkflowSubmitterGalaxyTest
 		badWorkflowString = badWorkflowScanner.useDelimiter("\\Z").next();
 		badWorkflowScanner.close();
 		badWorkflow = new ExecutableWorkflowGalaxy(badWorkflowString);
+		
+		badFilesWorkflowString = goodWorkflowString;
+		badFilesWorkflow = new ExecutableWorkflowGalaxy(badFilesWorkflowString);
 						
 		workflowSubmitter = new WorkflowSubmitterGalaxy(workflowAPIGalaxy);
 	}
@@ -51,17 +56,28 @@ public class WorkflowSubmitterGalaxyTest
 	public void testSubmitWorkflowGood() throws WorkflowSubmissionException
 	{
 		when(workflowAPIGalaxy.importWorkflow(goodWorkflow)).thenReturn("id");
+		when(workflowAPIGalaxy.importWorkflowFiles(goodWorkflow)).thenReturn("file_id");
 		
 		assertTrue(workflowSubmitter.submitWorkflow(new WorkflowImpl(goodWorkflowString)));
 		verify(workflowAPIGalaxy).importWorkflow(goodWorkflow);
+		verify(workflowAPIGalaxy).importWorkflowFiles(goodWorkflow);
 	}
 	
 	@Test(expected=WorkflowSubmissionException.class)
 	public void testSubmitWorkflowBad() throws WorkflowSubmissionException
 	{	
-		when(workflowAPIGalaxy.importWorkflow(badWorkflow)).thenThrow(new WorkflowSubmissionException("null"));
+		when(workflowAPIGalaxy.importWorkflow(badWorkflow)).thenThrow(new WorkflowSubmissionException());
 		
 		assertFalse(workflowSubmitter.submitWorkflow(new WorkflowImpl(badWorkflowString)));
 		verify(workflowAPIGalaxy).importWorkflow(badWorkflow);
+	}
+	
+	@Test(expected=WorkflowSubmissionException.class)
+	public void testSubmitWorkflowInvalidFiles() throws WorkflowSubmissionException
+	{
+		when(workflowAPIGalaxy.importWorkflow(badFilesWorkflow)).thenReturn("id");
+		when(workflowAPIGalaxy.importWorkflowFiles(badFilesWorkflow)).thenThrow(new WorkflowSubmissionException());
+		
+		workflowSubmitter.submitWorkflow(new WorkflowImpl(badFilesWorkflowString));
 	}
 }
