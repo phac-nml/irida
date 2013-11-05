@@ -34,11 +34,11 @@ public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	Long id;
 
-	@ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.DETACH) 
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "sequencefile_id")
 	private SequenceFile sequenceFile;
 
-	@ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.DETACH) 
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "sample_id")
 	private Sample sample;
 
@@ -63,7 +63,7 @@ public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(sequenceFile, sample);

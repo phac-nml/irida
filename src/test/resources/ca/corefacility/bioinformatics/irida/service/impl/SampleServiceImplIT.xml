@@ -26,7 +26,6 @@
 	<sample id="4" createdDate="2013-07-18 14:20:19.0" description="description4"
 		externalSampleId="sample4" sampleName="sample4" />
 
-
 	<project_sample id="1" createdDate="2013-07-18 14:20:19.0"
 		project_id="1" sample_id="1" />
 	<project_sample id="2" createdDate="2013-07-18 14:20:19.0"
