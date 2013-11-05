@@ -92,21 +92,20 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadSequenceFile')")
 	public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
-		SequenceFile updated = super.update(id, updatedFields);
-
 		if(updatedFields.containsKey("fileRevisionNumber")){
-			throw new InvalidPropertyException("File revision number cannot be updated.");
+			throw new InvalidPropertyException("File revision number cannot be updated manually.");
 		}
+		
+		SequenceFile updated = super.update(id, updatedFields);
 		
 		if (updatedFields.containsKey("file")) {
 			//need to read the sequence file to get the current file revision number
-			SequenceFile read = repository.read(id);
-			Long fileRevisionNumber = read.getFileRevisionNumber();
+			Long fileRevisionNumber = updated.getFileRevisionNumber();
 			fileRevisionNumber++;
 			updatedFields.put("fileRevisionNumber", fileRevisionNumber);
 			
 			updated = fileRepository.update(id, updatedFields);
-			super.update(id, ImmutableMap.of("file", (Object) updated.getFile()));
+			super.update(id, ImmutableMap.of("file", (Object) updated.getFile(),"fileRevisionNumber", fileRevisionNumber));
 		}
 
 		return updated;

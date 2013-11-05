@@ -70,6 +70,10 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Long, Se
 		Path sequenceFileDirWithRevision = getSequenceFileDirWithRevision(sequenceFileDir, object.getFileRevisionNumber());
         Path target = sequenceFileDirWithRevision.resolve(object.getFile().getFileName());
         try {
+			if(!Files.exists(sequenceFileDir)){
+				Files.createDirectory(sequenceFileDir);
+                logger.debug("Created directory: [" + sequenceFileDir.toString() + "]");
+			}
         	if (!Files.exists(sequenceFileDirWithRevision)) {
         		Files.createDirectory(sequenceFileDirWithRevision);
                 logger.debug("Created directory: [" + sequenceFileDirWithRevision.toString() + "]");
@@ -117,24 +121,11 @@ public class SequenceFileFilesystemRepository implements CRUDRepository<Long, Se
 			throw new IllegalArgumentException("The directory for this sequence file revision already exists.");
 		}
 
-        // the directory exists. does the target file exist? if so, we don't
-        // want to overwrite the file. We'll rename the existing file with the
-        // current date appended to the end so that we're retaining existing
-        // file names.
-        Path target = sequenceFileDir.resolve(object.getFileName());
-        if (Files.exists(target)) {
-            String destination = target.getFileName().toString() + "-" + new Date().getTime();
-
-            // rename the existing file
-            try {
-                Files.move(target, target.resolveSibling(destination));
-            } catch (IOException e) {
-                throw new StorageException("Couldn't rename existing file.");
-            }
-        }
+        Path target = sequenceFileDirWithRevision.resolve(object.getFileName());
 
         // now handle storing the file as before:
         try {
+			Files.createDirectory(sequenceFileDirWithRevision);
             Files.move(object, target);
         } catch (IOException e) {
             throw new StorageException("Couldn't move updated file to existing directory.");

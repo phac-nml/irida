@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 import com.google.common.collect.ImmutableMap;
+import java.util.HashMap;
 
 /**
  * Tests for {@link SequenceFileServiceImpl}.
@@ -114,7 +115,8 @@ public class SequenceFileServiceImplTest {
 		SequenceFile updatedSf = new SequenceFile(updatedFile);
 		updatedSf.setId(id);
 
-		ImmutableMap<String, Object> updatedMap = ImmutableMap.of("file", (Object) updatedFile);
+		Map<String,Object> updatedMap = new HashMap<>();
+		updatedMap.put("file", (Object) updatedFile);
 
 		when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
 		when(crudRepository.update(sf.getId(), updatedMap)).thenReturn(updatedSf);
