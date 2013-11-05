@@ -40,6 +40,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
@@ -222,6 +223,17 @@ public class UserServiceImplIT {
 		Join<Project, User> projectUser = projectUsers.iterator().next();
 		assertEquals("Wrong project.", p, projectUser.getSubject());
 		assertEquals("Wrong user.", "fbristow", projectUser.getObject().getUsername());
+	}
+	
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	public void testGetUsersAvailableForProject() {
+		Project p = projectService.read(1L);
+		List<User> usersAvailableForProject = userService.getUsersAvailableForProject(p);
+		assertEquals("Wrong number of users.", 1, usersAvailableForProject.size());
+		User availableUser = usersAvailableForProject.iterator().next();
+		assertEquals("Wrong user.", "differentUser", availableUser.getUsername());
 	}
 
 	private UserServiceImplIT asUser() {

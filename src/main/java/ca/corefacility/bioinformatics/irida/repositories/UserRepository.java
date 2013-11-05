@@ -40,6 +40,6 @@ public interface UserRepository extends PagingAndSortingRepository<User, Long>, 
 	 *            The project we want to list the available users for
 	 * @return A List of {@link User}s that are not associated with the project.
 	 */
-	@Query("select u from User u")
+	@Query("SELECT u FROM User u WHERE u NOT IN (SELECT f from ProjectUserJoin p JOIN p.user f WHERE p.project=?1)")
 	public List<User> getUsersAvailableForProject(Project project);
 }
