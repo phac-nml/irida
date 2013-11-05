@@ -94,7 +94,17 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
 		SequenceFile updated = super.update(id, updatedFields);
 
+		if(updatedFields.containsKey("fileRevisionNumber")){
+			throw new InvalidPropertyException("File revision number cannot be updated.");
+		}
+		
 		if (updatedFields.containsKey("file")) {
+			//need to read the sequence file to get the current file revision number
+			SequenceFile read = repository.read(id);
+			Long fileRevisionNumber = read.getFileRevisionNumber();
+			fileRevisionNumber++;
+			updatedFields.put("fileRevisionNumber", fileRevisionNumber);
+			
 			updated = fileRepository.update(id, updatedFields);
 			super.update(id, ImmutableMap.of("file", (Object) updated.getFile()));
 		}
