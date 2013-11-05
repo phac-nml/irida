@@ -44,7 +44,6 @@ public class SampleRelationalRepository extends GenericRelationalRepository<Samp
 
 		Criteria crit = session.createCriteria(ProjectSampleJoin.class);
 		crit.add(Restrictions.eq("project", project));
-		crit.createCriteria("sample").add(Restrictions.eq("enabled", true));
 		@SuppressWarnings("unchecked")
 		List<ProjectSampleJoin> list = crit.list();
 
@@ -78,7 +77,6 @@ public class SampleRelationalRepository extends GenericRelationalRepository<Samp
 		Session session = sessionFactory.getCurrentSession();
 		Criteria crit = session.createCriteria(SampleSequenceFileJoin.class);
 		crit.add(Restrictions.eq("sequenceFile", sf));
-		crit.createCriteria("sample").add(Restrictions.eq("enabled", true));
 
 		return (SampleSequenceFileJoin) crit.uniqueResult();
 	}

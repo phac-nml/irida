@@ -19,8 +19,8 @@ import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileFilesystemRepository;
-import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntityRepo;
-import ca.corefacility.bioinformatics.irida.utils.IdentifiableTestEntityRepoImpl;
+import ca.corefacility.bioinformatics.irida.utils.repositories.IdentifiableTestEntityRepo;
+import ca.corefacility.bioinformatics.irida.utils.repositories.IdentifiableTestEntityRepoImpl;
 
 @Configuration
 @Profile("test")
@@ -54,10 +54,10 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 		builder.scanPackages(
 				"ca.corefacility.bioinformatics.irida.model",
 				"ca.corefacility.bioinformatics.irida.repositories.relational.auditing",
-				"ca.corefacility.bioinformatics.irida.utils");
+				"ca.corefacility.bioinformatics.irida.utils.model");
 		Properties properties = new Properties();
 		properties.put("hibernate.show_sql", false);
-		properties.put("hibernate.hbm2ddl.auto", "create");
+		properties.put("hibernate.hbm2ddl.auto", "create-drop");
 		properties
 				.put("hibernate.dialect", "org.hibernate.dialect.HSQLDialect");
 

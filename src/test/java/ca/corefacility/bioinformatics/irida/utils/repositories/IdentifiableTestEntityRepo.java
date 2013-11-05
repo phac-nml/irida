@@ -1,6 +1,7 @@
-package ca.corefacility.bioinformatics.irida.utils;
+package ca.corefacility.bioinformatics.irida.utils.repositories;
 
 import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import ca.corefacility.bioinformatics.irida.utils.model.IdentifiableTestEntity;
 
 /**
  *
