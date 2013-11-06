@@ -35,6 +35,8 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Com
 		CRUDService<KeyType, ValueType> {
 	private static final String NO_SUCH_ID_EXCEPTION = "No such identifier exists in the database.";
 	
+	private static final String CREATED_DATE_SORT_PROPERTY = "createdDate";
+	
 	protected final PagingAndSortingRepository<ValueType, KeyType> repository;
 	protected final Validator validator;
 	protected final Class<ValueType> valueType;
@@ -184,7 +186,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Com
 	@Override
 	@Transactional(readOnly = true)
 	public Page<ValueType> list(int page, int size, Direction order) {
-		return repository.findAll(new PageRequest(page, size, order));
+		return repository.findAll(new PageRequest(page, size, order,CREATED_DATE_SORT_PROPERTY));
 	}
 
 	/**
