@@ -9,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
@@ -32,9 +33,10 @@ public class ReadSequenceFilePermission extends BasePermission<SequenceFile> {
 	/**
 	 * Construct an instance of {@link ReadSequenceFilePermission}.
 	 */
-	public ReadSequenceFilePermission(UserRepository userRepository, ProjectUserJoinRepository pujRepository,
-			ProjectSampleJoinRepository psjRepository, SampleSequenceFileJoinRepository ssfRepository) {
-		super(SequenceFile.class, "sequenceFileRepository");
+	public ReadSequenceFilePermission(SequenceFileRepository sequenceFileRepository, UserRepository userRepository,
+			ProjectUserJoinRepository pujRepository, ProjectSampleJoinRepository psjRepository,
+			SampleSequenceFileJoinRepository ssfRepository) {
+		super(SequenceFile.class, sequenceFileRepository);
 		this.userRepository = userRepository;
 		this.pujRepository = pujRepository;
 		this.psjRepository = psjRepository;

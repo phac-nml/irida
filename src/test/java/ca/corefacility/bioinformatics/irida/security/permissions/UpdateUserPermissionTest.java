@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.security.permissions;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -12,7 +12,6 @@ import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,14 +32,9 @@ public class UpdateUserPermissionTest {
 
 	@Before
 	public void setUp() {
-		ApplicationContext applicationContext = mock(ApplicationContext.class);
 		userRepository = mock(UserRepository.class);
 
-		updateUserPermission = new UpdateUserPermission();
-		updateUserPermission.setApplicationContext(applicationContext);
-
-		when(applicationContext.getBean("userRepository")).thenReturn(userRepository);
-		when(applicationContext.getBean(UserRepository.class)).thenReturn(userRepository);
+		updateUserPermission = new UpdateUserPermission(userRepository);
 	}
 
 	@Test

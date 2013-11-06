@@ -1,8 +1,5 @@
 package ca.corefacility.bioinformatics.irida.security.permissions;
 
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.security.core.Authentication;
 
@@ -16,12 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.Role;
  * @param <DomainObjectType>
  *            the type of domain object that this permission is evaluating.
  */
-public abstract class BasePermission<DomainObjectType> implements ApplicationContextAware {
-
-	/**
-	 * Handle on the {@link ApplicationContext} for the application.
-	 */
-	private ApplicationContext applicationContext;
+public abstract class BasePermission<DomainObjectType> {
 
 	/**
 	 * Get the implementation-specific permission provided.
@@ -44,15 +36,14 @@ public abstract class BasePermission<DomainObjectType> implements ApplicationCon
 			DomainObjectType targetDomainObject);
 
 	/**
-	 * the name of the repository to be used, as defined in spring
-	 * configuration.
-	 */
-	private String repositoryId;
-
-	/**
 	 * The type of object to be loaded from the database.
 	 */
 	private Class<DomainObjectType> domainObjectType;
+	
+	/**
+	 * The repository to load objects with.
+	 */
+	private CrudRepository<DomainObjectType, Long> repository;
 
 	/**
 	 * Constructor with handles on the type of repository and type of domain
@@ -64,8 +55,8 @@ public abstract class BasePermission<DomainObjectType> implements ApplicationCon
 	 *            the identifier of the repository to load from the spring
 	 *            application context.
 	 */
-	protected BasePermission(Class<DomainObjectType> domainObjectType, String repositoryId) {
-		this.repositoryId = repositoryId;
+	protected BasePermission(Class<DomainObjectType> domainObjectType, CrudRepository<DomainObjectType, Long> repository) {
+		this.repository = repository;
 		this.domainObjectType = domainObjectType;
 	}
 
@@ -89,12 +80,11 @@ public abstract class BasePermission<DomainObjectType> implements ApplicationCon
 
 		// load the domain object (if necessary) so that the subclass can
 		// evaluate access
-		CrudRepository<DomainObjectType, Long> crudRepository = (CrudRepository<DomainObjectType, Long>) applicationContext
-				.getBean(repositoryId);
+
 		DomainObjectType domainObject;
 
 		if (targetDomainObject instanceof Long) {
-			domainObject = crudRepository.findOne((Long) targetDomainObject);
+			domainObject = repository.findOne((Long) targetDomainObject);
 		} else if (domainObjectType.isAssignableFrom(targetDomainObject.getClass())) {
 			// reflection replacement for instanceof
 			domainObject = (DomainObjectType) targetDomainObject;
@@ -105,22 +95,5 @@ public abstract class BasePermission<DomainObjectType> implements ApplicationCon
 
 		// pass off any other logic to the implementing permission class.
 		return customPermissionAllowed(authentication, domainObject);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
-	}
-
-	/**
-	 * Get the {@link ApplicationContext} injected into the base permission.
-	 * 
-	 * @return instance of {@link ApplicationContext} for the application.
-	 */
-	protected ApplicationContext getApplicationContext() {
-		return this.applicationContext;
 	}
 }

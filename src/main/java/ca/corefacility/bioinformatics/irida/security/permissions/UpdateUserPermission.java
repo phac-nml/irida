@@ -21,11 +21,14 @@ public class UpdateUserPermission extends BasePermission<User> {
 
 	private static final Logger logger = LoggerFactory.getLogger(UpdateUserPermission.class);
 
+	private UserRepository userRepository;
+
 	/**
 	 * Construct an instance of {@link UpdateUserPermission}.
 	 */
-	public UpdateUserPermission() {
-		super(User.class, "userRepository");
+	public UpdateUserPermission(UserRepository userRepository) {
+		super(User.class, userRepository);
+		this.userRepository = userRepository;
 	}
 
 	/**
@@ -34,7 +37,6 @@ public class UpdateUserPermission extends BasePermission<User> {
 	@Override
 	public boolean customPermissionAllowed(Authentication authentication, User u) {
 		logger.trace("Checking if [" + authentication + "] can modify [" + u + "]");
-		UserRepository userService = getApplicationContext().getBean(UserRepository.class);
 
 		// really quick check: if the principle is of ROLE_CLIENT, they should
 		// be rejected immediately.
@@ -50,8 +52,8 @@ public class UpdateUserPermission extends BasePermission<User> {
 
 		logger.trace("User is not admin, checking if user is trying to modify own account.");
 
-		User authenticated = userService.loadUserByUsername(authentication.getName());
-		
+		User authenticated = userRepository.loadUserByUsername(authentication.getName());
+
 		isOwnAccount = authenticated.equals(u);
 
 		logger.trace("Allowing modification of user account based on authenticated principle? [" + isOwnAccount + "]");

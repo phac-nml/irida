@@ -8,6 +8,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
@@ -29,9 +30,9 @@ public class ReadSamplePermission extends BasePermission<Sample> {
 	/**
 	 * Construct an instance of {@link ReadSamplePermission}.
 	 */
-	public ReadSamplePermission(UserRepository userRepository, ProjectUserJoinRepository pujRepository,
-			ProjectSampleJoinRepository psjRepository) {
-		super(Sample.class, "sampleRepository");
+	public ReadSamplePermission(SampleRepository sampleRepository, UserRepository userRepository,
+			ProjectUserJoinRepository pujRepository, ProjectSampleJoinRepository psjRepository) {
+		super(Sample.class, sampleRepository);
 		this.userRepository = userRepository;
 		this.pujRepository = pujRepository;
 		this.psjRepository = psjRepository;

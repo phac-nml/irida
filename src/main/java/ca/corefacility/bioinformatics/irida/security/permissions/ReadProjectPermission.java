@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 
@@ -22,15 +23,16 @@ public class ReadProjectPermission extends BasePermission<Project> {
 
 	private static final Logger logger = LoggerFactory.getLogger(ReadProjectPermission.class);
 	private static final String PERMISSION_PROVIDED = "canReadProject";
-	
+
 	private UserRepository userRepository;
 	private ProjectUserJoinRepository pujRepository;
 
 	/**
 	 * Construct an instance of {@link ReadProjectPermission}.
 	 */
-	public ReadProjectPermission(UserRepository userRepository, ProjectUserJoinRepository pujRepository) {
-		super(Project.class, "projectRepository");
+	public ReadProjectPermission(ProjectRepository projectRepository, UserRepository userRepository,
+			ProjectUserJoinRepository pujRepository) {
+		super(Project.class, projectRepository);
 		this.userRepository = userRepository;
 		this.pujRepository = pujRepository;
 	}
@@ -53,7 +55,7 @@ public class ReadProjectPermission extends BasePermission<Project> {
 				return true;
 			}
 		}
-		
+
 		logger.trace("Permission DENIED for [" + authentication + "] on project [" + p + "]");
 		return false;
 	}

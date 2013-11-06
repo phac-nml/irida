@@ -21,6 +21,9 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
@@ -44,6 +47,15 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private ProjectRepository projectRepository;
+
+	@Autowired
+	private SampleRepository sampleRepository;
+
+	@Autowired
+	private SequenceFileRepository sequenceFileRepository;
 
 	@Autowired
 	private ProjectUserJoinRepository pujRepository;
@@ -99,21 +111,22 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	@Bean
 	public BasePermission<User> updateUserPermission() {
-		return new UpdateUserPermission();
+		return new UpdateUserPermission(userRepository);
 	}
 
 	@Bean
 	public BasePermission<Project> readProjectPermission() {
-		return new ReadProjectPermission(userRepository, pujRepository);
+		return new ReadProjectPermission(projectRepository, userRepository, pujRepository);
 	}
 
 	@Bean
 	public BasePermission<Sample> readSamplePermission() {
-		return new ReadSamplePermission(userRepository, pujRepository, psjRepository);
+		return new ReadSamplePermission(sampleRepository, userRepository, pujRepository, psjRepository);
 	}
 
 	@Bean
 	public BasePermission<SequenceFile> readSequenceFilePermission() {
-		return new ReadSequenceFilePermission(userRepository, pujRepository, psjRepository, ssfRepository);
+		return new ReadSequenceFilePermission(sequenceFileRepository, userRepository, pujRepository, psjRepository,
+				ssfRepository);
 	}
 }

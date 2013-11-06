@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -40,18 +39,13 @@ public class ReadProjectPermissionTest {
 	private UserRepository userRepository;
 	private ProjectRepository projectRepository;
 	private ProjectUserJoinRepository pujRepository;
-	private ApplicationContext applicationContext;
 
 	@Before
 	public void setUp() {
-		applicationContext = mock(ApplicationContext.class);
 		userRepository = mock(UserRepository.class);
 		projectRepository = mock(ProjectRepository.class);
 		pujRepository = mock(ProjectUserJoinRepository.class);
-		readProjectPermission = new ReadProjectPermission(userRepository, pujRepository);
-		readProjectPermission.setApplicationContext(applicationContext);
-
-		when(applicationContext.getBean("projectRepository")).thenReturn(projectRepository);		
+		readProjectPermission = new ReadProjectPermission(projectRepository, userRepository, pujRepository);		
 	}
 	
 	@Test

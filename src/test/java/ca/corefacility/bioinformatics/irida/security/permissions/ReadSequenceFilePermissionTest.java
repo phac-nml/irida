@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -49,18 +48,14 @@ public class ReadSequenceFilePermissionTest {
 
 	@Before
 	public void setUp() {
-		ApplicationContext applicationContext = mock(ApplicationContext.class);
 		userRepository = mock(UserRepository.class);
 		ssfRepository = mock(SampleSequenceFileJoinRepository.class);
 		sequenceFileRepository = mock(SequenceFileRepository.class);
 		pujRepository = mock(ProjectUserJoinRepository.class);
 		psjRepository = mock(ProjectSampleJoinRepository.class);
 
-		readSequenceFilePermission = new ReadSequenceFilePermission(userRepository, pujRepository, psjRepository,
+		readSequenceFilePermission = new ReadSequenceFilePermission(sequenceFileRepository, userRepository, pujRepository, psjRepository,
 				ssfRepository);
-		readSequenceFilePermission.setApplicationContext(applicationContext);
-
-		when(applicationContext.getBean("sequenceFileRepository")).thenReturn(sequenceFileRepository);
 	}
 
 	@Test

@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -45,15 +44,11 @@ public class ReadSamplePermissionTest {
 
 	@Before
 	public void setUp() {
-		ApplicationContext applicationContext = mock(ApplicationContext.class);
 		userRepository = mock(UserRepository.class);
 		sampleRepository = mock(SampleRepository.class);
 		pujRepository = mock(ProjectUserJoinRepository.class);
 		psjRepository = mock(ProjectSampleJoinRepository.class);
-		readSamplePermission = new ReadSamplePermission(userRepository, pujRepository, psjRepository);
-		readSamplePermission.setApplicationContext(applicationContext);
-
-		when(applicationContext.getBean("sampleRepository")).thenReturn(sampleRepository);
+		readSamplePermission = new ReadSamplePermission(sampleRepository, userRepository, pujRepository, psjRepository);
 	}
 
 	@Test
