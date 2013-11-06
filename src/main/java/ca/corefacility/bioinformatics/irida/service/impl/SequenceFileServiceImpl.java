@@ -119,7 +119,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 			// number
 			Long fileRevisionNumber = updated.getFileRevisionNumber();
 			fileRevisionNumber++;
-			updatedFields.put("fileRevisionNumber", fileRevisionNumber);
 
 			Path fileLocation = (Path) updatedFields.get("file");
 			Path updatedLocation = fileRepository.updateSequenceFileOnDisk(id, fileLocation);
