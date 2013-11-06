@@ -7,12 +7,12 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
@@ -57,8 +57,8 @@ public class ProjectsController extends GenericController<Project, ProjectResour
      * @return a descending sort order (<code>Order.DESCENDING</code>).
      */
     @Override
-    protected Order getDefaultSortOrder() {
-        return Order.DESCENDING;
+    protected Direction getDefaultSortOrder() {
+        return Direction.DESC;
     }
 
     /**

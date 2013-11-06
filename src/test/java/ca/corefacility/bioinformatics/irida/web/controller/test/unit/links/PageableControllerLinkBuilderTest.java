@@ -10,13 +10,13 @@ import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.hateoas.Link;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageableControllerLinkBuilder;
 
 /**
@@ -41,7 +41,7 @@ public class PageableControllerLinkBuilderTest {
     @Test
     public void testNullSortBy() {
         Iterable<Link> links = PageableControllerLinkBuilder.pageLinksFor(
-                FakeController.class, 1, 10, 30, null, Order.ASCENDING);
+                FakeController.class, 1, 10, 30, null, Direction.ASC);
         Iterator<Link> iterator = links.iterator();
         while (iterator.hasNext()) {
             Link link = iterator.next();
@@ -76,7 +76,7 @@ public class PageableControllerLinkBuilderTest {
 
         Iterable<Link> links = PageableControllerLinkBuilder.pageLinksFor(
                 FakeController.class, totalPages, pageSize, numberOfElements,
-                DEFAULT_ORDER_PROPERTY, Order.ASCENDING);
+                DEFAULT_ORDER_PROPERTY, Direction.ASC);
         Iterator<Link> iterator = links.iterator();
         while (iterator.hasNext()) {
             Link link = iterator.next();
@@ -98,7 +98,7 @@ public class PageableControllerLinkBuilderTest {
 
         Iterable<Link> links = PageableControllerLinkBuilder.pageLinksFor(
                 FakeController.class, totalPages, pageSize, numberOfElements,
-                DEFAULT_ORDER_PROPERTY, Order.ASCENDING);
+                DEFAULT_ORDER_PROPERTY, Direction.ASC);
         Iterator<Link> iterator = links.iterator();
         Collection<String> linkRels = new HashSet<>();
         while (iterator.hasNext()) {

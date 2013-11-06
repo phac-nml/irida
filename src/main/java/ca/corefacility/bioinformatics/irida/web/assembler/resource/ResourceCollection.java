@@ -24,7 +24,7 @@ public class ResourceCollection<Type extends ResourceSupport> extends ResourceSu
     /**
      * The total number of resources in the ENTIRE collection (not just those that are being serialized).
      */
-    private int totalResources;
+    private long totalResources;
 
     /**
      * Default constructor, empty set of resources.
@@ -38,8 +38,8 @@ public class ResourceCollection<Type extends ResourceSupport> extends ResourceSu
      *
      * @param size the size of the collection.
      */
-    public ResourceCollection(int size) {
-        this.resources = new ArrayList<>(size);
+    public ResourceCollection(long size) {
+        this.resources = new ArrayList<>((int)size);
     }
 
     /**
@@ -65,7 +65,7 @@ public class ResourceCollection<Type extends ResourceSupport> extends ResourceSu
      *
      * @return total resources in the collection.
      */
-    public int getTotalResources() {
+    public long getTotalResources() {
         return this.totalResources;
     }
 
@@ -74,7 +74,7 @@ public class ResourceCollection<Type extends ResourceSupport> extends ResourceSu
      *
      * @param totalResources total number of resources in the collection.
      */
-    public void setTotalResources(int totalResources) {
+    public void setTotalResources(long totalResources) {
         this.totalResources = totalResources;
     }
 

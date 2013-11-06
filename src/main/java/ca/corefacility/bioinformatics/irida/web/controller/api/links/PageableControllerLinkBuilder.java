@@ -1,14 +1,15 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.links;
 
-import ca.corefacility.bioinformatics.irida.model.enums.Order;
-import com.google.common.base.Strings;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.common.base.Strings;
 
 /**
  * A class that enables adding page links to a resource.
@@ -48,7 +49,7 @@ public abstract class PageableControllerLinkBuilder {
      * @param sortOrder     the order that the column should be sorted on.
      * @return A collection of links to assist with page navigation.
      */
-    public static Iterable<Link> pageLinksFor(Class<?> controller, int page, int size, int totalElements, String sortColumn, Order sortOrder) {
+    public static Iterable<Link> pageLinksFor(Class<?> controller, int page, int size, long totalElements, String sortColumn, Direction sortOrder) {
         // we're only ever going to have 5-at-most links per page.
         List<Link> links = new ArrayList<>(5);
 
@@ -101,7 +102,7 @@ public abstract class PageableControllerLinkBuilder {
      * @param sortOrder  the order of the sort.
      * @return the parameter section of the URL.
      */
-    private static String pageParams(int page, int size, String sortColumn, Order sortOrder) {
+    private static String pageParams(int page, int size, String sortColumn, Direction sortOrder) {
         StringBuilder sb = new StringBuilder();
         // add the page and size parameters to the url params
         sb.append(REQUEST_PARAM_PAGE).append("=").append(page).append("&");
