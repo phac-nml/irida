@@ -22,11 +22,19 @@ public class ReadSamplePermission extends BasePermission<Sample> {
 
 	private static final String PERMISSION_PROVIDED = "canReadSample";
 
+	private UserRepository userRepository;
+	private ProjectUserJoinRepository pujRepository;
+	private ProjectSampleJoinRepository psjRepository;
+
 	/**
 	 * Construct an instance of {@link ReadSamplePermission}.
 	 */
-	public ReadSamplePermission() {
+	public ReadSamplePermission(UserRepository userRepository, ProjectUserJoinRepository pujRepository,
+			ProjectSampleJoinRepository psjRepository) {
 		super(Sample.class, "sampleRepository");
+		this.userRepository = userRepository;
+		this.pujRepository = pujRepository;
+		this.psjRepository = psjRepository;
 	}
 
 	/**
@@ -34,9 +42,6 @@ public class ReadSamplePermission extends BasePermission<Sample> {
 	 */
 	@Override
 	public boolean customPermissionAllowed(Authentication authentication, Sample s) {
-		UserRepository userRepository = getApplicationContext().getBean(UserRepository.class);
-		ProjectUserJoinRepository pujRepository = getApplicationContext().getBean(ProjectUserJoinRepository.class);
-		ProjectSampleJoinRepository psjRepository = getApplicationContext().getBean(ProjectSampleJoinRepository.class);
 
 		// samples are always associated with a project. for a user to be
 		// allowed to read a sample, the user must be part of the associated

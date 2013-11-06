@@ -50,12 +50,9 @@ public class ReadSamplePermissionTest {
 		sampleRepository = mock(SampleRepository.class);
 		pujRepository = mock(ProjectUserJoinRepository.class);
 		psjRepository = mock(ProjectSampleJoinRepository.class);
-		readSamplePermission = new ReadSamplePermission();
+		readSamplePermission = new ReadSamplePermission(userRepository, pujRepository, psjRepository);
 		readSamplePermission.setApplicationContext(applicationContext);
 
-		when(applicationContext.getBean(UserRepository.class)).thenReturn(userRepository);
-		when(applicationContext.getBean(ProjectUserJoinRepository.class)).thenReturn(pujRepository);
-		when(applicationContext.getBean(ProjectSampleJoinRepository.class)).thenReturn(psjRepository);
 		when(applicationContext.getBean("sampleRepository")).thenReturn(sampleRepository);
 	}
 
