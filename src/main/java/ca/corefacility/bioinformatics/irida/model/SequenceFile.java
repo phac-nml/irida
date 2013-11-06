@@ -18,6 +18,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
+import javax.persistence.PostLoad;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -102,6 +104,16 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	public SequenceFile(Path sampleFile) {
 		this();
 		this.file = sampleFile;
+	}
+
+	@PostLoad
+	public void postConstruct(){
+		setRealPath();
+	}
+	
+	@PrePersist
+	public void prePersist(){
+		setStringPath();
 	}
 
 	@Override
@@ -248,11 +260,15 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	}
 
 	public void setStringPath() {
-		stringPath = file.toFile().toString();
+		if(file != null){
+			 stringPath = file.toFile().toString();
+		}
 	}
 
 	public void setRealPath() {
-		file = Paths.get(stringPath);
+		if(stringPath != null){
+			file = Paths.get(stringPath);
+		}
 	}
 
 	public Path getFile() {
