@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.security.IgnoreExpiredCredentialsForPasswordChangeChecker;
 import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.IridaPermissionEvaluator;
@@ -41,6 +42,9 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	ProjectUserJoinRepository pujRepository;
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -92,7 +96,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	@Bean
 	public BasePermission<Project> readProjectPermission() {
-		return new ReadProjectPermission();
+		return new ReadProjectPermission(userRepository, pujRepository);
 	}
 
 	@Bean

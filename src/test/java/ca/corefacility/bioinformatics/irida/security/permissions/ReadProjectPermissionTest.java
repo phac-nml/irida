@@ -48,13 +48,10 @@ public class ReadProjectPermissionTest {
 		userRepository = mock(UserRepository.class);
 		projectRepository = mock(ProjectRepository.class);
 		pujRepository = mock(ProjectUserJoinRepository.class);
-		readProjectPermission = new ReadProjectPermission();
+		readProjectPermission = new ReadProjectPermission(userRepository, pujRepository);
 		readProjectPermission.setApplicationContext(applicationContext);
 
-		when(applicationContext.getBean(UserRepository.class)).thenReturn(userRepository);
-		when(applicationContext.getBean("projectRepository")).thenReturn(projectRepository);
-		when(applicationContext.getBean(ProjectUserJoinRepository.class)).thenReturn(pujRepository);
-		
+		when(applicationContext.getBean("projectRepository")).thenReturn(projectRepository);		
 	}
 	
 	@Test

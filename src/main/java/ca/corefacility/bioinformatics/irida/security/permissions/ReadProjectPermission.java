@@ -22,12 +22,17 @@ public class ReadProjectPermission extends BasePermission<Project> {
 
 	private static final Logger logger = LoggerFactory.getLogger(ReadProjectPermission.class);
 	private static final String PERMISSION_PROVIDED = "canReadProject";
+	
+	private UserRepository userRepository;
+	private ProjectUserJoinRepository pujRepository;
 
 	/**
 	 * Construct an instance of {@link ReadProjectPermission}.
 	 */
-	public ReadProjectPermission() {
+	public ReadProjectPermission(UserRepository userRepository, ProjectUserJoinRepository pujRepository) {
 		super(Project.class, "projectRepository");
+		this.userRepository = userRepository;
+		this.pujRepository = pujRepository;
 	}
 
 	/**
@@ -36,9 +41,6 @@ public class ReadProjectPermission extends BasePermission<Project> {
 	@Override
 	public boolean customPermissionAllowed(Authentication authentication, Project p) {
 		logger.trace("Testing permission for [" + authentication + "] on project [" + p + "]");
-		UserRepository userRepository = getApplicationContext().getBean(UserRepository.class);
-		ProjectUserJoinRepository pujRepository = getApplicationContext().getBean(ProjectUserJoinRepository.class);
-
 		// if not an administrator, then we need to figure out if the
 		// authenticated user is participating in the project.
 		User u = userRepository.loadUserByUsername(authentication.getName());
