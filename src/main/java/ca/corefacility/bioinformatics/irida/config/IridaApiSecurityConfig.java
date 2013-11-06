@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.config;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,15 +34,11 @@ import ca.corefacility.bioinformatics.irida.security.permissions.UpdateUserPermi
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
-	private static final Logger logger = LoggerFactory.getLogger(IridaApiSecurityConfig.class);
-	
-	private static final String[] ROLE_HIERARCHIES = new String[] {
-		"ROLE_ADMIN > ROLE_MANAGER",
-		"ROLE_MANAGER > ROLE_USER"
-	};
-	
+	private static final String[] ROLE_HIERARCHIES = new String[] { "ROLE_ADMIN > ROLE_MANAGER",
+			"ROLE_MANAGER > ROLE_USER" };
+
 	private static final String ROLE_HIERARCHY = StringUtils.join(ROLE_HIERARCHIES, "\n");
-	
+
 	@Autowired
 	private UserRepository userRepository;
 
@@ -78,13 +72,11 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 		RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
 		roleHierarchy.setHierarchy(ROLE_HIERARCHY);
 		handler.setRoleHierarchy(roleHierarchy);
-		logger.debug("Returning custom expression handler [" + handler + "]");
 		return handler;
 	}
 
 	@Bean
 	public AuthenticationManager authenticationManager() throws Exception {
-		logger.debug("Returning authentication manager [" + super.authenticationManager() + "] from API.");
 		return super.authenticationManager();
 	}
 
