@@ -43,7 +43,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	private UserRepository userRepository;
 
 	@Override
-	protected void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userRepository).passwordEncoder(passwordEncoder());
 		auth.authenticationProvider(authenticationProvider());
 	}
@@ -63,7 +63,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	}
 
 	@Override
-	protected MethodSecurityExpressionHandler expressionHandler() {
+	protected MethodSecurityExpressionHandler createExpressionHandler() {
 		DefaultMethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler();
 		IridaPermissionEvaluator permissionEvaluator = new IridaPermissionEvaluator(readProjectPermission(),
 				readSamplePermission(), readSequenceFilePermission(), updateUserPermission());
