@@ -56,13 +56,10 @@ public class ReadSequenceFilePermissionTest {
 		pujRepository = mock(ProjectUserJoinRepository.class);
 		psjRepository = mock(ProjectSampleJoinRepository.class);
 
-		readSequenceFilePermission = new ReadSequenceFilePermission();
+		readSequenceFilePermission = new ReadSequenceFilePermission(userRepository, pujRepository, psjRepository,
+				ssfRepository);
 		readSequenceFilePermission.setApplicationContext(applicationContext);
 
-		when(applicationContext.getBean(UserRepository.class)).thenReturn(userRepository);
-		when(applicationContext.getBean(SampleSequenceFileJoinRepository.class)).thenReturn(ssfRepository);
-		when(applicationContext.getBean(ProjectSampleJoinRepository.class)).thenReturn(psjRepository);
-		when(applicationContext.getBean(ProjectUserJoinRepository.class)).thenReturn(pujRepository);
 		when(applicationContext.getBean("sequenceFileRepository")).thenReturn(sequenceFileRepository);
 	}
 
@@ -75,10 +72,9 @@ public class ReadSequenceFilePermissionTest {
 		Sample s = new Sample();
 		List<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, u));
-		List<Join<Project,Sample>> projectSampleList = new ArrayList<>();
+		List<Join<Project, Sample>> projectSampleList = new ArrayList<>();
 		projectSampleList.add(new ProjectSampleJoin(p, s));
 
-		
 		SequenceFile sf = new SequenceFile();
 		SampleSequenceFileJoin sampleSequenceFile = new SampleSequenceFileJoin(s, sf);
 

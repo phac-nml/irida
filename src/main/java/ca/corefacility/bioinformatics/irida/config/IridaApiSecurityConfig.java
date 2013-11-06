@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.security.IgnoreExpiredCredentialsForPasswordChangeChecker;
 import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.IridaPermissionEvaluator;
@@ -40,15 +41,18 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 			"ROLE_MANAGER > ROLE_USER" };
 
 	private static final String ROLE_HIERARCHY = StringUtils.join(ROLE_HIERARCHIES, "\n");
-	
+
 	@Autowired
 	private UserRepository userRepository;
 
 	@Autowired
 	private ProjectUserJoinRepository pujRepository;
-	
+
 	@Autowired
 	private ProjectSampleJoinRepository psjRepository;
+
+	@Autowired
+	private SampleSequenceFileJoinRepository ssfRepository;
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -110,6 +114,6 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	@Bean
 	public BasePermission<SequenceFile> readSequenceFilePermission() {
-		return new ReadSequenceFilePermission();
+		return new ReadSequenceFilePermission(userRepository, pujRepository, psjRepository, ssfRepository);
 	}
 }

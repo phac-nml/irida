@@ -24,11 +24,21 @@ public class ReadSequenceFilePermission extends BasePermission<SequenceFile> {
 
 	private static final String PERMISSION_PROVIDED = "canReadSequenceFile";
 
+	private UserRepository userRepository;
+	private ProjectUserJoinRepository pujRepository;
+	private ProjectSampleJoinRepository psjRepository;
+	private SampleSequenceFileJoinRepository ssfRepository;
+
 	/**
 	 * Construct an instance of {@link ReadSequenceFilePermission}.
 	 */
-	public ReadSequenceFilePermission() {
+	public ReadSequenceFilePermission(UserRepository userRepository, ProjectUserJoinRepository pujRepository,
+			ProjectSampleJoinRepository psjRepository, SampleSequenceFileJoinRepository ssfRepository) {
 		super(SequenceFile.class, "sequenceFileRepository");
+		this.userRepository = userRepository;
+		this.pujRepository = pujRepository;
+		this.psjRepository = psjRepository;
+		this.ssfRepository = ssfRepository;
 	}
 
 	/**
@@ -40,14 +50,11 @@ public class ReadSequenceFilePermission extends BasePermission<SequenceFile> {
 		// similar to samples, an authenticated user can only read a sequence
 		// file if they are participating in the project owning the sample
 		// owning the sequence file.
-		UserRepository userRepository = getApplicationContext().getBean(UserRepository.class);
-		ProjectUserJoinRepository pujRepository = getApplicationContext().getBean(ProjectUserJoinRepository.class);
-		ProjectSampleJoinRepository psjRepository = getApplicationContext().getBean(ProjectSampleJoinRepository.class);
-		SampleSequenceFileJoinRepository ssfRepository = getApplicationContext().getBean(SampleSequenceFileJoinRepository.class);
 
 		Join<Sample, SequenceFile> sampleSequenceFile = ssfRepository.getSampleForSequenceFile(sf);
-		List<Join<Project, Sample>> projectForSample = psjRepository.getProjectForSample(sampleSequenceFile.getSubject());
-		for(Join<Project, Sample> projectSample : projectForSample){
+		List<Join<Project, Sample>> projectForSample = psjRepository.getProjectForSample(sampleSequenceFile
+				.getSubject());
+		for (Join<Project, Sample> projectSample : projectForSample) {
 
 			List<Join<Project, User>> projectUsers = pujRepository.getUsersForProject(projectSample.getSubject());
 			User u = userRepository.loadUserByUsername(authentication.getName());
