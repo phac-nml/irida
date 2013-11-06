@@ -289,19 +289,18 @@
 							<goal>integration-test</goal>
 							<goal>verify</goal>
 						</goals>
+						<configuration>
+							<argLine>${failsafeArgLine}</argLine>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven.surefire.plugin.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>test</goal>
-						</goals>
-					</execution>
-				</executions>
+				<configuration>
+					<argLine>${surefireArgLine}</argLine>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -323,17 +322,47 @@
 				<version>${maven.jacoco.plugin.version}</version>
 				<executions>
 					<execution>
-						<id>jacoco-initialize</id>
+						<id>pre-unit-test</id>
 						<goals>
 							<goal>prepare-agent</goal>
 						</goals>
+						<configuration>
+							<destFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile>
+							<propertyName>surefireArgLine</propertyName>
+						</configuration>
 					</execution>
 					<execution>
-						<id>jacoco-site</id>
-						<phase>package</phase>
+						<id>post-unit-test</id>
+						<phase>test</phase>
 						<goals>
 							<goal>report</goal>
 						</goals>
+						<configuration>
+							<dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
+							<outputDirectory>${project.reporting.outputDirectory}/jacoco-ut/</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>pre-integration-test</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<destFile>${jacoco.it.execution.data.file}</destFile>
+							<propertyName>failsafeArgLine</propertyName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>post-integration-test</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<dataFile>${jacoco.it.execution.data.file}</dataFile>
+							<outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -402,7 +431,7 @@
 		<maven.failsafe.plugin.version>2.13</maven.failsafe.plugin.version>
 		<maven.surefire.plugin.version>2.13</maven.surefire.plugin.version>
 		<maven.javadoc.plugin.version>2.9</maven.javadoc.plugin.version>
-		<maven.jacoco.plugin.version>0.6.2.201302030002</maven.jacoco.plugin.version>
+		<maven.jacoco.plugin.version>0.6.3.201306030806</maven.jacoco.plugin.version>
 		<maven.dbunit.plugin.version>1.0-beta-3</maven.dbunit.plugin.version>
 		<maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
 		<maven.exec.plugin.version>1.2.1</maven.exec.plugin.version>
