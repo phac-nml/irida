@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.config;
 
+import ca.corefacility.bioinformatics.irida.config.data.jpa.HibernateConfig;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,9 +25,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import ca.corefacility.bioinformatics.irida.config.data.DataConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.config.data.jpa.JpaProperties;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileFilesystem;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileFilesystemImpl;
 import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.UserRevListener;
+import java.util.Properties;
 
 /**
  * Configuration for repository/data storage classes.
@@ -37,23 +40,27 @@ import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.Use
 @Configuration
 @EnableTransactionManagement(order = 1000)
 @EnableJpaRepositories(basePackages = { "ca.corefacility.bioinformatics.irida.repositories" }, repositoryFactoryBeanClass = EnversRevisionRepositoryFactoryBean.class)
-@Import({ IridaApiPropertyPlaceholderConfig.class, IridaApiJdbcDataSourceConfig.class })
+@Import({ IridaApiPropertyPlaceholderConfig.class, IridaApiJdbcDataSourceConfig.class, HibernateConfig.class })
 public class IridaApiRepositoriesConfig {
 
 	private static final Logger logger = LoggerFactory.getLogger(IridaApiRepositoriesConfig.class);
 
 	@Autowired
 	private DataConfig dataConfig;
+	
+	@Autowired
+	JpaProperties jpaProperties;
 
 	private @Value("${sequence.file.base.directory}")
 	String sequenceFileBaseDirectory;
-
+	
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
 			JpaVendorAdapter jpaVendorAdapter) {
 		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 		factory.setDataSource(dataSource);
 		factory.setJpaVendorAdapter(jpaVendorAdapter);
+		factory.setJpaProperties(jpaProperties.getJpaProperties());
 		factory.setPackagesToScan("ca.corefacility.bioinformatics.irida.model",
 				"ca.corefacility.bioinformatics.irida.repositories.relational.auditing");
 
@@ -64,7 +71,7 @@ public class IridaApiRepositoriesConfig {
 	public PlatformTransactionManager transactionManager() {
 		return new JpaTransactionManager();
 	}
-
+	
 	@Bean
 	public SequenceFileFilesystem sequenceFileFilesystem() {
 		Path baseDirectory = Paths.get(sequenceFileBaseDirectory);
