@@ -41,5 +41,5 @@ public interface SequenceFileFilesystem {
 	 * @throws StorageException
 	 *             if the file couldn't be written to disk.
 	 */
-	public Path updateSequenceFileOnDisk(Long id, Path file) throws IllegalArgumentException, StorageException;
+	public Path updateSequenceFileOnDisk(Long id, Path file,Long revisionNumber) throws IllegalArgumentException, StorageException;
 }

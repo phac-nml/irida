@@ -33,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
+import ca.corefacility.bioinformatics.irida.service.OverrepresentedSequenceService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 import com.google.common.collect.ImmutableMap;
@@ -50,9 +51,11 @@ public class FastqcFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessor.class);
 
 	private SequenceFileService sequenceFileService;
+	private OverrepresentedSequenceService overrepresentedSequenceService;
 
-	public FastqcFileProcessor(SequenceFileService sequenceFileService) {
+	public FastqcFileProcessor(SequenceFileService sequenceFileService, OverrepresentedSequenceService overrepresentedSequenceService) {
 		this.sequenceFileService = sequenceFileService;
+		this.overrepresentedSequenceService = overrepresentedSequenceService;
 	}
 
 	/**
@@ -89,6 +92,7 @@ public class FastqcFileProcessor implements FileProcessor {
 
 			Collection<OverrepresentedSequence> overrepresentedSequences = handleOverRepresentedSequences(overRep);
 			for (OverrepresentedSequence sequence : overrepresentedSequences) {
+				sequence = overrepresentedSequenceService.create(sequence);
 				sequenceFileService.addOverrepresentedSequenceToSequenceFile(sequenceFile, sequence);
 			}
 		} catch (Exception e) {

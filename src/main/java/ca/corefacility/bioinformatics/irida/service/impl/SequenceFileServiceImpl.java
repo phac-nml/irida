@@ -121,8 +121,8 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 			fileRevisionNumber++;
 
 			Path fileLocation = (Path) updatedFields.get("file");
-			Path updatedLocation = fileRepository.updateSequenceFileOnDisk(id, fileLocation);
-			super.update(id,
+			Path updatedLocation = fileRepository.updateSequenceFileOnDisk(id, fileLocation, fileRevisionNumber);
+			updated = super.update(id,
 					ImmutableMap.of("file", (Object) updatedLocation, "fileRevisionNumber", fileRevisionNumber));
 		}
 

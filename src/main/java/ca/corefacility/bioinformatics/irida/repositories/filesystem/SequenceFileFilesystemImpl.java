@@ -42,6 +42,16 @@ public class SequenceFileFilesystemImpl implements SequenceFileFilesystem {
 	private Path getSequenceFileDir(Long id) {
 		return BASE_DIRECTORY.resolve(id.toString());
 	}
+	
+	/**
+	 * Get sequence file directory including revision number
+	 * @param sequenceBaseDir The sequence file's base directory
+	 * @param fileRevisionNumber The revision number for this file
+	 * @return The directory to write the file revision
+	 */
+	private Path getSequenceFileDirWithRevision(Path sequenceBaseDir, Long fileRevisionNumber){
+		return sequenceBaseDir.resolve(fileRevisionNumber.toString());
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -52,13 +62,20 @@ public class SequenceFileFilesystemImpl implements SequenceFileFilesystem {
 			throw new IllegalArgumentException("Identifier is required.");
 		}
 		Path sequenceFileDir = getSequenceFileDir(object.getId());
-		Path target = sequenceFileDir.resolve(object.getFile().getFileName());
+		Path sequenceFileDirWithRevision = getSequenceFileDirWithRevision(sequenceFileDir, object.getFileRevisionNumber());
+		Path target = sequenceFileDirWithRevision.resolve(object.getFile().getFileName());
 		try {
 			if (!Files.exists(sequenceFileDir)) {
 				Files.createDirectory(sequenceFileDir);
 				logger.debug("Created directory: [" + sequenceFileDir.toString() + "]");
 			}
+			
+			if (!Files.exists(sequenceFileDirWithRevision)) {
+        		Files.createDirectory(sequenceFileDirWithRevision);
+                logger.debug("Created directory: [" + sequenceFileDirWithRevision.toString() + "]");
+        	}
 			Files.move(object.getFile(), target);
+			logger.debug("Moved file " + object.getFile() + " to " + target);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new StorageException("Failed to move file into new directory.");
@@ -71,9 +88,12 @@ public class SequenceFileFilesystemImpl implements SequenceFileFilesystem {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Path updateSequenceFileOnDisk(Long id, Path updatedFile) throws IllegalArgumentException, StorageException {
+	public Path updateSequenceFileOnDisk(Long id, Path updatedFile,Long revisionNumber) throws IllegalArgumentException, StorageException {
 		if (id == null) {
 			throw new IllegalArgumentException("Identifier is required.");
+		}
+		if(revisionNumber == null){
+			throw new IllegalArgumentException("Sequence file revision number is required");
 		}
 
 		// the sequence file directory must previously exist, if not, then
@@ -81,30 +101,29 @@ public class SequenceFileFilesystemImpl implements SequenceFileFilesystem {
 		Path sequenceFileDir = getSequenceFileDir(id);
 		if (!Files.exists(sequenceFileDir)) {
 			throw new IllegalArgumentException("The directory for this "
-					+ "SequenceFile does not exist, has it been persisted " + "before?");
+					+ "SequenceFile does not exist, has it been persisted before?");
 		}
-
+		
+		//if the directory for this revision already exists, we would overwrite the file.  throw an error
+		Path sequenceFileDirWithRevision = getSequenceFileDirWithRevision(sequenceFileDir, revisionNumber);
+		if(Files.exists(sequenceFileDirWithRevision)){
+			throw new IllegalArgumentException("The directory for this sequence file revision already exists.  "
+					+ "Files must be updated with a new revision number.");
+		}
+		
 		// the directory exists. does the target file exist? if so, we don't
 		// want to overwrite the file. We'll rename the existing file with the
 		// current date appended to the end so that we're retaining existing
 		// file names.
-		Path target = sequenceFileDir.resolve(updatedFile.getFileName());
-		if (Files.exists(target)) {
-			String destination = target.getFileName().toString() + "-" + new Date().getTime();
-
-			// rename the existing file
-			try {
-				Files.move(target, target.resolveSibling(destination));
-			} catch (IOException e) {
-				throw new StorageException("Couldn't rename existing file.");
-			}
-		}
+		Path target = sequenceFileDirWithRevision.resolve(updatedFile.getFileName());
 
 		// now handle storing the file as before:
 		try {
+			Files.createDirectory(sequenceFileDirWithRevision);
 			Files.move(updatedFile, target);
 		} catch (IOException e) {
-			throw new StorageException("Couldn't move updated file to existing directory.");
+			logger.error("File update failed: " + e.getMessage());
+			throw new StorageException("Couldn't update file.");
 		}
 
 		return target;

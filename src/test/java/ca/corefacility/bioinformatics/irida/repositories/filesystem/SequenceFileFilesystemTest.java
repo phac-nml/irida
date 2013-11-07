@@ -88,26 +88,26 @@ public class SequenceFileFilesystemTest {
 	@Test
 	public void testCreateFile() throws IOException {
 		Long lid = new Long(1111);
-		Path f = getTempFile();
-		String filename = f.getFileName().toString();
-		SequenceFile s = new SequenceFile(f);
-		s.setId(lid);
+        Path f = getTempFile();
+        String filename = f.getFileName().toString();
+        SequenceFile s = new SequenceFile(f);
+        s.setId(lid);
 
 		s = repository.writeSequenceFileToDisk(s);
 
-		// the created file should reside in the base directory within a new
-		// directory using the sequence file's identifier.
-		Path p = FileSystems.getDefault().getPath(baseDirectory.toString(), lid.toString(), filename);
-		assertEquals(p, s.getFile());
-		assertTrue(Files.exists(p));
-		Files.delete(p);
+        // the created file should reside in the base directory within a new directory using the sequence file's identifier.
+        Path p = FileSystems.getDefault().getPath(baseDirectory.toString(),
+                lid.toString(), s.getFileRevisionNumber().toString(), filename);
+        assertEquals(p, s.getFile());
+        assertTrue(Files.exists(p));
+        Files.delete(p);
 	}
 
 	@Test
 	public void testUpdateFileMissingIdentifier() throws IOException {
 		SequenceFile s = new SequenceFile(getTempFile());
 		try {
-			repository.updateSequenceFileOnDisk(s.getId(), s.getFile());
+			repository.updateSequenceFileOnDisk(s.getId(), s.getFile(),2L);
 			fail();
 		} catch (IllegalArgumentException e) {
 		} catch (Exception e) {
@@ -121,7 +121,7 @@ public class SequenceFileFilesystemTest {
 		SequenceFile s = new SequenceFile(f);
 
 		try {
-			repository.updateSequenceFileOnDisk(s.getId(), f);
+			repository.updateSequenceFileOnDisk(s.getId(), f,2L);
 			fail();
 		} catch (IllegalArgumentException e) {
 		} catch (Exception e) {
@@ -132,75 +132,59 @@ public class SequenceFileFilesystemTest {
 	@Test
 	public void testUpdateExistingFilename() throws IOException {
 		String originalText = "old text.";
-		String updatedText = "new text.";
-		Long lid = new Long(1111);
-		Path oldFile = getTempFile();
-		Files.write(oldFile, originalText.getBytes());
-		SequenceFile sf = new SequenceFile(oldFile);
-		sf.setId(lid);
-		// create the directory and put the file into it.
-		// so call create instead of rewriting the logic:
+        String updatedText = "new text.";
+        Long lid = new Long(1111);
+        Path oldFile = getTempFile();
+        Files.write(oldFile, originalText.getBytes());
+        SequenceFile sf = new SequenceFile(oldFile);
+        sf.setId(lid);
+        // create the directory and put the file into it.
+        // so call create instead of rewriting the logic:
 		sf = repository.writeSequenceFileToDisk(sf);
+		
+		Path originalFile = sf.getFile();
 
-		// now create a new temp file with the same name
-		Path newFile = getTempFile();
-		Path target = newFile.getParent().resolve(oldFile.getFileName());
-		newFile = Files.move(newFile, target);
+        // now create a new temp file with the same name
+        Path newFile = getTempFile();
+        Path target = newFile.getParent().resolve(oldFile.getFileName());
+        newFile = Files.move(newFile, target);
 
-		// write something new into it so that we can make sure that the files
-		// are actually updated correctly:
-		Files.write(newFile, updatedText.getBytes());
+        // write something new into it so that we can make sure that the files
+        // are actually updated correctly:
+        Files.write(newFile, updatedText.getBytes());
 
-		sf.setFile(newFile);
-		// now try updating the file:
-
-		Path updated = repository.updateSequenceFileOnDisk(sf.getId(), newFile);
+        sf.setFile(newFile);
+        // now try updating the file:
+        //sf = repository.update(sf.getId(), ImmutableMap.of("file", (Object) newFile,"fileRevisionNumber",2L));
+		
+		Path updated = repository.updateSequenceFileOnDisk(sf.getId(), newFile,2L);
 		sf.setFile(updated);
-		// the filename should be the same as before:
-		assertEquals(updated.getFileName(), oldFile.getFileName());
-		// the contents of the file should be different:
-		Scanner sc = new Scanner(updated);
-		assertEquals(updatedText, sc.nextLine());
-		// we should also have a two files in the directory:
-		Path parentDirectory = sf.getFile().getParent();
-		DirectoryStream<Path> directory = Files.newDirectoryStream(parentDirectory);
-		int children = 0;
-		// check that the contents of both files still exists:
-		for (Path f : directory) {
-			children++;
-			assertTrue(f.getFileName().toString().startsWith(sf.getFile().getFileName().toString()));
-			sc = new Scanner(f);
-			if (f.getFileName().toString().contains("-")) {
-				assertEquals(originalText, sc.nextLine());
-			} else {
-				assertEquals(updatedText, sc.nextLine());
-			}
-		}
-		sc.close();
-		assertEquals(2, children);
+        // the filename should be the same as before:
+        Path updatedFile = sf.getFile();
+        assertEquals(updatedFile.getFileName(), oldFile.getFileName());
+        // the contents of the file should be different:
+        Scanner sc = new Scanner(updatedFile);
+        assertEquals(updatedText, sc.nextLine());
+		
+		sc = new Scanner(originalFile);
+        assertEquals(originalText, sc.nextLine());
 	}
 
 	@Test
 	public void testUpdate() throws IOException {
 		Long lId = new Long(9999);
 		Path originalFile = getTempFile();
-		SequenceFile sf = new SequenceFile(originalFile);
-		sf.setId(lId);
-		sf = repository.writeSequenceFileToDisk(sf);
+		SequenceFile original = new SequenceFile(originalFile);
+		original.setId(lId);
+		original = repository.writeSequenceFileToDisk(original);
 		Path updatedFile = getTempFile();
-		sf.setFile(updatedFile);
-		Path persistedFile = repository.updateSequenceFileOnDisk(lId, updatedFile);
-		assertEquals(updatedFile.getFileName(), persistedFile.getFileName());
 
-		Set<String> filenames = new HashSet<>();
-		filenames.add(originalFile.getFileName().toString());
-		filenames.add(updatedFile.getFileName().toString());
+		Path updatedPersistedFile = repository.updateSequenceFileOnDisk(lId, updatedFile,2L);
+		assertEquals(updatedFile.getFileName(), updatedPersistedFile.getFileName());
+		assertTrue(Files.exists(updatedPersistedFile));
+
 		// make sure that the other file is still there:
-		Path parentDirectory = persistedFile.getParent();
-		DirectoryStream<Path> children = Files.newDirectoryStream(parentDirectory);
-		for (Path f : children) {
-			filenames.remove(f.getFileName().toString());
-		}
-		assertTrue(filenames.isEmpty());
+		Path file = original.getFile();
+		assertTrue(Files.exists(file));
 	}
 }
