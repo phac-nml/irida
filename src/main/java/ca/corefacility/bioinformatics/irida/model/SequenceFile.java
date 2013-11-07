@@ -104,16 +104,13 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	public SequenceFile(Path sampleFile) {
 		this();
 		this.file = sampleFile;
+		setStringPath();
+
 	}
 
 	@PostLoad
-	public void postConstruct(){
+	public void postLoad(){
 		setRealPath();
-	}
-	
-	@PrePersist
-	public void prePersist(){
-		setStringPath();
 	}
 
 	@Override
@@ -277,6 +274,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
 	public void setFile(Path file) {
 		this.file = file;
+		setStringPath();
 	}
 
 	@Override
