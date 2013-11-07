@@ -9,10 +9,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
-import org.hibernate.PropertyAccessException;
-import org.springframework.beans.DirectFieldAccessor;
-import org.springframework.beans.NotWritablePropertyException;
-import org.springframework.beans.TypeMismatchException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
@@ -20,10 +16,13 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.apache.commons.beanutils.BeanUtils;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * A universal CRUD service for all types. Specialized services should extend
@@ -142,12 +141,12 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Com
 		for (String key : updatedFields.keySet()) {
 			Object value = updatedFields.get(key);
 
-			DirectFieldAccessor acc = new DirectFieldAccessor(instance);
-
-			try {
-				acc.setPropertyValue(key, value);
-			} catch (InvalidPropertyException | PropertyAccessException | TypeMismatchException
-					| NotWritablePropertyException ex) {
+			try{
+				String property = BeanUtils.getProperty(instance, key);
+				BeanUtils.setProperty(instance, key, value);
+				
+			}
+			catch(IllegalAccessException | InvocationTargetException | java.lang.IllegalArgumentException | NoSuchMethodException ex){
 				throw new InvalidPropertyException("Unable to access field [" + key + "]");
 			}
 		}
