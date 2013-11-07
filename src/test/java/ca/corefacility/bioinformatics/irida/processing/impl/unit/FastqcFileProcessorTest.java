@@ -23,7 +23,10 @@ import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
+import ca.corefacility.bioinformatics.irida.service.OverrepresentedSequenceService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests for {@link FastqcFileProcessor}.
@@ -34,6 +37,8 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 public class FastqcFileProcessorTest {
 	private FastqcFileProcessor fileProcessor;
 	private SequenceFileService sequenceFileService;
+	private OverrepresentedSequenceService overrepresentedSequenceService;
+
 	private static final String SEQUENCE = "ACGTACGTN";
 	private static final String FASTQ_FILE_CONTENTS = "@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
 			+ SEQUENCE + "\n+\n?????????";
@@ -42,7 +47,8 @@ public class FastqcFileProcessorTest {
 	@Before
 	public void setUp() {
 		sequenceFileService = mock(SequenceFileService.class);
-		fileProcessor = new FastqcFileProcessor(sequenceFileService);
+		overrepresentedSequenceService = mock(OverrepresentedSequenceService.class);
+		fileProcessor = new FastqcFileProcessor(sequenceFileService,overrepresentedSequenceService);
 	}
 
 	@Test
@@ -70,6 +76,10 @@ public class FastqcFileProcessorTest {
 		// fastqc shouldn't barf on a fastq file.
 		Path fastq = Files.createTempFile(null, null);
 		Files.write(fastq, FASTQ_FILE_CONTENTS.getBytes());
+		
+		OverrepresentedSequence ovrs = new OverrepresentedSequence(SEQUENCE, 2, BigDecimal.valueOf(100.), "");
+		when(overrepresentedSequenceService.create(any(OverrepresentedSequence.class))).thenReturn(ovrs);
+
 
 		@SuppressWarnings("rawtypes")
 		ArgumentCaptor<Map> argument = ArgumentCaptor.forClass(Map.class);
