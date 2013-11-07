@@ -126,13 +126,14 @@ public class SequenceFileServiceImplTest {
 		sf.setId(id);
 		SequenceFile updatedSf = new SequenceFile(updatedFile);
 		updatedSf.setId(id);
+		Long newRevisionNumber = 2L;
 
 		Map<String,Object> updatedMap = new HashMap<>();
 		updatedMap.put("file", (Object) updatedFile);
 
 		when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
 		when(crudRepository.save(updatedSf)).thenReturn(updatedSf);
-		when(fileRepository.updateSequenceFileOnDisk(sf.getId(), updatedFile)).thenReturn(updatedFile);
+		when(fileRepository.updateSequenceFileOnDisk(sf.getId(), updatedFile,newRevisionNumber)).thenReturn(updatedFile);
 		when(crudRepository.findOne(id)).thenReturn(updatedSf);
 
 		sf = sequenceFileService.update(id, updatedMap);
@@ -144,7 +145,7 @@ public class SequenceFileServiceImplTest {
 		// directory
 		verify(crudRepository, times(2)).exists(id);
 		verify(crudRepository, times(2)).save(updatedSf);
-		verify(fileRepository).updateSequenceFileOnDisk(sf.getId(), updatedFile);
+		verify(fileRepository).updateSequenceFileOnDisk(sf.getId(), updatedFile,newRevisionNumber);
 		verify(crudRepository, times(2)).findOne(id);
 
 		Files.delete(originalFile);
