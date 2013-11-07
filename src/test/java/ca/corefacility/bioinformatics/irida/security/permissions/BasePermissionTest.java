@@ -38,6 +38,16 @@ public class BasePermissionTest {
 		when(crudRepository.findOne(1L)).thenReturn(null);
 		basePermission.isAllowed(auth, 1L);
 	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testBizarreExecution() {
+		String username = "fbristow";
+		User u = new User();
+		u.setUsername(username);
+		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
+
+		basePermission.isAllowed(auth, new Object());
+	}
 
 	private static class PermittablePermission extends BasePermission<Permittable> {
 

@@ -83,4 +83,15 @@ public class UpdateUserPermissionTest {
 		// we should fast pass through to permission granted for administrators.
 		verifyZeroInteractions(userRepository);
 	}
+
+	@Test
+	public void testRejectClient() {
+		Collection<GrantedAuthority> roles = new ArrayList<>();
+		roles.add(Role.ROLE_CLIENT);
+
+		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
+
+		when(userRepository.findOne(1L)).thenReturn(new User());
+		assertFalse("permission was granted to client.", updateUserPermission.isAllowed(auth, 1l));
+	}
 }
