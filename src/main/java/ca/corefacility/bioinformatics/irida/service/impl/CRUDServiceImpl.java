@@ -33,9 +33,9 @@ import java.lang.reflect.InvocationTargetException;
 public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Comparable<ValueType>> implements
 		CRUDService<KeyType, ValueType> {
 	private static final String NO_SUCH_ID_EXCEPTION = "No such identifier exists in the database.";
-	
+
 	private static final String CREATED_DATE_SORT_PROPERTY = "createdDate";
-	
+
 	protected final PagingAndSortingRepository<ValueType, KeyType> repository;
 	protected final Validator validator;
 	protected final Class<ValueType> valueType;
@@ -141,12 +141,9 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Com
 		for (String key : updatedFields.keySet()) {
 			Object value = updatedFields.get(key);
 
-			try{
-				String property = BeanUtils.getProperty(instance, key);
+			try {
 				BeanUtils.setProperty(instance, key, value);
-				
-			}
-			catch(IllegalAccessException | InvocationTargetException | java.lang.IllegalArgumentException | NoSuchMethodException ex){
+			} catch (IllegalAccessException | InvocationTargetException | java.lang.IllegalArgumentException e) {
 				throw new InvalidPropertyException("Unable to access field [" + key + "]");
 			}
 		}
@@ -185,7 +182,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Com
 	@Override
 	@Transactional(readOnly = true)
 	public Page<ValueType> list(int page, int size, Direction order) {
-		return repository.findAll(new PageRequest(page, size, order,CREATED_DATE_SORT_PROPERTY));
+		return repository.findAll(new PageRequest(page, size, order, CREATED_DATE_SORT_PROPERTY));
 	}
 
 	/**
