@@ -153,6 +153,11 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 					RuntimeException translated = translateConstraintViolationException((org.hibernate.exception.ConstraintViolationException) e
 							.getCause());
 					throw translated;
+				} else {
+					// I can't figure out what the problem was, just keep
+					// throwing it up.
+					throw new DataIntegrityViolationException(
+							"Unexpected DataIntegrityViolationException, cause accompanies.", e);
 				}
 			}
 		}
@@ -263,22 +268,32 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 		return repository.findAll();
 	}
 
+	/**
+	 * Translate {@link ConstraintViolationException} errors into an appropriate
+	 * {@link EntityExistsException}.
+	 * 
+	 * @param e
+	 *            the exception to translate.
+	 * @return the translated exception.
+	 */
 	private RuntimeException translateConstraintViolationException(
 			org.hibernate.exception.ConstraintViolationException e) {
+		final EntityExistsException UNABLE_TO_PARSE = new EntityExistsException(
+				"Could not create user as a duplicate fields exists; however the duplicate field was not included in "
+						+ "the ConstraintViolationException, the original cause is included.", e);
 		String constraintName = e.getConstraintName();
 
 		if (StringUtils.isEmpty(constraintName)) {
-			return new EntityExistsException(
-					"Could not create user as a duplicate fields exists; however the duplicate field was not included in "
-							+ "the ConstraintViolationException, the original cause is included.", e);
+			return UNABLE_TO_PARSE;
 		}
 		Matcher matcher = USER_CONSTRAINT_PATTERN.matcher(constraintName);
 		if (matcher.groupCount() != 1) {
-			return new IllegalArgumentException("Couldn't parse field name from constraint violation: "
-					+ constraintName);
+			throw new IllegalArgumentException("The pattern must have capture groups to parse the constraint name.");
 		}
 
-		matcher.find();
+		if (!matcher.find()) {
+			return UNABLE_TO_PARSE;
+		}
 		String fieldName = matcher.group(1).toLowerCase();
 
 		return new EntityExistsException("Could not create user as a duplicate field exists: " + fieldName, fieldName);

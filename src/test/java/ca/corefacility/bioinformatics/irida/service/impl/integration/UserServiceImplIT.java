@@ -3,9 +3,16 @@ package ca.corefacility.bioinformatics.irida.service.impl.integration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +48,6 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
@@ -205,7 +211,7 @@ public class UserServiceImplIT {
 		User u = userService.getUserByUsername(username);
 		assertEquals("Username is wrong.", username, u.getUsername());
 	}
-	
+
 	@Test(expected = EntityNotFoundException.class)
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
@@ -213,7 +219,7 @@ public class UserServiceImplIT {
 		String username = "random garbage";
 		userService.getUserByUsername(username);
 	}
-	
+
 	@Test
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
@@ -225,7 +231,7 @@ public class UserServiceImplIT {
 		assertEquals("Wrong project.", p, projectUser.getSubject());
 		assertEquals("Wrong user.", "fbristow", projectUser.getObject().getUsername());
 	}
-	
+
 	@Test
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
@@ -235,6 +241,53 @@ public class UserServiceImplIT {
 		assertEquals("Wrong number of users.", 1, usersAvailableForProject.size());
 		User availableUser = usersAvailableForProject.iterator().next();
 		assertEquals("Wrong user.", "differentUser", availableUser.getUsername());
+	}
+
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	public void testBadPasswordUpdate() {
+		// a user should not be persisted with a bad password (like password1)
+		String password = "password1";
+		Map<String, Object> properties = new HashMap<>();
+		properties.put("password", password);
+
+		try {
+			asUser().userService.update(1l, properties);
+			fail();
+		} catch (ConstraintViolationException e) {
+			Set<ConstraintViolation<?>> violationSet = e.getConstraintViolations();
+			assertEquals(1, violationSet.size());
+			ConstraintViolation<?> violation = violationSet.iterator().next();
+			assertTrue(violation.getPropertyPath().toString().contains("password"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	@Test(expected = ConstraintViolationException.class)
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	public void testUpdatePasswordBadPassword() {
+		String password = "arguablynotagoodpassword";
+		asUser().userService.changePassword(1l, password);
+	}
+	
+	@Test(expected = ConstraintViolationException.class)
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	public void testCreateBadPassword() {
+		User u = new User();
+		u.setPassword("not a good password");
+		u.setEmail("fbristow@gmail.com");
+		u.setUsername("fbristow");
+		u.setFirstName("Franklin");
+		u.setLastName("Bristow");
+		u.setPhoneNumber("7029");
+		u.setSystemRole(Role.ROLE_USER);
+
+		userService.create(u);
 	}
 
 	private UserServiceImplIT asUser() {
