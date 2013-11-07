@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.config;
 
-import ca.corefacility.bioinformatics.irida.config.data.jpa.HibernateConfig;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,11 +24,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import ca.corefacility.bioinformatics.irida.config.data.DataConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.config.data.jpa.HibernateConfig;
 import ca.corefacility.bioinformatics.irida.config.data.jpa.JpaProperties;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileFilesystem;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileFilesystemImpl;
 import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.UserRevListener;
-import java.util.Properties;
 
 /**
  * Configuration for repository/data storage classes.
