@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.processing.impl;
+package ca.corefacility.bioinformatics.irida.processing.impl.unit;
 
 import static org.junit.Assert.*;
 
@@ -11,6 +11,7 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
+import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
 
 /**
  * Tests for {@link DefaultFileProcessingChain}.

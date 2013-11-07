@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.processing.impl;
+package ca.corefacility.bioinformatics.irida.processing.impl.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -22,6 +22,7 @@ import org.mockito.ArgumentCaptor;
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
+import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 /**
