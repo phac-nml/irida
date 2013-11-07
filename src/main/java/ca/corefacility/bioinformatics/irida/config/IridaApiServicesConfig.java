@@ -9,6 +9,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
+import ca.corefacility.bioinformatics.irida.config.processing.IridaApiMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
@@ -45,7 +46,8 @@ import ca.corefacility.bioinformatics.irida.service.impl.UserServiceImpl;
  * 
  */
 @Configuration
-@Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class })
+@Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class,
+		IridaApiMultithreadingConfig.class })
 public class IridaApiServicesConfig {
 	@Bean
 	public UserService userService(UserRepository userRepository, ProjectUserJoinRepository pujRepository,
@@ -69,8 +71,7 @@ public class IridaApiServicesConfig {
 
 	@Bean
 	public SequenceFileService sequenceFileService(SequenceFileRepository sequenceFileRepository,
-			SequenceFileFilesystem sequenceFileFilesystemRepository,
-			SampleSequenceFileJoinRepository ssfRepository,
+			SequenceFileFilesystem sequenceFileFilesystemRepository, SampleSequenceFileJoinRepository ssfRepository,
 			SequenceFileOverrepresentedSequenceJoinRepository sfosRepository,
 			MiseqRunSequenceFileJoinRepository mrsfRepository, Validator validator) {
 		return new SequenceFileServiceImpl(sequenceFileRepository, sequenceFileFilesystemRepository, ssfRepository,

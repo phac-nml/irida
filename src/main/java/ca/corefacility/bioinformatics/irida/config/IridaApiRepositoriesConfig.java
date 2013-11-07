@@ -46,13 +46,13 @@ public class IridaApiRepositoriesConfig {
 
 	@Autowired
 	private DataConfig dataConfig;
-	
+
 	@Autowired
 	JpaProperties jpaProperties;
 
 	private @Value("${sequence.file.base.directory}")
 	String sequenceFileBaseDirectory;
-	
+
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
 			JpaVendorAdapter jpaVendorAdapter) {
@@ -70,7 +70,7 @@ public class IridaApiRepositoriesConfig {
 	public PlatformTransactionManager transactionManager() {
 		return new JpaTransactionManager();
 	}
-	
+
 	@Bean
 	public SequenceFileFilesystem sequenceFileFilesystem() {
 		Path baseDirectory = Paths.get(sequenceFileBaseDirectory);
