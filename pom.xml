@@ -96,6 +96,9 @@
 
 		<!-- REST-assured -->
 		<rest.assured.version>1.8.0</rest.assured.version>
+		
+		<!-- Groovy test version -->
+		<groovy.version>2.1.2</groovy.version>
 
 		<!-- mockito -->
 		<mockito.version>1.9.5</mockito.version>
@@ -185,6 +188,20 @@
 			<groupId>com.jayway.restassured</groupId>
 			<artifactId>rest-assured</artifactId>
 			<version>${rest.assured.version}</version>
+			<!-- Exclude Groovy because of classpath issue -->
+			<exclusions>
+				<exclusion>
+					<groupId>org.codehaus.groovy</groupId>
+					<artifactId>groovy</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<!-- Needs to be the same version that REST Assured depends on -->
+			<version>${groovy.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- used by Spring MVC Test framework -->
