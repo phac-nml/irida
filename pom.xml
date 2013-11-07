@@ -77,7 +77,7 @@
 		<jetty.version>9.0.2.v20130417</jetty.version>
 
 		<!-- Spring -->
-		<spring-framework.version>3.2.4.RELEASE</spring-framework.version>
+		<spring-framework.version>3.2.5.RELEASE</spring-framework.version>
 		<org.springframework.hateoas.version>0.5.0.RELEASE</org.springframework.hateoas.version>
 		<org.springframework.security.version>3.2.0.RC2</org.springframework.security.version>
 		<org.springframework.plugin.version>0.8.0.RELEASE</org.springframework.plugin.version>
