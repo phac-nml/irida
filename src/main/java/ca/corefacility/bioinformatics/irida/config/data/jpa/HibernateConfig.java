@@ -36,7 +36,7 @@ public class HibernateConfig implements JpaProperties{
 		properties.setProperty("hibernate.hbm2ddl.auto", hibernateHbm2dllAuto);
 		properties.setProperty("hibernate.hbm2ddl.import_files", hibernateHbm2ddlImportFiles);
 		properties.setProperty("org.hibernate.envers.store_data_at_delete", hibernateStoreDataAtDelete);
-		properties.setProperty("show_sql", "true");
+		properties.setProperty("show_sql", "false");
 		return properties;	
 	}
 
