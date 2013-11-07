@@ -89,8 +89,9 @@ public class UpdateUserPermissionTest {
 		Collection<GrantedAuthority> roles = new ArrayList<>();
 		roles.add(Role.ROLE_CLIENT);
 
-		Authentication authentication = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
+		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
 
-		assertFalse("permission was granted to client.", updateUserPermission.isAllowed(authentication, 1l));
+		when(userRepository.findOne(1L)).thenReturn(new User());
+		assertFalse("permission was granted to client.", updateUserPermission.isAllowed(auth, 1l));
 	}
 }

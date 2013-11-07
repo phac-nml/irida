@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.processing.impl;
+package ca.corefacility.bioinformatics.irida.processing.impl.unit;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -12,6 +12,7 @@ import org.springframework.core.task.TaskExecutor;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
+import ca.corefacility.bioinformatics.irida.processing.impl.FileProcessorAspect;
 
 import com.google.common.collect.ImmutableMap;
 

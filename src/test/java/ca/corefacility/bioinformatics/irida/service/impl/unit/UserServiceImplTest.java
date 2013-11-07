@@ -1,29 +1,29 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validation;
 import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
@@ -49,8 +49,7 @@ public class UserServiceImplTest {
 
 	@Before
 	public void setUp() {
-		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-		validator = factory.getValidator();
+		validator = mock(Validator.class);
 		userRepository = mock(UserRepository.class);
 		passwordEncoder = mock(PasswordEncoder.class);
 		pujRepository = mock(ProjectUserJoinRepository.class);
@@ -66,54 +65,6 @@ public class UserServiceImplTest {
 	}
 
 	@Test
-	public void testBadPasswordCreate() {
-		// a user should not be persisted with a bad password (like password1)
-		String username = "fbristow";
-		String password = "password1";
-		String passwordEncoded = "ENCODED_password1";
-		String email = "fbristow@gmail.com";
-		String firstName = "Franklin";
-		String lastName = "Bristow";
-		String phoneNumber = "7029";
-		User user = new User(username, email, password, firstName, lastName, phoneNumber);
-		when(passwordEncoder.encode(password)).thenReturn(passwordEncoded);
-		try {
-			userService.create(user);
-			fail();
-		} catch (ConstraintViolationException e) {
-			Set<ConstraintViolation<?>> violationSet = e.getConstraintViolations();
-			assertEquals(1, violationSet.size());
-			ConstraintViolation<?> violation = violationSet.iterator().next();
-			assertTrue(violation.getPropertyPath().toString().contains("password"));
-		} catch (Exception e) {
-			fail();
-		}
-	}
-
-	@Test
-	public void testBadPasswordUpdate() {
-		// a user should not be persisted with a bad password (like password1)
-		String password = "password1";
-		String passwordEncoded = "$2a$10$vMzhJFdyM72NnnWIoMSbUecHRxZDtCE1fdiPfjfjT1WD0fISDXOX2";
-		Long luid = 1111l;
-		Map<String, Object> properties = new HashMap<>();
-		properties.put("password", password);
-
-		when(passwordEncoder.encode(password)).thenReturn(passwordEncoded);
-		try {
-			userService.update(luid, properties);
-			fail();
-		} catch (ConstraintViolationException e) {
-			Set<ConstraintViolation<?>> violationSet = e.getConstraintViolations();
-			assertEquals(1, violationSet.size());
-			ConstraintViolation<?> violation = violationSet.iterator().next();
-			assertTrue(violation.getPropertyPath().toString().contains("password"));
-		} catch (Exception e) {
-			fail();
-		}
-	}
-
-	@Test
 	public void testPasswordUpdate() {
 		final String password = "Password1";
 		final String encodedPassword = "ENCODED_" + password;
@@ -122,7 +73,8 @@ public class UserServiceImplTest {
 
 		Map<String, Object> properties = new HashMap<>();
 		properties.put("password", (Object) password);
-		//Map<String, Object> encodedPasswordProperties = ImmutableMap.of("password", (Object) encodedPassword);
+		// Map<String, Object> encodedPasswordProperties =
+		// ImmutableMap.of("password", (Object) encodedPassword);
 
 		when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
 		when(userRepository.save(persisted)).thenReturn(persisted);
@@ -146,14 +98,6 @@ public class UserServiceImplTest {
 		when(userRepository.findOne(1l)).thenReturn(user());
 		userService.update(1l, properties);
 		verifyZeroInteractions(passwordEncoder);
-	}
-
-	@Test(expected = ConstraintViolationException.class)
-	public void testCreateBadPassword() {
-		User u = user();
-		u.setPassword("not a good password");
-
-		userService.create(u);
 	}
 
 	@Test
@@ -204,19 +148,64 @@ public class UserServiceImplTest {
 		assertEquals("password field was not encoded.", encodedPassword, saved.getPassword());
 	}
 
-	@Test
-	public void testUpdatePasswordBadPassword() {
-		String password = "arguablynotagoodpassword";
+	@Test(expected = EntityExistsException.class)
+	public void testCreateUserWithIntegrityConstraintViolations() {
+		User u = new User();
 
-		try {
-			userService.changePassword(1l, password);
-			fail();
-		} catch (ConstraintViolationException e) {
-		} catch (Exception e) {
-			fail();
-		}
+		ConstraintViolationException constraintViolationException = new ConstraintViolationException("Duplicate", null,
+				User.USER_USERNAME_CONSTRAINT_NAME);
+		DataIntegrityViolationException integrityViolationException = new DataIntegrityViolationException("Duplicate",
+				constraintViolationException);
 
-		verifyZeroInteractions(userRepository, passwordEncoder);
+		when(userRepository.save(any(User.class))).thenThrow(integrityViolationException);
+		when(validator.validateValue(eq(User.class), eq("password"), any(String.class))).thenReturn(
+				new HashSet<ConstraintViolation<User>>());
+
+		userService.create(u);
+	}
+
+	@Test(expected = DataIntegrityViolationException.class)
+	public void testCreateUserWithUnknownIntegrityConstraintViolation() {
+		User u = new User();
+
+		DataIntegrityViolationException integrityViolationException = new DataIntegrityViolationException("Duplicate");
+
+		when(userRepository.save(any(User.class))).thenThrow(integrityViolationException);
+		when(validator.validateValue(eq(User.class), eq("password"), any(String.class))).thenReturn(
+				new HashSet<ConstraintViolation<User>>());
+
+		userService.create(u);
+	}
+
+	@Test(expected = EntityExistsException.class)
+	public void testCreateUserWithUnknownIntegrityConstraintViolationName() {
+		User u = new User();
+
+		ConstraintViolationException constraintViolationException = new ConstraintViolationException("Duplicate", null,
+				"Not a very nicely formatted constraint violation name.");
+		DataIntegrityViolationException integrityViolationException = new DataIntegrityViolationException("Duplicate",
+				constraintViolationException);
+
+		when(userRepository.save(any(User.class))).thenThrow(integrityViolationException);
+		when(validator.validateValue(eq(User.class), eq("password"), any(String.class))).thenReturn(
+				new HashSet<ConstraintViolation<User>>());
+
+		userService.create(u);
+	}
+
+	@Test(expected = EntityExistsException.class)
+	public void testCreateUserWithNoConstraintViolationName() {
+		User u = new User();
+
+		ConstraintViolationException constraintViolationException = new ConstraintViolationException(null, null, null);
+		DataIntegrityViolationException integrityViolationException = new DataIntegrityViolationException("Duplicate",
+				constraintViolationException);
+
+		when(userRepository.save(any(User.class))).thenThrow(integrityViolationException);
+		when(validator.validateValue(eq(User.class), eq("password"), any(String.class))).thenReturn(
+				new HashSet<ConstraintViolation<User>>());
+
+		userService.create(u);
 	}
 
 	private User user() {

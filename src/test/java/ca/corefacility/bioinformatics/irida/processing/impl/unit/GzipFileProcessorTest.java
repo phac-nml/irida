@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.processing.impl;
+package ca.corefacility.bioinformatics.irida.processing.impl.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -18,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 /**

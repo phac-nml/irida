@@ -326,6 +326,13 @@
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>${maven.jacoco.plugin.version}</version>
+				<configuration>
+					<excludes>
+						<exclude>**/model/**</exclude>
+						<exclude>**/config/**</exclude>
+						<exclude>**/exceptions/**</exclude>
+					</excludes>
+				</configuration>
 				<executions>
 					<execution>
 						<id>pre-unit-test</id>

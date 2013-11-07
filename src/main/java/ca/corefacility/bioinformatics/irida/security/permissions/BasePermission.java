@@ -1,8 +1,11 @@
 package ca.corefacility.bioinformatics.irida.security.permissions;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.security.core.Authentication;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Role;
 
 /**
@@ -14,6 +17,8 @@ import ca.corefacility.bioinformatics.irida.model.Role;
  *            the type of domain object that this permission is evaluating.
  */
 public abstract class BasePermission<DomainObjectType> {
+	
+	private static final Logger logger = LoggerFactory.getLogger(BasePermission.class);
 
 	/**
 	 * Get the implementation-specific permission provided.
@@ -84,7 +89,11 @@ public abstract class BasePermission<DomainObjectType> {
 		DomainObjectType domainObject;
 
 		if (targetDomainObject instanceof Long) {
+			logger.trace("Trying to find domain object by id [" + targetDomainObject + "]");
 			domainObject = repository.findOne((Long) targetDomainObject);
+			if (domainObject == null) {
+				throw new EntityNotFoundException("Could not find entity with id [" + targetDomainObject + "]");
+			}
 		} else if (domainObjectType.isAssignableFrom(targetDomainObject.getClass())) {
 			// reflection replacement for instanceof
 			domainObject = (DomainObjectType) targetDomainObject;
@@ -92,7 +101,7 @@ public abstract class BasePermission<DomainObjectType> {
 			throw new IllegalArgumentException("Parameter to " + getClass().getName() + " must be of type Long or "
 					+ domainObjectType.getName() + ".");
 		}
-
+		
 		// pass off any other logic to the implementing permission class.
 		return customPermissionAllowed(authentication, domainObject);
 	}

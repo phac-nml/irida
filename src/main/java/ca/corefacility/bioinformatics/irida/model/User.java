@@ -38,12 +38,16 @@ import ca.corefacility.bioinformatics.irida.validators.Patterns;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Entity
-@Table(name = "user", uniqueConstraints = { @UniqueConstraint(name = "user_email_constraint", columnNames = "email"),
-		@UniqueConstraint(name = "user_username_constraint", columnNames = "username") })
+@Table(name = "user", uniqueConstraints = {
+		@UniqueConstraint(name = User.USER_EMAIL_CONSTRAINT_NAME, columnNames = "email"),
+		@UniqueConstraint(name = User.USER_USERNAME_CONSTRAINT_NAME, columnNames = "username") })
 @Audited
 public class User implements IridaThing, Comparable<User>, UserDetails {
 
 	private static final long serialVersionUID = -7516211470008791995L;
+
+	public static final String USER_EMAIL_CONSTRAINT_NAME = "user_email_constraint";
+	public static final String USER_USERNAME_CONSTRAINT_NAME = "user_username_constraint";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -93,8 +97,8 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	private String locale;
 
 	private boolean credentialsNonExpired;
-	
-	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "user")
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
 	private List<ProjectUserJoin> projects;
 
 	/**
