@@ -24,7 +24,7 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFile
 public class IridaApiTestDataSourceConfig implements DataConfig {
 
 	@Bean
-	public SequenceFileFilesystem sequenceFileFilesystemRepository() {
+	public SequenceFileFilesystem sequenceFileFilesystem() {
 		Path baseDirectory = Paths.get("/tmp", "sequence-files");
 		if (!Files.exists(baseDirectory)) {
 			try {
