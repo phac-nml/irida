@@ -15,13 +15,13 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
-
 import org.apache.commons.beanutils.BeanUtils;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
+
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -142,8 +142,13 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Com
 			Object value = updatedFields.get(key);
 
 			try {
+				// setProperty doesn't throw an exception if the field name
+				// can't be found, so we have to force an exception to be thrown
+				// by calling getProperty manually first.
+				BeanUtils.getProperty(instance, key);
 				BeanUtils.setProperty(instance, key, value);
-			} catch (IllegalAccessException | InvocationTargetException | java.lang.IllegalArgumentException e) {
+			} catch (IllegalAccessException | InvocationTargetException | java.lang.IllegalArgumentException
+					| NoSuchMethodException e) {
 				throw new InvalidPropertyException("Unable to access field [" + key + "]");
 			}
 		}
