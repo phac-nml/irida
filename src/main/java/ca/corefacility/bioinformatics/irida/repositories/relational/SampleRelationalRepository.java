@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
+import org.hibernate.criterion.Projections;
 
 /**
  * 
@@ -57,15 +58,18 @@ public class SampleRelationalRepository extends GenericRelationalRepository<Samp
 	@Override
 	public Sample getSampleByExternalSampleId(Project p, String sampleId) {
 		Session session = sessionFactory.getCurrentSession();
-		Query q = session.createQuery("select ps.sample from ProjectSampleJoin ps where "
-				+ "ps.id = :projectId and ps.sample.externalSampleId = :externalSampleId");
-		q.setLong("projectId", p.getId());
-		q.setString("externalSampleId", sampleId);
 		
-		Sample sample = (Sample) q.uniqueResult();
-		if (sample == null) {
+		Criteria crit = session.createCriteria(ProjectSampleJoin.class);
+		crit.add(Restrictions.eq("project", p));
+		crit.createCriteria("sample").add(Restrictions.eq("externalSampleId", sampleId));
+
+		ProjectSampleJoin joinResult = (ProjectSampleJoin) crit.uniqueResult();
+			
+		if (joinResult == null) {
 			throw new EntityNotFoundException("Sample with id " + sampleId + " not found");
 		}
+		
+		Sample sample = joinResult.getObject();
 
 		return sample;
 	}
