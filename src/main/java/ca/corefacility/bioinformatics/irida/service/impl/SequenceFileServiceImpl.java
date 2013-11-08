@@ -27,7 +27,9 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.sequencefile.Mise
 import ca.corefacility.bioinformatics.irida.repositories.joins.sequencefile.SequenceFileOverrepresentedSequenceJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 /**
  * Implementation for managing {@link SequenceFile}.
@@ -37,6 +39,8 @@ import com.google.common.collect.ImmutableMap;
 public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile> implements SequenceFileService {
 
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFileServiceImpl.class);
+
+	private static final String FILE_PROPERTY = "file";
 
 	/**
 	 * A reference to the file system repository.
@@ -86,18 +90,17 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Transactional
 	public SequenceFile create(SequenceFile sequenceFile) {
 		// Send the file to the database repository to be stored (in super)
+		logger.debug("Calling super.create");
 		sequenceFile = super.create(sequenceFile);
 		// Then store the file in an appropriate directory
+		logger.debug("About to write file to disk.");
 		sequenceFile = fileRepository.writeSequenceFileToDisk(sequenceFile);
 		// And finally, update the database with the stored file location
 
 		Map<String, Object> changed = new HashMap<>();
-		changed.put("file", sequenceFile.getFile());
-		final SequenceFile updatedSequenceFile = super.update(sequenceFile.getId(), changed);
-
-		logger.debug("Outside thread: " + Thread.currentThread().toString() + " with sequence file ["
-				+ updatedSequenceFile.getId() + "]");
-
+		changed.put(FILE_PROPERTY, sequenceFile.getFile());
+		logger.debug("Calling this.update");
+		final SequenceFile updatedSequenceFile = update(sequenceFile.getId(), changed);
 		return updatedSequenceFile;
 	}
 
@@ -112,20 +115,36 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 			throw new InvalidPropertyException("File revision number cannot be updated manually.");
 		}
 
-		SequenceFile updated = super.update(id, updatedFields);
+		ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
 
-		if (updatedFields.containsKey("file")) {
-			// need to read the sequence file to get the current file revision
-			// number
-			Long fileRevisionNumber = updated.getFileRevisionNumber();
-			fileRevisionNumber++;
+		SequenceFile toUpdate = read(id);
 
-			Path fileLocation = (Path) updatedFields.get("file");
-			Path updatedLocation = fileRepository.updateSequenceFileOnDisk(id, fileLocation, fileRevisionNumber);
-			updated = super.update(id,
-					ImmutableMap.of("file", (Object) updatedLocation, "fileRevisionNumber", fileRevisionNumber));
+		if (updatedFields.containsKey(FILE_PROPERTY)) {
+			logger.debug("Sequence file [" + toUpdate.getId() + "] has file location to be updated.");
+			Path fileLocation = (Path) updatedFields.get(FILE_PROPERTY);
+			Long updatedRevision = toUpdate.getFileRevisionNumber() + 1;
+			// write the file to a new location on disk
+			Path updatedLocation = fileRepository.updateSequenceFileOnDisk(id, fileLocation, updatedRevision);
+			// put the new location into the map to be constructed
+			builder.put(FILE_PROPERTY, (Object) updatedLocation);
+			builder.put("fileRevisionNumber", (Object) updatedRevision);
+			// add all keys from the updatedFields map that are NOT equal to
+			// "file"
+			builder.putAll(Maps.filterKeys(updatedFields, new Predicate<String>() {
+				@Override
+				public boolean apply(String input) {
+					return !input.equals(FILE_PROPERTY);
+				}
+			}));
+		} else {
+			// the file isn't to be updated, so just keep all the keys that were
+			// originally supplied to the method.
+			builder.putAll(updatedFields);
 		}
 
+		logger.debug("Calling super.update");
+		SequenceFile updated = super.update(id, builder.build());
+		logger.debug("Finished calling super.update");
 		return updated;
 	}
 

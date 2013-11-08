@@ -9,8 +9,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -31,12 +29,12 @@ import uk.ac.babraham.FastQC.Sequence.SequenceFactory;
 import uk.ac.babraham.FastQC.Sequence.QualityEncoding.PhredEncoding;
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileOverrepresentedSequenceJoin;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
-import ca.corefacility.bioinformatics.irida.service.OverrepresentedSequenceService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-
-import com.google.common.collect.ImmutableMap;
+import ca.corefacility.bioinformatics.irida.repositories.OverrepresentedSequenceRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sequencefile.SequenceFileOverrepresentedSequenceJoinRepository;
 
 /**
  * Executes FastQC on a {@link SequenceFile} and stores the report in the
@@ -50,12 +48,16 @@ import com.google.common.collect.ImmutableMap;
 public class FastqcFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessor.class);
 
-	private SequenceFileService sequenceFileService;
-	private OverrepresentedSequenceService overrepresentedSequenceService;
+	private SequenceFileRepository sequenceFileRepository;
+	private OverrepresentedSequenceRepository overrepresentedSequenceRepository;
+	private SequenceFileOverrepresentedSequenceJoinRepository sfosRepository;
 
-	public FastqcFileProcessor(SequenceFileService sequenceFileService, OverrepresentedSequenceService overrepresentedSequenceService) {
-		this.sequenceFileService = sequenceFileService;
-		this.overrepresentedSequenceService = overrepresentedSequenceService;
+	public FastqcFileProcessor(SequenceFileRepository sequenceFileService,
+			OverrepresentedSequenceRepository overrepresentedSequenceService,
+			SequenceFileOverrepresentedSequenceJoinRepository sfosRepository) {
+		this.sequenceFileRepository = sequenceFileService;
+		this.overrepresentedSequenceRepository = overrepresentedSequenceService;
+		this.sfosRepository = sfosRepository;
 	}
 
 	/**
@@ -82,18 +84,18 @@ public class FastqcFileProcessor implements FileProcessor {
 			}
 
 			logger.debug("Finished FastQC analysis modules.");
-			Map<String, Object> updatedProperties = new HashMap<>();
-			updatedProperties.putAll(handleBasicStats(basicStats));
-			updatedProperties.putAll(handlePerBaseQualityScores(pbqs));
-			updatedProperties.putAll(handlePerSequenceQualityScores(psqs));
-			updatedProperties.putAll(handleDuplicationLevel(overRep.duplicationLevelModule()));
+			handleBasicStats(basicStats, sequenceFile);
+			handlePerBaseQualityScores(pbqs, sequenceFile);
+			handlePerSequenceQualityScores(psqs, sequenceFile);
+			handleDuplicationLevel(overRep.duplicationLevelModule(), sequenceFile);
 
-			sequenceFile = sequenceFileService.update(sequenceFile.getId(), updatedProperties);
+			logger.debug("Calling sequenceFileService.update");
+			sequenceFile = sequenceFileRepository.save(sequenceFile);
 
 			Collection<OverrepresentedSequence> overrepresentedSequences = handleOverRepresentedSequences(overRep);
 			for (OverrepresentedSequence sequence : overrepresentedSequences) {
-				sequence = overrepresentedSequenceService.create(sequence);
-				sequenceFileService.addOverrepresentedSequenceToSequenceFile(sequenceFile, sequence);
+				sequence = overrepresentedSequenceRepository.save(sequence);
+				sfosRepository.save(new SequenceFileOverrepresentedSequenceJoin(sequenceFile, sequence));
 			}
 		} catch (Exception e) {
 			logger.error("FastQC failed to process the sequence file. Stack trace follows.", e);
@@ -107,22 +109,19 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * 
 	 * @param stats
 	 *            the {@link BasicStats} computed by fastqc.
-	 * @return properties suitable for updating a {@link SequenceFile}.
+	 * @param sequenceFile
+	 *            the {@link SequenceFile} to update.
 	 */
-	private Map<String, Object> handleBasicStats(BasicStats stats) {
-		Map<String, Object> updatedProperties = new HashMap<>();
-
-		updatedProperties.put("fileType", stats.getFileType());
-		updatedProperties.put("encoding", PhredEncoding.getFastQEncodingOffset(stats.getLowestChar()).name());
-		updatedProperties.put("minLength", stats.getMinLength());
-		updatedProperties.put("maxLength", stats.getMaxLength());
-		updatedProperties.put("totalSequences", stats.getActualCount());
-		updatedProperties.put("filteredSequences", stats.getFilteredCount());
-		updatedProperties.put("gcContent", stats.getGCContent());
-		updatedProperties.put("totalBases",
-				stats.getACount() + stats.getGCount() + stats.getCCount() + stats.getTCount() + stats.getNCount());
-
-		return updatedProperties;
+	private void handleBasicStats(BasicStats stats, SequenceFile sequenceFile) {
+		sequenceFile.setFileType(stats.getFileType());
+		sequenceFile.setEncoding(PhredEncoding.getFastQEncodingOffset(stats.getLowestChar()).name());
+		sequenceFile.setMinLength(stats.getMinLength());
+		sequenceFile.setMaxLength(stats.getMaxLength());
+		sequenceFile.setTotalSequences(stats.getActualCount());
+		sequenceFile.setFilteredSequences(stats.getFilteredCount());
+		sequenceFile.setGcContent(stats.getGCContent());
+		sequenceFile.setTotalBases(stats.getACount() + stats.getGCount() + stats.getCCount() + stats.getTCount()
+				+ stats.getNCount());
 	}
 
 	/**
@@ -130,10 +129,10 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * 
 	 * @param scores
 	 *            the {@link PerBaseQualityScores} computed by fastqc.
-	 * @return a map with a single key containing a byte array, png-formatted
-	 *         chart.
+	 * @param sequenceFile
+	 *            the {@link SequenceFile} to update.
 	 */
-	private Map<String, Object> handlePerBaseQualityScores(PerBaseQualityScores scores) throws IOException {
+	private void handlePerBaseQualityScores(PerBaseQualityScores scores, SequenceFile sequenceFile) throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		QualityBoxPlot bp = (QualityBoxPlot) scores.getResultsPanel();
 		BufferedImage b = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
@@ -142,7 +141,7 @@ public class FastqcFileProcessor implements FileProcessor {
 
 		ImageIO.write(b, "PNG", os);
 		byte[] image = os.toByteArray();
-		return ImmutableMap.of("perBaseQualityScoreChart", (Object) image);
+		sequenceFile.setPerBaseQualityScoreChart(image);
 	}
 
 	/**
@@ -150,10 +149,11 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * 
 	 * @param scores
 	 *            the {@link PerSequenceQualityScores} computed by fastqc.
-	 * @return a map with a single key containing a byte array, png-formatted
-	 *         chart.
+	 * @param sequenceFile
+	 *            the {@link SequenceFile} to update.
 	 */
-	private Map<String, Object> handlePerSequenceQualityScores(PerSequenceQualityScores scores) throws IOException {
+	private void handlePerSequenceQualityScores(PerSequenceQualityScores scores, SequenceFile sequenceFile)
+			throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		LineGraph lg = (LineGraph) scores.getResultsPanel();
 		BufferedImage b = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
@@ -162,17 +162,19 @@ public class FastqcFileProcessor implements FileProcessor {
 
 		ImageIO.write(b, "PNG", os);
 		byte[] image = os.toByteArray();
-		return ImmutableMap.of("perSequenceQualityScoreChart", (Object) image);
+		sequenceFile.setPerSequenceQualityScoreChart(image);
 	}
 
 	/**
 	 * Handle writing the {@link DuplicationLevel} to the database.
 	 * 
 	 * @param duplicationLevel
-	 * @return
-	 * @throws IOException
+	 *            the {@link DuplicationLevel} calculated by fastqc.
+	 * @param sequenceFile
+	 *            the {@link SequenceFile} to update.
 	 */
-	private Map<String, Object> handleDuplicationLevel(DuplicationLevel duplicationLevel) throws IOException {
+	private void handleDuplicationLevel(DuplicationLevel duplicationLevel, SequenceFile sequenceFile)
+			throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		LineGraph lg = (LineGraph) duplicationLevel.getResultsPanel();
 		BufferedImage b = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
@@ -181,7 +183,7 @@ public class FastqcFileProcessor implements FileProcessor {
 
 		ImageIO.write(b, "PNG", os);
 		byte[] image = os.toByteArray();
-		return ImmutableMap.of("duplicationLevelChart", (Object) image);
+		sequenceFile.setDuplicationLevelChart(image);
 	}
 
 	/**

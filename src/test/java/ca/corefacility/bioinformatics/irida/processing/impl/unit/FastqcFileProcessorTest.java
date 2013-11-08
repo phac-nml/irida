@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -14,7 +13,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,8 +22,9 @@ import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
-import ca.corefacility.bioinformatics.irida.service.OverrepresentedSequenceService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.repositories.OverrepresentedSequenceRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sequencefile.SequenceFileOverrepresentedSequenceJoinRepository;
 
 /**
  * Tests for {@link FastqcFileProcessor}.
@@ -35,8 +34,9 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
  */
 public class FastqcFileProcessorTest {
 	private FastqcFileProcessor fileProcessor;
-	private SequenceFileService sequenceFileService;
-	private OverrepresentedSequenceService overrepresentedSequenceService;
+	private SequenceFileRepository sequenceFileRepository;
+	private OverrepresentedSequenceRepository overrepresentedSequenceRepository;
+	private SequenceFileOverrepresentedSequenceJoinRepository sfosRepository;
 
 	private static final String SEQUENCE = "ACGTACGTN";
 	private static final String FASTQ_FILE_CONTENTS = "@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
@@ -45,9 +45,11 @@ public class FastqcFileProcessorTest {
 
 	@Before
 	public void setUp() {
-		sequenceFileService = mock(SequenceFileService.class);
-		overrepresentedSequenceService = mock(OverrepresentedSequenceService.class);
-		fileProcessor = new FastqcFileProcessor(sequenceFileService,overrepresentedSequenceService);
+		sequenceFileRepository = mock(SequenceFileRepository.class);
+		overrepresentedSequenceRepository = mock(OverrepresentedSequenceRepository.class);
+		sfosRepository = mock(SequenceFileOverrepresentedSequenceJoinRepository.class);
+		fileProcessor = new FastqcFileProcessor(sequenceFileRepository, overrepresentedSequenceRepository,
+				sfosRepository);
 	}
 
 	@Test
@@ -69,19 +71,16 @@ public class FastqcFileProcessorTest {
 		Files.deleteIfExists(fasta);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testHandleFastqFile() throws IOException {
 		// fastqc shouldn't barf on a fastq file.
 		Path fastq = Files.createTempFile(null, null);
 		Files.write(fastq, FASTQ_FILE_CONTENTS.getBytes());
-		
+
 		OverrepresentedSequence ovrs = new OverrepresentedSequence(SEQUENCE, 2, BigDecimal.valueOf(100.), "");
-		when(overrepresentedSequenceService.create(any(OverrepresentedSequence.class))).thenReturn(ovrs);
+		when(overrepresentedSequenceRepository.save(any(OverrepresentedSequence.class))).thenReturn(ovrs);
 
-
-		@SuppressWarnings("rawtypes")
-		ArgumentCaptor<Map> argument = ArgumentCaptor.forClass(Map.class);
+		ArgumentCaptor<SequenceFile> argument = ArgumentCaptor.forClass(SequenceFile.class);
 
 		SequenceFile sf = new SequenceFile(fastq);
 		sf.setId(1L);
@@ -92,37 +91,33 @@ public class FastqcFileProcessorTest {
 			fail();
 		}
 
-		verify(sequenceFileService).update(eq(1L), argument.capture());
-		Map<String, Object> updatedProperties = argument.getValue();
-		assertEquals("GC Content was not set correctly.", (short) 50, updatedProperties.get("gcContent"));
-		assertEquals("Filtered sequences was not 0.", 0, updatedProperties.get("filteredSequences"));
-		assertEquals("File type was not correct.", "Conventional base calls", updatedProperties.get("fileType"));
-		assertEquals("Max length was not correct.", SEQUENCE.length(), updatedProperties.get("maxLength"));
-		assertEquals("Min length was not correct.", SEQUENCE.length(), updatedProperties.get("minLength"));
-		assertEquals("Total sequences was not correct.", 2, updatedProperties.get("totalSequences"));
-		assertEquals("Encoding was not correct.", "Illumina <1.3", updatedProperties.get("encoding"));
+		verify(sequenceFileRepository).save(argument.capture());
+		SequenceFile updated = argument.getValue();
+		assertEquals("GC Content was not set correctly.", Short.valueOf((short) 50), updated.getGcContent());
+		assertEquals("Filtered sequences was not 0.", Integer.valueOf(0), updated.getFilteredSequences());
+		assertEquals("File type was not correct.", "Conventional base calls", updated.getFileType());
+		assertEquals("Max length was not correct.", Integer.valueOf(SEQUENCE.length()), updated.getMaxLength());
+		assertEquals("Min length was not correct.", Integer.valueOf(SEQUENCE.length()), updated.getMinLength());
+		assertEquals("Total sequences was not correct.", Integer.valueOf(2), updated.getTotalSequences());
+		assertEquals("Encoding was not correct.", "Illumina <1.3", updated.getEncoding());
 		assertEquals("Total number of bases was not correct.", Long.valueOf(SEQUENCE.length() * 2),
-				updatedProperties.get("totalBases"));
+				updated.getTotalBases());
 
-		assertNotNull("Per-base quality score chart was not created.",
-				updatedProperties.get("perBaseQualityScoreChart"));
+		assertNotNull("Per-base quality score chart was not created.", updated.getPerBaseQualityScoreChart());
 		assertTrue("Per-base quality score chart was created, but was empty.",
-				((byte[]) updatedProperties.get("perBaseQualityScoreChart")).length > 0);
+				((byte[]) updated.getPerBaseQualityScoreChart()).length > 0);
 
-		assertNotNull("Per-sequence quality score chart was not created.",
-				updatedProperties.get("perSequenceQualityScoreChart"));
+		assertNotNull("Per-sequence quality score chart was not created.", updated.getPerSequenceQualityScoreChart());
 		assertTrue("Per-sequence quality score chart was created, but was empty.",
-				((byte[]) updatedProperties.get("perSequenceQualityScoreChart")).length > 0);
+				((byte[]) updated.getPerSequenceQualityScoreChart()).length > 0);
 
-		assertNotNull("Duplication level chart was not created.", updatedProperties.get("duplicationLevelChart"));
-		assertTrue("Duplication level chart was not created.",
-				((byte[]) updatedProperties.get("duplicationLevelChart")).length > 0);
+		assertNotNull("Duplication level chart was not created.", updated.getDuplicationLevelChart());
+		assertTrue("Duplication level chart was not created.", ((byte[]) updated.getDuplicationLevelChart()).length > 0);
 
 		ArgumentCaptor<OverrepresentedSequence> overrepresentedSequenceCaptor = ArgumentCaptor
 				.forClass(OverrepresentedSequence.class);
 
-		verify(sequenceFileService).addOverrepresentedSequenceToSequenceFile(any(SequenceFile.class),
-				overrepresentedSequenceCaptor.capture());
+		verify(overrepresentedSequenceRepository).save(overrepresentedSequenceCaptor.capture());
 		OverrepresentedSequence overrepresentedSequence = overrepresentedSequenceCaptor.getValue();
 		assertEquals("Sequence was not the correct sequence.", SEQUENCE, overrepresentedSequence.getSequence());
 		assertEquals("The count was not correct.", 2, overrepresentedSequence.getOverrepresentedSequenceCount());

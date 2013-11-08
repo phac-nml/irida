@@ -92,8 +92,11 @@ public class IridaApiServicesConfig {
 	}
 
 	@Bean
-	public FileProcessingChain fileProcessorChain(SequenceFileService sequenceFileService, OverrepresentedSequenceService overrepresentedSequenceService) {
-		return new DefaultFileProcessingChain(new GzipFileProcessor(sequenceFileService), new FastqcFileProcessor(sequenceFileService,overrepresentedSequenceService));
+	public FileProcessingChain fileProcessorChain(SequenceFileRepository sequenceFileRepository,
+			OverrepresentedSequenceRepository overrepresentedSequenceFileRepository,
+			SequenceFileOverrepresentedSequenceJoinRepository sfosRepository) {
+		return new DefaultFileProcessingChain(new GzipFileProcessor(sequenceFileRepository), new FastqcFileProcessor(
+				sequenceFileRepository, overrepresentedSequenceFileRepository, sfosRepository));
 	}
 
 	@Bean

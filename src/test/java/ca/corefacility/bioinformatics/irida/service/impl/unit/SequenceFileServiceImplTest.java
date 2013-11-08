@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl.unit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -12,6 +13,8 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -33,9 +36,6 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.impl.SequenceFileServiceImpl;
 
 import com.google.common.collect.ImmutableMap;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Tests for {@link SequenceFileServiceImpl}.
@@ -74,6 +74,7 @@ public class SequenceFileServiceImplTest {
 		withIdentifier.setId(new Long(1111));
 		when(crudRepository.save(sf)).thenReturn(withIdentifier);
 		when(fileRepository.writeSequenceFileToDisk(withIdentifier)).thenReturn(withIdentifier);
+		when(fileRepository.updateSequenceFileOnDisk(any(Long.class), any(Path.class), any(Long.class))).thenReturn(f);
 		when(crudRepository.save(withIdentifier)).thenReturn(withIdentifier);
 		when(crudRepository.exists(withIdentifier.getId())).thenReturn(Boolean.TRUE);
 		when(crudRepository.findOne(withIdentifier.getId())).thenReturn(withIdentifier);
@@ -86,7 +87,7 @@ public class SequenceFileServiceImplTest {
 		verify(fileRepository).writeSequenceFileToDisk(withIdentifier);
 		verify(crudRepository).save(withIdentifier);
 		verify(crudRepository).exists(withIdentifier.getId());
-		verify(crudRepository).findOne(withIdentifier.getId());
+		verify(crudRepository, times(2)).findOne(withIdentifier.getId());
 		Files.delete(f);
 	}
 
@@ -112,7 +113,7 @@ public class SequenceFileServiceImplTest {
 
 		verify(crudRepository).exists(originalId);
 		verify(crudRepository).save(updatedSf);
-		verify(crudRepository).findOne(originalId);
+		verify(crudRepository, times(2)).findOne(originalId);
 		verifyZeroInteractions(fileRepository);
 		Files.delete(f);
 	}
@@ -126,14 +127,14 @@ public class SequenceFileServiceImplTest {
 		sf.setId(id);
 		SequenceFile updatedSf = new SequenceFile(updatedFile);
 		updatedSf.setId(id);
-		Long newRevisionNumber = 2L;
 
-		Map<String,Object> updatedMap = new HashMap<>();
+		Map<String, Object> updatedMap = new HashMap<>();
 		updatedMap.put("file", (Object) updatedFile);
 
 		when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
 		when(crudRepository.save(updatedSf)).thenReturn(updatedSf);
-		when(fileRepository.updateSequenceFileOnDisk(sf.getId(), updatedFile,newRevisionNumber)).thenReturn(updatedFile);
+		when(fileRepository.updateSequenceFileOnDisk(eq(sf.getId()), eq(updatedFile), any(Long.class))).thenReturn(
+				updatedFile);
 		when(crudRepository.findOne(id)).thenReturn(updatedSf);
 
 		sf = sequenceFileService.update(id, updatedMap);
@@ -143,9 +144,9 @@ public class SequenceFileServiceImplTest {
 		// each is called twice, once to update other possible fields, once
 		// again after an updated file has been dropped into the appropriate
 		// directory
-		verify(crudRepository, times(2)).exists(id);
-		verify(crudRepository, times(2)).save(updatedSf);
-		verify(fileRepository).updateSequenceFileOnDisk(sf.getId(), updatedFile,newRevisionNumber);
+		verify(crudRepository, times(1)).exists(id);
+		verify(crudRepository, times(1)).save(updatedSf);
+		verify(fileRepository).updateSequenceFileOnDisk(eq(sf.getId()), eq(updatedFile), any(Long.class));
 		verify(crudRepository, times(2)).findOne(id);
 
 		Files.delete(originalFile);
@@ -161,10 +162,11 @@ public class SequenceFileServiceImplTest {
 		owner.setId(new Long(2222));
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(owner, sf);
 
-		when(crudRepository.save(sf)).thenReturn(sf);
 		when(crudRepository.save(any(SequenceFile.class))).thenReturn(sf);
 		when(crudRepository.exists(sf.getId())).thenReturn(true);
 		when(fileRepository.writeSequenceFileToDisk(sf)).thenReturn(sf);
+		when(fileRepository.updateSequenceFileOnDisk(any(Long.class), any(Path.class), any(Long.class))).thenReturn(
+				file);
 		when(ssfRepository.save(join)).thenReturn(join);
 		when(crudRepository.findOne(sf.getId())).thenReturn(sf);
 
@@ -174,7 +176,7 @@ public class SequenceFileServiceImplTest {
 		verify(crudRepository).exists(sf.getId());
 		verify(fileRepository).writeSequenceFileToDisk(sf);
 		verify(ssfRepository).save(join);
-		verify(crudRepository).findOne(sf.getId());
+		verify(crudRepository, times(2)).findOne(sf.getId());
 
 		assertNotNull(created);
 		assertEquals(sf, created.getObject());
