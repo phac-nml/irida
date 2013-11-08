@@ -98,52 +98,35 @@ public class CRUDServiceImplTest {
 		}
 	}
 
-	@Test
+	@Test(expected = EntityNotFoundException.class)
 	public void testUpdateMissingEntity() {
 		Long id = new Long(1);
 		Map<String, Object> updatedProperties = new HashMap<>();
 		when(crudRepository.exists(id)).thenReturn(Boolean.FALSE);
-		try {
-			crudService.update(id, updatedProperties);
-			fail();
-		} catch (EntityNotFoundException e) {
-		} catch (Exception e) {
-			fail();
-		}
+
+		crudService.update(id, updatedProperties);
 	}
 
-	@Test
+	@Test(expected = InvalidPropertyException.class)
 	public void testUpdateWithBadPropertyName() {
 		IdentifiableTestEntity entity = new IdentifiableTestEntity();
 		entity.setId(1l);
 		Map<String, Object> updatedProperties = new HashMap<>();
 		updatedProperties.put("noSuchField", new Object());
 		when(crudRepository.findOne(1l)).thenReturn(entity);
-		try {
-			crudService.update(entity.getId(), updatedProperties);
-			fail();
-		} catch (InvalidPropertyException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Failed for unexpected reason; stack precedes.");
-		}
+
+		crudService.update(entity.getId(), updatedProperties);
 	}
 
-	@Test
+	@Test(expected = InvalidPropertyException.class)
 	public void testUpdateWithBadPropertyType() {
 		IdentifiableTestEntity entity = new IdentifiableTestEntity();
 		entity.setId(new Long(1));
 		Map<String, Object> updatedProperties = new HashMap<>();
 		updatedProperties.put("integerValue", new Object());
 		when(crudRepository.findOne(1l)).thenReturn(entity);
-		try {
-			crudService.update(entity.getId(), updatedProperties);
-			fail();
-		} catch (InvalidPropertyException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Failed for unexpected reason; stack precedes.");
-		}
+
+		crudService.update(entity.getId(), updatedProperties);
 	}
 
 	@Test
@@ -221,31 +204,20 @@ public class CRUDServiceImplTest {
 		}
 	}
 
-	@Test
+	@Test(expected = EntityNotFoundException.class)
 	public void testInvalidDelete() {
 		Long id = new Long(1);
 		when(crudRepository.exists(id)).thenReturn(Boolean.FALSE);
-		try {
-			crudService.delete(id);
-			fail();
-		} catch (EntityNotFoundException e) {
-		} catch (Exception e) {
-			fail();
-		}
+
+		crudService.delete(id);
 	}
 
-	@Test
+	@Test(expected = EntityNotFoundException.class)
 	public void testGetMissingEntity() {
 		Long id = new Long(1);
 		when(crudRepository.findOne(id)).thenReturn(null);
-		try {
-			crudService.read(id);
-			fail("Should not have proceeded when reading a non-existing entity.");
-		} catch (EntityNotFoundException e) {
-		} catch (Throwable e) {
-			e.printStackTrace();
-			fail("Failed for unknown reason; stack precedes.");
-		}
+
+		crudService.read(id);
 	}
 
 	@Test
