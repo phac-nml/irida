@@ -88,15 +88,14 @@ public class SequenceFileServiceImplIT {
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 	public void testCreateNotCompressedSequenceFile() throws IOException {
-		logger.debug("STARTING TEST ON UNCOMPRESSED FILE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		SequenceFile sf = new SequenceFile();
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
 		sf.setFile(sequenceFile);
 
-		logger.debug("About to save the file.");
+		logger.trace("About to save the file.");
 		sf = sequenceFileService.create(sf);
-		logger.debug("Finished saving the file.");
+		logger.trace("Finished saving the file.");
 
 		assertNotNull("ID wasn't assigned.", sf.getId());
 
@@ -119,8 +118,6 @@ public class SequenceFileServiceImplIT {
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 	public void testCreateCompressedSequenceFile() throws IOException {
-		logger.debug("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< STARTING TEST ON COMPRESSED FILE");
-
 		SequenceFile sf = new SequenceFile();
 		Path sequenceFile = Files.createTempFile(null, ".gz");
 		OutputStream gzOut = new GZIPOutputStream(Files.newOutputStream(sequenceFile));
@@ -129,9 +126,9 @@ public class SequenceFileServiceImplIT {
 
 		sf.setFile(sequenceFile);
 
-		logger.debug("About to save the file.");
+		logger.trace("About to save the file.");
 		sf = sequenceFileService.create(sf);
-		logger.debug("Finished saving the file.");
+		logger.trace("Finished saving the file.");
 
 		assertNotNull("ID wasn't assigned.", sf.getId());
 

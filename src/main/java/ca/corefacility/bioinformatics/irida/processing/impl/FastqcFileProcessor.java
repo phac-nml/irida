@@ -89,7 +89,7 @@ public class FastqcFileProcessor implements FileProcessor {
 			handlePerSequenceQualityScores(psqs, sequenceFile);
 			handleDuplicationLevel(overRep.duplicationLevelModule(), sequenceFile);
 
-			logger.debug("Calling sequenceFileService.update");
+			logger.trace("Calling sequenceFileService.update");
 			sequenceFile = sequenceFileRepository.save(sequenceFile);
 
 			Collection<OverrepresentedSequence> overrepresentedSequences = handleOverRepresentedSequences(overRep);

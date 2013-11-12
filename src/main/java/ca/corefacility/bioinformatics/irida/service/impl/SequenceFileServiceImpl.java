@@ -90,16 +90,16 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Transactional
 	public SequenceFile create(SequenceFile sequenceFile) {
 		// Send the file to the database repository to be stored (in super)
-		logger.debug("Calling super.create");
+		logger.trace("Calling super.create");
 		sequenceFile = super.create(sequenceFile);
 		// Then store the file in an appropriate directory
-		logger.debug("About to write file to disk.");
+		logger.trace("About to write file to disk.");
 		sequenceFile = fileRepository.writeSequenceFileToDisk(sequenceFile);
 		// And finally, update the database with the stored file location
 
 		Map<String, Object> changed = new HashMap<>();
 		changed.put(FILE_PROPERTY, sequenceFile.getFile());
-		logger.debug("Calling this.update");
+		logger.trace("Calling this.update");
 		final SequenceFile updatedSequenceFile = update(sequenceFile.getId(), changed);
 		return updatedSequenceFile;
 	}
@@ -120,7 +120,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		SequenceFile toUpdate = read(id);
 
 		if (updatedFields.containsKey(FILE_PROPERTY)) {
-			logger.debug("Sequence file [" + toUpdate.getId() + "] has file location to be updated.");
+			logger.trace("Sequence file [" + toUpdate.getId() + "] has file location to be updated.");
 			Path fileLocation = (Path) updatedFields.get(FILE_PROPERTY);
 			Long updatedRevision = toUpdate.getFileRevisionNumber() + 1;
 			// write the file to a new location on disk
@@ -142,9 +142,9 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 			builder.putAll(updatedFields);
 		}
 
-		logger.debug("Calling super.update");
+		logger.trace("Calling super.update");
 		SequenceFile updated = super.update(id, builder.build());
-		logger.debug("Finished calling super.update");
+		logger.trace("Finished calling super.update");
 		return updated;
 	}
 
