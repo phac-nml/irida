@@ -68,7 +68,6 @@ public class MiseqServiceImplIT {
 		}
 	}
 
-	@Test(expected = AccessDeniedException.class)
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
 	public void testAddSequenceFileToMiseqRunAsManager() {
@@ -77,7 +76,6 @@ public class MiseqServiceImplIT {
 		asRole(Role.ROLE_MANAGER).miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
 	}
 
-	@Test(expected = AccessDeniedException.class)
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
 	public void testAddSequenceFileToMiseqRunAsUser() {

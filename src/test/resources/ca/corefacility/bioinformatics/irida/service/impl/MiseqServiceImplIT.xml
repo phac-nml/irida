@@ -15,13 +15,20 @@
 	<miseq_run id="1" />
 	<miseq_run id="2" />
 	
+	<sample id="1" sampleName="sample" externalSampleId="sample1"/>
+	<project id="1" name="project 1"/>
+	
 	<miseqrun_sequencefile id="1" miseqRun_id="2" sequenceFile_id="2" />
+	
+	<sequencefile_sample id="1" sequenceFile_id="1" sample_id="1"/>
+	
+	<project_sample id="1" project_id="1" sample_id="1"/>
+	<project_user id="1" project_id="1" user_id="1" projectRole="PROJECT_USER"/>
 
 	<Revisions />
 	<USER_AUD />
 	<MISEQRUN_SEQUENCEFILE_AUD />
 	<MISEQRUN_SEQUENCEFILE />
-	<SEQUENCEFILE_SAMPLE />
 	<PROJECT_USER />
 	<PROJECT_USER_AUD />
 	<MISEQ_RUN_AUD />
