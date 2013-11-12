@@ -1,18 +1,11 @@
 package ca.corefacility.bioinformatics.irida.pipeline;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-
-import ca.corefacility.bioinformatics.irida.pipeline.workflow.Workflow;
-import ca.corefacility.bioinformatics.irida.pipeline.workflow.WorkflowSubmissionException;
-import ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.WorkflowImpl;
+import ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.GalaxySample;
 import ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.WorkflowRESTAPIGalaxy;
-import ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.WorkflowSubmitterGalaxy;
 
 public class LibraryMain
 {
@@ -37,6 +30,10 @@ public class LibraryMain
 			File dataFile = new File(Main.class.getResource("testData.fastq").toURI());
 			List<File> dataFiles = new ArrayList<File>();
 			dataFiles.add(dataFile);
+			
+			GalaxySample sample = new GalaxySample("TestSample", dataFiles);
+			List<GalaxySample> samples = new ArrayList<GalaxySample>();
+			samples.add(sample);
 	
 			WorkflowRESTAPIGalaxy workflowAPI = new WorkflowRESTAPIGalaxy(galaxyURL, apiKey);
 			String libraryId = workflowAPI.buildGalaxyLibrary(libraryName);
@@ -44,7 +41,7 @@ public class LibraryMain
 			{		
 				System.out.println("Successfully created library '" + libraryName);
 				
-				if (workflowAPI.uploadFilesToLibrary(dataFiles, libraryId))
+				if (workflowAPI.uploadFilesToLibrary(samples, libraryId))
 				{
 					System.out.println("Successfully uploaded files:");
 					for (File file : dataFiles)
