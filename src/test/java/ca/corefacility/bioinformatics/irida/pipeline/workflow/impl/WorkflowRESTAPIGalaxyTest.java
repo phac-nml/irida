@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.pipeline.workflow.impl;
 
 import static org.mockito.Mockito.*;
-import static org.mockito.Matchers.any;
 import static org.junit.Assert.*;
 
 import java.io.File;
@@ -17,7 +16,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import ca.corefacility.bioinformatics.irida.pipeline.Main;
 import ca.corefacility.bioinformatics.irida.pipeline.workflow.WorkflowSubmissionException;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
@@ -39,6 +37,10 @@ public class WorkflowRESTAPIGalaxyTest
 	@Mock private com.github.jmchilton.blend4j.galaxy.beans.Workflow blendWorkflow;
 	
 	private WorkflowRESTAPIGalaxy workflowRESTAPI;
+	private File dataFile1;
+	private File dataFile2;
+	private List<File> dataFilesSingle;
+	private List<File> dataFilesDouble;
 	private String goodWorkflowString;
 	private String badWorkflowString;
 	
@@ -62,6 +64,16 @@ public class WorkflowRESTAPIGalaxyTest
 		when(galaxyInstance.getLibrariesClient()).thenReturn(librariesClient);
 		
 		workflowRESTAPI = new WorkflowRESTAPIGalaxy(galaxyInstance);
+		
+		dataFile1 = new File(this.getClass().getResource("testData1.fastq").toURI());
+		dataFile2 = new File(this.getClass().getResource("testData2.fastq").toURI());
+		
+		dataFilesSingle = new ArrayList<File>();
+		dataFilesSingle.add(dataFile1);
+		
+		dataFilesDouble = new ArrayList<File>();
+		dataFilesDouble.add(dataFile1);
+		dataFilesDouble.add(dataFile2);
 	}
 	
 	@Test
@@ -107,11 +119,12 @@ public class WorkflowRESTAPIGalaxyTest
 	}
 	
 	@Test
-	public void testUploadFilesToLibrary() throws URISyntaxException
+	public void testUploadSampleToLibrary() throws URISyntaxException
 	{
-		File dataFile = new File(this.getClass().getResource("testData.fastq").toURI());
-		List<File> dataFiles = new ArrayList<File>();
-		dataFiles.add(dataFile);
+		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
+		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		samples.add(galaxySample);
+		
 		String libraryID = "1";
 		String rootFolderID = "2";
 		List<Library> actualLibraries = new ArrayList<Library>();
@@ -125,16 +138,41 @@ public class WorkflowRESTAPIGalaxyTest
 		when(clientResponse.getClientResponseStatus()).thenReturn(ClientResponse.Status.OK);
 		when(librariesClient.uploadFile(eq(libraryID), any(FileLibraryUpload.class))).thenReturn(clientResponse);
 		
-		assertTrue(workflowRESTAPI.uploadFilesToLibrary(dataFiles, libraryID));
+		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryID));
+		verify(librariesClient).uploadFile(eq(libraryID), any(FileLibraryUpload.class));
+	}
+	
+	@Test
+	public void testUploadMultiFileSampleToLibrary() throws URISyntaxException
+	{
+		GalaxySample galaxySample = new GalaxySample("testData", dataFilesDouble);
+		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		samples.add(galaxySample);
+		
+		String libraryID = "1";
+		String rootFolderID = "2";
+		List<Library> actualLibraries = new ArrayList<Library>();
+		Library library = new Library("testName");
+		library.setId(libraryID);
+		actualLibraries.add(library);
+		
+		when(librariesClient.getRootFolder(libraryID)).thenReturn(libraryContent);
+		when(librariesClient.getLibraries()).thenReturn(actualLibraries);
+		when(libraryContent.getId()).thenReturn(rootFolderID);
+		when(clientResponse.getClientResponseStatus()).thenReturn(ClientResponse.Status.OK);
+		when(librariesClient.uploadFile(eq(libraryID), any(FileLibraryUpload.class))).thenReturn(clientResponse);
+		
+		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryID));
 		verify(librariesClient).uploadFile(eq(libraryID), any(FileLibraryUpload.class));
 	}
 	
 	@Test
 	public void testUploadFilesToLibraryFail() throws URISyntaxException
 	{
-		File dataFile = new File(this.getClass().getResource("testData.fastq").toURI());
-		List<File> dataFiles = new ArrayList<File>();
-		dataFiles.add(dataFile);
+		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
+		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		samples.add(galaxySample);
+
 		String libraryID = "1";
 		String rootFolderID = "2";
 		List<Library> actualLibraries = new ArrayList<Library>();
@@ -148,7 +186,7 @@ public class WorkflowRESTAPIGalaxyTest
 		when(clientResponse.getClientResponseStatus()).thenReturn(ClientResponse.Status.FORBIDDEN);
 		when(librariesClient.uploadFile(eq(libraryID), any(FileLibraryUpload.class))).thenReturn(clientResponse);		
 		
-		assertFalse(workflowRESTAPI.uploadFilesToLibrary(dataFiles, libraryID));
+		assertFalse(workflowRESTAPI.uploadFilesToLibrary(samples, libraryID));
 		verify(librariesClient).uploadFile(eq(libraryID), any(FileLibraryUpload.class));
 	}
 }

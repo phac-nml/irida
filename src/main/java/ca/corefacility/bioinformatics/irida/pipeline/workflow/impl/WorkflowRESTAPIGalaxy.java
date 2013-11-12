@@ -117,15 +117,15 @@ public class WorkflowRESTAPIGalaxy
 	
 	/**
 	 * Uploads the passed set of files to a Galaxy library.
-	 * @param dataFiles  The data files to upload to this library.
+	 * @param samples  The samples to upload to Galaxy.
 	 * @param libraryID  A unique ID for the library, generated from buildGalaxyLibrary(String)
 	 * @return  True if the files have been uploaded, false otherwise.
 	 */
-	public boolean uploadFilesToLibrary(List<File> dataFiles, String libraryID)
+	public boolean uploadFilesToLibrary(List<GalaxySample> samples, String libraryID)
 	{
-		if (dataFiles == null)
+		if (samples == null)
 		{
-			throw new IllegalArgumentException("dataFiles are null");
+			throw new IllegalArgumentException("samples are null");
 		}
 		else if (libraryID == null)
 		{
@@ -147,15 +147,18 @@ public class WorkflowRESTAPIGalaxy
 		
 		if (library != null)
 		{
-			if (dataFiles.size() > 0)
+			if (samples.size() > 0)
 			{
 				FileLibraryUpload upload = new FileLibraryUpload();
-				for (File file : dataFiles)
+				for (GalaxySample sample : samples)
 				{
-					if (file != null)
+					if (sample != null)
 					{
-						upload.setFile(file);
-						upload.setName(file.getName());
+						for (File file : sample.getSampleFiles())
+						{
+							upload.setFile(file);
+							upload.setName(file.getName());
+						}
 					}
 				}
 			
