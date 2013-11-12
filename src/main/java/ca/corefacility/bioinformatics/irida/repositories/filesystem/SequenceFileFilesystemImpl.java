@@ -66,15 +66,15 @@ public class SequenceFileFilesystemImpl implements SequenceFileFilesystem {
 		try {
 			if (!Files.exists(sequenceFileDir)) {
 				Files.createDirectory(sequenceFileDir);
-				logger.debug("Created directory: [" + sequenceFileDir.toString() + "]");
+				logger.trace("Created directory: [" + sequenceFileDir.toString() + "]");
 			}
 			
 			if (!Files.exists(sequenceFileDirWithRevision)) {
         		Files.createDirectory(sequenceFileDirWithRevision);
-                logger.debug("Created directory: [" + sequenceFileDirWithRevision.toString() + "]");
+                logger.trace("Created directory: [" + sequenceFileDirWithRevision.toString() + "]");
         	}
 			Files.move(object.getFile(), target);
-			logger.debug("Moved file " + object.getFile() + " to " + target);
+			logger.trace("Moved file " + object.getFile() + " to " + target);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new StorageException("Failed to move file into new directory.");

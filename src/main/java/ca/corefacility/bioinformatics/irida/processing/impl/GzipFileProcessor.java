@@ -52,12 +52,12 @@ public class GzipFileProcessor implements FileProcessor {
 		}
 
 		try {
-			logger.debug("About to try handling a gzip file.");
+			logger.trace("About to try handling a gzip file.");
 			if (isCompressed(file)) {
 				file = addExtensionToFilename(file, GZIP_EXTENSION);
 
 				try (GZIPInputStream zippedInputStream = new GZIPInputStream(Files.newInputStream(file))) {
-					logger.debug("Handling gzip compressed file.");
+					logger.trace("Handling gzip compressed file.");
 
 					Path target = Paths.get(nameWithoutExtension);
 					logger.debug("Writing uncompressed file to [" + target + "]");
@@ -67,7 +67,7 @@ public class GzipFileProcessor implements FileProcessor {
 					// if the new name is different from the name before, update
 					// the file name in the database.
 					if (!nameWithoutExtension.equals(originalFilename)) {
-						logger.debug("Calling sequenceFileService.update");
+						logger.trace("Calling sequenceFileService.update");
 						sequenceFile.setFile(target);
 						
 						sequenceFile = sequenceFileRepository.save(sequenceFile);
