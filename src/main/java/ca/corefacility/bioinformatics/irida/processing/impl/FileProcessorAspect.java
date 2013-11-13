@@ -16,14 +16,14 @@ import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
-import ca.corefacility.bioinformatics.irida.processing.annotations.EnablePostProcessing;
+import ca.corefacility.bioinformatics.irida.processing.annotations.ModifiesSequenceFile;
 
 /**
  * Aspect that handles post-processing of {@link SequenceFile} after a
  * transaction has been committed.
  * 
- * This aspect watches for methods annotated with {@link EnablePostProcessing} annotations.
- * @see EnablePostProcessing
+ * This aspect watches for methods annotated with {@link ModifiesSequenceFile} annotations.
+ * @see ModifiesSequenceFile
  * 
  * This aspect should be executed *after* a transaction has been committed. Note
  * that this aspect is annotated with an {@link Order} that is lower than the
@@ -49,13 +49,13 @@ public class FileProcessorAspect {
 		this.taskExecutor = taskExecutor;
 	}
 
-	@AfterReturning(value = "@annotation(ca.corefacility.bioinformatics.irida.processing.annotations.EnablePostProcessing)", returning = "sequenceFileJoin")
+	@AfterReturning(value = "@annotation(ca.corefacility.bioinformatics.irida.processing.annotations.ModifiesSequenceFile)", returning = "sequenceFileJoin")
 	public void postProcess(JoinPoint jp, Join<Sample, SequenceFile> sequenceFileJoin) {
 		logger.debug("Executing afterReturning advice for creating a new sequence file in a sample.");
 		executeProcessor(sequenceFileJoin.getObject());
 	}
 
-	@AfterReturning(value = "@annotation(ca.corefacility.bioinformatics.irida.processing.annotations.EnablePostProcessing) && args(id, updatedFields)", returning = "sequenceFile")
+	@AfterReturning(value = "@annotation(ca.corefacility.bioinformatics.irida.processing.annotations.ModifiesSequenceFile) && args(id, updatedFields)", returning = "sequenceFile")
 	public void postProcess(JoinPoint jp, SequenceFile sequenceFile, Long id, Map<String, Object> updatedFields) {
 		logger.debug("Executing afterReturning advice for updating a sequence file.");
 
@@ -64,7 +64,7 @@ public class FileProcessorAspect {
 		}
 	}
 
-	@AfterReturning(value = "@annotation(ca.corefacility.bioinformatics.irida.processing.annotations.EnablePostProcessing)", returning = "sequenceFile")
+	@AfterReturning(value = "@annotation(ca.corefacility.bioinformatics.irida.processing.annotations.ModifiesSequenceFile)", returning = "sequenceFile")
 	public void postProcess(JoinPoint jp, SequenceFile sequenceFile) {
 		logger.debug("Executing afterReturning advice for creating a sequence file.");
 

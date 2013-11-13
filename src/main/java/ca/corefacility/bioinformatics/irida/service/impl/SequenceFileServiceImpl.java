@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileOverrepresentedSequenceJoin;
-import ca.corefacility.bioinformatics.irida.processing.annotations.EnablePostProcessing;
+import ca.corefacility.bioinformatics.irida.processing.annotations.ModifiesSequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileFilesystem;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
@@ -89,7 +89,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Override
 	@PreAuthorize("hasAnyRole('ROLE_CLIENT', 'ROLE_USER')")
 	@Transactional
-	@EnablePostProcessing
+	@ModifiesSequenceFile
 	public SequenceFile create(SequenceFile sequenceFile) {
 		// Send the file to the database repository to be stored (in super)
 		logger.trace("Calling super.create");
@@ -112,7 +112,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Override
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadSequenceFile')")
-	@EnablePostProcessing
+	@ModifiesSequenceFile
 	public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
 		if (updatedFields.containsKey("fileRevisionNumber")) {
 			throw new InvalidPropertyException("File revision number cannot be updated manually.");
@@ -157,7 +157,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Override
 	@Transactional
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT') or hasPermission(#sample, 'canReadSample')")
-	@EnablePostProcessing
+	@ModifiesSequenceFile
 	public Join<Sample, SequenceFile> createSequenceFileInSample(SequenceFile sequenceFile, Sample sample) {
 		SequenceFile created = create(sequenceFile);
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(sample, created);

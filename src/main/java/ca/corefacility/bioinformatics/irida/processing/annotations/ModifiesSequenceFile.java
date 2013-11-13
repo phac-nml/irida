@@ -10,6 +10,6 @@ import ca.corefacility.bioinformatics.irida.processing.impl.FileProcessorAspect;
  * @see FileProcessorAspect
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public @interface EnablePostProcessing {
+public @interface ModifiesSequenceFile {
 
 }
