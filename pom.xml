@@ -311,6 +311,15 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>${maven.javadoc.plugin.version}</version>
+				<executions>
+					<execution>
+						<id>generate-doc</id>
+						<phase>site</phase>
+						<goals>
+							<goal>javadoc</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
@@ -332,42 +341,28 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-maven-plugin</artifactId>
+				<version>${maven.liquibase.plugin.version}</version>
+				<configuration>
+					<propertyFile>src/main/resources/liquibase.properties</propertyFile>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>process-resources</phase>
+						<configuration>
+							<propertyFile>src/main/resources/liquibase.properties</propertyFile>
+						</configuration>
+						<goals>
+							<goal>update</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
-	<profiles>
-		<profile>
-			<id>generate-ddl</id>
-			<activation>
-				<property>
-					<name>generate-ddl</name>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<version>${maven.exec.plugin.version}</version>
-						<configuration>
-							<mainClass>ca.corefacility.bioinformatics.irida.tools.SchemaExporter</mainClass>
-							<arguments>
-								<argument>--create</argument>
-								<argument>--output=${generate-ddl.outputFile}</argument>
-								<argument>--delimiter=;</argument>
-							</arguments>
-						</configuration>
-						<dependencies>
-							<dependency>
-								<groupId>org.hibernate</groupId>
-								<artifactId>hibernate-entitymanager</artifactId>
-								<version>${hibernate.version}</version>
-							</dependency>
-						</dependencies>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+
 	<properties>
 		<!-- Dependencies -->
 		<junit.version>4.11</junit.version>
@@ -398,9 +393,8 @@
 		<maven.surefire.plugin.version>2.13</maven.surefire.plugin.version>
 		<maven.javadoc.plugin.version>2.9</maven.javadoc.plugin.version>
 		<maven.jacoco.plugin.version>0.6.2.201302030002</maven.jacoco.plugin.version>
-		<maven.dbunit.plugin.version>1.0-beta-3</maven.dbunit.plugin.version>
 		<maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
-		<maven.exec.plugin.version>1.2.1</maven.exec.plugin.version>
+		<maven.liquibase.plugin.version>3.0.7</maven.liquibase.plugin.version>
 
 		<!-- project configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
