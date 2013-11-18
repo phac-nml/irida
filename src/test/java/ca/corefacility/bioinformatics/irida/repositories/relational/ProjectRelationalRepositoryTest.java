@@ -200,7 +200,7 @@ public class ProjectRelationalRepositoryTest {
 		Sample read = srepo.read(10L);
 		Project p = repo.read(10L);
 
-		ProjectSampleJoin addSampleToProject = repo.addSampleToProject(p, read);
+		repo.addSampleToProject(p, read);
 		try{
 			repo.addSampleToProject(p, read);
 			fail("Sample should not be able to be added to project twice");

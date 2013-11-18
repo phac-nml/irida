@@ -5,7 +5,6 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -19,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
-import org.hibernate.criterion.Projections;
 
 /**
  * 
