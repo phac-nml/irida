@@ -12,6 +12,7 @@ import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.FileLibraryUpload;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
+import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 
@@ -147,32 +148,47 @@ public class WorkflowRESTAPIGalaxy
 		
 		if (library != null)
 		{
-			if (samples.size() > 0)
+			LibraryContent rootFolder = librariesClient.getRootFolder(library.getId());
+			
+			if (rootFolder != null)
 			{
-				FileLibraryUpload upload = new FileLibraryUpload();
-				for (GalaxySample sample : samples)
+				if (samples.size() > 0)
 				{
-					if (sample != null)
+					boolean sampleUploadSuccess = true;
+					for (GalaxySample sample : samples)
 					{
-						for (File file : sample.getSampleFiles())
+						if (sample != null)
 						{
-							upload.setFile(file);
-							upload.setName(file.getName());
+							FileLibraryUpload upload = new FileLibraryUpload();
+							
+							LibraryFolder sampleFolder = new LibraryFolder();
+							sampleFolder.setName(sample.getSampleName());
+							sampleFolder.setFolderId(rootFolder.getId());
+							
+							LibraryFolder persistedSampleFolder = librariesClient.createFolder(library.getId(), sampleFolder);
+							
+							if (persistedSampleFolder != null)
+							{
+								upload.setFolderId(persistedSampleFolder.getId());
+								
+								for (File file : sample.getSampleFiles())
+								{
+									upload.setFile(file);
+									upload.setName(file.getName());
+								}
+							
+								ClientResponse uploadResponse = librariesClient.uploadFile(library.getId(), upload);
+								
+								sampleUploadSuccess &= 
+										ClientResponse.Status.OK.equals(uploadResponse.getClientResponseStatus());
+							}
+							else
+							{
+								sampleUploadSuccess = false;
+							}
 						}
 					}
-				}
-			
-				LibraryContent rootFolder = librariesClient.getRootFolder(library.getId());
-				if (rootFolder != null)
-				{
-					upload.setFolderId(rootFolder.getId());
-				
-					ClientResponse uploadResponse = librariesClient.uploadFile(library.getId(), upload);
-					
-					if (ClientResponse.Status.OK.equals(uploadResponse.getClientResponseStatus()))
-					{
-						success = true;
-					}
+					success = sampleUploadSuccess;
 				}
 			}
 		}
