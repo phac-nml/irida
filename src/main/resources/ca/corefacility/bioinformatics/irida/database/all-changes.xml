@@ -6,6 +6,6 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
 	<!-- include everything in the changesets directory -->
-	<include file="changesets/initialschema-v1.0.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/updates-v1.1.xml" relativeToChangelogFile="true" />
+	<include file="changesets/1.0/initialschema-v1.0.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/1.1/updates-v1.1.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>
