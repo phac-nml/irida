@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+	<changeSet id="1" author="fbristow">
+		<!-- ******************************* DATA MODEL TABLES ******************************* -->
+
+		<!-- SYSTEM ROLE -->
+		<createTable tableName="system_role">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="description" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="name" type="varchar(255)">
+				<constraints unique="true" nullable="false" />
+			</column>
+		</createTable>
+		<!-- /SYSTEM ROLE -->
+
+		<!-- USER -->
+		<createTable tableName="user">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="createdDate" type="datetime" />
+			<column name="credentialsNonExpired" type="tinyint(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="email" type="varchar(255)">
+				<constraints nullable="false" unique="true"
+					uniqueConstraintName="user_email_constraint" />
+			</column>
+			<column name="enabled" type="tinyint(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="firstName" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="lastName" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="locale" type="varchar(255)" />
+			<column name="modifiedDate" type="datetime" />
+			<column name="password" type="varchar(1024)">
+				<constraints nullable="false" />
+			</column>
+			<column name="phoneNumber" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="username" type="varchar(255)">
+				<constraints nullable="false" unique="true"
+					uniqueConstraintName="user_username_constraint" />
+			</column>
+			<column name="system_role" type="bigint(20)">
+				<constraints nullable="false" foreignKeyName="USER_SYSTEM_ROLE"
+					referencedColumnNames="id" referencedTableName="system_role" />
+			</column>
+		</createTable>
+		<!-- /USER -->
+
+		<!-- PROJECT -->
+		<createTable tableName="project">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="createdDate" type="datetime" />
+			<column name="enabled" type="tinyint(1)" />
+			<column name="modifiedDate" type="datetime" />
+			<column name="name" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="projectDescription" type="longtext" />
+			<column name="remoteURL" type="varchar(255)" />
+		</createTable>
+		<!-- /PROJECT -->
+
+		<!-- PROJECT_USER -->
+		<createTable tableName="project_user">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="createdDate" type="datetime" />
+			<column name="projectRole" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="project_id" type="bigint(20)">
+				<constraints foreignKeyName="PROJECT_USER_RELATION_PROJECT"
+					referencedTableName="project" referencedColumnNames="id" />
+			</column>
+			<column name="user_id" type="bigint(20)">
+				<constraints foreignKeyName="PROJECT_USER_RELATION_USER"
+					referencedTableName="user" referencedColumnNames="id" />
+			</column>
+		</createTable>
+		<!-- /PROJECT_USER -->
+
+		<!-- SAMPLE -->
+		<createTable tableName="sample">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="createdDate" type="datetime" />
+			<column name="description" type="longtext" />
+			<column name="enabled" type="tinyint(1)" />
+			<column name="externalSampleId" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="modifiedDate" type="datetime" />
+			<column name="sampleName" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<!-- /SAMPLE -->
+
+		<!-- PROJECT_SAMPLE -->
+		<createTable tableName="project_sample">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="createdDate" type="datetime" />
+			<column name="project_id" type="bigint(20)">
+				<constraints foreignKeyName="PROJECT_SAMPLE_RELATION_PROJECT"
+					referencedTableName="project" referencedColumnNames="id" />
+			</column>
+			<column name="sample_id" type="bigint(20)">
+				<constraints foreignKeyName="PROJECT_SAMPLE_RELATION_SAMPLE"
+					referencedTableName="sample" referencedColumnNames="id" />
+			</column>
+		</createTable>
+		<!-- /PROJECT_SAMPLE -->
+
+		<!-- SEQUENCEFILE -->
+		<createTable tableName="sequence_file">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="createdDate" type="datetime" />
+			<column name="duplicationLevelChart" type="longblob" />
+			<column name="enabled" type="tinyint(1)" />
+			<column name="encoding" type="varchar(255)" />
+			<column name="fileType" type="varchar(255)" />
+			<column name="filteredSequences" type="int(11)" />
+			<column name="gcContent" type="smallint(6)" />
+			<column name="i5Index" type="varchar(255)" />
+			<column name="i5IndexId" type="varchar(255)" />
+			<column name="i7Index" type="varchar(255)" />
+			<column name="i7IndexId" type="varchar(255)" />
+			<column name="maxLength" type="int(11)" />
+			<column name="minLength" type="int(11)" />
+			<column name="modifiedDate" type="datetime" />
+			<column name="perBaseQualityScoreChart" type="longblob" />
+			<column name="perSequenceQualityScoreChart" type="longblob" />
+			<column name="samplePlate" type="varchar(255)" />
+			<column name="sampleWell" type="varchar(255)" />
+			<column name="filePath" type="varchar(255)" />
+			<column name="totalBases" type="bigint(20)" />
+			<column name="totalSequences" type="int(11)" />
+		</createTable>
+		<!-- /SEQUENCEFILE -->
+
+		<!-- SEQUENCEFILE_SAMPLE -->
+		<createTable tableName="sequencefile_sample">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="createdDate" type="datetime" />
+			<column name="sample_id" type="bigint(20)">
+				<constraints foreignKeyName="SAMPLE_SEQUENCEFILE_RELATION_SAMPLE"
+					referencedTableName="sample" referencedColumnNames="id" />
+			</column>
+			<column name="sequencefile_id" type="bigint(20)">
+				<constraints foreignKeyName="SAMPLE_SEQUENCEFILE_RELATION_SEQUENCEFILE"
+					referencedTableName="sequence_file" referencedColumnNames="id" />
+			</column>
+		</createTable>
+		<!-- /SEQUENCEFILE_SAMPLE -->
+
+		<!-- SEQUENCEFILE_PROJECT -->
+		<createTable tableName="sequencefile_project">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="createdDate" type="datetime" />
+			<column name="project_id" type="bigint(20)">
+				<constraints foreignKeyName="FK_knhqge319pxvyv1q03oyuwyb5"
+					referencedTableName="project" referencedColumnNames="id" />
+			</column>
+			<column name="sequencefile_id" type="bigint(20)">
+				<constraints foreignKeyName="FK_4n46u6l77a4kmxar2jh500hbg"
+					referencedTableName="sequence_file" referencedColumnNames="id" />
+			</column>
+		</createTable>
+		<!-- /SEQUENCEFILE_PROJECT -->
+
+		<!-- OVERREPRESENTED_SEQUENCE -->
+		<createTable tableName="overrepresented_sequence">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="createdDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="enabled" type="tinyint(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="modifiedDate" type="datetime" />
+			<column name="overrepresentedSequenceCount" type="int(11)">
+				<constraints nullable="false" />
+			</column>
+			<column name="percentage" type="decimal(19,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="possibleSource" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="sequence" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<!-- /OVERREPRESENTED_SEQUENCE -->
+
+		<!-- SEQUENCEFILE_OVERREPRESENTEDSEQUENCE -->
+		<createTable tableName="sequencefile_overrepresentedsequence">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="timestamp" type="datetime" />
+			<column name="overrepresentedsequence_id" type="bigint(20)">
+				<constraints foreignKeyName="SEQUENCEFILE_OVERSEQ_RELATION_OVERSEQ"
+					referencedTableName="overrepresented_sequence"
+					referencedColumnNames="id" />
+			</column>
+			<column name="sequencefile_id" type="bigint(20)">
+				<constraints foreignKeyName="SEQUENCEFILE_OVERSEQ_RELATION_SEQUENCEFILE"
+					referencedTableName="sequence_file" referencedColumnNames="id" />
+			</column>
+		</createTable>
+		<!-- /SEQUENCEFILE_OVERREPRESENTEDSEQUENCE -->
+
+		<!-- MISEQRUN -->
+		<createTable tableName="miseqRun">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="application" type="varchar(255)" />
+			<column name="assay" type="varchar(255)" />
+			<column name="chemistry" type="varchar(255)" />
+			<column name="createdDate" type="datetime" />
+			<column name="description" type="longtext" />
+			<column name="enabled" type="tinyint(1)" />
+			<column name="experimentName" type="varchar(255)" />
+			<column name="investigatorName" type="varchar(255)" />
+			<column name="modifiedDate" type="datetime" />
+			<column name="projectName" type="varchar(255)" />
+			<column name="workflow" type="varchar(255)" />
+		</createTable>
+		<!-- /MISEQRUN -->
+
+		<!-- MISEQRUN_SEQUENCEFILE -->
+		<createTable tableName="miseqrun_sequencefile">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="createdDate" type="datetime" />
+			<column name="miseqRun_id" type="bigint(20)">
+				<constraints foreignKeyName="SEQUENCEFILE_MISEQRUN_RELATION_MISEQRUN"
+					referencedTableName="miseqRun" referencedColumnNames="id" />
+			</column>
+			<column name="sequenceFile_id" type="bigint(20)">
+				<constraints foreignKeyName="SEQUENCEFILE_MISEQRUN_RELATION_SEQUENCEFILE"
+					referencedTableName="sequence_file" referencedColumnNames="id" />
+			</column>
+		</createTable>
+		<!-- /MISEQRUN_SEQUENCEFILE -->
+
+		<!-- ********************************************************************************* -->
+
+		<!-- ******************************** REVISIONS TABLES ******************************* -->
+		<!-- Revisions -->
+		<createTable tableName="Revisions">
+			<column name="id" type="int(11)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="timestamp" type="bigint(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="user_id" type="bigint(20)">
+				<constraints foreignKeyName="CREATOR_OF_REVISION"
+					referencedTableName="user" referencedColumnNames="id" />
+			</column>
+		</createTable>
+		<!-- /Revisions -->
+
+		<!-- SYSTEM_ROLE -->
+		<createTable tableName="system_role_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" foreignKeyName="SYSTEM_ROLE_REVISION"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="description" type="varchar(255)" />
+			<column name="name" type="varchar(255)" />
+		</createTable>
+		<!-- /SYSTEM_ROLE -->
+
+		<!-- USER -->
+		<createTable tableName="user_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="USER_REVISION" referencedColumnNames="id"
+					referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="createdDate" type="datetime" />
+			<column name="credentialsNonExpired" type="tinyint(1)" />
+			<column name="email" type="varchar(255)" />
+			<column name="enabled" type="tinyint(1)" />
+			<column name="firstName" type="varchar(255)" />
+			<column name="lastName" type="varchar(255)" />
+			<column name="locale" type="varchar(255)" />
+			<column name="modifiedDate" type="datetime" />
+			<column name="password" type="varchar(1024)" />
+			<column name="phoneNumber" type="varchar(255)" />
+			<column name="username" type="varchar(255)" />
+			<column name="system_role" type="bigint(20)" />
+		</createTable>
+		<!-- /USER -->
+
+		<!-- PROJECT -->
+		<createTable tableName="project_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="PROJECT_REVISION" referencedColumnNames="id"
+					referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="createdDate" type="datetime" />
+			<column name="enabled" type="tinyint(1)" />
+			<column name="modifiedDate" type="datetime" />
+			<column name="name" type="varchar(255)" />
+			<column name="projectDescription" type="longtext" />
+			<column name="remoteURL" type="varchar(255)" />
+		</createTable>
+		<!-- /PROJECT -->
+
+		<!-- PROJECT_USER -->
+		<createTable tableName="project_user_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="PROJECT_USER_REVISION" referencedColumnNames="id"
+					referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="createdDate" type="datetime" />
+			<column name="projectRole" type="varchar(255)" />
+			<column name="project_id" type="bigint(20)" />
+			<column name="user_id" type="bigint(20)" />
+		</createTable>
+		<!-- /PROJECT_USER -->
+
+		<!-- SAMPLE -->
+		<createTable tableName="sample_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="SAMPLE_REVISION" referencedColumnNames="id"
+					referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="createdDate" type="datetime" />
+			<column name="description" type="longtext" />
+			<column name="enabled" type="tinyint(1)" />
+			<column name="externalSampleId" type="varchar(255)" />
+			<column name="modifiedDate" type="datetime" />
+			<column name="sampleName" type="varchar(255)" />
+		</createTable>
+		<!-- /SAMPLE -->
+
+		<!-- PROJECT_SAMPLE -->
+		<createTable tableName="project_sample_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="PROJECT_SAMPLE_REVISION" referencedColumnNames="id"
+					referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="createdDate" type="datetime" />
+			<column name="project_id" type="bigint(20)" />
+			<column name="sample_id" type="bigint(20)" />
+		</createTable>
+		<!-- /PROJECT_SAMPLE -->
+
+		<!-- SEQUENCEFILE -->
+		<createTable tableName="sequence_file_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="SEQUENCE_FILE_REVISION" referencedColumnNames="id"
+					referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="createdDate" type="datetime" />
+			<column name="duplicationLevelChart" type="longblob" />
+			<column name="enabled" type="tinyint(1)" />
+			<column name="encoding" type="varchar(255)" />
+			<column name="fileType" type="varchar(255)" />
+			<column name="filteredSequences" type="int(11)" />
+			<column name="gcContent" type="smallint(6)" />
+			<column name="i5Index" type="varchar(255)" />
+			<column name="i5IndexId" type="varchar(255)" />
+			<column name="i7Index" type="varchar(255)" />
+			<column name="i7IndexId" type="varchar(255)" />
+			<column name="maxLength" type="int(11)" />
+			<column name="minLength" type="int(11)" />
+			<column name="modifiedDate" type="datetime" />
+			<column name="perBaseQualityScoreChart" type="longblob" />
+			<column name="perSequenceQualityScoreChart" type="longblob" />
+			<column name="samplePlate" type="varchar(255)" />
+			<column name="sampleWell" type="varchar(255)" />
+			<column name="filePath" type="varchar(255)" />
+			<column name="totalBases" type="bigint(20)" />
+			<column name="totalSequences" type="int(11)" />
+		</createTable>
+		<!-- /SEQUENCEFILE -->
+
+		<!-- SEQUENCEFILE_SAMPLE -->
+		<createTable tableName="sequencefile_sample_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="SAMPLE_SEQUENCEFILE_REVISION"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="createdDate" type="datetime" />
+			<column name="sample_id" type="bigint(20)" />
+			<column name="sequencefile_id" type="bigint(20)" />
+		</createTable>
+		<!-- /SEQUENCEFILE_SAMPLE -->
+
+		<!-- SEQUENCEFILE_PROJECT -->
+		<createTable tableName="sequencefile_project_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_nkd7r2dtcq67msb99u1jvgxd2"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="createdDate" type="datetime" />
+			<column name="project_id" type="bigint(20)" />
+			<column name="sequencefile_id" type="bigint(20)" />
+		</createTable>
+		<!-- /SEQUENCEFILE_PROJECT -->
+
+		<!-- OVERREPRESENTED_SEQUENCE -->
+		<createTable tableName="overrepresented_sequence_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="OVERREPRESENTED_SEQUENCE_REVISION"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="createdDate" type="datetime" />
+			<column name="enabled" type="tinyint(1)" />
+			<column name="modifiedDate" type="datetime" />
+			<column name="overrepresentedSequenceCount" type="int(11)" />
+			<column name="percentage" type="decimal(19,2)" />
+			<column name="possibleSource" type="varchar(255)" />
+			<column name="sequence" type="varchar(255)" />
+		</createTable>
+		<!-- /OVERREPRESENTED_SEQUENCE -->
+
+		<!-- SEQUENCEFILE_OVERREPRESENTEDSEQUENCE -->
+		<createTable tableName="sequencefile_overrepresentedsequence_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="SEQUENCEFILE_OVERSEQ_REVISION"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="timestamp" type="datetime" />
+			<column name="overrepresentedsequence_id" type="bigint(20)" />
+			<column name="sequencefile_id" type="bigint(20)" />
+		</createTable>
+		<!-- /SEQUENCEFILE_OVERREPRESENTEDSEQUENCE -->
+
+		<!-- MISEQRUN -->
+		<createTable tableName="miseqRun_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="MISEQRUN_REVISION" referencedColumnNames="id"
+					referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="application" type="varchar(255)" />
+			<column name="assay" type="varchar(255)" />
+			<column name="chemistry" type="varchar(255)" />
+			<column name="createdDate" type="datetime" />
+			<column name="description" type="longtext" />
+			<column name="enabled" type="tinyint(1)" />
+			<column name="experimentName" type="varchar(255)" />
+			<column name="investigatorName" type="varchar(255)" />
+			<column name="modifiedDate" type="datetime" />
+			<column name="projectName" type="varchar(255)" />
+			<column name="workflow" type="varchar(255)" />
+		</createTable>
+		<!-- /MISEQRUN -->
+
+		<!-- MISEQRUN_SEQUENCEFILE -->
+		<createTable tableName="miseqrun_sequencefile_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="SEQUENCEFILE_MISEQRUN_REVISION"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="createdDate" type="datetime" />
+			<column name="miseqRun_id" type="bigint(20)" />
+			<column name="sequenceFile_id" type="bigint(20)" />
+		</createTable>
+		<!-- /MISEQRUN_SEQUENCEFILE -->
+		<!-- ********************************************************************************* -->
+	</changeSet>
+
+</databaseChangeLog>
