@@ -32,11 +32,11 @@
 		<!-- add unique constraints on join tables where only one instance of a 
 			pair may exist. -->
 		<addUniqueConstraint columnNames="miseqRun_id, sequenceFile_id"
-			tableName="miseqrun_sequencefile" constraintName="UNIQUE_MISEQRUN_SEQUENCEFILE" />
+			tableName="miseqrun_sequencefile" constraintName="UK_MISEQRUN_SEQUENCEFILE" />
 		<addUniqueConstraint columnNames="project_id, sample_id"
-			tableName="project_sample" constraintName="UNIQUE_PROJECT_SAMPLE" />
+			tableName="project_sample" constraintName="UK_PROJECT_SAMPLE" />
 		<addUniqueConstraint columnNames="project_id, user_id"
-			tableName="project_user" constraintName="UNIQUE_PROJECT_USER" />
+			tableName="project_user" constraintName="UK_PROJECT_USER" />
 
 		<!-- sequence files have a revision number, used to ensure that only one 
 			file per directory is stored on the filesystem. -->
@@ -86,11 +86,9 @@
 			oldColumnName="system_role_name" tableName="user" />
 
 		<!-- 2) change the primary key on system_role -->
-		<!-- a) drop the primary key on system role. -->
-		<dropPrimaryKey tableName="system_role" />
-		<!-- b) drop the id column. -->
+		<!-- a) drop the id column. -->
 		<dropColumn columnName="id" tableName="system_role" />
-		<!-- c) add a primary key constraint on the name column. -->
+		<!-- b) add a primary key constraint on the name column. -->
 		<addPrimaryKey columnNames="name" constraintName="PK_SYSTEM_ROLE"
 			tableName="system_role" />
 		<!-- 3) add a new foreign key constraint on the user.system_role column. -->
