@@ -17,7 +17,8 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="name" type="varchar(255)">
-				<constraints unique="true" nullable="false" />
+				<constraints unique="true" nullable="false"
+					uniqueConstraintName="UK_3qbj4kdbey8f8wgabcel8i7io" />
 			</column>
 		</createTable>
 		<!-- /SYSTEM ROLE -->
@@ -57,7 +58,7 @@
 					uniqueConstraintName="user_username_constraint" />
 			</column>
 			<column name="system_role" type="bigint(20)">
-				<constraints nullable="false" foreignKeyName="USER_SYSTEM_ROLE"
+				<constraints nullable="false" foreignKeyName="FK_dc875ks31x9kh1hjsekrcvxss"
 					referencedColumnNames="id" referencedTableName="system_role" />
 			</column>
 		</createTable>
@@ -89,11 +90,11 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="project_id" type="bigint(20)">
-				<constraints foreignKeyName="PROJECT_USER_RELATION_PROJECT"
+				<constraints foreignKeyName="FK_ptwhmsh2vocln8sffhyvr2ohm"
 					referencedTableName="project" referencedColumnNames="id" />
 			</column>
 			<column name="user_id" type="bigint(20)">
-				<constraints foreignKeyName="PROJECT_USER_RELATION_USER"
+				<constraints foreignKeyName="FK_d6kfrxuqknbxrlxhwmn66a3kg"
 					referencedTableName="user" referencedColumnNames="id" />
 			</column>
 		</createTable>
@@ -124,11 +125,11 @@
 			</column>
 			<column name="createdDate" type="datetime" />
 			<column name="project_id" type="bigint(20)">
-				<constraints foreignKeyName="PROJECT_SAMPLE_RELATION_PROJECT"
+				<constraints foreignKeyName="FK_mhd5u60xudtj6f8th3kasoy5s"
 					referencedTableName="project" referencedColumnNames="id" />
 			</column>
 			<column name="sample_id" type="bigint(20)">
-				<constraints foreignKeyName="PROJECT_SAMPLE_RELATION_SAMPLE"
+				<constraints foreignKeyName="FK_hggs23w3t3ag0tx46v2fdoni0"
 					referencedTableName="sample" referencedColumnNames="id" />
 			</column>
 		</createTable>
@@ -170,11 +171,11 @@
 			</column>
 			<column name="createdDate" type="datetime" />
 			<column name="sample_id" type="bigint(20)">
-				<constraints foreignKeyName="SAMPLE_SEQUENCEFILE_RELATION_SAMPLE"
+				<constraints foreignKeyName="FK_gnn9w98b5tyk6wyt2affuhviu"
 					referencedTableName="sample" referencedColumnNames="id" />
 			</column>
 			<column name="sequencefile_id" type="bigint(20)">
-				<constraints foreignKeyName="SAMPLE_SEQUENCEFILE_RELATION_SEQUENCEFILE"
+				<constraints foreignKeyName="FK_pav3r6f727qwk9oxsajqk6o90"
 					referencedTableName="sequence_file" referencedColumnNames="id" />
 			</column>
 		</createTable>
@@ -231,12 +232,12 @@
 			</column>
 			<column name="timestamp" type="datetime" />
 			<column name="overrepresentedsequence_id" type="bigint(20)">
-				<constraints foreignKeyName="SEQUENCEFILE_OVERSEQ_RELATION_OVERSEQ"
+				<constraints foreignKeyName="FK_87l76iceme3jcea1vqv1luntl"
 					referencedTableName="overrepresented_sequence"
 					referencedColumnNames="id" />
 			</column>
 			<column name="sequencefile_id" type="bigint(20)">
-				<constraints foreignKeyName="SEQUENCEFILE_OVERSEQ_RELATION_SEQUENCEFILE"
+				<constraints foreignKeyName="FK_fitgb03i3bh0yypslc72qeu8h"
 					referencedTableName="sequence_file" referencedColumnNames="id" />
 			</column>
 		</createTable>
@@ -268,11 +269,11 @@
 			</column>
 			<column name="createdDate" type="datetime" />
 			<column name="miseqRun_id" type="bigint(20)">
-				<constraints foreignKeyName="SEQUENCEFILE_MISEQRUN_RELATION_MISEQRUN"
+				<constraints foreignKeyName="FK_gopqduar4x49levqfaxlf5ya3"
 					referencedTableName="miseqRun" referencedColumnNames="id" />
 			</column>
 			<column name="sequenceFile_id" type="bigint(20)">
-				<constraints foreignKeyName="SEQUENCEFILE_MISEQRUN_RELATION_SEQUENCEFILE"
+				<constraints foreignKeyName="FK_31h01pymfikjll61licwjyxtl"
 					referencedTableName="sequence_file" referencedColumnNames="id" />
 			</column>
 		</createTable>
@@ -290,7 +291,7 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="user_id" type="bigint(20)">
-				<constraints foreignKeyName="CREATOR_OF_REVISION"
+				<constraints foreignKeyName="FK_9h58753k8cr3e19i4buy9dboc"
 					referencedTableName="user" referencedColumnNames="id" />
 			</column>
 		</createTable>
@@ -302,7 +303,7 @@
 				<constraints primaryKey="true" />
 			</column>
 			<column name="REV" type="int(11)">
-				<constraints primaryKey="true" foreignKeyName="SYSTEM_ROLE_REVISION"
+				<constraints primaryKey="true" foreignKeyName="FK_q3neqt718i8h9x5dxdbb0aj40"
 					referencedColumnNames="id" referencedTableName="Revisions" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
@@ -318,8 +319,8 @@
 			</column>
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" nullable="false"
-					foreignKeyName="USER_REVISION" referencedColumnNames="id"
-					referencedTableName="Revisions" />
+					foreignKeyName="FK_ih31uc6fikcf93ek8i9xqfxxo"
+					referencedColumnNames="id" referencedTableName="Revisions" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
 			<column name="createdDate" type="datetime" />
@@ -344,8 +345,8 @@
 			</column>
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" nullable="false"
-					foreignKeyName="PROJECT_REVISION" referencedColumnNames="id"
-					referencedTableName="Revisions" />
+					foreignKeyName="FK_n2xwgs7hevwt0ha611ftf085v"
+					referencedColumnNames="id" referencedTableName="Revisions" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
 			<column name="createdDate" type="datetime" />
@@ -364,7 +365,7 @@
 			</column>
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" nullable="false"
-					foreignKeyName="PROJECT_USER_REVISION" referencedColumnNames="id"
+					foreignKeyName="FK_u80eff5m4010t3wxeydf1h3l" referencedColumnNames="id"
 					referencedTableName="Revisions" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
@@ -382,8 +383,8 @@
 			</column>
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" nullable="false"
-					foreignKeyName="SAMPLE_REVISION" referencedColumnNames="id"
-					referencedTableName="Revisions" />
+					foreignKeyName="FK_630kkpasqawvecp8p2imue78k"
+					referencedColumnNames="id" referencedTableName="Revisions" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
 			<column name="createdDate" type="datetime" />
@@ -402,8 +403,8 @@
 			</column>
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" nullable="false"
-					foreignKeyName="PROJECT_SAMPLE_REVISION" referencedColumnNames="id"
-					referencedTableName="Revisions" />
+					foreignKeyName="FK_arj1cjb0xk8d2ojpdr116nifl"
+					referencedColumnNames="id" referencedTableName="Revisions" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
 			<column name="createdDate" type="datetime" />
@@ -419,8 +420,8 @@
 			</column>
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" nullable="false"
-					foreignKeyName="SEQUENCE_FILE_REVISION" referencedColumnNames="id"
-					referencedTableName="Revisions" />
+					foreignKeyName="FK_p455ngkyx9373deuhvtkr0bi2"
+					referencedColumnNames="id" referencedTableName="Revisions" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
 			<column name="createdDate" type="datetime" />
@@ -454,7 +455,7 @@
 			</column>
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" nullable="false"
-					foreignKeyName="SAMPLE_SEQUENCEFILE_REVISION"
+					foreignKeyName="FK_13vxx3bdssdsc1h65i6rpisgk"
 					referencedColumnNames="id" referencedTableName="Revisions" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
@@ -488,7 +489,7 @@
 			</column>
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" nullable="false"
-					foreignKeyName="OVERREPRESENTED_SEQUENCE_REVISION"
+					foreignKeyName="FK_5wdy3sfqgx70dkethxa2clnk9"
 					referencedColumnNames="id" referencedTableName="Revisions" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
@@ -509,7 +510,7 @@
 			</column>
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" nullable="false"
-					foreignKeyName="SEQUENCEFILE_OVERSEQ_REVISION"
+					foreignKeyName="FK_jdpcpx2lbb7x9msm0j9bf2qwm"
 					referencedColumnNames="id" referencedTableName="Revisions" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
@@ -526,8 +527,8 @@
 			</column>
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" nullable="false"
-					foreignKeyName="MISEQRUN_REVISION" referencedColumnNames="id"
-					referencedTableName="Revisions" />
+					foreignKeyName="FK_oxvcne374i54prd0c89mud85b"
+					referencedColumnNames="id" referencedTableName="Revisions" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
 			<column name="application" type="varchar(255)" />
@@ -551,7 +552,7 @@
 			</column>
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" nullable="false"
-					foreignKeyName="SEQUENCEFILE_MISEQRUN_REVISION"
+					foreignKeyName="FK_h680dca8tfgwcr2lmybogy9kj"
 					referencedColumnNames="id" referencedTableName="Revisions" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
