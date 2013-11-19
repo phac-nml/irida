@@ -100,9 +100,6 @@
 		<addColumn tableName="user_AUD">
 			<column name="system_role_name" type="varchar(255)" />
 		</addColumn>
-
-		<!-- b) enter the right system role name into the column given the system 
-			role id that the user currently has -->
 		<update tableName="user_AUD">
 			<column name="system_role_name" type="varchar(255)" value="ROLE_USER" />
 			<where>system_role=1</where>
@@ -119,9 +116,7 @@
 			<column name="system_role_name" type="varchar(255)" value="ROLE_MANAGER" />
 			<where>system_role=4</where>
 		</update>
-		<!-- d) drop the system_role column from the user table -->
 		<dropColumn columnName="system_role" tableName="user_AUD" />
-		<!-- e) rename system_role_name to system_role -->
 		<renameColumn newColumnName="system_role" columnDataType="varchar(255)"
 			oldColumnName="system_role_name" tableName="user" />
 	</changeSet>
