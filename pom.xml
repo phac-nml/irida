@@ -350,7 +350,6 @@
 				</configuration>
 				<executions>
 					<execution>
-						<phase>process-resources</phase>
 						<configuration>
 							<propertyFile>src/main/resources/liquibase.properties</propertyFile>
 						</configuration>
