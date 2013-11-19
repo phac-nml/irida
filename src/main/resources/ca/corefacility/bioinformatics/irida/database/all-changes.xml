@@ -7,5 +7,5 @@
 
 	<!-- include everything in the changesets directory -->
 	<include file="changesets/initialschema-v1.0.xml" relativeToChangelogFile="true"/>
-
+	<include file="changesets/updates-v1.1.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>
