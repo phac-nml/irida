@@ -24,6 +24,7 @@ import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.FileLibraryUpload;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
+import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 
@@ -131,15 +132,20 @@ public class WorkflowRESTAPIGalaxyTest
 		Library library = new Library("testName");
 		library.setId(libraryID);
 		actualLibraries.add(library);
+		LibraryFolder sampleFolder = new LibraryFolder();
+		sampleFolder.setName(galaxySample.getSampleName());
+		sampleFolder.setFolderId(rootFolderID);
 		
 		when(librariesClient.getRootFolder(libraryID)).thenReturn(libraryContent);
 		when(librariesClient.getLibraries()).thenReturn(actualLibraries);
+		when(librariesClient.createFolder(eq(libraryID), any(LibraryFolder.class))).thenReturn(sampleFolder);
 		when(libraryContent.getId()).thenReturn(rootFolderID);
 		when(clientResponse.getClientResponseStatus()).thenReturn(ClientResponse.Status.OK);
 		when(librariesClient.uploadFile(eq(libraryID), any(FileLibraryUpload.class))).thenReturn(clientResponse);
 		
 		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryID));
 		verify(librariesClient).uploadFile(eq(libraryID), any(FileLibraryUpload.class));
+		verify(librariesClient).createFolder(eq(libraryID), any(LibraryFolder.class));
 	}
 	
 	@Test
@@ -155,9 +161,13 @@ public class WorkflowRESTAPIGalaxyTest
 		Library library = new Library("testName");
 		library.setId(libraryID);
 		actualLibraries.add(library);
+		LibraryFolder sampleFolder = new LibraryFolder();
+		sampleFolder.setName(galaxySample.getSampleName());
+		sampleFolder.setFolderId(rootFolderID);
 		
 		when(librariesClient.getRootFolder(libraryID)).thenReturn(libraryContent);
 		when(librariesClient.getLibraries()).thenReturn(actualLibraries);
+		when(librariesClient.createFolder(eq(libraryID), any(LibraryFolder.class))).thenReturn(sampleFolder);
 		when(libraryContent.getId()).thenReturn(rootFolderID);
 		when(clientResponse.getClientResponseStatus()).thenReturn(ClientResponse.Status.OK);
 		when(librariesClient.uploadFile(eq(libraryID), any(FileLibraryUpload.class))).thenReturn(clientResponse);
@@ -179,12 +189,16 @@ public class WorkflowRESTAPIGalaxyTest
 		Library library = new Library("testName");
 		library.setId(libraryID);
 		actualLibraries.add(library);
+		LibraryFolder sampleFolder = new LibraryFolder();
+		sampleFolder.setName(galaxySample.getSampleName());
+		sampleFolder.setFolderId(rootFolderID);
 		
 		when(librariesClient.getRootFolder(libraryID)).thenReturn(libraryContent);
 		when(librariesClient.getLibraries()).thenReturn(actualLibraries);
+		when(librariesClient.createFolder(eq(libraryID), any(LibraryFolder.class))).thenReturn(sampleFolder);
 		when(libraryContent.getId()).thenReturn(rootFolderID);
 		when(clientResponse.getClientResponseStatus()).thenReturn(ClientResponse.Status.FORBIDDEN);
-		when(librariesClient.uploadFile(eq(libraryID), any(FileLibraryUpload.class))).thenReturn(clientResponse);		
+		when(librariesClient.uploadFile(eq(libraryID), any(FileLibraryUpload.class))).thenReturn(clientResponse);
 		
 		assertFalse(workflowRESTAPI.uploadFilesToLibrary(samples, libraryID));
 		verify(librariesClient).uploadFile(eq(libraryID), any(FileLibraryUpload.class));
