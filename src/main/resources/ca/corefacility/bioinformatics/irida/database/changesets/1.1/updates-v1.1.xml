@@ -118,6 +118,6 @@
 		</update>
 		<dropColumn columnName="system_role" tableName="user_AUD" />
 		<renameColumn newColumnName="system_role" columnDataType="varchar(255)"
-			oldColumnName="system_role_name" tableName="user" />
+			oldColumnName="system_role_name" tableName="user_AUD" />
 	</changeSet>
 </databaseChangeLog>

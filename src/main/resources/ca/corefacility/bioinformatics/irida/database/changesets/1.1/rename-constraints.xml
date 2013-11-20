@@ -48,8 +48,8 @@
 		<dropForeignKeyConstraint baseTableName="sequencefile_sample"
 			constraintName="FK_pav3r6f727qwk9oxsajqk6o90" />
 		<addForeignKeyConstraint baseColumnNames="sequencefile_id"
-			constraintName="FK_SEQFILE_SAMPLE_SEQFILE" referencedColumnNames="id"
-			referencedTableName="sequence_file" />
+			baseTableName="sequencefile_sample" constraintName="FK_SEQFILE_SAMPLE_SEQFILE"
+			referencedColumnNames="id" referencedTableName="sequence_file" />
 
 		<!-- alter foreign key constraints for sequencefile_overrepresentedsequence -->
 		<dropForeignKeyConstraint baseTableName="sequencefile_overrepresentedsequence"
@@ -91,63 +91,63 @@
 			referencedColumnNames="id" referencedTableName="Revisions" />
 
 		<!-- alter foreign key constraints for user_AUD -->
-		<dropForeignKeyConstraints baseTableName="user_AUD"
+		<dropForeignKeyConstraint baseTableName="user_AUD"
 			constraintName="FK_ih31uc6fikcf93ek8i9xqfxxo" />
 		<addForeignKeyConstraint baseColumnNames="REV"
 			baseTableName="user_AUD" constraintName="FK_USER_REVISION"
 			referencedColumnNames="id" referencedTableName="Revisions" />
 
 		<!-- alter foreign key constraints for project_AUD -->
-		<dropForeignKeyConstraints baseTableName="project_AUD"
+		<dropForeignKeyConstraint baseTableName="project_AUD"
 			constraintName="FK_n2xwgs7hevwt0ha611ftf085v" />
 		<addForeignKeyConstraint baseColumnNames="REV"
 			baseTableName="project_AUD" constraintName="FK_PROJECT_REVISION"
 			referencedColumnNames="id" referencedTableName="Revisions" />
 
 		<!-- alter foreign key constraints for project_user_AUD -->
-		<dropForeignKeyConstraints baseTableName="project_user_AUD"
+		<dropForeignKeyConstraint baseTableName="project_user_AUD"
 			constraintName="FK_u80eff5m4010t3wxeydf1h3l" />
 		<addForeignKeyConstraint baseColumnNames="REV"
 			baseTableName="project_user_AUD" constraintName="FK_PROJECT_USER_REVISION"
 			referencedColumnNames="id" referencedTableName="Revisions" />
 
 		<!-- alter foreign key constraints for sample_AUD -->
-		<dropForeignKeyConstraints baseTableName="sample_AUD"
+		<dropForeignKeyConstraint baseTableName="sample_AUD"
 			constraintName="FK_630kkpasqawvecp8p2imue78k" />
 		<addForeignKeyConstraint baseColumnNames="REV"
 			baseTableName="sample_AUD" constraintName="FK_SAMPLE_REVISION"
 			referencedColumnNames="id" referencedTableName="Revisions" />
 
 		<!-- alter foreign key constraints for project_sample_AUD -->
-		<dropForeignKeyConstraints baseTableName="project_sample_AUD"
+		<dropForeignKeyConstraint baseTableName="project_sample_AUD"
 			constraintName="FK_arj1cjb0xk8d2ojpdr116nifl" />
 		<addForeignKeyConstraint baseColumnNames="REV"
 			baseTableName="project_sample_AUD" constraintName="FK_PROJECT_SAMPLE_REVISION"
 			referencedColumnNames="id" referencedTableName="Revisions" />
 
 		<!-- alter foreign key constraints for sequence_file_AUD -->
-		<dropForeignKeyConstraints baseTableName="sequence_file_AUD"
+		<dropForeignKeyConstraint baseTableName="sequence_file_AUD"
 			constraintName="FK_p455ngkyx9373deuhvtkr0bi2" />
 		<addForeignKeyConstraint baseColumnNames="REV"
 			baseTableName="sequence_file_AUD" constraintName="FK_SEQFILE_REVISION"
 			referencedColumnNames="id" referencedTableName="Revisions" />
 
 		<!-- alter foreign key constraints for sequencefile_sample_AUD -->
-		<dropForeignKeyConstraints baseTableName="sequencefile_sample_AUD"
+		<dropForeignKeyConstraint baseTableName="sequencefile_sample_AUD"
 			constraintName="FK_13vxx3bdssdsc1h65i6rpisgk" />
 		<addForeignKeyConstraint baseColumnNames="REV"
 			baseTableName="sequencefile_sample_AUD" constraintName="FK_SEQFILE_SAMPLE_REVISION"
 			referencedColumnNames="id" referencedTableName="Revisions" />
 
 		<!-- alter foreign key constraints for overrepresented_sequence_AUD -->
-		<dropForeignKeyConstraints baseTableName="overrepresented_sequence_AUD"
+		<dropForeignKeyConstraint baseTableName="overrepresented_sequence_AUD"
 			constraintName="FK_5wdy3sfqgx70dkethxa2clnk9" />
 		<addForeignKeyConstraint baseColumnNames="REV"
 			baseTableName="overrepresented_sequence_AUD" constraintName="FK_OVERSEQ_REVISION"
 			referencedColumnNames="id" referencedTableName="Revisions" />
 
 		<!-- alter foreign key constraints for sequencefile_overrepresentedsequence_AUD -->
-		<dropForeignKeyConstraints baseTableName="sequencefile_overrepresentedsequence_AUD"
+		<dropForeignKeyConstraint baseTableName="sequencefile_overrepresentedsequence_AUD"
 			constraintName="FK_jdpcpx2lbb7x9msm0j9bf2qwm" />
 		<addForeignKeyConstraint baseColumnNames="REV"
 			baseTableName="sequencefile_overrepresentedsequence_AUD"
@@ -155,14 +155,14 @@
 			referencedTableName="Revisions" />
 
 		<!-- alter foreign key constraints for miseq_run_AUD -->
-		<dropForeignKeyConstraints baseTableName="miseq_run_AUD"
+		<dropForeignKeyConstraint baseTableName="miseq_run_AUD"
 			constraintName="FK_oxvcne374i54prd0c89mud85b" />
 		<addForeignKeyConstraint baseColumnNames="REV"
 			baseTableName="miseq_run_AUD" constraintName="FK_MISEQ_RUN_REVISION"
 			referencedColumnNames="id" referencedTableName="Revisions" />
 
 		<!-- alter foreign key constraints for miseqrun_sequencefile_AUD -->
-		<dropForeignKeyConstraints baseTableName="miseqrun_sequencefile_AUD"
+		<dropForeignKeyConstraint baseTableName="miseqrun_sequencefile_AUD"
 			constraintName="FK_h680dca8tfgwcr2lmybogy9kj" />
 		<addForeignKeyConstraint baseColumnNames="REV"
 			baseTableName="miseqrun_sequencefile_AUD" constraintName="FK_MISEQ_RUN_SEQFILE_REVISION"
