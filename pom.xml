@@ -399,6 +399,7 @@
 					<execution>
 						<configuration>
 							<propertyFile>src/main/resources/liquibase.properties</propertyFile>
+							<promptOnNonLocalDatabase>true</promptOnNonLocalDatabase>
 						</configuration>
 						<goals>
 							<goal>update</goal>
@@ -444,7 +445,6 @@
 		<maven.jacoco.plugin.version>0.6.3.201306030806</maven.jacoco.plugin.version>
 		<maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
 		<maven.liquibase.plugin.version>3.0.7</maven.liquibase.plugin.version>
-
 
 		<!-- project configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
