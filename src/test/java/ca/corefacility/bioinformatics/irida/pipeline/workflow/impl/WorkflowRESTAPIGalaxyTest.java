@@ -132,20 +132,59 @@ public class WorkflowRESTAPIGalaxyTest
 		Library library = new Library("testName");
 		library.setId(libraryID);
 		actualLibraries.add(library);
-		LibraryFolder sampleFolder = new LibraryFolder();
+		LibraryFolder sampleFolder = new LibraryFolderTest();
 		sampleFolder.setName(galaxySample.getSampleName());
 		sampleFolder.setFolderId(rootFolderID);
 		
 		when(librariesClient.getRootFolder(libraryID)).thenReturn(libraryContent);
 		when(librariesClient.getLibraries()).thenReturn(actualLibraries);
-		when(librariesClient.createFolder(eq(libraryID), any(LibraryFolder.class))).thenReturn(sampleFolder);
+		when(librariesClient.createFolder(libraryID, sampleFolder)).thenReturn(sampleFolder);
 		when(libraryContent.getId()).thenReturn(rootFolderID);
 		when(clientResponse.getClientResponseStatus()).thenReturn(ClientResponse.Status.OK);
 		when(librariesClient.uploadFile(eq(libraryID), any(FileLibraryUpload.class))).thenReturn(clientResponse);
 		
 		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryID));
 		verify(librariesClient).uploadFile(eq(libraryID), any(FileLibraryUpload.class));
-		verify(librariesClient).createFolder(eq(libraryID), any(LibraryFolder.class));
+		verify(librariesClient).createFolder(libraryID, sampleFolder);
+	}
+	
+	@Test
+	public void testUploadMultiSampleToLibrary() throws URISyntaxException
+	{
+		GalaxySample galaxySample1 = new GalaxySample("testData1", dataFilesSingle);		
+		GalaxySample galaxySample2 = new GalaxySample("testData2", dataFilesSingle);
+		
+		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		samples.add(galaxySample1);
+		samples.add(galaxySample2);
+		
+		String libraryID = "1";
+		String rootFolderID = "2";
+		List<Library> actualLibraries = new ArrayList<Library>();
+		Library library = new Library("testName");
+		library.setId(libraryID);
+		actualLibraries.add(library);
+		
+		LibraryFolder sampleFolder1 = new LibraryFolderTest();
+		sampleFolder1.setName(galaxySample1.getSampleName());
+		sampleFolder1.setFolderId(rootFolderID);
+		
+		LibraryFolder sampleFolder2 = new LibraryFolderTest();
+		sampleFolder2.setName(galaxySample2.getSampleName());
+		sampleFolder2.setFolderId(rootFolderID);
+		
+		when(librariesClient.getRootFolder(libraryID)).thenReturn(libraryContent);
+		when(librariesClient.getLibraries()).thenReturn(actualLibraries);
+		when(librariesClient.createFolder(libraryID, sampleFolder1)).thenReturn(sampleFolder1);
+		when(librariesClient.createFolder(libraryID, sampleFolder2)).thenReturn(sampleFolder2);
+		when(libraryContent.getId()).thenReturn(rootFolderID);
+		when(clientResponse.getClientResponseStatus()).thenReturn(ClientResponse.Status.OK);
+		when(librariesClient.uploadFile(eq(libraryID), any(FileLibraryUpload.class))).thenReturn(clientResponse);
+		
+		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryID));
+		verify(librariesClient, times(2)).uploadFile(eq(libraryID), any(FileLibraryUpload.class));
+		verify(librariesClient).createFolder(libraryID, sampleFolder1);
+		verify(librariesClient).createFolder(libraryID, sampleFolder2);
 	}
 	
 	@Test
@@ -161,19 +200,20 @@ public class WorkflowRESTAPIGalaxyTest
 		Library library = new Library("testName");
 		library.setId(libraryID);
 		actualLibraries.add(library);
-		LibraryFolder sampleFolder = new LibraryFolder();
+		LibraryFolder sampleFolder = new LibraryFolderTest();
 		sampleFolder.setName(galaxySample.getSampleName());
 		sampleFolder.setFolderId(rootFolderID);
 		
 		when(librariesClient.getRootFolder(libraryID)).thenReturn(libraryContent);
 		when(librariesClient.getLibraries()).thenReturn(actualLibraries);
-		when(librariesClient.createFolder(eq(libraryID), any(LibraryFolder.class))).thenReturn(sampleFolder);
+		when(librariesClient.createFolder(libraryID, sampleFolder)).thenReturn(sampleFolder);
 		when(libraryContent.getId()).thenReturn(rootFolderID);
 		when(clientResponse.getClientResponseStatus()).thenReturn(ClientResponse.Status.OK);
 		when(librariesClient.uploadFile(eq(libraryID), any(FileLibraryUpload.class))).thenReturn(clientResponse);
 		
 		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryID));
 		verify(librariesClient).uploadFile(eq(libraryID), any(FileLibraryUpload.class));
+		verify(librariesClient).createFolder(libraryID, sampleFolder);
 	}
 	
 	@Test
@@ -189,18 +229,67 @@ public class WorkflowRESTAPIGalaxyTest
 		Library library = new Library("testName");
 		library.setId(libraryID);
 		actualLibraries.add(library);
-		LibraryFolder sampleFolder = new LibraryFolder();
+		LibraryFolder sampleFolder = new LibraryFolderTest();
 		sampleFolder.setName(galaxySample.getSampleName());
 		sampleFolder.setFolderId(rootFolderID);
 		
 		when(librariesClient.getRootFolder(libraryID)).thenReturn(libraryContent);
 		when(librariesClient.getLibraries()).thenReturn(actualLibraries);
-		when(librariesClient.createFolder(eq(libraryID), any(LibraryFolder.class))).thenReturn(sampleFolder);
+		when(librariesClient.createFolder(libraryID, sampleFolder)).thenReturn(sampleFolder);
 		when(libraryContent.getId()).thenReturn(rootFolderID);
 		when(clientResponse.getClientResponseStatus()).thenReturn(ClientResponse.Status.FORBIDDEN);
 		when(librariesClient.uploadFile(eq(libraryID), any(FileLibraryUpload.class))).thenReturn(clientResponse);
 		
 		assertFalse(workflowRESTAPI.uploadFilesToLibrary(samples, libraryID));
 		verify(librariesClient).uploadFile(eq(libraryID), any(FileLibraryUpload.class));
+		verify(librariesClient).createFolder(libraryID, sampleFolder);
+	}
+	
+	/**
+	 * Class used to implement equals() and hashCode() methods to get testing to work.
+	 * @author aaron
+	 *
+	 */
+	private class LibraryFolderTest extends LibraryFolder
+	{
+		@Override
+		public boolean equals(Object o)
+		{
+			if (this == o)
+				return true;
+			if (!(o instanceof LibraryFolder))
+				return false;
+			LibraryFolder l = (LibraryFolder)o;
+			
+			if (this.getName() != l.getName())
+				return false;
+			if (this.getName() == null)
+				return false;
+			if (! this.getName().equals(l.getName()))
+				return false;
+			
+			if (this.getCreateType() != l.getCreateType())
+				return false;
+			if (this.getCreateType() == null)
+				return false;
+			if (! this.getCreateType().equals(l.getCreateType()))
+				return false;
+			
+			if (this.getDescription() != l.getDescription())
+				return false;
+			if (this.getDescription() == null)
+				return false;
+			if (! this.getDescription().equals(l.getDescription()))
+				return false;
+			
+			if (this.getFolderId() != l.getFolderId())
+				return false;
+			if (this.getFolderId() == null)
+				return false;
+			if (! this.getFolderId().equals(l.getFolderId()))
+				return false;
+			
+			return true;
+		}
 	}
 }
