@@ -393,19 +393,14 @@
 				<artifactId>liquibase-maven-plugin</artifactId>
 				<version>${maven.liquibase.plugin.version}</version>
 				<configuration>
-					<propertyFile>src/main/resources/liquibase.properties</propertyFile>
+					<propertyFile>${liquibase.config.file}</propertyFile>
+					<promptOnNonLocalDatabase>${liquibase.config.prompt}</promptOnNonLocalDatabase>
+					<driver>${liquibase.config.driver}</driver>
+					<url>${liquibase.config.url}</url>
+					<username>${liquibase.config.username}</username>
+					<password>${liquibase.config.password}</password>
+					<changeLogFile>${liquibase.config.changeLogFile}</changeLogFile>
 				</configuration>
-				<executions>
-					<execution>
-						<configuration>
-							<propertyFile>src/main/resources/liquibase.properties</propertyFile>
-							<promptOnNonLocalDatabase>true</promptOnNonLocalDatabase>
-						</configuration>
-						<goals>
-							<goal>update</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -449,5 +444,14 @@
 		<!-- project configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<!-- liquibase configuration -->
+		<liquibase.config.file>src/main/resources/liquibase.properties</liquibase.config.file>
+		<liquibase.config.prompt>true</liquibase.config.prompt>
+		<liquibase.config.driver>com.mysql.jdbc.Driver</liquibase.config.driver>
+		<liquibase.config.url>jdbc:mysql://localhost:3306/irida_test</liquibase.config.url>
+		<liquibase.config.username>test</liquibase.config.username>
+		<liquibase.config.password>test</liquibase.config.password>
+		<liquibase.config.changeLogFile>src/main/resources/ca/corefacility/bioinformatics/irida/database/all-changes.xml</liquibase.config.changeLogFile>
 	</properties>
 </project>

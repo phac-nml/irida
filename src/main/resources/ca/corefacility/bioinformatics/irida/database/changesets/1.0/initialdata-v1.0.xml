@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+	<changeSet id="initial-data-set-roles-and-admin" author="fbristow">
+		<!-- insert the initial set of roles -->
+		<insert tableName="system_role">
+			<column name="name" value="ROLE_USER" />
+			<column name="description" value="A basic user in the system." />
+		</insert>
+		<insert tableName="system_role">
+			<column name="name" value="ROLE_ADMIN" />
+			<column name="description" value="An administrative user in the system." />
+		</insert>
+		<insert tableName="system_role">
+			<column name="name" value="ROLE_CLIENT" />
+			<column name="description" value="A client tool in the system." />
+		</insert>
+		<insert tableName="system_role">
+			<column name="name" value="ROLE_MANAGER" />
+			<column name="description" value="A manager role in the system." />
+		</insert>
+
+		<!-- insert the initial administrator user -->
+		<insert tableName="user">
+			<column name="createdDate" valueComputed="NOW()" />
+			<column name="modifiedDate" valueComputed="NOW()" />
+			<column name="email" value="admin@example.org" />
+			<column name="firstName" value="Administrator" />
+			<column name="lastName" value="Administrator" />
+			<column name="locale" value="en" />
+			<column name="password"
+				value="$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW" />
+			<column name="phoneNumber" value="867-5309" />
+			<column name="username" value="admin" />
+			<column name="enabled" valueBoolean="true" />
+			<column name="system_role" value="2" />
+			<column name="credentialsNonExpired" valueBoolean="false" />
+		</insert>
+	</changeSet>
+</databaseChangeLog>

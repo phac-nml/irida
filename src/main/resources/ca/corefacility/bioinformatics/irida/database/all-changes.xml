@@ -7,6 +7,9 @@
 
 	<!-- include everything in the changesets directory -->
 	<include file="changesets/1.0/initialschema-v1.0.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/1.0/initialdata-v1.0.xml" relativeToChangelogFile="true"/>
+
 	<include file="changesets/1.1/updates-v1.1.xml" relativeToChangelogFile="true" />
 	<include file="changesets/1.1/rename-constraints.xml" relativeToChangelogFile="true" />
+
 </databaseChangeLog>
