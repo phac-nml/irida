@@ -87,7 +87,7 @@ public class SequenceFileServiceImplTest {
 		verify(fileRepository).writeSequenceFileToDisk(withIdentifier);
 		verify(crudRepository).save(withIdentifier);
 		verify(crudRepository).exists(withIdentifier.getId());
-		verify(crudRepository, times(2)).findOne(withIdentifier.getId());
+		verify(crudRepository).findOne(withIdentifier.getId());
 		Files.delete(f);
 	}
 
@@ -176,7 +176,7 @@ public class SequenceFileServiceImplTest {
 		verify(crudRepository).exists(sf.getId());
 		verify(fileRepository).writeSequenceFileToDisk(sf);
 		verify(ssfRepository).save(join);
-		verify(crudRepository, times(2)).findOne(sf.getId());
+		verify(crudRepository).findOne(sf.getId());
 
 		assertNotNull(created);
 		assertEquals(sf, created.getObject());
