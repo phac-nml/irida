@@ -120,7 +120,7 @@ public class WorkflowRESTAPIGalaxyTest
 	}
 	
 	@Test
-	public void testUploadSampleToLibrary() throws URISyntaxException
+	public void testUploadSampleToLibrary() throws URISyntaxException, LibraryUploadException
 	{
 		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
@@ -149,7 +149,7 @@ public class WorkflowRESTAPIGalaxyTest
 	}
 	
 	@Test
-	public void testUploadMultiSampleToLibrary() throws URISyntaxException
+	public void testUploadMultiSampleToLibrary() throws URISyntaxException, LibraryUploadException
 	{
 		GalaxySample galaxySample1 = new GalaxySample("testData1", dataFilesSingle);		
 		GalaxySample galaxySample2 = new GalaxySample("testData2", dataFilesSingle);
@@ -188,7 +188,7 @@ public class WorkflowRESTAPIGalaxyTest
 	}
 	
 	@Test
-	public void testUploadMultiFileSampleToLibrary() throws URISyntaxException
+	public void testUploadMultiFileSampleToLibrary() throws URISyntaxException, LibraryUploadException
 	{
 		GalaxySample galaxySample = new GalaxySample("testData", dataFilesDouble);
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
@@ -217,7 +217,7 @@ public class WorkflowRESTAPIGalaxyTest
 	}
 	
 	@Test
-	public void testUploadFilesToLibraryFail() throws URISyntaxException
+	public void testUploadFilesToLibraryFail() throws URISyntaxException, LibraryUploadException
 	{
 		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
@@ -243,6 +243,75 @@ public class WorkflowRESTAPIGalaxyTest
 		assertFalse(workflowRESTAPI.uploadFilesToLibrary(samples, libraryID));
 		verify(librariesClient).uploadFile(eq(libraryID), any(FileLibraryUpload.class));
 		verify(librariesClient).createFolder(libraryID, sampleFolder);
+	}
+	
+	@Test(expected=LibraryUploadException.class)
+	public void testNoExistingLibrary() throws URISyntaxException, LibraryUploadException
+	{
+		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
+		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		samples.add(galaxySample);
+
+		String libraryID = "1";
+		List<Library> actualLibraries = new ArrayList<Library>();
+		Library library = new Library("testName");
+		library.setId(libraryID);
+		actualLibraries.add(library);
+		
+		when(librariesClient.getLibraries()).thenReturn(actualLibraries);
+		
+		workflowRESTAPI.uploadFilesToLibrary(samples, "2");
+	}
+	
+	@Test(expected=LibraryUploadException.class)
+	public void testNoRootFolder() throws URISyntaxException, LibraryUploadException
+	{
+		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
+		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		samples.add(galaxySample);
+
+		String libraryID = "1";
+		List<Library> actualLibraries = new ArrayList<Library>();
+		Library library = new Library("testName");
+		library.setId(libraryID);
+		actualLibraries.add(library);
+		
+		when(librariesClient.getLibraries()).thenReturn(actualLibraries);
+		when(libraryContent.getId()).thenReturn(null);
+		
+		workflowRESTAPI.uploadFilesToLibrary(samples, "1");
+	}
+	
+	@Test(expected=LibraryUploadException.class)
+	public void testNoCreateSampleFolder() throws URISyntaxException, LibraryUploadException
+	{
+		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
+		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		samples.add(galaxySample);
+		
+		String libraryID = "1";
+		String rootFolderID = "2";
+		List<Library> actualLibraries = new ArrayList<Library>();
+		Library library = new Library("testName");
+		library.setId(libraryID);
+		actualLibraries.add(library);
+		LibraryFolder sampleFolder = new LibraryFolderTest();
+		sampleFolder.setName(galaxySample.getSampleName());
+		sampleFolder.setFolderId(rootFolderID);
+		
+		when(librariesClient.getRootFolder(libraryID)).thenReturn(libraryContent);
+		when(librariesClient.getLibraries()).thenReturn(actualLibraries);
+		when(librariesClient.createFolder(libraryID, sampleFolder)).thenReturn(null);
+		
+		workflowRESTAPI.uploadFilesToLibrary(samples, libraryID);
+	}
+	
+	@Test
+	public void testUploadNoFiles() throws URISyntaxException, LibraryUploadException
+	{
+		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		
+		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, "1"));
 	}
 	
 	/**
