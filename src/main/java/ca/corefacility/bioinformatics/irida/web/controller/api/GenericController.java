@@ -176,7 +176,7 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelMap listResources(
-			@RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_PAGE, defaultValue = "1") int page,
+			@RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_PAGE, defaultValue = "0") int page,
 			@RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SIZE, defaultValue = "20") int size,
 			@RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_PROPERTY, required = false) String sortProperty,
 			@RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER, required = false) Direction sortOrder) {
