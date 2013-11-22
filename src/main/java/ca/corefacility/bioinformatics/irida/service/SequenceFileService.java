@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 
 import java.util.List;
+import java.util.Map;
 
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.Sample;
@@ -58,4 +59,15 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 */
 	public Join<SequenceFile, OverrepresentedSequence> addOverrepresentedSequenceToSequenceFile(
 			SequenceFile sequenceFile, OverrepresentedSequence sequence);
+
+	/**
+	 * Update a {@link SequenceFile} without calling the file processors.
+	 * 
+	 * @param id
+	 *            the id of the {@link SequenceFile}
+	 * @param updatedFields
+	 *            the fields that were update.
+	 * @return the {@link SequenceFile} that exists in the database.
+	 */
+	public SequenceFile updateWithoutProcessors(Long id, Map<String, Object> updatedFields);
 }

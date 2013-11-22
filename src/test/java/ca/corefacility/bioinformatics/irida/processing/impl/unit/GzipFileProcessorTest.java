@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.processing.impl.unit;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -9,6 +11,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
 import org.junit.Before;
@@ -16,7 +19,7 @@ import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
-import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 /**
  * Tests for {@link GzipFileProcessor}.
@@ -27,13 +30,13 @@ import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 public class GzipFileProcessorTest {
 
 	private GzipFileProcessor fileProcessor;
-	private SequenceFileRepository sequenceFileRepository;
+	private SequenceFileService sequenceFileService;
 	private static final String FILE_CONTENTS = ">test read\nACGTACTCATG";
 
 	@Before
 	public void setUp() {
-		sequenceFileRepository = mock(SequenceFileRepository.class);
-		fileProcessor = new GzipFileProcessor(sequenceFileRepository);
+		sequenceFileService = mock(SequenceFileService.class);
+		fileProcessor = new GzipFileProcessor(sequenceFileService);
 	}
 
 	@Test
@@ -44,13 +47,14 @@ public class GzipFileProcessorTest {
 
 		SequenceFile modified = fileProcessor.process(sf);
 
-		verifyZeroInteractions(sequenceFileRepository);
+		verifyZeroInteractions(sequenceFileService);
 		assertEquals("no changes were expected.", modified, sf);
 
 		Files.deleteIfExists(sf.getFile());
 		Files.deleteIfExists(original);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void handleCompressedFileWithGzExtension() throws IOException {
 		// the file processor should decompress the file, then update the
@@ -68,13 +72,13 @@ public class GzipFileProcessorTest {
 		Files.copy(uncompressed, out);
 		out.close();
 
-		when(sequenceFileRepository.save(sf)).thenReturn(sfUpdated);
+		when(sequenceFileService.updateWithoutProcessors(eq(sf.getId()), any(Map.class))).thenReturn(sfUpdated);
 
 		sf.setFile(compressed);
 
 		SequenceFile modified = fileProcessor.process(sf);
 
-		verify(sequenceFileRepository).save(sf);
+		verify(sequenceFileService).updateWithoutProcessors(eq(sf.getId()), any(Map.class));
 		String uncompressedFileContents = new String(Files.readAllBytes(modified.getFile()));
 		assertEquals("uncompressed file and file in database should be the same.", FILE_CONTENTS,
 				uncompressedFileContents);
@@ -103,7 +107,7 @@ public class GzipFileProcessorTest {
 
 		SequenceFile modified = fileProcessor.process(sf);
 
-		verifyZeroInteractions(sequenceFileRepository);
+		verifyZeroInteractions(sequenceFileService);
 		String uncompressedFileContents = new String(Files.readAllBytes(modified.getFile()));
 		assertEquals("uncompressed file and file in database should be the same.", FILE_CONTENTS,
 				uncompressedFileContents);

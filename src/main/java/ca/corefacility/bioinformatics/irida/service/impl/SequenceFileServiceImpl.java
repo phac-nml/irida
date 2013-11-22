@@ -102,8 +102,18 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		Map<String, Object> changed = new HashMap<>();
 		changed.put(FILE_PROPERTY, sequenceFile.getFile());
 		logger.trace("Calling this.update");
-		final SequenceFile updatedSequenceFile = update(sequenceFile.getId(), changed);
+		final SequenceFile updatedSequenceFile = super.update(sequenceFile.getId(), changed);
 		return updatedSequenceFile;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadSequenceFile')")
+	public SequenceFile updateWithoutProcessors(Long id, Map<String, Object> updatedFields) {
+		return update(id, updatedFields);
 	}
 
 	/**
