@@ -5,11 +5,12 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.GalaxySample;
+import ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.LibraryUploadException;
 import ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.WorkflowRESTAPIGalaxy;
 
 public class LibraryMain
 {
-	public static void main(String[] args)
+	public static void main(String[] args) throws LibraryUploadException
 	{
 		String usage = "Usage: " + LibraryMain.class.getName()
 				+ " [galaxy url] [galaxy api key]";

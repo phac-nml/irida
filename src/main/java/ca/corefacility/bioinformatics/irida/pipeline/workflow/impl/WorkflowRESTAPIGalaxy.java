@@ -121,8 +121,9 @@ public class WorkflowRESTAPIGalaxy
 	 * @param samples  The samples to upload to Galaxy.
 	 * @param libraryID  A unique ID for the library, generated from buildGalaxyLibrary(String)
 	 * @return  True if the files have been uploaded, false otherwise.
+	 * @throws LibraryUploadException 
 	 */
-	public boolean uploadFilesToLibrary(List<GalaxySample> samples, String libraryID)
+	public boolean uploadFilesToLibrary(List<GalaxySample> samples, String libraryID) throws LibraryUploadException
 	{
 		if (samples == null)
 		{
@@ -135,31 +136,33 @@ public class WorkflowRESTAPIGalaxy
 		
 		boolean success = false;
 		
-		Library library = null;
-		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
-		List<Library> libraries = librariesClient.getLibraries();
-		for (Library curr : libraries)
+		if (samples.size() > 0)
 		{
-			if (libraryID.equals(curr.getId()))
-			{
-				library = curr;
-			}
-		}
-		
-		if (library != null)
-		{
-			LibraryContent rootFolder = librariesClient.getRootFolder(library.getId());
+			String errorSuffix = " in instance of galaxy with url=" + galaxyInstance.getGalaxyUrl();
 			
-			if (rootFolder != null)
+			Library library = null;
+			LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
+			List<Library> libraries = librariesClient.getLibraries();
+			for (Library curr : libraries)
 			{
-				if (samples.size() > 0)
+				if (libraryID.equals(curr.getId()))
+				{
+					library = curr;
+				}
+			}
+			
+			if (library != null)
+			{
+				LibraryContent rootFolder = librariesClient.getRootFolder(library.getId());
+				
+				if (rootFolder != null)
 				{
 					boolean sampleUploadSuccess = true;
 					for (GalaxySample sample : samples)
 					{
 						if (sample != null)
 						{
-							FileLibraryUpload upload = new FileLibraryUpload();
+							FileLibraryUpload upload = new FileLibraryUpload();						
 							
 							LibraryFolder sampleFolder = new LibraryFolder();
 							sampleFolder.setName(sample.getSampleName());
@@ -185,12 +188,30 @@ public class WorkflowRESTAPIGalaxy
 							else
 							{
 								sampleUploadSuccess = false;
+								throw new LibraryUploadException("Could not build folder for sample " + sample.getSampleName() +
+										" within library " + library.getName() + ":" + library.getId() + errorSuffix);
 							}
+						}
+						else
+						{
+							throw new LibraryUploadException("Cannot upload a null sample" + errorSuffix);
 						}
 					}
 					success = sampleUploadSuccess;
 				}
+				else
+				{
+					throw new LibraryUploadException("Could not get root folder from library with id=" + libraryID + errorSuffix);
+				}
 			}
+			else
+			{
+				throw new LibraryUploadException("Could not find library with id=" + libraryID + errorSuffix);
+			}
+		}
+		else
+		{
+			return true;
 		}
 		
 		return success;

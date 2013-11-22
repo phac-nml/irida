@@ -46,7 +46,7 @@ public class WorkflowSubmitterGalaxy implements WorkflowSubmitter
 		ExecutableWorkflowGalaxy workflowGalaxy = workflowGenerator.generateExecutableWorkflow(workflow);
 		
 		String workflowId = workflowAPIGalaxy.importWorkflow(workflowGalaxy);
-		String libraryName = workflowAPIGalaxy.importWorkflowFiles(workflowGalaxy);
+		workflowAPIGalaxy.importWorkflowFiles(workflowGalaxy);
 		
 		return workflowId != null;
 	}
