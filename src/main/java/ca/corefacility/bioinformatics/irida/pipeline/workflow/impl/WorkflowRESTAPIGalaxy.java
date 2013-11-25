@@ -116,6 +116,38 @@ public class WorkflowRESTAPIGalaxy
 		return libraryID;
 	}
 	
+	private boolean uploadSample(GalaxySample sample, LibrariesClient librariesClient, LibraryContent rootFolder,
+			Library library, String errorSuffix) throws LibraryUploadException
+	{
+		FileLibraryUpload upload = new FileLibraryUpload();
+		
+		LibraryFolder sampleFolder = new LibraryFolder();
+		sampleFolder.setName(sample.getSampleName());
+		sampleFolder.setFolderId(rootFolder.getId());
+		
+		LibraryFolder persistedSampleFolder = librariesClient.createFolder(library.getId(), sampleFolder);
+		
+		if (persistedSampleFolder != null)
+		{
+			upload.setFolderId(persistedSampleFolder.getId());
+			
+			for (File file : sample.getSampleFiles())
+			{
+				upload.setFile(file);
+				upload.setName(file.getName());
+			}
+		
+			ClientResponse uploadResponse = librariesClient.uploadFile(library.getId(), upload);
+			
+			return	ClientResponse.Status.OK.equals(uploadResponse.getClientResponseStatus());
+		}
+		else
+		{
+			throw new LibraryUploadException("Could not build folder for sample " + sample.getSampleName() +
+					" within library " + library.getName() + ":" + library.getId() + errorSuffix);
+		}
+	}
+	
 	/**
 	 * Uploads the passed set of files to a Galaxy library.
 	 * @param samples  The samples to upload to Galaxy.
@@ -134,7 +166,7 @@ public class WorkflowRESTAPIGalaxy
 			throw new IllegalArgumentException("libraryID is null");
 		}
 		
-		boolean success = false;
+		boolean success = true;
 		
 		if (samples.size() > 0)
 		{
@@ -157,47 +189,17 @@ public class WorkflowRESTAPIGalaxy
 				
 				if (rootFolder != null)
 				{
-					boolean sampleUploadSuccess = true;
 					for (GalaxySample sample : samples)
 					{
 						if (sample != null)
 						{
-							FileLibraryUpload upload = new FileLibraryUpload();						
-							
-							LibraryFolder sampleFolder = new LibraryFolder();
-							sampleFolder.setName(sample.getSampleName());
-							sampleFolder.setFolderId(rootFolder.getId());
-							
-							LibraryFolder persistedSampleFolder = librariesClient.createFolder(library.getId(), sampleFolder);
-							
-							if (persistedSampleFolder != null)
-							{
-								upload.setFolderId(persistedSampleFolder.getId());
-								
-								for (File file : sample.getSampleFiles())
-								{
-									upload.setFile(file);
-									upload.setName(file.getName());
-								}
-							
-								ClientResponse uploadResponse = librariesClient.uploadFile(library.getId(), upload);
-								
-								sampleUploadSuccess &= 
-										ClientResponse.Status.OK.equals(uploadResponse.getClientResponseStatus());
-							}
-							else
-							{
-								sampleUploadSuccess = false;
-								throw new LibraryUploadException("Could not build folder for sample " + sample.getSampleName() +
-										" within library " + library.getName() + ":" + library.getId() + errorSuffix);
-							}
+							success &= uploadSample(sample, librariesClient, rootFolder, library, errorSuffix);
 						}
 						else
 						{
 							throw new LibraryUploadException("Cannot upload a null sample" + errorSuffix);
 						}
 					}
-					success = sampleUploadSuccess;
 				}
 				else
 				{
@@ -208,10 +210,6 @@ public class WorkflowRESTAPIGalaxy
 			{
 				throw new LibraryUploadException("Could not find library with id=" + libraryID + errorSuffix);
 			}
-		}
-		else
-		{
-			return true;
 		}
 		
 		return success;
