@@ -37,27 +37,17 @@ public class LibraryMain
 			samples.add(sample);
 	
 			WorkflowRESTAPIGalaxy workflowAPI = new WorkflowRESTAPIGalaxy(galaxyURL, apiKey);
-			String libraryId = workflowAPI.buildGalaxyLibrary(libraryName);
-			if (libraryId != null)
-			{		
-				System.out.println("Successfully created library '" + libraryName);
-				
-				if (workflowAPI.uploadFilesToLibrary(samples, libraryId))
+			if (workflowAPI.uploadSamples(samples, libraryName))
+			{
+				System.out.println("Successfully uploaded files to library " + libraryName + ":");
+				for (File file : dataFiles)
 				{
-					System.out.println("Successfully uploaded files:");
-					for (File file : dataFiles)
-					{
-						System.out.println(file.getAbsolutePath());
-					}
-				}
-				else
-				{
-					System.err.println("Error uploading files");
+					System.out.println(file.getAbsolutePath());
 				}
 			}
 			else
 			{
-				System.err.println("Error creating library " + libraryName);
+				System.err.println("Error uploading files");
 			}
 		}
 		catch (URISyntaxException e)

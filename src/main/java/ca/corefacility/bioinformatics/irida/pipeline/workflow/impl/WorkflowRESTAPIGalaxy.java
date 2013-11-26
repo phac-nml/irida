@@ -149,6 +149,42 @@ public class WorkflowRESTAPIGalaxy
 	}
 	
 	/**
+	 * Uploads the given list of samples to the passed Galaxy library.
+	 * @param samples  The set of samples to upload.
+	 * @param libraryName  The name of the library to upload to.
+	 * @return  True if successful, false otherwise.
+	 * @throws LibraryUploadException If an error occurred.
+	 */
+	public boolean uploadSamples(List<GalaxySample> samples, String libraryName)
+			throws LibraryUploadException
+	{
+		if (libraryName == null)
+		{
+			throw new IllegalArgumentException("libraryName is null");
+		}
+		
+		if (samples == null)
+		{
+			throw new IllegalArgumentException("samples is null");
+		}
+		
+		boolean success = false;
+		
+		String libraryId = buildGalaxyLibrary(libraryName);
+		if (libraryId != null)
+		{		
+			success = uploadFilesToLibrary(samples, libraryId);
+		}
+		else
+		{
+			throw new LibraryUploadException("Could not create library with name " + libraryName
+					+ " in instance of galaxy with url=" + galaxyInstance.getGalaxyUrl());
+		}
+		
+		return success;
+	}
+	
+	/**
 	 * Uploads the passed set of files to a Galaxy library.
 	 * @param samples  The samples to upload to Galaxy.
 	 * @param libraryID  A unique ID for the library, generated from buildGalaxyLibrary(String)
