@@ -245,7 +245,7 @@ public class WorkflowRESTAPIGalaxyTest
 		when(librariesClient.uploadFile(eq(libraryID), any(FileLibraryUpload.class))).thenReturn(clientResponse);
 		
 		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryID));
-		verify(librariesClient).uploadFile(eq(libraryID), any(FileLibraryUpload.class));
+		verify(librariesClient, times(2)).uploadFile(eq(libraryID), any(FileLibraryUpload.class));
 		verify(librariesClient).createFolder(libraryID, sampleFolder);
 	}
 	

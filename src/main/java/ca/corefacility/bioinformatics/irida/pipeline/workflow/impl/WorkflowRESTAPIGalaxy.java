@@ -118,28 +118,31 @@ public class WorkflowRESTAPIGalaxy
 	
 	private boolean uploadSample(GalaxySample sample, LibrariesClient librariesClient, LibraryContent rootFolder,
 			Library library, String errorSuffix) throws LibraryUploadException
-	{
-		FileLibraryUpload upload = new FileLibraryUpload();
-		
+	{		
 		LibraryFolder sampleFolder = new LibraryFolder();
 		sampleFolder.setName(sample.getSampleName());
 		sampleFolder.setFolderId(rootFolder.getId());
 		
 		LibraryFolder persistedSampleFolder = librariesClient.createFolder(library.getId(), sampleFolder);
 		
+		boolean success = true;
+		
 		if (persistedSampleFolder != null)
 		{
-			upload.setFolderId(persistedSampleFolder.getId());
-			
 			for (File file : sample.getSampleFiles())
 			{
+				FileLibraryUpload upload = new FileLibraryUpload();
+				upload.setFolderId(persistedSampleFolder.getId());
+				
 				upload.setFile(file);
 				upload.setName(file.getName());
+				
+				ClientResponse uploadResponse = librariesClient.uploadFile(library.getId(), upload);
+				
+				success &= ClientResponse.Status.OK.equals(uploadResponse.getClientResponseStatus());
 			}
-		
-			ClientResponse uploadResponse = librariesClient.uploadFile(library.getId(), upload);
 			
-			return	ClientResponse.Status.OK.equals(uploadResponse.getClientResponseStatus());
+			return success;
 		}
 		else
 		{
@@ -170,15 +173,26 @@ public class WorkflowRESTAPIGalaxy
 		
 		boolean success = false;
 		
-		String libraryId = buildGalaxyLibrary(libraryName);
-		if (libraryId != null)
-		{		
-			success = uploadFilesToLibrary(samples, libraryId);
-		}
-		else
+		try
 		{
-			throw new LibraryUploadException("Could not create library with name " + libraryName
-					+ " in instance of galaxy with url=" + galaxyInstance.getGalaxyUrl());
+			String libraryId = buildGalaxyLibrary(libraryName);
+			if (libraryId != null)
+			{		
+				success = uploadFilesToLibrary(samples, libraryId);
+			}
+			else
+			{
+				throw new LibraryUploadException("Could not create library with name " + libraryName
+						+ " in instance of galaxy with url=" + galaxyInstance.getGalaxyUrl());
+			}
+		}
+		catch (LibraryUploadException e)
+		{
+			throw e;
+		}
+		catch (Exception e)
+		{
+			throw new LibraryUploadException(e);
 		}
 		
 		return success;

@@ -271,10 +271,17 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>${commons.lang.version}</version>
 		</dependency>
+		
+		<!-- Galaxy blend4j/testing -->
 		<dependency>
 		  <groupId>com.github.jmchilton.blend4j</groupId>
 		  <artifactId>blend4j</artifactId>
 		  <version>0.1-alpha-7</version>
+		</dependency>
+		<dependency>
+		  <groupId>com.github.jmchilton.galaxybootstrap</groupId>
+		  <artifactId>galaxybootstrap</artifactId>
+		  <version>0.2.0-rc2-1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<build>
