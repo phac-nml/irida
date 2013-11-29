@@ -45,7 +45,6 @@ public class GalaxyAPIITTestLong
 	public static void setup() throws IOException, URISyntaxException
 	{
 	    BootStrapper bootStrapper = new BootStrapper(DownloadProperties.forGalaxyCentral());
-	    bootStrapper.setVerbose(true); // change to false to see less debugging information
 	    bootStrapper.setupGalaxy();
 	    final GalaxyProperties galaxyProperties = 
 	      new GalaxyProperties()
