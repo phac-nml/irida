@@ -5,11 +5,12 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
-import ca.corefacility.bioinformatics.irida.model.enums.Order;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
@@ -131,8 +131,8 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 	 * 
 	 * @return the default sort order for this class.
 	 */
-	protected Order getDefaultSortOrder() {
-		return Order.ASCENDING;
+	protected Direction getDefaultSortOrder() {
+		return Direction.ASC;
 	}
 
 	/**
@@ -159,7 +159,7 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 	protected Collection<Link> constructCustomResourceLinks(Type resource) {
 		return Collections.emptySet();
 	}
-	
+
 	/**
 	 * Retrieve and construct a response with a collection of resources.
 	 * 
@@ -176,14 +176,14 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelMap listResources(
-			@RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_PAGE, defaultValue = "1") int page,
+			@RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_PAGE, defaultValue = "0") int page,
 			@RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SIZE, defaultValue = "20") int size,
 			@RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_PROPERTY, required = false) String sortProperty,
-			@RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER, required = false) Order sortOrder) {
+			@RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER, required = false) Direction sortOrder) {
 		ModelMap model = new ModelMap();
-		List<Type> entities;
+		Page<Type> entities;
 		ControllerLinkBuilder linkBuilder = linkTo(getClass());
-		int totalEntities = crudService.count();
+		long totalEntities = crudService.count();
 		ResourceCollection<ResourceType> resources = new ResourceCollection<>();
 
 		// if the client did not specify a sort property via parameters,
@@ -194,7 +194,7 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 
 		// if the client did not specify a sort order via parameters,
 		// try to get the default sort order from the subclass.
-		if (sortOrder == null && !Order.NONE.equals(getDefaultSortOrder())) {
+		if (sortOrder == null) {
 			sortOrder = getDefaultSortOrder();
 		}
 
@@ -209,7 +209,7 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 		if (Strings.isNullOrEmpty(sortProperty)) {
 			entities = crudService.list(page, size, sortOrder);
 		} else {
-			entities = crudService.list(page, size, sortProperty, sortOrder);
+			entities = crudService.list(page, size, sortOrder, sortProperty);
 		}
 
 		// for each entity returned by the service, construct a new instance of
@@ -254,8 +254,9 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 	 */
 	@RequestMapping(value = "/all", method = RequestMethod.GET)
 	public ModelMap listAllResources() {
-		List<Type> entities = crudService.list();
-		ResourceCollection<ResourceType> resources = new ResourceCollection<>(entities.size());
+		Iterable<Type> entities = crudService.findAll();
+		long count = crudService.count();
+		ResourceCollection<ResourceType> resources = new ResourceCollection<>(count);
 		try {
 			for (Type entity : entities) {
 				ResourceType resource = resourceType.newInstance();
@@ -269,7 +270,7 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 
 		resources.add(linkTo(getClass()).slash("all").withSelfRel());
 		resources.add(linkTo(getClass()).withRel(REL_COLLECTION_FIRST_PAGE));
-		resources.setTotalResources(entities.size());
+		resources.setTotalResources(count);
 
 		ModelMap model = new ModelMap();
 		model.addAttribute(GenericController.RESOURCE_NAME, resources);
@@ -290,7 +291,7 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 
 		logger.debug("Getting resource with id [" + identifier + "]");
 		// construct a new instance of an identifier as specified by the client
-		
+
 		// try to retrieve a resource from the database using the identifier
 		// supplied by the client.
 		Type t = crudService.read(identifier);

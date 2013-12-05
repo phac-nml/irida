@@ -41,6 +41,8 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSamplesController;
 
 import com.google.common.net.HttpHeaders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Controller for managing relationships between {@link Sample} and
@@ -50,6 +52,7 @@ import com.google.common.net.HttpHeaders;
  */
 @Controller
 public class SampleSequenceFilesController {
+	private static final Logger logger = LoggerFactory.getLogger(SampleSequenceFilesController.class);
 	/**
 	 * Rel to get back to the {@link Sample}.
 	 */
@@ -107,6 +110,7 @@ public class SampleSequenceFilesController {
 		// Use the RelationshipService to get the set of SequenceFile
 		// identifiers associated with a Sample, then
 		// retrieve each of the SequenceFiles and prepare for serialization.
+		logger.debug("Reading seq files for sample " + sampleId +  " in project " + projectId);
 		Sample sample = sampleService.read(sampleId);
 		List<Join<Sample, SequenceFile>> relationships = sequenceFileService.getSequenceFilesForSample(sample);
 
@@ -147,13 +151,16 @@ public class SampleSequenceFilesController {
 	@RequestMapping(value = "/projects/{projectId}/samples/{sampleId}/sequenceFiles", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<String> addNewSequenceFileToSample(@PathVariable Long projectId, @PathVariable Long sampleId,
 			@RequestPart("file") MultipartFile file, @RequestPart(value="parameters",required=false) SequenceFileResource fileResource) throws IOException {
-
+		logger.debug("Adding sequence file to sample " + sampleId + " in project " + projectId);
+		
 		Project p = projectService.read(projectId);
+		logger.trace("Read project " + projectId);
 		// confirm that a relationship exists between the project and the sample
 		sampleService.getSampleForProject(p, sampleId);
 
 		// load the sample from the database
 		Sample sample = sampleService.read(sampleId);
+		logger.trace("Read sample " + sampleId);
 
 		// prepare a new sequence file using the multipart file supplied by the
 		// caller
@@ -161,6 +168,8 @@ public class SampleSequenceFilesController {
 		Path target = temp.resolve(file.getOriginalFilename());
 
 		target = Files.write(target, file.getBytes());
+		logger.trace("Wrote temp file to " + target);
+		
 		SequenceFile sf;
 		MiseqRun miseqRun = null;
 		
@@ -170,6 +179,7 @@ public class SampleSequenceFilesController {
 			Long miseqRunId = fileResource.getMiseqRunId();
 			if(miseqRunId != null){
 				miseqRun = miseqRunService.read(miseqRunId);
+				logger.trace("Read miseq run " + miseqRunId);
 			}
 		}
 		else{
@@ -180,14 +190,17 @@ public class SampleSequenceFilesController {
 		// persist the changes by calling the sample service
 		Join<Sample, SequenceFile> sampleSequenceFileRelationship = sequenceFileService.createSequenceFileInSample(sf,
 				sample);
+		logger.trace("Created seqfile in sample " + sampleSequenceFileRelationship.getObject().getId());
 		
 		if(miseqRun != null){
 			miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
+			logger.trace("Added seqfile to miseqrun");
 		}
 
 		// clean up the temporary files.
 		Files.deleteIfExists(target);
 		Files.deleteIfExists(temp);
+		logger.trace("Deleted temp file");
 
 		// prepare a link to the sequence file itself (on the sequence file
 		// controller)
@@ -231,6 +244,7 @@ public class SampleSequenceFilesController {
 		}
 
 		Long sequenceFileIdentifier = Long.valueOf(requestBody.get(SEQUENCE_FILE_ID_KEY));
+		logger.debug("Adding sequence file reference " + sequenceFileIdentifier + " to sample " + sampleId);
 		Project p = projectService.read(projectId);
 		// confirm the relationship between the sample and the project.
 		Sample s = sampleService.getSampleForProject(p, sampleId);

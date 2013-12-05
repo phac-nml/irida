@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ca.corefacility.bioinformatics.irida</groupId>
 	<artifactId>irida-web</artifactId>
-	<version>1.0.0.beta</version>
+	<version>1.1.0</version>
 	<packaging>war</packaging>
 
 	<name>irida-web</name>
@@ -68,7 +68,7 @@
 		<java.version>1.7</java.version>
 
 		<!-- irida-api -->
-		<irida.api.version>1.0.0.beta</irida.api.version>
+		<irida.api.version>1.1.0</irida.api.version>
 
 		<!-- Jackson -->
 		<jackson.version>2.1.4</jackson.version>
@@ -77,10 +77,9 @@
 		<jetty.version>9.0.2.v20130417</jetty.version>
 
 		<!-- Spring -->
-		<spring-framework.version>3.2.4.RELEASE</spring-framework.version>
+		<spring-framework.version>3.2.5.RELEASE</spring-framework.version>
 		<org.springframework.hateoas.version>0.5.0.RELEASE</org.springframework.hateoas.version>
-		<spring-framework-security-oauth2.version>1.0.4.RELEASE</spring-framework-security-oauth2.version>
-		<org.springframework.security.version>3.2.0.RC1</org.springframework.security.version>
+		<org.springframework.security.version>3.2.0.RC2</org.springframework.security.version>
 		<org.springframework.plugin.version>0.8.0.RELEASE</org.springframework.plugin.version>
 
 		<!-- Test -->
@@ -97,6 +96,9 @@
 
 		<!-- REST-assured -->
 		<rest.assured.version>1.8.0</rest.assured.version>
+		
+		<!-- Groovy test version -->
+		<groovy.version>2.1.2</groovy.version>
 
 		<!-- mockito -->
 		<mockito.version>1.9.5</mockito.version>
@@ -186,6 +188,20 @@
 			<groupId>com.jayway.restassured</groupId>
 			<artifactId>rest-assured</artifactId>
 			<version>${rest.assured.version}</version>
+			<!-- Exclude Groovy because of classpath issue -->
+			<exclusions>
+				<exclusion>
+					<groupId>org.codehaus.groovy</groupId>
+					<artifactId>groovy</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<!-- Needs to be the same version that REST Assured depends on -->
+			<version>${groovy.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- used by Spring MVC Test framework -->

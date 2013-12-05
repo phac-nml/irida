@@ -101,7 +101,8 @@ public class UserControllerTest {
         User u = new User();
         u.setUsername(username);
         List<User> users = Lists.newArrayList(u);
-        when(userService.list()).thenReturn(users);
+        when(userService.findAll()).thenReturn(users);
+        when(userService.count()).thenReturn(1L);
 
         ModelMap output = controller.listAllResources();
 

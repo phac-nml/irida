@@ -105,7 +105,7 @@ public class ProjectIntegrationTest {
 
 	@Test
 	public void testDeleteProject() {
-		String projectUri = "http://localhost:8080/projects/1";
+		String projectUri = "http://localhost:8080/projects/99";
 		expect().body("resource.links.rel", hasItems("collection")).and()
 				.body("resource.links.href", hasItems("http://localhost:8080/projects")).when().delete(projectUri);
 	}
