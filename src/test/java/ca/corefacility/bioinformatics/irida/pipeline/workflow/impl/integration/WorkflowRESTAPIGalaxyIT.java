@@ -11,6 +11,8 @@ import java.util.Map;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 
@@ -33,6 +35,8 @@ public class WorkflowRESTAPIGalaxyIT
 {
 	private static final int largestPort = 65535;
 	
+	private static final Logger logger = LoggerFactory.getLogger(WorkflowRESTAPIGalaxyIT.class);
+	
 	private static WorkflowRESTAPIGalaxy restAPIGalaxy;
 	private static GalaxyInstance galaxyInstance;
 	
@@ -48,28 +52,47 @@ public class WorkflowRESTAPIGalaxyIT
 	@BeforeClass
 	public static void setup() throws IOException, URISyntaxException
 	{
-	    BootStrapper bootStrapper = new BootStrapper(DownloadProperties.forGalaxyCentral());
+		File galaxyLogFile;
+		DownloadProperties downloadProperties =
+				new DownloadProperties(DownloadProperties.GALAXY_CENTRAL_REPOSITORY_URL, DownloadProperties.BRANCH_STABLE, null);
+	    BootStrapper bootStrapper = new BootStrapper(downloadProperties);
+	    
+	    String galaxyAdmin = "admin@localhost";
+	    
+	    logger.info("About to download Galaxy from url: " + DownloadProperties.GALAXY_CENTRAL_REPOSITORY_URL + ", branch:" +
+	    		DownloadProperties.BRANCH_STABLE);
+	    logger.info("Galaxy will be downloaded to: " + bootStrapper.getPath());
 	    bootStrapper.setupGalaxy();
+	    logger.info("Finished downloading Galaxy");
+	    
+	    galaxyLogFile = new File(bootStrapper.getPath() + File.separator + "paster.log");
+	    
 	    final GalaxyProperties galaxyProperties = 
 	      new GalaxyProperties()
 	            .assignFreePort()
 	            .configureNestedShedTools();
+	    
+	    galaxyPort = galaxyProperties.getPort();
+	    galaxyURL = "http://localhost:" + galaxyPort + "/";
+	    
 	    final GalaxyData galaxyData = new GalaxyData();
-	    final User adminUser = new User("admin@localhost");
+	    final User adminUser = new User(galaxyAdmin);
 	    galaxyData.getUsers().add(adminUser);
-	    galaxyProperties.setAdminUser("admin@localhost");
+	    galaxyProperties.setAdminUser(galaxyAdmin);
 	    adminAPIKey = adminUser.getApiKey();
 	    
 	    galaxyProperties.setAppProperty("allow_library_path_paste", "true");
-	    galaxyDaemon = bootStrapper.run(galaxyProperties, galaxyData);
 	    
+	    logger.info("About to run Galaxy on url: " + galaxyURL);
+	    logger.debug("Galaxy admin user: " + galaxyAdmin + ", apiKey: " + adminAPIKey);
+	    galaxyDaemon = bootStrapper.run(galaxyProperties, galaxyData);
+	    logger.info("Waiting for Galaxy to come up, log: " + galaxyLogFile.getAbsolutePath());
 	    if (!galaxyDaemon.waitForUp())
 	    {
 	    	fail("Could not start Galaxy for tests");
 	    }
+	    logger.info("Galaxy running on url: " + galaxyURL);
 	    
-	    galaxyPort = galaxyProperties.getPort();
-	    galaxyURL = "http://localhost:" + galaxyPort + "/";
 	    restAPIGalaxy = new WorkflowRESTAPIGalaxy(galaxyURL, adminAPIKey);
 	    
 	    galaxyInstance = GalaxyInstanceFactory.get(galaxyURL, adminAPIKey);
@@ -89,8 +112,10 @@ public class WorkflowRESTAPIGalaxyIT
 	@AfterClass
 	public static void tearDown()
 	{
+		logger.info("Shutting down Galaxy on url=" + galaxyURL);
 		galaxyDaemon.stop();
 		galaxyDaemon.waitForDown();
+		logger.info("Galaxy shutdown");
 	}
 	
 	private Library findLibraryByID(String libraryID)
