@@ -285,14 +285,14 @@
 			<type>jar</type>
 		</dependency>
 		<dependency>
-			<groupId>com.github.jmchilton.blend4j</groupId>
-			<artifactId>blend4j</artifactId>
-			<version>${blend4j.version}</version>
+		  <groupId>com.github.jmchilton.blend4j</groupId>
+		  <artifactId>blend4j</artifactId>
+		  <version>${com.github.jmchilton.blend4j.version}</version>
 		</dependency>
 		<dependency>
 		  <groupId>com.github.jmchilton.galaxybootstrap</groupId>
 		  <artifactId>galaxybootstrap</artifactId>
-		  <version>0.3.0-rc2</version>
+		  <version>${com.github.jmchilton.galaxybootstrap.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -439,7 +439,8 @@
 		<aspectj.version>1.7.3</aspectj.version>
 		<commons.lang.version>3.1</commons.lang.version>
 		<commons.beanutils.version>1.7.0</commons.beanutils.version>
-		<blend4j.version>0.1-alpha-7</blend4j.version>
+		<com.github.jmchilton.blend4j.version>0.1-alpha-7</com.github.jmchilton.blend4j.version>
+		<com.github.jmchilton.galaxybootstrap.version>0.3.0-rc2</com.github.jmchilton.galaxybootstrap.version>
 
 		<!-- stuck on an older version of hibernate validator until spring upgrades 
 			support -->
