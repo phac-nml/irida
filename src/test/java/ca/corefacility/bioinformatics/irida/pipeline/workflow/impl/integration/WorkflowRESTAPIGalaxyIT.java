@@ -45,6 +45,7 @@ public class WorkflowRESTAPIGalaxyIT
 	private static String galaxyURL;
 	
 	private static GalaxyDaemon galaxyDaemon;
+	private static BootStrapper bootStrapper;
 	
 	private static List<File> dataFilesSingle;
 	private static List<File> dataFilesDouble;
@@ -55,22 +56,22 @@ public class WorkflowRESTAPIGalaxyIT
 		File galaxyLogFile;
 		DownloadProperties downloadProperties =
 				new DownloadProperties(DownloadProperties.GALAXY_CENTRAL_REPOSITORY_URL, DownloadProperties.BRANCH_STABLE, null);
-	    BootStrapper bootStrapper = new BootStrapper(downloadProperties);
+	    bootStrapper = new BootStrapper(downloadProperties);
 	    
 	    String galaxyAdmin = "admin@localhost";
+	    File galaxyCache = new File(System.getProperty("user.home"), ".galaxy-bootstrap");
 	    
 	    logger.info("About to download Galaxy from url: " + DownloadProperties.GALAXY_CENTRAL_REPOSITORY_URL + ", branch:" +
 	    		DownloadProperties.BRANCH_STABLE);
-	    logger.info("Galaxy will be downloaded to: " + bootStrapper.getPath());
+	    logger.info("Galaxy will be downloaded to cache at: " + galaxyCache.getAbsolutePath()
+	    		+ ", and copied to: " + bootStrapper.getPath());
 	    bootStrapper.setupGalaxy();
 	    logger.info("Finished downloading Galaxy");
 	    
 	    galaxyLogFile = new File(bootStrapper.getPath() + File.separator + "paster.log");
 	    
-	    final GalaxyProperties galaxyProperties = 
-	      new GalaxyProperties()
-	            .assignFreePort()
-	            .configureNestedShedTools();
+	    GalaxyProperties galaxyProperties = new GalaxyProperties().assignFreePort().configureNestedShedTools();
+	    galaxyProperties.prepopulateSqliteDatabase();
 	    
 	    galaxyPort = galaxyProperties.getPort();
 	    galaxyURL = "http://localhost:" + galaxyPort + "/";
@@ -116,6 +117,8 @@ public class WorkflowRESTAPIGalaxyIT
 		galaxyDaemon.stop();
 		galaxyDaemon.waitForDown();
 		logger.info("Galaxy shutdown");
+		logger.debug("Deleting Galaxy directory: " + bootStrapper.getPath());
+		bootStrapper.deleteGalaxyRoot();
 	}
 	
 	private Library findLibraryByID(String libraryID)
