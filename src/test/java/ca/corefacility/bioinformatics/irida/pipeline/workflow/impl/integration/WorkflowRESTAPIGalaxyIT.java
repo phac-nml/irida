@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.workflow.impl;
+package ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.integration;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +14,10 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+import ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.GalaxySample;
+import ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.LibraryUploadException;
+import ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.WorkflowRESTAPIGalaxy;
+
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
@@ -25,7 +29,7 @@ import com.github.jmchilton.galaxybootstrap.GalaxyProperties;
 import com.github.jmchilton.galaxybootstrap.BootStrapper.GalaxyDaemon;
 import com.github.jmchilton.galaxybootstrap.GalaxyData.User;
 
-public class GalaxyAPIITTestLong
+public class WorkflowRESTAPIGalaxyIT
 {
 	private static final int largestPort = 65535;
 	
@@ -71,8 +75,8 @@ public class GalaxyAPIITTestLong
 	    galaxyInstance = GalaxyInstanceFactory.get(galaxyURL, adminAPIKey);
 	    
 	    // setup data files
-		File dataFile1 = new File(GalaxyAPIITTestLong.class.getResource("testData1.fastq").toURI());
-		File dataFile2 = new File(GalaxyAPIITTestLong.class.getResource("testData2.fastq").toURI());
+		File dataFile1 = new File(WorkflowRESTAPIGalaxyIT.class.getResource("testData1.fastq").toURI());
+		File dataFile2 = new File(WorkflowRESTAPIGalaxyIT.class.getResource("testData2.fastq").toURI());
 		
 		dataFilesSingle = new ArrayList<File>();
 		dataFilesSingle.add(dataFile1);

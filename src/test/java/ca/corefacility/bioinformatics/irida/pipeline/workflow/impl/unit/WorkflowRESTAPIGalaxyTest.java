@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.workflow.impl;
+package ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.unit;
 
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
@@ -17,6 +17,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.pipeline.workflow.WorkflowSubmissionException;
+import ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.ExecutableWorkflowGalaxy;
+import ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.GalaxySample;
+import ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.LibraryUploadException;
+import ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.WorkflowRESTAPIGalaxy;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
