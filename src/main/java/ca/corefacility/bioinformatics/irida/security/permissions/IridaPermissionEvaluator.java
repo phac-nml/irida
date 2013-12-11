@@ -42,7 +42,7 @@ public class IridaPermissionEvaluator implements PermissionEvaluator {
 	@PostConstruct
 	public void init() {
 		for (BasePermission<?> p : permissions) {
-			logger.debug("Registering permission [" + p.getPermissionProvided() + "] with class ["
+			logger.trace("Registering permission [" + p.getPermissionProvided() + "] with class ["
 					+ p.getClass().getName() + "]");
 			namedPermissionMap.put(p.getPermissionProvided(), p);
 		}

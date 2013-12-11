@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
-import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -33,10 +33,10 @@ public class GzipFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(GzipFileProcessor.class);
 	private static final String GZIP_EXTENSION = ".gz";
 
-	private SequenceFileRepository sequenceFileRepository;
+	private SequenceFileService sequenceFileService;
 
-	public GzipFileProcessor(SequenceFileRepository sequenceFileRepository) {
-		this.sequenceFileRepository = sequenceFileRepository;
+	public GzipFileProcessor(SequenceFileService sequenceFileService) {
+		this.sequenceFileService = sequenceFileService;
 	}
 
 	/**
@@ -54,11 +54,12 @@ public class GzipFileProcessor implements FileProcessor {
 		}
 
 		try {
+			logger.trace("About to try handling a gzip file.");
 			if (isCompressed(file)) {
 				file = addExtensionToFilename(file, GZIP_EXTENSION);
 
 				try (GZIPInputStream zippedInputStream = new GZIPInputStream(Files.newInputStream(file))) {
-					logger.debug("Handling gzip compressed file.");
+					logger.trace("Handling gzip compressed file.");
 
 					Path target = Paths.get(nameWithoutExtension);
 					logger.debug("Writing uncompressed file to [" + target + "]");
@@ -68,7 +69,7 @@ public class GzipFileProcessor implements FileProcessor {
 					// if the new name is different from the name before, update
 					// the file name in the database.
 					if (!nameWithoutExtension.equals(originalFilename)) {
-						sequenceFile = sequenceFileRepository.update(sequenceFile.getId(),
+						sequenceFile = sequenceFileService.updateWithoutProcessors(sequenceFile.getId(),
 								ImmutableMap.of("file", (Object) target));
 					}
 				}

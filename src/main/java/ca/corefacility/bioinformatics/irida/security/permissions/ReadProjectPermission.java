@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.security.permissions;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +9,9 @@ import org.springframework.security.core.Authentication;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 
 /**
  * Confirms that the authenticated user is allowed to read a project.
@@ -22,11 +24,17 @@ public class ReadProjectPermission extends BasePermission<Project> {
 	private static final Logger logger = LoggerFactory.getLogger(ReadProjectPermission.class);
 	private static final String PERMISSION_PROVIDED = "canReadProject";
 
+	private UserRepository userRepository;
+	private ProjectUserJoinRepository pujRepository;
+
 	/**
 	 * Construct an instance of {@link ReadProjectPermission}.
 	 */
-	public ReadProjectPermission() {
-		super(Project.class, "projectRepository");
+	public ReadProjectPermission(ProjectRepository projectRepository, UserRepository userRepository,
+			ProjectUserJoinRepository pujRepository) {
+		super(Project.class, projectRepository);
+		this.userRepository = userRepository;
+		this.pujRepository = pujRepository;
 	}
 
 	/**
@@ -35,12 +43,10 @@ public class ReadProjectPermission extends BasePermission<Project> {
 	@Override
 	public boolean customPermissionAllowed(Authentication authentication, Project p) {
 		logger.trace("Testing permission for [" + authentication + "] on project [" + p + "]");
-		UserRepository userRepository = getApplicationContext().getBean(UserRepository.class);
-
 		// if not an administrator, then we need to figure out if the
 		// authenticated user is participating in the project.
-		User u = userRepository.getUserByUsername(authentication.getName());
-		Collection<Join<Project, User>> projectUsers = userRepository.getUsersForProject(p);
+		User u = userRepository.loadUserByUsername(authentication.getName());
+		List<Join<Project, User>> projectUsers = pujRepository.getUsersForProject(p);
 
 		for (Join<Project, User> projectUser : projectUsers) {
 			if (projectUser.getObject().equals(u)) {
@@ -49,7 +55,7 @@ public class ReadProjectPermission extends BasePermission<Project> {
 				return true;
 			}
 		}
-		
+
 		logger.trace("Permission DENIED for [" + authentication + "] on project [" + p + "]");
 		return false;
 	}

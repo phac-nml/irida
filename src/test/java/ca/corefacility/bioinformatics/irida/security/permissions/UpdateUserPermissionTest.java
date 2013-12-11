@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.security.permissions;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -12,7 +12,6 @@ import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,14 +32,9 @@ public class UpdateUserPermissionTest {
 
 	@Before
 	public void setUp() {
-		ApplicationContext applicationContext = mock(ApplicationContext.class);
 		userRepository = mock(UserRepository.class);
 
-		updateUserPermission = new UpdateUserPermission();
-		updateUserPermission.setApplicationContext(applicationContext);
-
-		when(applicationContext.getBean("userRepository")).thenReturn(userRepository);
-		when(applicationContext.getBean(UserRepository.class)).thenReturn(userRepository);
+		updateUserPermission = new UpdateUserPermission(userRepository);
 	}
 
 	@Test
@@ -49,15 +43,15 @@ public class UpdateUserPermissionTest {
 		User u = new User();
 		u.setUsername(username);
 
-		when(userRepository.getUserByUsername(username)).thenReturn(u);
-		when(userRepository.read(1l)).thenReturn(u);
+		when(userRepository.loadUserByUsername(username)).thenReturn(u);
+		when(userRepository.findOne(1l)).thenReturn(u);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
 		assertTrue("permission was not granted.", updateUserPermission.isAllowed(auth, 1l));
 
-		verify(userRepository).getUserByUsername(username);
-		verify(userRepository).read(1l);
+		verify(userRepository).loadUserByUsername(username);
+		verify(userRepository).findOne(1l);
 	}
 
 	@Test
@@ -66,15 +60,15 @@ public class UpdateUserPermissionTest {
 		User u = new User();
 		u.setUsername(username);
 
-		when(userRepository.getUserByUsername(username)).thenReturn(u);
-		when(userRepository.read(1l)).thenReturn(new User());
+		when(userRepository.loadUserByUsername(username)).thenReturn(u);
+		when(userRepository.findOne(1l)).thenReturn(new User());
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
 		assertFalse("permission was granted.", updateUserPermission.isAllowed(auth, 1l));
 
-		verify(userRepository).getUserByUsername(username);
-		verify(userRepository).read(1l);
+		verify(userRepository).loadUserByUsername(username);
+		verify(userRepository).findOne(1l);
 	}
 
 	@Test
@@ -95,8 +89,9 @@ public class UpdateUserPermissionTest {
 		Collection<GrantedAuthority> roles = new ArrayList<>();
 		roles.add(Role.ROLE_CLIENT);
 
-		Authentication authentication = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
+		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
 
-		assertFalse("permission was granted to client.", updateUserPermission.isAllowed(authentication, 1l));
+		when(userRepository.findOne(1L)).thenReturn(new User());
+		assertFalse("permission was granted to client.", updateUserPermission.isAllowed(auth, 1l));
 	}
 }

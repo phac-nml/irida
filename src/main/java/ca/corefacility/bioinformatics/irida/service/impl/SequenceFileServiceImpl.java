@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import java.util.ArrayList;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,16 +14,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
+import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
-import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileOverrepresentedSequenceJoin;
+import ca.corefacility.bioinformatics.irida.processing.annotations.ModifiesSequenceFile;
+import ca.corefacility.bioinformatics.irida.repositories.SequenceFileFilesystem;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sequencefile.MiseqRunSequenceFileJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sequencefile.SequenceFileOverrepresentedSequenceJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 /**
  * Implementation for managing {@link SequenceFile}.
@@ -34,15 +41,25 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFileServiceImpl.class);
 
+	private static final String FILE_PROPERTY = "file";
+
 	/**
 	 * A reference to the file system repository.
 	 */
-	private CRUDRepository<Long, SequenceFile> fileRepository;
+	private SequenceFileFilesystem fileRepository;
 	/**
-	 * A reference to the data store repository.
+	 * Reference to {@link SampleSequenceFileJoinRepository}.
 	 */
-	private SequenceFileRepository sequenceFileRepository;
-	
+	private SampleSequenceFileJoinRepository ssfRepository;
+	/**
+	 * Reference to {@link SequenceFileOverrepresentedSequenceJoinRepository}.
+	 */
+	private SequenceFileOverrepresentedSequenceJoinRepository sfosRepository;
+	/**
+	 * Reference to {@link MiseqRunSequenceFileJoinRepository}.
+	 */
+	private MiseqRunSequenceFileJoinRepository mrsfRepository;
+
 	protected SequenceFileServiceImpl() {
 		super(null, null, SequenceFile.class);
 	}
@@ -56,10 +73,14 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 *            validator.
 	 */
 	public SequenceFileServiceImpl(SequenceFileRepository sequenceFileRepository,
-			CRUDRepository<Long, SequenceFile> fileRepository, Validator validator) {
+			SequenceFileFilesystem fileRepository, SampleSequenceFileJoinRepository ssfRepository,
+			SequenceFileOverrepresentedSequenceJoinRepository sfosRepository,
+			MiseqRunSequenceFileJoinRepository mrsfRepository, Validator validator) {
 		super(sequenceFileRepository, validator, SequenceFile.class);
-		this.sequenceFileRepository = sequenceFileRepository;
 		this.fileRepository = fileRepository;
+		this.ssfRepository = ssfRepository;
+		this.sfosRepository = sfosRepository;
+		this.mrsfRepository = mrsfRepository;
 	}
 
 	/**
@@ -68,20 +89,20 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Override
 	@PreAuthorize("hasAnyRole('ROLE_CLIENT', 'ROLE_USER')")
 	@Transactional
+	@ModifiesSequenceFile
 	public SequenceFile create(SequenceFile sequenceFile) {
 		// Send the file to the database repository to be stored (in super)
+		logger.trace("Calling super.create");
 		sequenceFile = super.create(sequenceFile);
 		// Then store the file in an appropriate directory
-		sequenceFile = fileRepository.create(sequenceFile);
+		logger.trace("About to write file to disk.");
+		sequenceFile = fileRepository.writeSequenceFileToDisk(sequenceFile);
 		// And finally, update the database with the stored file location
 
 		Map<String, Object> changed = new HashMap<>();
-		changed.put("file", sequenceFile.getFile());
+		changed.put(FILE_PROPERTY, sequenceFile.getFile());
+		logger.trace("Calling this.update");
 		final SequenceFile updatedSequenceFile = super.update(sequenceFile.getId(), changed);
-
-		logger.debug("Outside thread: " + Thread.currentThread().toString() + " with sequence file ["
-				+ updatedSequenceFile.getId() + "]");
-
 		return updatedSequenceFile;
 	}
 
@@ -91,14 +112,52 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Override
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadSequenceFile')")
-	public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
-		SequenceFile updated = super.update(id, updatedFields);
+	public SequenceFile updateWithoutProcessors(Long id, Map<String, Object> updatedFields) {
+		return update(id, updatedFields);
+	}
 
-		if (updatedFields.containsKey("file")) {
-			updated = fileRepository.update(id, updatedFields);
-			super.update(id, ImmutableMap.of("file", (Object) updated.getFile()));
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadSequenceFile')")
+	@ModifiesSequenceFile
+	public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
+		if (updatedFields.containsKey("fileRevisionNumber")) {
+			throw new InvalidPropertyException("File revision number cannot be updated manually.");
 		}
 
+		ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
+
+		SequenceFile toUpdate = read(id);
+
+		if (updatedFields.containsKey(FILE_PROPERTY)) {
+			logger.trace("Sequence file [" + toUpdate.getId() + "] has file location to be updated.");
+			Path fileLocation = (Path) updatedFields.get(FILE_PROPERTY);
+			Long updatedRevision = toUpdate.getFileRevisionNumber() + 1;
+			// write the file to a new location on disk
+			Path updatedLocation = fileRepository.updateSequenceFileOnDisk(id, fileLocation, updatedRevision);
+			// put the new location into the map to be constructed
+			builder.put(FILE_PROPERTY, (Object) updatedLocation);
+			builder.put("fileRevisionNumber", (Object) updatedRevision);
+			// add all keys from the updatedFields map that are NOT equal to
+			// "file"
+			builder.putAll(Maps.filterKeys(updatedFields, new Predicate<String>() {
+				@Override
+				public boolean apply(String input) {
+					return !input.equals(FILE_PROPERTY);
+				}
+			}));
+		} else {
+			// the file isn't to be updated, so just keep all the keys that were
+			// originally supplied to the method.
+			builder.putAll(updatedFields);
+		}
+
+		logger.trace("Calling super.update");
+		SequenceFile updated = super.update(id, builder.build());
+		logger.trace("Finished calling super.update");
 		return updated;
 	}
 
@@ -108,11 +167,11 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Override
 	@Transactional
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT') or hasPermission(#sample, 'canReadSample')")
+	@ModifiesSequenceFile
 	public Join<Sample, SequenceFile> createSequenceFileInSample(SequenceFile sequenceFile, Sample sample) {
 		SequenceFile created = create(sequenceFile);
-		SampleSequenceFileJoin addFileToSample = sequenceFileRepository.addFileToSample(sample, created);
-
-		return addFileToSample;
+		SampleSequenceFileJoin join = new SampleSequenceFileJoin(sample, created);
+		return ssfRepository.save(join);
 	}
 
 	/**
@@ -122,12 +181,19 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Transactional(readOnly = true)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public List<Join<Sample, SequenceFile>> getSequenceFilesForSample(Sample sample) {
-		List<SampleSequenceFileJoin> joins = sequenceFileRepository.getFilesForSample(sample);
-		return new ArrayList<Join<Sample, SequenceFile>>(joins);
+		return ssfRepository.getFilesForSample(sample);
 	}
-        
-        public List<Join<MiseqRun,SequenceFile>> getSequenceFilesForMiseqRun(MiseqRun miseqRun){
-            List<MiseqRunSequenceFileJoin> filesForMiseqRun = sequenceFileRepository.getFilesForMiseqRun(miseqRun);
-            return new ArrayList<Join<MiseqRun,SequenceFile>>(filesForMiseqRun);
-        }
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Join<MiseqRun, SequenceFile>> getSequenceFilesForMiseqRun(MiseqRun miseqRun) {
+		return mrsfRepository.getFilesForMiseqRun(miseqRun);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Join<SequenceFile, OverrepresentedSequence> addOverrepresentedSequenceToSequenceFile(
+			SequenceFile sequenceFile, OverrepresentedSequence sequence) {
+		return sfosRepository.save(new SequenceFileOverrepresentedSequenceJoin(sequenceFile, sequence));
+	}
 }

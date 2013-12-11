@@ -1,11 +1,10 @@
-
 package ca.corefacility.bioinformatics.irida.model.joins.impl;
 
-import ca.corefacility.bioinformatics.irida.model.MiseqRun;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import java.util.Date;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,68 +13,76 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
+
 import org.hibernate.envers.Audited;
 
+import ca.corefacility.bioinformatics.irida.model.MiseqRun;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+
 /**
- *
+ * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Entity
-@Table(name="miseqrun_sequencefile")
+@Table(name = "miseqrun_sequencefile", uniqueConstraints = @UniqueConstraint(columnNames = { "miseqRun_id",
+		"sequenceFile_id" }))
 @Audited
-public class MiseqRunSequenceFileJoin implements Join<MiseqRun, SequenceFile>{
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
-    
-    @ManyToOne
-    @JoinColumn(name="miseqRun_id")
-    private MiseqRun miseqRun;
-    
-    @ManyToOne
-    @JoinColumn(name="sequenceFile_id")
-    private SequenceFile sequenceFile;
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate;
-    
-    public MiseqRunSequenceFileJoin(){
-        createdDate = new Date();
-    }
-    
-    public MiseqRunSequenceFileJoin(MiseqRun subject, SequenceFile object){
-        this();
-        this.miseqRun=subject;
-        this.sequenceFile=object;
-    }
-    @Override
-    public MiseqRun getSubject() {
-        return miseqRun;
-    }
+public class MiseqRunSequenceFileJoin implements Join<MiseqRun, SequenceFile> {
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	Long id;
 
-    @Override
-    public void setSubject(MiseqRun subject) {
-        this.miseqRun = subject;
-    }
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "miseqRun_id")
+	private MiseqRun miseqRun;
 
-    @Override
-    public SequenceFile getObject() {
-        return sequenceFile;
-    }
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "sequenceFile_id")
+	private SequenceFile sequenceFile;
 
-    @Override
-    public void setObject(SequenceFile object) {
-        this.sequenceFile = object;
-    }
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdDate;
 
-    @Override
-    public Date getTimestamp() {
-        return createdDate;
-    }
+	public MiseqRunSequenceFileJoin() {
+		createdDate = new Date();
+	}
 
-    @Override
-    public void setTimestamp(Date timestamp) {
-        this.createdDate = timestamp;
-    }
+	public MiseqRunSequenceFileJoin(MiseqRun subject, SequenceFile object) {
+		this();
+		this.miseqRun = subject;
+		this.sequenceFile = object;
+	}
 
+	@Override
+	public MiseqRun getSubject() {
+		return miseqRun;
+	}
+
+	@Override
+	public void setSubject(MiseqRun subject) {
+		this.miseqRun = subject;
+	}
+
+	@Override
+	public SequenceFile getObject() {
+		return sequenceFile;
+	}
+
+	@Override
+	public void setObject(SequenceFile object) {
+		this.sequenceFile = object;
+	}
+
+	@Override
+	public Date getTimestamp() {
+		return createdDate;
+	}
+
+	@Override
+	public void setTimestamp(Date timestamp) {
+		this.createdDate = timestamp;
+	}
 }

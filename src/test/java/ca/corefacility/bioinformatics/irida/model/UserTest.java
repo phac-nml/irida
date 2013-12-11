@@ -157,7 +157,7 @@ public class UserTest {
 		u.setFirstName("Franklin");
 		u.setLastName("Bristow");
 		u.setPhoneNumber("7029");
-		u.setSystemRole(new Role("ROLE_USER"));
+		u.setSystemRole(Role.ROLE_USER);
 
 		Set<ConstraintViolation<User>> constraintViolations = validator.validate(u);
 
@@ -173,7 +173,7 @@ public class UserTest {
 		u.setFirstName("Franklin");
 		u.setLastName("Bristow");
 		u.setPhoneNumber("7029");
-		u.setSystemRole(new Role("ROLE_USER"));
+		u.setSystemRole(Role.ROLE_USER);
 
 		Set<ConstraintViolation<User>> constraintViolations = validator.validate(u);
 		assertEquals("wrong number of constraint violations.", 1, constraintViolations.size());
@@ -213,6 +213,10 @@ public class UserTest {
 
 	@Test
 	public void testEquals() {
+		// we want the first user to be created at a different time than the
+		// second user. on fast enough computers, if you just let the
+		// constructor set the creation date, the creation date might be the
+		// same.
 		Date created = new Date(1);
 		User u1 = new User("username", "email", "password", "firstName", "lastName", "phoneNumber");
 		u1.setTimestamp(created);

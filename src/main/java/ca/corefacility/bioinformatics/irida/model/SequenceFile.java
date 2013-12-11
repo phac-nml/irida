@@ -3,14 +3,19 @@ package ca.corefacility.bioinformatics.irida.model;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
+import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -18,6 +23,10 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+
+import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileOverrepresentedSequenceJoin;
 
 /**
  * A file that may be stored somewhere on the file system and belongs to a
@@ -38,8 +47,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	@NotNull
 	@Transient
 	private Path file;
-
-	private Boolean enabled = true;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
@@ -71,10 +78,21 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
     private String i7Index;
     private String i5IndexId;
     private String i5Index;
+	private Long fileRevisionNumber; //the filesystem file revision number
+	
+	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sequenceFile")
+	private List<MiseqRunSequenceFileJoin> miseqRuns;
+	
+	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sequenceFile")
+	private List<SampleSequenceFileJoin> samples;
+	
+	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sequenceFile")
+	private List<SequenceFileOverrepresentedSequenceJoin> overrepresentedSequences;
 
 	public SequenceFile() {
 		createdDate = new Date();
 		modifiedDate = createdDate;
+		fileRevisionNumber = 1L;
 	}
 
 	/**
@@ -86,6 +104,13 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	public SequenceFile(Path sampleFile) {
 		this();
 		this.file = sampleFile;
+		setStringPath();
+
+	}
+
+	@PostLoad
+	public void postLoad(){
+		setRealPath();
 	}
 
 	@Override
@@ -149,14 +174,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
 	public void setDuplicationLevelChart(byte[] duplicationLevelChart) {
 		this.duplicationLevelChart = duplicationLevelChart;
-	}
-
-	public Boolean getEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
 	}
 
 	public Date getCreatedDate() {
@@ -240,11 +257,15 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	}
 
 	public void setStringPath() {
-		stringPath = file.toFile().toString();
+		if(file != null){
+			 stringPath = file.toFile().toString();
+		}
 	}
 
 	public void setRealPath() {
-		file = Paths.get(stringPath);
+		if(stringPath != null){
+			file = Paths.get(stringPath);
+		}
 	}
 
 	public Path getFile() {
@@ -253,6 +274,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
 	public void setFile(Path file) {
 		this.file = file;
+		setStringPath();
 	}
 
 	@Override
@@ -267,16 +289,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	@Override
-	public void setEnabled(boolean valid) {
-		this.enabled = valid;
 	}
 
 	@Override
@@ -346,5 +358,36 @@ public String getSamplePlate() {
     public void setI5Index(String i5Index) {
         this.i5Index = i5Index;
     }
-    
+
+	public Long getFileRevisionNumber() {
+		return fileRevisionNumber;
+	}
+
+	public void setFileRevisionNumber(Long fileRevisionNumber) {
+		this.fileRevisionNumber = fileRevisionNumber;
+	}
+	
+	public List<MiseqRunSequenceFileJoin> getMiseqRuns() {
+		return miseqRuns;
+	}
+
+	public void setMiseqRuns(List<MiseqRunSequenceFileJoin> miseqRuns) {
+		this.miseqRuns = miseqRuns;
+	}
+
+	public List<SampleSequenceFileJoin> getSamples() {
+		return samples;
+	}
+
+	public void setSamples(List<SampleSequenceFileJoin> samples) {
+		this.samples = samples;
+	}
+
+	public List<SequenceFileOverrepresentedSequenceJoin> getOverrepresentedSequences() {
+		return overrepresentedSequences;
+	}
+
+	public void setOverrepresentedSequences(List<SequenceFileOverrepresentedSequenceJoin> overrepresentedSequences) {
+		this.overrepresentedSequences = overrepresentedSequences;
+	}
 }

@@ -3,17 +3,22 @@ package ca.corefacility.bioinformatics.irida.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -23,8 +28,8 @@ import org.hibernate.validator.constraints.Email;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.validators.Patterns;
-import javax.persistence.UniqueConstraint;
 
 /**
  * A user object.
@@ -33,12 +38,16 @@ import javax.persistence.UniqueConstraint;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Entity
-@Table(name = "user", uniqueConstraints = { @UniqueConstraint(name = "user_email_constraint", columnNames = "email"),
-		@UniqueConstraint(name = "user_username_constraint", columnNames = "username") })
+@Table(name = "user", uniqueConstraints = {
+		@UniqueConstraint(name = User.USER_EMAIL_CONSTRAINT_NAME, columnNames = "email"),
+		@UniqueConstraint(name = User.USER_USERNAME_CONSTRAINT_NAME, columnNames = "username") })
 @Audited
 public class User implements IridaThing, Comparable<User>, UserDetails {
 
 	private static final long serialVersionUID = -7516211470008791995L;
+
+	public static final String USER_EMAIL_CONSTRAINT_NAME = "user_email_constraint";
+	public static final String USER_USERNAME_CONSTRAINT_NAME = "user_username_constraint";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -72,7 +81,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	@Size(min = 4, message = "{user.phoneNumber.size}")
 	private String phoneNumber;
 	@NotNull
-	private Boolean enabled = true;
+	private boolean enabled = true;
 
 	@ManyToOne
 	@JoinColumn(name = "system_role")
@@ -88,6 +97,9 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	private String locale;
 
 	private boolean credentialsNonExpired;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
+	private List<ProjectUserJoin> projects;
 
 	/**
 	 * Construct an instance of {@link User} with no properties set.
@@ -285,7 +297,6 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 		return enabled;
 	}
 
-	@Override
 	public void setEnabled(boolean valid) {
 		this.enabled = valid;
 	}
@@ -326,14 +337,6 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 		this.locale = locale;
 	}
 
-	public Boolean getEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
-	}
-
 	public Date getCreatedDate() {
 		return createdDate;
 	}
@@ -344,5 +347,13 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 
 	public void setSystemRole(Role systemRole) {
 		this.systemRole = systemRole;
+	}
+
+	public List<ProjectUserJoin> getProjects() {
+		return projects;
+	}
+
+	public void setProjects(List<ProjectUserJoin> projects) {
+		this.projects = projects;
 	}
 }

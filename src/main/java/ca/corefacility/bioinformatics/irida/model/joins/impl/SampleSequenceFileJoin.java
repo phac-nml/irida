@@ -1,10 +1,11 @@
 package ca.corefacility.bioinformatics.irida.model.joins.impl;
 
-import ca.corefacility.bioinformatics.irida.model.Sample;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import java.util.Date;
+import java.util.Objects;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,7 +14,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 import org.hibernate.envers.Audited;
+
+import ca.corefacility.bioinformatics.irida.model.Sample;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 
 /**
  * 
@@ -23,6 +29,21 @@ import org.hibernate.envers.Audited;
 @Table(name = "sequencefile_sample")
 @Audited
 public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	Long id;
+
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "sequencefile_id")
+	private SequenceFile sequenceFile;
+
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "sample_id")
+	private Sample sample;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdDate;
 
 	public SampleSequenceFileJoin() {
 		createdDate = new Date();
@@ -34,20 +55,19 @@ public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 		createdDate = new Date();
 	}
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	Long id;
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof SampleSequenceFileJoin) {
+			SampleSequenceFileJoin j = (SampleSequenceFileJoin) o;
+			return Objects.equals(sequenceFile, j.sequenceFile) && Objects.equals(sample, j.sample);
+		}
+		return false;
+	}
 
-	@ManyToOne
-	@JoinColumn(name = "sequencefile_id")
-	private SequenceFile sequenceFile;
-
-	@ManyToOne
-	@JoinColumn(name = "sample_id")
-	private Sample sample;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
+	@Override
+	public int hashCode() {
+		return Objects.hash(sequenceFile, sample);
+	}
 
 	@Override
 	public Sample getSubject() {

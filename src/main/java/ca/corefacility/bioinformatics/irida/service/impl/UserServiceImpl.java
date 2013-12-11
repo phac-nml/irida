@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -12,18 +14,22 @@ import javax.validation.Validator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 
 import com.google.common.collect.ImmutableMap;
@@ -52,6 +58,10 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * A reference to the user repository used to manage users.
 	 */
 	private UserRepository userRepository;
+	/**
+	 * A reference to the project user join repository.
+	 */
+	private ProjectUserJoinRepository pujRepository;
 	/**
 	 * A reference to the password encoder used by the system for storing
 	 * passwords.
@@ -83,6 +93,13 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	private static final String CHANGE_PASSWORD_PERMISSIONS = "isFullyAuthenticated() or "
 			+ "(principal instanceof T(ca.corefacility.bioinformatics.irida.model.User) and !principal.isCredentialsNonExpired())";
 
+	private static final Pattern USER_CONSTRAINT_PATTERN;
+
+	static {
+		String regex = "^USER_(.*)_CONSTRAINT$";
+		USER_CONSTRAINT_PATTERN = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+	}
+
 	protected UserServiceImpl() {
 		super(null, null, User.class);
 	}
@@ -95,10 +112,12 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * @param validator
 	 *            the validator used to validate instances of {@link User}.
 	 */
-	public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, Validator validator) {
+	public UserServiceImpl(UserRepository userRepository, ProjectUserJoinRepository pujRepository,
+			PasswordEncoder passwordEncoder, Validator validator) {
 		super(userRepository, validator, User.class);
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
+		this.pujRepository = pujRepository;
 	}
 
 	/**
@@ -127,7 +146,20 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 			// encode the user password
 			String password = u.getPassword();
 			u.setPassword(passwordEncoder.encode(password));
-			return super.create(u);
+			try {
+				return super.create(u);
+			} catch (DataIntegrityViolationException e) {
+				if (e.getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
+					RuntimeException translated = translateConstraintViolationException((org.hibernate.exception.ConstraintViolationException) e
+							.getCause());
+					throw translated;
+				} else {
+					// I can't figure out what the problem was, just keep
+					// throwing it up.
+					throw new DataIntegrityViolationException(
+							"Unexpected DataIntegrityViolationException, cause accompanies.", e);
+				}
+			}
 		}
 
 		throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
@@ -164,7 +196,11 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	@Override
 	@Transactional(readOnly = true)
 	public User getUserByUsername(String username) throws EntityNotFoundException {
-		return userRepository.getUserByUsername(username);
+		User u = userRepository.loadUserByUsername(username);
+		if (u == null) {
+			throw new EntityNotFoundException("User could not be found.");
+		}
+		return u;
 	}
 
 	/**
@@ -173,7 +209,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	@Override
 	@Transactional(readOnly = true)
 	public Collection<Join<Project, User>> getUsersForProject(Project project) {
-		return userRepository.getUsersForProject(project);
+		return pujRepository.getUsersForProject(project);
 	}
 
 	/**
@@ -186,7 +222,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 		org.springframework.security.core.userdetails.User userDetails = null;
 		User u;
 		try {
-			u = userRepository.getUserByUsername(username);
+			u = userRepository.loadUserByUsername(username);
 
 			userDetails = new org.springframework.security.core.userdetails.User(u.getUsername(), u.getPassword(),
 					u.getAuthorities());
@@ -223,12 +259,43 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	@Override
 	@Transactional(readOnly = true)
 	public Collection<Join<Project, User>> getUsersForProjectByRole(Project project, ProjectRole projectRole) {
-		return userRepository.getUsersForProjectByRole(project, projectRole);
+		return pujRepository.getUsersForProjectByRole(project, projectRole);
 	}
 
 	@Override
 	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_MANAGER')")
-	public List<User> listAll() {
-		return repository.listAll();
+	public Iterable<User> findAll() {
+		return repository.findAll();
+	}
+
+	/**
+	 * Translate {@link ConstraintViolationException} errors into an appropriate
+	 * {@link EntityExistsException}.
+	 * 
+	 * @param e
+	 *            the exception to translate.
+	 * @return the translated exception.
+	 */
+	private RuntimeException translateConstraintViolationException(
+			org.hibernate.exception.ConstraintViolationException e) {
+		final EntityExistsException UNABLE_TO_PARSE = new EntityExistsException(
+				"Could not create user as a duplicate fields exists; however the duplicate field was not included in "
+						+ "the ConstraintViolationException, the original cause is included.", e);
+		String constraintName = e.getConstraintName();
+
+		if (StringUtils.isEmpty(constraintName)) {
+			return UNABLE_TO_PARSE;
+		}
+		Matcher matcher = USER_CONSTRAINT_PATTERN.matcher(constraintName);
+		if (matcher.groupCount() != 1) {
+			throw new IllegalArgumentException("The pattern must have capture groups to parse the constraint name.");
+		}
+
+		if (!matcher.find()) {
+			return UNABLE_TO_PARSE;
+		}
+		String fieldName = matcher.group(1).toLowerCase();
+
+		return new EntityExistsException("Could not create user as a duplicate field exists: " + fieldName, fieldName);
 	}
 }

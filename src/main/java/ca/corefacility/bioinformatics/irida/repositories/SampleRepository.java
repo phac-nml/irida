@@ -1,40 +1,21 @@
 package ca.corefacility.bioinformatics.irida.repositories;
 
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.history.RevisionRepository;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
-
-import java.util.List;
 
 /**
  * A repository for storing Sample objects
  * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public interface SampleRepository extends CRUDRepository<Long, Sample> {
-
-	/**
-	 * Get the {@link Sample}s associated with a {@link Project}
-	 * 
-	 * @param project
-	 *            The {@link Project} to get {@link Sample}s from
-	 * @return A List of {@link ProjectSampleJoin}s describing the
-	 *         project/sample relationship
-	 */
-	public List<ProjectSampleJoin> getSamplesForProject(Project project);
-
-	/**
-	 * Get the {@link Sample} that owns the {@link SequenceFile}.
-	 * 
-	 * @param sequenceFile
-	 *            the file to find the {@link Sample} for.
-	 * @return the {@link Sample} that owns the file.
-	 */
-	public SampleSequenceFileJoin getSampleForSequenceFile(SequenceFile sequenceFile);
-
+public interface SampleRepository extends PagingAndSortingRepository<Sample, Long>,
+		RevisionRepository<Sample, Long, Integer> {
 	/**
 	 * Get a {@link Sample} with the given string sample identifier from a
 	 * specific project.
@@ -47,5 +28,6 @@ public interface SampleRepository extends CRUDRepository<Long, Sample> {
 	 * @throws EntityNotFoundException
 	 *             if a sample with this identifier doesn't exist
 	 */
+	@Query("select j.sample from ProjectSampleJoin j where j.project = ?1 and j.sample.externalSampleId = ?2")
 	public Sample getSampleByExternalSampleId(Project p, String externalSampleId) throws EntityNotFoundException;
 }

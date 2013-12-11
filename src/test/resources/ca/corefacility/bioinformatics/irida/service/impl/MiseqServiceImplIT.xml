@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+	<system_role description="A basic user in the system" name="ROLE_USER" />
+	<system_role description="An administrator" name="ROLE_ADMIN" />
+
+	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+		email="manager@nowhere.com" firstName="Mr." lastName="Manager"
+		password="$2a$10$rgdnCrrAqN11Hz03mcGCg.R9gZehmEcyLC3kUGQJ1fEBlF9ld.4v."
+		phoneNumber="867-5309" username="fbristow" system_role="ROLE_ADMIN"
+		credentialsNonExpired="true" enabled="true" />
+
+	<sequence_file id="1" />
+	<sequence_file id="2" />
+
+	<miseq_run id="1" />
+	<miseq_run id="2" />
+	
+	<sample id="1" sampleName="sample" externalSampleId="sample1"/>
+	<project id="1" name="project 1"/>
+	
+	<miseqrun_sequencefile id="1" miseqRun_id="2" sequenceFile_id="2" />
+	
+	<sequencefile_sample id="1" sequenceFile_id="1" sample_id="1"/>
+	
+	<project_sample id="1" project_id="1" sample_id="1"/>
+	<project_user id="1" project_id="1" user_id="1" projectRole="PROJECT_USER"/>
+
+	<Revisions />
+	<USER_AUD />
+	<MISEQRUN_SEQUENCEFILE_AUD />
+	<MISEQRUN_SEQUENCEFILE />
+	<PROJECT_USER />
+	<PROJECT_USER_AUD />
+	<MISEQ_RUN_AUD />
+	<SEQUENCE_FILE_AUD />
+</dataset>

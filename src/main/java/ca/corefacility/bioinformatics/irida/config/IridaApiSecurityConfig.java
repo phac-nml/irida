@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.config;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +21,13 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.security.IgnoreExpiredCredentialsForPasswordChangeChecker;
 import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.IridaPermissionEvaluator;
@@ -36,20 +40,34 @@ import ca.corefacility.bioinformatics.irida.security.permissions.UpdateUserPermi
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
-	private static final Logger logger = LoggerFactory.getLogger(IridaApiSecurityConfig.class);
-	
-	private static final String[] ROLE_HIERARCHIES = new String[] {
-		"ROLE_ADMIN > ROLE_MANAGER",
-		"ROLE_MANAGER > ROLE_USER"
-	};
-	
+	private static final String[] ROLE_HIERARCHIES = new String[] { "ROLE_ADMIN > ROLE_MANAGER",
+			"ROLE_MANAGER > ROLE_USER" };
+
 	private static final String ROLE_HIERARCHY = StringUtils.join(ROLE_HIERARCHIES, "\n");
-	
+
 	@Autowired
 	private UserRepository userRepository;
 
+	@Autowired
+	private ProjectRepository projectRepository;
+
+	@Autowired
+	private SampleRepository sampleRepository;
+
+	@Autowired
+	private SequenceFileRepository sequenceFileRepository;
+
+	@Autowired
+	private ProjectUserJoinRepository pujRepository;
+
+	@Autowired
+	private ProjectSampleJoinRepository psjRepository;
+
+	@Autowired
+	private SampleSequenceFileJoinRepository ssfRepository;
+
 	@Override
-	protected void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userRepository).passwordEncoder(passwordEncoder());
 		auth.authenticationProvider(authenticationProvider());
 	}
@@ -69,7 +87,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	}
 
 	@Override
-	protected MethodSecurityExpressionHandler expressionHandler() {
+	protected MethodSecurityExpressionHandler createExpressionHandler() {
 		DefaultMethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler();
 		IridaPermissionEvaluator permissionEvaluator = new IridaPermissionEvaluator(readProjectPermission(),
 				readSamplePermission(), readSequenceFilePermission(), updateUserPermission());
@@ -78,13 +96,11 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 		RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
 		roleHierarchy.setHierarchy(ROLE_HIERARCHY);
 		handler.setRoleHierarchy(roleHierarchy);
-		logger.debug("Returning custom expression handler [" + handler + "]");
 		return handler;
 	}
 
 	@Bean
 	public AuthenticationManager authenticationManager() throws Exception {
-		logger.debug("Returning authentication manager [" + super.authenticationManager() + "] from API.");
 		return super.authenticationManager();
 	}
 
@@ -95,21 +111,22 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	@Bean
 	public BasePermission<User> updateUserPermission() {
-		return new UpdateUserPermission();
+		return new UpdateUserPermission(userRepository);
 	}
 
 	@Bean
 	public BasePermission<Project> readProjectPermission() {
-		return new ReadProjectPermission();
+		return new ReadProjectPermission(projectRepository, userRepository, pujRepository);
 	}
 
 	@Bean
 	public BasePermission<Sample> readSamplePermission() {
-		return new ReadSamplePermission();
+		return new ReadSamplePermission(sampleRepository, userRepository, pujRepository, psjRepository);
 	}
 
 	@Bean
 	public BasePermission<SequenceFile> readSequenceFilePermission() {
-		return new ReadSequenceFilePermission();
+		return new ReadSequenceFilePermission(sequenceFileRepository, userRepository, pujRepository, psjRepository,
+				ssfRepository);
 	}
 }

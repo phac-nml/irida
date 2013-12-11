@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+	<changeSet id="2" author="fbristow">
+
+		<!-- vestige of old model concept where sequence files could exist as part 
+			of a project. -->
+		<dropTable tableName="sequencefile_project" />
+		<dropTable tableName="sequencefile_project_AUD" />
+
+		<!-- renamed miseqRun to have a more consistent name with other models. -->
+		<renameTable oldTableName="miseqRun" newTableName="miseq_run" />
+		<renameTable oldTableName="miseqRun_AUD" newTableName="miseq_run_AUD" />
+
+		<!-- dropped enabled column on all tables (EXCEPT USER, that's part of 
+			Spring Security) -->
+		<dropColumn columnName="enabled" tableName="project" />
+		<dropColumn columnName="enabled" tableName="project_AUD" />
+		<dropColumn columnName="enabled" tableName="sample" />
+		<dropColumn columnName="enabled" tableName="sample_AUD" />
+		<dropColumn columnName="enabled" tableName="sequence_file" />
+		<dropColumn columnName="enabled" tableName="sequence_file_AUD" />
+		<dropColumn columnName="enabled" tableName="overrepresented_sequence" />
+		<dropColumn columnName="enabled" tableName="overrepresented_sequence_AUD" />
+		<dropColumn columnName="enabled" tableName="miseq_run" />
+		<dropColumn columnName="enabled" tableName="miseq_run_AUD" />
+
+		<!-- add unique constraints on join tables where only one instance of a 
+			pair may exist. -->
+		<addUniqueConstraint columnNames="miseqRun_id, sequenceFile_id"
+			tableName="miseqrun_sequencefile" constraintName="UK_MISEQRUN_SEQUENCEFILE" />
+		<addUniqueConstraint columnNames="project_id, sample_id"
+			tableName="project_sample" constraintName="UK_PROJECT_SAMPLE" />
+		<addUniqueConstraint columnNames="project_id, user_id"
+			tableName="project_user" constraintName="UK_PROJECT_USER" />
+
+		<!-- sequence files have a revision number, used to ensure that only one 
+			file per directory is stored on the filesystem. -->
+		<addColumn tableName="sequence_file">
+			<column name="fileRevisionNumber" type="bigint(20)" />
+		</addColumn>
+		<addColumn tableName="sequence_file_AUD">
+			<column name="fileRevisionNumber" type="bigint(20)" />
+		</addColumn>
+
+
+		<!-- drop the id column on system role and use the name column as the primary 
+			key. slightly more complicated modification: -->
+		<!-- 1) modify the user table to have a column that refers to the name 
+			column: -->
+		<!-- a) add a new column (system_role_name) to the user table referring 
+			to the name of the system role -->
+		<addColumn tableName="user">
+			<column name="system_role_name" type="varchar(255)" />
+		</addColumn>
+
+		<!-- b) enter the right system role name into the column given the system 
+			role id that the user currently has -->
+		<update tableName="user">
+			<column name="system_role_name" type="varchar(255)" value="ROLE_USER" />
+			<where>system_role=1</where>
+		</update>
+		<update tableName="user">
+			<column name="system_role_name" type="varchar(255)" value="ROLE_ADMIN" />
+			<where>system_role=2</where>
+		</update>
+		<update tableName="user">
+			<column name="system_role_name" type="varchar(255)" value="ROLE_CLIENT" />
+			<where>system_role=3</where>
+		</update>
+		<update tableName="user">
+			<column name="system_role_name" type="varchar(255)" value="ROLE_MANAGER" />
+			<where>system_role=4</where>
+		</update>
+		<!-- c) drop the foreign key constraint on system_role.id -->
+		<dropForeignKeyConstraint baseTableName="user"
+			constraintName="FK_dc875ks31x9kh1hjsekrcvxss" />
+		<!-- d) drop the system_role column from the user table -->
+		<dropColumn columnName="system_role" tableName="user" />
+		<!-- e) rename system_role_name to system_role -->
+		<renameColumn newColumnName="system_role" columnDataType="varchar(255)"
+			oldColumnName="system_role_name" tableName="user" />
+
+		<!-- 2) change the primary key on system_role -->
+		<!-- a) drop the id column. -->
+		<dropColumn columnName="id" tableName="system_role" />
+		<!-- b) add a primary key constraint on the name column. -->
+		<addPrimaryKey columnNames="name" constraintName="PK_SYSTEM_ROLE"
+			tableName="system_role" />
+		<!-- 3) add a new foreign key constraint on the user.system_role column. -->
+		<addForeignKeyConstraint baseTableName="user"
+			baseColumnNames="system_role" constraintName="FK_USER_SYSTEM_ROLE"
+			referencedColumnNames="name" referencedTableName="system_role" />
+
+		<!-- update the user_AUD table, too. -->
+		<addColumn tableName="user_AUD">
+			<column name="system_role_name" type="varchar(255)" />
+		</addColumn>
+		<update tableName="user_AUD">
+			<column name="system_role_name" type="varchar(255)" value="ROLE_USER" />
+			<where>system_role=1</where>
+		</update>
+		<update tableName="user_AUD">
+			<column name="system_role_name" type="varchar(255)" value="ROLE_ADMIN" />
+			<where>system_role=2</where>
+		</update>
+		<update tableName="user_AUD">
+			<column name="system_role_name" type="varchar(255)" value="ROLE_CLIENT" />
+			<where>system_role=3</where>
+		</update>
+		<update tableName="user_AUD">
+			<column name="system_role_name" type="varchar(255)" value="ROLE_MANAGER" />
+			<where>system_role=4</where>
+		</update>
+		<dropColumn columnName="system_role" tableName="user_AUD" />
+		<renameColumn newColumnName="system_role" columnDataType="varchar(255)"
+			oldColumnName="system_role_name" tableName="user_AUD" />
+	</changeSet>
+</databaseChangeLog>

@@ -1,13 +1,19 @@
 package ca.corefacility.bioinformatics.irida.model;
 
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -49,13 +55,17 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	@Lob
 	private String description;
 
-	private Boolean enabled = true;
-
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
+	
+	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sample")
+	private List<ProjectSampleJoin> projects;
+	
+	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sample")
+	private List<SampleSequenceFileJoin> sequenceFiles;
 
 	public Sample() {
 		createdDate = new Date();
@@ -145,16 +155,6 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	}
 
 	@Override
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	@Override
-	public void setEnabled(boolean valid) {
-		this.enabled = valid;
-	}
-
-	@Override
 	public Date getTimestamp() {
 		return createdDate;
 	}
@@ -172,5 +172,21 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
+	}
+
+	public List<ProjectSampleJoin> getProjects() {
+		return projects;
+	}
+
+	public void setProjects(List<ProjectSampleJoin> projects) {
+		this.projects = projects;
+	}
+
+	public List<SampleSequenceFileJoin> getSequenceFiles() {
+		return sequenceFiles;
+	}
+
+	public void setSequenceFiles(List<SampleSequenceFileJoin> sequenceFiles) {
+		this.sequenceFiles = sequenceFiles;
 	}
 }

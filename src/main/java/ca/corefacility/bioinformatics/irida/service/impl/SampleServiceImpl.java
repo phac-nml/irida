@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,10 +16,9 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
-import ca.corefacility.bioinformatics.irida.repositories.CRUDRepository;
-import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
-import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
 
 /**
@@ -32,16 +29,20 @@ import ca.corefacility.bioinformatics.irida.service.SampleService;
 public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements SampleService {
 
 	/**
-	 * Reference to {@link CRUDRepository} for managing {@link Sample}.
+	 * Reference to {@link SampleRepository} for managing {@link Sample}.
 	 */
 	private SampleRepository sampleRepository;
 	/**
-	 * Reference to {@link SequenceFileRepository} for managing
-	 * {@link SequenceFile}.
+	 * Reference to {@link ProjectSampleJoinRepository} for managing
+	 * {@link ProjectSampleJoin}.
 	 */
-	private SequenceFileRepository sequenceFileRepository;
+	private ProjectSampleJoinRepository psjRepository;
 
-	private ProjectRepository projectRespository;
+	/**
+	 * Reference to {@link SampleSequenceFileJoinRepository} for managing
+	 * {@link SampleSequenceFileJoin}.
+	 */
+	private SampleSequenceFileJoinRepository ssfRepository;
 
 	protected SampleServiceImpl() {
 		super(null, null, Sample.class);
@@ -55,12 +56,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * @param validator
 	 *            validator.
 	 */
-	public SampleServiceImpl(SampleRepository sampleRepository, SequenceFileRepository sequenceFileRepository,
-			ProjectRepository projectRepository, Validator validator) {
+	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
+			SampleSequenceFileJoinRepository ssfRepository, Validator validator) {
 		super(sampleRepository, validator, Sample.class);
-		this.projectRespository = projectRepository;
 		this.sampleRepository = sampleRepository;
-		this.sequenceFileRepository = sequenceFileRepository;
+		this.psjRepository = psjRepository;
+		this.ssfRepository = ssfRepository;
 	}
 
 	/**
@@ -81,7 +82,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public SampleSequenceFileJoin addSequenceFileToSample(Sample sample, SequenceFile sampleFile) {
 		// call the relationship repository to create the relationship between
 		// the two entities.
-		return sequenceFileRepository.addFileToSample(sample, sampleFile);
+		SampleSequenceFileJoin join = new SampleSequenceFileJoin(sample, sampleFile);
+		return ssfRepository.save(join);
 	}
 
 	/**
@@ -95,8 +97,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		Sample s = null;
 
 		// confirm that the link between project and this identifier exists
-		List<ProjectSampleJoin> samplesForProject = sampleRepository.getSamplesForProject(project);
-		for (ProjectSampleJoin join : samplesForProject) {
+		List<Join<Project, Sample>> samplesForProject = psjRepository.getSamplesForProject(project);
+		for (Join<Project, Sample> join : samplesForProject) {
 			if (join.getObject().getId().equals(identifier)) {
 				// load the sample from the database
 				s = read(identifier);
@@ -117,7 +119,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Override
 	@Transactional(readOnly = true)
 	public Sample getSampleByExternalSampleId(Project p, String sampleId) {
-		return sampleRepository.getSampleByExternalSampleId(p, sampleId);
+		Sample s = sampleRepository.getSampleByExternalSampleId(p, sampleId);
+		if (s != null) {
+			return s;
+		} else {
+			throw new EntityNotFoundException("No sample with external id [" + sampleId + "] in project [" + p.getId()
+					+ "]");
+		}
 	}
 
 	/**
@@ -127,7 +135,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public void removeSequenceFileFromSample(Sample sample, SequenceFile sequenceFile) {
-		sequenceFileRepository.removeFileFromSample(sample, sequenceFile);
+		ssfRepository.removeFileFromSample(sample, sequenceFile);
 	}
 
 	/**
@@ -136,7 +144,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Transactional(readOnly = true)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public List<Join<Project, Sample>> getSamplesForProject(Project project) {
-		return new ArrayList<Join<Project, Sample>>(sampleRepository.getSamplesForProject(project));
+		return psjRepository.getSamplesForProject(project);
 	}
 
 	/**
@@ -149,11 +157,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		for (Sample s : toMerge) {
 			confirmProjectSampleJoin(project, s);
-			List<SampleSequenceFileJoin> sequenceFiles = sequenceFileRepository.getFilesForSample(s);
-			for (SampleSequenceFileJoin sequenceFile : sequenceFiles) {
+			List<Join<Sample, SequenceFile>> sequenceFiles = ssfRepository.getFilesForSample(s);
+			for (Join<Sample, SequenceFile> sequenceFile : sequenceFiles) {
 				removeSequenceFileFromSample(s, sequenceFile.getObject());
 				addSequenceFileToSample(mergeInto, sequenceFile.getObject());
 			}
+			// have to remove the sample to be deleted from its project:
+			psjRepository.removeSampleFromProject(project, s);
 			sampleRepository.delete(s.getId());
 		}
 		return mergeInto;
@@ -161,8 +171,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 	private void confirmProjectSampleJoin(Project project, Sample sample) {
 		Set<Project> projects = new HashSet<>();
-		Collection<ProjectSampleJoin> sampleProjects = projectRespository.getProjectForSample(sample);
-		for (ProjectSampleJoin p : sampleProjects) {
+		List<Join<Project, Sample>> sampleProjects = psjRepository.getProjectForSample(sample);
+		for (Join<Project, Sample> p : sampleProjects) {
 			projects.add(p.getSubject());
 		}
 		if (!projects.contains(project)) {

@@ -9,15 +9,13 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-
-import com.google.common.collect.ImmutableList;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
@@ -26,6 +24,9 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * Tests for {@link ReadProjectPermission}.
@@ -37,39 +38,36 @@ public class ReadProjectPermissionTest {
 	private ReadProjectPermission readProjectPermission;
 	private UserRepository userRepository;
 	private ProjectRepository projectRepository;
+	private ProjectUserJoinRepository pujRepository;
 
 	@Before
 	public void setUp() {
-		ApplicationContext applicationContext = mock(ApplicationContext.class);
 		userRepository = mock(UserRepository.class);
 		projectRepository = mock(ProjectRepository.class);
-		readProjectPermission = new ReadProjectPermission();
-		readProjectPermission.setApplicationContext(applicationContext);
-
-		when(applicationContext.getBean(UserRepository.class)).thenReturn(userRepository);
-		when(applicationContext.getBean("projectRepository")).thenReturn(projectRepository);
+		pujRepository = mock(ProjectUserJoinRepository.class);
+		readProjectPermission = new ReadProjectPermission(projectRepository, userRepository, pujRepository);		
 	}
-
+	
 	@Test
 	public void testGrantPermission() {
 		String username = "fbristow";
 		User u = new User();
 		u.setUsername(username);
 		Project p = new Project();
-		Collection<Join<Project, User>> projectUsers = new ArrayList<>();
+		List<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, u));
 
-		when(userRepository.getUserByUsername(username)).thenReturn(u);
-		when(projectRepository.read(1l)).thenReturn(p);
-		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
+		when(userRepository.loadUserByUsername(username)).thenReturn(u);
+		when(projectRepository.findOne(1l)).thenReturn(p);
+		when(pujRepository.getUsersForProject(p)).thenReturn(projectUsers);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
 		assertTrue("permission was not granted.", readProjectPermission.isAllowed(auth, 1l));
 
-		verify(userRepository).getUserByUsername(username);
-		verify(projectRepository).read(1l);
-		verify(userRepository).getUsersForProject(p);
+		verify(userRepository).loadUserByUsername(username);
+		verify(projectRepository).findOne(1l);
+		verify(pujRepository).getUsersForProject(p);
 	}
 
 	@Test
@@ -78,20 +76,20 @@ public class ReadProjectPermissionTest {
 		User u = new User();
 		u.setUsername(username);
 		Project p = new Project();
-		Collection<Join<Project, User>> projectUsers = new ArrayList<>();
+		List<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, new User()));
 
-		when(userRepository.getUserByUsername(username)).thenReturn(u);
-		when(projectRepository.read(1l)).thenReturn(p);
-		when(userRepository.getUsersForProject(p)).thenReturn(projectUsers);
+		when(userRepository.loadUserByUsername(username)).thenReturn(u);
+		when(projectRepository.findOne(1l)).thenReturn(p);
+		when(pujRepository.getUsersForProject(p)).thenReturn(projectUsers);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
 		assertFalse("permission was granted.", readProjectPermission.isAllowed(auth, 1l));
 
-		verify(userRepository).getUserByUsername(username);
-		verify(projectRepository).read(1l);
-		verify(userRepository).getUsersForProject(p);
+		verify(userRepository).loadUserByUsername(username);
+		verify(projectRepository).findOne(1l);
+		verify(pujRepository).getUsersForProject(p);
 	}
 
 	@Test
@@ -111,8 +109,7 @@ public class ReadProjectPermissionTest {
 	@Test
 	public void testPermitAdminWithoutDescription() {
 		// Collection<GrantedAuthority> roles = new ArrayList<>();
-		Collection<GrantedAuthority> roles = ImmutableList.of((GrantedAuthority) new Role("ROLE_ADMIN",
-				"Aww yiss, administrator privileges."));
+		Collection<GrantedAuthority> roles = ImmutableList.of((GrantedAuthority) Role.ROLE_ADMIN);
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
 
 		assertTrue("permission should be granted to admin.", readProjectPermission.isAllowed(auth, 1l));

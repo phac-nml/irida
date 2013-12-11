@@ -1,16 +1,14 @@
 package ca.corefacility.bioinformatics.irida.model;
 
-import org.springframework.security.core.GrantedAuthority;
-
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
-import javax.persistence.Column;
+
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.envers.Audited;
+import org.springframework.security.core.GrantedAuthority;
 
 /**
  * Roles for authorization in the application.
@@ -42,26 +40,21 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 	 */
 	public static final Role ROLE_MANAGER = new Role("ROLE_MANAGER");
 
+	
 	@Id
-	@Column(name = "id")
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	Long id;
-
-	@NotNull
-	@Column(unique = true)
 	private String name;
 	@NotNull
 	private String description;
 
-	public Role() {
+	private Role() {
 	}
 
-	public Role(String name) {
+	private Role(String name) {
 		this();
 		this.name = name;
 	}
 
-	public Role(String name, String description) {
+	private Role(String name, String description) {
 		this(name);
 		this.description = description;
 	}
