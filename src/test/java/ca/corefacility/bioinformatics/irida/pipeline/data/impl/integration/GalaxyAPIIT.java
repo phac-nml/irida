@@ -120,15 +120,18 @@ public class GalaxyAPIIT
 	    
 	    galaxyProperties.setAppProperty("allow_library_path_paste", "true");
 	    
-	    logger.info("About to run Galaxy on url: " + galaxyURL);
+	    logger.info("Setting up Galaxy");
 	    logger.debug("Galaxy admin user: " + galaxyAdmin + ", password: " + adminPassword +
 	    		", apiKey: " + adminAPIKey);
 	    logger.debug("Galaxy regular user: " + regularUserName + ", password: " + regularUserPassword +
 	    		", apiKey: " + regularUserAPIKey);
 	    logger.debug("Galaxy regular user2: " + regularUserName2 + ", password: " + regularUserPassword2 +
 	    		", apiKey: " + regularUserAPIKey2);
+	    
 	    galaxyDaemon = bootStrapper.run(galaxyProperties, galaxyData);
-	    logger.info("Waiting for Galaxy to come up, log: " + galaxyLogFile.getAbsolutePath());
+	    
+	    logger.info("Waiting for Galaxy to come up on url: " + galaxyURL + ", log: " +
+	    		galaxyLogFile.getAbsolutePath());
 	    if (!galaxyDaemon.waitForUp())
 	    {
 	    	fail("Could not start Galaxy for tests");

@@ -3,6 +3,9 @@ package ca.corefacility.bioinformatics.irida.pipeline.data.impl;
 import java.io.File;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
@@ -19,6 +22,8 @@ import com.sun.jersey.api.client.ClientResponse;
 
 public class GalaxyAPI
 {
+	private static final Logger logger = LoggerFactory.getLogger(GalaxyAPI.class);
+	
 	private GalaxyInstance galaxyInstance;
 	private String adminEmail;
 	
@@ -95,6 +100,7 @@ public class GalaxyAPI
 	 */
 	private boolean checkValidAdminEmailAPIKey(String adminEmail, String adminAPIKey)
 	{		
+		logger.debug("Checking for user=" + adminEmail + " in Galaxy url=" + galaxyInstance.getGalaxyUrl());
 		User user = findUserWithEmail(adminEmail);
 		
 		// TODO: find some way of verifying that the email/api key correspond to each other
@@ -121,6 +127,8 @@ public class GalaxyAPI
 			throw new IllegalArgumentException("galaxyUser is null");
 		}
 		
+		logger.info("Attempt to create new library=" + libraryName + " owned by user=" + galaxyUserEmail +
+				" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
 		String libraryID = null;
 		User user = findUserWithEmail(galaxyUserEmail);
 		
@@ -139,6 +147,9 @@ public class GalaxyAPI
 					
 					if (persistedLibrary != null)
 					{
+						logger.info("Created library=" + libraryName + " libraryId=" + persistedLibrary.getId() + 
+								" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
+						
 						// setup permissions for library
 						LibraryPermissions permissions = new LibraryPermissions();
 						permissions.getAccessInRoles().add(userRole.getId());
@@ -153,6 +164,10 @@ public class GalaxyAPI
 						ClientResponse response = librariesClient.setLibraryPermissions(persistedLibrary.getId(), permissions);
 						if (ClientResponse.Status.OK.equals(response.getClientResponseStatus()))
 						{
+							logger.info("Changed owner of library=" + libraryName + " libraryId=" + persistedLibrary.getId() +
+									" to roles:" + userRole.getName() + "," + adminRole.getName() + " in Galaxy url=" + 
+									galaxyInstance.getGalaxyUrl());
+							
 							libraryID = persistedLibrary.getId();
 						}
 						else
@@ -251,10 +266,16 @@ public class GalaxyAPI
 		
 		LibraryFolder persistedSampleFolder = librariesClient.createFolder(library.getId(), sampleFolder);
 		
-		boolean success = true;
+		boolean success = false;
 		
 		if (persistedSampleFolder != null)
 		{
+			success = true;
+			
+			logger.info("Created sample folder name=" + sampleFolder.getName() + " id=" + persistedSampleFolder.getId() +
+					" in library name=" + library.getName() + " id=" + library.getId() + 
+					" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
+			
 			for (File file : sample.getSampleFiles())
 			{
 				FileLibraryUpload upload = new FileLibraryUpload();
@@ -266,15 +287,22 @@ public class GalaxyAPI
 				ClientResponse uploadResponse = librariesClient.uploadFile(library.getId(), upload);
 				
 				success &= ClientResponse.Status.OK.equals(uploadResponse.getClientResponseStatus());
-			}
-			
-			return success;
+				
+				if (success)
+				{
+					logger.info("Uploaded file to path=/" + sampleFolder.getName() + "/" + file.getName() +
+							" in library name=" + library.getName() + " id=" + library.getId() + 
+							" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
+				}
+			}			
 		}
 		else
 		{
 			throw new LibraryUploadException("Could not build folder for sample " + sample.getSampleName() +
 					" within library " + library.getName() + ":" + library.getId() + errorSuffix);
 		}
+		
+		return success;
 	}
 	
 	/**
@@ -320,10 +348,12 @@ public class GalaxyAPI
 		}
 		catch (LibraryUploadException e)
 		{
+			logger.error(e.toString());
 			throw e;
 		}
 		catch (Exception e)
 		{
+			logger.error(e.toString());
 			throw new LibraryUploadException(e);
 		}
 		
