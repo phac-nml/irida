@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.integration;
+package ca.corefacility.bioinformatics.irida.pipeline.data.impl.integration;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,9 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 
-import ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.GalaxySample;
-import ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.LibraryUploadException;
-import ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.WorkflowRESTAPIGalaxy;
+import ca.corefacility.bioinformatics.irida.pipeline.data.impl.GalaxySample;
+import ca.corefacility.bioinformatics.irida.pipeline.data.impl.LibraryUploadException;
+import ca.corefacility.bioinformatics.irida.pipeline.data.impl.GalaxyAPI;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
@@ -31,13 +31,13 @@ import com.github.jmchilton.galaxybootstrap.GalaxyProperties;
 import com.github.jmchilton.galaxybootstrap.BootStrapper.GalaxyDaemon;
 import com.github.jmchilton.galaxybootstrap.GalaxyData.User;
 
-public class WorkflowRESTAPIGalaxyIT
+public class GalaxyAPIIT
 {
 	private static final int largestPort = 65535;
 	
-	private static final Logger logger = LoggerFactory.getLogger(WorkflowRESTAPIGalaxyIT.class);
+	private static final Logger logger = LoggerFactory.getLogger(GalaxyAPIIT.class);
 	
-	private static WorkflowRESTAPIGalaxy restAPIGalaxy;
+	private static GalaxyAPI restAPIGalaxy;
 	private static GalaxyInstance galaxyInstance;
 	
 	private static String adminAPIKey;
@@ -94,13 +94,13 @@ public class WorkflowRESTAPIGalaxyIT
 	    }
 	    logger.info("Galaxy running on url: " + galaxyURL);
 	    
-	    restAPIGalaxy = new WorkflowRESTAPIGalaxy(galaxyURL, adminAPIKey);
+	    restAPIGalaxy = new GalaxyAPI(galaxyURL, adminAPIKey);
 	    
 	    galaxyInstance = GalaxyInstanceFactory.get(galaxyURL, adminAPIKey);
 	    
 	    // setup data files
-		File dataFile1 = new File(WorkflowRESTAPIGalaxyIT.class.getResource("testData1.fastq").toURI());
-		File dataFile2 = new File(WorkflowRESTAPIGalaxyIT.class.getResource("testData2.fastq").toURI());
+		File dataFile1 = new File(GalaxyAPIIT.class.getResource("testData1.fastq").toURI());
+		File dataFile2 = new File(GalaxyAPIIT.class.getResource("testData2.fastq").toURI());
 		
 		dataFilesSingle = new ArrayList<File>();
 		dataFilesSingle.add(dataFile1);
@@ -213,7 +213,7 @@ public class WorkflowRESTAPIGalaxyIT
 		
 		String wrongGalaxyURL = "http://localhost:" + wrongPort + "/";
 		
-		WorkflowRESTAPIGalaxy restAPIGalaxy = new WorkflowRESTAPIGalaxy(wrongGalaxyURL, adminAPIKey);
+		GalaxyAPI restAPIGalaxy = new GalaxyAPI(wrongGalaxyURL, adminAPIKey);
 		
 		String libraryName = "testUploadSampleWrongGalaxyAddress";
 		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
@@ -232,7 +232,7 @@ public class WorkflowRESTAPIGalaxyIT
 			wrongAdminAPIKey = "badbadbadbadbadbadbadbadbadbadbaa";
 		}
 		
-		WorkflowRESTAPIGalaxy restAPIGalaxy = new WorkflowRESTAPIGalaxy(galaxyURL, wrongAdminAPIKey);
+		GalaxyAPI restAPIGalaxy = new GalaxyAPI(galaxyURL, wrongAdminAPIKey);
 		
 		String libraryName = "testUploadSampleWrongGalaxyAddress";
 		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);

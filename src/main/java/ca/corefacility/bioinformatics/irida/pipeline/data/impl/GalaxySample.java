@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.workflow.impl;
+package ca.corefacility.bioinformatics.irida.pipeline.data.impl;
 
 import java.io.File;
 import java.util.List;
