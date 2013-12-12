@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.unit;
+package ca.corefacility.bioinformatics.irida.pipeline.data.impl.unit;
 
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
@@ -6,21 +6,17 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import ca.corefacility.bioinformatics.irida.pipeline.workflow.WorkflowSubmissionException;
-import ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.ExecutableWorkflowGalaxy;
-import ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.GalaxySample;
-import ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.LibraryUploadException;
-import ca.corefacility.bioinformatics.irida.pipeline.workflow.impl.WorkflowRESTAPIGalaxy;
+import ca.corefacility.bioinformatics.irida.pipeline.data.impl.GalaxySample;
+import ca.corefacility.bioinformatics.irida.pipeline.data.impl.LibraryUploadException;
+import ca.corefacility.bioinformatics.irida.pipeline.data.impl.GalaxyAPI;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
@@ -29,10 +25,9 @@ import com.github.jmchilton.blend4j.galaxy.beans.FileLibraryUpload;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
-import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 
-public class WorkflowRESTAPIGalaxyTest
+public class GalaxyAPITest
 {
 	@Mock private WorkflowsClient workflowsClient;
 	@Mock private LibrariesClient librariesClient;
@@ -41,34 +36,21 @@ public class WorkflowRESTAPIGalaxyTest
 	@Mock private ClientResponse clientResponse;
 	@Mock private com.github.jmchilton.blend4j.galaxy.beans.Workflow blendWorkflow;
 	
-	private WorkflowRESTAPIGalaxy workflowRESTAPI;
+	private GalaxyAPI workflowRESTAPI;
 	private File dataFile1;
 	private File dataFile2;
 	private List<File> dataFilesSingle;
 	private List<File> dataFilesDouble;
-	private String goodWorkflowString;
-	private String badWorkflowString;
 	
 	@Before
 	public void setup() throws FileNotFoundException, URISyntaxException
-	{
-		URL goodWorkflowURL = this.getClass().getResource("GalaxyWorkflowGood.ga");
-		URL badWorkflowURL = this.getClass().getResource("GalaxyWorkflowBad.ga");
-		Scanner goodWorkflowScanner = new Scanner(new File(goodWorkflowURL.toURI()));
-		Scanner badWorkflowScanner = new Scanner(new File(badWorkflowURL.toURI()));
-		
+	{		
 		MockitoAnnotations.initMocks(this);
-		
-		goodWorkflowString = goodWorkflowScanner.useDelimiter("\\Z").next();
-		goodWorkflowScanner.close();
-		
-		badWorkflowString = badWorkflowScanner.useDelimiter("\\Z").next();
-		badWorkflowScanner.close();
 		
 		when(galaxyInstance.getWorkflowsClient()).thenReturn(workflowsClient);
 		when(galaxyInstance.getLibrariesClient()).thenReturn(librariesClient);
 		
-		workflowRESTAPI = new WorkflowRESTAPIGalaxy(galaxyInstance);
+		workflowRESTAPI = new GalaxyAPI(galaxyInstance);
 		
 		dataFile1 = new File(this.getClass().getResource("testData1.fastq").toURI());
 		dataFile2 = new File(this.getClass().getResource("testData2.fastq").toURI());
@@ -79,24 +61,6 @@ public class WorkflowRESTAPIGalaxyTest
 		dataFilesDouble = new ArrayList<File>();
 		dataFilesDouble.add(dataFile1);
 		dataFilesDouble.add(dataFile2);
-	}
-	
-	@Test
-	public void testSubmitWorkflowGood() throws WorkflowSubmissionException
-	{
-		when(workflowsClient.importWorkflow(goodWorkflowString)).thenReturn(blendWorkflow);
-		when(blendWorkflow.getId()).thenReturn("id");
-		
-		assertEquals("id", workflowRESTAPI.importWorkflow(new ExecutableWorkflowGalaxy(goodWorkflowString)));
-		verify(workflowsClient).importWorkflow(goodWorkflowString);
-	}
-	
-	@Test(expected=WorkflowSubmissionException.class)
-	public void testSubmitWorkflowBad() throws WorkflowSubmissionException
-	{	
-		when(workflowsClient.importWorkflow(badWorkflowString)).thenThrow(new ClientHandlerException());
-		
-		workflowRESTAPI.importWorkflow(new ExecutableWorkflowGalaxy(badWorkflowString));
 	}
 	
 	@Test

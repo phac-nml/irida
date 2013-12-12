@@ -1,26 +1,22 @@
-package ca.corefacility.bioinformatics.irida.pipeline.workflow.impl;
+package ca.corefacility.bioinformatics.irida.pipeline.data.impl;
 
 import java.io.File;
 import java.util.List;
 
-import ca.corefacility.bioinformatics.irida.pipeline.workflow.WorkflowSubmissionException;
-
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
-import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.FileLibraryUpload;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
-import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 
-public class WorkflowRESTAPIGalaxy
+public class GalaxyAPI
 {
 	private GalaxyInstance galaxyInstance;
 	
-	public WorkflowRESTAPIGalaxy(String galaxyURL, String apiKey)
+	public GalaxyAPI(String galaxyURL, String apiKey)
 	{
 		if (galaxyURL == null)
 		{
@@ -40,7 +36,7 @@ public class WorkflowRESTAPIGalaxy
 		}
 	}
 	
-	public WorkflowRESTAPIGalaxy(GalaxyInstance galaxyInstance)
+	public GalaxyAPI(GalaxyInstance galaxyInstance)
 	{
 		if (galaxyInstance == null)
 		{
@@ -48,45 +44,6 @@ public class WorkflowRESTAPIGalaxy
 		}
 		
 		this.galaxyInstance = galaxyInstance;
-	}
-	
-	/**
-	 * Imports the passed workflow into Galaxy.
-	 * @param workflowGalaxy  The Galaxy Workflow to import.
-	 * @return  The ID of the Galaxy Workflow, or null if not successfully imported.
-	 * @throws WorkflowSubmissionException  If an error occurred while importing the workflow.
-	 */
-	public String importWorkflow(ExecutableWorkflowGalaxy workflowGalaxy) throws WorkflowSubmissionException
-	{
-		WorkflowsClient workflowsClient = galaxyInstance.getWorkflowsClient();
-		com.github.jmchilton.blend4j.galaxy.beans.Workflow galaxyWorkflow = null;
-		
-		try
-		{
-			galaxyWorkflow = workflowsClient.importWorkflow(workflowGalaxy.getJson());
-		}
-		catch (ClientHandlerException e)
-		{
-			throw new WorkflowSubmissionException(e);
-		}
-		
-		if (galaxyWorkflow == null)
-		{
-			throw new WorkflowSubmissionException("uploaded Galaxy workflow is null");
-		}
-		
-		return galaxyWorkflow.getId();
-	}
-	
-	/**
-	 * Imports the files used within the given workflow to Galaxy.
-	 * @param workflowGalaxy  The workflow containing the files to import.
-	 * @return  An ID of the data library containing the files.
-	 */
-	public String importWorkflowFiles(ExecutableWorkflowGalaxy workflowGalaxy)
-		throws WorkflowSubmissionException
-	{
-		return null;
 	}
 	
 	/**

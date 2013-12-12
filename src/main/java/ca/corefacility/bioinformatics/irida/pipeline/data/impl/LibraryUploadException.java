@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.workflow.impl;
+package ca.corefacility.bioinformatics.irida.pipeline.data.impl;
 
 public class LibraryUploadException extends Exception
 {
