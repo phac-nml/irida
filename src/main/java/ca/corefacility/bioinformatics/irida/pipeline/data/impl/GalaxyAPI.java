@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
-import com.github.jmchilton.blend4j.galaxy.RolesClient;
-import com.github.jmchilton.blend4j.galaxy.UsersClient;
 import com.github.jmchilton.blend4j.galaxy.beans.FileLibraryUpload;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
@@ -26,6 +24,7 @@ public class GalaxyAPI
 	
 	private GalaxyInstance galaxyInstance;
 	private String adminEmail;
+	private GalaxySearch galaxySearch;
 	
 	/**
 	 * Builds a new GalaxyAPI instance with the given information.
@@ -58,7 +57,10 @@ public class GalaxyAPI
 			throw new RuntimeException("Could not create GalaxyInstance with URL=" + 
 						galaxyURL + ", adminEmail=" + adminEmail);
 		}
-		else if (!checkValidAdminEmailAPIKey(adminEmail, adminAPIKey))
+		
+		galaxySearch = new GalaxySearch(galaxyInstance);
+		
+		if (!galaxySearch.checkValidAdminEmailAPIKey(adminEmail, adminAPIKey))
 		{
 			throw new RuntimeException("Could not create GalaxyInstance with URL=" + 
 					galaxyURL + ", adminEmail=" + adminEmail);
@@ -85,27 +87,13 @@ public class GalaxyAPI
 		this.galaxyInstance = galaxyInstance;
 		this.adminEmail = adminEmail;
 		
-		if (!checkValidAdminEmailAPIKey(adminEmail, galaxyInstance.getApiKey()))
+		galaxySearch = new GalaxySearch(galaxyInstance);
+		
+		if (!galaxySearch.checkValidAdminEmailAPIKey(adminEmail, galaxyInstance.getApiKey()))
 		{
 			throw new RuntimeException("Could not create GalaxyInstance with URL=" + 
 					galaxyInstance.getGalaxyUrl() + ", adminEmail=" + adminEmail);
 		}
-	}
-	
-	/**
-	 * Verifies that the given admin email address corresponds to the given admin API key
-	 * @param adminEmail  The email of an administrator.
-	 * @param adminAPIKey  The API key of an administrator.
-	 * @return  True if the admin email address corresponds to the admin API key, false otherwise.
-	 */
-	private boolean checkValidAdminEmailAPIKey(String adminEmail, String adminAPIKey)
-	{		
-		logger.debug("Checking for user=" + adminEmail + " in Galaxy url=" + galaxyInstance.getGalaxyUrl());
-		User user = findUserWithEmail(adminEmail);
-		
-		// TODO: find some way of verifying that the email/api key correspond to each other
-		
-		return user != null;
 	}
 	
 	/**
@@ -130,12 +118,12 @@ public class GalaxyAPI
 		logger.info("Attempt to create new library=" + libraryName + " owned by user=" + galaxyUserEmail +
 				" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
 		String libraryID = null;
-		User user = findUserWithEmail(galaxyUserEmail);
+		User user = galaxySearch.findUserWithEmail(galaxyUserEmail);
 		
 		if (user != null)
 		{
-			Role userRole = findUserRoleWithEmail(galaxyUserEmail);
-			Role adminRole = findUserRoleWithEmail(adminEmail);
+			Role userRole = galaxySearch.findUserRoleWithEmail(galaxyUserEmail);
+			Role adminRole = galaxySearch.findUserRoleWithEmail(adminEmail);
 			
 			if (userRole != null)
 			{
@@ -195,66 +183,6 @@ public class GalaxyAPI
 		}
 		
 		return libraryID;
-	}
-	
-	/**
-	 * Given an email, finds a corresponding User object in Galaxy with that email.
-	 * @param email  The email of the user to search.
-	 * @return  A User object of the user with the corresponding email, or null otherwise.
-	 */
-	private User findUserWithEmail(String email)
-	{
-		User user = null;
-		
-		if (email == null)
-		{
-			throw new IllegalArgumentException("email is null");
-		}
-		
-		UsersClient usersClient = galaxyInstance.getUsersClient();
-		if (usersClient != null)
-		{
-			for (User curr : usersClient.getUsers())
-			{
-				if (email.equals(curr.getEmail()))
-				{
-					user = curr;
-					break;
-				}
-			}
-		}
-		
-		return user;
-	}
-	
-	/**
-	 * Given an email, finds a corresponding users private Role object in Galaxy with that email.
-	 * @param email  The email of the user to search.
-	 * @return  A private Role object of the user with the corresponding email, or null otherwise.
-	 */
-	private Role findUserRoleWithEmail(String email)
-	{
-		Role role = null;
-		
-		if (email == null)
-		{
-			throw new IllegalArgumentException("email is null");
-		}
-		
-		RolesClient rolesClient = galaxyInstance.getRolesClient();
-		if (rolesClient != null)
-		{
-			for (Role curr : rolesClient.getRoles())
-			{
-				if (email.equals(curr.getName()))
-				{
-					role = curr;
-					break;
-				}
-			}
-		}
-		
-		return role;
 	}
 	
 	private boolean uploadSample(GalaxySample sample, LibrariesClient librariesClient, LibraryContent rootFolder,
