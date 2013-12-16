@@ -1,11 +1,15 @@
 package ca.corefacility.bioinformatics.irida.pipeline.data.impl;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
+import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.RolesClient;
 import com.github.jmchilton.blend4j.galaxy.UsersClient;
+import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.github.jmchilton.blend4j.galaxy.beans.User;
 
@@ -89,6 +93,33 @@ public class GalaxySearch
 		}
 		
 		return user;
+	}
+	
+	/**
+	 * Given a library ID, searches for the corresponding Library object.
+	 * @param libraryId  The libraryId to search for.
+	 * @return  A Library object for this Galaxy library, or null if no library is found.
+	 */
+	public Library findLibraryWithId(String libraryId)
+	{
+		if (libraryId == null)
+		{
+			throw new IllegalArgumentException("libraryId is null");
+		}
+		
+		Library library = null;
+		
+		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
+		List<Library> libraries = librariesClient.getLibraries();
+		for (Library curr : libraries)
+		{
+			if (libraryId.equals(curr.getId()))
+			{
+				library = curr;
+			}
+		}
+		
+		return library;
 	}
 	
 	/**

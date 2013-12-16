@@ -13,8 +13,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.FileLibraryUpload;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
-import com.github.jmchilton.blend4j.galaxy.beans.LibraryPermissions;
-import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.github.jmchilton.blend4j.galaxy.beans.User;
 import com.sun.jersey.api.client.ClientResponse;
 
@@ -25,6 +23,7 @@ public class GalaxyAPI
 	private GalaxyInstance galaxyInstance;
 	private String adminEmail;
 	private GalaxySearch galaxySearch;
+	private GalaxyLibrary galaxyLibrary;
 	
 	/**
 	 * Builds a new GalaxyAPI instance with the given information.
@@ -59,6 +58,7 @@ public class GalaxyAPI
 		}
 		
 		galaxySearch = new GalaxySearch(galaxyInstance);
+		galaxyLibrary = new GalaxyLibrary(galaxyInstance, galaxySearch);
 		
 		if (!galaxySearch.checkValidAdminEmailAPIKey(adminEmail, adminAPIKey))
 		{
@@ -88,10 +88,53 @@ public class GalaxyAPI
 		this.adminEmail = adminEmail;
 		
 		galaxySearch = new GalaxySearch(galaxyInstance);
+		galaxyLibrary = new GalaxyLibrary(galaxyInstance, galaxySearch);
 		
 		if (!galaxySearch.checkValidAdminEmailAPIKey(adminEmail, galaxyInstance.getApiKey()))
 		{
 			throw new RuntimeException("Could not create GalaxyInstance with URL=" + 
+					galaxyInstance.getGalaxyUrl() + ", adminEmail=" + adminEmail);
+		}
+	}
+	
+	/**
+	 * Builds a GalaxyAPI object with the given information.
+	 * @param galaxyInstance  A GalaxyInstance object pointing to the correct Galaxy location.
+	 * @param adminEmail  The administrators email address for the corresponding API key within the GalaxyInstance.
+	 * @param galaxySearch  A GalaxySearch object.
+	 * @param galaxyLibrary  A GalaxyLibrary object.
+	 */
+	public GalaxyAPI(GalaxyInstance galaxyInstance, String adminEmail, GalaxySearch galaxySearch, GalaxyLibrary galaxyLibrary)
+	{
+		if (galaxyInstance == null)
+		{
+			throw new IllegalArgumentException("galaxyInstance is null");
+		}
+		
+		if (adminEmail == null)
+		{
+			throw new IllegalArgumentException("adminEmail is null");
+		}
+		
+		if (galaxySearch == null)
+		{
+			throw new IllegalArgumentException("galaxySearch is null");
+		}
+		
+		if (galaxyLibrary == null)
+		{
+			throw new IllegalArgumentException("galaxyLibrary is null");
+		}
+		
+		this.galaxyInstance = galaxyInstance;
+		this.adminEmail = adminEmail;
+		
+		this.galaxyLibrary = galaxyLibrary;
+		this.galaxySearch = galaxySearch;
+		
+		if (!galaxySearch.checkValidAdminEmailAPIKey(adminEmail, galaxyInstance.getApiKey()))
+		{
+			throw new RuntimeException("Could not use GalaxyInstance with URL=" + 
 					galaxyInstance.getGalaxyUrl() + ", adminEmail=" + adminEmail);
 		}
 	}
@@ -117,64 +160,32 @@ public class GalaxyAPI
 		
 		logger.info("Attempt to create new library=" + libraryName + " owned by user=" + galaxyUserEmail +
 				" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
+		
 		String libraryID = null;
 		User user = galaxySearch.findUserWithEmail(galaxyUserEmail);
 		
 		if (user != null)
 		{
-			Role userRole = galaxySearch.findUserRoleWithEmail(galaxyUserEmail);
-			Role adminRole = galaxySearch.findUserRoleWithEmail(adminEmail);
+			Library library = galaxyLibrary.buildEmptyLibrary(libraryName);
 			
-			if (userRole != null)
+			if (library != null)
 			{
-				if (adminRole != null)
+				Library securedLibrary = galaxyLibrary.changeLibraryOwner(library, galaxyUserEmail, adminEmail); 
+				
+				if (securedLibrary != null)
 				{
-					LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
-					Library library = new Library(libraryName);
-					Library persistedLibrary = librariesClient.createLibrary(library);
-					
-					if (persistedLibrary != null)
-					{
-						logger.info("Created library=" + libraryName + " libraryId=" + persistedLibrary.getId() + 
-								" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
-						
-						// setup permissions for library
-						LibraryPermissions permissions = new LibraryPermissions();
-						permissions.getAccessInRoles().add(userRole.getId());
-						permissions.getAccessInRoles().add(adminRole.getId());
-						permissions.getAddInRoles().add(userRole.getId());
-						permissions.getAddInRoles().add(adminRole.getId());
-						permissions.getManageInRoles().add(userRole.getId());
-						permissions.getManageInRoles().add(adminRole.getId());
-						permissions.getModifyInRoles().add(userRole.getId());
-						permissions.getModifyInRoles().add(adminRole.getId());
-						
-						ClientResponse response = librariesClient.setLibraryPermissions(persistedLibrary.getId(), permissions);
-						if (ClientResponse.Status.OK.equals(response.getClientResponseStatus()))
-						{
-							logger.info("Changed owner of library=" + libraryName + " libraryId=" + persistedLibrary.getId() +
-									" to roles:" + userRole.getName() + "," + adminRole.getName() + " in Galaxy url=" + 
-									galaxyInstance.getGalaxyUrl());
-							
-							libraryID = persistedLibrary.getId();
-						}
-						else
-						{
-							throw new CreateLibraryException("Could not setup permissions for user " + galaxyUserEmail +
-									", response=" + response.getStatus());
-						}
-					}
+					libraryID = securedLibrary.getId();
 				}
 				else
 				{
-					throw new CreateLibraryException("Galaxy admin with email " + adminEmail +
-							" does not have corresponding private role");
+					throw new CreateLibraryException("Could not change owner for library name=" + library.getName() +
+							" id=" + library.getId() + " to " + galaxyUserEmail + " and " + adminEmail);
 				}
 			}
 			else
 			{
-				throw new CreateLibraryException("Galaxy user with email " + galaxyUserEmail +
-						" does not have corresponding private role");
+				throw new CreateLibraryException("Could not build Galaxy library name=" + libraryName +
+						" for user " + galaxyUserEmail);
 			}
 		}
 		else
@@ -185,14 +196,10 @@ public class GalaxyAPI
 		return libraryID;
 	}
 	
-	private boolean uploadSample(GalaxySample sample, LibrariesClient librariesClient, LibraryContent rootFolder,
+	private boolean uploadSample(GalaxySample sample, LibrariesClient librariesClient,
 			Library library, String errorSuffix) throws LibraryUploadException
-	{		
-		LibraryFolder sampleFolder = new LibraryFolder();
-		sampleFolder.setName(sample.getSampleName());
-		sampleFolder.setFolderId(rootFolder.getId());
-		
-		LibraryFolder persistedSampleFolder = librariesClient.createFolder(library.getId(), sampleFolder);
+	{				
+		LibraryFolder persistedSampleFolder = galaxyLibrary.createLibraryFolder(library, sample.getSampleName());
 		
 		boolean success = false;
 		
@@ -200,7 +207,7 @@ public class GalaxyAPI
 		{
 			success = true;
 			
-			logger.info("Created sample folder name=" + sampleFolder.getName() + " id=" + persistedSampleFolder.getId() +
+			logger.info("Created sample folder name=" + sample.getSampleName() + " id=" + persistedSampleFolder.getId() +
 					" in library name=" + library.getName() + " id=" + library.getId() + 
 					" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
 			
@@ -218,7 +225,7 @@ public class GalaxyAPI
 				
 				if (success)
 				{
-					logger.info("Uploaded file to path=/" + sampleFolder.getName() + "/" + file.getName() +
+					logger.info("Uploaded file to path=/" + sample.getSampleName() + "/" + file.getName() +
 							" in library name=" + library.getName() + " id=" + library.getId() + 
 							" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
 				}
@@ -312,16 +319,9 @@ public class GalaxyAPI
 		{
 			String errorSuffix = " in instance of galaxy with url=" + galaxyInstance.getGalaxyUrl();
 			
-			Library library = null;
 			LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
-			List<Library> libraries = librariesClient.getLibraries();
-			for (Library curr : libraries)
-			{
-				if (libraryID.equals(curr.getId()))
-				{
-					library = curr;
-				}
-			}
+			
+			Library library = galaxySearch.findLibraryWithId(libraryID);
 			
 			if (library != null)
 			{
@@ -333,7 +333,7 @@ public class GalaxyAPI
 					{
 						if (sample != null)
 						{
-							success &= uploadSample(sample, librariesClient, rootFolder, library, errorSuffix);
+							success &= uploadSample(sample, librariesClient, library, errorSuffix);
 						}
 						else
 						{

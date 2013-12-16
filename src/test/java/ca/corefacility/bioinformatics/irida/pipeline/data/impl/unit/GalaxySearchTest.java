@@ -16,8 +16,10 @@ import org.mockito.MockitoAnnotations;
 import ca.corefacility.bioinformatics.irida.pipeline.data.impl.GalaxySearch;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
+import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.RolesClient;
 import com.github.jmchilton.blend4j.galaxy.UsersClient;
+import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.github.jmchilton.blend4j.galaxy.beans.User;
 
@@ -25,9 +27,14 @@ public class GalaxySearchTest
 {
 	@Mock private RolesClient rolesClient;
 	@Mock private UsersClient usersClient;
+	@Mock private LibrariesClient librariesClient;
 	@Mock private GalaxyInstance galaxyInstance;
 	
 	private GalaxySearch galaxySearch;
+	
+	private static final String LIBRARY_ID = "1";
+	private static final String INVALID_LIBRARY_ID = "2";
+	private static final String LIBRARY_NAME = "Test";
 	
 	@Before
 	public void setup() throws FileNotFoundException, URISyntaxException
@@ -36,6 +43,7 @@ public class GalaxySearchTest
 		
 		setupRolesTest();
 		setupUserTest();
+		setupLibraryTest();
 
 		galaxySearch = new GalaxySearch(galaxyInstance);
 	}
@@ -76,6 +84,35 @@ public class GalaxySearchTest
 		userList.add(user2);
 		
 		when(usersClient.getUsers()).thenReturn(userList);
+	}
+	
+	private void setupLibraryTest()
+	{
+		when(galaxyInstance.getLibrariesClient()).thenReturn(librariesClient);
+		
+		Library library = new Library(LIBRARY_NAME);
+		library.setId(LIBRARY_ID);
+		
+		List<Library> librariesList = new ArrayList<Library>();
+		librariesList.add(library);
+		
+		when(librariesClient.getLibraries()).thenReturn(librariesList);
+	}
+	
+	@Test
+	public void testFindLibrary()
+	{		
+		Library library = galaxySearch.findLibraryWithId(LIBRARY_ID);
+		assertNotNull(library);
+		assertEquals(LIBRARY_ID, library.getId());
+		assertEquals(LIBRARY_NAME, library.getName());
+	}
+	
+	@Test
+	public void testNoFindLibrary()
+	{		
+		Library library = galaxySearch.findLibraryWithId(INVALID_LIBRARY_ID);
+		assertNull(library);
 	}
 	
 	@Test
