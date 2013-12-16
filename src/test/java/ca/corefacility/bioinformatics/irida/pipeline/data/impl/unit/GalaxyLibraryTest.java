@@ -14,6 +14,8 @@ import org.mockito.MockitoAnnotations;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
+import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
+import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryPermissions;
 import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.sun.jersey.api.client.ClientResponse;
@@ -34,6 +36,7 @@ public class GalaxyLibraryTest
 	private final static String USER_EMAIL = "user@localhost";
 	private final static String ADMIN_EMAIL = "admin@localhost";
 	private final static String INVALID_EMAIL = "invalid@localhost";
+	private final static String ROOT_FOLDER_ID = "10";
 	
 	private Library testLibrary;
 	private GalaxyLibrary galaxyLibrary;
@@ -48,6 +51,7 @@ public class GalaxyLibraryTest
 
 		setupLibrariesTest();
 		setupPermissionsTest();
+		setupFoldersTest();
 		
 		galaxyLibrary = new GalaxyLibrary(galaxyInstance, galaxySearch);
 	}
@@ -61,6 +65,15 @@ public class GalaxyLibraryTest
 		when(galaxyInstance.getLibrariesClient()).thenReturn(librariesClient);
 	}
 	
+	private void setupFoldersTest()
+	{
+		LibraryContent rootFolder = new LibraryContent();
+		rootFolder.setName("/");
+		rootFolder.setId(ROOT_FOLDER_ID);
+		
+		when(librariesClient.getRootFolder(LIBRARY_ID)).thenReturn(rootFolder);
+	}
+	
 	private void setupPermissionsTest()
 	{
 		Role userRole = new Role();
@@ -71,6 +84,45 @@ public class GalaxyLibraryTest
 		
 		when(galaxySearch.findUserRoleWithEmail(USER_EMAIL)).thenReturn(userRole);
 		when(galaxySearch.findUserRoleWithEmail(ADMIN_EMAIL)).thenReturn(adminRole);
+	}
+	
+	@Test
+	public void testCreateLibraryFolderRoot() throws CreateLibraryException
+	{
+		LibraryFolder folder = new LibraryFolder();
+		folder.setName("folder_name");
+		folder.setId("1");
+		
+		when(librariesClient.createFolder(eq(LIBRARY_ID), any(LibraryFolder.class))).thenReturn(folder);
+		
+		LibraryFolder newFolder = galaxyLibrary.createLibraryFolder(testLibrary, "new_folder");
+		assertNotNull(newFolder);
+		assertEquals("folder_name", newFolder.getName());
+		assertEquals("1", newFolder.getId());
+	}
+	
+	@Test
+	public void testCreateLibraryFolderNoRoot() throws CreateLibraryException
+	{
+		when(librariesClient.getRootFolder(LIBRARY_ID)).thenReturn(null);
+		
+		LibraryFolder folder = galaxyLibrary.createLibraryFolder(testLibrary, "new_folder");
+		assertNull(folder);
+	}
+	
+	@Test
+	public void testCreateLibraryFolder() throws CreateLibraryException
+	{
+		LibraryFolder folder = new LibraryFolder();
+		folder.setName("folder_name");
+		folder.setId("1");
+		
+		when(librariesClient.createFolder(eq(LIBRARY_ID), any(LibraryFolder.class))).thenReturn(folder);
+		
+		LibraryFolder newFolder = galaxyLibrary.createLibraryFolder(testLibrary, folder, "new_folder");
+		assertNotNull(newFolder);
+		assertEquals("folder_name", newFolder.getName());
+		assertEquals("1", newFolder.getId());
 	}
 	
 	@Test

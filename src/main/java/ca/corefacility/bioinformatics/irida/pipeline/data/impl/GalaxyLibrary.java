@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
+import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
+import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryPermissions;
 import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.sun.jersey.api.client.ClientResponse;
@@ -56,7 +58,91 @@ public class GalaxyLibrary
 		Library library = new Library(libraryName);
 		persistedLibrary = librariesClient.createLibrary(library);
 		
+		if (persistedLibrary != null)
+		{
+			logger.info("Created library=" + library.getName() + " libraryId=" + library.getId() +
+					" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
+		}
+		
 		return persistedLibrary;
+	}
+	
+	/**
+	 * Creates a new folder within the given library under the "root" directory.
+	 * @param library  The library to create the folder within.
+	 * @param folderName  The name of the folder to create.
+	 * @return  A LibraryFolder object representing this folder, or null if no folder could be created.
+	 */
+	public LibraryFolder createLibraryFolder(Library library, String folderName)
+	{
+		if (library == null)
+		{
+			throw new IllegalArgumentException("library is null");
+		}
+		
+		if (folderName == null)
+		{
+			throw new IllegalArgumentException("folderName is null");
+		}
+		
+		LibraryFolder folder = null;
+		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
+		
+		if (librariesClient != null)
+		{
+			LibraryContent rootContent = librariesClient.getRootFolder(library.getId());
+			
+			if (rootContent != null)
+			{
+				LibraryFolder newFolder = new LibraryFolder();
+				newFolder.setName(folderName);
+				newFolder.setFolderId(rootContent.getId());
+				
+				folder = librariesClient.createFolder(library.getId(), newFolder);
+			}
+		}
+		
+		return folder;
+	}
+	
+	/**
+	 * Creates a new folder within the given library under the given LibraryFolder.
+	 * @param library  The library to create the folder within.
+	 * @param libraryFolder  The folder to create the new folder within.
+	 * @param folderName  The name of the folder to create.
+	 * @return  A LibraryFolder object representing this folder, or null if no folder could be created.
+	 */
+	public LibraryFolder createLibraryFolder(Library library, LibraryFolder libraryFolder, String folderName)
+	{
+		LibraryFolder folder = null;
+		
+		if (library == null)
+		{
+			throw new IllegalArgumentException("library is null");
+		}
+		
+		if (libraryFolder == null)
+		{
+			throw new IllegalArgumentException("libraryFolder is null");
+		}
+		
+		if (folderName == null)
+		{
+			throw new IllegalArgumentException("folderName is null");
+		}
+		
+		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
+		
+		if (librariesClient != null)
+		{
+			LibraryFolder newFolder = new LibraryFolder();
+			newFolder.setName(folderName);
+			newFolder.setFolderId(libraryFolder.getId());
+			
+			folder = librariesClient.createFolder(library.getId(), libraryFolder);
+		}
+		
+		return folder;
 	}
 	
 	/**
