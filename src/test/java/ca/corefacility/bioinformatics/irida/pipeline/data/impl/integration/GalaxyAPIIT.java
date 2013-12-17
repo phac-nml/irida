@@ -318,14 +318,18 @@ public class GalaxyAPIIT
 		List<LibraryContent> libraryContents = galaxyInstanceRegularUser.getLibrariesClient().
 				getLibraryContents(libraryId);
 		Map<String,LibraryContent> contentsMapRegularUser = fileToLibraryContentMap(libraryContents);
-		assertEquals(3, contentsMapRegularUser.size());
+		assertEquals(5, contentsMapRegularUser.size());
 		
 		assertTrue(contentsMapRegularUser.containsKey("/"));
 		assertEquals("folder", contentsMapRegularUser.get("/").getType());
-		assertTrue(contentsMapRegularUser.containsKey("/testData"));
-		assertEquals("folder", contentsMapRegularUser.get("/testData").getType());
-		assertTrue(contentsMapRegularUser.containsKey("/testData/testData1.fastq"));
-		assertEquals("file", contentsMapRegularUser.get("/testData/testData1.fastq").getType());
+		assertTrue(contentsMapRegularUser.containsKey("/illumina_reads"));
+		assertEquals("folder", contentsMapRegularUser.get("/illumina_reads").getType());
+		assertTrue(contentsMapRegularUser.containsKey("/references"));
+		assertEquals("folder", contentsMapRegularUser.get("/references").getType());
+		assertTrue(contentsMapRegularUser.containsKey("/illumina_reads/testData"));
+		assertEquals("folder", contentsMapRegularUser.get("/illumina_reads/testData").getType());
+		assertTrue(contentsMapRegularUser.containsKey("/illumina_reads/testData/testData1.fastq"));
+		assertEquals("file", contentsMapRegularUser.get("/illumina_reads/testData/testData1.fastq").getType());
 		
 		// admin should have access to files
 		Library actualLibraryAdmin = findLibraryByName(libraryName, galaxyInstanceAdmin);
@@ -335,14 +339,18 @@ public class GalaxyAPIIT
 				getLibraryContents(libraryId);
 		assertNotNull(libraryContents);
 		Map<String,LibraryContent> contentsMapAdminUser = fileToLibraryContentMap(libraryContents);
-		assertEquals(3, contentsMapAdminUser.size());
+		assertEquals(5, contentsMapAdminUser.size());
 		
 		assertTrue(contentsMapAdminUser.containsKey("/"));
 		assertEquals("folder", contentsMapAdminUser.get("/").getType());
-		assertTrue(contentsMapAdminUser.containsKey("/testData"));
-		assertEquals("folder", contentsMapAdminUser.get("/testData").getType());
-		assertTrue(contentsMapAdminUser.containsKey("/testData/testData1.fastq"));
-		assertEquals("file", contentsMapAdminUser.get("/testData/testData1.fastq").getType());
+		assertTrue(contentsMapAdminUser.containsKey("/illumina_reads"));
+		assertEquals("folder", contentsMapAdminUser.get("/illumina_reads").getType());
+		assertTrue(contentsMapAdminUser.containsKey("/references"));
+		assertEquals("folder", contentsMapAdminUser.get("/references").getType());
+		assertTrue(contentsMapAdminUser.containsKey("/illumina_reads/testData"));
+		assertEquals("folder", contentsMapAdminUser.get("/illumina_reads/testData").getType());
+		assertTrue(contentsMapAdminUser.containsKey("/illumina_reads/testData/testData1.fastq"));
+		assertEquals("file", contentsMapAdminUser.get("/illumina_reads/testData/testData1.fastq").getType());
 		
 		// 2nd regular user should not have access to library or files
 		Library actualLibraryRegularUser2 = findLibraryByName(libraryName, galaxyInstanceRegularUser2);
@@ -375,14 +383,18 @@ public class GalaxyAPIIT
 		
 		List<LibraryContent> libraryContents = galaxyInstanceAdmin.getLibrariesClient().getLibraryContents(actualLibrary.getId());
 		Map<String,LibraryContent> contentsMapRegularUser = fileToLibraryContentMap(libraryContents);
-		assertEquals(3, contentsMapRegularUser.size());
+		assertEquals(5, contentsMapRegularUser.size());
 		
 		assertTrue(contentsMapRegularUser.containsKey("/"));
 		assertEquals("folder", contentsMapRegularUser.get("/").getType());
-		assertTrue(contentsMapRegularUser.containsKey("/testData"));
-		assertEquals("folder", contentsMapRegularUser.get("/testData").getType());
-		assertTrue(contentsMapRegularUser.containsKey("/testData/testData1.fastq"));
-		assertEquals("file", contentsMapRegularUser.get("/testData/testData1.fastq").getType());
+		assertTrue(contentsMapRegularUser.containsKey("/illumina_reads"));
+		assertEquals("folder", contentsMapRegularUser.get("/illumina_reads").getType());
+		assertTrue(contentsMapRegularUser.containsKey("/references"));
+		assertEquals("folder", contentsMapRegularUser.get("/references").getType());
+		assertTrue(contentsMapRegularUser.containsKey("/illumina_reads/testData"));
+		assertEquals("folder", contentsMapRegularUser.get("/illumina_reads/testData").getType());
+		assertTrue(contentsMapRegularUser.containsKey("/illumina_reads/testData/testData1.fastq"));
+		assertEquals("file", contentsMapRegularUser.get("/illumina_reads/testData/testData1.fastq").getType());
 		
 		// regular user should not have access to files
 		actualLibrary = findLibraryByName(libraryName, galaxyInstanceRegularUser);
@@ -449,16 +461,20 @@ public class GalaxyAPIIT
 		
 		List<LibraryContent> libraryContents = galaxyInstanceAdmin.getLibrariesClient().getLibraryContents(actualLibrary.getId());
 		Map<String,LibraryContent> contentsMap = fileToLibraryContentMap(libraryContents);
-		assertEquals(4, contentsMap.size());
+		assertEquals(6, contentsMap.size());
 		
 		assertTrue(contentsMap.containsKey("/"));
 		assertEquals("folder", contentsMap.get("/").getType());
-		assertTrue(contentsMap.containsKey("/testData"));
-		assertEquals("folder", contentsMap.get("/testData").getType());
-		assertTrue(contentsMap.containsKey("/testData/testData1.fastq"));
-		assertEquals("file", contentsMap.get("/testData/testData1.fastq").getType());
-		assertTrue(contentsMap.containsKey("/testData/testData2.fastq"));
-		assertEquals("file", contentsMap.get("/testData/testData2.fastq").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads"));
+		assertEquals("folder", contentsMap.get("/illumina_reads").getType());
+		assertTrue(contentsMap.containsKey("/references"));
+		assertEquals("folder", contentsMap.get("/references").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads/testData"));
+		assertEquals("folder", contentsMap.get("/illumina_reads/testData").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads/testData/testData1.fastq"));
+		assertEquals("file", contentsMap.get("/illumina_reads/testData/testData1.fastq").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads/testData/testData2.fastq"));
+		assertEquals("file", contentsMap.get("/illumina_reads/testData/testData2.fastq").getType());
 	}
 	
 	@Test
@@ -479,17 +495,21 @@ public class GalaxyAPIIT
 		
 		List<LibraryContent> libraryContents = galaxyInstanceAdmin.getLibrariesClient().getLibraryContents(actualLibrary.getId());
 		Map<String,LibraryContent> contentsMap = fileToLibraryContentMap(libraryContents);
-		assertEquals(5, contentsMap.size());
+		assertEquals(7, contentsMap.size());
 		
 		assertTrue(contentsMap.containsKey("/"));
 		assertEquals("folder", contentsMap.get("/").getType());
-		assertTrue(contentsMap.containsKey("/testData1"));
-		assertEquals("folder", contentsMap.get("/testData1").getType());
-		assertTrue(contentsMap.containsKey("/testData1/testData1.fastq"));
-		assertEquals("file", contentsMap.get("/testData1/testData1.fastq").getType());
-		assertTrue(contentsMap.containsKey("/testData2"));
-		assertEquals("folder", contentsMap.get("/testData2").getType());
-		assertTrue(contentsMap.containsKey("/testData2/testData1.fastq"));
-		assertEquals("file", contentsMap.get("/testData2/testData1.fastq").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads"));
+		assertEquals("folder", contentsMap.get("/illumina_reads").getType());
+		assertTrue(contentsMap.containsKey("/references"));
+		assertEquals("folder", contentsMap.get("/references").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads/testData1"));
+		assertEquals("folder", contentsMap.get("/illumina_reads/testData1").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads/testData1/testData1.fastq"));
+		assertEquals("file", contentsMap.get("/illumina_reads/testData1/testData1.fastq").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads/testData2"));
+		assertEquals("folder", contentsMap.get("/illumina_reads/testData2").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads/testData2/testData1.fastq"));
+		assertEquals("file", contentsMap.get("/illumina_reads/testData2/testData1.fastq").getType());
 	}
 }

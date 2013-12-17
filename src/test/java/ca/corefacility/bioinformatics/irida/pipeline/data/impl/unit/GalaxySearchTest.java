@@ -20,6 +20,7 @@ import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.RolesClient;
 import com.github.jmchilton.blend4j.galaxy.UsersClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
+import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.github.jmchilton.blend4j.galaxy.beans.User;
 
@@ -35,6 +36,8 @@ public class GalaxySearchTest
 	private static final String LIBRARY_ID = "1";
 	private static final String INVALID_LIBRARY_ID = "2";
 	private static final String LIBRARY_NAME = "Test";
+	private static final String FOLDER_NAME = "test_folder";
+	private static final String INVALID_FOLDER_NAME = "invalid_folder";
 	
 	@Before
 	public void setup() throws FileNotFoundException, URISyntaxException
@@ -44,6 +47,7 @@ public class GalaxySearchTest
 		setupRolesTest();
 		setupUserTest();
 		setupLibraryTest();
+		setupLibraryContentTest();
 
 		galaxySearch = new GalaxySearch(galaxyInstance);
 	}
@@ -99,6 +103,17 @@ public class GalaxySearchTest
 		when(librariesClient.getLibraries()).thenReturn(librariesList);
 	}
 	
+	private void setupLibraryContentTest()
+	{
+		List<LibraryContent> libraryContents = new ArrayList<LibraryContent>();
+		LibraryContent validFolder = new LibraryContent();
+		validFolder.setName(FOLDER_NAME);
+		validFolder.setType("folder");
+		libraryContents.add(validFolder);
+		
+		when(librariesClient.getLibraryContents(LIBRARY_ID)).thenReturn(libraryContents);
+	}
+	
 	@Test
 	public void testFindLibrary()
 	{		
@@ -152,5 +167,25 @@ public class GalaxySearchTest
 	{		
 		assertTrue(galaxySearch.checkValidAdminEmailAPIKey("user1@localhost", null));
 		assertFalse(galaxySearch.checkValidAdminEmailAPIKey("invalid@localhost", null));
+	}
+	
+	@Test
+	public void testFindLibraryContentWithId()
+	{
+		LibraryContent validFolder = galaxySearch.findLibraryContentWithId(LIBRARY_ID, FOLDER_NAME);
+		assertEquals("folder", validFolder.getType());
+		assertEquals(FOLDER_NAME, validFolder.getName());
+	}
+	
+	@Test
+	public void testFindLibraryContentWithIdInvalidFolder()
+	{
+		assertNull(galaxySearch.findLibraryContentWithId(LIBRARY_ID, INVALID_FOLDER_NAME));
+	}
+	
+	@Test
+	public void testFindLibraryContentWithIdInvalidLibraryId()
+	{
+		assertNull(galaxySearch.findLibraryContentWithId(INVALID_LIBRARY_ID, FOLDER_NAME));
 	}
 }
