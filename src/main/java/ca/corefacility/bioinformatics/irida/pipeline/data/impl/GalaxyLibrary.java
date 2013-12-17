@@ -139,7 +139,7 @@ public class GalaxyLibrary
 			newFolder.setName(folderName);
 			newFolder.setFolderId(libraryFolder.getId());
 			
-			folder = librariesClient.createFolder(library.getId(), libraryFolder);
+			folder = librariesClient.createFolder(library.getId(), newFolder);
 		}
 		
 		return folder;

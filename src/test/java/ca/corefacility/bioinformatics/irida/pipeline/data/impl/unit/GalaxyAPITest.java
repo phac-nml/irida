@@ -53,6 +53,8 @@ public class GalaxyAPITest
 	final private String fakeUserEmail = "fake@localhost";
 	final private String realRoleId = "1";
 	final private String adminRoleId = "0";
+	final private String illuminaFolderName = "illumina_reads";
+	final private String referencesFolderName = "references";
 		
 	private GalaxyAPI workflowRESTAPI;
 	private File dataFile1;
@@ -120,7 +122,7 @@ public class GalaxyAPITest
 		when(librariesClient.getRootFolder(libraryId)).thenReturn(libraryContent);
 		when(libraryContent.getId()).thenReturn(rootFolderId);
 		when(librariesClient.uploadFile(eq(libraryId), any(FileLibraryUpload.class))).thenReturn(okayResponse);
-		
+			
 		for (int i = 0; i < samples.size(); i++)
 		{
 			GalaxySample sample = samples.get(i);
@@ -128,8 +130,64 @@ public class GalaxyAPITest
 			
 			String sampleName = sample.getSampleName();
 			
-			when(galaxyLibrary.createLibraryFolder(any(Library.class), eq(sampleName))).thenReturn(folder);
+			when(galaxyLibrary.createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq(sampleName))).thenReturn(folder);
 		}
+	}
+	
+	private void setupLibraryFolders()
+	{
+		LibraryFolder referencesFolder = new LibraryFolder();
+		referencesFolder.setName(referencesFolderName);
+		referencesFolder.setFolderId(rootFolderId);
+		
+		LibraryFolder illuminaFolder = new LibraryFolder();
+		illuminaFolder.setName(illuminaFolderName);
+		illuminaFolder.setFolderId(rootFolderId);
+		
+		when(galaxySearch.findLibraryContentWithId(libraryId, illuminaFolderName)).thenReturn(null);
+		when(galaxySearch.findLibraryContentWithId(libraryId, referencesFolderName)).thenReturn(null);
+		when(galaxyLibrary.createLibraryFolder(any(Library.class), eq(illuminaFolderName))).thenReturn(illuminaFolder);
+		when(galaxyLibrary.createLibraryFolder(any(Library.class), eq(referencesFolderName))).thenReturn(referencesFolder);
+	}
+	
+	private void setupLibraryFoldersWithIlluminaFolder()
+	{
+		LibraryFolder referencesFolder = new LibraryFolder();
+		referencesFolder.setName(referencesFolderName);
+		referencesFolder.setFolderId(rootFolderId);
+		
+		LibraryFolder illuminaFolder = new LibraryFolder();
+		illuminaFolder.setName(illuminaFolderName);
+		illuminaFolder.setFolderId(rootFolderId);
+		
+		LibraryContent illuminaContent = new LibraryContent();
+		illuminaContent.setName(illuminaFolderName);
+		illuminaContent.setType("folder");
+		
+		when(galaxySearch.findLibraryContentWithId(libraryId, illuminaFolderName)).thenReturn(illuminaContent);
+		when(galaxySearch.findLibraryContentWithId(libraryId, referencesFolderName)).thenReturn(null);
+		when(galaxyLibrary.createLibraryFolder(any(Library.class), eq(illuminaFolderName))).thenReturn(illuminaFolder);
+		when(galaxyLibrary.createLibraryFolder(any(Library.class), eq(referencesFolderName))).thenReturn(referencesFolder);
+	}
+	
+	private void setupLibraryFoldersWithReferencesFolder()
+	{
+		LibraryFolder referencesFolder = new LibraryFolder();
+		referencesFolder.setName(referencesFolderName);
+		referencesFolder.setFolderId(rootFolderId);
+		
+		LibraryContent referenceContent = new LibraryContent();
+		referenceContent.setName(referencesFolderName);
+		referenceContent.setType("folder");
+		
+		LibraryFolder illuminaFolder = new LibraryFolder();
+		illuminaFolder.setName(illuminaFolderName);
+		illuminaFolder.setFolderId(rootFolderId);
+		
+		when(galaxySearch.findLibraryContentWithId(libraryId, illuminaFolderName)).thenReturn(null);
+		when(galaxySearch.findLibraryContentWithId(libraryId, referencesFolderName)).thenReturn(referenceContent);
+		when(galaxyLibrary.createLibraryFolder(any(Library.class), eq(illuminaFolderName))).thenReturn(illuminaFolder);
+		when(galaxyLibrary.createLibraryFolder(any(Library.class), eq(referencesFolderName))).thenReturn(referencesFolder);
 	}
 	
 	@Test
@@ -190,28 +248,92 @@ public class GalaxyAPITest
 	@Test
 	public void testUploadSampleToLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException
 	{
+		setupLibraryFolders();
+		
 		String sampleFolderId = "3";
 		
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
 		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
 		samples.add(galaxySample);
 		
-		List<LibraryFolder> folders = new ArrayList<LibraryFolder>();
+		List<LibraryFolder> sampleFolders = new ArrayList<LibraryFolder>();
 		LibraryFolder sampleFolder = new LibraryFolder();
 		sampleFolder.setName(galaxySample.getSampleName());
 		sampleFolder.setFolderId(sampleFolderId);
-		folders.add(sampleFolder);
+		sampleFolders.add(sampleFolder);
 		
-		setupUploadSampleToLibrary(samples, folders);
+		setupUploadSampleToLibrary(samples, sampleFolders);
 		
 		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
-		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq("testData"));
+		verify(galaxySearch).findLibraryContentWithId(libraryId, illuminaFolderName);
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(referencesFolderName));
+		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderName);
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData"));
+		verify(librariesClient).uploadFile(eq(libraryId), any(FileLibraryUpload.class));
+	}
+	
+	@Test
+	public void testUploadSampleToLibraryWithIlluminaFolder() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	{
+		setupLibraryFoldersWithIlluminaFolder();
+		
+		String sampleFolderId = "3";
+		
+		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
+		samples.add(galaxySample);
+		
+		List<LibraryFolder> sampleFolders = new ArrayList<LibraryFolder>();
+		LibraryFolder sampleFolder = new LibraryFolder();
+		sampleFolder.setName(galaxySample.getSampleName());
+		sampleFolder.setFolderId(sampleFolderId);
+		sampleFolders.add(sampleFolder);
+		
+		setupUploadSampleToLibrary(samples, sampleFolders);
+		
+		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
+		verify(galaxySearch).findLibraryContentWithId(libraryId, illuminaFolderName);
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(referencesFolderName));
+		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderName);
+		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData"));
+		verify(librariesClient).uploadFile(eq(libraryId), any(FileLibraryUpload.class));
+	}
+	
+	@Test
+	public void testUploadSampleToLibraryWithReferencesFolder() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	{
+		setupLibraryFoldersWithReferencesFolder();
+		
+		String sampleFolderId = "3";
+		
+		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
+		samples.add(galaxySample);
+		
+		List<LibraryFolder> sampleFolders = new ArrayList<LibraryFolder>();
+		LibraryFolder sampleFolder = new LibraryFolder();
+		sampleFolder.setName(galaxySample.getSampleName());
+		sampleFolder.setFolderId(sampleFolderId);
+		sampleFolders.add(sampleFolder);
+		
+		setupUploadSampleToLibrary(samples, sampleFolders);
+		
+		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
+		verify(galaxySearch).findLibraryContentWithId(libraryId, illuminaFolderName);
+		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class), eq(referencesFolderName));
+		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderName);
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData"));
 		verify(librariesClient).uploadFile(eq(libraryId), any(FileLibraryUpload.class));
 	}
 		
 	@Test
 	public void testUploadFilesToLibraryFail() throws URISyntaxException, LibraryUploadException, CreateLibraryException
 	{
+		setupLibraryFolders();
+		
 		String sampleFolderId = "3";
 		
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
@@ -228,13 +350,19 @@ public class GalaxyAPITest
 		when(librariesClient.uploadFile(eq(libraryId), any(FileLibraryUpload.class))).thenReturn(invalidResponse);
 		
 		assertFalse(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
-		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq("testData"));
+		verify(galaxySearch).findLibraryContentWithId(libraryId, illuminaFolderName);
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(referencesFolderName));
+		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderName);
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData"));
 		verify(librariesClient).uploadFile(eq(libraryId), any(FileLibraryUpload.class));
 	}
 	
 	@Test
 	public void testUploadMultiSampleToLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException
 	{
+		setupLibraryFolders();
+		
 		String sampleFolderId1 = "3";
 		String sampleFolderId2 = "4";
 		
@@ -257,14 +385,20 @@ public class GalaxyAPITest
 		setupUploadSampleToLibrary(samples, folders);
 		
 		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
-		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq("testData1"));
-		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq("testData2"));
+		verify(galaxySearch).findLibraryContentWithId(libraryId, illuminaFolderName);
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(referencesFolderName));
+		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderName);
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData1"));
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData2"));
 		verify(librariesClient, times(2)).uploadFile(eq(libraryId), any(FileLibraryUpload.class));
 	}
 	
 	@Test
 	public void testUploadMultiFileSampleToLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException
 	{
+		setupLibraryFolders();
+		
 		String sampleFolderId = "3";
 		
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
@@ -280,13 +414,19 @@ public class GalaxyAPITest
 		setupUploadSampleToLibrary(samples, folders);
 		
 		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
-		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq("testData"));
+		verify(galaxySearch).findLibraryContentWithId(libraryId, illuminaFolderName);
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(referencesFolderName));
+		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderName);
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData"));
 		verify(librariesClient, times(2)).uploadFile(eq(libraryId), any(FileLibraryUpload.class));
 	}
 	
 	@Test
 	public void testUploadSamples() throws URISyntaxException, LibraryUploadException, CreateLibraryException
 	{
+		setupLibraryFolders();
+		
 		String sampleFolderId = "3";
 		
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
@@ -304,13 +444,19 @@ public class GalaxyAPITest
 		assertTrue(workflowRESTAPI.uploadSamples(samples, libraryName, realUserEmail));
 		verify(galaxyLibrary).buildEmptyLibrary(libraryName);
 		verify(galaxyLibrary).changeLibraryOwner(any(Library.class), eq(realUserEmail), eq(realAdminEmail));
-		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq("testData"));
+		verify(galaxySearch).findLibraryContentWithId(libraryId, illuminaFolderName);
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(referencesFolderName));
+		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderName);
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData"));
 		verify(librariesClient).uploadFile(eq(libraryId), any(FileLibraryUpload.class));
 	}
 	
 	@Test(expected=LibraryUploadException.class)
 	public void testNoExistingLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException
 	{
+		setupLibraryFolders();
+		
 		String sampleFolderId = "3";
 		
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
@@ -329,29 +475,10 @@ public class GalaxyAPITest
 	}
 	
 	@Test(expected=LibraryUploadException.class)
-	public void testNoRootFolder() throws URISyntaxException, LibraryUploadException, CreateLibraryException
-	{
-		String sampleFolderId = "3";
-		
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
-		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
-		samples.add(galaxySample);
-		
-		List<LibraryFolder> folders = new ArrayList<LibraryFolder>();
-		LibraryFolder sampleFolder = new LibraryFolder();
-		sampleFolder.setName(galaxySample.getSampleName());
-		sampleFolder.setFolderId(sampleFolderId);
-		folders.add(sampleFolder);
-		
-		setupUploadSampleToLibrary(samples, folders);
-		when(librariesClient.getRootFolder(libraryId)).thenReturn(null);
-		
-		workflowRESTAPI.uploadFilesToLibrary(samples, libraryId);
-	}
-	
-	@Test(expected=LibraryUploadException.class)
 	public void testNoCreateSampleFolder() throws URISyntaxException, LibraryUploadException, CreateLibraryException
 	{
+		setupLibraryFolders();
+		
 		String sampleFolderId = "3";
 		
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
@@ -373,12 +500,13 @@ public class GalaxyAPITest
 	@Test
 	public void testUploadNoFiles() throws URISyntaxException, LibraryUploadException, CreateLibraryException
 	{
+		setupLibraryFolders();
+		
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
 		List<LibraryFolder> folders = new ArrayList<LibraryFolder>();
 		
 		setupUploadSampleToLibrary(samples, folders);
 		
 		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
-	}
-	
+	}	
 }

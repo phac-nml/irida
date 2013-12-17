@@ -20,6 +20,9 @@ public class GalaxyAPI
 {
 	private static final Logger logger = LoggerFactory.getLogger(GalaxyAPI.class);
 	
+	private static final String illuminaFolderName = "illumina_reads";
+	private static final String referencesFolderName = "references";
+	
 	private GalaxyInstance galaxyInstance;
 	private String adminEmail;
 	private GalaxySearch galaxySearch;
@@ -196,10 +199,10 @@ public class GalaxyAPI
 		return libraryID;
 	}
 	
-	private boolean uploadSample(GalaxySample sample, LibrariesClient librariesClient,
+	private boolean uploadSample(GalaxySample sample, LibraryFolder rootFolder, LibrariesClient librariesClient,
 			Library library, String errorSuffix) throws LibraryUploadException
 	{				
-		LibraryFolder persistedSampleFolder = galaxyLibrary.createLibraryFolder(library, sample.getSampleName());
+		LibraryFolder persistedSampleFolder = galaxyLibrary.createLibraryFolder(library, rootFolder, sample.getSampleName());
 		
 		boolean success = false;
 		
@@ -325,25 +328,48 @@ public class GalaxyAPI
 			
 			if (library != null)
 			{
-				LibraryContent rootFolder = librariesClient.getRootFolder(library.getId());
+				LibraryFolder illuminaFolder;
 				
-				if (rootFolder != null)
+				LibraryContent illuminaContent = galaxySearch.findLibraryContentWithId(libraryID, illuminaFolderName);
+				LibraryContent referencesContent = galaxySearch.findLibraryContentWithId(libraryID, referencesFolderName);
+				
+				if (illuminaContent == null)
 				{
-					for (GalaxySample sample : samples)
+					illuminaFolder = galaxyLibrary.createLibraryFolder(library, illuminaFolderName);
+					if (illuminaFolder == null)
 					{
-						if (sample != null)
-						{
-							success &= uploadSample(sample, librariesClient, library, errorSuffix);
-						}
-						else
-						{
-							throw new LibraryUploadException("Cannot upload a null sample" + errorSuffix);
-						}
+						throw new LibraryUploadException("Could not create folder " + illuminaFolderName + " in library with id=" +
+								libraryID);
 					}
 				}
 				else
 				{
-					throw new LibraryUploadException("Could not get root folder from library with id=" + libraryID + errorSuffix);
+					illuminaFolder = new LibraryFolder();
+					illuminaFolder.setId(illuminaContent.getId());
+					illuminaFolder.setName(illuminaContent.getName());
+				}
+				
+				// builds references folder, but we don't need to use it
+				if (referencesContent == null)
+				{
+					LibraryFolder referencesFolder = galaxyLibrary.createLibraryFolder(library, referencesFolderName);
+					if (referencesFolder == null)
+					{
+						throw new LibraryUploadException("Could not create folder " + referencesFolderName + " in library with id=" +
+								libraryID);
+					}
+				}
+
+				for (GalaxySample sample : samples)
+				{
+					if (sample != null)
+					{
+						success &= uploadSample(sample, illuminaFolder, librariesClient, library, errorSuffix);
+					}
+					else
+					{
+						throw new LibraryUploadException("Cannot upload a null sample" + errorSuffix);
+					}
 				}
 			}
 			else

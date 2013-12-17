@@ -10,6 +10,7 @@ import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.RolesClient;
 import com.github.jmchilton.blend4j.galaxy.UsersClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
+import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.github.jmchilton.blend4j.galaxy.beans.User;
 
@@ -120,6 +121,47 @@ public class GalaxySearch
 		}
 		
 		return library;
+	}
+	
+	/**
+	 * Given a libraryId and a folder name, search for the corresponding LibraryContent object within this library.
+	 * @param libraryId  The ID of the library to search for.
+	 * @param folderName  The name of the folder to search for (only finds first instance of this folder name).
+	 * @return  A LibraryContent within the given library with the given name, or null if no such folder exists.
+	 */
+	public LibraryContent findLibraryContentWithId(String libraryId, String folderName)
+	{
+		LibraryContent folder = null;
+		
+		if (libraryId == null)
+		{
+			throw new IllegalArgumentException("libraryId is null");
+		}
+		
+		if (folderName == null)
+		{
+			throw new IllegalArgumentException("folderName is null");
+		}
+		
+		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
+		List<LibraryContent> libraryContents = librariesClient.getLibraryContents(libraryId);
+		
+		if (libraryContents != null)
+		{
+			for (LibraryContent content : libraryContents)
+			{
+				if ("folder".equals(content.getType()))
+				{
+    				if (folderName.equals(content.getName()))
+    				{
+    					folder = content;
+    					break;
+    				}
+				}
+			}
+		}
+		
+		return folder;
 	}
 	
 	/**
