@@ -23,7 +23,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.data.impl.GalaxyAPI;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
-import com.github.jmchilton.blend4j.galaxy.beans.FileLibraryUpload;
+import com.github.jmchilton.blend4j.galaxy.beans.FilesystemPathsLibraryUpload;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
@@ -76,7 +76,7 @@ public class GalaxyAPITest
 		when(galaxySearch.checkValidAdminEmailAPIKey(realAdminEmail, realAdminAPIKey)).
 			thenReturn(true);
 		
-		workflowRESTAPI = new GalaxyAPI(galaxyInstance, realAdminEmail, galaxySearch, galaxyLibrary);
+		workflowRESTAPI = new GalaxyAPI(galaxyInstance, realAdminEmail, false, galaxySearch, galaxyLibrary);
 		
 		// setup files
 		dataFile1 = new File(this.getClass().getResource("testData1.fastq").toURI());
@@ -121,7 +121,8 @@ public class GalaxyAPITest
 		
 		when(librariesClient.getRootFolder(libraryId)).thenReturn(libraryContent);
 		when(libraryContent.getId()).thenReturn(rootFolderId);
-		when(librariesClient.uploadFile(eq(libraryId), any(FileLibraryUpload.class))).thenReturn(okayResponse);
+		when(librariesClient.uploadFilesystemPathsRequest(eq(libraryId), any(FilesystemPathsLibraryUpload.class)))
+			.thenReturn(okayResponse);
 			
 		for (int i = 0; i < samples.size(); i++)
 		{
@@ -223,7 +224,7 @@ public class GalaxyAPITest
 	{
 		setupBuildLibrary();
 		
-		workflowRESTAPI = new GalaxyAPI(galaxyInstance, invalidAdminEmail);
+		workflowRESTAPI = new GalaxyAPI(galaxyInstance, invalidAdminEmail, false);
 	}
 	
 	@Test(expected=CreateLibraryException.class)
@@ -270,7 +271,7 @@ public class GalaxyAPITest
 		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderName);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData"));
-		verify(librariesClient).uploadFile(eq(libraryId), any(FileLibraryUpload.class));
+		verify(librariesClient).uploadFilesystemPathsRequest(eq(libraryId), any(FilesystemPathsLibraryUpload.class));
 	}
 	
 	@Test
@@ -298,7 +299,7 @@ public class GalaxyAPITest
 		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderName);
 		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData"));
-		verify(librariesClient).uploadFile(eq(libraryId), any(FileLibraryUpload.class));
+		verify(librariesClient).uploadFilesystemPathsRequest(eq(libraryId), any(FilesystemPathsLibraryUpload.class));
 	}
 	
 	@Test
@@ -326,7 +327,7 @@ public class GalaxyAPITest
 		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderName);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData"));
-		verify(librariesClient).uploadFile(eq(libraryId), any(FileLibraryUpload.class));
+		verify(librariesClient).uploadFilesystemPathsRequest(eq(libraryId), any(FilesystemPathsLibraryUpload.class));
 	}
 		
 	@Test
@@ -347,7 +348,7 @@ public class GalaxyAPITest
 		folders.add(sampleFolder);
 		
 		setupUploadSampleToLibrary(samples, folders);
-		when(librariesClient.uploadFile(eq(libraryId), any(FileLibraryUpload.class))).thenReturn(invalidResponse);
+		when(librariesClient.uploadFilesystemPathsRequest(eq(libraryId), any(FilesystemPathsLibraryUpload.class))).thenReturn(invalidResponse);
 		
 		assertFalse(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
 		verify(galaxySearch).findLibraryContentWithId(libraryId, illuminaFolderName);
@@ -355,7 +356,7 @@ public class GalaxyAPITest
 		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderName);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData"));
-		verify(librariesClient).uploadFile(eq(libraryId), any(FileLibraryUpload.class));
+		verify(librariesClient).uploadFilesystemPathsRequest(eq(libraryId), any(FilesystemPathsLibraryUpload.class));
 	}
 	
 	@Test
@@ -391,7 +392,7 @@ public class GalaxyAPITest
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData1"));
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData2"));
-		verify(librariesClient, times(2)).uploadFile(eq(libraryId), any(FileLibraryUpload.class));
+		verify(librariesClient, times(2)).uploadFilesystemPathsRequest(eq(libraryId), any(FilesystemPathsLibraryUpload.class));
 	}
 	
 	@Test
@@ -419,7 +420,7 @@ public class GalaxyAPITest
 		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderName);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData"));
-		verify(librariesClient, times(2)).uploadFile(eq(libraryId), any(FileLibraryUpload.class));
+		verify(librariesClient, times(2)).uploadFilesystemPathsRequest(eq(libraryId), any(FilesystemPathsLibraryUpload.class));
 	}
 	
 	@Test
@@ -449,7 +450,7 @@ public class GalaxyAPITest
 		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderName);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData"));
-		verify(librariesClient).uploadFile(eq(libraryId), any(FileLibraryUpload.class));
+		verify(librariesClient).uploadFilesystemPathsRequest(eq(libraryId), any(FilesystemPathsLibraryUpload.class));
 	}
 	
 	@Test(expected=LibraryUploadException.class)

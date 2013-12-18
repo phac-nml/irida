@@ -1,8 +1,18 @@
 package ca.corefacility.bioinformatics.irida.pipeline.data.impl.integration;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -24,6 +35,13 @@ import ca.corefacility.bioinformatics.irida.pipeline.data.impl.GalaxyAPI;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
+import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
+import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
+import com.github.jmchilton.blend4j.galaxy.beans.History;
+import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
+import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset;
+import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset.Source;
+import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.galaxybootstrap.BootStrapper;
@@ -39,7 +57,6 @@ public class GalaxyAPIIT
 	
 	private static final Logger logger = LoggerFactory.getLogger(GalaxyAPIIT.class);
 	
-	private static GalaxyAPI restAPIGalaxy;
 	private static GalaxyInstance galaxyInstanceAdmin;
 	private static GalaxyInstance galaxyInstanceRegularUser;
 	private static GalaxyInstance galaxyInstanceRegularUser2;
@@ -64,11 +81,13 @@ public class GalaxyAPIIT
 	private static GalaxyDaemon galaxyDaemon;
 	private static BootStrapper bootStrapper;
 	
-	private static List<File> dataFilesSingle;
-	private static List<File> dataFilesDouble;
+	private List<File> dataFilesSingle;
+	private List<File> dataFilesDouble;
+	
+	private GalaxyAPI restAPIGalaxy;
 		
 	@BeforeClass
-	public static void setup() throws IOException, URISyntaxException
+	public static void setupStatic() throws IOException, URISyntaxException
 	{
 	    GalaxyData galaxyData = new GalaxyData();
 	    bootStrapper = downloadGalaxy();
@@ -78,8 +97,12 @@ public class GalaxyAPIIT
 	    buildGalaxyUsers(galaxyProperties, galaxyData);
 	    
 	    runGalaxy(bootStrapper, galaxyProperties, galaxyData);
-	    
-	    restAPIGalaxy = new GalaxyAPI(galaxyURL, galaxyAdmin, adminAPIKey);
+	}
+	
+	@Before
+	public void setup() throws URISyntaxException
+	{
+	    restAPIGalaxy = new GalaxyAPI(galaxyURL, galaxyAdmin, adminAPIKey, false);
 	    
 	    setupDataFiles();
 	}
@@ -103,7 +126,7 @@ public class GalaxyAPIIT
 	    return bootStrapper;
 	}
 	
-	private static void setupDataFiles() throws URISyntaxException
+	private void setupDataFiles() throws URISyntaxException
 	{
 		File dataFile1 = new File(GalaxyAPIIT.class.getResource("testData1.fastq").toURI());
 		File dataFile2 = new File(GalaxyAPIIT.class.getResource("testData2.fastq").toURI());
@@ -233,10 +256,105 @@ public class GalaxyAPIIT
 		return map;
 	}
 	
+	/**
+	 * Given a file library ID, loads a file into a Galaxy history and then loads the contents of this file into a string.
+	 * @param testName
+	 * @param filename
+	 * @param galaxyInstance
+	 * @param libraryFileId
+	 * @return  The String with the file contents.
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
+	private String getGalaxyFileContents(String testName, String filename, GalaxyInstance galaxyInstance, String libraryFileId) throws InterruptedException, IOException
+	{
+		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
+		
+		History history = new History();
+		history.setName(testName);
+		History persistedHistory = historiesClient.create(history);
+		assertNotNull(persistedHistory);
+		
+		HistoryDataset historyDataset = new HistoryDataset();
+		historyDataset.setSource(Source.LIBRARY);
+		historyDataset.setContent(libraryFileId);
+		HistoryDetails historyDetails = historiesClient.createHistoryDataset(persistedHistory.getId(), historyDataset);
+		assertNotNull(historyDetails);
+
+		String dataId = getIdForFileInHistory(filename, persistedHistory.getId(), galaxyInstance);
+		assertNotNull(dataId);
+		
+		Dataset dataset;
+		do
+		{
+			dataset = historiesClient.showDataset(persistedHistory.getId(), dataId);
+			assertNotNull(dataset);
+			Thread.sleep(2000);
+		} while (!"ok".equals(dataset.getState()));
+		
+		URL url = new URL(dataset.getFullDownloadUrl());
+		
+		HttpURLConnection con = (HttpURLConnection)url.openConnection();
+		InputStream stream = con.getInputStream();
+		
+		String galaxyFileContents = readFileContentsFromReader(
+				new BufferedReader(new InputStreamReader(stream)));
+		
+		return galaxyFileContents;
+	}
+	
+	private String getIdForFileInHistory(String filename, String historyId, GalaxyInstance galaxyInstance)
+	{
+		String dataId = null;
+		List<HistoryContents> historyContentsList = galaxyInstance.getHistoriesClient().
+				showHistoryContents(historyId);
+		
+		for (HistoryContents contents : historyContentsList)
+		{
+			if (filename.equals(contents.getName()))
+			{
+				dataId = contents.getId();
+				break;
+			}
+		}
+		
+		return dataId;
+	}
+	
+	private String readFileContentsFromReader(BufferedReader reader) throws IOException
+	{
+		String line;
+		String contents = "";
+		while((line = reader.readLine()) != null)
+		{
+			contents += line;
+		}
+		
+		return contents;
+	}
+	
+	private File createTemporaryDataFile() throws IOException, URISyntaxException
+	{
+		File dataFile1 = new File(GalaxyAPIIT.class.getResource("testData1.fastq").toURI());
+		
+		// create temp file so I can delete it afterwards for testing the "link" option in Galaxy
+		File tempDir = File.createTempFile("testData1", "folder");
+		tempDir.delete();
+		tempDir.mkdir();
+		tempDir.deleteOnExit();
+		
+		Path dataPathTemp = Paths.get(tempDir.getAbsolutePath(), "testData1.fastq");
+		File dataFileTemp = dataPathTemp.toFile();
+		Files.copy(Paths.get(dataFile1.getAbsolutePath()), dataPathTemp,
+				StandardCopyOption.REPLACE_EXISTING);
+		
+		return dataFileTemp;
+	}
+	
 	@Test(expected=RuntimeException.class)
 	public void testCreateGalaxyAPIInvalidAdmin()
 	{
-		restAPIGalaxy = new GalaxyAPI(galaxyURL, invalidGalaxyAdmin, adminAPIKey);
+		restAPIGalaxy = new GalaxyAPI(galaxyURL, invalidGalaxyAdmin, adminAPIKey, false);
 	}
 	
 	@Test(expected=RuntimeException.class)
@@ -248,7 +366,7 @@ public class GalaxyAPIIT
 			wrongAdminAPIKey = "badbadbadbadbadbadbadbadbadbadbaa";
 		}
 		
-		restAPIGalaxy = new GalaxyAPI(galaxyURL, galaxyAdmin, wrongAdminAPIKey);
+		restAPIGalaxy = new GalaxyAPI(galaxyURL, galaxyAdmin, wrongAdminAPIKey, false);
 	}
 	
 	@Test
@@ -419,6 +537,109 @@ public class GalaxyAPIIT
 		} catch (RuntimeException e){}
 	}
 	
+	@Test
+	public void testUploadSampleNoLink() throws URISyntaxException, LibraryUploadException, InterruptedException, IOException
+	{
+		restAPIGalaxy = new GalaxyAPI(galaxyURL, galaxyAdmin, adminAPIKey, false);
+		
+		File dataFileTemp1 = createTemporaryDataFile();
+		dataFilesSingle = new ArrayList<File>();
+		dataFilesSingle.add(dataFileTemp1);
+		
+		String libraryName = "testUploadSampleNoLink";
+		
+		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
+		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		samples.add(galaxySample);
+		
+		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, regularUserName));
+		
+		// regular user should have access to files
+		Library actualLibraryRegularUser = findLibraryByName(libraryName, galaxyInstanceRegularUser);
+		assertNotNull(actualLibraryRegularUser);
+		
+		String libraryId = actualLibraryRegularUser.getId();
+		
+		List<LibraryContent> libraryContents = galaxyInstanceRegularUser.getLibrariesClient().
+				getLibraryContents(libraryId);
+		Map<String,LibraryContent> contentsMapRegularUser = fileToLibraryContentMap(libraryContents);
+		
+		assertTrue(contentsMapRegularUser.containsKey("/illumina_reads/testData/testData1.fastq"));
+		assertEquals("file", contentsMapRegularUser.get("/illumina_reads/testData/testData1.fastq").getType());
+		
+		// download file from Galaxy
+		String galaxyFileContents = getGalaxyFileContents(libraryName, "testData1.fastq", galaxyInstanceRegularUser,
+				contentsMapRegularUser.get("/illumina_reads/testData/testData1.fastq").getId());
+		
+		// load file from filesystem
+		String fileSystemFileContents = readFileContentsFromReader(
+				new BufferedReader(new FileReader(dataFileTemp1.getAbsolutePath())));
+		
+		// make sure files are the same
+		assertEquals(fileSystemFileContents, galaxyFileContents);
+		
+		// delete original file
+		assertTrue(dataFileTemp1.delete());
+		
+		// file contents should be the same (no link)
+		galaxyFileContents = getGalaxyFileContents(libraryName + "Deleted", "testData1.fastq", galaxyInstanceRegularUser,
+				contentsMapRegularUser.get("/illumina_reads/testData/testData1.fastq").getId());
+		assertEquals(fileSystemFileContents, galaxyFileContents);
+	}
+	
+	@Test
+	public void testUploadSampleLink() throws URISyntaxException, LibraryUploadException, InterruptedException, IOException
+	{
+		restAPIGalaxy = new GalaxyAPI(galaxyURL, galaxyAdmin, adminAPIKey, true);
+		
+		String libraryName = "testUploadSampleLink";
+		
+		File dataFileTemp1 = createTemporaryDataFile();
+		dataFilesSingle = new ArrayList<File>();
+		dataFilesSingle.add(dataFileTemp1);
+		
+		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
+		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		samples.add(galaxySample);
+		
+		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, regularUserName));
+		
+		// regular user should have access to files
+		Library actualLibraryRegularUser = findLibraryByName(libraryName, galaxyInstanceRegularUser);
+		assertNotNull(actualLibraryRegularUser);
+		
+		String libraryId = actualLibraryRegularUser.getId();
+		
+		List<LibraryContent> libraryContents = galaxyInstanceRegularUser.getLibrariesClient().
+				getLibraryContents(libraryId);
+		Map<String,LibraryContent> contentsMapRegularUser = fileToLibraryContentMap(libraryContents);
+		
+		assertTrue(contentsMapRegularUser.containsKey("/illumina_reads/testData/testData1.fastq"));
+		assertEquals("file", contentsMapRegularUser.get("/illumina_reads/testData/testData1.fastq").getType());
+		
+		// download file from Galaxy
+		String galaxyFileContents = getGalaxyFileContents(libraryName, "testData1.fastq", galaxyInstanceRegularUser,
+				contentsMapRegularUser.get("/illumina_reads/testData/testData1.fastq").getId());
+		
+		// load file from filesystem
+		String fileSystemFileContents = readFileContentsFromReader(
+				new BufferedReader(new FileReader(dataFileTemp1.getAbsolutePath())));
+		
+		// make sure files are the same
+		assertEquals(fileSystemFileContents, galaxyFileContents);
+		
+		// delete original file
+		assertTrue(dataFileTemp1.delete());
+		
+		// should get an error when attempting to download file
+		try
+		{
+			galaxyFileContents = getGalaxyFileContents(libraryName + "Deleted", "testData1.fastq", galaxyInstanceRegularUser,
+					contentsMapRegularUser.get("/illumina_reads/testData/testData1.fastq").getId());
+			fail("No exception when attempting to download");
+		} catch (Exception e){}
+	}
+	
 	@Test(expected=RuntimeException.class)
 	public void testUploadSampleWrongGalaxyAddress() throws URISyntaxException, LibraryUploadException
 	{
@@ -431,7 +652,7 @@ public class GalaxyAPIIT
 		
 		String wrongGalaxyURL = "http://localhost:" + wrongPort + "/";
 		
-		restAPIGalaxy = new GalaxyAPI(wrongGalaxyURL, galaxyAdmin, adminAPIKey);
+		restAPIGalaxy = new GalaxyAPI(wrongGalaxyURL, galaxyAdmin, adminAPIKey, false);
 	}
 	
 	@Test(expected=LibraryUploadException.class)
