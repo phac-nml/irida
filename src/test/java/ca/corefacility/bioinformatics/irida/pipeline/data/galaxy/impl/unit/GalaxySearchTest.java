@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.data.impl.unit;
+package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.unit;
 
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import ca.corefacility.bioinformatics.irida.pipeline.data.impl.GalaxySearch;
+import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxySearch;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
