@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
-import com.github.jmchilton.blend4j.galaxy.beans.FileLibraryUpload;
+import com.github.jmchilton.blend4j.galaxy.beans.FilesystemPathsLibraryUpload;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
@@ -27,14 +27,17 @@ public class GalaxyAPI
 	private String adminEmail;
 	private GalaxySearch galaxySearch;
 	private GalaxyLibrary galaxyLibrary;
+	private boolean linkUploadedFiles = false;
 	
 	/**
 	 * Builds a new GalaxyAPI instance with the given information.
 	 * @param galaxyURL  The URL to the Galaxy instance.
 	 * @param adminEmail  An administrators email address for the Galaxy instance.
 	 * @param adminAPIKey  A corresponding administrators API key for the Galaxy instance.
+	 * @param linkUploadedFiles  If uploaded files should be linked, or uploaded
+	 * 	(linking assumes the files are on the same filesystem as Galaxy).
 	 */
-	public GalaxyAPI(String galaxyURL, String adminEmail, String adminAPIKey)
+	public GalaxyAPI(String galaxyURL, String adminEmail, String adminAPIKey, boolean linkUploadedFiles)
 	{
 		if (galaxyURL == null)
 		{
@@ -53,6 +56,7 @@ public class GalaxyAPI
 		
 		galaxyInstance = GalaxyInstanceFactory.get(galaxyURL, adminAPIKey);
 		this.adminEmail = adminEmail;
+		this.linkUploadedFiles = linkUploadedFiles;
 		
 		if (galaxyInstance == null)
 		{
@@ -74,8 +78,10 @@ public class GalaxyAPI
 	 * Builds a GalaxyAPI object with the given information.
 	 * @param galaxyInstance  A GalaxyInstance object pointing to the correct Galaxy location.
 	 * @param adminEmail  The administrators email address for the corresponding API key within the GalaxyInstance.
+	 * @param linkUploadedFiles  If uploaded files should be linked, or uploaded
+	 * 	(linking assumes the files are on the same filesystem as Galaxy).
 	 */
-	public GalaxyAPI(GalaxyInstance galaxyInstance, String adminEmail)
+	public GalaxyAPI(GalaxyInstance galaxyInstance, String adminEmail, boolean linkUploadedFiles)
 	{
 		if (galaxyInstance == null)
 		{
@@ -89,6 +95,7 @@ public class GalaxyAPI
 		
 		this.galaxyInstance = galaxyInstance;
 		this.adminEmail = adminEmail;
+		this.linkUploadedFiles = linkUploadedFiles;
 		
 		galaxySearch = new GalaxySearch(galaxyInstance);
 		galaxyLibrary = new GalaxyLibrary(galaxyInstance, galaxySearch);
@@ -104,10 +111,12 @@ public class GalaxyAPI
 	 * Builds a GalaxyAPI object with the given information.
 	 * @param galaxyInstance  A GalaxyInstance object pointing to the correct Galaxy location.
 	 * @param adminEmail  The administrators email address for the corresponding API key within the GalaxyInstance.
+	 * @param linkUploadedFiles  If uploaded files should be linked, or uploaded
+	 * 	(linking assumes the files are on the same filesystem as Galaxy).
 	 * @param galaxySearch  A GalaxySearch object.
 	 * @param galaxyLibrary  A GalaxyLibrary object.
 	 */
-	public GalaxyAPI(GalaxyInstance galaxyInstance, String adminEmail, GalaxySearch galaxySearch, GalaxyLibrary galaxyLibrary)
+	public GalaxyAPI(GalaxyInstance galaxyInstance, String adminEmail, boolean linkUploadedFiles, GalaxySearch galaxySearch, GalaxyLibrary galaxyLibrary)
 	{
 		if (galaxyInstance == null)
 		{
@@ -131,6 +140,7 @@ public class GalaxyAPI
 		
 		this.galaxyInstance = galaxyInstance;
 		this.adminEmail = adminEmail;
+		this.linkUploadedFiles = linkUploadedFiles;
 		
 		this.galaxyLibrary = galaxyLibrary;
 		this.galaxySearch = galaxySearch;
@@ -199,6 +209,28 @@ public class GalaxyAPI
 		return libraryID;
 	}
 	
+	private ClientResponse uploadFile(LibraryFolder folder, File file, LibrariesClient librariesClient, Library library)
+	{
+		FilesystemPathsLibraryUpload upload = new FilesystemPathsLibraryUpload();
+		upload.setFolderId(folder.getId());
+		
+		upload.setContent(file.getAbsolutePath());
+		upload.setName(file.getName());
+		upload.setLinkData(linkUploadedFiles);
+		
+		return librariesClient.uploadFilesystemPathsRequest(library.getId(), upload);
+	}
+	
+	private String samplePath(LibraryFolder rootFolder, GalaxySample sample)
+	{
+		return "/" + rootFolder.getName() + "/" + sample.getSampleName();
+	}
+	
+	private String samplePath(LibraryFolder rootFolder, GalaxySample sample, File file)
+	{
+		return "/" + rootFolder.getName() + "/" + sample.getSampleName() + "/" + file.getName();
+	}
+	
 	private boolean uploadSample(GalaxySample sample, LibraryFolder rootFolder, LibrariesClient librariesClient,
 			Library library, String errorSuffix) throws LibraryUploadException
 	{				
@@ -210,25 +242,20 @@ public class GalaxyAPI
 		{
 			success = true;
 			
-			logger.info("Created sample folder name=" + sample.getSampleName() + " id=" + persistedSampleFolder.getId() +
+			logger.info("Created Galaxy sample folder name=" + samplePath(rootFolder, sample) + " id=" + persistedSampleFolder.getId() +
 					" in library name=" + library.getName() + " id=" + library.getId() + 
 					" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
 			
 			for (File file : sample.getSampleFiles())
 			{
-				FileLibraryUpload upload = new FileLibraryUpload();
-				upload.setFolderId(persistedSampleFolder.getId());
-				
-				upload.setFile(file);
-				upload.setName(file.getName());
-				
-				ClientResponse uploadResponse = librariesClient.uploadFile(library.getId(), upload);
+				ClientResponse uploadResponse = uploadFile(persistedSampleFolder, file, librariesClient, library);
 				
 				success &= ClientResponse.Status.OK.equals(uploadResponse.getClientResponseStatus());
 				
 				if (success)
 				{
-					logger.info("Uploaded file to path=/" + sample.getSampleName() + "/" + file.getName() +
+					logger.info("Uploaded file to Galaxy path=" + samplePath(rootFolder, sample, file) +
+							" from local path=" + file.getAbsolutePath() + " link=" + linkUploadedFiles + 
 							" in library name=" + library.getName() + " id=" + library.getId() + 
 							" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
 				}

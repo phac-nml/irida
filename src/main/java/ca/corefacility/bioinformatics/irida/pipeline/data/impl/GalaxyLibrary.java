@@ -60,7 +60,7 @@ public class GalaxyLibrary
 		
 		if (persistedLibrary != null)
 		{
-			logger.info("Created library=" + library.getName() + " libraryId=" + library.getId() +
+			logger.info("Created library=" + library.getName() + " libraryId=" + persistedLibrary.getId() +
 					" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
 		}
 		
