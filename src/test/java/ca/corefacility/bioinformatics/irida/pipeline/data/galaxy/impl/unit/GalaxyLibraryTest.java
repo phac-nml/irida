@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.data.impl.unit;
+package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.unit;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -20,9 +20,9 @@ import com.github.jmchilton.blend4j.galaxy.beans.LibraryPermissions;
 import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.sun.jersey.api.client.ClientResponse;
 
-import ca.corefacility.bioinformatics.irida.pipeline.data.impl.CreateLibraryException;
-import ca.corefacility.bioinformatics.irida.pipeline.data.impl.GalaxyLibrary;
-import ca.corefacility.bioinformatics.irida.pipeline.data.impl.GalaxySearch;
+import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.CreateLibraryException;
+import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyLibrary;
+import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxySearch;
 
 public class GalaxyLibraryTest
 {

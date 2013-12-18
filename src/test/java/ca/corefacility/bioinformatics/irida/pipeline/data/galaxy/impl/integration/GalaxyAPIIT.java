@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.data.impl.integration;
+package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.integration;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -28,10 +28,10 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 
-import ca.corefacility.bioinformatics.irida.pipeline.data.impl.CreateLibraryException;
-import ca.corefacility.bioinformatics.irida.pipeline.data.impl.GalaxySample;
-import ca.corefacility.bioinformatics.irida.pipeline.data.impl.LibraryUploadException;
-import ca.corefacility.bioinformatics.irida.pipeline.data.impl.GalaxyAPI;
+import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.CreateLibraryException;
+import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyAPI;
+import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxySample;
+import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.LibraryUploadException;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;

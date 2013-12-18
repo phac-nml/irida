@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.data.impl.unit;
+package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.unit;
 
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
@@ -14,12 +14,12 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import ca.corefacility.bioinformatics.irida.pipeline.data.impl.CreateLibraryException;
-import ca.corefacility.bioinformatics.irida.pipeline.data.impl.GalaxyLibrary;
-import ca.corefacility.bioinformatics.irida.pipeline.data.impl.GalaxySample;
-import ca.corefacility.bioinformatics.irida.pipeline.data.impl.GalaxySearch;
-import ca.corefacility.bioinformatics.irida.pipeline.data.impl.LibraryUploadException;
-import ca.corefacility.bioinformatics.irida.pipeline.data.impl.GalaxyAPI;
+import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.CreateLibraryException;
+import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyAPI;
+import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyLibrary;
+import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxySample;
+import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxySearch;
+import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.LibraryUploadException;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;

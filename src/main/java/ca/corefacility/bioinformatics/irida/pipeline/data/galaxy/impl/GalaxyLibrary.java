@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.data.impl;
+package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
