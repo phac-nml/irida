@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -17,7 +18,7 @@ public class IridaApiAspectsConfig {
 	private FileProcessingChain fileProcessorChain;
 
 	@Bean
-	public FileProcessorAspect sequenceFilePostProcessor(TaskExecutor taskExecutor) {
+	public FileProcessorAspect sequenceFilePostProcessor(@Qualifier(value = "fileProcessingChainExecutor")TaskExecutor taskExecutor) {
 		return new FileProcessorAspect(fileProcessorChain, taskExecutor);
 	}
 
