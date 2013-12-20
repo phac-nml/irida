@@ -17,14 +17,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.*;
 
@@ -32,9 +28,9 @@ import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.CreateLibr
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxySample;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.LibraryUploadException;
+import ca.corefacility.bioinformatics.irida.utils.test.IridaIntegrationTest;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
-import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
@@ -44,86 +40,24 @@ import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset.Source;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
-import com.github.jmchilton.galaxybootstrap.BootStrapper;
-import com.github.jmchilton.galaxybootstrap.DownloadProperties;
-import com.github.jmchilton.galaxybootstrap.GalaxyData;
-import com.github.jmchilton.galaxybootstrap.GalaxyProperties;
-import com.github.jmchilton.galaxybootstrap.BootStrapper.GalaxyDaemon;
-import com.github.jmchilton.galaxybootstrap.GalaxyData.User;
 
-public class GalaxyAPIIT
-{
-	private static final int largestPort = 65535;
-	
-	private static final Logger logger = LoggerFactory.getLogger(GalaxyAPIIT.class);
-	
-	private static GalaxyInstance galaxyInstanceAdmin;
-	private static GalaxyInstance galaxyInstanceRegularUser;
-	private static GalaxyInstance galaxyInstanceRegularUser2;
-	
-	private static String regularUserName = "regular@localhost";
-	private static String regularUserPassword;
-	private static String regularUserAPIKey;
-	
-	private static String regularUserName2 = "regular2@localhost";
-	private static String regularUserPassword2;
-	private static String regularUserAPIKey2;
-	
-	private static String adminAPIKey;
-	private static String adminPassword;
-	private static String galaxyAdmin;
-	private static String invalidGalaxyUser = "invalid@localhost";
-	private static int galaxyPort;
-	private static String galaxyURL;
-	
-	private static String invalidGalaxyAdmin = "admin_invalid@localhost";
-	
-	private static GalaxyDaemon galaxyDaemon;
-	private static BootStrapper bootStrapper;
+public class GalaxyAPIIT extends IridaIntegrationTest
+{		
+	@Autowired
+	private LocalGalaxy localGalaxy;
 	
 	private List<File> dataFilesSingle;
 	private List<File> dataFilesDouble;
 	
 	private GalaxyAPI restAPIGalaxy;
-		
-	@BeforeClass
-	public static void setupStatic() throws IOException, URISyntaxException
-	{
-	    GalaxyData galaxyData = new GalaxyData();
-	    bootStrapper = downloadGalaxy();
-	    
-	    GalaxyProperties galaxyProperties = setupGalaxyProperties();
-	    	    
-	    buildGalaxyUsers(galaxyProperties, galaxyData);
-	    
-	    runGalaxy(bootStrapper, galaxyProperties, galaxyData);
-	}
 	
 	@Before
 	public void setup() throws URISyntaxException
 	{
-	    restAPIGalaxy = new GalaxyAPI(galaxyURL, galaxyAdmin, adminAPIKey, false);
+	    restAPIGalaxy = new GalaxyAPI(localGalaxy.getGalaxyURL(), localGalaxy.getAdminName(),
+	    		localGalaxy.getAdminAPIKey(), false);
 	    
 	    setupDataFiles();
-	}
-	
-	private static BootStrapper downloadGalaxy()
-	{		
-		DownloadProperties downloadProperties =
-				new DownloadProperties(DownloadProperties.GALAXY_CENTRAL_REPOSITORY_URL, DownloadProperties.BRANCH_STABLE, null);
-	    BootStrapper bootStrapper = new BootStrapper(downloadProperties);
-	    
-	    galaxyAdmin = "admin@localhost";
-	    File galaxyCache = new File(System.getProperty("user.home"), ".galaxy-bootstrap");
-	    
-	    logger.info("About to download Galaxy from url: " + DownloadProperties.GALAXY_CENTRAL_REPOSITORY_URL + ", branch:" +
-	    		DownloadProperties.BRANCH_STABLE);
-	    logger.info("Galaxy will be downloaded to cache at: " + galaxyCache.getAbsolutePath()
-	    		+ ", and copied to: " + bootStrapper.getPath());
-	    bootStrapper.setupGalaxy();
-	    logger.info("Finished downloading Galaxy");
-	    
-	    return bootStrapper;
 	}
 	
 	private void setupDataFiles() throws URISyntaxException
@@ -137,82 +71,6 @@ public class GalaxyAPIIT
 		dataFilesDouble = new ArrayList<File>();
 		dataFilesDouble.add(dataFile1);
 		dataFilesDouble.add(dataFile2);
-	}
-	
-	private static GalaxyProperties setupGalaxyProperties()
-	{
-	    GalaxyProperties galaxyProperties = new GalaxyProperties().assignFreePort().configureNestedShedTools();
-	    galaxyProperties.prepopulateSqliteDatabase();
-	    galaxyProperties.setAppProperty("allow_library_path_paste", "true");
-	    
-	    galaxyPort = galaxyProperties.getPort();
-	    galaxyURL = "http://localhost:" + galaxyPort + "/";
-	    
-	    return galaxyProperties;
-	}
-	
-	private static void runGalaxy(BootStrapper bootStrapper, GalaxyProperties galaxyProperties, GalaxyData galaxyData)
-	{
-		File galaxyLogFile = new File(bootStrapper.getPath() + File.separator + "paster.log");
-		
-  		logger.info("Setting up Galaxy");
-		logger.debug("Galaxy admin user: " + galaxyAdmin + ", password: " + adminPassword +
-		   	", apiKey: " + adminAPIKey);
-		logger.debug("Galaxy regular user: " + regularUserName + ", password: " + regularUserPassword +
-			 ", apiKey: " + regularUserAPIKey);
-		logger.debug("Galaxy regular user2: " + regularUserName2 + ", password: " + regularUserPassword2 +
-			 ", apiKey: " + regularUserAPIKey2);
-		   
-		galaxyDaemon = bootStrapper.run(galaxyProperties, galaxyData);
-		   
-		logger.info("Waiting for Galaxy to come up on url: " + galaxyURL + ", log: " +
-			 galaxyLogFile.getAbsolutePath());
-		
-		if (!galaxyDaemon.waitForUp())
-		{
-			fail("Could not start Galaxy for tests");
-		}
-		logger.info("Galaxy running on url: " + galaxyURL);
-	}
-	
-	private static void buildGalaxyUsers(GalaxyProperties galaxyProperties, GalaxyData galaxyData)
-	{
-	    User adminUser = new User(galaxyAdmin);
-	    adminPassword = UUID.randomUUID().toString();
-	    adminUser.setPassword(adminPassword);
-	    
-	    User regularUser = new User(regularUserName);
-	    regularUserPassword = UUID.randomUUID().toString();
-	    regularUser.setPassword(regularUserPassword);
-	    
-	    User regularUser2 = new User(regularUserName2);
-	    regularUserPassword2 = UUID.randomUUID().toString();
-	    regularUser2.setPassword(regularUserPassword2);
-	    
-	    galaxyData.getUsers().add(adminUser);
-	    galaxyData.getUsers().add(regularUser);
-	    galaxyData.getUsers().add(regularUser2);
-	    
-	    galaxyProperties.setAdminUser(galaxyAdmin);
-	    adminAPIKey = adminUser.getApiKey();
-	    
-	    regularUserAPIKey = regularUser.getApiKey();
-	    regularUserAPIKey2 = regularUser2.getApiKey();
-	    
-	    galaxyInstanceAdmin = GalaxyInstanceFactory.get(galaxyURL, adminAPIKey);
-	    galaxyInstanceRegularUser = GalaxyInstanceFactory.get(galaxyURL, regularUserAPIKey);
-	    galaxyInstanceRegularUser2 = GalaxyInstanceFactory.get(galaxyURL, regularUserAPIKey2);
-	}
-	
-	@AfterClass
-	public static void tearDown()
-	{
-		logger.info("Shutting down Galaxy on url=" + galaxyURL);
-		galaxyDaemon.stop();
-		galaxyDaemon.waitForDown();
-		logger.info("Galaxy shutdown");
-		logger.debug("Deleting Galaxy directory: " + bootStrapper.getPath());
-		bootStrapper.deleteGalaxyRoot();
 	}
 	
 	private Library findLibraryByID(String libraryID, GalaxyInstance galaxyInstance)
@@ -354,19 +212,20 @@ public class GalaxyAPIIT
 	@Test(expected=RuntimeException.class)
 	public void testCreateGalaxyAPIInvalidAdmin()
 	{
-		restAPIGalaxy = new GalaxyAPI(galaxyURL, invalidGalaxyAdmin, adminAPIKey, false);
+	    restAPIGalaxy = new GalaxyAPI(localGalaxy.getGalaxyURL(), localGalaxy.getInvalidGalaxyAdminName(),
+	    		localGalaxy.getAdminAPIKey(), false);
 	}
 	
 	@Test(expected=RuntimeException.class)
 	public void testInvalidAPIKey() throws URISyntaxException, LibraryUploadException
 	{
 		String wrongAdminAPIKey = "badbadbadbadbadbadbadbadbadbadbad";
-		if (wrongAdminAPIKey.equals(adminAPIKey)) // what are the chances?
+		if (wrongAdminAPIKey.equals(localGalaxy.getAdminAPIKey())) // what are the chances?
 		{
 			wrongAdminAPIKey = "badbadbadbadbadbadbadbadbadbadbaa";
 		}
 		
-		restAPIGalaxy = new GalaxyAPI(galaxyURL, galaxyAdmin, wrongAdminAPIKey, false);
+		restAPIGalaxy = new GalaxyAPI(localGalaxy.getGalaxyURL(), localGalaxy.getAdminName(), wrongAdminAPIKey, false);
 	}
 	
 	@Test
@@ -374,15 +233,15 @@ public class GalaxyAPIIT
 	{
 		String libraryName = "testCreateLibraryAdmin";
 		
-		String libraryID = restAPIGalaxy.buildGalaxyLibrary(libraryName, galaxyAdmin);
+		String libraryID = restAPIGalaxy.buildGalaxyLibrary(libraryName, localGalaxy.getAdminName());
 		
 		// make sure admin can see library
-		Library actualLibraryAdmin = findLibraryByID(libraryID, galaxyInstanceAdmin);	
+		Library actualLibraryAdmin = findLibraryByID(libraryID, localGalaxy.getGalaxyInstanceAdmin());	
 		assertNotNull(actualLibraryAdmin);
 		assertEquals(libraryName, actualLibraryAdmin.getName());
 		
 		// make sure regular user cannot see library
-		Library actualLibraryRegularUser = findLibraryByID(libraryID, galaxyInstanceRegularUser);
+		Library actualLibraryRegularUser = findLibraryByID(libraryID, localGalaxy.getGalaxyInstanceUser1());
 		assertNull(actualLibraryRegularUser);
 	}
 	
@@ -391,19 +250,19 @@ public class GalaxyAPIIT
 	{
 		String libraryName = "testCreateLibraryRegularUser";
 		
-		String libraryID = restAPIGalaxy.buildGalaxyLibrary(libraryName, regularUserName);
+		String libraryID = restAPIGalaxy.buildGalaxyLibrary(libraryName, localGalaxy.getUser1Name());
 		
 		// make sure regular user can see library
-		Library actualLibraryRegularUser = findLibraryByID(libraryID, galaxyInstanceRegularUser);
+		Library actualLibraryRegularUser = findLibraryByID(libraryID, localGalaxy.getGalaxyInstanceUser1());
 		assertNotNull(actualLibraryRegularUser);
 		assertEquals(libraryName, actualLibraryRegularUser.getName());
 		
 		// make sure 2nd regular user cannot see library
-		Library actualLibraryRegularUser2 = findLibraryByID(libraryID, galaxyInstanceRegularUser2);
+		Library actualLibraryRegularUser2 = findLibraryByID(libraryID, localGalaxy.getGalaxyInstanceUser2());
 		assertNull(actualLibraryRegularUser2);
 		
 		// make sure admin can see library
-		Library actualLibraryAdmin = findLibraryByID(libraryID, galaxyInstanceAdmin);	
+		Library actualLibraryAdmin = findLibraryByID(libraryID, localGalaxy.getGalaxyInstanceAdmin());	
 		assertNotNull(actualLibraryAdmin);
 		assertEquals(libraryName, actualLibraryAdmin.getName());
 	}
@@ -413,7 +272,7 @@ public class GalaxyAPIIT
 	{
 		String libraryName = "testCreateLibraryInvalidUser";
 		
-		restAPIGalaxy.buildGalaxyLibrary(libraryName, invalidGalaxyUser);
+		restAPIGalaxy.buildGalaxyLibrary(libraryName, localGalaxy.getInvalidGalaxyUserName());
 	}
 	
 	@Test
@@ -425,15 +284,15 @@ public class GalaxyAPIIT
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
 		samples.add(galaxySample);
 		
-		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, regularUserName));
+		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getUser1Name()));
 		
 		// regular user should have access to files
-		Library actualLibraryRegularUser = findLibraryByName(libraryName, galaxyInstanceRegularUser);
+		Library actualLibraryRegularUser = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceUser1());
 		assertNotNull(actualLibraryRegularUser);
 		
 		String libraryId = actualLibraryRegularUser.getId();
 		
-		List<LibraryContent> libraryContents = galaxyInstanceRegularUser.getLibrariesClient().
+		List<LibraryContent> libraryContents = localGalaxy.getGalaxyInstanceUser1().getLibrariesClient().
 				getLibraryContents(libraryId);
 		Map<String,LibraryContent> contentsMapRegularUser = fileToLibraryContentMap(libraryContents);
 		assertEquals(5, contentsMapRegularUser.size());
@@ -450,10 +309,10 @@ public class GalaxyAPIIT
 		assertEquals("file", contentsMapRegularUser.get("/illumina_reads/testData/testData1.fastq").getType());
 		
 		// admin should have access to files
-		Library actualLibraryAdmin = findLibraryByName(libraryName, galaxyInstanceAdmin);
+		Library actualLibraryAdmin = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
 		assertNotNull(actualLibraryAdmin);
 		
-		libraryContents = galaxyInstanceAdmin.getLibrariesClient().
+		libraryContents = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient().
 				getLibraryContents(libraryId);
 		assertNotNull(libraryContents);
 		Map<String,LibraryContent> contentsMapAdminUser = fileToLibraryContentMap(libraryContents);
@@ -471,12 +330,12 @@ public class GalaxyAPIIT
 		assertEquals("file", contentsMapAdminUser.get("/illumina_reads/testData/testData1.fastq").getType());
 		
 		// 2nd regular user should not have access to library or files
-		Library actualLibraryRegularUser2 = findLibraryByName(libraryName, galaxyInstanceRegularUser2);
+		Library actualLibraryRegularUser2 = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceUser2());
 		assertNull(actualLibraryRegularUser2);
 		
 		try
 		{
-			libraryContents = galaxyInstanceRegularUser2.getLibrariesClient().
+			libraryContents = localGalaxy.getGalaxyInstanceUser2().getLibrariesClient().
 					getLibraryContents(libraryId);
 			fail("Did not throw RuntimeException");
 		} catch (RuntimeException e){}		
@@ -491,15 +350,16 @@ public class GalaxyAPIIT
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
 		samples.add(galaxySample);
 		
-		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, galaxyAdmin));
+		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
 		
 		// admin user should have access to files
-		Library actualLibrary = findLibraryByName(libraryName, galaxyInstanceAdmin);
+		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
 		assertNotNull(actualLibrary);
 		
 		String libraryId = actualLibrary.getId();
 		
-		List<LibraryContent> libraryContents = galaxyInstanceAdmin.getLibrariesClient().getLibraryContents(actualLibrary.getId());
+		List<LibraryContent> libraryContents = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient().
+				getLibraryContents(actualLibrary.getId());
 		Map<String,LibraryContent> contentsMapRegularUser = fileToLibraryContentMap(libraryContents);
 		assertEquals(5, contentsMapRegularUser.size());
 		
@@ -515,23 +375,23 @@ public class GalaxyAPIIT
 		assertEquals("file", contentsMapRegularUser.get("/illumina_reads/testData/testData1.fastq").getType());
 		
 		// regular user should not have access to files
-		actualLibrary = findLibraryByName(libraryName, galaxyInstanceRegularUser);
+		actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceUser1());
 		assertNull(actualLibrary);
 		
 		try
 		{
-			libraryContents = galaxyInstanceRegularUser.getLibrariesClient().
+			libraryContents = localGalaxy.getGalaxyInstanceUser1().getLibrariesClient().
 					getLibraryContents(libraryId);
 			fail("Did not throw RuntimeException");
 		} catch (RuntimeException e){}
 		
 		// 2nd regular user should not have access to files
-		actualLibrary = findLibraryByName(libraryName, galaxyInstanceRegularUser2);
+		actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceUser2());
 		assertNull(actualLibrary);
 		
 		try
 		{
-			libraryContents = galaxyInstanceRegularUser2.getLibrariesClient().
+			libraryContents = localGalaxy.getGalaxyInstanceUser2().getLibrariesClient().
 					getLibraryContents(libraryId);
 			fail("Did not throw RuntimeException");
 		} catch (RuntimeException e){}
@@ -540,7 +400,8 @@ public class GalaxyAPIIT
 	@Test
 	public void testUploadSampleNoLink() throws URISyntaxException, LibraryUploadException, InterruptedException, IOException
 	{
-		restAPIGalaxy = new GalaxyAPI(galaxyURL, galaxyAdmin, adminAPIKey, false);
+		restAPIGalaxy = new GalaxyAPI(localGalaxy.getGalaxyURL(), localGalaxy.getAdminName(),
+				localGalaxy.getAdminAPIKey(), false);
 		
 		File dataFileTemp1 = createTemporaryDataFile();
 		dataFilesSingle = new ArrayList<File>();
@@ -552,15 +413,15 @@ public class GalaxyAPIIT
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
 		samples.add(galaxySample);
 		
-		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, regularUserName));
+		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getUser1Name()));
 		
 		// regular user should have access to files
-		Library actualLibraryRegularUser = findLibraryByName(libraryName, galaxyInstanceRegularUser);
+		Library actualLibraryRegularUser = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceUser1());
 		assertNotNull(actualLibraryRegularUser);
 		
 		String libraryId = actualLibraryRegularUser.getId();
 		
-		List<LibraryContent> libraryContents = galaxyInstanceRegularUser.getLibrariesClient().
+		List<LibraryContent> libraryContents = localGalaxy.getGalaxyInstanceUser1().getLibrariesClient().
 				getLibraryContents(libraryId);
 		Map<String,LibraryContent> contentsMapRegularUser = fileToLibraryContentMap(libraryContents);
 		
@@ -568,7 +429,7 @@ public class GalaxyAPIIT
 		assertEquals("file", contentsMapRegularUser.get("/illumina_reads/testData/testData1.fastq").getType());
 		
 		// download file from Galaxy
-		String galaxyFileContents = getGalaxyFileContents(libraryName, "testData1.fastq", galaxyInstanceRegularUser,
+		String galaxyFileContents = getGalaxyFileContents(libraryName, "testData1.fastq", localGalaxy.getGalaxyInstanceUser1(),
 				contentsMapRegularUser.get("/illumina_reads/testData/testData1.fastq").getId());
 		
 		// load file from filesystem
@@ -582,7 +443,7 @@ public class GalaxyAPIIT
 		assertTrue(dataFileTemp1.delete());
 		
 		// file contents should be the same (no link)
-		galaxyFileContents = getGalaxyFileContents(libraryName + "Deleted", "testData1.fastq", galaxyInstanceRegularUser,
+		galaxyFileContents = getGalaxyFileContents(libraryName + "Deleted", "testData1.fastq", localGalaxy.getGalaxyInstanceUser1(),
 				contentsMapRegularUser.get("/illumina_reads/testData/testData1.fastq").getId());
 		assertEquals(fileSystemFileContents, galaxyFileContents);
 	}
@@ -590,7 +451,8 @@ public class GalaxyAPIIT
 	@Test
 	public void testUploadSampleLink() throws URISyntaxException, LibraryUploadException, InterruptedException, IOException
 	{
-		restAPIGalaxy = new GalaxyAPI(galaxyURL, galaxyAdmin, adminAPIKey, true);
+		restAPIGalaxy = new GalaxyAPI(localGalaxy.getGalaxyURL(), localGalaxy.getAdminName(),
+				localGalaxy.getAdminAPIKey(), true);
 		
 		String libraryName = "testUploadSampleLink";
 		
@@ -602,15 +464,15 @@ public class GalaxyAPIIT
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
 		samples.add(galaxySample);
 		
-		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, regularUserName));
+		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getUser1Name()));
 		
 		// regular user should have access to files
-		Library actualLibraryRegularUser = findLibraryByName(libraryName, galaxyInstanceRegularUser);
+		Library actualLibraryRegularUser = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceUser1());
 		assertNotNull(actualLibraryRegularUser);
 		
 		String libraryId = actualLibraryRegularUser.getId();
 		
-		List<LibraryContent> libraryContents = galaxyInstanceRegularUser.getLibrariesClient().
+		List<LibraryContent> libraryContents = localGalaxy.getGalaxyInstanceUser1().getLibrariesClient().
 				getLibraryContents(libraryId);
 		Map<String,LibraryContent> contentsMapRegularUser = fileToLibraryContentMap(libraryContents);
 		
@@ -618,7 +480,7 @@ public class GalaxyAPIIT
 		assertEquals("file", contentsMapRegularUser.get("/illumina_reads/testData/testData1.fastq").getType());
 		
 		// download file from Galaxy
-		String galaxyFileContents = getGalaxyFileContents(libraryName, "testData1.fastq", galaxyInstanceRegularUser,
+		String galaxyFileContents = getGalaxyFileContents(libraryName, "testData1.fastq", localGalaxy.getGalaxyInstanceUser1(),
 				contentsMapRegularUser.get("/illumina_reads/testData/testData1.fastq").getId());
 		
 		// load file from filesystem
@@ -634,7 +496,7 @@ public class GalaxyAPIIT
 		// should get an error when attempting to download file
 		try
 		{
-			galaxyFileContents = getGalaxyFileContents(libraryName + "Deleted", "testData1.fastq", galaxyInstanceRegularUser,
+			galaxyFileContents = getGalaxyFileContents(libraryName + "Deleted", "testData1.fastq", localGalaxy.getGalaxyInstanceUser1(),
 					contentsMapRegularUser.get("/illumina_reads/testData/testData1.fastq").getId());
 			fail("No exception when attempting to download");
 		} catch (Exception e){}
@@ -642,17 +504,9 @@ public class GalaxyAPIIT
 	
 	@Test(expected=RuntimeException.class)
 	public void testUploadSampleWrongGalaxyAddress() throws URISyntaxException, LibraryUploadException
-	{
-		// set port to something Galaxy is not running on
-		int wrongPort = (galaxyPort + 1);
-		if (wrongPort > largestPort)
-		{
-			wrongPort = galaxyPort - 1;
-		}
-		
-		String wrongGalaxyURL = "http://localhost:" + wrongPort + "/";
-		
-		restAPIGalaxy = new GalaxyAPI(wrongGalaxyURL, galaxyAdmin, adminAPIKey, false);
+	{		
+		restAPIGalaxy = new GalaxyAPI(localGalaxy.getInvalidGalaxyURL(),
+				localGalaxy.getAdminName(), localGalaxy.getAdminAPIKey(), false);
 	}
 	
 	@Test(expected=LibraryUploadException.class)
@@ -663,7 +517,7 @@ public class GalaxyAPIIT
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
 		samples.add(galaxySample);
 		
-		restAPIGalaxy.uploadSamples(samples, libraryName, invalidGalaxyUser);
+		restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getInvalidGalaxyUserName());
 	}
 	
 	@Test
@@ -675,12 +529,13 @@ public class GalaxyAPIIT
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
 		samples.add(galaxySample);
 		
-		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, galaxyAdmin));
+		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
 		
-		Library actualLibrary = findLibraryByName(libraryName, galaxyInstanceAdmin);
+		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
 		assertNotNull(actualLibrary);
 		
-		List<LibraryContent> libraryContents = galaxyInstanceAdmin.getLibrariesClient().getLibraryContents(actualLibrary.getId());
+		List<LibraryContent> libraryContents = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient().
+				getLibraryContents(actualLibrary.getId());
 		Map<String,LibraryContent> contentsMap = fileToLibraryContentMap(libraryContents);
 		assertEquals(6, contentsMap.size());
 		
@@ -709,12 +564,13 @@ public class GalaxyAPIIT
 		samples.add(galaxySample1);
 		samples.add(galaxySample2);
 		
-		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, galaxyAdmin));
+		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
 		
-		Library actualLibrary = findLibraryByName(libraryName, galaxyInstanceAdmin);
+		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
 		assertNotNull(actualLibrary);
 		
-		List<LibraryContent> libraryContents = galaxyInstanceAdmin.getLibrariesClient().getLibraryContents(actualLibrary.getId());
+		List<LibraryContent> libraryContents = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient().
+				getLibraryContents(actualLibrary.getId());
 		Map<String,LibraryContent> contentsMap = fileToLibraryContentMap(libraryContents);
 		assertEquals(7, contentsMap.size());
 		
