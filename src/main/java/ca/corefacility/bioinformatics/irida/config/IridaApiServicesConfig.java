@@ -9,6 +9,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
+import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.GalaxyAPIConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
@@ -47,7 +48,7 @@ import ca.corefacility.bioinformatics.irida.service.impl.UserServiceImpl;
  */
 @Configuration
 @Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class,
-		IridaApiMultithreadingConfig.class })
+		IridaApiMultithreadingConfig.class, GalaxyAPIConfig.class })
 public class IridaApiServicesConfig {
 	@Bean
 	public UserService userService(UserRepository userRepository, ProjectUserJoinRepository pujRepository,
