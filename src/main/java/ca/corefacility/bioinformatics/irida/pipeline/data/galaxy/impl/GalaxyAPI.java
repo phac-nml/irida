@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl;
 
 import java.io.File;
+import java.net.URL;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -406,5 +407,14 @@ public class GalaxyAPI
 		}
 		
 		return success;
+	}
+	
+	/**
+	 * Gets the URL of the Galaxy instance we are connected to.
+	 * @return  A String of the URL of the Galaxy instance we are connected to.
+	 */
+	public String getGalaxyUrl()
+	{
+		return galaxyInstance.getGalaxyUrl();
 	}
 }
