@@ -1,8 +1,11 @@
 package ca.corefacility.bioinformatics.irida.config;
 
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
@@ -17,27 +20,14 @@ import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.Sample;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
-import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
-import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.security.IgnoreExpiredCredentialsForPasswordChangeChecker;
 import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.IridaPermissionEvaluator;
-import ca.corefacility.bioinformatics.irida.security.permissions.ReadProjectPermission;
-import ca.corefacility.bioinformatics.irida.security.permissions.ReadSamplePermission;
-import ca.corefacility.bioinformatics.irida.security.permissions.ReadSequenceFilePermission;
-import ca.corefacility.bioinformatics.irida.security.permissions.UpdateUserPermission;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.security")
 public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	private static final String[] ROLE_HIERARCHIES = new String[] { "ROLE_ADMIN > ROLE_MANAGER",
@@ -46,25 +36,22 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	private static final String ROLE_HIERARCHY = StringUtils.join(ROLE_HIERARCHIES, "\n");
 
 	@Autowired
+	private List<BasePermission<?>> basePermissions;
+
+	@Autowired
 	private UserRepository userRepository;
 
-	@Autowired
-	private ProjectRepository projectRepository;
-
-	@Autowired
-	private SampleRepository sampleRepository;
-
-	@Autowired
-	private SequenceFileRepository sequenceFileRepository;
-
-	@Autowired
-	private ProjectUserJoinRepository pujRepository;
-
-	@Autowired
-	private ProjectSampleJoinRepository psjRepository;
-
-	@Autowired
-	private SampleSequenceFileJoinRepository ssfRepository;
+	@Override
+	protected MethodSecurityExpressionHandler createExpressionHandler() {
+		DefaultMethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler();
+		IridaPermissionEvaluator permissionEvaluator = new IridaPermissionEvaluator(basePermissions);
+		permissionEvaluator.init();
+		handler.setPermissionEvaluator(permissionEvaluator);
+		RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+		roleHierarchy.setHierarchy(ROLE_HIERARCHY);
+		handler.setRoleHierarchy(roleHierarchy);
+		return handler;
+	}
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -86,19 +73,6 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 		return new IgnoreExpiredCredentialsForPasswordChangeChecker();
 	}
 
-	@Override
-	protected MethodSecurityExpressionHandler createExpressionHandler() {
-		DefaultMethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler();
-		IridaPermissionEvaluator permissionEvaluator = new IridaPermissionEvaluator(readProjectPermission(),
-				readSamplePermission(), readSequenceFilePermission(), updateUserPermission());
-		permissionEvaluator.init();
-		handler.setPermissionEvaluator(permissionEvaluator);
-		RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-		roleHierarchy.setHierarchy(ROLE_HIERARCHY);
-		handler.setRoleHierarchy(roleHierarchy);
-		return handler;
-	}
-
 	@Bean
 	public AuthenticationManager authenticationManager() throws Exception {
 		return super.authenticationManager();
@@ -107,26 +81,5 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
-	}
-
-	@Bean
-	public BasePermission<User> updateUserPermission() {
-		return new UpdateUserPermission(userRepository);
-	}
-
-	@Bean
-	public BasePermission<Project> readProjectPermission() {
-		return new ReadProjectPermission(projectRepository, userRepository, pujRepository);
-	}
-
-	@Bean
-	public BasePermission<Sample> readSamplePermission() {
-		return new ReadSamplePermission(sampleRepository, userRepository, pujRepository, psjRepository);
-	}
-
-	@Bean
-	public BasePermission<SequenceFile> readSequenceFilePermission() {
-		return new ReadSequenceFilePermission(sequenceFileRepository, userRepository, pujRepository, psjRepository,
-				ssfRepository);
 	}
 }

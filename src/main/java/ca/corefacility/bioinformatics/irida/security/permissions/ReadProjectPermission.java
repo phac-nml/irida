@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
@@ -19,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUs
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
+@Component
 public class ReadProjectPermission extends BasePermission<Project> {
 
 	private static final Logger logger = LoggerFactory.getLogger(ReadProjectPermission.class);
@@ -30,6 +33,7 @@ public class ReadProjectPermission extends BasePermission<Project> {
 	/**
 	 * Construct an instance of {@link ReadProjectPermission}.
 	 */
+	@Autowired
 	public ReadProjectPermission(ProjectRepository projectRepository, UserRepository userRepository,
 			ProjectUserJoinRepository pujRepository) {
 		super(Project.class, projectRepository);
