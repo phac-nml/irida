@@ -6,7 +6,9 @@ import static org.junit.Assert.*;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,12 +40,15 @@ public class GalaxySearchTest
 	private static final String LIBRARY_ID_3 = "3";
 	private static final String INVALID_LIBRARY_ID = "0";
 	private static final String LIBRARY_NAME = "Test";
-	private static final String LIBRARY_NAME_2 = "Test2";
 	private static final String LIBRARY_NAME_3 = "Test3";
+	private static final String LIBRARY_ID_MULTIPLE_CONTENTS = "10";
 	private static final String FOLDER_NAME = "test_folder";
+	private static final String ILLUMINA_FOLDER_NAME = "test_folder/illumina";
 	private static final String INVALID_FOLDER_NAME = "invalid_folder";
 	
 	private List<Library> allLibrariesList;
+	private Map<String, LibraryContent> singleLibraryContentsAsMap;
+	private Map<String, LibraryContent> multipleLibraryContentsAsMap;
 	
 	@Before
 	public void setup() throws FileNotFoundException, URISyntaxException
@@ -111,13 +116,35 @@ public class GalaxySearchTest
 	
 	private void setupLibraryContentTest()
 	{
-		List<LibraryContent> libraryContents = new ArrayList<LibraryContent>();
+		List<LibraryContent> singleLibraryContents = new ArrayList<LibraryContent>();
 		LibraryContent validFolder = new LibraryContent();
 		validFolder.setName(FOLDER_NAME);
 		validFolder.setType("folder");
-		libraryContents.add(validFolder);
+		singleLibraryContents.add(validFolder);
 		
-		when(librariesClient.getLibraryContents(LIBRARY_ID)).thenReturn(libraryContents);
+		when(librariesClient.getLibraryContents(LIBRARY_ID)).thenReturn(singleLibraryContents);
+		
+		singleLibraryContentsAsMap = new HashMap<String, LibraryContent>();
+		singleLibraryContentsAsMap.put(FOLDER_NAME, validFolder);
+		
+		List<LibraryContent> multipleLibraryContents = new ArrayList<LibraryContent>();
+		LibraryContent validFolder1 = new LibraryContent();
+		validFolder1.setName(FOLDER_NAME);
+		validFolder1.setType("folder");
+		multipleLibraryContents.add(validFolder1);
+		
+		LibraryContent validFolder2 = new LibraryContent();
+		validFolder2.setName(ILLUMINA_FOLDER_NAME);
+		validFolder2.setType("folder");
+		multipleLibraryContents.add(validFolder2);
+		
+		when(librariesClient.getLibraryContents(LIBRARY_ID_MULTIPLE_CONTENTS)).thenReturn(multipleLibraryContents);
+		
+		multipleLibraryContentsAsMap = new HashMap<String, LibraryContent>();
+		multipleLibraryContentsAsMap.put(FOLDER_NAME, validFolder1);
+		multipleLibraryContentsAsMap.put(ILLUMINA_FOLDER_NAME, validFolder2);
+		
+		when(librariesClient.getLibraryContents(INVALID_LIBRARY_ID)).thenReturn(null);
 	}
 	
 	private ArrayList<Library> convertLibraryToArrayList(List<Library> libraries)
@@ -229,6 +256,23 @@ public class GalaxySearchTest
 		LibraryContent validFolder = galaxySearch.findLibraryContentWithId(LIBRARY_ID, FOLDER_NAME);
 		assertEquals("folder", validFolder.getType());
 		assertEquals(FOLDER_NAME, validFolder.getName());
+	}
+	
+	@Test
+	public void testLibraryContentAsMap()
+	{
+		Map<String, LibraryContent> validFolder = galaxySearch.libraryContentAsMap(LIBRARY_ID);
+		assertEquals(singleLibraryContentsAsMap, validFolder);
+		
+		validFolder = galaxySearch.libraryContentAsMap(LIBRARY_ID_MULTIPLE_CONTENTS);
+		assertEquals(multipleLibraryContentsAsMap, validFolder);
+	}
+	
+	@Test
+	public void testLibraryContentAsMapNoContent()
+	{
+		Map<String, LibraryContent> validFolder = galaxySearch.libraryContentAsMap(INVALID_LIBRARY_ID);
+		assertNull(validFolder);
 	}
 	
 	@Test

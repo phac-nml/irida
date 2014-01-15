@@ -1,7 +1,9 @@
 package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,6 +124,37 @@ public class GalaxySearch
 		}
 		
 		return library;
+	}
+	
+	/**
+	 * Gets a Map listing all contents of the passed Galaxy library to the LibraryContent object.
+	 * @param libraryId  The library to get all contents from.
+	 * @return  A Map mapping the path of the library content to the LibraryContent object,
+	 * 		or null if no such library.
+	 */
+	public Map<String,LibraryContent> libraryContentAsMap(String libraryId)
+	{
+		if (libraryId == null)
+		{
+			throw new IllegalArgumentException("libraryId is null");
+		}
+		
+		Map<String,LibraryContent> map = null;
+		
+		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
+		List<LibraryContent> libraryContents = librariesClient.getLibraryContents(libraryId);
+		
+		if (libraryContents != null)
+		{	
+			map = new HashMap<String,LibraryContent>();
+			
+			for (LibraryContent content : libraryContents)
+			{
+				map.put(content.getName(), content);
+			}
+		}
+
+		return map;
 	}
 	
 	/**
