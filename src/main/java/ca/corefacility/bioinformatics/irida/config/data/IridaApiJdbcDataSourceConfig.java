@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.config.data;
 
+import java.util.Properties;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
@@ -45,5 +47,18 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		adapter.setGenerateDdl(true);
 		adapter.setDatabase(Database.MYSQL);
 		return adapter;
+	}
+
+	@Bean
+	public Properties getJpaProperties() {
+		Properties properties = new Properties();
+		properties.setProperty("hibernate.dialect", environment.getProperty("hibernate.dialect"));
+		properties.setProperty("hibernate.hbm2ddl.auto", environment.getProperty("hibernate.hbm2ddl.auto"));
+		properties.setProperty("hibernate.hbm2ddl.import_files",
+				environment.getProperty("hibernate.hbm2ddl.import_files"));
+		properties.setProperty("org.hibernate.envers.store_data_at_delete",
+				environment.getProperty("org.hibernate.envers.store_data_at_delete"));
+		properties.setProperty("show_sql", "false");
+		return properties;
 	}
 }
