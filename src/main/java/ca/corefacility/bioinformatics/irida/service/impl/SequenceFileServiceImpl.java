@@ -9,7 +9,9 @@ import javax.validation.Validator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
@@ -37,6 +39,7 @@ import com.google.common.collect.Maps;
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
+@Service
 public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile> implements SequenceFileService {
 
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFileServiceImpl.class);
@@ -72,6 +75,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 * @param validator
 	 *            validator.
 	 */
+	@Autowired
 	public SequenceFileServiceImpl(SequenceFileRepository sequenceFileRepository,
 			SequenceFileFilesystem fileRepository, SampleSequenceFileJoinRepository ssfRepository,
 			SequenceFileOverrepresentedSequenceJoinRepository sfosRepository,

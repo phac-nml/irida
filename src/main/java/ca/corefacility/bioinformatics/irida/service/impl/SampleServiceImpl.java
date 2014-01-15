@@ -6,7 +6,9 @@ import java.util.Set;
 
 import javax.validation.Validator;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -26,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.service.SampleService;
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
+@Service
 public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements SampleService {
 
 	/**
@@ -56,6 +59,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * @param validator
 	 *            validator.
 	 */
+	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
 			SampleSequenceFileJoinRepository ssfRepository, Validator validator) {
 		super(sampleRepository, validator, Sample.class);

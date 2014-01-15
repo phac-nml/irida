@@ -38,7 +38,7 @@ import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.Use
  */
 @Configuration
 @EnableTransactionManagement(order = 1000)
-@EnableJpaRepositories(basePackages = { "ca.corefacility.bioinformatics.irida.repositories" }, repositoryFactoryBeanClass = EnversRevisionRepositoryFactoryBean.class)
+@EnableJpaRepositories(basePackages = "ca.corefacility.bioinformatics.irida.repositories", repositoryFactoryBeanClass = EnversRevisionRepositoryFactoryBean.class)
 @Import({ IridaApiPropertyPlaceholderConfig.class, IridaApiJdbcDataSourceConfig.class, HibernateConfig.class })
 public class IridaApiRepositoriesConfig {
 
