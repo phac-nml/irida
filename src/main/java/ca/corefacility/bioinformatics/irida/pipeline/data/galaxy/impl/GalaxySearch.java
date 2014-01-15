@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -121,6 +122,33 @@ public class GalaxySearch
 		}
 		
 		return library;
+	}
+	
+	/**
+	 * Given a library name, searches for a list of matching Library objects.
+	 * @param libraryName  The name of the library to search for.
+	 * @return  A list of Library objects matching the given name, empty if no library is found.
+	 */
+	public List<Library> findLibraryWithName(String libraryName)
+	{		
+		if (libraryName == null)
+		{
+			throw new IllegalArgumentException("libraryName is null");
+		}
+		
+		List<Library> libraries = new LinkedList<Library>();
+		
+		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
+		List<Library> allLibraries = librariesClient.getLibraries();
+		for (Library curr : allLibraries)
+		{
+			if (libraryName.equals(curr.getName()))
+			{
+				libraries.add(curr);
+			}
+		}
+		
+		return libraries;
 	}
 	
 	/**

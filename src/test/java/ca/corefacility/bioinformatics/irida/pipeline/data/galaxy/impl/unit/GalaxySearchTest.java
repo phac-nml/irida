@@ -34,10 +34,16 @@ public class GalaxySearchTest
 	private GalaxySearch galaxySearch;
 	
 	private static final String LIBRARY_ID = "1";
-	private static final String INVALID_LIBRARY_ID = "2";
+	private static final String LIBRARY_ID_2 = "2";
+	private static final String LIBRARY_ID_3 = "3";
+	private static final String INVALID_LIBRARY_ID = "0";
 	private static final String LIBRARY_NAME = "Test";
+	private static final String LIBRARY_NAME_2 = "Test2";
+	private static final String LIBRARY_NAME_3 = "Test3";
 	private static final String FOLDER_NAME = "test_folder";
 	private static final String INVALID_FOLDER_NAME = "invalid_folder";
+	
+	private List<Library> allLibrariesList;
 	
 	@Before
 	public void setup() throws FileNotFoundException, URISyntaxException
@@ -91,16 +97,16 @@ public class GalaxySearchTest
 	}
 	
 	private void setupLibraryTest()
-	{
+	{		
 		when(galaxyInstance.getLibrariesClient()).thenReturn(librariesClient);
 		
 		Library library = new Library(LIBRARY_NAME);
 		library.setId(LIBRARY_ID);
 		
-		List<Library> librariesList = new ArrayList<Library>();
-		librariesList.add(library);
+		allLibrariesList = new ArrayList<Library>();
+		allLibrariesList.add(library);
 		
-		when(librariesClient.getLibraries()).thenReturn(librariesList);
+		when(librariesClient.getLibraries()).thenReturn(allLibrariesList);
 	}
 	
 	private void setupLibraryContentTest()
@@ -112,6 +118,18 @@ public class GalaxySearchTest
 		libraryContents.add(validFolder);
 		
 		when(librariesClient.getLibraryContents(LIBRARY_ID)).thenReturn(libraryContents);
+	}
+	
+	private ArrayList<Library> convertLibraryToArrayList(List<Library> libraries)
+	{
+		ArrayList<Library> newLibraries = new ArrayList<Library>();
+		
+		for (Library library : libraries)
+		{
+			newLibraries.add(library);
+		}
+		
+		return newLibraries;
 	}
 	
 	@Test
@@ -128,6 +146,42 @@ public class GalaxySearchTest
 	{		
 		Library library = galaxySearch.findLibraryWithId(INVALID_LIBRARY_ID);
 		assertNull(library);
+	}
+	
+	@Test
+	public void testFindLibraryByName()
+	{
+		List<Library> libraries = galaxySearch.findLibraryWithName(LIBRARY_NAME);
+		List<Library> returnedLibraries = convertLibraryToArrayList(libraries);
+		assertEquals(allLibrariesList, returnedLibraries);
+		
+		// add new library to all libraries list with same name
+		Library newLibrary = new Library(LIBRARY_NAME);
+		newLibrary.setId(LIBRARY_ID_2);
+		allLibrariesList.add(newLibrary);
+		
+		libraries = galaxySearch.findLibraryWithName(LIBRARY_NAME);
+		returnedLibraries = convertLibraryToArrayList(libraries);
+		assertEquals(allLibrariesList, returnedLibraries);
+		
+		// add new library to all libraries with different name
+		// expected list (equal to above returnedLibraries list)
+		List<Library> expectedList = returnedLibraries;
+		newLibrary = new Library(LIBRARY_NAME_3);
+		newLibrary.setId(LIBRARY_ID_3);
+		allLibrariesList.add(newLibrary);
+		
+		libraries = galaxySearch.findLibraryWithName(LIBRARY_NAME);
+		returnedLibraries = convertLibraryToArrayList(libraries);
+		assertEquals(expectedList, returnedLibraries);
+	}
+	
+	@Test
+	public void testInvalidFindLibraryByName()
+	{
+		List<Library> libraries = galaxySearch.findLibraryWithName(INVALID_LIBRARY_ID);
+		assertNotNull(libraries);
+		assertEquals(0, libraries.size());
 	}
 	
 	@Test
