@@ -59,8 +59,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Com
 			return repository.save(object);
 		}
 
-		// this is simplified in bean validation spec 1.1
-		throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(constraintViolations));
+		throw new ConstraintViolationException(constraintViolations);
 	}
 
 	/**
@@ -167,7 +166,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Com
 
 		// if any validations fail, throw a constraint violation exception.
 		if (!constraintViolations.isEmpty()) {
-			throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(constraintViolations));
+			throw new ConstraintViolationException(constraintViolations);
 		}
 
 		// check if the entity exists in the database

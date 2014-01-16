@@ -167,7 +167,8 @@ public class ProjectServiceImplTest {
 		s.setExternalSampleId("external");
 		s.setSampleName("name");
 		Set<ConstraintViolation<Sample>> violations = new HashSet<>();
-		violations.add(new ConstraintViolationImpl<Sample>(null, null, null, null, null, null, null, null, null));
+		violations.add(ConstraintViolationImpl.forBeanValidation(null, null, Sample.class, null, null, null, null,
+				null, null));
 
 		when(validator.validate(s)).thenReturn(violations);
 

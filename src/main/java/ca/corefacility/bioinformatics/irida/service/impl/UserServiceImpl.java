@@ -166,7 +166,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 			}
 		}
 
-		throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
+		throw new ConstraintViolationException(violations);
 	}
 
 	/**
@@ -181,7 +181,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 			if (violations.isEmpty()) {
 				properties.put(PASSWORD_PROPERTY, passwordEncoder.encode(password));
 			} else {
-				throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
+				throw new ConstraintViolationException(violations);
 			}
 		}
 
