@@ -284,6 +284,7 @@
 			<version>${commons.beanutils.version}</version>
 			<type>jar</type>
 		</dependency>
+		<!-- Galaxy blend4j/testing -->
 		<dependency>
 		  <groupId>com.github.jmchilton.blend4j</groupId>
 		  <artifactId>blend4j</artifactId>
