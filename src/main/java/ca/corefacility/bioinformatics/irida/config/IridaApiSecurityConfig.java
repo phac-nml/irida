@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.security.IgnoreExpiredCredentialsForPasswordChangeChecker;
 import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.IridaPermissionEvaluator;
+import ca.corefacility.bioinformatics.irida.service.UserService;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -35,6 +36,12 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	private static final String ROLE_HIERARCHY = StringUtils.join(ROLE_HIERARCHIES, "\n");
 
+	/**
+	 * Loads all of the {@link BasePermission} sub-classes found in the security
+	 * package during component scan. {@link BasePermission} classes are used in
+	 * {@link @PreAuthorize} annotations for verifying that a user has
+	 * permission to invoke a method by the expression handler.
+	 */
 	@Autowired
 	private List<BasePermission<?>> basePermissions;
 
@@ -68,6 +75,15 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 		return authenticationProvider;
 	}
 
+	/**
+	 * After a user has been authenticated, we want to allow them to change
+	 * their password if the password is expired. The
+	 * {@link IgnoreExpiredCredentialsForPasswordChangeChecker} allows
+	 * authenticated users with expired credentials to invoke one method, the
+	 * {@link UserService.changePassword} method.
+	 * 
+	 * @return
+	 */
 	@Bean
 	public UserDetailsChecker postAuthenticationChecker() {
 		return new IgnoreExpiredCredentialsForPasswordChangeChecker();
