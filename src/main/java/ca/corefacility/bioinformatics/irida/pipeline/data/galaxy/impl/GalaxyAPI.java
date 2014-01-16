@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -233,40 +234,67 @@ public class GalaxyAPI
 	}
 	
 	private boolean uploadSample(GalaxySample sample, LibraryFolder rootFolder, LibrariesClient librariesClient,
-			Library library, String errorSuffix) throws LibraryUploadException
-	{				
-		LibraryFolder persistedSampleFolder = galaxyLibrary.createLibraryFolder(library, rootFolder, sample.getSampleName());
-		
+			Library library, Map<String,LibraryContent> libraryMap, String errorSuffix) throws LibraryUploadException
+	{
 		boolean success = false;
+		LibraryFolder persistedSampleFolder;
 		
-		if (persistedSampleFolder != null)
+		String expectedSamplePath = samplePath(rootFolder, sample);
+		
+		// if Galaxy already contains a folder for this sample, don't create a new folder
+		if (libraryMap.containsKey(expectedSamplePath))
 		{
-			success = true;
+			LibraryContent persistedSampleFolderAsContent = libraryMap.get(expectedSamplePath);
 			
-			logger.info("Created Galaxy sample folder name=" + samplePath(rootFolder, sample) + " id=" + persistedSampleFolder.getId() +
-					" in library name=" + library.getName() + " id=" + library.getId() + 
-					" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
-			
-			for (File file : sample.getSampleFiles())
-			{
-				ClientResponse uploadResponse = uploadFile(persistedSampleFolder, file, librariesClient, library);
-				
-				success &= ClientResponse.Status.OK.equals(uploadResponse.getClientResponseStatus());
-				
-				if (success)
-				{
-					logger.info("Uploaded file to Galaxy path=" + samplePath(rootFolder, sample, file) +
-							" from local path=" + file.getAbsolutePath() + " link=" + linkUploadedFiles + 
-							" in library name=" + library.getName() + " id=" + library.getId() + 
-							" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
-				}
-			}			
+			persistedSampleFolder = new LibraryFolder();
+			persistedSampleFolder.setId(persistedSampleFolderAsContent.getId());
+			persistedSampleFolder.setName(persistedSampleFolderAsContent.getName());
 		}
 		else
 		{
-			throw new LibraryUploadException("Could not build folder for sample " + sample.getSampleName() +
-					" within library " + library.getName() + ":" + library.getId() + errorSuffix);
+			persistedSampleFolder = galaxyLibrary.createLibraryFolder(library, rootFolder, sample.getSampleName());
+			
+			if (persistedSampleFolder != null)
+			{
+    			logger.info("Created Galaxy sample folder name=" + expectedSamplePath + " id=" + persistedSampleFolder.getId() +
+    					" in library name=" + library.getName() + " id=" + library.getId() + 
+    					" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
+			}
+			else
+			{
+				throw new LibraryUploadException("Could not build folder for sample " + sample.getSampleName() +
+						" within library " + library.getName() + ":" + library.getId() + errorSuffix);
+			}
 		}
+		
+		success = true;
+		
+		for (File file : sample.getSampleFiles())
+		{
+			String sampleFilePath = samplePath(rootFolder, sample, file);
+			
+			if (libraryMap.containsKey(sampleFilePath))
+			{
+				logger.debug("File from local path=" + file.getAbsolutePath() +
+						" alread exists on Galaxy path=" + samplePath(rootFolder, sample, file) +
+						" in library name=" + library.getName() + " id=" + library.getId() + 
+						" in Galaxy url=" + galaxyInstance.getGalaxyUrl() + " skipping upload");
+			}
+			else
+			{
+    			ClientResponse uploadResponse = uploadFile(persistedSampleFolder, file, librariesClient, library);
+    			
+    			success &= ClientResponse.Status.OK.equals(uploadResponse.getClientResponseStatus());
+    			
+    			if (success)
+    			{
+    				logger.info("Uploaded file to Galaxy path=" + samplePath(rootFolder, sample, file) +
+    						" from local path=" + file.getAbsolutePath() + " link=" + linkUploadedFiles + 
+    						" in library name=" + library.getName() + " id=" + library.getId() + 
+    						" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
+    			}
+			}
+		}			
 		
 		return success;
 	}
@@ -301,7 +329,20 @@ public class GalaxyAPI
 		
 		try
 		{
-			String libraryId = buildGalaxyLibrary(libraryName, galaxyUserEmail);
+			String libraryId;
+			List<Library> libraries = galaxySearch.findLibraryWithName(libraryName);
+			
+			if (libraries != null && libraries.size() > 0)
+			{
+				// use 1st library that comes up from search to attempt to upload into
+				Library library = libraries.get(0);
+				libraryId = library.getId();
+			}
+			else
+			{
+				libraryId = buildGalaxyLibrary(libraryName, galaxyUserEmail);
+			}
+			
 			if (libraryId != null)
 			{		
 				success = uploadFilesToLibrary(samples, libraryId);
@@ -356,6 +397,7 @@ public class GalaxyAPI
 			
 			if (library != null)
 			{
+				Map<String, LibraryContent> libraryContentMap = galaxySearch.libraryContentAsMap(libraryID);
 				LibraryFolder illuminaFolder;
 				
 				LibraryContent illuminaContent = galaxySearch.findLibraryContentWithId(libraryID, illuminaFolderName);
@@ -387,12 +429,12 @@ public class GalaxyAPI
 								libraryID);
 					}
 				}
-
+				
 				for (GalaxySample sample : samples)
 				{
 					if (sample != null)
 					{
-						success &= uploadSample(sample, illuminaFolder, librariesClient, library, errorSuffix);
+						success &= uploadSample(sample, illuminaFolder, librariesClient, library, libraryContentMap, errorSuffix);
 					}
 					else
 					{
