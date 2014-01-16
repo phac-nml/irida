@@ -69,6 +69,7 @@ public class LocalGalaxyConfig
 	
 	private BootStrapper downloadGalaxy(LocalGalaxy localGalaxy)
 	{		
+		@SuppressWarnings("deprecation")
 		DownloadProperties downloadProperties =
 				new DownloadProperties(DownloadProperties.GALAXY_CENTRAL_REPOSITORY_URL, DownloadProperties.BRANCH_STABLE, null);
 	    BootStrapper bootStrapper = new BootStrapper(downloadProperties);

@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl;
 
 import java.io.File;
-import java.net.URL;
 import java.util.List;
 
 import org.slf4j.Logger;
