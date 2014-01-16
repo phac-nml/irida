@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -138,7 +137,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			if (constraintViolations.isEmpty()) {
 				sample = sampleRepository.save(sample);
 			} else {
-				throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(constraintViolations));
+				throw new ConstraintViolationException(constraintViolations);
 			}
 		}
 
