@@ -276,13 +276,14 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>${commons.lang.version}</version>
 		</dependency>
+		
+		<!-- Galaxy blend4j/testing -->
 		<dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
 			<version>${commons.beanutils.version}</version>
 			<type>jar</type>
 		</dependency>
-
 		<!-- Galaxy blend4j/testing -->
 		<dependency>
 		  <groupId>com.github.jmchilton.blend4j</groupId>
@@ -422,7 +423,7 @@
 		<junit.version>4.11</junit.version>
 		<slf4j.version>1.7.5</slf4j.version>
 		<guava.version>15.0</guava.version>
-		<spring.version>3.2.5.RELEASE</spring.version>
+		<spring.version>4.0.0.RELEASE</spring.version>
 		<spring.security.version>3.2.0.RC2</spring.security.version>
 		<spring.data.jpa.version>1.4.2.RELEASE</spring.data.jpa.version>
 		<spring.data.envers.version>0.1.0.RELEASE</spring.data.envers.version>
@@ -432,7 +433,7 @@
 		<hibernate.jpa.version>1.0.1.Final</hibernate.jpa.version>
 		<hsqldb.version>2.2.8</hsqldb.version>
 		<jsr250.api.version>1.0</jsr250.api.version>
-		<spring.test.dbunit.version>1.0.0</spring.test.dbunit.version>
+		<spring.test.dbunit.version>1.1.0-SNAPSHOT</spring.test.dbunit.version>
 		<dbunit.version>2.4.9</dbunit.version>
 		<commons.dbcp.version>1.4</commons.dbcp.version>
 		<fastqc.version>0.10.1-nml-custom</fastqc.version>

@@ -5,11 +5,22 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.config.data.jpa.TestJpaProperties;
+import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.Role;
@@ -18,13 +29,18 @@ import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-import ca.corefacility.bioinformatics.irida.utils.test.IridaIntegrationTest;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
 
-public class MiseqServiceImplIT extends IridaIntegrationTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
+		IridaApiTestDataSourceConfig.class, TestJpaProperties.class, IridaApiTestMultithreadingConfig.class })
+@ActiveProfiles("test")
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
+public class MiseqServiceImplIT {
 	@Autowired
 	private MiseqRunService miseqRunService;
 	@Autowired

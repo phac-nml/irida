@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl;
 
 import java.io.File;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -22,8 +21,8 @@ public class GalaxyAPI
 {
 	private static final Logger logger = LoggerFactory.getLogger(GalaxyAPI.class);
 	
-	private static final String illuminaFolderName = "illumina_reads";
-	private static final String referencesFolderName = "references";
+	private static final String ILLUMINA_FOLDER_NAME = "illumina_reads";
+	private static final String REFERENCES_FOLDER_NAME = "references";
 	
 	private GalaxyInstance galaxyInstance;
 	private String adminEmail;
@@ -400,15 +399,15 @@ public class GalaxyAPI
 				Map<String, LibraryContent> libraryContentMap = galaxySearch.libraryContentAsMap(libraryID);
 				LibraryFolder illuminaFolder;
 				
-				LibraryContent illuminaContent = galaxySearch.findLibraryContentWithId(libraryID, illuminaFolderName);
-				LibraryContent referencesContent = galaxySearch.findLibraryContentWithId(libraryID, referencesFolderName);
+				LibraryContent illuminaContent = galaxySearch.findLibraryContentWithId(libraryID, ILLUMINA_FOLDER_NAME);
+				LibraryContent referencesContent = galaxySearch.findLibraryContentWithId(libraryID, REFERENCES_FOLDER_NAME);
 				
 				if (illuminaContent == null)
 				{
-					illuminaFolder = galaxyLibrary.createLibraryFolder(library, illuminaFolderName);
+					illuminaFolder = galaxyLibrary.createLibraryFolder(library, ILLUMINA_FOLDER_NAME);
 					if (illuminaFolder == null)
 					{
-						throw new LibraryUploadException("Could not create folder " + illuminaFolderName + " in library with id=" +
+						throw new LibraryUploadException("Could not create folder " + ILLUMINA_FOLDER_NAME + " in library with id=" +
 								libraryID);
 					}
 				}
@@ -422,10 +421,10 @@ public class GalaxyAPI
 				// builds references folder, but we don't need to use it
 				if (referencesContent == null)
 				{
-					LibraryFolder referencesFolder = galaxyLibrary.createLibraryFolder(library, referencesFolderName);
+					LibraryFolder referencesFolder = galaxyLibrary.createLibraryFolder(library, REFERENCES_FOLDER_NAME);
 					if (referencesFolder == null)
 					{
-						throw new LibraryUploadException("Could not create folder " + referencesFolderName + " in library with id=" +
+						throw new LibraryUploadException("Could not create folder " + REFERENCES_FOLDER_NAME + " in library with id=" +
 								libraryID);
 					}
 				}

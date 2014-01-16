@@ -9,7 +9,7 @@ import org.springframework.core.task.TaskExecutor;
 @Configuration
 @Profile("test")
 public class IridaApiTestMultithreadingConfig {
-	@Bean
+	@Bean(name = "fileProcessingChainExecutor")
 	public TaskExecutor fileProcessingChainExecutor() {
 		return new SyncTaskExecutor();
 	}
