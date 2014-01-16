@@ -5,7 +5,9 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -65,6 +67,7 @@ public class GalaxyAPITest
 	private File dataFile2;
 	private List<File> dataFilesSingle;
 	private List<File> dataFilesDouble;
+	private URL libraryURL;
 	
 	@Before
 	public void setup() throws FileNotFoundException, URISyntaxException, CreateLibraryException
@@ -76,6 +79,7 @@ public class GalaxyAPITest
 		
 		when(galaxyInstance.getApiKey()).thenReturn(realAdminAPIKey);
 		when(galaxyInstance.getLibrariesClient()).thenReturn(librariesClient);
+		when(galaxyInstance.getGalaxyUrl()).thenReturn("http://localhost/");
 		
 		when(galaxySearch.checkValidAdminEmailAPIKey(realAdminEmail, realAdminAPIKey)).
 			thenReturn(true);
@@ -96,10 +100,12 @@ public class GalaxyAPITest
 		libraryMap = new HashMap<String, LibraryContent>();
 	}
 	
-	private void setupBuildLibrary() throws CreateLibraryException
+	private void setupBuildLibrary() throws CreateLibraryException, MalformedURLException
 	{
 		Library returnedLibrary = new Library(libraryName);
 		returnedLibrary.setId(libraryId);
+		libraryURL = new URL("http://localhost/api/libraries/" + libraryId);
+		returnedLibrary.setUrl("/api/libraries/" + libraryId);
 		
 		User realUser = new User();
 		realUser.setEmail(realUserEmail);
@@ -122,12 +128,14 @@ public class GalaxyAPITest
 		when(galaxySearch.libraryContentAsMap(libraryId)).thenReturn(libraryMap);
 	}
 	
-	private void setupExisitingLibrary() throws CreateLibraryException
+	private void setupExisitingLibrary() throws CreateLibraryException, MalformedURLException
 	{
 		List<Library> libraries = new LinkedList<Library>();
 		Library existingLibrary = new Library(libraryName);
 		existingLibrary.setId(libraryId);
 		libraries.add(existingLibrary);
+		libraryURL = new URL("http://localhost/api/libraries/" + libraryId);
+		existingLibrary.setUrl("/api/libraries/" + libraryId);
 				
 		User realUser = new User();
 		realUser.setEmail(realUserEmail);
@@ -149,7 +157,7 @@ public class GalaxyAPITest
 	}
 	
 	private void setupUploadSampleToLibrary(List<GalaxySample> samples, List<LibraryFolder> folders,
-			boolean libraryExists) throws CreateLibraryException
+			boolean libraryExists) throws CreateLibraryException, MalformedURLException
 	{
 		if (libraryExists)
 		{
@@ -262,17 +270,17 @@ public class GalaxyAPITest
 	}
 	
 	@Test
-	public void testBuildGalaxyLibrary() throws URISyntaxException, CreateLibraryException
+	public void testBuildGalaxyLibrary() throws URISyntaxException, CreateLibraryException, MalformedURLException
 	{	
 		setupBuildLibrary();
 		
-		assertEquals(libraryId, workflowRESTAPI.buildGalaxyLibrary(libraryName,realUserEmail));
+		assertEquals(libraryId, workflowRESTAPI.buildGalaxyLibrary(libraryName,realUserEmail).getId());
 		verify(galaxyLibrary).buildEmptyLibrary(libraryName);
 		verify(galaxyLibrary).changeLibraryOwner(any(Library.class), eq(realUserEmail), eq(realAdminEmail));
 	}
 	
 	@Test(expected=CreateLibraryException.class)
-	public void testBuildGalaxyLibraryFail() throws URISyntaxException, CreateLibraryException
+	public void testBuildGalaxyLibraryFail() throws URISyntaxException, CreateLibraryException, MalformedURLException
 	{	
 		setupBuildLibrary();
 		
@@ -282,7 +290,7 @@ public class GalaxyAPITest
 	}
 	
 	@Test(expected=CreateLibraryException.class)
-	public void testBuildGalaxyLibraryNoUser() throws URISyntaxException, CreateLibraryException
+	public void testBuildGalaxyLibraryNoUser() throws URISyntaxException, CreateLibraryException, MalformedURLException
 	{	
 		setupBuildLibrary();
 		
@@ -290,7 +298,7 @@ public class GalaxyAPITest
 	}
 	
 	@Test(expected=RuntimeException.class)
-	public void testSetupInvalidAdminEmail() throws URISyntaxException, CreateLibraryException
+	public void testSetupInvalidAdminEmail() throws URISyntaxException, CreateLibraryException, MalformedURLException
 	{
 		setupBuildLibrary();
 		
@@ -306,7 +314,7 @@ public class GalaxyAPITest
 	}
 	
 	@Test(expected=CreateLibraryException.class)
-	public void testBuildGalaxyLibraryNoSetPermissions() throws URISyntaxException, CreateLibraryException
+	public void testBuildGalaxyLibraryNoSetPermissions() throws URISyntaxException, CreateLibraryException, MalformedURLException
 	{
 		setupBuildLibrary();
 		
@@ -317,7 +325,7 @@ public class GalaxyAPITest
 	}
 	
 	@Test
-	public void testUploadSampleToLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	public void testUploadSampleToLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException, MalformedURLException
 	{
 		setupLibraryFolders();
 		
@@ -345,7 +353,7 @@ public class GalaxyAPITest
 	}
 	
 	@Test
-	public void testUploadExistingSampleFolderToLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	public void testUploadExistingSampleFolderToLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException, MalformedURLException
 	{
 		setupLibraryFoldersWithBothFolders();
 		
@@ -381,7 +389,7 @@ public class GalaxyAPITest
 	}
 	
 	@Test
-	public void testUploadExistingSampleFileToLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	public void testUploadExistingSampleFileToLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException, MalformedURLException
 	{
 		setupLibraryFoldersWithBothFolders();
 		
@@ -425,7 +433,7 @@ public class GalaxyAPITest
 	}
 	
 	@Test
-	public void testUploadOneExistingOneNewSampleFileToLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	public void testUploadOneExistingOneNewSampleFileToLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException, MalformedURLException
 	{
 		setupLibraryFoldersWithBothFolders();
 		
@@ -469,7 +477,7 @@ public class GalaxyAPITest
 	}
 	
 	@Test
-	public void testUploadSampleToLibraryWithIlluminaFolder() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	public void testUploadSampleToLibraryWithIlluminaFolder() throws URISyntaxException, LibraryUploadException, CreateLibraryException, MalformedURLException
 	{
 		setupLibraryFoldersWithIlluminaFolder();
 		
@@ -497,7 +505,7 @@ public class GalaxyAPITest
 	}
 	
 	@Test
-	public void testUploadSampleToLibraryWithReferencesFolder() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	public void testUploadSampleToLibraryWithReferencesFolder() throws URISyntaxException, LibraryUploadException, CreateLibraryException, MalformedURLException
 	{
 		setupLibraryFoldersWithReferencesFolder();
 		
@@ -525,7 +533,7 @@ public class GalaxyAPITest
 	}
 		
 	@Test
-	public void testUploadFilesToLibraryFail() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	public void testUploadFilesToLibraryFail() throws URISyntaxException, LibraryUploadException, CreateLibraryException, MalformedURLException
 	{
 		setupLibraryFolders();
 		
@@ -554,7 +562,7 @@ public class GalaxyAPITest
 	}
 	
 	@Test
-	public void testUploadMultiSampleToLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	public void testUploadMultiSampleToLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException, MalformedURLException
 	{
 		setupLibraryFolders();
 		
@@ -590,7 +598,7 @@ public class GalaxyAPITest
 	}
 	
 	@Test
-	public void testUploadMultiFileSampleToLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	public void testUploadMultiFileSampleToLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException, MalformedURLException
 	{
 		setupLibraryFolders();
 		
@@ -618,7 +626,7 @@ public class GalaxyAPITest
 	}
 	
 	@Test
-	public void testUploadSamples() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	public void testUploadSamples() throws URISyntaxException, LibraryUploadException, CreateLibraryException, MalformedURLException
 	{
 		setupLibraryFolders();
 		
@@ -636,7 +644,7 @@ public class GalaxyAPITest
 		
 		setupUploadSampleToLibrary(samples, folders, false);
 				
-		assertTrue(workflowRESTAPI.uploadSamples(samples, libraryName, realUserEmail));
+		assertEquals(libraryURL, workflowRESTAPI.uploadSamples(samples, libraryName, realUserEmail));
 		verify(galaxySearch).findLibraryWithName(libraryName);
 		verify(galaxyLibrary).buildEmptyLibrary(libraryName);
 		verify(galaxyLibrary).changeLibraryOwner(any(Library.class), eq(realUserEmail), eq(realAdminEmail));
@@ -649,7 +657,7 @@ public class GalaxyAPITest
 	}
 	
 	@Test
-	public void testUploadSamplesToExistingLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	public void testUploadSamplesToExistingLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException, MalformedURLException
 	{
 		setupLibraryFolders();
 		
@@ -667,7 +675,7 @@ public class GalaxyAPITest
 		
 		setupUploadSampleToLibrary(samples, folders, true);
 				
-		assertTrue(workflowRESTAPI.uploadSamples(samples, libraryName, realUserEmail));
+		assertEquals(libraryURL, workflowRESTAPI.uploadSamples(samples, libraryName, realUserEmail));
 		verify(galaxySearch).findLibraryWithName(libraryName);
 		verify(galaxyLibrary, never()).buildEmptyLibrary(libraryName);
 		verify(galaxyLibrary, never()).changeLibraryOwner(any(Library.class), eq(realUserEmail), eq(realAdminEmail));
@@ -680,7 +688,7 @@ public class GalaxyAPITest
 	}
 	
 	@Test(expected=LibraryUploadException.class)
-	public void testNoExistingLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	public void testNoExistingLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException, MalformedURLException
 	{
 		setupLibraryFolders();
 		
@@ -702,7 +710,7 @@ public class GalaxyAPITest
 	}
 	
 	@Test(expected=LibraryUploadException.class)
-	public void testNoCreateSampleFolder() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	public void testNoCreateSampleFolder() throws URISyntaxException, LibraryUploadException, CreateLibraryException, MalformedURLException
 	{
 		setupLibraryFolders();
 		
@@ -725,7 +733,7 @@ public class GalaxyAPITest
 	}
 	
 	@Test
-	public void testUploadNoFiles() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	public void testUploadNoFiles() throws URISyntaxException, LibraryUploadException, CreateLibraryException, MalformedURLException
 	{
 		setupLibraryFolders();
 		

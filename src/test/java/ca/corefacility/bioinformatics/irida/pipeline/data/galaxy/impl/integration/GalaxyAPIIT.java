@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -236,7 +237,8 @@ public class GalaxyAPIIT extends IridaIntegrationTest
 	{
 		String libraryName = "testCreateLibraryAdmin";
 		
-		String libraryID = restAPIGalaxy.buildGalaxyLibrary(libraryName, localGalaxy.getAdminName());
+		Library library = restAPIGalaxy.buildGalaxyLibrary(libraryName, localGalaxy.getAdminName());
+		String libraryID = library.getId();
 		
 		// make sure admin can see library
 		Library actualLibraryAdmin = findLibraryByID(libraryID, localGalaxy.getGalaxyInstanceAdmin());	
@@ -253,7 +255,8 @@ public class GalaxyAPIIT extends IridaIntegrationTest
 	{
 		String libraryName = "testCreateLibraryRegularUser";
 		
-		String libraryID = restAPIGalaxy.buildGalaxyLibrary(libraryName, localGalaxy.getUser1Name());
+		Library library = restAPIGalaxy.buildGalaxyLibrary(libraryName, localGalaxy.getUser1Name());
+		String libraryID = library.getId();
 		
 		// make sure regular user can see library
 		Library actualLibraryRegularUser = findLibraryByID(libraryID, localGalaxy.getGalaxyInstanceUser1());
@@ -287,7 +290,7 @@ public class GalaxyAPIIT extends IridaIntegrationTest
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
 		samples.add(galaxySample);
 		
-		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getUser1Name()));
+		assertNotNull(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getUser1Name()));
 		
 		// regular user should have access to files
 		Library actualLibraryRegularUser = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceUser1());
@@ -353,7 +356,7 @@ public class GalaxyAPIIT extends IridaIntegrationTest
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
 		samples.add(galaxySample);
 		
-		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
+		assertNotNull(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
 		
 		// admin user should have access to files
 		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
@@ -416,7 +419,7 @@ public class GalaxyAPIIT extends IridaIntegrationTest
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
 		samples.add(galaxySample);
 		
-		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getUser1Name()));
+		assertNotNull(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getUser1Name()));
 		
 		// regular user should have access to files
 		Library actualLibraryRegularUser = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceUser1());
@@ -467,7 +470,7 @@ public class GalaxyAPIIT extends IridaIntegrationTest
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
 		samples.add(galaxySample);
 		
-		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getUser1Name()));
+		assertNotNull(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getUser1Name()));
 		
 		// regular user should have access to files
 		Library actualLibraryRegularUser = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceUser1());
@@ -532,7 +535,7 @@ public class GalaxyAPIIT extends IridaIntegrationTest
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
 		samples.add(galaxySample);
 		
-		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
+		assertNotNull(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
 		
 		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
 		assertNotNull(actualLibrary);
@@ -570,8 +573,26 @@ public class GalaxyAPIIT extends IridaIntegrationTest
 		return count;
 	}
 	
+	private URL libraryToFullURL(Library library) throws MalformedURLException
+	{
+		String urlPath = library.getUrl();
+		String domainPath = restAPIGalaxy.getGalaxyUrl();
+		
+		if (domainPath.endsWith("/"))
+		{
+			domainPath = domainPath.substring(0, domainPath.length() -1);
+		}
+		
+		if (urlPath.startsWith("/"))
+		{
+			urlPath = urlPath.substring(1);
+		}
+		
+		return new URL(domainPath + "/" + urlPath);
+	}
+	
 	@Test
-	public void testUploadSampleToExistingLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	public void testUploadSampleToExistingLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException, MalformedURLException
 	{
 		GalaxySearch galaxySearch = new GalaxySearch(localGalaxy.getGalaxyInstanceAdmin());
 		GalaxyLibrary galaxyLibrary = new GalaxyLibrary(localGalaxy.getGalaxyInstanceAdmin(), galaxySearch);
@@ -579,8 +600,11 @@ public class GalaxyAPIIT extends IridaIntegrationTest
 		String libraryName = "testUploadSampleToExistingSampleFolder";
 		
 		// build data library structure with no data in it
-		String libraryId = restAPIGalaxy.buildGalaxyLibrary(libraryName, localGalaxy.getAdminName());
+		Library returnedLibrary = restAPIGalaxy.buildGalaxyLibrary(libraryName, localGalaxy.getAdminName());
+		String libraryId = returnedLibrary.getId();
 		assertNotNull(libraryId);
+		
+		URL returnedLibraryURL = libraryToFullURL(returnedLibrary);
 		
 		Library library = galaxySearch.findLibraryWithId(libraryId);
 		assertNotNull(library);
@@ -605,7 +629,9 @@ public class GalaxyAPIIT extends IridaIntegrationTest
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
 		samples.add(galaxySample);
 		
-		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
+		URL returnedLibrary2URL = restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
+		assertNotNull(returnedLibrary2URL);
+		assertEquals(returnedLibraryURL, returnedLibrary2URL);
 		
 		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
 		assertNotNull(actualLibrary);
@@ -644,7 +670,8 @@ public class GalaxyAPIIT extends IridaIntegrationTest
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
 		samples.add(galaxySample);
 		
-		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
+		URL returnedLibraryURL = restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
+		assertNotNull(returnedLibraryURL);
 		
 		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
 		assertNotNull(actualLibrary);
@@ -670,7 +697,10 @@ public class GalaxyAPIIT extends IridaIntegrationTest
 		samples = new ArrayList<GalaxySample>();
 		samples.add(galaxySample);
 		
-		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
+		// make sure both libraries are the same
+		URL returnedLibraryURL2 = restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
+		assertNotNull(returnedLibraryURL2);
+		assertEquals(returnedLibraryURL, returnedLibraryURL2);
 		
 		actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
 		assertNotNull(actualLibrary);
@@ -709,7 +739,7 @@ public class GalaxyAPIIT extends IridaIntegrationTest
 		samples.add(galaxySample1);
 		samples.add(galaxySample2);
 		
-		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
+		assertNotNull(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
 		
 		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
 		assertNotNull(actualLibrary);

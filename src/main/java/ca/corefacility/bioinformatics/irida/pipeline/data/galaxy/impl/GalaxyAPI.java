@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -157,10 +159,10 @@ public class GalaxyAPI
 	 * Builds a data library in Galaxy with the name and owner.
 	 * @param libraryName  The name of the library to create.
 	 * @param galaxyUserEmail  The name of the user who will own the galaxy library.
-	 * @return  A unique ID for the created library, or null if no library was created.
+	 * @return A Library object for the library just created.
 	 * @throws CreateLibraryException 
 	 */
-	public String buildGalaxyLibrary(String libraryName, String galaxyUserEmail) throws CreateLibraryException
+	public Library buildGalaxyLibrary(String libraryName, String galaxyUserEmail) throws CreateLibraryException
 	{
 		if (libraryName == null)
 		{
@@ -175,7 +177,7 @@ public class GalaxyAPI
 		logger.info("Attempt to create new library=" + libraryName + " owned by user=" + galaxyUserEmail +
 				" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
 		
-		String libraryID = null;
+		Library createdLibrary = null;
 		User user = galaxySearch.findUserWithEmail(galaxyUserEmail);
 		
 		if (user != null)
@@ -188,7 +190,7 @@ public class GalaxyAPI
 				
 				if (securedLibrary != null)
 				{
-					libraryID = securedLibrary.getId();
+					createdLibrary = securedLibrary;
 				}
 				else
 				{
@@ -207,7 +209,7 @@ public class GalaxyAPI
 			throw new CreateLibraryException("Galaxy user with email " + galaxyUserEmail + " does not exist");
 		}
 		
-		return libraryID;
+		return createdLibrary;
 	}
 	
 	private ClientResponse uploadFile(LibraryFolder folder, File file, LibrariesClient librariesClient, Library library)
@@ -298,15 +300,33 @@ public class GalaxyAPI
 		return success;
 	}
 	
+	private URL libraryToFullURL(Library library) throws MalformedURLException
+	{
+		String urlPath = library.getUrl();
+		String domainPath = galaxyInstance.getGalaxyUrl();
+		
+		if (domainPath.endsWith("/"))
+		{
+			domainPath = domainPath.substring(0, domainPath.length() -1);
+		}
+		
+		if (urlPath.startsWith("/"))
+		{
+			urlPath = urlPath.substring(1);
+		}
+		
+		return new URL(domainPath + "/" + urlPath);
+	}
+	
 	/**
 	 * Uploads the given list of samples to the passed Galaxy library with the passed Galaxy user.
 	 * @param samples  The set of samples to upload.
 	 * @param libraryName  The name of the library to upload to.
 	 * @param galaxyUser  The name of the Galaxy user who should own the files.
-	 * @return  True if successful, false otherwise.
+	 * @return A URL containing the location of the library the files were uploaded, or null if an error occurred.
 	 * @throws LibraryUploadException If an error occurred.
 	 */
-	public boolean uploadSamples(List<GalaxySample> samples, String libraryName, String galaxyUserEmail)
+	public URL uploadSamples(List<GalaxySample> samples, String libraryName, String galaxyUserEmail)
 			throws LibraryUploadException
 	{
 		if (libraryName == null)
@@ -324,32 +344,32 @@ public class GalaxyAPI
 			throw new IllegalArgumentException("galaxyUser is null");
 		}
 		
-		boolean success = false;
+		URL libraryURL = null;
 		
 		try
 		{
-			String libraryId;
+			Library uploadLibrary;
 			List<Library> libraries = galaxySearch.findLibraryWithName(libraryName);
 			
 			if (libraries != null && libraries.size() > 0)
 			{
 				// use 1st library that comes up from search to attempt to upload into
-				Library library = libraries.get(0);
-				libraryId = library.getId();
+				uploadLibrary = libraries.get(0);
 			}
 			else
 			{
-				libraryId = buildGalaxyLibrary(libraryName, galaxyUserEmail);
+				uploadLibrary = buildGalaxyLibrary(libraryName, galaxyUserEmail);
 			}
-			
-			if (libraryId != null)
-			{		
-				success = uploadFilesToLibrary(samples, libraryId);
+					
+			if(uploadFilesToLibrary(samples, uploadLibrary.getId()))
+			{
+				libraryURL = libraryToFullURL(uploadLibrary);
 			}
 			else
 			{
-				throw new LibraryUploadException("Could not create library with name " + libraryName
-						+ " in instance of galaxy with url=" + galaxyInstance.getGalaxyUrl());
+				throw new LibraryUploadException("Could upload files to library " + libraryName
+						+ "id=" + uploadLibrary.getId() + " in instance of galaxy with url="
+						+ galaxyInstance.getGalaxyUrl());
 			}
 		}
 		catch (LibraryUploadException e)
@@ -363,7 +383,7 @@ public class GalaxyAPI
 			throw new LibraryUploadException(e);
 		}
 		
-		return success;
+		return libraryURL;
 	}
 	
 	/**
