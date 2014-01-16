@@ -14,11 +14,13 @@ import javax.validation.Validator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
@@ -40,6 +42,7 @@ import com.google.common.collect.ImmutableMap;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Transactional
+@Service
 public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements UserService {
 	/**
 	 * The property name to use for passwords on the {@link User} class.
@@ -112,6 +115,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * @param validator
 	 *            the validator used to validate instances of {@link User}.
 	 */
+	@Autowired
 	public UserServiceImpl(UserRepository userRepository, ProjectUserJoinRepository pujRepository,
 			PasswordEncoder passwordEncoder, Validator validator) {
 		super(userRepository, validator, User.class);
