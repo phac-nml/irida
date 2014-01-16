@@ -26,7 +26,9 @@ import static org.junit.Assert.*;
 
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyAPI;
+import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyLibrary;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxySample;
+import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxySearch;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.LibraryUploadException;
 import ca.corefacility.bioinformatics.irida.utils.test.IridaIntegrationTest;
 
@@ -40,6 +42,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset.Source;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
+import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
 
 public class GalaxyAPIIT extends IridaIntegrationTest
 {		
@@ -551,6 +554,148 @@ public class GalaxyAPIIT extends IridaIntegrationTest
 		assertEquals("file", contentsMap.get("/illumina_reads/testData/testData1.fastq").getType());
 		assertTrue(contentsMap.containsKey("/illumina_reads/testData/testData2.fastq"));
 		assertEquals("file", contentsMap.get("/illumina_reads/testData/testData2.fastq").getType());
+	}
+	
+	private int countNumberOfFolderPaths(List<LibraryContent> contents, String folderPaths)
+	{
+		int count = 0;
+		for (LibraryContent c : contents)
+		{
+			if (folderPaths.equals(c.getName()))
+			{
+				count++;
+			}
+		}
+		
+		return count;
+	}
+	
+	@Test
+	public void testUploadSampleToExistingLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	{
+		GalaxySearch galaxySearch = new GalaxySearch(localGalaxy.getGalaxyInstanceAdmin());
+		GalaxyLibrary galaxyLibrary = new GalaxyLibrary(localGalaxy.getGalaxyInstanceAdmin(), galaxySearch);
+		
+		String libraryName = "testUploadSampleToExistingSampleFolder";
+		
+		// build data library structure with no data in it
+		String libraryId = restAPIGalaxy.buildGalaxyLibrary(libraryName, localGalaxy.getAdminName());
+		assertNotNull(libraryId);
+		
+		Library library = galaxySearch.findLibraryWithId(libraryId);
+		assertNotNull(library);
+		
+		LibraryFolder illuminaFolder = galaxyLibrary.createLibraryFolder(library, "illumina_reads");
+		assertNotNull(illuminaFolder);
+		
+		LibraryFolder sampleFolder = galaxyLibrary.createLibraryFolder(library, illuminaFolder, "testData");
+		assertNotNull(sampleFolder);
+		
+		List<Library> libraries = galaxySearch.findLibraryWithName(libraryName);
+		assertEquals("The number of libraries with name " + libraryName + " is not one", 1, libraries.size());
+		
+		List<LibraryContent> libraryContents = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient().
+				getLibraryContents(library.getId());
+		
+		int sampleFolderCount = countNumberOfFolderPaths(libraryContents, "/illumina_reads/testData");
+		assertEquals("The number of testData folders is not one", 1, sampleFolderCount);
+		
+		// attempt to upload to this above data library, should not create duplicate library nor duplicate sample folder
+		GalaxySample galaxySample = new GalaxySample("testData", dataFilesDouble);
+		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		samples.add(galaxySample);
+		
+		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
+		
+		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
+		assertNotNull(actualLibrary);
+		
+		libraryContents = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient().
+				getLibraryContents(actualLibrary.getId());
+		Map<String,LibraryContent> contentsMap = fileToLibraryContentMap(libraryContents);
+		assertEquals(6, contentsMap.size());
+		
+		assertTrue(contentsMap.containsKey("/"));
+		assertEquals("folder", contentsMap.get("/").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads"));
+		assertEquals("folder", contentsMap.get("/illumina_reads").getType());
+		assertTrue(contentsMap.containsKey("/references"));
+		assertEquals("folder", contentsMap.get("/references").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads/testData"));
+		assertEquals("folder", contentsMap.get("/illumina_reads/testData").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads/testData/testData1.fastq"));
+		assertEquals("file", contentsMap.get("/illumina_reads/testData/testData1.fastq").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads/testData/testData2.fastq"));
+		assertEquals("file", contentsMap.get("/illumina_reads/testData/testData2.fastq").getType());
+		
+		libraries = galaxySearch.findLibraryWithName(libraryName);
+		assertEquals("The number of libraries with name " + libraryName + " is not one", 1, libraries.size());
+		
+		sampleFolderCount = countNumberOfFolderPaths(libraryContents, "/illumina_reads/testData");
+		assertEquals("The number of testData folders is not one", 1, sampleFolderCount);
+	}
+	
+	@Test
+	public void testUploadSampleOneFileAlreadyExists() throws URISyntaxException, LibraryUploadException
+	{
+		String libraryName = "testUploadSampleOneFileAlreadyExists";
+		
+		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
+		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		samples.add(galaxySample);
+		
+		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
+		
+		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
+		assertNotNull(actualLibrary);
+		
+		List<LibraryContent> libraryContents = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient().
+				getLibraryContents(actualLibrary.getId());
+		Map<String,LibraryContent> contentsMap = fileToLibraryContentMap(libraryContents);
+		assertEquals(5, contentsMap.size());
+		
+		assertTrue(contentsMap.containsKey("/"));
+		assertEquals("folder", contentsMap.get("/").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads"));
+		assertEquals("folder", contentsMap.get("/illumina_reads").getType());
+		assertTrue(contentsMap.containsKey("/references"));
+		assertEquals("folder", contentsMap.get("/references").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads/testData"));
+		assertEquals("folder", contentsMap.get("/illumina_reads/testData").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads/testData/testData1.fastq"));
+		assertEquals("file", contentsMap.get("/illumina_reads/testData/testData1.fastq").getType());
+		
+		// now attempt to upload dataFilesDouble with two files, only one file should upload		
+		galaxySample = new GalaxySample("testData", dataFilesDouble);
+		samples = new ArrayList<GalaxySample>();
+		samples.add(galaxySample);
+		
+		assertTrue(restAPIGalaxy.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
+		
+		actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
+		assertNotNull(actualLibrary);
+		
+		libraryContents = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient().
+				getLibraryContents(actualLibrary.getId());
+		contentsMap = fileToLibraryContentMap(libraryContents);
+		assertEquals(6, contentsMap.size());
+		
+		assertTrue(contentsMap.containsKey("/"));
+		assertEquals("folder", contentsMap.get("/").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads"));
+		assertEquals("folder", contentsMap.get("/illumina_reads").getType());
+		assertTrue(contentsMap.containsKey("/references"));
+		assertEquals("folder", contentsMap.get("/references").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads/testData"));
+		assertEquals("folder", contentsMap.get("/illumina_reads/testData").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads/testData/testData1.fastq"));
+		assertEquals("file", contentsMap.get("/illumina_reads/testData/testData1.fastq").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads/testData/testData2.fastq"));
+		assertEquals("file", contentsMap.get("/illumina_reads/testData/testData2.fastq").getType());
+		
+		// make sure only 1 instance of testData2 exists in library
+		int countTestData2 = countNumberOfFolderPaths(libraryContents, "/illumina_reads/testData/testData2.fastq");
+		assertEquals("More than one copy of testData2.fastq was uploaded", 1, countTestData2);
 	}
 	
 	@Test
