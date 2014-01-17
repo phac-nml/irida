@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -24,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyLibrary;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxySample;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxySearch;
+import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyUploadResult;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.LibraryUploadException;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
@@ -62,6 +62,7 @@ public class GalaxyAPITest
 	final private String referencesFolderName = "references";
 	final private String illuminaFolderPath = "/illumina_reads";
 	final private String referencesFolderPath = "/references";
+	final private String galaxyURL = "http://localhost/";
 		
 	private GalaxyAPI workflowRESTAPI;
 	private Map<String, LibraryContent> libraryMap;
@@ -69,7 +70,7 @@ public class GalaxyAPITest
 	private File dataFile2;
 	private List<File> dataFilesSingle;
 	private List<File> dataFilesDouble;
-	private URL libraryURL;
+	private GalaxyUploadResult expectedUploadResult;
 	
 	@Before
 	public void setup() throws FileNotFoundException, URISyntaxException, CreateLibraryException
@@ -78,10 +79,10 @@ public class GalaxyAPITest
 		
 		when(okayResponse.getClientResponseStatus()).thenReturn(ClientResponse.Status.OK);
 		when(invalidResponse.getClientResponseStatus()).thenReturn(ClientResponse.Status.FORBIDDEN);
-		
+				
 		when(galaxyInstance.getApiKey()).thenReturn(realAdminAPIKey);
 		when(galaxyInstance.getLibrariesClient()).thenReturn(librariesClient);
-		when(galaxyInstance.getGalaxyUrl()).thenReturn("http://localhost/");
+		when(galaxyInstance.getGalaxyUrl()).thenReturn(galaxyURL);
 		
 		when(galaxySearch.checkValidAdminEmailAPIKey(realAdminEmail, realAdminAPIKey)).
 			thenReturn(true);
@@ -106,8 +107,8 @@ public class GalaxyAPITest
 	{
 		Library returnedLibrary = new Library(libraryName);
 		returnedLibrary.setId(libraryId);
-		libraryURL = new URL("http://localhost/api/libraries/" + libraryId);
 		returnedLibrary.setUrl("/api/libraries/" + libraryId);
+		expectedUploadResult = new GalaxyUploadResult(returnedLibrary, galaxyURL);
 		
 		User realUser = new User();
 		realUser.setEmail(realUserEmail);
@@ -136,8 +137,8 @@ public class GalaxyAPITest
 		Library existingLibrary = new Library(libraryName);
 		existingLibrary.setId(libraryId);
 		libraries.add(existingLibrary);
-		libraryURL = new URL("http://localhost/api/libraries/" + libraryId);
 		existingLibrary.setUrl("/api/libraries/" + libraryId);
+		expectedUploadResult = new GalaxyUploadResult(existingLibrary, galaxyURL);
 				
 		User realUser = new User();
 		realUser.setEmail(realUserEmail);
@@ -644,7 +645,7 @@ public class GalaxyAPITest
 		
 		setupUploadSampleToLibrary(samples, folders, false);
 				
-		assertEquals(libraryURL, workflowRESTAPI.uploadSamples(samples, libraryName, realUserEmail));
+		assertEquals(expectedUploadResult, workflowRESTAPI.uploadSamples(samples, libraryName, realUserEmail));
 		verify(galaxySearch).findLibraryWithName(libraryName);
 		verify(galaxyLibrary).buildEmptyLibrary(libraryName);
 		verify(galaxyLibrary).changeLibraryOwner(any(Library.class), eq(realUserEmail), eq(realAdminEmail));
@@ -675,7 +676,7 @@ public class GalaxyAPITest
 		
 		setupUploadSampleToLibrary(samples, folders, true);
 				
-		assertEquals(libraryURL, workflowRESTAPI.uploadSamples(samples, libraryName, realUserEmail));
+		assertEquals(expectedUploadResult, workflowRESTAPI.uploadSamples(samples, libraryName, realUserEmail));
 		verify(galaxySearch).findLibraryWithName(libraryName);
 		verify(galaxyLibrary, never()).buildEmptyLibrary(libraryName);
 		verify(galaxyLibrary, never()).changeLibraryOwner(any(Library.class), eq(realUserEmail), eq(realAdminEmail));

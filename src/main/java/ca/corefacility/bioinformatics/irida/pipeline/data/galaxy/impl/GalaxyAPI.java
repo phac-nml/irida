@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -322,33 +320,16 @@ public class GalaxyAPI
 		return success;
 	}
 	
-	private URL libraryToFullURL(Library library) throws MalformedURLException
-	{
-		String urlPath = library.getUrl();
-		String domainPath = galaxyInstance.getGalaxyUrl();
-		
-		if (domainPath.endsWith("/"))
-		{
-			domainPath = domainPath.substring(0, domainPath.length() -1);
-		}
-		
-		if (urlPath.startsWith("/"))
-		{
-			urlPath = urlPath.substring(1);
-		}
-		
-		return new URL(domainPath + "/" + urlPath);
-	}
-	
 	/**
 	 * Uploads the given list of samples to the passed Galaxy library with the passed Galaxy user.
 	 * @param samples  The set of samples to upload.
 	 * @param libraryName  The name of the library to upload to.
 	 * @param galaxyUser  The name of the Galaxy user who should own the files.
-	 * @return A URL containing the location of the library the files were uploaded, or null if an error occurred.
+	 * @return A GalaxyUploadResult containing information about the location of the uploaded files, or null
+	 * 	if an error occured.
 	 * @throws LibraryUploadException If an error occurred.
 	 */
-	public URL uploadSamples(List<GalaxySample> samples, String libraryName, String galaxyUserEmail)
+	public GalaxyUploadResult uploadSamples(List<GalaxySample> samples, String libraryName, String galaxyUserEmail)
 			throws LibraryUploadException
 	{
 		if (libraryName == null)
@@ -366,7 +347,7 @@ public class GalaxyAPI
 			throw new IllegalArgumentException("galaxyUser is null");
 		}
 		
-		URL libraryURL = null;
+		GalaxyUploadResult galaxyUploadResult = null;
 		
 		try
 		{
@@ -385,7 +366,7 @@ public class GalaxyAPI
 					
 			if(uploadFilesToLibrary(samples, uploadLibrary.getId()))
 			{
-				libraryURL = libraryToFullURL(uploadLibrary);
+				galaxyUploadResult = new GalaxyUploadResult(uploadLibrary, galaxyInstance.getGalaxyUrl());
 			}
 			else
 			{
@@ -405,7 +386,7 @@ public class GalaxyAPI
 			throw new LibraryUploadException(e);
 		}
 		
-		return libraryURL;
+		return galaxyUploadResult;
 	}
 	
 	/**
