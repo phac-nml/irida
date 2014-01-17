@@ -615,6 +615,9 @@ public class GalaxyAPIIT extends IridaIntegrationTest
 		LibraryFolder sampleFolder = galaxyLibrary.createLibraryFolder(library, illuminaFolder, "testData");
 		assertNotNull(sampleFolder);
 		
+		LibraryFolder referencesFolder = galaxyLibrary.createLibraryFolder(library, "references");
+		assertNotNull(referencesFolder);
+		
 		List<Library> libraries = galaxySearch.findLibraryWithName(libraryName);
 		assertEquals("The number of libraries with name " + libraryName + " is not one", 1, libraries.size());
 		
@@ -623,6 +626,12 @@ public class GalaxyAPIIT extends IridaIntegrationTest
 		
 		int sampleFolderCount = countNumberOfFolderPaths(libraryContents, "/illumina_reads/testData");
 		assertEquals("The number of testData folders is not one", 1, sampleFolderCount);
+		
+		int illuminaReadsFolderCount = countNumberOfFolderPaths(libraryContents, "/illumina_reads");
+		assertEquals("The number of illumina_reads folders is not one", 1, illuminaReadsFolderCount);
+		
+		int referencesFolderCount = countNumberOfFolderPaths(libraryContents, "/references");
+		assertEquals("The number of references folders is not one", 1, referencesFolderCount);
 		
 		// attempt to upload to this above data library, should not create duplicate library nor duplicate sample folder
 		GalaxySample galaxySample = new GalaxySample("testData", dataFilesDouble);
@@ -659,6 +668,12 @@ public class GalaxyAPIIT extends IridaIntegrationTest
 		
 		sampleFolderCount = countNumberOfFolderPaths(libraryContents, "/illumina_reads/testData");
 		assertEquals("The number of testData folders is not one", 1, sampleFolderCount);
+		
+		illuminaReadsFolderCount = countNumberOfFolderPaths(libraryContents, "/illumina_reads");
+		assertEquals("The number of illumina_reads folders is not one", 1, illuminaReadsFolderCount);
+		
+		referencesFolderCount = countNumberOfFolderPaths(libraryContents, "/references");
+		assertEquals("The number of references folders is not one", 1, referencesFolderCount);
 	}
 	
 	@Test
@@ -726,6 +741,18 @@ public class GalaxyAPIIT extends IridaIntegrationTest
 		// make sure only 1 instance of testData2 exists in library
 		int countTestData2 = countNumberOfFolderPaths(libraryContents, "/illumina_reads/testData/testData2.fastq");
 		assertEquals("More than one copy of testData2.fastq was uploaded", 1, countTestData2);
+		
+		// make sure only 1 instance of testData sample folder exists in library
+		int countTestDataFolder = countNumberOfFolderPaths(libraryContents, "/illumina_reads/testData");
+		assertEquals("More than one copy of /illumina_reads/testData was created", 1, countTestDataFolder);
+		
+		// make sure only 1 instance of illumina_reads folder exists in library
+		int countIlluminaReadsFolder = countNumberOfFolderPaths(libraryContents, "/illumina_reads");
+		assertEquals("More than one copy of /illumina_reads was created", 1, countIlluminaReadsFolder);
+		
+		// make sure only 1 instance of references folder exists in library
+		int countReferencesFolder = countNumberOfFolderPaths(libraryContents, "/illumina_reads");
+		assertEquals("More than one copy of /references was created", 1, countReferencesFolder);
 	}
 	
 	@Test

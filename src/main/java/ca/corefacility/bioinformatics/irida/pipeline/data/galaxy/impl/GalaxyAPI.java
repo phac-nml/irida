@@ -25,6 +25,8 @@ public class GalaxyAPI
 	
 	private static final String ILLUMINA_FOLDER_NAME = "illumina_reads";
 	private static final String REFERENCES_FOLDER_NAME = "references";
+	private static final String ILLUMINA_FOLDER_PATH = "/illumina_reads";
+	private static final String REFERENCES_FOLDER_PATH = "/references";
 	
 	private GalaxyInstance galaxyInstance;
 	private String adminEmail;
@@ -226,12 +228,32 @@ public class GalaxyAPI
 	
 	private String samplePath(LibraryFolder rootFolder, GalaxySample sample)
 	{
-		return "/" + rootFolder.getName() + "/" + sample.getSampleName();
+		String rootFolderName;
+		if (rootFolder.getName().startsWith("/"))
+		{
+			rootFolderName = rootFolder.getName().substring(1);
+		}
+		else
+		{
+			rootFolderName = rootFolder.getName();
+		}
+		
+		return "/" + rootFolderName + "/" + sample.getSampleName();
 	}
 	
 	private String samplePath(LibraryFolder rootFolder, GalaxySample sample, File file)
 	{
-		return "/" + rootFolder.getName() + "/" + sample.getSampleName() + "/" + file.getName();
+		String rootFolderName;
+		if (rootFolder.getName().startsWith("/"))
+		{
+			rootFolderName = rootFolder.getName().substring(1);
+		}
+		else
+		{
+			rootFolderName = rootFolder.getName();
+		}
+		
+		return "/" + rootFolderName + "/" + sample.getSampleName() + "/" + file.getName();
 	}
 	
 	private boolean uploadSample(GalaxySample sample, LibraryFolder rootFolder, LibrariesClient librariesClient,
@@ -419,8 +441,8 @@ public class GalaxyAPI
 				Map<String, LibraryContent> libraryContentMap = galaxySearch.libraryContentAsMap(libraryID);
 				LibraryFolder illuminaFolder;
 				
-				LibraryContent illuminaContent = galaxySearch.findLibraryContentWithId(libraryID, ILLUMINA_FOLDER_NAME);
-				LibraryContent referencesContent = galaxySearch.findLibraryContentWithId(libraryID, REFERENCES_FOLDER_NAME);
+				LibraryContent illuminaContent = galaxySearch.findLibraryContentWithId(libraryID, ILLUMINA_FOLDER_PATH);
+				LibraryContent referencesContent = galaxySearch.findLibraryContentWithId(libraryID, REFERENCES_FOLDER_PATH);
 				
 				if (illuminaContent == null)
 				{
