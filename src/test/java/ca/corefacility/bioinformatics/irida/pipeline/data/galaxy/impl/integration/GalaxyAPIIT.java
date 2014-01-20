@@ -25,13 +25,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.*;
 
-import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.CreateLibraryException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
+import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyLibrary;
-import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxySample;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxySearch;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyUploadResult;
-import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.LibraryUploadException;
 import ca.corefacility.bioinformatics.irida.utils.test.IridaIntegrationTest;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;

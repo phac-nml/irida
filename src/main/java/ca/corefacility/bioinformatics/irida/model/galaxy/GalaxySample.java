@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl;
+package ca.corefacility.bioinformatics.irida.model.galaxy;
 
 import static com.google.common.base.Preconditions.*;
 
