@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl;
 
+import static com.google.common.base.Preconditions.*;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -14,6 +16,9 @@ public class GalaxyUploadResult
 
 	public GalaxyUploadResult(Library library, String galaxyURL) throws MalformedURLException
 	{
+		checkNotNull(library, "library is null");
+		checkNotNull(galaxyURL, "galaxyURL is null");
+		
 		this.libraryId = library.getId();
 		this.libraryName = library.getName();
 		

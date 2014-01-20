@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl;
 
+import static com.google.common.base.Preconditions.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,15 +28,8 @@ public class GalaxyLibrary
 	 */
 	public GalaxyLibrary(GalaxyInstance galaxyInstance, GalaxySearch galaxySearch)
 	{
-		if (galaxyInstance == null)
-		{
-			throw new IllegalArgumentException("galaxyInstance is null");
-		}
-		
-		if (galaxySearch == null)
-		{
-			throw new IllegalArgumentException("galaxySearch is null");
-		}
+		checkNotNull(galaxyInstance, "galaxyInstance is null");
+		checkNotNull(galaxySearch, "galaxySearch is null");
 		
 		this.galaxyInstance = galaxyInstance;
 		this.galaxySearch = galaxySearch;
@@ -47,12 +42,9 @@ public class GalaxyLibrary
 	 */
 	public Library buildEmptyLibrary(String libraryName)
 	{
-		Library persistedLibrary = null;
+		checkNotNull(libraryName, "libraryName is null");
 		
-		if (libraryName == null)
-		{
-			throw new IllegalArgumentException("libraryName is null");
-		}
+		Library persistedLibrary = null;
 		
 		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
 		Library library = new Library(libraryName);
@@ -75,15 +67,8 @@ public class GalaxyLibrary
 	 */
 	public LibraryFolder createLibraryFolder(Library library, String folderName)
 	{
-		if (library == null)
-		{
-			throw new IllegalArgumentException("library is null");
-		}
-		
-		if (folderName == null)
-		{
-			throw new IllegalArgumentException("folderName is null");
-		}
+		checkNotNull(library, "library is null");
+		checkNotNull(folderName, "folderName is null");
 		
 		LibraryFolder folder = null;
 		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
@@ -114,22 +99,11 @@ public class GalaxyLibrary
 	 */
 	public LibraryFolder createLibraryFolder(Library library, LibraryFolder libraryFolder, String folderName)
 	{
+		checkNotNull(library, "library is null");
+		checkNotNull(libraryFolder, "libraryFolder is null");
+		checkNotNull(folderName, "folderName is null");
+		
 		LibraryFolder folder = null;
-		
-		if (library == null)
-		{
-			throw new IllegalArgumentException("library is null");
-		}
-		
-		if (libraryFolder == null)
-		{
-			throw new IllegalArgumentException("libraryFolder is null");
-		}
-		
-		if (folderName == null)
-		{
-			throw new IllegalArgumentException("folderName is null");
-		}
 		
 		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
 		
@@ -156,20 +130,9 @@ public class GalaxyLibrary
 	 */
 	public Library changeLibraryOwner(Library library, String userEmail, String adminEmail) throws CreateLibraryException
 	{
-		if (library == null)
-		{
-			throw new IllegalArgumentException("library is null");
-		}
-		
-		if (library.getId() == null)
-		{
-			throw new IllegalArgumentException("library.getId() is null");
-		}
-		
-		if (userEmail == null)
-		{
-			throw new IllegalArgumentException("userEmail is null");
-		}
+		checkNotNull(library, "library is null");
+		checkNotNull(library.getId(), "library.getId() is null");
+		checkNotNull(userEmail, "userEmail is null");
 		
 		Library changedLibrary = null;
 		

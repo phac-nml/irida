@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl;
 
+import static com.google.common.base.Preconditions.*;
+
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -42,20 +44,9 @@ public class GalaxyAPI
 	 */
 	public GalaxyAPI(String galaxyURL, String adminEmail, String adminAPIKey, boolean linkUploadedFiles)
 	{
-		if (galaxyURL == null)
-		{
-			throw new IllegalArgumentException("galaxyURL is null");
-		}
-		
-		if (adminEmail == null)
-		{
-			throw new IllegalArgumentException("adminEmail is null");
-		}
-		
-		if (adminAPIKey == null)
-		{
-			throw new IllegalArgumentException("apiKey is null");			
-		}
+		checkNotNull(galaxyURL, "galaxyURL is null");
+		checkNotNull(adminEmail, "adminEmail is null");
+		checkNotNull(adminAPIKey, "apiKey is null");			
 		
 		galaxyInstance = GalaxyInstanceFactory.get(galaxyURL, adminAPIKey);
 		this.adminEmail = adminEmail;
@@ -86,15 +77,8 @@ public class GalaxyAPI
 	 */
 	public GalaxyAPI(GalaxyInstance galaxyInstance, String adminEmail, boolean linkUploadedFiles)
 	{
-		if (galaxyInstance == null)
-		{
-			throw new IllegalArgumentException("galaxyInstance is null");
-		}
-		
-		if (adminEmail == null)
-		{
-			throw new IllegalArgumentException("adminEmail is null");
-		}
+		checkNotNull(galaxyInstance, "galaxyInstance is null");
+		checkNotNull(adminEmail, "adminEmail is null");
 		
 		this.galaxyInstance = galaxyInstance;
 		this.adminEmail = adminEmail;
@@ -121,25 +105,10 @@ public class GalaxyAPI
 	 */
 	public GalaxyAPI(GalaxyInstance galaxyInstance, String adminEmail, boolean linkUploadedFiles, GalaxySearch galaxySearch, GalaxyLibrary galaxyLibrary)
 	{
-		if (galaxyInstance == null)
-		{
-			throw new IllegalArgumentException("galaxyInstance is null");
-		}
-		
-		if (adminEmail == null)
-		{
-			throw new IllegalArgumentException("adminEmail is null");
-		}
-		
-		if (galaxySearch == null)
-		{
-			throw new IllegalArgumentException("galaxySearch is null");
-		}
-		
-		if (galaxyLibrary == null)
-		{
-			throw new IllegalArgumentException("galaxyLibrary is null");
-		}
+		checkNotNull(galaxyInstance, "galaxyInstance is null");
+		checkNotNull(adminEmail, "adminEmail is null");
+		checkNotNull(galaxySearch, "galaxySearch is null");
+		checkNotNull(galaxyLibrary, "galaxyLibrary is null");
 		
 		this.galaxyInstance = galaxyInstance;
 		this.adminEmail = adminEmail;
@@ -164,15 +133,8 @@ public class GalaxyAPI
 	 */
 	public Library buildGalaxyLibrary(String libraryName, String galaxyUserEmail) throws CreateLibraryException
 	{
-		if (libraryName == null)
-		{
-			throw new IllegalArgumentException("libraryName is null");
-		}
-		
-		if (galaxyUserEmail == null)
-		{
-			throw new IllegalArgumentException("galaxyUser is null");
-		}
+		checkNotNull(libraryName, "libraryName is null");
+		checkNotNull(galaxyUserEmail, "galaxyUser is null");
 		
 		logger.info("Attempt to create new library=" + libraryName + " owned by user=" + galaxyUserEmail +
 				" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
@@ -332,20 +294,9 @@ public class GalaxyAPI
 	public GalaxyUploadResult uploadSamples(List<GalaxySample> samples, String libraryName, String galaxyUserEmail)
 			throws LibraryUploadException
 	{
-		if (libraryName == null)
-		{
-			throw new IllegalArgumentException("libraryName is null");
-		}
-		
-		if (samples == null)
-		{
-			throw new IllegalArgumentException("samples is null");
-		}
-		
-		if (galaxyUserEmail == null)
-		{
-			throw new IllegalArgumentException("galaxyUser is null");
-		}
+		checkNotNull(libraryName, "libraryName is null");
+		checkNotNull(samples, "samples is null");
+		checkNotNull(galaxyUserEmail, "galaxyUserEmail is null");
 		
 		GalaxyUploadResult galaxyUploadResult = null;
 		
@@ -398,14 +349,8 @@ public class GalaxyAPI
 	 */
 	public boolean uploadFilesToLibrary(List<GalaxySample> samples, String libraryID) throws LibraryUploadException
 	{
-		if (samples == null)
-		{
-			throw new IllegalArgumentException("samples are null");
-		}
-		else if (libraryID == null)
-		{
-			throw new IllegalArgumentException("libraryID is null");
-		}
+		checkNotNull(samples, "samples are null");
+		checkNotNull(libraryID, "libraryID is null");
 		
 		boolean success = true;
 		

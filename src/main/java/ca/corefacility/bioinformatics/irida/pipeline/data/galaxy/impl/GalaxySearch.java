@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl;
 
+import static com.google.common.base.Preconditions.*;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,10 +33,7 @@ public class GalaxySearch
 	
 	public GalaxySearch(GalaxyInstance galaxyInstance)
 	{
-		if (galaxyInstance == null)
-		{
-			throw new IllegalArgumentException("galaxyInstance is null");
-		}
+		checkNotNull(galaxyInstance, "galaxyInstance is null");
 		
 		this.galaxyInstance = galaxyInstance;
 	}
@@ -46,12 +45,9 @@ public class GalaxySearch
 	 */
 	public Role findUserRoleWithEmail(String email)
 	{
-		Role role = null;
+		checkNotNull(email, "email is null");
 		
-		if (email == null)
-		{
-			throw new IllegalArgumentException("email is null");
-		}
+		Role role = null;
 		
 		RolesClient rolesClient = galaxyInstance.getRolesClient();
 		if (rolesClient != null)
@@ -76,12 +72,9 @@ public class GalaxySearch
 	 */
 	public User findUserWithEmail(String email)
 	{
-		User user = null;
+		checkNotNull(email, "email is null");
 		
-		if (email == null)
-		{
-			throw new IllegalArgumentException("email is null");
-		}
+		User user = null;
 		
 		UsersClient usersClient = galaxyInstance.getUsersClient();
 		if (usersClient != null)
@@ -106,10 +99,7 @@ public class GalaxySearch
 	 */
 	public Library findLibraryWithId(String libraryId)
 	{
-		if (libraryId == null)
-		{
-			throw new IllegalArgumentException("libraryId is null");
-		}
+		checkNotNull(libraryId, "libraryId is null");
 		
 		Library library = null;
 		
@@ -134,10 +124,7 @@ public class GalaxySearch
 	 */
 	public Map<String,LibraryContent> libraryContentAsMap(String libraryId)
 	{
-		if (libraryId == null)
-		{
-			throw new IllegalArgumentException("libraryId is null");
-		}
+		checkNotNull(libraryId, "libraryId is null");
 		
 		Map<String,LibraryContent> map = null;
 		
@@ -164,10 +151,7 @@ public class GalaxySearch
 	 */
 	public List<Library> findLibraryWithName(String libraryName)
 	{		
-		if (libraryName == null)
-		{
-			throw new IllegalArgumentException("libraryName is null");
-		}
+		checkNotNull(libraryName, "libraryName is null");
 		
 		List<Library> libraries = new LinkedList<Library>();
 		
@@ -192,17 +176,10 @@ public class GalaxySearch
 	 */
 	public LibraryContent findLibraryContentWithId(String libraryId, String folderName)
 	{
+		checkNotNull(libraryId, "libraryId is null");
+		checkNotNull(folderName, "folderName is null");
+		
 		LibraryContent folder = null;
-		
-		if (libraryId == null)
-		{
-			throw new IllegalArgumentException("libraryId is null");
-		}
-		
-		if (folderName == null)
-		{
-			throw new IllegalArgumentException("folderName is null");
-		}
 		
 		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
 		List<LibraryContent> libraryContents = librariesClient.getLibraryContents(libraryId);

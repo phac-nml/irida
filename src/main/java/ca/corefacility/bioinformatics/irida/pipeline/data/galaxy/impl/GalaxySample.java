@@ -1,11 +1,13 @@
 package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl;
 
+import static com.google.common.base.Preconditions.*;
+
 import java.io.File;
 import java.util.List;
 
 /**
  * Represents a Sample to be uploaded to Galaxy
- * @author aaron
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxySample
@@ -15,6 +17,9 @@ public class GalaxySample
 	
 	public GalaxySample(String sampleName, List<File> sampleFiles)
 	{
+		checkNotNull(sampleName, "sampleName is null");
+		checkNotNull(sampleFiles, "sampleFiles is null");
+		
 		this.sampleName = sampleName;
 		this.sampleFiles = sampleFiles;
 	}
