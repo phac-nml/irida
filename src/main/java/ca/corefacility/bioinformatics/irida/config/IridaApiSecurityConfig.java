@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.config;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -26,6 +25,8 @@ import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.IridaPermissionEvaluator;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 
+import com.google.common.base.Joiner;
+
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.security")
@@ -34,7 +35,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	private static final String[] ROLE_HIERARCHIES = new String[] { "ROLE_ADMIN > ROLE_MANAGER",
 			"ROLE_MANAGER > ROLE_USER" };
 
-	private static final String ROLE_HIERARCHY = StringUtils.join(ROLE_HIERARCHIES, "\n");
+	private static final String ROLE_HIERARCHY = Joiner.on('\n').join(ROLE_HIERARCHIES);
 
 	/**
 	 * Loads all of the {@link BasePermission} sub-classes found in the security
