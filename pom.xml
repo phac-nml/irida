@@ -412,18 +412,15 @@
 		<commons.dbcp.version>1.4</commons.dbcp.version>
 		<fastqc.version>0.10.1-nml-custom</fastqc.version>
 		<aspectj.version>1.7.4</aspectj.version>
-
-		<!-- stuck on an older version of hibernate validator until spring upgrades 
-			support -->
 		<hibernate.validator.version>5.0.2.Final</hibernate.validator.version>
 
 		<!-- plugins -->
-		<maven.failsafe.plugin.version>2.13</maven.failsafe.plugin.version>
-		<maven.surefire.plugin.version>2.13</maven.surefire.plugin.version>
-		<maven.javadoc.plugin.version>2.9</maven.javadoc.plugin.version>
-		<maven.jacoco.plugin.version>0.6.3.201306030806</maven.jacoco.plugin.version>
-		<maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
-		<maven.liquibase.plugin.version>3.0.7</maven.liquibase.plugin.version>
+		<maven.failsafe.plugin.version>2.16</maven.failsafe.plugin.version>
+		<maven.surefire.plugin.version>2.16</maven.surefire.plugin.version>
+		<maven.javadoc.plugin.version>2.9.1</maven.javadoc.plugin.version>
+		<maven.jacoco.plugin.version>0.6.4.201312101107</maven.jacoco.plugin.version>
+		<maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
+		<maven.liquibase.plugin.version>3.0.8</maven.liquibase.plugin.version>
 
 		<!-- project configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
