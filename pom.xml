@@ -405,6 +405,9 @@
 		<mysql.connector.version>5.1.28</mysql.connector.version>
 		<hibernate.version>4.3.0.Final</hibernate.version>
 		<hibernate.jpa.version>1.0.1.Final</hibernate.jpa.version>
+		<!-- Do NOT upgrade hsqldb; causes integration tests to fail when trying 
+			to save quality control data (specifically the binary charts) for sequence 
+			files. (fb; Jan 21, 2014) -->
 		<hsqldb.version>2.2.8</hsqldb.version>
 		<jsr250.api.version>1.0</jsr250.api.version>
 		<spring.test.dbunit.version>1.1.0-SNAPSHOT</spring.test.dbunit.version>
