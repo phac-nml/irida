@@ -424,7 +424,7 @@
 		<dbunit.version>2.4.9</dbunit.version>
 		<commons.dbcp.version>1.4</commons.dbcp.version>
 		<fastqc.version>0.10.1-nml-custom</fastqc.version>
-		<aspectj.version>1.7.3</aspectj.version>
+		<aspectj.version>1.7.4</aspectj.version>
 		<commons.lang.version>3.1</commons.lang.version>
 		<commons.beanutils.version>1.7.0</commons.beanutils.version>
 
