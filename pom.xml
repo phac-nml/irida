@@ -416,7 +416,7 @@
 		<spring.data.envers.version>0.1.0.RELEASE</spring.data.envers.version>
 		<mockito.version>1.9.5</mockito.version>
 		<mysql.connector.version>5.1.28</mysql.connector.version>
-		<hibernate.version>4.2.6.Final</hibernate.version>
+		<hibernate.version>4.3.0.Final</hibernate.version>
 		<hibernate.jpa.version>1.0.1.Final</hibernate.jpa.version>
 		<hsqldb.version>2.2.8</hsqldb.version>
 		<jsr250.api.version>1.0</jsr250.api.version>
