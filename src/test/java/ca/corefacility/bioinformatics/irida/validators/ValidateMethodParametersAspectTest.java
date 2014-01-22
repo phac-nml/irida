@@ -28,20 +28,24 @@ import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
  */
 public class ValidateMethodParametersAspectTest {
 
-	private AnnotatedMethodsClass target;
 	private ValidMethodParametersAspect aspect;
 	private AnnotatedMethodsClass proxy;
+	private AnnotatedInterface interfaceProxy;
 	@Mock
 	private Validator validator;
 
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
-		target = new AnnotatedMethodsClass();
-		AspectJProxyFactory factory = new AspectJProxyFactory(target);
+		AnnotatedMethodsClass target = new AnnotatedMethodsClass();
+		AnnotatedInterfaceImpl interfaceProxyTarget = new AnnotatedInterfaceImpl();
+		AspectJProxyFactory proxyFactory = new AspectJProxyFactory(target);
+		AspectJProxyFactory interfaceProxyFactory = new AspectJProxyFactory(interfaceProxyTarget);
 		aspect = new ValidMethodParametersAspect(validator);
-		factory.addAspect(aspect);
-		proxy = factory.getProxy();
+		proxyFactory.addAspect(aspect);
+		interfaceProxyFactory.addAspect(aspect);
+		proxy = proxyFactory.getProxy();
+		interfaceProxy = interfaceProxyFactory.getProxy();
 	}
 
 	@Test
@@ -74,6 +78,20 @@ public class ValidateMethodParametersAspectTest {
 		proxy.testOneValidParameter(first);
 	}
 
+	@Test
+	public void testExecutesAnnotatedInterface() {
+		String param = "Paramter";
+		interfaceProxy.testParameter(param);
+		verify(validator).validate(param);
+	}
+
+	@Test
+	public void testExecutesArgAnnotatedInImpl() {
+		String param = "Parameter";
+		interfaceProxy.testParameterAnnotatedInClass(param);
+		verify(validator).validate(param);
+	}
+
 	private static class AnnotatedMethodsClass {
 		public void testOneValidParameter(@Valid String param) {
 
@@ -82,6 +100,22 @@ public class ValidateMethodParametersAspectTest {
 		public void testManyValidParameters(@Valid String first, @Valid String second, String third,
 				@Valid String fourth) {
 
+		}
+	}
+
+	private static interface AnnotatedInterface {
+		public void testParameter(@Valid String parameter);
+
+		public void testParameterAnnotatedInClass(String parameter);
+	}
+
+	private static class AnnotatedInterfaceImpl implements AnnotatedInterface {
+		@Override
+		public void testParameter(String parameter) {
+		}
+
+		@Override
+		public void testParameterAnnotatedInClass(@Valid String parameter) {
 		}
 	}
 }
