@@ -2,10 +2,14 @@ package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl;
 
 import static com.google.common.base.Preconditions.*;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
+import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyAccountEmail;
+import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyObjectName;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
@@ -16,10 +20,10 @@ import com.github.jmchilton.blend4j.galaxy.beans.LibraryPermissions;
 import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.sun.jersey.api.client.ClientResponse;
 
-public class GalaxyLibrary
+public class GalaxyLibraryBuilder
 {
-	private static final Logger logger = LoggerFactory.getLogger(GalaxyLibrary.class);
-	
+	private static final Logger logger = LoggerFactory.getLogger(GalaxyLibraryBuilder.class);
+		
 	private GalaxyInstance galaxyInstance;
 	private GalaxySearch galaxySearch;
 	
@@ -28,7 +32,7 @@ public class GalaxyLibrary
 	 * @param galaxyInstance  The GalaxyInstance object to work with.
 	 * @param galaxySearch  The GalaxySearch object to use for searching.
 	 */
-	public GalaxyLibrary(GalaxyInstance galaxyInstance, GalaxySearch galaxySearch)
+	public GalaxyLibraryBuilder(GalaxyInstance galaxyInstance, GalaxySearch galaxySearch)
 	{
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
 		checkNotNull(galaxySearch, "galaxySearch is null");
@@ -42,14 +46,14 @@ public class GalaxyLibrary
 	 * @param libraryName  The name of the new library.
 	 * @return  A Library object for the newly created library, or null if library could not be created.
 	 */
-	public Library buildEmptyLibrary(String libraryName)
+	public Library buildEmptyLibrary(@Valid GalaxyObjectName libraryName)
 	{
 		checkNotNull(libraryName, "libraryName is null");
 		
 		Library persistedLibrary = null;
 		
 		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
-		Library library = new Library(libraryName);
+		Library library = new Library(libraryName.getName());
 		persistedLibrary = librariesClient.createLibrary(library);
 		
 		if (persistedLibrary != null)
@@ -67,7 +71,7 @@ public class GalaxyLibrary
 	 * @param folderName  The name of the folder to create.
 	 * @return  A LibraryFolder object representing this folder, or null if no folder could be created.
 	 */
-	public LibraryFolder createLibraryFolder(Library library, String folderName)
+	public LibraryFolder createLibraryFolder(Library library, @Valid GalaxyObjectName folderName)
 	{
 		checkNotNull(library, "library is null");
 		checkNotNull(folderName, "folderName is null");
@@ -82,7 +86,7 @@ public class GalaxyLibrary
 			if (rootContent != null)
 			{
 				LibraryFolder newFolder = new LibraryFolder();
-				newFolder.setName(folderName);
+				newFolder.setName(folderName.getName());
 				newFolder.setFolderId(rootContent.getId());
 				
 				folder = librariesClient.createFolder(library.getId(), newFolder);
@@ -99,7 +103,8 @@ public class GalaxyLibrary
 	 * @param folderName  The name of the folder to create.
 	 * @return  A LibraryFolder object representing this folder, or null if no folder could be created.
 	 */
-	public LibraryFolder createLibraryFolder(Library library, LibraryFolder libraryFolder, String folderName)
+	public LibraryFolder createLibraryFolder(Library library, LibraryFolder libraryFolder,
+			@Valid GalaxyObjectName folderName)
 	{
 		checkNotNull(library, "library is null");
 		checkNotNull(libraryFolder, "libraryFolder is null");
@@ -112,7 +117,7 @@ public class GalaxyLibrary
 		if (librariesClient != null)
 		{
 			LibraryFolder newFolder = new LibraryFolder();
-			newFolder.setName(folderName);
+			newFolder.setName(folderName.getName());
 			newFolder.setFolderId(libraryFolder.getId());
 			
 			folder = librariesClient.createFolder(library.getId(), newFolder);
@@ -130,7 +135,8 @@ public class GalaxyLibrary
 	 * @return  The Library we changed the owner of, or null if could not change owner.
 	 * @throws CreateLibraryException 
 	 */
-	public Library changeLibraryOwner(Library library, String userEmail, String adminEmail) throws CreateLibraryException
+	public Library changeLibraryOwner(Library library, GalaxyAccountEmail userEmail,
+			GalaxyAccountEmail adminEmail) throws CreateLibraryException
 	{
 		checkNotNull(library, "library is null");
 		checkNotNull(library.getId(), "library.getId() is null");

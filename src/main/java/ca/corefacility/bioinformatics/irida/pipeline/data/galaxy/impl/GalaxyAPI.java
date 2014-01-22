@@ -3,14 +3,25 @@ package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl;
 import static com.google.common.base.Preconditions.*;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+import javax.validation.Validator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
+import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyAccountEmail;
+import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyFolderPath;
+import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyObjectName;
 import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxySample;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
@@ -27,34 +38,36 @@ public class GalaxyAPI
 {
 	private static final Logger logger = LoggerFactory.getLogger(GalaxyAPI.class);
 	
-	private static final String ILLUMINA_FOLDER_NAME = "illumina_reads";
-	private static final String REFERENCES_FOLDER_NAME = "references";
-	private static final String ILLUMINA_FOLDER_PATH = "/illumina_reads";
-	private static final String REFERENCES_FOLDER_PATH = "/references";
+	private static final GalaxyObjectName ILLUMINA_FOLDER_NAME = new GalaxyObjectName("illumina_reads");
+	private static final GalaxyObjectName REFERENCES_FOLDER_NAME = new GalaxyObjectName("references");
+	private static final GalaxyFolderPath ILLUMINA_FOLDER_PATH = new GalaxyFolderPath("/illumina_reads");
+	private static final GalaxyFolderPath REFERENCES_FOLDER_PATH = new GalaxyFolderPath("/references");
+	
+	private Validator validator;
 	
 	private GalaxyInstance galaxyInstance;
-	private String adminEmail;
+	private GalaxyAccountEmail adminEmail;
 	private GalaxySearch galaxySearch;
-	private GalaxyLibrary galaxyLibrary;
-	private boolean linkUploadedFiles = false;
+	private GalaxyLibraryBuilder galaxyLibrary;
+	private boolean linkUploadedFiles = true;
 	
 	/**
 	 * Builds a new GalaxyAPI instance with the given information.
 	 * @param galaxyURL  The URL to the Galaxy instance.
 	 * @param adminEmail  An administrators email address for the Galaxy instance.
 	 * @param adminAPIKey  A corresponding administrators API key for the Galaxy instance.
-	 * @param linkUploadedFiles  If uploaded files should be linked, or uploaded
-	 * 	(linking assumes the files are on the same filesystem as Galaxy).
+	 * @param validator  The Validator to use to validate objects.
 	 */
-	public GalaxyAPI(String galaxyURL, String adminEmail, String adminAPIKey, boolean linkUploadedFiles)
+	public GalaxyAPI(String galaxyURL, @Valid GalaxyAccountEmail adminEmail, String adminAPIKey, Validator validator)
 	{
 		checkNotNull(galaxyURL, "galaxyURL is null");
 		checkNotNull(adminEmail, "adminEmail is null");
-		checkNotNull(adminAPIKey, "apiKey is null");			
+		checkNotNull(adminAPIKey, "apiKey is null");
+		checkNotNull(validator, "validator is null");
 		
 		galaxyInstance = GalaxyInstanceFactory.get(galaxyURL, adminAPIKey);
 		this.adminEmail = adminEmail;
-		this.linkUploadedFiles = linkUploadedFiles;
+		this.validator = validator;
 		
 		if (galaxyInstance == null)
 		{
@@ -63,7 +76,7 @@ public class GalaxyAPI
 		}
 		
 		galaxySearch = new GalaxySearch(galaxyInstance);
-		galaxyLibrary = new GalaxyLibrary(galaxyInstance, galaxySearch);
+		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxySearch);
 		
 		if (!galaxySearch.checkValidAdminEmailAPIKey(adminEmail, adminAPIKey))
 		{
@@ -76,20 +89,20 @@ public class GalaxyAPI
 	 * Builds a GalaxyAPI object with the given information.
 	 * @param galaxyInstance  A GalaxyInstance object pointing to the correct Galaxy location.
 	 * @param adminEmail  The administrators email address for the corresponding API key within the GalaxyInstance.
-	 * @param linkUploadedFiles  If uploaded files should be linked, or uploaded
-	 * 	(linking assumes the files are on the same filesystem as Galaxy).
+	 * @param validator  The Validator to use to validate objects.
 	 */
-	public GalaxyAPI(GalaxyInstance galaxyInstance, String adminEmail, boolean linkUploadedFiles)
+	public GalaxyAPI(GalaxyInstance galaxyInstance, @Valid GalaxyAccountEmail adminEmail, Validator validator)
 	{
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
 		checkNotNull(adminEmail, "adminEmail is null");
+		checkNotNull(validator, "validator is null");
 		
 		this.galaxyInstance = galaxyInstance;
 		this.adminEmail = adminEmail;
-		this.linkUploadedFiles = linkUploadedFiles;
+		this.validator = validator;
 		
 		galaxySearch = new GalaxySearch(galaxyInstance);
-		galaxyLibrary = new GalaxyLibrary(galaxyInstance, galaxySearch);
+		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxySearch);
 		
 		if (!galaxySearch.checkValidAdminEmailAPIKey(adminEmail, galaxyInstance.getApiKey()))
 		{
@@ -106,20 +119,23 @@ public class GalaxyAPI
 	 * 	(linking assumes the files are on the same filesystem as Galaxy).
 	 * @param galaxySearch  A GalaxySearch object.
 	 * @param galaxyLibrary  A GalaxyLibrary object.
+	 * @param validator  The Validator to use to validate objects.
 	 */
-	public GalaxyAPI(GalaxyInstance galaxyInstance, String adminEmail, boolean linkUploadedFiles, GalaxySearch galaxySearch, GalaxyLibrary galaxyLibrary)
+	public GalaxyAPI(GalaxyInstance galaxyInstance, @Valid GalaxyAccountEmail adminEmail,
+			GalaxySearch galaxySearch, GalaxyLibraryBuilder galaxyLibrary, Validator validator)
 	{
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
 		checkNotNull(adminEmail, "adminEmail is null");
 		checkNotNull(galaxySearch, "galaxySearch is null");
 		checkNotNull(galaxyLibrary, "galaxyLibrary is null");
+		checkNotNull(validator, "validator is null");
 		
 		this.galaxyInstance = galaxyInstance;
 		this.adminEmail = adminEmail;
-		this.linkUploadedFiles = linkUploadedFiles;
 		
 		this.galaxyLibrary = galaxyLibrary;
 		this.galaxySearch = galaxySearch;
+		this.validator = validator;
 		
 		if (!galaxySearch.checkValidAdminEmailAPIKey(adminEmail, galaxyInstance.getApiKey()))
 		{
@@ -135,10 +151,13 @@ public class GalaxyAPI
 	 * @return A Library object for the library just created.
 	 * @throws CreateLibraryException 
 	 */
-	public Library buildGalaxyLibrary(String libraryName, String galaxyUserEmail) throws CreateLibraryException
+	public Library buildGalaxyLibrary(@Valid GalaxyObjectName libraryName,
+			@Valid GalaxyAccountEmail galaxyUserEmail) throws CreateLibraryException
 	{
 		checkNotNull(libraryName, "libraryName is null");
 		checkNotNull(galaxyUserEmail, "galaxyUser is null");
+		validateGalaxyObjectName(libraryName);
+		validateGalaxyAccountEmail(galaxyUserEmail);
 		
 		logger.info("Attempt to create new library=" + libraryName + " owned by user=" + galaxyUserEmail +
 				" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
@@ -178,7 +197,28 @@ public class GalaxyAPI
 		return createdLibrary;
 	}
 	
-	private ClientResponse uploadFile(LibraryFolder folder, File file, LibrariesClient librariesClient, Library library)
+	private void validateGalaxyAccountEmail(GalaxyAccountEmail email) throws ConstraintViolationException
+	{
+		Set<ConstraintViolation<GalaxyAccountEmail>> violations = 
+				validator.validate(email);
+		if (!violations.isEmpty())
+		{
+			throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
+		}
+	}
+	
+	private void validateGalaxyObjectName(GalaxyObjectName name) throws ConstraintViolationException
+	{
+		Set<ConstraintViolation<GalaxyObjectName>> violations = 
+				validator.validate(name);
+		if (!violations.isEmpty())
+		{
+			throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
+		}
+	}
+	
+	private ClientResponse uploadFile(LibraryFolder folder, File file, LibrariesClient librariesClient,
+			Library library)
 	{
 		FilesystemPathsLibraryUpload upload = new FilesystemPathsLibraryUpload();
 		upload.setFolderId(folder.getId());
@@ -239,7 +279,8 @@ public class GalaxyAPI
 		}
 		else
 		{
-			persistedSampleFolder = galaxyLibrary.createLibraryFolder(library, rootFolder, sample.getSampleName());
+			persistedSampleFolder = galaxyLibrary.createLibraryFolder(library, rootFolder,
+					sample.getSampleName());
 			
 			if (persistedSampleFolder != null)
 			{
@@ -294,9 +335,11 @@ public class GalaxyAPI
 	 * @return A GalaxyUploadResult containing information about the location of the uploaded files, or null
 	 * 	if an error occured.
 	 * @throws LibraryUploadException If an error occurred.
+	 * @throws CreateLibraryException 
 	 */
-	public GalaxyUploadResult uploadSamples(List<GalaxySample> samples, String libraryName, String galaxyUserEmail)
-			throws LibraryUploadException
+	public GalaxyUploadResult uploadSamples(List<GalaxySample> samples, @Valid GalaxyObjectName libraryName,
+			@Valid GalaxyAccountEmail galaxyUserEmail)
+			throws LibraryUploadException, CreateLibraryException
 	{
 		checkNotNull(libraryName, "libraryName is null");
 		checkNotNull(samples, "samples is null");
@@ -330,16 +373,10 @@ public class GalaxyAPI
 						+ galaxyInstance.getGalaxyUrl());
 			}
 		}
-		catch (LibraryUploadException e)
-		{
-			logger.error(e.toString());
-			throw e;
-		}
-		catch (Exception e)
-		{
-			logger.error(e.toString());
-			throw new LibraryUploadException(e);
-		}
+        catch (MalformedURLException e)
+        {
+            throw new RuntimeException(e);
+        }
 		
 		return galaxyUploadResult;
 	}
@@ -351,7 +388,7 @@ public class GalaxyAPI
 	 * @return  True if the files have been uploaded, false otherwise.
 	 * @throws LibraryUploadException 
 	 */
-	public boolean uploadFilesToLibrary(List<GalaxySample> samples, String libraryID) throws LibraryUploadException
+	public boolean uploadFilesToLibrary(@Valid List<GalaxySample> samples, String libraryID) throws LibraryUploadException
 	{
 		checkNotNull(samples, "samples are null");
 		checkNotNull(libraryID, "libraryID is null");
@@ -402,9 +439,10 @@ public class GalaxyAPI
 				}
 				
 				for (GalaxySample sample : samples)
-				{
+				{					
 					if (sample != null)
 					{
+						validateGalaxyObjectName(sample.getSampleName());
 						success &= uploadSample(sample, illuminaFolder, librariesClient, library, libraryContentMap, errorSuffix);
 					}
 					else
@@ -420,6 +458,26 @@ public class GalaxyAPI
 		}
 		
 		return success;
+	}
+	
+	/**
+	 * Whether or not files should be linked within Galaxy (assumes IRIDA is on the same filesystem as
+	 *  Galaxy) or copies of the files should be uploaded to Galaxy.
+	 * @param linkUploadedFiles  True to link files, false to copy files.
+	 */
+	public void setLinkUploadedFiles(boolean linkUploadedFiles)
+	{
+		this.linkUploadedFiles = linkUploadedFiles;
+	}
+	
+	/**
+	 * Whether or not files should be linked within Galaxy (assumes IRIDA is on the same filesystem as
+	 *  Galaxy) or copies of the files should be uploaded to Galaxy.
+	 * @return True if linking files is turned on, false otherwise.
+	 */
+	public boolean getLinkUploadedFiles()
+	{
+		return linkUploadedFiles;
 	}
 	
 	/**

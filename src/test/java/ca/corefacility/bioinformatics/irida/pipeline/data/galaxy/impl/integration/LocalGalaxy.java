@@ -5,6 +5,8 @@ import javax.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyAccountEmail;
+
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.galaxybootstrap.BootStrapper;
 import com.github.jmchilton.galaxybootstrap.BootStrapper.GalaxyDaemon;
@@ -21,20 +23,22 @@ public class LocalGalaxy
 	private String galaxyURL;
 	private String invalidGalaxyURL;
 	
-	private String adminName;
+	private GalaxyAccountEmail adminName;
 	private String adminPassword;
 	private String adminAPIKey;
 	
-	private String user1Name;
+	private GalaxyAccountEmail user1Name;
 	private String user1Password;
 	private String user1APIKey;
 	
-	private String user2Name;
+	private GalaxyAccountEmail user2Name;
 	private String user2Password;
 	private String user2APIKey;
 	
-	private String invalidGalaxyAdminName;
-	private String invalidGalaxyUserName;
+	private GalaxyAccountEmail nonExistentGalaxyAdminName;
+	private GalaxyAccountEmail nonExistentGalaxyUserName;
+	
+	private GalaxyAccountEmail invalidGalaxyUserName;
 	
 	private GalaxyInstance galaxyInstanceAdmin;
 	private GalaxyInstance galaxyInstanceUser1;
@@ -61,12 +65,12 @@ public class LocalGalaxy
 		this.galaxyURL = galaxyURL;
 	}
 	
-	public String getAdminName()
+	public GalaxyAccountEmail getAdminName()
 	{
 		return adminName;
 	}
 	
-	public void setAdminName(String adminName)
+	public void setAdminName(GalaxyAccountEmail adminName)
 	{
 		this.adminName = adminName;
 	}
@@ -91,12 +95,12 @@ public class LocalGalaxy
 		this.adminAPIKey = adminAPIKey;
 	}
 	
-	public String getUser1Name()
+	public GalaxyAccountEmail getUser1Name()
 	{
 		return user1Name;
 	}
 	
-	public void setUser1Name(String user1Name)
+	public void setUser1Name(GalaxyAccountEmail user1Name)
 	{
 		this.user1Name = user1Name;
 	}
@@ -121,12 +125,12 @@ public class LocalGalaxy
 		user1APIKey = user1apiKey;
 	}
 	
-	public String getUser2Name()
+	public GalaxyAccountEmail getUser2Name()
 	{
 		return user2Name;
 	}
 	
-	public void setUser2Name(String user2Name)
+	public void setUser2Name(GalaxyAccountEmail user2Name)
 	{
 		this.user2Name = user2Name;
 	}
@@ -151,24 +155,24 @@ public class LocalGalaxy
 		user2APIKey = user2apiKey;
 	}
 	
-	public String getInvalidGalaxyAdminName()
+	public GalaxyAccountEmail getNonExistentGalaxyAdminName()
 	{
-		return invalidGalaxyAdminName;
+		return nonExistentGalaxyAdminName;
 	}
 	
-	public void setInvalidGalaxyAdminName(String invalidGalaxyAdminName)
+	public void setNonExistentGalaxyAdminName(GalaxyAccountEmail invalidGalaxyAdminName)
 	{
-		this.invalidGalaxyAdminName = invalidGalaxyAdminName;
+		this.nonExistentGalaxyAdminName = invalidGalaxyAdminName;
 	}
 	
-	public String getInvalidGalaxyUserName()
+	public GalaxyAccountEmail getNonExistentGalaxyUserName()
 	{
-		return invalidGalaxyUserName;
+		return nonExistentGalaxyUserName;
 	}
 	
-	public void setInvalidGalaxyUserName(String invalidGalaxyUserName)
+	public void setNonExistentGalaxyUserName(GalaxyAccountEmail invalidGalaxyUserName)
 	{
-		this.invalidGalaxyUserName = invalidGalaxyUserName;
+		this.nonExistentGalaxyUserName = invalidGalaxyUserName;
 	}
 	
 	public GalaxyInstance getGalaxyInstanceAdmin()
@@ -239,5 +243,15 @@ public class LocalGalaxy
 	public void setInvalidGalaxyURL(String invalidGalaxyURL)
 	{
 		this.invalidGalaxyURL = invalidGalaxyURL;
+	}
+
+	public GalaxyAccountEmail getInvalidGalaxyUserName()
+	{
+		return invalidGalaxyUserName;
+	}
+
+	public void setInvalidGalaxyUserName(GalaxyAccountEmail invalidGalaxyUserName)
+	{
+		this.invalidGalaxyUserName = invalidGalaxyUserName;
 	}
 }

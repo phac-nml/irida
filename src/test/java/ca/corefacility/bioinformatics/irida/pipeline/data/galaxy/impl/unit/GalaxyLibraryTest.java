@@ -21,7 +21,9 @@ import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.sun.jersey.api.client.ClientResponse;
 
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
-import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyLibrary;
+import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyAccountEmail;
+import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyObjectName;
+import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxySearch;
 
 public class GalaxyLibraryTest
@@ -33,13 +35,13 @@ public class GalaxyLibraryTest
 	@Mock private ClientResponse invalidResponse;
 	
 	private final static String LIBRARY_ID = "1";
-	private final static String USER_EMAIL = "user@localhost";
-	private final static String ADMIN_EMAIL = "admin@localhost";
-	private final static String INVALID_EMAIL = "invalid@localhost";
+	private final static GalaxyAccountEmail USER_EMAIL = new GalaxyAccountEmail("user@localhost");
+	private final static GalaxyAccountEmail ADMIN_EMAIL = new GalaxyAccountEmail("admin@localhost");
+	private final static GalaxyAccountEmail INVALID_EMAIL = new GalaxyAccountEmail("invalid@localhost");
 	private final static String ROOT_FOLDER_ID = "10";
 	
 	private Library testLibrary;
-	private GalaxyLibrary galaxyLibrary;
+	private GalaxyLibraryBuilder galaxyLibrary;
 	
 	@Before
 	public void setup() throws FileNotFoundException, URISyntaxException
@@ -53,7 +55,7 @@ public class GalaxyLibraryTest
 		setupPermissionsTest();
 		setupFoldersTest();
 		
-		galaxyLibrary = new GalaxyLibrary(galaxyInstance, galaxySearch);
+		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxySearch);
 	}
 	
 	private void setupLibrariesTest()
@@ -77,10 +79,10 @@ public class GalaxyLibraryTest
 	private void setupPermissionsTest()
 	{
 		Role userRole = new Role();
-		userRole.setName(USER_EMAIL);
+		userRole.setName(USER_EMAIL.getAccountEmail());
 		
 		Role adminRole = new Role();
-		adminRole.setName(ADMIN_EMAIL);
+		adminRole.setName(ADMIN_EMAIL.getAccountEmail());
 		
 		when(galaxySearch.findUserRoleWithEmail(USER_EMAIL)).thenReturn(userRole);
 		when(galaxySearch.findUserRoleWithEmail(ADMIN_EMAIL)).thenReturn(adminRole);
@@ -95,7 +97,7 @@ public class GalaxyLibraryTest
 		
 		when(librariesClient.createFolder(eq(LIBRARY_ID), any(LibraryFolder.class))).thenReturn(folder);
 		
-		LibraryFolder newFolder = galaxyLibrary.createLibraryFolder(testLibrary, "new_folder");
+		LibraryFolder newFolder = galaxyLibrary.createLibraryFolder(testLibrary, new GalaxyObjectName("new_folder"));
 		assertNotNull(newFolder);
 		assertEquals("folder_name", newFolder.getName());
 		assertEquals("1", newFolder.getId());
@@ -106,7 +108,7 @@ public class GalaxyLibraryTest
 	{
 		when(librariesClient.getRootFolder(LIBRARY_ID)).thenReturn(null);
 		
-		LibraryFolder folder = galaxyLibrary.createLibraryFolder(testLibrary, "new_folder");
+		LibraryFolder folder = galaxyLibrary.createLibraryFolder(testLibrary, new GalaxyObjectName("new_folder"));
 		assertNull(folder);
 	}
 	
@@ -119,7 +121,7 @@ public class GalaxyLibraryTest
 		
 		when(librariesClient.createFolder(eq(LIBRARY_ID), any(LibraryFolder.class))).thenReturn(folder);
 		
-		LibraryFolder newFolder = galaxyLibrary.createLibraryFolder(testLibrary, folder, "new_folder");
+		LibraryFolder newFolder = galaxyLibrary.createLibraryFolder(testLibrary, folder, new GalaxyObjectName("new_folder"));
 		assertNotNull(newFolder);
 		assertEquals("folder_name", newFolder.getName());
 		assertEquals("1", newFolder.getId());
@@ -156,6 +158,15 @@ public class GalaxyLibraryTest
 		galaxyLibrary.changeLibraryOwner(testLibrary, USER_EMAIL, INVALID_EMAIL);
 	}
 	
+//	@Test(expected=ConstraintViolationException.class)
+//	public void testChangeLibraryOwnerInvalidAdminEmail() throws CreateLibraryException
+//	{
+//		when(librariesClient.setLibraryPermissions(eq(LIBRARY_ID), any(LibraryPermissions.class))).
+//			thenReturn(okayResponse);
+//		
+//		galaxyLibrary.changeLibraryOwner(testLibrary, USER_EMAIL, new GalaxyAccountEmail("invalid <email"));
+//	}
+	
 	@Test
 	public void testChangeLibraryOwnerInvalidResponse() throws CreateLibraryException
 	{
@@ -172,7 +183,7 @@ public class GalaxyLibraryTest
 	{		
 		when(librariesClient.createLibrary(any(Library.class))).thenReturn(testLibrary);
 		
-		Library library = galaxyLibrary.buildEmptyLibrary("test");
+		Library library = galaxyLibrary.buildEmptyLibrary(new GalaxyObjectName("test"));
 		
 		assertNotNull(library);
 		assertEquals("test", library.getName());
@@ -184,6 +195,14 @@ public class GalaxyLibraryTest
 	{	
 		when(librariesClient.createLibrary(any(Library.class))).thenThrow(new RuntimeException("error creating library"));
 		
-		galaxyLibrary.buildEmptyLibrary("test");
+		galaxyLibrary.buildEmptyLibrary(new GalaxyObjectName("test"));
 	}
+//	
+//	@Test(expected=ConstraintViolationException.class)
+//	public void testBuildLibraryWithInvalidName()
+//	{
+//		when(librariesClient.createLibrary(any(Library.class))).thenReturn(testLibrary);
+//		
+//		galaxyLibrary.buildEmptyLibrary(new GalaxyObjectName("<a href='http://google.com'>bad$library' name</a>"));
+//	}
 }

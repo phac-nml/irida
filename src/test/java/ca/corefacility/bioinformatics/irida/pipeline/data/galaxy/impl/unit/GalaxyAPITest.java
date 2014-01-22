@@ -9,9 +9,13 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,9 +24,12 @@ import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
+import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyAccountEmail;
+import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyFolderPath;
+import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyObjectName;
 import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyAPI;
-import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyLibrary;
+import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxySearch;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyUploadResult;
 
@@ -45,23 +52,25 @@ public class GalaxyAPITest
 	@Mock private ClientResponse invalidResponse;
 	
 	@Mock private GalaxySearch galaxySearch;
-	@Mock private GalaxyLibrary galaxyLibrary;
+	@Mock private GalaxyLibraryBuilder galaxyLibrary;
 	
-	final private String realAdminEmail = "admin@localhost";
+	@Mock Validator validator;
+	
+	final private GalaxyAccountEmail realAdminEmail = new GalaxyAccountEmail("admin@localhost");
 	final private String libraryId = "1";
-	final private String invalidLibraryId = "2";
+	final private String nonExistentLibraryId = "2";
 	final private String rootFolderId = "2";
-	final private String libraryName = "TestLibrary";
+	final private GalaxyObjectName libraryName = new GalaxyObjectName("TestLibrary");
 	final private String realAdminAPIKey = "0";
-	final private String invalidAdminEmail = "admin_invalid@localhost";
-	final private String realUserEmail = "test@localhost";
-	final private String fakeUserEmail = "fake@localhost";
+	final private GalaxyAccountEmail nonExistentAdminEmail = new GalaxyAccountEmail("admin_no_exist@localhost");
+	final private GalaxyAccountEmail realUserEmail = new GalaxyAccountEmail("test@localhost");
+	final private GalaxyAccountEmail fakeUserEmail = new GalaxyAccountEmail("fake@localhost");
 	final private String realRoleId = "1";
 	final private String adminRoleId = "0";
-	final private String illuminaFolderName = "illumina_reads";
-	final private String referencesFolderName = "references";
-	final private String illuminaFolderPath = "/illumina_reads";
-	final private String referencesFolderPath = "/references";
+	final private GalaxyObjectName illuminaFolderName = new GalaxyObjectName("illumina_reads");
+	final private GalaxyObjectName referencesFolderName = new GalaxyObjectName("references");
+	final private GalaxyFolderPath illuminaFolderPath = new GalaxyFolderPath("/illumina_reads");
+	final private GalaxyFolderPath referencesFolderPath = new GalaxyFolderPath("/references");
 	final private String galaxyURL = "http://localhost/";
 		
 	private GalaxyAPI workflowRESTAPI;
@@ -87,7 +96,10 @@ public class GalaxyAPITest
 		when(galaxySearch.checkValidAdminEmailAPIKey(realAdminEmail, realAdminAPIKey)).
 			thenReturn(true);
 		
-		workflowRESTAPI = new GalaxyAPI(galaxyInstance, realAdminEmail, false, galaxySearch, galaxyLibrary);
+		when(validator.validate(any(GalaxyObjectName.class))).thenReturn(new HashSet<ConstraintViolation<GalaxyObjectName>>());
+		
+		workflowRESTAPI = new GalaxyAPI(galaxyInstance, realAdminEmail, galaxySearch, galaxyLibrary, validator);
+		workflowRESTAPI.setLinkUploadedFiles(false);
 		
 		// setup files
 		dataFile1 = new File(this.getClass().getResource("testData1.fastq").toURI());
@@ -105,20 +117,20 @@ public class GalaxyAPITest
 	
 	private void setupBuildLibrary() throws CreateLibraryException, MalformedURLException
 	{
-		Library returnedLibrary = new Library(libraryName);
+		Library returnedLibrary = new Library(libraryName.getName());
 		returnedLibrary.setId(libraryId);
 		returnedLibrary.setUrl("/api/libraries/" + libraryId);
 		expectedUploadResult = new GalaxyUploadResult(returnedLibrary, galaxyURL);
 		
 		User realUser = new User();
-		realUser.setEmail(realUserEmail);
+		realUser.setEmail(realUserEmail.getAccountEmail());
 		
 		Role realUserRole = new Role();
-		realUserRole.setName(realUserEmail);
+		realUserRole.setName(realUserEmail.getAccountEmail());
 		realUserRole.setId(realRoleId);
 		
 		Role realAdminRole = new Role();
-		realAdminRole.setName(realAdminEmail);
+		realAdminRole.setName(realAdminEmail.getAccountEmail());
 		realAdminRole.setId(adminRoleId);
 		
 		when(galaxySearch.findUserWithEmail(realUserEmail)).thenReturn(realUser);
@@ -134,21 +146,21 @@ public class GalaxyAPITest
 	private void setupExisitingLibrary() throws CreateLibraryException, MalformedURLException
 	{
 		List<Library> libraries = new LinkedList<Library>();
-		Library existingLibrary = new Library(libraryName);
+		Library existingLibrary = new Library(libraryName.getName());
 		existingLibrary.setId(libraryId);
 		libraries.add(existingLibrary);
 		existingLibrary.setUrl("/api/libraries/" + libraryId);
 		expectedUploadResult = new GalaxyUploadResult(existingLibrary, galaxyURL);
 				
 		User realUser = new User();
-		realUser.setEmail(realUserEmail);
+		realUser.setEmail(realUserEmail.getAccountEmail());
 		
 		Role realUserRole = new Role();
-		realUserRole.setName(realUserEmail);
+		realUserRole.setName(realUserEmail.getAccountEmail());
 		realUserRole.setId(realRoleId);
 		
 		Role realAdminRole = new Role();
-		realAdminRole.setName(realAdminEmail);
+		realAdminRole.setName(realAdminEmail.getAccountEmail());
 		realAdminRole.setId(adminRoleId);
 		
 		when(galaxySearch.findUserWithEmail(realUserEmail)).thenReturn(realUser);
@@ -182,7 +194,7 @@ public class GalaxyAPITest
 			GalaxySample sample = samples.get(i);
 			LibraryFolder folder = folders.get(i);
 			
-			String sampleName = sample.getSampleName();
+			GalaxyObjectName sampleName = sample.getSampleName();
 			
 			when(galaxyLibrary.createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq(sampleName))).thenReturn(folder);
 		}
@@ -191,11 +203,11 @@ public class GalaxyAPITest
 	private void setupLibraryFolders()
 	{		
 		LibraryFolder referencesFolder = new LibraryFolder();
-		referencesFolder.setName(referencesFolderPath);
+		referencesFolder.setName(referencesFolderPath.getName());
 		referencesFolder.setFolderId(rootFolderId);
 		
 		LibraryFolder illuminaFolder = new LibraryFolder();
-		illuminaFolder.setName(illuminaFolderPath);
+		illuminaFolder.setName(illuminaFolderPath.getName());
 		illuminaFolder.setFolderId(rootFolderId);
 		
 		when(galaxySearch.findLibraryContentWithId(libraryId, illuminaFolderPath)).thenReturn(null);
@@ -207,17 +219,17 @@ public class GalaxyAPITest
 	private void setupLibraryFoldersWithIlluminaFolder()
 	{
 		LibraryFolder referencesFolder = new LibraryFolder();
-		referencesFolder.setName(referencesFolderPath);
+		referencesFolder.setName(referencesFolderPath.getName());
 		referencesFolder.setFolderId(rootFolderId);
 		
 		LibraryFolder illuminaFolder = new LibraryFolder();
-		illuminaFolder.setName(illuminaFolderPath);
+		illuminaFolder.setName(illuminaFolderPath.getName());
 		illuminaFolder.setFolderId(rootFolderId);
 		
 		LibraryContent illuminaContent = new LibraryContent();
-		illuminaContent.setName(illuminaFolderPath);
+		illuminaContent.setName(illuminaFolderPath.getName());
 		illuminaContent.setType("folder");
-		libraryMap.put(illuminaFolderPath, illuminaContent);
+		libraryMap.put(illuminaFolderPath.getName(), illuminaContent);
 		
 		when(galaxySearch.findLibraryContentWithId(libraryId, illuminaFolderPath)).thenReturn(illuminaContent);
 		when(galaxySearch.findLibraryContentWithId(libraryId, referencesFolderPath)).thenReturn(null);
@@ -228,16 +240,16 @@ public class GalaxyAPITest
 	private void setupLibraryFoldersWithReferencesFolder()
 	{
 		LibraryFolder referencesFolder = new LibraryFolder();
-		referencesFolder.setName(referencesFolderPath);
+		referencesFolder.setName(referencesFolderPath.getName());
 		referencesFolder.setFolderId(rootFolderId);
 		
 		LibraryContent referenceContent = new LibraryContent();
-		referenceContent.setName(referencesFolderPath);
+		referenceContent.setName(referencesFolderPath.getName());
 		referenceContent.setType("folder");
-		libraryMap.put(referencesFolderPath, referenceContent);
+		libraryMap.put(referencesFolderPath.getName(), referenceContent);
 		
 		LibraryFolder illuminaFolder = new LibraryFolder();
-		illuminaFolder.setName(illuminaFolderPath);
+		illuminaFolder.setName(illuminaFolderPath.getName());
 		illuminaFolder.setFolderId(rootFolderId);
 		
 		when(galaxySearch.findLibraryContentWithId(libraryId, illuminaFolderPath)).thenReturn(null);
@@ -249,22 +261,22 @@ public class GalaxyAPITest
 	private void setupLibraryFoldersWithBothFolders()
 	{
 		LibraryFolder referencesFolder = new LibraryFolder();
-		referencesFolder.setName(referencesFolderPath);
+		referencesFolder.setName(referencesFolderPath.getName());
 		referencesFolder.setFolderId(rootFolderId);
 		
 		LibraryContent referenceContent = new LibraryContent();
-		referenceContent.setName(referencesFolderPath);
+		referenceContent.setName(referencesFolderPath.getName());
 		referenceContent.setType("folder");
-		libraryMap.put(referencesFolderPath, referenceContent);
+		libraryMap.put(referencesFolderPath.getName(), referenceContent);
 		
 		LibraryFolder illuminaFolder = new LibraryFolder();
-		illuminaFolder.setName(illuminaFolderPath);
+		illuminaFolder.setName(illuminaFolderPath.getName());
 		illuminaFolder.setFolderId(rootFolderId);
 		
 		LibraryContent illuminaContent = new LibraryContent();
-		illuminaContent.setName(illuminaFolderPath);
+		illuminaContent.setName(illuminaFolderPath.getName());
 		illuminaContent.setType("folder");
-		libraryMap.put(illuminaFolderPath, illuminaContent);
+		libraryMap.put(illuminaFolderPath.getName(), illuminaContent);
 		
 		when(galaxySearch.findLibraryContentWithId(libraryId, illuminaFolderPath)).thenReturn(illuminaContent);
 		when(galaxySearch.findLibraryContentWithId(libraryId, referencesFolderPath)).thenReturn(referenceContent);
@@ -305,7 +317,8 @@ public class GalaxyAPITest
 	{
 		setupBuildLibrary();
 		
-		workflowRESTAPI = new GalaxyAPI(galaxyInstance, invalidAdminEmail, false);
+		workflowRESTAPI = new GalaxyAPI(galaxyInstance, nonExistentAdminEmail, validator);
+		workflowRESTAPI.setLinkUploadedFiles(false);
 	}
 	
 	@Test(expected=CreateLibraryException.class)
@@ -335,7 +348,7 @@ public class GalaxyAPITest
 		String sampleFolderId = "3";
 		
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
-		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
+		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
 		samples.add(galaxySample);
 		
 		List<LibraryFolder> sampleFolders = new ArrayList<LibraryFolder>();
@@ -351,7 +364,7 @@ public class GalaxyAPITest
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(referencesFolderName));
 		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderPath);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
-		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData"));
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq(new GalaxyObjectName("testData")));
 		verify(librariesClient).uploadFilesystemPathsRequest(eq(libraryId), any(FilesystemPathsLibraryUpload.class));
 	}
 	
@@ -363,7 +376,7 @@ public class GalaxyAPITest
 		String sampleFolderId = "3";
 		
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
-		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
+		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
 		samples.add(galaxySample);
 		
 		List<LibraryFolder> sampleFolders = new ArrayList<LibraryFolder>();
@@ -385,7 +398,8 @@ public class GalaxyAPITest
 		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderPath);
 		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class), eq(referencesFolderName));
 		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
-		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData"));
+		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class), any(LibraryFolder.class),
+				eq(new GalaxyObjectName("testData")));
 		
 		// should still upload files since they didn't exist in sample folder
 		verify(librariesClient).uploadFilesystemPathsRequest(eq(libraryId), any(FilesystemPathsLibraryUpload.class));
@@ -400,7 +414,7 @@ public class GalaxyAPITest
 		String fileId = "4";
 		
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
-		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
+		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
 		samples.add(galaxySample);
 		
 		List<LibraryFolder> sampleFolders = new ArrayList<LibraryFolder>();
@@ -428,7 +442,8 @@ public class GalaxyAPITest
 		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderPath);
 		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class), eq(referencesFolderName));
 		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
-		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData"));
+		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class), any(LibraryFolder.class),
+				eq(new GalaxyObjectName("testData")));
 		
 		// should not upload files since they do exist in sample folder
 		verify(librariesClient, never()).uploadFilesystemPathsRequest(eq(libraryId), any(FilesystemPathsLibraryUpload.class));
@@ -443,7 +458,7 @@ public class GalaxyAPITest
 		String fileId = "4";
 		
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
-		GalaxySample galaxySample = new GalaxySample("testData", dataFilesDouble);
+		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesDouble);
 		samples.add(galaxySample);
 		
 		List<LibraryFolder> sampleFolders = new ArrayList<LibraryFolder>();
@@ -471,7 +486,8 @@ public class GalaxyAPITest
 		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderPath);
 		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class), eq(referencesFolderName));
 		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
-		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData"));
+		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class), any(LibraryFolder.class),
+				eq(new GalaxyObjectName("testData")));
 		
 		// should only run once to upload one of the files
 		verify(librariesClient).uploadFilesystemPathsRequest(eq(libraryId), any(FilesystemPathsLibraryUpload.class));
@@ -485,7 +501,7 @@ public class GalaxyAPITest
 		String sampleFolderId = "3";
 		
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
-		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
+		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
 		samples.add(galaxySample);
 		
 		List<LibraryFolder> sampleFolders = new ArrayList<LibraryFolder>();
@@ -501,7 +517,8 @@ public class GalaxyAPITest
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(referencesFolderName));
 		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderPath);
 		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
-		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData"));
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class),
+				eq(new GalaxyObjectName("testData")));
 		verify(librariesClient).uploadFilesystemPathsRequest(eq(libraryId), any(FilesystemPathsLibraryUpload.class));
 	}
 	
@@ -513,7 +530,7 @@ public class GalaxyAPITest
 		String sampleFolderId = "3";
 		
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
-		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
+		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
 		samples.add(galaxySample);
 		
 		List<LibraryFolder> sampleFolders = new ArrayList<LibraryFolder>();
@@ -526,10 +543,11 @@ public class GalaxyAPITest
 		
 		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
 		verify(galaxySearch).findLibraryContentWithId(libraryId, illuminaFolderPath);
-		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class), eq(referencesFolderPath));
+		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class), eq(referencesFolderName));
 		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderPath);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
-		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData"));
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class),
+				eq(new GalaxyObjectName("testData")));
 		verify(librariesClient).uploadFilesystemPathsRequest(eq(libraryId), any(FilesystemPathsLibraryUpload.class));
 	}
 		
@@ -541,7 +559,7 @@ public class GalaxyAPITest
 		String sampleFolderId = "3";
 		
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
-		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
+		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
 		samples.add(galaxySample);
 		
 		List<LibraryFolder> folders = new ArrayList<LibraryFolder>();
@@ -558,7 +576,8 @@ public class GalaxyAPITest
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(referencesFolderName));
 		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderPath);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
-		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData"));
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class),
+				eq(new GalaxyObjectName("testData")));
 		verify(librariesClient).uploadFilesystemPathsRequest(eq(libraryId), any(FilesystemPathsLibraryUpload.class));
 	}
 	
@@ -571,8 +590,8 @@ public class GalaxyAPITest
 		String sampleFolderId2 = "4";
 		
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
-		GalaxySample galaxySample1 = new GalaxySample("testData1", dataFilesSingle);		
-		GalaxySample galaxySample2 = new GalaxySample("testData2", dataFilesSingle);
+		GalaxySample galaxySample1 = new GalaxySample(new GalaxyObjectName("testData1"), dataFilesSingle);		
+		GalaxySample galaxySample2 = new GalaxySample(new GalaxyObjectName("testData2"), dataFilesSingle);
 		samples.add(galaxySample1);
 		samples.add(galaxySample2);
 		
@@ -593,8 +612,10 @@ public class GalaxyAPITest
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(referencesFolderName));
 		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderPath);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
-		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData1"));
-		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData2"));
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class),
+				eq(new GalaxyObjectName("testData1")));
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class),
+				eq(new GalaxyObjectName("testData2")));
 		verify(librariesClient, times(2)).uploadFilesystemPathsRequest(eq(libraryId), any(FilesystemPathsLibraryUpload.class));
 	}
 	
@@ -606,7 +627,7 @@ public class GalaxyAPITest
 		String sampleFolderId = "3";
 		
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
-		GalaxySample galaxySample = new GalaxySample("testData", dataFilesDouble);
+		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesDouble);
 		samples.add(galaxySample);
 
 		List<LibraryFolder> folders = new ArrayList<LibraryFolder>();
@@ -622,7 +643,8 @@ public class GalaxyAPITest
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(referencesFolderName));
 		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderPath);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
-		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData"));
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class),
+				eq(new GalaxyObjectName("testData")));
 		verify(librariesClient, times(2)).uploadFilesystemPathsRequest(eq(libraryId), any(FilesystemPathsLibraryUpload.class));
 	}
 	
@@ -634,7 +656,7 @@ public class GalaxyAPITest
 		String sampleFolderId = "3";
 		
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
-		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
+		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
 		samples.add(galaxySample);
 		
 		List<LibraryFolder> folders = new ArrayList<LibraryFolder>();
@@ -653,7 +675,8 @@ public class GalaxyAPITest
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(referencesFolderName));
 		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderPath);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
-		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData"));
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class),
+				eq(new GalaxyObjectName("testData")));
 		verify(librariesClient).uploadFilesystemPathsRequest(eq(libraryId), any(FilesystemPathsLibraryUpload.class));
 	}
 	
@@ -665,7 +688,7 @@ public class GalaxyAPITest
 		String sampleFolderId = "3";
 		
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
-		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
+		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
 		samples.add(galaxySample);
 		
 		List<LibraryFolder> folders = new ArrayList<LibraryFolder>();
@@ -684,7 +707,8 @@ public class GalaxyAPITest
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(referencesFolderName));
 		verify(galaxySearch).findLibraryContentWithId(libraryId, referencesFolderPath);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), eq(illuminaFolderName));
-		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq("testData"));
+		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class),
+				eq(new GalaxyObjectName("testData")));
 		verify(librariesClient).uploadFilesystemPathsRequest(eq(libraryId), any(FilesystemPathsLibraryUpload.class));
 	}
 	
@@ -696,7 +720,7 @@ public class GalaxyAPITest
 		String sampleFolderId = "3";
 		
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
-		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
+		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
 		samples.add(galaxySample);
 		
 		List<LibraryFolder> folders = new ArrayList<LibraryFolder>();
@@ -707,7 +731,7 @@ public class GalaxyAPITest
 		
 		setupUploadSampleToLibrary(samples, folders, false);
 		
-		workflowRESTAPI.uploadFilesToLibrary(samples, invalidLibraryId);
+		workflowRESTAPI.uploadFilesToLibrary(samples, nonExistentLibraryId);
 	}
 	
 	@Test(expected=LibraryUploadException.class)
@@ -718,7 +742,7 @@ public class GalaxyAPITest
 		String sampleFolderId = "3";
 		
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
-		GalaxySample galaxySample = new GalaxySample("testData", dataFilesSingle);
+		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
 		samples.add(galaxySample);
 		
 		List<LibraryFolder> folders = new ArrayList<LibraryFolder>();
@@ -728,7 +752,7 @@ public class GalaxyAPITest
 		folders.add(sampleFolder);
 		
 		setupUploadSampleToLibrary(samples, folders, false);
-		when(galaxyLibrary.createLibraryFolder(any(Library.class), any(String.class))).thenReturn(null);
+		when(galaxyLibrary.createLibraryFolder(any(Library.class), any(GalaxyObjectName.class))).thenReturn(null);
 		
 		workflowRESTAPI.uploadFilesToLibrary(samples, libraryId);
 	}

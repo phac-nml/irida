@@ -15,6 +15,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyAccountEmail;
+import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyFolderPath;
+import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyObjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxySearch;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
@@ -39,12 +42,14 @@ public class GalaxySearchTest
 	private static final String LIBRARY_ID_2 = "2";
 	private static final String LIBRARY_ID_3 = "3";
 	private static final String INVALID_LIBRARY_ID = "0";
-	private static final String LIBRARY_NAME = "Test";
-	private static final String LIBRARY_NAME_3 = "Test3";
+	private static final GalaxyObjectName LIBRARY_NAME = new GalaxyObjectName("Test");
+	private static final GalaxyObjectName INVALID_LIBRARY_NAME = new GalaxyObjectName("InvalidTest");
+	private static final GalaxyObjectName LIBRARY_NAME_3 = new GalaxyObjectName("Test3");
 	private static final String LIBRARY_ID_MULTIPLE_CONTENTS = "10";
-	private static final String FOLDER_NAME = "test_folder";
-	private static final String ILLUMINA_FOLDER_NAME = "test_folder/illumina";
-	private static final String INVALID_FOLDER_NAME = "invalid_folder";
+	private static final GalaxyFolderPath FOLDER_PATH = new GalaxyFolderPath("test_folder");
+	private static final GalaxyFolderPath ILLUMINA_FOLDER_NAME = new GalaxyFolderPath("test_folder/illumina");
+	private static final GalaxyFolderPath INVALID_FOLDER_NAME = new GalaxyFolderPath("invalid_folder");
+	private static final String ADMIN_API_KEY = "0";
 	
 	private List<Library> allLibrariesList;
 	private Map<String, LibraryContent> singleLibraryContentsAsMap;
@@ -105,7 +110,7 @@ public class GalaxySearchTest
 	{		
 		when(galaxyInstance.getLibrariesClient()).thenReturn(librariesClient);
 		
-		Library library = new Library(LIBRARY_NAME);
+		Library library = new Library(LIBRARY_NAME.getName());
 		library.setId(LIBRARY_ID);
 		
 		allLibrariesList = new ArrayList<Library>();
@@ -118,31 +123,31 @@ public class GalaxySearchTest
 	{
 		List<LibraryContent> singleLibraryContents = new ArrayList<LibraryContent>();
 		LibraryContent validFolder = new LibraryContent();
-		validFolder.setName(FOLDER_NAME);
+		validFolder.setName(FOLDER_PATH.getName());
 		validFolder.setType("folder");
 		singleLibraryContents.add(validFolder);
 		
 		when(librariesClient.getLibraryContents(LIBRARY_ID)).thenReturn(singleLibraryContents);
 		
 		singleLibraryContentsAsMap = new HashMap<String, LibraryContent>();
-		singleLibraryContentsAsMap.put(FOLDER_NAME, validFolder);
+		singleLibraryContentsAsMap.put(FOLDER_PATH.getName(), validFolder);
 		
 		List<LibraryContent> multipleLibraryContents = new ArrayList<LibraryContent>();
 		LibraryContent validFolder1 = new LibraryContent();
-		validFolder1.setName(FOLDER_NAME);
+		validFolder1.setName(FOLDER_PATH.getName());
 		validFolder1.setType("folder");
 		multipleLibraryContents.add(validFolder1);
 		
 		LibraryContent validFolder2 = new LibraryContent();
-		validFolder2.setName(ILLUMINA_FOLDER_NAME);
+		validFolder2.setName(ILLUMINA_FOLDER_NAME.getName());
 		validFolder2.setType("folder");
 		multipleLibraryContents.add(validFolder2);
 		
 		when(librariesClient.getLibraryContents(LIBRARY_ID_MULTIPLE_CONTENTS)).thenReturn(multipleLibraryContents);
 		
 		multipleLibraryContentsAsMap = new HashMap<String, LibraryContent>();
-		multipleLibraryContentsAsMap.put(FOLDER_NAME, validFolder1);
-		multipleLibraryContentsAsMap.put(ILLUMINA_FOLDER_NAME, validFolder2);
+		multipleLibraryContentsAsMap.put(FOLDER_PATH.getName(), validFolder1);
+		multipleLibraryContentsAsMap.put(ILLUMINA_FOLDER_NAME.getName(), validFolder2);
 		
 		when(librariesClient.getLibraryContents(INVALID_LIBRARY_ID)).thenReturn(null);
 	}
@@ -165,7 +170,7 @@ public class GalaxySearchTest
 		Library library = galaxySearch.findLibraryWithId(LIBRARY_ID);
 		assertNotNull(library);
 		assertEquals(LIBRARY_ID, library.getId());
-		assertEquals(LIBRARY_NAME, library.getName());
+		assertEquals(LIBRARY_NAME.getName(), library.getName());
 	}
 	
 	@Test
@@ -183,7 +188,7 @@ public class GalaxySearchTest
 		assertEquals(allLibrariesList, returnedLibraries);
 		
 		// add new library to all libraries list with same name
-		Library newLibrary = new Library(LIBRARY_NAME);
+		Library newLibrary = new Library(LIBRARY_NAME.getName());
 		newLibrary.setId(LIBRARY_ID_2);
 		allLibrariesList.add(newLibrary);
 		
@@ -194,7 +199,7 @@ public class GalaxySearchTest
 		// add new library to all libraries with different name
 		// expected list (equal to above returnedLibraries list)
 		List<Library> expectedList = returnedLibraries;
-		newLibrary = new Library(LIBRARY_NAME_3);
+		newLibrary = new Library(LIBRARY_NAME_3.getName());
 		newLibrary.setId(LIBRARY_ID_3);
 		allLibrariesList.add(newLibrary);
 		
@@ -206,7 +211,7 @@ public class GalaxySearchTest
 	@Test
 	public void testInvalidFindLibraryByName()
 	{
-		List<Library> libraries = galaxySearch.findLibraryWithName(INVALID_LIBRARY_ID);
+		List<Library> libraries = galaxySearch.findLibraryWithName(INVALID_LIBRARY_NAME);
 		assertNotNull(libraries);
 		assertEquals(0, libraries.size());
 	}
@@ -214,7 +219,7 @@ public class GalaxySearchTest
 	@Test
 	public void testFindUserRoleWithEmail()
 	{		
-		Role foundRole = galaxySearch.findUserRoleWithEmail("role1@localhost");
+		Role foundRole = galaxySearch.findUserRoleWithEmail(new GalaxyAccountEmail("role1@localhost"));
 		assertNotNull(foundRole);
 		assertEquals("role1@localhost", foundRole.getName());
 		assertEquals("1", foundRole.getId());
@@ -223,14 +228,14 @@ public class GalaxySearchTest
 	@Test
 	public void testNoFindUserRoleWithEmail()
 	{		
-		Role foundRole = galaxySearch.findUserRoleWithEmail("invalid@localhost");
+		Role foundRole = galaxySearch.findUserRoleWithEmail(new GalaxyAccountEmail("invalid@localhost"));
 		assertNull(foundRole);
 	}	
 	
 	@Test
 	public void testFindUserWithEmail()
 	{		
-		User foundUser = galaxySearch.findUserWithEmail("user1@localhost");
+		User foundUser = galaxySearch.findUserWithEmail(new GalaxyAccountEmail("user1@localhost"));
 		assertNotNull(foundUser);
 		assertEquals("user1@localhost", foundUser.getEmail());
 		assertEquals("1", foundUser.getId());
@@ -239,23 +244,23 @@ public class GalaxySearchTest
 	@Test
 	public void testNoFindUserWithEmail()
 	{		
-		User foundUser = galaxySearch.findUserWithEmail("invalid@localhost");
+		User foundUser = galaxySearch.findUserWithEmail(new GalaxyAccountEmail("invalid@localhost"));
 		assertNull(foundUser);
 	}
 	
 	@Test
 	public void testCheckValidAdminEmailAPIKey()
 	{		
-		assertTrue(galaxySearch.checkValidAdminEmailAPIKey("user1@localhost", null));
-		assertFalse(galaxySearch.checkValidAdminEmailAPIKey("invalid@localhost", null));
+		assertTrue(galaxySearch.checkValidAdminEmailAPIKey(new GalaxyAccountEmail("user1@localhost"), ADMIN_API_KEY));
+		assertFalse(galaxySearch.checkValidAdminEmailAPIKey(new GalaxyAccountEmail("invalid@localhost"), ADMIN_API_KEY));
 	}
 	
 	@Test
 	public void testFindLibraryContentWithId()
 	{
-		LibraryContent validFolder = galaxySearch.findLibraryContentWithId(LIBRARY_ID, FOLDER_NAME);
+		LibraryContent validFolder = galaxySearch.findLibraryContentWithId(LIBRARY_ID, FOLDER_PATH);
 		assertEquals("folder", validFolder.getType());
-		assertEquals(FOLDER_NAME, validFolder.getName());
+		assertEquals(FOLDER_PATH.getName(), validFolder.getName());
 	}
 	
 	@Test
@@ -284,6 +289,6 @@ public class GalaxySearchTest
 	@Test
 	public void testFindLibraryContentWithIdInvalidLibraryId()
 	{
-		assertNull(galaxySearch.findLibraryContentWithId(INVALID_LIBRARY_ID, FOLDER_NAME));
+		assertNull(galaxySearch.findLibraryContentWithId(INVALID_LIBRARY_ID, FOLDER_PATH));
 	}
 }

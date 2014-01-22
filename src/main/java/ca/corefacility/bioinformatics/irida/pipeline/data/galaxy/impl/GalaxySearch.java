@@ -7,8 +7,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyAccountEmail;
+import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyFolderPath;
+import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyObjectName;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
@@ -43,7 +49,7 @@ public class GalaxySearch
 	 * @param email  The email of the user to search.
 	 * @return  A private Role object of the user with the corresponding email, or null otherwise.
 	 */
-	public Role findUserRoleWithEmail(String email)
+	public Role findUserRoleWithEmail(@Valid GalaxyAccountEmail email)
 	{
 		checkNotNull(email, "email is null");
 		
@@ -54,7 +60,7 @@ public class GalaxySearch
 		{
 			for (Role curr : rolesClient.getRoles())
 			{
-				if (email.equals(curr.getName()))
+				if (email.getAccountEmail().equals(curr.getName()))
 				{
 					role = curr;
 					break;
@@ -70,7 +76,7 @@ public class GalaxySearch
 	 * @param email  The email of the user to search.
 	 * @return  A User object of the user with the corresponding email, or null otherwise.
 	 */
-	public User findUserWithEmail(String email)
+	public User findUserWithEmail(@Valid GalaxyAccountEmail email)
 	{
 		checkNotNull(email, "email is null");
 		
@@ -81,7 +87,7 @@ public class GalaxySearch
 		{
 			for (User curr : usersClient.getUsers())
 			{
-				if (email.equals(curr.getEmail()))
+				if (email.getAccountEmail().equals(curr.getEmail()))
 				{
 					user = curr;
 					break;
@@ -149,7 +155,7 @@ public class GalaxySearch
 	 * @param libraryName  The name of the library to search for.
 	 * @return  A list of Library objects matching the given name, empty if no library is found.
 	 */
-	public List<Library> findLibraryWithName(String libraryName)
+	public List<Library> findLibraryWithName(@Valid GalaxyObjectName libraryName)
 	{		
 		checkNotNull(libraryName, "libraryName is null");
 		
@@ -159,7 +165,7 @@ public class GalaxySearch
 		List<Library> allLibraries = librariesClient.getLibraries();
 		for (Library curr : allLibraries)
 		{
-			if (libraryName.equals(curr.getName()))
+			if (libraryName.getName().equals(curr.getName()))
 			{
 				libraries.add(curr);
 			}
@@ -174,10 +180,10 @@ public class GalaxySearch
 	 * @param folderName  The name of the folder to search for (only finds first instance of this folder name).
 	 * @return  A LibraryContent within the given library with the given name, or null if no such folder exists.
 	 */
-	public LibraryContent findLibraryContentWithId(String libraryId, String folderName)
+	public LibraryContent findLibraryContentWithId(String libraryId, @Valid GalaxyFolderPath folderPath)
 	{
 		checkNotNull(libraryId, "libraryId is null");
-		checkNotNull(folderName, "folderName is null");
+		checkNotNull(folderPath, "folderPath is null");
 		
 		LibraryContent folder = null;
 		
@@ -190,7 +196,7 @@ public class GalaxySearch
 			{
 				if ("folder".equals(content.getType()))
 				{
-    				if (folderName.equals(content.getName()))
+    				if (folderPath.getName().equals(content.getName()))
     				{
     					folder = content;
     					break;
@@ -208,13 +214,13 @@ public class GalaxySearch
 	 * @param adminAPIKey  The API key of an administrator.
 	 * @return  True if the admin email address corresponds to the admin API key, false otherwise.
 	 */
-	public boolean checkValidAdminEmailAPIKey(String adminEmail, String adminAPIKey)
+	public boolean checkValidAdminEmailAPIKey(@Valid GalaxyAccountEmail adminEmail, String adminAPIKey)
 	{		
 		logger.debug("Checking for user=" + adminEmail + " in Galaxy url=" + galaxyInstance.getGalaxyUrl());
 		User user = findUserWithEmail(adminEmail);
 		
 		// TODO: find some way of verifying that the email/api key correspond to each other
 		
-		return user != null;
+		return user != null && adminAPIKey != null;
 	}
 }

@@ -3,8 +3,11 @@ package ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy;
 import java.io.File;
 import java.util.UUID;
 
+import javax.validation.Validator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -18,6 +21,8 @@ import com.github.jmchilton.galaxybootstrap.GalaxyData;
 import com.github.jmchilton.galaxybootstrap.GalaxyProperties;
 import com.github.jmchilton.galaxybootstrap.GalaxyData.User;
 
+import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyAccountEmail;
+import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.integration.LocalGalaxy;
 
 @Configuration
@@ -27,6 +32,16 @@ public class LocalGalaxyConfig
 	private static final Logger logger = LoggerFactory.getLogger(LocalGalaxyConfig.class);
 	
 	private static final int largestPort = 65535;
+	
+	@Autowired
+	private Validator validator;
+	
+	@Lazy @Bean
+	public GalaxyAPI galaxyAPI()
+	{
+		return new GalaxyAPI(localGalaxy().getGalaxyURL(), localGalaxy().getAdminName(),
+	    		localGalaxy().getAdminAPIKey(), validator);
+	}
 		
 	@Lazy @Bean
 	public LocalGalaxy localGalaxy()
@@ -35,14 +50,16 @@ public class LocalGalaxyConfig
 		
 		String randomPassword = UUID.randomUUID().toString();
 		
-		localGalaxy.setAdminName("admin@localhost");
+		localGalaxy.setAdminName(new GalaxyAccountEmail("admin@localhost"));
 	    localGalaxy.setAdminPassword(randomPassword);
-		localGalaxy.setUser1Name("user1@localhost");
+		localGalaxy.setUser1Name(new GalaxyAccountEmail("user1@localhost"));
 		localGalaxy.setUser1Password(randomPassword);
-		localGalaxy.setUser2Name("user2@localhost");
+		localGalaxy.setUser2Name(new GalaxyAccountEmail("user2@localhost"));
 		localGalaxy.setUser2Password(randomPassword);
-		localGalaxy.setInvalidGalaxyAdminName("admin_invalid@localhost");
-		localGalaxy.setInvalidGalaxyUserName("invalid@localhost");
+		localGalaxy.setNonExistentGalaxyAdminName(new GalaxyAccountEmail("admin_no_exist@localhost"));
+		localGalaxy.setNonExistentGalaxyUserName(new GalaxyAccountEmail("no_exist@localhost"));
+		
+		localGalaxy.setInvalidGalaxyUserName(new GalaxyAccountEmail("<a href='localhost'>invalid user</a>"));
 		
 	    GalaxyData galaxyData = new GalaxyData();
 	    
@@ -112,15 +129,15 @@ public class LocalGalaxyConfig
 	{
 		GalaxyProperties galaxyProperties = localGalaxy.getGalaxyProperties();
 		
-	    User adminUser = new User(localGalaxy.getAdminName());
+	    User adminUser = new User(localGalaxy.getAdminName().getAccountEmail());
 	    adminUser.setPassword(localGalaxy.getAdminPassword());
 	    localGalaxy.setAdminAPIKey(adminUser.getApiKey());
 	    
-	    User user1 = new User(localGalaxy.getUser1Name());
+	    User user1 = new User(localGalaxy.getUser1Name().getAccountEmail());
 	    user1.setPassword(localGalaxy.getUser1Password());
 	    localGalaxy.setUser1APIKey(user1.getApiKey());
 	    
-	    User user2 = new User(localGalaxy.getUser2Name());
+	    User user2 = new User(localGalaxy.getUser2Name().getAccountEmail());
 	    user2.setPassword(localGalaxy.getUser2Password());
 	    localGalaxy.setUser2APIKey(user2.getApiKey());
 	    
@@ -146,11 +163,11 @@ public class LocalGalaxyConfig
 		File galaxyLogFile = new File(bootStrapper.getPath() + File.separator + "paster.log");
 		
   		logger.info("Setting up Galaxy");
-		logger.debug(generateUserString("admin",localGalaxy.getAdminName(),
+		logger.debug(generateUserString("admin",localGalaxy.getAdminName().getAccountEmail(),
 				localGalaxy.getAdminPassword(), localGalaxy.getAdminAPIKey()));
-		logger.debug(generateUserString("user1",localGalaxy.getUser1Name(),
+		logger.debug(generateUserString("user1",localGalaxy.getUser1Name().getAccountEmail(),
 				localGalaxy.getUser1Password(), localGalaxy.getUser1APIKey()));
-		logger.debug(generateUserString("user2",localGalaxy.getUser2Name(),
+		logger.debug(generateUserString("user2",localGalaxy.getUser2Name().getAccountEmail(),
 				localGalaxy.getUser2Password(), localGalaxy.getUser2APIKey()));
 		   
 		galaxyDaemon = bootStrapper.run(galaxyProperties, galaxyData);
