@@ -15,7 +15,6 @@ import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import javax.validation.Path;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
@@ -48,41 +47,6 @@ public class CRUDServiceImplTest {
 		validator = factory.getValidator();
 		crudRepository = mock(PagingAndSortingRepository.class);
 		crudService = new CRUDServiceImpl<>(crudRepository, validator, IdentifiableTestEntity.class);
-	}
-
-	@Test
-	public void testAddInvalidObject() {
-		IdentifiableTestEntity i = new IdentifiableTestEntity(); // nothing is
-																	// set, this
-																	// should be
-																	// invalid
-
-		try {
-			crudService.create(i);
-			fail();
-		} catch (ConstraintViolationException constraintViolations) {
-			assertEquals(2, constraintViolations.getConstraintViolations().size());
-		}
-	}
-
-	@Test
-	public void addObjectWithoutLabel() {
-		IdentifiableTestEntity i = new IdentifiableTestEntity(); // nothing is
-																	// set, this
-																	// should be
-																	// invalid
-		i.setNonNull("Definitely not null.");
-
-		try {
-			crudService.create(i);
-			fail();
-		} catch (ConstraintViolationException constraintViolations) {
-
-			assertEquals(1, constraintViolations.getConstraintViolations().size());
-			ConstraintViolation<?> next = constraintViolations.getConstraintViolations().iterator().next();
-			Path propertyPath = next.getPropertyPath();
-			assertEquals("label", propertyPath.toString());
-		}
 	}
 
 	@Test

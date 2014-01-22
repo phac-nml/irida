@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service;
 import java.util.Map;
 
 import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
@@ -31,7 +32,7 @@ public interface CRUDService<IdentifierType, Type extends Comparable<Type> > {
      * @throws ConstraintViolationException If the object being persisted cannot
      *                                      be validated by validation rules associated with the object.
      */
-    public Type create(Type object) throws EntityExistsException, ConstraintViolationException;
+    public Type create(@Valid Type object) throws EntityExistsException, ConstraintViolationException;
 
     /**
      * Read the object type by unique identifier.

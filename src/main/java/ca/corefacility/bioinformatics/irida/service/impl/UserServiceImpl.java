@@ -145,28 +145,22 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	@Override
 	@PreAuthorize(CREATE_USER_PERMISSIONS)
 	public User create(User u) {
-		Set<ConstraintViolation<User>> violations = validatePassword(u.getPassword());
-		if (violations.isEmpty()) {
-			// encode the user password
-			String password = u.getPassword();
-			u.setPassword(passwordEncoder.encode(password));
-			try {
-				return super.create(u);
-			} catch (DataIntegrityViolationException e) {
-				if (e.getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
-					RuntimeException translated = translateConstraintViolationException((org.hibernate.exception.ConstraintViolationException) e
-							.getCause());
-					throw translated;
-				} else {
-					// I can't figure out what the problem was, just keep
-					// throwing it up.
-					throw new DataIntegrityViolationException(
-							"Unexpected DataIntegrityViolationException, cause accompanies.", e);
-				}
+		String password = u.getPassword();
+		u.setPassword(passwordEncoder.encode(password));
+		try {
+			return super.create(u);
+		} catch (DataIntegrityViolationException e) {
+			if (e.getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
+				RuntimeException translated = translateConstraintViolationException((org.hibernate.exception.ConstraintViolationException) e
+						.getCause());
+				throw translated;
+			} else {
+				// I can't figure out what the problem was, just keep
+				// throwing it up.
+				throw new DataIntegrityViolationException(
+						"Unexpected DataIntegrityViolationException, cause accompanies.", e);
 			}
 		}
-
-		throw new ConstraintViolationException(violations);
 	}
 
 	/**

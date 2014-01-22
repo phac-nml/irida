@@ -53,13 +53,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Com
 	@Override
 	@Transactional
 	public ValueType create(ValueType object) throws ConstraintViolationException, EntityExistsException {
-
-		Set<ConstraintViolation<ValueType>> constraintViolations = validator.validate(object);
-		if (constraintViolations.isEmpty()) {
-			return repository.save(object);
-		}
-
-		throw new ConstraintViolationException(constraintViolations);
+		return repository.save(object);
 	}
 
 	/**
