@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-//@PreAuthorize("isAuthenticated()")
+@PreAuthorize("isAuthenticated()")
 public interface CRUDService<IdentifierType, Type extends Comparable<Type> > {
 
     /**
@@ -45,7 +45,7 @@ public interface CRUDService<IdentifierType, Type extends Comparable<Type> > {
      * @throws EntityNotFoundException If the identifier does not exist in the
      *                                 database.
      */
-	//@PreAuthorize("hasRole('ROLE_USER')")
+	@PreAuthorize("hasRole('ROLE_USER')")
     public Type read(IdentifierType id) throws EntityNotFoundException;
 
     /**
