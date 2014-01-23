@@ -5,10 +5,13 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Customized service for accessing user objects.
@@ -71,5 +74,57 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 *            the new password for the user account.
 	 * @return the user entity with the updated password.
 	 */
+	@PreAuthorize(CHANGE_PASSWORD_PERMISSIONS)
 	public User changePassword(Long userId, String password);
+
+	/**
+	 * A user is permitted to change their own password if they did not
+	 * successfully log in, but the reason for the login failure is that their
+	 * credentials are expired. This permission checks to see that the user is
+	 * authenticated, or that the principle in the security context has an
+	 * expired password.
+	 */
+	static final String CHANGE_PASSWORD_PERMISSIONS = "isFullyAuthenticated() or "
+			+ "(principal instanceof T(ca.corefacility.bioinformatics.irida.model.User) and !principal.isCredentialsNonExpired())";
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize(CREATE_USER_PERMISSIONS)
+	public User create(User u);
+
+	/**
+	 * If a user is an administrator, they are permitted to create a user
+	 * account with any role. If a user is a manager, then they are only
+	 * permitted to create user accounts with a ROLE_USER role.
+	 */
+	static final String CREATE_USER_PERMISSIONS = "hasRole('ROLE_ADMIN') or "
+			+ "((#u.getSystemRole() == T(ca.corefacility.bioinformatics.irida.model.Role).ROLE_USER) and hasRole('ROLE_MANAGER'))";
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize(UPDATE_USER_PERMISSIONS)
+	public User update(Long uid, Map<String, Object> properties);
+
+	/**
+	 * If a user is an administrator, they are permitted to update any user
+	 * property. If a manager or user is updating an account, they should not be
+	 * permitted to change the role of the user (only administrators can create
+	 * users with role other than Role.ROLE_USER).
+	 */
+	static final String UPDATE_USER_PERMISSIONS = "hasRole('ROLE_ADMIN') or "
+			+ "(!#properties.containsKey('systemRole') and (hasRole('ROLE_MANAGER') or hasPermission(#uid, 'canUpdateUser')))";
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_MANAGER')")
+	public void delete(Long id);
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public Iterable<User> findAll();
 }

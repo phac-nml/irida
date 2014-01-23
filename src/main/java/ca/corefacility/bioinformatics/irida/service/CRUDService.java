@@ -7,6 +7,7 @@ import javax.validation.Valid;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -19,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
+//@PreAuthorize("isAuthenticated()")
 public interface CRUDService<IdentifierType, Type extends Comparable<Type> > {
 
     /**
@@ -32,6 +34,7 @@ public interface CRUDService<IdentifierType, Type extends Comparable<Type> > {
      * @throws ConstraintViolationException If the object being persisted cannot
      *                                      be validated by validation rules associated with the object.
      */
+	@PreAuthorize("hasRole('ROLE_USER')")
     public Type create(@Valid Type object) throws EntityExistsException, ConstraintViolationException;
 
     /**
@@ -42,6 +45,7 @@ public interface CRUDService<IdentifierType, Type extends Comparable<Type> > {
      * @throws EntityNotFoundException If the identifier does not exist in the
      *                                 database.
      */
+	//@PreAuthorize("hasRole('ROLE_USER')")
     public Type read(IdentifierType id) throws EntityNotFoundException;
 
     /**
@@ -50,6 +54,7 @@ public interface CRUDService<IdentifierType, Type extends Comparable<Type> > {
      * @param idents The unique identifiers of the objects to read
      * @return A collection of the requested objects
      */
+	@PreAuthorize("hasRole('ROLE_USER')")
     public Iterable<Type> readMultiple(Iterable<IdentifierType> idents);
 
     /**
@@ -69,6 +74,7 @@ public interface CRUDService<IdentifierType, Type extends Comparable<Type> > {
      * @throws InvalidPropertyException     If the updated properties map contains a
      *                                      property name that does not exist on the domain model.
      */
+	@PreAuthorize("hasRole('ROLE_USER')")
     public Type update(IdentifierType id, Map<String, Object> updatedProperties)
             throws EntityExistsException, EntityNotFoundException,
             ConstraintViolationException, InvalidPropertyException;
@@ -80,6 +86,7 @@ public interface CRUDService<IdentifierType, Type extends Comparable<Type> > {
      * @throws EntityNotFoundException If no object with the specified
      *                                 identifier exists in the database.
      */
+	@PreAuthorize("hasRole('ROLE_USER')")
     public void delete(IdentifierType id) throws EntityNotFoundException;
 
     /**
@@ -88,6 +95,7 @@ public interface CRUDService<IdentifierType, Type extends Comparable<Type> > {
      *
      * @return All objects of the specified <code>Type</code> in the database.
      */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
     public Iterable<Type> findAll();
 
     /**
@@ -102,6 +110,7 @@ public interface CRUDService<IdentifierType, Type extends Comparable<Type> > {
      * @throws IllegalArgumentException If the <code>Type</code> has no public
      *                                  property <code>sortProperty</code>.
      */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
     public Page<Type> list(int page, int size, Direction order, String... sortProperty) 
             throws IllegalArgumentException;
 
@@ -116,6 +125,7 @@ public interface CRUDService<IdentifierType, Type extends Comparable<Type> > {
      * @param order the order of the sort.
      * @return the list of users within the specified range.
      */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
     public Page<Type> list(int page, int size, Direction order);
 
     /**
@@ -126,13 +136,14 @@ public interface CRUDService<IdentifierType, Type extends Comparable<Type> > {
      * @return <code>true</code> if the identifier exists, <code>false</code>
      *         otherwise.
      */
+	@PreAuthorize("hasRole('ROLE_USER')")
     public Boolean exists(IdentifierType id);
 
     /**
-     * How many entities of
-     * <code>Type</code> exist in the database?
-     *
-     * @return the number of entities in the database.
-     */
-    public long count();
+	 * How many entities of <code>Type</code> exist in the database?
+	 * 
+	 * @return the number of entities in the database.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public long count();
 }
