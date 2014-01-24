@@ -118,6 +118,14 @@ public class MiseqServiceImplIT {
 		mr = asRole(Role.ROLE_SEQUENCER).miseqRunService.create(mr);
 		assertNotNull("Created run was not assigned an ID.", mr.getId());
 	}
+	
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
+	public void testReadMiseqRunAsSequencer() {
+		MiseqRun mr = asRole(Role.ROLE_SEQUENCER).miseqRunService.read(1L);
+		assertNotNull("Created run was not assigned an ID.", mr.getId());
+	}
 
 	private MiseqServiceImplIT asRole(Role r) {
 		User u = new User();
