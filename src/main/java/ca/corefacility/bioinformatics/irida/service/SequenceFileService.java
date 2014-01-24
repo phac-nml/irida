@@ -3,8 +3,12 @@ package ca.corefacility.bioinformatics.irida.service;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
@@ -18,6 +22,13 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER')")
+	public SequenceFile create(@Valid SequenceFile object) throws EntityExistsException, ConstraintViolationException;
+
 	/**
 	 * Persist the {@link SequenceFile} to the database and create a new
 	 * relationship between the {@link SequenceFile} and a {@link Sample}
@@ -73,12 +84,12 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 *            the fields that were update.
 	 * @return the {@link SequenceFile} that exists in the database.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadSequenceFile')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadSequenceFile')")
 	public SequenceFile updateWithoutProcessors(Long id, Map<String, Object> updatedFields);
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadSequenceFile')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadSequenceFile')")
 	public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException;
 }

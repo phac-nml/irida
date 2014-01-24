@@ -73,9 +73,9 @@ public class SequenceFileServiceImplIT {
 		User u = new User();
 		u.setUsername("fbristow");
 		u.setPassword(passwordEncoder.encode("Password1"));
-		u.setSystemRole(Role.ROLE_ADMIN);
+		u.setSystemRole(Role.ROLE_SEQUENCER);
 		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
-				ImmutableList.of(Role.ROLE_ADMIN));
+				ImmutableList.of(Role.ROLE_SEQUENCER));
 		auth.setDetails(u);
 		SecurityContextHolder.getContext().setAuthentication(auth);
 		Files.createDirectories(BASE_DIRECTORY);
@@ -103,7 +103,7 @@ public class SequenceFileServiceImplIT {
 
 		// figure out what the version number of the sequence file is (should be
 		// 2; the file wasn't gzipped, but fastqc will have modified it.)
-		sf = sequenceFileService.read(sf.getId());
+		sf = asRole(Role.ROLE_ADMIN).sequenceFileService.read(sf.getId());
 		assertEquals("Wrong version number after processing.", Long.valueOf(1), sf.getFileRevisionNumber());
 
 		List<Join<SequenceFile, OverrepresentedSequence>> overrepresentedSequences = overrepresentedSequenceService
@@ -151,7 +151,7 @@ public class SequenceFileServiceImplIT {
 		// 2; the file was gzipped)
 		// get the MOST RECENT version of the sequence file from the database
 		// (it will have been modified outside of the create method.)
-		sf = sequenceFileService.read(sf.getId());
+		sf = asRole(Role.ROLE_ADMIN).sequenceFileService.read(sf.getId());
 		assertEquals("Wrong version number after processing.", Long.valueOf(2L), sf.getFileRevisionNumber());
 
 		List<Join<SequenceFile, OverrepresentedSequence>> overrepresentedSequences = overrepresentedSequenceService
@@ -177,5 +177,17 @@ public class SequenceFileServiceImplIT {
 			fileCount++;
 		}
 		assertEquals("Wrong number of directories beneath the id directory", 2, fileCount);
+	}
+
+	private SequenceFileServiceImplIT asRole(Role r) {
+		User u = new User();
+		u.setUsername("fbristow");
+		u.setPassword(passwordEncoder.encode("Password1"));
+		u.setSystemRole(r);
+		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
+				ImmutableList.of(r));
+		auth.setDetails(u);
+		SecurityContextHolder.getContext().setAuthentication(auth);
+		return this;
 	}
 }
