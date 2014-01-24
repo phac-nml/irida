@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
@@ -28,6 +29,15 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 */
 	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER')")
 	public SequenceFile create(@Valid SequenceFile object) throws EntityExistsException, ConstraintViolationException;
+
+	/**
+	 * {@inheritDoc}
+	 */
+	// TODO: ROLE_SEQUENCER should **not** have access to read sequence files
+	// after they have been uploaded. Revoke this access when sequencing data is
+	// uploaded as a single package.
+	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER')")
+	public SequenceFile read(Long id) throws EntityNotFoundException;
 
 	/**
 	 * Persist the {@link SequenceFile} to the database and create a new
