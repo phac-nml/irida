@@ -44,7 +44,7 @@ public interface MiseqRunService extends CRUDService<Long, MiseqRun> {
 	 * @return A {@link Join<MiseqRun, SequenceFile>} describing the
 	 *         relationship
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#file, 'canReadSequenceFile')")
+	@PreAuthorize("hasRole('ROLE_SEQUENCER')")
 	public Join<MiseqRun, SequenceFile> addSequenceFileToMiseqRun(MiseqRun run, SequenceFile file);
 
 	/**
