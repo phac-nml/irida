@@ -11,11 +11,15 @@ import java.util.List;
 
 import javax.validation.Validator;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 /**
  * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
+@Service
 public class OverrepresentedSequenceServiceImpl extends CRUDServiceImpl<Long, OverrepresentedSequence> implements
 		OverrepresentedSequenceService {
 	/**
@@ -27,6 +31,7 @@ public class OverrepresentedSequenceServiceImpl extends CRUDServiceImpl<Long, Ov
 		super(null, null, OverrepresentedSequence.class);
 	}
 
+	@Autowired
 	public OverrepresentedSequenceServiceImpl(OverrepresentedSequenceRepository repository,
 			SequenceFileOverrepresentedSequenceJoinRepository sfosRepository, Validator validator) {
 		super(repository, validator, OverrepresentedSequence.class);

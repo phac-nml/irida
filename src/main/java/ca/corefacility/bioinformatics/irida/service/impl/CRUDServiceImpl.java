@@ -9,20 +9,20 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
+import org.springframework.beans.DirectFieldAccessor;
+import org.springframework.beans.NotWritablePropertyException;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
-import org.apache.commons.beanutils.BeanUtils;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
-
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * A universal CRUD service for all types. Specialized services should extend
@@ -53,14 +53,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Com
 	@Override
 	@Transactional
 	public ValueType create(ValueType object) throws ConstraintViolationException, EntityExistsException {
-
-		Set<ConstraintViolation<ValueType>> constraintViolations = validator.validate(object);
-		if (constraintViolations.isEmpty()) {
-			return repository.save(object);
-		}
-
-		// this is simplified in bean validation spec 1.1
-		throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(constraintViolations));
+		return repository.save(object);
 	}
 
 	/**
@@ -145,10 +138,9 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Com
 				// setProperty doesn't throw an exception if the field name
 				// can't be found, so we have to force an exception to be thrown
 				// by calling getProperty manually first.
-				BeanUtils.getProperty(instance, key);
-				BeanUtils.setProperty(instance, key, value);
-			} catch (IllegalAccessException | InvocationTargetException | java.lang.IllegalArgumentException
-					| NoSuchMethodException e) {
+				DirectFieldAccessor dfa = new DirectFieldAccessor(instance);
+				dfa.setPropertyValue(key, value);
+			} catch (IllegalArgumentException | NotWritablePropertyException | TypeMismatchException e) {
 				throw new InvalidPropertyException("Unable to access field [" + key + "]");
 			}
 		}
@@ -167,7 +159,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Com
 
 		// if any validations fail, throw a constraint violation exception.
 		if (!constraintViolations.isEmpty()) {
-			throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(constraintViolations));
+			throw new ConstraintViolationException(constraintViolations);
 		}
 
 		// check if the entity exists in the database

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Properties;
 
 import javax.sql.DataSource;
 
@@ -50,5 +51,11 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 	public DataSource dataSource() {
 		return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.HSQL)
 				.build();
+	}
+
+	@Override
+	@Bean
+	public Properties getJpaProperties() {
+		return new Properties();
 	}
 }

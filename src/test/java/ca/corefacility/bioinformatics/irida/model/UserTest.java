@@ -26,7 +26,6 @@ public class UserTest {
 	private ResourceBundle b;
 
 	@Before
-	@SuppressWarnings("deprecation")
 	public void setUp() {
 		b = ResourceBundle.getBundle(MESSAGES_BASENAME);
 		Configuration<?> configuration = Validation.byDefaultProvider().configure();

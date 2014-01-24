@@ -14,11 +14,13 @@ import javax.validation.Validator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
@@ -40,6 +42,7 @@ import com.google.common.collect.ImmutableMap;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Transactional
+@Service
 public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements UserService {
 	/**
 	 * The property name to use for passwords on the {@link User} class.
@@ -112,6 +115,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * @param validator
 	 *            the validator used to validate instances of {@link User}.
 	 */
+	@Autowired
 	public UserServiceImpl(UserRepository userRepository, ProjectUserJoinRepository pujRepository,
 			PasswordEncoder passwordEncoder, Validator validator) {
 		super(userRepository, validator, User.class);
@@ -141,28 +145,22 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	@Override
 	@PreAuthorize(CREATE_USER_PERMISSIONS)
 	public User create(User u) {
-		Set<ConstraintViolation<User>> violations = validatePassword(u.getPassword());
-		if (violations.isEmpty()) {
-			// encode the user password
-			String password = u.getPassword();
-			u.setPassword(passwordEncoder.encode(password));
-			try {
-				return super.create(u);
-			} catch (DataIntegrityViolationException e) {
-				if (e.getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
-					RuntimeException translated = translateConstraintViolationException((org.hibernate.exception.ConstraintViolationException) e
-							.getCause());
-					throw translated;
-				} else {
-					// I can't figure out what the problem was, just keep
-					// throwing it up.
-					throw new DataIntegrityViolationException(
-							"Unexpected DataIntegrityViolationException, cause accompanies.", e);
-				}
+		String password = u.getPassword();
+		u.setPassword(passwordEncoder.encode(password));
+		try {
+			return super.create(u);
+		} catch (DataIntegrityViolationException e) {
+			if (e.getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
+				RuntimeException translated = translateConstraintViolationException((org.hibernate.exception.ConstraintViolationException) e
+						.getCause());
+				throw translated;
+			} else {
+				// I can't figure out what the problem was, just keep
+				// throwing it up.
+				throw new DataIntegrityViolationException(
+						"Unexpected DataIntegrityViolationException, cause accompanies.", e);
 			}
 		}
-
-		throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
 	}
 
 	/**
@@ -177,7 +175,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 			if (violations.isEmpty()) {
 				properties.put(PASSWORD_PROPERTY, passwordEncoder.encode(password));
 			} else {
-				throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
+				throw new ConstraintViolationException(violations);
 			}
 		}
 
