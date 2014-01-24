@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.User;
@@ -12,6 +13,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 
 /**
  * Customized service for accessing user objects.
@@ -91,7 +95,8 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize(CREATE_USER_PERMISSIONS)
-	public User create(User u);
+    public User create(@Valid User object) throws EntityExistsException, ConstraintViolationException;
+
 
 	/**
 	 * If a user is an administrator, they are permitted to create a user
