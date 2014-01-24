@@ -60,7 +60,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return a reference to the relationship resource created between the two
 	 *         entities.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
 	public Join<Project, Sample> addSampleToProject(Project project, Sample sample);
 
 	/**

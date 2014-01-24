@@ -221,19 +221,32 @@ public class ProjectServiceImplIT {
 		Collection<Join<Project, Sample>> samples = asRole(Role.ROLE_ADMIN).sampleService.getSamplesForProject(p);
 		assertTrue("No samples should be assigned to project.", samples.isEmpty());
 	}
-	
+
 	@Test
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	public void testReadProjectAsSequencerRole() {
 		asRole(Role.ROLE_SEQUENCER).projectService.read(1L);
 	}
-	
+
 	@Test(expected = AccessDeniedException.class)
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	public void testRejectReadProjectAsUserRole() {
 		asRole(Role.ROLE_USER).projectService.read(3L);
+	}
+
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	public void testAddSampleToProjectAsSequencer() {
+		Project p = asRole(Role.ROLE_SEQUENCER).projectService.read(1L);
+		Sample s = s();
+
+		Join<Project, Sample> join = asRole(Role.ROLE_SEQUENCER).projectService.addSampleToProject(p, s);
+		assertNotNull("Join should not be empty.", join);
+		assertEquals("Wrong project in join.", p, join.getSubject());
+		assertEquals("Wrong sample in join.", s, join.getObject());
 	}
 
 	private Project p() {
@@ -242,6 +255,15 @@ public class ProjectServiceImplIT {
 		p.setProjectDescription("Description");
 		p.setRemoteURL("http://google.com");
 		return p;
+	}
+
+	private Sample s() {
+		Sample s = new Sample();
+		s.setSampleName("Sample name");
+		s.setDescription("Description");
+		s.setExternalSampleId("external");
+
+		return s;
 	}
 
 	private ProjectServiceImplIT asRole(Role r) {
