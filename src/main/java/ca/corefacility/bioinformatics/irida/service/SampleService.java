@@ -56,7 +56,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return the collection of samples for the {@link Project}.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
-	public List<Join<Project, Sample>> getSamplesForProject(Project p);
+	public List<Join<Project, Sample>> getSamplesForProject(Project project);
 
 	/**
 	 * Get the {@link Sample} for the given ID
@@ -67,7 +67,8 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *            The id for the requested sample
 	 * @return A {@link Sample} with the given ID
 	 */
-	public Sample getSampleByExternalSampleId(Project p, String sampleId);
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
+	public Sample getSampleByExternalSampleId(Project project, String sampleId);
 
 	/**
 	 * Move an instance of a {@link SequenceFile} associated with a
