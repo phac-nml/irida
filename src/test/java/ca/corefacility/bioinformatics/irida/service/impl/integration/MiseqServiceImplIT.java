@@ -109,6 +109,16 @@ public class MiseqServiceImplIT {
 		}
 	}
 
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
+	public void testCreateMiseqRunAsSequencer() {
+		MiseqRun mr = new MiseqRun();
+		mr.setProjectName("Project name.");
+		mr = asRole(Role.ROLE_SEQUENCER).miseqRunService.create(mr);
+		assertNotNull("Created run was not assigned an ID.", mr.getId());
+	}
+
 	private MiseqServiceImplIT asRole(Role r) {
 		User u = new User();
 		u.setUsername("fbristow");

@@ -1,7 +1,11 @@
 package ca.corefacility.bioinformatics.irida.service;
 
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -13,6 +17,13 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public interface MiseqRunService extends CRUDService<Long, MiseqRun> {
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_SEQUENCER')")
+	public MiseqRun create(@Valid MiseqRun object) throws EntityExistsException, ConstraintViolationException;
+
 	/**
 	 * Create a join between a {@link SequenceFile} to a {@link MiseqRun}
 	 * 
