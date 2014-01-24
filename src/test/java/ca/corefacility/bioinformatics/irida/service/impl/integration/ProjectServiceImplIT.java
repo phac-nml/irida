@@ -221,6 +221,20 @@ public class ProjectServiceImplIT {
 		Collection<Join<Project, Sample>> samples = asRole(Role.ROLE_ADMIN).sampleService.getSamplesForProject(p);
 		assertTrue("No samples should be assigned to project.", samples.isEmpty());
 	}
+	
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	public void testReadProjectAsSequencerRole() {
+		asRole(Role.ROLE_SEQUENCER).projectService.read(1L);
+	}
+	
+	@Test(expected = AccessDeniedException.class)
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	public void testRejectReadProjectAsUserRole() {
+		asRole(Role.ROLE_USER).projectService.read(3L);
+	}
 
 	private Project p() {
 		Project p = new Project();
