@@ -250,7 +250,7 @@ public class GalaxyAPI
 			rootFolderName = rootFolder.getName();
 		}
 		
-		return "/" + rootFolderName + "/" + sample.getSampleName();
+		return String.format("/%s/%s", rootFolderName, sample.getSampleName());
 	}
 	
 	private String samplePath(LibraryFolder rootFolder, GalaxySample sample, File file)
@@ -265,7 +265,7 @@ public class GalaxyAPI
 			rootFolderName = rootFolder.getName();
 		}
 		
-		return "/" + rootFolderName + "/" + sample.getSampleName() + "/" + file.getName();
+		return String.format("/%s/%s/%s", rootFolderName, sample.getSampleName(), file.getName());
 	}
 	
 	private boolean uploadSample(GalaxySample sample, LibraryFolder rootFolder, LibrariesClient librariesClient,
