@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.validators;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -42,6 +43,7 @@ public class ValidMethodParametersAspect {
 	 *            the {@link JoinPoint} representing the captured method
 	 *            execution.
 	 */
+	@SuppressWarnings("unchecked")
 	@Before("execution(* ca.corefacility.bioinformatics.irida..*(.., @javax.validation.Valid (*), ..))")
 	public void validateParameters(JoinPoint jp) {
 		// This is an array of the *actual* arguments passed to the method.
@@ -65,7 +67,19 @@ public class ValidMethodParametersAspect {
 			if (anyValidAnnotation) {
 				// if any parameter is annotated with @Valid, proceed with
 				// validation using the validator.
-				Set<ConstraintViolation<Object>> violations = validator.validate(args[i]);
+				Set<ConstraintViolation<Object>> violations;
+
+				if (args[i] instanceof Iterable) {
+					// the element that we're currently validating is a
+					// collection of elements; we should validate each of those
+					// elements individually.
+					violations = new HashSet<>();
+					for (Object o : (Iterable<Object>) args[i]) {
+						violations.addAll(validator.validate(o));
+					}
+				} else {
+					violations = validator.validate(args[i]);
+				}
 				if (!violations.isEmpty()) {
 					// if any validation errors are found, throw a
 					// ConstraintViolationException.
