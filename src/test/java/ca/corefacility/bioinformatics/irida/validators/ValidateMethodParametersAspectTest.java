@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -19,6 +20,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
+
+import com.google.common.collect.Lists;
 
 /**
  * Unit tests for validating method parameters.
@@ -91,6 +94,17 @@ public class ValidateMethodParametersAspectTest {
 		interfaceProxy.testParameterAnnotatedInClass(param);
 		verify(validator).validate(param);
 	}
+	
+	@Test
+	public void testValidatesIterable() {
+		List<String> collection = Lists.newArrayList("first", "second", "third", "fourth");
+		interfaceProxy.testIterableValidAnnotation(collection);
+		
+		verify(validator, times(collection.size())).validate(any(String.class));
+		for (String el : collection) {
+			verify(validator).validate(el);
+		}
+	}
 
 	private static class AnnotatedMethodsClass {
 		public void testOneValidParameter(@Valid String param) {
@@ -107,6 +121,8 @@ public class ValidateMethodParametersAspectTest {
 		public void testParameter(@Valid String parameter);
 
 		public void testParameterAnnotatedInClass(String parameter);
+
+		public void testIterableValidAnnotation(@Valid Iterable<String> collection);
 	}
 
 	private static class AnnotatedInterfaceImpl implements AnnotatedInterface {
@@ -116,6 +132,10 @@ public class ValidateMethodParametersAspectTest {
 
 		@Override
 		public void testParameterAnnotatedInClass(@Valid String parameter) {
+		}
+
+		@Override
+		public void testIterableValidAnnotation(Iterable<String> collection) {
 		}
 	}
 }
