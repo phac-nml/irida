@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
-import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyAPI;
+import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyUploader;
 
 @Configuration
 @Profile({ "dev", "prod" })
@@ -17,16 +17,27 @@ public class GalaxyAPIConfig
 	private Environment environment;
 	
 	@Bean
-	public GalaxyAPI galaxyAPI()
+	public GalaxyUploader galaxyUploader()
 	{
+		GalaxyUploader galaxyUploader = new GalaxyUploader();
+		
 		String galaxyURL = environment.getProperty("galaxy.url");
 		String galaxyAdminAPIKey = environment.getProperty("galaxy.admin.apiKey");
 		GalaxyAccountEmail galaxyAdminEmail = new GalaxyAccountEmail(environment.getProperty("galaxy.admin.email"));
-		boolean linkFiles = Boolean.valueOf(environment.getProperty("galaxy.linkFiles"));
+		String linkFilesString = environment.getProperty("galaxy.linkFiles");
 		
-		GalaxyAPI galaxyAPI = new GalaxyAPI(galaxyURL, galaxyAdminEmail, galaxyAdminAPIKey);
-		galaxyAPI.setLinkUploadedFiles(linkFiles);
+		// Only setup connection to Galaxy if it has been defined in the configuration file
+		if (galaxyURL != null && galaxyAdminAPIKey != null && galaxyAdminEmail != null)
+		{
+			galaxyUploader.setupGalaxyAPI(galaxyURL, galaxyAdminEmail, galaxyAdminAPIKey);
+			
+			if (linkFilesString != null)
+			{
+				boolean linkFiles = Boolean.valueOf(linkFilesString);
+				galaxyUploader.setLinkUploadedFiles(linkFiles);
+			}
+		}
 		
-		return galaxyAPI;
+		return galaxyUploader;
 	}
 }
