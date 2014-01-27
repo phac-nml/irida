@@ -57,8 +57,10 @@ public class GalaxyAPI
 	 * @param adminEmail  An administrators email address for the Galaxy instance.
 	 * @param adminAPIKey  A corresponding administrators API key for the Galaxy instance.
 	 * @param validator  The Validator to use to validate objects.
+	 * @throws ConstraintViolationException  If the adminEmail is invalid.
 	 */
 	public GalaxyAPI(String galaxyURL, @Valid GalaxyAccountEmail adminEmail, String adminAPIKey, Validator validator)
+		throws ConstraintViolationException
 	{
 		checkNotNull(galaxyURL, "galaxyURL is null");
 		checkNotNull(adminEmail, "adminEmail is null");
@@ -90,8 +92,10 @@ public class GalaxyAPI
 	 * @param galaxyInstance  A GalaxyInstance object pointing to the correct Galaxy location.
 	 * @param adminEmail  The administrators email address for the corresponding API key within the GalaxyInstance.
 	 * @param validator  The Validator to use to validate objects.
+	 * @throws ConstraintViolationException  If the adminEmail is invalid.
 	 */
 	public GalaxyAPI(GalaxyInstance galaxyInstance, @Valid GalaxyAccountEmail adminEmail, Validator validator)
+	throws ConstraintViolationException
 	{
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
 		checkNotNull(adminEmail, "adminEmail is null");
@@ -120,9 +124,11 @@ public class GalaxyAPI
 	 * @param galaxySearch  A GalaxySearch object.
 	 * @param galaxyLibrary  A GalaxyLibrary object.
 	 * @param validator  The Validator to use to validate objects.
+	 * @throws ConstraintViolationException  If the adminEmail is invalid.
 	 */
 	public GalaxyAPI(GalaxyInstance galaxyInstance, @Valid GalaxyAccountEmail adminEmail,
 			GalaxySearch galaxySearch, GalaxyLibraryBuilder galaxyLibrary, Validator validator)
+	throws ConstraintViolationException
 	{
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
 		checkNotNull(adminEmail, "adminEmail is null");
@@ -149,10 +155,11 @@ public class GalaxyAPI
 	 * @param libraryName  The name of the library to create.
 	 * @param galaxyUserEmail  The name of the user who will own the galaxy library.
 	 * @return A Library object for the library just created.
-	 * @throws CreateLibraryException 
+	 * @throws ConstraintViolationException  If the galaxyUserEmail or libraryName are invalid.
+	 * @throws CreateLibraryException If there was an error building a library.
 	 */
 	public Library buildGalaxyLibrary(@Valid GalaxyObjectName libraryName,
-			@Valid GalaxyAccountEmail galaxyUserEmail) throws CreateLibraryException
+			@Valid GalaxyAccountEmail galaxyUserEmail) throws CreateLibraryException, ConstraintViolationException
 	{
 		checkNotNull(libraryName, "libraryName is null");
 		checkNotNull(galaxyUserEmail, "galaxyUser is null");
@@ -333,13 +340,14 @@ public class GalaxyAPI
 	 * @param libraryName  The name of the library to upload to.
 	 * @param galaxyUser  The name of the Galaxy user who should own the files.
 	 * @return A GalaxyUploadResult containing information about the location of the uploaded files, or null
-	 * 	if an error occured.
+	 * 	if an error occurred.
 	 * @throws LibraryUploadException If an error occurred.
-	 * @throws CreateLibraryException 
+	 * @throws CreateLibraryException If there was an error creating the folder structure for the library.
+	 * @throws ConstraintViolationException  If the libraryName or galaxyUserEmail are invalid.
 	 */
 	public GalaxyUploadResult uploadSamples(List<GalaxySample> samples, @Valid GalaxyObjectName libraryName,
 			@Valid GalaxyAccountEmail galaxyUserEmail)
-			throws LibraryUploadException, CreateLibraryException
+			throws LibraryUploadException, CreateLibraryException, ConstraintViolationException
 	{
 		checkNotNull(libraryName, "libraryName is null");
 		checkNotNull(samples, "samples is null");
@@ -386,9 +394,11 @@ public class GalaxyAPI
 	 * @param samples  The samples to upload to Galaxy.
 	 * @param libraryID  A unique ID for the library, generated from buildGalaxyLibrary(String)
 	 * @return  True if the files have been uploaded, false otherwise.
-	 * @throws LibraryUploadException 
+	 * @throws LibraryUploadException If there was an error uploading files to the library.
+	 * @throws ConstraintViolationException  If one of the GalaxySamples is invalid.
 	 */
-	public boolean uploadFilesToLibrary(@Valid List<GalaxySample> samples, String libraryID) throws LibraryUploadException
+	public boolean uploadFilesToLibrary(@Valid List<GalaxySample> samples, String libraryID)
+			throws LibraryUploadException, ConstraintViolationException
 	{
 		checkNotNull(samples, "samples are null");
 		checkNotNull(libraryID, "libraryID is null");

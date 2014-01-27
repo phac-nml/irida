@@ -41,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.LocalGal
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
+import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyObjectName;
 import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyAPI;
@@ -242,6 +243,14 @@ public class GalaxyAPIIT
 	{
 		GalaxyObjectName invalidLibraryName = new GalaxyObjectName("<a href='http://google.com'>invalid name</a>");
 	    galaxyAPI.buildGalaxyLibrary(invalidLibraryName, localGalaxy.getUser1Name());
+	}
+	
+	@Test(expected=ConstraintViolationException.class)
+	public void testCreateLibraryInvalidUserName() throws CreateLibraryException
+	{
+		GalaxyObjectName invalidLibraryName = new GalaxyObjectName("testCreateLibraryInvalidUserName");
+		GalaxyAccountEmail userEmail = new GalaxyAccountEmail("invalid_email");
+	    galaxyAPI.buildGalaxyLibrary(invalidLibraryName, userEmail);
 	}
 	
 	@Test(expected=RuntimeException.class)
@@ -553,6 +562,40 @@ public class GalaxyAPIIT
 		samples.add(galaxySample);
 		
 		galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getNonExistentGalaxyUserName());
+	}
+	
+	@Test(expected=ConstraintViolationException.class)
+	public void testUploadSampleInvalidUserName() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	{	
+		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleInvalidUserName");
+		GalaxyAccountEmail userEmail = new GalaxyAccountEmail("invalid_user");
+		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
+		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		samples.add(galaxySample);
+		
+		galaxyAPI.uploadSamples(samples, libraryName, userEmail);
+	}
+	
+	@Test(expected=ConstraintViolationException.class)
+	public void testUploadSampleInvalidSampleName() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	{	
+		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleInvalidSampleName");
+		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("<invalidSample>"), dataFilesSingle);
+		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		samples.add(galaxySample);
+		
+		galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getUser1Name());
+	}
+	
+	@Test(expected=ConstraintViolationException.class)
+	public void testUploadSampleInvalidLibraryName() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	{	
+		GalaxyObjectName libraryName = new GalaxyObjectName("<invalidLibrary>");
+		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
+		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		samples.add(galaxySample);
+		
+		galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getUser1Name());
 	}
 	
 	@Test
