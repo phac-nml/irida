@@ -5,15 +5,11 @@ import static com.google.common.base.Preconditions.*;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
-import javax.validation.Validator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,9 +39,7 @@ public class GalaxyAPI
 	private static final GalaxyObjectName REFERENCES_FOLDER_NAME = new GalaxyObjectName("references");
 	private static final GalaxyFolderPath ILLUMINA_FOLDER_PATH = new GalaxyFolderPath("/illumina_reads");
 	private static final GalaxyFolderPath REFERENCES_FOLDER_PATH = new GalaxyFolderPath("/references");
-	
-	private Validator validator;
-	
+		
 	private GalaxyInstance galaxyInstance;
 	private GalaxyAccountEmail adminEmail;
 	private GalaxySearch galaxySearch;
@@ -57,20 +51,17 @@ public class GalaxyAPI
 	 * @param galaxyURL  The URL to the Galaxy instance.
 	 * @param adminEmail  An administrators email address for the Galaxy instance.
 	 * @param adminAPIKey  A corresponding administrators API key for the Galaxy instance.
-	 * @param validator  The Validator to use to validate objects.
 	 * @throws ConstraintViolationException  If the adminEmail is invalid.
 	 */
-	public GalaxyAPI(String galaxyURL, @Valid GalaxyAccountEmail adminEmail, String adminAPIKey, Validator validator)
+	public GalaxyAPI(String galaxyURL, @Valid GalaxyAccountEmail adminEmail, String adminAPIKey)
 		throws ConstraintViolationException
 	{
 		checkNotNull(galaxyURL, "galaxyURL is null");
 		checkNotNull(adminEmail, "adminEmail is null");
 		checkNotNull(adminAPIKey, "apiKey is null");
-		checkNotNull(validator, "validator is null");
 		
 		galaxyInstance = GalaxyInstanceFactory.get(galaxyURL, adminAPIKey);
 		this.adminEmail = adminEmail;
-		this.validator = validator;
 		
 		if (galaxyInstance == null)
 		{
@@ -92,19 +83,16 @@ public class GalaxyAPI
 	 * Builds a GalaxyAPI object with the given information.
 	 * @param galaxyInstance  A GalaxyInstance object pointing to the correct Galaxy location.
 	 * @param adminEmail  The administrators email address for the corresponding API key within the GalaxyInstance.
-	 * @param validator  The Validator to use to validate objects.
 	 * @throws ConstraintViolationException  If the adminEmail is invalid.
 	 */
-	public GalaxyAPI(GalaxyInstance galaxyInstance, @Valid GalaxyAccountEmail adminEmail, Validator validator)
+	public GalaxyAPI(GalaxyInstance galaxyInstance, @Valid GalaxyAccountEmail adminEmail)
 	throws ConstraintViolationException
 	{
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
 		checkNotNull(adminEmail, "adminEmail is null");
-		checkNotNull(validator, "validator is null");
 		
 		this.galaxyInstance = galaxyInstance;
 		this.adminEmail = adminEmail;
-		this.validator = validator;
 		
 		galaxySearch = new GalaxySearch(galaxyInstance);
 		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxySearch);
@@ -124,25 +112,22 @@ public class GalaxyAPI
 	 * 	(linking assumes the files are on the same filesystem as Galaxy).
 	 * @param galaxySearch  A GalaxySearch object.
 	 * @param galaxyLibrary  A GalaxyLibrary object.
-	 * @param validator  The Validator to use to validate objects.
 	 * @throws ConstraintViolationException  If the adminEmail is invalid.
 	 */
 	public GalaxyAPI(GalaxyInstance galaxyInstance, @Valid GalaxyAccountEmail adminEmail,
-			GalaxySearch galaxySearch, GalaxyLibraryBuilder galaxyLibrary, Validator validator)
+			GalaxySearch galaxySearch, GalaxyLibraryBuilder galaxyLibrary)
 	throws ConstraintViolationException
 	{
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
 		checkNotNull(adminEmail, "adminEmail is null");
 		checkNotNull(galaxySearch, "galaxySearch is null");
 		checkNotNull(galaxyLibrary, "galaxyLibrary is null");
-		checkNotNull(validator, "validator is null");
 		
 		this.galaxyInstance = galaxyInstance;
 		this.adminEmail = adminEmail;
 		
 		this.galaxyLibrary = galaxyLibrary;
 		this.galaxySearch = galaxySearch;
-		this.validator = validator;
 		
 		if (!galaxySearch.checkValidAdminEmailAPIKey(adminEmail, galaxyInstance.getApiKey()))
 		{
@@ -164,8 +149,6 @@ public class GalaxyAPI
 	{
 		checkNotNull(libraryName, "libraryName is null");
 		checkNotNull(galaxyUserEmail, "galaxyUser is null");
-		validateGalaxyObjectName(libraryName);
-		validateGalaxyAccountEmail(galaxyUserEmail);
 		
 		logger.info("Attempt to create new library=" + libraryName + " owned by user=" + galaxyUserEmail +
 				" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
@@ -203,26 +186,6 @@ public class GalaxyAPI
 		}
 		
 		return createdLibrary;
-	}
-	
-	private void validateGalaxyAccountEmail(GalaxyAccountEmail email) throws ConstraintViolationException
-	{
-		Set<ConstraintViolation<GalaxyAccountEmail>> violations = 
-				validator.validate(email);
-		if (!violations.isEmpty())
-		{
-			throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
-		}
-	}
-	
-	private void validateGalaxyObjectName(GalaxyObjectName name) throws ConstraintViolationException
-	{
-		Set<ConstraintViolation<GalaxyObjectName>> violations = 
-				validator.validate(name);
-		if (!violations.isEmpty())
-		{
-			throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
-		}
 	}
 	
 	private ClientResponse uploadFile(LibraryFolder folder, File file, LibrariesClient librariesClient,
@@ -345,9 +308,9 @@ public class GalaxyAPI
 	 * 	if an error occurred.
 	 * @throws LibraryUploadException If an error occurred.
 	 * @throws CreateLibraryException If there was an error creating the folder structure for the library.
-	 * @throws ConstraintViolationException  If the libraryName or galaxyUserEmail are invalid.
+	 * @throws ConstraintViolationException  If the samples, libraryName or galaxyUserEmail are invalid.
 	 */
-	public GalaxyUploadResult uploadSamples(List<GalaxySample> samples, @Valid GalaxyObjectName libraryName,
+	public GalaxyUploadResult uploadSamples(@Valid List<GalaxySample> samples, @Valid GalaxyObjectName libraryName,
 			@Valid GalaxyAccountEmail galaxyUserEmail)
 			throws LibraryUploadException, CreateLibraryException, ConstraintViolationException
 	{
@@ -454,7 +417,6 @@ public class GalaxyAPI
 				{					
 					if (sample != null)
 					{
-						validateGalaxyObjectName(sample.getSampleName());
 						success &= uploadSample(sample, illuminaFolder, librariesClient, library, libraryContentMap, errorSuffix);
 					}
 					else

@@ -3,11 +3,8 @@ package ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy;
 import java.io.File;
 import java.util.UUID;
 
-import javax.validation.Validator;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -33,14 +30,11 @@ public class LocalGalaxyConfig
 	
 	private static final int largestPort = 65535;
 	
-	@Autowired
-	private Validator validator;
-	
 	@Lazy @Bean
 	public GalaxyAPI galaxyAPI()
 	{
 		return new GalaxyAPI(localGalaxy().getGalaxyURL(), localGalaxy().getAdminName(),
-	    		localGalaxy().getAdminAPIKey(), validator);
+	    		localGalaxy().getAdminAPIKey());
 	}
 		
 	@Lazy @Bean

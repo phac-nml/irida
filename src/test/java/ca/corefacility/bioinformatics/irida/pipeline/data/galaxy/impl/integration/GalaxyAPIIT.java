@@ -31,7 +31,6 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
 
 import static org.junit.Assert.*;
 
@@ -74,9 +73,6 @@ public class GalaxyAPIIT
 	
 	@Autowired
 	private GalaxyAPI galaxyAPI;
-	
-	@Autowired
-	private Validator validator;
 	
 	private List<Path> dataFilesSingle;
 	private List<Path> dataFilesDouble;
@@ -257,7 +253,7 @@ public class GalaxyAPIIT
 	public void testCreateGalaxyAPIInvalidAdmin()
 	{
 	    new GalaxyAPI(localGalaxy.getGalaxyURL(), localGalaxy.getNonExistentGalaxyAdminName(),
-	    		localGalaxy.getAdminAPIKey(), validator);
+	    		localGalaxy.getAdminAPIKey());
 	}
 	
 	@Test(expected=RuntimeException.class)
@@ -269,7 +265,7 @@ public class GalaxyAPIIT
 			wrongAdminAPIKey = "badbadbadbadbadbadbadbadbadbadbaa";
 		}
 		
-		new GalaxyAPI(localGalaxy.getGalaxyURL(), localGalaxy.getAdminName(), wrongAdminAPIKey, validator);
+		new GalaxyAPI(localGalaxy.getGalaxyURL(), localGalaxy.getAdminName(), wrongAdminAPIKey);
 	}
 	
 	@Test
@@ -550,7 +546,7 @@ public class GalaxyAPIIT
 	public void testUploadSampleWrongGalaxyAddress() throws URISyntaxException, LibraryUploadException
 	{		
 		new GalaxyAPI(localGalaxy.getInvalidGalaxyURL(),
-				localGalaxy.getAdminName(), localGalaxy.getAdminAPIKey(), validator);
+				localGalaxy.getAdminName(), localGalaxy.getAdminAPIKey());
 	}
 	
 	@Test(expected=CreateLibraryException.class)

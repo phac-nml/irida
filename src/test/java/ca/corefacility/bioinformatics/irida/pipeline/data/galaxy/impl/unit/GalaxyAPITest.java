@@ -10,13 +10,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -54,9 +50,7 @@ public class GalaxyAPITest
 	
 	@Mock private GalaxySearch galaxySearch;
 	@Mock private GalaxyLibraryBuilder galaxyLibrary;
-	
-	@Mock Validator validator;
-	
+		
 	final private GalaxyAccountEmail realAdminEmail = new GalaxyAccountEmail("admin@localhost");
 	final private String libraryId = "1";
 	final private String nonExistentLibraryId = "2";
@@ -96,10 +90,8 @@ public class GalaxyAPITest
 		
 		when(galaxySearch.checkValidAdminEmailAPIKey(realAdminEmail, realAdminAPIKey)).
 			thenReturn(true);
-		
-		when(validator.validate(any(GalaxyObjectName.class))).thenReturn(new HashSet<ConstraintViolation<GalaxyObjectName>>());
-		
-		workflowRESTAPI = new GalaxyAPI(galaxyInstance, realAdminEmail, galaxySearch, galaxyLibrary, validator);
+				
+		workflowRESTAPI = new GalaxyAPI(galaxyInstance, realAdminEmail, galaxySearch, galaxyLibrary);
 		workflowRESTAPI.setLinkUploadedFiles(false);
 		
 		// setup files
@@ -318,7 +310,7 @@ public class GalaxyAPITest
 	{
 		setupBuildLibrary();
 		
-		workflowRESTAPI = new GalaxyAPI(galaxyInstance, nonExistentAdminEmail, validator);
+		workflowRESTAPI = new GalaxyAPI(galaxyInstance, nonExistentAdminEmail);
 		workflowRESTAPI.setLinkUploadedFiles(false);
 	}
 	

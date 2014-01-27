@@ -5,6 +5,8 @@ import static com.google.common.base.Preconditions.*;
 import java.nio.file.Path;
 import java.util.List;
 
+import javax.validation.Valid;
+
 /**
  * Represents a Sample to be uploaded to Galaxy
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
@@ -12,6 +14,7 @@ import java.util.List;
  */
 public class GalaxySample
 {
+	@Valid
 	private GalaxyObjectName sampleName;
 	private List<Path> sampleFiles;
 	
