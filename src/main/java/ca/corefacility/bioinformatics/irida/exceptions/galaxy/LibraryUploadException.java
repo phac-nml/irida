@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.exceptions.galaxy;
 
-public class LibraryUploadException extends Exception
+import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+
+public class LibraryUploadException extends UploadException
 {
     private static final long serialVersionUID = -5915057695904796185L;
 
