@@ -10,6 +10,8 @@ irida-api.iml
 /src/main/java/ca/corefacility/bioinformatics/irida/repositories/sesame/TextSearch.java
 /src/main/resources/ca/corefacility/bioinformatics/irida/rdf/catalog-v001.xml
 
+lib/spring-test-dbunit
+
 .classpath
 .project
 .settings

@@ -15,9 +15,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyAccountEmail;
-import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyFolderPath;
-import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxySearch;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;

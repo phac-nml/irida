@@ -40,9 +40,9 @@ import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.LocalGal
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
-import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyAccountEmail;
-import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyObjectName;
-import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxySample;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxySearch;

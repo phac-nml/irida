@@ -21,8 +21,8 @@ import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.sun.jersey.api.client.ClientResponse;
 
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
-import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyAccountEmail;
-import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxySearch;
 

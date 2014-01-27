@@ -12,9 +12,9 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyAccountEmail;
-import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyFolderPath;
-import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;

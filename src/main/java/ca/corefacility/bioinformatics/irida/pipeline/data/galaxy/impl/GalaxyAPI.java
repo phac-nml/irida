@@ -16,10 +16,10 @@ import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
-import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyAccountEmail;
-import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyFolderPath;
-import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxyObjectName;
-import ca.corefacility.bioinformatics.irida.model.galaxy.GalaxySample;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
