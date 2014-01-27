@@ -51,11 +51,11 @@ public class MiseqServiceImplIT {
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
 	public void testAddSequenceFileToMiseqRunAsAdmin() {
-		SequenceFile sf = asRole(Role.ROLE_ADMIN).sequenceFileService.read(1l);
-		MiseqRun miseqRun = asRole(Role.ROLE_ADMIN).miseqRunService.read(1l);
+		SequenceFile sf = asRole(Role.ROLE_SEQUENCER).sequenceFileService.read(1l);
+		MiseqRun miseqRun = asRole(Role.ROLE_SEQUENCER).miseqRunService.read(1l);
 
 		try {
-			Join<MiseqRun, SequenceFile> j = asRole(Role.ROLE_ADMIN).miseqRunService.addSequenceFileToMiseqRun(
+			Join<MiseqRun, SequenceFile> j = asRole(Role.ROLE_SEQUENCER).miseqRunService.addSequenceFileToMiseqRun(
 					miseqRun, sf);
 			assertNotNull("Join was empty.", j);
 			assertEquals("Join had wrong sequence file.", sf, j.getObject());
@@ -86,10 +86,10 @@ public class MiseqServiceImplIT {
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
 	public void testAddSequenceFileToMiseqRunMultiple() {
-		SequenceFile sf = asRole(Role.ROLE_ADMIN).sequenceFileService.read(1l);
-		MiseqRun miseqRun = asRole(Role.ROLE_ADMIN).miseqRunService.read(1l);
-		asRole(Role.ROLE_ADMIN).miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
-		asRole(Role.ROLE_ADMIN).miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
+		SequenceFile sf = asRole(Role.ROLE_SEQUENCER).sequenceFileService.read(1l);
+		MiseqRun miseqRun = asRole(Role.ROLE_SEQUENCER).miseqRunService.read(1l);
+		asRole(Role.ROLE_SEQUENCER).miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
+		asRole(Role.ROLE_SEQUENCER).miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
 	}
 
 	@Test
@@ -107,6 +107,35 @@ public class MiseqServiceImplIT {
 			e.printStackTrace();
 			fail("Test failed for unknown reason.");
 		}
+	}
+
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
+	public void testCreateMiseqRunAsSequencer() {
+		MiseqRun mr = new MiseqRun();
+		mr.setProjectName("Project name.");
+		mr = asRole(Role.ROLE_SEQUENCER).miseqRunService.create(mr);
+		assertNotNull("Created run was not assigned an ID.", mr.getId());
+	}
+	
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
+	public void testReadMiseqRunAsSequencer() {
+		MiseqRun mr = asRole(Role.ROLE_SEQUENCER).miseqRunService.read(1L);
+		assertNotNull("Created run was not assigned an ID.", mr.getId());
+	}
+	
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
+	public void testAddFileToMiseqRunAsSequencer() {
+		MiseqRun mr = asRole(Role.ROLE_SEQUENCER).miseqRunService.read(1L);
+		SequenceFile sf = asRole(Role.ROLE_SEQUENCER).sequenceFileService.read(1l);
+		Join<MiseqRun, SequenceFile> join = asRole(Role.ROLE_SEQUENCER).miseqRunService.addSequenceFileToMiseqRun(mr, sf);
+		assertEquals("Wrong miseq run in join.", mr, join.getSubject());
+		assertEquals("Wrong sequence file in join.", sf, join.getObject());
 	}
 
 	private MiseqServiceImplIT asRole(Role r) {
