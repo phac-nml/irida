@@ -7,7 +7,6 @@ import java.util.Set;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,17 +71,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_USER')")
-	public Sample create(Sample s) {
-		return super.create(s);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	@Transactional
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public SampleSequenceFileJoin addSequenceFileToSample(Sample sample, SequenceFile sampleFile) {
 		// call the relationship repository to create the relationship between
 		// the two entities.
@@ -95,7 +84,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Sample getSampleForProject(Project project, Long identifier) throws EntityNotFoundException {
 
 		Sample s = null;
@@ -122,12 +110,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public Sample getSampleByExternalSampleId(Project p, String sampleId) {
-		Sample s = sampleRepository.getSampleByExternalSampleId(p, sampleId);
+	public Sample getSampleByExternalSampleId(Project project, String sampleId) {
+		Sample s = sampleRepository.getSampleByExternalSampleId(project, sampleId);
 		if (s != null) {
 			return s;
 		} else {
-			throw new EntityNotFoundException("No sample with external id [" + sampleId + "] in project [" + p.getId()
+			throw new EntityNotFoundException("No sample with external id [" + sampleId + "] in project [" + project.getId()
 					+ "]");
 		}
 	}
@@ -137,7 +125,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public void removeSequenceFileFromSample(Sample sample, SequenceFile sequenceFile) {
 		ssfRepository.removeFileFromSample(sample, sequenceFile);
 	}
@@ -146,7 +133,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Transactional(readOnly = true)
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public List<Join<Project, Sample>> getSamplesForProject(Project project) {
 		return psjRepository.getSamplesForProject(project);
 	}

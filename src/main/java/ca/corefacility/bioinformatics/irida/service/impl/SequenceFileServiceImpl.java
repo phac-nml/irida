@@ -10,7 +10,6 @@ import javax.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,7 +90,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasAnyRole('ROLE_CLIENT', 'ROLE_USER')")
 	@Transactional
 	@ModifiesSequenceFile
 	public SequenceFile create(SequenceFile sequenceFile) {
@@ -115,7 +113,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	@Override
 	@Transactional
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadSequenceFile')")
 	public SequenceFile updateWithoutProcessors(Long id, Map<String, Object> updatedFields) {
 		return update(id, updatedFields);
 	}
@@ -125,7 +122,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	@Override
 	@Transactional
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadSequenceFile')")
 	@ModifiesSequenceFile
 	public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
 		if (updatedFields.containsKey("fileRevisionNumber")) {
@@ -170,7 +166,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	@Override
 	@Transactional
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT') or hasPermission(#sample, 'canReadSample')")
 	@ModifiesSequenceFile
 	public Join<Sample, SequenceFile> createSequenceFileInSample(SequenceFile sequenceFile, Sample sample) {
 		SequenceFile created = create(sequenceFile);
@@ -183,7 +178,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public List<Join<Sample, SequenceFile>> getSequenceFilesForSample(Sample sample) {
 		return ssfRepository.getFilesForSample(sample);
 	}

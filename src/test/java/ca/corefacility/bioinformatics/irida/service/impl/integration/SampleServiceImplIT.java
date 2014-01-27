@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import org.junit.Before;
@@ -121,6 +122,18 @@ public class SampleServiceImplIT {
 		sampleService.getSampleByExternalSampleId(p, "garbage");
 	}
 
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
+	public void testReadSampleByExternalIdAsSequencer() {
+		String externalId = "sample5";
+		Project p = asRole(Role.ROLE_SEQUENCER).projectService.read(3L);
+		Sample s = asRole(Role.ROLE_SEQUENCER).sampleService.getSampleByExternalSampleId(p, externalId);
+		
+		assertNotNull("Sample was not populated.", s);
+		assertEquals("Wrong external id.", externalId, s.getExternalSampleId());
+	}
+
 	private void assertSampleNotFound(Long id) {
 		try {
 			sampleService.read(id);
@@ -129,5 +142,17 @@ public class SampleServiceImplIT {
 		} catch (Exception e) {
 			fail("Failed for unknown reason; ");
 		}
+	}
+
+	private SampleServiceImplIT asRole(Role r) {
+		User u = new User();
+		u.setUsername("fbristow");
+		u.setPassword(passwordEncoder.encode("Password1"));
+		u.setSystemRole(r);
+		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
+				ImmutableList.of(r));
+		auth.setDetails(u);
+		SecurityContextHolder.getContext().setAuthentication(auth);
+		return this;
 	}
 }

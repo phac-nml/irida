@@ -11,8 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -66,7 +64,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_USER')")
 	@Transactional
 	public Project create(Project p) {
 		Project project = super.create(p);
@@ -80,26 +77,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadProject')")
-	public Project read(Long id) {
-		return super.read(id);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@PostFilter("hasPermission(filterObject, 'canReadProject')")
-	public Iterable<Project> findAll() {
-		return super.findAll();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	@Transactional
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Join<Project, User> addUserToProject(Project project, User user, ProjectRole role) {
 		try {
 			ProjectUserJoin join = pujRepository.save(new ProjectUserJoin(project, user, role));
@@ -115,7 +93,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public void removeUserFromProject(Project project, User user) {
 		pujRepository.removeUserFromProject(project, user);
 	}
@@ -125,7 +102,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public ProjectSampleJoin addSampleToProject(Project project, Sample sample) {
 		logger.trace("Adding sample to project.");
 		// the sample hasn't been persisted before, persist it before calling
@@ -156,7 +132,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public void removeSampleFromProject(Project project, Sample sample) {
 		psjRepository.removeSampleFromProject(project, sample);
 	}
@@ -166,7 +141,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize("isAuthenticated()")
 	public List<Join<Project, User>> getProjectsForUser(User user) {
 		return pujRepository.getProjectsForUser(user);
 	}
@@ -175,7 +149,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("isAuthenticated()")
 	public List<Join<Project, User>> getProjectsForUserWithRole(User user, ProjectRole role) {
 		return pujRepository.getProjectsForUserWithRole(user, role);
 	}
@@ -184,7 +157,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc }
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	public boolean userHasProjectRole(User user, Project project, ProjectRole projectRole) {
 		List<Join<Project, User>> projects = getProjectsForUserWithRole(user, projectRole);
 		return projects.contains(new ProjectUserJoin(project, user));

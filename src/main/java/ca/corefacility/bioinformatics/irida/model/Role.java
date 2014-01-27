@@ -34,13 +34,17 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 	 * Constant reference for client role.
 	 */
 	public static final Role ROLE_CLIENT = new Role("ROLE_CLIENT");
-	
+
 	/**
 	 * Constant reference for the manager role
 	 */
 	public static final Role ROLE_MANAGER = new Role("ROLE_MANAGER");
 
-	
+	/**
+	 * Constant reference for the sequencer role.
+	 */
+	public static final Role ROLE_SEQUENCER = new Role("ROLE_SEQUENCER");
+
 	@Id
 	private String name;
 	@NotNull

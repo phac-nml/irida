@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
@@ -24,6 +26,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *            the {@link SequenceFile} that we're adding.
 	 * @return the {@link Relationship} created between the two entities.
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public Join<Sample, SequenceFile> addSequenceFileToSample(Sample sample, SequenceFile sampleFile);
 
 	/**
@@ -42,6 +45,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *             if no {@link Relationship} exists between {@link Sample} and
 	 *             {@link Project}.
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Sample getSampleForProject(Project project, Long identifier) throws EntityNotFoundException;
 
 	/**
@@ -51,7 +55,8 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *            the {@link Project} to get samples for.
 	 * @return the collection of samples for the {@link Project}.
 	 */
-	public List<Join<Project, Sample>> getSamplesForProject(Project p);
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	public List<Join<Project, Sample>> getSamplesForProject(Project project);
 
 	/**
 	 * Get the {@link Sample} for the given ID
@@ -62,7 +67,8 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *            The id for the requested sample
 	 * @return A {@link Sample} with the given ID
 	 */
-	public Sample getSampleByExternalSampleId(Project p, String sampleId);
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
+	public Sample getSampleByExternalSampleId(Project project, String sampleId);
 
 	/**
 	 * Move an instance of a {@link SequenceFile} associated with a
@@ -76,6 +82,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return the new relationship between the {@link Project} and
 	 *         {@link SequenceFile}.
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public void removeSequenceFileFromSample(Sample sample, SequenceFile sequenceFile);
 
 	/**

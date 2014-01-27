@@ -22,15 +22,18 @@ import ca.corefacility.bioinformatics.irida.processing.annotations.ModifiesSeque
  * Aspect that handles post-processing of {@link SequenceFile} after a
  * transaction has been committed.
  * 
- * This aspect watches for methods annotated with {@link ModifiesSequenceFile} annotations.
+ * This aspect watches for methods annotated with {@link ModifiesSequenceFile}
+ * annotations.
+ * 
  * @see ModifiesSequenceFile
  * 
- * This aspect should be executed *after* a transaction has been committed. Note
- * that this aspect is annotated with an {@link Order} that is lower than the
- * {@link Order} specified by the transaction manager. See:
- * http://www.coderanch.com/t/607422/Spring/Spring-Aspects-advices-transactions
- * and http://forum.springsource.org/showthread.php?85082-Aspect-Order for more
- * information.
+ *      This aspect should be executed *after* a transaction has been committed.
+ *      Note that this aspect is annotated with an {@link Order} that is lower
+ *      than the {@link Order} specified by the transaction manager. See:
+ *      http://
+ *      www.coderanch.com/t/607422/Spring/Spring-Aspects-advices-transactions
+ *      and http://forum.springsource.org/showthread.php?85082-Aspect-Order for
+ *      more information.
  * 
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
@@ -97,9 +100,25 @@ public class FileProcessorAspect {
 
 		@Override
 		public void run() {
-			SecurityContextHolder.setContext(securityContext);
+			// when running in single-threaded mode, the security context should
+			// already be populated in the current thread and and we shouldn't
+			// have to overwrite and erase the context before execution.
+			boolean copiedSecurityContext = true;
+			SecurityContext context = SecurityContextHolder.getContext();
+			if (context == null || context.getAuthentication() == null) {
+				SecurityContextHolder.setContext(securityContext);
+			} else {
+				copiedSecurityContext = false;
+			}
+
+			// proceed with analysis
 			fileProcessingChain.launchChain(sequenceFile);
-			SecurityContextHolder.clearContext();
+
+			// erase the security context if we copied the context into the
+			// current thread.
+			if (copiedSecurityContext) {
+				SecurityContextHolder.clearContext();
+			}
 		}
 
 	}

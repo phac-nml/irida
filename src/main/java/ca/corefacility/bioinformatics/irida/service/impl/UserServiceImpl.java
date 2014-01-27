@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -70,31 +69,6 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * passwords.
 	 */
 	private PasswordEncoder passwordEncoder;
-	/**
-	 * If a user is an administrator, they are permitted to create a user
-	 * account with any role. If a user is a manager, then they are only
-	 * permitted to create user accounts with a ROLE_USER role.
-	 */
-	private static final String CREATE_USER_PERMISSIONS = "hasRole('ROLE_ADMIN') or "
-			+ "((#u.getSystemRole() == T(ca.corefacility.bioinformatics.irida.model.Role).ROLE_USER) and hasRole('ROLE_MANAGER'))";
-	/**
-	 * If a user is an administrator, they are permitted to update any user
-	 * property. If a manager or user is updating an account, they should not be
-	 * permitted to change the role of the user (only administrators can create
-	 * users with role other than Role.ROLE_USER).
-	 */
-	private static final String UPDATE_USER_PERMISSIONS = "hasRole('ROLE_ADMIN') or "
-			+ "(!#properties.containsKey('systemRole') and (hasRole('ROLE_MANAGER') or hasPermission(#uid, 'canUpdateUser')))";
-
-	/**
-	 * A user is permitted to change their own password if they did not
-	 * successfully log in, but the reason for the login failure is that their
-	 * credentials are expired. This permission checks to see that the user is
-	 * authenticated, or that the principle in the security context has an
-	 * expired password.
-	 */
-	private static final String CHANGE_PASSWORD_PERMISSIONS = "isFullyAuthenticated() or "
-			+ "(principal instanceof T(ca.corefacility.bioinformatics.irida.model.User) and !principal.isCredentialsNonExpired())";
 
 	private static final Pattern USER_CONSTRAINT_PATTERN;
 
@@ -127,7 +101,6 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	/**
 	 * {@inheritDoc}
 	 */
-	@PreAuthorize(CHANGE_PASSWORD_PERMISSIONS)
 	public User changePassword(Long userId, String password) {
 		Set<ConstraintViolation<User>> violations = validatePassword(password);
 		if (violations.isEmpty()) {
@@ -143,7 +116,6 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize(CREATE_USER_PERMISSIONS)
 	public User create(User u) {
 		String password = u.getPassword();
 		u.setPassword(passwordEncoder.encode(password));
@@ -167,7 +139,6 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize(UPDATE_USER_PERMISSIONS)
 	public User update(Long uid, Map<String, Object> properties) {
 		if (properties.containsKey(PASSWORD_PROPERTY)) {
 			String password = properties.get(PASSWORD_PROPERTY).toString();
@@ -180,12 +151,6 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 		}
 
 		return super.update(uid, properties);
-	}
-
-	@Override
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
-	public void delete(Long id) {
-		super.delete(id);
 	}
 
 	/**
@@ -258,12 +223,6 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	@Transactional(readOnly = true)
 	public Collection<Join<Project, User>> getUsersForProjectByRole(Project project, ProjectRole projectRole) {
 		return pujRepository.getUsersForProjectByRole(project, projectRole);
-	}
-
-	@Override
-	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_MANAGER')")
-	public Iterable<User> findAll() {
-		return repository.findAll();
 	}
 
 	/**
