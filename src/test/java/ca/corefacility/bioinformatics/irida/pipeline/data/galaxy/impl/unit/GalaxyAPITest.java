@@ -3,10 +3,11 @@ package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.unit;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -75,10 +76,10 @@ public class GalaxyAPITest
 		
 	private GalaxyAPI workflowRESTAPI;
 	private Map<String, LibraryContent> libraryMap;
-	private File dataFile1;
-	private File dataFile2;
-	private List<File> dataFilesSingle;
-	private List<File> dataFilesDouble;
+	private Path dataFile1;
+	private Path dataFile2;
+	private List<Path> dataFilesSingle;
+	private List<Path> dataFilesDouble;
 	private GalaxyUploadResult expectedUploadResult;
 	
 	@Before
@@ -102,13 +103,13 @@ public class GalaxyAPITest
 		workflowRESTAPI.setLinkUploadedFiles(false);
 		
 		// setup files
-		dataFile1 = new File(this.getClass().getResource("testData1.fastq").toURI());
-		dataFile2 = new File(this.getClass().getResource("testData2.fastq").toURI());
+		dataFile1 = Paths.get(this.getClass().getResource("testData1.fastq").toURI());
+		dataFile2 = Paths.get(this.getClass().getResource("testData2.fastq").toURI());
 		
-		dataFilesSingle = new ArrayList<File>();
+		dataFilesSingle = new ArrayList<Path>();
 		dataFilesSingle.add(dataFile1);
 		
-		dataFilesDouble = new ArrayList<File>();
+		dataFilesDouble = new ArrayList<Path>();
 		dataFilesDouble.add(dataFile1);
 		dataFilesDouble.add(dataFile2);
 		
@@ -431,7 +432,7 @@ public class GalaxyAPITest
 		
 		// add sample file to map of already existing files
 		LibraryContent fileContent = new LibraryContent();
-		fileContent.setName(sampleFolder.getName() + "/" + dataFile1.getName());
+		fileContent.setName(sampleFolder.getName() + "/" + dataFile1.getFileName());
 		fileContent.setId(fileId);
 		libraryMap.put(fileContent.getName(), fileContent);
 		
@@ -475,7 +476,7 @@ public class GalaxyAPITest
 		
 		// add sample file to map of one already existing file
 		LibraryContent fileContent = new LibraryContent();
-		fileContent.setName(sampleFolder.getName() + "/" + dataFile1.getName());
+		fileContent.setName(sampleFolder.getName() + "/" + dataFile1.getFileName());
 		fileContent.setId(fileId);
 		libraryMap.put(fileContent.getName(), fileContent);
 		

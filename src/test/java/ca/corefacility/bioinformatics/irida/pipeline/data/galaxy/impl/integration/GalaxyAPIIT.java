@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.integrati
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -78,8 +78,8 @@ public class GalaxyAPIIT
 	@Autowired
 	private Validator validator;
 	
-	private List<File> dataFilesSingle;
-	private List<File> dataFilesDouble;
+	private List<Path> dataFilesSingle;
+	private List<Path> dataFilesDouble;
 	
 	@Before
 	public void setup() throws URISyntaxException
@@ -91,13 +91,13 @@ public class GalaxyAPIIT
 	
 	private void setupDataFiles() throws URISyntaxException
 	{
-		File dataFile1 = new File(GalaxyAPIIT.class.getResource("testData1.fastq").toURI());
-		File dataFile2 = new File(GalaxyAPIIT.class.getResource("testData2.fastq").toURI());
+		Path dataFile1 = Paths.get(GalaxyAPIIT.class.getResource("testData1.fastq").toURI());
+		Path dataFile2 = Paths.get(GalaxyAPIIT.class.getResource("testData2.fastq").toURI());
 		
-		dataFilesSingle = new ArrayList<File>();
+		dataFilesSingle = new ArrayList<Path>();
 		dataFilesSingle.add(dataFile1);
 		
-		dataFilesDouble = new ArrayList<File>();
+		dataFilesDouble = new ArrayList<Path>();
 		dataFilesDouble.add(dataFile1);
 		dataFilesDouble.add(dataFile2);
 	}
@@ -220,7 +220,7 @@ public class GalaxyAPIIT
 		return contents;
 	}
 	
-	private File createTemporaryDataFile() throws IOException, URISyntaxException
+	private Path createTemporaryDataFile() throws IOException, URISyntaxException
 	{
 		File dataFile1 = new File(GalaxyAPIIT.class.getResource("testData1.fastq").toURI());
 		
@@ -235,7 +235,7 @@ public class GalaxyAPIIT
 		Files.copy(Paths.get(dataFile1.getAbsolutePath()), dataPathTemp,
 				StandardCopyOption.REPLACE_EXISTING);
 		
-		return dataFileTemp;
+		return dataFileTemp.toPath();
 	}
 	
 	@Test(expected=ConstraintViolationException.class)
@@ -448,8 +448,8 @@ public class GalaxyAPIIT
 	{
 		galaxyAPI.setLinkUploadedFiles(false);
 		
-		File dataFileTemp1 = createTemporaryDataFile();
-		dataFilesSingle = new ArrayList<File>();
+		Path dataFileTemp1 = createTemporaryDataFile();
+		dataFilesSingle = new ArrayList<Path>();
 		dataFilesSingle.add(dataFileTemp1);
 		
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleNoLink");
@@ -479,13 +479,13 @@ public class GalaxyAPIIT
 		
 		// load file from filesystem
 		String fileSystemFileContents = readFileContentsFromReader(
-				new BufferedReader(new FileReader(dataFileTemp1.getAbsolutePath())));
+				Files.newBufferedReader(dataFileTemp1, Charset.defaultCharset()));
 		
 		// make sure files are the same
 		assertEquals(fileSystemFileContents, galaxyFileContents);
 		
 		// delete original file
-		assertTrue(dataFileTemp1.delete());
+		assertTrue(dataFileTemp1.toFile().delete());
 		
 		// file contents should be the same (no link)
 		galaxyFileContents = getGalaxyFileContents(libraryName + "Deleted", "testData1.fastq", localGalaxy.getGalaxyInstanceUser1(),
@@ -500,8 +500,8 @@ public class GalaxyAPIIT
 		
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleLink");
 		
-		File dataFileTemp1 = createTemporaryDataFile();
-		dataFilesSingle = new ArrayList<File>();
+		Path dataFileTemp1 = createTemporaryDataFile();
+		dataFilesSingle = new ArrayList<Path>();
 		dataFilesSingle.add(dataFileTemp1);
 		
 		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
@@ -529,13 +529,13 @@ public class GalaxyAPIIT
 		
 		// load file from filesystem
 		String fileSystemFileContents = readFileContentsFromReader(
-				new BufferedReader(new FileReader(dataFileTemp1.getAbsolutePath())));
+				Files.newBufferedReader(dataFileTemp1, Charset.defaultCharset()));
 		
 		// make sure files are the same
 		assertEquals(fileSystemFileContents, galaxyFileContents);
 		
 		// delete original file
-		assertTrue(dataFileTemp1.delete());
+		assertTrue(dataFileTemp1.toFile().delete());
 		
 		// should get an error when attempting to download file
 		try

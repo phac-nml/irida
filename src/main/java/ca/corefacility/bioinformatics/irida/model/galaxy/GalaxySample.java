@@ -2,7 +2,7 @@ package ca.corefacility.bioinformatics.irida.model.galaxy;
 
 import static com.google.common.base.Preconditions.*;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -13,9 +13,9 @@ import java.util.List;
 public class GalaxySample
 {
 	private GalaxyObjectName sampleName;
-	private List<File> sampleFiles;
+	private List<Path> sampleFiles;
 	
-	public GalaxySample(GalaxyObjectName sampleName, List<File> sampleFiles)
+	public GalaxySample(GalaxyObjectName sampleName, List<Path> sampleFiles)
 	{
 		checkNotNull(sampleName, "sampleName is null");
 		checkNotNull(sampleFiles, "sampleFiles is null");
@@ -32,12 +32,13 @@ public class GalaxySample
 	{
 		this.sampleName = sampleName;
 	}
-	public List<File> getSampleFiles()
+	public List<Path> getSampleFiles()
 	{
 		return sampleFiles;
 	}
-	public void setSampleFiles(List<File> sampleFiles)
+	public void setSampleFiles(List<Path> sampleFiles)
 	{
+		checkNotNull(sampleFiles, "sampleFiles are null");
 		this.sampleFiles = sampleFiles;
 	}
 

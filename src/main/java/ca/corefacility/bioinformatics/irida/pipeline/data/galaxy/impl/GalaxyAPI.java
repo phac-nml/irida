@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.*;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -304,8 +305,9 @@ public class GalaxyAPI
 		
 		success = true;
 		
-		for (File file : sample.getSampleFiles())
+		for (Path path : sample.getSampleFiles())
 		{
+			File file = path.toFile();
 			String sampleFilePath = samplePath(rootFolder, sample, file);
 			
 			if (libraryMap.containsKey(sampleFilePath))
