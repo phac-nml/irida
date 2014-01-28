@@ -8,7 +8,9 @@ import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Collection;
 import java.util.List;
@@ -25,12 +27,19 @@ import javax.validation.Valid;
 public interface UserService extends CRUDService<Long, User>, UserDetailsService {
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("permitAll")
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
+	
+	/**
 	 * Get a user from the database with the supplied username.
 	 * 
 	 * @param username
 	 *            the user's username.
 	 * @return the user corresponding to the username.
 	 */
+	@PreAuthorize("permitAll")
 	public User getUserByUsername(String username) throws EntityNotFoundException;
 
 	/**
