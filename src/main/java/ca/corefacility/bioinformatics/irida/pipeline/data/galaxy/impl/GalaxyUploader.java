@@ -94,9 +94,8 @@ public class GalaxyUploader
 	/**
 	 * Gets the URL of the connected Galaxy instance.
 	 * @return  The URL of the connected Galaxy instance
-	 * @throws UploadException  If the uploader is not connected to an instance of Galaxy.
 	 */
-	public URL getGalaxyUrl() throws UploadException
+	public URL getGalaxyUrl()
 	{
 		if (galaxyAPI != null)
 		{
@@ -104,7 +103,7 @@ public class GalaxyUploader
 		}
 		else
 		{
-			throw new UploadException("Uploader is not connected to any instance of Galaxy");
+			throw new RuntimeException("Uploader is not connected to any instance of Galaxy");
 		}
 	}
 }
