@@ -104,6 +104,33 @@ public class UserServiceImplIT {
 	public void testCreateUserAsUserFail() {
 		asUser().userService.create(new User());
 	}
+	
+	@Test
+	public void testLoadUserUnauthenticated() {
+		SecurityContextHolder.clearContext();
+		AnonymousAuthenticationToken token = new AnonymousAuthenticationToken("nobody", "nobody", 
+				ImmutableList.of(Role.ROLE_ANONYMOUS));
+		SecurityContextHolder.getContext().setAuthentication(token);
+		userService.loadUserByUsername("fbristow");
+	}
+	
+	@Test
+	public void testGetUserUnauthenticated() {
+		SecurityContextHolder.clearContext();
+		AnonymousAuthenticationToken token = new AnonymousAuthenticationToken("nobody", "nobody", 
+				ImmutableList.of(Role.ROLE_ANONYMOUS));
+		SecurityContextHolder.getContext().setAuthentication(token);
+		userService.loadUserByUsername("fbristow");
+	}
+	
+	@Test(expected = AccessDeniedException.class)
+	public void testGetUsersForProjectUnauthenticated() {
+		SecurityContextHolder.clearContext();
+		AnonymousAuthenticationToken token = new AnonymousAuthenticationToken("nobody", "nobody", 
+				ImmutableList.of(Role.ROLE_ANONYMOUS));
+		SecurityContextHolder.getContext().setAuthentication(token);
+		userService.getUsersForProject(null);
+	}
 
 	@Test(expected = AccessDeniedException.class)
 	public void testUpdateToAdministratorAsManagerFail() {
