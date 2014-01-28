@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URL;
 import java.util.List;
 
 import javax.validation.ConstraintViolationException;
@@ -27,7 +28,7 @@ public class GalaxyUploader
 	private GalaxyAPI galaxyAPI = null;
 	private boolean linkFiles = false;
 	
-	public void setupGalaxyAPI(String galaxyURL, @Valid GalaxyAccountEmail adminEmail, String adminAPIKey)
+	public void setupGalaxyAPI(URL galaxyURL, @Valid GalaxyAccountEmail adminEmail, String adminAPIKey)
 	{
 		checkNotNull(galaxyURL, "galaxyURL is null");
 		checkNotNull(adminEmail, "adminEmail is null");
@@ -89,4 +90,21 @@ public class GalaxyUploader
 	    	galaxyAPI.setLinkUploadedFiles(linkFiles);
 	    }
     }
+	
+	/**
+	 * Gets the URL of the connected Galaxy instance.
+	 * @return  The URL of the connected Galaxy instance
+	 * @throws UploadException  If the uploader is not connected to an instance of Galaxy.
+	 */
+	public URL getGalaxyUrl() throws UploadException
+	{
+		if (galaxyAPI != null)
+		{
+			return galaxyAPI.getGalaxyUrl();
+		}
+		else
+		{
+			throw new UploadException("Uploader is not connected to any instance of Galaxy");
+		}
+	}
 }

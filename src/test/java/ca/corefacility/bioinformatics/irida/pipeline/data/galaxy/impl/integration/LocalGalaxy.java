@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.integration;
 
+import java.net.URL;
+
 import javax.annotation.PreDestroy;
 
 import org.slf4j.Logger;
@@ -20,8 +22,8 @@ public class LocalGalaxy
 	private GalaxyDaemon galaxyDaemon;
 	private GalaxyProperties galaxyProperties;
 		
-	private String galaxyURL;
-	private String invalidGalaxyURL;
+	private URL galaxyURL;
+	private URL invalidGalaxyURL;
 	
 	private GalaxyAccountEmail adminName;
 	private String adminPassword;
@@ -55,12 +57,12 @@ public class LocalGalaxy
 		bootStrapper.deleteGalaxyRoot();
 	}
 	
-	public String getGalaxyURL()
+	public URL getGalaxyURL()
 	{
 		return galaxyURL;
 	}
 	
-	public void setGalaxyURL(String galaxyURL)
+	public void setGalaxyURL(URL galaxyURL)
 	{
 		this.galaxyURL = galaxyURL;
 	}
@@ -235,12 +237,12 @@ public class LocalGalaxy
 		this.galaxyProperties = galaxyProperties;
 	}
 
-	public String getInvalidGalaxyURL()
+	public URL getInvalidGalaxyURL()
 	{
 		return invalidGalaxyURL;
 	}
 
-	public void setInvalidGalaxyURL(String invalidGalaxyURL)
+	public void setInvalidGalaxyURL(URL invalidGalaxyURL)
 	{
 		this.invalidGalaxyURL = invalidGalaxyURL;
 	}

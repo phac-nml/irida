@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.*;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -53,14 +54,14 @@ public class GalaxyAPI
 	 * @param adminAPIKey  A corresponding administrators API key for the Galaxy instance.
 	 * @throws ConstraintViolationException  If the adminEmail is invalid.
 	 */
-	public GalaxyAPI(String galaxyURL, @Valid GalaxyAccountEmail adminEmail, String adminAPIKey)
+	public GalaxyAPI(URL galaxyURL, @Valid GalaxyAccountEmail adminEmail, String adminAPIKey)
 		throws ConstraintViolationException
 	{
 		checkNotNull(galaxyURL, "galaxyURL is null");
 		checkNotNull(adminEmail, "adminEmail is null");
 		checkNotNull(adminAPIKey, "apiKey is null");
 		
-		galaxyInstance = GalaxyInstanceFactory.get(galaxyURL, adminAPIKey);
+		galaxyInstance = GalaxyInstanceFactory.get(galaxyURL.toString(), adminAPIKey);
 		this.adminEmail = adminEmail;
 		
 		if (galaxyInstance == null)
@@ -458,8 +459,15 @@ public class GalaxyAPI
 	 * Gets the URL of the Galaxy instance we are connected to.
 	 * @return  A String of the URL of the Galaxy instance we are connected to.
 	 */
-	public String getGalaxyUrl()
+	public URL getGalaxyUrl()
 	{
-		return galaxyInstance.getGalaxyUrl();
+		try
+        {
+	        return new URL(galaxyInstance.getGalaxyUrl());
+        } catch (MalformedURLException e)
+        {
+        	// This should never really occur, don't force all calling methods to catch exception
+	        throw new RuntimeException("Galaxy URL is malformed", e);
+        }
 	}
 }

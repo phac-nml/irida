@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.unit;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -8,14 +11,14 @@ import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyUplo
 
 public class GalaxyUploaderTest
 {
-	private String galaxyURL;
+	private URL galaxyURL;
 	private GalaxyAccountEmail accountEmail;
 	private String adminApiKey;
 	
 	@Before
-	public void setup()
+	public void setup() throws MalformedURLException
 	{
-		galaxyURL = "http://localhost";
+		galaxyURL = new URL("http://localhost");
 		accountEmail = new GalaxyAccountEmail("admin@localhost");
 		adminApiKey = "0";
 	}

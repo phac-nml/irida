@@ -92,7 +92,8 @@ public class GalaxyUploaderIT
 	public void testUploadSamples() throws URISyntaxException, MalformedURLException, ConstraintViolationException, UploadException
 	{
 		GalaxyObjectName libraryName = new GalaxyObjectName("GalaxyUploader_testUploadSamples");
-		String localGalaxyURL = localGalaxy.getGalaxyURL().substring(0,localGalaxy.getGalaxyURL().length()-1); // remove trailing '/'
+		String localGalaxyURL = localGalaxy.getGalaxyURL().toString().substring(0,localGalaxy.getGalaxyURL()
+				.toString().length()-1); // remove trailing '/'
 		
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
 		GalaxySample galaxySample1 = new GalaxySample(new GalaxyObjectName("testData1"), dataFilesSingle);

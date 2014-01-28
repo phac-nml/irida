@@ -1,7 +1,11 @@
 package ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.UUID;
+
+import javax.validation.ConstraintViolationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +36,7 @@ public class LocalGalaxyConfig
 	private static final int largestPort = 65535;
 	
 	@Lazy @Bean
-	public GalaxyUploader galaxyUploader()
+	public GalaxyUploader galaxyUploader() throws MalformedURLException
 	{
 		GalaxyUploader galaxyUploader = new GalaxyUploader();
 		galaxyUploader.setupGalaxyAPI(localGalaxy().getGalaxyURL(), localGalaxy().getAdminName(),
@@ -42,14 +46,14 @@ public class LocalGalaxyConfig
 	}
 	
 	@Lazy @Bean
-	public GalaxyAPI galaxyAPI()
+	public GalaxyAPI galaxyAPI() throws ConstraintViolationException, MalformedURLException
 	{
 		return new GalaxyAPI(localGalaxy().getGalaxyURL(), localGalaxy().getAdminName(),
 	    		localGalaxy().getAdminAPIKey());
 	}
 		
 	@Lazy @Bean
-	public LocalGalaxy localGalaxy()
+	public LocalGalaxy localGalaxy() throws MalformedURLException
 	{
 		LocalGalaxy localGalaxy = new LocalGalaxy();
 		
@@ -80,11 +84,11 @@ public class LocalGalaxyConfig
 	    localGalaxy.setGalaxyDaemon(galaxyDaemon);
 	    
 	    localGalaxy.setGalaxyInstanceAdmin(GalaxyInstanceFactory.get(
-	    		localGalaxy.getGalaxyURL(), localGalaxy.getAdminAPIKey()));
+	    		localGalaxy.getGalaxyURL().toString(), localGalaxy.getAdminAPIKey()));
 	    localGalaxy.setGalaxyInstanceUser1(GalaxyInstanceFactory.get(
-	    		localGalaxy.getGalaxyURL(), localGalaxy.getUser1APIKey()));
+	    		localGalaxy.getGalaxyURL().toString(), localGalaxy.getUser1APIKey()));
 	    localGalaxy.setGalaxyInstanceUser2(GalaxyInstanceFactory.get(
-	    		localGalaxy.getGalaxyURL(), localGalaxy.getUser2APIKey()));
+	    		localGalaxy.getGalaxyURL().toString(), localGalaxy.getUser2APIKey()));
 		
 		return localGalaxy;
 	}
@@ -108,14 +112,14 @@ public class LocalGalaxyConfig
 	    return bootStrapper;
 	}
 	
-	private GalaxyProperties setupGalaxyProperties(LocalGalaxy localGalaxy)
+	private GalaxyProperties setupGalaxyProperties(LocalGalaxy localGalaxy) throws MalformedURLException
 	{
         GalaxyProperties galaxyProperties = new GalaxyProperties().assignFreePort().configureNestedShedTools();
         galaxyProperties.prepopulateSqliteDatabase();
         galaxyProperties.setAppProperty("allow_library_path_paste", "true");
         
         int galaxyPort = galaxyProperties.getPort();
-        String galaxyURL = "http://localhost:" + galaxyPort + "/";
+        URL galaxyURL = new URL("http://localhost:" + galaxyPort + "/");
         localGalaxy.setGalaxyURL(galaxyURL);
         
 		// set wrong port to something Galaxy is not running on
@@ -124,7 +128,7 @@ public class LocalGalaxyConfig
 		{
 			wrongPort = galaxyPort - 1;
 		}
-		String wrongGalaxyURL = "http://localhost:" + wrongPort + "/";
+		URL wrongGalaxyURL = new URL("http://localhost:" + wrongPort + "/");
 		localGalaxy.setInvalidGalaxyURL(wrongGalaxyURL);
         
         return galaxyProperties;

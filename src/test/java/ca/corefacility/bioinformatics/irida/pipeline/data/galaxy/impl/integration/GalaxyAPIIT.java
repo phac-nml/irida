@@ -654,7 +654,7 @@ public class GalaxyAPIIT
 		Library returnedLibrary = galaxyAPI.buildGalaxyLibrary(libraryName, localGalaxy.getAdminName());
 		String libraryId = returnedLibrary.getId();
 		assertNotNull(libraryId);
-		expectedUploadResult = new GalaxyUploadResult(returnedLibrary, localGalaxy.getGalaxyURL());
+		expectedUploadResult = new GalaxyUploadResult(returnedLibrary, localGalaxy.getGalaxyURL().toString());
 				
 		Library library = galaxySearch.findLibraryWithId(libraryId);
 		assertNotNull(library);
@@ -734,7 +734,7 @@ public class GalaxyAPIIT
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
 		samples.add(galaxySample);
 		
-		String localGalaxyURL = localGalaxy.getGalaxyURL().substring(0,localGalaxy.getGalaxyURL().length()-1); // remove trailing '/'
+		String localGalaxyURL = localGalaxy.getGalaxyURL().toString().substring(0,localGalaxy.getGalaxyURL().toString().length()-1); // remove trailing '/'
 		
 		GalaxyUploadResult actualUploadResult = galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
 		assertNotNull(actualUploadResult);
@@ -819,7 +819,7 @@ public class GalaxyAPIIT
 	public void testUploadSamples() throws URISyntaxException, LibraryUploadException, MalformedURLException, CreateLibraryException
 	{
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSamples");
-		String localGalaxyURL = localGalaxy.getGalaxyURL().substring(0,localGalaxy.getGalaxyURL().length()-1); // remove trailing '/'
+		String localGalaxyURL = localGalaxy.getGalaxyURL().toString().substring(0,localGalaxy.getGalaxyURL().toString().length()-1); // remove trailing '/'
 		
 		List<GalaxySample> samples = new ArrayList<GalaxySample>();
 		GalaxySample galaxySample1 = new GalaxySample(new GalaxyObjectName("testData1"), dataFilesSingle);
