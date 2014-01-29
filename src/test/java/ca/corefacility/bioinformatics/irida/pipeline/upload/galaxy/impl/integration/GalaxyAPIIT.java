@@ -42,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
@@ -115,7 +116,7 @@ public class GalaxyAPIIT
 		return actualLibrary;
 	}
 	
-	private Library findLibraryByName(GalaxyObjectName libraryName, GalaxyInstance galaxyInstance)
+	private Library findLibraryByName(UploadObjectName libraryName, GalaxyInstance galaxyInstance)
 	{
 		Library actualLibrary = null;
 		List<Library> libraries = galaxyInstance.getLibrariesClient().getLibraries();

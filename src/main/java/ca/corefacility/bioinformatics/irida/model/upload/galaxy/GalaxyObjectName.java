@@ -4,12 +4,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
+
 /**
  * A name for a Galaxy object (Library, Folder) used for checking the validity of the name.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxyObjectName
+public class GalaxyObjectName implements UploadObjectName
 {
 	@NotNull(message = "{galaxy.object.notnull}")
 	@Size(min = 1, message = "{galaxy.object.size}")
@@ -21,7 +23,11 @@ public class GalaxyObjectName
 		this.objectName = objectName;
 	}
 	
-	public String getName()
+	/* (non-Javadoc)
+	 * @see ca.corefacility.bioinformatics.irida.model.upload.galaxy.UploadObjectName#getName()
+	 */
+	@Override
+    public String getName()
 	{
 		return objectName;
 	}

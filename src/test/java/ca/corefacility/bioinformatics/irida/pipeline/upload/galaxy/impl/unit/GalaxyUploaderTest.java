@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
@@ -73,5 +74,21 @@ public class GalaxyUploaderTest
 		};
 		galaxyUploader.uploadSamples(new ArrayList<GalaxySample>(), new GalaxyObjectName("lib"),
 				invalidNameType);
+	}
+	
+	@Test(expected=UploadException.class)
+	public void testUploadWithInvalidDataLibraryObject() throws ConstraintViolationException, UploadException
+	{
+		GalaxyUploader galaxyUploader = new GalaxyUploader(galaxyAPI);
+		
+		UploadObjectName invalidLibraryType = new UploadObjectName(){
+			@Override
+            public String getName()
+            {
+	            return "test";
+            }
+		};
+		galaxyUploader.uploadSamples(new ArrayList<GalaxySample>(), invalidLibraryType,
+				accountEmail);
 	}
 }

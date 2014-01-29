@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
@@ -45,7 +46,7 @@ public class GalaxySearchTest
 	private static final String INVALID_LIBRARY_ID = "0";
 	private static final GalaxyObjectName LIBRARY_NAME = new GalaxyObjectName("Test");
 	private static final GalaxyObjectName INVALID_LIBRARY_NAME = new GalaxyObjectName("InvalidTest");
-	private static final GalaxyObjectName LIBRARY_NAME_3 = new GalaxyObjectName("Test3");
+	private static final UploadObjectName LIBRARY_NAME_3 = new GalaxyObjectName("Test3");
 	private static final String LIBRARY_ID_MULTIPLE_CONTENTS = "10";
 	private static final GalaxyFolderPath FOLDER_PATH = new GalaxyFolderPath("test_folder");
 	private static final GalaxyFolderPath ILLUMINA_FOLDER_NAME = new GalaxyFolderPath("test_folder/illumina");

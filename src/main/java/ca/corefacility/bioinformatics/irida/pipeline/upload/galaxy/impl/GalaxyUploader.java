@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
@@ -106,13 +107,14 @@ public class GalaxyUploader implements Uploader
 
 	@Override
     public GalaxyUploadResult uploadSamples(@Valid List<GalaxySample> samples,
-            @Valid GalaxyObjectName dataLocation,
+            @Valid UploadObjectName dataLocation,
             @Valid UploaderAccountName userName) throws UploadException,
             ConstraintViolationException
     {
 	    GalaxyAccountEmail accountEmail = toAccountEmail(userName);
+	    GalaxyObjectName galaxyDataLibraryLocation = toGalaxyObjectName(dataLocation);
 	    
-	    return uploadSamplesInternal(samples, dataLocation, accountEmail);
+	    return uploadSamplesInternal(samples, galaxyDataLibraryLocation, accountEmail);
     }
 	
 	private GalaxyAccountEmail toAccountEmail(UploaderAccountName accountName) throws UploadException
@@ -124,6 +126,18 @@ public class GalaxyUploader implements Uploader
 		else
 		{
 			throw new UploadException("accountName not of type GalaxyAccountEmail");
+		}
+	}
+	
+	private GalaxyObjectName toGalaxyObjectName(UploadObjectName objectName) throws UploadException
+	{
+		if (objectName instanceof GalaxyObjectName)
+		{
+			return (GalaxyObjectName)objectName;
+		}
+		else
+		{
+			throw new UploadException("objectName not of type GalaxyObjectName");
 		}
 	}
 }

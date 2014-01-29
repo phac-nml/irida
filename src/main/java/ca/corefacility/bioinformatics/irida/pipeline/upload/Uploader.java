@@ -7,8 +7,8 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyUploadResult;
 
@@ -26,7 +26,7 @@ public interface Uploader
 	 */
 	public abstract GalaxyUploadResult uploadSamples(
 	        @Valid List<GalaxySample> samples,
-	        @Valid GalaxyObjectName dataLocation,
+	        @Valid UploadObjectName dataLocation,
 	        @Valid UploaderAccountName userName) throws UploadException,
 	        ConstraintViolationException;
 
