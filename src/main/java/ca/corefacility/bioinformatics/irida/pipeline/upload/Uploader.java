@@ -8,9 +8,9 @@ import javax.validation.Valid;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyUploadResult;
 
 public interface Uploader
 {
@@ -19,12 +19,12 @@ public interface Uploader
 	 * @param samples  The set of samples to upload.
 	 * @param dataLocation  The name of the data location to upload to.
 	 * @param userName  The name of the user who should own the files.
-	 * @return A GalaxyUploadResult containing information about the location of the uploaded files, or null
+	 * @return An UploadResult containing information about the location of the uploaded files, or null
 	 * 	if an error occurred.
 	 * @throws UploadException  If an error occurred.
 	 * @throws ConstraintViolationException If the samples, dataLocation or userName are invalid.
 	 */
-	public abstract GalaxyUploadResult uploadSamples(
+	public abstract UploadResult uploadSamples(
 	        @Valid List<GalaxySample> samples,
 	        @Valid UploadObjectName dataLocation,
 	        @Valid UploaderAccountName userName) throws UploadException,

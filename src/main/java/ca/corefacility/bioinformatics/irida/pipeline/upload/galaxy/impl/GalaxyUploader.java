@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
@@ -56,7 +57,7 @@ public class GalaxyUploader implements Uploader
 		logger.info("Setup connection to Galaxy with url=" + galaxyURL + ", adminEmail=" + adminEmail);
 	}
 	
-    public GalaxyUploadResult uploadSamplesInternal(@Valid List<GalaxySample> samples,
+    public UploadResult uploadSamplesInternal(@Valid List<GalaxySample> samples,
     		@Valid GalaxyObjectName libraryName,
 			@Valid GalaxyAccountEmail galaxyUserEmail)
 			throws UploadException, ConstraintViolationException
@@ -106,7 +107,7 @@ public class GalaxyUploader implements Uploader
 	}
 
 	@Override
-    public GalaxyUploadResult uploadSamples(@Valid List<GalaxySample> samples,
+    public UploadResult uploadSamples(@Valid List<GalaxySample> samples,
             @Valid UploadObjectName dataLocation,
             @Valid UploaderAccountName userName) throws UploadException,
             ConstraintViolationException

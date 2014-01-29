@@ -28,11 +28,11 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.LocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyUploadResult;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyUploader;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -100,10 +100,10 @@ public class GalaxyUploaderIT
 		GalaxySample galaxySample1 = new GalaxySample(new GalaxyObjectName("testData1"), dataFilesSingle);
 		samples.add(galaxySample1);
 		
-		GalaxyUploadResult actualUploadResult =
+		UploadResult actualUploadResult =
 				galaxyUploader.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
 		assertNotNull(actualUploadResult);
-		assertEquals(libraryName.getName(), actualUploadResult.getLibraryName());
+		assertEquals(libraryName.getName(), actualUploadResult.getLocationName());
 		assertEquals(new URL(localGalaxyURL + "/library"), actualUploadResult.getDataLocation());
 	}
 	

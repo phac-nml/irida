@@ -1,13 +1,15 @@
-package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl;
+package ca.corefacility.bioinformatics.irida.model.upload.galaxy;
 
 import static com.google.common.base.Preconditions.*;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
+
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 
-public class GalaxyUploadResult
+public class GalaxyUploadResult implements UploadResult
 {
 	private String libraryId;
 	private String libraryName;
@@ -61,7 +63,11 @@ public class GalaxyUploadResult
 		return libraryAPIURL;
 	}
 	
-	public URL getDataLocation()
+	/* (non-Javadoc)
+	 * @see ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.UploadResult#getDataLocation()
+	 */
+	@Override
+    public URL getDataLocation()
 	{
 		return sharedDataURL;
 	}
@@ -71,7 +77,11 @@ public class GalaxyUploadResult
 		return libraryId;
 	}
 	
-	public String getLibraryName()
+	/* (non-Javadoc)
+	 * @see ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.UploadResult#getLibraryName()
+	 */
+	@Override
+    public String getLocationName()
 	{
 		return libraryName;
 	}
