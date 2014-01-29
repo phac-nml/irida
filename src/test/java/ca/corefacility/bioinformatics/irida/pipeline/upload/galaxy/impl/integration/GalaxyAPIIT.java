@@ -44,6 +44,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadExcep
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
@@ -326,8 +327,8 @@ public class GalaxyAPIIT
 	{
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleRegularUser");
 		
-		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
 		
 		assertNotNull(galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getUser1Name()));
@@ -392,8 +393,8 @@ public class GalaxyAPIIT
 	{
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleAdminUser");
 		
-		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
 		
 		assertNotNull(galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
@@ -454,8 +455,8 @@ public class GalaxyAPIIT
 		
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleNoLink");
 		
-		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
 		
 		assertNotNull(galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getUser1Name()));
@@ -504,8 +505,8 @@ public class GalaxyAPIIT
 		dataFilesSingle = new ArrayList<Path>();
 		dataFilesSingle.add(dataFileTemp1);
 		
-		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
 		
 		assertNotNull(galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getUser1Name()));
@@ -557,8 +558,8 @@ public class GalaxyAPIIT
 	public void testUploadSampleWrongUser() throws URISyntaxException, LibraryUploadException, CreateLibraryException
 	{	
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleWrongUser");
-		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
 		
 		galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getNonExistentGalaxyUserName());
@@ -569,8 +570,8 @@ public class GalaxyAPIIT
 	{	
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleInvalidUserName");
 		GalaxyAccountEmail userEmail = new GalaxyAccountEmail("invalid_user");
-		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
 		
 		galaxyAPI.uploadSamples(samples, libraryName, userEmail);
@@ -580,8 +581,8 @@ public class GalaxyAPIIT
 	public void testUploadSampleInvalidSampleName() throws URISyntaxException, LibraryUploadException, CreateLibraryException
 	{	
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleInvalidSampleName");
-		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("<invalidSample>"), dataFilesSingle);
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName("<invalidSample>"), dataFilesSingle);
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
 		
 		galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getUser1Name());
@@ -591,8 +592,8 @@ public class GalaxyAPIIT
 	public void testUploadSampleInvalidLibraryName() throws URISyntaxException, LibraryUploadException, CreateLibraryException
 	{	
 		GalaxyObjectName libraryName = new GalaxyObjectName("<invalidLibrary>");
-		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
 		
 		galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getUser1Name());
@@ -603,8 +604,8 @@ public class GalaxyAPIIT
 	{
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleMultipleFile");
 		
-		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesDouble);
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesDouble);
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
 		
 		assertNotNull(galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
@@ -688,8 +689,8 @@ public class GalaxyAPIIT
 		assertEquals("The number of references folders is not one", 1, referencesFolderCount);
 		
 		// attempt to upload to this above data library, should not create duplicate library nor duplicate sample folder
-		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesDouble);
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesDouble);
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
 		
 		UploadResult actualUploadResult = galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
@@ -734,8 +735,8 @@ public class GalaxyAPIIT
 	{
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleOneFileAlreadyExists");
 		
-		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
 		
 		String localGalaxyURL = localGalaxy.getGalaxyURL().toString().substring(0,localGalaxy.getGalaxyURL().toString().length()-1); // remove trailing '/'
@@ -769,7 +770,7 @@ public class GalaxyAPIIT
 		
 		// now attempt to upload dataFilesDouble with two files, only one file should upload		
 		galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesDouble);
-		samples = new ArrayList<GalaxySample>();
+		samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
 		
 		// make sure both libraries are the same
@@ -825,7 +826,7 @@ public class GalaxyAPIIT
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSamples");
 		String localGalaxyURL = localGalaxy.getGalaxyURL().toString().substring(0,localGalaxy.getGalaxyURL().toString().length()-1); // remove trailing '/'
 		
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		GalaxySample galaxySample1 = new GalaxySample(new GalaxyObjectName("testData1"), dataFilesSingle);
 		GalaxySample galaxySample2 = new GalaxySample(new GalaxyObjectName("testData2"), dataFilesSingle);
 		samples.add(galaxySample1);

@@ -2,6 +2,11 @@ package ca.corefacility.bioinformatics.irida.model.upload;
 
 import java.net.URL;
 
+/**
+ * An interface for accessing information about the result of an upload.
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ */
 public interface UploadResult
 {
 	/**

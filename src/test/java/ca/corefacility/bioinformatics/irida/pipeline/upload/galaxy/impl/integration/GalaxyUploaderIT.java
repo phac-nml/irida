@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.LocalGal
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
@@ -73,7 +74,7 @@ public class GalaxyUploaderIT
 		
 		GalaxyObjectName libraryName = new GalaxyObjectName("GalaxyUploader_testNoGalaxyConnection");
 		
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		GalaxySample galaxySample1 = new GalaxySample(new GalaxyObjectName("testData1"), dataFilesSingle);
 		samples.add(galaxySample1);
 		
@@ -96,7 +97,7 @@ public class GalaxyUploaderIT
 		String localGalaxyURL = localGalaxy.getGalaxyURL().toString().substring(0,localGalaxy.getGalaxyURL()
 				.toString().length()-1); // remove trailing '/'
 		
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		GalaxySample galaxySample1 = new GalaxySample(new GalaxyObjectName("testData1"), dataFilesSingle);
 		samples.add(galaxySample1);
 		
@@ -113,7 +114,7 @@ public class GalaxyUploaderIT
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleInvalidUserName");
 		GalaxyAccountEmail userEmail = new GalaxyAccountEmail("invalid_user");
 		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
 		
 		galaxyUploader.uploadSamples(samples, libraryName, userEmail);
@@ -124,7 +125,7 @@ public class GalaxyUploaderIT
 	{	
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleInvalidSampleName");
 		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("<invalidSample>"), dataFilesSingle);
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
 		
 		galaxyUploader.uploadSamples(samples, libraryName, localGalaxy.getUser1Name());
@@ -135,7 +136,7 @@ public class GalaxyUploaderIT
 	{	
 		GalaxyObjectName libraryName = new GalaxyObjectName("<invalidLibrary>");
 		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
 		
 		galaxyUploader.uploadSamples(samples, libraryName, localGalaxy.getUser1Name());

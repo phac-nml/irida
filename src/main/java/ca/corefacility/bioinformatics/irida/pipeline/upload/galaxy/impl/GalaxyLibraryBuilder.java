@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
 
@@ -104,7 +105,7 @@ public class GalaxyLibraryBuilder
 	 * @return  A LibraryFolder object representing this folder, or null if no folder could be created.
 	 */
 	public LibraryFolder createLibraryFolder(Library library, LibraryFolder libraryFolder,
-			@Valid GalaxyObjectName folderName)
+			@Valid UploadObjectName folderName)
 	{
 		checkNotNull(library, "library is null");
 		checkNotNull(libraryFolder, "libraryFolder is null");

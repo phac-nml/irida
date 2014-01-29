@@ -19,10 +19,10 @@ import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
@@ -208,7 +208,7 @@ public class GalaxyAPI
 		return librariesClient.uploadFilesystemPathsRequest(library.getId(), upload);
 	}
 	
-	private String samplePath(LibraryFolder rootFolder, GalaxySample sample)
+	private String samplePath(LibraryFolder rootFolder, UploadSample sample)
 	{
 		String rootFolderName;
 		if (rootFolder.getName().startsWith("/"))
@@ -223,7 +223,7 @@ public class GalaxyAPI
 		return String.format("/%s/%s", rootFolderName, sample.getSampleName());
 	}
 	
-	private String samplePath(LibraryFolder rootFolder, GalaxySample sample, File file)
+	private String samplePath(LibraryFolder rootFolder, UploadSample sample, File file)
 	{
 		String rootFolderName;
 		if (rootFolder.getName().startsWith("/"))
@@ -238,7 +238,7 @@ public class GalaxyAPI
 		return String.format("/%s/%s/%s", rootFolderName, sample.getSampleName(), file.getName());
 	}
 	
-	private boolean uploadSample(GalaxySample sample, LibraryFolder rootFolder, LibrariesClient librariesClient,
+	private boolean uploadSample(UploadSample sample, LibraryFolder rootFolder, LibrariesClient librariesClient,
 			Library library, Map<String,LibraryContent> libraryMap, String errorSuffix) throws LibraryUploadException
 	{
 		boolean success = false;
@@ -317,7 +317,7 @@ public class GalaxyAPI
 	 * @throws CreateLibraryException If there was an error creating the folder structure for the library.
 	 * @throws ConstraintViolationException  If the samples, libraryName or galaxyUserEmail are invalid.
 	 */
-	public GalaxyUploadResult uploadSamples(@Valid List<GalaxySample> samples, @Valid GalaxyObjectName libraryName,
+	public GalaxyUploadResult uploadSamples(@Valid List<UploadSample> samples, @Valid GalaxyObjectName libraryName,
 			@Valid GalaxyAccountEmail galaxyUserEmail)
 			throws LibraryUploadException, CreateLibraryException, ConstraintViolationException
 	{
@@ -369,7 +369,7 @@ public class GalaxyAPI
 	 * @throws LibraryUploadException If there was an error uploading files to the library.
 	 * @throws ConstraintViolationException  If one of the GalaxySamples is invalid.
 	 */
-	public boolean uploadFilesToLibrary(@Valid List<GalaxySample> samples, String libraryID)
+	public boolean uploadFilesToLibrary(@Valid List<UploadSample> samples, String libraryID)
 			throws LibraryUploadException, ConstraintViolationException
 	{
 		checkNotNull(samples, "samples are null");
@@ -420,7 +420,7 @@ public class GalaxyAPI
 					}
 				}
 				
-				for (GalaxySample sample : samples)
+				for (UploadSample sample : samples)
 				{					
 					if (sample != null)
 					{

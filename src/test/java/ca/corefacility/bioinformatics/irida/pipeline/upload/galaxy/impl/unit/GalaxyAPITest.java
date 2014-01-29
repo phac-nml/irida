@@ -24,7 +24,9 @@ import org.mockito.MockitoAnnotations;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
@@ -168,7 +170,7 @@ public class GalaxyAPITest
 		when(galaxySearch.libraryContentAsMap(libraryId)).thenReturn(libraryMap);
 	}
 	
-	private void setupUploadSampleToLibrary(List<GalaxySample> samples, List<LibraryFolder> folders,
+	private void setupUploadSampleToLibrary(List<UploadSample> samples, List<LibraryFolder> folders,
 			boolean libraryExists) throws CreateLibraryException, MalformedURLException
 	{
 		if (libraryExists)
@@ -188,10 +190,10 @@ public class GalaxyAPITest
 			
 		for (int i = 0; i < samples.size(); i++)
 		{
-			GalaxySample sample = samples.get(i);
+			UploadSample sample = samples.get(i);
 			LibraryFolder folder = folders.get(i);
 			
-			GalaxyObjectName sampleName = sample.getSampleName();
+			UploadObjectName sampleName = sample.getSampleName();
 			
 			when(galaxyLibrary.createLibraryFolder(any(Library.class), any(LibraryFolder.class), eq(sampleName))).thenReturn(folder);
 		}
@@ -344,7 +346,7 @@ public class GalaxyAPITest
 		
 		String sampleFolderId = "3";
 		
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
 		samples.add(galaxySample);
 		
@@ -372,7 +374,7 @@ public class GalaxyAPITest
 		
 		String sampleFolderId = "3";
 		
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
 		samples.add(galaxySample);
 		
@@ -410,7 +412,7 @@ public class GalaxyAPITest
 		String sampleFolderId = "3";
 		String fileId = "4";
 		
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
 		samples.add(galaxySample);
 		
@@ -454,7 +456,7 @@ public class GalaxyAPITest
 		String sampleFolderId = "3";
 		String fileId = "4";
 		
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesDouble);
 		samples.add(galaxySample);
 		
@@ -497,7 +499,7 @@ public class GalaxyAPITest
 		
 		String sampleFolderId = "3";
 		
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
 		samples.add(galaxySample);
 		
@@ -526,7 +528,7 @@ public class GalaxyAPITest
 		
 		String sampleFolderId = "3";
 		
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
 		samples.add(galaxySample);
 		
@@ -555,7 +557,7 @@ public class GalaxyAPITest
 		
 		String sampleFolderId = "3";
 		
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
 		samples.add(galaxySample);
 		
@@ -586,7 +588,7 @@ public class GalaxyAPITest
 		String sampleFolderId1 = "3";
 		String sampleFolderId2 = "4";
 		
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		GalaxySample galaxySample1 = new GalaxySample(new GalaxyObjectName("testData1"), dataFilesSingle);		
 		GalaxySample galaxySample2 = new GalaxySample(new GalaxyObjectName("testData2"), dataFilesSingle);
 		samples.add(galaxySample1);
@@ -623,7 +625,7 @@ public class GalaxyAPITest
 		
 		String sampleFolderId = "3";
 		
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesDouble);
 		samples.add(galaxySample);
 
@@ -652,7 +654,7 @@ public class GalaxyAPITest
 		
 		String sampleFolderId = "3";
 		
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
 		samples.add(galaxySample);
 		
@@ -684,7 +686,7 @@ public class GalaxyAPITest
 		
 		String sampleFolderId = "3";
 		
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
 		samples.add(galaxySample);
 		
@@ -716,7 +718,7 @@ public class GalaxyAPITest
 		
 		String sampleFolderId = "3";
 		
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
 		samples.add(galaxySample);
 		
@@ -738,7 +740,7 @@ public class GalaxyAPITest
 		
 		String sampleFolderId = "3";
 		
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
 		samples.add(galaxySample);
 		
@@ -759,7 +761,7 @@ public class GalaxyAPITest
 	{
 		setupLibraryFolders();
 		
-		List<GalaxySample> samples = new ArrayList<GalaxySample>();
+		List<UploadSample> samples = new ArrayList<UploadSample>();
 		List<LibraryFolder> folders = new ArrayList<LibraryFolder>();
 		
 		setupUploadSampleToLibrary(samples, folders, false);

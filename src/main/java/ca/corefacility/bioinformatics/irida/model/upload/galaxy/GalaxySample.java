@@ -7,18 +7,21 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
+
 /**
  * Represents a Sample to be uploaded to Galaxy
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxySample
+public class GalaxySample implements UploadSample
 {
 	@Valid
-	private GalaxyObjectName sampleName;
+	private UploadObjectName sampleName;
 	private List<Path> sampleFiles;
 	
-	public GalaxySample(GalaxyObjectName sampleName, List<Path> sampleFiles)
+	public GalaxySample(UploadObjectName sampleName, List<Path> sampleFiles)
 	{
 		checkNotNull(sampleName, "sampleName is null");
 		checkNotNull(sampleFiles, "sampleFiles is null");
@@ -27,19 +30,35 @@ public class GalaxySample
 		this.sampleFiles = sampleFiles;
 	}
 	
-	public GalaxyObjectName getSampleName()
+	/* (non-Javadoc)
+	 * @see ca.corefacility.bioinformatics.irida.model.upload.galaxy.UploadSample#getSampleName()
+	 */
+	@Override
+    public UploadObjectName getSampleName()
 	{
 		return sampleName;
 	}
-	public void setSampleName(GalaxyObjectName sampleName)
+	/* (non-Javadoc)
+	 * @see ca.corefacility.bioinformatics.irida.model.upload.galaxy.UploadSample#setSampleName(ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName)
+	 */
+	@Override
+    public void setSampleName(UploadObjectName sampleName)
 	{
 		this.sampleName = sampleName;
 	}
-	public List<Path> getSampleFiles()
+	/* (non-Javadoc)
+	 * @see ca.corefacility.bioinformatics.irida.model.upload.galaxy.UploadSample#getSampleFiles()
+	 */
+	@Override
+    public List<Path> getSampleFiles()
 	{
 		return sampleFiles;
 	}
-	public void setSampleFiles(List<Path> sampleFiles)
+	/* (non-Javadoc)
+	 * @see ca.corefacility.bioinformatics.irida.model.upload.galaxy.UploadSample#setSampleFiles(java.util.List)
+	 */
+	@Override
+    public void setSampleFiles(List<Path> sampleFiles)
 	{
 		checkNotNull(sampleFiles, "sampleFiles are null");
 		this.sampleFiles = sampleFiles;

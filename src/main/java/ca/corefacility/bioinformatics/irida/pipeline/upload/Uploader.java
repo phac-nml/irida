@@ -9,8 +9,8 @@ import javax.validation.Valid;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 
 public interface Uploader
 {
@@ -25,7 +25,7 @@ public interface Uploader
 	 * @throws ConstraintViolationException If the samples, dataLocation or userName are invalid.
 	 */
 	public abstract UploadResult uploadSamples(
-	        @Valid List<GalaxySample> samples,
+	        @Valid List<UploadSample> samples,
 	        @Valid UploadObjectName dataLocation,
 	        @Valid UploaderAccountName userName) throws UploadException,
 	        ConstraintViolationException;

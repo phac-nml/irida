@@ -13,10 +13,10 @@ import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyUploader;
 
@@ -72,7 +72,7 @@ public class GalaxyUploaderTest
 	            return "test";
             }
 		};
-		galaxyUploader.uploadSamples(new ArrayList<GalaxySample>(), new GalaxyObjectName("lib"),
+		galaxyUploader.uploadSamples(new ArrayList<UploadSample>(), new GalaxyObjectName("lib"),
 				invalidNameType);
 	}
 	
@@ -88,7 +88,7 @@ public class GalaxyUploaderTest
 	            return "test";
             }
 		};
-		galaxyUploader.uploadSamples(new ArrayList<GalaxySample>(), invalidLibraryType,
+		galaxyUploader.uploadSamples(new ArrayList<UploadSample>(), invalidLibraryType,
 				accountEmail);
 	}
 }
