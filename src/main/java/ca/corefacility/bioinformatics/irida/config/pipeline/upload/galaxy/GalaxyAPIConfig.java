@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy;
+package ca.corefacility.bioinformatics.irida.config.pipeline.upload.galaxy;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -18,6 +18,7 @@ import org.springframework.core.env.Environment;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyUploader;
 
 @Configuration
@@ -38,7 +39,7 @@ public class GalaxyAPIConfig
 	private Validator validator;
 	
 	@Bean
-	public GalaxyUploader galaxyUploader()
+	public Uploader galaxyUploader()
 	{
 		GalaxyUploader galaxyUploader = new GalaxyUploader();
 		

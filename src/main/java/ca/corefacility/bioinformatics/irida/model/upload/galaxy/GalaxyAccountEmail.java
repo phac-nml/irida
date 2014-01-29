@@ -5,12 +5,14 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
 
+import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
+
 /**
  * A GalaxyAccount object for storing credentials for an account in Galaxy.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxyAccountEmail
+public class GalaxyAccountEmail implements UploaderAccountName
 {
 	@NotNull(message = "{galaxy.user.email.notnull}")
 	@Size(min = 5, message = "{galaxy.user.email.size}")
@@ -22,7 +24,8 @@ public class GalaxyAccountEmail
 		this.galaxyAccountEmail = galaxyAccountEmail;
 	}
 	
-	public String getAccountEmail()
+	@Override
+    public String getName()
 	{
 		return galaxyAccountEmail;
 	}

@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.integration;
+package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.integration;
 
 import java.io.BufferedReader;
 import java.io.File;

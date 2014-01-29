@@ -24,9 +24,10 @@ import com.github.jmchilton.galaxybootstrap.GalaxyData.User;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
-import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.integration.LocalGalaxy;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyUploader;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.integration.LocalGalaxy;
 
 @Configuration
 @Profile("test")
@@ -37,7 +38,7 @@ public class LocalGalaxyConfig
 	private static final int largestPort = 65535;
 	
 	@Lazy @Bean
-	public GalaxyUploader galaxyUploader() throws MalformedURLException, ConstraintViolationException, UploadException
+	public Uploader galaxyUploader() throws MalformedURLException, ConstraintViolationException, UploadException
 	{
 		GalaxyUploader galaxyUploader = new GalaxyUploader();
 		galaxyUploader.setupGalaxyAPI(localGalaxy().getGalaxyURL(), localGalaxy().getAdminName(),
@@ -139,15 +140,15 @@ public class LocalGalaxyConfig
 	{
 		GalaxyProperties galaxyProperties = localGalaxy.getGalaxyProperties();
 		
-	    User adminUser = new User(localGalaxy.getAdminName().getAccountEmail());
+	    User adminUser = new User(localGalaxy.getAdminName().getName());
 	    adminUser.setPassword(localGalaxy.getAdminPassword());
 	    localGalaxy.setAdminAPIKey(adminUser.getApiKey());
 	    
-	    User user1 = new User(localGalaxy.getUser1Name().getAccountEmail());
+	    User user1 = new User(localGalaxy.getUser1Name().getName());
 	    user1.setPassword(localGalaxy.getUser1Password());
 	    localGalaxy.setUser1APIKey(user1.getApiKey());
 	    
-	    User user2 = new User(localGalaxy.getUser2Name().getAccountEmail());
+	    User user2 = new User(localGalaxy.getUser2Name().getName());
 	    user2.setPassword(localGalaxy.getUser2Password());
 	    localGalaxy.setUser2APIKey(user2.getApiKey());
 	    
@@ -173,11 +174,11 @@ public class LocalGalaxyConfig
 		File galaxyLogFile = new File(bootStrapper.getPath() + File.separator + "paster.log");
 		
   		logger.info("Setting up Galaxy");
-		logger.debug(generateUserString("admin",localGalaxy.getAdminName().getAccountEmail(),
+		logger.debug(generateUserString("admin",localGalaxy.getAdminName().getName(),
 				localGalaxy.getAdminPassword(), localGalaxy.getAdminAPIKey()));
-		logger.debug(generateUserString("user1",localGalaxy.getUser1Name().getAccountEmail(),
+		logger.debug(generateUserString("user1",localGalaxy.getUser1Name().getName(),
 				localGalaxy.getUser1Password(), localGalaxy.getUser1APIKey()));
-		logger.debug(generateUserString("user2",localGalaxy.getUser2Name().getAccountEmail(),
+		logger.debug(generateUserString("user2",localGalaxy.getUser2Name().getName(),
 				localGalaxy.getUser2Password(), localGalaxy.getUser2APIKey()));
 		   
 		galaxyDaemon = bootStrapper.run(galaxyProperties, galaxyData);

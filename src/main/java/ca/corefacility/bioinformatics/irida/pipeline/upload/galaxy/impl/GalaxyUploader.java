@@ -12,21 +12,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 
 /**
  * An uploader for deciding whether or not to upload sample files into Galaxy
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxyUploader
+public class GalaxyUploader implements Uploader
 {
 	private static final Logger logger = LoggerFactory.getLogger(GalaxyUploader.class);
 	
 	private GalaxyAPI galaxyAPI = null;
 	private boolean linkFiles = false;
+	
+	public GalaxyUploader(){}
+	
+	/**
+	 * Builds a new GalaxyUploader with the given GalaxyAPI.
+	 * @param galaxyAPI  The GalaxyAPI to build the uploader with.
+	 */
+	public GalaxyUploader(GalaxyAPI galaxyAPI)
+	{
+		checkNotNull(galaxyAPI, "galaxyAPI is not null");
+		
+		this.galaxyAPI = galaxyAPI;
+	}
 	
 	public void setupGalaxyAPI(URL galaxyURL, @Valid GalaxyAccountEmail adminEmail, String adminAPIKey) throws ConstraintViolationException, UploadException
 	{
@@ -40,17 +55,8 @@ public class GalaxyUploader
 		logger.info("Setup connection to Galaxy with url=" + galaxyURL + ", adminEmail=" + adminEmail);
 	}
 	
-	/**
-	 * Uploads the given list of samples to the passed Galaxy library with the passed Galaxy user.
-	 * @param samples  The set of samples to upload.
-	 * @param libraryName  The name of the library to upload to.
-	 * @param galaxyUser  The name of the Galaxy user who should own the files.
-	 * @return A GalaxyUploadResult containing information about the location of the uploaded files, or null
-	 * 	if an error occurred.
-	 * @throws UploadException  If an error occurred.
-	 * @throws ConstraintViolationException If the samples, libraryName or galaxyUserEmail are invalid.
-	 */
-	public GalaxyUploadResult uploadSamples(@Valid List<GalaxySample> samples, @Valid GalaxyObjectName libraryName,
+    public GalaxyUploadResult uploadSamplesInternal(@Valid List<GalaxySample> samples,
+    		@Valid GalaxyObjectName libraryName,
 			@Valid GalaxyAccountEmail galaxyUserEmail)
 			throws UploadException, ConstraintViolationException
 	{
@@ -68,21 +74,15 @@ public class GalaxyUploader
 			return galaxyAPI.uploadSamples(samples, libraryName, galaxyUserEmail);
 		}
 	}
-	
-	/**
-	 * @return  Whether or not this uploader is connected to an instance of Galaxy.
-	 */
-	public boolean isConnected()
+    
+	@Override
+    public boolean isConnected()
 	{
 		return galaxyAPI != null;
 	}
 
-	/**
-	 * Sets a parameter to link up files within Galaxy (assumes files exist on same filesystem),
-	 *  or copy the uploaded files.
-	 * @param linkFiles  True if files should be linked, false otherwise.
-	 */
-	public void setLinkUploadedFiles(boolean linkFiles)
+	@Override
+    public void setLinkUploadedFiles(boolean linkFiles)
     {
 	    this.linkFiles = linkFiles;
 	    if (galaxyAPI != null)
@@ -91,11 +91,8 @@ public class GalaxyUploader
 	    }
     }
 	
-	/**
-	 * Gets the URL of the connected Galaxy instance.
-	 * @return  The URL of the connected Galaxy instance
-	 */
-	public URL getGalaxyUrl()
+	@Override
+    public URL getUrl()
 	{
 		if (galaxyAPI != null)
 		{
@@ -104,6 +101,29 @@ public class GalaxyUploader
 		else
 		{
 			throw new RuntimeException("Uploader is not connected to any instance of Galaxy");
+		}
+	}
+
+	@Override
+    public GalaxyUploadResult uploadSamples(@Valid List<GalaxySample> samples,
+            @Valid GalaxyObjectName dataLocation,
+            @Valid UploaderAccountName userName) throws UploadException,
+            ConstraintViolationException
+    {
+	    GalaxyAccountEmail accountEmail = toAccountEmail(userName);
+	    
+	    return uploadSamplesInternal(samples, dataLocation, accountEmail);
+    }
+	
+	private GalaxyAccountEmail toAccountEmail(UploaderAccountName accountName) throws UploadException
+	{
+		if (accountName instanceof GalaxyAccountEmail)
+		{
+			return (GalaxyAccountEmail)accountName;
+		}
+		else
+		{
+			throw new UploadException("accountName not of type GalaxyAccountEmail");
 		}
 	}
 }

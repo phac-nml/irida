@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.integration;
+package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.integration;
 
 import static org.junit.Assert.*;
 
@@ -31,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyUploadResult;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyUploader;
 
@@ -47,7 +48,7 @@ public class GalaxyUploaderIT
 	private LocalGalaxy localGalaxy;
 	
 	@Autowired
-	private GalaxyUploader galaxyUploader;
+	private Uploader galaxyUploader;
 	
 	private List<Path> dataFilesSingle;
 	
@@ -68,7 +69,7 @@ public class GalaxyUploaderIT
 	@Test(expected=UploadException.class)
 	public void testNoGalaxyConnectionUpload() throws ConstraintViolationException, UploadException
 	{
-		GalaxyUploader unconnectedGalaxyUploader = new GalaxyUploader();
+		Uploader unconnectedGalaxyUploader = new GalaxyUploader();
 		
 		GalaxyObjectName libraryName = new GalaxyObjectName("GalaxyUploader_testNoGalaxyConnection");
 		
@@ -82,7 +83,7 @@ public class GalaxyUploaderIT
 	@Test
 	public void testCheckGalaxyConnection() throws ConstraintViolationException, UploadException
 	{
-		GalaxyUploader unconnectedGalaxyUploader = new GalaxyUploader();
+		Uploader unconnectedGalaxyUploader = new GalaxyUploader();
 
 		assertTrue(galaxyUploader.isConnected());
 		assertFalse(unconnectedGalaxyUploader.isConnected());

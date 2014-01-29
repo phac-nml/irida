@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.unit;
+package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.unit;
 
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;

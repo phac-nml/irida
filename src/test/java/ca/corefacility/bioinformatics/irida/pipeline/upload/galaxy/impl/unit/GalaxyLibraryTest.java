@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.unit;
+package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.unit;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -79,10 +79,10 @@ public class GalaxyLibraryTest
 	private void setupPermissionsTest()
 	{
 		Role userRole = new Role();
-		userRole.setName(USER_EMAIL.getAccountEmail());
+		userRole.setName(USER_EMAIL.getName());
 		
 		Role adminRole = new Role();
-		adminRole.setName(ADMIN_EMAIL.getAccountEmail());
+		adminRole.setName(ADMIN_EMAIL.getName());
 		
 		when(galaxySearch.findUserRoleWithEmail(USER_EMAIL)).thenReturn(userRole);
 		when(galaxySearch.findUserRoleWithEmail(ADMIN_EMAIL)).thenReturn(adminRole);

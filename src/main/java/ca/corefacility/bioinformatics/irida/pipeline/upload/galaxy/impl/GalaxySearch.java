@@ -62,7 +62,7 @@ public class GalaxySearch
 		{
 			for (Role curr : rolesClient.getRoles())
 			{
-				if (email.getAccountEmail().equals(curr.getName()))
+				if (email.getName().equals(curr.getName()))
 				{
 					role = curr;
 					break;
@@ -89,7 +89,7 @@ public class GalaxySearch
 		{
 			for (User curr : usersClient.getUsers())
 			{
-				if (email.getAccountEmail().equals(curr.getEmail()))
+				if (email.getName().equals(curr.getEmail()))
 				{
 					user = curr;
 					break;

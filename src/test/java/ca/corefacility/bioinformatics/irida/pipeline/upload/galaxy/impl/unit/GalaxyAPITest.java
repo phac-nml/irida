@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.unit;
+package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.unit;
 
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
@@ -119,14 +119,14 @@ public class GalaxyAPITest
 		expectedUploadResult = new GalaxyUploadResult(returnedLibrary, galaxyURL);
 		
 		User realUser = new User();
-		realUser.setEmail(realUserEmail.getAccountEmail());
+		realUser.setEmail(realUserEmail.getName());
 		
 		Role realUserRole = new Role();
-		realUserRole.setName(realUserEmail.getAccountEmail());
+		realUserRole.setName(realUserEmail.getName());
 		realUserRole.setId(realRoleId);
 		
 		Role realAdminRole = new Role();
-		realAdminRole.setName(realAdminEmail.getAccountEmail());
+		realAdminRole.setName(realAdminEmail.getName());
 		realAdminRole.setId(adminRoleId);
 		
 		when(galaxySearch.findUserWithEmail(realUserEmail)).thenReturn(realUser);
@@ -149,14 +149,14 @@ public class GalaxyAPITest
 		expectedUploadResult = new GalaxyUploadResult(existingLibrary, galaxyURL);
 				
 		User realUser = new User();
-		realUser.setEmail(realUserEmail.getAccountEmail());
+		realUser.setEmail(realUserEmail.getName());
 		
 		Role realUserRole = new Role();
-		realUserRole.setName(realUserEmail.getAccountEmail());
+		realUserRole.setName(realUserEmail.getName());
 		realUserRole.setId(realRoleId);
 		
 		Role realAdminRole = new Role();
-		realAdminRole.setName(realAdminEmail.getAccountEmail());
+		realAdminRole.setName(realAdminEmail.getName());
 		realAdminRole.setId(adminRoleId);
 		
 		when(galaxySearch.findUserWithEmail(realUserEmail)).thenReturn(realUser);

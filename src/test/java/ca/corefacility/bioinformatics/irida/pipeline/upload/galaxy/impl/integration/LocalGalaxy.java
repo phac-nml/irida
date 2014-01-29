@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.integration;
+package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.integration;
 
 import java.net.URL;
 
@@ -7,6 +7,7 @@ import javax.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
@@ -33,14 +34,14 @@ public class LocalGalaxy
 	private String user1Password;
 	private String user1APIKey;
 	
-	private GalaxyAccountEmail user2Name;
+	private UploaderAccountName user2Name;
 	private String user2Password;
 	private String user2APIKey;
 	
 	private GalaxyAccountEmail nonExistentGalaxyAdminName;
 	private GalaxyAccountEmail nonExistentGalaxyUserName;
 	
-	private GalaxyAccountEmail invalidGalaxyUserName;
+	private UploaderAccountName invalidGalaxyUserName;
 	
 	private GalaxyInstance galaxyInstanceAdmin;
 	private GalaxyInstance galaxyInstanceUser1;
@@ -127,12 +128,12 @@ public class LocalGalaxy
 		user1APIKey = user1apiKey;
 	}
 	
-	public GalaxyAccountEmail getUser2Name()
+	public UploaderAccountName getUser2Name()
 	{
 		return user2Name;
 	}
 	
-	public void setUser2Name(GalaxyAccountEmail user2Name)
+	public void setUser2Name(UploaderAccountName user2Name)
 	{
 		this.user2Name = user2Name;
 	}
@@ -247,12 +248,12 @@ public class LocalGalaxy
 		this.invalidGalaxyURL = invalidGalaxyURL;
 	}
 
-	public GalaxyAccountEmail getInvalidGalaxyUserName()
+	public UploaderAccountName getInvalidGalaxyUserName()
 	{
 		return invalidGalaxyUserName;
 	}
 
-	public void setInvalidGalaxyUserName(GalaxyAccountEmail invalidGalaxyUserName)
+	public void setInvalidGalaxyUserName(UploaderAccountName invalidGalaxyUserName)
 	{
 		this.invalidGalaxyUserName = invalidGalaxyUserName;
 	}

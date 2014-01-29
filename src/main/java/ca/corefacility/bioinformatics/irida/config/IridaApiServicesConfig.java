@@ -11,7 +11,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.GalaxyAPIConfig;
+import ca.corefacility.bioinformatics.irida.config.pipeline.upload.galaxy.GalaxyAPIConfig;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
