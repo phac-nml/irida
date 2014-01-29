@@ -15,7 +15,9 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
@@ -30,6 +32,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
 import com.github.jmchilton.blend4j.galaxy.beans.User;
+import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 
 public class GalaxyAPI
@@ -53,9 +56,10 @@ public class GalaxyAPI
 	 * @param adminEmail  An administrators email address for the Galaxy instance.
 	 * @param adminAPIKey  A corresponding administrators API key for the Galaxy instance.
 	 * @throws ConstraintViolationException  If the adminEmail is invalid.
+	 * @throws UploadException 
 	 */
 	public GalaxyAPI(URL galaxyURL, @Valid GalaxyAccountEmail adminEmail, String adminAPIKey)
-		throws ConstraintViolationException
+		throws ConstraintViolationException, UploadException
 	{
 		checkNotNull(galaxyURL, "galaxyURL is null");
 		checkNotNull(adminEmail, "adminEmail is null");
@@ -75,7 +79,7 @@ public class GalaxyAPI
 		
 		if (!galaxySearch.checkValidAdminEmailAPIKey(adminEmail, adminAPIKey))
 		{
-			throw new RuntimeException("Could not create GalaxyInstance with URL=" + 
+			throw new GalaxyConnectException("Could not create GalaxyInstance with URL=" + 
 					galaxyURL + ", adminEmail=" + adminEmail);
 		}
 	}
@@ -85,9 +89,10 @@ public class GalaxyAPI
 	 * @param galaxyInstance  A GalaxyInstance object pointing to the correct Galaxy location.
 	 * @param adminEmail  The administrators email address for the corresponding API key within the GalaxyInstance.
 	 * @throws ConstraintViolationException  If the adminEmail is invalid.
+	 * @throws GalaxyConnectException If an issue connecting to Galaxy occurred.
 	 */
 	public GalaxyAPI(GalaxyInstance galaxyInstance, @Valid GalaxyAccountEmail adminEmail)
-	throws ConstraintViolationException
+	throws ConstraintViolationException, GalaxyConnectException
 	{
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
 		checkNotNull(adminEmail, "adminEmail is null");
@@ -100,7 +105,7 @@ public class GalaxyAPI
 		
 		if (!galaxySearch.checkValidAdminEmailAPIKey(adminEmail, galaxyInstance.getApiKey()))
 		{
-			throw new RuntimeException("Could not create GalaxyInstance with URL=" + 
+			throw new GalaxyConnectException("Could not create GalaxyInstance with URL=" + 
 					galaxyInstance.getGalaxyUrl() + ", adminEmail=" + adminEmail);
 		}
 	}
@@ -114,10 +119,11 @@ public class GalaxyAPI
 	 * @param galaxySearch  A GalaxySearch object.
 	 * @param galaxyLibrary  A GalaxyLibrary object.
 	 * @throws ConstraintViolationException  If the adminEmail is invalid.
+	 * @throws GalaxyConnectException If an issue connecting to Galaxy occurred.
 	 */
 	public GalaxyAPI(GalaxyInstance galaxyInstance, @Valid GalaxyAccountEmail adminEmail,
 			GalaxySearch galaxySearch, GalaxyLibraryBuilder galaxyLibrary)
-	throws ConstraintViolationException
+	throws ConstraintViolationException, GalaxyConnectException
 	{
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
 		checkNotNull(adminEmail, "adminEmail is null");

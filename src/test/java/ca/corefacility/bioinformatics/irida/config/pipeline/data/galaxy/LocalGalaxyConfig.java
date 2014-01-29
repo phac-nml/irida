@@ -22,6 +22,7 @@ import com.github.jmchilton.galaxybootstrap.GalaxyData;
 import com.github.jmchilton.galaxybootstrap.GalaxyProperties;
 import com.github.jmchilton.galaxybootstrap.GalaxyData.User;
 
+import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyUploader;
@@ -36,7 +37,7 @@ public class LocalGalaxyConfig
 	private static final int largestPort = 65535;
 	
 	@Lazy @Bean
-	public GalaxyUploader galaxyUploader() throws MalformedURLException
+	public GalaxyUploader galaxyUploader() throws MalformedURLException, ConstraintViolationException, UploadException
 	{
 		GalaxyUploader galaxyUploader = new GalaxyUploader();
 		galaxyUploader.setupGalaxyAPI(localGalaxy().getGalaxyURL(), localGalaxy().getAdminName(),
@@ -46,7 +47,7 @@ public class LocalGalaxyConfig
 	}
 	
 	@Lazy @Bean
-	public GalaxyAPI galaxyAPI() throws ConstraintViolationException, MalformedURLException
+	public GalaxyAPI galaxyAPI() throws ConstraintViolationException, MalformedURLException, UploadException
 	{
 		return new GalaxyAPI(localGalaxy().getGalaxyURL(), localGalaxy().getAdminName(),
 	    		localGalaxy().getAdminAPIKey());

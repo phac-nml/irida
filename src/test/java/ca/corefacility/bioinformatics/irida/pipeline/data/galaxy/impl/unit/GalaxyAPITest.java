@@ -14,12 +14,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.ConstraintViolationException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
@@ -77,7 +80,7 @@ public class GalaxyAPITest
 	private GalaxyUploadResult expectedUploadResult;
 	
 	@Before
-	public void setup() throws FileNotFoundException, URISyntaxException, CreateLibraryException
+	public void setup() throws FileNotFoundException, URISyntaxException, CreateLibraryException, GalaxyConnectException
 	{		
 		MockitoAnnotations.initMocks(this);
 		
@@ -305,8 +308,8 @@ public class GalaxyAPITest
 		workflowRESTAPI.buildGalaxyLibrary(libraryName,fakeUserEmail);
 	}
 	
-	@Test(expected=RuntimeException.class)
-	public void testSetupInvalidAdminEmail() throws URISyntaxException, CreateLibraryException, MalformedURLException
+	@Test(expected=GalaxyConnectException.class)
+	public void testSetupInvalidAdminEmail() throws URISyntaxException, CreateLibraryException, MalformedURLException, ConstraintViolationException, GalaxyConnectException
 	{
 		setupBuildLibrary();
 		

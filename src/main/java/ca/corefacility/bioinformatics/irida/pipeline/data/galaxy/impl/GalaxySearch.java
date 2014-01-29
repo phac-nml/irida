@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
@@ -24,6 +25,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.github.jmchilton.blend4j.galaxy.beans.User;
+import com.sun.jersey.api.client.ClientHandlerException;
 
 /**
  * Class containing methods used to search for information within a Galaxy instance.
@@ -213,14 +215,23 @@ public class GalaxySearch
 	 * @param adminEmail  The email of an administrator.
 	 * @param adminAPIKey  The API key of an administrator.
 	 * @return  True if the admin email address corresponds to the admin API key, false otherwise.
+	 * @throws GalaxyConnectException  If error connecting to Galaxy.
 	 */
 	public boolean checkValidAdminEmailAPIKey(@Valid GalaxyAccountEmail adminEmail, String adminAPIKey)
+		throws GalaxyConnectException
 	{		
 		logger.debug("Checking for user=" + adminEmail + " in Galaxy url=" + galaxyInstance.getGalaxyUrl());
-		User user = findUserWithEmail(adminEmail);
-		
-		// TODO: find some way of verifying that the email/api key correspond to each other
-		
-		return user != null && adminAPIKey != null;
+		try
+		{
+			User user = findUserWithEmail(adminEmail);
+			
+			// TODO: find some way of verifying that the email/api key correspond to each other
+			
+			return user != null && adminAPIKey != null;
+		}
+		catch (ClientHandlerException e)
+		{
+			throw new GalaxyConnectException(e);
+		}
 	}
 }

@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
@@ -249,7 +250,7 @@ public class GalaxySearchTest
 	}
 	
 	@Test
-	public void testCheckValidAdminEmailAPIKey()
+	public void testCheckValidAdminEmailAPIKey() throws GalaxyConnectException
 	{		
 		assertTrue(galaxySearch.checkValidAdminEmailAPIKey(new GalaxyAccountEmail("user1@localhost"), ADMIN_API_KEY));
 		assertFalse(galaxySearch.checkValidAdminEmailAPIKey(new GalaxyAccountEmail("invalid@localhost"), ADMIN_API_KEY));

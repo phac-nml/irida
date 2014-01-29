@@ -38,8 +38,10 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.LocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
@@ -249,15 +251,15 @@ public class GalaxyAPIIT
 	    galaxyAPI.buildGalaxyLibrary(invalidLibraryName, userEmail);
 	}
 	
-	@Test(expected=RuntimeException.class)
-	public void testCreateGalaxyAPIInvalidAdmin()
+	@Test(expected=GalaxyConnectException.class)
+	public void testCreateGalaxyAPIInvalidAdmin() throws ConstraintViolationException, UploadException
 	{
 	    new GalaxyAPI(localGalaxy.getGalaxyURL(), localGalaxy.getNonExistentGalaxyAdminName(),
 	    		localGalaxy.getAdminAPIKey());
 	}
 	
-	@Test(expected=RuntimeException.class)
-	public void testInvalidAPIKey() throws URISyntaxException, LibraryUploadException
+	@Test(expected=GalaxyConnectException.class)
+	public void testInvalidAPIKey() throws URISyntaxException, ConstraintViolationException, UploadException
 	{
 		String wrongAdminAPIKey = "badbadbadbadbadbadbadbadbadbadbad";
 		if (wrongAdminAPIKey.equals(localGalaxy.getAdminAPIKey())) // what are the chances?
@@ -542,8 +544,8 @@ public class GalaxyAPIIT
 		} catch (Exception e){}
 	}
 	
-	@Test(expected=RuntimeException.class)
-	public void testUploadSampleWrongGalaxyAddress() throws URISyntaxException, LibraryUploadException
+	@Test(expected=GalaxyConnectException.class)
+	public void testUploadSampleWrongGalaxyAddress() throws URISyntaxException, ConstraintViolationException, UploadException
 	{		
 		new GalaxyAPI(localGalaxy.getInvalidGalaxyURL(),
 				localGalaxy.getAdminName(), localGalaxy.getAdminAPIKey());

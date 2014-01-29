@@ -28,7 +28,7 @@ public class GalaxyUploader
 	private GalaxyAPI galaxyAPI = null;
 	private boolean linkFiles = false;
 	
-	public void setupGalaxyAPI(URL galaxyURL, @Valid GalaxyAccountEmail adminEmail, String adminAPIKey)
+	public void setupGalaxyAPI(URL galaxyURL, @Valid GalaxyAccountEmail adminEmail, String adminAPIKey) throws ConstraintViolationException, UploadException
 	{
 		checkNotNull(galaxyURL, "galaxyURL is null");
 		checkNotNull(adminEmail, "adminEmail is null");

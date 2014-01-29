@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 
+import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyUploader;
 
@@ -71,6 +72,10 @@ public class GalaxyAPIConfig
 			{
 				logger.error("Could not validate parameters to Galaxy", e);
 			}
+			catch (UploadException e)
+            {
+				logger.error("Could not connect to Galaxy on url=" + galaxyURLString, e);
+            }
 		}
 		else
 		{
