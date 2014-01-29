@@ -18,7 +18,7 @@ import org.springframework.core.env.Environment;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
-import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyUploader;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyUploader;
 
 @Configuration
 @Profile({ "dev", "prod" })

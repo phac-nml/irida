@@ -24,9 +24,9 @@ import com.github.jmchilton.galaxybootstrap.GalaxyData.User;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
-import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyAPI;
-import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.GalaxyUploader;
 import ca.corefacility.bioinformatics.irida.pipeline.data.galaxy.impl.integration.LocalGalaxy;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyAPI;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyUploader;
 
 @Configuration
 @Profile("test")
