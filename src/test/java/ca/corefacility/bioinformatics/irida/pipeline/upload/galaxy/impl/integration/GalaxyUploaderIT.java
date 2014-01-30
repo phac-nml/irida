@@ -28,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.LocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.UploadConnectionException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
@@ -81,7 +82,7 @@ public class GalaxyUploaderIT
 		unconnectedGalaxyUploader.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
 	}
 	
-	@Test(expected=UploadException.class)
+	@Test(expected=UploadConnectionException.class)
 	public void testGalaxyShutdownRandomly() throws ConstraintViolationException, UploadException, MalformedURLException
 	{
 		// I need to bring up a new version of Galaxy so I can connect to it, then shut it down

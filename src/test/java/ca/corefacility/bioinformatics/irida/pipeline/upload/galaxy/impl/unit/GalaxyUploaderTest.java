@@ -11,7 +11,12 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.sun.jersey.api.client.ClientHandlerException;
+
+import static org.mockito.Mockito.*;
+
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.UploadConnectionException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
@@ -37,6 +42,19 @@ public class GalaxyUploaderTest
 		galaxyURL = new URL("http://localhost");
 		accountEmail = new GalaxyAccountEmail("admin@localhost");
 		adminApiKey = "0";
+	}
+	
+	@SuppressWarnings("unchecked")
+    @Test(expected=UploadConnectionException.class)
+	public void testUploadGalaxyConnectionFail() throws ConstraintViolationException, UploadException
+	{
+		GalaxyUploader galaxyUploader = new GalaxyUploader(galaxyAPI);
+		
+		when(galaxyAPI.uploadSamples(any(ArrayList.class), any(GalaxyObjectName.class),
+				any(GalaxyAccountEmail.class))).thenThrow(new ClientHandlerException("error connecting"));
+		
+		galaxyUploader.uploadSamples(new ArrayList<UploadSample>(), new GalaxyObjectName("lib"),
+				accountEmail);
 	}
 	
 	@Test(expected=NullPointerException.class)

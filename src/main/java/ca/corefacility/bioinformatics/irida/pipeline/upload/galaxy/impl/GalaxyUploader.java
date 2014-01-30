@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.sun.jersey.api.client.ClientHandlerException;
 
+import ca.corefacility.bioinformatics.irida.exceptions.UploadConnectionException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
@@ -81,7 +82,7 @@ public class GalaxyUploader implements Uploader
 			}
 			catch (ClientHandlerException e)
 			{
-				throw new UploadException("Could not upload to Galaxy", e);
+				throw new UploadConnectionException("Could not upload to Galaxy", e);
 			}
 		}
 	}
