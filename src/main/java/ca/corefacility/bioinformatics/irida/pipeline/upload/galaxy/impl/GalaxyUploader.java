@@ -11,6 +11,8 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.jersey.api.client.ClientHandlerException;
+
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
@@ -57,7 +59,7 @@ public class GalaxyUploader implements Uploader
 		logger.info("Setup connection to Galaxy with url=" + galaxyURL + ", adminEmail=" + adminEmail);
 	}
 	
-    public UploadResult uploadSamplesInternal(@Valid List<UploadSample> samples,
+    private UploadResult uploadSamplesInternal(@Valid List<UploadSample> samples,
     		@Valid GalaxyObjectName libraryName,
 			@Valid GalaxyAccountEmail galaxyUserEmail)
 			throws UploadException, ConstraintViolationException
@@ -73,7 +75,14 @@ public class GalaxyUploader implements Uploader
 			logger.debug("Uploading samples to Galaxy Library " + libraryName +
 					", userEmail=" + galaxyUserEmail);
 			
-			return galaxyAPI.uploadSamples(samples, libraryName, galaxyUserEmail);
+			try
+			{
+				return galaxyAPI.uploadSamples(samples, libraryName, galaxyUserEmail);
+			}
+			catch (ClientHandlerException e)
+			{
+				throw new UploadException("Could not upload to Galaxy", e);
+			}
 		}
 	}
     

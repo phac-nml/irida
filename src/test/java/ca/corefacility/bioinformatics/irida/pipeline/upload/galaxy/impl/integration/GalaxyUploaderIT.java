@@ -81,6 +81,36 @@ public class GalaxyUploaderIT
 		unconnectedGalaxyUploader.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
 	}
 	
+	@Test(expected=UploadException.class)
+	public void testGalaxyShutdownRandomly() throws ConstraintViolationException, UploadException, MalformedURLException
+	{
+		// I need to bring up a new version of Galaxy so I can connect to it, then shut it down
+		// without affecting other tests
+		LocalGalaxyConfig galaxyConfig = new LocalGalaxyConfig();
+		LocalGalaxy newLocalGalaxy = galaxyConfig.localGalaxy();
+		
+		// connect to running Galaxy first, so it passes all initial checks
+		GalaxyUploader galaxyUploader = new GalaxyUploader();
+		galaxyUploader.setupGalaxyAPI(newLocalGalaxy.getGalaxyURL(),
+				newLocalGalaxy.getAdminName(),
+				newLocalGalaxy.getAdminAPIKey());
+		
+		// I should be able to upload a file initially
+		GalaxyObjectName libraryName = new GalaxyObjectName("GalaxyUploader_testGalaxyShutdownRandomly");
+		
+		List<UploadSample> samples = new ArrayList<UploadSample>();
+		GalaxySample galaxySample1 = new GalaxySample(new GalaxyObjectName("testData1"), dataFilesSingle);
+		samples.add(galaxySample1);
+		
+		assertNotNull(galaxyUploader.uploadSamples(samples, libraryName, newLocalGalaxy.getAdminName()));
+		
+		// shutdown running Galaxy
+		newLocalGalaxy.shutdownGalaxy();
+		
+		// try uploading again, this should fail and throw an exception
+		galaxyUploader.uploadSamples(samples, libraryName, newLocalGalaxy.getAdminName());
+	}
+	
 	@Test
 	public void testCheckGalaxyConnection() throws ConstraintViolationException, UploadException
 	{
