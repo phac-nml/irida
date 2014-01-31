@@ -15,7 +15,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.ChangeLibraryPermissionsException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
@@ -56,10 +56,10 @@ public class GalaxyAPI
 	 * @param adminEmail  An administrators email address for the Galaxy instance.
 	 * @param adminAPIKey  A corresponding administrators API key for the Galaxy instance.
 	 * @throws ConstraintViolationException  If the adminEmail is invalid.
-	 * @throws UploadException 
+	 * @throws GalaxyConnectException If an error occred when connecting to Galaxy.
 	 */
 	public GalaxyAPI(URL galaxyURL, @Valid GalaxyAccountEmail adminEmail, String adminAPIKey)
-		throws ConstraintViolationException, UploadException
+		throws ConstraintViolationException, GalaxyConnectException
 	{
 		checkNotNull(galaxyURL, "galaxyURL is null");
 		checkNotNull(adminEmail, "adminEmail is null");
@@ -138,7 +138,7 @@ public class GalaxyAPI
 		
 		if (!galaxySearch.checkValidAdminEmailAPIKey(adminEmail, galaxyInstance.getApiKey()))
 		{
-			throw new RuntimeException("Could not use GalaxyInstance with URL=" + 
+			throw new GalaxyConnectException("Could not use GalaxyInstance with URL=" + 
 					galaxyInstance.getGalaxyUrl() + ", adminEmail=" + adminEmail);
 		}
 	}
@@ -149,16 +149,18 @@ public class GalaxyAPI
 	 * @param galaxyUserEmail  The name of the user who will own the galaxy library.
 	 * @return A Library object for the library just created.
 	 * @throws ConstraintViolationException  If the galaxyUserEmail or libraryName are invalid.
-	 * @throws CreateLibraryException If there was an error building a library.
+	 * @throws CreateLibraryException If there was an error building a library
+	 * 	(assuming Spring is managing the API object).
+	 * @throws ChangeLibraryPermissionsException If an error occured while attempting to change the library permissions.
 	 */
 	public Library buildGalaxyLibrary(@Valid GalaxyObjectName libraryName,
-			@Valid GalaxyAccountEmail galaxyUserEmail) throws CreateLibraryException, ConstraintViolationException
+			@Valid GalaxyAccountEmail galaxyUserEmail) throws CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException
 	{
 		checkNotNull(libraryName, "libraryName is null");
 		checkNotNull(galaxyUserEmail, "galaxyUser is null");
 		
-		logger.info("Attempt to create new library=" + libraryName + " owned by user=" + galaxyUserEmail +
-				" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
+		logger.debug("Attempt to create new library=" + libraryName + " owned by user=" + galaxyUserEmail +
+				" under Galaxy url=" + galaxyInstance.getGalaxyUrl());
 		
 		Library createdLibrary = null;
 		User user = galaxySearch.findUserWithEmail(galaxyUserEmail);
@@ -262,7 +264,7 @@ public class GalaxyAPI
 			
 			if (persistedSampleFolder != null)
 			{
-    			logger.info("Created Galaxy sample folder name=" + expectedSamplePath + " id=" + persistedSampleFolder.getId() +
+    			logger.debug("Created Galaxy sample folder name=" + expectedSamplePath + " id=" + persistedSampleFolder.getId() +
     					" in library name=" + library.getName() + " id=" + library.getId() + 
     					" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
 			}
@@ -295,13 +297,13 @@ public class GalaxyAPI
     			
     			if (success)
     			{
-    				logger.info("Uploaded file to Galaxy path=" + samplePath(rootFolder, sample, file) +
+    				logger.debug("Uploaded file to Galaxy path=" + samplePath(rootFolder, sample, file) +
     						" from local path=" + file.getAbsolutePath() + " link=" + linkUploadedFiles + 
     						" in library name=" + library.getName() + " id=" + library.getId() + 
     						" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
     			}
 			}
-		}			
+		}
 		
 		return success;
 	}
@@ -310,16 +312,19 @@ public class GalaxyAPI
 	 * Uploads the given list of samples to the passed Galaxy library with the passed Galaxy user.
 	 * @param samples  The set of samples to upload.
 	 * @param libraryName  The name of the library to upload to.
-	 * @param galaxyUser  The name of the Galaxy user who should own the files.
+	 * @param galaxyUserEmail  The name of the Galaxy user who should own the files.
 	 * @return A GalaxyUploadResult containing information about the location of the uploaded files, or null
 	 * 	if an error occurred.
 	 * @throws LibraryUploadException If an error occurred.
 	 * @throws CreateLibraryException If there was an error creating the folder structure for the library.
-	 * @throws ConstraintViolationException  If the samples, libraryName or galaxyUserEmail are invalid.
+	 * @throws ConstraintViolationException  If the samples, libraryName or galaxyUserEmail are invalid
+	 * 	(assumes this object is managed by Spring).
+	 * @throws ChangeLibraryPermissionsException If an error occured while attempting to change the library permissions.
 	 */
-	public GalaxyUploadResult uploadSamples(@Valid List<UploadSample> samples, @Valid GalaxyObjectName libraryName,
+	public GalaxyUploadResult uploadSamples(@Valid List<UploadSample> samples, 
+			@Valid GalaxyObjectName libraryName,
 			@Valid GalaxyAccountEmail galaxyUserEmail)
-			throws LibraryUploadException, CreateLibraryException, ConstraintViolationException
+			throws LibraryUploadException, CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException
 	{
 		checkNotNull(libraryName, "libraryName is null");
 		checkNotNull(samples, "samples is null");
@@ -367,7 +372,8 @@ public class GalaxyAPI
 	 * @param libraryID  A unique ID for the library, generated from buildGalaxyLibrary(String)
 	 * @return  True if the files have been uploaded, false otherwise.
 	 * @throws LibraryUploadException If there was an error uploading files to the library.
-	 * @throws ConstraintViolationException  If one of the GalaxySamples is invalid.
+	 * @throws ConstraintViolationException  If one of the GalaxySamples is invalid (assumes this object
+	 * 	is managed by Spring).
 	 */
 	public boolean uploadFilesToLibrary(@Valid List<UploadSample> samples, String libraryID)
 			throws LibraryUploadException, ConstraintViolationException
@@ -470,8 +476,7 @@ public class GalaxyAPI
 		try
         {
 	        return new URL(galaxyInstance.getGalaxyUrl());
-        } catch (MalformedURLException e)
-        {
+        } catch (MalformedURLException e) {
         	// This should never really occur, don't force all calling methods to catch exception
 	        throw new RuntimeException("Galaxy URL is malformed", e);
         }

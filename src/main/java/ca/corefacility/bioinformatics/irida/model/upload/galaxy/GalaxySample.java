@@ -67,8 +67,7 @@ public class GalaxySample implements UploadSample
 	@Override
     public String toString()
     {
-	    return "GalaxySample [sampleName=" + sampleName + ", sampleFiles="
-	            + sampleFiles + "]";
+	    return "(" + sampleName + ", " + sampleFiles + ")";
     }
 
 	@Override

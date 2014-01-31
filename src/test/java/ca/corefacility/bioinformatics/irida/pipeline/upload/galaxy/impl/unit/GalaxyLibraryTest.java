@@ -20,6 +20,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.LibraryPermissions;
 import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.sun.jersey.api.client.ClientResponse;
 
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.ChangeLibraryPermissionsException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
@@ -128,7 +129,7 @@ public class GalaxyLibraryTest
 	}
 	
 	@Test
-	public void testChangeLibraryOwner() throws CreateLibraryException
+	public void testChangeLibraryOwner() throws ChangeLibraryPermissionsException
 	{
 		when(librariesClient.setLibraryPermissions(eq(LIBRARY_ID), any(LibraryPermissions.class))).
 			thenReturn(okayResponse);
@@ -140,8 +141,8 @@ public class GalaxyLibraryTest
 		verify(librariesClient).setLibraryPermissions(eq(LIBRARY_ID), any(LibraryPermissions.class));
 	}
 	
-	@Test(expected=CreateLibraryException.class)
-	public void testChangeLibraryOwnerInvalidUser() throws CreateLibraryException
+	@Test(expected=ChangeLibraryPermissionsException.class)
+	public void testChangeLibraryOwnerInvalidUser() throws ChangeLibraryPermissionsException
 	{
 		when(librariesClient.setLibraryPermissions(eq(LIBRARY_ID), any(LibraryPermissions.class))).
 			thenReturn(okayResponse);
@@ -149,8 +150,8 @@ public class GalaxyLibraryTest
 		galaxyLibrary.changeLibraryOwner(testLibrary, INVALID_EMAIL, ADMIN_EMAIL);
 	}
 	
-	@Test(expected=CreateLibraryException.class)
-	public void testChangeLibraryOwnerInvalidAdmin() throws CreateLibraryException
+	@Test(expected=ChangeLibraryPermissionsException.class)
+	public void testChangeLibraryOwnerInvalidAdmin() throws ChangeLibraryPermissionsException
 	{
 		when(librariesClient.setLibraryPermissions(eq(LIBRARY_ID), any(LibraryPermissions.class))).
 			thenReturn(okayResponse);
@@ -158,17 +159,8 @@ public class GalaxyLibraryTest
 		galaxyLibrary.changeLibraryOwner(testLibrary, USER_EMAIL, INVALID_EMAIL);
 	}
 	
-//	@Test(expected=ConstraintViolationException.class)
-//	public void testChangeLibraryOwnerInvalidAdminEmail() throws CreateLibraryException
-//	{
-//		when(librariesClient.setLibraryPermissions(eq(LIBRARY_ID), any(LibraryPermissions.class))).
-//			thenReturn(okayResponse);
-//		
-//		galaxyLibrary.changeLibraryOwner(testLibrary, USER_EMAIL, new GalaxyAccountEmail("invalid <email"));
-//	}
-	
 	@Test
-	public void testChangeLibraryOwnerInvalidResponse() throws CreateLibraryException
+	public void testChangeLibraryOwnerInvalidResponse() throws ChangeLibraryPermissionsException
 	{
 		when(librariesClient.setLibraryPermissions(eq(LIBRARY_ID), any(LibraryPermissions.class))).
 			thenReturn(invalidResponse);
@@ -197,12 +189,4 @@ public class GalaxyLibraryTest
 		
 		galaxyLibrary.buildEmptyLibrary(new GalaxyObjectName("test"));
 	}
-//	
-//	@Test(expected=ConstraintViolationException.class)
-//	public void testBuildLibraryWithInvalidName()
-//	{
-//		when(librariesClient.createLibrary(any(Library.class))).thenReturn(testLibrary);
-//		
-//		galaxyLibrary.buildEmptyLibrary(new GalaxyObjectName("<a href='http://google.com'>bad$library' name</a>"));
-//	}
 }

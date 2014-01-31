@@ -15,6 +15,7 @@ import com.sun.jersey.api.client.ClientHandlerException;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadConnectionException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
@@ -35,6 +36,9 @@ public class GalaxyUploader implements Uploader
 	private GalaxyAPI galaxyAPI = null;
 	private boolean linkFiles = false;
 	
+	/**
+	 * Builds a new GalaxyUploader unconnected to any Galaxy instance.
+	 */
 	public GalaxyUploader(){}
 	
 	/**
@@ -48,7 +52,17 @@ public class GalaxyUploader implements Uploader
 		this.galaxyAPI = galaxyAPI;
 	}
 	
-	public void setupGalaxyAPI(URL galaxyURL, @Valid GalaxyAccountEmail adminEmail, String adminAPIKey) throws ConstraintViolationException, UploadException
+	/**
+	 * Connects this uploader with a running instance of Galaxy.
+	 * @param galaxyURL  The URL of the instance of Galaxy.
+	 * @param adminEmail  The email of an admin user for this instance of Galaxy.
+	 * @param adminAPIKey  The API Key of the passed admin user.
+	 * @throws ConstraintViolationException  If one of the parameters fails it's constraints
+	 * 	(assumes this is managed by Spring).
+	 * @throws GalaxyConnectException If an error occured when connecting to Galaxy.
+	 */
+	public void setupGalaxyAPI(URL galaxyURL, @Valid GalaxyAccountEmail adminEmail, String adminAPIKey)
+			throws ConstraintViolationException, GalaxyConnectException
 	{
 		checkNotNull(galaxyURL, "galaxyURL is null");
 		checkNotNull(adminEmail, "adminEmail is null");
@@ -72,10 +86,7 @@ public class GalaxyUploader implements Uploader
 			throw new UploadException("Could not upload to Galaxy, no Galaxy connection set");
 		}
 		else
-		{
-			logger.debug("Uploading samples to Galaxy Library " + libraryName +
-					", userEmail=" + galaxyUserEmail);
-			
+		{			
 			try
 			{
 				return galaxyAPI.uploadSamples(samples, libraryName, galaxyUserEmail);
@@ -124,6 +135,9 @@ public class GalaxyUploader implements Uploader
     {
 	    GalaxyAccountEmail accountEmail = toAccountEmail(userName);
 	    GalaxyObjectName galaxyDataLibraryLocation = toGalaxyObjectName(dataLocation);
+	    
+		logger.info("Uploading samples to Galaxy Library " + dataLocation +
+				", userEmail=" + userName + ", samples=" + samples);
 	    
 	    return uploadSamplesInternal(samples, galaxyDataLibraryLocation, accountEmail);
     }

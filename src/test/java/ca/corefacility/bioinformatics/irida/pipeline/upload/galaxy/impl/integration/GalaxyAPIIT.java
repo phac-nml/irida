@@ -39,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.LocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.ChangeLibraryPermissionsException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
@@ -240,14 +241,14 @@ public class GalaxyAPIIT
 	}
 	
 	@Test(expected=ConstraintViolationException.class)
-	public void testCreateLibraryInvalidName() throws CreateLibraryException
+	public void testCreateLibraryInvalidName() throws CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException
 	{
 		GalaxyObjectName invalidLibraryName = new GalaxyObjectName("<a href='http://google.com'>invalid name</a>");
 	    galaxyAPI.buildGalaxyLibrary(invalidLibraryName, localGalaxy.getUser1Name());
 	}
 	
 	@Test(expected=ConstraintViolationException.class)
-	public void testCreateLibraryInvalidUserName() throws CreateLibraryException
+	public void testCreateLibraryInvalidUserName() throws CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException
 	{
 		GalaxyObjectName invalidLibraryName = new GalaxyObjectName("testCreateLibraryInvalidUserName");
 		GalaxyAccountEmail userEmail = new GalaxyAccountEmail("invalid_email");
@@ -274,7 +275,7 @@ public class GalaxyAPIIT
 	}
 	
 	@Test
-	public void testCreateLibraryAdmin() throws CreateLibraryException
+	public void testCreateLibraryAdmin() throws CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException
 	{
 		GalaxyObjectName libraryName = new GalaxyObjectName("testCreateLibraryAdmin");
 		
@@ -292,7 +293,7 @@ public class GalaxyAPIIT
 	}
 	
 	@Test
-	public void testCreateLibraryRegularUser() throws CreateLibraryException
+	public void testCreateLibraryRegularUser() throws CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException
 	{
 		GalaxyObjectName libraryName = new GalaxyObjectName("testCreateLibraryRegularUser");
 		
@@ -315,7 +316,7 @@ public class GalaxyAPIIT
 	}
 	
 	@Test(expected=CreateLibraryException.class)
-	public void testCreateLibraryNonExistentUser() throws CreateLibraryException
+	public void testCreateLibraryNonExistentUser() throws CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException
 	{
 		GalaxyObjectName libraryName = new GalaxyObjectName("testCreateLibraryInvalidUser");
 		
@@ -323,7 +324,7 @@ public class GalaxyAPIIT
 	}
 	
 	@Test
-	public void testUploadSampleRegularUser() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	public void testUploadSampleRegularUser() throws URISyntaxException, LibraryUploadException, CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException
 	{
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleRegularUser");
 		
@@ -389,7 +390,7 @@ public class GalaxyAPIIT
 	}
 	
 	@Test
-	public void testUploadSampleAdminUser() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	public void testUploadSampleAdminUser() throws URISyntaxException, LibraryUploadException, CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException
 	{
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleAdminUser");
 		
@@ -445,7 +446,7 @@ public class GalaxyAPIIT
 	}
 	
 	@Test
-	public void testUploadSampleNoLink() throws URISyntaxException, LibraryUploadException, InterruptedException, IOException, CreateLibraryException
+	public void testUploadSampleNoLink() throws URISyntaxException, LibraryUploadException, InterruptedException, IOException, CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException
 	{
 		galaxyAPI.setLinkUploadedFiles(false);
 		
@@ -495,7 +496,7 @@ public class GalaxyAPIIT
 	}
 	
 	@Test
-	public void testUploadSampleLink() throws URISyntaxException, LibraryUploadException, InterruptedException, IOException, CreateLibraryException
+	public void testUploadSampleLink() throws URISyntaxException, LibraryUploadException, InterruptedException, IOException, CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException
 	{
 		galaxyAPI.setLinkUploadedFiles(true);
 		
@@ -555,7 +556,7 @@ public class GalaxyAPIIT
 	}
 	
 	@Test(expected=CreateLibraryException.class)
-	public void testUploadSampleWrongUser() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	public void testUploadSampleWrongUser() throws URISyntaxException, LibraryUploadException, CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException
 	{	
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleWrongUser");
 		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
@@ -566,7 +567,7 @@ public class GalaxyAPIIT
 	}
 	
 	@Test(expected=ConstraintViolationException.class)
-	public void testUploadSampleInvalidUserName() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	public void testUploadSampleInvalidUserName() throws URISyntaxException, LibraryUploadException, CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException
 	{	
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleInvalidUserName");
 		GalaxyAccountEmail userEmail = new GalaxyAccountEmail("invalid_user");
@@ -578,7 +579,7 @@ public class GalaxyAPIIT
 	}
 	
 	@Test(expected=ConstraintViolationException.class)
-	public void testUploadSampleInvalidSampleName() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	public void testUploadSampleInvalidSampleName() throws URISyntaxException, LibraryUploadException, CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException
 	{	
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleInvalidSampleName");
 		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName("<invalidSample>"), dataFilesSingle);
@@ -589,7 +590,7 @@ public class GalaxyAPIIT
 	}
 	
 	@Test(expected=ConstraintViolationException.class)
-	public void testUploadSampleInvalidLibraryName() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	public void testUploadSampleInvalidLibraryName() throws URISyntaxException, LibraryUploadException, CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException
 	{	
 		GalaxyObjectName libraryName = new GalaxyObjectName("<invalidLibrary>");
 		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
@@ -600,7 +601,7 @@ public class GalaxyAPIIT
 	}
 	
 	@Test
-	public void testUploadSampleMultipleFile() throws URISyntaxException, LibraryUploadException, CreateLibraryException
+	public void testUploadSampleMultipleFile() throws URISyntaxException, LibraryUploadException, CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException
 	{
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleMultipleFile");
 		
@@ -647,7 +648,7 @@ public class GalaxyAPIIT
 	}
 	
 	@Test
-	public void testUploadSampleToExistingLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException, MalformedURLException
+	public void testUploadSampleToExistingLibrary() throws URISyntaxException, LibraryUploadException, CreateLibraryException, MalformedURLException, ConstraintViolationException, ChangeLibraryPermissionsException
 	{
 		GalaxySearch galaxySearch = new GalaxySearch(localGalaxy.getGalaxyInstanceAdmin());
 		GalaxyLibraryBuilder galaxyLibrary = new GalaxyLibraryBuilder(localGalaxy.getGalaxyInstanceAdmin(), galaxySearch);
@@ -731,7 +732,7 @@ public class GalaxyAPIIT
 	}
 	
 	@Test
-	public void testUploadSampleOneFileAlreadyExists() throws URISyntaxException, LibraryUploadException, MalformedURLException, CreateLibraryException
+	public void testUploadSampleOneFileAlreadyExists() throws URISyntaxException, LibraryUploadException, MalformedURLException, CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException
 	{
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleOneFileAlreadyExists");
 		
@@ -821,7 +822,7 @@ public class GalaxyAPIIT
 	}
 	
 	@Test
-	public void testUploadSamples() throws URISyntaxException, LibraryUploadException, MalformedURLException, CreateLibraryException
+	public void testUploadSamples() throws URISyntaxException, LibraryUploadException, MalformedURLException, CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException
 	{
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSamples");
 		String localGalaxyURL = localGalaxy.getGalaxyURL().toString().substring(0,localGalaxy.getGalaxyURL().toString().length()-1); // remove trailing '/'

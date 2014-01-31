@@ -39,6 +39,10 @@ public class GalaxySearch
 	
 	private GalaxyInstance galaxyInstance;
 	
+	/**
+	 * Builds a new Galaxy search object around the passed GalaxyInstance.
+	 * @param galaxyInstance  The GalaxyInstance object used to connect to Galaxy.
+	 */
 	public GalaxySearch(GalaxyInstance galaxyInstance)
 	{
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
@@ -51,7 +55,7 @@ public class GalaxySearch
 	 * @param email  The email of the user to search.
 	 * @return  A private Role object of the user with the corresponding email, or null otherwise.
 	 */
-	public Role findUserRoleWithEmail(@Valid GalaxyAccountEmail email)
+	public Role findUserRoleWithEmail(GalaxyAccountEmail email)
 	{
 		checkNotNull(email, "email is null");
 		
@@ -78,7 +82,7 @@ public class GalaxySearch
 	 * @param email  The email of the user to search.
 	 * @return  A User object of the user with the corresponding email, or null otherwise.
 	 */
-	public User findUserWithEmail(@Valid GalaxyAccountEmail email)
+	public User findUserWithEmail(GalaxyAccountEmail email)
 	{
 		checkNotNull(email, "email is null");
 		
@@ -157,7 +161,7 @@ public class GalaxySearch
 	 * @param libraryName  The name of the library to search for.
 	 * @return  A list of Library objects matching the given name, empty if no library is found.
 	 */
-	public List<Library> findLibraryWithName(@Valid GalaxyObjectName libraryName)
+	public List<Library> findLibraryWithName(GalaxyObjectName libraryName)
 	{		
 		checkNotNull(libraryName, "libraryName is null");
 		
@@ -217,7 +221,7 @@ public class GalaxySearch
 	 * @return  True if the admin email address corresponds to the admin API key, false otherwise.
 	 * @throws GalaxyConnectException  If error connecting to Galaxy.
 	 */
-	public boolean checkValidAdminEmailAPIKey(@Valid GalaxyAccountEmail adminEmail, String adminAPIKey)
+	public boolean checkValidAdminEmailAPIKey(GalaxyAccountEmail adminEmail, String adminAPIKey)
 		throws GalaxyConnectException
 	{		
 		logger.debug("Checking for user=" + adminEmail + " in Galaxy url=" + galaxyInstance.getGalaxyUrl());

@@ -23,9 +23,6 @@ public class GalaxyObjectName implements UploadObjectName
 		this.objectName = objectName;
 	}
 	
-	/* (non-Javadoc)
-	 * @see ca.corefacility.bioinformatics.irida.model.upload.galaxy.UploadObjectName#getName()
-	 */
 	@Override
     public String getName()
 	{
