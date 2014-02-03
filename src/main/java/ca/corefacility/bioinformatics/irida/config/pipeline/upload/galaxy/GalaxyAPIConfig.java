@@ -80,7 +80,8 @@ public class GalaxyAPIConfig
     				{
     					logger.warn("Invalid configuration property \"" + DATA_STORAGE_PROPERTY
     							+ "=" + dataStorageString + "\" must be one of "
-    							+ VALID_STORAGE.keySet() + ": using default (" + galaxyUploader.getDataStorage() + ")");
+    							+ VALID_STORAGE.keySet() + ": using default ("
+    							+ galaxyUploader.getDataStorage().toString().toLowerCase() + ")");
     				}
     			}
 			}
