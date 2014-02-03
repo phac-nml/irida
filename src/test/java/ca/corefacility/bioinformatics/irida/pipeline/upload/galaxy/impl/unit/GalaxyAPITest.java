@@ -25,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.ChangeLibraryPermissionsException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
@@ -305,7 +306,7 @@ public class GalaxyAPITest
 		assertNull(workflowRESTAPI.buildGalaxyLibrary(libraryName, realUserEmail));
 	}
 	
-	@Test(expected=CreateLibraryException.class)
+	@Test(expected=GalaxyUserNotFoundException.class)
 	public void testBuildGalaxyLibraryNoUser() throws URISyntaxException, MalformedURLException, UploadException
 	{	
 		setupBuildLibrary();
@@ -322,8 +323,8 @@ public class GalaxyAPITest
 		workflowRESTAPI.setLinkUploadedFiles(false);
 	}
 	
-	@Test(expected=CreateLibraryException.class)
-	public void testBuildGalaxyLibraryNoUserRole() throws URISyntaxException, CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException
+	@Test(expected=GalaxyUserNotFoundException.class)
+	public void testBuildGalaxyLibraryNoUserRole() throws URISyntaxException, CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException
 	{				
 		when(galaxySearch.findUserRoleWithEmail(realUserEmail)).thenReturn(null);
 		
@@ -667,6 +668,8 @@ public class GalaxyAPITest
 		folders.add(sampleFolder);
 		
 		setupUploadSampleToLibrary(samples, folders, false);
+		
+		when(galaxySearch.galaxyUserExists(realUserEmail)).thenReturn(true);
 				
 		assertEquals(expectedUploadResult, workflowRESTAPI.uploadSamples(samples, libraryName, realUserEmail));
 		verify(galaxySearch).findLibraryWithName(libraryName);
@@ -679,6 +682,29 @@ public class GalaxyAPITest
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class), any(LibraryFolder.class),
 				eq(new GalaxyObjectName("testData")));
 		verify(librariesClient).uploadFilesystemPathsRequest(eq(libraryId), any(FilesystemPathsLibraryUpload.class));
+	}
+	
+	@Test(expected=GalaxyUserNotFoundException.class)
+	public void testUploadSamplesUserDoesNotExist() throws URISyntaxException, MalformedURLException, UploadException
+	{
+		setupLibraryFolders();
+		
+		String sampleFolderId = "3";
+		
+		List<UploadSample> samples = new ArrayList<UploadSample>();
+		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesSingle);
+		samples.add(galaxySample);
+		
+		List<LibraryFolder> folders = new ArrayList<LibraryFolder>();
+		LibraryFolder sampleFolder = new LibraryFolder();
+		sampleFolder.setName(illuminaFolderPath + "/" + galaxySample.getSampleName());
+		sampleFolder.setFolderId(sampleFolderId);
+		folders.add(sampleFolder);
+		
+		setupUploadSampleToLibrary(samples, folders, false);
+		
+		when(galaxySearch.galaxyUserExists(realUserEmail)).thenReturn(false);
+		workflowRESTAPI.uploadSamples(samples, libraryName, realUserEmail);
 	}
 	
 	@Test
@@ -700,6 +726,8 @@ public class GalaxyAPITest
 		
 		setupUploadSampleToLibrary(samples, folders, true);
 				
+		when(galaxySearch.galaxyUserExists(realUserEmail)).thenReturn(true);
+		
 		assertEquals(expectedUploadResult, workflowRESTAPI.uploadSamples(samples, libraryName, realUserEmail));
 		verify(galaxySearch).findLibraryWithName(libraryName);
 		verify(galaxyLibrary, never()).buildEmptyLibrary(libraryName);

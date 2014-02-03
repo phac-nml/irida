@@ -251,6 +251,18 @@ public class GalaxySearchTest
 	}
 	
 	@Test
+	public void testUserDoesExist()
+	{		
+		assertTrue(galaxySearch.galaxyUserExists(new GalaxyAccountEmail("user1@localhost")));
+	}
+	
+	@Test
+	public void testUserDoesNotExist()
+	{		
+		assertFalse(galaxySearch.galaxyUserExists(new GalaxyAccountEmail("invalid@localhost")));
+	}
+	
+	@Test
 	public void testCheckValidAdminEmailAPIKey() throws GalaxyConnectException
 	{		
 		assertTrue(galaxySearch.checkValidAdminEmailAPIKey(new GalaxyAccountEmail("user1@localhost"), ADMIN_API_KEY));

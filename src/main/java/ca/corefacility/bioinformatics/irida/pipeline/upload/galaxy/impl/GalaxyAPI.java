@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.ChangeLibraryPermissionsException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
@@ -152,9 +153,10 @@ public class GalaxyAPI
 	 * @throws CreateLibraryException If there was an error building a library
 	 * 	(assuming Spring is managing the API object).
 	 * @throws ChangeLibraryPermissionsException If an error occured while attempting to change the library permissions.
+	 * @throws GalaxyUserNotFoundException If the passed Galaxy user does not exist.
 	 */
 	public Library buildGalaxyLibrary(@Valid GalaxyObjectName libraryName,
-			@Valid GalaxyAccountEmail galaxyUserEmail) throws CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException
+			@Valid GalaxyAccountEmail galaxyUserEmail) throws CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException
 	{
 		checkNotNull(libraryName, "libraryName is null");
 		checkNotNull(galaxyUserEmail, "galaxyUser is null");
@@ -191,7 +193,7 @@ public class GalaxyAPI
 		}
 		else
 		{
-			throw new CreateLibraryException("Galaxy user with email " + galaxyUserEmail + " does not exist");
+			throw new GalaxyUserNotFoundException("Galaxy user with email " + galaxyUserEmail + " does not exist");
 		}
 		
 		return createdLibrary;
@@ -320,11 +322,12 @@ public class GalaxyAPI
 	 * @throws ConstraintViolationException  If the samples, libraryName or galaxyUserEmail are invalid
 	 * 	(assumes this object is managed by Spring).
 	 * @throws ChangeLibraryPermissionsException If an error occured while attempting to change the library permissions.
+	 * @throws GalaxyUserNotFoundException If the passed Galaxy user does not exist.
 	 */
 	public GalaxyUploadResult uploadSamples(@Valid List<UploadSample> samples, 
 			@Valid GalaxyObjectName libraryName,
 			@Valid GalaxyAccountEmail galaxyUserEmail)
-			throws LibraryUploadException, CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException
+			throws LibraryUploadException, CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException
 	{
 		checkNotNull(libraryName, "libraryName is null");
 		checkNotNull(samples, "samples is null");
@@ -335,27 +338,34 @@ public class GalaxyAPI
 		try
 		{
 			Library uploadLibrary;
-			List<Library> libraries = galaxySearch.findLibraryWithName(libraryName);
-			
-			if (libraries != null && libraries.size() > 0)
-			{
-				// use 1st library that comes up from search to attempt to upload into
-				uploadLibrary = libraries.get(0);
+			if (galaxySearch.galaxyUserExists(galaxyUserEmail))
+			{	
+    			List<Library> libraries = galaxySearch.findLibraryWithName(libraryName);
+    			
+    			if (libraries != null && libraries.size() > 0)
+    			{
+    				// use 1st library that comes up from search to attempt to upload into
+    				uploadLibrary = libraries.get(0);
+    			}
+    			else
+    			{
+    				uploadLibrary = buildGalaxyLibrary(libraryName, galaxyUserEmail);
+    			}
+    					
+    			if(uploadFilesToLibrary(samples, uploadLibrary.getId()))
+    			{
+    				galaxyUploadResult = new GalaxyUploadResult(uploadLibrary, galaxyInstance.getGalaxyUrl());
+    			}
+    			else
+    			{
+    				throw new LibraryUploadException("Could upload files to library " + libraryName
+    						+ "id=" + uploadLibrary.getId() + " in instance of galaxy with url="
+    						+ galaxyInstance.getGalaxyUrl());
+    			}
 			}
 			else
 			{
-				uploadLibrary = buildGalaxyLibrary(libraryName, galaxyUserEmail);
-			}
-					
-			if(uploadFilesToLibrary(samples, uploadLibrary.getId()))
-			{
-				galaxyUploadResult = new GalaxyUploadResult(uploadLibrary, galaxyInstance.getGalaxyUrl());
-			}
-			else
-			{
-				throw new LibraryUploadException("Could upload files to library " + libraryName
-						+ "id=" + uploadLibrary.getId() + " in instance of galaxy with url="
-						+ galaxyInstance.getGalaxyUrl());
+				throw new GalaxyUserNotFoundException("Galaxy user with email " + galaxyUserEmail + " does not exist");
 			}
 		}
         catch (MalformedURLException e)

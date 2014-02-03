@@ -238,4 +238,14 @@ public class GalaxySearch
 			throw new GalaxyConnectException(e);
 		}
 	}
+
+	/**
+	 * Determines if the passed Galaxy user exists within the Galaxy instance.
+	 * @param galaxyUserEmail  The user email address to check.
+	 * @return  True if this user exists, false otherwise.
+	 */
+	public boolean galaxyUserExists(GalaxyAccountEmail galaxyUserEmail)
+    {
+	    return findUserWithEmail(galaxyUserEmail) != null;
+    }
 }
