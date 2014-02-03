@@ -175,4 +175,9 @@ public class GalaxyUploader implements Uploader
 			throw new UploadException("objectName not of type GalaxyObjectName");
 		}
 	}
+
+	public DataStorage getDataStorage()
+    {
+	    return dataStorage;
+    }
 }

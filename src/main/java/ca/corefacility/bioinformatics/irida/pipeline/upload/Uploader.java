@@ -59,12 +59,17 @@ public interface Uploader
 	 * Sets up the type of data storage for this uploader.
 	 * @param dataStorage  How the data should be stored on the remote site.
 	 */
-	public abstract void setDataStorage(DataStorage dataStorage);
+	public abstract void setDataStorage(DataStorage dataStorage);	
+
+	/**
+	 * Gets the current DataStorage method.
+	 * @return  The DataStorage currently in use.
+	 */
+	public abstract DataStorage getDataStorage();
 
 	/**
 	 * Gets the URL of the connected data location instance.
 	 * @return  The URL of the connected data location instance
 	 */
 	public abstract URL getUrl();
-
 }
