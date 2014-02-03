@@ -25,6 +25,8 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEma
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
@@ -50,7 +52,7 @@ public class GalaxyAPI
 	private GalaxyAccountEmail adminEmail;
 	private GalaxySearch galaxySearch;
 	private GalaxyLibraryBuilder galaxyLibrary;
-	private boolean linkUploadedFiles = true;
+	private Uploader.DataStorage dataStorage = Uploader.DataStorage.REMOTE;
 	
 	/**
 	 * Builds a new GalaxyAPI instance with the given information.
@@ -130,8 +132,7 @@ public class GalaxyAPI
 	 * Builds a GalaxyAPI object with the given information.
 	 * @param galaxyInstance  A GalaxyInstance object pointing to the correct Galaxy location.
 	 * @param adminEmail  The administrators email address for the corresponding API key within the GalaxyInstance.
-	 * @param linkUploadedFiles  If uploaded files should be linked, or uploaded
-	 * 	(linking assumes the files are on the same filesystem as Galaxy).
+	 * @param dataStorage  If uploaded files will exist on the same or a separate filesystem as the archive.
 	 * @param galaxySearch  A GalaxySearch object.
 	 * @param galaxyLibrary  A GalaxyLibrary object.
 	 * @throws ConstraintViolationException  If the adminEmail is invalid.
@@ -229,7 +230,7 @@ public class GalaxyAPI
 		
 		upload.setContent(file.getAbsolutePath());
 		upload.setName(file.getName());
-		upload.setLinkData(linkUploadedFiles);
+		upload.setLinkData(DataStorage.LOCAL.equals(dataStorage));
 		
 		return librariesClient.uploadFilesystemPathsRequest(library.getId(), upload);
 	}
@@ -322,7 +323,7 @@ public class GalaxyAPI
     			if (success)
     			{
     				logger.debug("Uploaded file to Galaxy path=" + samplePath(rootFolder, sample, file) +
-    						" from local path=" + file.getAbsolutePath() + " link=" + linkUploadedFiles + 
+    						" from local path=" + file.getAbsolutePath() + " dataStorage=" + dataStorage + 
     						" in library name=" + library.getName() + " id=" + library.getId() + 
     						" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
     			}
@@ -481,23 +482,25 @@ public class GalaxyAPI
 	}
 	
 	/**
-	 * Whether or not files should be linked within Galaxy (assumes IRIDA is on the same filesystem as
-	 *  Galaxy) or copies of the files should be uploaded to Galaxy.
-	 * @param linkUploadedFiles  True to link files, false to copy files.
+	 * The type of data storage the remote site has.  Determines whether or not files
+	 * 	should be linked within Galaxy or a duplicate should be uploaded.
+	 * @param dataStorage DataStorage.REMOTE if there is no shared filesystem between the archive and the remote site,
+	 * 	or DataStorage.LOCAL if there is a shared filesystem.
 	 */
-	public void setLinkUploadedFiles(boolean linkUploadedFiles)
+	public void setDataStorage(DataStorage dataStorage)
 	{
-		this.linkUploadedFiles = linkUploadedFiles;
+		this.dataStorage = dataStorage;
 	}
 	
 	/**
-	 * Whether or not files should be linked within Galaxy (assumes IRIDA is on the same filesystem as
-	 *  Galaxy) or copies of the files should be uploaded to Galaxy.
-	 * @return True if linking files is turned on, false otherwise.
+	 * The type of data storage the remote site has.  Determines whether or not files
+	 * 	should be linked within Galaxy or a duplicate should be uploaded.
+	 * @return DataStorage.REMOTE if there is no shared filesystem between the archive and the remote site,
+	 * 	or DataStorage.LOCAL if there is a shared filesystem.
 	 */
-	public boolean getLinkUploadedFiles()
+	public DataStorage getDataStorage()
 	{
-		return linkUploadedFiles;
+		return dataStorage;
 	}
 	
 	/**

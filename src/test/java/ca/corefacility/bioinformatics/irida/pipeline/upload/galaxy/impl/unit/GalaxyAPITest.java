@@ -35,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxySearch;
@@ -101,7 +102,7 @@ public class GalaxyAPITest
 			thenReturn(true);
 				
 		workflowRESTAPI = new GalaxyAPI(galaxyInstance, realAdminEmail, galaxySearch, galaxyLibrary);
-		workflowRESTAPI.setLinkUploadedFiles(false);
+		workflowRESTAPI.setDataStorage(Uploader.DataStorage.REMOTE);
 		
 		// setup files
 		dataFile1 = Paths.get(this.getClass().getResource("testData1.fastq").toURI());

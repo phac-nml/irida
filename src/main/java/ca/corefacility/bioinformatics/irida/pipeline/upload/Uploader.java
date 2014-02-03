@@ -15,6 +15,26 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 public interface Uploader
 {
 	/**
+	 * Defines the location of data to upload on a filesystem.
+	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+	 *
+	 */
+	public enum DataStorage
+	{
+		/**
+		 * LOCAL implies the data to upload is on the same filesystem as the remote site
+		 *  (e.g. NFS shared filesystem). 
+		 */
+		LOCAL,
+		
+		/**
+		 * REMOTE implies the data to upload is on a separate filesystem as the remote site
+		 *  (e.g. no NFS shared filesystem, so requires uploading a copy of the files). 
+		 */
+		REMOTE
+	}
+	
+	/**
 	 * Uploads the given list of samples to the passed data location name with the passed user.
 	 * @param samples  The set of samples to upload.
 	 * @param dataLocation  The name of the data location to upload to.
@@ -36,11 +56,10 @@ public interface Uploader
 	public abstract boolean isConnected();
 
 	/**
-	 * Sets a parameter to link up files within the data location (assumes files exist on same filesystem),
-	 *  or copy the uploaded files.
-	 * @param linkFiles  True if files should be linked, false otherwise.
+	 * Sets up the type of data storage for this uploader.
+	 * @param dataStorage  How the data should be stored on the remote site.
 	 */
-	public abstract void setLinkUploadedFiles(boolean linkFiles);
+	public abstract void setDataStorage(DataStorage dataStorage);
 
 	/**
 	 * Gets the URL of the connected data location instance.

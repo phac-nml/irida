@@ -49,6 +49,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEma
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxySearch;
@@ -85,7 +86,7 @@ public class GalaxyAPIIT
 	@Before
 	public void setup() throws URISyntaxException
 	{
-		galaxyAPI.setLinkUploadedFiles(false);
+		galaxyAPI.setDataStorage(Uploader.DataStorage.REMOTE);
 		
 	    setupDataFiles();
 	}
@@ -225,7 +226,7 @@ public class GalaxyAPIIT
 	{
 		File dataFile1 = new File(GalaxyAPIIT.class.getResource("testData1.fastq").toURI());
 		
-		// create temp file so I can delete it afterwards for testing the "link" option in Galaxy
+		// create temp file so I can delete it afterwards for testing the "link" (dataStorage) option in Galaxy
 		File tempDir = File.createTempFile("testData1", "folder");
 		tempDir.delete();
 		tempDir.mkdir();
@@ -450,7 +451,7 @@ public class GalaxyAPIIT
 	@Test
 	public void testUploadSampleNoLink() throws URISyntaxException, InterruptedException, IOException, UploadException
 	{
-		galaxyAPI.setLinkUploadedFiles(false);
+		galaxyAPI.setDataStorage(Uploader.DataStorage.REMOTE);
 		
 		Path dataFileTemp1 = createTemporaryDataFile();
 		dataFilesSingle = new ArrayList<Path>();
@@ -500,7 +501,7 @@ public class GalaxyAPIIT
 	@Test
 	public void testUploadSampleLink() throws URISyntaxException, LibraryUploadException, InterruptedException, IOException, UploadException
 	{
-		galaxyAPI.setLinkUploadedFiles(true);
+		galaxyAPI.setDataStorage(Uploader.DataStorage.LOCAL);
 		
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleLink");
 		

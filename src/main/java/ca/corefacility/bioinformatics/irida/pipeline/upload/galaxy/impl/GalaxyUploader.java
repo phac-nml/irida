@@ -34,7 +34,7 @@ public class GalaxyUploader implements Uploader
 	private static final Logger logger = LoggerFactory.getLogger(GalaxyUploader.class);
 	
 	private GalaxyAPI galaxyAPI = null;
-	private boolean linkFiles = false;
+	private DataStorage dataStorage = DataStorage.REMOTE;
 	
 	/**
 	 * Builds a new GalaxyUploader unconnected to any Galaxy instance.
@@ -69,7 +69,7 @@ public class GalaxyUploader implements Uploader
 		checkNotNull(adminAPIKey, "apiKey is null");
 		
 		galaxyAPI = new GalaxyAPI(galaxyURL, adminEmail, adminAPIKey);
-		galaxyAPI.setLinkUploadedFiles(linkFiles);
+		galaxyAPI.setDataStorage(dataStorage);
 		
 		logger.info("Setup connection to Galaxy with url=" + galaxyURL + ", adminEmail=" + adminEmail);
 	}
@@ -105,12 +105,12 @@ public class GalaxyUploader implements Uploader
 	}
 
 	@Override
-    public void setLinkUploadedFiles(boolean linkFiles)
+    public void setDataStorage(DataStorage dataStorage)
     {
-	    this.linkFiles = linkFiles;
+	    this.dataStorage = dataStorage;
 	    if (galaxyAPI != null)
 	    {
-	    	galaxyAPI.setLinkUploadedFiles(linkFiles);
+	    	galaxyAPI.setDataStorage(dataStorage);
 	    }
     }
 	
