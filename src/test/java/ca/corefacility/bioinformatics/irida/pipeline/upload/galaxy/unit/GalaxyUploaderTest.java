@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.unit;
+package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.unit;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -22,8 +22,8 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyAPI;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyUploader;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
 
 public class GalaxyUploaderTest
 {

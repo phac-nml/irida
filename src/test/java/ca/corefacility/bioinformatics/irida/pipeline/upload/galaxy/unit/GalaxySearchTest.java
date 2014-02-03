@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.unit;
+package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.unit;
 
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
@@ -19,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxySearch;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;

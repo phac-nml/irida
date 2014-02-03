@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.unit;
+package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.unit;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -24,8 +24,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.ChangeLibraryPermi
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyLibraryBuilder;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxySearch;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
 
 public class GalaxyLibraryTest
 {

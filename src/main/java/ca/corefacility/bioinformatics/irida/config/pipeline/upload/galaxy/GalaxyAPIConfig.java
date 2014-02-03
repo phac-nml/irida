@@ -22,7 +22,7 @@ import com.google.common.collect.ImmutableMap;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyUploader;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
 
 @Configuration
 @Profile({ "dev", "prod" })

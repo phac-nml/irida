@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.integration;
+package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 
 import static org.junit.Assert.*;
 
@@ -36,7 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEma
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyUploader;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 

@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.integration;
+package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -50,9 +50,9 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyAPI;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxyLibraryBuilder;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.GalaxySearch;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;

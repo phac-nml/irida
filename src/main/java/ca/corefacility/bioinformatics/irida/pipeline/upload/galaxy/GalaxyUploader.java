@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl;
+package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -115,6 +115,12 @@ public class GalaxyUploader implements Uploader
     }
 	
 	@Override
+	public DataStorage getDataStorage()
+    {
+	    return dataStorage;
+    }
+	
+	@Override
     public URL getUrl()
 	{
 		if (galaxyAPI != null)
@@ -175,9 +181,4 @@ public class GalaxyUploader implements Uploader
 			throw new UploadException("objectName not of type GalaxyObjectName");
 		}
 	}
-
-	public DataStorage getDataStorage()
-    {
-	    return dataStorage;
-    }
 }
