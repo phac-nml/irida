@@ -122,7 +122,8 @@ public class GalaxyAPITest
 		Library returnedLibrary = new Library(libraryName.getName());
 		returnedLibrary.setId(libraryId);
 		returnedLibrary.setUrl("/api/libraries/" + libraryId);
-		expectedUploadResult = new GalaxyUploadResult(returnedLibrary, galaxyURL);
+		expectedUploadResult = new GalaxyUploadResult(returnedLibrary, libraryName,
+				realUserEmail, galaxyURL);
 		
 		User realUser = new User();
 		realUser.setEmail(realUserEmail.getName());
@@ -152,7 +153,8 @@ public class GalaxyAPITest
 		existingLibrary.setId(libraryId);
 		libraries.add(existingLibrary);
 		existingLibrary.setUrl("/api/libraries/" + libraryId);
-		expectedUploadResult = new GalaxyUploadResult(existingLibrary, galaxyURL);
+		expectedUploadResult = new GalaxyUploadResult(existingLibrary, libraryName,
+				realUserEmail, galaxyURL);
 				
 		User realUser = new User();
 		realUser.setEmail(realUserEmail.getName());

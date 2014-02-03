@@ -5,24 +5,40 @@ import static com.google.common.base.Preconditions.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
+import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 
 public class GalaxyUploadResult implements UploadResult
 {
 	private String libraryId;
-	private String libraryName;
+	private GalaxyObjectName libraryName;
+	private GalaxyAccountEmail ownerName;
 	private URL libraryAPIURL;
 	private URL sharedDataURL;
 
-	public GalaxyUploadResult(Library library, String galaxyURL) throws MalformedURLException
+	public GalaxyUploadResult(Library library,
+			GalaxyObjectName libraryName,
+			GalaxyAccountEmail ownerName,
+			String galaxyURL) throws MalformedURLException
 	{
 		checkNotNull(library, "library is null");
+		checkNotNull(libraryName, "libraryName is null");
+		checkNotNull(ownerName, "ownerName is null");
 		checkNotNull(galaxyURL, "galaxyURL is null");
 		
+		String actualLibraryName = library.getName();
+		
+		if (!libraryName.getName().equals(actualLibraryName))
+		{
+			throw new RuntimeException("Library names are out of sync");
+		}
+		
 		this.libraryId = library.getId();
-		this.libraryName = library.getName();
+		this.libraryName = libraryName;
+		this.ownerName = ownerName;
 		
 		this.libraryAPIURL = libraryToAPIURL(library, galaxyURL);
 		this.sharedDataURL = galaxyURLToLibraryURL(galaxyURL);
@@ -77,14 +93,17 @@ public class GalaxyUploadResult implements UploadResult
 		return libraryId;
 	}
 	
-	/* (non-Javadoc)
-	 * @see ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.UploadResult#getLibraryName()
-	 */
 	@Override
-    public String getLocationName()
+    public UploadObjectName getLocationName()
 	{
 		return libraryName;
 	}
+	
+	@Override
+    public UploaderAccountName getOwner()
+    {
+	    return ownerName;
+    }
 
 	@Override
     public int hashCode()
@@ -97,6 +116,8 @@ public class GalaxyUploadResult implements UploadResult
 	            + ((libraryId == null) ? 0 : libraryId.hashCode());
 	    result = prime * result
 	            + ((libraryName == null) ? 0 : libraryName.hashCode());
+	    result = prime * result
+	            + ((ownerName == null) ? 0 : ownerName.hashCode());
 	    result = prime * result
 	            + ((sharedDataURL == null) ? 0 : sharedDataURL.hashCode());
 	    return result;
@@ -129,6 +150,12 @@ public class GalaxyUploadResult implements UploadResult
 		    if (other.libraryName != null)
 			    return false;
 	    } else if (!libraryName.equals(other.libraryName))
+		    return false;
+	    if (ownerName == null)
+	    {
+		    if (other.ownerName != null)
+			    return false;
+	    } else if (!ownerName.equals(other.ownerName))
 		    return false;
 	    if (sharedDataURL == null)
 	    {

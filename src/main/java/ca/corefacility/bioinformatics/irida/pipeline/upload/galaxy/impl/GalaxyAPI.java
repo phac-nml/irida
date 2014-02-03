@@ -376,7 +376,8 @@ public class GalaxyAPI
     					
     			if(uploadFilesToLibrary(samples, uploadLibrary.getId()))
     			{
-    				galaxyUploadResult = new GalaxyUploadResult(uploadLibrary, galaxyInstance.getGalaxyUrl());
+    				galaxyUploadResult = new GalaxyUploadResult(uploadLibrary, libraryName,
+    						galaxyUserEmail, galaxyInstance.getGalaxyUrl());
     			}
     			else
     			{

@@ -14,10 +14,16 @@ public interface UploadResult
 	 * @return  The URL for the uploaded data.
 	 */
 	public abstract URL getDataLocation();
+	
+	/**
+	 * Gets the owner of this upload result.
+	 * @return
+	 */
+	public abstract UploaderAccountName getOwner();
 
 	/**
 	 * Gets the name under which the data was uploaded.
 	 * @return  The name under which the data was uploaded.
 	 */
-	public abstract String getLocationName();
+	public abstract UploadObjectName getLocationName();
 }

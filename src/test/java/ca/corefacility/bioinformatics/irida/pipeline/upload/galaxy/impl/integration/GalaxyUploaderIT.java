@@ -144,7 +144,7 @@ public class GalaxyUploaderIT
 		UploadResult actualUploadResult =
 				galaxyUploader.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
 		assertNotNull(actualUploadResult);
-		assertEquals(libraryName.getName(), actualUploadResult.getLocationName());
+		assertEquals(libraryName, actualUploadResult.getLocationName());
 		assertEquals(new URL(localGalaxyURL + "/library"), actualUploadResult.getDataLocation());
 	}
 	
