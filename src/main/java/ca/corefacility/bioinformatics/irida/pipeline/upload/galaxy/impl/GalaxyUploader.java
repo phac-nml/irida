@@ -133,13 +133,23 @@ public class GalaxyUploader implements Uploader
             @Valid UploaderAccountName userName) throws UploadException,
             ConstraintViolationException
     {
+		UploadResult uploadResult;
+		
 	    GalaxyAccountEmail accountEmail = toAccountEmail(userName);
 	    GalaxyObjectName galaxyDataLibraryLocation = toGalaxyObjectName(dataLocation);
 	    
-		logger.info("Uploading samples to Galaxy Library " + dataLocation +
+		logger.debug("Uploading samples to Galaxy Library " + dataLocation +
 				", userEmail=" + userName + ", samples=" + samples);
 	    
-	    return uploadSamplesInternal(samples, galaxyDataLibraryLocation, accountEmail);
+	    uploadResult = uploadSamplesInternal(samples, galaxyDataLibraryLocation, accountEmail);
+	    
+	    if (uploadResult != null)
+	    {
+	    	logger.info("Uploaded samples to Galaxy Library " + dataLocation +
+					", userEmail=" + userName + ", samples=" + samples);
+	    }
+	    
+	    return uploadResult;
     }
 	
 	private GalaxyAccountEmail toAccountEmail(UploaderAccountName accountName) throws UploadException
