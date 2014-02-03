@@ -18,8 +18,11 @@ import org.slf4j.LoggerFactory;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.ChangeLibraryPermissionsException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
@@ -35,7 +38,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.FilesystemPathsLibraryUpload;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
-import com.github.jmchilton.blend4j.galaxy.beans.User;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 
@@ -177,9 +179,10 @@ public class GalaxyAPI
 	 * 	(assuming Spring is managing the API object).
 	 * @throws ChangeLibraryPermissionsException If an error occured while attempting to change the library permissions.
 	 * @throws GalaxyUserNotFoundException If the passed Galaxy user does not exist.
+	 * @throws GalaxyUserNoRoleException If the passed Galaxy user has no role.
 	 */
 	public Library buildGalaxyLibrary(@Valid GalaxyObjectName libraryName,
-			@Valid GalaxyAccountEmail galaxyUserEmail) throws CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException
+			@Valid GalaxyAccountEmail galaxyUserEmail) throws CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, GalaxyUserNoRoleException
 	{
 		checkNotNull(libraryName, "libraryName is null");
 		checkNotNull(galaxyUserEmail, "galaxyUser is null");
@@ -187,39 +190,13 @@ public class GalaxyAPI
 		logger.debug("Attempt to create new library=" + libraryName + " owned by user=" + galaxyUserEmail +
 				" under Galaxy url=" + galaxyInstance.getGalaxyUrl());
 		
-		Library createdLibrary = null;
-		User user = galaxySearch.findUserWithEmail(galaxyUserEmail);
+		// make sure user exists and has a role before we create an empty library
+		galaxySearch.findUserWithEmail(galaxyUserEmail);
+		galaxySearch.findUserRoleWithEmail(galaxyUserEmail);
 		
-		if (user != null)
-		{
-			Library library = galaxyLibrary.buildEmptyLibrary(libraryName);
-			
-			if (library != null)
-			{
-				Library securedLibrary = galaxyLibrary.changeLibraryOwner(library, galaxyUserEmail, adminEmail); 
-				
-				if (securedLibrary != null)
-				{
-					createdLibrary = securedLibrary;
-				}
-				else
-				{
-					throw new CreateLibraryException("Could not change owner for library name=" + library.getName() +
-							" id=" + library.getId() + " to " + galaxyUserEmail + " and " + adminEmail);
-				}
-			}
-			else
-			{
-				throw new CreateLibraryException("Could not build Galaxy library name=" + libraryName +
-						" for user " + galaxyUserEmail);
-			}
-		}
-		else
-		{
-			throw new GalaxyUserNotFoundException("Galaxy user with email " + galaxyUserEmail + " does not exist");
-		}
+		Library library = galaxyLibrary.buildEmptyLibrary(libraryName);
 		
-		return createdLibrary;
+		return galaxyLibrary.changeLibraryOwner(library, galaxyUserEmail, adminEmail); 
 	}
 	
 	private ClientResponse uploadFile(LibraryFolder folder, File file, LibrariesClient librariesClient,
@@ -266,7 +243,7 @@ public class GalaxyAPI
 	}
 	
 	private boolean uploadSample(UploadSample sample, LibraryFolder rootFolder, LibrariesClient librariesClient,
-			Library library, Map<String,LibraryContent> libraryMap, String errorSuffix) throws LibraryUploadException
+			Library library, Map<String,LibraryContent> libraryMap, String errorSuffix) throws LibraryUploadException, CreateLibraryException
 	{
 		boolean success = false;
 		LibraryFolder persistedSampleFolder;
@@ -286,18 +263,10 @@ public class GalaxyAPI
 		{
 			persistedSampleFolder = galaxyLibrary.createLibraryFolder(library, rootFolder,
 					sample.getSampleName());
-			
-			if (persistedSampleFolder != null)
-			{
-    			logger.debug("Created Galaxy sample folder name=" + expectedSamplePath + " id=" + persistedSampleFolder.getId() +
-    					" in library name=" + library.getName() + " id=" + library.getId() + 
-    					" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
-			}
-			else
-			{
-				throw new LibraryUploadException("Could not build folder for sample " + sample.getSampleName() +
-						" within library " + library.getName() + ":" + library.getId() + errorSuffix);
-			}
+
+			logger.debug("Created Galaxy sample folder name=" + expectedSamplePath + " id=" + persistedSampleFolder.getId() +
+					" in library name=" + library.getName() + " id=" + library.getId() + 
+					" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
 		}
 		
 		success = true;
@@ -338,19 +307,20 @@ public class GalaxyAPI
 	 * @param samples  The set of samples to upload.
 	 * @param libraryName  The name of the library to upload to.
 	 * @param galaxyUserEmail  The name of the Galaxy user who should own the files.
-	 * @return A GalaxyUploadResult containing information about the location of the uploaded files, or null
-	 * 	if an error occurred.
+	 * @return A GalaxyUploadResult containing information about the location of the uploaded files.
 	 * @throws LibraryUploadException If an error occurred.
 	 * @throws CreateLibraryException If there was an error creating the folder structure for the library.
 	 * @throws ConstraintViolationException  If the samples, libraryName or galaxyUserEmail are invalid
 	 * 	(assumes this object is managed by Spring).
 	 * @throws ChangeLibraryPermissionsException If an error occured while attempting to change the library permissions.
 	 * @throws GalaxyUserNotFoundException If the passed Galaxy user does not exist.
+	 * @throws NoLibraryFoundException If no library with the given name can be found.
+	 * @throws GalaxyUserNoRoleException If the passed Galaxy user has no associated role.
 	 */
 	public GalaxyUploadResult uploadSamples(@Valid List<UploadSample> samples, 
 			@Valid GalaxyObjectName libraryName,
 			@Valid GalaxyAccountEmail galaxyUserEmail)
-			throws LibraryUploadException, CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException
+			throws LibraryUploadException, CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException
 	{
 		checkNotNull(libraryName, "libraryName is null");
 		checkNotNull(samples, "samples is null");
@@ -358,46 +328,44 @@ public class GalaxyAPI
 		
 		GalaxyUploadResult galaxyUploadResult = null;
 		
-		try
+		Library uploadLibrary;
+		if (galaxySearch.galaxyUserExists(galaxyUserEmail))
 		{
-			Library uploadLibrary;
-			if (galaxySearch.galaxyUserExists(galaxyUserEmail))
+			try
 			{
-    			List<Library> libraries = galaxySearch.findLibraryWithName(libraryName);
-    			
-    			if (libraries != null && libraries.size() > 0)
-    			{
-    				// use 1st library that comes up from search to attempt to upload into
-    				uploadLibrary = libraries.get(0);
-    			}
-    			else
-    			{
-    				uploadLibrary = buildGalaxyLibrary(libraryName, galaxyUserEmail);
-    			}
-    					
-    			if(uploadFilesToLibrary(samples, uploadLibrary.getId()))
-    			{
-    				galaxyUploadResult = new GalaxyUploadResult(uploadLibrary, libraryName,
-    						galaxyUserEmail, galaxyInstance.getGalaxyUrl());
-    			}
-    			else
-    			{
-    				throw new LibraryUploadException("Could upload files to library " + libraryName
-    						+ "id=" + uploadLibrary.getId() + " in instance of galaxy with url="
-    						+ galaxyInstance.getGalaxyUrl());
-    			}
+				List<Library> libraries = galaxySearch.findLibraryWithName(libraryName);
+				uploadLibrary = libraries.get(0);
+			}
+			catch (NoLibraryFoundException e)
+			{
+				uploadLibrary = buildGalaxyLibrary(libraryName, galaxyUserEmail);
+			}
+			
+			if(uploadFilesToLibrary(samples, uploadLibrary.getId()))
+			{
+				try
+                {
+                    galaxyUploadResult = new GalaxyUploadResult(uploadLibrary, libraryName,
+                    		galaxyUserEmail, galaxyInstance.getGalaxyUrl());
+                }
+				catch (MalformedURLException e)
+                {
+                    throw new RuntimeException(e);
+                }
+				
+				return galaxyUploadResult;
 			}
 			else
 			{
-				throw new GalaxyUserNotFoundException("Galaxy user with email " + galaxyUserEmail + " does not exist");
+				throw new LibraryUploadException("Could upload files to library " + libraryName
+						+ "id=" + uploadLibrary.getId() + " in instance of galaxy with url="
+						+ galaxyInstance.getGalaxyUrl());
 			}
 		}
-        catch (MalformedURLException e)
-        {
-            throw new RuntimeException(e);
-        }
-		
-		return galaxyUploadResult;
+		else
+		{
+			throw new GalaxyUserNotFoundException("Galaxy user with email " + galaxyUserEmail + " does not exist");
+		}
 	}
 	
 	/**
@@ -408,9 +376,11 @@ public class GalaxyAPI
 	 * @throws LibraryUploadException If there was an error uploading files to the library.
 	 * @throws ConstraintViolationException  If one of the GalaxySamples is invalid (assumes this object
 	 * 	is managed by Spring).
+	 * @throws NoLibraryFoundException If no library could be found with the given id.
+	 * @throws CreateLibraryException If an error occured while attempting to build the data library.
 	 */
 	public boolean uploadFilesToLibrary(@Valid List<UploadSample> samples, String libraryID)
-			throws LibraryUploadException, ConstraintViolationException
+			throws LibraryUploadException, ConstraintViolationException, NoLibraryFoundException, CreateLibraryException
 	{
 		checkNotNull(samples, "samples are null");
 		checkNotNull(libraryID, "libraryID is null");
@@ -425,56 +395,42 @@ public class GalaxyAPI
 			
 			Library library = galaxySearch.findLibraryWithId(libraryID);
 			
-			if (library != null)
+			Map<String, LibraryContent> libraryContentMap = galaxySearch.libraryContentAsMap(libraryID);
+			LibraryFolder illuminaFolder;
+						
+			try
 			{
-				Map<String, LibraryContent> libraryContentMap = galaxySearch.libraryContentAsMap(libraryID);
-				LibraryFolder illuminaFolder;
-				
 				LibraryContent illuminaContent = galaxySearch.findLibraryContentWithId(libraryID, ILLUMINA_FOLDER_PATH);
-				LibraryContent referencesContent = galaxySearch.findLibraryContentWithId(libraryID, REFERENCES_FOLDER_PATH);
 				
-				if (illuminaContent == null)
+				illuminaFolder = new LibraryFolder();
+				illuminaFolder.setId(illuminaContent.getId());
+				illuminaFolder.setName(illuminaContent.getName());
+			}
+			catch (NoGalaxyContentFoundException e)
+			{
+				illuminaFolder = galaxyLibrary.createLibraryFolder(library, ILLUMINA_FOLDER_NAME);
+			}
+			
+			try
+			{
+				galaxySearch.findLibraryContentWithId(libraryID, REFERENCES_FOLDER_PATH);
+			}
+			catch (NoGalaxyContentFoundException e)
+			{
+				// create references folder if it doesn't exist, but we don't need to put anything into it.
+				galaxyLibrary.createLibraryFolder(library, REFERENCES_FOLDER_NAME);
+			}
+			
+			for (UploadSample sample : samples)
+			{					
+				if (sample != null)
 				{
-					illuminaFolder = galaxyLibrary.createLibraryFolder(library, ILLUMINA_FOLDER_NAME);
-					if (illuminaFolder == null)
-					{
-						throw new LibraryUploadException("Could not create folder " + ILLUMINA_FOLDER_NAME + " in library with id=" +
-								libraryID);
-					}
+					success &= uploadSample(sample, illuminaFolder, librariesClient, library, libraryContentMap, errorSuffix);
 				}
 				else
 				{
-					illuminaFolder = new LibraryFolder();
-					illuminaFolder.setId(illuminaContent.getId());
-					illuminaFolder.setName(illuminaContent.getName());
+					throw new LibraryUploadException("Cannot upload a null sample" + errorSuffix);
 				}
-				
-				// builds references folder, but we don't need to use it
-				if (referencesContent == null)
-				{
-					LibraryFolder referencesFolder = galaxyLibrary.createLibraryFolder(library, REFERENCES_FOLDER_NAME);
-					if (referencesFolder == null)
-					{
-						throw new LibraryUploadException("Could not create folder " + REFERENCES_FOLDER_NAME + " in library with id=" +
-								libraryID);
-					}
-				}
-				
-				for (UploadSample sample : samples)
-				{					
-					if (sample != null)
-					{
-						success &= uploadSample(sample, illuminaFolder, librariesClient, library, libraryContentMap, errorSuffix);
-					}
-					else
-					{
-						throw new LibraryUploadException("Cannot upload a null sample" + errorSuffix);
-					}
-				}
-			}
-			else
-			{
-				throw new LibraryUploadException("Could not find library with id=" + libraryID + errorSuffix);
 			}
 		}
 		

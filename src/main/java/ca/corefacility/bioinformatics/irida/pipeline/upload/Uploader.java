@@ -39,8 +39,7 @@ public interface Uploader
 	 * @param samples  The set of samples to upload.
 	 * @param dataLocation  The name of the data location to upload to.
 	 * @param userName  The name of the user who should own the files.
-	 * @return An UploadResult containing information about the location of the uploaded files, or null
-	 * 	if an error occurred.
+	 * @return An UploadResult containing information about the location of the uploaded files.
 	 * @throws UploadException  If an error occurred.
 	 * @throws ConstraintViolationException If the samples, dataLocation or userName are invalid.
 	 */

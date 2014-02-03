@@ -20,4 +20,15 @@ public class CreateLibraryException extends UploadException
 	{
 		super(cause);
 	}
+
+	public CreateLibraryException()
+    {
+	    super();
+    }
+
+	public CreateLibraryException(String message, Throwable cause,
+            boolean enableSuppression, boolean writableStackTrace)
+    {
+	    super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

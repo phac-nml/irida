@@ -22,6 +22,7 @@ import com.sun.jersey.api.client.ClientResponse;
 
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.ChangeLibraryPermissionsException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
@@ -45,7 +46,7 @@ public class GalaxyLibraryTest
 	private GalaxyLibraryBuilder galaxyLibrary;
 	
 	@Before
-	public void setup() throws FileNotFoundException, URISyntaxException
+	public void setup() throws FileNotFoundException, URISyntaxException, GalaxyUserNoRoleException
 	{		
 		MockitoAnnotations.initMocks(this);
 		
@@ -77,7 +78,7 @@ public class GalaxyLibraryTest
 		when(librariesClient.getRootFolder(LIBRARY_ID)).thenReturn(rootFolder);
 	}
 	
-	private void setupPermissionsTest()
+	private void setupPermissionsTest() throws GalaxyUserNoRoleException
 	{
 		Role userRole = new Role();
 		userRole.setName(USER_EMAIL.getName());
@@ -87,6 +88,7 @@ public class GalaxyLibraryTest
 		
 		when(galaxySearch.findUserRoleWithEmail(USER_EMAIL)).thenReturn(userRole);
 		when(galaxySearch.findUserRoleWithEmail(ADMIN_EMAIL)).thenReturn(adminRole);
+		when(galaxySearch.findUserRoleWithEmail(INVALID_EMAIL)).thenThrow(new GalaxyUserNoRoleException());
 	}
 	
 	@Test
@@ -104,13 +106,12 @@ public class GalaxyLibraryTest
 		assertEquals("1", newFolder.getId());
 	}
 	
-	@Test
+	@Test(expected=CreateLibraryException.class)
 	public void testCreateLibraryFolderNoRoot() throws CreateLibraryException
 	{
 		when(librariesClient.getRootFolder(LIBRARY_ID)).thenReturn(null);
 		
-		LibraryFolder folder = galaxyLibrary.createLibraryFolder(testLibrary, new GalaxyObjectName("new_folder"));
-		assertNull(folder);
+		galaxyLibrary.createLibraryFolder(testLibrary, new GalaxyObjectName("new_folder"));
 	}
 	
 	@Test
@@ -159,19 +160,17 @@ public class GalaxyLibraryTest
 		galaxyLibrary.changeLibraryOwner(testLibrary, USER_EMAIL, INVALID_EMAIL);
 	}
 	
-	@Test
+	@Test(expected=ChangeLibraryPermissionsException.class)
 	public void testChangeLibraryOwnerInvalidResponse() throws ChangeLibraryPermissionsException
 	{
 		when(librariesClient.setLibraryPermissions(eq(LIBRARY_ID), any(LibraryPermissions.class))).
 			thenReturn(invalidResponse);
 		
-		Library library = galaxyLibrary.changeLibraryOwner(testLibrary, USER_EMAIL, ADMIN_EMAIL);
-		verify(librariesClient).setLibraryPermissions(eq(LIBRARY_ID), any(LibraryPermissions.class));
-		assertNull(library);
+		galaxyLibrary.changeLibraryOwner(testLibrary, USER_EMAIL, ADMIN_EMAIL);
 	}
 	
 	@Test
-	public void testBuildEmptyLibrary()
+	public void testBuildEmptyLibrary() throws CreateLibraryException
 	{		
 		when(librariesClient.createLibrary(any(Library.class))).thenReturn(testLibrary);
 		
@@ -182,8 +181,16 @@ public class GalaxyLibraryTest
 		assertEquals(LIBRARY_ID, library.getId());
 	}
 	
+	@Test(expected=CreateLibraryException.class)
+	public void testFailBuildEmptyLibrary() throws CreateLibraryException
+	{	
+		when(librariesClient.createLibrary(any(Library.class))).thenReturn(null);
+		
+		galaxyLibrary.buildEmptyLibrary(new GalaxyObjectName("test"));
+	}
+	
 	@Test(expected=RuntimeException.class)
-	public void testFailBuildEmptyLibrary()
+	public void testFailBuildEmptyLibraryException() throws CreateLibraryException
 	{	
 		when(librariesClient.createLibrary(any(Library.class))).thenThrow(new RuntimeException("error creating library"));
 		

@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.ChangeLibraryPermissionsException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
@@ -48,13 +50,14 @@ public class GalaxyLibraryBuilder
 	/**
 	 * Builds a new empty library with the given name.
 	 * @param libraryName  The name of the new library.
-	 * @return  A Library object for the newly created library, or null if library could not be created.
+	 * @return  A Library object for the newly created library.
+	 * @throws CreateLibraryException If no library could be created.
 	 */
-	public Library buildEmptyLibrary(GalaxyObjectName libraryName)
+	public Library buildEmptyLibrary(GalaxyObjectName libraryName) throws CreateLibraryException
 	{
 		checkNotNull(libraryName, "libraryName is null");
 		
-		Library persistedLibrary = null;
+		Library persistedLibrary;
 		
 		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
 		Library library = new Library(libraryName.getName());
@@ -64,18 +67,23 @@ public class GalaxyLibraryBuilder
 		{
 			logger.debug("Created library=" + library.getName() + " libraryId=" + persistedLibrary.getId() +
 					" in Galaxy url=" + galaxyInstance.getGalaxyUrl());
+			
+			return persistedLibrary;
 		}
-		
-		return persistedLibrary;
+		else
+		{
+			throw new CreateLibraryException("Could not create library named " + libraryName);
+		}		
 	}
 	
 	/**
 	 * Creates a new folder within the given library under the "root" directory.
 	 * @param library  The library to create the folder within.
 	 * @param folderName  The name of the folder to create.
-	 * @return  A LibraryFolder object representing this folder, or null if no folder could be created.
+	 * @return  A LibraryFolder object representing this folder.
+	 * @throws CreateLibraryException If no library folder could be created.
 	 */
-	public LibraryFolder createLibraryFolder(Library library, GalaxyObjectName folderName)
+	public LibraryFolder createLibraryFolder(Library library, GalaxyObjectName folderName) throws CreateLibraryException
 	{
 		checkNotNull(library, "library is null");
 		checkNotNull(folderName, "folderName is null");
@@ -97,7 +105,15 @@ public class GalaxyLibraryBuilder
 			}
 		}
 		
-		return folder;
+		if (folder == null)
+		{
+			throw new CreateLibraryException("Could not create library folder=" + folderName
+					+ " within library " + library.getName());
+		}
+		else
+		{
+			return folder;
+		}
 	}
 	
 	/**
@@ -105,10 +121,11 @@ public class GalaxyLibraryBuilder
 	 * @param library  The library to create the folder within.
 	 * @param libraryFolder  The folder to create the new folder within.
 	 * @param folderName  The name of the folder to create.
-	 * @return  A LibraryFolder object representing this folder, or null if no folder could be created.
+	 * @return  A LibraryFolder object representing this folder.
+	 * @throws CreateLibraryException If no library folder could be created.
 	 */
 	public LibraryFolder createLibraryFolder(Library library, LibraryFolder libraryFolder,
-			UploadObjectName folderName)
+			UploadObjectName folderName) throws CreateLibraryException
 	{
 		checkNotNull(library, "library is null");
 		checkNotNull(libraryFolder, "libraryFolder is null");
@@ -127,7 +144,15 @@ public class GalaxyLibraryBuilder
 			folder = librariesClient.createFolder(library.getId(), newFolder);
 		}
 		
-		return folder;
+		if (folder == null)
+		{
+			throw new CreateLibraryException("Could not create library folder=" + folderName
+					+ " within folder " + libraryFolder.getName() + " in library " + library.getName());
+		}
+		else
+		{
+			return folder;
+		}
 	}
 	
 	/**
@@ -136,7 +161,7 @@ public class GalaxyLibraryBuilder
 	 * @param userEmail  The regular user email address to own the library.
 	 * @param adminEmail  The admin email address to own the library,
 	 * 	used so administrator can upload files to this library.
-	 * @return  The Library we changed the owner of, or null if could not change owner.
+	 * @return  The Library we changed the owner of.
 	 * @throws ChangeLibraryPermissionsException  If an error occured changing the library permissions. 
 	 */
 	public Library changeLibraryOwner(Library library,
@@ -148,47 +173,47 @@ public class GalaxyLibraryBuilder
 		checkNotNull(userEmail, "userEmail is null");
 		
 		Library changedLibrary = null;
+		Role userRole;
+		Role adminRole;
 		
-		Role userRole = galaxySearch.findUserRoleWithEmail(userEmail);
-		Role adminRole = galaxySearch.findUserRoleWithEmail(adminEmail);
-		
-		if (userRole != null)
+		try
 		{
-			if (adminRole != null)
-			{
-				LibraryPermissions permissions = new LibraryPermissions();
-				permissions.getAccessInRoles().add(userRole.getId());
-				permissions.getAccessInRoles().add(adminRole.getId());
-				permissions.getAddInRoles().add(userRole.getId());
-				permissions.getAddInRoles().add(adminRole.getId());
-				permissions.getManageInRoles().add(userRole.getId());
-				permissions.getManageInRoles().add(adminRole.getId());
-				permissions.getModifyInRoles().add(userRole.getId());
-				permissions.getModifyInRoles().add(adminRole.getId());
-				
-				ClientResponse response = galaxyInstance.getLibrariesClient().
-						setLibraryPermissions(library.getId(), permissions);
-				if (ClientResponse.Status.OK.equals(response.getClientResponseStatus()))
-				{
-					logger.debug("Changed owner of library=" + library.getName() + " libraryId=" + library.getId() +
-							" to roles:" + userRole.getName() + "," + adminRole.getName() + " in Galaxy url=" + 
-							galaxyInstance.getGalaxyUrl());
-					
-					changedLibrary = library;
-				}
-			}
-			else
-			{
-				throw new ChangeLibraryPermissionsException("Galaxy admin with email " + adminEmail +
-						" does not have corresponding private role");
-			}
+    		userRole = galaxySearch.findUserRoleWithEmail(userEmail);
+    		adminRole = galaxySearch.findUserRoleWithEmail(adminEmail);
+		}
+		catch (GalaxyUserNoRoleException e)
+		{
+			throw new ChangeLibraryPermissionsException("Could not change the owner for library="
+					+ library.getName(), e);
+		}
+		
+		LibraryPermissions permissions = new LibraryPermissions();
+		permissions.getAccessInRoles().add(userRole.getId());
+		permissions.getAccessInRoles().add(adminRole.getId());
+		permissions.getAddInRoles().add(userRole.getId());
+		permissions.getAddInRoles().add(adminRole.getId());
+		permissions.getManageInRoles().add(userRole.getId());
+		permissions.getManageInRoles().add(adminRole.getId());
+		permissions.getModifyInRoles().add(userRole.getId());
+		permissions.getModifyInRoles().add(adminRole.getId());
+		
+		ClientResponse response = galaxyInstance.getLibrariesClient().
+				setLibraryPermissions(library.getId(), permissions);
+		
+		if (ClientResponse.Status.OK.equals(response.getClientResponseStatus()))
+		{
+			logger.debug("Changed owner of library=" + library.getName() + " libraryId=" + library.getId() +
+					" to roles:" + userRole.getName() + "," + adminRole.getName() + " in Galaxy url=" + 
+					galaxyInstance.getGalaxyUrl());
+			
+			changedLibrary = library;
+			
+			return changedLibrary;
 		}
 		else
 		{
-			throw new ChangeLibraryPermissionsException("Galaxy user with email " + userEmail +
-					" does not have corresponding private role");
+			throw new ChangeLibraryPermissionsException("Could not change the owner for library="
+					+ library.getName());
 		}
-		
-		return changedLibrary;
 	}
 }
