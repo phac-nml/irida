@@ -15,7 +15,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
@@ -51,7 +50,6 @@ public class GalaxySearchTest
 	private static final GalaxyFolderPath FOLDER_PATH = new GalaxyFolderPath("test_folder");
 	private static final GalaxyFolderPath ILLUMINA_FOLDER_NAME = new GalaxyFolderPath("test_folder/illumina");
 	private static final GalaxyFolderPath INVALID_FOLDER_NAME = new GalaxyFolderPath("invalid_folder");
-	private static final String ADMIN_API_KEY = "0";
 	
 	private List<Library> allLibrariesList;
 	private Map<String, LibraryContent> singleLibraryContentsAsMap;
@@ -260,13 +258,6 @@ public class GalaxySearchTest
 	public void testUserDoesNotExist()
 	{		
 		assertFalse(galaxySearch.galaxyUserExists(new GalaxyAccountEmail("invalid@localhost")));
-	}
-	
-	@Test
-	public void testCheckValidAdminEmailAPIKey() throws GalaxyConnectException
-	{		
-		assertTrue(galaxySearch.checkValidAdminEmailAPIKey(new GalaxyAccountEmail("user1@localhost"), ADMIN_API_KEY));
-		assertFalse(galaxySearch.checkValidAdminEmailAPIKey(new GalaxyAccountEmail("invalid@localhost"), ADMIN_API_KEY));
 	}
 	
 	@Test

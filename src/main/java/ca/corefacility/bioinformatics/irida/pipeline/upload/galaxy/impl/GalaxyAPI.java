@@ -34,6 +34,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
 import com.github.jmchilton.blend4j.galaxy.beans.User;
+import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 
 public class GalaxyAPI
@@ -78,10 +79,17 @@ public class GalaxyAPI
 		galaxySearch = new GalaxySearch(galaxyInstance);
 		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxySearch);
 		
-		if (!galaxySearch.checkValidAdminEmailAPIKey(adminEmail, adminAPIKey))
+		try
 		{
-			throw new GalaxyConnectException("Could not create GalaxyInstance with URL=" + 
-					galaxyURL + ", adminEmail=" + adminEmail);
+    		if (!galaxySearch.galaxyUserExists(adminEmail))
+    		{
+    			throw new GalaxyConnectException("Could not create GalaxyInstance with URL=" + 
+    					galaxyURL + ", adminEmail=" + adminEmail);
+    		}
+		}
+		catch (ClientHandlerException e)
+		{
+			throw new GalaxyConnectException(e);
 		}
 	}
 	
@@ -104,10 +112,17 @@ public class GalaxyAPI
 		galaxySearch = new GalaxySearch(galaxyInstance);
 		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxySearch);
 		
-		if (!galaxySearch.checkValidAdminEmailAPIKey(adminEmail, galaxyInstance.getApiKey()))
+		try
 		{
-			throw new GalaxyConnectException("Could not create GalaxyInstance with URL=" + 
-					galaxyInstance.getGalaxyUrl() + ", adminEmail=" + adminEmail);
+    		if (!galaxySearch.galaxyUserExists(adminEmail))
+    		{
+    			throw new GalaxyConnectException("Could not create GalaxyInstance with URL=" + 
+    					galaxyInstance.getGalaxyUrl() + ", adminEmail=" + adminEmail);
+    		}
+		}
+		catch (ClientHandlerException e)
+		{
+			throw new GalaxyConnectException(e);
 		}
 	}
 	
@@ -137,10 +152,17 @@ public class GalaxyAPI
 		this.galaxyLibrary = galaxyLibrary;
 		this.galaxySearch = galaxySearch;
 		
-		if (!galaxySearch.checkValidAdminEmailAPIKey(adminEmail, galaxyInstance.getApiKey()))
+		try
 		{
-			throw new GalaxyConnectException("Could not use GalaxyInstance with URL=" + 
-					galaxyInstance.getGalaxyUrl() + ", adminEmail=" + adminEmail);
+    		if (!galaxySearch.galaxyUserExists(adminEmail))
+    		{
+    			throw new GalaxyConnectException("Could not use GalaxyInstance with URL=" + 
+    					galaxyInstance.getGalaxyUrl() + ", adminEmail=" + adminEmail);
+    		}
+		}
+		catch (ClientHandlerException e)
+		{
+			throw new GalaxyConnectException(e);
 		}
 	}
 	
@@ -339,7 +361,7 @@ public class GalaxyAPI
 		{
 			Library uploadLibrary;
 			if (galaxySearch.galaxyUserExists(galaxyUserEmail))
-			{	
+			{
     			List<Library> libraries = galaxySearch.findLibraryWithName(libraryName);
     			
     			if (libraries != null && libraries.size() > 0)

@@ -97,7 +97,7 @@ public class GalaxyAPITest
 		when(galaxyInstance.getLibrariesClient()).thenReturn(librariesClient);
 		when(galaxyInstance.getGalaxyUrl()).thenReturn(galaxyURL);
 		
-		when(galaxySearch.checkValidAdminEmailAPIKey(realAdminEmail, realAdminAPIKey)).
+		when(galaxySearch.galaxyUserExists(realAdminEmail)).
 			thenReturn(true);
 				
 		workflowRESTAPI = new GalaxyAPI(galaxyInstance, realAdminEmail, galaxySearch, galaxyLibrary);
@@ -320,7 +320,6 @@ public class GalaxyAPITest
 		setupBuildLibrary();
 		
 		workflowRESTAPI = new GalaxyAPI(galaxyInstance, nonExistentAdminEmail);
-		workflowRESTAPI.setLinkUploadedFiles(false);
 	}
 	
 	@Test(expected=GalaxyUserNotFoundException.class)

@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.LocalGal
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadConnectionException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
@@ -80,6 +81,14 @@ public class GalaxyUploaderIT
 		samples.add(galaxySample1);
 		
 		unconnectedGalaxyUploader.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
+	}
+	
+	@Test(expected=GalaxyConnectException.class)
+	public void testSetupNonExistentEmail() throws ConstraintViolationException, GalaxyConnectException
+	{
+		GalaxyUploader newGalaxyUploder = new GalaxyUploader();
+		newGalaxyUploder.setupGalaxyAPI(localGalaxy.getGalaxyURL(), localGalaxy.getNonExistentGalaxyAdminName(),
+				localGalaxy.getAdminAPIKey());
 	}
 	
 	@Test(expected=UploadConnectionException.class)
