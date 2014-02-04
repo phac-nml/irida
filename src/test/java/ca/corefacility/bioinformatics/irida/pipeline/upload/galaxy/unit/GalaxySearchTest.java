@@ -177,10 +177,10 @@ public class GalaxySearchTest
 		assertEquals(LIBRARY_NAME.getName(), library.getName());
 	}
 	
-	@Test(expected=NoLibraryFoundException.class)
+	@Test
 	public void testNoFindLibrary() throws NoLibraryFoundException
 	{		
-		galaxySearch.findLibraryWithId(INVALID_LIBRARY_ID);
+		assertNull(galaxySearch.findLibraryWithId(INVALID_LIBRARY_ID));
 	}
 	
 	@Test
@@ -211,10 +211,10 @@ public class GalaxySearchTest
 		assertEquals(expectedList, returnedLibraries);
 	}
 	
-	@Test(expected=NoLibraryFoundException.class)
+	@Test
 	public void testInvalidFindLibraryByName() throws NoLibraryFoundException
 	{
-		galaxySearch.findLibraryWithName(INVALID_LIBRARY_NAME);
+		assertEquals(0, galaxySearch.findLibraryWithName(INVALID_LIBRARY_NAME).size());
 	}
 	
 	@Test
@@ -226,10 +226,10 @@ public class GalaxySearchTest
 		assertEquals("1", foundRole.getId());
 	}
 	
-	@Test(expected=GalaxyUserNoRoleException.class)
+	@Test
 	public void testNoFindUserRoleWithEmail() throws GalaxyUserNoRoleException
 	{		
-		galaxySearch.findUserRoleWithEmail(new GalaxyAccountEmail("invalid@localhost"));
+		assertNull(galaxySearch.findUserRoleWithEmail(new GalaxyAccountEmail("invalid@localhost")));
 	}
 	
 	@Test
@@ -241,10 +241,10 @@ public class GalaxySearchTest
 		assertEquals("1", foundUser.getId());
 	}
 	
-	@Test(expected=GalaxyUserNotFoundException.class)
+	@Test
 	public void testNoFindUserWithEmail() throws GalaxyUserNotFoundException
 	{		
-		galaxySearch.findUserWithEmail(new GalaxyAccountEmail("invalid@localhost"));
+		assertNull(galaxySearch.findUserWithEmail(new GalaxyAccountEmail("invalid@localhost")));
 	}
 	
 	@Test
@@ -277,21 +277,21 @@ public class GalaxySearchTest
 		assertEquals(multipleLibraryContentsAsMap, validFolder);
 	}
 	
-	@Test(expected=NoLibraryFoundException.class)
+	@Test
 	public void testLibraryContentAsMapNoContent() throws NoLibraryFoundException
 	{
-		galaxySearch.libraryContentAsMap(INVALID_LIBRARY_ID);
+		assertNull(galaxySearch.libraryContentAsMap(INVALID_LIBRARY_ID));
 	}
 	
-	@Test(expected=NoGalaxyContentFoundException.class)
+	@Test
 	public void testFindLibraryContentWithIdInvalidFolder() throws NoGalaxyContentFoundException
 	{
-		galaxySearch.findLibraryContentWithId(LIBRARY_ID, INVALID_FOLDER_NAME);
+		assertNull(galaxySearch.findLibraryContentWithId(LIBRARY_ID, INVALID_FOLDER_NAME));
 	}
 	
-	@Test(expected=NoGalaxyContentFoundException.class)
+	@Test
 	public void testFindLibraryContentWithIdInvalidLibraryId() throws NoGalaxyContentFoundException
 	{
-		galaxySearch.findLibraryContentWithId(INVALID_LIBRARY_ID, FOLDER_PATH);
+		assertNull(galaxySearch.findLibraryContentWithId(INVALID_LIBRARY_ID, FOLDER_PATH));
 	}
 }

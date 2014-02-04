@@ -7,12 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.validation.Valid;
-
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
@@ -50,10 +44,9 @@ public class GalaxySearch
 	/**
 	 * Given an email, finds a corresponding users private Role object in Galaxy with that email.
 	 * @param email  The email of the user to search.
-	 * @return  A private Role object of the user with the corresponding email.
-	 * @throws GalaxyUserNoRoleException If no role can be found for the user.
+	 * @return  A private Role object of the user with the corresponding email, or null if no such role.
 	 */
-	public Role findUserRoleWithEmail(GalaxyAccountEmail email) throws GalaxyUserNoRoleException
+	public Role findUserRoleWithEmail(GalaxyAccountEmail email)
 	{
 		checkNotNull(email, "email is null");
 		
@@ -72,23 +65,15 @@ public class GalaxySearch
 			}
 		}
 		
-		if (role == null)
-		{
-			throw new GalaxyUserNoRoleException("No role exists for user " + email);
-		}
-		else
-		{
-			return role;
-		}
+		return role;
 	}
 	
 	/**
 	 * Given an email, finds a corresponding User object in Galaxy with that email.
 	 * @param email  The email of the user to search.
-	 * @return  A User object of the user with the corresponding email.
-	 * @throws GalaxyUserNotFoundException If no such user exists.
+	 * @return  A User object of the user with the corresponding email, or null if no such user.
 	 */
-	public User findUserWithEmail(GalaxyAccountEmail email) throws GalaxyUserNotFoundException
+	public User findUserWithEmail(GalaxyAccountEmail email)
 	{
 		checkNotNull(email, "email is null");
 		
@@ -107,23 +92,15 @@ public class GalaxySearch
 			}
 		}
 		
-		if (user == null)
-		{
-			throw new GalaxyUserNotFoundException("Galaxy user " + email + " not found");
-		}
-		else
-		{
-			return user;
-		}
+		return user;
 	}
 	
 	/**
 	 * Given a library ID, searches for the corresponding Library object.
 	 * @param libraryId  The libraryId to search for.
-	 * @return  A Library object for this Galaxy library.
-	 * @throws NoLibraryFoundException If no library is found with the passed id.
+	 * @return  A Library object for this Galaxy library, or null if no such library.
 	 */
-	public Library findLibraryWithId(String libraryId) throws NoLibraryFoundException
+	public Library findLibraryWithId(String libraryId)
 	{
 		checkNotNull(libraryId, "libraryId is null");
 		
@@ -139,23 +116,15 @@ public class GalaxySearch
 			}
 		}
 		
-		if (library == null)
-		{
-			throw new NoLibraryFoundException("No library found with id " + libraryId);
-		}
-		else
-		{
-			return library;
-		}
+		return library;
 	}
 	
 	/**
 	 * Gets a Map listing all contents of the passed Galaxy library to the LibraryContent object.
 	 * @param libraryId  The library to get all contents from.
-	 * @return  A Map mapping the path of the library content to the LibraryContent object.
-	 * @throws NoLibraryFoundException If no library is found with the given id.
+	 * @return  A Map mapping the path of the library content to the LibraryContent object, or null if no library exists.
 	 */
-	public Map<String,LibraryContent> libraryContentAsMap(String libraryId) throws NoLibraryFoundException
+	public Map<String,LibraryContent> libraryContentAsMap(String libraryId)
 	{
 		checkNotNull(libraryId, "libraryId is null");
 		
@@ -174,23 +143,15 @@ public class GalaxySearch
 			}
 		}
 		
-		if (libraryContents == null)
-		{
-			throw new NoLibraryFoundException("No library found with id " + libraryId);
-		}
-		else
-		{
-			return map;
-		}
+		return map;
 	}
 	
 	/**
 	 * Given a library name, searches for a list of matching Library objects.
 	 * @param libraryName  The name of the library to search for.
-	 * @return  A list of Library objects matching the given name.
-	 * @throws NoLibraryFoundException If no libraries are found with the passed name.
+	 * @return  A list of Library objects matching the given name, empty if no matching libraries are found.
 	 */
-	public List<Library> findLibraryWithName(GalaxyObjectName libraryName) throws NoLibraryFoundException
+	public List<Library> findLibraryWithName(GalaxyObjectName libraryName)
 	{		
 		checkNotNull(libraryName, "libraryName is null");
 		
@@ -210,14 +171,7 @@ public class GalaxySearch
     		}
 		}
 		
-		if (libraries.isEmpty())
-		{
-			throw new NoLibraryFoundException("No library found with name " + libraryName);
-		}
-		else
-		{
-			return libraries;
-		}
+		return libraries;
 	}
 	
 	/**
@@ -225,10 +179,8 @@ public class GalaxySearch
 	 * @param libraryId  The ID of the library to search for.
 	 * @param folderName  The name of the folder to search for (only finds first instance of this folder name).
 	 * @return  A LibraryContent within the given library with the given name, or null if no such folder exists.
-	 * @throws NoGalaxyContentFoundException If no library content could be found for the given parameters.
 	 */
-	public LibraryContent findLibraryContentWithId(String libraryId, @Valid GalaxyFolderPath folderPath)
-			throws NoGalaxyContentFoundException
+	public LibraryContent findLibraryContentWithId(String libraryId, GalaxyFolderPath folderPath)
 	{
 		checkNotNull(libraryId, "libraryId is null");
 		checkNotNull(folderPath, "folderPath is null");
@@ -253,15 +205,7 @@ public class GalaxySearch
 			}
 		}
 		
-		if (folder == null)
-		{
-			throw new NoGalaxyContentFoundException("No library content found for libraryId=" + libraryId
-					+ ", folderPath=" + folderPath);
-		}
-		else
-		{
-			return folder;
-		}
+		return folder;
 	}
 
 	/**
@@ -271,16 +215,6 @@ public class GalaxySearch
 	 */
 	public boolean galaxyUserExists(GalaxyAccountEmail galaxyUserEmail)
     {
-		User user = null;
-		
-		try
-        {
-	        user = findUserWithEmail(galaxyUserEmail);
-	        return user != null;
-        }
-		catch (GalaxyUserNotFoundException e)
-        {
-	        return false;
-        }
+	    return findUserWithEmail(galaxyUserEmail) != null;
     }
 }

@@ -27,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryExcep
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
@@ -72,6 +71,7 @@ public class GalaxyAPITest
 	final private GalaxyAccountEmail nonExistentAdminEmail = new GalaxyAccountEmail("admin_no_exist@localhost");
 	final private GalaxyAccountEmail realUserEmail = new GalaxyAccountEmail("test@localhost");
 	final private GalaxyAccountEmail fakeUserEmail = new GalaxyAccountEmail("fake@localhost");
+	final private User realUser = new User();
 	final private String realRoleId = "1";
 	final private String adminRoleId = "0";
 	final private GalaxyObjectName illuminaFolderName = new GalaxyObjectName("illumina_reads");
@@ -117,7 +117,9 @@ public class GalaxyAPITest
 		dataFilesDouble.add(dataFile1);
 		dataFilesDouble.add(dataFile2);
 		
-		libraryMap = new HashMap<String, LibraryContent>();
+		libraryMap = new HashMap<String, LibraryContent>();	
+
+		realUser.setEmail(realUserEmail.getName());
 	}
 	
 	private void setupBuildLibrary() throws MalformedURLException, UploadException
@@ -128,9 +130,6 @@ public class GalaxyAPITest
 		expectedUploadResult = new GalaxyUploadResult(returnedLibrary, libraryName,
 				realUserEmail, galaxyURL);
 		
-		User realUser = new User();
-		realUser.setEmail(realUserEmail.getName());
-		
 		Role realUserRole = new Role();
 		realUserRole.setName(realUserEmail.getName());
 		realUserRole.setId(realRoleId);
@@ -140,6 +139,7 @@ public class GalaxyAPITest
 		realAdminRole.setId(adminRoleId);
 		
 		when(galaxySearch.findUserWithEmail(realUserEmail)).thenReturn(realUser);
+		when(galaxySearch.galaxyUserExists(realUserEmail)).thenReturn(true);
 		when(galaxySearch.findUserRoleWithEmail(realUserEmail)).thenReturn(realUserRole);
 		when(galaxySearch.findLibraryWithId(libraryId)).thenReturn(returnedLibrary);
 		when(galaxySearch.findUserRoleWithEmail(realAdminEmail)).thenReturn(realAdminRole);
@@ -217,12 +217,12 @@ public class GalaxyAPITest
 		illuminaFolder.setName(illuminaFolderPath.getName());
 		illuminaFolder.setFolderId(rootFolderId);
 		
-		when(galaxySearch.findLibraryContentWithId(libraryId, illuminaFolderPath)).thenThrow(new NoGalaxyContentFoundException());
-		when(galaxySearch.findLibraryContentWithId(libraryId, referencesFolderPath)).thenThrow(new NoGalaxyContentFoundException());
+		when(galaxySearch.findLibraryContentWithId(libraryId, illuminaFolderPath)).thenReturn(null);
+		when(galaxySearch.findLibraryContentWithId(libraryId, referencesFolderPath)).thenReturn(null);
 		when(galaxyLibrary.createLibraryFolder(any(Library.class), eq(illuminaFolderName))).thenReturn(illuminaFolder);
 		when(galaxyLibrary.createLibraryFolder(any(Library.class), eq(referencesFolderName))).thenReturn(referencesFolder);
 		
-		when(galaxySearch.findLibraryWithId(nonExistentLibraryId)).thenThrow(new NoLibraryFoundException());
+		when(galaxySearch.findLibraryWithId(nonExistentLibraryId)).thenReturn(null);
 	}
 	
 	private void setupLibraryFoldersWithIlluminaFolder() throws UploadException
@@ -241,7 +241,7 @@ public class GalaxyAPITest
 		libraryMap.put(illuminaFolderPath.getName(), illuminaContent);
 		
 		when(galaxySearch.findLibraryContentWithId(libraryId, illuminaFolderPath)).thenReturn(illuminaContent);
-		when(galaxySearch.findLibraryContentWithId(libraryId, referencesFolderPath)).thenThrow(new NoGalaxyContentFoundException());
+		when(galaxySearch.findLibraryContentWithId(libraryId, referencesFolderPath)).thenReturn(null);
 		when(galaxyLibrary.createLibraryFolder(any(Library.class), eq(illuminaFolderName))).thenReturn(illuminaFolder);
 		when(galaxyLibrary.createLibraryFolder(any(Library.class), eq(referencesFolderName))).thenReturn(referencesFolder);
 	}
@@ -261,7 +261,7 @@ public class GalaxyAPITest
 		illuminaFolder.setName(illuminaFolderPath.getName());
 		illuminaFolder.setFolderId(rootFolderId);
 		
-		when(galaxySearch.findLibraryContentWithId(libraryId, illuminaFolderPath)).thenThrow(new NoGalaxyContentFoundException());
+		when(galaxySearch.findLibraryContentWithId(libraryId, illuminaFolderPath)).thenReturn(null);
 		when(galaxySearch.findLibraryContentWithId(libraryId, referencesFolderPath)).thenReturn(referenceContent);
 		when(galaxyLibrary.createLibraryFolder(any(Library.class), eq(illuminaFolderName))).thenReturn(illuminaFolder);
 		when(galaxyLibrary.createLibraryFolder(any(Library.class), eq(referencesFolderName))).thenReturn(referencesFolder);
@@ -318,7 +318,7 @@ public class GalaxyAPITest
 	{	
 		setupBuildLibrary();
 		
-		when(galaxySearch.findUserWithEmail(fakeUserEmail)).thenThrow(new GalaxyUserNotFoundException());
+		when(galaxySearch.findUserWithEmail(fakeUserEmail)).thenReturn(null);
 		
 		workflowRESTAPI.buildGalaxyLibrary(libraryName,fakeUserEmail);
 	}
@@ -334,9 +334,11 @@ public class GalaxyAPITest
 	@Test(expected=GalaxyUserNoRoleException.class)
 	public void testBuildGalaxyLibraryNoUserRole() throws URISyntaxException, ConstraintViolationException, UploadException
 	{
-		when(galaxySearch.findUserRoleWithEmail(fakeUserEmail)).thenThrow(new GalaxyUserNoRoleException());
+		when(galaxySearch.findUserWithEmail(realUserEmail)).thenReturn(realUser);
+		when(galaxySearch.galaxyUserExists(realUserEmail)).thenReturn(true);
+		when(galaxySearch.findUserRoleWithEmail(realUserEmail)).thenReturn(null);
 		
-		workflowRESTAPI.buildGalaxyLibrary(libraryName,fakeUserEmail);
+		workflowRESTAPI.buildGalaxyLibrary(libraryName,realUserEmail);
 	}
 	
 	@Test(expected=ChangeLibraryPermissionsException.class)
@@ -678,7 +680,7 @@ public class GalaxyAPITest
 		setupUploadSampleToLibrary(samples, folders, false);
 		
 		when(galaxySearch.galaxyUserExists(realUserEmail)).thenReturn(true);
-		when(galaxySearch.findLibraryWithName(libraryName)).thenThrow(new NoLibraryFoundException());
+		when(galaxySearch.findLibraryWithName(libraryName)).thenReturn(new LinkedList<Library>());
 				
 		assertEquals(expectedUploadResult, workflowRESTAPI.uploadSamples(samples, libraryName, realUserEmail));
 		verify(galaxySearch).findLibraryWithName(libraryName);

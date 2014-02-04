@@ -88,7 +88,7 @@ public class GalaxyLibraryTest
 		
 		when(galaxySearch.findUserRoleWithEmail(USER_EMAIL)).thenReturn(userRole);
 		when(galaxySearch.findUserRoleWithEmail(ADMIN_EMAIL)).thenReturn(adminRole);
-		when(galaxySearch.findUserRoleWithEmail(INVALID_EMAIL)).thenThrow(new GalaxyUserNoRoleException());
+		when(galaxySearch.findUserRoleWithEmail(INVALID_EMAIL)).thenReturn(null);
 	}
 	
 	@Test
@@ -130,7 +130,7 @@ public class GalaxyLibraryTest
 	}
 	
 	@Test
-	public void testChangeLibraryOwner() throws ChangeLibraryPermissionsException
+	public void testChangeLibraryOwner() throws ChangeLibraryPermissionsException, GalaxyUserNoRoleException
 	{
 		when(librariesClient.setLibraryPermissions(eq(LIBRARY_ID), any(LibraryPermissions.class))).
 			thenReturn(okayResponse);
@@ -142,8 +142,8 @@ public class GalaxyLibraryTest
 		verify(librariesClient).setLibraryPermissions(eq(LIBRARY_ID), any(LibraryPermissions.class));
 	}
 	
-	@Test(expected=ChangeLibraryPermissionsException.class)
-	public void testChangeLibraryOwnerInvalidUser() throws ChangeLibraryPermissionsException
+	@Test(expected=GalaxyUserNoRoleException.class)
+	public void testChangeLibraryOwnerInvalidUser() throws ChangeLibraryPermissionsException, GalaxyUserNoRoleException
 	{
 		when(librariesClient.setLibraryPermissions(eq(LIBRARY_ID), any(LibraryPermissions.class))).
 			thenReturn(okayResponse);
@@ -151,8 +151,8 @@ public class GalaxyLibraryTest
 		galaxyLibrary.changeLibraryOwner(testLibrary, INVALID_EMAIL, ADMIN_EMAIL);
 	}
 	
-	@Test(expected=ChangeLibraryPermissionsException.class)
-	public void testChangeLibraryOwnerInvalidAdmin() throws ChangeLibraryPermissionsException
+	@Test(expected=GalaxyUserNoRoleException.class)
+	public void testChangeLibraryOwnerInvalidAdmin() throws ChangeLibraryPermissionsException, GalaxyUserNoRoleException
 	{
 		when(librariesClient.setLibraryPermissions(eq(LIBRARY_ID), any(LibraryPermissions.class))).
 			thenReturn(okayResponse);
@@ -161,7 +161,7 @@ public class GalaxyLibraryTest
 	}
 	
 	@Test(expected=ChangeLibraryPermissionsException.class)
-	public void testChangeLibraryOwnerInvalidResponse() throws ChangeLibraryPermissionsException
+	public void testChangeLibraryOwnerInvalidResponse() throws ChangeLibraryPermissionsException, GalaxyUserNoRoleException
 	{
 		when(librariesClient.setLibraryPermissions(eq(LIBRARY_ID), any(LibraryPermissions.class))).
 			thenReturn(invalidResponse);

@@ -162,29 +162,28 @@ public class GalaxyLibraryBuilder
 	 * @param adminEmail  The admin email address to own the library,
 	 * 	used so administrator can upload files to this library.
 	 * @return  The Library we changed the owner of.
-	 * @throws ChangeLibraryPermissionsException  If an error occured changing the library permissions. 
+	 * @throws ChangeLibraryPermissionsException  If an error occurred changing the library permissions. 
+	 * @throws GalaxyUserNoRoleException If no corresponding roles for the Galaxy users could be found.
 	 */
 	public Library changeLibraryOwner(Library library,
 			GalaxyAccountEmail userEmail,
-			GalaxyAccountEmail adminEmail) throws ChangeLibraryPermissionsException
+			GalaxyAccountEmail adminEmail) throws ChangeLibraryPermissionsException, GalaxyUserNoRoleException
 	{
 		checkNotNull(library, "library is null");
 		checkNotNull(library.getId(), "library.getId() is null");
 		checkNotNull(userEmail, "userEmail is null");
 		
 		Library changedLibrary = null;
-		Role userRole;
-		Role adminRole;
-		
-		try
+		Role userRole = galaxySearch.findUserRoleWithEmail(userEmail);
+		if (userRole == null)
 		{
-    		userRole = galaxySearch.findUserRoleWithEmail(userEmail);
-    		adminRole = galaxySearch.findUserRoleWithEmail(adminEmail);
+			throw new GalaxyUserNoRoleException("Could not find a role for user with email="+ userEmail);
 		}
-		catch (GalaxyUserNoRoleException e)
+		
+		Role adminRole = galaxySearch.findUserRoleWithEmail(adminEmail);
+		if (adminRole == null)
 		{
-			throw new ChangeLibraryPermissionsException("Could not change the owner for library="
-					+ library.getName(), e);
+			throw new GalaxyUserNoRoleException("Could not find a role for admin user with email="+ adminEmail);
 		}
 		
 		LibraryPermissions permissions = new LibraryPermissions();

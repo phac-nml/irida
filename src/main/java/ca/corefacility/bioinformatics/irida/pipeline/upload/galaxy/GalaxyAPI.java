@@ -21,7 +21,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectExcep
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
@@ -191,8 +190,15 @@ public class GalaxyAPI
 				" under Galaxy url=" + galaxyInstance.getGalaxyUrl());
 		
 		// make sure user exists and has a role before we create an empty library
-		galaxySearch.findUserWithEmail(galaxyUserEmail);
-		galaxySearch.findUserRoleWithEmail(galaxyUserEmail);
+		if(!galaxySearch.galaxyUserExists(galaxyUserEmail))
+		{
+			throw new GalaxyUserNotFoundException("Could not find Galaxy user with email=" + galaxyUserEmail);
+		}
+		
+		if (galaxySearch.findUserRoleWithEmail(galaxyUserEmail) == null)
+		{
+			throw new GalaxyUserNoRoleException("Could not find role for Galaxy user with email=" + galaxyUserEmail);
+		}
 		
 		Library library = galaxyLibrary.buildEmptyLibrary(libraryName);
 		
@@ -312,7 +318,7 @@ public class GalaxyAPI
 	 * @throws CreateLibraryException If there was an error creating the folder structure for the library.
 	 * @throws ConstraintViolationException  If the samples, libraryName or galaxyUserEmail are invalid
 	 * 	(assumes this object is managed by Spring).
-	 * @throws ChangeLibraryPermissionsException If an error occured while attempting to change the library permissions.
+	 * @throws ChangeLibraryPermissionsException If an error occurred while attempting to change the library permissions.
 	 * @throws GalaxyUserNotFoundException If the passed Galaxy user does not exist.
 	 * @throws NoLibraryFoundException If no library with the given name can be found.
 	 * @throws GalaxyUserNoRoleException If the passed Galaxy user has no associated role.
@@ -320,7 +326,9 @@ public class GalaxyAPI
 	public GalaxyUploadResult uploadSamples(@Valid List<UploadSample> samples, 
 			@Valid GalaxyObjectName libraryName,
 			@Valid GalaxyAccountEmail galaxyUserEmail)
-			throws LibraryUploadException, CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException
+			throws LibraryUploadException, CreateLibraryException, ConstraintViolationException,
+			ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException,
+			GalaxyUserNoRoleException
 	{
 		checkNotNull(libraryName, "libraryName is null");
 		checkNotNull(samples, "samples is null");
@@ -331,14 +339,16 @@ public class GalaxyAPI
 		Library uploadLibrary;
 		if (galaxySearch.galaxyUserExists(galaxyUserEmail))
 		{
-			try
-			{
-				List<Library> libraries = galaxySearch.findLibraryWithName(libraryName);
-				uploadLibrary = libraries.get(0);
-			}
-			catch (NoLibraryFoundException e)
+			List<Library> libraries = galaxySearch.findLibraryWithName(libraryName);
+			
+			if (libraries == null || libraries.size() <= 0)
 			{
 				uploadLibrary = buildGalaxyLibrary(libraryName, galaxyUserEmail);
+			}
+			else
+			{
+				// get very first matching library
+				uploadLibrary = libraries.get(0);
 			}
 			
 			if(uploadFilesToLibrary(samples, uploadLibrary.getId()))
@@ -377,7 +387,7 @@ public class GalaxyAPI
 	 * @throws ConstraintViolationException  If one of the GalaxySamples is invalid (assumes this object
 	 * 	is managed by Spring).
 	 * @throws NoLibraryFoundException If no library could be found with the given id.
-	 * @throws CreateLibraryException If an error occured while attempting to build the data library.
+	 * @throws CreateLibraryException If an error occurred while attempting to build the data library.
 	 */
 	public boolean uploadFilesToLibrary(@Valid List<UploadSample> samples, String libraryID)
 			throws LibraryUploadException, ConstraintViolationException, NoLibraryFoundException, CreateLibraryException
@@ -394,35 +404,36 @@ public class GalaxyAPI
 			LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
 			
 			Library library = galaxySearch.findLibraryWithId(libraryID);
+			if (library == null)
+			{
+				throw new NoLibraryFoundException("Could not find library with id=" + libraryID);
+			}
 			
 			Map<String, LibraryContent> libraryContentMap = galaxySearch.libraryContentAsMap(libraryID);
 			LibraryFolder illuminaFolder;
-						
-			try
+			
+			LibraryContent illuminaContent = galaxySearch.findLibraryContentWithId(libraryID, ILLUMINA_FOLDER_PATH);
+			
+			if (illuminaContent == null)
 			{
-				LibraryContent illuminaContent = galaxySearch.findLibraryContentWithId(libraryID, ILLUMINA_FOLDER_PATH);
-				
+				illuminaFolder = galaxyLibrary.createLibraryFolder(library, ILLUMINA_FOLDER_NAME);
+			}
+			else
+			{
 				illuminaFolder = new LibraryFolder();
 				illuminaFolder.setId(illuminaContent.getId());
 				illuminaFolder.setName(illuminaContent.getName());
 			}
-			catch (NoGalaxyContentFoundException e)
-			{
-				illuminaFolder = galaxyLibrary.createLibraryFolder(library, ILLUMINA_FOLDER_NAME);
-			}
 			
-			try
+			// create references folder if it doesn't exist, but we don't need to put anything into it.
+			LibraryContent referenceContent = galaxySearch.findLibraryContentWithId(libraryID, REFERENCES_FOLDER_PATH);
+			if (referenceContent == null)
 			{
-				galaxySearch.findLibraryContentWithId(libraryID, REFERENCES_FOLDER_PATH);
-			}
-			catch (NoGalaxyContentFoundException e)
-			{
-				// create references folder if it doesn't exist, but we don't need to put anything into it.
 				galaxyLibrary.createLibraryFolder(library, REFERENCES_FOLDER_NAME);
 			}
 			
 			for (UploadSample sample : samples)
-			{					
+			{
 				if (sample != null)
 				{
 					success &= uploadSample(sample, illuminaFolder, librariesClient, library, libraryContentMap, errorSuffix);
