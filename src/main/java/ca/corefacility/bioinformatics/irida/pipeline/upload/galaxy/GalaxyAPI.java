@@ -335,6 +335,7 @@ public class GalaxyAPI
 		checkNotNull(galaxyUserEmail, "galaxyUserEmail is null");
 		
 		GalaxyUploadResult galaxyUploadResult = null;
+		GalaxyAccountEmail returnedOwner = null;
 		
 		Library uploadLibrary;
 		if (galaxySearchAdmin.galaxyUserExists(galaxyUserEmail))
@@ -344,6 +345,7 @@ public class GalaxyAPI
 			if (libraries == null || libraries.size() <= 0)
 			{
 				uploadLibrary = buildGalaxyLibrary(libraryName, galaxyUserEmail);
+				returnedOwner = galaxyUserEmail;
 			}
 			else
 			{
@@ -356,7 +358,7 @@ public class GalaxyAPI
 				try
                 {
                     galaxyUploadResult = new GalaxyUploadResult(uploadLibrary, libraryName,
-                    		galaxyUserEmail, galaxyInstance.getGalaxyUrl());
+                    		returnedOwner, galaxyInstance.getGalaxyUrl());
                 }
 				catch (MalformedURLException e)
                 {

@@ -157,7 +157,7 @@ public class GalaxyAPITest
 		libraries.add(existingLibrary);
 		existingLibrary.setUrl("/api/libraries/" + libraryId);
 		expectedUploadResult = new GalaxyUploadResult(existingLibrary, libraryName,
-				realUserEmail, galaxyURL);
+				null, galaxyURL);
 				
 		User realUser = new User();
 		realUser.setEmail(realUserEmail.getName());
@@ -683,6 +683,7 @@ public class GalaxyAPITest
 		when(galaxySearch.findLibraryWithName(libraryName)).thenReturn(new LinkedList<Library>());
 				
 		assertEquals(expectedUploadResult, workflowRESTAPI.uploadSamples(samples, libraryName, realUserEmail));
+		assertTrue(expectedUploadResult.newLocationCreated());
 		verify(galaxySearch).findLibraryWithName(libraryName);
 		verify(galaxyLibrary).buildEmptyLibrary(libraryName);
 		verify(galaxyLibrary).changeLibraryOwner(any(Library.class), eq(realUserEmail), eq(realAdminEmail));
@@ -740,6 +741,7 @@ public class GalaxyAPITest
 		when(galaxySearch.galaxyUserExists(realUserEmail)).thenReturn(true);
 		
 		assertEquals(expectedUploadResult, workflowRESTAPI.uploadSamples(samples, libraryName, realUserEmail));
+		assertFalse(expectedUploadResult.newLocationCreated());
 		verify(galaxySearch).findLibraryWithName(libraryName);
 		verify(galaxyLibrary, never()).buildEmptyLibrary(libraryName);
 		verify(galaxyLibrary, never()).changeLibraryOwner(any(Library.class), eq(realUserEmail), eq(realAdminEmail));

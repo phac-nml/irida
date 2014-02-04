@@ -26,7 +26,6 @@ public class GalaxyUploadResult implements UploadResult
 	{
 		checkNotNull(library, "library is null");
 		checkNotNull(libraryName, "libraryName is null");
-		checkNotNull(ownerName, "ownerName is null");
 		checkNotNull(galaxyURL, "galaxyURL is null");
 		
 		String actualLibraryName = library.getName();
@@ -79,9 +78,6 @@ public class GalaxyUploadResult implements UploadResult
 		return libraryAPIURL;
 	}
 	
-	/* (non-Javadoc)
-	 * @see ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.impl.UploadResult#getDataLocation()
-	 */
 	@Override
     public URL getDataLocation()
 	{
@@ -100,9 +96,15 @@ public class GalaxyUploadResult implements UploadResult
 	}
 	
 	@Override
-    public UploaderAccountName getOwner()
+    public UploaderAccountName ownerOfNewLocation()
     {
 	    return ownerName;
+    }
+
+	@Override
+    public boolean newLocationCreated()
+    {
+	    return ownerName != null;
     }
 
 	@Override

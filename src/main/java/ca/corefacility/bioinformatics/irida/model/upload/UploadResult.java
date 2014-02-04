@@ -16,10 +16,16 @@ public interface UploadResult
 	public abstract URL getDataLocation();
 	
 	/**
-	 * Gets the owner of this upload result.
-	 * @return
+	 * Gets the owner of this upload result if a new data location was created.
+	 * @return  The owner of a new data location, or null if no new data location was created.
 	 */
-	public abstract UploaderAccountName getOwner();
+	public abstract UploaderAccountName ownerOfNewLocation();
+	
+	/**
+	 * Whether or not a new data location was created.
+	 * @return  True if a new data location was created, false otherwise.
+	 */
+	public abstract boolean newLocationCreated();
 
 	/**
 	 * Gets the name under which the data was uploaded.

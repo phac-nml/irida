@@ -335,7 +335,8 @@ public class GalaxyAPIIT
 		GalaxyUploadResult actualUploadResult = galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getUser1Name());
 		assertNotNull(actualUploadResult);
 		assertEquals(libraryName, actualUploadResult.getLocationName());
-		assertEquals(localGalaxy.getUser1Name(), actualUploadResult.getOwner());
+		assertEquals(localGalaxy.getUser1Name(), actualUploadResult.ownerOfNewLocation());
+		assertTrue(actualUploadResult.newLocationCreated());
 		
 		// regular user should have access to files
 		Library actualLibraryRegularUser = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceUser1());
@@ -667,7 +668,7 @@ public class GalaxyAPIIT
 		
 		// build expected upload result
 		expectedUploadResult = new GalaxyUploadResult(returnedLibrary, 
-				libraryName, localGalaxy.getUser1Name(),
+				libraryName, null,
 				localGalaxy.getGalaxyURL().toString());
 				
 		// build initial folders within library
@@ -704,6 +705,7 @@ public class GalaxyAPIIT
 		samples.add(galaxySample);
 		UploadResult actualUploadResult = galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getUser1Name());
 		assertEquals(expectedUploadResult, actualUploadResult);
+		assertFalse(actualUploadResult.newLocationCreated());
 		
 		// user 1 should have access to library
 		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceUser1());
@@ -827,6 +829,7 @@ public class GalaxyAPIIT
 		assertNotNull(actualUploadResult);
 		assertEquals(libraryName, actualUploadResult.getLocationName());
 		assertEquals(new URL(localGalaxyURL + "/library"), actualUploadResult.getDataLocation());
+		assertTrue(actualUploadResult.newLocationCreated());
 		
 		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
 		assertNotNull(actualLibrary);
@@ -860,6 +863,7 @@ public class GalaxyAPIIT
 		assertNotNull(actualUploadResult);
 		assertEquals(libraryName, actualUploadResult.getLocationName());
 		assertEquals(new URL(localGalaxyURL + "/library"), actualUploadResult.getDataLocation());
+		assertFalse(actualUploadResult.newLocationCreated());
 		
 		actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
 		assertNotNull(actualLibrary);
@@ -919,6 +923,7 @@ public class GalaxyAPIIT
 		assertNotNull(actualUploadResult);
 		assertEquals(libraryName, actualUploadResult.getLocationName());
 		assertEquals(new URL(localGalaxyURL + "/library"), actualUploadResult.getDataLocation());
+		assertTrue(actualUploadResult.newLocationCreated());
 		
 		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
 		assertNotNull(actualLibrary);
