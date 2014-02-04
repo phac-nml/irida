@@ -318,14 +318,6 @@
 						<include>**/test/integration/**/*Test.java</include>
 					</includes>
 					<encoding>UTF-8</encoding>
-					<properties>
-						<property>
-							<name>listener</name>
-							<value>
-								ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener
-							</value>
-						</property>
-					</properties>
 				</configuration>
 				<executions>
 					<execution>
