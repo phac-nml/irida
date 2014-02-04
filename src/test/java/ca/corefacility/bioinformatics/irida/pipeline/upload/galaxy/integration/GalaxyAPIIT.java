@@ -653,44 +653,48 @@ public class GalaxyAPIIT
 	@Test
 	public void testUploadSampleToExistingLibrary() throws URISyntaxException, MalformedURLException, ConstraintViolationException, UploadException
 	{
-		GalaxySearch galaxySearch = new GalaxySearch(localGalaxy.getGalaxyInstanceAdmin());
-		GalaxyLibraryBuilder galaxyLibrary = new GalaxyLibraryBuilder(localGalaxy.getGalaxyInstanceAdmin(), galaxySearch);
+		GalaxySearch galaxySearchAdmin = new GalaxySearch(localGalaxy.getGalaxyInstanceAdmin());
+		GalaxySearch galaxySearchUser1 = new GalaxySearch(localGalaxy.getGalaxyInstanceUser1());
+		GalaxyLibraryBuilder galaxyLibrary = new GalaxyLibraryBuilder(localGalaxy.getGalaxyInstanceAdmin(), galaxySearchAdmin);
 		UploadResult expectedUploadResult;
 		
 		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleToExistingSampleFolder");
 		
 		// build data library structure with no data in it
-		Library returnedLibrary = galaxyAPI.buildGalaxyLibrary(libraryName, localGalaxy.getAdminName());
+		Library returnedLibrary = galaxyAPI.buildGalaxyLibrary(libraryName, localGalaxy.getUser1Name());
 		String libraryId = returnedLibrary.getId();
 		assertNotNull(libraryId);
+		
+		// build expected upload result
 		expectedUploadResult = new GalaxyUploadResult(returnedLibrary, 
-				libraryName, localGalaxy.getAdminName(),
+				libraryName, localGalaxy.getUser1Name(),
 				localGalaxy.getGalaxyURL().toString());
 				
-		Library library = galaxySearch.findLibraryWithId(libraryId);
+		// build initial folders within library
+		Library library = galaxySearchUser1.findLibraryWithId(libraryId);
 		assertNotNull(library);
-		
 		LibraryFolder illuminaFolder = galaxyLibrary.createLibraryFolder(library, new GalaxyObjectName("illumina_reads"));
 		assertNotNull(illuminaFolder);
-		
 		LibraryFolder sampleFolder = galaxyLibrary.createLibraryFolder(library, illuminaFolder, new GalaxyObjectName("testData"));
 		assertNotNull(sampleFolder);
-		
 		LibraryFolder referencesFolder = galaxyLibrary.createLibraryFolder(library, new GalaxyObjectName("references"));
 		assertNotNull(referencesFolder);
 		
-		List<Library> libraries = galaxySearch.findLibraryWithName(libraryName);
+		// user 1 should have access to library
+		List<Library> libraries = galaxySearchUser1.findLibraryWithName(libraryName);
 		assertEquals("The number of libraries with name " + libraryName + " is not one", 1, libraries.size());
 		
-		List<LibraryContent> libraryContents = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient().
-				getLibraryContents(library.getId());
+		// admin should have access to library
+		libraries = galaxySearchAdmin.findLibraryWithName(libraryName);
+		assertEquals("The number of libraries with name " + libraryName + " is not one", 1, libraries.size());
 		
+		// all folders should have been created for library
+		List<LibraryContent> libraryContents = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient().
+				getLibraryContents(library.getId());	
 		int sampleFolderCount = countNumberOfFolderPaths(libraryContents, "/illumina_reads/testData");
 		assertEquals("The number of testData folders is not one", 1, sampleFolderCount);
-		
 		int illuminaReadsFolderCount = countNumberOfFolderPaths(libraryContents, "/illumina_reads");
 		assertEquals("The number of illumina_reads folders is not one", 1, illuminaReadsFolderCount);
-		
 		int referencesFolderCount = countNumberOfFolderPaths(libraryContents, "/references");
 		assertEquals("The number of references folders is not one", 1, referencesFolderCount);
 		
@@ -698,18 +702,18 @@ public class GalaxyAPIIT
 		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesDouble);
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
-		
-		UploadResult actualUploadResult = galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
+		UploadResult actualUploadResult = galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getUser1Name());
 		assertEquals(expectedUploadResult, actualUploadResult);
 		
-		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
+		// user 1 should have access to library
+		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceUser1());
 		assertNotNull(actualLibrary);
 		
-		libraryContents = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient().
+		// library contents should be updated
+		libraryContents = localGalaxy.getGalaxyInstanceUser1().getLibrariesClient().
 				getLibraryContents(actualLibrary.getId());
 		Map<String,LibraryContent> contentsMap = fileToLibraryContentMap(libraryContents);
 		assertEquals(6, contentsMap.size());
-		
 		assertTrue(contentsMap.containsKey("/"));
 		assertEquals("folder", contentsMap.get("/").getType());
 		assertTrue(contentsMap.containsKey("/illumina_reads"));
@@ -723,17 +727,89 @@ public class GalaxyAPIIT
 		assertTrue(contentsMap.containsKey("/illumina_reads/testData/testData2.fastq"));
 		assertEquals("file", contentsMap.get("/illumina_reads/testData/testData2.fastq").getType());
 		
-		libraries = galaxySearch.findLibraryWithName(libraryName);
+		// no duplicate folders or libraries for user1
+		libraries = galaxySearchUser1.findLibraryWithName(libraryName);
 		assertEquals("The number of libraries with name " + libraryName + " is not one", 1, libraries.size());
-		
 		sampleFolderCount = countNumberOfFolderPaths(libraryContents, "/illumina_reads/testData");
 		assertEquals("The number of testData folders is not one", 1, sampleFolderCount);
-		
 		illuminaReadsFolderCount = countNumberOfFolderPaths(libraryContents, "/illumina_reads");
 		assertEquals("The number of illumina_reads folders is not one", 1, illuminaReadsFolderCount);
-		
 		referencesFolderCount = countNumberOfFolderPaths(libraryContents, "/references");
 		assertEquals("The number of references folders is not one", 1, referencesFolderCount);
+		
+		// no duplicate libraries for admin
+		libraries = galaxySearchAdmin.findLibraryWithName(libraryName);
+		assertEquals("The number of libraries with name " + libraryName + " is not one", 1, libraries.size());
+	}
+	
+	@Test
+	public void testUploadSampleToExistingLibraryDifferentUsers()
+			throws URISyntaxException, MalformedURLException, ConstraintViolationException, UploadException
+	{
+		GalaxySearch galaxySearchAdmin = new GalaxySearch(localGalaxy.getGalaxyInstanceAdmin());
+		GalaxySearch galaxySearchUser1 = new GalaxySearch(localGalaxy.getGalaxyInstanceUser1());
+		GalaxySearch galaxySearchUser2 = new GalaxySearch(localGalaxy.getGalaxyInstanceUser2());
+		
+		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSampleToExistingLibraryDifferentUsers");
+		
+		// build data library structure with no data in it
+		Library returnedLibrary = galaxyAPI.buildGalaxyLibrary(libraryName, localGalaxy.getUser1Name());
+		String libraryId = returnedLibrary.getId();
+		assertNotNull(libraryId);
+		
+		// library should be visible to user 1 and admin
+		assertNotNull(galaxySearchUser1.findLibraryWithId(libraryId));
+		assertEquals(1, galaxySearchUser1.findLibraryWithName(libraryName).size());
+		assertNotNull(galaxySearchAdmin.findLibraryWithId(libraryId));
+		assertEquals(1, galaxySearchAdmin.findLibraryWithName(libraryName).size());
+				
+		// library should not be visible to user 2
+		assertNull(galaxySearchUser2.findLibraryWithId(libraryId));
+		assertEquals(0, galaxySearchUser2.findLibraryWithName(libraryName).size());
+		
+		// there should be nothing in this library
+		List<LibraryContent> libraryContents = localGalaxy.getGalaxyInstanceUser1().getLibrariesClient().
+				getLibraryContents(libraryId);
+		Map<String,LibraryContent> contentsMap = fileToLibraryContentMap(libraryContents);
+		assertEquals(1, contentsMap.size());
+		assertTrue(contentsMap.containsKey("/"));
+		assertEquals("folder", contentsMap.get("/").getType());
+		
+		// attempt to upload to this above data library as a different user
+		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName("testData"), dataFilesDouble);
+		List<UploadSample> samples = new ArrayList<UploadSample>();
+		samples.add(galaxySample);
+		assertNotNull(galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getUser2Name()));
+		
+		// library should be visible to user 1 and admin
+		assertNotNull(galaxySearchUser1.findLibraryWithId(libraryId));
+		assertEquals(1, galaxySearchUser1.findLibraryWithName(libraryName).size());
+		assertNotNull(galaxySearchAdmin.findLibraryWithId(libraryId));
+		assertEquals(1, galaxySearchAdmin.findLibraryWithName(libraryName).size());
+		
+		// library should not be visible to user 2 (user 2 shared with user 1, but did not gain access)
+		assertNull(galaxySearchUser2.findLibraryWithId(libraryId));
+		assertEquals(0, galaxySearchUser2.findLibraryWithName(libraryName).size());
+		
+		// library contents should be updated
+		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
+		assertNotNull(actualLibrary);
+		libraryContents = localGalaxy.getGalaxyInstanceUser1().getLibrariesClient().
+				getLibraryContents(actualLibrary.getId());
+		contentsMap = fileToLibraryContentMap(libraryContents);
+		assertEquals(6, contentsMap.size());
+		assertTrue(contentsMap.containsKey("/"));
+		assertEquals("folder", contentsMap.get("/").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads"));
+		assertEquals("folder", contentsMap.get("/illumina_reads").getType());
+		assertTrue(contentsMap.containsKey("/references"));
+		assertEquals("folder", contentsMap.get("/references").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads/testData"));
+		assertEquals("folder", contentsMap.get("/illumina_reads/testData").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads/testData/testData1.fastq"));
+		assertEquals("file", contentsMap.get("/illumina_reads/testData/testData1.fastq").getType());
+		assertTrue(contentsMap.containsKey("/illumina_reads/testData/testData2.fastq"));
+		assertEquals("file", contentsMap.get("/illumina_reads/testData/testData2.fastq").getType());
 	}
 	
 	@Test

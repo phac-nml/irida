@@ -51,7 +51,7 @@ public class GalaxyAPI
 		
 	private GalaxyInstance galaxyInstance;
 	private GalaxyAccountEmail adminEmail;
-	private GalaxySearch galaxySearch;
+	private GalaxySearch galaxySearchAdmin;
 	private GalaxyLibraryBuilder galaxyLibrary;
 	private Uploader.DataStorage dataStorage = Uploader.DataStorage.REMOTE;
 	
@@ -79,12 +79,12 @@ public class GalaxyAPI
 						galaxyURL + ", adminEmail=" + adminEmail);
 		}
 		
-		galaxySearch = new GalaxySearch(galaxyInstance);
-		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxySearch);
+		galaxySearchAdmin = new GalaxySearch(galaxyInstance);
+		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxySearchAdmin);
 		
 		try
 		{
-    		if (!galaxySearch.galaxyUserExists(adminEmail))
+    		if (!galaxySearchAdmin.galaxyUserExists(adminEmail))
     		{
     			throw new GalaxyConnectException("Could not create GalaxyInstance with URL=" + 
     					galaxyURL + ", adminEmail=" + adminEmail);
@@ -112,12 +112,12 @@ public class GalaxyAPI
 		this.galaxyInstance = galaxyInstance;
 		this.adminEmail = adminEmail;
 		
-		galaxySearch = new GalaxySearch(galaxyInstance);
-		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxySearch);
+		galaxySearchAdmin = new GalaxySearch(galaxyInstance);
+		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxySearchAdmin);
 		
 		try
 		{
-    		if (!galaxySearch.galaxyUserExists(adminEmail))
+    		if (!galaxySearchAdmin.galaxyUserExists(adminEmail))
     		{
     			throw new GalaxyConnectException("Could not create GalaxyInstance with URL=" + 
     					galaxyInstance.getGalaxyUrl() + ", adminEmail=" + adminEmail);
@@ -152,7 +152,7 @@ public class GalaxyAPI
 		this.adminEmail = adminEmail;
 		
 		this.galaxyLibrary = galaxyLibrary;
-		this.galaxySearch = galaxySearch;
+		this.galaxySearchAdmin = galaxySearch;
 		
 		try
 		{
@@ -190,12 +190,12 @@ public class GalaxyAPI
 				" under Galaxy url=" + galaxyInstance.getGalaxyUrl());
 		
 		// make sure user exists and has a role before we create an empty library
-		if(!galaxySearch.galaxyUserExists(galaxyUserEmail))
+		if(!galaxySearchAdmin.galaxyUserExists(galaxyUserEmail))
 		{
 			throw new GalaxyUserNotFoundException("Could not find Galaxy user with email=" + galaxyUserEmail);
 		}
 		
-		if (galaxySearch.findUserRoleWithEmail(galaxyUserEmail) == null)
+		if (galaxySearchAdmin.findUserRoleWithEmail(galaxyUserEmail) == null)
 		{
 			throw new GalaxyUserNoRoleException("Could not find role for Galaxy user with email=" + galaxyUserEmail);
 		}
@@ -337,9 +337,9 @@ public class GalaxyAPI
 		GalaxyUploadResult galaxyUploadResult = null;
 		
 		Library uploadLibrary;
-		if (galaxySearch.galaxyUserExists(galaxyUserEmail))
+		if (galaxySearchAdmin.galaxyUserExists(galaxyUserEmail))
 		{
-			List<Library> libraries = galaxySearch.findLibraryWithName(libraryName);
+			List<Library> libraries = galaxySearchAdmin.findLibraryWithName(libraryName);
 			
 			if (libraries == null || libraries.size() <= 0)
 			{
@@ -403,16 +403,16 @@ public class GalaxyAPI
 			
 			LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
 			
-			Library library = galaxySearch.findLibraryWithId(libraryID);
+			Library library = galaxySearchAdmin.findLibraryWithId(libraryID);
 			if (library == null)
 			{
 				throw new NoLibraryFoundException("Could not find library with id=" + libraryID);
 			}
 			
-			Map<String, LibraryContent> libraryContentMap = galaxySearch.libraryContentAsMap(libraryID);
+			Map<String, LibraryContent> libraryContentMap = galaxySearchAdmin.libraryContentAsMap(libraryID);
 			LibraryFolder illuminaFolder;
 			
-			LibraryContent illuminaContent = galaxySearch.findLibraryContentWithId(libraryID, ILLUMINA_FOLDER_PATH);
+			LibraryContent illuminaContent = galaxySearchAdmin.findLibraryContentWithId(libraryID, ILLUMINA_FOLDER_PATH);
 			
 			if (illuminaContent == null)
 			{
@@ -426,7 +426,7 @@ public class GalaxyAPI
 			}
 			
 			// create references folder if it doesn't exist, but we don't need to put anything into it.
-			LibraryContent referenceContent = galaxySearch.findLibraryContentWithId(libraryID, REFERENCES_FOLDER_PATH);
+			LibraryContent referenceContent = galaxySearchAdmin.findLibraryContentWithId(libraryID, REFERENCES_FOLDER_PATH);
 			if (referenceContent == null)
 			{
 				galaxyLibrary.createLibraryFolder(library, REFERENCES_FOLDER_NAME);

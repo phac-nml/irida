@@ -34,7 +34,7 @@ public class LocalGalaxy
 	private String user1Password;
 	private String user1APIKey;
 	
-	private UploaderAccountName user2Name;
+	private GalaxyAccountEmail user2Name;
 	private String user2Password;
 	private String user2APIKey;
 	
@@ -128,12 +128,12 @@ public class LocalGalaxy
 		user1APIKey = user1apiKey;
 	}
 	
-	public UploaderAccountName getUser2Name()
+	public GalaxyAccountEmail getUser2Name()
 	{
 		return user2Name;
 	}
 	
-	public void setUser2Name(UploaderAccountName user2Name)
+	public void setUser2Name(GalaxyAccountEmail user2Name)
 	{
 		this.user2Name = user2Name;
 	}
