@@ -12,63 +12,76 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 
-public interface Uploader
-{
+public interface Uploader {
 	/**
 	 * Defines the location of data to upload on a filesystem.
+	 * 
 	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
-	 *
+	 * 
 	 */
-	public enum DataStorage
-	{
+	public enum DataStorage {
 		/**
-		 * LOCAL implies the data to upload is on the same filesystem as the remote site
-		 *  (e.g. NFS shared filesystem). 
+		 * LOCAL implies the data to upload is on the same filesystem as the
+		 * remote site (e.g. NFS shared filesystem).
 		 */
 		LOCAL,
-		
+
 		/**
-		 * REMOTE implies the data to upload is on a separate filesystem as the remote site
-		 *  (e.g. no NFS shared filesystem, so requires uploading a copy of the files). 
+		 * REMOTE implies the data to upload is on a separate filesystem as the
+		 * remote site (e.g. no NFS shared filesystem, so requires uploading a
+		 * copy of the files).
 		 */
 		REMOTE
 	}
-	
-	/**
-	 * Uploads the given list of samples to the passed data location name with the passed user.
-	 * @param samples  The set of samples to upload.
-	 * @param dataLocation  The name of the data location to upload to.
-	 * @param userName  The name of the user who should own the files.
-	 * @return An UploadResult containing information about the location of the uploaded files.
-	 * @throws UploadException  If an error occurred.
-	 * @throws ConstraintViolationException If the samples, dataLocation or userName are invalid.
-	 */
-	public abstract UploadResult uploadSamples(
-	        @Valid List<UploadSample> samples,
-	        @Valid UploadObjectName dataLocation,
-	        @Valid UploaderAccountName userName) throws UploadException,
-	        ConstraintViolationException;
 
 	/**
-	 * @return  Whether or not this uploader is connected to a data location instance.
+	 * Uploads the given list of samples to the passed data location name with
+	 * the passed user.
+	 * 
+	 * @param samples
+	 *            The set of samples to upload.
+	 * @param dataLocation
+	 *            The name of the data location to upload to.
+	 * @param userName
+	 *            The name of the user who should own the files.
+	 * @return An UploadResult containing information about the location of the
+	 *         uploaded files.
+	 * @throws UploadException
+	 *             If an error occurred.
+	 * @throws ConstraintViolationException
+	 *             If the samples, dataLocation or userName are invalid.
+	 */
+	public abstract UploadResult uploadSamples(
+			@Valid List<UploadSample> samples,
+			@Valid UploadObjectName dataLocation,
+			@Valid UploaderAccountName userName) throws UploadException,
+			ConstraintViolationException;
+
+	/**
+	 * @return Whether or not this uploader is connected to a data location
+	 *         instance.
 	 */
 	public abstract boolean isConnected();
 
 	/**
 	 * Sets up the type of data storage for this uploader.
-	 * @param dataStorage  How the data should be stored on the remote site.
+	 * 
+	 * @param dataStorage
+	 *            How the data should be stored on the remote site.
 	 */
-	public abstract void setDataStorage(DataStorage dataStorage);	
+	public abstract void setDataStorage(DataStorage dataStorage);
 
 	/**
 	 * Gets the current DataStorage method.
-	 * @return  The DataStorage currently in use.
+	 * 
+	 * @return The DataStorage currently in use.
 	 */
 	public abstract DataStorage getDataStorage();
 
 	/**
 	 * Gets the URL of the connected data location instance.
-	 * @return  The URL of the connected data location instance
+	 * 
+	 * @return The URL of the connected data location instance
 	 */
 	public abstract URL getUrl();
 }
