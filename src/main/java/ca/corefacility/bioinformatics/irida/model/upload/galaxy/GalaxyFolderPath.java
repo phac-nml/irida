@@ -12,9 +12,9 @@ import javax.validation.constraints.Size;
  * 
  */
 public class GalaxyFolderPath {
-	@NotNull(message = "{galaxy.object.notnull}")
-	@Size(min = 1, message = "{galaxy.object.size}")
-	@Pattern(regexp = "^[A-Za-z0-9\\-_/]+$", message = "{galaxy.object.invalid}")
+	@NotNull(message = "{galaxy.path.notnull}")
+	@Size(min = 2, message = "{galaxy.path.size}")
+	@Pattern(regexp = "^[A-Za-z0-9 \\-_\\.'\"/]+$", message = "{galaxy.path.invalid}")
 	private String pathName;
 
 	public GalaxyFolderPath(String pathName) {

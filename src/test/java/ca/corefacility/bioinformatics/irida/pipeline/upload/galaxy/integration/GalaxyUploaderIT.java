@@ -144,14 +144,12 @@ public class GalaxyUploaderIT {
 			MalformedURLException, ConstraintViolationException,
 			UploadException {
 		GalaxyObjectName libraryName = new GalaxyObjectName(
-				"GalaxyUploader_testUploadSamples");
+				"Galaxy_Uploader testUploadSamples");
 		String localGalaxyURL = localGalaxy
 				.getGalaxyURL()
 				.toString()
 				.substring(0,
-						localGalaxy.getGalaxyURL().toString().length() - 1); // remove
-																				// trailing
-																				// '/'
+						localGalaxy.getGalaxyURL().toString().length() - 1); // remove trailing '/'
 
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		GalaxySample galaxySample1 = new GalaxySample(new GalaxyObjectName(

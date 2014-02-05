@@ -15,8 +15,8 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
  */
 public class GalaxyObjectName implements UploadObjectName {
 	@NotNull(message = "{galaxy.object.notnull}")
-	@Size(min = 1, message = "{galaxy.object.size}")
-	@Pattern(regexp = "^[A-Za-z0-9\\-_]+$", message = "{galaxy.object.invalid}")
+	@Size(min = 2, message = "{galaxy.object.size}")
+	@Pattern(regexp = "^[A-Za-z0-9 \\-_\\.'\"]+$", message = "{galaxy.object.invalid}")
 	private String objectName;
 
 	public GalaxyObjectName(String objectName) {
