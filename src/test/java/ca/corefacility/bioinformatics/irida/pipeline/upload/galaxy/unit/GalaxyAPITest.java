@@ -51,6 +51,11 @@ import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.github.jmchilton.blend4j.galaxy.beans.User;
 import com.sun.jersey.api.client.ClientResponse;
 
+/**
+ * Unit tests for the Galaxy API.
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ */
 public class GalaxyAPITest {
 	@Mock
 	private LibraryContent libraryContent;

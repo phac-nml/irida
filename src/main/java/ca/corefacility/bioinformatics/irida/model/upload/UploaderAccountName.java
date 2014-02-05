@@ -13,5 +13,5 @@ public interface UploaderAccountName {
 	 * 
 	 * @return The name of this account.
 	 */
-	public abstract String getName();
+	public String getName();
 }

@@ -28,6 +28,11 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
 
+/**
+ * Unit tests for GalaxyLibrary.
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ */
 public class GalaxyLibraryTest {
 	@Mock
 	private GalaxyInstance galaxyInstance;

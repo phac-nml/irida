@@ -17,6 +17,10 @@ public class GalaxyFolderPath {
 	@Pattern(regexp = "^[A-Za-z0-9 \\-_\\.'\"/]+$", message = "{galaxy.path.invalid}")
 	private String pathName;
 
+	/**
+	 * Builds a new Galaxy folder path with the given name.
+	 * @param pathName  The name of the folder path.
+	 */
 	public GalaxyFolderPath(String pathName) {
 		this.pathName = pathName;
 	}

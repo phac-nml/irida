@@ -21,6 +21,11 @@ public class GalaxySample implements UploadSample {
 	private UploadObjectName sampleName;
 	private List<Path> sampleFiles;
 
+	/**
+	 * Builds a new GalaxySample with the given name and list of files.
+	 * @param sampleName  The name of the sample.
+	 * @param sampleFiles  The list of files belonging to this sample.
+	 */
 	public GalaxySample(UploadObjectName sampleName, List<Path> sampleFiles) {
 		checkNotNull(sampleName, "sampleName is null");
 		checkNotNull(sampleFiles, "sampleFiles is null");
@@ -29,51 +34,21 @@ public class GalaxySample implements UploadSample {
 		this.sampleFiles = sampleFiles;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * ca.corefacility.bioinformatics.irida.model.upload.galaxy.UploadSample
-	 * #getSampleName()
-	 */
 	@Override
 	public UploadObjectName getSampleName() {
 		return sampleName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * ca.corefacility.bioinformatics.irida.model.upload.galaxy.UploadSample
-	 * #setSampleName
-	 * (ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName
-	 * )
-	 */
 	@Override
 	public void setSampleName(UploadObjectName sampleName) {
 		this.sampleName = sampleName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * ca.corefacility.bioinformatics.irida.model.upload.galaxy.UploadSample
-	 * #getSampleFiles()
-	 */
 	@Override
 	public List<Path> getSampleFiles() {
 		return sampleFiles;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * ca.corefacility.bioinformatics.irida.model.upload.galaxy.UploadSample
-	 * #setSampleFiles(java.util.List)
-	 */
 	@Override
 	public void setSampleFiles(List<Path> sampleFiles) {
 		checkNotNull(sampleFiles, "sampleFiles are null");

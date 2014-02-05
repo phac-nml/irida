@@ -34,6 +34,11 @@ import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.github.jmchilton.blend4j.galaxy.beans.User;
 
+/**
+ * Unit tests for GalaxySearch.
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ */
 public class GalaxySearchTest {
 	@Mock
 	private RolesClient rolesClient;

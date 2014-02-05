@@ -19,6 +19,10 @@ public class GalaxyAccountEmail implements UploaderAccountName {
 	@Email(message = "{galaxy.user.email.invalid}")
 	private String galaxyAccountEmail;
 
+	/**
+	 * Builds a new GalaxyAccountEmail with the passed email address.
+	 * @param galaxyAccountEmail  The email address for a user in Galaxy.
+	 */
 	public GalaxyAccountEmail(String galaxyAccountEmail) {
 		this.galaxyAccountEmail = galaxyAccountEmail;
 	}

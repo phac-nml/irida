@@ -67,6 +67,11 @@ import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 
+/**
+ * Integration tests for {@link GalaxyAPI}.  Will use a running instance of Galaxy to test against.
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {
 		IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class,
@@ -91,6 +96,10 @@ public class GalaxyAPIIT {
 		setupDataFiles();
 	}
 
+	/**
+	 * Sets up data files for uploading into Galaxy.
+	 * @throws URISyntaxException
+	 */
 	private void setupDataFiles() throws URISyntaxException {
 		Path dataFile1 = Paths.get(GalaxyAPIIT.class.getResource(
 				"testData1.fastq").toURI());
@@ -105,6 +114,12 @@ public class GalaxyAPIIT {
 		dataFilesDouble.add(dataFile2);
 	}
 
+	/**
+	 * Finds a library by it's id using the given GalaxyInstance
+	 * @param libraryID  The library id to search for.
+	 * @param galaxyInstance  The GalaxyInstance to user for connections.
+	 * @return  A Library object for this id, or null if not found.
+	 */
 	private Library findLibraryByID(String libraryID,
 			GalaxyInstance galaxyInstance) {
 		Library actualLibrary = null;
@@ -119,6 +134,12 @@ public class GalaxyAPIIT {
 		return actualLibrary;
 	}
 
+	/**
+	 * Finds a library by name with the given GalaxyInstance.
+	 * @param libraryName  The name of the library to search for.
+	 * @param galaxyInstance  The GalaxyInstance object to use to connect to Galaxy.
+	 * @return  A library described by this name.
+	 */
 	private Library findLibraryByName(UploadObjectName libraryName,
 			GalaxyInstance galaxyInstance) {
 		Library actualLibrary = null;
@@ -133,6 +154,11 @@ public class GalaxyAPIIT {
 		return actualLibrary;
 	}
 
+	/**
+	 * Builds a map of the name of these contents to the objects describing them.
+	 * @param libraryContents  The library contents to construct as a map.
+	 * @return  A Map describing these library contents.
+	 */
 	private Map<String, LibraryContent> fileToLibraryContentMap(
 			List<LibraryContent> libraryContents) {
 		Map<String, LibraryContent> map = new HashMap<String, LibraryContent>();
@@ -147,10 +173,10 @@ public class GalaxyAPIIT {
 	 * Given a file library ID, loads a file into a Galaxy history and then
 	 * loads the contents of this file into a string.
 	 * 
-	 * @param testName
-	 * @param filename
-	 * @param galaxyInstance
-	 * @param libraryFileId
+	 * @param testName  The name of the test we are running.
+	 * @param filename  The name of the file to load.
+	 * @param galaxyInstance  The GalaxyInstance to connect to galaxy.
+	 * @param libraryFileId  The id of the library the file is located within.
 	 * @return The String with the file contents.
 	 * @throws InterruptedException
 	 * @throws IOException
@@ -195,6 +221,13 @@ public class GalaxyAPIIT {
 		return galaxyFileContents;
 	}
 
+	/**
+	 * Given a file within a Galaxy history, finds the id of that file.
+	 * @param filename  The name of the file within a history.
+	 * @param historyId  The id of the history.
+	 * @param galaxyInstance  The GalaxyInstance to use for connections.
+	 * @return  The id of the file in this history, or null if no such file.
+	 */
 	private String getIdForFileInHistory(String filename, String historyId,
 			GalaxyInstance galaxyInstance) {
 		String dataId = null;
@@ -211,6 +244,12 @@ public class GalaxyAPIIT {
 		return dataId;
 	}
 
+	/**
+	 * Given a reader, reads in the contents of a file to a string.
+	 * @param reader  The reader to read from.
+	 * @return  The contents of the file within a string.
+	 * @throws IOException
+	 */
 	private String readFileContentsFromReader(BufferedReader reader)
 			throws IOException {
 		String line;
@@ -222,6 +261,12 @@ public class GalaxyAPIIT {
 		return contents;
 	}
 
+	/**
+	 * Creates a file to store temporary data.
+	 * @return  A Path describing a file to store temporary data.
+	 * @throws IOException
+	 * @throws URISyntaxException
+	 */
 	private Path createTemporaryDataFile() throws IOException,
 			URISyntaxException {
 		File dataFile1 = new File(GalaxyAPIIT.class.getResource(
@@ -243,6 +288,10 @@ public class GalaxyAPIIT {
 		return dataFileTemp.toPath();
 	}
 
+	/**
+	 * Tests creating a library with an invalid name.
+	 * @throws UploadException
+	 */
 	@Test(expected = ConstraintViolationException.class)
 	public void testCreateLibraryInvalidName() throws UploadException {
 		GalaxyObjectName invalidLibraryName = new GalaxyObjectName(
@@ -251,6 +300,10 @@ public class GalaxyAPIIT {
 				localGalaxy.getUser1Name());
 	}
 
+	/**
+	 * Tests creating a library with an invalid user name.
+	 * @throws UploadException
+	 */
 	@Test(expected = ConstraintViolationException.class)
 	public void testCreateLibraryInvalidUserName() throws UploadException {
 		GalaxyObjectName invalidLibraryName = new GalaxyObjectName(
@@ -259,6 +312,11 @@ public class GalaxyAPIIT {
 		galaxyAPI.buildGalaxyLibrary(invalidLibraryName, userEmail);
 	}
 
+	/**
+	 * Tests creating a Galaxy connection with an invalid admin name.
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test(expected = GalaxyConnectException.class)
 	public void testCreateGalaxyAPIInvalidAdmin()
 			throws ConstraintViolationException, UploadException {
@@ -267,6 +325,12 @@ public class GalaxyAPIIT {
 				localGalaxy.getAdminAPIKey());
 	}
 
+	/**
+	 * Tests connecting to Galaxy with the wrong API key.
+	 * @throws URISyntaxException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test(expected = GalaxyConnectException.class)
 	public void testInvalidAPIKey() throws URISyntaxException,
 			ConstraintViolationException, UploadException {
@@ -282,6 +346,10 @@ public class GalaxyAPIIT {
 				wrongAdminAPIKey);
 	}
 
+	/**
+	 * Tests creating a library as an admin user in Galaxy.
+	 * @throws UploadException
+	 */
 	@Test
 	public void testCreateLibraryAdmin() throws UploadException {
 		GalaxyObjectName libraryName = new GalaxyObjectName(
@@ -303,6 +371,10 @@ public class GalaxyAPIIT {
 		assertNull(actualLibraryRegularUser);
 	}
 
+	/**
+	 * Tests creating a library as a regular user in Galaxy.
+	 * @throws UploadException
+	 */
 	@Test
 	public void testCreateLibraryRegularUser() throws UploadException {
 		GalaxyObjectName libraryName = new GalaxyObjectName(
@@ -330,6 +402,10 @@ public class GalaxyAPIIT {
 		assertEquals(libraryName.getName(), actualLibraryAdmin.getName());
 	}
 
+	/**
+	 * Tests creating a library with a user that does not exist in Galaxy.
+	 * @throws UploadException
+	 */
 	@Test(expected = GalaxyUserNotFoundException.class)
 	public void testCreateLibraryNonExistentUser() throws UploadException {
 		GalaxyObjectName libraryName = new GalaxyObjectName(
@@ -339,6 +415,11 @@ public class GalaxyAPIIT {
 				localGalaxy.getNonExistentGalaxyUserName());
 	}
 
+	/**
+	 * Tests uploading samples as a regular user in Galaxy.
+	 * @throws URISyntaxException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testUploadSampleRegularUser() throws URISyntaxException,
 			UploadException {
@@ -433,6 +514,11 @@ public class GalaxyAPIIT {
 		}
 	}
 
+	/**
+	 * Tests uploading samples as an admin user in Galaxy.
+	 * @throws URISyntaxException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testUploadSampleAdminUser() throws URISyntaxException,
 			UploadException {
@@ -505,6 +591,13 @@ public class GalaxyAPIIT {
 		}
 	}
 
+	/**
+	 * Tests uploading samples to a remote Galaxy instance (no linking of files on the filesystem).
+	 * @throws URISyntaxException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testUploadSampleNoLink() throws URISyntaxException,
 			InterruptedException, IOException, UploadException {
@@ -571,6 +664,14 @@ public class GalaxyAPIIT {
 		assertEquals(fileSystemFileContents, galaxyFileContents);
 	}
 
+	/**
+	 * Tests uploading samples to a local Galaxy instance (linking files on the same filesystem).
+	 * @throws URISyntaxException
+	 * @throws LibraryUploadException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testUploadSampleLink() throws URISyntaxException,
 			LibraryUploadException, InterruptedException, IOException,
@@ -641,13 +742,25 @@ public class GalaxyAPIIT {
 		}
 	}
 
+	/**
+	 * Tests connecting to Galaxy with the wrong URL.
+	 * @throws URISyntaxException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test(expected = GalaxyConnectException.class)
-	public void testUploadSampleWrongGalaxyAddress() throws URISyntaxException,
+	public void testGalaxyWrongAddress() throws URISyntaxException,
 			ConstraintViolationException, UploadException {
 		new GalaxyAPI(localGalaxy.getInvalidGalaxyURL(),
 				localGalaxy.getAdminName(), localGalaxy.getAdminAPIKey());
 	}
 
+	/**
+	 * Tests uploading files to Galaxy with a non existent user.
+	 * @throws URISyntaxException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test(expected = GalaxyUserNotFoundException.class)
 	public void testUploadSampleWrongUser() throws URISyntaxException,
 			ConstraintViolationException, UploadException {
@@ -662,6 +775,12 @@ public class GalaxyAPIIT {
 				localGalaxy.getNonExistentGalaxyUserName());
 	}
 
+	/**
+	 * Tests uploading files to a user with an incorrectly formatted name.
+	 * @throws URISyntaxException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test(expected = ConstraintViolationException.class)
 	public void testUploadSampleInvalidUserName() throws URISyntaxException,
 			ConstraintViolationException, UploadException {
@@ -676,6 +795,12 @@ public class GalaxyAPIIT {
 		galaxyAPI.uploadSamples(samples, libraryName, userEmail);
 	}
 
+	/**
+	 * Tests uploading a sample with an incorrectly formatted name.
+	 * @throws URISyntaxException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test(expected = ConstraintViolationException.class)
 	public void testUploadSampleInvalidSampleName() throws URISyntaxException,
 			ConstraintViolationException, UploadException {
@@ -690,6 +815,12 @@ public class GalaxyAPIIT {
 				localGalaxy.getUser1Name());
 	}
 
+	/**
+	 * Tests uploading sample to a library with an incorrectly formatted name.
+	 * @throws URISyntaxException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test(expected = ConstraintViolationException.class)
 	public void testUploadSampleInvalidLibraryName() throws URISyntaxException,
 			ConstraintViolationException, UploadException {
@@ -703,6 +834,12 @@ public class GalaxyAPIIT {
 				localGalaxy.getUser1Name());
 	}
 
+	/**
+	 * Tests uploading a sample with multiple files.
+	 * @throws URISyntaxException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testUploadSampleMultipleFile() throws URISyntaxException,
 			ConstraintViolationException, UploadException {
@@ -748,6 +885,12 @@ public class GalaxyAPIIT {
 						.getType());
 	}
 
+	/**
+	 * Given a list of contents in a library, counts the occurance of the passed path.
+	 * @param contents
+	 * @param folderPaths
+	 * @return
+	 */
 	private int countNumberOfFolderPaths(List<LibraryContent> contents,
 			String folderPaths) {
 		int count = 0;
@@ -760,6 +903,13 @@ public class GalaxyAPIIT {
 		return count;
 	}
 
+	/**
+	 * Tests uploading samples to an already existing library.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testUploadSampleToExistingLibrary() throws URISyntaxException,
 			MalformedURLException, ConstraintViolationException,
@@ -890,6 +1040,13 @@ public class GalaxyAPIIT {
 				+ " is not one", 1, libraries.size());
 	}
 
+	/**
+	 * Tests uploading samples to an existing library as different regular Galaxy users.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testUploadSampleToExistingLibraryDifferentUsers()
 			throws URISyntaxException, MalformedURLException,
@@ -983,6 +1140,13 @@ public class GalaxyAPIIT {
 						.getType());
 	}
 
+	/**
+	 * Tests uploading a sample where one file already is uploaded in Galaxy.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testUploadSampleOneFileAlreadyExists()
 			throws URISyntaxException, MalformedURLException,
@@ -1113,6 +1277,13 @@ public class GalaxyAPIIT {
 				countReferencesFolder);
 	}
 
+	/**
+	 * Tests uploading multiple samples to Galaxy.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testUploadSamples() throws URISyntaxException,
 			MalformedURLException, ConstraintViolationException,

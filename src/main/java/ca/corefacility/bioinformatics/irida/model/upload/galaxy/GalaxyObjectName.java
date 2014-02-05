@@ -19,6 +19,10 @@ public class GalaxyObjectName implements UploadObjectName {
 	@Pattern(regexp = "^[A-Za-z0-9 \\-_\\.'\"]+$", message = "{galaxy.object.invalid}")
 	private String objectName;
 
+	/**
+	 * Builds a new GalaxyObjectName with the given name.
+	 * @param objectName  The name of the Galaxy object.
+	 */
 	public GalaxyObjectName(String objectName) {
 		this.objectName = objectName;
 	}

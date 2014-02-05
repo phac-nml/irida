@@ -15,7 +15,7 @@ public interface UploadSample {
 	 * 
 	 * @return An UploadObjectName representing the name of this sample.
 	 */
-	public abstract UploadObjectName getSampleName();
+	public UploadObjectName getSampleName();
 
 	/**
 	 * Sets the name of the sample represented by this object.
@@ -23,14 +23,14 @@ public interface UploadSample {
 	 * @param sampleName
 	 *            The name of the sample.
 	 */
-	public abstract void setSampleName(UploadObjectName sampleName);
+	public void setSampleName(UploadObjectName sampleName);
 
 	/**
 	 * Gets the list of files associated with this sample.
 	 * 
 	 * @return A list of files associated with this sample.
 	 */
-	public abstract List<Path> getSampleFiles();
+	public List<Path> getSampleFiles();
 
 	/**
 	 * Set the list of files associated with this sample.
@@ -38,5 +38,5 @@ public interface UploadSample {
 	 * @param sampleFiles
 	 *            The list of files associated with this sample.
 	 */
-	public abstract void setSampleFiles(List<Path> sampleFiles);
+	public void setSampleFiles(List<Path> sampleFiles);
 }

@@ -12,6 +12,11 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 
+/**
+ * Defines an interface for a class used to send data from the archive into a remote site (e.g. Galaxy).
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ */
 public interface Uploader {
 	/**
 	 * Defines the location of data to upload on a filesystem.
@@ -51,17 +56,19 @@ public interface Uploader {
 	 * @throws ConstraintViolationException
 	 *             If the samples, dataLocation or userName are invalid.
 	 */
-	public abstract UploadResult uploadSamples(
+	public UploadResult uploadSamples(
 			@Valid List<UploadSample> samples,
 			@Valid UploadObjectName dataLocation,
 			@Valid UploaderAccountName userName) throws UploadException,
 			ConstraintViolationException;
 
 	/**
-	 * @return Whether or not this uploader is connected to a data location
-	 *         instance.
+	 * Whether or not this uploader is connected to a data location.
+	 * 
+	 * @return True if this uploader is connected to a data location
+	 *         instance, false otherwise.
 	 */
-	public abstract boolean isConnected();
+	public boolean isConnected();
 
 	/**
 	 * Sets up the type of data storage for this uploader.
@@ -69,19 +76,19 @@ public interface Uploader {
 	 * @param dataStorage
 	 *            How the data should be stored on the remote site.
 	 */
-	public abstract void setDataStorage(DataStorage dataStorage);
+	public void setDataStorage(DataStorage dataStorage);
 
 	/**
 	 * Gets the current DataStorage method.
 	 * 
 	 * @return The DataStorage currently in use.
 	 */
-	public abstract DataStorage getDataStorage();
+	public DataStorage getDataStorage();
 
 	/**
 	 * Gets the URL of the connected data location instance.
 	 * 
 	 * @return The URL of the connected data location instance
 	 */
-	public abstract URL getUrl();
+	public URL getUrl();
 }

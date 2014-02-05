@@ -25,6 +25,11 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
 
+/**
+ * Unit tests for GalaxyUploader.
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ */
 public class GalaxyUploaderTest {
 	private URL galaxyURL;
 	private GalaxyAccountEmail accountEmail;
