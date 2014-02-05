@@ -5,7 +5,7 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida-api</artifactId>
 	<packaging>jar</packaging>
-	<version>1.2.0-SNAPSHOT</version>
+	<version>1.1.0-galaxy-data</version>
 	<name>irida-api</name>
 	<url>http://gitlab.corefacility.ca/irida/irida-api</url>
 
@@ -269,6 +269,18 @@
 			<artifactId>aspectjweaver</artifactId>
 			<version>${aspectj.version}</version>
 		</dependency>
+
+		<!-- Galaxy blend4j/testing -->
+		<dependency>
+		  <groupId>com.github.jmchilton.blend4j</groupId>
+		  <artifactId>blend4j</artifactId>
+		  <version>${com.github.jmchilton.blend4j.version}</version>
+		</dependency>
+		<dependency>
+		  <groupId>com.github.jmchilton.galaxybootstrap</groupId>
+		  <artifactId>galaxybootstrap</artifactId>
+		  <version>${com.github.jmchilton.galaxybootstrap.version}</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>irida-api</finalName>
@@ -416,6 +428,8 @@
 		<fastqc.version>0.10.1-nml-custom</fastqc.version>
 		<aspectj.version>1.7.4</aspectj.version>
 		<hibernate.validator.version>5.0.2.Final</hibernate.validator.version>
+		<com.github.jmchilton.blend4j.version>0.1-alpha-7</com.github.jmchilton.blend4j.version>
+		<com.github.jmchilton.galaxybootstrap.version>0.3.0-rc2</com.github.jmchilton.galaxybootstrap.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.16</maven.failsafe.plugin.version>

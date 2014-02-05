@@ -9,6 +9,8 @@ The IRIDA API project depends on FastQC, but FastQC isn't distributed as a Maven
     cd $IRIDA_API_ROOT/lib
     ./install-libs.sh
 
+In addition, some of the integration tests requires setting up an instance of [Galaxy](https://wiki.galaxyproject.org/Admin/GetGalaxy).  This is handled automatically, but requires [Mecurial](http://mercurial.selenic.com/) and [Python](http://www.python.org/) to be installed.  On Ubuntu, these can be installed with `sudo apt-get install mercurial python`.
+
 Setting Up MySQL for IRIDA
 ==========================
 Your computer will probably have MySQL installed already.  If not, there are many tutorials online for how to install.
