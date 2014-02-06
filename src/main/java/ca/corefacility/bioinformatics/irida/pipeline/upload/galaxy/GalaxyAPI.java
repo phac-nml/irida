@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectExcep
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
@@ -415,6 +416,8 @@ public class GalaxyAPI {
 	 *             If no library with the given name can be found.
 	 * @throws GalaxyUserNoRoleException
 	 *             If the passed Galaxy user has no associated role.
+	 * @throws NoGalaxyContentFoundException If an error occured trying to find
+	 * 	content for the library.
 	 */
 	public GalaxyUploadResult uploadSamples(@Valid List<UploadSample> samples,
 			@Valid GalaxyObjectName libraryName,
@@ -422,7 +425,7 @@ public class GalaxyAPI {
 			throws LibraryUploadException, CreateLibraryException,
 			ConstraintViolationException, ChangeLibraryPermissionsException,
 			GalaxyUserNotFoundException, NoLibraryFoundException,
-			GalaxyUserNoRoleException {
+			GalaxyUserNoRoleException, NoGalaxyContentFoundException {
 		checkNotNull(libraryName, "libraryName is null");
 		checkNotNull(samples, "samples is null");
 		checkNotNull(galaxyUserEmail, "galaxyUserEmail is null");
@@ -432,15 +435,13 @@ public class GalaxyAPI {
 
 		Library uploadLibrary;
 		if (galaxySearchAdmin.galaxyUserExists(galaxyUserEmail)) {
-			List<Library> libraries = galaxySearchAdmin
-					.findLibraryWithName(libraryName);
-
-			if (libraries == null || libraries.size() <= 0) {
+			
+			try {
+				List<Library> libraries = galaxySearchAdmin.findLibraryWithName(libraryName);
+				uploadLibrary = libraries.get(0);
+			} catch (NoLibraryFoundException e) {
 				uploadLibrary = buildGalaxyLibrary(libraryName, galaxyUserEmail);
 				returnedOwner = galaxyUserEmail;
-			} else {
-				// get very first matching library
-				uploadLibrary = libraries.get(0);
 			}
 
 			if (uploadFilesToLibrary(samples, uploadLibrary.getId())) {
@@ -485,11 +486,13 @@ public class GalaxyAPI {
 	 * @throws CreateLibraryException
 	 *             If an error occurred while attempting to build the data
 	 *             library.
+	 * @throws NoGalaxyContentFoundException If an error occured when attempting to find
+	 *  content for the library.
 	 */
 	public boolean uploadFilesToLibrary(@Valid List<UploadSample> samples,
 			String libraryID) throws LibraryUploadException,
 			ConstraintViolationException, NoLibraryFoundException,
-			CreateLibraryException {
+			CreateLibraryException, NoGalaxyContentFoundException {
 		checkNotNull(samples, "samples are null");
 		checkNotNull(libraryID, "libraryID is null");
 
@@ -508,27 +511,28 @@ public class GalaxyAPI {
 						"Could not find library with id=" + libraryID);
 			}
 
-			Map<String, LibraryContent> libraryContentMap = galaxySearchAdmin
-					.libraryContentAsMap(libraryID);
+			Map<String, LibraryContent> libraryContentMap
+				= galaxySearchAdmin.libraryContentAsMap(libraryID);
+			
 			LibraryFolder illuminaFolder;
-
-			LibraryContent illuminaContent = galaxySearchAdmin
-					.findLibraryContentWithId(libraryID, ILLUMINA_FOLDER_PATH);
-
-			if (illuminaContent == null) {
-				illuminaFolder = galaxyLibrary.createLibraryFolder(library,
-						ILLUMINA_FOLDER_NAME);
-			} else {
+			
+			try {
+				LibraryContent illuminaContent
+					= galaxySearchAdmin.findLibraryContentWithId(libraryID, ILLUMINA_FOLDER_PATH);
+				
 				illuminaFolder = new LibraryFolder();
 				illuminaFolder.setId(illuminaContent.getId());
-				illuminaFolder.setName(illuminaContent.getName());
+				illuminaFolder.setName(illuminaContent.getName());	
+			} catch (NoGalaxyContentFoundException e) {
+				illuminaFolder = galaxyLibrary.createLibraryFolder(library,
+						ILLUMINA_FOLDER_NAME);
 			}
 
 			// create references folder if it doesn't exist, but we don't need
 			// to put anything into it.
-			LibraryContent referenceContent = galaxySearchAdmin
-					.findLibraryContentWithId(libraryID, REFERENCES_FOLDER_PATH);
-			if (referenceContent == null) {
+			try {
+				galaxySearchAdmin.findLibraryContentWithId(libraryID, REFERENCES_FOLDER_PATH);
+			} catch (NoGalaxyContentFoundException e) {
 				galaxyLibrary.createLibraryFolder(library,
 						REFERENCES_FOLDER_NAME);
 			}

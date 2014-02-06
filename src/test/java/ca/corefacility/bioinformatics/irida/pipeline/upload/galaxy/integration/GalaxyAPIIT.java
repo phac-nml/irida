@@ -42,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
@@ -1076,9 +1077,15 @@ public class GalaxyAPIIT {
 				.size());
 
 		// library should not be visible to user 2
-		assertNull(galaxySearchUser2.findLibraryWithId(libraryId));
-		assertEquals(0, galaxySearchUser2.findLibraryWithName(libraryName)
-				.size());
+		try {
+			galaxySearchUser2.findLibraryWithId(libraryId);
+			fail("Library found for user 2");
+		} catch (NoLibraryFoundException e) {}
+		
+		try {
+			galaxySearchUser2.findLibraryWithName(libraryName);
+			fail("Library found for user 2");
+		} catch (NoLibraryFoundException e) {}
 
 		// there should be nothing in this library
 		List<LibraryContent> libraryContents = localGalaxy
@@ -1107,9 +1114,15 @@ public class GalaxyAPIIT {
 
 		// library should not be visible to user 2 (user 2 shared with user 1,
 		// but did not gain access)
-		assertNull(galaxySearchUser2.findLibraryWithId(libraryId));
-		assertEquals(0, galaxySearchUser2.findLibraryWithName(libraryName)
-				.size());
+		try {
+			galaxySearchUser2.findLibraryWithId(libraryId);
+			fail("Library found for user 2");
+		} catch (NoLibraryFoundException e) {}
+		
+		try {
+			galaxySearchUser2.findLibraryWithName(libraryName);
+			fail("Library found for user 2");
+		} catch (NoLibraryFoundException e) {}
 
 		// library contents should be updated
 		Library actualLibrary = findLibraryByName(libraryName,

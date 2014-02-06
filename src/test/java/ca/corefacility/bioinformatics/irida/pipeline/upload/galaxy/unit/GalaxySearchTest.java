@@ -15,7 +15,10 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
@@ -200,9 +203,10 @@ public class GalaxySearchTest {
 
 	/**
 	 * Tests finding a library.
+	 * @throws NoLibraryFoundException
 	 */
 	@Test
-	public void testFindLibrary() {
+	public void testFindLibrary() throws NoLibraryFoundException {
 		Library library = galaxySearch.findLibraryWithId(LIBRARY_ID);
 		assertNotNull(library);
 		assertEquals(LIBRARY_ID, library.getId());
@@ -211,17 +215,19 @@ public class GalaxySearchTest {
 
 	/**
 	 * Tests not finding a library.
+	 * @throws NoLibraryFoundException 
 	 */
-	@Test
-	public void testNoFindLibrary() {
-		assertNull(galaxySearch.findLibraryWithId(INVALID_LIBRARY_ID));
+	@Test(expected=NoLibraryFoundException.class)
+	public void testNoFindLibrary() throws NoLibraryFoundException {
+		galaxySearch.findLibraryWithId(INVALID_LIBRARY_ID);
 	}
 
 	/**
 	 * Tests finding a library by name.
+	 * @throws NoLibraryFoundException 
 	 */
 	@Test
-	public void testFindLibraryByName() {
+	public void testFindLibraryByName() throws NoLibraryFoundException {
 		List<Library> libraries = galaxySearch
 				.findLibraryWithName(LIBRARY_NAME);
 		List<Library> returnedLibraries = convertLibraryToArrayList(libraries);
@@ -250,20 +256,20 @@ public class GalaxySearchTest {
 
 	/**
 	 * Tests finding invalid library.
+	 * @throws NoLibraryFoundException 
 	 */
-	@Test
-	public void testInvalidFindLibraryByName() {
-		assertEquals(0, galaxySearch.findLibraryWithName(INVALID_LIBRARY_NAME)
-				.size());
+	@Test(expected=NoLibraryFoundException.class)
+	public void testInvalidFindLibraryByName() throws NoLibraryFoundException {
+		galaxySearch.findLibraryWithName(INVALID_LIBRARY_NAME);
 	}
 
 	/**
 	 * Tests finding a user role.
+	 * @throws GalaxyUserNoRoleException 
 	 */
 	@Test
-	public void testFindUserRoleWithEmail() {
-		Role foundRole = galaxySearch
-				.findUserRoleWithEmail(new GalaxyAccountEmail("role1@localhost"));
+	public void testFindUserRoleWithEmail() throws GalaxyUserNoRoleException {
+		Role foundRole = galaxySearch.findUserRoleWithEmail(new GalaxyAccountEmail("role1@localhost"));
 		assertNotNull(foundRole);
 		assertEquals("role1@localhost", foundRole.getName());
 		assertEquals("1", foundRole.getId());
@@ -271,18 +277,19 @@ public class GalaxySearchTest {
 
 	/**
 	 * Tests no finding a user role.
+	 * @throws GalaxyUserNoRoleException 
 	 */
-	@Test
-	public void testNoFindUserRoleWithEmail() {
-		assertNull(galaxySearch.findUserRoleWithEmail(new GalaxyAccountEmail(
-				"invalid@localhost")));
+	@Test(expected=GalaxyUserNoRoleException.class)
+	public void testNoFindUserRoleWithEmail() throws GalaxyUserNoRoleException {
+		galaxySearch.findUserRoleWithEmail(new GalaxyAccountEmail("invalid@localhost"));
 	}
 
 	/**
 	 * Tests finding a user.
+	 * @throws GalaxyUserNotFoundException 
 	 */
 	@Test
-	public void testFindUserWithEmail() {
+	public void testFindUserWithEmail() throws GalaxyUserNotFoundException {
 		User foundUser = galaxySearch.findUserWithEmail(new GalaxyAccountEmail(
 				"user1@localhost"));
 		assertNotNull(foundUser);
@@ -292,11 +299,12 @@ public class GalaxySearchTest {
 
 	/**
 	 * Tests not finding a user.
+	 * @throws GalaxyUserNotFoundException 
 	 */
-	@Test
-	public void testNoFindUserWithEmail() {
-		assertNull(galaxySearch.findUserWithEmail(new GalaxyAccountEmail(
-				"invalid@localhost")));
+	@Test(expected=GalaxyUserNotFoundException.class)
+	public void testNoFindUserWithEmail() throws GalaxyUserNotFoundException {
+		galaxySearch.findUserWithEmail(new GalaxyAccountEmail(
+				"invalid@localhost"));
 	}
 
 	/**
@@ -332,9 +340,10 @@ public class GalaxySearchTest {
 
 	/**
 	 * Tests getting library content as a map.
+	 * @throws NoGalaxyContentFoundException 
 	 */
 	@Test
-	public void testLibraryContentAsMap() {
+	public void testLibraryContentAsMap() throws NoGalaxyContentFoundException {
 		Map<String, LibraryContent> validFolder = galaxySearch
 				.libraryContentAsMap(LIBRARY_ID);
 		assertEquals(singleLibraryContentsAsMap, validFolder);
@@ -346,27 +355,30 @@ public class GalaxySearchTest {
 
 	/**
 	 * Tests finding no library content with id.
+	 * @throws NoGalaxyContentFoundException 
 	 */
-	@Test
-	public void testLibraryContentAsMapNoContent() {
-		assertNull(galaxySearch.libraryContentAsMap(INVALID_LIBRARY_ID));
+	@Test(expected=NoGalaxyContentFoundException.class)
+	public void testLibraryContentAsMapNoContent() throws NoGalaxyContentFoundException {
+		galaxySearch.libraryContentAsMap(INVALID_LIBRARY_ID);
 	}
 
 	/**
 	 * Tests finding library content with invalid folder.
+	 * @throws NoGalaxyContentFoundException 
 	 */
-	@Test
-	public void testFindLibraryContentWithIdInvalidFolder() {
-		assertNull(galaxySearch.findLibraryContentWithId(LIBRARY_ID,
-				INVALID_FOLDER_NAME));
+	@Test(expected=NoGalaxyContentFoundException.class)
+	public void testFindLibraryContentWithIdInvalidFolder() throws NoGalaxyContentFoundException {
+		galaxySearch.findLibraryContentWithId(LIBRARY_ID,
+				INVALID_FOLDER_NAME);
 	}
 
 	/**
 	 * Tests finding library content with invalid library id.
+	 * @throws NoGalaxyContentFoundException 
 	 */
-	@Test
-	public void testFindLibraryContentWithIdInvalidLibraryId() {
-		assertNull(galaxySearch.findLibraryContentWithId(INVALID_LIBRARY_ID,
-				FOLDER_PATH));
+	@Test(expected=NoGalaxyContentFoundException.class)
+	public void testFindLibraryContentWithIdInvalidLibraryId() throws NoGalaxyContentFoundException {
+		galaxySearch.findLibraryContentWithId(INVALID_LIBRARY_ID,
+				FOLDER_PATH);
 	}
 }

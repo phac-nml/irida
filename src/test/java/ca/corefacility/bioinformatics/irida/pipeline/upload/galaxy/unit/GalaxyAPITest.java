@@ -27,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryExcep
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
@@ -287,10 +288,10 @@ public class GalaxyAPITest {
 
 		when(
 				galaxySearch.findLibraryContentWithId(libraryId,
-						illuminaFolderPath)).thenReturn(null);
+						illuminaFolderPath)).thenThrow(new NoGalaxyContentFoundException());
 		when(
 				galaxySearch.findLibraryContentWithId(libraryId,
-						referencesFolderPath)).thenReturn(null);
+						referencesFolderPath)).thenThrow(new NoGalaxyContentFoundException());
 		when(
 				galaxyLibrary.createLibraryFolder(any(Library.class),
 						eq(illuminaFolderName))).thenReturn(illuminaFolder);
@@ -298,8 +299,8 @@ public class GalaxyAPITest {
 				galaxyLibrary.createLibraryFolder(any(Library.class),
 						eq(referencesFolderName))).thenReturn(referencesFolder);
 
-		when(galaxySearch.findLibraryWithId(nonExistentLibraryId)).thenReturn(
-				null);
+		when(galaxySearch.findLibraryWithId(nonExistentLibraryId)).thenThrow(
+				new NoLibraryFoundException());
 	}
 
 	/**
@@ -325,7 +326,7 @@ public class GalaxyAPITest {
 						illuminaFolderPath)).thenReturn(illuminaContent);
 		when(
 				galaxySearch.findLibraryContentWithId(libraryId,
-						referencesFolderPath)).thenReturn(null);
+						referencesFolderPath)).thenThrow(new NoGalaxyContentFoundException());
 		when(
 				galaxyLibrary.createLibraryFolder(any(Library.class),
 						eq(illuminaFolderName))).thenReturn(illuminaFolder);
@@ -355,7 +356,7 @@ public class GalaxyAPITest {
 
 		when(
 				galaxySearch.findLibraryContentWithId(libraryId,
-						illuminaFolderPath)).thenReturn(null);
+						illuminaFolderPath)).thenThrow(new NoGalaxyContentFoundException());
 		when(
 				galaxySearch.findLibraryContentWithId(libraryId,
 						referencesFolderPath)).thenReturn(referenceContent);
@@ -451,7 +452,7 @@ public class GalaxyAPITest {
 			MalformedURLException, UploadException {
 		setupBuildLibrary();
 
-		when(galaxySearch.findUserWithEmail(fakeUserEmail)).thenReturn(null);
+		when(galaxySearch.findUserWithEmail(fakeUserEmail)).thenThrow(new GalaxyUserNotFoundException());
 
 		workflowRESTAPI.buildGalaxyLibrary(libraryName, fakeUserEmail);
 	}
@@ -485,7 +486,7 @@ public class GalaxyAPITest {
 				.thenReturn(realUser);
 		when(galaxySearch.galaxyUserExists(realUserEmail)).thenReturn(true);
 		when(galaxySearch.findUserRoleWithEmail(realUserEmail))
-				.thenReturn(null);
+				.thenThrow(new GalaxyUserNoRoleException());
 
 		workflowRESTAPI.buildGalaxyLibrary(libraryName, realUserEmail);
 	}
@@ -974,8 +975,7 @@ public class GalaxyAPITest {
 		setupUploadSampleToLibrary(samples, folders, false);
 
 		when(galaxySearch.galaxyUserExists(realUserEmail)).thenReturn(true);
-		when(galaxySearch.findLibraryWithName(libraryName)).thenReturn(
-				new LinkedList<Library>());
+		when(galaxySearch.findLibraryWithName(libraryName)).thenThrow(new NoLibraryFoundException());
 
 		assertEquals(expectedUploadResult, workflowRESTAPI.uploadSamples(
 				samples, libraryName, realUserEmail));
