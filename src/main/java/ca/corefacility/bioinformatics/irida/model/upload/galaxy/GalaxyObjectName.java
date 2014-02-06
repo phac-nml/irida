@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.upload.galaxy;
 
+import java.util.Objects;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -43,15 +45,17 @@ public class GalaxyObjectName implements UploadObjectName {
 		return objectName;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((objectName == null) ? 0 : objectName.hashCode());
-		return result;
+		return Objects.hashCode(objectName);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -61,11 +65,7 @@ public class GalaxyObjectName implements UploadObjectName {
 		if (getClass() != obj.getClass())
 			return false;
 		GalaxyObjectName other = (GalaxyObjectName) obj;
-		if (objectName == null) {
-			if (other.objectName != null)
-				return false;
-		} else if (!objectName.equals(other.objectName))
-			return false;
-		return true;
+		
+		return Objects.equals(this.objectName, other.objectName);
 	}
 }

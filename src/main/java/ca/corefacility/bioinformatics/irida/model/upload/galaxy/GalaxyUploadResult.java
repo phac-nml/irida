@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.*;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Objects;
 
 import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
@@ -141,23 +142,17 @@ public class GalaxyUploadResult implements UploadResult {
 		return ownerName != null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((libraryAPIURL == null) ? 0 : libraryAPIURL.hashCode());
-		result = prime * result
-				+ ((libraryId == null) ? 0 : libraryId.hashCode());
-		result = prime * result
-				+ ((libraryName == null) ? 0 : libraryName.hashCode());
-		result = prime * result
-				+ ((ownerName == null) ? 0 : ownerName.hashCode());
-		result = prime * result
-				+ ((sharedDataURL == null) ? 0 : sharedDataURL.hashCode());
-		return result;
+		return Objects.hash(libraryId, libraryName, ownerName, libraryAPIURL, sharedDataURL);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -167,31 +162,11 @@ public class GalaxyUploadResult implements UploadResult {
 		if (getClass() != obj.getClass())
 			return false;
 		GalaxyUploadResult other = (GalaxyUploadResult) obj;
-		if (libraryAPIURL == null) {
-			if (other.libraryAPIURL != null)
-				return false;
-		} else if (!libraryAPIURL.equals(other.libraryAPIURL))
-			return false;
-		if (libraryId == null) {
-			if (other.libraryId != null)
-				return false;
-		} else if (!libraryId.equals(other.libraryId))
-			return false;
-		if (libraryName == null) {
-			if (other.libraryName != null)
-				return false;
-		} else if (!libraryName.equals(other.libraryName))
-			return false;
-		if (ownerName == null) {
-			if (other.ownerName != null)
-				return false;
-		} else if (!ownerName.equals(other.ownerName))
-			return false;
-		if (sharedDataURL == null) {
-			if (other.sharedDataURL != null)
-				return false;
-		} else if (!sharedDataURL.equals(other.sharedDataURL))
-			return false;
-		return true;
+		
+		return Objects.equals(this.libraryId, other.libraryId) &&
+				Objects.equals(this.libraryName, other.libraryName) &&
+				Objects.equals(this.ownerName, other.ownerName) &&
+				Objects.equals(this.libraryAPIURL, other.libraryAPIURL) &&
+				Objects.equals(this.sharedDataURL, other.sharedDataURL);
 	}
 }

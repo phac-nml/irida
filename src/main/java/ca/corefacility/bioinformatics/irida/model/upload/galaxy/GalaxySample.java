@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.*;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 
 import javax.validation.Valid;
 
@@ -58,6 +59,9 @@ public class GalaxySample implements UploadSample {
 		return sampleFiles;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setSampleFiles(List<Path> sampleFiles) {
 		checkNotNull(sampleFiles, "sampleFiles are null");
@@ -72,17 +76,17 @@ public class GalaxySample implements UploadSample {
 		return "(" + sampleName + ", " + sampleFiles + ")";
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((sampleFiles == null) ? 0 : sampleFiles.hashCode());
-		result = prime * result
-				+ ((sampleName == null) ? 0 : sampleName.hashCode());
-		return result;
+		return Objects.hash(sampleName, sampleFiles);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -92,16 +96,8 @@ public class GalaxySample implements UploadSample {
 		if (getClass() != obj.getClass())
 			return false;
 		GalaxySample other = (GalaxySample) obj;
-		if (sampleFiles == null) {
-			if (other.sampleFiles != null)
-				return false;
-		} else if (!sampleFiles.equals(other.sampleFiles))
-			return false;
-		if (sampleName == null) {
-			if (other.sampleName != null)
-				return false;
-		} else if (!sampleName.equals(other.sampleName))
-			return false;
-		return true;
+		
+		return Objects.equals(this.sampleName, other.sampleName) &&
+				Objects.equals(this.sampleFiles, other.sampleFiles);
 	}
 }

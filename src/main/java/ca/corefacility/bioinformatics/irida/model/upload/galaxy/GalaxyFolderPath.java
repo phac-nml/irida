@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.upload.galaxy;
 
+import java.util.Objects;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -41,15 +43,17 @@ public class GalaxyFolderPath {
 		return pathName;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((pathName == null) ? 0 : pathName.hashCode());
-		return result;
+		return Objects.hashCode(pathName);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -59,11 +63,7 @@ public class GalaxyFolderPath {
 		if (getClass() != obj.getClass())
 			return false;
 		GalaxyFolderPath other = (GalaxyFolderPath) obj;
-		if (pathName == null) {
-			if (other.pathName != null)
-				return false;
-		} else if (!pathName.equals(other.pathName))
-			return false;
-		return true;
+		
+		return Objects.equals(this.pathName, other.pathName);
 	}
 }
