@@ -64,7 +64,7 @@ public class GalaxyObjectNameTest {
 	
 	@Test
 	public void testValidName() {
-		GalaxyObjectName name = new GalaxyObjectName("Abc123 _-.\"'");
+		GalaxyObjectName name = new GalaxyObjectName("Abc123 _-.'");
 		
 		Set<ConstraintViolation<GalaxyObjectName>> constraintViolations
 			= validator.validate(name);
@@ -74,7 +74,7 @@ public class GalaxyObjectNameTest {
 	
 	@Test
 	public void testInvalidName() {
-		GalaxyObjectName name = new GalaxyObjectName("Abc123 _-.\"'<");
+		GalaxyObjectName name = new GalaxyObjectName("Abc123 _-.'<");
 		
 		Set<ConstraintViolation<GalaxyObjectName>> constraintViolations
 			= validator.validate(name);

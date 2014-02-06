@@ -60,7 +60,7 @@ public class GalaxySampleTest {
 	
 	@Test
 	public void testValidName() {
-		GalaxySample sample = new GalaxySample(new GalaxyObjectName("Abc123 _-.\"'"), new LinkedList<Path>());
+		GalaxySample sample = new GalaxySample(new GalaxyObjectName("Abc123 _-.'"), new LinkedList<Path>());
 		
 		Set<ConstraintViolation<GalaxySample>> constraintViolations
 			= validator.validate(sample);
@@ -70,7 +70,7 @@ public class GalaxySampleTest {
 	
 	@Test
 	public void testInvalidName() {
-		GalaxySample sample = new GalaxySample(new GalaxyObjectName("Abc123 _-.\"'<"), new LinkedList<Path>());
+		GalaxySample sample = new GalaxySample(new GalaxyObjectName("Abc123 _-.'<"), new LinkedList<Path>());
 		
 		Set<ConstraintViolation<GalaxySample>> constraintViolations
 			= validator.validate(sample);
