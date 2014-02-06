@@ -25,10 +25,17 @@ public class GalaxyFolderPath {
 		this.pathName = pathName;
 	}
 
+	/**
+	 * Gets the name of this GalaxyFolderPath
+	 * @return  The name of this folder path.
+	 */
 	public String getName() {
 		return pathName;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		return pathName;

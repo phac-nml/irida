@@ -27,11 +27,17 @@ public class GalaxyObjectName implements UploadObjectName {
 		this.objectName = objectName;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getName() {
 		return objectName;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		return objectName;

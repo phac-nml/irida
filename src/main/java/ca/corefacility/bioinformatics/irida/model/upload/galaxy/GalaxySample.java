@@ -34,16 +34,25 @@ public class GalaxySample implements UploadSample {
 		this.sampleFiles = sampleFiles;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public UploadObjectName getSampleName() {
 		return sampleName;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setSampleName(UploadObjectName sampleName) {
 		this.sampleName = sampleName;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Path> getSampleFiles() {
 		return sampleFiles;
@@ -55,6 +64,9 @@ public class GalaxySample implements UploadSample {
 		this.sampleFiles = sampleFiles;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		return "(" + sampleName + ", " + sampleFiles + ")";

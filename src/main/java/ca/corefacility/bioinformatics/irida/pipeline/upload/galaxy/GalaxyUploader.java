@@ -115,11 +115,17 @@ public class GalaxyUploader implements Uploader {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isConnected() {
 		return galaxyAPI != null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setDataStorage(DataStorage dataStorage) {
 		this.dataStorage = dataStorage;
@@ -128,11 +134,17 @@ public class GalaxyUploader implements Uploader {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public DataStorage getDataStorage() {
 		return dataStorage;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public URL getUrl() {
 		if (galaxyAPI != null) {
@@ -143,6 +155,9 @@ public class GalaxyUploader implements Uploader {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public UploadResult uploadSamples(@Valid List<UploadSample> samples,
 			@Valid UploadObjectName dataLocation,

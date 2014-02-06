@@ -101,6 +101,9 @@ public class GalaxyUploadResult implements UploadResult {
 		return libraryAPIURL;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public URL getDataLocation() {
 		return sharedDataURL;
@@ -114,16 +117,25 @@ public class GalaxyUploadResult implements UploadResult {
 		return libraryId;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public UploadObjectName getLocationName() {
 		return libraryName;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public UploaderAccountName ownerOfNewLocation() {
 		return ownerName;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean newLocationCreated() {
 		return ownerName != null;
