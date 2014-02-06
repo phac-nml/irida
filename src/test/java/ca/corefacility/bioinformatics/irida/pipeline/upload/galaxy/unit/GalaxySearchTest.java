@@ -15,10 +15,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
@@ -73,6 +70,11 @@ public class GalaxySearchTest {
 	private Map<String, LibraryContent> singleLibraryContentsAsMap;
 	private Map<String, LibraryContent> multipleLibraryContentsAsMap;
 
+	/**
+	 * Setup objects for test.
+	 * @throws FileNotFoundException
+	 * @throws URISyntaxException
+	 */
 	@Before
 	public void setup() throws FileNotFoundException, URISyntaxException {
 		MockitoAnnotations.initMocks(this);
@@ -85,6 +87,9 @@ public class GalaxySearchTest {
 		galaxySearch = new GalaxySearch(galaxyInstance);
 	}
 
+	/**
+	 * Setup user roles.
+	 */
 	private void setupRolesTest() {
 		when(galaxyInstance.getRolesClient()).thenReturn(rolesClient);
 
@@ -103,6 +108,9 @@ public class GalaxySearchTest {
 		when(rolesClient.getRoles()).thenReturn(roleList);
 	}
 
+	/**
+	 * Setup users.
+	 */
 	private void setupUserTest() {
 		when(galaxyInstance.getUsersClient()).thenReturn(usersClient);
 
@@ -121,6 +129,9 @@ public class GalaxySearchTest {
 		when(usersClient.getUsers()).thenReturn(userList);
 	}
 
+	/**
+	 * Setup libraries.
+	 */
 	private void setupLibraryTest() {
 		when(galaxyInstance.getLibrariesClient()).thenReturn(librariesClient);
 
@@ -133,6 +144,9 @@ public class GalaxySearchTest {
 		when(librariesClient.getLibraries()).thenReturn(allLibrariesList);
 	}
 
+	/**
+	 * Setup library contents.
+	 */
 	private void setupLibraryContentTest() {
 		List<LibraryContent> singleLibraryContents = new ArrayList<LibraryContent>();
 		LibraryContent validFolder = new LibraryContent();
@@ -169,6 +183,11 @@ public class GalaxySearchTest {
 				.thenReturn(null);
 	}
 
+	/**
+	 * Convert list of libraries to an array list.
+	 * @param libraries  A general list of libraries.
+	 * @return An array list of libraries.
+	 */
 	private ArrayList<Library> convertLibraryToArrayList(List<Library> libraries) {
 		ArrayList<Library> newLibraries = new ArrayList<Library>();
 
@@ -179,21 +198,30 @@ public class GalaxySearchTest {
 		return newLibraries;
 	}
 
+	/**
+	 * Tests finding a library.
+	 */
 	@Test
-	public void testFindLibrary() throws NoLibraryFoundException {
+	public void testFindLibrary() {
 		Library library = galaxySearch.findLibraryWithId(LIBRARY_ID);
 		assertNotNull(library);
 		assertEquals(LIBRARY_ID, library.getId());
 		assertEquals(LIBRARY_NAME.getName(), library.getName());
 	}
 
+	/**
+	 * Tests not finding a library.
+	 */
 	@Test
-	public void testNoFindLibrary() throws NoLibraryFoundException {
+	public void testNoFindLibrary() {
 		assertNull(galaxySearch.findLibraryWithId(INVALID_LIBRARY_ID));
 	}
 
+	/**
+	 * Tests finding a library by name.
+	 */
 	@Test
-	public void testFindLibraryByName() throws NoLibraryFoundException {
+	public void testFindLibraryByName() {
 		List<Library> libraries = galaxySearch
 				.findLibraryWithName(LIBRARY_NAME);
 		List<Library> returnedLibraries = convertLibraryToArrayList(libraries);
@@ -220,14 +248,20 @@ public class GalaxySearchTest {
 		assertEquals(expectedList, returnedLibraries);
 	}
 
+	/**
+	 * Tests finding invalid library.
+	 */
 	@Test
-	public void testInvalidFindLibraryByName() throws NoLibraryFoundException {
+	public void testInvalidFindLibraryByName() {
 		assertEquals(0, galaxySearch.findLibraryWithName(INVALID_LIBRARY_NAME)
 				.size());
 	}
 
+	/**
+	 * Tests finding a user role.
+	 */
 	@Test
-	public void testFindUserRoleWithEmail() throws GalaxyUserNoRoleException {
+	public void testFindUserRoleWithEmail() {
 		Role foundRole = galaxySearch
 				.findUserRoleWithEmail(new GalaxyAccountEmail("role1@localhost"));
 		assertNotNull(foundRole);
@@ -235,14 +269,20 @@ public class GalaxySearchTest {
 		assertEquals("1", foundRole.getId());
 	}
 
+	/**
+	 * Tests no finding a user role.
+	 */
 	@Test
-	public void testNoFindUserRoleWithEmail() throws GalaxyUserNoRoleException {
+	public void testNoFindUserRoleWithEmail() {
 		assertNull(galaxySearch.findUserRoleWithEmail(new GalaxyAccountEmail(
 				"invalid@localhost")));
 	}
 
+	/**
+	 * Tests finding a user.
+	 */
 	@Test
-	public void testFindUserWithEmail() throws GalaxyUserNotFoundException {
+	public void testFindUserWithEmail() {
 		User foundUser = galaxySearch.findUserWithEmail(new GalaxyAccountEmail(
 				"user1@localhost"));
 		assertNotNull(foundUser);
@@ -250,24 +290,37 @@ public class GalaxySearchTest {
 		assertEquals("1", foundUser.getId());
 	}
 
+	/**
+	 * Tests not finding a user.
+	 */
 	@Test
-	public void testNoFindUserWithEmail() throws GalaxyUserNotFoundException {
+	public void testNoFindUserWithEmail() {
 		assertNull(galaxySearch.findUserWithEmail(new GalaxyAccountEmail(
 				"invalid@localhost")));
 	}
 
+	/**
+	 * Tests if user exists.
+	 */
 	@Test
 	public void testUserDoesExist() {
 		assertTrue(galaxySearch.galaxyUserExists(new GalaxyAccountEmail(
 				"user1@localhost")));
 	}
 
+	/**
+	 * Tests if user does not exist.
+	 */
 	@Test
 	public void testUserDoesNotExist() {
 		assertFalse(galaxySearch.galaxyUserExists(new GalaxyAccountEmail(
 				"invalid@localhost")));
 	}
 
+	/**
+	 * Tests finding library content with library id.
+	 * @throws NoGalaxyContentFoundException
+	 */
 	@Test
 	public void testFindLibraryContentWithId()
 			throws NoGalaxyContentFoundException {
@@ -277,8 +330,11 @@ public class GalaxySearchTest {
 		assertEquals(FOLDER_PATH.getName(), validFolder.getName());
 	}
 
+	/**
+	 * Tests getting library content as a map.
+	 */
 	@Test
-	public void testLibraryContentAsMap() throws NoLibraryFoundException {
+	public void testLibraryContentAsMap() {
 		Map<String, LibraryContent> validFolder = galaxySearch
 				.libraryContentAsMap(LIBRARY_ID);
 		assertEquals(singleLibraryContentsAsMap, validFolder);
@@ -288,22 +344,28 @@ public class GalaxySearchTest {
 		assertEquals(multipleLibraryContentsAsMap, validFolder);
 	}
 
+	/**
+	 * Tests finding no library content with id.
+	 */
 	@Test
-	public void testLibraryContentAsMapNoContent()
-			throws NoLibraryFoundException {
+	public void testLibraryContentAsMapNoContent() {
 		assertNull(galaxySearch.libraryContentAsMap(INVALID_LIBRARY_ID));
 	}
 
+	/**
+	 * Tests finding library content with invalid folder.
+	 */
 	@Test
-	public void testFindLibraryContentWithIdInvalidFolder()
-			throws NoGalaxyContentFoundException {
+	public void testFindLibraryContentWithIdInvalidFolder() {
 		assertNull(galaxySearch.findLibraryContentWithId(LIBRARY_ID,
 				INVALID_FOLDER_NAME));
 	}
 
+	/**
+	 * Tests finding library content with invalid library id.
+	 */
 	@Test
-	public void testFindLibraryContentWithIdInvalidLibraryId()
-			throws NoGalaxyContentFoundException {
+	public void testFindLibraryContentWithIdInvalidLibraryId() {
 		assertNull(galaxySearch.findLibraryContentWithId(INVALID_LIBRARY_ID,
 				FOLDER_PATH));
 	}

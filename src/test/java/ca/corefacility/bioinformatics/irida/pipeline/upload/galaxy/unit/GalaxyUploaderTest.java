@@ -38,6 +38,10 @@ public class GalaxyUploaderTest {
 	@Mock
 	private GalaxyAPI galaxyAPI;
 
+	/**
+	 * Setup objects for test.
+	 * @throws MalformedURLException
+	 */
 	@Before
 	public void setup() throws MalformedURLException {
 		MockitoAnnotations.initMocks(this);
@@ -47,6 +51,11 @@ public class GalaxyUploaderTest {
 		adminApiKey = "0";
 	}
 
+	/**
+	 * Test connection failure to Galaxy on upload.
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@SuppressWarnings("unchecked")
 	@Test(expected = UploadConnectionException.class)
 	public void testUploadGalaxyConnectionFail()
@@ -63,6 +72,11 @@ public class GalaxyUploaderTest {
 				new GalaxyObjectName("lib"), accountEmail);
 	}
 
+	/**
+	 * Tests setup Galaxy with no url.
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test(expected = NullPointerException.class)
 	public void testSetupGalaxyNoURL() throws ConstraintViolationException,
 			UploadException {
@@ -70,13 +84,23 @@ public class GalaxyUploaderTest {
 		galaxyUploader.setupGalaxyAPI(null, accountEmail, adminApiKey);
 	}
 
+	/**
+	 * Tests setup galaxy with no account email
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test(expected = NullPointerException.class)
-	public void testSetupGalaxyAccountEmail()
+	public void testSetupGalaxyNoAccountEmail()
 			throws ConstraintViolationException, UploadException {
 		GalaxyUploader galaxyUploader = new GalaxyUploader();
 		galaxyUploader.setupGalaxyAPI(galaxyURL, null, adminApiKey);
 	}
 
+	/**
+	 * Tests setup of Galaxy with no API key.
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test(expected = NullPointerException.class)
 	public void testSetupGalaxyNoApiKey() throws ConstraintViolationException,
 			UploadException {
@@ -84,6 +108,11 @@ public class GalaxyUploaderTest {
 		galaxyUploader.setupGalaxyAPI(galaxyURL, accountEmail, null);
 	}
 
+	/**
+	 * Tests setup of Galaxy with invalid admin name.
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test(expected = UploadException.class)
 	public void testUploadWithInvalidAccountName()
 			throws ConstraintViolationException, UploadException {
@@ -99,6 +128,11 @@ public class GalaxyUploaderTest {
 				new GalaxyObjectName("lib"), invalidNameType);
 	}
 
+	/**
+	 * Tests upload invalid data library type.
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test(expected = UploadException.class)
 	public void testUploadWithInvalidDataLibraryObject()
 			throws ConstraintViolationException, UploadException {

@@ -108,6 +108,13 @@ public class GalaxyAPITest {
 	private List<Path> dataFilesDouble;
 	private UploadResult expectedUploadResult;
 
+	/**
+	 * Setup mock objects for testing.
+	 * @throws FileNotFoundException
+	 * @throws URISyntaxException
+	 * @throws CreateLibraryException
+	 * @throws GalaxyConnectException
+	 */
 	@Before
 	public void setup() throws FileNotFoundException, URISyntaxException,
 			CreateLibraryException, GalaxyConnectException {
@@ -146,6 +153,11 @@ public class GalaxyAPITest {
 		realUser.setEmail(realUserEmail.getName());
 	}
 
+	/**
+	 * Setup objects and return values for bulding libraries.
+	 * @throws MalformedURLException
+	 * @throws UploadException
+	 */
 	private void setupBuildLibrary() throws MalformedURLException,
 			UploadException {
 		Library returnedLibrary = new Library(libraryName.getName());
@@ -181,6 +193,11 @@ public class GalaxyAPITest {
 				.thenReturn(libraryMap);
 	}
 
+	/**
+	 * Setup objects for uploading to existing libraries.
+	 * @throws UploadException
+	 * @throws MalformedURLException
+	 */
 	private void setupExisitingLibrary() throws UploadException,
 			MalformedURLException {
 		List<Library> libraries = new LinkedList<Library>();
@@ -216,6 +233,14 @@ public class GalaxyAPITest {
 				.thenReturn(libraryMap);
 	}
 
+	/**
+	 * Setup objects for uploading a list of samples to a list of library folders within a library.
+	 * @param samples  A list of samples to upload.
+	 * @param folders  A list of folders (parallel to samples) to upload into.
+	 * @param libraryExists  True if the library already exists, false otherwise.
+	 * @throws MalformedURLException
+	 * @throws UploadException
+	 */
 	private void setupUploadSampleToLibrary(List<UploadSample> samples,
 			List<LibraryFolder> folders, boolean libraryExists)
 			throws MalformedURLException, UploadException {
@@ -247,6 +272,10 @@ public class GalaxyAPITest {
 		}
 	}
 
+	/**
+	 * Setup return values for handling library folders.
+	 * @throws UploadException
+	 */
 	private void setupLibraryFolders() throws UploadException {
 		LibraryFolder referencesFolder = new LibraryFolder();
 		referencesFolder.setName(referencesFolderPath.getName());
@@ -273,6 +302,10 @@ public class GalaxyAPITest {
 				null);
 	}
 
+	/**
+	 * Setup return values for existing library with only an illumina folder.
+	 * @throws UploadException
+	 */
 	private void setupLibraryFoldersWithIlluminaFolder() throws UploadException {
 		LibraryFolder referencesFolder = new LibraryFolder();
 		referencesFolder.setName(referencesFolderPath.getName());
@@ -301,6 +334,10 @@ public class GalaxyAPITest {
 						eq(referencesFolderName))).thenReturn(referencesFolder);
 	}
 
+	/**
+	 * Setup return values for an existing library with a reference folder.
+	 * @throws UploadException
+	 */
 	private void setupLibraryFoldersWithReferencesFolder()
 			throws UploadException {
 		LibraryFolder referencesFolder = new LibraryFolder();
@@ -330,6 +367,10 @@ public class GalaxyAPITest {
 						eq(referencesFolderName))).thenReturn(referencesFolder);
 	}
 
+	/**
+	 * Setup return values for a library with both illumina and reference folders.
+	 * @throws UploadException
+	 */
 	private void setupLibraryFoldersWithBothFolders() throws UploadException {
 		LibraryFolder referencesFolder = new LibraryFolder();
 		referencesFolder.setName(referencesFolderPath.getName());
@@ -363,6 +404,12 @@ public class GalaxyAPITest {
 						eq(referencesFolderName))).thenReturn(referencesFolder);
 	}
 
+	/**
+	 * Test building a Galaxy library.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testBuildGalaxyLibrary() throws URISyntaxException,
 			MalformedURLException, UploadException {
@@ -376,6 +423,12 @@ public class GalaxyAPITest {
 				eq(realUserEmail), eq(realAdminEmail));
 	}
 
+	/**
+	 * Test failure to build a Galaxy library.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws UploadException
+	 */
 	@Test(expected = CreateLibraryException.class)
 	public void testBuildGalaxyLibraryFail() throws URISyntaxException,
 			MalformedURLException, UploadException {
@@ -387,6 +440,12 @@ public class GalaxyAPITest {
 		workflowRESTAPI.buildGalaxyLibrary(libraryName, realUserEmail);
 	}
 
+	/**
+	 * Test build Galaxy library with unknown user.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws UploadException
+	 */
 	@Test(expected = GalaxyUserNotFoundException.class)
 	public void testBuildGalaxyLibraryNoUser() throws URISyntaxException,
 			MalformedURLException, UploadException {
@@ -397,8 +456,15 @@ public class GalaxyAPITest {
 		workflowRESTAPI.buildGalaxyLibrary(libraryName, fakeUserEmail);
 	}
 
+	/**
+	 * Test setup API with unknown admin email.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test(expected = GalaxyConnectException.class)
-	public void testSetupInvalidAdminEmail() throws URISyntaxException,
+	public void testSetupUnknownAdminEmail() throws URISyntaxException,
 			MalformedURLException, ConstraintViolationException,
 			UploadException {
 		setupBuildLibrary();
@@ -406,6 +472,12 @@ public class GalaxyAPITest {
 		workflowRESTAPI = new GalaxyAPI(galaxyInstance, nonExistentAdminEmail);
 	}
 
+	/**
+	 * Test build Galaxy library with no user role found.
+	 * @throws URISyntaxException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test(expected = GalaxyUserNoRoleException.class)
 	public void testBuildGalaxyLibraryNoUserRole() throws URISyntaxException,
 			ConstraintViolationException, UploadException {
@@ -418,6 +490,12 @@ public class GalaxyAPITest {
 		workflowRESTAPI.buildGalaxyLibrary(libraryName, realUserEmail);
 	}
 
+	/**
+	 * Test build Galaxy library with error changing permissions.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws UploadException
+	 */
 	@Test(expected = ChangeLibraryPermissionsException.class)
 	public void testBuildGalaxyLibraryNoSetPermissions()
 			throws URISyntaxException, MalformedURLException, UploadException {
@@ -431,6 +509,12 @@ public class GalaxyAPITest {
 		workflowRESTAPI.buildGalaxyLibrary(libraryName, realUserEmail);
 	}
 
+	/**
+	 * Test upload a sample to a library.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testUploadSampleToLibrary() throws URISyntaxException,
 			MalformedURLException, UploadException {
@@ -467,6 +551,12 @@ public class GalaxyAPITest {
 				any(FilesystemPathsLibraryUpload.class));
 	}
 
+	/**
+	 * Test upload a sample to a library which already contains that sample folder.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testUploadExistingSampleFolderToLibrary()
 			throws URISyntaxException, MalformedURLException, UploadException {
@@ -511,6 +601,12 @@ public class GalaxyAPITest {
 				any(FilesystemPathsLibraryUpload.class));
 	}
 
+	/**
+	 * Tests uploading sample file to library where sample already exists.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testUploadExistingSampleFileToLibrary()
 			throws URISyntaxException, MalformedURLException, UploadException {
@@ -563,6 +659,12 @@ public class GalaxyAPITest {
 				eq(libraryId), any(FilesystemPathsLibraryUpload.class));
 	}
 
+	/**
+	 * Tests uploading mixture of existing/non existing sample files to library.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testUploadOneExistingOneNewSampleFileToLibrary()
 			throws URISyntaxException, MalformedURLException, UploadException {
@@ -615,6 +717,12 @@ public class GalaxyAPITest {
 				any(FilesystemPathsLibraryUpload.class));
 	}
 
+	/**
+	 * Tests uploading sample to library with illumina folder (don't want multiple folders created).
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testUploadSampleToLibraryWithIlluminaFolder()
 			throws URISyntaxException, MalformedURLException, UploadException {
@@ -651,6 +759,12 @@ public class GalaxyAPITest {
 				any(FilesystemPathsLibraryUpload.class));
 	}
 
+	/**
+	 * Tests uploading a sample to a library which contains a references folder (no multiple folders created).
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testUploadSampleToLibraryWithReferencesFolder()
 			throws URISyntaxException, MalformedURLException, UploadException {
@@ -687,6 +801,12 @@ public class GalaxyAPITest {
 				any(FilesystemPathsLibraryUpload.class));
 	}
 
+	/**
+	 * Tests uploading library to file and it fails.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testUploadFilesToLibraryFail() throws URISyntaxException,
 			MalformedURLException, UploadException {
@@ -727,6 +847,12 @@ public class GalaxyAPITest {
 				any(FilesystemPathsLibraryUpload.class));
 	}
 
+	/**
+	 * Tests uploading multiple samples to a library.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testUploadMultiSampleToLibrary() throws URISyntaxException,
 			MalformedURLException, UploadException {
@@ -778,6 +904,12 @@ public class GalaxyAPITest {
 				eq(libraryId), any(FilesystemPathsLibraryUpload.class));
 	}
 
+	/**
+	 * Tests uploading sample with multiple files to library.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testUploadMultiFileSampleToLibrary() throws URISyntaxException,
 			MalformedURLException, UploadException {
@@ -814,6 +946,12 @@ public class GalaxyAPITest {
 				eq(libraryId), any(FilesystemPathsLibraryUpload.class));
 	}
 
+	/**
+	 * Tests uploading samples (with creating library).
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testUploadSamples() throws URISyntaxException,
 			MalformedURLException, UploadException {
@@ -860,6 +998,12 @@ public class GalaxyAPITest {
 				any(FilesystemPathsLibraryUpload.class));
 	}
 
+	/**
+	 * Tests uploading samples, no user exists.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws UploadException
+	 */
 	@Test(expected = GalaxyUserNotFoundException.class)
 	public void testUploadSamplesUserDoesNotExist() throws URISyntaxException,
 			MalformedURLException, UploadException {
@@ -885,6 +1029,12 @@ public class GalaxyAPITest {
 		workflowRESTAPI.uploadSamples(samples, libraryName, realUserEmail);
 	}
 
+	/**
+	 * Tests uploading samples to existing library.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testUploadSamplesToExistingLibrary() throws URISyntaxException,
 			MalformedURLException, UploadException {
@@ -929,6 +1079,12 @@ public class GalaxyAPITest {
 				any(FilesystemPathsLibraryUpload.class));
 	}
 
+	/**
+	 * Tests uploading files to non-existing file.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws UploadException
+	 */
 	@Test(expected = NoLibraryFoundException.class)
 	public void testNoExistingLibrary() throws URISyntaxException,
 			MalformedURLException, UploadException {
@@ -953,6 +1109,12 @@ public class GalaxyAPITest {
 		workflowRESTAPI.uploadFilesToLibrary(samples, nonExistentLibraryId);
 	}
 
+	/**
+	 * Tests uploading files to library, error creating sample folder.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws UploadException
+	 */
 	@Test(expected = CreateLibraryException.class)
 	public void testNoCreateSampleFolder() throws URISyntaxException,
 			MalformedURLException, UploadException {
@@ -981,6 +1143,12 @@ public class GalaxyAPITest {
 		workflowRESTAPI.uploadFilesToLibrary(samples, libraryId);
 	}
 
+	/**
+	 * Tests uploading empty list of samples.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testUploadNoFiles() throws URISyntaxException,
 			MalformedURLException, UploadException {
