@@ -239,7 +239,7 @@ public class GalaxyAPI {
 					"Could not find Galaxy user with email=" + galaxyUserEmail);
 		}
 
-		if (galaxySearchAdmin.findUserRoleWithEmail(galaxyUserEmail) == null) {
+		if (!galaxySearchAdmin.userRoleExistsFor(galaxyUserEmail)) {
 			throw new GalaxyUserNoRoleException(
 					"Could not find role for Galaxy user with email="
 							+ galaxyUserEmail);
@@ -436,10 +436,10 @@ public class GalaxyAPI {
 		Library uploadLibrary;
 		if (galaxySearchAdmin.galaxyUserExists(galaxyUserEmail)) {
 			
-			try {
+			if (galaxySearchAdmin.libraryExists(libraryName)) {
 				List<Library> libraries = galaxySearchAdmin.findLibraryWithName(libraryName);
-				uploadLibrary = libraries.get(0);
-			} catch (NoLibraryFoundException e) {
+				uploadLibrary = libraries.get(0); // gets first library returned
+			} else {
 				uploadLibrary = buildGalaxyLibrary(libraryName, galaxyUserEmail);
 				returnedOwner = galaxyUserEmail;
 			}
@@ -506,35 +506,27 @@ public class GalaxyAPI {
 					.getLibrariesClient();
 
 			Library library = galaxySearchAdmin.findLibraryWithId(libraryID);
-			if (library == null) {
-				throw new NoLibraryFoundException(
-						"Could not find library with id=" + libraryID);
-			}
 
 			Map<String, LibraryContent> libraryContentMap
 				= galaxySearchAdmin.libraryContentAsMap(libraryID);
 			
 			LibraryFolder illuminaFolder;
 			
-			try {
+			if (galaxySearchAdmin.libraryContentExists(libraryID, ILLUMINA_FOLDER_PATH)) {
 				LibraryContent illuminaContent
 					= galaxySearchAdmin.findLibraryContentWithId(libraryID, ILLUMINA_FOLDER_PATH);
 				
 				illuminaFolder = new LibraryFolder();
 				illuminaFolder.setId(illuminaContent.getId());
-				illuminaFolder.setName(illuminaContent.getName());	
-			} catch (NoGalaxyContentFoundException e) {
-				illuminaFolder = galaxyLibrary.createLibraryFolder(library,
-						ILLUMINA_FOLDER_NAME);
+				illuminaFolder.setName(illuminaContent.getName());
+			} else {
+				illuminaFolder = galaxyLibrary.createLibraryFolder(library, ILLUMINA_FOLDER_NAME);
 			}
 
 			// create references folder if it doesn't exist, but we don't need
 			// to put anything into it.
-			try {
-				galaxySearchAdmin.findLibraryContentWithId(libraryID, REFERENCES_FOLDER_PATH);
-			} catch (NoGalaxyContentFoundException e) {
-				galaxyLibrary.createLibraryFolder(library,
-						REFERENCES_FOLDER_NAME);
+			if (!galaxySearchAdmin.libraryContentExists(libraryID, REFERENCES_FOLDER_PATH)) {
+				galaxyLibrary.createLibraryFolder(library, REFERENCES_FOLDER_NAME);
 			}
 
 			for (UploadSample sample : samples) {

@@ -262,6 +262,46 @@ public class GalaxySearchTest {
 	public void testInvalidFindLibraryByName() throws NoLibraryFoundException {
 		galaxySearch.findLibraryWithName(INVALID_LIBRARY_NAME);
 	}
+	
+	/**
+	 * Tests checking existence of library.
+	 */
+	@Test
+	public void testLibraryExists() {
+		assertTrue(galaxySearch.libraryExists(LIBRARY_NAME));
+	}
+	
+	/**
+	 * Tests checking non-existence of library.
+	 */
+	@Test
+	public void testNoLibraryExists() {
+		assertFalse(galaxySearch.libraryExists(INVALID_LIBRARY_NAME));
+	}
+	
+	/**
+	 * Tests checking existence of library content.
+	 */
+	@Test
+	public void testLibraryContentExists() {
+		assertTrue(galaxySearch.libraryContentExists(LIBRARY_ID_MULTIPLE_CONTENTS, ILLUMINA_FOLDER_NAME));
+	}
+	
+	/**
+	 * Tests checking non-existence of library content (no content).
+	 */
+	@Test
+	public void testLibraryNoContentExists() {
+		assertFalse(galaxySearch.libraryContentExists(LIBRARY_ID_MULTIPLE_CONTENTS, INVALID_FOLDER_NAME));
+	}
+	
+	/**
+	 * Tests checking non-existence of library content (no library).
+	 */
+	@Test
+	public void testNoLibraryContentExists() {
+		assertFalse(galaxySearch.libraryContentExists(INVALID_LIBRARY_ID, ILLUMINA_FOLDER_NAME));
+	}
 
 	/**
 	 * Tests finding a user role.
@@ -282,6 +322,22 @@ public class GalaxySearchTest {
 	@Test(expected=GalaxyUserNoRoleException.class)
 	public void testNoFindUserRoleWithEmail() throws GalaxyUserNoRoleException {
 		galaxySearch.findUserRoleWithEmail(new GalaxyAccountEmail("invalid@localhost"));
+	}
+	
+	/**
+	 * Tests finding a user role.
+	 */
+	@Test
+	public void testUserRoleExistsFor() {
+		assertTrue(galaxySearch.userRoleExistsFor(new GalaxyAccountEmail("role1@localhost")));
+	}
+	
+	/**
+	 * Tests not finding a user role.
+	 */
+	@Test
+	public void testNoUserRoleExistsFor() {
+		assertFalse(galaxySearch.userRoleExistsFor(new GalaxyAccountEmail("invalid@localhost")));
 	}
 
 	/**

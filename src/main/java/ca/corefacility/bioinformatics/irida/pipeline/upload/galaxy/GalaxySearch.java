@@ -226,4 +226,49 @@ public class GalaxySearch {
 			return false;
 		}
 	}
+
+	/**
+	 * Determines if a library with the given name exists.
+	 * @param libraryName The name of the library to check.
+	 * @return True if a library with this name exists, false otherwise.
+	 */
+	public boolean libraryExists(GalaxyObjectName libraryName) {
+		try {
+			List<Library> libraries = findLibraryWithName(libraryName);
+			return libraries != null && libraries.size() > 0;
+		} catch (NoLibraryFoundException e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Determine if the given folderPath exists within a library with
+	 * 	the given id.
+	 * @param libraryId  The id of the library to check.
+	 * @param folderPath  A path within this library to check.
+	 * @return True if this path exists within this library, false otherwise.
+	 */
+	public boolean libraryContentExists(String libraryId,
+			GalaxyFolderPath folderPath) {
+		try {
+			LibraryContent content = findLibraryContentWithId(libraryId, folderPath);
+			return content != null;
+		} catch (NoGalaxyContentFoundException e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Determins if a role exists for the given user.
+	 * @param galaxyUserEmail  The user to search for a role.
+	 * @return  True if a role exists for the user, false otherwise.
+	 */
+	public boolean userRoleExistsFor(GalaxyAccountEmail galaxyUserEmail) {
+		try {
+			Role role = findUserRoleWithEmail(galaxyUserEmail);
+			return role != null;
+		} catch (GalaxyUserNoRoleException e) {
+			return false;
+		}
+	}
 }
