@@ -40,6 +40,11 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploade
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 
+/**
+ * Integration tests for the GalaxyUploader with a running instance of Galaxy.
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {
 		IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class,
@@ -69,6 +74,11 @@ public class GalaxyUploaderIT {
 		dataFilesSingle.add(dataFile1);
 	}
 
+	/**
+	 * Test the case of no connection to a running instance of Galaxy.
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test(expected = UploadException.class)
 	public void testNoGalaxyConnectionUpload()
 			throws ConstraintViolationException, UploadException {
@@ -86,6 +96,11 @@ public class GalaxyUploaderIT {
 				localGalaxy.getAdminName());
 	}
 
+	/**
+	 * Test the case of setting up the Galaxy API with a an email that does not exist in Galaxy.
+	 * @throws ConstraintViolationException
+	 * @throws GalaxyConnectException
+	 */
 	@Test(expected = GalaxyConnectException.class)
 	public void testSetupNonExistentEmail()
 			throws ConstraintViolationException, GalaxyConnectException {
@@ -95,6 +110,12 @@ public class GalaxyUploaderIT {
 				localGalaxy.getAdminAPIKey());
 	}
 
+	/**
+	 * Tests the case of Galaxy being shutdown while the archive is running.
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 * @throws MalformedURLException
+	 */
 	@Test(expected = UploadConnectionException.class)
 	public void testGalaxyShutdownRandomly()
 			throws ConstraintViolationException, UploadException,
@@ -130,6 +151,11 @@ public class GalaxyUploaderIT {
 				newLocalGalaxy.getAdminName());
 	}
 
+	/**
+	 * Tests out the GalaxyUploader.isConnected() method.
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testCheckGalaxyConnection()
 			throws ConstraintViolationException, UploadException {
@@ -139,19 +165,24 @@ public class GalaxyUploaderIT {
 		assertFalse(unconnectedGalaxyUploader.isConnected());
 	}
 
+	/**
+	 * Tests uploading some samples to Galaxy.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testUploadSamples() throws URISyntaxException,
 			MalformedURLException, ConstraintViolationException,
 			UploadException {
 		GalaxyObjectName libraryName = new GalaxyObjectName(
-				"GalaxyUploader_testUploadSamples");
+				"Galaxy_Uploader testUploadSamples");
 		String localGalaxyURL = localGalaxy
 				.getGalaxyURL()
 				.toString()
 				.substring(0,
-						localGalaxy.getGalaxyURL().toString().length() - 1); // remove
-																				// trailing
-																				// '/'
+						localGalaxy.getGalaxyURL().toString().length() - 1); // remove trailing '/'
 
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		GalaxySample galaxySample1 = new GalaxySample(new GalaxyObjectName(
@@ -166,6 +197,12 @@ public class GalaxyUploaderIT {
 				actualUploadResult.getDataLocation());
 	}
 
+	/**
+	 * Tests uploading a sample with an invalid user name.
+	 * @throws URISyntaxException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test(expected = ConstraintViolationException.class)
 	public void testUploadSampleInvalidUserName() throws URISyntaxException,
 			ConstraintViolationException, UploadException {
@@ -180,6 +217,12 @@ public class GalaxyUploaderIT {
 		galaxyUploader.uploadSamples(samples, libraryName, userEmail);
 	}
 
+	/**
+	 * Tests uploading a sample with an invalid name.
+	 * @throws URISyntaxException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test(expected = ConstraintViolationException.class)
 	public void testUploadSampleInvalidSampleName() throws URISyntaxException,
 			ConstraintViolationException, UploadException {
@@ -194,6 +237,12 @@ public class GalaxyUploaderIT {
 				localGalaxy.getUser1Name());
 	}
 
+	/**
+	 * Tests uploading a sample with an invalid library name.
+	 * @throws URISyntaxException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
 	@Test(expected = ConstraintViolationException.class)
 	public void testUploadSampleInvalidLibraryName() throws URISyntaxException,
 			ConstraintViolationException, UploadException {

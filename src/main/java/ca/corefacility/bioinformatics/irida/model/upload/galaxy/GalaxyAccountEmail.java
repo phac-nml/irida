@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.upload.galaxy;
 
+import java.util.Objects;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -19,31 +21,41 @@ public class GalaxyAccountEmail implements UploaderAccountName {
 	@Email(message = "{galaxy.user.email.invalid}")
 	private String galaxyAccountEmail;
 
+	/**
+	 * Builds a new GalaxyAccountEmail with the passed email address.
+	 * @param galaxyAccountEmail  The email address for a user in Galaxy.
+	 */
 	public GalaxyAccountEmail(String galaxyAccountEmail) {
 		this.galaxyAccountEmail = galaxyAccountEmail;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getName() {
 		return galaxyAccountEmail;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		return galaxyAccountEmail;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime
-				* result
-				+ ((galaxyAccountEmail == null) ? 0 : galaxyAccountEmail
-						.hashCode());
-		return result;
+		return Objects.hashCode(galaxyAccountEmail);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -53,11 +65,7 @@ public class GalaxyAccountEmail implements UploaderAccountName {
 		if (getClass() != obj.getClass())
 			return false;
 		GalaxyAccountEmail other = (GalaxyAccountEmail) obj;
-		if (galaxyAccountEmail == null) {
-			if (other.galaxyAccountEmail != null)
-				return false;
-		} else if (!galaxyAccountEmail.equals(other.galaxyAccountEmail))
-			return false;
-		return true;
+		
+		return Objects.equals(this.galaxyAccountEmail, other.galaxyAccountEmail);
 	}
 }

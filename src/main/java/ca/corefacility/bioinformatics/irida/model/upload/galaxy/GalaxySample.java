@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.*;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 
 import javax.validation.Valid;
 
@@ -21,6 +22,11 @@ public class GalaxySample implements UploadSample {
 	private UploadObjectName sampleName;
 	private List<Path> sampleFiles;
 
+	/**
+	 * Builds a new GalaxySample with the given name and list of files.
+	 * @param sampleName  The name of the sample.
+	 * @param sampleFiles  The list of files belonging to this sample.
+	 */
 	public GalaxySample(UploadObjectName sampleName, List<Path> sampleFiles) {
 		checkNotNull(sampleName, "sampleName is null");
 		checkNotNull(sampleFiles, "sampleFiles is null");
@@ -29,50 +35,32 @@ public class GalaxySample implements UploadSample {
 		this.sampleFiles = sampleFiles;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * ca.corefacility.bioinformatics.irida.model.upload.galaxy.UploadSample
-	 * #getSampleName()
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	public UploadObjectName getSampleName() {
 		return sampleName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * ca.corefacility.bioinformatics.irida.model.upload.galaxy.UploadSample
-	 * #setSampleName
-	 * (ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName
-	 * )
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void setSampleName(UploadObjectName sampleName) {
 		this.sampleName = sampleName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * ca.corefacility.bioinformatics.irida.model.upload.galaxy.UploadSample
-	 * #getSampleFiles()
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	public List<Path> getSampleFiles() {
 		return sampleFiles;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * ca.corefacility.bioinformatics.irida.model.upload.galaxy.UploadSample
-	 * #setSampleFiles(java.util.List)
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void setSampleFiles(List<Path> sampleFiles) {
@@ -80,22 +68,25 @@ public class GalaxySample implements UploadSample {
 		this.sampleFiles = sampleFiles;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		return "(" + sampleName + ", " + sampleFiles + ")";
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((sampleFiles == null) ? 0 : sampleFiles.hashCode());
-		result = prime * result
-				+ ((sampleName == null) ? 0 : sampleName.hashCode());
-		return result;
+		return Objects.hash(sampleName, sampleFiles);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -105,16 +96,8 @@ public class GalaxySample implements UploadSample {
 		if (getClass() != obj.getClass())
 			return false;
 		GalaxySample other = (GalaxySample) obj;
-		if (sampleFiles == null) {
-			if (other.sampleFiles != null)
-				return false;
-		} else if (!sampleFiles.equals(other.sampleFiles))
-			return false;
-		if (sampleName == null) {
-			if (other.sampleName != null)
-				return false;
-		} else if (!sampleName.equals(other.sampleName))
-			return false;
-		return true;
+		
+		return Objects.equals(this.sampleName, other.sampleName) &&
+				Objects.equals(this.sampleFiles, other.sampleFiles);
 	}
 }

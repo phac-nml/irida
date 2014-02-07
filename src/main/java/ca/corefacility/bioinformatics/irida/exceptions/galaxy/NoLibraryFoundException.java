@@ -2,26 +2,42 @@ package ca.corefacility.bioinformatics.irida.exceptions.galaxy;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 
+/**
+ * When no data library could be found.
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ */
 public class NoLibraryFoundException extends UploadException {
 	private static final long serialVersionUID = -2968750017497563652L;
 
+	/**
+	 * Constructs a new NoLibraryFoundException with no information.
+	 */
 	public NoLibraryFoundException() {
 		super();
 	}
 
-	public NoLibraryFoundException(String message, Throwable cause,
-			boolean enableSuppression, boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
-
+	/**
+	 * Constructs a new NoLibraryFoundException with the given message and cause.
+	 * @param message  The message explaining the error.
+	 * @param cause  The cause of this message.
+	 */
 	public NoLibraryFoundException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
+	/**
+	 * Constructs a new NoLibraryFoundException with the given message.
+	 * @param message  The message explaining the error.
+	 */
 	public NoLibraryFoundException(String message) {
 		super(message);
 	}
 
+	/**
+	 * Constructs a new NoLibraryFoundException with the given cause.
+	 * @param cause  The cause of this error.
+	 */
 	public NoLibraryFoundException(Throwable cause) {
 		super(cause);
 	}

@@ -46,6 +46,10 @@ public class GalaxyAPIConfig {
 	@Autowired
 	private Validator validator;
 
+	/**
+	 * Builds a new GalaxyUploader bean for connecting to an instance of Galaxy.
+	 * @return  A new GalaxyUploader object.
+	 */
 	@Bean
 	public Uploader galaxyUploader() {
 		GalaxyUploader galaxyUploader = new GalaxyUploader();
@@ -104,6 +108,11 @@ public class GalaxyAPIConfig {
 		return galaxyUploader;
 	}
 
+	/**
+	 * Validates the constraints on a GalaxyAccountEmail for the property from the configuration file.
+	 * @param accountEmail  The GalaxyAccountEmail that was loaded from the configuration file.
+	 * @throws ConstraintViolationException  If one of the constraints was violated.
+	 */
 	private void validateGalaxyAccountEmail(GalaxyAccountEmail accountEmail)
 			throws ConstraintViolationException {
 		Set<ConstraintViolation<GalaxyAccountEmail>> violations = validator

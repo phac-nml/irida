@@ -12,5 +12,5 @@ public interface UploadObjectName {
 	 * 
 	 * @return The name of the object to upload.
 	 */
-	public abstract String getName();
+	public String getName();
 }

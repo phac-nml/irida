@@ -84,10 +84,19 @@ public class GalaxyUploader implements Uploader {
 				+ ", adminEmail=" + adminEmail);
 	}
 
+	/**
+	 * Performs the actual upload with the given Galaxy-specific information.
+	 * @param samples  The samples to upload.
+	 * @param libraryName  The library name to upload into.
+	 * @param galaxyUserEmail  The user email who should own the library
+	 *  if a new library needs to be created.
+	 * @return  An UploadResult describing the location the files were uploaded into.
+	 * @throws UploadException  If an error occured while uploading the files.
+	 */
 	private UploadResult uploadSamplesInternal(
-			@Valid List<UploadSample> samples,
-			@Valid GalaxyObjectName libraryName,
-			@Valid GalaxyAccountEmail galaxyUserEmail) throws UploadException,
+			List<UploadSample> samples,
+			GalaxyObjectName libraryName,
+			GalaxyAccountEmail galaxyUserEmail) throws UploadException,
 			ConstraintViolationException {
 		if (galaxyAPI == null) {
 			logger.debug("Could not upload samples to Galaxy Library "
@@ -106,11 +115,17 @@ public class GalaxyUploader implements Uploader {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isConnected() {
 		return galaxyAPI != null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setDataStorage(DataStorage dataStorage) {
 		this.dataStorage = dataStorage;
@@ -119,11 +134,17 @@ public class GalaxyUploader implements Uploader {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public DataStorage getDataStorage() {
 		return dataStorage;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public URL getUrl() {
 		if (galaxyAPI != null) {
@@ -134,6 +155,9 @@ public class GalaxyUploader implements Uploader {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public UploadResult uploadSamples(@Valid List<UploadSample> samples,
 			@Valid UploadObjectName dataLocation,
@@ -158,6 +182,12 @@ public class GalaxyUploader implements Uploader {
 		return uploadResult;
 	}
 
+	/**
+	 * Converts the given UploaderAccountName to a GalaxyAccountEmail.
+	 * @param accountName  The account name.
+	 * @return  A GalaxyAccountEmail describing the account name.
+	 * @throws UploadException  If a conversion exception occured.
+	 */
 	private GalaxyAccountEmail toAccountEmail(UploaderAccountName accountName)
 			throws UploadException {
 		if (accountName instanceof GalaxyAccountEmail) {
@@ -168,6 +198,12 @@ public class GalaxyUploader implements Uploader {
 		}
 	}
 
+	/**
+	 * Converts the given UploadObjectName to a GalaxyObjectName.
+	 * @param objectName  The UploadObjectName to convert.
+	 * @return  A GalaxyObjectName describing the name.
+	 * @throws UploadException  If a conversion exception occured.
+	 */
 	private GalaxyObjectName toGalaxyObjectName(UploadObjectName objectName)
 			throws UploadException {
 		if (objectName instanceof GalaxyObjectName) {

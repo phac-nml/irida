@@ -5,8 +5,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
 
-import javax.validation.ConstraintViolationException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -22,13 +20,18 @@ import com.github.jmchilton.galaxybootstrap.GalaxyData;
 import com.github.jmchilton.galaxybootstrap.GalaxyProperties;
 import com.github.jmchilton.galaxybootstrap.GalaxyData.User;
 
-import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 
+/**
+ * Builds a local running instance of Galaxy (requires mercurial and python) for integration testing.
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ */
 @Configuration
 @Profile("test")
 public class LocalGalaxyConfig {
@@ -37,10 +40,15 @@ public class LocalGalaxyConfig {
 
 	private static final int largestPort = 65535;
 
+	/**
+	 * Builds a GalaxyUploader to connect to a running instance of Galaxy.
+	 * @return  An Uploader connected to a running instance of Galaxy.
+	 * @throws MalformedURLException  If there was an issue when contructing a URL.
+	 * @throws GalaxyConnectException If there was an issue connecting to the running instance of Galaxy.
+	 */
 	@Lazy
 	@Bean
-	public Uploader galaxyUploader() throws MalformedURLException,
-			ConstraintViolationException, UploadException {
+	public Uploader galaxyUploader() throws MalformedURLException, GalaxyConnectException {
 		GalaxyUploader galaxyUploader = new GalaxyUploader();
 		galaxyUploader.setupGalaxyAPI(localGalaxy().getGalaxyURL(),
 				localGalaxy().getAdminName(), localGalaxy().getAdminAPIKey());
@@ -48,14 +56,24 @@ public class LocalGalaxyConfig {
 		return galaxyUploader;
 	}
 
+	/**
+	 * Builds a GalaxyAPI object to connect to a running instance of Galaxy.
+	 * @return  A GalaxyAPI object connected to a running instance of Galaxy.
+	 * @throws MalformedURLException  If there was an issue building some of the URLs.
+	 * @throws GalaxyConnectException If there was an issue connecting to the Galaxy instance.
+	 */
 	@Lazy
 	@Bean
-	public GalaxyAPI galaxyAPI() throws ConstraintViolationException,
-			MalformedURLException, UploadException {
+	public GalaxyAPI galaxyAPI() throws MalformedURLException, GalaxyConnectException {
 		return new GalaxyAPI(localGalaxy().getGalaxyURL(), localGalaxy()
 				.getAdminName(), localGalaxy().getAdminAPIKey());
 	}
 
+	/**
+	 * Builds a new LocalGalaxy allowing for connecting with a running Galaxy instance.
+	 * @return  A LocalGalaxy with information about the running Galaxy instance.
+	 * @throws MalformedURLException  If there was an issue constructing the URLs.
+	 */
 	@Lazy
 	@Bean
 	public LocalGalaxy localGalaxy() throws MalformedURLException {
@@ -103,6 +121,11 @@ public class LocalGalaxyConfig {
 		return localGalaxy;
 	}
 
+	/**
+	 * Downloads the latest stable release of Galaxy.
+	 * @param localGalaxy  The LocalGalaxy object used to fill in information about Galaxy.
+	 * @return  A BootStrapper object describing the downloaded Galaxy.
+	 */
 	private BootStrapper downloadGalaxy(LocalGalaxy localGalaxy) {
 		@SuppressWarnings("deprecation")
 		DownloadProperties downloadProperties = new DownloadProperties(
@@ -125,6 +148,12 @@ public class LocalGalaxyConfig {
 		return bootStrapper;
 	}
 
+	/**
+	 * Does some custom configuration for Galaxy to work with the tests.
+	 * @param localGalaxy  The object describing the local running instance of Galaxy.
+	 * @return  A GalaxyProperties object defining properties of the running instance of Galaxy.
+	 * @throws MalformedURLException  If there was an issue constructing the Galaxy URL.
+	 */
 	private GalaxyProperties setupGalaxyProperties(LocalGalaxy localGalaxy)
 			throws MalformedURLException {
 		GalaxyProperties galaxyProperties = new GalaxyProperties()
@@ -147,6 +176,11 @@ public class LocalGalaxyConfig {
 		return galaxyProperties;
 	}
 
+	/**
+	 * Configures the users for the Galaxy for integration testing.
+	 * @param galaxyData  A GalaxyData object used to setup users.
+	 * @param localGalaxy  An object containing information about the local running Galaxy.
+	 */
 	private void buildGalaxyUsers(GalaxyData galaxyData, LocalGalaxy localGalaxy) {
 		GalaxyProperties galaxyProperties = localGalaxy.getGalaxyProperties();
 
@@ -169,12 +203,26 @@ public class LocalGalaxyConfig {
 		galaxyProperties.setAdminUser(adminUser.getUsername());
 	}
 
+	/**
+	 * Constructs a string containing the Galaxy user information for logging.
+	 * @param usertype  The type of user constructed (admin, etc).
+	 * @param name  The name of the user.
+	 * @param password  The password of the user.
+	 * @param apiKey  The api key of the user.
+	 * @return  A String with the proper logging message.
+	 */
 	private String generateUserString(String usertype, String name,
 			String password, String apiKey) {
 		return "Galaxy " + usertype + " user: " + name + ", password: "
 				+ password + ", apiKey: " + apiKey;
 	}
 
+	/**
+	 * Runs the downloaded and configured instance of Galaxy.
+	 * @param galaxyData  The data used to run Galaxy.
+	 * @param localGalaxy  The object containing information about the local Galaxy instance.
+	 * @return  A GalaxyDaemon object containing information about the running Galaxy process.
+	 */
 	private GalaxyDaemon runGalaxy(GalaxyData galaxyData,
 			LocalGalaxy localGalaxy) {
 		GalaxyDaemon galaxyDaemon;
