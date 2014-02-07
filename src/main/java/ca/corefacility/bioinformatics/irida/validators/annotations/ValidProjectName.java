@@ -10,8 +10,6 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 import javax.validation.constraints.Pattern;
 
-import ca.corefacility.bioinformatics.irida.validators.Patterns;
-
 /**
  * Custom validation annotation that implements a black-list of unacceptable
  * characters in resources that can be named.
@@ -19,7 +17,7 @@ import ca.corefacility.bioinformatics.irida.validators.Patterns;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
-@Patterns({
+@Pattern.List({
 	@Pattern(regexp = "^[^\\?]+$", message = "{irida.name.invalid.question.mark}"),
 	@Pattern(regexp = "^[^\\(]+$", message = "{irida.name.invalid.left.paren}"),
 	@Pattern(regexp = "^[^\\)]+$", message = "{irida.name.invalid.right.paren}"),

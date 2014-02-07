@@ -10,15 +10,13 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 import javax.validation.constraints.Pattern;
 
-import ca.corefacility.bioinformatics.irida.validators.Patterns;
-
 /**
  * A collection of patterns that validate the name of a sample.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
-@Patterns({
+@Pattern.List({
 	@Pattern(regexp = "^[^\\']+$", message = "{irida.name.invalid.single.quote}"),
 	@Pattern(regexp = "^[^\\.]+$", message = "{irida.name.invalid.period}"),
 	@Pattern(regexp = "^[^ ]+$", message = "{irida.name.invalid.space}")
