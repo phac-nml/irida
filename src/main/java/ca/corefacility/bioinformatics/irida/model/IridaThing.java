@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public interface IridaThing extends Timestamped{
-    @NotNull
+    @NotNull(message = "{irida.label.notnull}")
     public String getLabel();
      
     public Long getId();

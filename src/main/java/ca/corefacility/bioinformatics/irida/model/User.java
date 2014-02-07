@@ -84,7 +84,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 
 	@ManyToOne
 	@JoinColumn(name = "system_role")
-	@NotNull
+	@NotNull(message = "{user.systemRole.notnull}")
 	private Role systemRole;
 
 	@Temporal(TemporalType.TIMESTAMP)

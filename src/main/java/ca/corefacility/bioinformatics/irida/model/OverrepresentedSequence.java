@@ -35,13 +35,13 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@NotNull
+	@NotNull(message = "{overrepresented.sequence.sequence.notnull}")
 	private String sequence;
-	@NotNull
+	@NotNull(message = "{overrepresented.sequence.sequence.count.notnull}")
 	private int overrepresentedSequenceCount;
-	@NotNull
+	@NotNull(message = "{overrepresented.sequence.percentage.notnull}")
 	private BigDecimal percentage;
-	@NotNull
+	@NotNull(message = "{overrepresented.sequence.possibleSource.notnull}")
 	private String possibleSource;
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)

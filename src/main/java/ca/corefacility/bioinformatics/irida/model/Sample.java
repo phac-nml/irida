@@ -45,14 +45,14 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	 * from the perspective of a user; especially since the external identifier
 	 * is provided entirely externally from the system.
 	 */
-	@NotNull
+	@NotNull(message = "{sample.external.id.notnull}")
 	@Size(min = 3, message = "{sample.external.id.too.short}")
 	@ValidSampleName
 	// @Column(unique = true)
 	private String externalSampleId;
 
-	@NotNull
-	@Size(min = 3)
+	@NotNull(message = "{sample.name.notnull}")
+	@Size(min = 3, message = "{sample.name.too.short}")
 	@ValidSampleName
 	private String sampleName;
 
