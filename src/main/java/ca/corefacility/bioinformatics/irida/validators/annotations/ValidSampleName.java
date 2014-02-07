@@ -16,20 +16,21 @@ import javax.validation.constraints.Pattern;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
-@Pattern.List({
-	@Pattern(regexp = "^[^\\']+$", message = "{irida.name.invalid.single.quote}"),
-	@Pattern(regexp = "^[^\\.]+$", message = "{irida.name.invalid.period}"),
-	@Pattern(regexp = "^[^ ]+$", message = "{irida.name.invalid.space}")
-})
+@Pattern.List({ @Pattern(regexp = "^[^\\']+$", message = "{irida.name.invalid.single.quote}"),
+		@Pattern(regexp = "^[^\\.]+$", message = "{irida.name.invalid.period}"),
+		@Pattern(regexp = "^[^ ]+$", message = "{irida.name.invalid.space}") })
+@ValidProjectName
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(validatedBy = {})
 public @interface ValidSampleName {
 
+	public static char[] BLACKLISTED_CHARACTERS = { '\'', '.', ' ' };
+
 	String message() default "{irida.name.invalid.default}";
-	
+
 	Class<?>[] groups() default {};
-	
+
 	Class<? extends Payload>[] payload() default {};
 }
