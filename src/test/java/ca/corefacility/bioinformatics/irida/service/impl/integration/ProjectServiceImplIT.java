@@ -259,7 +259,7 @@ public class ProjectServiceImplIT {
 
 	private Sample s() {
 		Sample s = new Sample();
-		s.setSampleName("Sample name");
+		s.setSampleName("Samplename");
 		s.setDescription("Description");
 		s.setExternalSampleId("external");
 

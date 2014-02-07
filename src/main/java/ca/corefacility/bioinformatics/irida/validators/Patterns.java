@@ -14,7 +14,7 @@ import javax.validation.constraints.Pattern;
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-@Target({ElementType.METHOD, ElementType.FIELD})
+@Target({ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Patterns {
     Pattern[] value();

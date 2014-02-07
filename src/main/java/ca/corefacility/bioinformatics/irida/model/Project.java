@@ -23,6 +23,7 @@ import org.hibernate.validator.constraints.URL;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectName;
 
 /**
  * A project object.
@@ -41,6 +42,7 @@ public class Project implements IridaThing, Comparable<Project> {
 
 	@NotNull(message = "{project.name.notnull}")
 	@Size(min = 5, message = "{project.name.size}")
+	@ValidProjectName
 	private String name;
 
 	@Temporal(TemporalType.TIMESTAMP)
