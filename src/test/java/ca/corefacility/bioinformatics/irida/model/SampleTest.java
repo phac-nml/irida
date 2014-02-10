@@ -16,7 +16,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
-import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectName;
 import ca.corefacility.bioinformatics.irida.validators.annotations.ValidSampleName;
 
 public class SampleTest {
@@ -46,8 +45,8 @@ public class SampleTest {
 
 	@Test
 	public void testBlacklistedCharactersInSampleName() {
-		testBlacklists(ValidProjectName.BLACKLISTED_CHARACTERS);
-		testBlacklists(ValidSampleName.BLACKLISTED_CHARACTERS);
+		testBlacklists(ValidSampleName.ValidSampleNameBlacklist.BLACKLIST);
+		testBlacklists(ValidSampleName.ValidSampleNameBlacklist.BLACKLIST);
 	}
 
 	private void testBlacklists(char[] blacklist) {

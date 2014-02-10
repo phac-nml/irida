@@ -26,11 +26,13 @@ import javax.validation.constraints.Pattern;
 @Constraint(validatedBy = {})
 public @interface ValidSampleName {
 
-	public static char[] BLACKLISTED_CHARACTERS = { '\'', '.', ' ' };
-
 	String message() default "{irida.name.invalid.default}";
 
 	Class<?>[] groups() default {};
 
 	Class<? extends Payload>[] payload() default {};
+
+	public static class ValidSampleNameBlacklist {
+		public static final char[] BLACKLIST = { '\'', '.', ' ' };
+	}
 }

@@ -36,18 +36,20 @@ import javax.validation.constraints.Pattern;
 		@Pattern(regexp = "^[^\\^]+$", message = "{irida.name.invalid.circumflex}"),
 		@Pattern(regexp = "^[^\\|]+$", message = "{irida.name.invalid.pipe}"),
 		@Pattern(regexp = "^[^\\&]+$", message = "{irida.name.invalid.ampersand}"), })
-@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
+@Target({ ElementType.FIELD, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(validatedBy = {})
 public @interface ValidProjectName {
-
-	public static char[] BLACKLISTED_CHARACTERS = { '?', '(', ')', '[', ']', '/', '\\', '=', '+', '<', '>', ':', ';',
-			'"', ',', '*', '^', '|', '&' };
 
 	String message() default "{irida.name.invalid.default}";
 
 	Class<?>[] groups() default {};
 
 	Class<? extends Payload>[] payload() default {};
+
+	public static class ValidProjectNameBlacklist {
+		public static final char[] BLACKLIST = { '?', '(', ')', '[', ']', '/', '\\', '=', '+', '<', '>', ':', ';', '"',
+				',', '*', '^', '|', '&' };
+	}
 }

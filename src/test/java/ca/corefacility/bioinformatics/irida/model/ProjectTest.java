@@ -44,7 +44,7 @@ public class ProjectTest {
 
 	@Test
 	public void testBlacklistedCharactersInSampleName() {
-		testBlacklists(ValidProjectName.BLACKLISTED_CHARACTERS);
+		testBlacklists(ValidProjectName.ValidProjectNameBlacklist.BLACKLIST);
 	}
 
 	private void testBlacklists(char[] blacklist) {
