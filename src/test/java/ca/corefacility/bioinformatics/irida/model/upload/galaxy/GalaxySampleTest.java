@@ -19,6 +19,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
+import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectName;
+
 /**
  * Tests for {@link GalaxySample}.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
@@ -69,13 +72,16 @@ public class GalaxySampleTest {
 	}
 	
 	@Test
-	public void testInvalidName() {
-		GalaxySample sample = new GalaxySample(new GalaxyObjectName("Abc123 _-.'<"), new LinkedList<Path>());
-		
-		Set<ConstraintViolation<GalaxySample>> constraintViolations
-			= validator.validate(sample);
+	public void testBlacklistedCharactersInGalaxySample() {
+		testBlacklists(ValidProjectName.ValidProjectNameBlacklist.BLACKLIST);
+	}
 
-		assertEquals(1, constraintViolations.size());
-		assertEquals(b.getString("galaxy.object.invalid"), constraintViolations.iterator().next().getMessage());
+	private void testBlacklists(char[] blacklist) {
+		for (char c : blacklist) {
+			Project p = new Project();
+			p.setName("Abc123 _-.'" + c);
+			Set<ConstraintViolation<Project>> violations = validator.validate(p);
+			assertEquals("Wrong number of violations.", 1, violations.size());
+		}
 	}
 }

@@ -80,6 +80,5 @@ public class GalaxyFolderPathTest {
 			= validator.validate(name);
 
 		assertEquals(1, constraintViolations.size());
-		assertEquals(b.getString("galaxy.path.invalid"), constraintViolations.iterator().next().getMessage());
 	}
 }
