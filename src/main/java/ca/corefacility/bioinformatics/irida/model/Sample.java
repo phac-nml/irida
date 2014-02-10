@@ -1,12 +1,10 @@
 package ca.corefacility.bioinformatics.irida.model;
 
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -21,6 +19,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
+
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.validators.annotations.ValidSampleName;
 
 /**
  * A biological sample. Each sample may correspond to many files.
@@ -43,13 +45,15 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	 * from the perspective of a user; especially since the external identifier
 	 * is provided entirely externally from the system.
 	 */
-	@NotNull
-	@Size(min = 3)
+	@NotNull(message = "{sample.external.id.notnull}")
+	@Size(min = 3, message = "{sample.external.id.too.short}")
+	@ValidSampleName
 	// @Column(unique = true)
 	private String externalSampleId;
 
-	@NotNull
-	@Size(min = 3)
+	@NotNull(message = "{sample.name.notnull}")
+	@Size(min = 3, message = "{sample.name.too.short}")
+	@ValidSampleName
 	private String sampleName;
 
 	@Lob
@@ -60,11 +64,11 @@ public class Sample implements IridaThing, Comparable<Sample> {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
-	
-	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sample")
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sample")
 	private List<ProjectSampleJoin> projects;
-	
-	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sample")
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sample")
 	private List<SampleSequenceFileJoin> sequenceFiles;
 
 	public Sample() {

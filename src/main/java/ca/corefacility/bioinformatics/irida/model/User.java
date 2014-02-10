@@ -29,7 +29,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.validators.Patterns;
 
 /**
  * A user object.
@@ -67,7 +66,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	// longer than 1024 (who's going to remember a password that long anyway?)
 	// to prevent DOS attacks on our password hashing.
 	@Size(min = 6, max = 1024, message = "{user.password.size}")
-	@Patterns({ @Pattern(regexp = "^.*[A-Z].*$", message = "{user.password.uppercase}"),
+	@Pattern.List({ @Pattern(regexp = "^.*[A-Z].*$", message = "{user.password.uppercase}"),
 			@Pattern(regexp = "^.*[0-9].*$", message = "{user.password.number}"),
 			@Pattern(regexp = "^.*[a-z].*$", message = "{user.password.lowercase}") })
 	private String password;
@@ -85,7 +84,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 
 	@ManyToOne
 	@JoinColumn(name = "system_role")
-	@NotNull
+	@NotNull(message = "{user.systemRole.notnull}")
 	private Role systemRole;
 
 	@Temporal(TemporalType.TIMESTAMP)

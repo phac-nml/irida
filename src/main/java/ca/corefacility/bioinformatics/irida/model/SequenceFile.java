@@ -44,7 +44,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@NotNull
+	@NotNull(message = "{sequencefile.file.notnull}")
 	@Transient
 	private Path file;
 

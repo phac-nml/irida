@@ -176,7 +176,16 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>el-api</artifactId>
+			<version>${javax.el-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.el</groupId>
+			<artifactId>el-ri</artifactId>
+			<version>${el-ri.version}</version>
+		</dependency>
 
 		<!-- mockito -->
 		<dependency>
@@ -428,6 +437,8 @@
 		<fastqc.version>0.10.1-nml-custom</fastqc.version>
 		<aspectj.version>1.7.4</aspectj.version>
 		<hibernate.validator.version>5.0.2.Final</hibernate.validator.version>
+		<javax.el-api.version>2.2</javax.el-api.version>
+		<el-ri.version>1.0</el-ri.version>
 		<com.github.jmchilton.blend4j.version>0.1-alpha-7</com.github.jmchilton.blend4j.version>
 		<com.github.jmchilton.galaxybootstrap.version>0.3.0-rc2</com.github.jmchilton.galaxybootstrap.version>
 
