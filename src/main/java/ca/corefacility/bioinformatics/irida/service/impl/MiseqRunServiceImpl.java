@@ -60,4 +60,8 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 		return mrsfRepository.getMiseqRunForSequenceFile(file);
 	}
 
+	@Override
+	public MiseqRun create(MiseqRun o) {
+		return super.create(o);
+	}
 }
