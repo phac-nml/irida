@@ -123,7 +123,7 @@ public class LocalGalaxyConfig {
 	
 	/**
 	 * Given a system property string gets the revision hash for the version of Galaxy
-	 * 	from this property.  Corresponds to commit in https://bitbucket.org/galaxy/galaxy-central.
+	 * 	from this property.  Corresponds to commit in https://bitbucket.org/galaxy/galaxy-dist.
 	 * @param systemProperty  The system property storing the revision hash.
 	 * @return  The revision hash code to download Galaxy at, DownloadProperties.LATEST_REVISION
 	 * 	if no hash is defined.
@@ -157,7 +157,7 @@ public class LocalGalaxyConfig {
 		String revisionHash = getGalaxyRevision("test.galaxy.revision");
 		
 		DownloadProperties downloadProperties
-			= DownloadProperties.forStableAtRevision(DEFAULT_DESTINATION,revisionHash);
+			= DownloadProperties.forGalaxyDist(DEFAULT_DESTINATION, revisionHash);
 		BootStrapper bootStrapper = new BootStrapper(downloadProperties);
 
 		logger.info("About to download Galaxy");
