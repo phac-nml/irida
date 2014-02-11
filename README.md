@@ -4,12 +4,12 @@ This project contains *only* the back-end Java API and database interaction proj
 
 Installing Dependencies
 =======================
-The IRIDA API project depends on FastQC, but FastQC isn't distributed as a Maven artifact. We distribute a copy of FastQC (binaries and source code) in the `lib/` directory. You can quickly install the files in the `lib/` directory by doing the following:
+The IRIDA API project depends on FastQC and a custom version of Galaxy Bootstrap, but these aren't distributed as Maven artifacts. We distribute a copy of FastQC and Galaxy Bootstrap (binaries and source code) in the `lib/` directory. You can quickly install the files in the `lib/` directory by doing the following:
 
     cd $IRIDA_API_ROOT/lib
     ./install-libs.sh
 
-In addition, some of the integration tests requires setting up an instance of [Galaxy](https://wiki.galaxyproject.org/Admin/GetGalaxy).  This is handled automatically, but requires [Mecurial](http://mercurial.selenic.com/) and [Python](http://www.python.org/) to be installed.  On Ubuntu, these can be installed with `sudo apt-get install mercurial python`.
+In addition, some of the integration tests requires setting up an instance of [Galaxy](https://wiki.galaxyproject.org/Admin/GetGalaxy).  This is handled automatically using Galaxy Bootstrap, but requires [Mecurial](http://mercurial.selenic.com/) and [Python](http://www.python.org/) to be installed.  On Ubuntu, these can be installed with `sudo apt-get install mercurial python`.
 
 Setting Up MySQL for IRIDA
 ==========================
@@ -35,8 +35,18 @@ Creating the IRIDA test user
 
 The irida-api package should now be able to run.
 
+Running the Tests
+=================
+
+The unit tests for the IRIDA API can be run with `mvn test`.  The full set of tests can be run with `mvn verify`.
+
+Some of the tests require downloading and setting up a version of Galaxy.  By default, this will download the latest release of Galaxy in the stable branch from https://bitbucket.org/galaxy/galaxy-central.  If changes have been made in Galaxy which break the tests then the tests can be run with a previous revision number of Galaxy by setting the `test.galaxy.revision` property.  For example:
+
+	mvn verify -Dtest.galaxy.revision=6c5913a4b701813e823638125fff8bf9fda7354b
+
 Miscellaneous Doodads
 =====================
 Installing the API project *without* executing tests:
 
     mvn clean install -Dmaven.test.skip=true
+

@@ -120,6 +120,31 @@ public class LocalGalaxyConfig {
 
 		return localGalaxy;
 	}
+	
+	/**
+	 * Given a system property string gets the revision hash for the version of Galaxy
+	 * 	from this property.  Corresponds to commit in https://bitbucket.org/galaxy/galaxy-central.
+	 * @param systemProperty  The system property storing the revision hash.
+	 * @return  The revision hash code to download Galaxy at, DownloadProperties.LATEST_REVISION
+	 * 	if no hash is defined.
+	 */
+	private String getGalaxyRevision(String systemProperty) {
+		String revisionHash = System.getProperty(systemProperty);
+		if (revisionHash != null) {
+			
+			// must be hex number
+			if (revisionHash.matches("[^a-fA-F0-9]")) {
+				throw new IllegalArgumentException(systemProperty + "=" + revisionHash + " is invalid");
+			}
+			
+			logger.debug("Galaxy revision from " + systemProperty + "=" + revisionHash);
+		} else {
+			revisionHash = DownloadProperties.LATEST_REVISION;
+			logger.debug("No Galaxy revision set in " + systemProperty + " defaulting to latest revision");
+		}
+		
+		return revisionHash;
+	}
 
 	/**
 	 * Downloads the latest stable release of Galaxy.
@@ -127,21 +152,16 @@ public class LocalGalaxyConfig {
 	 * @return  A BootStrapper object describing the downloaded Galaxy.
 	 */
 	private BootStrapper downloadGalaxy(LocalGalaxy localGalaxy) {
-		@SuppressWarnings("deprecation")
-		DownloadProperties downloadProperties = new DownloadProperties(
-				DownloadProperties.GALAXY_CENTRAL_REPOSITORY_URL,
-				DownloadProperties.BRANCH_STABLE, null);
+		final File DEFAULT_DESTINATION = null;
+		
+		String revisionHash = getGalaxyRevision("test.galaxy.revision");
+		
+		DownloadProperties downloadProperties
+			= DownloadProperties.forStableAtRevision(DEFAULT_DESTINATION,revisionHash);
 		BootStrapper bootStrapper = new BootStrapper(downloadProperties);
 
-		File galaxyCache = new File(System.getProperty("user.home"),
-				".galaxy-bootstrap");
-
-		logger.info("About to download Galaxy from url: "
-				+ DownloadProperties.GALAXY_CENTRAL_REPOSITORY_URL
-				+ ", branch:" + DownloadProperties.BRANCH_STABLE);
-		logger.info("Galaxy will be downloaded to cache at: "
-				+ galaxyCache.getAbsolutePath() + ", and copied to: "
-				+ bootStrapper.getPath());
+		logger.info("About to download Galaxy");
+		logger.info(downloadProperties.toString());
 		bootStrapper.setupGalaxy();
 		logger.info("Finished downloading Galaxy");
 
@@ -243,6 +263,7 @@ public class LocalGalaxyConfig {
 		logger.debug(generateUserString("user2", localGalaxy.getUser2Name()
 				.getName(), localGalaxy.getUser2Password(), localGalaxy
 				.getUser2APIKey()));
+		logger.debug("Setup log files located within: " + bootStrapper.getBootstrapLogDir().getAbsolutePath());
 
 		galaxyDaemon = bootStrapper.run(galaxyProperties, galaxyData);
 
