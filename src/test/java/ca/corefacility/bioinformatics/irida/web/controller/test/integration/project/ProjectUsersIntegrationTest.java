@@ -1,18 +1,21 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.integration.project;
 
-import com.google.common.net.HttpHeaders;
-import com.jayway.restassured.response.Response;
-import org.junit.Test;
-import org.springframework.http.HttpStatus;
+import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
+import static com.jayway.restassured.path.json.JsonPath.from;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.jayway.restassured.RestAssured.*;
-import static com.jayway.restassured.path.json.JsonPath.from;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.junit.Test;
+import org.springframework.http.HttpStatus;
+
+import com.google.common.net.HttpHeaders;
+import com.jayway.restassured.response.Response;
 
 /**
  * Integration test for project and user.
@@ -28,12 +31,12 @@ public class ProjectUsersIntegrationTest {
 		users.put("userId", username);
 
 		// get the project
-		String projectJson = get(projectUri).asString();
+		String projectJson = asUser().get(projectUri).asString();
 		// get the uri for adding users to the project
 		String usersUri = from(projectJson).get("resource.links.find{it.rel == 'project/users'}.href");
 
 		// post the users uri to add tom to the project
-		Response r = given().body(users).expect().statusCode(HttpStatus.CREATED.value()).when().post(usersUri);
+		Response r = asUser().given().body(users).expect().statusCode(HttpStatus.CREATED.value()).when().post(usersUri);
 
 		// check that the locations make sense
 		String location = r.getHeader(HttpHeaders.LOCATION);
@@ -42,7 +45,7 @@ public class ProjectUsersIntegrationTest {
 		assertEquals(projectUri + "/users/" + username, location);
 
 		// confirm that tom is part of the project now
-		expect().body("resource.resources.username", hasItem(username)).when().get(usersUri);
+		asUser().expect().body("resource.resources.username", hasItem(username)).when().get(usersUri);
 	}
 
 	@Test
@@ -51,17 +54,17 @@ public class ProjectUsersIntegrationTest {
 		String projectUri = "http://localhost:8080/projects/2";
 
 		// get the project
-		String projectJson = get(projectUri).asString();
+		String projectJson = asUser().get(projectUri).asString();
 		String projectUsersUri = from(projectJson).get("resource.links.find{it.rel=='project/users'}.href");
-		String projectUsersJson = get(projectUsersUri).asString();
+		String projectUsersJson = asUser().get(projectUsersUri).asString();
 		String userRelationshipUri = from(projectUsersJson).get(
 				"resource.resources.find{it.firstName == '" + name + "'}.links.find{it.rel == 'relationship'}.href");
 
 		// delete the user relationship
-		expect().body("resource.links.rel", hasItems("project", "project/users")).when().delete(userRelationshipUri);
+		asUser().expect().body("resource.links.rel", hasItems("project", "project/users")).when().delete(userRelationshipUri);
 
 		// get the project again and confirm that josh isn't part of the project
 		// anymore
-		expect().body("resource.resources.firstName", not(hasItem(name))).when().get(projectUsersUri);
+		asUser().expect().body("resource.resources.firstName", not(hasItem(name))).when().get(projectUsersUri);
 	}
 }
