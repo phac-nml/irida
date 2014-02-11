@@ -102,7 +102,27 @@ public class ValidMethodParametersAspect {
 		List<List<Annotation>> annotations = new ArrayList<>();
 		MethodSignature signature = (MethodSignature) jp.getSignature();
 		Method m = signature.getMethod();
-		Annotation[][] interfaceAnnotations = m.getParameterAnnotations();
+
+		// in the event that the class is *not* an interface, we need to get the
+		// corresponding method from the interface to load any parameter
+		// annotations from there. Note that we only load the direct super
+		// interface, and stop when we find the first interface that matches the
+		// method definition; order of interfaces is important.
+		Class<?>[] interfaces = m.getDeclaringClass().getInterfaces();
+		Method interfaceMethod = null;
+		for (Class<?> iface : interfaces) {
+			try {
+				interfaceMethod = iface.getMethod(m.getName(), m.getParameterTypes());
+			} catch (NoSuchMethodException | SecurityException e) {
+
+			}
+		}
+
+		if (interfaceMethod == null) {
+			interfaceMethod = m;
+		}
+
+		Annotation[][] interfaceAnnotations = interfaceMethod.getParameterAnnotations();
 
 		for (Annotation[] interfaceAnnotation : interfaceAnnotations) {
 			annotations.add(Lists.newArrayList(interfaceAnnotation));
