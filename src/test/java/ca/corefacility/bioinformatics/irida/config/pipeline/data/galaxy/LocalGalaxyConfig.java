@@ -39,6 +39,8 @@ public class LocalGalaxyConfig {
 			.getLogger(LocalGalaxyConfig.class);
 
 	private static final int largestPort = 65535;
+	
+	private static final String LATEST_REVISION_STRING = "latest";
 
 	/**
 	 * Builds a GalaxyUploader to connect to a running instance of Galaxy.
@@ -132,8 +134,11 @@ public class LocalGalaxyConfig {
 		String revisionHash = System.getProperty(systemProperty);
 		if (revisionHash != null) {
 			
-			// must be hex number
-			if (revisionHash.matches("[^a-fA-F0-9]")) {
+			// must string LATEST_REVISION_STRING or a hex number
+			if (LATEST_REVISION_STRING.equalsIgnoreCase(revisionHash)) {
+				revisionHash = DownloadProperties.LATEST_REVISION;
+			}
+			else if (!revisionHash.matches("^[a-fA-F0-9]+$")) {
 				throw new IllegalArgumentException(systemProperty + "=" + revisionHash + " is invalid");
 			}
 			
