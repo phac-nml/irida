@@ -120,6 +120,31 @@ public class LocalGalaxyConfig {
 
 		return localGalaxy;
 	}
+	
+	/**
+	 * Given a system property string gets the revision hash for the version of Galaxy
+	 * 	from this property.  Corresponds to commit in https://bitbucket.org/galaxy/galaxy-central.
+	 * @param systemProperty  The system property storing the revision hash.
+	 * @return  The revision hash code to download Galaxy at, DownloadProperties.LATEST_REVISION
+	 * 	if no hash is defined.
+	 */
+	private String getGalaxyRevision(String systemProperty) {
+		String revisionHash = System.getProperty(systemProperty);
+		if (revisionHash != null) {
+			
+			// must be hex number
+			if (revisionHash.matches("[^a-fA-F0-9]")) {
+				throw new IllegalArgumentException(systemProperty + "=" + revisionHash + " is invalid");
+			}
+			
+			logger.debug("Galaxy revision from " + systemProperty + "=" + revisionHash);
+		} else {
+			revisionHash = DownloadProperties.LATEST_REVISION;
+			logger.debug("No Galaxy revision set in " + systemProperty + " defaulting to latest revision");
+		}
+		
+		return revisionHash;
+	}
 
 	/**
 	 * Downloads the latest stable release of Galaxy.
@@ -129,8 +154,7 @@ public class LocalGalaxyConfig {
 	private BootStrapper downloadGalaxy(LocalGalaxy localGalaxy) {
 		final File DEFAULT_DESTINATION = null;
 		
-		// hash for version of Galaxy from https://bitbucket.org/galaxy/galaxy-central
-		String revisionHash = "6c5913a4b701813e823638125fff8bf9fda7354b";
+		String revisionHash = getGalaxyRevision("test.galaxy.revision");
 		
 		DownloadProperties downloadProperties
 			= DownloadProperties.forStableAtRevision(DEFAULT_DESTINATION,revisionHash);
