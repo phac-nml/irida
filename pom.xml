@@ -440,7 +440,7 @@
 		<javax.el-api.version>2.2</javax.el-api.version>
 		<el-ri.version>1.0</el-ri.version>
 		<com.github.jmchilton.blend4j.version>0.1-alpha-7</com.github.jmchilton.blend4j.version>
-		<com.github.jmchilton.galaxybootstrap.version>0.3.0-rc2</com.github.jmchilton.galaxybootstrap.version>
+		<com.github.jmchilton.galaxybootstrap.version>0.3.0-rc3-petkau</com.github.jmchilton.galaxybootstrap.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.16</maven.failsafe.plugin.version>
