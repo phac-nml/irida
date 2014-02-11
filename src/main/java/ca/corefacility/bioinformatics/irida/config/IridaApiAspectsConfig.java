@@ -14,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.processing.impl.FileProcessorAspect;
 import ca.corefacility.bioinformatics.irida.validators.ValidMethodParametersAspect;
 
 @Configuration
-@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class IridaApiAspectsConfig {
 
 	@Autowired
