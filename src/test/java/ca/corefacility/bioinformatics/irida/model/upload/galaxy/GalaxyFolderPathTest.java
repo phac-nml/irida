@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.model.upload.galaxy;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.validation.Configuration;
@@ -26,11 +25,9 @@ public class GalaxyFolderPathTest {
 	
 	private static final String MESSAGES_BASENAME = "ca.corefacility.bioinformatics.irida.validation.ValidationMessages";
 	private Validator validator;
-	private ResourceBundle b;
 
 	@Before
 	public void setUp() {
-		b = ResourceBundle.getBundle(MESSAGES_BASENAME);
 		Configuration<?> configuration = Validation.byDefaultProvider().configure();
 		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
 		messageSource.setBasename(MESSAGES_BASENAME);
@@ -48,7 +45,6 @@ public class GalaxyFolderPathTest {
 			= validator.validate(name);
 
 		assertEquals(1, constraintViolations.size());
-		assertEquals(b.getString("galaxy.path.notnull"), constraintViolations.iterator().next().getMessage());
 	}
 	
 	@Test
@@ -59,12 +55,11 @@ public class GalaxyFolderPathTest {
 			= validator.validate(name);
 
 		assertEquals(1, constraintViolations.size());
-		assertEquals(b.getString("galaxy.path.size"), constraintViolations.iterator().next().getMessage());
 	}
 	
 	@Test
 	public void testValidName() {
-		GalaxyFolderPath name = new GalaxyFolderPath("Abc123 _-.\"'/");
+		GalaxyFolderPath name = new GalaxyFolderPath("Abc123_-/");
 		
 		Set<ConstraintViolation<GalaxyFolderPath>> constraintViolations
 			= validator.validate(name);
@@ -74,7 +69,7 @@ public class GalaxyFolderPathTest {
 	
 	@Test
 	public void testInvalidName() {
-		GalaxyFolderPath name = new GalaxyFolderPath("Abc123 _-.\"'\\<");
+		GalaxyFolderPath name = new GalaxyFolderPath("Abc123_-/<");
 		
 		Set<ConstraintViolation<GalaxyFolderPath>> constraintViolations
 			= validator.validate(name);

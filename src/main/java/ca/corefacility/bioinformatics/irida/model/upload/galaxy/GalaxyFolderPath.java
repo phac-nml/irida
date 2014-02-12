@@ -14,9 +14,34 @@ import javax.validation.constraints.Size;
  * 
  */
 public class GalaxyFolderPath {
-	@NotNull(message = "{galaxy.path.notnull}")
-	@Size(min = 2, message = "{galaxy.path.size}")
-	@Pattern(regexp = "^[A-Za-z0-9 \\-_\\.'\"/]+$", message = "{galaxy.path.invalid}")
+	
+	@NotNull
+	@Size(min = 2)
+	@Pattern.List({ @Pattern(regexp = "^[^\\?]+$"),
+		@Pattern(regexp = "^[^\\(]+$"),
+		@Pattern(regexp = "^[^\\)]+$"),
+		@Pattern(regexp = "^[^\\[]+$"),
+		@Pattern(regexp = "^[^\\]]+$"),
+		
+		/** keep forward slash since this is a path name **/ 
+		//@Pattern(regexp = "^[^\\/]+$", message = "{irida.name.invalid.forward.slash}"),
+		
+		@Pattern(regexp = "^[^\\\\]+$"),
+		@Pattern(regexp = "^[^\\=]+$"),
+		@Pattern(regexp = "^[^\\+]+$"),
+		@Pattern(regexp = "^[^\\<]+$"),
+		@Pattern(regexp = "^[^\\>]+$"),
+		@Pattern(regexp = "^[^\\:]+$"),
+		@Pattern(regexp = "^[^\\;]+$"),
+		@Pattern(regexp = "^[^\\\"]+$"),
+		@Pattern(regexp = "^[^\\,]+$"),
+		@Pattern(regexp = "^[^\\*]+$"),
+		@Pattern(regexp = "^[^\\^]+$"),
+		@Pattern(regexp = "^[^\\|]+$"),
+		@Pattern(regexp = "^[^\\&]+$"),
+		@Pattern(regexp = "^[^\\']+$"),
+		@Pattern(regexp = "^[^\\.]+$"),
+		@Pattern(regexp = "^[^ ]+$") })
 	private String pathName;
 
 	/**
