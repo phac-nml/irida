@@ -59,6 +59,11 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.pujRepository = pujRepository;
 		this.psjRepository = psjRepository;
 	}
+	
+	@Override
+	public Project read(Long id) {
+		return super.read(id);
+	}
 
 	/**
 	 * {@inheritDoc}

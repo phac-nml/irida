@@ -33,7 +33,6 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import javax.validation.ConstraintViolationException;
 
 import static org.junit.Assert.*;
-
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.LocalGalaxyConfig;

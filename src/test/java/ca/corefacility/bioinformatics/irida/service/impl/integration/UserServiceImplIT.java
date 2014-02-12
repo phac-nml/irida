@@ -40,6 +40,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 
@@ -62,6 +63,8 @@ public class UserServiceImplIT {
 	private ProjectService projectService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	@Autowired
+	private CRUDService<Long, User> crudUserService;
 
 	@Before
 	public void setUp() {
@@ -104,29 +107,29 @@ public class UserServiceImplIT {
 	public void testCreateUserAsUserFail() {
 		asUser().userService.create(new User());
 	}
-	
+
 	@Test
 	public void testLoadUserUnauthenticated() {
 		SecurityContextHolder.clearContext();
-		AnonymousAuthenticationToken token = new AnonymousAuthenticationToken("nobody", "nobody", 
+		AnonymousAuthenticationToken token = new AnonymousAuthenticationToken("nobody", "nobody",
 				ImmutableList.of(Role.ROLE_ANONYMOUS));
 		SecurityContextHolder.getContext().setAuthentication(token);
 		userService.loadUserByUsername("fbristow");
 	}
-	
+
 	@Test
 	public void testGetUserUnauthenticated() {
 		SecurityContextHolder.clearContext();
-		AnonymousAuthenticationToken token = new AnonymousAuthenticationToken("nobody", "nobody", 
+		AnonymousAuthenticationToken token = new AnonymousAuthenticationToken("nobody", "nobody",
 				ImmutableList.of(Role.ROLE_ANONYMOUS));
 		SecurityContextHolder.getContext().setAuthentication(token);
 		userService.loadUserByUsername("fbristow");
 	}
-	
+
 	@Test(expected = AccessDeniedException.class)
 	public void testGetUsersForProjectUnauthenticated() {
 		SecurityContextHolder.clearContext();
-		AnonymousAuthenticationToken token = new AnonymousAuthenticationToken("nobody", "nobody", 
+		AnonymousAuthenticationToken token = new AnonymousAuthenticationToken("nobody", "nobody",
 				ImmutableList.of(Role.ROLE_ANONYMOUS));
 		SecurityContextHolder.getContext().setAuthentication(token);
 		userService.getUsersForProject(null);
@@ -315,6 +318,14 @@ public class UserServiceImplIT {
 		u.setSystemRole(Role.ROLE_USER);
 
 		userService.create(u);
+	}
+
+	@Test(expected = AccessDeniedException.class)
+	//@Ignore("This test is disabled because it shows a (possibly) language-level issue with dynamic JDK proxys.")
+	public void testReferenceTypeChangesBehaviourAtRuntime() {
+		assertEquals("The two services are the same instance.", userService, crudUserService);
+		// asUser().userService.create(new User());
+		asUser().crudUserService.create(new User());
 	}
 
 	private UserServiceImplIT asUser() {

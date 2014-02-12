@@ -97,6 +97,14 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 		this.passwordEncoder = passwordEncoder;
 		this.pujRepository = pujRepository;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Iterable<User> findAll() {
+		return super.findAll();
+	}
 
 	/**
 	 * {@inheritDoc}

@@ -117,7 +117,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadProject')")
-	public Project read(Long projectId);
+	public Project read(Long id);
 
 	/**
 	 * {@inheritDoc}
