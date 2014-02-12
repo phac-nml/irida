@@ -13,7 +13,6 @@ import java.util.List;
 import javax.validation.ConstraintViolationException;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +52,6 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
-@Ignore("Galaxy bootstrap is broken, skip Galaxy integration tests.")
 public class GalaxyUploaderIT {
 	@Autowired
 	private LocalGalaxy localGalaxy;
