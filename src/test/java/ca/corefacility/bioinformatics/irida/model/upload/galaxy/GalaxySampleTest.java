@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.nio.file.Path;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -19,8 +20,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
-import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectName;
+import ca.corefacility.bioinformatics.irida.validators.annotations.ValidSampleName;
 
 /**
  * Tests for {@link GalaxySample}.
@@ -74,13 +75,15 @@ public class GalaxySampleTest {
 	@Test
 	public void testBlacklistedCharactersInGalaxySample() {
 		testBlacklists(ValidProjectName.ValidProjectNameBlacklist.BLACKLIST);
+		testBlacklists(ValidSampleName.ValidSampleNameBlacklist.BLACKLIST);
 	}
 
 	private void testBlacklists(char[] blacklist) {
+		List<Path> sampleFiles = new LinkedList<Path>();
+		
 		for (char c : blacklist) {
-			Project p = new Project();
-			p.setName("Abc123_-" + c);
-			Set<ConstraintViolation<Project>> violations = validator.validate(p);
+			GalaxySample sample = new GalaxySample(new GalaxyFolderName("Abc123_-" + c), sampleFiles);
+			Set<ConstraintViolation<GalaxySample>> violations = validator.validate(sample);
 			assertEquals("Wrong number of violations.", 1, violations.size());
 		}
 	}
