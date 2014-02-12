@@ -36,5 +36,5 @@ public interface UploadResult {
 	 * 
 	 * @return The name under which the data was uploaded.
 	 */
-	public UploadObjectName getLocationName();
+	public UploadProjectName getLocationName();
 }

@@ -33,7 +33,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectExcep
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderName;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
@@ -84,11 +85,11 @@ public class GalaxyUploaderIT {
 			throws ConstraintViolationException, UploadException {
 		Uploader unconnectedGalaxyUploader = new GalaxyUploader();
 
-		GalaxyObjectName libraryName = new GalaxyObjectName(
+		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"GalaxyUploader_testNoGalaxyConnection");
 
 		List<UploadSample> samples = new ArrayList<UploadSample>();
-		GalaxySample galaxySample1 = new GalaxySample(new GalaxyObjectName(
+		GalaxySample galaxySample1 = new GalaxySample(new GalaxyFolderName(
 				"testData1"), dataFilesSingle);
 		samples.add(galaxySample1);
 
@@ -132,11 +133,11 @@ public class GalaxyUploaderIT {
 				newLocalGalaxy.getAdminName(), newLocalGalaxy.getAdminAPIKey());
 
 		// I should be able to upload a file initially
-		GalaxyObjectName libraryName = new GalaxyObjectName(
+		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"GalaxyUploader_testGalaxyShutdownRandomly");
 
 		List<UploadSample> samples = new ArrayList<UploadSample>();
-		GalaxySample galaxySample1 = new GalaxySample(new GalaxyObjectName(
+		GalaxySample galaxySample1 = new GalaxySample(new GalaxyFolderName(
 				"testData1"), dataFilesSingle);
 		samples.add(galaxySample1);
 
@@ -176,7 +177,7 @@ public class GalaxyUploaderIT {
 	public void testUploadSamples() throws URISyntaxException,
 			MalformedURLException, ConstraintViolationException,
 			UploadException {
-		GalaxyObjectName libraryName = new GalaxyObjectName(
+		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"Galaxy_Uploader testUploadSamples");
 		String localGalaxyURL = localGalaxy
 				.getGalaxyURL()
@@ -185,7 +186,7 @@ public class GalaxyUploaderIT {
 						localGalaxy.getGalaxyURL().toString().length() - 1); // remove trailing '/'
 
 		List<UploadSample> samples = new ArrayList<UploadSample>();
-		GalaxySample galaxySample1 = new GalaxySample(new GalaxyObjectName(
+		GalaxySample galaxySample1 = new GalaxySample(new GalaxyFolderName(
 				"testData1"), dataFilesSingle);
 		samples.add(galaxySample1);
 
@@ -206,10 +207,10 @@ public class GalaxyUploaderIT {
 	@Test(expected = ConstraintViolationException.class)
 	public void testUploadSampleInvalidUserName() throws URISyntaxException,
 			ConstraintViolationException, UploadException {
-		GalaxyObjectName libraryName = new GalaxyObjectName(
+		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"testUploadSampleInvalidUserName");
 		GalaxyAccountEmail userEmail = new GalaxyAccountEmail("invalid_user");
-		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName(
+		GalaxySample galaxySample = new GalaxySample(new GalaxyFolderName(
 				"testData"), dataFilesSingle);
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
@@ -226,9 +227,9 @@ public class GalaxyUploaderIT {
 	@Test(expected = ConstraintViolationException.class)
 	public void testUploadSampleInvalidSampleName() throws URISyntaxException,
 			ConstraintViolationException, UploadException {
-		GalaxyObjectName libraryName = new GalaxyObjectName(
+		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"testUploadSampleInvalidSampleName");
-		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName(
+		GalaxySample galaxySample = new GalaxySample(new GalaxyFolderName(
 				"<invalidSample>"), dataFilesSingle);
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
@@ -246,8 +247,8 @@ public class GalaxyUploaderIT {
 	@Test(expected = ConstraintViolationException.class)
 	public void testUploadSampleInvalidLibraryName() throws URISyntaxException,
 			ConstraintViolationException, UploadException {
-		GalaxyObjectName libraryName = new GalaxyObjectName("<invalidLibrary>");
-		GalaxySample galaxySample = new GalaxySample(new GalaxyObjectName(
+		GalaxyProjectName libraryName = new GalaxyProjectName("<invalidLibrary>");
+		GalaxySample galaxySample = new GalaxySample(new GalaxyFolderName(
 				"testData"), dataFilesSingle);
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);

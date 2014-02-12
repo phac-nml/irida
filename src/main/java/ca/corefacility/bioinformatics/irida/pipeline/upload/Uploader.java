@@ -7,7 +7,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
-import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
@@ -58,7 +58,7 @@ public interface Uploader {
 	 */
 	public UploadResult uploadSamples(
 			@Valid List<UploadSample> samples,
-			@Valid UploadObjectName dataLocation,
+			@Valid UploadProjectName dataLocation,
 			@Valid UploaderAccountName userName) throws UploadException,
 			ConstraintViolationException;
 

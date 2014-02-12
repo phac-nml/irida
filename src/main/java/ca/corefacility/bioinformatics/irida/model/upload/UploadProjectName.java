@@ -1,12 +1,12 @@
 package ca.corefacility.bioinformatics.irida.model.upload;
 
 /**
- * Defines the name of an object (file) to be uploaded to a remote site.
+ * Defines the name of a project to be uploaded to a remote site.
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * 
  */
-public interface UploadObjectName {
+public interface UploadProjectName {
 	/**
 	 * The name of the object to upload.
 	 * 

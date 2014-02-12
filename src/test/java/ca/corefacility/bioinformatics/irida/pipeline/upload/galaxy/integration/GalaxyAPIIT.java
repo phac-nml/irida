@@ -43,11 +43,12 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFound
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
-import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderName;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
@@ -141,7 +142,7 @@ public class GalaxyAPIIT {
 	 * @param galaxyInstance  The GalaxyInstance object to use to connect to Galaxy.
 	 * @return  A library described by this name.
 	 */
-	private Library findLibraryByName(UploadObjectName libraryName,
+	private Library findLibraryByName(UploadProjectName libraryName,
 			GalaxyInstance galaxyInstance) {
 		Library actualLibrary = null;
 		List<Library> libraries = galaxyInstance.getLibrariesClient()
@@ -295,7 +296,7 @@ public class GalaxyAPIIT {
 	 */
 	@Test(expected = ConstraintViolationException.class)
 	public void testCreateLibraryInvalidName() throws UploadException {
-		GalaxyObjectName invalidLibraryName = new GalaxyObjectName(
+		GalaxyProjectName invalidLibraryName = new GalaxyProjectName(
 				"<a href='http://google.com'>invalid name</a>");
 		galaxyAPI.buildGalaxyLibrary(invalidLibraryName,
 				localGalaxy.getUser1Name());
@@ -307,7 +308,7 @@ public class GalaxyAPIIT {
 	 */
 	@Test(expected = ConstraintViolationException.class)
 	public void testCreateLibraryInvalidUserName() throws UploadException {
-		GalaxyObjectName invalidLibraryName = new GalaxyObjectName(
+		GalaxyProjectName invalidLibraryName = new GalaxyProjectName(
 				"testCreateLibraryInvalidUserName");
 		GalaxyAccountEmail userEmail = new GalaxyAccountEmail("invalid_email");
 		galaxyAPI.buildGalaxyLibrary(invalidLibraryName, userEmail);
@@ -353,7 +354,7 @@ public class GalaxyAPIIT {
 	 */
 	@Test
 	public void testCreateLibraryAdmin() throws UploadException {
-		GalaxyObjectName libraryName = new GalaxyObjectName(
+		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"testCreateLibraryAdmin");
 
 		Library library = galaxyAPI.buildGalaxyLibrary(libraryName,
@@ -378,7 +379,7 @@ public class GalaxyAPIIT {
 	 */
 	@Test
 	public void testCreateLibraryRegularUser() throws UploadException {
-		GalaxyObjectName libraryName = new GalaxyObjectName(
+		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"testCreateLibraryRegularUser");
 
 		Library library = galaxyAPI.buildGalaxyLibrary(libraryName,
@@ -409,7 +410,7 @@ public class GalaxyAPIIT {
 	 */
 	@Test(expected = GalaxyUserNotFoundException.class)
 	public void testCreateLibraryNonExistentUser() throws UploadException {
-		GalaxyObjectName libraryName = new GalaxyObjectName(
+		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"testCreateLibraryInvalidUser");
 
 		galaxyAPI.buildGalaxyLibrary(libraryName,
@@ -424,10 +425,10 @@ public class GalaxyAPIIT {
 	@Test
 	public void testUploadSampleRegularUser() throws URISyntaxException,
 			UploadException {
-		GalaxyObjectName libraryName = new GalaxyObjectName(
+		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"testUploadSampleRegularUser");
 
-		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName(
+		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName(
 				"testData"), dataFilesSingle);
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
@@ -523,10 +524,10 @@ public class GalaxyAPIIT {
 	@Test
 	public void testUploadSampleAdminUser() throws URISyntaxException,
 			UploadException {
-		GalaxyObjectName libraryName = new GalaxyObjectName(
+		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"testUploadSampleAdminUser");
 
-		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName(
+		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName(
 				"testData"), dataFilesSingle);
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
@@ -608,10 +609,10 @@ public class GalaxyAPIIT {
 		dataFilesSingle = new ArrayList<Path>();
 		dataFilesSingle.add(dataFileTemp1);
 
-		GalaxyObjectName libraryName = new GalaxyObjectName(
+		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"testUploadSampleNoLink");
 
-		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName(
+		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName(
 				"testData"), dataFilesSingle);
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
@@ -679,14 +680,14 @@ public class GalaxyAPIIT {
 			UploadException {
 		galaxyAPI.setDataStorage(Uploader.DataStorage.LOCAL);
 
-		GalaxyObjectName libraryName = new GalaxyObjectName(
+		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"testUploadSampleLink");
 
 		Path dataFileTemp1 = createTemporaryDataFile();
 		dataFilesSingle = new ArrayList<Path>();
 		dataFilesSingle.add(dataFileTemp1);
 
-		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName(
+		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName(
 				"testData"), dataFilesSingle);
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
@@ -765,9 +766,9 @@ public class GalaxyAPIIT {
 	@Test(expected = GalaxyUserNotFoundException.class)
 	public void testUploadSampleWrongUser() throws URISyntaxException,
 			ConstraintViolationException, UploadException {
-		GalaxyObjectName libraryName = new GalaxyObjectName(
+		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"testUploadSampleWrongUser");
-		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName(
+		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName(
 				"testData"), dataFilesSingle);
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
@@ -785,10 +786,10 @@ public class GalaxyAPIIT {
 	@Test(expected = ConstraintViolationException.class)
 	public void testUploadSampleInvalidUserName() throws URISyntaxException,
 			ConstraintViolationException, UploadException {
-		GalaxyObjectName libraryName = new GalaxyObjectName(
+		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"testUploadSampleInvalidUserName");
 		GalaxyAccountEmail userEmail = new GalaxyAccountEmail("invalid_user");
-		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName(
+		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName(
 				"testData"), dataFilesSingle);
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
@@ -805,9 +806,9 @@ public class GalaxyAPIIT {
 	@Test(expected = ConstraintViolationException.class)
 	public void testUploadSampleInvalidSampleName() throws URISyntaxException,
 			ConstraintViolationException, UploadException {
-		GalaxyObjectName libraryName = new GalaxyObjectName(
+		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"testUploadSampleInvalidSampleName");
-		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName(
+		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName(
 				"<invalidSample>"), dataFilesSingle);
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
@@ -825,8 +826,8 @@ public class GalaxyAPIIT {
 	@Test(expected = ConstraintViolationException.class)
 	public void testUploadSampleInvalidLibraryName() throws URISyntaxException,
 			ConstraintViolationException, UploadException {
-		GalaxyObjectName libraryName = new GalaxyObjectName("<invalidLibrary>");
-		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName(
+		GalaxyProjectName libraryName = new GalaxyProjectName("<invalidLibrary>");
+		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName(
 				"testData"), dataFilesSingle);
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
@@ -844,10 +845,10 @@ public class GalaxyAPIIT {
 	@Test
 	public void testUploadSampleMultipleFile() throws URISyntaxException,
 			ConstraintViolationException, UploadException {
-		GalaxyObjectName libraryName = new GalaxyObjectName(
+		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"testUploadSampleMultipleFile");
 
-		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName(
+		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName(
 				"testData"), dataFilesDouble);
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
@@ -923,7 +924,7 @@ public class GalaxyAPIIT {
 				localGalaxy.getGalaxyInstanceAdmin(), galaxySearchAdmin);
 		UploadResult expectedUploadResult;
 
-		GalaxyObjectName libraryName = new GalaxyObjectName(
+		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"testUploadSampleToExistingSampleFolder");
 
 		// build data library structure with no data in it
@@ -940,13 +941,13 @@ public class GalaxyAPIIT {
 		Library library = galaxySearchUser1.findLibraryWithId(libraryId);
 		assertNotNull(library);
 		LibraryFolder illuminaFolder = galaxyLibrary.createLibraryFolder(
-				library, new GalaxyObjectName("illumina_reads"));
+				library, new GalaxyFolderName("illumina_reads"));
 		assertNotNull(illuminaFolder);
 		LibraryFolder sampleFolder = galaxyLibrary.createLibraryFolder(library,
-				illuminaFolder, new GalaxyObjectName("testData"));
+				illuminaFolder, new GalaxyFolderName("testData"));
 		assertNotNull(sampleFolder);
 		LibraryFolder referencesFolder = galaxyLibrary.createLibraryFolder(
-				library, new GalaxyObjectName("references"));
+				library, new GalaxyFolderName("references"));
 		assertNotNull(referencesFolder);
 
 		// user 1 should have access to library
@@ -979,7 +980,7 @@ public class GalaxyAPIIT {
 
 		// attempt to upload to this above data library, should not create
 		// duplicate library nor duplicate sample folder
-		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName(
+		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName(
 				"testData"), dataFilesDouble);
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
@@ -1059,7 +1060,7 @@ public class GalaxyAPIIT {
 		GalaxySearch galaxySearchUser2 = new GalaxySearch(
 				localGalaxy.getGalaxyInstanceUser2());
 
-		GalaxyObjectName libraryName = new GalaxyObjectName(
+		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"testUploadSampleToExistingLibraryDifferentUsers");
 
 		// build data library structure with no data in it
@@ -1097,7 +1098,7 @@ public class GalaxyAPIIT {
 		assertEquals("folder", contentsMap.get("/").getType());
 
 		// attempt to upload to this above data library as a different user
-		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName(
+		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName(
 				"testData"), dataFilesDouble);
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
@@ -1164,10 +1165,10 @@ public class GalaxyAPIIT {
 	public void testUploadSampleOneFileAlreadyExists()
 			throws URISyntaxException, MalformedURLException,
 			ConstraintViolationException, UploadException {
-		GalaxyObjectName libraryName = new GalaxyObjectName(
+		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"testUploadSampleOneFileAlreadyExists");
 
-		UploadSample galaxySample = new GalaxySample(new GalaxyObjectName(
+		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName(
 				"testData"), dataFilesSingle);
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
@@ -1218,7 +1219,7 @@ public class GalaxyAPIIT {
 
 		// now attempt to upload dataFilesDouble with two files, only one file
 		// should upload
-		galaxySample = new GalaxySample(new GalaxyObjectName("testData"),
+		galaxySample = new GalaxySample(new GalaxyFolderName("testData"),
 				dataFilesDouble);
 		samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
@@ -1301,19 +1302,17 @@ public class GalaxyAPIIT {
 	public void testUploadSamples() throws URISyntaxException,
 			MalformedURLException, ConstraintViolationException,
 			UploadException {
-		GalaxyObjectName libraryName = new GalaxyObjectName("testUploadSamples");
+		GalaxyProjectName libraryName = new GalaxyProjectName("testUploadSamples");
 		String localGalaxyURL = localGalaxy
 				.getGalaxyURL()
 				.toString()
 				.substring(0,
-						localGalaxy.getGalaxyURL().toString().length() - 1); // remove
-																				// trailing
-																				// '/'
+						localGalaxy.getGalaxyURL().toString().length() - 1); // remove trailing '/'
 
 		List<UploadSample> samples = new ArrayList<UploadSample>();
-		GalaxySample galaxySample1 = new GalaxySample(new GalaxyObjectName(
+		GalaxySample galaxySample1 = new GalaxySample(new GalaxyFolderName(
 				"testData1"), dataFilesSingle);
-		GalaxySample galaxySample2 = new GalaxySample(new GalaxyObjectName(
+		GalaxySample galaxySample2 = new GalaxySample(new GalaxyFolderName(
 				"testData2"), dataFilesSingle);
 		samples.add(galaxySample1);
 		samples.add(galaxySample2);

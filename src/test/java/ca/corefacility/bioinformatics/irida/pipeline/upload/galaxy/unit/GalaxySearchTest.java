@@ -19,10 +19,10 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleEx
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
-import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
@@ -55,11 +55,11 @@ public class GalaxySearchTest {
 	private static final String LIBRARY_ID_2 = "2";
 	private static final String LIBRARY_ID_3 = "3";
 	private static final String INVALID_LIBRARY_ID = "0";
-	private static final GalaxyObjectName LIBRARY_NAME = new GalaxyObjectName(
+	private static final GalaxyProjectName LIBRARY_NAME = new GalaxyProjectName(
 			"Test");
-	private static final GalaxyObjectName INVALID_LIBRARY_NAME = new GalaxyObjectName(
+	private static final GalaxyProjectName INVALID_LIBRARY_NAME = new GalaxyProjectName(
 			"InvalidTest");
-	private static final UploadObjectName LIBRARY_NAME_3 = new GalaxyObjectName(
+	private static final UploadProjectName LIBRARY_NAME_3 = new GalaxyProjectName(
 			"Test3");
 	private static final String LIBRARY_ID_MULTIPLE_CONTENTS = "10";
 	private static final GalaxyFolderPath FOLDER_PATH = new GalaxyFolderPath(
