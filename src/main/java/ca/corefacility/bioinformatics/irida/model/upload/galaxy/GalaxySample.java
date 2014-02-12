@@ -8,8 +8,8 @@ import java.util.Objects;
 
 import javax.validation.Valid;
 
-import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadFolderName;
 
 /**
  * Represents a Sample to be uploaded to Galaxy
@@ -19,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
  */
 public class GalaxySample implements UploadSample {
 	@Valid
-	private UploadObjectName sampleName;
+	private UploadFolderName sampleName;
 	private List<Path> sampleFiles;
 
 	/**
@@ -27,7 +27,7 @@ public class GalaxySample implements UploadSample {
 	 * @param sampleName  The name of the sample.
 	 * @param sampleFiles  The list of files belonging to this sample.
 	 */
-	public GalaxySample(UploadObjectName sampleName, List<Path> sampleFiles) {
+	public GalaxySample(UploadFolderName sampleName, List<Path> sampleFiles) {
 		checkNotNull(sampleName, "sampleName is null");
 		checkNotNull(sampleFiles, "sampleFiles is null");
 
@@ -39,7 +39,7 @@ public class GalaxySample implements UploadSample {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public UploadObjectName getSampleName() {
+	public UploadFolderName getSampleName() {
 		return sampleName;
 	}
 
@@ -47,7 +47,7 @@ public class GalaxySample implements UploadSample {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setSampleName(UploadObjectName sampleName) {
+	public void setSampleName(UploadFolderName sampleName) {
 		this.sampleName = sampleName;
 	}
 

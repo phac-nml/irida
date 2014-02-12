@@ -17,15 +17,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
-import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectName;
+import ca.corefacility.bioinformatics.irida.validators.annotations.ValidSampleName;
 
 /**
- * Tests for {@link GalaxyObjectName}.
+ * Tests for {@link GalaxyProjectName}.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxyObjectNameTest {
+public class GalaxyFolderNameTest {
 	
 	private static final String MESSAGES_BASENAME = "ca.corefacility.bioinformatics.irida.validation.ValidationMessages";
 	private Validator validator;
@@ -45,9 +44,9 @@ public class GalaxyObjectNameTest {
 	
 	@Test
 	public void testNullName() {
-		GalaxyObjectName name = new GalaxyObjectName(null);
+		GalaxyFolderName name = new GalaxyFolderName(null);
 		
-		Set<ConstraintViolation<GalaxyObjectName>> constraintViolations
+		Set<ConstraintViolation<GalaxyFolderName>> constraintViolations
 			= validator.validate(name);
 
 		assertEquals(1, constraintViolations.size());
@@ -56,9 +55,9 @@ public class GalaxyObjectNameTest {
 	
 	@Test
 	public void testShortName() {
-		GalaxyObjectName name = new GalaxyObjectName("a");
+		GalaxyFolderName name = new GalaxyFolderName("a");
 		
-		Set<ConstraintViolation<GalaxyObjectName>> constraintViolations
+		Set<ConstraintViolation<GalaxyFolderName>> constraintViolations
 			= validator.validate(name);
 
 		assertEquals(1, constraintViolations.size());
@@ -67,24 +66,23 @@ public class GalaxyObjectNameTest {
 	
 	@Test
 	public void testValidName() {
-		GalaxyObjectName name = new GalaxyObjectName("Abc123 _-.'");
+		GalaxyFolderName name = new GalaxyFolderName("Abc123_-");
 		
-		Set<ConstraintViolation<GalaxyObjectName>> constraintViolations
+		Set<ConstraintViolation<GalaxyFolderName>> constraintViolations
 			= validator.validate(name);
 
 		assertEquals(0, constraintViolations.size());
 	}
 	
 	@Test
-	public void testBlacklistedCharactersInGalaxyObjectName() {
-		testBlacklists(ValidProjectName.ValidProjectNameBlacklist.BLACKLIST);
+	public void testBlacklistedCharactersInName() {
+		testBlacklists(ValidSampleName.ValidSampleNameBlacklist.BLACKLIST);
 	}
 
 	private void testBlacklists(char[] blacklist) {
 		for (char c : blacklist) {
-			Project p = new Project();
-			p.setName("Abc123 _-.'" + c);
-			Set<ConstraintViolation<Project>> violations = validator.validate(p);
+			GalaxyFolderName s = new GalaxyFolderName("Abc123_-" + c);
+			Set<ConstraintViolation<GalaxyFolderName>> violations = validator.validate(s);
 			assertEquals("Wrong number of violations.", 1, violations.size());
 		}
 	}

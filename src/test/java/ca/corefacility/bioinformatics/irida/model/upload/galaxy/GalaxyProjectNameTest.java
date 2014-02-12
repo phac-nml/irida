@@ -2,8 +2,6 @@ package ca.corefacility.bioinformatics.irida.model.upload.galaxy;
 
 import static org.junit.Assert.assertEquals;
 
-import java.nio.file.Path;
-import java.util.LinkedList;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -19,15 +17,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
-import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectName;
 
 /**
- * Tests for {@link GalaxySample}.
+ * Tests for {@link GalaxyProjectName}.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxySampleTest {
+public class GalaxyProjectNameTest {
 	
 	private static final String MESSAGES_BASENAME = "ca.corefacility.bioinformatics.irida.validation.ValidationMessages";
 	private Validator validator;
@@ -45,17 +42,23 @@ public class GalaxySampleTest {
 		validator = factory.getValidator();
 	}
 	
-	@Test(expected=NullPointerException.class)
+	@Test
 	public void testNullName() {
-		new GalaxySample(null, new LinkedList<Path>());
+		GalaxyProjectName name = new GalaxyProjectName(null);
+		
+		Set<ConstraintViolation<GalaxyProjectName>> constraintViolations
+			= validator.validate(name);
+
+		assertEquals(1, constraintViolations.size());
+		assertEquals(b.getString("galaxy.object.notnull"), constraintViolations.iterator().next().getMessage());
 	}
 	
 	@Test
 	public void testShortName() {
-		GalaxySample sample = new GalaxySample(new GalaxyFolderName("a"), new LinkedList<Path>());
+		GalaxyProjectName name = new GalaxyProjectName("a");
 		
-		Set<ConstraintViolation<GalaxySample>> constraintViolations
-			= validator.validate(sample);
+		Set<ConstraintViolation<GalaxyProjectName>> constraintViolations
+			= validator.validate(name);
 
 		assertEquals(1, constraintViolations.size());
 		assertEquals(b.getString("galaxy.object.size"), constraintViolations.iterator().next().getMessage());
@@ -63,24 +66,23 @@ public class GalaxySampleTest {
 	
 	@Test
 	public void testValidName() {
-		GalaxySample sample = new GalaxySample(new GalaxyFolderName("Abc123_-"), new LinkedList<Path>());
+		GalaxyProjectName name = new GalaxyProjectName("Abc123 _-.'");
 		
-		Set<ConstraintViolation<GalaxySample>> constraintViolations
-			= validator.validate(sample);
+		Set<ConstraintViolation<GalaxyProjectName>> constraintViolations
+			= validator.validate(name);
 
 		assertEquals(0, constraintViolations.size());
 	}
 	
 	@Test
-	public void testBlacklistedCharactersInGalaxySample() {
+	public void testBlacklistedCharactersInGalaxyProjectName() {
 		testBlacklists(ValidProjectName.ValidProjectNameBlacklist.BLACKLIST);
 	}
 
 	private void testBlacklists(char[] blacklist) {
 		for (char c : blacklist) {
-			Project p = new Project();
-			p.setName("Abc123_-" + c);
-			Set<ConstraintViolation<Project>> violations = validator.validate(p);
+			GalaxyProjectName p = new GalaxyProjectName("Abc123 _-.'" + c);
+			Set<ConstraintViolation<GalaxyProjectName>> violations = validator.validate(p);
 			assertEquals("Wrong number of violations.", 1, violations.size());
 		}
 	}

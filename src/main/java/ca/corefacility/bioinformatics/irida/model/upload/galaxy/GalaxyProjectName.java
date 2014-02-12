@@ -5,17 +5,17 @@ import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadProjectName;
 import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectName;
 
 /**
- * A name for a Galaxy object (Library, Folder) used for checking the validity
+ * A name for a Galaxy project (Library) used for checking the validity
  * of the name.
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * 
  */
-public class GalaxyObjectName implements UploadObjectName {
+public class GalaxyProjectName implements UploadProjectName {
 	@NotNull(message = "{galaxy.object.notnull}")
 	@Size(min = 2, message = "{galaxy.object.size}")
 	@ValidProjectName
@@ -25,7 +25,7 @@ public class GalaxyObjectName implements UploadObjectName {
 	 * Builds a new GalaxyObjectName with the given name.
 	 * @param objectName  The name of the Galaxy object.
 	 */
-	public GalaxyObjectName(String objectName) {
+	public GalaxyProjectName(String objectName) {
 		this.objectName = objectName;
 	}
 
@@ -64,7 +64,7 @@ public class GalaxyObjectName implements UploadObjectName {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		GalaxyObjectName other = (GalaxyObjectName) obj;
+		GalaxyProjectName other = (GalaxyProjectName) obj;
 		
 		return Objects.equals(this.objectName, other.objectName);
 	}

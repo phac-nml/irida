@@ -6,7 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Objects;
 
-import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 
@@ -19,7 +19,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.Library;
  */
 public class GalaxyUploadResult implements UploadResult {
 	private String libraryId;
-	private GalaxyObjectName libraryName;
+	private GalaxyProjectName libraryName;
 	private GalaxyAccountEmail ownerName;
 	private URL libraryAPIURL;
 	private URL sharedDataURL;
@@ -32,7 +32,7 @@ public class GalaxyUploadResult implements UploadResult {
 	 * @param galaxyURL  The URL of the Galaxy we uploaded to.
 	 * @throws MalformedURLException  If the galaxyURL is invalid.
 	 */
-	public GalaxyUploadResult(Library library, GalaxyObjectName libraryName,
+	public GalaxyUploadResult(Library library, GalaxyProjectName libraryName,
 			GalaxyAccountEmail ownerName, String galaxyURL)
 			throws MalformedURLException {
 		checkNotNull(library, "library is null");
@@ -122,7 +122,7 @@ public class GalaxyUploadResult implements UploadResult {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public UploadObjectName getLocationName() {
+	public UploadProjectName getLocationName() {
 		return libraryName;
 	}
 
