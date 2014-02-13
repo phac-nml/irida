@@ -1,10 +1,13 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.integration.sample;
 
-import com.google.common.net.HttpHeaders;
-import com.jayway.restassured.response.Response;
-import org.junit.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
+import static com.jayway.restassured.path.json.JsonPath.from;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.hasItem;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,13 +15,12 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.jayway.restassured.RestAssured.expect;
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.path.json.JsonPath.from;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.hasItem;
-import static org.junit.Assert.*;
+import org.junit.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+
+import com.google.common.net.HttpHeaders;
+import com.jayway.restassured.response.Response;
 
 /**
  * Integration tests for working with sequence files and samples.
@@ -32,7 +34,7 @@ public class SampleSequenceFilesIntegrationTest {
 	@Test
 	public void testAddSequenceFileToSample() throws IOException {
 		String sampleUri = "http://localhost:8080/projects/5/samples/1";
-		Response response = expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
+		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
 		String sampleBody = response.getBody().asString();
 		String sequenceFileUri = from(sampleBody).getString(
 				"resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
@@ -43,7 +45,7 @@ public class SampleSequenceFilesIntegrationTest {
 		Map<String,String> fileParams = new HashMap<>();
 		fileParams.put("description", "some file");
 		
-		Response r = given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE).multiPart("file", sequenceFile.toFile())
+		Response r = asUser().given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE).multiPart("file", sequenceFile.toFile())
 				.multiPart("parameters",fileParams, MediaType.APPLICATION_JSON_VALUE)
 				.expect().statusCode(HttpStatus.CREATED.value()).when().post(sequenceFileUri);
 
@@ -55,7 +57,7 @@ public class SampleSequenceFilesIntegrationTest {
 
 		// confirm that the sequence file was added to the sample as a related
 		// resource
-		expect().body("relatedResources.sequenceFiles.resources.label", hasItem(sequenceFile.getFileName().toString()))
+		asUser().expect().body("relatedResources.sequenceFiles.resources.label", hasItem(sequenceFile.getFileName().toString()))
 				.and().body("relatedResources.sequenceFiles.resources[0].links.rel", hasItems("self")).when()
 				.get(sampleUri);
 
@@ -67,7 +69,7 @@ public class SampleSequenceFilesIntegrationTest {
 	public void testAddExistingSequenceFileToSample() throws IOException {
 		// for now, add a sequence file to another sample
 		String sampleUri = "http://localhost:8080/projects/5/samples/1";
-		Response response = expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
+		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
 		String projectBody = response.getBody().asString();
 		String sequenceFileUri = from(projectBody).getString(
 				"resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
@@ -75,7 +77,7 @@ public class SampleSequenceFilesIntegrationTest {
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
 
-		Response r = given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE).multiPart("file", sequenceFile.toFile())
+		Response r = asUser().given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE).multiPart("file", sequenceFile.toFile())
 				.expect().statusCode(HttpStatus.CREATED.value()).when().post(sequenceFileUri);
 
 		// figure out what the identifier for that sequence file is
@@ -86,11 +88,11 @@ public class SampleSequenceFilesIntegrationTest {
 
 		// now figure out where to post the sequence file to add it to the
 		// sample
-		String sampleBody = expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri).getBody().asString();
+		String sampleBody = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri).getBody().asString();
 		sequenceFileUri = from(sampleBody).getString("resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
 
 		// add the sequence file to the sample
-		r = given().body(existingSequenceFile).expect().statusCode(HttpStatus.CREATED.value()).when()
+		r = asUser().given().body(existingSequenceFile).expect().statusCode(HttpStatus.CREATED.value()).when()
 				.post(sequenceFileUri);
 		location = r.getHeader(HttpHeaders.LOCATION);
 
@@ -98,7 +100,7 @@ public class SampleSequenceFilesIntegrationTest {
 		assertTrue(location.matches("http://localhost:8080/projects/[0-9]+/samples/[0-9]+/sequenceFiles/[0-9]+"));
 
 		// confirm that the sequence file was removed from the project
-		expect().body("relatedResources.sequenceFiles.identifier", not(hasItem(identifier))).when().get(sampleUri)
+		asUser().expect().body("relatedResources.sequenceFiles.identifier", not(hasItem(identifier))).when().get(sampleUri)
 				.getBody().asString();
 	}
 
@@ -106,7 +108,7 @@ public class SampleSequenceFilesIntegrationTest {
 	public void testRemoveSequenceFileFromSample() throws IOException {
 		// for now, add a sequence file to the sample so that we can remove it
 		String sampleUri = "http://localhost:8080/projects/5/samples/1";
-		Response response = expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
+		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
 		String sampleBody = response.getBody().asString();
 		String sequenceFileUri = from(sampleBody).getString(
 				"resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
@@ -114,12 +116,12 @@ public class SampleSequenceFilesIntegrationTest {
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
 
-		Response r = given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE).multiPart("file", sequenceFile.toFile())
+		Response r = asUser().given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE).multiPart("file", sequenceFile.toFile())
 				.expect().statusCode(HttpStatus.CREATED.value()).when().post(sequenceFileUri);
 
 		String location = r.getHeader(HttpHeaders.LOCATION);
 
-		r = expect().statusCode(HttpStatus.OK.value()).when().delete(location);
+		r = asUser().expect().statusCode(HttpStatus.OK.value()).when().delete(location);
 		String responseBody = r.getBody().asString();
 		String sampleLocation = from(responseBody).getString("resource.links.find{it.rel == 'sample'}.href");
 
