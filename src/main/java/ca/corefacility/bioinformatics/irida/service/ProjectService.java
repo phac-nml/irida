@@ -122,6 +122,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@PreAuthorize("hasRole('ROLE_USER')")
 	@PostFilter("hasPermission(filterObject, 'canReadProject')")
 	public Iterable<Project> findAll();
 }

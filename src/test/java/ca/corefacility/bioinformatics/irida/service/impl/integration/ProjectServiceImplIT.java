@@ -249,6 +249,26 @@ public class ProjectServiceImplIT {
 		assertEquals("Wrong sample in join.", s, join.getObject());
 	}
 
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	public void testFindAllProjectsAsUser() {
+		List<Project> projects = (List<Project>) asUsername("user1", Role.ROLE_USER).projectService.findAll();
+		// this user should only have access to one project:
+
+		assertEquals("Wrong number of projects.", 1, projects.size());
+	}
+
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	public void testFindAllProjectsAsAdmin() {
+		List<Project> projects = (List<Project>) asUsername("user1", Role.ROLE_ADMIN).projectService.findAll();
+		// this admin should have access to 3 projects
+
+		assertEquals("Wrong number of projects.", 3, projects.size());
+	}
+
 	private Project p() {
 		Project p = new Project();
 		p.setName("Project name");
@@ -264,6 +284,18 @@ public class ProjectServiceImplIT {
 		s.setExternalSampleId("external");
 
 		return s;
+	}
+
+	private ProjectServiceImplIT asUsername(String username, Role r) {
+		User u = new User();
+		u.setUsername(username);
+		u.setPassword(passwordEncoder.encode("Password1"));
+		u.setSystemRole(r);
+		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
+				ImmutableList.of(r));
+		auth.setDetails(u);
+		SecurityContextHolder.getContext().setAuthentication(auth);
+		return this;
 	}
 
 	private ProjectServiceImplIT asRole(Role r) {
