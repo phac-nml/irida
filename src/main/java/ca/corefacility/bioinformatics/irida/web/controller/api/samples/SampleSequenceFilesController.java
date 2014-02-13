@@ -152,6 +152,7 @@ public class SampleSequenceFilesController {
 	public ResponseEntity<String> addNewSequenceFileToSample(@PathVariable Long projectId, @PathVariable Long sampleId,
 			@RequestPart("file") MultipartFile file, @RequestPart(value="parameters",required=false) SequenceFileResource fileResource) throws IOException {
 		logger.debug("Adding sequence file to sample " + sampleId + " in project " + projectId);
+		logger.trace("Uploaded file size: " + file.getSize() + " bytes");
 		
 		Project p = projectService.read(projectId);
 		logger.trace("Read project " + projectId);
@@ -166,8 +167,11 @@ public class SampleSequenceFilesController {
 		// caller
 		Path temp = Files.createTempDirectory(null);
 		Path target = temp.resolve(file.getOriginalFilename());
-
-		target = Files.write(target, file.getBytes());
+		
+		//Changed to MultipartFile.transerTo(File) because it was truncating large files to 1039956336 bytes
+		//target = Files.write(target, file.getBytes());
+		file.transferTo(target.toFile());
+		
 		logger.trace("Wrote temp file to " + target);
 		
 		SequenceFile sf;
