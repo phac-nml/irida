@@ -148,6 +148,7 @@ public class ControllerExceptionHandler {
 	 */
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<String> handleInvalidJsonException(HttpMessageNotReadableException e) {
+		logger.debug("Client attempted to send invalid JSON.");
 		String message = "Your request could not be parsed.";
 		Throwable cause = e.getCause();
 		if (cause instanceof UnrecognizedPropertyException) {
@@ -168,10 +169,17 @@ public class ControllerExceptionHandler {
 			}
 			builder.append("].");
 			message = builder.toString();
+			logger.debug("Sending the following message to the client: [" + message + "]");
 		} else if (cause instanceof JsonParseException) {
+			logger.debug("Client attempted to send JSON with the wrong type of double quotes.");
 			JsonParseException parseException = (JsonParseException) cause;
 			if (parseException.getMessage().contains("double-quote")) {
 				message = "Your request could not be parsed. Field names must be surrounded by double quotes (see: http://www.json.org/).";
+			} else {
+				message = "Your request could not be parsed for an unknown reason."
+						+ " The message we got from the JSON parsing library follows, maybe that will help debug your JSON: ["
+						+ e.getMessage() + "]";
+
 			}
 		}
 
