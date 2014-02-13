@@ -13,9 +13,9 @@ public interface UploadSample {
 	/**
 	 * Gets the name of the sample represented by this object.
 	 * 
-	 * @return An UploadObjectName representing the name of this sample.
+	 * @return An UploadFolderName representing the name of this sample.
 	 */
-	public UploadObjectName getSampleName();
+	public UploadFolderName getSampleName();
 
 	/**
 	 * Sets the name of the sample represented by this object.
@@ -23,7 +23,7 @@ public interface UploadSample {
 	 * @param sampleName
 	 *            The name of the sample.
 	 */
-	public void setSampleName(UploadObjectName sampleName);
+	public void setSampleName(UploadFolderName sampleName);
 
 	/**
 	 * Gets the list of files associated with this sample.

@@ -18,7 +18,7 @@ import javax.validation.constraints.Pattern;
  */
 @Pattern.List({ @Pattern(regexp = "^[^\\']+$", message = "{irida.name.invalid.single.quote}"),
 		@Pattern(regexp = "^[^\\.]+$", message = "{irida.name.invalid.period}"),
-		@Pattern(regexp = "^[^ ]+$", message = "{irida.name.invalid.space}") })
+		@Pattern(regexp = "^[^\\s]+$", message = "{irida.name.invalid.space}") })
 @ValidProjectName
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -33,6 +33,6 @@ public @interface ValidSampleName {
 	Class<? extends Payload>[] payload() default {};
 
 	public static class ValidSampleNameBlacklist {
-		public static final char[] BLACKLIST = { '\'', '.', ' ' };
+		public static final char[] BLACKLIST = { '\'', '.', ' ', '\t' };
 	}
 }

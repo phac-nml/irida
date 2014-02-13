@@ -17,11 +17,11 @@ import static org.mockito.Mockito.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadConnectionException;
-import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
 
@@ -64,12 +64,12 @@ public class GalaxyUploaderTest {
 
 		when(
 				galaxyAPI.uploadSamples(any(ArrayList.class),
-						any(GalaxyObjectName.class),
+						any(GalaxyProjectName.class),
 						any(GalaxyAccountEmail.class))).thenThrow(
 				new ClientHandlerException("error connecting"));
 
 		galaxyUploader.uploadSamples(new ArrayList<UploadSample>(),
-				new GalaxyObjectName("lib"), accountEmail);
+				new GalaxyProjectName("lib"), accountEmail);
 	}
 
 	/**
@@ -125,7 +125,7 @@ public class GalaxyUploaderTest {
 			}
 		};
 		galaxyUploader.uploadSamples(new ArrayList<UploadSample>(),
-				new GalaxyObjectName("lib"), invalidNameType);
+				new GalaxyProjectName("lib"), invalidNameType);
 	}
 
 	/**
@@ -138,7 +138,7 @@ public class GalaxyUploaderTest {
 			throws ConstraintViolationException, UploadException {
 		GalaxyUploader galaxyUploader = new GalaxyUploader(galaxyAPI);
 
-		UploadObjectName invalidLibraryType = new UploadObjectName() {
+		UploadProjectName invalidLibraryType = new UploadProjectName() {
 			@Override
 			public String getName() {
 				return "test";

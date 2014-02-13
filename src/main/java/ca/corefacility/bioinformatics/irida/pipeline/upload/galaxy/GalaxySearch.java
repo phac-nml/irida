@@ -13,7 +13,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFou
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
@@ -154,7 +154,7 @@ public class GalaxySearch {
 	 * @return A list of Library objects matching the given name.
 	 * @throws NoLibraryFoundException If no libraries could be found.
 	 */
-	public List<Library> findLibraryWithName(GalaxyObjectName libraryName) throws NoLibraryFoundException {
+	public List<Library> findLibraryWithName(GalaxyProjectName libraryName) throws NoLibraryFoundException {
 		checkNotNull(libraryName, "libraryName is null");
 
 		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
@@ -232,7 +232,7 @@ public class GalaxySearch {
 	 * @param libraryName The name of the library to check.
 	 * @return True if a library with this name exists, false otherwise.
 	 */
-	public boolean libraryExists(GalaxyObjectName libraryName) {
+	public boolean libraryExists(GalaxyProjectName libraryName) {
 		try {
 			List<Library> libraries = findLibraryWithName(libraryName);
 			return libraries != null && libraries.size() > 0;

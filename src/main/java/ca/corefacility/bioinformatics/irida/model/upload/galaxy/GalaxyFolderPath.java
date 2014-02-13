@@ -1,22 +1,27 @@
 package ca.corefacility.bioinformatics.irida.model.upload.galaxy;
 
-import java.util.Objects;
+import static com.google.common.base.Preconditions.*;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * A name for a Galaxy folder path (eg. /illumina_reads/sample_name) used for
- * checking the validity of the path.
+ * checking the validity of the path.  This is different from the GalaxyFolderName only in that
+ * a folder path can contain '/' characters separating folders or files.
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * 
  */
 public class GalaxyFolderPath {
-	@NotNull(message = "{galaxy.path.notnull}")
-	@Size(min = 2, message = "{galaxy.path.size}")
-	@Pattern(regexp = "^[A-Za-z0-9 \\-_\\.'\"/]+$", message = "{galaxy.path.invalid}")
+	
+	public static final char[] BLACKLIST = { '?', '(', ')', '[', ']', '\\',
+		'=', '+', '<', '>', ':', ';', '"', ',', '*', '^', '|', '&', '\'', '.', ' ', '\t' };
+	
+	private static final Pattern invalidPathName 
+		= Pattern.compile("[\\?\\(\\)\\[\\]\\\\\\=\\+\\<\\>" +
+				"\\:\\;\\\"\\,\\*\\^\\|\\&\\'\\.\\s]");
+	
 	private String pathName;
 
 	/**
@@ -24,6 +29,10 @@ public class GalaxyFolderPath {
 	 * @param pathName  The name of the folder path.
 	 */
 	public GalaxyFolderPath(String pathName) {
+		checkNotNull(pathName, "pathName is null");
+		checkArgument(pathName.length() >= 2, "pathName is less than 2 characters");
+		checkArgument(!invalidPathName.matcher(pathName).find(), "pathName=" + pathName + " is invalid");
+		
 		this.pathName = pathName;
 	}
 

@@ -25,8 +25,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFou
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
@@ -51,9 +52,9 @@ public class GalaxyAPI {
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyAPI.class);
 
-	private static final GalaxyObjectName ILLUMINA_FOLDER_NAME = new GalaxyObjectName(
+	private static final GalaxyFolderName ILLUMINA_FOLDER_NAME = new GalaxyFolderName(
 			"illumina_reads");
-	private static final GalaxyObjectName REFERENCES_FOLDER_NAME = new GalaxyObjectName(
+	private static final GalaxyFolderName REFERENCES_FOLDER_NAME = new GalaxyFolderName(
 			"references");
 	private static final GalaxyFolderPath ILLUMINA_FOLDER_PATH = new GalaxyFolderPath(
 			"/illumina_reads");
@@ -221,7 +222,7 @@ public class GalaxyAPI {
 	 * @throws GalaxyUserNoRoleException
 	 *             If the passed Galaxy user has no role.
 	 */
-	public Library buildGalaxyLibrary(@Valid GalaxyObjectName libraryName,
+	public Library buildGalaxyLibrary(@Valid GalaxyProjectName libraryName,
 			@Valid GalaxyAccountEmail galaxyUserEmail)
 			throws CreateLibraryException, ConstraintViolationException,
 			ChangeLibraryPermissionsException, GalaxyUserNotFoundException,
@@ -420,7 +421,7 @@ public class GalaxyAPI {
 	 * 	content for the library.
 	 */
 	public GalaxyUploadResult uploadSamples(@Valid List<UploadSample> samples,
-			@Valid GalaxyObjectName libraryName,
+			@Valid GalaxyProjectName libraryName,
 			@Valid GalaxyAccountEmail galaxyUserEmail)
 			throws LibraryUploadException, CreateLibraryException,
 			ConstraintViolationException, ChangeLibraryPermissionsException,

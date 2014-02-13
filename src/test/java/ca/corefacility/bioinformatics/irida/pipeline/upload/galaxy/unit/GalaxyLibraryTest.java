@@ -24,7 +24,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.ChangeLibraryPermi
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderName;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
 
@@ -136,7 +137,7 @@ public class GalaxyLibraryTest {
 						any(LibraryFolder.class))).thenReturn(folder);
 
 		LibraryFolder newFolder = galaxyLibrary.createLibraryFolder(
-				testLibrary, new GalaxyObjectName("new_folder"));
+				testLibrary, new GalaxyFolderName("new_folder"));
 		assertNotNull(newFolder);
 		assertEquals("folder_name", newFolder.getName());
 		assertEquals("1", newFolder.getId());
@@ -150,7 +151,7 @@ public class GalaxyLibraryTest {
 	public void testCreateLibraryFolderNoRoot() throws CreateLibraryException {
 		when(librariesClient.getRootFolder(LIBRARY_ID)).thenReturn(null);
 
-		galaxyLibrary.createLibraryFolder(testLibrary, new GalaxyObjectName(
+		galaxyLibrary.createLibraryFolder(testLibrary, new GalaxyFolderName(
 				"new_folder"));
 	}
 
@@ -169,7 +170,7 @@ public class GalaxyLibraryTest {
 						any(LibraryFolder.class))).thenReturn(folder);
 
 		LibraryFolder newFolder = galaxyLibrary.createLibraryFolder(
-				testLibrary, folder, new GalaxyObjectName("new_folder"));
+				testLibrary, folder, new GalaxyFolderName("new_folder"));
 		assertNotNull(newFolder);
 		assertEquals("folder_name", newFolder.getName());
 		assertEquals("1", newFolder.getId());
@@ -256,7 +257,7 @@ public class GalaxyLibraryTest {
 		when(librariesClient.createLibrary(any(Library.class))).thenReturn(
 				testLibrary);
 
-		Library library = galaxyLibrary.buildEmptyLibrary(new GalaxyObjectName(
+		Library library = galaxyLibrary.buildEmptyLibrary(new GalaxyProjectName(
 				"test"));
 
 		assertNotNull(library);
@@ -273,7 +274,7 @@ public class GalaxyLibraryTest {
 		when(librariesClient.createLibrary(any(Library.class)))
 				.thenReturn(null);
 
-		galaxyLibrary.buildEmptyLibrary(new GalaxyObjectName("test"));
+		galaxyLibrary.buildEmptyLibrary(new GalaxyProjectName("test"));
 	}
 
 	/**
@@ -286,6 +287,6 @@ public class GalaxyLibraryTest {
 		when(librariesClient.createLibrary(any(Library.class))).thenThrow(
 				new RuntimeException("error creating library"));
 
-		galaxyLibrary.buildEmptyLibrary(new GalaxyObjectName("test"));
+		galaxyLibrary.buildEmptyLibrary(new GalaxyProjectName("test"));
 	}
 }

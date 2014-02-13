@@ -16,12 +16,12 @@ import com.sun.jersey.api.client.ClientHandlerException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadConnectionException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
-import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 
 /**
@@ -95,7 +95,7 @@ public class GalaxyUploader implements Uploader {
 	 */
 	private UploadResult uploadSamplesInternal(
 			List<UploadSample> samples,
-			GalaxyObjectName libraryName,
+			GalaxyProjectName libraryName,
 			GalaxyAccountEmail galaxyUserEmail) throws UploadException,
 			ConstraintViolationException {
 		if (galaxyAPI == null) {
@@ -160,13 +160,13 @@ public class GalaxyUploader implements Uploader {
 	 */
 	@Override
 	public UploadResult uploadSamples(@Valid List<UploadSample> samples,
-			@Valid UploadObjectName dataLocation,
+			@Valid UploadProjectName dataLocation,
 			@Valid UploaderAccountName userName) throws UploadException,
 			ConstraintViolationException {
 		UploadResult uploadResult;
 
 		GalaxyAccountEmail accountEmail = toAccountEmail(userName);
-		GalaxyObjectName galaxyDataLibraryLocation = toGalaxyObjectName(dataLocation);
+		GalaxyProjectName galaxyDataLibraryLocation = toGalaxyProjectName(dataLocation);
 
 		logger.debug("Uploading samples to Galaxy Library " + dataLocation
 				+ ", userEmail=" + userName + ", samples=" + samples);
@@ -204,10 +204,10 @@ public class GalaxyUploader implements Uploader {
 	 * @return  A GalaxyObjectName describing the name.
 	 * @throws UploadException  If a conversion exception occured.
 	 */
-	private GalaxyObjectName toGalaxyObjectName(UploadObjectName objectName)
+	private GalaxyProjectName toGalaxyProjectName(UploadProjectName objectName)
 			throws UploadException {
-		if (objectName instanceof GalaxyObjectName) {
-			return (GalaxyObjectName) objectName;
+		if (objectName instanceof GalaxyProjectName) {
+			return (GalaxyProjectName) objectName;
 		} else {
 			throw new UploadException("objectName not of type GalaxyObjectName");
 		}

@@ -17,12 +17,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
+import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectName;
+
 /**
- * Tests for {@link GalaxyObjectName}.
+ * Tests for {@link GalaxyProjectName}.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxyObjectNameTest {
+public class GalaxyProjectNameTest {
 	
 	private static final String MESSAGES_BASENAME = "ca.corefacility.bioinformatics.irida.validation.ValidationMessages";
 	private Validator validator;
@@ -42,9 +44,9 @@ public class GalaxyObjectNameTest {
 	
 	@Test
 	public void testNullName() {
-		GalaxyObjectName name = new GalaxyObjectName(null);
+		GalaxyProjectName name = new GalaxyProjectName(null);
 		
-		Set<ConstraintViolation<GalaxyObjectName>> constraintViolations
+		Set<ConstraintViolation<GalaxyProjectName>> constraintViolations
 			= validator.validate(name);
 
 		assertEquals(1, constraintViolations.size());
@@ -53,9 +55,9 @@ public class GalaxyObjectNameTest {
 	
 	@Test
 	public void testShortName() {
-		GalaxyObjectName name = new GalaxyObjectName("a");
+		GalaxyProjectName name = new GalaxyProjectName("a");
 		
-		Set<ConstraintViolation<GalaxyObjectName>> constraintViolations
+		Set<ConstraintViolation<GalaxyProjectName>> constraintViolations
 			= validator.validate(name);
 
 		assertEquals(1, constraintViolations.size());
@@ -64,22 +66,24 @@ public class GalaxyObjectNameTest {
 	
 	@Test
 	public void testValidName() {
-		GalaxyObjectName name = new GalaxyObjectName("Abc123 _-.'");
+		GalaxyProjectName name = new GalaxyProjectName("Abc123 _-.'");
 		
-		Set<ConstraintViolation<GalaxyObjectName>> constraintViolations
+		Set<ConstraintViolation<GalaxyProjectName>> constraintViolations
 			= validator.validate(name);
 
 		assertEquals(0, constraintViolations.size());
 	}
 	
 	@Test
-	public void testInvalidName() {
-		GalaxyObjectName name = new GalaxyObjectName("Abc123 _-.'<");
-		
-		Set<ConstraintViolation<GalaxyObjectName>> constraintViolations
-			= validator.validate(name);
+	public void testBlacklistedCharactersInGalaxyProjectName() {
+		testBlacklists(ValidProjectName.ValidProjectNameBlacklist.BLACKLIST);
+	}
 
-		assertEquals(1, constraintViolations.size());
-		assertEquals(b.getString("galaxy.object.invalid"), constraintViolations.iterator().next().getMessage());
+	private void testBlacklists(char[] blacklist) {
+		for (char c : blacklist) {
+			GalaxyProjectName p = new GalaxyProjectName("Abc123 _-.'" + c);
+			Set<ConstraintViolation<GalaxyProjectName>> violations = validator.validate(p);
+			assertEquals("Wrong number of violations.", 1, violations.size());
+		}
 	}
 }

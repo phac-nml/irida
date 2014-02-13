@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.ChangeLibraryPermissionsException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
-import ca.corefacility.bioinformatics.irida.model.upload.UploadObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadFolderName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyObjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
@@ -61,7 +61,7 @@ public class GalaxyLibraryBuilder {
 	 * @throws CreateLibraryException
 	 *             If no library could be created.
 	 */
-	public Library buildEmptyLibrary(GalaxyObjectName libraryName)
+	public Library buildEmptyLibrary(GalaxyProjectName libraryName)
 			throws CreateLibraryException {
 		checkNotNull(libraryName, "libraryName is null");
 
@@ -95,7 +95,7 @@ public class GalaxyLibraryBuilder {
 	 *             If no library folder could be created.
 	 */
 	public LibraryFolder createLibraryFolder(Library library,
-			GalaxyObjectName folderName) throws CreateLibraryException {
+			UploadFolderName folderName) throws CreateLibraryException {
 		checkNotNull(library, "library is null");
 		checkNotNull(folderName, "folderName is null");
 
@@ -139,7 +139,7 @@ public class GalaxyLibraryBuilder {
 	 *             If no library folder could be created.
 	 */
 	public LibraryFolder createLibraryFolder(Library library,
-			LibraryFolder libraryFolder, UploadObjectName folderName)
+			LibraryFolder libraryFolder, UploadFolderName folderName)
 			throws CreateLibraryException {
 		checkNotNull(library, "library is null");
 		checkNotNull(libraryFolder, "libraryFolder is null");
