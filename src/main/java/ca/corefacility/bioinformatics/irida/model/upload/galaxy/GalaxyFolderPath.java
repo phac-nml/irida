@@ -7,7 +7,8 @@ import java.util.regex.Pattern;
 
 /**
  * A name for a Galaxy folder path (eg. /illumina_reads/sample_name) used for
- * checking the validity of the path.
+ * checking the validity of the path.  This is different from the GalaxyFolderName only in that
+ * a folder path can contain '/' characters separating folders or files.
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * 

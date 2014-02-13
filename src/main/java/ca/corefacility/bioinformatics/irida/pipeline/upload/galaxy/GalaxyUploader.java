@@ -166,7 +166,7 @@ public class GalaxyUploader implements Uploader {
 		UploadResult uploadResult;
 
 		GalaxyAccountEmail accountEmail = toAccountEmail(userName);
-		GalaxyProjectName galaxyDataLibraryLocation = toGalaxyObjectName(dataLocation);
+		GalaxyProjectName galaxyDataLibraryLocation = toGalaxyProjectName(dataLocation);
 
 		logger.debug("Uploading samples to Galaxy Library " + dataLocation
 				+ ", userEmail=" + userName + ", samples=" + samples);
@@ -204,7 +204,7 @@ public class GalaxyUploader implements Uploader {
 	 * @return  A GalaxyObjectName describing the name.
 	 * @throws UploadException  If a conversion exception occured.
 	 */
-	private GalaxyProjectName toGalaxyObjectName(UploadProjectName objectName)
+	private GalaxyProjectName toGalaxyProjectName(UploadProjectName objectName)
 			throws UploadException {
 		if (objectName instanceof GalaxyProjectName) {
 			return (GalaxyProjectName) objectName;

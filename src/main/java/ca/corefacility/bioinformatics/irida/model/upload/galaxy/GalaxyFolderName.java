@@ -10,7 +10,9 @@ import ca.corefacility.bioinformatics.irida.validators.annotations.ValidSampleNa
 
 /**
  * A name for a Galaxy project (Library) used for checking the validity
- * of the name.
+ * of the name.  Differs from GalaxyFolderPath in that a folder path
+ * contains '/' separating different folders.  Both paths and names
+ * are used by blend4j for different purposes.
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * 
