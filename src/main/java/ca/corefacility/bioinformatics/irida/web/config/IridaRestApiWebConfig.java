@@ -42,12 +42,12 @@ import com.google.common.collect.ImmutableMap;
 @Import({ IridaApiServicesConfig.class, IridaRestApiSecurityConfig.class })
 public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 
-	private static final long TWO_GIGABYTES = 2147483648l;
+	private static final long TEN_GIGABYTES = 10737418240l;
 
 	@Bean
 	public MultipartResolver multipartResolver() {
 		CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-		resolver.setMaxUploadSize(TWO_GIGABYTES);
+		resolver.setMaxUploadSize(TEN_GIGABYTES);
 		return resolver;
 	}
 
