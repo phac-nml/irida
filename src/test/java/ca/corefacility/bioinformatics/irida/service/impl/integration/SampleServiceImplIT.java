@@ -133,6 +133,30 @@ public class SampleServiceImplIT {
 		assertNotNull("Sample was not populated.", s);
 		assertEquals("Wrong external id.", externalId, s.getExternalSampleId());
 	}
+	
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
+	public void testReadSampleAsSequencer() {
+		Long sampleID = 1L;
+		Sample s = asRole(Role.ROLE_SEQUENCER).sampleService.read(sampleID);
+		
+		assertNotNull("Sample was not populated.", s);
+		assertEquals("Wrong external id.", sampleID, s.getId());
+	}
+	
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
+	public void testGetSampleForProjectAsSequencer() {
+		Long sampleID = 2L;
+		Long projectID = 1L;
+		Project p = asRole(Role.ROLE_SEQUENCER).projectService.read(projectID);
+		Sample s = asRole(Role.ROLE_SEQUENCER).sampleService.getSampleForProject(p, sampleID);
+		
+		assertNotNull("Sample was not populated.", s);
+		assertEquals("Wrong external id.", sampleID, s.getId());
+	}
 
 	private void assertSampleNotFound(Long id) {
 		try {
