@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -153,7 +154,7 @@ public class SequenceFileServiceImplIT {
 		// (it will have been modified outside of the create method.)
 		sf = sequenceFileService.read(sf.getId());
 		assertEquals("Wrong version number after processing.", Long.valueOf(2L), sf.getFileRevisionNumber());
-
+		assertFalse("File name is still gzipped.", sf.getFile().getFileName().toString().endsWith(".gz"));
 		List<Join<SequenceFile, OverrepresentedSequence>> overrepresentedSequences = overrepresentedSequenceService
 				.getOverrepresentedSequencesForSequenceFile(sf);
 		assertNotNull("No overrepresented sequences were found.", overrepresentedSequences);
