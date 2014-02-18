@@ -170,4 +170,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 					+ "] with other samples; the sample does not belong to project [" + project.getId() + "]");
 		}
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Sample read(Long id){
+		return super.read(id);
+	}
 }
