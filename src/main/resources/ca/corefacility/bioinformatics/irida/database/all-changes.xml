@@ -13,5 +13,7 @@
 	<include file="changesets/1.1/rename-constraints.xml" relativeToChangelogFile="true" />
 	
 	<include file="changesets/1.2/insert-sequencer-role.xml" relativeToChangelogFile="true" />
+	
+	<include file="changesets/1.3/drop-client-role.xml" relativeToChangelogFile="true" />
 
 </databaseChangeLog>
