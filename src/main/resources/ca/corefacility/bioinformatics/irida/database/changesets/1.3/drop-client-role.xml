@@ -6,7 +6,7 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
 	<changeSet id="drop-client-role" author="tom">
-		<!-- insert the initial set of roles -->
+		<!-- remove ROLE_CLIENT from the system roles -->
 		<delete tableName="system_role">
 			<where>name="ROLE_CLIENT"</where>
 		</delete>
