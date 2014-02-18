@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.integration.sample;
 
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
+import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asAdmin;
 import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.not;
@@ -45,7 +46,7 @@ public class SampleSequenceFilesIntegrationTest {
 		Map<String,String> fileParams = new HashMap<>();
 		fileParams.put("description", "some file");
 		
-		Response r = asUser().given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE).multiPart("file", sequenceFile.toFile())
+		Response r = asAdmin().given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE).multiPart("file", sequenceFile.toFile())
 				.multiPart("parameters",fileParams, MediaType.APPLICATION_JSON_VALUE)
 				.expect().statusCode(HttpStatus.CREATED.value()).when().post(sequenceFileUri);
 
@@ -77,7 +78,7 @@ public class SampleSequenceFilesIntegrationTest {
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
 
-		Response r = asUser().given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE).multiPart("file", sequenceFile.toFile())
+		Response r = asAdmin().given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE).multiPart("file", sequenceFile.toFile())
 				.expect().statusCode(HttpStatus.CREATED.value()).when().post(sequenceFileUri);
 
 		// figure out what the identifier for that sequence file is
@@ -116,12 +117,12 @@ public class SampleSequenceFilesIntegrationTest {
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
 
-		Response r = asUser().given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE).multiPart("file", sequenceFile.toFile())
+		Response r = asAdmin().given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE).multiPart("file", sequenceFile.toFile())
 				.expect().statusCode(HttpStatus.CREATED.value()).when().post(sequenceFileUri);
 
 		String location = r.getHeader(HttpHeaders.LOCATION);
 
-		r = asUser().expect().statusCode(HttpStatus.OK.value()).when().delete(location);
+		r = asAdmin().expect().statusCode(HttpStatus.OK.value()).when().delete(location);
 		String responseBody = r.getBody().asString();
 		String sampleLocation = from(responseBody).getString("resource.links.find{it.rel == 'sample'}.href");
 
