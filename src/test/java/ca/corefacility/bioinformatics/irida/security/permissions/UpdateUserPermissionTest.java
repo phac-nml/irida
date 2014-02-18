@@ -87,7 +87,7 @@ public class UpdateUserPermissionTest {
 	@Test
 	public void testRejectClient() {
 		Collection<GrantedAuthority> roles = new ArrayList<>();
-		roles.add(Role.ROLE_CLIENT);
+		roles.add(Role.ROLE_SEQUENCER);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
 

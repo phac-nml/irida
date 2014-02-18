@@ -44,7 +44,7 @@ public class UpdateUserPermission extends BasePermission<User> {
 
 		// really quick check: if the principle is of ROLE_CLIENT, they should
 		// be rejected immediately.
-		if (authentication.getAuthorities().contains(Role.ROLE_CLIENT)) {
+		if (authentication.getAuthorities().contains(Role.ROLE_SEQUENCER)) {
 			logger.trace("Tool attempting to modify itself: [" + authentication + "], attempt rejected.");
 			return false;
 		}

@@ -50,7 +50,7 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 * @return the {@link Join} between the {@link SequenceFile} and its
 	 *         {@link Sample}.
 	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT') or hasPermission(#sample, 'canReadSample')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
 	public Join<Sample, SequenceFile> createSequenceFileInSample(SequenceFile sequenceFile, Sample sample);
 
 	/**
@@ -62,7 +62,10 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 *            from.
 	 * @return the references to {@link SequenceFile}.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	// TODO: ROLE_SEQUENCER should **not** have access to read sequence files
+	// after they have been uploaded. Revoke this access when sequencing data is
+	// uploaded as a single package.
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
 	public List<Join<Sample, SequenceFile>> getSequenceFilesForSample(Sample sample);
 
 	/**
