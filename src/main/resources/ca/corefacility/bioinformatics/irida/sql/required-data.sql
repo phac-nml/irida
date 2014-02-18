@@ -1,6 +1,5 @@
 INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_USER','A basic user in the system.');
 INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_ADMIN','An administrative user in the system.');
-INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_CLIENT','A client tool in the system.');
 INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_MANAGER','A manager role in the system.');
 INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_SEQUENCER','A sequencer role in the system.');
 

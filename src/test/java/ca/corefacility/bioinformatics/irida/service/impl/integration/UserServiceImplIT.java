@@ -211,7 +211,7 @@ public class UserServiceImplIT {
 	@Test(expected = AccessDeniedException.class)
 	public void testUpdatePasswordWithAnonymousUser() {
 		SecurityContextHolder.getContext().setAuthentication(
-				new AnonymousAuthenticationToken("key", "anonymouse", ImmutableList.of(Role.ROLE_CLIENT)));
+				new AnonymousAuthenticationToken("key", "anonymouse", ImmutableList.of(Role.ROLE_SEQUENCER)));
 		userService.changePassword(1l, "NewPassword1");
 	}
 

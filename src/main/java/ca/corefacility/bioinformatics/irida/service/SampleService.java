@@ -18,6 +18,12 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 public interface SampleService extends CRUDService<Long, Sample> {
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER')")
+	public Sample read(Long id) throws EntityNotFoundException;
+	
+	/**
 	 * Add a {@link SequenceFile} to a {@link Sample}.
 	 * 
 	 * @param sample
@@ -45,7 +51,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *             if no {@link Relationship} exists between {@link Sample} and
 	 *             {@link Project}.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
 	public Sample getSampleForProject(Project project, Long identifier) throws EntityNotFoundException;
 
 	/**

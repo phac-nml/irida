@@ -35,10 +35,6 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 	 * Constant reference for user role.
 	 */
 	public static final Role ROLE_USER = new Role("ROLE_USER");
-	/**
-	 * Constant reference for client role.
-	 */
-	public static final Role ROLE_CLIENT = new Role("ROLE_CLIENT");
 
 	/**
 	 * Constant reference for the manager role

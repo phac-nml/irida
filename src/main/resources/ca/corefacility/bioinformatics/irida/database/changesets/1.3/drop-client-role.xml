@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+	<changeSet id="drop-client-role" author="tom">
+		<!-- remove ROLE_CLIENT from the system roles -->
+		<delete tableName="system_role">
+			<where>name="ROLE_CLIENT"</where>
+		</delete>
+	</changeSet>
+</databaseChangeLog>
