@@ -16,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -111,6 +113,12 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	@PostLoad
 	public void postLoad(){
 		setRealPath();
+	}
+	
+	@PrePersist
+	@PreUpdate
+	public void prePersist() {
+		setStringPath();
 	}
 
 	@Override
