@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.integration.project;
 
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
+import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asAdmin;
 import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
@@ -61,7 +62,7 @@ public class ProjectSamplesIntegrationTest {
 		// get the uri for a specific sample associated with a project
 		String sampleUri = from(projectSamplesJson).get("resource.resources[0].links.find{it.rel == 'self'}.href");
 		// issue a delete against the service
-		Response r = asUser().expect().statusCode(HttpStatus.OK.value()).when().delete(sampleUri);
+		Response r = asAdmin().expect().statusCode(HttpStatus.OK.value()).when().delete(sampleUri);
 
 		// check that the response body contains links to the project and
 		// samples collection
