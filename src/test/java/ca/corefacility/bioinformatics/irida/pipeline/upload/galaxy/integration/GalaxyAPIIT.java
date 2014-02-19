@@ -185,6 +185,31 @@ public class GalaxyAPIIT {
 	private String getGalaxyFileContents(String testName, String filename,
 			GalaxyInstance galaxyInstance, String libraryFileId)
 			throws InterruptedException, IOException {
+
+		Dataset dataset = moveLibraryDataToHistoryDataset(testName, filename, galaxyInstance, libraryFileId);
+		
+		URL url = new URL(dataset.getFullDownloadUrl());
+
+		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		InputStream stream = con.getInputStream();
+
+		String galaxyFileContents = readFileContentsFromReader(new BufferedReader(
+				new InputStreamReader(stream)));
+
+		return galaxyFileContents;
+	}
+	
+	/**
+	 * Moves a library data file into a history (so we can check the file type of the data file).
+	 * @param testName  The name of the test.
+	 * @param filename  The name of the file.
+	 * @param galaxyInstance  The connector to Galaxy.
+	 * @param libraryFileId  The library id.
+	 * @return  A Dataset for the moved file.
+	 * @throws InterruptedException
+	 */
+	private Dataset moveLibraryDataToHistoryDataset(String testName, String filename,
+			GalaxyInstance galaxyInstance, String libraryFileId) throws InterruptedException {
 		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
 
 		History history = new History();
@@ -210,16 +235,8 @@ public class GalaxyAPIIT {
 			assertNotNull(dataset);
 			Thread.sleep(2000);
 		} while (!"ok".equals(dataset.getState()));
-
-		URL url = new URL(dataset.getFullDownloadUrl());
-
-		HttpURLConnection con = (HttpURLConnection) url.openConnection();
-		InputStream stream = con.getInputStream();
-
-		String galaxyFileContents = readFileContentsFromReader(new BufferedReader(
-				new InputStreamReader(stream)));
-
-		return galaxyFileContents;
+		
+		return dataset;
 	}
 
 	/**
@@ -420,10 +437,11 @@ public class GalaxyAPIIT {
 	 * Tests uploading samples as a regular user in Galaxy.
 	 * @throws URISyntaxException
 	 * @throws UploadException
+	 * @throws InterruptedException 
 	 */
 	@Test
 	public void testUploadSampleRegularUser() throws URISyntaxException,
-			UploadException {
+			UploadException, InterruptedException {
 		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"testUploadSampleRegularUser");
 
@@ -472,6 +490,14 @@ public class GalaxyAPIIT {
 				"file",
 				contentsMapRegularUser.get(
 						"/illumina_reads/testData/testData1.fastq").getType());
+		
+		// test out correct file type
+		Dataset datasetData1 = moveLibraryDataToHistoryDataset(libraryName.getName() + "1", "testData1.fastq",
+				localGalaxy.getGalaxyInstanceUser1(), contentsMapRegularUser
+						.get("/illumina_reads/testData/testData1.fastq")
+						.getId());
+		
+		assertEquals("fastqsanger",datasetData1.getDataType());
 
 		// admin should have access to files
 		Library actualLibraryAdmin = findLibraryByName(libraryName,
@@ -519,10 +545,11 @@ public class GalaxyAPIIT {
 	 * Tests uploading samples as an admin user in Galaxy.
 	 * @throws URISyntaxException
 	 * @throws UploadException
+	 * @throws InterruptedException 
 	 */
 	@Test
 	public void testUploadSampleAdminUser() throws URISyntaxException,
-			UploadException {
+			UploadException, InterruptedException {
 		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"testUploadSampleAdminUser");
 
@@ -544,28 +571,36 @@ public class GalaxyAPIIT {
 		List<LibraryContent> libraryContents = localGalaxy
 				.getGalaxyInstanceAdmin().getLibrariesClient()
 				.getLibraryContents(actualLibrary.getId());
-		Map<String, LibraryContent> contentsMapRegularUser = fileToLibraryContentMap(libraryContents);
-		assertEquals(5, contentsMapRegularUser.size());
+		Map<String, LibraryContent> contentsMapAdmin = fileToLibraryContentMap(libraryContents);
+		assertEquals(5, contentsMapAdmin.size());
 
-		assertTrue(contentsMapRegularUser.containsKey("/"));
-		assertEquals("folder", contentsMapRegularUser.get("/").getType());
-		assertTrue(contentsMapRegularUser.containsKey("/illumina_reads"));
-		assertEquals("folder", contentsMapRegularUser.get("/illumina_reads")
+		assertTrue(contentsMapAdmin.containsKey("/"));
+		assertEquals("folder", contentsMapAdmin.get("/").getType());
+		assertTrue(contentsMapAdmin.containsKey("/illumina_reads"));
+		assertEquals("folder", contentsMapAdmin.get("/illumina_reads")
 				.getType());
-		assertTrue(contentsMapRegularUser.containsKey("/references"));
-		assertEquals("folder", contentsMapRegularUser.get("/references")
+		assertTrue(contentsMapAdmin.containsKey("/references"));
+		assertEquals("folder", contentsMapAdmin.get("/references")
 				.getType());
-		assertTrue(contentsMapRegularUser
+		assertTrue(contentsMapAdmin
 				.containsKey("/illumina_reads/testData"));
 		assertEquals("folder",
-				contentsMapRegularUser.get("/illumina_reads/testData")
+				contentsMapAdmin.get("/illumina_reads/testData")
 						.getType());
-		assertTrue(contentsMapRegularUser
+		assertTrue(contentsMapAdmin
 				.containsKey("/illumina_reads/testData/testData1.fastq"));
 		assertEquals(
 				"file",
-				contentsMapRegularUser.get(
+				contentsMapAdmin.get(
 						"/illumina_reads/testData/testData1.fastq").getType());
+		
+		// test out correct file type
+		Dataset datasetData1 = moveLibraryDataToHistoryDataset(libraryName.getName() + "1", "testData1.fastq",
+				localGalaxy.getGalaxyInstanceAdmin(), contentsMapAdmin
+						.get("/illumina_reads/testData/testData1.fastq")
+						.getId());
+		
+		assertEquals("fastqsanger",datasetData1.getDataType());
 
 		// regular user should not have access to files
 		actualLibrary = findLibraryByName(libraryName,
@@ -637,6 +672,14 @@ public class GalaxyAPIIT {
 				"file",
 				contentsMapRegularUser.get(
 						"/illumina_reads/testData/testData1.fastq").getType());
+		
+		// test out correct file type
+		Dataset datasetData1 = moveLibraryDataToHistoryDataset(libraryName.getName() + "1", "testData1.fastq",
+				localGalaxy.getGalaxyInstanceUser1(), contentsMapRegularUser
+						.get("/illumina_reads/testData/testData1.fastq")
+						.getId());
+		
+		assertEquals("fastqsanger",datasetData1.getDataType());
 
 		// download file from Galaxy
 		String galaxyFileContents = getGalaxyFileContents(
@@ -712,6 +755,14 @@ public class GalaxyAPIIT {
 				"file",
 				contentsMapRegularUser.get(
 						"/illumina_reads/testData/testData1.fastq").getType());
+		
+		// test out correct file type
+		Dataset datasetData1 = moveLibraryDataToHistoryDataset(libraryName.getName() + "1", "testData1.fastq",
+				localGalaxy.getGalaxyInstanceUser1(), contentsMapRegularUser
+						.get("/illumina_reads/testData/testData1.fastq")
+						.getId());
+		
+		assertEquals("fastqsanger",datasetData1.getDataType());
 
 		// download file from Galaxy
 		String galaxyFileContents = getGalaxyFileContents(
@@ -910,11 +961,12 @@ public class GalaxyAPIIT {
 	 * @throws MalformedURLException
 	 * @throws ConstraintViolationException
 	 * @throws UploadException
+	 * @throws InterruptedException 
 	 */
 	@Test
 	public void testUploadSampleToExistingLibrary() throws URISyntaxException,
 			MalformedURLException, ConstraintViolationException,
-			UploadException {
+			UploadException, InterruptedException {
 		GalaxySearch galaxySearchAdmin = new GalaxySearch(
 				localGalaxy.getGalaxyInstanceAdmin());
 		GalaxySearch galaxySearchUser1 = new GalaxySearch(
@@ -1017,6 +1069,21 @@ public class GalaxyAPIIT {
 		assertEquals("file",
 				contentsMap.get("/illumina_reads/testData/testData2.fastq")
 						.getType());
+		
+		// test out correct file type
+		Dataset datasetData1 = moveLibraryDataToHistoryDataset(libraryName.getName() + "1", "testData1.fastq",
+				localGalaxy.getGalaxyInstanceUser1(), contentsMap
+						.get("/illumina_reads/testData/testData1.fastq")
+						.getId());
+		
+		assertEquals("fastqsanger",datasetData1.getDataType());
+		
+		Dataset datasetData2 = moveLibraryDataToHistoryDataset(libraryName.getName() + "2", "testData2.fastq",
+				localGalaxy.getGalaxyInstanceUser1(), contentsMap
+						.get("/illumina_reads/testData/testData2.fastq")
+						.getId());
+		
+		assertEquals("fastqsanger",datasetData2.getDataType());
 
 		// no duplicate folders or libraries for user1
 		libraries = galaxySearchUser1.findLibraryWithName(libraryName);
@@ -1296,11 +1363,12 @@ public class GalaxyAPIIT {
 	 * @throws MalformedURLException
 	 * @throws ConstraintViolationException
 	 * @throws UploadException
+	 * @throws InterruptedException 
 	 */
 	@Test
 	public void testUploadSamples() throws URISyntaxException,
 			MalformedURLException, ConstraintViolationException,
-			UploadException {
+			UploadException, InterruptedException {
 		GalaxyProjectName libraryName = new GalaxyProjectName("testUploadSamples");
 		String localGalaxyURL = localGalaxy
 				.getGalaxyURL()
@@ -1359,5 +1427,20 @@ public class GalaxyAPIIT {
 		assertEquals("file",
 				contentsMap.get("/illumina_reads/testData2/testData1.fastq")
 						.getType());
+		
+		// test out correct file type
+		Dataset datasetData1 = moveLibraryDataToHistoryDataset(libraryName.getName() + "1", "testData1.fastq",
+				localGalaxy.getGalaxyInstanceAdmin(), contentsMap
+						.get("/illumina_reads/testData1/testData1.fastq")
+						.getId());
+		
+		assertEquals("fastqsanger",datasetData1.getDataType());
+		
+		Dataset datasetData2 = moveLibraryDataToHistoryDataset(libraryName.getName() + "2", "testData1.fastq",
+				localGalaxy.getGalaxyInstanceAdmin(), contentsMap
+						.get("/illumina_reads/testData2/testData1.fastq")
+						.getId());
+		
+		assertEquals("fastqsanger",datasetData2.getDataType());
 	}
 }
