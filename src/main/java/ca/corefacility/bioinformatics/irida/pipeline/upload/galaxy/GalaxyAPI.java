@@ -387,6 +387,15 @@ public class GalaxyAPI {
 							+ " in library name=" + library.getName() + " id="
 							+ library.getId() + " in Galaxy url="
 							+ galaxyInstance.getGalaxyUrl());
+				} else {
+					logger.debug("Failed to upload file to Galaxy, response \"" + uploadResponse.getStatus() + " " + 
+							uploadResponse.getClientResponseStatus() + "\" path="
+							+ samplePath(rootFolder, sample, file)
+							+ " from local path=" + file.getAbsolutePath()
+							+ " dataStorage=" + dataStorage
+							+ " in library name=" + library.getName() + " id="
+							+ library.getId() + " in Galaxy url="
+							+ galaxyInstance.getGalaxyUrl());
 				}
 			}
 		}
