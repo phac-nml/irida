@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.Scope;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
 import com.github.jmchilton.galaxybootstrap.BootStrapper;
@@ -79,7 +78,6 @@ public class LocalGalaxyConfig {
 	 */
 	@Lazy
 	@Bean
-	@Scope("singleton")
 	public LocalGalaxy localGalaxy() throws MalformedURLException {
 		
 		LocalGalaxy localGalaxy = null;
