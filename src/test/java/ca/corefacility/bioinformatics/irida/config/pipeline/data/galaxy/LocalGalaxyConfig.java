@@ -35,6 +35,9 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.L
 @Configuration
 @Profile("test")
 public class LocalGalaxyConfig {
+	
+	private boolean galaxyBuilt = true;
+	
 	private static final Logger logger = LoggerFactory
 			.getLogger(LocalGalaxyConfig.class);
 
@@ -81,6 +84,11 @@ public class LocalGalaxyConfig {
 	public LocalGalaxy localGalaxy() throws MalformedURLException {
 		
 		LocalGalaxy localGalaxy = null;
+		
+		if (!galaxyBuilt) {
+			throw new RuntimeException("Galaxy could not be built the first time.");
+		}
+		
 		try {
 			localGalaxy = new LocalGalaxy();
 	
@@ -122,16 +130,16 @@ public class LocalGalaxyConfig {
 			localGalaxy.setGalaxyInstanceUser2(GalaxyInstanceFactory.get(
 					localGalaxy.getGalaxyURL().toString(),
 					localGalaxy.getUser2APIKey()));
+			
+			galaxyBuilt = true;
 		} catch (Exception e) {
 			logger.error("Could not create local instance of Galaxy");
+			
+			galaxyBuilt = false;
+			
+			throw new RuntimeException("Galaxy could not be built the first time.");
 		}
 
-		// Will return null if Galaxy fails to be built
-		// This is to avoid unit tests constantly re-asking for a LocalGalaxy bean
-		// which then triggers a re-build and takes a lot of time.
-		// Cannot just use System.exit() here either to kill tests early on failure to build as that is
-		// incompatible with Surefire, see http://maven.apache.org/surefire/maven-surefire-plugin/faq.html
-		// Is there another way to handle this?
 		return localGalaxy;
 	}
 	
