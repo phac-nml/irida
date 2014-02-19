@@ -129,22 +129,22 @@ public class SampleServiceImplIT {
 		String externalId = "sample5";
 		Project p = asRole(Role.ROLE_SEQUENCER).projectService.read(3L);
 		Sample s = asRole(Role.ROLE_SEQUENCER).sampleService.getSampleByExternalSampleId(p, externalId);
-		
+
 		assertNotNull("Sample was not populated.", s);
 		assertEquals("Wrong external id.", externalId, s.getExternalSampleId());
 	}
-	
+
 	@Test
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
 	public void testReadSampleAsSequencer() {
 		Long sampleID = 1L;
 		Sample s = asRole(Role.ROLE_SEQUENCER).sampleService.read(sampleID);
-		
+
 		assertNotNull("Sample was not populated.", s);
 		assertEquals("Wrong external id.", sampleID, s.getId());
 	}
-	
+
 	@Test
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
@@ -153,7 +153,18 @@ public class SampleServiceImplIT {
 		Long projectID = 1L;
 		Project p = asRole(Role.ROLE_SEQUENCER).projectService.read(projectID);
 		Sample s = asRole(Role.ROLE_SEQUENCER).sampleService.getSampleForProject(p, sampleID);
-		
+
+		assertNotNull("Sample was not populated.", s);
+		assertEquals("Wrong external id.", sampleID, s.getId());
+	}
+
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
+	public void testGetSampleForProjectAsUser() {
+		Long sampleID = 2L;
+		Sample s = asRole(Role.ROLE_USER).sampleService.read(sampleID);
+
 		assertNotNull("Sample was not populated.", s);
 		assertEquals("Wrong external id.", sampleID, s.getId());
 	}
