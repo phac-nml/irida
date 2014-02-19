@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -85,6 +86,32 @@ public class SequenceFileServiceImplIT {
 	@After
 	public void tearDown() throws IOException {
 		Files.walkFileTree(BASE_DIRECTORY, new RecursiveDeleteVisitor());
+	}
+	
+	private SequenceFileServiceImplIT asRole(Role r, String username) {
+		User u = new User();
+		u.setUsername(username);
+		u.setPassword(passwordEncoder.encode("Password1"));
+		u.setSystemRole(r);
+		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
+				ImmutableList.of(r));
+		auth.setDetails(u);
+		SecurityContextHolder.getContext().setAuthentication(auth);
+		return this;
+	}
+	
+	@Test(expected = AccessDeniedException.class)
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
+	public void testReadSequenceFileAsUserNoPermissions() {
+		asRole(Role.ROLE_USER, "fbristow").sequenceFileService.read(1L);
+	}
+	
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
+	public void testReadSequenceFileAsUserWithPermissions() {
+		asRole(Role.ROLE_USER, "fbristow1").sequenceFileService.read(1L);
 	}
 
 	@Test

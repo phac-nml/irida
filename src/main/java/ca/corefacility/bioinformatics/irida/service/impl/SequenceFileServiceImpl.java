@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
@@ -106,6 +107,14 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		logger.trace("Calling this.update");
 		final SequenceFile updatedSequenceFile = super.update(sequenceFile.getId(), changed);
 		return updatedSequenceFile;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public SequenceFile read(Long id) throws EntityNotFoundException {
+		return super.read(id);
 	}
 
 	/**

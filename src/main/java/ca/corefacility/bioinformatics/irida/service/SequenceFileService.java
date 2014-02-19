@@ -36,7 +36,7 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	// TODO: ROLE_SEQUENCER should **not** have access to read sequence files
 	// after they have been uploaded. Revoke this access when sequencing data is
 	// uploaded as a single package.
-	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER')")
+	@PreAuthorize("hasRole('ROLE_SEQUENCER') or hasPermission(#id, 'canReadSequenceFile')")
 	public SequenceFile read(Long id) throws EntityNotFoundException;
 
 	/**
