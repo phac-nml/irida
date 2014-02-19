@@ -20,7 +20,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	/**
 	 * {@inheritDoc}
 	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadSample')")
 	public Sample read(Long id) throws EntityNotFoundException;
 	
 	/**
