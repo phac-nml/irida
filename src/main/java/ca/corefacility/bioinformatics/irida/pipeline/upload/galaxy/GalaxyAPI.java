@@ -49,6 +49,11 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 public class GalaxyAPI {
 	
+	/**
+	 * Sets default filetype for fastq files uploaded to Galaxy libraries.
+	 */
+	private static final String DEFAULT_FILE_TYPE = "fastqsanger";
+	
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyAPI.class);
 
@@ -268,6 +273,7 @@ public class GalaxyAPI {
 		upload.setContent(file.getAbsolutePath());
 		upload.setName(file.getName());
 		upload.setLinkData(DataStorage.LOCAL.equals(dataStorage));
+		upload.setFileType(DEFAULT_FILE_TYPE);
 
 		return librariesClient.uploadFilesystemPathsRequest(library.getId(),
 				upload);
