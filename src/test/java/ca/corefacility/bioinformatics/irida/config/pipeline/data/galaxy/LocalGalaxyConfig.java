@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.Scope;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
 import com.github.jmchilton.galaxybootstrap.BootStrapper;
@@ -78,48 +79,61 @@ public class LocalGalaxyConfig {
 	 */
 	@Lazy
 	@Bean
+	@Scope("singleton")
 	public LocalGalaxy localGalaxy() throws MalformedURLException {
-		LocalGalaxy localGalaxy = new LocalGalaxy();
+		
+		LocalGalaxy localGalaxy = null;
+		try {
+			localGalaxy = new LocalGalaxy();
+	
+			String randomPassword = UUID.randomUUID().toString();
+	
+			localGalaxy.setAdminName(new GalaxyAccountEmail("admin@localhost"));
+			localGalaxy.setAdminPassword(randomPassword);
+			localGalaxy.setUser1Name(new GalaxyAccountEmail("user1@localhost"));
+			localGalaxy.setUser1Password(randomPassword);
+			localGalaxy.setUser2Name(new GalaxyAccountEmail("user2@localhost"));
+			localGalaxy.setUser2Password(randomPassword);
+			localGalaxy.setNonExistentGalaxyAdminName(new GalaxyAccountEmail(
+					"admin_no_exist@localhost"));
+			localGalaxy.setNonExistentGalaxyUserName(new GalaxyAccountEmail(
+					"no_exist@localhost"));
+	
+			localGalaxy.setInvalidGalaxyUserName(new GalaxyAccountEmail(
+					"<a href='localhost'>invalid user</a>"));
+	
+			GalaxyData galaxyData = new GalaxyData();
+	
+			BootStrapper bootStrapper = downloadGalaxy(localGalaxy);
+			localGalaxy.setBootStrapper(bootStrapper);
+	
+			GalaxyProperties galaxyProperties = setupGalaxyProperties(localGalaxy);
+			localGalaxy.setGalaxyProperties(galaxyProperties);
+	
+			buildGalaxyUsers(galaxyData, localGalaxy);
+	
+			GalaxyDaemon galaxyDaemon = runGalaxy(galaxyData, localGalaxy);
+			localGalaxy.setGalaxyDaemon(galaxyDaemon);
+	
+			localGalaxy.setGalaxyInstanceAdmin(GalaxyInstanceFactory.get(
+					localGalaxy.getGalaxyURL().toString(),
+					localGalaxy.getAdminAPIKey()));
+			localGalaxy.setGalaxyInstanceUser1(GalaxyInstanceFactory.get(
+					localGalaxy.getGalaxyURL().toString(),
+					localGalaxy.getUser1APIKey()));
+			localGalaxy.setGalaxyInstanceUser2(GalaxyInstanceFactory.get(
+					localGalaxy.getGalaxyURL().toString(),
+					localGalaxy.getUser2APIKey()));
+		} catch (Exception e) {
+			logger.error("Could not create local instance of Galaxy");
+		}
 
-		String randomPassword = UUID.randomUUID().toString();
-
-		localGalaxy.setAdminName(new GalaxyAccountEmail("admin@localhost"));
-		localGalaxy.setAdminPassword(randomPassword);
-		localGalaxy.setUser1Name(new GalaxyAccountEmail("user1@localhost"));
-		localGalaxy.setUser1Password(randomPassword);
-		localGalaxy.setUser2Name(new GalaxyAccountEmail("user2@localhost"));
-		localGalaxy.setUser2Password(randomPassword);
-		localGalaxy.setNonExistentGalaxyAdminName(new GalaxyAccountEmail(
-				"admin_no_exist@localhost"));
-		localGalaxy.setNonExistentGalaxyUserName(new GalaxyAccountEmail(
-				"no_exist@localhost"));
-
-		localGalaxy.setInvalidGalaxyUserName(new GalaxyAccountEmail(
-				"<a href='localhost'>invalid user</a>"));
-
-		GalaxyData galaxyData = new GalaxyData();
-
-		BootStrapper bootStrapper = downloadGalaxy(localGalaxy);
-		localGalaxy.setBootStrapper(bootStrapper);
-
-		GalaxyProperties galaxyProperties = setupGalaxyProperties(localGalaxy);
-		localGalaxy.setGalaxyProperties(galaxyProperties);
-
-		buildGalaxyUsers(galaxyData, localGalaxy);
-
-		GalaxyDaemon galaxyDaemon = runGalaxy(galaxyData, localGalaxy);
-		localGalaxy.setGalaxyDaemon(galaxyDaemon);
-
-		localGalaxy.setGalaxyInstanceAdmin(GalaxyInstanceFactory.get(
-				localGalaxy.getGalaxyURL().toString(),
-				localGalaxy.getAdminAPIKey()));
-		localGalaxy.setGalaxyInstanceUser1(GalaxyInstanceFactory.get(
-				localGalaxy.getGalaxyURL().toString(),
-				localGalaxy.getUser1APIKey()));
-		localGalaxy.setGalaxyInstanceUser2(GalaxyInstanceFactory.get(
-				localGalaxy.getGalaxyURL().toString(),
-				localGalaxy.getUser2APIKey()));
-
+		// Will return null if Galaxy fails to be built
+		// This is to avoid unit tests constantly re-asking for a LocalGalaxy bean
+		// which then triggers a re-build and takes a lot of time.
+		// Cannot just use System.exit() here either to kill tests early on failure to build as that is
+		// incompatible with Surefire, see http://maven.apache.org/surefire/maven-surefire-plugin/faq.html
+		// Is there another way to handle this?
 		return localGalaxy;
 	}
 	
