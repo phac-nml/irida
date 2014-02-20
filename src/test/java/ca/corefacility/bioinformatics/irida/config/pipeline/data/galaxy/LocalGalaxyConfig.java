@@ -36,7 +36,15 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.L
 @Profile("test")
 public class LocalGalaxyConfig {
 	
-	private boolean galaxyBuilt = true;
+	/**
+	 * Boolean to determine of Galaxy was successfully built the very first time.
+	 */
+	private boolean galaxyFailedToBuild = false;
+	
+	/**
+	 * Exception on failure to build Galaxy for the first time.
+	 */
+	private Exception galaxyBuildException = null;
 	
 	private static final Logger logger = LoggerFactory
 			.getLogger(LocalGalaxyConfig.class);
@@ -83,64 +91,64 @@ public class LocalGalaxyConfig {
 	@Bean
 	public LocalGalaxy localGalaxy() throws MalformedURLException {
 		
-		LocalGalaxy localGalaxy = null;
+		if (galaxyFailedToBuild) {
+			throw new RuntimeException("Galaxy could not be built the first time, don't attempt to try again", galaxyBuildException);
+		} else {
+			
+			try {
+				LocalGalaxy localGalaxy = new LocalGalaxy();
 		
-		if (!galaxyBuilt) {
-			throw new RuntimeException("Galaxy could not be built the first time.");
-		}
+				String randomPassword = UUID.randomUUID().toString();
 		
-		try {
-			localGalaxy = new LocalGalaxy();
-	
-			String randomPassword = UUID.randomUUID().toString();
-	
-			localGalaxy.setAdminName(new GalaxyAccountEmail("admin@localhost"));
-			localGalaxy.setAdminPassword(randomPassword);
-			localGalaxy.setUser1Name(new GalaxyAccountEmail("user1@localhost"));
-			localGalaxy.setUser1Password(randomPassword);
-			localGalaxy.setUser2Name(new GalaxyAccountEmail("user2@localhost"));
-			localGalaxy.setUser2Password(randomPassword);
-			localGalaxy.setNonExistentGalaxyAdminName(new GalaxyAccountEmail(
-					"admin_no_exist@localhost"));
-			localGalaxy.setNonExistentGalaxyUserName(new GalaxyAccountEmail(
-					"no_exist@localhost"));
-	
-			localGalaxy.setInvalidGalaxyUserName(new GalaxyAccountEmail(
-					"<a href='localhost'>invalid user</a>"));
-	
-			GalaxyData galaxyData = new GalaxyData();
-	
-			BootStrapper bootStrapper = downloadGalaxy(localGalaxy);
-			localGalaxy.setBootStrapper(bootStrapper);
-	
-			GalaxyProperties galaxyProperties = setupGalaxyProperties(localGalaxy);
-			localGalaxy.setGalaxyProperties(galaxyProperties);
-	
-			buildGalaxyUsers(galaxyData, localGalaxy);
-	
-			GalaxyDaemon galaxyDaemon = runGalaxy(galaxyData, localGalaxy);
-			localGalaxy.setGalaxyDaemon(galaxyDaemon);
-	
-			localGalaxy.setGalaxyInstanceAdmin(GalaxyInstanceFactory.get(
-					localGalaxy.getGalaxyURL().toString(),
-					localGalaxy.getAdminAPIKey()));
-			localGalaxy.setGalaxyInstanceUser1(GalaxyInstanceFactory.get(
-					localGalaxy.getGalaxyURL().toString(),
-					localGalaxy.getUser1APIKey()));
-			localGalaxy.setGalaxyInstanceUser2(GalaxyInstanceFactory.get(
-					localGalaxy.getGalaxyURL().toString(),
-					localGalaxy.getUser2APIKey()));
-			
-			galaxyBuilt = true;
-		} catch (Exception e) {
-			logger.error("Could not create local instance of Galaxy");
-			
-			galaxyBuilt = false;
-			
-			throw new RuntimeException("Galaxy could not be built the first time.");
+				localGalaxy.setAdminName(new GalaxyAccountEmail("admin@localhost"));
+				localGalaxy.setAdminPassword(randomPassword);
+				localGalaxy.setUser1Name(new GalaxyAccountEmail("user1@localhost"));
+				localGalaxy.setUser1Password(randomPassword);
+				localGalaxy.setUser2Name(new GalaxyAccountEmail("user2@localhost"));
+				localGalaxy.setUser2Password(randomPassword);
+				localGalaxy.setNonExistentGalaxyAdminName(new GalaxyAccountEmail(
+						"admin_no_exist@localhost"));
+				localGalaxy.setNonExistentGalaxyUserName(new GalaxyAccountEmail(
+						"no_exist@localhost"));
+		
+				localGalaxy.setInvalidGalaxyUserName(new GalaxyAccountEmail(
+						"<a href='localhost'>invalid user</a>"));
+		
+				GalaxyData galaxyData = new GalaxyData();
+		
+				BootStrapper bootStrapper = downloadGalaxy(localGalaxy);
+				localGalaxy.setBootStrapper(bootStrapper);
+		
+				GalaxyProperties galaxyProperties = setupGalaxyProperties(localGalaxy);
+				localGalaxy.setGalaxyProperties(galaxyProperties);
+		
+				buildGalaxyUsers(galaxyData, localGalaxy);
+		
+				GalaxyDaemon galaxyDaemon = runGalaxy(galaxyData, localGalaxy);
+				localGalaxy.setGalaxyDaemon(galaxyDaemon);
+		
+				localGalaxy.setGalaxyInstanceAdmin(GalaxyInstanceFactory.get(
+						localGalaxy.getGalaxyURL().toString(),
+						localGalaxy.getAdminAPIKey()));
+				localGalaxy.setGalaxyInstanceUser1(GalaxyInstanceFactory.get(
+						localGalaxy.getGalaxyURL().toString(),
+						localGalaxy.getUser1APIKey()));
+				localGalaxy.setGalaxyInstanceUser2(GalaxyInstanceFactory.get(
+						localGalaxy.getGalaxyURL().toString(),
+						localGalaxy.getUser2APIKey()));
+				
+				return localGalaxy;
+			} catch (Exception e) {
+				// If Galaxy failed to build, we don't want it to re-build on every test
+				// which will waste time and resources.  Instead, we save the failure exception
+				// and throw it on every further attempt to build a local instance of Galaxy.
+				
+				galaxyFailedToBuild = true;
+				galaxyBuildException = e;
+				
+				throw e;
+			}
 		}
-
-		return localGalaxy;
 	}
 	
 	/**
