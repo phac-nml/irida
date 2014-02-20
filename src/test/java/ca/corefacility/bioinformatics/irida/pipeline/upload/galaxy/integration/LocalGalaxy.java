@@ -64,7 +64,13 @@ public class LocalGalaxy {
 		logger.info("Shutting down Galaxy on url=" + galaxyURL);
 		galaxyDaemon.stop();
 		galaxyDaemon.waitForDown();
-		logger.info("Galaxy shutdown");
+		deleteGalaxy();
+	}
+	
+	/**
+	 * Delete Galaxy directory
+	 */
+	public void deleteGalaxy() {
 		logger.debug("Deleting Galaxy directory: " + bootStrapper.getPath());
 		bootStrapper.deleteGalaxyRoot();
 	}

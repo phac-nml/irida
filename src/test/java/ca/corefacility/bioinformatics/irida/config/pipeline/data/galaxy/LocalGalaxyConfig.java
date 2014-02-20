@@ -94,9 +94,10 @@ public class LocalGalaxyConfig {
 		if (galaxyFailedToBuild) {
 			throw new RuntimeException("Galaxy could not be built the first time, don't attempt to try again", galaxyBuildException);
 		} else {
+			LocalGalaxy localGalaxy = null;
 			
 			try {
-				LocalGalaxy localGalaxy = new LocalGalaxy();
+				localGalaxy = new LocalGalaxy();
 		
 				String randomPassword = UUID.randomUUID().toString();
 		
@@ -145,6 +146,11 @@ public class LocalGalaxyConfig {
 				
 				galaxyFailedToBuild = true;
 				galaxyBuildException = e;
+				
+				// cleanup files if Galaxy was downloaded but couldn't be run
+				if (localGalaxy != null) {
+					localGalaxy.deleteGalaxy();
+				}
 				
 				throw e;
 			}
