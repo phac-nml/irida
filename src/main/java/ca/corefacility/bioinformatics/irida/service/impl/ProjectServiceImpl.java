@@ -61,6 +61,11 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	}
 	
 	@Override
+	public Iterable<Project> findAll() {
+		return super.findAll();
+	}
+	
+	@Override
 	public Project read(Long id) {
 		return super.read(id);
 	}
