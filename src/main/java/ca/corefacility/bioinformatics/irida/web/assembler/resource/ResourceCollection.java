@@ -1,12 +1,13 @@
 package ca.corefacility.bioinformatics.irida.web.assembler.resource;
 
-import org.springframework.hateoas.ResourceSupport;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.springframework.hateoas.ResourceSupport;
 
 /**
  * Wraps a collection of {@link ResourceCollection} objects to be sent to the client.
@@ -21,10 +22,6 @@ public class ResourceCollection<Type extends ResourceSupport> extends ResourceSu
      */
     @XmlElement
     private List<Type> resources;
-    /**
-     * The total number of resources in the ENTIRE collection (not just those that are being serialized).
-     */
-    private long totalResources;
 
     /**
      * Default constructor, empty set of resources.
@@ -58,24 +55,6 @@ public class ResourceCollection<Type extends ResourceSupport> extends ResourceSu
      */
     public List<Type> getResources() {
         return this.resources;
-    }
-
-    /**
-     * Get the total number of resources in the collection.
-     *
-     * @return total resources in the collection.
-     */
-    public long getTotalResources() {
-        return this.totalResources;
-    }
-
-    /**
-     * Set the total number of resources in the collection.
-     *
-     * @param totalResources total number of resources in the collection.
-     */
-    public void setTotalResources(long totalResources) {
-        this.totalResources = totalResources;
     }
 
     /**

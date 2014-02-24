@@ -122,8 +122,7 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelMap listAllResources() {
 		Iterable<Type> entities = crudService.findAll();
-		long count = crudService.count();
-		ResourceCollection<ResourceType> resources = new ResourceCollection<>(count);
+		ResourceCollection<ResourceType> resources = new ResourceCollection<>();
 		try {
 			for (Type entity : entities) {
 				ResourceType resource = resourceType.newInstance();
@@ -137,7 +136,6 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 
 		resources.add(linkTo(getClass()).withSelfRel());
 		resources.add(linkTo(getClass()).withRel(REL_COLLECTION_FIRST_PAGE));
-		resources.setTotalResources(count);
 
 		ModelMap model = new ModelMap();
 		model.addAttribute(GenericController.RESOURCE_NAME, resources);

@@ -134,7 +134,6 @@ public class ProjectSamplesController {
 		}
 
 		sampleResources.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
-		sampleResources.setTotalResources(relationships.size());
 
 		modelMap.addAttribute(GenericController.RESOURCE_NAME, sampleResources);
 
