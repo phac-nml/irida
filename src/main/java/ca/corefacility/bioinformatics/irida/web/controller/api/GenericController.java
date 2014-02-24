@@ -61,10 +61,6 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 	 */
 	public static final String REL_COLLECTION = "collection";
 	/**
-	 * rel for the first page of the users document.
-	 */
-	public static final String REL_COLLECTION_FIRST_PAGE = "collection/pages/first";
-	/**
 	 * logger.
 	 */
 	private static final Logger logger = LoggerFactory.getLogger(GenericController.class);
@@ -135,7 +131,6 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 		}
 
 		resources.add(linkTo(getClass()).withSelfRel());
-		resources.add(linkTo(getClass()).withRel(REL_COLLECTION_FIRST_PAGE));
 
 		ModelMap model = new ModelMap();
 		model.addAttribute(GenericController.RESOURCE_NAME, resources);
