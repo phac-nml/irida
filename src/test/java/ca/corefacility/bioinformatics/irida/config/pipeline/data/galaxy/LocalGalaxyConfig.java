@@ -168,15 +168,16 @@ public class LocalGalaxyConfig {
 		String revisionHash = System.getProperty(systemProperty);
 		if (revisionHash != null) {
 			
-			// must string LATEST_REVISION_STRING or a hex number
+			// must be LATEST_REVISION_STRING or a hex number
 			if (LATEST_REVISION_STRING.equalsIgnoreCase(revisionHash)) {
 				revisionHash = DownloadProperties.LATEST_REVISION;
+				logger.debug("Galaxy revision from " + systemProperty + "=" + LATEST_REVISION_STRING);
 			}
 			else if (!revisionHash.matches("^[a-fA-F0-9]+$")) {
 				throw new IllegalArgumentException(systemProperty + "=" + revisionHash + " is invalid");
+			} else {
+				logger.debug("Galaxy revision from " + systemProperty + "=" + revisionHash);
 			}
-			
-			logger.debug("Galaxy revision from " + systemProperty + "=" + revisionHash);
 		} else {
 			revisionHash = DownloadProperties.LATEST_REVISION;
 			logger.debug("No Galaxy revision set in " + systemProperty + " defaulting to latest revision");
@@ -217,7 +218,6 @@ public class LocalGalaxyConfig {
 			throws MalformedURLException {
 		GalaxyProperties galaxyProperties = new GalaxyProperties()
 				.assignFreePort().configureNestedShedTools();
-		galaxyProperties.prepopulateSqliteDatabase();
 		galaxyProperties.setAppProperty("allow_library_path_paste", "true");
 
 		int galaxyPort = galaxyProperties.getPort();
