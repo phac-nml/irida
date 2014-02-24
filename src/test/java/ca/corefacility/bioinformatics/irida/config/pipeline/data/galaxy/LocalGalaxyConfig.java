@@ -98,6 +98,8 @@ public class LocalGalaxyConfig {
 			
 			try {
 				localGalaxy = new LocalGalaxy();
+				
+				String revisionHash = getGalaxyRevision("test.galaxy.revision");
 		
 				String randomPassword = UUID.randomUUID().toString();
 		
@@ -117,10 +119,10 @@ public class LocalGalaxyConfig {
 		
 				GalaxyData galaxyData = new GalaxyData();
 		
-				BootStrapper bootStrapper = downloadGalaxy(localGalaxy);
+				BootStrapper bootStrapper = downloadGalaxy(localGalaxy,revisionHash);
 				localGalaxy.setBootStrapper(bootStrapper);
 		
-				GalaxyProperties galaxyProperties = setupGalaxyProperties(localGalaxy);
+				GalaxyProperties galaxyProperties = setupGalaxyProperties(localGalaxy,revisionHash);
 				localGalaxy.setGalaxyProperties(galaxyProperties);
 		
 				buildGalaxyUsers(galaxyData, localGalaxy);
@@ -168,15 +170,16 @@ public class LocalGalaxyConfig {
 		String revisionHash = System.getProperty(systemProperty);
 		if (revisionHash != null) {
 			
-			// must string LATEST_REVISION_STRING or a hex number
+			// must be LATEST_REVISION_STRING or a hex number
 			if (LATEST_REVISION_STRING.equalsIgnoreCase(revisionHash)) {
 				revisionHash = DownloadProperties.LATEST_REVISION;
+				logger.debug("Galaxy revision from " + systemProperty + "=" + LATEST_REVISION_STRING);
 			}
 			else if (!revisionHash.matches("^[a-fA-F0-9]+$")) {
 				throw new IllegalArgumentException(systemProperty + "=" + revisionHash + " is invalid");
+			} else {
+				logger.debug("Galaxy revision from " + systemProperty + "=" + revisionHash);
 			}
-			
-			logger.debug("Galaxy revision from " + systemProperty + "=" + revisionHash);
 		} else {
 			revisionHash = DownloadProperties.LATEST_REVISION;
 			logger.debug("No Galaxy revision set in " + systemProperty + " defaulting to latest revision");
@@ -188,12 +191,11 @@ public class LocalGalaxyConfig {
 	/**
 	 * Downloads the latest stable release of Galaxy.
 	 * @param localGalaxy  The LocalGalaxy object used to fill in information about Galaxy.
+	 * @param revisionHash  The mercurial revisionHash of Galaxy to download. 
 	 * @return  A BootStrapper object describing the downloaded Galaxy.
 	 */
-	private BootStrapper downloadGalaxy(LocalGalaxy localGalaxy) {
+	private BootStrapper downloadGalaxy(LocalGalaxy localGalaxy, String revisionHash) {
 		final File DEFAULT_DESTINATION = null;
-		
-		String revisionHash = getGalaxyRevision("test.galaxy.revision");
 		
 		DownloadProperties downloadProperties
 			= DownloadProperties.forGalaxyDist(DEFAULT_DESTINATION, revisionHash);
@@ -210,14 +212,21 @@ public class LocalGalaxyConfig {
 	/**
 	 * Does some custom configuration for Galaxy to work with the tests.
 	 * @param localGalaxy  The object describing the local running instance of Galaxy.
+	 * @param revisionHash  The mercurial revision hash of the Galaxy version to download. 
 	 * @return  A GalaxyProperties object defining properties of the running instance of Galaxy.
 	 * @throws MalformedURLException  If there was an issue constructing the Galaxy URL.
 	 */
-	private GalaxyProperties setupGalaxyProperties(LocalGalaxy localGalaxy)
+	private GalaxyProperties setupGalaxyProperties(LocalGalaxy localGalaxy, String revisionHash)
 			throws MalformedURLException {
 		GalaxyProperties galaxyProperties = new GalaxyProperties()
 				.assignFreePort().configureNestedShedTools();
-		galaxyProperties.prepopulateSqliteDatabase();
+		
+		// only pre-populate if latest Galaxy
+		// speeds up database construction, but database wouldn't be valid for previous versions of Galaxy
+		if (DownloadProperties.LATEST_REVISION.equals(revisionHash)) {
+			galaxyProperties.prepopulateSqliteDatabase();
+		}
+		
 		galaxyProperties.setAppProperty("allow_library_path_paste", "true");
 
 		int galaxyPort = galaxyProperties.getPort();
