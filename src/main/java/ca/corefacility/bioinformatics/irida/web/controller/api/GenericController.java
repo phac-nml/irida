@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api;
 
-import static ca.corefacility.bioinformatics.irida.web.controller.api.links.PageableControllerLinkBuilder.pageLinksFor;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 import java.util.Collection;
@@ -9,10 +8,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +20,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
@@ -32,18 +27,12 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.exception.GenericsException;
-import ca.corefacility.bioinformatics.irida.web.controller.api.links.PageableControllerLinkBuilder;
-import ca.corefacility.bioinformatics.irida.web.controller.api.support.SortProperty;
 
-import com.google.common.base.Strings;
 import com.google.common.net.HttpHeaders;
 
 /**
  * A controller that can serve any model from the database.
  * 
- * @param <IdentifierType>
- *            the type used to identify the resource served by this controller
- *            in the database.
  * @param <Type>
  *            the type that this controller is working with.
  * @param <ResourceType>
@@ -75,10 +64,6 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 	 * rel for the first page of the users document.
 	 */
 	public static final String REL_COLLECTION_FIRST_PAGE = "collection/pages/first";
-	/**
-	 * rel for the complete collection instead of the paged collection.
-	 */
-	public static final String REL_ALL = "collection/all";
 	/**
 	 * logger.
 	 */
@@ -116,38 +101,6 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 	}
 
 	/**
-	 * Get the default sort property, <code>SortProperty.DEFAULT</code> by
-	 * default.
-	 * 
-	 * @return the default sort property for this class.
-	 */
-	protected SortProperty getDefaultSortProperty() {
-		return SortProperty.DEFAULT;
-	}
-
-	/**
-	 * Get the default sort order for this class, <code>Order.ASCENDING</code>
-	 * by default.
-	 * 
-	 * @return the default sort order for this class.
-	 */
-	protected Direction getDefaultSortOrder() {
-		return Direction.ASC;
-	}
-
-	/**
-	 * Construct a collection of {@link Link}s for a complete resource
-	 * collection. Each resource collection may have have custom links that
-	 * refer to other controllers (or themselves). This method is called by the
-	 * <code>listResources</code> method.
-	 * 
-	 * @return a collection of links.
-	 */
-	protected Collection<Link> constructCustomResourceCollectionLinks() {
-		return Collections.emptySet();
-	}
-
-	/**
 	 * Construct a collection of {@link Link}s for a specific resource. Each
 	 * resource may have custom links that refer to other controllers, but not
 	 * all will. This method is called by the <code>getResource</code> method.
@@ -161,98 +114,12 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 	}
 
 	/**
-	 * Retrieve and construct a response with a collection of resources.
-	 * 
-	 * @param page
-	 *            the current page of the list of resources that the client
-	 *            wants.
-	 * @param size
-	 *            the size of the page that the client wants to see.
-	 * @param sortProperty
-	 *            the property that the resources should be sorted by.
-	 * @param sortOrder
-	 *            the order of the sort.
-	 * @return a model and view containing the collection of resources.
-	 */
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelMap listResources(
-			@RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_PAGE, defaultValue = "0") int page,
-			@RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SIZE, defaultValue = "20") int size,
-			@RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_PROPERTY, required = false) String sortProperty,
-			@RequestParam(value = PageableControllerLinkBuilder.REQUEST_PARAM_SORT_ORDER, required = false) Direction sortOrder) {
-		ModelMap model = new ModelMap();
-		Page<Type> entities;
-		ControllerLinkBuilder linkBuilder = linkTo(getClass());
-		long totalEntities = crudService.count();
-		ResourceCollection<ResourceType> resources = new ResourceCollection<>();
-
-		// if the client did not specify a sort property via parameters,
-		// try to get a default sort property from the subclass.
-		if (Strings.isNullOrEmpty(sortProperty) && !SortProperty.DEFAULT.equals(getDefaultSortProperty())) {
-			sortProperty = getDefaultSortProperty().getSortProperty();
-		}
-
-		// if the client did not specify a sort order via parameters,
-		// try to get the default sort order from the subclass.
-		if (sortOrder == null) {
-			sortOrder = getDefaultSortOrder();
-		}
-
-		logger.debug("Sort property: [" + sortProperty + "], sort order: [" + sortOrder + "]");
-
-		// if no sort property is supplied by parameters, then the default sort
-		// property
-		// should be used by calling the service without specifying a property
-		// to sort by.
-		// Otherwise, call the service with the sort property supplied by the
-		// client.
-		if (Strings.isNullOrEmpty(sortProperty)) {
-			entities = crudService.list(page, size, sortOrder);
-		} else {
-			entities = crudService.list(page, size, sortOrder, sortProperty);
-		}
-
-		// for each entity returned by the service, construct a new instance of
-		// the
-		// resource type and add a self-rel using the linkBuilder.
-		try {
-			for (Type entity : entities) {
-				ResourceType resource = resourceType.newInstance();
-				resource.setResource(entity);
-				resource.add(linkBuilder.slash(entity.getId()).withSelfRel());
-				resources.add(resource);
-			}
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw new GenericsException("Could not initialize resourceType: [" + resourceType + "]");
-		}
-
-		// the server will respond with only one page worth of entities, so we
-		// should tell
-		// the client how to get more pages of results by constructing a series
-		// of page links.
-		resources.add(pageLinksFor(getClass(), page, size, totalEntities, sortProperty, sortOrder));
-		// add a link to the "all" collection:
-		resources.add(linkTo(getClass()).slash("/all").withRel(REL_ALL));
-		// we should also tell the client how many resources of this type there
-		// are in total
-		resources.setTotalResources(totalEntities);
-		// add any custom links for the resource collection.
-		resources.add(constructCustomResourceCollectionLinks());
-
-		// finally, add the resource collection to the response
-		model.addAttribute(RESOURCE_NAME, resources);
-
-		// send the response back to the client.
-		return model;
-	}
-
-	/**
 	 * Get all resources in the application.
 	 * 
 	 * @return a model containing all resources of the specified type in the
 	 *         application.
 	 */
-	@RequestMapping(value = "/all", method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelMap listAllResources() {
 		Iterable<Type> entities = crudService.findAll();
 		long count = crudService.count();
@@ -268,7 +135,7 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 			throw new GenericsException("Could not initialize resourceType: [" + resourceType + "]");
 		}
 
-		resources.add(linkTo(getClass()).slash("all").withSelfRel());
+		resources.add(linkTo(getClass()).withSelfRel());
 		resources.add(linkTo(getClass()).withRel(REL_COLLECTION_FIRST_PAGE));
 		resources.setTotalResources(count);
 
