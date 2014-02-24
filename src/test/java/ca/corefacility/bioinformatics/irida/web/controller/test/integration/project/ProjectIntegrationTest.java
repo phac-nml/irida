@@ -6,8 +6,6 @@ import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.isA;
-import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -94,9 +92,7 @@ public class ProjectIntegrationTest {
 	@Test
 	public void testGetProjects() {
 		// first page shouldn't have prev link, default view returns 20 projects
-		asAdmin().expect().body("resource.links.rel", hasItems("self", "first", "next", "last")).and()
-				.body("resource.links.rel", not(hasItem("prev"))).and()
-				.body("resource.totalResources", isA(Integer.class)).when().get(PROJECTS);
+		asAdmin().expect().body("resource.links.rel", hasItems("self")).when().get(PROJECTS);
 	}
 
 	@Test

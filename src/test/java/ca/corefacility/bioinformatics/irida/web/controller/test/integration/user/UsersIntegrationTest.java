@@ -24,8 +24,8 @@ public class UsersIntegrationTest {
 
 	@Test
 	public void testGetAllUsers() {
-		asAdmin().expect().body("resource.links.rel", hasItems("self", "collection/pages/first")).and()
-				.body("resource.resources.username", hasItem("fbristow")).when().get("/users/all");
+		asAdmin().expect().body("resource.links.rel", hasItems("self")).and()
+				.body("resource.resources.username", hasItem("fbristow")).when().get("/users");
 	}
 
 	@Test

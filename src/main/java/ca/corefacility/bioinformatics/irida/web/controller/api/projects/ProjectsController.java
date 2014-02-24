@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,16 +48,6 @@ public class ProjectsController extends GenericController<Project, ProjectResour
     @Autowired
     public ProjectsController(ProjectService projectService) {
         super(projectService, Project.class, ProjectResource.class);
-    }
-
-    /**
-     * Projects should be sorted in descending order by default.
-     *
-     * @return a descending sort order (<code>Order.DESCENDING</code>).
-     */
-    @Override
-    protected Direction getDefaultSortOrder() {
-        return Direction.DESC;
     }
 
     /**
