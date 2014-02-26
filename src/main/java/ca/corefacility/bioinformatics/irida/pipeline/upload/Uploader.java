@@ -14,10 +14,13 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 
 /**
  * Defines an interface for a class used to send data from the archive into a remote site (e.g. Galaxy).
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
+ * @param <ProjectName>  The name of the project to upload into.
+ * @param <AccountName>  The name of the user account to make an owner of a new data location.
+ * 
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
-public interface Uploader<P extends UploadProjectName, A extends UploaderAccountName> {
+public interface Uploader<ProjectName extends UploadProjectName, AccountName extends UploaderAccountName> {
 	/**
 	 * Defines the location of data to upload on a filesystem.
 	 * 
@@ -58,8 +61,8 @@ public interface Uploader<P extends UploadProjectName, A extends UploaderAccount
 	 */
 	public UploadResult uploadSamples(
 			@Valid List<UploadSample> samples,
-			@Valid P dataLocation,
-			@Valid A userName) throws UploadException,
+			@Valid ProjectName dataLocation,
+			@Valid AccountName userName) throws UploadException,
 			ConstraintViolationException;
 
 	/**
