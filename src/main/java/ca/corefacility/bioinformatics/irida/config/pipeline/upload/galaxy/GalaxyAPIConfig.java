@@ -21,6 +21,7 @@ import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
 
@@ -51,7 +52,7 @@ public class GalaxyAPIConfig {
 	 * @return  A new GalaxyUploader object.
 	 */
 	@Bean
-	public GalaxyUploader galaxyUploader() {
+	public Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader() {
 		GalaxyUploader galaxyUploader = new GalaxyUploader();
 
 		String galaxyURLString = environment.getProperty(URL_PROPERTY);

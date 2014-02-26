@@ -22,6 +22,8 @@ import com.github.jmchilton.galaxybootstrap.GalaxyData.User;
 
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
@@ -60,7 +62,7 @@ public class LocalGalaxyConfig {
 	 */
 	@Lazy
 	@Bean
-	public GalaxyUploader galaxyUploader() throws MalformedURLException, GalaxyConnectException {
+	public Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader() throws MalformedURLException, GalaxyConnectException {
 		GalaxyUploader galaxyUploader = new GalaxyUploader();
 		galaxyUploader.setupGalaxyAPI(localGalaxy().getGalaxyURL(),
 				localGalaxy().getAdminName(), localGalaxy().getAdminAPIKey());
