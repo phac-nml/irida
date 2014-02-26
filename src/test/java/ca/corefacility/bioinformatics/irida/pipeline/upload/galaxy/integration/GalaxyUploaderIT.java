@@ -36,7 +36,6 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEma
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -58,7 +57,7 @@ public class GalaxyUploaderIT {
 	private LocalGalaxy localGalaxy;
 
 	@Autowired
-	private Uploader galaxyUploader;
+	private GalaxyUploader galaxyUploader;
 
 	private List<Path> dataFilesSingle;
 
@@ -83,7 +82,7 @@ public class GalaxyUploaderIT {
 	@Test(expected = UploadException.class)
 	public void testNoGalaxyConnectionUpload()
 			throws ConstraintViolationException, UploadException {
-		Uploader unconnectedGalaxyUploader = new GalaxyUploader();
+		GalaxyUploader unconnectedGalaxyUploader = new GalaxyUploader();
 
 		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"GalaxyUploader_testNoGalaxyConnection");
@@ -160,7 +159,7 @@ public class GalaxyUploaderIT {
 	@Test
 	public void testCheckGalaxyConnection()
 			throws ConstraintViolationException, UploadException {
-		Uploader unconnectedGalaxyUploader = new GalaxyUploader();
+		GalaxyUploader unconnectedGalaxyUploader = new GalaxyUploader();
 
 		assertTrue(galaxyUploader.isConnected());
 		assertFalse(unconnectedGalaxyUploader.isConnected());

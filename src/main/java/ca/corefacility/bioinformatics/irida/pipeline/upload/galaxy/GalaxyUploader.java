@@ -16,10 +16,8 @@ import com.sun.jersey.api.client.ClientHandlerException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadConnectionException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
-import ca.corefacility.bioinformatics.irida.model.upload.UploadProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
-import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
@@ -30,7 +28,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * 
  */
-public class GalaxyUploader implements Uploader {
+public class GalaxyUploader implements Uploader<GalaxyProjectName, GalaxyAccountEmail> {
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyUploader.class);
 
@@ -85,37 +83,6 @@ public class GalaxyUploader implements Uploader {
 	}
 
 	/**
-	 * Performs the actual upload with the given Galaxy-specific information.
-	 * @param samples  The samples to upload.
-	 * @param libraryName  The library name to upload into.
-	 * @param galaxyUserEmail  The user email who should own the library
-	 *  if a new library needs to be created.
-	 * @return  An UploadResult describing the location the files were uploaded into.
-	 * @throws UploadException  If an error occured while uploading the files.
-	 */
-	private UploadResult uploadSamplesInternal(
-			List<UploadSample> samples,
-			GalaxyProjectName libraryName,
-			GalaxyAccountEmail galaxyUserEmail) throws UploadException,
-			ConstraintViolationException {
-		if (galaxyAPI == null) {
-			logger.debug("Could not upload samples to Galaxy Library "
-					+ libraryName + ", userEmail=" + galaxyUserEmail
-					+ ": no Galaxy connection established");
-			throw new UploadException(
-					"Could not upload to Galaxy, no Galaxy connection set");
-		} else {
-			try {
-				return galaxyAPI.uploadSamples(samples, libraryName,
-						galaxyUserEmail);
-			} catch (ClientHandlerException e) {
-				throw new UploadConnectionException(
-						"Could not upload to Galaxy", e);
-			}
-		}
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -160,56 +127,25 @@ public class GalaxyUploader implements Uploader {
 	 */
 	@Override
 	public UploadResult uploadSamples(@Valid List<UploadSample> samples,
-			@Valid UploadProjectName dataLocation,
-			@Valid UploaderAccountName userName) throws UploadException,
+			@Valid GalaxyProjectName dataLocation,
+			@Valid GalaxyAccountEmail userName) throws UploadException,
 			ConstraintViolationException {
-		UploadResult uploadResult;
-
-		GalaxyAccountEmail accountEmail = toAccountEmail(userName);
-		GalaxyProjectName galaxyDataLibraryLocation = toGalaxyProjectName(dataLocation);
 
 		logger.debug("Uploading samples to Galaxy Library " + dataLocation
 				+ ", userEmail=" + userName + ", samples=" + samples);
 
-		uploadResult = uploadSamplesInternal(samples,
-				galaxyDataLibraryLocation, accountEmail);
-
-		if (uploadResult != null) {
-			logger.info("Uploaded samples to Galaxy Library " + dataLocation
-					+ ", userEmail=" + userName + ", samples=" + samples);
-		}
-
-		return uploadResult;
-	}
-
-	/**
-	 * Converts the given UploaderAccountName to a GalaxyAccountEmail.
-	 * @param accountName  The account name.
-	 * @return  A GalaxyAccountEmail describing the account name.
-	 * @throws UploadException  If a conversion exception occured.
-	 */
-	private GalaxyAccountEmail toAccountEmail(UploaderAccountName accountName)
-			throws UploadException {
-		if (accountName instanceof GalaxyAccountEmail) {
-			return (GalaxyAccountEmail) accountName;
-		} else {
+		if (galaxyAPI == null) {
 			throw new UploadException(
-					"accountName not of type GalaxyAccountEmail");
-		}
-	}
-
-	/**
-	 * Converts the given UploadObjectName to a GalaxyObjectName.
-	 * @param objectName  The UploadObjectName to convert.
-	 * @return  A GalaxyObjectName describing the name.
-	 * @throws UploadException  If a conversion exception occured.
-	 */
-	private GalaxyProjectName toGalaxyProjectName(UploadProjectName objectName)
-			throws UploadException {
-		if (objectName instanceof GalaxyProjectName) {
-			return (GalaxyProjectName) objectName;
+					"Could not upload samples to Galaxy Library "
+							+ dataLocation + ", userEmail=" + userName
+							+ ": no Galaxy connection established");
 		} else {
-			throw new UploadException("objectName not of type GalaxyObjectName");
+			try {
+				return galaxyAPI.uploadSamples(samples, dataLocation, userName);
+			} catch (ClientHandlerException e) {
+				throw new UploadConnectionException(
+						"Could not upload to Galaxy", e);
+			}
 		}
 	}
 }

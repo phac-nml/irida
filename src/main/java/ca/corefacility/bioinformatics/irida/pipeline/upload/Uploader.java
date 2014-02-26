@@ -17,7 +17,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public interface Uploader {
+public interface Uploader<P extends UploadProjectName, A extends UploaderAccountName> {
 	/**
 	 * Defines the location of data to upload on a filesystem.
 	 * 
@@ -58,8 +58,8 @@ public interface Uploader {
 	 */
 	public UploadResult uploadSamples(
 			@Valid List<UploadSample> samples,
-			@Valid UploadProjectName dataLocation,
-			@Valid UploaderAccountName userName) throws UploadException,
+			@Valid P dataLocation,
+			@Valid A userName) throws UploadException,
 			ConstraintViolationException;
 
 	/**

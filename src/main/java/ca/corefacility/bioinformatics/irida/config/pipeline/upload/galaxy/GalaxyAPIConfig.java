@@ -51,7 +51,7 @@ public class GalaxyAPIConfig {
 	 * @return  A new GalaxyUploader object.
 	 */
 	@Bean
-	public Uploader galaxyUploader() {
+	public GalaxyUploader galaxyUploader() {
 		GalaxyUploader galaxyUploader = new GalaxyUploader();
 
 		String galaxyURLString = environment.getProperty(URL_PROPERTY);
