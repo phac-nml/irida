@@ -1443,4 +1443,12 @@ public class GalaxyAPIIT {
 		
 		assertEquals("fastqsanger",datasetData2.getDataType());
 	}
+	
+	/**
+	 * Tests case of GalaxyAPI properly connected.
+	 */
+	@Test
+	public void testIsConnected() {
+		assertTrue(galaxyAPI.isConnected());
+	}
 }

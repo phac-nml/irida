@@ -131,6 +131,9 @@ public class GalaxyUploaderIT {
 		GalaxyUploader galaxyUploader = new GalaxyUploader();
 		galaxyUploader.setupGalaxyAPI(newLocalGalaxy.getGalaxyURL(),
 				newLocalGalaxy.getAdminName(), newLocalGalaxy.getAdminAPIKey());
+		
+		assertTrue(galaxyUploader.isDataLocationAttached());
+		assertTrue(galaxyUploader.isDataLocationConnected());
 
 		// I should be able to upload a file initially
 		GalaxyProjectName libraryName = new GalaxyProjectName(
@@ -143,9 +146,13 @@ public class GalaxyUploaderIT {
 
 		assertNotNull(galaxyUploader.uploadSamples(samples, libraryName,
 				newLocalGalaxy.getAdminName()));
-
+		
 		// shutdown running Galaxy
 		newLocalGalaxy.shutdownGalaxy();
+		
+		// should not be connected
+		assertTrue(galaxyUploader.isDataLocationAttached());
+		assertFalse(galaxyUploader.isDataLocationConnected());
 
 		// try uploading again, this should fail and throw an exception
 		galaxyUploader.uploadSamples(samples, libraryName,
