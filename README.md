@@ -35,6 +35,32 @@ Creating the IRIDA test user
 
 The irida-api package should now be able to run.
 
+Setup of Galaxy
+===============
+
+To link up the API with a running instance of Galaxy, the following steps need to be taken.
+
+1. Install [Galaxy](https://wiki.galaxyproject.org/Admin/GetGalaxy) and setup an administrator user.
+   * Make sure to set the property `allow_library_path_paste = True` within the `universe_wsgi.ini` configuration file to properly upload files.
+2. Construct a configuration file with the Galaxy connection parameters.  This should be located within `/etc/irida/irida.conf` and contain the following information:
+
+        # The URL where Galaxy is being run
+        galaxy.url=http://localhost/
+
+        # An email address of an administrator account on Galaxy
+        galaxy.admin.email=admin@localhost
+
+        # An API key for the above admin account
+        galaxy.admin.apiKey=xxxx
+
+        # How to store data on Galaxy.  One of 'remote' or 'local'.
+        ## remote:  Uploads a copy of a file to Galaxy.
+        ## local:  Uploads only a filesystem location (link) of a file to Galaxy.  Assumes
+        ##  files are shared between the NGS Archive and Galaxy (e.g. over NFS).
+        galaxy.dataStorage=local
+
+Please see the main IRIDA installation guide for more details.
+
 Running the Tests
 =================
 
