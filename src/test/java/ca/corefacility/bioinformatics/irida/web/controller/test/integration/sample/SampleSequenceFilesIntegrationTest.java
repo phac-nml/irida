@@ -4,7 +4,6 @@ import static ca.corefacility.bioinformatics.irida.web.controller.test.integrati
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asAdmin;
 import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -55,12 +54,11 @@ public class SampleSequenceFilesIntegrationTest {
 
 		assertNotNull(location);
 		assertTrue(location.matches(sequenceFileUri + "/[0-9]+"));
-
-		// confirm that the sequence file was added to the sample as a related
-		// resource
-		asUser().expect().body("relatedResources.sequenceFiles.resources.label", hasItem(sequenceFile.getFileName().toString()))
-				.and().body("relatedResources.sequenceFiles.resources[0].links.rel", hasItems("self")).when()
-				.get(sampleUri);
+		
+		// confirm that the sequence file was added to the sample sequence files list
+		asUser().expect().body("resource.resources.fileName",hasItem(sequenceFile.getFileName().toString()))
+			.and().body("resource.resources.links[0].rel",hasItems("self"))
+			.when().get(sequenceFileUri);
 
 		// clean up
 		Files.delete(sequenceFile);
@@ -100,9 +98,6 @@ public class SampleSequenceFilesIntegrationTest {
 		assertNotNull(location);
 		assertTrue(location.matches("http://localhost:8080/projects/[0-9]+/samples/[0-9]+/sequenceFiles/[0-9]+"));
 
-		// confirm that the sequence file was removed from the project
-		asUser().expect().body("relatedResources.sequenceFiles.identifier", not(hasItem(identifier))).when().get(sampleUri)
-				.getBody().asString();
 	}
 
 	@Test

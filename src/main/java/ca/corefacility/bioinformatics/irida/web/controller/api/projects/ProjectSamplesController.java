@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.web.controller.api.projects;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,12 +24,10 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
@@ -65,17 +62,14 @@ public class ProjectSamplesController {
     /**
      * Reference to {@link SequenceFileService}.
      */
-    private SequenceFileService sequenceFileService;
-
 
     protected ProjectSamplesController() {
     }
 
     @Autowired
-    public ProjectSamplesController(ProjectService projectService, SampleService sampleService, SequenceFileService sequenceFileService) {
+    public ProjectSamplesController(ProjectService projectService, SampleService sampleService) {
         this.projectService = projectService;
         this.sampleService = sampleService;
-        this.sequenceFileService = sequenceFileService;
     }
 
     /**
@@ -187,25 +181,6 @@ public class ProjectSamplesController {
 
         // add the sample resource to the response
         modelMap.addAttribute(GenericController.RESOURCE_NAME, sr);
-
-        // get some related sequence files for the sample
-        List<Join<Sample, SequenceFile>> relationships = sequenceFileService.getSequenceFilesForSample(s);
-        ResourceCollection<LabelledRelationshipResource<Sample, SequenceFile>> sequenceFileResources =
-                new ResourceCollection<>(relationships.size());
-
-        for (Join<Sample, SequenceFile> r : relationships) {
-            SequenceFile sf = r.getObject();
-            LabelledRelationshipResource<Sample, SequenceFile> resource = new LabelledRelationshipResource<>(sf.getLabel(), r);
-            resource.add(linkTo(methodOn(SampleSequenceFilesController.class).getSequenceFileForSample(projectId,
-                    sampleId, sf.getId())).withSelfRel());
-            sequenceFileResources.add(resource);
-        }
-
-        sequenceFileResources.add(linkTo(methodOn(SampleSequenceFilesController.class)
-                .getSampleSequenceFiles(projectId, sampleId)).withSelfRel());
-        Map<String, ResourceCollection<LabelledRelationshipResource<Sample, SequenceFile>>> relatedResources = new HashMap<>();
-        relatedResources.put("sequenceFiles", sequenceFileResources);
-        modelMap.addAttribute(GenericController.RELATED_RESOURCES_NAME, relatedResources);
 
         return modelMap;
     }
