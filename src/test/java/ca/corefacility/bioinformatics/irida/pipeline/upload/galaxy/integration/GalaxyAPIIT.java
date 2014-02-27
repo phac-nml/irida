@@ -22,6 +22,8 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -81,6 +83,10 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
 public class GalaxyAPIIT {
+	
+	private static final Logger logger = LoggerFactory
+			.getLogger(GalaxyAPIIT.class);
+	
 	@Autowired
 	private LocalGalaxy localGalaxy;
 
@@ -210,6 +216,8 @@ public class GalaxyAPIIT {
 	 */
 	private Dataset moveLibraryDataToHistoryDataset(String testName, String filename,
 			GalaxyInstance galaxyInstance, String libraryFileId) throws InterruptedException {
+		final int totalSecondsWait = 1*60; // 1 minute
+		
 		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
 
 		History history = new History();
@@ -229,12 +237,25 @@ public class GalaxyAPIIT {
 		assertNotNull(dataId);
 
 		Dataset dataset;
+		long timeBefore = System.currentTimeMillis();
 		do {
 			dataset = historiesClient.showDataset(persistedHistory.getId(),
 					dataId);
 			assertNotNull(dataset);
-			Thread.sleep(2000);
+			
+			long timeAfter = System.currentTimeMillis();
+			double deltaSeconds = (timeAfter - timeBefore)/1000.0;
+			if (deltaSeconds <= totalSecondsWait) {
+				Thread.sleep(2000);
+			} else {
+				fail("Could not load dataset from file=" + filename + " into history, timeout: "
+						+ deltaSeconds + "s > " + totalSecondsWait + "s");
+			}
 		} while (!"ok".equals(dataset.getState()));
+		
+		long timeAfter = System.currentTimeMillis();
+		logger.debug("Took " + (timeAfter - timeBefore)/1000.0 + "s to load file=" + filename +
+				" into Galaxy history");
 		
 		return dataset;
 	}
