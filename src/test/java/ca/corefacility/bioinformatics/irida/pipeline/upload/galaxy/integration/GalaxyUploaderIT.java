@@ -36,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEma
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -57,7 +58,7 @@ public class GalaxyUploaderIT {
 	private LocalGalaxy localGalaxy;
 
 	@Autowired
-	private GalaxyUploader galaxyUploader;
+	private Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader;
 
 	private List<Path> dataFilesSingle;
 
