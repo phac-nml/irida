@@ -162,8 +162,8 @@ public class GalaxyUploaderIT {
 			throws ConstraintViolationException, UploadException {
 		GalaxyUploader unconnectedGalaxyUploader = new GalaxyUploader();
 
-		assertTrue(galaxyUploader.isConnected());
-		assertFalse(unconnectedGalaxyUploader.isConnected());
+		assertTrue(galaxyUploader.isDataLocationAttached());
+		assertFalse(unconnectedGalaxyUploader.isDataLocationAttached());
 	}
 
 	/**

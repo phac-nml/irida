@@ -66,12 +66,12 @@ public interface Uploader<ProjectName extends UploadProjectName, AccountName ext
 			ConstraintViolationException;
 
 	/**
-	 * Whether or not this uploader is connected to a data location.
+	 * Whether or not this uploader is attached to a data location.
 	 * 
 	 * @return True if this uploader is connected to a data location
 	 *         instance, false otherwise.
 	 */
-	public boolean isConnected();
+	public boolean isDataLocationAttached();
 
 	/**
 	 * Sets up the type of data storage for this uploader.
