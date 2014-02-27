@@ -68,10 +68,18 @@ public interface Uploader<ProjectName extends UploadProjectName, AccountName ext
 	/**
 	 * Whether or not this uploader is attached to a data location.
 	 * 
-	 * @return True if this uploader is connected to a data location
+	 * @return True if this uploader is attached to a data location
 	 *         instance, false otherwise.
 	 */
 	public boolean isDataLocationAttached();
+	
+	/**
+	 * Whether or not the connection to a data location is properly working.
+	 * 
+	 * @return True if this uploader is connected to a data location
+	 *         instance, false otherwise.
+	 */
+	public boolean isDataLocationConnected();
 
 	/**
 	 * Sets up the type of data storage for this uploader.

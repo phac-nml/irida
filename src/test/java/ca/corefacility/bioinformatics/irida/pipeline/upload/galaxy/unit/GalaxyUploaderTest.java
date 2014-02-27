@@ -40,6 +40,8 @@ public class GalaxyUploaderTest {
 	
 	@Mock
 	private GalaxyUploadResult uploadResult;
+	
+	private GalaxyUploader galaxyUploader;
 
 	/**
 	 * Setup objects for test.
@@ -52,6 +54,8 @@ public class GalaxyUploaderTest {
 		galaxyURL = new URL("http://localhost");
 		accountEmail = new GalaxyAccountEmail("admin@localhost");
 		adminApiKey = "0";
+		
+		galaxyUploader = new GalaxyUploader(galaxyAPI);
 	}
 
 	/**
@@ -63,7 +67,6 @@ public class GalaxyUploaderTest {
 	@Test(expected = UploadConnectionException.class)
 	public void testUploadGalaxyConnectionFail()
 			throws ConstraintViolationException, UploadException {
-		GalaxyUploader galaxyUploader = new GalaxyUploader(galaxyAPI);
 
 		when(
 				galaxyAPI.uploadSamples(any(ArrayList.class),
@@ -83,7 +86,6 @@ public class GalaxyUploaderTest {
 	@SuppressWarnings("unchecked")
 	public void testUploadGalaxyConnectionSuccess()
 			throws UploadException {
-		GalaxyUploader galaxyUploader = new GalaxyUploader(galaxyAPI);
 
 		when(galaxyAPI.uploadSamples(any(ArrayList.class),
 				any(GalaxyProjectName.class),
@@ -127,5 +129,35 @@ public class GalaxyUploaderTest {
 			UploadException {
 		GalaxyUploader galaxyUploader = new GalaxyUploader();
 		galaxyUploader.setupGalaxyAPI(galaxyURL, accountEmail, null);
+	}
+	
+	/**
+	 * Tests case of GalaxyUploader properly connected to an instance of Galaxy.
+	 */
+	@Test
+	public void testIsDataLocationConnectedProperly() {
+		when(galaxyAPI.isConnected()).thenReturn(true);
+		
+		assertTrue(galaxyUploader.isDataLocationConnected());
+	}
+	
+	/**
+	 * Tests case of GalaxyUploader without a Galaxy connection.
+	 */
+	@Test
+	public void testIsDataLocationConnectedNoGalaxySetup() {
+		GalaxyUploader galaxyUploader = new GalaxyUploader();
+		
+		assertFalse(galaxyUploader.isDataLocationConnected());
+	}
+	
+	/**
+	 * Tests case of GalaxyUploader improperly connected to an instance of Galaxy.
+	 */
+	@Test
+	public void testIsDataLocationConnectedNoGalaxyConnection() {
+		when(galaxyAPI.isConnected()).thenReturn(false);
+		
+		assertFalse(galaxyUploader.isDataLocationConnected());
 	}
 }
