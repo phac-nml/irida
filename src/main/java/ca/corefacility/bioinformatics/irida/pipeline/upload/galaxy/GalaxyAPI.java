@@ -604,6 +604,10 @@ public class GalaxyAPI {
 	 * @return  True if there is a proper connection, false otherwise.
 	 */
 	public boolean isConnected() {
-		return galaxySearchAdmin.galaxyUserExists(adminEmail);
+		try {
+			return galaxySearchAdmin.galaxyUserExists(adminEmail);
+		} catch (ClientHandlerException e) {
+			return false;
+		}
 	}
 }
