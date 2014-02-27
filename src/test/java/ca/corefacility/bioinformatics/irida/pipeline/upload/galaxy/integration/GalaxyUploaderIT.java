@@ -58,7 +58,7 @@ public class GalaxyUploaderIT {
 	private LocalGalaxy localGalaxy;
 
 	@Autowired
-	private Uploader galaxyUploader;
+	private Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader;
 
 	private List<Path> dataFilesSingle;
 
@@ -83,7 +83,7 @@ public class GalaxyUploaderIT {
 	@Test(expected = UploadException.class)
 	public void testNoGalaxyConnectionUpload()
 			throws ConstraintViolationException, UploadException {
-		Uploader unconnectedGalaxyUploader = new GalaxyUploader();
+		GalaxyUploader unconnectedGalaxyUploader = new GalaxyUploader();
 
 		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"GalaxyUploader_testNoGalaxyConnection");
@@ -160,7 +160,7 @@ public class GalaxyUploaderIT {
 	@Test
 	public void testCheckGalaxyConnection()
 			throws ConstraintViolationException, UploadException {
-		Uploader unconnectedGalaxyUploader = new GalaxyUploader();
+		GalaxyUploader unconnectedGalaxyUploader = new GalaxyUploader();
 
 		assertTrue(galaxyUploader.isConnected());
 		assertFalse(unconnectedGalaxyUploader.isConnected());

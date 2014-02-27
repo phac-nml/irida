@@ -13,15 +13,15 @@ import org.mockito.MockitoAnnotations;
 
 import com.sun.jersey.api.client.ClientHandlerException;
 
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadConnectionException;
-import ca.corefacility.bioinformatics.irida.model.upload.UploadProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
-import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
 
@@ -37,6 +37,9 @@ public class GalaxyUploaderTest {
 
 	@Mock
 	private GalaxyAPI galaxyAPI;
+	
+	@Mock
+	private GalaxyUploadResult uploadResult;
 
 	/**
 	 * Setup objects for test.
@@ -70,6 +73,24 @@ public class GalaxyUploaderTest {
 
 		galaxyUploader.uploadSamples(new ArrayList<UploadSample>(),
 				new GalaxyProjectName("lib"), accountEmail);
+	}
+	
+	/**
+	 * Test successful upload.
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 */
+	@SuppressWarnings("unchecked")
+	public void testUploadGalaxyConnectionSuccess()
+			throws UploadException {
+		GalaxyUploader galaxyUploader = new GalaxyUploader(galaxyAPI);
+
+		when(galaxyAPI.uploadSamples(any(ArrayList.class),
+				any(GalaxyProjectName.class),
+				any(GalaxyAccountEmail.class))).thenReturn(uploadResult);
+
+		assertNotNull(galaxyUploader.uploadSamples(new ArrayList<UploadSample>(),
+						new GalaxyProjectName("lib"), accountEmail));
 	}
 
 	/**
@@ -106,45 +127,5 @@ public class GalaxyUploaderTest {
 			UploadException {
 		GalaxyUploader galaxyUploader = new GalaxyUploader();
 		galaxyUploader.setupGalaxyAPI(galaxyURL, accountEmail, null);
-	}
-
-	/**
-	 * Tests setup of Galaxy with invalid admin name.
-	 * @throws ConstraintViolationException
-	 * @throws UploadException
-	 */
-	@Test(expected = UploadException.class)
-	public void testUploadWithInvalidAccountName()
-			throws ConstraintViolationException, UploadException {
-		GalaxyUploader galaxyUploader = new GalaxyUploader(galaxyAPI);
-
-		UploaderAccountName invalidNameType = new UploaderAccountName() {
-			@Override
-			public String getName() {
-				return "test";
-			}
-		};
-		galaxyUploader.uploadSamples(new ArrayList<UploadSample>(),
-				new GalaxyProjectName("lib"), invalidNameType);
-	}
-
-	/**
-	 * Tests upload invalid data library type.
-	 * @throws ConstraintViolationException
-	 * @throws UploadException
-	 */
-	@Test(expected = UploadException.class)
-	public void testUploadWithInvalidDataLibraryObject()
-			throws ConstraintViolationException, UploadException {
-		GalaxyUploader galaxyUploader = new GalaxyUploader(galaxyAPI);
-
-		UploadProjectName invalidLibraryType = new UploadProjectName() {
-			@Override
-			public String getName() {
-				return "test";
-			}
-		};
-		galaxyUploader.uploadSamples(new ArrayList<UploadSample>(),
-				invalidLibraryType, accountEmail);
 	}
 }
