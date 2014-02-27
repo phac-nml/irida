@@ -1,16 +1,11 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.project;
 
-import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
@@ -45,14 +40,12 @@ public class ProjectSamplesControllerTest {
     private ProjectSamplesController controller;
     private ProjectService projectService;
     private SampleService sampleService;
-    private SequenceFileService sequenceFileService;
 
     @Before
     public void setUp() {
         projectService = mock(ProjectService.class);
         sampleService = mock(SampleService.class);
-        sequenceFileService = mock(SequenceFileService.class);
-        controller = new ProjectSamplesController(projectService, sampleService, sequenceFileService);
+        controller = new ProjectSamplesController(projectService, sampleService);
     }
 
     @Test
@@ -155,21 +148,15 @@ public class ProjectSamplesControllerTest {
     public void testGetIndividualSample() throws IOException {
         Project p = TestDataFactory.constructProject();
         Sample s = TestDataFactory.constructSample();
-        SequenceFile sf = TestDataFactory.constructSequenceFile();
-        Join<Sample, SequenceFile> r = new SampleSequenceFileJoin(s, sf);
-        @SuppressWarnings("unchecked")
-		List<Join<Sample, SequenceFile>> relationships = Lists.newArrayList(r);
-
+        
+        // mock out the service calls
         when(projectService.read(p.getId())).thenReturn(p);
         when(sampleService.getSampleForProject(p, s.getId())).thenReturn(s);
-        // mock out the service calls
-        when(sequenceFileService.getSequenceFilesForSample(s)).thenReturn(relationships);
 
         ModelMap modelMap = controller.getProjectSample(p.getId(), s.getId());
 
         verify(sampleService).getSampleForProject(p, s.getId());
         verify(projectService).read(p.getId());
-        verify(sequenceFileService).getSequenceFilesForSample(s);
 
         Object o = modelMap.get(GenericController.RESOURCE_NAME);
         assertTrue(o instanceof SampleResource);
@@ -191,18 +178,6 @@ public class ProjectSamplesControllerTest {
         assertNotNull(projectLink);
         assertEquals(projectLocation, projectLink.getHref());
 
-        // confirm that the sequence files were added as related resources
-        o = modelMap.get(GenericController.RELATED_RESOURCES_NAME);
-        assertTrue(o instanceof Map);
-        @SuppressWarnings("unchecked")
-        Map<String, ResourceCollection<LabelledRelationshipResource<IridaThing, IridaThing>>> related =
-                (Map<String, ResourceCollection<LabelledRelationshipResource<IridaThing, IridaThing>>>) o;
-        assertTrue(related.containsKey("sequenceFiles"));
-        ResourceCollection<LabelledRelationshipResource<IridaThing, IridaThing>> sequenceFiles = related.get("sequenceFiles");
-        assertEquals(1, sequenceFiles.size());
-        LabelledRelationshipResource<IridaThing, IridaThing> labelledRelationship = sequenceFiles.iterator().next();
-        Link sequenceFileLink = labelledRelationship.getLink(Link.REL_SELF);
-        assertEquals(sampleLocation + "/sequenceFiles/" + sf.getId(), sequenceFileLink.getHref());
     }
 
     @Test
