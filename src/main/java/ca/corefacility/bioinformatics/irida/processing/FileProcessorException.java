@@ -7,6 +7,9 @@ package ca.corefacility.bioinformatics.irida.processing;
  * 
  */
 public class FileProcessorException extends RuntimeException {
+
+	private static final long serialVersionUID = 7389408065012958110L;
+
 	public FileProcessorException(String message) {
 		super(message);
 	}
