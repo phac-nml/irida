@@ -33,9 +33,6 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	/**
 	 * {@inheritDoc}
 	 */
-	// TODO: ROLE_SEQUENCER should **not** have access to read sequence files
-	// after they have been uploaded. Revoke this access when sequencing data is
-	// uploaded as a single package.
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadSequenceFile')")
 	public SequenceFile read(Long id) throws EntityNotFoundException;
 
@@ -62,9 +59,6 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 *            from.
 	 * @return the references to {@link SequenceFile}.
 	 */
-	// TODO: ROLE_SEQUENCER should **not** have access to read sequence files
-	// after they have been uploaded. Revoke this access when sequencing data is
-	// uploaded as a single package.
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public List<Join<Sample, SequenceFile>> getSequenceFilesForSample(Sample sample);
 
