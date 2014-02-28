@@ -51,6 +51,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
 import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.github.jmchilton.blend4j.galaxy.beans.User;
+import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 
 /**
@@ -1201,5 +1202,35 @@ public class GalaxyAPITest {
 		setupUploadSampleToLibrary(samples, folders, false);
 
 		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
+	}
+	
+	/**
+	 * Tests checking for connection in case of Galaxy properly connected.
+	 */
+	@Test
+	public void testIsConnectedValid() {
+		when(galaxySearch.galaxyUserExists(realAdminEmail)).thenReturn(true);
+		
+		assertTrue(workflowRESTAPI.isConnected());
+	}
+	
+	/**
+	 * Tests checking for connection in case of Galaxy improperly connected.
+	 */
+	@Test
+	public void testIsConnectedInvalid() {
+		when(galaxySearch.galaxyUserExists(realAdminEmail)).thenReturn(false);
+		
+		assertFalse(workflowRESTAPI.isConnected());
+	}
+	
+	/**
+	 * Tests checking for connection in case of Galaxy improperly connected (exception).
+	 */
+	@Test
+	public void testIsConnectedInvalidException() {
+		when(galaxySearch.galaxyUserExists(realAdminEmail)).thenThrow(new ClientHandlerException());
+		
+		assertFalse(workflowRESTAPI.isConnected());
 	}
 }

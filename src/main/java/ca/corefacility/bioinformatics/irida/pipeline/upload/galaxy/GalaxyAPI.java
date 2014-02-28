@@ -598,4 +598,16 @@ public class GalaxyAPI {
 			throw new RuntimeException("Galaxy URL is malformed", e);
 		}
 	}
+
+	/**
+	 * Whether or not the API is properly connected to an instance of Galaxy.
+	 * @return  True if there is a proper connection, false otherwise.
+	 */
+	public boolean isConnected() {
+		try {
+			return galaxySearchAdmin.galaxyUserExists(adminEmail);
+		} catch (ClientHandlerException e) {
+			return false;
+		}
+	}
 }

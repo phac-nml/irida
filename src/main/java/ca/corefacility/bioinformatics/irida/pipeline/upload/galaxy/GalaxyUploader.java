@@ -86,8 +86,17 @@ public class GalaxyUploader implements Uploader<GalaxyProjectName, GalaxyAccount
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean isConnected() {
+	public boolean isDataLocationAttached() {
 		return galaxyAPI != null;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isDataLocationConnected() {
+		return isDataLocationAttached() &&
+				galaxyAPI.isConnected();
 	}
 
 	/**
