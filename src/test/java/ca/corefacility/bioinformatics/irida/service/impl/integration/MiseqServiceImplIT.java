@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
@@ -28,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
+import ca.corefacility.bioinformatics.irida.service.SampleService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -45,6 +48,8 @@ public class MiseqServiceImplIT {
 	private MiseqRunService miseqRunService;
 	@Autowired
 	private SequenceFileService sequenceFileService;
+	@Autowired
+	private SampleService sampleService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
@@ -149,6 +154,15 @@ public class MiseqServiceImplIT {
 		MiseqRun r = new MiseqRun();
 		r.setProjectName("some project");
 		asRole(Role.ROLE_ADMIN).miseqRunService.create(r);
+	}
+	
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
+	public void testDeleteCascade(){
+		assertTrue("Sequence file should exist before",asRole(Role.ROLE_ADMIN).sequenceFileService.exists(1L));
+		miseqRunService.delete(2L);
+		assertFalse("Sequence file should be deleted on cascade",asRole(Role.ROLE_ADMIN).sequenceFileService.exists(2L));
 	}
 
 	private MiseqServiceImplIT asRole(Role r) {

@@ -64,4 +64,9 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 	public MiseqRun create(MiseqRun o) {
 		return super.create(o);
 	}
+	
+	@Override
+	public void delete(Long id){
+		super.delete(id);
+	}
 }
