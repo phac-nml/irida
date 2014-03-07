@@ -164,6 +164,17 @@ public class MiseqServiceImplIT {
 		miseqRunService.delete(2L);
 		assertFalse("Sequence file should be deleted on cascade",asRole(Role.ROLE_ADMIN).sequenceFileService.exists(2L));
 	}
+	
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
+	public void testDeleteCascadeSample(){
+		assertTrue("Sequence file should exist before",asRole(Role.ROLE_ADMIN).sequenceFileService.exists(1L));
+		miseqRunService.deleteCascadeToSample(3L);
+		assertFalse("Sequence file should be deleted on cascade",asRole(Role.ROLE_ADMIN).sequenceFileService.exists(1L));
+		assertFalse("Sequence file should be deleted on cascade",asRole(Role.ROLE_ADMIN).sequenceFileService.exists(3L));
+		assertFalse(sampleService.exists(2L));
+	}
 
 	private MiseqServiceImplIT asRole(Role r) {
 		User u = new User();

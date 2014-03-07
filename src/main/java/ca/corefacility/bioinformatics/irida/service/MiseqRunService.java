@@ -61,4 +61,7 @@ public interface MiseqRunService extends CRUDService<Long, MiseqRun> {
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
     public void delete(Long id) throws EntityNotFoundException;
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void deleteCascadeToSample(Long id) throws EntityNotFoundException;
 }
