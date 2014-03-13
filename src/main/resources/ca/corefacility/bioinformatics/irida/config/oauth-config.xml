@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	
+	<!-- oauth:expression-handler id="oauthExpressionHandler" /-->
+
+	<!-- oauth:web-expression-handler id="oauthWebExpressionHandler" /-->
+	<bean id="tokenStore"
+		class="org.springframework.security.oauth2.provider.token.InMemoryTokenStore" />
+		
+	<!-- FILTER FOR IN WEB PROJECT oauth:resource-server id="resourceServerFilterData"
+		resource-id="sparklrData" token-services-ref="tokenServices" /> -->
+		
+	<!--  Use in web project
+	<oauth:authorization-server
+		client-details-service-ref="clientDetails" token-services-ref="tokenServices">
+		<oauth:authorization-code />
+		<oauth:implicit />
+		<oauth:refresh-token />
+		<oauth:client-credentials />
+		<oauth:password authentication-manager-ref="authenticationManager"/>
+	</oauth:authorization-server> -->
+		
+	<oauth:client-details-service id="clientDetails">
+		<oauth:client client-id="tonrData" resource-ids="sparklrData"
+				authorized-grant-types="authorization_code,implicit" authorities="ROLE_CLIENT"
+				scope="read,write" secret="secret" />
+	</oauth:client-details-service>
+	
+	<bean id="tokenServices"
+		class="org.springframework.security.oauth2.provider.token.DefaultTokenServices">
+		<property name="tokenStore" ref="tokenStore" />
+		<!-- property name="tokenEnhancer" ref="tokenEnhancer" /-->
+		<property name="supportRefreshToken" value="true" />
+		<property name="clientDetailsService" ref="clientDetails" />
+	</bean>
+		
+</beans>
