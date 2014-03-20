@@ -268,6 +268,15 @@ public class ProjectServiceImplIT {
 
 		assertEquals("Wrong number of projects.", 3, projects.size());
 	}
+	
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+	public void testUserHasProjectRole(){
+		User user = asRole(Role.ROLE_ADMIN).userService.read(3l);
+		Project project = asRole(Role.ROLE_ADMIN).projectService.read(2l);
+		assertTrue(asRole(Role.ROLE_ADMIN).projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER));
+	}
 
 	private Project p() {
 		Project p = new Project();

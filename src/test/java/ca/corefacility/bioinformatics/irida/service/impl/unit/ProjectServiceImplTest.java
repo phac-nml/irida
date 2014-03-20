@@ -201,7 +201,7 @@ public class ProjectServiceImplTest {
 		User u = new User();
 
 		List<Join<Project, User>> joins = new ArrayList<>();
-		joins.add(new ProjectUserJoin(p, u));
+		joins.add(new ProjectUserJoin(p, u,ProjectRole.PROJECT_OWNER));
 
 		when(pujRepository.getProjectsForUserWithRole(u, ProjectRole.PROJECT_OWNER)).thenReturn(joins);
 
