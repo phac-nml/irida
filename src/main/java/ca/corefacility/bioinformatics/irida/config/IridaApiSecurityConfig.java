@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
@@ -31,7 +32,7 @@ import com.google.common.base.Joiner;
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.security")
-@ImportResource(value={"classpath:ca/corefacility/bioinformatics/irida/config/oauth-config.xml"})
+@Import(IridaOAuth2Config.class)
 public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	private static final String[] ROLE_HIERARCHIES = new String[] { "ROLE_ADMIN > ROLE_MANAGER",
