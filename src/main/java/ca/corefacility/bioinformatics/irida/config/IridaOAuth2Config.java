@@ -1,39 +1,56 @@
 package ca.corefacility.bioinformatics.irida.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
+import org.springframework.security.oauth2.provider.BaseClientDetails;
+import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.InMemoryClientDetailsService;
 import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.InMemoryTokenStore;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
 @Configuration
-@ImportResource(value={"classpath:ca/corefacility/bioinformatics/irida/config/oauth-config.xml"})
 public class IridaOAuth2Config {
-	@Autowired
-	ClientDetailsService clientDetailsService;
-	
+
 	@Bean
-	public DefaultTokenServices tokenServices(){	
+	public DefaultTokenServices tokenServices() {
 		DefaultTokenServices services = new DefaultTokenServices();
 		services.setTokenStore(tokenStore());
 		services.setSupportRefreshToken(true);
-		services.setClientDetailsService(clientDetailsService);
+		services.setClientDetailsService(clientDetails());
 		return services;
 	}
 
 	@Bean
-	public TokenStore tokenStore(){
+	public TokenStore tokenStore() {
 		TokenStore store = new InMemoryTokenStore();
 		return store;
 	}
-	
+
 	@Bean
-	public ClientDetailsUserDetailsService clientDetailsUserDetailsService(){
-		ClientDetailsUserDetailsService clientDetailsUserDetailsService = new ClientDetailsUserDetailsService(clientDetailsService);
+	public ClientDetailsUserDetailsService clientDetailsUserDetailsService() {
+		ClientDetailsUserDetailsService clientDetailsUserDetailsService = new ClientDetailsUserDetailsService(
+				clientDetails());
 		return clientDetailsUserDetailsService;
+	}
+
+	@Bean
+	public ClientDetailsService clientDetails() {
+		InMemoryClientDetailsService inMemoryClientDetailsService = new InMemoryClientDetailsService();
+
+		BaseClientDetails thing = new BaseClientDetails("tonrData", "sparklrData", "read,write",
+				"authorization_code,implicit", "ROLE_CLIENT");
+		thing.setClientSecret("secret");
+
+		Map<String, ClientDetails> clientStore = new HashMap<>();
+		clientStore.put("tonrData", thing);
+		inMemoryClientDetailsService.setClientDetailsStore(clientStore);
+		return inMemoryClientDetailsService;
+
 	}
 }
