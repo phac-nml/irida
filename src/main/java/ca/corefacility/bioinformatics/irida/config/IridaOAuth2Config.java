@@ -36,19 +36,21 @@ public class IridaOAuth2Config {
 	public ClientDetailsUserDetailsService clientDetailsUserDetailsService() {
 		ClientDetailsUserDetailsService clientDetailsUserDetailsService = new ClientDetailsUserDetailsService(
 				clientDetails());
+
 		return clientDetailsUserDetailsService;
 	}
 
 	@Bean
 	public ClientDetailsService clientDetails() {
 		InMemoryClientDetailsService inMemoryClientDetailsService = new InMemoryClientDetailsService();
+		Map<String, ClientDetails> clientStore = new HashMap<>();
 
 		BaseClientDetails thing = new BaseClientDetails("tonrData", "sparklrData", "read,write",
-				"authorization_code,implicit", "ROLE_CLIENT");
+				"authorization_code,refresh_token", "ROLE_CLIENT");
 		thing.setClientSecret("secret");
 
-		Map<String, ClientDetails> clientStore = new HashMap<>();
 		clientStore.put("tonrData", thing);
+
 		inMemoryClientDetailsService.setClientDetailsStore(clientStore);
 		return inMemoryClientDetailsService;
 
