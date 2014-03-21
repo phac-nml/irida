@@ -155,6 +155,11 @@
 			<artifactId>spring-security-config</artifactId>
 			<version>${spring.security.version}</version>
 		</dependency>
+		<dependency>
+        	<groupId>org.springframework.security.oauth</groupId>
+        	<artifactId>spring-security-oauth2</artifactId>
+        	<version>${spring.security.oauth.version}</version>
+    	</dependency>
 
 		<!-- Validation API -->
 		<dependency>
@@ -277,12 +282,6 @@
 		  <artifactId>galaxybootstrap</artifactId>
 		  <version>${com.github.jmchilton.galaxybootstrap.version}</version>
 		</dependency>
-		
-		<dependency>
-        	<groupId>org.springframework.security.oauth</groupId>
-        	<artifactId>spring-security-oauth2</artifactId>
-        	<version>1.0.5.RELEASE</version>
-    	</dependency>
 	</dependencies>
 	<build>
 		<finalName>irida-api</finalName>
@@ -416,6 +415,7 @@
 		<guava.version>15.0</guava.version>
 		<spring.version>4.0.0.RELEASE</spring.version>
 		<spring.security.version>3.2.0.RELEASE</spring.security.version>
+		<spring.security.oauth.version>1.0.5.RELEASE</spring.security.oauth.version>
 		<spring.data.jpa.version>1.4.3.RELEASE</spring.data.jpa.version>
 		<spring.data.envers.version>0.1.0.RELEASE</spring.data.envers.version>
 		<mockito.version>1.9.5</mockito.version>
