@@ -45,11 +45,26 @@ public class IridaOAuth2Config {
 		InMemoryClientDetailsService inMemoryClientDetailsService = new InMemoryClientDetailsService();
 		Map<String, ClientDetails> clientStore = new HashMap<>();
 
-		BaseClientDetails thing = new BaseClientDetails("tonrData", "sparklrData", "read,write",
+		/*
+		 * Add client details here:
+		 * args:clientId,resourceId,scopes,grant types,authorities
+		 * BaseClientDetails thing = new BaseClientDetails("clientId", "resourceId", "read,write","authorization_code,refresh_token", "ROLE_CLIENT");
+		 * thing.setClientSecret("secret");
+		 * clientStore.put("clientId", thing);
+		 */
+		
+		BaseClientDetails thing = new BaseClientDetails("tonrData", "NmlIrida", "read,write",
 				"authorization_code,refresh_token", "ROLE_CLIENT");
 		thing.setClientSecret("secret");
-
 		clientStore.put("tonrData", thing);
+		
+		BaseClientDetails sequencerClient = new BaseClientDetails("sequencer", "NmlIrida", "read,write",
+				"password", "ROLE_CLIENT");
+		sequencerClient.setClientSecret("sequencerSecret");
+
+		clientStore.put("sequencer", sequencerClient);
+
+		
 
 		inMemoryClientDetailsService.setClientDetailsStore(clientStore);
 		return inMemoryClientDetailsService;
