@@ -79,11 +79,17 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 		return super.create(o);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void delete(Long id){
 		super.delete(id);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@Transactional
 	public void deleteCascadeToSample(Long id) throws EntityNotFoundException {

@@ -173,7 +173,7 @@ public class MiseqServiceImplIT {
 		miseqRunService.deleteCascadeToSample(3L);
 		assertFalse("Sequence file should be deleted on cascade",asRole(Role.ROLE_ADMIN).sequenceFileService.exists(1L));
 		assertFalse("Sequence file should be deleted on cascade",asRole(Role.ROLE_ADMIN).sequenceFileService.exists(3L));
-		assertFalse(sampleService.exists(2L));
+		assertFalse("Sequence file should be deleted on cascade", sampleService.exists(2L));
 	}
 
 	private MiseqServiceImplIT asRole(Role r) {

@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
+import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 
@@ -62,6 +63,11 @@ public interface MiseqRunService extends CRUDService<Long, MiseqRun> {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
     public void delete(Long id) throws EntityNotFoundException;
 	
+	/**
+	 * Deletes a {@link MiseqRun} and cascades the delete to any empty {@link Sample}s.  If a Sample is empty after the delete, it will also be deleted.
+	 * @param id The ID of the {@link MiseqRun} to delete.
+	 * @throws EntityNotFoundException If a {@link MiseqRun} with this ID doesn't exist
+	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void deleteCascadeToSample(Long id) throws EntityNotFoundException;
 }
