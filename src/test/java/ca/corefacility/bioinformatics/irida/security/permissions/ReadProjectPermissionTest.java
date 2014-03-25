@@ -20,6 +20,7 @@ import org.springframework.security.core.GrantedAuthority;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
@@ -55,7 +56,7 @@ public class ReadProjectPermissionTest {
 		u.setUsername(username);
 		Project p = new Project();
 		List<Join<Project, User>> projectUsers = new ArrayList<>();
-		projectUsers.add(new ProjectUserJoin(p, u));
+		projectUsers.add(new ProjectUserJoin(p, u,ProjectRole.PROJECT_USER));
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(projectRepository.findOne(1l)).thenReturn(p);
@@ -77,7 +78,7 @@ public class ReadProjectPermissionTest {
 		u.setUsername(username);
 		Project p = new Project();
 		List<Join<Project, User>> projectUsers = new ArrayList<>();
-		projectUsers.add(new ProjectUserJoin(p, new User()));
+		projectUsers.add(new ProjectUserJoin(p, new User(),ProjectRole.PROJECT_USER));
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(projectRepository.findOne(1l)).thenReturn(p);
