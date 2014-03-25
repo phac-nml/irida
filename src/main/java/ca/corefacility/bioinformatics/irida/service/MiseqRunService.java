@@ -59,6 +59,9 @@ public interface MiseqRunService extends CRUDService<Long, MiseqRun> {
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#file, 'canReadSequenceFile')")
 	public Join<MiseqRun, SequenceFile> getMiseqRunForSequenceFile(SequenceFile file);
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
     public void delete(Long id) throws EntityNotFoundException;
