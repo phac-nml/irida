@@ -42,13 +42,30 @@ public class UpdateUserPermission extends BasePermission<User> {
 	public boolean customPermissionAllowed(Authentication authentication, User u) {
 		logger.trace("Checking if [" + authentication + "] can modify [" + u + "]");
 
-		// really quick check: if the principle is of ROLE_CLIENT, they should
+		// really quick check: if the principle is of ROLE_SEQUENCER, they should
 		// be rejected immediately.
 		if (authentication.getAuthorities().contains(Role.ROLE_SEQUENCER)) {
 			logger.trace("Tool attempting to modify itself: [" + authentication + "], attempt rejected.");
 			return false;
 		}
 
+		boolean isOwnAccount = modifyingOwnAccount(authentication, u);
+		boolean isAdmin = authentication.getAuthorities().contains(Role.ROLE_ADMIN);
+		boolean isManagerModifyingAdmin = authentication.getAuthorities().contains(Role.ROLE_MANAGER) && u.getAuthorities().contains(Role.ROLE_ADMIN);
+
+		return (isOwnAccount || isAdmin) && !isManagerModifyingAdmin;
+	}
+
+	/**
+	 * Check to see if the user is modifying their own account.
+	 * 
+	 * @param authentication
+	 *            the currently logged in user.
+	 * @param u
+	 *            the user that is being modified
+	 * @return true if the authentication and user are the same thing.
+	 */
+	private boolean modifyingOwnAccount(Authentication authentication, User u) {
 		boolean isOwnAccount = false;
 		// business rules specify that the authenticated user must have a
 		// role of administrator, or the user is trying to modify their own

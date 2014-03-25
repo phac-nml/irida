@@ -104,7 +104,7 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize(CREATE_USER_PERMISSIONS)
-    public User create(@Valid User object) throws EntityExistsException, ConstraintViolationException;
+    public User create(@Valid User u) throws EntityExistsException, ConstraintViolationException;
 
 
 	/**
@@ -128,7 +128,7 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 * users with role other than Role.ROLE_USER).
 	 */
 	static final String UPDATE_USER_PERMISSIONS = "hasRole('ROLE_ADMIN') or "
-			+ "(!#properties.containsKey('systemRole') and (hasRole('ROLE_MANAGER') or hasPermission(#uid, 'canUpdateUser')))";
+			+ "(!#properties.containsKey('systemRole') and hasPermission(#uid, 'canUpdateUser'))";
 
 	/**
 	 * {@inheritDoc}
