@@ -1,7 +1,8 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Validator;
 
@@ -93,7 +94,7 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 	@Override
 	@Transactional
 	public void deleteCascadeToSample(Long id) throws EntityNotFoundException {
-		List<Sample> referencedSamples = new ArrayList<>();
+		Set<Sample> referencedSamples = new HashSet<>();
 		
 		logger.trace("Getting samples for miseq run " + id);
 		//Get the Files from the MiSeqRun to delete
