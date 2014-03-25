@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
@@ -84,16 +83,8 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(Long id){
-		super.delete(id);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	@Transactional
-	public void deleteCascadeToSample(Long id) throws EntityNotFoundException {
+	public void delete(Long id){
 		Set<Sample> referencedSamples = new HashSet<>();
 		
 		logger.trace("Getting samples for miseq run " + id);
@@ -110,7 +101,7 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 		
 		//Delete the run
 		logger.trace("Deleting MiSeq run");
-		delete(id);
+		super.delete(id);
 		
 		//Search if samples are empty.  If they are, delete the sample.
 		for(Sample sample: referencedSamples){
@@ -120,6 +111,5 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 				sampleRepository.delete(sample.getId());
 			}
 		}
-		
 	}
 }

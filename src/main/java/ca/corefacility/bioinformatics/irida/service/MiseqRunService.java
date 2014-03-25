@@ -60,17 +60,11 @@ public interface MiseqRunService extends CRUDService<Long, MiseqRun> {
 	public Join<MiseqRun, SequenceFile> getMiseqRunForSequenceFile(SequenceFile file);
 	
 	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-    public void delete(Long id) throws EntityNotFoundException;
-	
-	/**
 	 * Deletes a {@link MiseqRun} and cascades the delete to any empty {@link Sample}s.  If a Sample is empty after the delete, it will also be deleted.
 	 * @param id The ID of the {@link MiseqRun} to delete.
 	 * @throws EntityNotFoundException If a {@link MiseqRun} with this ID doesn't exist
 	 */
+	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public void deleteCascadeToSample(Long id) throws EntityNotFoundException;
+    public void delete(Long id) throws EntityNotFoundException;
 }
