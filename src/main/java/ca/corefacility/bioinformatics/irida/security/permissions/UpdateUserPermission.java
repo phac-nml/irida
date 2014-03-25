@@ -51,6 +51,8 @@ public class UpdateUserPermission extends BasePermission<User> {
 
 		boolean isOwnAccount = modifyingOwnAccount(authentication, u);
 		boolean isAdmin = authentication.getAuthorities().contains(Role.ROLE_ADMIN);
+
+		//We're not allowing a manager to modify an admin.  This is checking if the logged in user is a manager and if the passed model object is an admin. 
 		boolean isManagerModifyingAdmin = authentication.getAuthorities().contains(Role.ROLE_MANAGER) && u.getAuthorities().contains(Role.ROLE_ADMIN);
 
 		return (isOwnAccount || isAdmin) && !isManagerModifyingAdmin;
