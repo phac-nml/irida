@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderName
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.SampleProgressListener;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 
@@ -71,6 +72,8 @@ public class GalaxyAPI {
 	private GalaxySearch galaxySearchAdmin;
 	private GalaxyLibraryBuilder galaxyLibrary;
 	private Uploader.DataStorage dataStorage = Uploader.DataStorage.REMOTE;
+	
+	private SampleProgressListener progressListener = SampleProgressListener.DEFAULT_LISTENER;
 
 	/**
 	 * Builds a new GalaxyAPI instance with the given information.
@@ -470,6 +473,16 @@ public class GalaxyAPI {
 					+ galaxyUserEmail + " does not exist");
 		}
 	}
+	
+	/**
+	 * Sets a SampleProgressListener to listen to sample upload progress events.
+	 * @param sampleProgressListener  The listener to listen to sample upload progress events.
+	 */
+	public void setSampleProgressListener(SampleProgressListener sampleProgressListener) {
+		checkNotNull(sampleProgressListener, "sampleProgressListener is null");
+		
+		this.progressListener = sampleProgressListener;
+	}
 
 	/**
 	 * Uploads the passed set of files to a Galaxy library.
@@ -501,8 +514,9 @@ public class GalaxyAPI {
 		checkNotNull(libraryID, "libraryID is null");
 
 		boolean success = true;
+		int numberOfSamples = samples.size();
 
-		if (samples.size() > 0) {
+		if (numberOfSamples > 0) {
 			String errorSuffix = " in instance of galaxy with url="
 					+ galaxyInstance.getGalaxyUrl();
 
@@ -533,10 +547,15 @@ public class GalaxyAPI {
 				galaxyLibrary.createLibraryFolder(library, REFERENCES_FOLDER_NAME);
 			}
 
+			int currentSample = 0;
 			for (UploadSample sample : samples) {
 				if (sample != null) {
 					success &= uploadSample(sample, illuminaFolder,
 							librariesClient, library, libraryContentMap);
+					
+					currentSample++;
+					progressListener.progressUpdate(numberOfSamples, currentSample,
+							sample.getSampleName());
 				} else {
 					throw new LibraryUploadException(
 							"Cannot upload a null sample" + errorSuffix);

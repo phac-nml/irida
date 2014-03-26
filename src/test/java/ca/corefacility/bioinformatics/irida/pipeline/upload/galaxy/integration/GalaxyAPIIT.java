@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +45,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFound
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadFolderName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
@@ -52,6 +54,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderName
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.SampleProgressListener;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
@@ -1377,6 +1380,40 @@ public class GalaxyAPIIT {
 		assertEquals("More than one copy of /references was created", 1,
 				countReferencesFolder);
 	}
+	
+	/**
+	 * Tests progress listener when uploading multiple samples to Galaxy.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 * @throws InterruptedException 
+	 */
+	@Test
+	public void testUploadProgressListener() throws URISyntaxException,
+			MalformedURLException, ConstraintViolationException,
+			UploadException, InterruptedException {
+		GalaxyProjectName libraryName = new GalaxyProjectName("testUploadProgressListener");
+		
+		GalaxyFolderName sample1Name = new GalaxyFolderName("testData1");
+		GalaxyFolderName sample2Name = new GalaxyFolderName("testData2");
+
+		List<UploadSample> samples = new ArrayList<UploadSample>();
+		GalaxySample galaxySample1 = new GalaxySample(sample1Name, dataFilesSingle);
+		GalaxySample galaxySample2 = new GalaxySample(sample2Name, dataFilesSingle);
+		samples.add(galaxySample1);
+		samples.add(galaxySample2);
+
+		SampleProgressListenerTest progressListener = new SampleProgressListenerTest();
+		galaxyAPI.setSampleProgressListener(progressListener);
+		assertEquals(0, progressListener.getProgressUpdates().size());
+		
+		galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
+		
+		assertEquals(2, progressListener.getProgressUpdates().size());
+		assertTrue(progressListener.getProgressUpdates().contains(new ProgressUpdate(2,1,sample1Name)));
+		assertTrue(progressListener.getProgressUpdates().contains(new ProgressUpdate(2,2,sample2Name)));
+	}
 
 	/**
 	 * Tests uploading multiple samples to Galaxy.
@@ -1471,5 +1508,88 @@ public class GalaxyAPIIT {
 	@Test
 	public void testIsConnected() {
 		assertTrue(galaxyAPI.isConnected());
+	}
+	
+	/**
+	 * SampleProgressListener class which keeps track of all progress events sent to it.
+	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+	 *
+	 */
+	private class SampleProgressListenerTest implements SampleProgressListener {
+	
+		private List<ProgressUpdate> progressUpdates;
+		
+		/**
+		 * Creates a new SampleProgressListenerTest and sets up the tracking of events in a list.
+		 */
+		public SampleProgressListenerTest() {
+			progressUpdates = new ArrayList<ProgressUpdate>();
+		}
+		
+		@Override
+		public void progressUpdate(int totalSamples, int currentSample,
+				UploadFolderName sampleName) {
+			progressUpdates.add(new ProgressUpdate(totalSamples, currentSample, sampleName));
+		}
+		
+		/**
+		 * Gets the recorded events.
+		 * @return  A list containing the recorded events.
+		 */
+		public List<ProgressUpdate> getProgressUpdates() {
+			return progressUpdates;
+		}
+	}
+	
+	/**
+	 * Class for storing together any progress update messages so I can verify
+	 * that they got sent later.
+	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+	 */
+	private class ProgressUpdate {
+		
+		private int totalSamples;
+		private int currentSample;
+		private UploadFolderName sampleName;
+		
+		/**
+		 * Builds new progress update object for storing progress update messages.
+		 * @param totalSamples  The total number of samples from the event.
+		 * @param currentSample  The current sample in the event.
+		 * @param sampleName  The name of the sample in the event.
+		 */
+		public ProgressUpdate(int totalSamples, int currentSample,
+				UploadFolderName sampleName) {
+			super();
+			this.totalSamples = totalSamples;
+			this.currentSample = currentSample;
+			this.sampleName = sampleName;
+		}
+		
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public int hashCode() {
+			return Objects.hash(totalSamples, currentSample, sampleName);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			ProgressUpdate other = (ProgressUpdate) obj;
+			
+			return Objects.equals(this.totalSamples, other.totalSamples) &&
+					Objects.equals(this.currentSample, other.currentSample)&&
+					Objects.equals(this.sampleName, other.sampleName);
+		}
 	}
 }

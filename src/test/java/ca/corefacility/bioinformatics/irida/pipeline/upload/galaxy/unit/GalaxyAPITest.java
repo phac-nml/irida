@@ -38,6 +38,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.SampleProgressListener;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
@@ -75,6 +76,9 @@ public class GalaxyAPITest {
 	private GalaxySearch galaxySearch;
 	@Mock
 	private GalaxyLibraryBuilder galaxyLibrary;
+	
+	@Mock
+	private SampleProgressListener sampleProgressListener;
 
 	final private GalaxyAccountEmail realAdminEmail = new GalaxyAccountEmail(
 			"admin@localhost");
@@ -944,6 +948,51 @@ public class GalaxyAPITest {
 						eq(new GalaxyFolderName("testData2")));
 		verify(librariesClient, times(2)).uploadFilesystemPathsRequest(
 				eq(libraryId), any(FilesystemPathsLibraryUpload.class));
+	}
+	
+	/**
+	 * Tests that the sample progress listener receives events.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws UploadException
+	 */
+	@Test
+	public void testSampleProgressMonitor() throws URISyntaxException,
+			MalformedURLException, UploadException {
+		setupLibraryFolders();
+
+		String sampleFolderId1 = "3";
+		String sampleFolderId2 = "4";
+		
+		GalaxyFolderName sample1Name = new GalaxyFolderName("testData1");
+		GalaxyFolderName sample2Name = new GalaxyFolderName("testData2");
+
+		List<UploadSample> samples = new ArrayList<UploadSample>();
+		GalaxySample galaxySample1 = new GalaxySample(sample1Name, dataFilesSingle);
+		GalaxySample galaxySample2 = new GalaxySample(sample2Name, dataFilesSingle);
+		samples.add(galaxySample1);
+		samples.add(galaxySample2);
+
+		List<LibraryFolder> folders = new ArrayList<LibraryFolder>();
+		LibraryFolder sampleFolder1 = new LibraryFolder();
+		sampleFolder1.setName(illuminaFolderPath + "/"
+				+ galaxySample1.getSampleName());
+		sampleFolder1.setFolderId(sampleFolderId1);
+		LibraryFolder sampleFolder2 = new LibraryFolder();
+		sampleFolder2.setName(illuminaFolderPath + "/"
+				+ galaxySample2.getSampleName());
+		sampleFolder2.setFolderId(sampleFolderId2);
+		folders.add(sampleFolder1);
+		folders.add(sampleFolder2);
+
+		setupUploadSampleToLibrary(samples, folders, false);
+
+		workflowRESTAPI.setSampleProgressListener(sampleProgressListener);
+		
+		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
+		verify(sampleProgressListener).progressUpdate(2, 1, sample1Name);
+		verify(sampleProgressListener).progressUpdate(2, 2, sample2Name);
+		
 	}
 
 	/**
