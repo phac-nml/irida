@@ -11,13 +11,10 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.sun.jersey.api.client.ClientHandlerException;
-
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
-import ca.corefacility.bioinformatics.irida.exceptions.UploadConnectionException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
@@ -57,42 +54,21 @@ public class GalaxyUploaderTest {
 		
 		galaxyUploader = new GalaxyUploader(galaxyAPI);
 	}
-
-	/**
-	 * Test connection failure to Galaxy on upload.
-	 * @throws ConstraintViolationException
-	 * @throws UploadException
-	 */
-	@SuppressWarnings("unchecked")
-	@Test(expected = UploadConnectionException.class)
-	public void testUploadGalaxyConnectionFail()
-			throws ConstraintViolationException, UploadException {
-
-		when(
-				galaxyAPI.uploadSamples(any(ArrayList.class),
-						any(GalaxyProjectName.class),
-						any(GalaxyAccountEmail.class))).thenThrow(
-				new ClientHandlerException("error connecting"));
-
-		galaxyUploader.uploadSamples(new ArrayList<UploadSample>(),
-				new GalaxyProjectName("lib"), accountEmail);
+	
+	@Test
+	public void testGalaxyUploadWorkerSuccess() {
+		when(galaxyAPI.isConnected()).thenReturn(true);
+		
+		assertNotNull(galaxyUploader.uploadSamples(new ArrayList<UploadSample>(),
+				new GalaxyProjectName("lib"), accountEmail));
 	}
 	
-	/**
-	 * Test successful upload.
-	 * @throws ConstraintViolationException
-	 * @throws UploadException
-	 */
-	@SuppressWarnings("unchecked")
-	public void testUploadGalaxyConnectionSuccess()
-			throws UploadException {
-
-		when(galaxyAPI.uploadSamples(any(ArrayList.class),
-				any(GalaxyProjectName.class),
-				any(GalaxyAccountEmail.class))).thenReturn(uploadResult);
-
-		assertNotNull(galaxyUploader.uploadSamples(new ArrayList<UploadSample>(),
-						new GalaxyProjectName("lib"), accountEmail));
+	@Test(expected=RuntimeException.class)
+	public void testGalaxyUploadWorkerFail() {
+		when(galaxyAPI.isConnected()).thenReturn(false);
+		
+		galaxyUploader.uploadSamples(new ArrayList<UploadSample>(),
+				new GalaxyProjectName("lib"), accountEmail);
 	}
 
 	/**

@@ -992,7 +992,6 @@ public class GalaxyAPITest {
 		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
 		verify(sampleProgressListener).progressUpdate(2, 1, sample1Name);
 		verify(sampleProgressListener).progressUpdate(2, 2, sample2Name);
-		
 	}
 
 	/**

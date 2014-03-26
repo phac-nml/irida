@@ -11,6 +11,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.sun.jersey.api.client.ClientHandlerException;
+
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
@@ -227,6 +229,39 @@ public class GalaxyUploadWorkerTest {
 		assertEquals(uploadException, exceptionRunnerTest.getException());
 		assertTrue(worker.exceptionOccured());
 		assertEquals(uploadException, worker.getUploadException());
+		assertNull(worker.getUploadResult());
+		assertNull(finishedRunnerTest.getFinishedResult());
+	}
+	
+	/**
+	 * Tests failed upload for connection exception.
+	 * @throws InterruptedException
+	 * @throws ConstraintViolationException
+	 * @throws LibraryUploadException
+	 * @throws CreateLibraryException
+	 * @throws ChangeLibraryPermissionsException
+	 * @throws GalaxyUserNotFoundException
+	 * @throws NoLibraryFoundException
+	 * @throws GalaxyUserNoRoleException
+	 * @throws NoGalaxyContentFoundException
+	 */
+	@Test
+	public void testUploadNoGalaxyConnection() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
+		
+		when(galaxyAPI.uploadSamples(samples, dataLocation, userName)).thenThrow(
+				new ClientHandlerException("error connecting"));
+		
+		UploadFinishedRunnerTest finishedRunnerTest = new UploadFinishedRunnerTest();
+		UploadExceptionRunnerTest exceptionRunnerTest = new UploadExceptionRunnerTest();
+		
+		GalaxyUploadWorker worker = new GalaxyUploadWorker(galaxyAPI, samples, dataLocation, userName);
+		worker.runOnUploadFinished(finishedRunnerTest);
+		worker.runOnUploadException(exceptionRunnerTest);
+		
+		worker.run();
+		
+		verify(galaxyAPI).uploadSamples(samples, dataLocation, userName);
+		assertNotNull(exceptionRunnerTest.getException());
 		assertNull(worker.getUploadResult());
 		assertNull(finishedRunnerTest.getFinishedResult());
 	}

@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 
 /**
@@ -33,6 +34,10 @@ public class GalaxyUploader implements Uploader<GalaxyProjectName, GalaxyAccount
 			.getLogger(GalaxyUploader.class);
 
 	private GalaxyAPI galaxyAPI = null;
+	
+	private URL galaxyURL;
+	private GalaxyAccountEmail adminEmail;
+	private String adminAPIKey;
 	private DataStorage dataStorage = DataStorage.REMOTE;
 
 	/**
@@ -40,7 +45,7 @@ public class GalaxyUploader implements Uploader<GalaxyProjectName, GalaxyAccount
 	 */
 	public GalaxyUploader() {
 	}
-
+	
 	/**
 	 * Builds a new GalaxyUploader with the given GalaxyAPI.
 	 * 
@@ -74,6 +79,10 @@ public class GalaxyUploader implements Uploader<GalaxyProjectName, GalaxyAccount
 		checkNotNull(galaxyURL, "galaxyURL is null");
 		checkNotNull(adminEmail, "adminEmail is null");
 		checkNotNull(adminAPIKey, "apiKey is null");
+		
+		this.galaxyURL = galaxyURL;
+		this.adminEmail = adminEmail;
+		this.adminAPIKey = adminAPIKey;
 
 		galaxyAPI = new GalaxyAPI(galaxyURL, adminEmail, adminAPIKey);
 		galaxyAPI.setDataStorage(dataStorage);
@@ -135,26 +144,14 @@ public class GalaxyUploader implements Uploader<GalaxyProjectName, GalaxyAccount
 	 * {@inheritDoc}
 	 */
 	@Override
-	public UploadResult uploadSamples(@Valid List<UploadSample> samples,
+	public UploadWorker uploadSamples(@Valid List<UploadSample> samples,
 			@Valid GalaxyProjectName dataLocation,
-			@Valid GalaxyAccountEmail userName) throws UploadException,
-			ConstraintViolationException {
+			@Valid GalaxyAccountEmail userName) throws ConstraintViolationException {
 
-		logger.debug("Uploading samples to Galaxy Library " + dataLocation
-				+ ", userEmail=" + userName + ", samples=" + samples);
-
-		if (galaxyAPI == null) {
-			throw new UploadException(
-					"Could not upload samples to Galaxy Library "
-							+ dataLocation + ", userEmail=" + userName
-							+ ": no Galaxy connection established");
+		if (isDataLocationConnected()) {
+			return new GalaxyUploadWorker(galaxyAPI, samples, dataLocation, userName);
 		} else {
-			try {
-				return galaxyAPI.uploadSamples(samples, dataLocation, userName);
-			} catch (ClientHandlerException e) {
-				throw new UploadConnectionException(
-						"Could not upload to Galaxy", e);
-			}
+			throw new RuntimeException("Uploader is not connected to any instance of Galaxy");
 		}
 	}
 }

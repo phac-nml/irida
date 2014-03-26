@@ -72,6 +72,9 @@ public class GalaxyUploadWorker implements UploadWorker {
 		} catch (UploadException e) {
 			this.uploadException = e;
 			exceptionRunner.exception(uploadException);
+		} catch (RuntimeException e) {
+			this.uploadException = new UploadException(e);
+			exceptionRunner.exception(uploadException);
 		} catch (Exception e) {
 			// handle any remaining exceptions
 			this.uploadException = new UploadException(e);
