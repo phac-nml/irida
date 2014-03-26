@@ -31,6 +31,11 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploadWorker;
 
+/**
+ * Unit tests for GalaxyUploadWorker.
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ */
 public class GalaxyUploadWorkerTest {
 	private GalaxyAccountEmail userName;
 	private GalaxyProjectName dataLocation;
@@ -62,10 +67,20 @@ public class GalaxyUploadWorkerTest {
 		dataLocation = new GalaxyProjectName("Test");
 		
 		samples = new ArrayList<UploadSample>();
-		
-		
 	}
 	
+	/**
+	 * Tests general upload without overriding behaviours on finished upload or on exceptions.
+	 * @throws InterruptedException
+	 * @throws ConstraintViolationException
+	 * @throws LibraryUploadException
+	 * @throws CreateLibraryException
+	 * @throws ChangeLibraryPermissionsException
+	 * @throws GalaxyUserNotFoundException
+	 * @throws NoLibraryFoundException
+	 * @throws GalaxyUserNoRoleException
+	 * @throws NoGalaxyContentFoundException
+	 */
 	@Test
 	public void testUpload() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
 		when(galaxyAPI.uploadSamples(samples, dataLocation, userName)).thenReturn(uploadResult);
@@ -77,6 +92,18 @@ public class GalaxyUploadWorkerTest {
 		verify(galaxyAPI).uploadSamples(samples, dataLocation, userName);
 	}
 	
+	/**
+	 * Tests successful upload and running of finished method.
+	 * @throws InterruptedException
+	 * @throws ConstraintViolationException
+	 * @throws LibraryUploadException
+	 * @throws CreateLibraryException
+	 * @throws ChangeLibraryPermissionsException
+	 * @throws GalaxyUserNotFoundException
+	 * @throws NoLibraryFoundException
+	 * @throws GalaxyUserNoRoleException
+	 * @throws NoGalaxyContentFoundException
+	 */
 	@Test
 	public void testUploadSuccess() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
 		when(galaxyAPI.uploadSamples(samples, dataLocation, userName)).thenReturn(uploadResult);
@@ -96,6 +123,18 @@ public class GalaxyUploadWorkerTest {
 		assertNull(exceptionRunnerTest.getException());
 	}
 	
+	/**
+	 * Tests failed upload and running of exception methods.
+	 * @throws InterruptedException
+	 * @throws ConstraintViolationException
+	 * @throws LibraryUploadException
+	 * @throws CreateLibraryException
+	 * @throws ChangeLibraryPermissionsException
+	 * @throws GalaxyUserNotFoundException
+	 * @throws NoLibraryFoundException
+	 * @throws GalaxyUserNoRoleException
+	 * @throws NoGalaxyContentFoundException
+	 */
 	@Test
 	public void testUploadException() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
 		UploadException uploadException = new LibraryUploadException("exception");
@@ -117,6 +156,11 @@ public class GalaxyUploadWorkerTest {
 		assertNull(finishedRunnerTest.getFinishedResult());
 	}
 	
+	/**
+	 * Class for getting access to upload result on successfull upload.
+	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+	 *
+	 */
 	private class UploadFinishedRunnerTest implements UploadWorker.UploadFinishedRunner {
 		private UploadResult result = null;
 		
@@ -125,14 +169,27 @@ public class GalaxyUploadWorkerTest {
 			this.result = result;
 		}
 		
+		/**
+		 * Gets the UploadResult on successfull upload.
+		 * @return  The UploadResult.
+		 */
 		public UploadResult getFinishedResult() {
 			return result;
 		}
 	}
 	
+	/**
+	 * Class for getting access to exception on failed upload.
+	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+	 *
+	 */
 	private class UploadExceptionRunnerTest implements UploadWorker.UploadExceptionRunner {
 		private UploadException exception = null;
 		
+		/**
+		 * Gets the exception raised in the UploadWorker.
+		 * @return
+		 */
 		public UploadException getException() {
 			return exception;
 		}
