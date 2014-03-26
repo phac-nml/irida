@@ -108,14 +108,10 @@ public class GalaxyAPI {
 		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance,
 				galaxySearchAdmin);
 
-		try {
-			if (!galaxySearchAdmin.galaxyUserExists(adminEmail)) {
-				throw new GalaxyConnectException(
-						"Could not create GalaxyInstance with URL=" + galaxyURL
-								+ ", adminEmail=" + adminEmail);
-			}
-		} catch (ClientHandlerException e) {
-			throw new GalaxyConnectException(e);
+		if (!isConnected()) {
+			throw new GalaxyConnectException(
+					"Could not create GalaxyInstance with URL=" + galaxyURL
+							+ ", adminEmail=" + adminEmail);
 		}
 	}
 
@@ -146,15 +142,11 @@ public class GalaxyAPI {
 		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance,
 				galaxySearchAdmin);
 
-		try {
-			if (!galaxySearchAdmin.galaxyUserExists(adminEmail)) {
-				throw new GalaxyConnectException(
-						"Could not create GalaxyInstance with URL="
-								+ galaxyInstance.getGalaxyUrl()
-								+ ", adminEmail=" + adminEmail);
-			}
-		} catch (ClientHandlerException e) {
-			throw new GalaxyConnectException(e);
+		if (!isConnected()) {
+			throw new GalaxyConnectException(
+					"Could not create GalaxyInstance with URL="
+							+ galaxyInstance.getGalaxyUrl()
+							+ ", adminEmail=" + adminEmail);
 		}
 	}
 
@@ -194,15 +186,11 @@ public class GalaxyAPI {
 		this.galaxyLibrary = galaxyLibrary;
 		this.galaxySearchAdmin = galaxySearch;
 
-		try {
-			if (!galaxySearch.galaxyUserExists(adminEmail)) {
-				throw new GalaxyConnectException(
-						"Could not use GalaxyInstance with URL="
-								+ galaxyInstance.getGalaxyUrl()
-								+ ", adminEmail=" + adminEmail);
-			}
-		} catch (ClientHandlerException e) {
-			throw new GalaxyConnectException(e);
+		if (!isConnected()) {
+			throw new GalaxyConnectException(
+					"Could not use GalaxyInstance with URL="
+							+ galaxyInstance.getGalaxyUrl()
+							+ ", adminEmail=" + adminEmail);
 		}
 	}
 
