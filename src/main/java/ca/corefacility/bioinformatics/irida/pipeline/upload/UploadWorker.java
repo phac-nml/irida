@@ -1,10 +1,70 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload;
 
+import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
+
 /**
  * An interface for a class used to perform the actual uploading of files to a remote site.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public interface UploadWorker extends Runnable {
+	
+	/**
+	 * Default class for running when upload is finished.
+	 */
+	public static UploadFinishedRunner DEFAULT_FINISHED = new UploadFinishedRunner(){
+		@Override
+		public void finish(UploadResult result) {
+		}
+	};
+	
+	/**
+	 * Default class for running when an upload exception has occured.
+	 */
+	public static UploadExceptionRunner DEFAULT_EXCEPTION = new UploadExceptionRunner(){
+		@Override
+		public void exception(UploadException uploadException) {
+		}
+	};
 
+	/**
+	 * Interface for definining code to run when upload is finished.
+	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+	 *
+	 */
+	public interface UploadFinishedRunner {
+		
+		/**
+		 * Run when upload has finished.
+		 * @param result  The resulting object and status of the upload.
+		 */
+		public void finish(UploadResult result);
+	}
+	
+	/**
+	 * Interface for defining code to run when an upload exception is raised.
+	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+	 *
+	 */
+	public interface UploadExceptionRunner {
+		
+		/**
+		 * Run when an upload exception is raised.
+		 * @param uploadException  The exception raised.
+		 */
+		public void exception(UploadException uploadException);
+	}
+	
+	/**
+	 * Attaches code to run when the upload has finished running.
+	 * @param finishedRunner  The UploadFinishedRunner with code to be run when the upload is finished.
+	 */
+	public void runOnUploadFinished(UploadFinishedRunner finishedRunner);
+	
+	/**
+	 * Attaches code to run when an upload exception has been raised.
+	 * @param finishedRunner  The UploadExceptionRunner with code to be run when an upload exception is raised.
+	 */
+	public void runOnUploadException(UploadExceptionRunner exceptionRunner);
 }

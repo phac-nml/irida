@@ -35,6 +35,9 @@ public class GalaxyUploadWorker extends Thread implements UploadWorker {
 	private GalaxyProjectName dataLocation;
 	private GalaxyAccountEmail userName;
 	
+	private UploadFinishedRunner finishedRunner = DEFAULT_FINISHED;
+	private UploadExceptionRunner exceptionRunner = DEFAULT_EXCEPTION;
+	
 	/**
 	 * Constructs a new GalaxyUploadWorker for performing the upload of files to Galaxy within a new Thread.
 	 * @param galaxyAPI  The GalaxyAPI to connect to an instance of Galaxy.
@@ -59,20 +62,15 @@ public class GalaxyUploadWorker extends Thread implements UploadWorker {
 	public void run() {
 		try {
 			UploadResult uploadResult = uploadSamples(samples, dataLocation, userName);
-			uploadFinished(uploadResult);
+			finishedRunner.finish(uploadResult);
 		} catch (ConstraintViolationException e) {
-			uploadException(new UploadException(e));
+			exceptionRunner.exception(new UploadException(e));
 		} catch (UploadException e) {
-			uploadException(e);
+			exceptionRunner.exception(e);
+		} catch (Exception e) {
+			// handle any remaining exceptions
+			exceptionRunner.exception(new UploadException(e));
 		}
-	}
-	
-	private void uploadFinished(UploadResult uploadResult) {
-		
-	}
-	
-	private void uploadException(UploadException uploadException) {
-		
 	}
 	
 	/**
@@ -106,5 +104,17 @@ public class GalaxyUploadWorker extends Thread implements UploadWorker {
 			throw new UploadConnectionException(
 					"Could not upload to Galaxy", e);
 		}
+	}
+
+	@Override
+	public void runOnUploadFinished(UploadFinishedRunner finishedRunner) {
+		checkNotNull(finishedRunner, "finishedRunner is null");
+		this.finishedRunner = finishedRunner;
+	}
+
+	@Override
+	public void runOnUploadException(UploadExceptionRunner exceptionRunner) {
+		checkNotNull(exceptionRunner, "exceptionRunner is null");
+		this.exceptionRunner = exceptionRunner;
 	}
 }
