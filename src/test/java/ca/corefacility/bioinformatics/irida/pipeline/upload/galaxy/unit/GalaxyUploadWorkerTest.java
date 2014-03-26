@@ -22,13 +22,14 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFound
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
-import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
+
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploadResultUtils.UploadExceptionRunnerTest;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploadResultUtils.UploadFinishedRunnerTest;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploadWorker;
 
 /**
@@ -156,49 +157,5 @@ public class GalaxyUploadWorkerTest {
 		assertEquals(uploadException, exceptionRunnerTest.getException());
 		assertNull(worker.getUploadResult());
 		assertNull(finishedRunnerTest.getFinishedResult());
-	}
-	
-	/**
-	 * Class for getting access to upload result on successfull upload.
-	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
-	 *
-	 */
-	private class UploadFinishedRunnerTest implements UploadWorker.UploadFinishedRunner {
-		private UploadResult result = null;
-		
-		@Override
-		public void finish(UploadResult result) {
-			this.result = result;
-		}
-		
-		/**
-		 * Gets the UploadResult on successfull upload.
-		 * @return  The UploadResult.
-		 */
-		public UploadResult getFinishedResult() {
-			return result;
-		}
-	}
-	
-	/**
-	 * Class for getting access to exception on failed upload.
-	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
-	 *
-	 */
-	private class UploadExceptionRunnerTest implements UploadWorker.UploadExceptionRunner {
-		private UploadException exception = null;
-		
-		/**
-		 * Gets the exception raised in the UploadWorker.
-		 * @return
-		 */
-		public UploadException getException() {
-			return exception;
-		}
-
-		@Override
-		public void exception(UploadException uploadException) {
-			this.exception = uploadException;
-		}
 	}
 }
