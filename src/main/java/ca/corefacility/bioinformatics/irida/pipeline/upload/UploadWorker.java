@@ -57,6 +57,12 @@ public interface UploadWorker extends Runnable {
 	}
 	
 	/**
+	 * Returns the final upload result when the worker is finished running.
+	 * @return The final upload result when the worker is finished running, or null if no such result.
+	 */
+	public UploadResult getUploadResult();
+	
+	/**
 	 * Attaches code to run when the upload has finished running.
 	 * @param finishedRunner  The UploadFinishedRunner with code to be run when the upload is finished.
 	 */
