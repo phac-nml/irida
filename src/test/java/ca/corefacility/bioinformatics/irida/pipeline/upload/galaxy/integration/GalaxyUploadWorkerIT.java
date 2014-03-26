@@ -98,6 +98,8 @@ public class GalaxyUploadWorkerIT {
 		assertNotNull(finishedRunnerTest.getFinishedResult());
 		assertEquals(worker.getUploadResult(), finishedRunnerTest.getFinishedResult());
 		assertNull(exceptionRunnerTest.getException());
+		assertFalse(worker.exceptionOccured());
+		assertNull(worker.getUploadException());
 	}
 	
 	/**
@@ -132,6 +134,8 @@ public class GalaxyUploadWorkerIT {
 		worker.join();
 
 		assertNotNull(exceptionRunnerTest.getException());
+		assertNotNull(worker.getUploadException());
+		assertTrue(worker.exceptionOccured());
 		assertNull(worker.getUploadResult());
 		assertNull(finishedRunnerTest.getFinishedResult());
 	}

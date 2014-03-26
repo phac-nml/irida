@@ -122,6 +122,8 @@ public class GalaxyUploadWorkerTest {
 		verify(galaxyAPI).uploadSamples(samples, dataLocation, userName);
 		assertEquals(uploadResult, finishedRunnerTest.getFinishedResult());
 		assertEquals(uploadResult, worker.getUploadResult());
+		assertFalse(worker.exceptionOccured());
+		assertNull(worker.getUploadException());
 		assertNull(exceptionRunnerTest.getException());
 	}
 	
@@ -155,6 +157,8 @@ public class GalaxyUploadWorkerTest {
 		
 		verify(galaxyAPI).uploadSamples(samples, dataLocation, userName);
 		assertEquals(uploadException, exceptionRunnerTest.getException());
+		assertTrue(worker.exceptionOccured());
+		assertEquals(uploadException, worker.getUploadException());
 		assertNull(worker.getUploadResult());
 		assertNull(finishedRunnerTest.getFinishedResult());
 	}

@@ -63,6 +63,18 @@ public interface UploadWorker extends Runnable {
 	public UploadResult getUploadResult();
 	
 	/**
+	 * Returns an UploadException if any such exception was thrown.
+	 * @return  An UploadException if one was thrown, or null if no exceptions where thrown.
+	 */
+	public UploadException getUploadException();
+	
+	/**
+	 * True if an exception occured while uploading, false otherwise.
+	 * @return True if an exception occured while uploading, false otherwise.
+	 */
+	public boolean exceptionOccured();
+	
+	/**
 	 * Attaches code to run when the upload has finished running.
 	 * @param finishedRunner  The UploadFinishedRunner with code to be run when the upload is finished.
 	 */
