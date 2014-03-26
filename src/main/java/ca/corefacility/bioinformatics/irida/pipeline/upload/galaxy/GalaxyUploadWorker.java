@@ -24,7 +24,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxyUploadWorker extends Thread implements UploadWorker {
+public class GalaxyUploadWorker implements UploadWorker {
 	
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyUploadWorker.class);

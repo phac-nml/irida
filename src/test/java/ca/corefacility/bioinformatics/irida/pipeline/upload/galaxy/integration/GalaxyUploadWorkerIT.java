@@ -92,8 +92,9 @@ public class GalaxyUploadWorkerIT {
 				samples, libraryName, localGalaxy.getAdminName());
 		worker.runOnUploadFinished(finishedRunnerTest);
 		worker.runOnUploadException(exceptionRunnerTest);
-		worker.start();
-		worker.join();
+		Thread t = new Thread(worker);
+		t.start();
+		t.join();
 
 		assertNotNull(finishedRunnerTest.getFinishedResult());
 		assertEquals(worker.getUploadResult(), finishedRunnerTest.getFinishedResult());
@@ -130,8 +131,9 @@ public class GalaxyUploadWorkerIT {
 				samples, libraryName, localGalaxy.getNonExistentGalaxyAdminName());
 		worker.runOnUploadFinished(finishedRunnerTest);
 		worker.runOnUploadException(exceptionRunnerTest);
-		worker.start();
-		worker.join();
+		Thread t = new Thread(worker);
+		t.start();
+		t.join();
 
 		assertNotNull(exceptionRunnerTest.getException());
 		assertNotNull(worker.getUploadException());
