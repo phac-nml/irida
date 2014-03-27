@@ -434,12 +434,12 @@
 		<com.github.jmchilton.galaxybootstrap.version>0.3.0-rc3</com.github.jmchilton.galaxybootstrap.version>
 
 		<!-- plugins -->
-		<maven.failsafe.plugin.version>2.16</maven.failsafe.plugin.version>
-		<maven.surefire.plugin.version>2.16</maven.surefire.plugin.version>
+		<maven.failsafe.plugin.version>2.17</maven.failsafe.plugin.version>
+		<maven.surefire.plugin.version>2.17</maven.surefire.plugin.version>
 		<maven.javadoc.plugin.version>2.9.1</maven.javadoc.plugin.version>
 		<maven.jacoco.plugin.version>0.7.0.201403182114</maven.jacoco.plugin.version>
 		<maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
-		<maven.liquibase.plugin.version>3.0.8</maven.liquibase.plugin.version>
+		<maven.liquibase.plugin.version>3.1.1</maven.liquibase.plugin.version>
 
 		<!-- project configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
