@@ -11,12 +11,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.jersey.api.client.ClientHandlerException;
-
-import ca.corefacility.bioinformatics.irida.exceptions.UploadConnectionException;
-import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
-import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
@@ -33,11 +28,8 @@ public class GalaxyUploader implements Uploader<GalaxyProjectName, GalaxyAccount
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyUploader.class);
 
-	private GalaxyAPI galaxyAPI = null;
+	private GalaxyConnector galaxyConnector = null;
 	
-	private URL galaxyURL;
-	private GalaxyAccountEmail adminEmail;
-	private String adminAPIKey;
 	private DataStorage dataStorage = DataStorage.REMOTE;
 
 	/**
@@ -47,19 +39,19 @@ public class GalaxyUploader implements Uploader<GalaxyProjectName, GalaxyAccount
 	}
 	
 	/**
-	 * Builds a new GalaxyUploader with the given GalaxyAPI.
+	 * Builds a new GalaxyUploader with the given GalaxyConnector.
 	 * 
-	 * @param galaxyAPI
-	 *            The GalaxyAPI to build the uploader with.
+	 * @param galaxyConnector
+	 *            The GalaxyConnector to build the uploader with.
 	 */
-	public GalaxyUploader(GalaxyAPI galaxyAPI) {
-		checkNotNull(galaxyAPI, "galaxyAPI is not null");
+	public GalaxyUploader(GalaxyConnector galaxyConnector) {
+		checkNotNull(galaxyConnector, "galaxyConnector is not null");
 
-		this.galaxyAPI = galaxyAPI;
+		this.galaxyConnector = galaxyConnector;
 	}
 
 	/**
-	 * Connects this uploader with a running instance of Galaxy.
+	 * Connects this uploader to a GalaxyConnector.
 	 * 
 	 * @param galaxyURL
 	 *            The URL of the instance of Galaxy.
@@ -73,22 +65,13 @@ public class GalaxyUploader implements Uploader<GalaxyProjectName, GalaxyAccount
 	 * @throws GalaxyConnectException
 	 *             If an error occured when connecting to Galaxy.
 	 */
-	public void setupGalaxyAPI(URL galaxyURL,
-			@Valid GalaxyAccountEmail adminEmail, String adminAPIKey)
+	public void connectToGalaxy(GalaxyConnector galaxyConnector)
 			throws ConstraintViolationException, GalaxyConnectException {
-		checkNotNull(galaxyURL, "galaxyURL is null");
-		checkNotNull(adminEmail, "adminEmail is null");
-		checkNotNull(adminAPIKey, "apiKey is null");
-		
-		this.galaxyURL = galaxyURL;
-		this.adminEmail = adminEmail;
-		this.adminAPIKey = adminAPIKey;
+		checkNotNull(galaxyConnector, "galaxyURL is null");
 
-		galaxyAPI = new GalaxyAPI(galaxyURL, adminEmail, adminAPIKey);
-		galaxyAPI.setDataStorage(dataStorage);
+		this.galaxyConnector = galaxyConnector;
 
-		logger.info("Setup connection to Galaxy with url=" + galaxyURL
-				+ ", adminEmail=" + adminEmail);
+		logger.info("Setup connection to Galaxy " + galaxyConnector);
 	}
 
 	/**
@@ -96,7 +79,7 @@ public class GalaxyUploader implements Uploader<GalaxyProjectName, GalaxyAccount
 	 */
 	@Override
 	public boolean isDataLocationAttached() {
-		return galaxyAPI != null;
+		return galaxyConnector != null;
 	}
 	
 	/**
@@ -105,7 +88,7 @@ public class GalaxyUploader implements Uploader<GalaxyProjectName, GalaxyAccount
 	@Override
 	public boolean isDataLocationConnected() {
 		return isDataLocationAttached() &&
-				galaxyAPI.isConnected();
+				galaxyConnector.isConnected();
 	}
 
 	/**
@@ -114,8 +97,8 @@ public class GalaxyUploader implements Uploader<GalaxyProjectName, GalaxyAccount
 	@Override
 	public void setDataStorage(DataStorage dataStorage) {
 		this.dataStorage = dataStorage;
-		if (galaxyAPI != null) {
-			galaxyAPI.setDataStorage(dataStorage);
+		if (galaxyConnector != null) {
+			galaxyConnector.setDataStorage(dataStorage);
 		}
 	}
 
@@ -132,8 +115,8 @@ public class GalaxyUploader implements Uploader<GalaxyProjectName, GalaxyAccount
 	 */
 	@Override
 	public URL getUrl() {
-		if (galaxyAPI != null) {
-			return galaxyAPI.getGalaxyUrl();
+		if (galaxyConnector != null) {
+			return galaxyConnector.getURL();
 		} else {
 			throw new RuntimeException(
 					"Uploader is not connected to any instance of Galaxy");
@@ -148,10 +131,17 @@ public class GalaxyUploader implements Uploader<GalaxyProjectName, GalaxyAccount
 			@Valid GalaxyProjectName dataLocation,
 			@Valid GalaxyAccountEmail userName) throws ConstraintViolationException {
 
-		if (isDataLocationConnected()) {
-			return new GalaxyUploadWorker(galaxyAPI, samples, dataLocation, userName);
-		} else {
-			throw new RuntimeException("Uploader is not connected to any instance of Galaxy");
+		try {
+			GalaxyAPI galaxyAPI = galaxyConnector.createGalaxyConnection();
+			
+			if (isDataLocationConnected()) {
+				return new GalaxyUploadWorker(galaxyAPI, samples, dataLocation, userName);
+			} else {
+				throw new RuntimeException("Uploader is not connected to any instance of Galaxy");
+			}
+			
+		} catch (GalaxyConnectException e) {
+			throw new RuntimeException("Uploader is not connected to any instance of Galaxy", e);
 		}
 	}
 }

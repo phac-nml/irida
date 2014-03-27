@@ -23,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyConnector;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
 
 @Configuration
@@ -67,13 +68,16 @@ public class GalaxyAPIConfig {
 		if (galaxyURLString != null && galaxyAdminAPIKey != null
 				&& galaxyAdminEmailString != null) {
 			try {
+				GalaxyConnector galaxyConnector;
+				
 				URL galaxyURL = new URL(galaxyURLString);
 				GalaxyAccountEmail galaxyAdminEmail = new GalaxyAccountEmail(
 						galaxyAdminEmailString);
 				validateGalaxyAccountEmail(galaxyAdminEmail);
 
-				galaxyUploader.setupGalaxyAPI(galaxyURL, galaxyAdminEmail,
+				galaxyConnector = new GalaxyConnector(galaxyURL, galaxyAdminEmail,
 						galaxyAdminAPIKey);
+				galaxyUploader.connectToGalaxy(galaxyConnector);
 
 				if (dataStorageString != null) {
 					Uploader.DataStorage dataStorage = VALID_STORAGE

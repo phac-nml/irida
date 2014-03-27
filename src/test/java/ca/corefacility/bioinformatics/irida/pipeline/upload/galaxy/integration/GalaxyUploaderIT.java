@@ -28,7 +28,6 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.LocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
@@ -37,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectNam
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyConnector;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -99,20 +99,6 @@ public class GalaxyUploaderIT {
 	}
 
 	/**
-	 * Test the case of setting up the Galaxy API with a an email that does not exist in Galaxy.
-	 * @throws ConstraintViolationException
-	 * @throws GalaxyConnectException
-	 */
-	@Test(expected = GalaxyConnectException.class)
-	public void testSetupNonExistentEmail()
-			throws ConstraintViolationException, GalaxyConnectException {
-		GalaxyUploader newGalaxyUploder = new GalaxyUploader();
-		newGalaxyUploder.setupGalaxyAPI(localGalaxy.getGalaxyURL(),
-				localGalaxy.getNonExistentGalaxyAdminName(),
-				localGalaxy.getAdminAPIKey());
-	}
-
-	/**
 	 * Tests the case of Galaxy being shutdown while the archive is running.
 	 * @throws ConstraintViolationException
 	 * @throws UploadException
@@ -130,8 +116,9 @@ public class GalaxyUploaderIT {
 
 		// connect to running Galaxy first, so it passes all initial checks
 		GalaxyUploader galaxyUploader = new GalaxyUploader();
-		galaxyUploader.setupGalaxyAPI(newLocalGalaxy.getGalaxyURL(),
+		GalaxyConnector galaxyConnector = new GalaxyConnector(newLocalGalaxy.getGalaxyURL(),
 				newLocalGalaxy.getAdminName(), newLocalGalaxy.getAdminAPIKey());
+		galaxyUploader.connectToGalaxy(galaxyConnector);
 		
 		assertTrue(galaxyUploader.isDataLocationAttached());
 		assertTrue(galaxyUploader.isDataLocationConnected());

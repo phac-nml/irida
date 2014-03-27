@@ -24,7 +24,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectExcep
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyConnector;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 
@@ -64,10 +66,24 @@ public class LocalGalaxyConfig {
 	@Bean
 	public Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader() throws MalformedURLException, GalaxyConnectException {
 		GalaxyUploader galaxyUploader = new GalaxyUploader();
-		galaxyUploader.setupGalaxyAPI(localGalaxy().getGalaxyURL(),
-				localGalaxy().getAdminName(), localGalaxy().getAdminAPIKey());
+		galaxyUploader.connectToGalaxy(galaxyConnector());
 
 		return galaxyUploader;
+	}
+	
+	/**
+	 * Creates a new GalaxyConnector to connect to the local Galaxy instance.
+	 * @return  A GalaxyConnector to connect to the local Galaxy instance.
+	 * @throws MalformedURLException  If the Galaxy URL is not formed properly.
+	 */
+	@Lazy
+	@Bean
+	public GalaxyConnector galaxyConnector() throws MalformedURLException {
+		GalaxyConnector galaxyConnector = new GalaxyConnector(localGalaxy().getGalaxyURL(),
+				localGalaxy().getAdminName(), localGalaxy().getAdminAPIKey());
+		galaxyConnector.setDataStorage(DataStorage.REMOTE);
+		
+		return galaxyConnector;
 	}
 
 	/**
