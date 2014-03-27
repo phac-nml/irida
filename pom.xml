@@ -268,14 +268,14 @@
 
 		<!-- Galaxy blend4j/testing -->
 		<dependency>
-		  <groupId>com.github.jmchilton.blend4j</groupId>
-		  <artifactId>blend4j</artifactId>
-		  <version>${com.github.jmchilton.blend4j.version}</version>
+			<groupId>com.github.jmchilton.blend4j</groupId>
+			<artifactId>blend4j</artifactId>
+			<version>${com.github.jmchilton.blend4j.version}</version>
 		</dependency>
 		<dependency>
-		  <groupId>com.github.jmchilton.galaxybootstrap</groupId>
-		  <artifactId>galaxybootstrap</artifactId>
-		  <version>${com.github.jmchilton.galaxybootstrap.version}</version>
+			<groupId>com.github.jmchilton.galaxybootstrap</groupId>
+			<artifactId>galaxybootstrap</artifactId>
+			<version>${com.github.jmchilton.galaxybootstrap.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -407,10 +407,12 @@
 		<!-- Dependencies -->
 		<junit.version>4.11</junit.version>
 		<slf4j.version>1.7.6</slf4j.version>
+		<!-- Can't upgrade guava to > 16 until jmchilton or apetkau depend on a 
+			newer version of Guava in galaxy-bootstrap (see: https://github.com/jmchilton/galaxy-bootstrap/issues/5) -->
 		<guava.version>15.0</guava.version>
-		<spring.version>4.0.0.RELEASE</spring.version>
-		<spring.security.version>3.2.0.RELEASE</spring.security.version>
-		<spring.data.jpa.version>1.4.3.RELEASE</spring.data.jpa.version>
+		<spring.version>4.0.3.RELEASE</spring.version>
+		<spring.security.version>3.2.3.RELEASE</spring.security.version>
+		<spring.data.jpa.version>1.5.1.RELEASE</spring.data.jpa.version>
 		<spring.data.envers.version>0.1.0.RELEASE</spring.data.envers.version>
 		<mockito.version>1.9.5</mockito.version>
 		<mysql.connector.version>5.1.28</mysql.connector.version>
