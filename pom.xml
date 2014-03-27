@@ -416,8 +416,7 @@
 		<spring.data.envers.version>0.1.0.RELEASE</spring.data.envers.version>
 		<mockito.version>1.9.5</mockito.version>
 		<mysql.connector.version>5.1.28</mysql.connector.version>
-		<hibernate.version>4.3.0.Final</hibernate.version>
-		<hibernate.jpa.version>1.0.1.Final</hibernate.jpa.version>
+		<hibernate.version>4.3.4.Final</hibernate.version>
 		<!-- Do NOT upgrade hsqldb; causes integration tests to fail when trying 
 			to save quality control data (specifically the binary charts) for sequence 
 			files. (fb; Jan 21, 2014) -->
@@ -428,7 +427,7 @@
 		<commons.dbcp.version>1.4</commons.dbcp.version>
 		<fastqc.version>0.10.1-nml-custom</fastqc.version>
 		<aspectj.version>1.7.4</aspectj.version>
-		<hibernate.validator.version>5.0.2.Final</hibernate.validator.version>
+		<hibernate.validator.version>5.1.0.Final</hibernate.validator.version>
 		<javax.el-api.version>2.2</javax.el-api.version>
 		<el-ri.version>1.0</el-ri.version>
 		<com.github.jmchilton.blend4j.version>0.1-alpha-7</com.github.jmchilton.blend4j.version>
