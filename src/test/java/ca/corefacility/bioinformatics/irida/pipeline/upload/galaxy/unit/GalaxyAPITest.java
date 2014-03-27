@@ -38,7 +38,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.SampleProgressListener;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker.UploadEventListener;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
@@ -78,7 +78,7 @@ public class GalaxyAPITest {
 	private GalaxyLibraryBuilder galaxyLibrary;
 	
 	@Mock
-	private SampleProgressListener sampleProgressListener;
+	private UploadEventListener uploadEventListener;
 
 	final private GalaxyAccountEmail realAdminEmail = new GalaxyAccountEmail(
 			"admin@localhost");
@@ -960,7 +960,7 @@ public class GalaxyAPITest {
 	public void testSampleProgressMonitor() throws URISyntaxException,
 			MalformedURLException, UploadException {
 		setupLibraryFolders();
-
+		
 		String sampleFolderId1 = "3";
 		String sampleFolderId2 = "4";
 		
@@ -987,11 +987,11 @@ public class GalaxyAPITest {
 
 		setupUploadSampleToLibrary(samples, folders, false);
 
-		workflowRESTAPI.setSampleProgressListener(sampleProgressListener);
+		workflowRESTAPI.addUploadEventListener(uploadEventListener);
 		
 		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
-		verify(sampleProgressListener).progressUpdate(2, 1, sample1Name);
-		verify(sampleProgressListener).progressUpdate(2, 2, sample2Name);
+		verify(uploadEventListener).progressUpdate(2, 1, sample1Name);
+		verify(uploadEventListener).progressUpdate(2, 2, sample2Name);
 	}
 
 	/**

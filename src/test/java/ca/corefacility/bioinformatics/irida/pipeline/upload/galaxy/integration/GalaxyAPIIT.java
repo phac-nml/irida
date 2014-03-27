@@ -57,7 +57,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.ProgressUpdate;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.SampleProgressListenerExample;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.UploadEventListenerTracker;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
@@ -1403,15 +1403,15 @@ public class GalaxyAPIIT {
 		samples.add(galaxySample1);
 		samples.add(galaxySample2);
 
-		SampleProgressListenerExample progressListener = new SampleProgressListenerExample();
-		galaxyAPI.setSampleProgressListener(progressListener);
-		assertEquals(0, progressListener.getProgressUpdates().size());
+		UploadEventListenerTracker eventListener = new UploadEventListenerTracker();
+		galaxyAPI.addUploadEventListener(eventListener);
+		assertEquals(0, eventListener.getProgressUpdates().size());
 		
 		galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
 		
-		assertEquals(2, progressListener.getProgressUpdates().size());
-		assertTrue(progressListener.getProgressUpdates().contains(new ProgressUpdate(2,1,sample1Name)));
-		assertTrue(progressListener.getProgressUpdates().contains(new ProgressUpdate(2,2,sample2Name)));
+		assertEquals(2, eventListener.getProgressUpdates().size());
+		assertTrue(eventListener.getProgressUpdates().contains(new ProgressUpdate(2,1,sample1Name)));
+		assertTrue(eventListener.getProgressUpdates().contains(new ProgressUpdate(2,2,sample2Name)));
 	}
 
 	/**

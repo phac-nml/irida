@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadFolderName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 
 /**
@@ -11,49 +12,31 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 public interface UploadWorker extends Runnable {
 	
 	/**
-	 * Default class for running when upload is finished.
-	 */
-	public static UploadFinishedRunner DEFAULT_FINISHED = new UploadFinishedRunner(){
-		@Override
-		public void finish(UploadResult result) {
-		}
-	};
-	
-	/**
-	 * Default class for running when an upload exception has occured.
-	 */
-	public static UploadExceptionRunner DEFAULT_EXCEPTION = new UploadExceptionRunner(){
-		@Override
-		public void exception(UploadException uploadException) {
-		}
-	};
-
-	/**
-	 * Interface for definining code to run when upload is finished.
+	 * Interface for definining code to run on events when uploading files.
 	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
 	 *
 	 */
-	public interface UploadFinishedRunner {
+	public interface UploadEventListener {
 		
 		/**
 		 * Run when upload has finished.
 		 * @param result  The resulting object and status of the upload.
 		 */
 		public void finish(UploadResult result);
-	}
-	
-	/**
-	 * Interface for defining code to run when an upload exception is raised.
-	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
-	 *
-	 */
-	public interface UploadExceptionRunner {
 		
 		/**
 		 * Run when an upload exception is raised.
 		 * @param uploadException  The exception raised.
 		 */
 		public void exception(UploadException uploadException);
+		
+		/**
+		 * Triggered whenever a new sample is being uploaded.
+		 * @param totalSamples  The total number of samples to upload.
+		 * @param currentSample  The current sample completed.
+		 * @param sampleName  The name of the current sample completed.
+		 */
+		public void progressUpdate(int totalSamples, int currentSample, UploadFolderName sampleName);
 	}
 	
 	/**
@@ -75,20 +58,8 @@ public interface UploadWorker extends Runnable {
 	public boolean exceptionOccured();
 	
 	/**
-	 * Attaches code to run when the upload has finished running.
-	 * @param finishedRunner  The UploadFinishedRunner with code to be run when the upload is finished.
+	 * Adds a new UploadEventListener to listen for upload events.
+	 * @param eventListener  The UploadEventListener to add.
 	 */
-	public void runOnUploadFinished(UploadFinishedRunner finishedRunner);
-	
-	/**
-	 * Attaches code to run when an upload exception has been raised.
-	 * @param finishedRunner  The UploadExceptionRunner with code to be run when an upload exception is raised.
-	 */
-	public void runOnUploadException(UploadExceptionRunner exceptionRunner);
-	
-	/**
-	 * Set a SampleProgressListener to this UploadWorker to recieve messages about upload progress.
-	 * @param progressListener  The progressListener to set.
-	 */
-	public void setSampleProgressListener(SampleProgressListener progressListener);
+	public void addUploadEventListener(UploadEventListener eventListener);
 }

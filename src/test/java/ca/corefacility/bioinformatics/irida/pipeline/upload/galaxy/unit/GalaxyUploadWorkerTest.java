@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.unit;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.validation.ConstraintViolationException;
@@ -25,16 +26,15 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFound
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
 
-import ca.corefacility.bioinformatics.irida.pipeline.upload.SampleProgressListener;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploadResultUtils.UploadExceptionRunnerTest;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploadResultUtils.UploadFinishedRunnerTest;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploadWorker;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.UploadEventListenerTracker;
 
 /**
  * Unit tests for GalaxyUploadWorker.
@@ -112,9 +112,10 @@ public class GalaxyUploadWorkerTest {
 	@Test
 	public void testSampleProgressListenerAttach() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
 		GalaxyUploadWorker worker = new GalaxyUploadWorker(galaxyAPI, samples, dataLocation, userName);
-		worker.setSampleProgressListener(SampleProgressListener.DEFAULT_LISTENER);
+		UploadEventListenerTracker eventListener = new UploadEventListenerTracker();
+		worker.addUploadEventListener(eventListener);
 		
-		verify(galaxyAPI).setSampleProgressListener(SampleProgressListener.DEFAULT_LISTENER);
+		verify(galaxyAPI).addUploadEventListener(eventListener);
 	}
 	
 	/**
@@ -132,7 +133,7 @@ public class GalaxyUploadWorkerTest {
 	@Test(expected=NullPointerException.class)
 	public void testSampleProgressListenerAttachInvalid() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
 		GalaxyUploadWorker worker = new GalaxyUploadWorker(galaxyAPI, samples, dataLocation, userName);
-		worker.setSampleProgressListener(null);
+		worker.addUploadEventListener(null);
 	}
 	
 	/**
@@ -151,21 +152,22 @@ public class GalaxyUploadWorkerTest {
 	public void testUploadSuccess() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
 		when(galaxyAPI.uploadSamples(samples, dataLocation, userName)).thenReturn(uploadResult);
 		
-		UploadFinishedRunnerTest finishedRunnerTest = new UploadFinishedRunnerTest();
-		UploadExceptionRunnerTest exceptionRunnerTest = new UploadExceptionRunnerTest();
+		UploadEventListenerTracker eventListener = new UploadEventListenerTracker();
+		
+		LinkedList<UploadResult> expectedUploadResults = new LinkedList<UploadResult>();
+		expectedUploadResults.add(uploadResult);
 		
 		GalaxyUploadWorker worker = new GalaxyUploadWorker(galaxyAPI, samples, dataLocation, userName);
-		worker.runOnUploadFinished(finishedRunnerTest);
-		worker.runOnUploadException(exceptionRunnerTest);
+		worker.addUploadEventListener(eventListener);
 		
 		worker.run();
 		
 		verify(galaxyAPI).uploadSamples(samples, dataLocation, userName);
-		assertEquals(uploadResult, finishedRunnerTest.getFinishedResult());
+		assertEquals(expectedUploadResults, eventListener.getResults());
 		assertEquals(uploadResult, worker.getUploadResult());
+		assertEquals(0, eventListener.getExceptions().size());
 		assertFalse(worker.exceptionOccured());
 		assertNull(worker.getUploadException());
-		assertNull(exceptionRunnerTest.getException());
 	}
 	
 	/**
@@ -184,22 +186,24 @@ public class GalaxyUploadWorkerTest {
 	public void testUploadSuccessSeparateThread() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
 		when(galaxyAPI.uploadSamples(samples, dataLocation, userName)).thenReturn(uploadResult);
 		
-		UploadFinishedRunnerTest finishedRunnerTest = new UploadFinishedRunnerTest();
-		UploadExceptionRunnerTest exceptionRunnerTest = new UploadExceptionRunnerTest();
+		UploadEventListenerTracker eventListener = new UploadEventListenerTracker();
+		
+		LinkedList<UploadResult> expectedUploadResults = new LinkedList<UploadResult>();
+		expectedUploadResults.add(uploadResult);
 		
 		GalaxyUploadWorker worker = new GalaxyUploadWorker(galaxyAPI, samples, dataLocation, userName);
-		worker.runOnUploadFinished(finishedRunnerTest);
-		worker.runOnUploadException(exceptionRunnerTest);
+		worker.addUploadEventListener(eventListener);
+		
 		Thread t = new Thread(worker);
-		t.run();
+		t.start();
 		t.join();
 		
 		verify(galaxyAPI).uploadSamples(samples, dataLocation, userName);
-		assertEquals(uploadResult, finishedRunnerTest.getFinishedResult());
+		assertEquals(expectedUploadResults, eventListener.getResults());
 		assertEquals(uploadResult, worker.getUploadResult());
+		assertEquals(0, eventListener.getExceptions().size());
 		assertFalse(worker.exceptionOccured());
 		assertNull(worker.getUploadException());
-		assertNull(exceptionRunnerTest.getException());
 	}
 	
 	/**
@@ -217,24 +221,24 @@ public class GalaxyUploadWorkerTest {
 	@Test
 	public void testUploadException() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
 		UploadException uploadException = new LibraryUploadException("exception");
+		UploadEventListenerTracker eventListener = new UploadEventListenerTracker();
 		
 		when(galaxyAPI.uploadSamples(samples, dataLocation, userName)).thenThrow(uploadException);
 		
-		UploadFinishedRunnerTest finishedRunnerTest = new UploadFinishedRunnerTest();
-		UploadExceptionRunnerTest exceptionRunnerTest = new UploadExceptionRunnerTest();
+		List<UploadException> expectedUploadExceptions = new LinkedList<UploadException>();
+		expectedUploadExceptions.add(uploadException);
 		
 		GalaxyUploadWorker worker = new GalaxyUploadWorker(galaxyAPI, samples, dataLocation, userName);
-		worker.runOnUploadFinished(finishedRunnerTest);
-		worker.runOnUploadException(exceptionRunnerTest);
+		worker.addUploadEventListener(eventListener);
 		
 		worker.run();
 		
 		verify(galaxyAPI).uploadSamples(samples, dataLocation, userName);
-		assertEquals(uploadException, exceptionRunnerTest.getException());
+		assertEquals(expectedUploadExceptions, eventListener.getExceptions());
 		assertTrue(worker.exceptionOccured());
 		assertEquals(uploadException, worker.getUploadException());
+		assertEquals(0, eventListener.getResults().size());
 		assertNull(worker.getUploadResult());
-		assertNull(finishedRunnerTest.getFinishedResult());
 	}
 	
 	/**
@@ -250,28 +254,28 @@ public class GalaxyUploadWorkerTest {
 	 * @throws NoGalaxyContentFoundException
 	 */
 	@Test
-	public void testUploadExceptionSeparateThread() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
+	public void testUploadExceptionMultiThread() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
 		UploadException uploadException = new LibraryUploadException("exception");
+		UploadEventListenerTracker eventListener = new UploadEventListenerTracker();
 		
 		when(galaxyAPI.uploadSamples(samples, dataLocation, userName)).thenThrow(uploadException);
 		
-		UploadFinishedRunnerTest finishedRunnerTest = new UploadFinishedRunnerTest();
-		UploadExceptionRunnerTest exceptionRunnerTest = new UploadExceptionRunnerTest();
+		List<UploadException> expectedUploadExceptions = new LinkedList<UploadException>();
+		expectedUploadExceptions.add(uploadException);
 		
 		GalaxyUploadWorker worker = new GalaxyUploadWorker(galaxyAPI, samples, dataLocation, userName);
-		worker.runOnUploadFinished(finishedRunnerTest);
-		worker.runOnUploadException(exceptionRunnerTest);
+		worker.addUploadEventListener(eventListener);
 		
 		Thread t = new Thread(worker);
 		t.start();
 		t.join();
 		
 		verify(galaxyAPI).uploadSamples(samples, dataLocation, userName);
-		assertEquals(uploadException, exceptionRunnerTest.getException());
+		assertEquals(expectedUploadExceptions, eventListener.getExceptions());
 		assertTrue(worker.exceptionOccured());
 		assertEquals(uploadException, worker.getUploadException());
+		assertEquals(0, eventListener.getResults().size());
 		assertNull(worker.getUploadResult());
-		assertNull(finishedRunnerTest.getFinishedResult());
 	}
 	
 	/**
@@ -288,22 +292,20 @@ public class GalaxyUploadWorkerTest {
 	 */
 	@Test
 	public void testUploadNoGalaxyConnection() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
+		UploadEventListenerTracker eventListener = new UploadEventListenerTracker();
 		
 		when(galaxyAPI.uploadSamples(samples, dataLocation, userName)).thenThrow(
 				new ClientHandlerException("error connecting"));
 		
-		UploadFinishedRunnerTest finishedRunnerTest = new UploadFinishedRunnerTest();
-		UploadExceptionRunnerTest exceptionRunnerTest = new UploadExceptionRunnerTest();
-		
 		GalaxyUploadWorker worker = new GalaxyUploadWorker(galaxyAPI, samples, dataLocation, userName);
-		worker.runOnUploadFinished(finishedRunnerTest);
-		worker.runOnUploadException(exceptionRunnerTest);
+		worker.addUploadEventListener(eventListener);
 		
 		worker.run();
 		
 		verify(galaxyAPI).uploadSamples(samples, dataLocation, userName);
-		assertNotNull(exceptionRunnerTest.getException());
+		assertEquals(1,eventListener.getExceptions().size());
 		assertNull(worker.getUploadResult());
-		assertNull(finishedRunnerTest.getFinishedResult());
+		assertEquals(0,eventListener.getProgressUpdates().size());
+		assertEquals(0,eventListener.getResults().size());
 	}
 }

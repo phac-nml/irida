@@ -31,8 +31,8 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploadWorker;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploadResultUtils.UploadExceptionRunnerTest;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploadResultUtils.UploadFinishedRunnerTest;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.ProgressUpdate;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.UploadEventListenerTracker;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 
@@ -75,9 +75,12 @@ public class GalaxyUploadWorkerIT {
 			UploadException, InterruptedException {
 		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"GalaxyUploadWorkerIT-testUploadSampleSuccess");
+		
+		GalaxyFolderName folderName = new GalaxyFolderName("testData");
+		
+		UploadEventListenerTracker eventListener = new UploadEventListenerTracker();
 
-		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName(
-				"testData"), dataFilesSingle);
+		UploadSample galaxySample = new GalaxySample(folderName, dataFilesSingle);
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
 		
@@ -85,22 +88,20 @@ public class GalaxyUploadWorkerIT {
 				.getAdminName(), localGalaxy.getAdminAPIKey());
 		galaxyAPI.setDataStorage(Uploader.DataStorage.REMOTE);
 		
-		UploadFinishedRunnerTest finishedRunnerTest = new UploadFinishedRunnerTest();
-		UploadExceptionRunnerTest exceptionRunnerTest = new UploadExceptionRunnerTest();
-		
 		GalaxyUploadWorker worker = new GalaxyUploadWorker(galaxyAPI,
 				samples, libraryName, localGalaxy.getAdminName());
-		worker.runOnUploadFinished(finishedRunnerTest);
-		worker.runOnUploadException(exceptionRunnerTest);
+		worker.addUploadEventListener(eventListener);
 		Thread t = new Thread(worker);
 		t.start();
 		t.join();
 
-		assertNotNull(finishedRunnerTest.getFinishedResult());
-		assertEquals(worker.getUploadResult(), finishedRunnerTest.getFinishedResult());
-		assertNull(exceptionRunnerTest.getException());
+		assertEquals(1,eventListener.getResults().size());
+		assertEquals(worker.getUploadResult(), eventListener.getResults().get(0));
+		assertEquals(0,eventListener.getExceptions().size());
 		assertFalse(worker.exceptionOccured());
 		assertNull(worker.getUploadException());
+		assertEquals(1,eventListener.getProgressUpdates().size());
+		assertEquals(new ProgressUpdate(1,1,folderName),eventListener.getProgressUpdates().get(0));
 	}
 	
 	/**
@@ -114,6 +115,8 @@ public class GalaxyUploadWorkerIT {
 			UploadException, InterruptedException {
 		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"GalaxyUploadWorkerIT-testUploadSampleFailure");
+		
+		UploadEventListenerTracker eventListener = new UploadEventListenerTracker();
 
 		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName(
 				"testData"), dataFilesSingle);
@@ -124,21 +127,17 @@ public class GalaxyUploadWorkerIT {
 				.getAdminName(), localGalaxy.getAdminAPIKey());
 		galaxyAPI.setDataStorage(Uploader.DataStorage.REMOTE);
 		
-		UploadFinishedRunnerTest finishedRunnerTest = new UploadFinishedRunnerTest();
-		UploadExceptionRunnerTest exceptionRunnerTest = new UploadExceptionRunnerTest();
-		
 		GalaxyUploadWorker worker = new GalaxyUploadWorker(galaxyAPI,
 				samples, libraryName, localGalaxy.getNonExistentGalaxyAdminName());
-		worker.runOnUploadFinished(finishedRunnerTest);
-		worker.runOnUploadException(exceptionRunnerTest);
+		worker.addUploadEventListener(eventListener);
 		Thread t = new Thread(worker);
 		t.start();
 		t.join();
 
-		assertNotNull(exceptionRunnerTest.getException());
-		assertNotNull(worker.getUploadException());
+		assertEquals(1, eventListener.getExceptions().size());
+		assertEquals(eventListener.getExceptions().get(0),worker.getUploadException());
 		assertTrue(worker.exceptionOccured());
 		assertNull(worker.getUploadResult());
-		assertNull(finishedRunnerTest.getFinishedResult());
+		assertEquals(0, eventListener.getResults().size());
 	}
 }

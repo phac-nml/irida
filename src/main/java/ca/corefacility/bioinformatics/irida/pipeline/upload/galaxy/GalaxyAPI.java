@@ -6,6 +6,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,13 +24,14 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFound
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadFolderName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.SampleProgressListener;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker.UploadEventListener;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 
@@ -73,8 +75,8 @@ public class GalaxyAPI {
 	private GalaxyLibraryBuilder galaxyLibrary;
 	private Uploader.DataStorage dataStorage = Uploader.DataStorage.REMOTE;
 	
-	private SampleProgressListener progressListener = SampleProgressListener.DEFAULT_LISTENER;
-
+	private List<UploadEventListener> eventListeners = new LinkedList<UploadEventListener>();
+	
 	/**
 	 * Builds a new GalaxyAPI instance with the given information.
 	 * 
@@ -475,13 +477,15 @@ public class GalaxyAPI {
 	}
 	
 	/**
-	 * Sets a SampleProgressListener to listen to sample upload progress events.
-	 * @param sampleProgressListener  The listener to listen to sample upload progress events.
+	 * Updates all listeners about the progress of the upload.
+	 * @param totalSamples
+	 * @param currentSample
+	 * @param sampleName
 	 */
-	public void setSampleProgressListener(SampleProgressListener sampleProgressListener) {
-		checkNotNull(sampleProgressListener, "sampleProgressListener is null");
-		
-		this.progressListener = sampleProgressListener;
+	private void progressUpdate(int totalSamples, int currentSample, UploadFolderName sampleName) {
+		for (UploadEventListener eventListener : eventListeners) {
+			eventListener.progressUpdate(totalSamples, currentSample, sampleName);
+		}
 	}
 
 	/**
@@ -554,7 +558,7 @@ public class GalaxyAPI {
 							librariesClient, library, libraryContentMap);
 					
 					currentSample++;
-					progressListener.progressUpdate(numberOfSamples, currentSample,
+					progressUpdate(numberOfSamples, currentSample,
 							sample.getSampleName());
 				} else {
 					throw new LibraryUploadException(
@@ -616,5 +620,14 @@ public class GalaxyAPI {
 		} catch (ClientHandlerException e) {
 			return false;
 		}
+	}
+
+	/**
+	 * Adds a new upload event listener.
+	 * @param eventListener  The event listener to add.
+	 */
+	public void addUploadEventListener(UploadEventListener eventListener) {
+		checkNotNull(eventListener, "eventListener is null");
+		eventListeners.add(eventListener);
 	}
 }

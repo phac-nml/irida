@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 
 import static com.google.common.base.Preconditions.*;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.validation.ConstraintViolationException;
@@ -17,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.SampleProgressListener;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
 
 /**
@@ -29,15 +29,14 @@ public class GalaxyUploadWorker implements UploadWorker {
 	
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyUploadWorker.class);
+	
+	private List<UploadEventListener> eventListeners;
 
 	private GalaxyAPI galaxyAPI;
 	
 	private List<UploadSample> samples;
 	private GalaxyProjectName dataLocation;
 	private GalaxyAccountEmail userName;
-	
-	private UploadFinishedRunner finishedRunner = DEFAULT_FINISHED;
-	private UploadExceptionRunner exceptionRunner = DEFAULT_EXCEPTION;
 	
 	private UploadResult uploadResult = null;
 	private UploadException uploadException = null;
@@ -60,26 +59,40 @@ public class GalaxyUploadWorker implements UploadWorker {
 		this.samples = samples;
 		this.dataLocation = dataLocation;
 		this.userName = userName;
+		
+		eventListeners = new LinkedList<UploadEventListener>();
 	}
 	
 	@Override
 	public void run() {
 		try {
 			uploadResult = uploadSamples(samples, dataLocation, userName);
-			finishedRunner.finish(uploadResult);
+			finish(uploadResult);
 		} catch (ConstraintViolationException e) {
 			this.uploadException = new UploadException(e);
-			exceptionRunner.exception(uploadException);
+			exception(uploadException);
 		} catch (UploadException e) {
 			this.uploadException = e;
-			exceptionRunner.exception(uploadException);
+			exception(uploadException);
 		} catch (RuntimeException e) {
 			this.uploadException = new UploadException(e);
-			exceptionRunner.exception(uploadException);
+			exception(uploadException);
 		} catch (Exception e) {
 			// handle any remaining exceptions
 			this.uploadException = new UploadException(e);
-			exceptionRunner.exception(uploadException);
+			exception(uploadException);
+		}
+	}
+	
+	private void finish(UploadResult uploadResult) {
+		for (UploadEventListener eventListener : eventListeners) {
+			eventListener.finish(uploadResult);
+		}
+	}
+	
+	private void exception(UploadException uploadException) {
+		for (UploadEventListener eventListener : eventListeners) {
+			eventListener.exception(uploadException);
 		}
 	}
 	
@@ -117,18 +130,6 @@ public class GalaxyUploadWorker implements UploadWorker {
 	}
 
 	@Override
-	public void runOnUploadFinished(UploadFinishedRunner finishedRunner) {
-		checkNotNull(finishedRunner, "finishedRunner is null");
-		this.finishedRunner = finishedRunner;
-	}
-
-	@Override
-	public void runOnUploadException(UploadExceptionRunner exceptionRunner) {
-		checkNotNull(exceptionRunner, "exceptionRunner is null");
-		this.exceptionRunner = exceptionRunner;
-	}
-
-	@Override
 	public UploadResult getUploadResult() {
 		return uploadResult;
 	}
@@ -144,9 +145,9 @@ public class GalaxyUploadWorker implements UploadWorker {
 	}
 
 	@Override
-	public void setSampleProgressListener(
-			SampleProgressListener progressListener) {
-		checkNotNull(progressListener, "progressListener is null");
-		galaxyAPI.setSampleProgressListener(progressListener);
+	public void addUploadEventListener(UploadEventListener eventListener) {
+		checkNotNull(eventListener, "eventListener is null");
+		eventListeners.add(eventListener);
+		galaxyAPI.addUploadEventListener(eventListener);
 	}
 }
