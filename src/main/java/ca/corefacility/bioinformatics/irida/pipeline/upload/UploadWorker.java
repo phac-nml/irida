@@ -85,4 +85,10 @@ public interface UploadWorker extends Runnable {
 	 * @param finishedRunner  The UploadExceptionRunner with code to be run when an upload exception is raised.
 	 */
 	public void runOnUploadException(UploadExceptionRunner exceptionRunner);
+	
+	/**
+	 * Set a SampleProgressListener to this UploadWorker to recieve messages about upload progress.
+	 * @param progressListener  The progressListener to set.
+	 */
+	public void setSampleProgressListener(SampleProgressListener progressListener);
 }

@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.unit;
 
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEma
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
 
+import ca.corefacility.bioinformatics.irida.pipeline.upload.SampleProgressListener;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploadResultUtils.UploadExceptionRunnerTest;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploadResultUtils.UploadFinishedRunnerTest;
@@ -61,9 +63,10 @@ public class GalaxyUploadWorkerTest {
 	 * @throws CreateLibraryException 
 	 * @throws LibraryUploadException 
 	 * @throws ConstraintViolationException 
+	 * @throws URISyntaxException 
 	 */
 	@Before
-	public void setup() throws MalformedURLException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
+	public void setup() throws MalformedURLException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException, URISyntaxException {
 		MockitoAnnotations.initMocks(this);
 
 		userName = new GalaxyAccountEmail("admin@localhost");
@@ -92,6 +95,44 @@ public class GalaxyUploadWorkerTest {
 		worker.run();
 		
 		verify(galaxyAPI).uploadSamples(samples, dataLocation, userName);
+	}
+	
+	/**
+	 * Tests attaching a SampleProgressListener.
+	 * @throws InterruptedException
+	 * @throws ConstraintViolationException
+	 * @throws LibraryUploadException
+	 * @throws CreateLibraryException
+	 * @throws ChangeLibraryPermissionsException
+	 * @throws GalaxyUserNotFoundException
+	 * @throws NoLibraryFoundException
+	 * @throws GalaxyUserNoRoleException
+	 * @throws NoGalaxyContentFoundException
+	 */
+	@Test
+	public void testSampleProgressListenerAttach() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
+		GalaxyUploadWorker worker = new GalaxyUploadWorker(galaxyAPI, samples, dataLocation, userName);
+		worker.setSampleProgressListener(SampleProgressListener.DEFAULT_LISTENER);
+		
+		verify(galaxyAPI).setSampleProgressListener(SampleProgressListener.DEFAULT_LISTENER);
+	}
+	
+	/**
+	 * Tests attaching an invalid SampleProgressListener.
+	 * @throws InterruptedException
+	 * @throws ConstraintViolationException
+	 * @throws LibraryUploadException
+	 * @throws CreateLibraryException
+	 * @throws ChangeLibraryPermissionsException
+	 * @throws GalaxyUserNotFoundException
+	 * @throws NoLibraryFoundException
+	 * @throws GalaxyUserNoRoleException
+	 * @throws NoGalaxyContentFoundException
+	 */
+	@Test(expected=NullPointerException.class)
+	public void testSampleProgressListenerAttachInvalid() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
+		GalaxyUploadWorker worker = new GalaxyUploadWorker(galaxyAPI, samples, dataLocation, userName);
+		worker.setSampleProgressListener(null);
 	}
 	
 	/**

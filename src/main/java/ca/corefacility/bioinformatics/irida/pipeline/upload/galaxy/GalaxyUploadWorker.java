@@ -17,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.SampleProgressListener;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
 
 /**
@@ -140,5 +141,12 @@ public class GalaxyUploadWorker implements UploadWorker {
 	@Override
 	public boolean exceptionOccured() {
 		return uploadException != null;
+	}
+
+	@Override
+	public void setSampleProgressListener(
+			SampleProgressListener progressListener) {
+		checkNotNull(progressListener, "progressListener is null");
+		galaxyAPI.setSampleProgressListener(progressListener);
 	}
 }
