@@ -36,7 +36,7 @@ public interface UploadWorker extends Runnable {
 		 * @param currentSample  The current sample completed.
 		 * @param sampleName  The name of the current sample completed.
 		 */
-		public void progressUpdate(int totalSamples, int currentSample, UploadFolderName sampleName);
+		public void sampleProgressUpdate(int totalSamples, int currentSample, UploadFolderName sampleName);
 	}
 	
 	/**

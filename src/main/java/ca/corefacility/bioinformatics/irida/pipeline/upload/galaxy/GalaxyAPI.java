@@ -482,9 +482,9 @@ public class GalaxyAPI {
 	 * @param currentSample
 	 * @param sampleName
 	 */
-	private void progressUpdate(int totalSamples, int currentSample, UploadFolderName sampleName) {
+	private void sampleProgressUpdate(int totalSamples, int currentSample, UploadFolderName sampleName) {
 		for (UploadEventListener eventListener : eventListeners) {
-			eventListener.progressUpdate(totalSamples, currentSample, sampleName);
+			eventListener.sampleProgressUpdate(totalSamples, currentSample, sampleName);
 		}
 	}
 
@@ -558,7 +558,7 @@ public class GalaxyAPI {
 							librariesClient, library, libraryContentMap);
 					
 					currentSample++;
-					progressUpdate(numberOfSamples, currentSample,
+					sampleProgressUpdate(numberOfSamples, currentSample,
 							sample.getSampleName());
 				} else {
 					throw new LibraryUploadException(

@@ -990,8 +990,8 @@ public class GalaxyAPITest {
 		workflowRESTAPI.addUploadEventListener(uploadEventListener);
 		
 		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
-		verify(uploadEventListener).progressUpdate(2, 1, sample1Name);
-		verify(uploadEventListener).progressUpdate(2, 2, sample2Name);
+		verify(uploadEventListener).sampleProgressUpdate(2, 1, sample1Name);
+		verify(uploadEventListener).sampleProgressUpdate(2, 2, sample2Name);
 	}
 
 	/**

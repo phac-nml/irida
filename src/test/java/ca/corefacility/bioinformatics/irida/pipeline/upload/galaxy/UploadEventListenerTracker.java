@@ -30,7 +30,7 @@ public class UploadEventListenerTracker implements UploadEventListener {
 	}
 
 	@Override
-	public void progressUpdate(int totalSamples, int currentSample,
+	public void sampleProgressUpdate(int totalSamples, int currentSample,
 			UploadFolderName sampleName) {
 		progressUpdates.add(new ProgressUpdate(totalSamples, currentSample, sampleName));
 	}
