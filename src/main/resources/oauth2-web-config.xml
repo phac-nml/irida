@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	
+	<!-- oauth:expression-handler id="oauthExpressionHandler" /-->
+	
+	
+	
+	<http pattern="/oauth/token" create-session="stateless"
+		authentication-manager-ref="clientAuthenticationManager"
+		xmlns="http://www.springframework.org/schema/security">
+		<!-- <intercept-url pattern="/**" method="GET" access="ROLE_DENY" />
+		<intercept-url pattern="/**" method="PUT" access="ROLE_DENY" />
+		<intercept-url pattern="/**" method="DELETE" access="ROLE_DENY" />
+		<intercept-url pattern="/**" access="IS_AUTHENTICATED_FULLY" /> -->
+		<anonymous enabled="false" />
+		<http-basic entry-point-ref="clientAuthenticationEntryPoint" />
+		<!-- include this only if you need to authenticate clients via request 
+			parameters -->
+		<custom-filter ref="clientCredentialsTokenEndpointFilter"
+			after="BASIC_AUTH_FILTER" />
+		<access-denied-handler ref="oauthAccessDeniedHandler" />
+	</http>
+	
+	<http pattern="/**" create-session="never"
+		entry-point-ref="oauthAuthenticationEntryPoint"
+		access-decision-manager-ref="accessDecisionManager"
+		authentication-manager-ref="clientAuthenticationManager"
+		xmlns="http://www.springframework.org/schema/security">
+		<anonymous enabled="false" />
+		<intercept-url pattern="/**" access="SCOPE_READ,SCOPE_WRITE" />
+		<custom-filter ref="resourceServerFilterData" before="PRE_AUTH_FILTER" />
+		<access-denied-handler ref="oauthAccessDeniedHandler" />
+	</http>
+	
+	<!-- <http authentication-manager-ref="authenticationManager" access-denied-page="/login"
+		disable-url-rewriting="true" xmlns="http://www.springframework.org/schema/security">
+		<intercept-url pattern="/oauth/**" access="ROLE_USER" />
+		<intercept-url pattern="/login" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<intercept-url pattern="/**" access="IS_AUTHENTICATED_FULLY" />
+
+		<form-login authentication-failure-url="/login?authentication_error=true"
+			default-target-url="/" login-page="/login"
+			login-processing-url="/login.do" />
+		<logout logout-success-url="/login" logout-url="/logout.do" />
+	</http> -->
+
+	<oauth:web-expression-handler id="oauthWebExpressionHandler" />
+		
+	<!-- FILTER FOR IN WEB PROJECT !-->
+	<oauth:resource-server id="resourceServerFilterData"
+		resource-id="NmlIrida" token-services-ref="tokenServices" />
+		
+	<!--  Use in web project-->
+	<oauth:authorization-server
+			client-details-service-ref="clientDetails" 
+			token-services-ref="tokenServices">
+		<oauth:authorization-code />
+		<oauth:implicit />
+		<oauth:refresh-token />
+		<oauth:client-credentials />
+		<oauth:password authentication-manager-ref="authenticationManager"/>
+	</oauth:authorization-server>
+	 
+	<authentication-manager id="clientAuthenticationManager"
+		xmlns="http://www.springframework.org/schema/security">
+		<authentication-provider user-service-ref="clientDetailsUserDetailsService" />
+	</authentication-manager>
+		
+</beans>
