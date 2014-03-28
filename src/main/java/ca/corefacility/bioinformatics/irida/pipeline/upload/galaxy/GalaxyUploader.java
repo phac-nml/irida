@@ -53,12 +53,7 @@ public class GalaxyUploader implements Uploader<GalaxyProjectName, GalaxyAccount
 	/**
 	 * Connects this uploader to a GalaxyConnector.
 	 * 
-	 * @param galaxyURL
-	 *            The URL of the instance of Galaxy.
-	 * @param adminEmail
-	 *            The email of an admin user for this instance of Galaxy.
-	 * @param adminAPIKey
-	 *            The API Key of the passed admin user.
+	 * @param galaxyConnector  A GalaxyConnector used to generate connections to a Galaxy instance.
 	 * @throws ConstraintViolationException
 	 *             If one of the parameters fails it's constraints (assumes this
 	 *             is managed by Spring).
@@ -132,9 +127,9 @@ public class GalaxyUploader implements Uploader<GalaxyProjectName, GalaxyAccount
 			@Valid GalaxyAccountEmail userName) throws ConstraintViolationException {
 
 		try {
-			GalaxyAPI galaxyAPI = galaxyConnector.createGalaxyConnection();
 			
 			if (isDataLocationConnected()) {
+				GalaxyAPI galaxyAPI = galaxyConnector.createGalaxyConnection();
 				return new GalaxyUploadWorker(galaxyAPI, samples, dataLocation, userName);
 			} else {
 				throw new RuntimeException("Uploader is not connected to any instance of Galaxy");
