@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 
 import static com.google.common.base.Preconditions.*;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -91,7 +93,22 @@ public class GalaxySearch {
 			}
 		}
 
-		throw new GalaxyUserNotFoundException(email);
+		throw new GalaxyUserNotFoundException(email, getGalaxyUrl());
+	}
+	
+	/**
+	 * Gets the URL of the Galaxy instance we are connected to.
+	 * 
+	 * @return A String of the URL of the Galaxy instance we are connected to.
+	 */
+	private URL getGalaxyUrl() {
+		try {
+			return new URL(galaxyInstance.getGalaxyUrl());
+		} catch (MalformedURLException e) {
+			// This should never really occur, don't force all calling methods
+			// to catch exception
+			throw new RuntimeException("Galaxy URL is malformed", e);
+		}
 	}
 
 	/**

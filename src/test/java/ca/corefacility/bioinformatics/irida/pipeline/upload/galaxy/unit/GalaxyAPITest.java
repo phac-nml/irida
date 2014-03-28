@@ -6,6 +6,7 @@ import static org.junit.Assert.*;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -488,8 +489,11 @@ public class GalaxyAPITest {
 	public void testBuildGalaxyLibraryNoUser() throws URISyntaxException,
 			MalformedURLException, UploadException {
 		setupBuildLibrary();
+		
+		URL url = new URL(galaxyURL);
 
-		when(galaxySearch.findUserWithEmail(fakeUserEmail)).thenThrow(new GalaxyUserNotFoundException(fakeUserEmail));
+		when(galaxySearch.findUserWithEmail(fakeUserEmail))
+			.thenThrow(new GalaxyUserNotFoundException(fakeUserEmail, url));
 
 		workflowRESTAPI.buildGalaxyLibrary(libraryName, fakeUserEmail);
 	}
