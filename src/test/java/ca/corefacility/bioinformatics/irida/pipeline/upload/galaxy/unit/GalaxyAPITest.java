@@ -489,7 +489,7 @@ public class GalaxyAPITest {
 			MalformedURLException, UploadException {
 		setupBuildLibrary();
 
-		when(galaxySearch.findUserWithEmail(fakeUserEmail)).thenThrow(new GalaxyUserNotFoundException());
+		when(galaxySearch.findUserWithEmail(fakeUserEmail)).thenThrow(new GalaxyUserNotFoundException(fakeUserEmail));
 
 		workflowRESTAPI.buildGalaxyLibrary(libraryName, fakeUserEmail);
 	}

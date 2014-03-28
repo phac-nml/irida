@@ -234,8 +234,7 @@ public class GalaxyAPI {
 
 		// make sure user exists and has a role before we create an empty library
 		if (!galaxySearchAdmin.galaxyUserExists(galaxyUserEmail)) {
-			throw new GalaxyUserNotFoundException(
-					"Could not find Galaxy user with email=" + galaxyUserEmail);
+			throw new GalaxyUserNotFoundException(galaxyUserEmail);
 		}
 
 		if (!galaxySearchAdmin.userRoleExistsFor(galaxyUserEmail)) {
@@ -471,8 +470,7 @@ public class GalaxyAPI {
 								+ galaxyInstance.getGalaxyUrl());
 			}
 		} else {
-			throw new GalaxyUserNotFoundException("Galaxy user with email "
-					+ galaxyUserEmail + " does not exist");
+			throw new GalaxyUserNotFoundException(galaxyUserEmail);
 		}
 	}
 	

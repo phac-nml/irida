@@ -91,7 +91,7 @@ public class GalaxySearch {
 			}
 		}
 
-		throw new GalaxyUserNotFoundException("No user found with email " + email);
+		throw new GalaxyUserNotFoundException(email);
 	}
 
 	/**
