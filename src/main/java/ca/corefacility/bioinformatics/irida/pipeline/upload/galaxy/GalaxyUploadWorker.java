@@ -63,6 +63,9 @@ public class GalaxyUploadWorker implements UploadWorker {
 		eventListeners = new LinkedList<UploadEventListener>();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void run() {
 		try {
@@ -129,21 +132,33 @@ public class GalaxyUploadWorker implements UploadWorker {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public UploadResult getUploadResult() {
 		return uploadResult;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public UploadException getUploadException() {
 		return uploadException;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean exceptionOccured() {
 		return uploadException != null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void addUploadEventListener(UploadEventListener eventListener) {
 		checkNotNull(eventListener, "eventListener is null");
