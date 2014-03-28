@@ -3,6 +3,9 @@ package ca.corefacility.bioinformatics.irida.config;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.provider.BaseClientDetails;
@@ -16,6 +19,9 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 
 @Configuration
 public class IridaOAuth2Config {
+
+	@Autowired
+	private DataSource dataSource;
 
 	@Bean
 	public DefaultTokenServices tokenServices() {
@@ -43,31 +49,27 @@ public class IridaOAuth2Config {
 	@Bean
 	public ClientDetailsService clientDetails() {
 		InMemoryClientDetailsService inMemoryClientDetailsService = new InMemoryClientDetailsService();
+
+		inMemoryClientDetailsService.setClientDetailsStore(clientDetailsList());
+		return inMemoryClientDetailsService;
+	}
+
+	private Map<String, ClientDetails> clientDetailsList() {
 		Map<String, ClientDetails> clientStore = new HashMap<>();
 
 		/*
-		 * Add client details here:
-		 * args:clientId,resourceId,scopes,grant types,authorities
-		 * BaseClientDetails thing = new BaseClientDetails("clientId", "resourceId", "read,write","authorization_code,refresh_token", "ROLE_CLIENT");
-		 * thing.setClientSecret("secret");
-		 * clientStore.put("clientId", thing);
+		 * Add client details here: args:clientId,resourceId,scopes,grant
+		 * types,authorities BaseClientDetails thing = new
+		 * BaseClientDetails("clientId", "resourceId",
+		 * "read,write","authorization_code,refresh_token", "ROLE_CLIENT");
+		 * thing.setClientSecret("secret"); clientStore.put("clientId", thing);
 		 */
-		
-		BaseClientDetails thing = new BaseClientDetails("tonrData", "NmlIrida", "read,write",
-				"authorization_code,refresh_token", "ROLE_CLIENT");
-		thing.setClientSecret("secret");
-		clientStore.put("tonrData", thing);
-		
-		BaseClientDetails sequencerClient = new BaseClientDetails("sequencer", "NmlIrida", "read,write",
-				"password", "ROLE_CLIENT");
+
+		BaseClientDetails sequencerClient = new BaseClientDetails("sequencer", "NmlIrida", "read,write", "password","ROLE_CLIENT");
 		sequencerClient.setClientSecret("sequencerSecret");
 
 		clientStore.put("sequencer", sequencerClient);
 
-		
-
-		inMemoryClientDetailsService.setClientDetailsStore(clientStore);
-		return inMemoryClientDetailsService;
-
+		return clientStore;
 	}
 }
