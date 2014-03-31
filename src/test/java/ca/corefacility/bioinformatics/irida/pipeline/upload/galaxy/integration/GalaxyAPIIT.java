@@ -1410,8 +1410,8 @@ public class GalaxyAPIIT {
 		galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
 		
 		assertEquals(2, eventListener.getProgressUpdates().size());
-		assertTrue(eventListener.getProgressUpdates().contains(new ProgressUpdate(2,1,sample1Name)));
-		assertTrue(eventListener.getProgressUpdates().contains(new ProgressUpdate(2,2,sample2Name)));
+		assertTrue(eventListener.getProgressUpdates().contains(new ProgressUpdate(2,0,sample1Name)));
+		assertTrue(eventListener.getProgressUpdates().contains(new ProgressUpdate(2,1,sample2Name)));
 	}
 
 	/**

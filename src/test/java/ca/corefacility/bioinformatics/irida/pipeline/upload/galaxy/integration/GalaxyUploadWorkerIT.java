@@ -101,7 +101,7 @@ public class GalaxyUploadWorkerIT {
 		assertFalse(worker.exceptionOccured());
 		assertNull(worker.getUploadException());
 		assertEquals(1,eventListener.getProgressUpdates().size());
-		assertEquals(new ProgressUpdate(1,1,folderName),eventListener.getProgressUpdates().get(0));
+		assertEquals(new ProgressUpdate(1,0,folderName),eventListener.getProgressUpdates().get(0));
 	}
 	
 	/**

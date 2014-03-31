@@ -552,12 +552,14 @@ public class GalaxyAPI {
 			int currentSample = 0;
 			for (UploadSample sample : samples) {
 				if (sample != null) {
+					// message about current sample being worked on
+					sampleProgressUpdate(numberOfSamples, currentSample,
+							sample.getSampleName());
+					
 					success &= uploadSample(sample, illuminaFolder,
 							librariesClient, library, libraryContentMap);
 					
 					currentSample++;
-					sampleProgressUpdate(numberOfSamples, currentSample,
-							sample.getSampleName());
 				} else {
 					throw new LibraryUploadException(
 							"Cannot upload a null sample" + errorSuffix);
