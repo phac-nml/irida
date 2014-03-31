@@ -54,6 +54,17 @@ public class GalaxyProjectNameTest {
 	}
 	
 	@Test
+	public void testEmptyName() {
+		GalaxyProjectName name = new GalaxyProjectName("");
+		
+		Set<ConstraintViolation<GalaxyProjectName>> constraintViolations
+			= validator.validate(name);
+
+		assertEquals(1, constraintViolations.size());
+		assertEquals(b.getString("galaxy.object.size"), constraintViolations.iterator().next().getMessage());
+	}
+	
+	@Test
 	public void testShortName() {
 		GalaxyProjectName name = new GalaxyProjectName("a");
 		

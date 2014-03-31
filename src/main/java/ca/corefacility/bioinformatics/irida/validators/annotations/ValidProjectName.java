@@ -17,25 +17,25 @@ import javax.validation.constraints.Pattern;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
-@Pattern.List({ @Pattern(regexp = "^[^\\?]+$", message = "{irida.name.invalid.question.mark}"),
-		@Pattern(regexp = "^[^\\(]+$", message = "{irida.name.invalid.left.paren}"),
-		@Pattern(regexp = "^[^\\)]+$", message = "{irida.name.invalid.right.paren}"),
-		@Pattern(regexp = "^[^\\[]+$", message = "{irida.name.invalid.left.bracket}"),
-		@Pattern(regexp = "^[^\\]]+$", message = "{irida.name.invalid.right.bracket}"),
-		@Pattern(regexp = "^[^\\/]+$", message = "{irida.name.invalid.forward.slash}"),
-		@Pattern(regexp = "^[^\\\\]+$", message = "{irida.name.invalid.back.slash}"),
-		@Pattern(regexp = "^[^\\=]+$", message = "{irida.name.invalid.equals}"),
-		@Pattern(regexp = "^[^\\+]+$", message = "{irida.name.invalid.plus}"),
-		@Pattern(regexp = "^[^\\<]+$", message = "{irida.name.invalid.left.angle}"),
-		@Pattern(regexp = "^[^\\>]+$", message = "{irida.name.invalid.right.angle}"),
-		@Pattern(regexp = "^[^\\:]+$", message = "{irida.name.invalid.colon}"),
-		@Pattern(regexp = "^[^\\;]+$", message = "{irida.name.invalid.semi.colon}"),
-		@Pattern(regexp = "^[^\\\"]+$", message = "{irida.name.invalid.double.quote}"),
-		@Pattern(regexp = "^[^\\,]+$", message = "{irida.name.invalid.comma}"),
-		@Pattern(regexp = "^[^\\*]+$", message = "{irida.name.invalid.star}"),
-		@Pattern(regexp = "^[^\\^]+$", message = "{irida.name.invalid.circumflex}"),
-		@Pattern(regexp = "^[^\\|]+$", message = "{irida.name.invalid.pipe}"),
-		@Pattern(regexp = "^[^\\&]+$", message = "{irida.name.invalid.ampersand}"), })
+@Pattern.List({ @Pattern(regexp = "^[^\\?]*$", message = "{irida.name.invalid.question.mark}"),
+		@Pattern(regexp = "^[^\\(]*$", message = "{irida.name.invalid.left.paren}"),
+		@Pattern(regexp = "^[^\\)]*$", message = "{irida.name.invalid.right.paren}"),
+		@Pattern(regexp = "^[^\\[]*$", message = "{irida.name.invalid.left.bracket}"),
+		@Pattern(regexp = "^[^\\]]*$", message = "{irida.name.invalid.right.bracket}"),
+		@Pattern(regexp = "^[^\\/]*$", message = "{irida.name.invalid.forward.slash}"),
+		@Pattern(regexp = "^[^\\\\]*$", message = "{irida.name.invalid.back.slash}"),
+		@Pattern(regexp = "^[^\\=]*$", message = "{irida.name.invalid.equals}"),
+		@Pattern(regexp = "^[^\\+]*$", message = "{irida.name.invalid.plus}"),
+		@Pattern(regexp = "^[^\\<]*$", message = "{irida.name.invalid.left.angle}"),
+		@Pattern(regexp = "^[^\\>]*$", message = "{irida.name.invalid.right.angle}"),
+		@Pattern(regexp = "^[^\\:]*$", message = "{irida.name.invalid.colon}"),
+		@Pattern(regexp = "^[^\\;]*$", message = "{irida.name.invalid.semi.colon}"),
+		@Pattern(regexp = "^[^\\\"]*$", message = "{irida.name.invalid.double.quote}"),
+		@Pattern(regexp = "^[^\\,]*$", message = "{irida.name.invalid.comma}"),
+		@Pattern(regexp = "^[^\\*]*$", message = "{irida.name.invalid.star}"),
+		@Pattern(regexp = "^[^\\^]*$", message = "{irida.name.invalid.circumflex}"),
+		@Pattern(regexp = "^[^\\|]*$", message = "{irida.name.invalid.pipe}"),
+		@Pattern(regexp = "^[^\\&]*$", message = "{irida.name.invalid.ampersand}"), })
 @Target({ ElementType.FIELD, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
