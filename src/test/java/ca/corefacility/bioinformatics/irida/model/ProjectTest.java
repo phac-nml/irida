@@ -32,6 +32,24 @@ public class ProjectTest {
 		ValidatorFactory factory = configuration.buildValidatorFactory();
 		validator = factory.getValidator();
 	}
+	
+	@Test
+	public void testNullProjectName() {
+		Project p = new Project();
+		p.setName(null);
+
+		Set<ConstraintViolation<Project>> violations = validator.validate(p);
+		assertEquals("Wrong number of violations.", 2, violations.size());
+	}
+	
+	@Test
+	public void testEmptyProjectName() {
+		Project p = new Project();
+		p.setName("");
+
+		Set<ConstraintViolation<Project>> violations = validator.validate(p);
+		assertEquals("Wrong number of violations.", 1, violations.size());
+	}
 
 	@Test
 	public void testInvalidSampleName() {

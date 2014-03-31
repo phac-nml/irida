@@ -57,7 +57,6 @@ public class GalaxyAccountEmailTest {
 		
 		Set<ConstraintViolation<GalaxyAccountEmail>> constraintViolations
 			= validator.validate(email);
-		System.out.println(constraintViolations.toString());
 
 		assertEquals(1, constraintViolations.size());
 	}
