@@ -67,8 +67,11 @@ public class IridaOAuth2Config {
 
 		BaseClientDetails sequencerClient = new BaseClientDetails("sequencer", "NmlIrida", "read,write", "password","ROLE_CLIENT");
 		sequencerClient.setClientSecret("sequencerSecret");
-
 		clientStore.put("sequencer", sequencerClient);
+		
+		BaseClientDetails linkerClient = new BaseClientDetails("linker", "NmlIrida", "read,write", "password","ROLE_CLIENT");
+		linkerClient.setClientSecret("linkerSecret");
+		clientStore.put("linker", linkerClient);
 
 		return clientStore;
 	}
