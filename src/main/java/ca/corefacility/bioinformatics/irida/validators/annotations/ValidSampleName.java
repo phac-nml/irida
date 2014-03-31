@@ -16,9 +16,9 @@ import javax.validation.constraints.Pattern;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
-@Pattern.List({ @Pattern(regexp = "^[^\\']+$", message = "{irida.name.invalid.single.quote}"),
-		@Pattern(regexp = "^[^\\.]+$", message = "{irida.name.invalid.period}"),
-		@Pattern(regexp = "^[^\\s]+$", message = "{irida.name.invalid.space}") })
+@Pattern.List({ @Pattern(regexp = "^[^\\']*$", message = "{irida.name.invalid.single.quote}"),
+		@Pattern(regexp = "^[^\\.]*$", message = "{irida.name.invalid.period}"),
+		@Pattern(regexp = "^[^\\s]*$", message = "{irida.name.invalid.space}") })
 @ValidProjectName
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
