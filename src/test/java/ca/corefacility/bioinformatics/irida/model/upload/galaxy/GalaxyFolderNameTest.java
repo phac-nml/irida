@@ -66,6 +66,17 @@ public class GalaxyFolderNameTest {
 	}
 	
 	@Test
+	public void testEmptyName() {
+		GalaxyFolderName name = new GalaxyFolderName("");
+		
+		Set<ConstraintViolation<GalaxyFolderName>> constraintViolations
+			= validator.validate(name);
+
+		assertEquals(1, constraintViolations.size());
+		assertEquals(b.getString("galaxy.object.size"), constraintViolations.iterator().next().getMessage());
+	}
+	
+	@Test
 	public void testValidName() {
 		GalaxyFolderName name = new GalaxyFolderName("Abc123_-");
 		
