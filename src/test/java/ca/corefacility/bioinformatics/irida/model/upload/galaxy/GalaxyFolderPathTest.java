@@ -27,6 +27,14 @@ public class GalaxyFolderPathTest {
 	}
 	
 	/**
+	 * Tests for case of empty name.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void testEmptyName() {
+		new GalaxyFolderPath("");
+	}
+	
+	/**
 	 * Tests for a valid name.
 	 */
 	@Test

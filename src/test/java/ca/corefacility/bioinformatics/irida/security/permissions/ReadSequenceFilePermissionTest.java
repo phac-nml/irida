@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -66,7 +67,7 @@ public class ReadSequenceFilePermissionTest {
 		Project p = new Project();
 		Sample s = new Sample();
 		List<Join<Project, User>> projectUsers = new ArrayList<>();
-		projectUsers.add(new ProjectUserJoin(p, u));
+		projectUsers.add(new ProjectUserJoin(p, u,ProjectRole.PROJECT_USER));
 		List<Join<Project, Sample>> projectSampleList = new ArrayList<>();
 		projectSampleList.add(new ProjectSampleJoin(p, s));
 
@@ -98,7 +99,7 @@ public class ReadSequenceFilePermissionTest {
 		Project p = new Project();
 		Sample s = new Sample();
 		List<Join<Project, User>> projectUsers = new ArrayList<>();
-		projectUsers.add(new ProjectUserJoin(p, new User()));
+		projectUsers.add(new ProjectUserJoin(p, new User(),ProjectRole.PROJECT_USER));
 		List<Join<Project, Sample>> projectSampleList = new ArrayList<>();
 		projectSampleList.add(new ProjectSampleJoin(p, s));
 		SequenceFile sf = new SequenceFile();

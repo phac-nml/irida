@@ -169,6 +169,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	public boolean userHasProjectRole(User user, Project project, ProjectRole projectRole) {
 		List<Join<Project, User>> projects = getProjectsForUserWithRole(user, projectRole);
-		return projects.contains(new ProjectUserJoin(project, user));
+		return projects.contains(new ProjectUserJoin(project, user,projectRole));
 	}
 }

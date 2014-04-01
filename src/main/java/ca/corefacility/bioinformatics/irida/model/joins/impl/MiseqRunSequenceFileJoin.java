@@ -39,7 +39,7 @@ public class MiseqRunSequenceFileJoin implements Join<MiseqRun, SequenceFile> {
 	@JoinColumn(name = "miseqRun_id")
 	private MiseqRun miseqRun;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "sequenceFile_id")
 	private SequenceFile sequenceFile;
 

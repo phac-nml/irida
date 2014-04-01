@@ -5,6 +5,8 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -76,6 +78,22 @@ public class UserServiceImplIT {
 				ImmutableList.of(Role.ROLE_MANAGER));
 		auth.setDetails(u);
 		SecurityContextHolder.getContext().setAuthentication(auth);
+	}
+
+	@Test(expected = AccessDeniedException.class)
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	public void testEditAdministratorAsManagerFail() {
+		// managers should *not* be able to edit administrator accounts.
+		userService.update(3L, ImmutableMap.of("enabled", (Object) Boolean.FALSE));
+	}
+
+	@Test(expected = AccessDeniedException.class)
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	public void testChangeSelfToAdministrator() {
+		// I should not be able to elevate myself to administrator.
+		asUser().userService.update(2L, ImmutableMap.of("systemRole", (Object) Role.ROLE_ADMIN));
 	}
 
 	@Test(expected = AccessDeniedException.class)
@@ -268,7 +286,7 @@ public class UserServiceImplIT {
 	public void testGetUsersAvailableForProject() {
 		Project p = projectService.read(1L);
 		List<User> usersAvailableForProject = userService.getUsersAvailableForProject(p);
-		assertEquals("Wrong number of users.", 1, usersAvailableForProject.size());
+		assertEquals("Wrong number of users.", 2, usersAvailableForProject.size());
 		User availableUser = usersAvailableForProject.iterator().next();
 		assertEquals("Wrong user.", "differentUser", availableUser.getUsername());
 	}
@@ -283,7 +301,7 @@ public class UserServiceImplIT {
 		properties.put("password", password);
 
 		try {
-			asUser().userService.update(1l, properties);
+			asUser().userService.update(2l, properties);
 			fail();
 		} catch (ConstraintViolationException e) {
 			Set<ConstraintViolation<?>> violationSet = e.getConstraintViolations();
@@ -321,7 +339,7 @@ public class UserServiceImplIT {
 	}
 
 	@Test(expected = AccessDeniedException.class)
-	//@Ignore("This test is disabled because it shows a (possibly) language-level issue with dynamic JDK proxys.")
+	// @Ignore("This test is disabled because it shows a (possibly) language-level issue with dynamic JDK proxys.")
 	public void testReferenceTypeChangesBehaviourAtRuntime() {
 		assertEquals("The two services are the same instance.", userService, crudUserService);
 		// asUser().userService.create(new User());
@@ -330,9 +348,21 @@ public class UserServiceImplIT {
 
 	private UserServiceImplIT asUser() {
 		User u = new User();
-		u.setUsername("fbristow");
+		u.setUsername("differentUser");
 		u.setPassword(passwordEncoder.encode("Password1"));
 		u.setSystemRole(Role.ROLE_USER);
+		u.setFirstName("Mr.");
+		u.setLastName("User");
+		u.setPhoneNumber("867-5309");
+		u.setEmail("differentUser@nowhere.com");
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+			u.setCreatedDate(sdf.parse("2013-07-18 14:20:19.0"));
+			u.setModifiedDate(sdf.parse("2013-07-18 14:20:19.0"));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
 				ImmutableList.of(Role.ROLE_USER));
 		auth.setDetails(u);
@@ -340,3 +370,4 @@ public class UserServiceImplIT {
 		return this;
 	}
 }
+

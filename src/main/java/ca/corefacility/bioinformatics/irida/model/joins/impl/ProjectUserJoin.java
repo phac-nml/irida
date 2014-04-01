@@ -60,14 +60,10 @@ public class ProjectUserJoin implements Join<Project, User> {
 		projectRole = ProjectRole.PROJECT_USER;
 	}
 
-	public ProjectUserJoin(Project subject, User object) {
+	public ProjectUserJoin(Project subject, User object, ProjectRole projectRole) {
 		this();
 		this.project = subject;
 		this.user = object;
-	}
-
-	public ProjectUserJoin(Project subject, User object, ProjectRole projectRole) {
-		this(subject, object);
 		this.projectRole = projectRole;
 	}
 

@@ -273,14 +273,14 @@
 
 		<!-- Galaxy blend4j/testing -->
 		<dependency>
-		  <groupId>com.github.jmchilton.blend4j</groupId>
-		  <artifactId>blend4j</artifactId>
-		  <version>${com.github.jmchilton.blend4j.version}</version>
+			<groupId>com.github.jmchilton.blend4j</groupId>
+			<artifactId>blend4j</artifactId>
+			<version>${com.github.jmchilton.blend4j.version}</version>
 		</dependency>
 		<dependency>
-		  <groupId>com.github.jmchilton.galaxybootstrap</groupId>
-		  <artifactId>galaxybootstrap</artifactId>
-		  <version>${com.github.jmchilton.galaxybootstrap.version}</version>
+			<groupId>com.github.jmchilton.galaxybootstrap</groupId>
+			<artifactId>galaxybootstrap</artifactId>
+			<version>${com.github.jmchilton.galaxybootstrap.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -411,17 +411,18 @@
 	<properties>
 		<!-- Dependencies -->
 		<junit.version>4.11</junit.version>
-		<slf4j.version>1.7.5</slf4j.version>
+		<slf4j.version>1.7.6</slf4j.version>
+		<!-- Can't upgrade guava to > 16 until jmchilton or apetkau depend on a 
+			newer version of Guava in galaxy-bootstrap (see: https://github.com/jmchilton/galaxy-bootstrap/issues/5) -->
 		<guava.version>15.0</guava.version>
-		<spring.version>4.0.0.RELEASE</spring.version>
-		<spring.security.version>3.2.0.RELEASE</spring.security.version>
+		<spring.version>4.0.3.RELEASE</spring.version>
+		<spring.security.version>3.2.3.RELEASE</spring.security.version>
+		<spring.data.jpa.version>1.5.1.RELEASE</spring.data.jpa.version>
 		<spring.security.oauth.version>1.0.5.RELEASE</spring.security.oauth.version>
-		<spring.data.jpa.version>1.4.3.RELEASE</spring.data.jpa.version>
 		<spring.data.envers.version>0.1.0.RELEASE</spring.data.envers.version>
 		<mockito.version>1.9.5</mockito.version>
 		<mysql.connector.version>5.1.28</mysql.connector.version>
-		<hibernate.version>4.3.0.Final</hibernate.version>
-		<hibernate.jpa.version>1.0.1.Final</hibernate.jpa.version>
+		<hibernate.version>4.3.4.Final</hibernate.version>
 		<!-- Do NOT upgrade hsqldb; causes integration tests to fail when trying 
 			to save quality control data (specifically the binary charts) for sequence 
 			files. (fb; Jan 21, 2014) -->
@@ -432,19 +433,19 @@
 		<commons.dbcp.version>1.4</commons.dbcp.version>
 		<fastqc.version>0.10.1-nml-custom</fastqc.version>
 		<aspectj.version>1.7.4</aspectj.version>
-		<hibernate.validator.version>5.0.2.Final</hibernate.validator.version>
+		<hibernate.validator.version>5.1.0.Final</hibernate.validator.version>
 		<javax.el-api.version>2.2</javax.el-api.version>
 		<el-ri.version>1.0</el-ri.version>
 		<com.github.jmchilton.blend4j.version>0.1-alpha-7</com.github.jmchilton.blend4j.version>
 		<com.github.jmchilton.galaxybootstrap.version>0.3.0-rc3</com.github.jmchilton.galaxybootstrap.version>
 
 		<!-- plugins -->
-		<maven.failsafe.plugin.version>2.16</maven.failsafe.plugin.version>
-		<maven.surefire.plugin.version>2.16</maven.surefire.plugin.version>
+		<maven.failsafe.plugin.version>2.17</maven.failsafe.plugin.version>
+		<maven.surefire.plugin.version>2.17</maven.surefire.plugin.version>
 		<maven.javadoc.plugin.version>2.9.1</maven.javadoc.plugin.version>
-		<maven.jacoco.plugin.version>0.6.4.201312101107</maven.jacoco.plugin.version>
+		<maven.jacoco.plugin.version>0.7.0.201403182114</maven.jacoco.plugin.version>
 		<maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
-		<maven.liquibase.plugin.version>3.0.8</maven.liquibase.plugin.version>
+		<maven.liquibase.plugin.version>3.1.1</maven.liquibase.plugin.version>
 
 		<!-- project configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
