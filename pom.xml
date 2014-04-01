@@ -108,7 +108,7 @@
 		<plugin.maven.dependency.version>2.1</plugin.maven.dependency.version>
 		<plugin.maven.failsafe.version>2.13</plugin.maven.failsafe.version>
 		<plugin.maven.surefire.version>2.13</plugin.maven.surefire.version>
-		<plugin.maven.jacoco.version>0.6.2.201302030002</plugin.maven.jacoco.version>
+		<plugin.maven.jacoco.version>0.7.0.201403182114</plugin.maven.jacoco.version>
 		<plugin.maven.karma.version>1.0</plugin.maven.karma.version>
 	</properties>
 
