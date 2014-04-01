@@ -9,17 +9,9 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 	
-	<!-- oauth:expression-handler id="oauthExpressionHandler" /-->
-	
-	
-	
 	<http pattern="/oauth/token" create-session="stateless"
 		authentication-manager-ref="clientAuthenticationManager"
 		xmlns="http://www.springframework.org/schema/security">
-		<!-- <intercept-url pattern="/**" method="GET" access="ROLE_DENY" />
-		<intercept-url pattern="/**" method="PUT" access="ROLE_DENY" />
-		<intercept-url pattern="/**" method="DELETE" access="ROLE_DENY" />
-		<intercept-url pattern="/**" access="IS_AUTHENTICATED_FULLY" /> -->
 		<anonymous enabled="false" />
 		<http-basic entry-point-ref="clientAuthenticationEntryPoint" />
 		<!-- include this only if you need to authenticate clients via request 
