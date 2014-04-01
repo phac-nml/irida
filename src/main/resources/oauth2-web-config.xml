@@ -27,15 +27,15 @@
 		authentication-manager-ref="clientAuthenticationManager"
 		xmlns="http://www.springframework.org/schema/security">
 		<anonymous enabled="false" />
+		<intercept-url pattern="/**" method="GET" access="SCOPE_READ" />
 		<intercept-url pattern="/**" access="SCOPE_READ,SCOPE_WRITE" />
-		<custom-filter ref="resourceServerFilterData" before="PRE_AUTH_FILTER" />
+		<custom-filter ref="nmlIridaResourceServer" before="PRE_AUTH_FILTER" />
 		<access-denied-handler ref="oauthAccessDeniedHandler" />
 	</http>
 
 	<oauth:web-expression-handler id="oauthWebExpressionHandler" />
 		
-	<!-- FILTER FOR IN WEB PROJECT !-->
-	<oauth:resource-server id="resourceServerFilterData"
+	<oauth:resource-server id="nmlIridaResourceServer"
 		resource-id="NmlIrida" token-services-ref="tokenServices" />
 		
 	<!--  Use in web project-->
