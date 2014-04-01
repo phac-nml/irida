@@ -52,6 +52,16 @@ public class GalaxyAccountEmailTest {
 	}
 	
 	@Test
+	public void testEmptyName() {
+		GalaxyAccountEmail email = new GalaxyAccountEmail("");
+		
+		Set<ConstraintViolation<GalaxyAccountEmail>> constraintViolations
+			= validator.validate(email);
+
+		assertEquals(1, constraintViolations.size());
+	}
+	
+	@Test
 	public void testShortName() {
 		GalaxyAccountEmail email = new GalaxyAccountEmail("a@b.");
 		

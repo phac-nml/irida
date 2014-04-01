@@ -52,6 +52,17 @@ public class GalaxySampleTest {
 	}
 	
 	@Test
+	public void testEmptyName() {
+		GalaxySample sample = new GalaxySample(new GalaxyFolderName(""), new LinkedList<Path>());
+		
+		Set<ConstraintViolation<GalaxySample>> constraintViolations
+			= validator.validate(sample);
+
+		assertEquals(1, constraintViolations.size());
+		assertEquals(b.getString("galaxy.object.size"), constraintViolations.iterator().next().getMessage());
+	}
+	
+	@Test
 	public void testShortName() {
 		GalaxySample sample = new GalaxySample(new GalaxyFolderName("a"), new LinkedList<Path>());
 		
