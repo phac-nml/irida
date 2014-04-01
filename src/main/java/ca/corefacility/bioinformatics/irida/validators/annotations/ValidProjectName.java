@@ -15,6 +15,7 @@ import javax.validation.constraints.Pattern;
  * characters in resources that can be named.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * 
  */
 @Pattern.List({ @Pattern(regexp = "^[^\\?]*$", message = "{irida.name.invalid.question.mark}"),
