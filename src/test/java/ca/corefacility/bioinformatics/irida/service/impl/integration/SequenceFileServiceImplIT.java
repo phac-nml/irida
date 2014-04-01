@@ -15,13 +15,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,7 +43,6 @@ import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.service.OverrepresentedSequenceService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-import ca.corefacility.bioinformatics.irida.utils.RecursiveDeleteVisitor;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -61,7 +60,6 @@ public class SequenceFileServiceImplIT {
 	private static final byte[] FASTQ_FILE_CONTENTS = ("@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
 			+ SEQUENCE + "\n+\n?????????").getBytes();
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFileServiceImplIT.class);
-	private static final Path BASE_DIRECTORY = Paths.get("/tmp", "sequence-files");
 
 	@Autowired
 	private SequenceFileService sequenceFileService;
@@ -69,6 +67,9 @@ public class SequenceFileServiceImplIT {
 	private OverrepresentedSequenceService overrepresentedSequenceService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	@Autowired
+	@Qualifier("baseDirectory")
+	private Path baseDirectory;
 
 	@Before
 	public void setUp() throws IOException {
@@ -80,14 +81,9 @@ public class SequenceFileServiceImplIT {
 				ImmutableList.of(Role.ROLE_SEQUENCER));
 		auth.setDetails(u);
 		SecurityContextHolder.getContext().setAuthentication(auth);
-		Files.createDirectories(BASE_DIRECTORY);
+		Files.createDirectories(baseDirectory);
 	}
 
-	@After
-	public void tearDown() throws IOException {
-		Files.walkFileTree(BASE_DIRECTORY, new RecursiveDeleteVisitor());
-	}
-	
 	private SequenceFileServiceImplIT asRole(Role r, String username) {
 		User u = new User();
 		u.setUsername(username);
@@ -99,14 +95,14 @@ public class SequenceFileServiceImplIT {
 		SecurityContextHolder.getContext().setAuthentication(auth);
 		return this;
 	}
-	
+
 	@Test(expected = AccessDeniedException.class)
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 	public void testReadSequenceFileAsUserNoPermissions() {
 		asRole(Role.ROLE_USER, "fbristow").sequenceFileService.read(1L);
 	}
-	
+
 	@Test
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
@@ -131,10 +127,10 @@ public class SequenceFileServiceImplIT {
 
 		// figure out what the version number of the sequence file is (should be
 		// 2; the file wasn't gzipped, but fastqc will have modified it.)
-		sf = asRole(Role.ROLE_ADMIN,"tom").sequenceFileService.read(sf.getId());
+		sf = asRole(Role.ROLE_ADMIN, "tom").sequenceFileService.read(sf.getId());
 		assertEquals("Wrong version number after processing.", Long.valueOf(1), sf.getFileRevisionNumber());
 
-		List<Join<SequenceFile, OverrepresentedSequence>> overrepresentedSequences = asRole(Role.ROLE_ADMIN,"tom").overrepresentedSequenceService
+		List<Join<SequenceFile, OverrepresentedSequence>> overrepresentedSequences = asRole(Role.ROLE_ADMIN, "tom").overrepresentedSequenceService
 				.getOverrepresentedSequencesForSequenceFile(sf);
 		assertNotNull("No overrepresented sequences were found.", overrepresentedSequences);
 		assertEquals("Wrong number of overrepresented sequences were found.", 1, overrepresentedSequences.size());
@@ -144,7 +140,7 @@ public class SequenceFileServiceImplIT {
 		assertEquals("The percent was not correct.", new BigDecimal("100.00"), overrepresentedSequence.getPercentage());
 
 		// confirm that the file structure is correct
-		Path idDirectory = BASE_DIRECTORY.resolve(Paths.get(sf.getId().toString()));
+		Path idDirectory = baseDirectory.resolve(Paths.get(sf.getId().toString()));
 		assertTrue("Revision directory doesn't exist.", Files.exists(idDirectory.resolve(Paths.get(sf
 				.getFileRevisionNumber().toString(), sequenceFile.getFileName().toString()))));
 		// no other files or directories should be beneath the ID directory
@@ -179,10 +175,10 @@ public class SequenceFileServiceImplIT {
 		// 2; the file was gzipped)
 		// get the MOST RECENT version of the sequence file from the database
 		// (it will have been modified outside of the create method.)
-		sf = asRole(Role.ROLE_ADMIN,"tom").sequenceFileService.read(sf.getId());
+		sf = asRole(Role.ROLE_ADMIN, "tom").sequenceFileService.read(sf.getId());
 		assertEquals("Wrong version number after processing.", Long.valueOf(2L), sf.getFileRevisionNumber());
 		assertFalse("File name is still gzipped.", sf.getFile().getFileName().toString().endsWith(".gz"));
-		List<Join<SequenceFile, OverrepresentedSequence>> overrepresentedSequences = asRole(Role.ROLE_ADMIN,"tom").overrepresentedSequenceService
+		List<Join<SequenceFile, OverrepresentedSequence>> overrepresentedSequences = asRole(Role.ROLE_ADMIN, "tom").overrepresentedSequenceService
 				.getOverrepresentedSequencesForSequenceFile(sf);
 		assertNotNull("No overrepresented sequences were found.", overrepresentedSequences);
 		assertEquals("Wrong number of overrepresented sequences were found.", 1, overrepresentedSequences.size());
@@ -194,7 +190,7 @@ public class SequenceFileServiceImplIT {
 		// confirm that the file structure is correct
 		String filename = sequenceFile.getFileName().toString();
 		filename = filename.substring(0, filename.lastIndexOf('.'));
-		Path idDirectory = BASE_DIRECTORY.resolve(Paths.get(sf.getId().toString()));
+		Path idDirectory = baseDirectory.resolve(Paths.get(sf.getId().toString()));
 		assertTrue("Revision directory doesn't exist.",
 				Files.exists(idDirectory.resolve(Paths.get(sf.getFileRevisionNumber().toString(), filename))));
 		// no other files or directories should be beneath the ID directory
