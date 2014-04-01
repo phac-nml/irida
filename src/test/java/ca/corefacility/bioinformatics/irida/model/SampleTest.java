@@ -33,6 +33,27 @@ public class SampleTest {
 		ValidatorFactory factory = configuration.buildValidatorFactory();
 		validator = factory.getValidator();
 	}
+	
+	@Test
+	public void testNullSampleName() {
+		Sample s = new Sample();
+		s.setSampleName(null);
+		s.setExternalSampleId(null);
+
+		Set<ConstraintViolation<Sample>> violations = validator.validate(s);
+
+		assertEquals("Wrong number of violations.", 3, violations.size());
+	}
+	
+	@Test
+	public void testEmptySampleName() {
+		Sample s = new Sample();
+		s.setSampleName("");
+		s.setExternalSampleId("");
+
+		Set<ConstraintViolation<Sample>> violations = validator.validate(s);
+		assertEquals("Wrong number of violations.", 2, violations.size());
+	}
 
 	@Test
 	public void testInvalidSampleName() {
