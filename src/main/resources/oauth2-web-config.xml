@@ -23,7 +23,9 @@
 		access-decision-manager-ref="accessDecisionManager"
 		authentication-manager-ref="clientAuthenticationManager">
 		<sec:anonymous enabled="false" />
+		<!-- Read scope for GET requests -->
 		<sec:intercept-url pattern="/**" method="GET" access="SCOPE_READ" />
+		<!-- Read and write scope for all other requests -->
 		<sec:intercept-url pattern="/**" access="SCOPE_READ,SCOPE_WRITE" />
 		<sec:custom-filter ref="nmlIridaResourceServer" before="PRE_AUTH_FILTER" />
 		<sec:access-denied-handler ref="oauthAccessDeniedHandler" />
