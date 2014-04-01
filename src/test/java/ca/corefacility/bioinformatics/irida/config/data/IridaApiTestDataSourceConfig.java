@@ -32,7 +32,7 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 	// tests have finished running.
 	@PreDestroy
 	public void tearDown() throws IOException {
-		Files.walkFileTree(baseDirectory(), new RecursiveDeleteVisitor());
+		Files.walkFileTree(baseDirectory, new RecursiveDeleteVisitor());
 	}
 
 	@Bean
