@@ -3,9 +3,9 @@ package ca.corefacility.bioinformatics.irida.config.data;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Properties;
 
+import javax.annotation.PreDestroy;
 import javax.sql.DataSource;
 
 import org.springframework.context.annotation.Bean;
@@ -19,23 +19,25 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileFilesystem;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileFilesystemImpl;
+import ca.corefacility.bioinformatics.irida.utils.RecursiveDeleteVisitor;
 
 @Configuration
 @Profile("test")
 public class IridaApiTestDataSourceConfig implements DataConfig {
 
+	private Path baseDirectory;
+
+	// Franklin: I assume that the scope of a configuration bean is the lifetime
+	// of the application, so the directory should only get deleted *after* the
+	// tests have finished running.
+	@PreDestroy
+	public void tearDown() throws IOException {
+		Files.walkFileTree(baseDirectory, new RecursiveDeleteVisitor());
+	}
+
 	@Bean
-	public SequenceFileFilesystem sequenceFileFilesystem() {
-		Path baseDirectory = Paths.get("/tmp", "sequence-files");
-		if (!Files.exists(baseDirectory)) {
-			try {
-				Files.createDirectories(baseDirectory);
-			} catch (IOException e) {
-				e.printStackTrace();
-				System.exit(1);
-			}
-		}
-		return new SequenceFileFilesystemImpl(baseDirectory);
+	public SequenceFileFilesystem sequenceFileFilesystem() throws IOException {
+		return new SequenceFileFilesystemImpl(baseDirectory());
 	}
 
 	@Bean
@@ -46,16 +48,21 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 		adapter.setDatabase(Database.HSQL);
 		return adapter;
 	}
-	
+
 	@Bean
 	public DataSource dataSource() {
-		return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.HSQL)
-				.build();
+		return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.HSQL).build();
 	}
 
 	@Override
 	@Bean
 	public Properties getJpaProperties() {
 		return new Properties();
+	}
+
+	@Bean(name = "baseDirectory")
+	public Path baseDirectory() throws IOException {
+		baseDirectory = Files.createTempDirectory("irida-test-dir");
+		return baseDirectory;
 	}
 }
