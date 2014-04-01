@@ -60,7 +60,7 @@ public class ProjectUsersControllerTest {
         u.setUsername(username);
         u.setId(1L);
         Project p = TestDataFactory.constructProject();
-        Join<Project, User> join = new ProjectUserJoin(p, u);
+        Join<Project, User> join = new ProjectUserJoin(p, u,ProjectRole.PROJECT_OWNER);
         @SuppressWarnings("unchecked")
 		List<Join<Project, User>> relationships = Lists.newArrayList(join);
 
