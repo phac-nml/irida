@@ -54,22 +54,22 @@ public class IridaOAuth2Config {
 		return inMemoryClientDetailsService;
 	}
 
+	/**
+	 * Listing of OAuth2 client details to be used in the system.  Eventually this should likely be stored in a database somewhere.
+	 * @return A Map where the key is the clientID
+	 */
 	private Map<String, ClientDetails> clientDetailsList() {
 		Map<String, ClientDetails> clientStore = new HashMap<>();
 
 		/*
-		 * Add client details here: args:clientId,resourceId,scopes,grant
-		 * types,authorities BaseClientDetails thing = new
-		 * BaseClientDetails("clientId", "resourceId",
-		 * "read,write","authorization_code,refresh_token", "ROLE_CLIENT");
-		 * thing.setClientSecret("secret"); clientStore.put("clientId", thing);
+		 * Add client details here: args:clientId,resourceId,scopes,grant types,authorities 
 		 */
 
 		BaseClientDetails sequencerClient = new BaseClientDetails("sequencer", "NmlIrida", "read,write", "password","ROLE_CLIENT");
 		sequencerClient.setClientSecret("sequencerSecret");
 		clientStore.put("sequencer", sequencerClient);
 		
-		BaseClientDetails linkerClient = new BaseClientDetails("linker", "NmlIrida", "read,write", "password","ROLE_CLIENT");
+		BaseClientDetails linkerClient = new BaseClientDetails("linker", "NmlIrida", "read", "password","ROLE_CLIENT");
 		linkerClient.setClientSecret("linkerSecret");
 		clientStore.put("linker", linkerClient);
 
