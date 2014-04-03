@@ -87,14 +87,37 @@ public class GalaxyUploadWorker implements UploadWorker {
 		}
 	}
 	
-	private void finish(UploadResult uploadResult) {
+	/**
+	 * Gets a copy of the event listeners list.
+	 * @return  A copy of the event listeners list
+	 */
+	private synchronized List<UploadEventListener> getEventListenersCopy() {
+		List<UploadEventListener> eventListenersList = new LinkedList<UploadEventListener>();
 		for (UploadEventListener eventListener : eventListeners) {
+			eventListenersList.add(eventListener);
+		}
+		
+		return eventListenersList;
+	}
+	
+	/**
+	 * Runs the finish() method on all event listeners.
+	 * @param uploadResult  The result of the upload.
+	 */
+	private void finish(UploadResult uploadResult) {
+		List<UploadEventListener> eventListenersList = getEventListenersCopy();
+		for (UploadEventListener eventListener : eventListenersList) {
 			eventListener.finish(uploadResult);
 		}
 	}
 	
+	/**
+	 * Runs the exception() method on all event listeners.
+	 * @param uploadException  The exception that occured.
+	 */
 	private void exception(UploadException uploadException) {
-		for (UploadEventListener eventListener : eventListeners) {
+		List<UploadEventListener> eventListenersList = getEventListenersCopy();
+		for (UploadEventListener eventListener : eventListenersList) {
 			eventListener.exception(uploadException);
 		}
 	}
@@ -160,7 +183,7 @@ public class GalaxyUploadWorker implements UploadWorker {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void addUploadEventListener(UploadEventListener eventListener) {
+	public synchronized void addUploadEventListener(UploadEventListener eventListener) {
 		checkNotNull(eventListener, "eventListener is null");
 		eventListeners.add(eventListener);
 		galaxyAPI.addUploadEventListener(eventListener);

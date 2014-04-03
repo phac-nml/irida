@@ -475,13 +475,27 @@ public class GalaxyAPI {
 	}
 	
 	/**
+	 * Gets a copy of the event listeners list.
+	 * @return  A copy of the event listeners list
+	 */
+	private synchronized List<UploadEventListener> getEventListenersCopy() {
+		List<UploadEventListener> eventListenersList = new LinkedList<UploadEventListener>();
+		for (UploadEventListener eventListener : eventListeners) {
+			eventListenersList.add(eventListener);
+		}
+		
+		return eventListenersList;
+	}
+	
+	/**
 	 * Updates all listeners about the progress of the upload.
 	 * @param totalSamples
 	 * @param currentSample
 	 * @param sampleName
 	 */
 	private void sampleProgressUpdate(int totalSamples, int currentSample, UploadFolderName sampleName) {
-		for (UploadEventListener eventListener : eventListeners) {
+		List<UploadEventListener> eventListenersList = getEventListenersCopy();
+		for (UploadEventListener eventListener : eventListenersList) {
 			eventListener.sampleProgressUpdate(totalSamples, currentSample, sampleName);
 		}
 	}
@@ -626,7 +640,7 @@ public class GalaxyAPI {
 	 * Adds a new upload event listener.
 	 * @param eventListener  The event listener to add.
 	 */
-	public void addUploadEventListener(UploadEventListener eventListener) {
+	public synchronized void addUploadEventListener(UploadEventListener eventListener) {
 		checkNotNull(eventListener, "eventListener is null");
 		eventListeners.add(eventListener);
 	}
