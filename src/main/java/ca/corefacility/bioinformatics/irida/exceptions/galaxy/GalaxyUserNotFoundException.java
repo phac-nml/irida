@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.exceptions.galaxy;
 
+import java.net.URL;
+
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 
 /**
  * When no user is found in Galaxy.
@@ -9,36 +12,46 @@ import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
  */
 public class GalaxyUserNotFoundException extends UploadException {
 	private static final long serialVersionUID = 2496168579584339258L;
+	
+	private GalaxyAccountEmail userEmail;
+	private URL galaxyURL;
 
 	/**
-	 * Constructs a new GalaxyUserNotFoundException with no information.
+	 * Constructs a new GalaxyUserNotFoundException with the given user email.
+	 * @param userEmail The user email of the user not found.
+	 * @param galaxyURL The URL to galaxy where the error occured.
 	 */
-	public GalaxyUserNotFoundException() {
-		super();
+	public GalaxyUserNotFoundException(GalaxyAccountEmail userEmail, URL galaxyURL) {
+		super("Could not find Galaxy user " + userEmail + " in Galaxy " + galaxyURL);
+		this.userEmail = userEmail;
+		this.galaxyURL = galaxyURL;
+	}
+
+	/**
+	 * Constructs a new GalaxyUserNotFoundException with the given user email and cause.
+	 * @param userEmail The user email of the user not found.
+	 * @param galaxyURL The URL to galaxy where the error occured.
+	 * @param cause  The cause of this error.
+	 */
+	public GalaxyUserNotFoundException(GalaxyAccountEmail userEmail, URL galaxyURL, Throwable cause) {
+		super("Could not find Galaxy user " + userEmail + " in Galaxy " + galaxyURL, cause);
+		this.userEmail = userEmail;
+		this.galaxyURL = galaxyURL;
 	}
 	
 	/**
-	 * Constructs a new GalaxyUserNotFoundException with the given message and cause.
-	 * @param message  The message explaining the error.
-	 * @param cause  The cause of this message.
+	 * Gets the email address of the user not found.
+	 * @return  The email address of the user not found.
 	 */
-	public GalaxyUserNotFoundException(String message, Throwable cause) {
-		super(message, cause);
+	public GalaxyAccountEmail getUserEmail() {
+		return userEmail;
 	}
-
+	
 	/**
-	 * Constructs a new GalaxyUserNotFoundException with the given message.
-	 * @param message  The message explaining the error.
+	 * Gets the URL of Galaxy where the user was not found.
+	 * @return  The URL of Galaxy where the user was not found.
 	 */
-	public GalaxyUserNotFoundException(String message) {
-		super(message);
-	}
-
-	/**
-	 * Constructs a new GalaxyUserNotFoundException with the given cause.
-	 * @param cause  The cause of this error.
-	 */
-	public GalaxyUserNotFoundException(Throwable cause) {
-		super(cause);
+	public URL getGalaxyURL() {
+		return galaxyURL;
 	}
 }

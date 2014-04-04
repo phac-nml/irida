@@ -6,9 +6,7 @@ import java.util.List;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 
-import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadProjectName;
-import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 
@@ -43,8 +41,8 @@ public interface Uploader<ProjectName extends UploadProjectName, AccountName ext
 	}
 
 	/**
-	 * Uploads the given list of samples to the passed data location name with
-	 * the passed user.
+	 * Creates an UploadWorker object to be used to upload the given list of samples
+	 * to the passed data location name with the passed user.
 	 * 
 	 * @param samples
 	 *            The set of samples to upload.
@@ -52,18 +50,14 @@ public interface Uploader<ProjectName extends UploadProjectName, AccountName ext
 	 *            The name of the data location to upload to.
 	 * @param userName
 	 *            The name of the user who should own the files.
-	 * @return An UploadResult containing information about the location of the
-	 *         uploaded files.
-	 * @throws UploadException
-	 *             If an error occurred.
+	 * @return An UploadWorker object which can be used to start the upload.
 	 * @throws ConstraintViolationException
 	 *             If the samples, dataLocation or userName are invalid.
 	 */
-	public UploadResult uploadSamples(
+	public UploadWorker uploadSamples(
 			@Valid List<UploadSample> samples,
 			@Valid ProjectName dataLocation,
-			@Valid AccountName userName) throws UploadException,
-			ConstraintViolationException;
+			@Valid AccountName userName) throws ConstraintViolationException;
 
 	/**
 	 * Whether or not this uploader is attached to a data location.

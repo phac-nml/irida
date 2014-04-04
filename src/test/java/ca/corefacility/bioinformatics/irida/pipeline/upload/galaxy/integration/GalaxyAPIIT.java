@@ -56,6 +56,8 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.ProgressUpdate;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.UploadEventListenerTracker;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
@@ -1376,6 +1378,40 @@ public class GalaxyAPIIT {
 				"/illumina_reads");
 		assertEquals("More than one copy of /references was created", 1,
 				countReferencesFolder);
+	}
+	
+	/**
+	 * Tests progress listener when uploading multiple samples to Galaxy.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 * @throws InterruptedException 
+	 */
+	@Test
+	public void testUploadProgressListener() throws URISyntaxException,
+			MalformedURLException, ConstraintViolationException,
+			UploadException, InterruptedException {
+		GalaxyProjectName libraryName = new GalaxyProjectName("testUploadProgressListener");
+		
+		GalaxyFolderName sample1Name = new GalaxyFolderName("testData1");
+		GalaxyFolderName sample2Name = new GalaxyFolderName("testData2");
+
+		List<UploadSample> samples = new ArrayList<UploadSample>();
+		GalaxySample galaxySample1 = new GalaxySample(sample1Name, dataFilesSingle);
+		GalaxySample galaxySample2 = new GalaxySample(sample2Name, dataFilesSingle);
+		samples.add(galaxySample1);
+		samples.add(galaxySample2);
+
+		UploadEventListenerTracker eventListener = new UploadEventListenerTracker();
+		galaxyAPI.addUploadEventListener(eventListener);
+		assertEquals(0, eventListener.getProgressUpdates().size());
+		
+		galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
+		
+		assertEquals(2, eventListener.getProgressUpdates().size());
+		assertTrue(eventListener.getProgressUpdates().contains(new ProgressUpdate(2,0,sample1Name)));
+		assertTrue(eventListener.getProgressUpdates().contains(new ProgressUpdate(2,1,sample2Name)));
 	}
 
 	/**
