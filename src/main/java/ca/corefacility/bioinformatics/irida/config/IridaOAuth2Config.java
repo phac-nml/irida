@@ -8,6 +8,7 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.security.oauth2.provider.BaseClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
@@ -18,6 +19,7 @@ import org.springframework.security.oauth2.provider.token.InMemoryTokenStore;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
 @Configuration
+@ImportResource("classpath:/ca/corefacility/bioinformatics/irida/config/oauth-config.xml")
 public class IridaOAuth2Config {
 
 	@Autowired
@@ -69,7 +71,7 @@ public class IridaOAuth2Config {
 		sequencerClient.setClientSecret("sequencerSecret");
 		clientStore.put("sequencer", sequencerClient);
 		
-		BaseClientDetails linkerClient = new BaseClientDetails("linker", "NmlIrida", "read", "password","ROLE_CLIENT");
+		BaseClientDetails linkerClient = new BaseClientDetails("linker", "NmlIrida", "read", "authorization_code,password","ROLE_CLIENT");
 		linkerClient.setClientSecret("linkerSecret");
 		clientStore.put("linker", linkerClient);
 

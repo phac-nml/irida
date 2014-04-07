@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<bean id="projectRemoteRepo" class="ca.corefacility.bioinformatics.irida.repositories.remote.ProjectRemoteRepository">
+		<constructor-arg><oauth:rest-template resource="nmlIridaResource"/></constructor-arg>
+	</bean>
+	
+	<oauth:resource id="nmlIridaResource" use-current-uri="true"
+		access-token-uri="http://bobloblaw:8080/oauth/token"
+		user-authorization-uri="http://bobloblaw:8080/oauth/authorize" 
+		client-id="linker"
+		client-secret="linkerSecret" 
+		type="authorization_code" 
+		scope="read" />
+</beans>
