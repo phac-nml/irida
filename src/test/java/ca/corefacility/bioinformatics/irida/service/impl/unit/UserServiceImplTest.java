@@ -207,6 +207,26 @@ public class UserServiceImplTest {
 
 		userService.create(u);
 	}
+	
+	@Test
+	public void testLoadUserByEmail(){
+		String email = "fbristow@gmail.com";
+		when(userRepository.loadUserByEmail(email)).thenReturn(user());
+		
+		User loadUserByEmail = userService.loadUserByEmail(email);
+		
+		assertEquals(user(), loadUserByEmail);
+	}
+	
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void testLoadUserByEmailNotFound(){
+		String email = "bademail@nowhere.com";
+		when(userRepository.loadUserByEmail(email)).thenReturn(null);
+		
+		userService.loadUserByEmail(email);
+
+	}
 
 	private User user() {
 		String username = "fbristow";
