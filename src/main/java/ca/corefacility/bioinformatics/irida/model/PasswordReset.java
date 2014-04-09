@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.model;
 import org.hibernate.envers.Audited;
 
 import java.util.Date;
+import java.util.UUID;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -15,28 +16,40 @@ import javax.validation.constraints.NotNull;
 @Audited
 public class PasswordReset implements Comparable<PasswordReset> {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
 
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
 
-	@NotNull
 	@OneToOne
 	private User user;
 
-	public PasswordReset() {
+	@Id
+	@NotNull
+	private String key;
+
+	private PasswordReset() {}
+
+	public PasswordReset(User user) {
 		this.createdDate = new Date();
+		this.user = user;
+		this.key = UUID.randomUUID().toString();
 	}
 
 	public Date getCreatedDate() {
 		return createdDate;
 	}
 
+	public User getUser() {
+		return user;
+	}
+
+	public String getKey() {
+		return this.key;
+	}
+
 	@Override
-	public int compareTo(PasswordReset o) {
+	public int compareTo(PasswordReset passwordReset) {
 		return 0;
 	}
 }
