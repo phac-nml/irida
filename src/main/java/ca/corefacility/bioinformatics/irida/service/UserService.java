@@ -51,6 +51,7 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 * @throws EntityNotFoundException
 	 *             If no user has the given email address
 	 */
+	@PreAuthorize("permitAll")
 	public User loadUserByEmail(String email) throws EntityNotFoundException;
 
 	/**
