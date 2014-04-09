@@ -21,7 +21,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @PreAuthorize("isAuthenticated()")
-public interface CRUDService<IdentifierType, Type extends Comparable<Type> > {
+public interface CRUDService<IdentifierType, Type> {
 
     /**
      * Create a new object in the persistence store.
