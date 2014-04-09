@@ -267,6 +267,28 @@ public class UserServiceImplIT {
 		String username = "random garbage";
 		userService.getUserByUsername(username);
 	}
+	
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	public void testLoadUserByEmail(){
+		String email = "manager@nowhere.com";
+		
+		User loadUserByEmail = userService.loadUserByEmail(email);
+		
+		assertEquals(email, loadUserByEmail.getEmail());
+	}
+	
+	
+	@Test(expected = EntityNotFoundException.class)
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+	public void testLoadUserByEmailNotFound(){
+		String email = "bademail@nowhere.com";
+		
+		userService.loadUserByEmail(email);
+
+	}	
 
 	@Test
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")

@@ -97,7 +97,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 		this.passwordEncoder = passwordEncoder;
 		this.pujRepository = pujRepository;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -204,6 +204,19 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public User loadUserByEmail(String email) throws EntityNotFoundException {
+		logger.trace("Loading user with email " + email);
+		User loadUserByEmail = userRepository.loadUserByEmail(email);
+		if (loadUserByEmail == null) {
+			throw new EntityNotFoundException("User could not be found with that email address.");
+		}
+		return loadUserByEmail;
+	}
+
+	/**
 	 * Validate the password of a {@link User} *before* encoding the password
 	 * and passing to super.
 	 * 
@@ -263,4 +276,5 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 
 		return new EntityExistsException("Could not create user as a duplicate field exists: " + fieldName, fieldName);
 	}
+
 }
