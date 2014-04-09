@@ -11,15 +11,19 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.web.accept.ContentNegotiationManager;
+import org.springframework.web.accept.ContentNegotiationManagerFactoryBean;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.springframework.web.servlet.view.xml.MarshallingView;
 
@@ -54,9 +58,20 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 	@Bean
 	public ViewResolver viewResolver() {
 		ContentNegotiatingViewResolver resolver = new ContentNegotiatingViewResolver();
-		resolver.setViewResolvers(Arrays.asList((ViewResolver) new BeanNameViewResolver()));
+		resolver.setViewResolvers(Arrays.asList((ViewResolver) new BeanNameViewResolver(),(ViewResolver)getViewResolver()));
 		resolver.setDefaultViews(defaultViews());
+		resolver.setOrder(1);
 
+		return resolver;
+	}
+	
+	
+	public ViewResolver getViewResolver(){
+		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+		//restrict this view resolver to ONLY do oauth stuff.  We don't need it for other stuff and in fact it makes a mess.
+		String[] arr = {"/oauth*"};
+		resolver.setViewNames(arr);
+		resolver.setOrder(2);
 		return resolver;
 	}
 
@@ -83,5 +98,10 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 				MediaType.valueOf("application/fastq"), "gbk", MediaType.valueOf("application/genbank"));
 		configurer.ignoreAcceptHeader(false).defaultContentType(MediaType.APPLICATION_JSON).favorPathExtension(true)
 				.mediaTypes(mediaTypes);
+	}
+	
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/pages/**").addResourceLocations("/resources/");
 	}
 }
