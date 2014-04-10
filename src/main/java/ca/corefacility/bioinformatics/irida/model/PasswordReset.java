@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model;
 
-import org.hibernate.envers.Audited;
-
 import java.util.Date;
 import java.util.UUID;
 
@@ -9,13 +7,13 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 /**
+ * A password reset object.
+ * 
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Entity
 @Table(name = "password_reset")
-@Audited
 public class PasswordReset implements Comparable<PasswordReset> {
-
 
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
@@ -26,14 +24,15 @@ public class PasswordReset implements Comparable<PasswordReset> {
 
 	@Id
 	@NotNull
-	private String key;
+	private String id;
 
-	private PasswordReset() {}
+	private PasswordReset() {
+	}
 
 	public PasswordReset(User user) {
 		this.createdDate = new Date();
 		this.user = user;
-		this.key = UUID.randomUUID().toString();
+		this.id = UUID.randomUUID().toString();
 	}
 
 	public Date getCreatedDate() {
@@ -44,8 +43,8 @@ public class PasswordReset implements Comparable<PasswordReset> {
 		return user;
 	}
 
-	public String getKey() {
-		return this.key;
+	public String getId() {
+		return this.id;
 	}
 
 	@Override
