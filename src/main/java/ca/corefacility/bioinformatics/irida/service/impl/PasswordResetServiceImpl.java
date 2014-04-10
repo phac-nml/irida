@@ -42,7 +42,6 @@ public class PasswordResetServiceImpl extends CRUDServiceImpl<String, PasswordRe
 	}
 
 	@Override
-	@Transactional
 	public PasswordReset create(@Valid PasswordReset passwordReset) {
 		// Find existing resets
 		PasswordReset pw = passwordResetRepository.findByUser(passwordReset.getUser());
