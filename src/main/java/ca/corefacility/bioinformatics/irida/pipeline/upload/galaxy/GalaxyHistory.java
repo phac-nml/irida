@@ -4,9 +4,13 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.UUID;
 
+import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
+
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
+import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset.Source;
@@ -23,15 +27,18 @@ import static com.google.common.base.Preconditions.*;
 public class GalaxyHistory {
 	
 	private GalaxyInstance galaxyInstance;
+	private GalaxySearch galaxySearch;
 	
 	/**
-	 * Builds a new GalaxyHistory with the given Galaxy instance.
+	 * Builds a new GalaxyHistory with the given Galaxy instance and GalaxySearch objects.
 	 * @param galaxyInstance  The Galaxy Instance to use to connect to Galaxy.
+	 * @param galaxySearch The GalaxySearch object to use.
 	 */
-	public GalaxyHistory(GalaxyInstance galaxyInstance) {
+	public GalaxyHistory(GalaxyInstance galaxyInstance, GalaxySearch galaxySearch) {
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
 		
 		this.galaxyInstance = galaxyInstance;
+		this.galaxySearch = galaxySearch;
 	}
 	
 	/**
@@ -66,16 +73,24 @@ public class GalaxyHistory {
 				history.getId(), historyDataset);
 	}
 	
-	public ClientResponse fileToHistory(Path path, History history) {
+	public Dataset fileToHistory(Path path, History history) throws UploadException, GalaxyDatasetNotFoundException {
 		checkNotNull(path, "path is null");
 		checkNotNull(history, "history is null");
+		checkState(path.toFile().exists(), "path " + path + " does not exist");
 		
 		File file = path.toFile();
 		
-		checkState(path.toFile().exists(), "path " + path + " does not exist");
-		
 		ToolsClient toolsClient = galaxyInstance.getToolsClient();
 		
-		return toolsClient.fileUploadRequest(history.getId(), "fastqsanger", null, file);
+		ClientResponse clientResponse = 
+				toolsClient.fileUploadRequest(history.getId(), "fastqsanger", null, file);
+		
+		if (clientResponse != null &&
+			ClientResponse.Status.OK.equals(clientResponse.getClientResponseStatus())) {
+			
+			return galaxySearch.getDatasetForFileInHistory(file.getName(), history);
+		} else {
+			throw new UploadException("Could not upload " + file + " to history " + history.getId());
+		}
 	}
 }

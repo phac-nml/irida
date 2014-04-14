@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
@@ -18,9 +19,13 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
+import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.RolesClient;
 import com.github.jmchilton.blend4j.galaxy.UsersClient;
+import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
+import com.github.jmchilton.blend4j.galaxy.beans.History;
+import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.Role;
@@ -272,6 +277,47 @@ public class GalaxySearch {
 			return content != null;
 		} catch (NoGalaxyContentFoundException e) {
 			return false;
+		}
+	}
+	
+	/**
+	 * Gets a Dataset object for a file with the given name in the given history.
+	 * @param filename  The name of the file to get a Dataset object for.
+	 * @param history  The history to look for the dataset.
+	 * @return The corresponding dataset for the given file name.
+	 * @throws GalaxyDatasetNotFoundException  If the dataset could not be found.
+	 */
+	public Dataset getDatasetForFileInHistory(String filename, History history) throws GalaxyDatasetNotFoundException {
+		checkNotNull(filename, "filename is null");
+		checkNotNull(history, "history is null");
+		
+		Dataset dataset;
+		String dataId = null;
+		
+		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
+		
+		List<HistoryContents> historyContentsList =
+				historiesClient.showHistoryContents(history.getId());
+
+		for (HistoryContents contents : historyContentsList) {
+			if (filename.equals(contents.getName())) {
+				dataId = contents.getId();
+				break;
+			}
+		}
+		
+		if (dataId != null) {
+			dataset = historiesClient.showDataset(history.getId(), dataId);
+			
+			if (dataset != null) {
+				return dataset;
+			} else {
+				throw new GalaxyDatasetNotFoundException("dataset for file " + filename +
+						" not found in Galaxy history " + history.getId());
+			}
+		} else {
+			throw new GalaxyDatasetNotFoundException("dataset for file " + filename +
+					" not found in Galaxy history " + history.getId());
 		}
 	}
 
