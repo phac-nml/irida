@@ -63,7 +63,6 @@ import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
-import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset.Source;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
@@ -234,7 +233,7 @@ public class GalaxyAPIIT {
 				persistedHistory.getId(), historyDataset);
 		assertNotNull(historyDetails);
 
-		String dataId = getIdForFileInHistory(filename,
+		String dataId = Util.getIdForFileInHistory(filename,
 				persistedHistory.getId(), galaxyInstance);
 		assertNotNull(dataId);
 
@@ -260,29 +259,6 @@ public class GalaxyAPIIT {
 				" into Galaxy history");
 		
 		return dataset;
-	}
-
-	/**
-	 * Given a file within a Galaxy history, finds the id of that file.
-	 * @param filename  The name of the file within a history.
-	 * @param historyId  The id of the history.
-	 * @param galaxyInstance  The GalaxyInstance to use for connections.
-	 * @return  The id of the file in this history, or null if no such file.
-	 */
-	private String getIdForFileInHistory(String filename, String historyId,
-			GalaxyInstance galaxyInstance) {
-		String dataId = null;
-		List<HistoryContents> historyContentsList = galaxyInstance
-				.getHistoriesClient().showHistoryContents(historyId);
-
-		for (HistoryContents contents : historyContentsList) {
-			if (filename.equals(contents.getName())) {
-				dataId = contents.getId();
-				break;
-			}
-		}
-
-		return dataId;
 	}
 
 	/**
