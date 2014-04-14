@@ -1,13 +1,17 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.UUID;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
+import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset.Source;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
+import com.sun.jersey.api.client.ClientResponse;
 
 import static com.google.common.base.Preconditions.*;
 
@@ -60,5 +64,18 @@ public class GalaxyHistory {
 		
 		return historiesClient.createHistoryDataset(
 				history.getId(), historyDataset);
+	}
+	
+	public ClientResponse fileToHistory(Path path, History history) {
+		checkNotNull(path, "path is null");
+		checkNotNull(history, "history is null");
+		
+		File file = path.toFile();
+		
+		checkState(path.toFile().exists(), "path " + path + " does not exist");
+		
+		ToolsClient toolsClient = galaxyInstance.getToolsClient();
+		
+		return toolsClient.fileUploadRequest(history.getId(), "fastqsanger", null, file);
 	}
 }
