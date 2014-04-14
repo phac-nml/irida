@@ -37,6 +37,7 @@ public class GalaxyHistory {
 	 */
 	public GalaxyHistory(GalaxyInstance galaxyInstance, GalaxySearch galaxySearch) {
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
+		checkNotNull(galaxySearch, "galaxySearch is null");
 		
 		this.galaxyInstance = galaxyInstance;
 		this.galaxySearch = galaxySearch;
