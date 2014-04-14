@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.unit;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,6 +15,7 @@ import org.mockito.MockitoAnnotations;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
+import com.github.jmchilton.blend4j.galaxy.ToolsClient.FileUploadRequest;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset;
@@ -92,9 +92,9 @@ public class GalaxyHistoryTest {
 		Dataset dataset = new Dataset();
 		createdHistory.setId(historyId);
 		
-		when(toolsClient.fileUploadRequest(historyId, "fastqsanger",
-				null, dataFile.toFile())).thenReturn(okayResponse);
-		when(galaxySearch.getDatasetForFileInHistory(filename, createdHistory)).thenReturn(dataset);
+		when(toolsClient.uploadRequest(any(FileUploadRequest.class))).thenReturn(okayResponse);
+		when(galaxySearch.getDatasetForFileInHistory(filename, createdHistory)).
+			thenReturn(dataset);
 		
 		assertEquals(dataset, galaxyHistory.fileToHistory(dataFile, createdHistory));
 	}
@@ -105,8 +105,8 @@ public class GalaxyHistoryTest {
 		History createdHistory = new History();
 		createdHistory.setId(historyId);
 		
-		when(toolsClient.fileUploadRequest(historyId, "fastqsanger",
-				null, dataFile.toFile())).thenReturn(invalidResponse);
+		when(toolsClient.uploadRequest(any(FileUploadRequest.class))).
+			thenReturn(invalidResponse);
 		
 		galaxyHistory.fileToHistory(dataFile, createdHistory);
 	}
@@ -118,8 +118,8 @@ public class GalaxyHistoryTest {
 		History createdHistory = new History();
 		createdHistory.setId(historyId);
 		
-		when(toolsClient.fileUploadRequest(historyId, "fastqsanger",
-				null, dataFile.toFile())).thenReturn(okayResponse);
+		when(toolsClient.uploadRequest(any(FileUploadRequest.class))).
+			thenReturn(okayResponse);
 		when(galaxySearch.getDatasetForFileInHistory(filename, createdHistory)).thenThrow(new GalaxyDatasetNotFoundException());
 		
 		galaxyHistory.fileToHistory(dataFile, createdHistory);

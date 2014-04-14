@@ -10,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFo
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
+import com.github.jmchilton.blend4j.galaxy.ToolsClient.FileUploadRequest;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset;
@@ -76,14 +77,21 @@ public class GalaxyHistory {
 	public Dataset fileToHistory(Path path, History history) throws UploadException, GalaxyDatasetNotFoundException {
 		checkNotNull(path, "path is null");
 		checkNotNull(history, "history is null");
+		checkNotNull(history.getId(), "history id is null");
 		checkState(path.toFile().exists(), "path " + path + " does not exist");
 		
 		File file = path.toFile();
 		
 		ToolsClient toolsClient = galaxyInstance.getToolsClient();
 		
+		//Map<String, String> extraParameters;
+		FileUploadRequest uploadRequest = new FileUploadRequest(history.getId(), file);
+		uploadRequest.setFileType("fastqsanger");
+		//extraParameters = uploadRequest.getExtraParameters();
+		//extraParameters.put("link_data_only", "link_to_files");
+		
 		ClientResponse clientResponse = 
-				toolsClient.fileUploadRequest(history.getId(), "fastqsanger", null, file);
+				toolsClient.uploadRequest(uploadRequest);
 		
 		if (clientResponse != null &&
 			ClientResponse.Status.OK.equals(clientResponse.getClientResponseStatus())) {
