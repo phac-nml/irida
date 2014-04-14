@@ -30,7 +30,7 @@ public class OAuth2ClientDetailsConfig {
 		clientStore.put("linker", linkerClient);
 		
 		BaseClientDetails testClient = new BaseClientDetails("testClient", "NmlIrida", "read,write", "password","ROLE_CLIENT");
-		linkerClient.setClientSecret("testClientSecret");
+		testClient.setClientSecret("testClientSecret");
 		clientStore.put("testClient", testClient);
 
 		return clientStore;
