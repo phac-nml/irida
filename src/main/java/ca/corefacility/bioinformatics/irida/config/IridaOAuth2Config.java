@@ -1,15 +1,12 @@
 package ca.corefacility.bioinformatics.irida.config;
 
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.oauth2.provider.BaseClientDetails;
-import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.InMemoryClientDetailsService;
 import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService;
@@ -17,11 +14,17 @@ import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.InMemoryTokenStore;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
+import ca.corefacility.bioinformatics.irida.config.oauth.OAuth2ClientDetailsConfig;
+
 @Configuration
+@ComponentScan("ca.corefacility.bioinformatics.irida.config.oauth")
 public class IridaOAuth2Config {
 
 	@Autowired
 	private DataSource dataSource;
+	
+	@Autowired
+	OAuth2ClientDetailsConfig clientDetailsConfig;
 
 	@Bean
 	public DefaultTokenServices tokenServices() {
@@ -50,29 +53,9 @@ public class IridaOAuth2Config {
 	public ClientDetailsService clientDetails() {
 		InMemoryClientDetailsService inMemoryClientDetailsService = new InMemoryClientDetailsService();
 
-		inMemoryClientDetailsService.setClientDetailsStore(clientDetailsList());
+		inMemoryClientDetailsService.setClientDetailsStore(clientDetailsConfig.clientDetailsList());
 		return inMemoryClientDetailsService;
 	}
 
-	/**
-	 * Listing of OAuth2 client details to be used in the system.  Eventually this should likely be stored in a database somewhere.
-	 * @return A Map where the key is the clientID
-	 */
-	private Map<String, ClientDetails> clientDetailsList() {
-		Map<String, ClientDetails> clientStore = new HashMap<>();
 
-		/*
-		 * Add client details here: args:clientId,resourceId,scopes,grant types,authorities 
-		 */
-
-		BaseClientDetails sequencerClient = new BaseClientDetails("sequencer", "NmlIrida", "read,write", "password","ROLE_CLIENT");
-		sequencerClient.setClientSecret("sequencerSecret");
-		clientStore.put("sequencer", sequencerClient);
-		
-		BaseClientDetails linkerClient = new BaseClientDetails("linker", "NmlIrida", "read", "password","ROLE_CLIENT");
-		linkerClient.setClientSecret("linkerSecret");
-		clientStore.put("linker", linkerClient);
-
-		return clientStore;
-	}
 }
