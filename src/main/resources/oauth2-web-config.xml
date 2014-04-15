@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	
+	<sec:http pattern="/oauth/token" create-session="stateless"
+		authentication-manager-ref="clientAuthenticationManager">
+		<sec:anonymous enabled="false" />
+		<sec:http-basic entry-point-ref="clientAuthenticationEntryPoint" />
+		<sec:custom-filter ref="clientCredentialsTokenEndpointFilter"
+			after="BASIC_AUTH_FILTER" />
+		<sec:access-denied-handler ref="oauthAccessDeniedHandler" />
+	</sec:http>
+	
+	<sec:http pattern="/**" create-session="stateless"
+		entry-point-ref="oauthAuthenticationEntryPoint"
+		access-decision-manager-ref="accessDecisionManager"
+		authentication-manager-ref="clientAuthenticationManager">
+		<sec:anonymous enabled="false" />
+		<!-- Read scope for GET requests -->
+		<sec:intercept-url pattern="/**" method="GET" access="SCOPE_READ" />
+		<!-- Read and write scope for all other requests -->
+		<sec:intercept-url pattern="/**" access="SCOPE_READ,SCOPE_WRITE" />
+		<sec:custom-filter ref="nmlIridaResourceServer" before="PRE_AUTH_FILTER" />
+		<sec:access-denied-handler ref="oauthAccessDeniedHandler" />
+	</sec:http>
+
+	<oauth:web-expression-handler id="oauthWebExpressionHandler" />
+		
+	<oauth:resource-server id="nmlIridaResourceServer"
+		resource-id="NmlIrida" token-services-ref="tokenServices" />
+		
+	<!--  Use in web project-->
+	<oauth:authorization-server
+			client-details-service-ref="clientDetails" 
+			token-services-ref="tokenServices">
+		<oauth:authorization-code />
+		<oauth:password authentication-manager-ref="authenticationManager"/>
+	</oauth:authorization-server>
+	 
+	<sec:authentication-manager id="clientAuthenticationManager">
+		<sec:authentication-provider user-service-ref="clientDetailsUserDetailsService" />
+	</sec:authentication-manager>
+		
+</beans>
