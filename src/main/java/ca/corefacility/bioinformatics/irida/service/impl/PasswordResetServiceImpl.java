@@ -5,8 +5,6 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.Validator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +20,6 @@ import ca.corefacility.bioinformatics.irida.service.PasswordResetService;
  */
 @Service
 public class PasswordResetServiceImpl extends CRUDServiceImpl<String, PasswordReset> implements PasswordResetService {
-	private static final Logger logger = LoggerFactory.getLogger(PasswordResetServiceImpl.class);
 
 	/**
 	 * A reference to a password reset repository
