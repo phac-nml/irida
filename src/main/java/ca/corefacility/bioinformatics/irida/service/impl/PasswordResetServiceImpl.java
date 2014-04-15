@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import javax.transaction.Transactional;
+import java.util.Map;
+
 import javax.validation.Valid;
 import javax.validation.Validator;
 
@@ -10,17 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.PasswordReset;
-import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.repositories.PasswordResetRepository;
 import ca.corefacility.bioinformatics.irida.service.PasswordResetService;
 
-import java.util.Map;
-
 /**
  * Implementation for managing {@link PasswordReset}
- *
+ * 
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
- *
+ * 
  */
 @Service
 public class PasswordResetServiceImpl extends CRUDServiceImpl<String, PasswordReset> implements PasswordResetService {
