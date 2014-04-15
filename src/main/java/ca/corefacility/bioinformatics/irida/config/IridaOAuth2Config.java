@@ -17,9 +17,6 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 @ComponentScan("ca.corefacility.bioinformatics.irida.config.oauth")
 public class IridaOAuth2Config {
 
-	@Autowired
-	private DataSource dataSource;
-
 	@Bean
 	public DefaultTokenServices tokenServices(ClientDetailsService clientDetails) {
 		DefaultTokenServices services = new DefaultTokenServices();
