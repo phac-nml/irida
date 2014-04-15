@@ -61,10 +61,10 @@ public class PasswordReset implements Comparable<PasswordReset> {
 
 	@Override
 	public boolean equals(Object other) {
-		if (other instanceof Project) {
+		if (other instanceof PasswordReset) {
 			PasswordReset p = (PasswordReset) other;
 			return Objects.equals(createdDate, p.createdDate) && Objects.equals(user, p.user)
-					&&					Objects.equals(id, p.id);
+					&&	Objects.equals(id, p.id);
 		}
 
 		return false;
