@@ -29,7 +29,7 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Comparable<ValueType>> implements
+public class CRUDServiceImpl<KeyType extends Serializable, ValueType> implements
 		CRUDService<KeyType, ValueType> {
 	private static final String NO_SUCH_ID_EXCEPTION = "No such identifier exists in the database.";
 
