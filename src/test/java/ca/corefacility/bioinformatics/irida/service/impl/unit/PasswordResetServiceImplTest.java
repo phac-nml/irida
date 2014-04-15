@@ -1,7 +1,58 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
+import static org.mockito.Mockito.*;
+
+import java.util.Map;
+
+import javax.validation.Validator;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import ca.corefacility.bioinformatics.irida.model.PasswordReset;
+import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.repositories.PasswordResetRepository;
+import ca.corefacility.bioinformatics.irida.service.PasswordResetService;
+import ca.corefacility.bioinformatics.irida.service.impl.PasswordResetServiceImpl;
+
+import com.google.common.collect.ImmutableMap;
+
 /**
- * Created by josh on 2014-04-15.
+ * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class PasswordResetServiceImplTest {
+	private PasswordResetService passwordResetService;
+	private PasswordResetRepository passwordResetRepository;
+	private Validator validator;
+
+	@Before
+	public void setUp() {
+		validator = mock(Validator.class);
+		passwordResetRepository = mock(PasswordResetRepository.class);
+		passwordResetService = new PasswordResetServiceImpl(passwordResetRepository, validator);
+	}
+
+	@After
+	public void tearDown() {
+		SecurityContextHolder.getContext().setAuthentication(null);
+	}
+
+	@Test(expected = UnsupportedOperationException.class)
+	public void testCannotUpdateAPasswordReset() {
+		Map<String, Object> properties = ImmutableMap.of("user_id", (Object) "3");
+		passwordResetService.update("1121-1212-1d2d1-df433", properties);
+	}
+
+	@Test
+	public void testCreatePasswordReset() {
+		User user = new User();
+		PasswordReset passwordReset = new PasswordReset(user);
+
+		when(passwordResetRepository.findByUser(user)).thenReturn(null);
+		when(passwordResetRepository.save(passwordReset)).thenReturn(passwordReset);
+		passwordResetService.create(passwordReset);
+		verify(passwordResetRepository).save(passwordReset);
+	}
 }
