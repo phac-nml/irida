@@ -49,6 +49,6 @@ public class PasswordReset implements Comparable<PasswordReset> {
 
 	@Override
 	public int compareTo(PasswordReset passwordReset) {
-		return 0;
+		return createdDate.compareTo(passwordReset.createdDate);
 	}
 }
