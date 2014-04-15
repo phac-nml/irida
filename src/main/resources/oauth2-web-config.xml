@@ -18,7 +18,7 @@
 		<sec:access-denied-handler ref="oauthAccessDeniedHandler" />
 	</sec:http>
 	
-	<sec:http pattern="/**" create-session="never"
+	<sec:http pattern="/**" create-session="stateless"
 		entry-point-ref="oauthAuthenticationEntryPoint"
 		access-decision-manager-ref="accessDecisionManager"
 		authentication-manager-ref="clientAuthenticationManager">
@@ -41,9 +41,7 @@
 			client-details-service-ref="clientDetails" 
 			token-services-ref="tokenServices">
 		<oauth:authorization-code />
-		<oauth:implicit />
 		<oauth:refresh-token />
-		<oauth:client-credentials />
 		<oauth:password authentication-manager-ref="authenticationManager"/>
 	</oauth:authorization-server>
 	 
