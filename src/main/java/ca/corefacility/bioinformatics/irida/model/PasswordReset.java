@@ -20,6 +20,7 @@ public class PasswordReset implements Comparable<PasswordReset> {
 	private Date createdDate;
 
 	@OneToOne
+	@NotNull
 	private User user;
 
 	@Id
