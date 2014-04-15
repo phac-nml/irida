@@ -26,8 +26,7 @@ public class PasswordReset implements Comparable<PasswordReset> {
 	@NotNull
 	private String id;
 
-	private PasswordReset() {
-	}
+	protected PasswordReset() {}
 
 	public PasswordReset(User user) {
 		this.createdDate = new Date();
