@@ -28,15 +28,15 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.LocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
-import ca.corefacility.bioinformatics.irida.exceptions.UploadConnectionException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyConnector;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -79,10 +79,11 @@ public class GalaxyUploaderIT {
 	 * Test the case of no connection to a running instance of Galaxy.
 	 * @throws ConstraintViolationException
 	 * @throws UploadException
+	 * @throws InterruptedException 
 	 */
-	@Test(expected = UploadException.class)
+	@Test(expected=RuntimeException.class)
 	public void testNoGalaxyConnectionUpload()
-			throws ConstraintViolationException, UploadException {
+			throws ConstraintViolationException, UploadException, InterruptedException {
 		GalaxyUploader unconnectedGalaxyUploader = new GalaxyUploader();
 
 		GalaxyProjectName libraryName = new GalaxyProjectName(
@@ -98,26 +99,12 @@ public class GalaxyUploaderIT {
 	}
 
 	/**
-	 * Test the case of setting up the Galaxy API with a an email that does not exist in Galaxy.
-	 * @throws ConstraintViolationException
-	 * @throws GalaxyConnectException
-	 */
-	@Test(expected = GalaxyConnectException.class)
-	public void testSetupNonExistentEmail()
-			throws ConstraintViolationException, GalaxyConnectException {
-		GalaxyUploader newGalaxyUploder = new GalaxyUploader();
-		newGalaxyUploder.setupGalaxyAPI(localGalaxy.getGalaxyURL(),
-				localGalaxy.getNonExistentGalaxyAdminName(),
-				localGalaxy.getAdminAPIKey());
-	}
-
-	/**
 	 * Tests the case of Galaxy being shutdown while the archive is running.
 	 * @throws ConstraintViolationException
 	 * @throws UploadException
 	 * @throws MalformedURLException
 	 */
-	@Test(expected = UploadConnectionException.class)
+	@Test(expected=RuntimeException.class)
 	public void testGalaxyShutdownRandomly()
 			throws ConstraintViolationException, UploadException,
 			MalformedURLException {
@@ -129,8 +116,9 @@ public class GalaxyUploaderIT {
 
 		// connect to running Galaxy first, so it passes all initial checks
 		GalaxyUploader galaxyUploader = new GalaxyUploader();
-		galaxyUploader.setupGalaxyAPI(newLocalGalaxy.getGalaxyURL(),
+		GalaxyConnector galaxyConnector = new GalaxyConnector(newLocalGalaxy.getGalaxyURL(),
 				newLocalGalaxy.getAdminName(), newLocalGalaxy.getAdminAPIKey());
+		galaxyUploader.connectToGalaxy(galaxyConnector);
 		
 		assertTrue(galaxyUploader.isDataLocationAttached());
 		assertTrue(galaxyUploader.isDataLocationConnected());
@@ -144,8 +132,10 @@ public class GalaxyUploaderIT {
 				"testData1"), dataFilesSingle);
 		samples.add(galaxySample1);
 
-		assertNotNull(galaxyUploader.uploadSamples(samples, libraryName,
-				newLocalGalaxy.getAdminName()));
+		UploadWorker uploadWorker = galaxyUploader.uploadSamples(samples, libraryName,
+				newLocalGalaxy.getAdminName());
+		uploadWorker.run();
+		assertNotNull(uploadWorker.getUploadResult());
 		
 		// shutdown running Galaxy
 		newLocalGalaxy.shutdownGalaxy();
@@ -197,8 +187,10 @@ public class GalaxyUploaderIT {
 				"testData1"), dataFilesSingle);
 		samples.add(galaxySample1);
 
-		UploadResult actualUploadResult = galaxyUploader.uploadSamples(samples,
+		UploadWorker uploadWorker = galaxyUploader.uploadSamples(samples,
 				libraryName, localGalaxy.getAdminName());
+		uploadWorker.run();
+		UploadResult actualUploadResult = uploadWorker.getUploadResult();
 		assertNotNull(actualUploadResult);
 		assertEquals(libraryName, actualUploadResult.getLocationName());
 		assertEquals(new URL(localGalaxyURL + "/library"),

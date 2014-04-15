@@ -31,7 +31,7 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 */
 	@PreAuthorize("permitAll")
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
-	
+
 	/**
 	 * Get a user from the database with the supplied username.
 	 * 
@@ -41,6 +41,18 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 */
 	@PreAuthorize("permitAll")
 	public User getUserByUsername(String username) throws EntityNotFoundException;
+
+	/**
+	 * Get a user from the database with the supplied email address
+	 * 
+	 * @param email
+	 *            The email address to read a user for
+	 * @return The user with the given email address
+	 * @throws EntityNotFoundException
+	 *             If no user has the given email address
+	 */
+	@PreAuthorize("permitAll")
+	public User loadUserByEmail(String email) throws EntityNotFoundException;
 
 	/**
 	 * Get all users associated with a particular project.
@@ -104,8 +116,7 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize(CREATE_USER_PERMISSIONS)
-    public User create(@Valid User u) throws EntityExistsException, ConstraintViolationException;
-
+	public User create(@Valid User u) throws EntityExistsException, ConstraintViolationException;
 
 	/**
 	 * If a user is an administrator, they are permitted to create a user
