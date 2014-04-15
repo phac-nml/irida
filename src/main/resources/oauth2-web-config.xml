@@ -41,7 +41,6 @@
 			client-details-service-ref="clientDetails" 
 			token-services-ref="tokenServices">
 		<oauth:authorization-code />
-		<oauth:refresh-token />
 		<oauth:password authentication-manager-ref="authenticationManager"/>
 	</oauth:authorization-server>
 	 
