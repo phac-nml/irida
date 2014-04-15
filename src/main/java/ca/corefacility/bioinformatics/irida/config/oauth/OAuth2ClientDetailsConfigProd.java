@@ -38,12 +38,16 @@ public class OAuth2ClientDetailsConfigProd implements OAuth2ClientDetailsConfig{
 		 */
 
 		BaseClientDetails sequencerClient = new BaseClientDetails("sequencer", "NmlIrida", "read,write", "password","ROLE_CLIENT");
-		sequencerClient.setClientSecret("sequencerSecret");
+		sequencerClient.setClientSecret("N9Ywc6GKWWZotzsJGutj3BZXJDRn65fXJqjrk29yTjI");
 		clientStore.put("sequencer", sequencerClient);
 		
 		BaseClientDetails linkerClient = new BaseClientDetails("linker", "NmlIrida", "read", "password","ROLE_CLIENT");
-		linkerClient.setClientSecret("linkerSecret");
+		linkerClient.setClientSecret("ZG5K1AFVSycE25ooxgcBRGCWFzSTfDnJ1DxSkdEmEho");
 		clientStore.put("linker", linkerClient);
+		
+		BaseClientDetails pythonLinkerClient = new BaseClientDetails("pythonLinker", "NmlIrida", "read", "password","ROLE_CLIENT");
+		pythonLinkerClient.setClientSecret("bySZBP5jNO9pSZTz3omFRtJs3XFAvshxGgvXIlZ2zjk");
+		clientStore.put("pythonLinker", pythonLinkerClient);
 		
 
 
