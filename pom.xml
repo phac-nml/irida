@@ -456,7 +456,5 @@
 
 		<!-- Galaxy Testing Revision: either 'latest' or a revision from https://bitbucket.org/galaxy/galaxy-dist -->
 		<test.galaxy.revision>26f58e05aa1068761660681583821e21e6cbf7ab</test.galaxy.revision>
-
-        <surefireArgLine/>
 	</properties>
 </project>
