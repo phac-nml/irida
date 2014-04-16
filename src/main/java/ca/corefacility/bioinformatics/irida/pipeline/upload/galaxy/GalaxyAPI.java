@@ -381,8 +381,9 @@ public class GalaxyAPI {
 							+ galaxyInstance.getGalaxyUrl());
 				} else {
 					logger.debug("Failed to upload file to Galaxy, response \"" + uploadResponse.getStatus() + " " + 
-							uploadResponse.getClientResponseStatus() + "\" path="
-							+ samplePath(rootFolder, sample, file)
+							uploadResponse.getClientResponseStatus() + "\", " +
+							"response message=\"" + uploadResponse.getEntity(String.class) + "\""+
+							" path=" + samplePath(rootFolder, sample, file)
 							+ " from local path=" + file.getAbsolutePath()
 							+ " dataStorage=" + dataStorage
 							+ " in library name=" + library.getName() + " id="

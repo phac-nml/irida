@@ -220,7 +220,8 @@ public class GalaxyLibraryBuilder {
 					"Could not change the owner for library="
 							+ library.getName() + " in Galaxy "
 							+ galaxyInstance.getGalaxyUrl()
-							+ ": response status=" + response.getClientResponseStatus());
+							+ ": response status=" + response.getClientResponseStatus() +
+							", message=\"" + response.getEntity(String.class) + "\"");
 		}
 	}
 }
