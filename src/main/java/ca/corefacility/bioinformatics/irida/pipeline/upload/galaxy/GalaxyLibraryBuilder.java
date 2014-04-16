@@ -79,7 +79,7 @@ public class GalaxyLibraryBuilder {
 			return persistedLibrary;
 		} else {
 			throw new CreateLibraryException("Could not create library named "
-					+ libraryName);
+					+ libraryName + " in Galaxy " + galaxyInstance.getGalaxyUrl());
 		}
 	}
 
@@ -118,7 +118,8 @@ public class GalaxyLibraryBuilder {
 
 		if (folder == null) {
 			throw new CreateLibraryException("Could not create library folder="
-					+ folderName + " within library " + library.getName());
+					+ folderName + " within library " + library.getName() +
+					" in Galaxy " + galaxyInstance.getGalaxyUrl());
 		} else {
 			return folder;
 		}
@@ -160,7 +161,8 @@ public class GalaxyLibraryBuilder {
 		if (folder == null) {
 			throw new CreateLibraryException("Could not create library folder="
 					+ folderName + " within folder " + libraryFolder.getName()
-					+ " in library " + library.getName());
+					+ " in library " + library.getName() +
+					" in Galaxy " + galaxyInstance.getGalaxyUrl());
 		} else {
 			return folder;
 		}
@@ -229,7 +231,9 @@ public class GalaxyLibraryBuilder {
 		} else {
 			throw new ChangeLibraryPermissionsException(
 					"Could not change the owner for library="
-							+ library.getName());
+							+ library.getName() + " in Galaxy "
+							+ galaxyInstance.getGalaxyUrl()
+							+ ": response status=" + response.getClientResponseStatus());
 		}
 	}
 }
