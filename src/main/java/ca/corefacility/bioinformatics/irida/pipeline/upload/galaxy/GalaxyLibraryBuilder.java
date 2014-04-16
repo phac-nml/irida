@@ -192,19 +192,8 @@ public class GalaxyLibraryBuilder {
 		checkNotNull(library.getId(), "library.getId() is null");
 		checkNotNull(userEmail, "userEmail is null");
 
-		Library changedLibrary = null;
 		Role userRole = galaxySearch.findUserRoleWithEmail(userEmail);
-		if (userRole == null) {
-			throw new GalaxyUserNoRoleException(
-					"Could not find a role for user with email=" + userEmail);
-		}
-
 		Role adminRole = galaxySearch.findUserRoleWithEmail(adminEmail);
-		if (adminRole == null) {
-			throw new GalaxyUserNoRoleException(
-					"Could not find a role for admin user with email="
-							+ adminEmail);
-		}
 
 		LibraryPermissions permissions = new LibraryPermissions();
 		permissions.getAccessInRoles().add(userRole.getId());
@@ -225,9 +214,7 @@ public class GalaxyLibraryBuilder {
 					+ userRole.getName() + "," + adminRole.getName()
 					+ " in Galaxy url=" + galaxyInstance.getGalaxyUrl());
 
-			changedLibrary = library;
-
-			return changedLibrary;
+			return library;
 		} else {
 			throw new ChangeLibraryPermissionsException(
 					"Could not change the owner for library="
