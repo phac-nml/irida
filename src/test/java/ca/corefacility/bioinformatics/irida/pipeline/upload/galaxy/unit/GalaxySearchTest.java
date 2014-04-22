@@ -333,6 +333,15 @@ public class GalaxySearchTest {
 	}
 	
 	/**
+	 * Tests finding a null user role
+	 * @throws GalaxyUserNoRoleException 
+	 */
+	@Test(expected=NullPointerException.class)
+	public void testNullFindUserRoleWithEmail() throws GalaxyUserNoRoleException {
+		galaxySearch.findUserRoleWithEmail(null);
+	}
+	
+	/**
 	 * Tests finding a user role.
 	 */
 	@Test

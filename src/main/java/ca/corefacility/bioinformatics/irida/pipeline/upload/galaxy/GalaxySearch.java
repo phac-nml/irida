@@ -69,7 +69,7 @@ public class GalaxySearch {
 			}
 		}
 
-		throw new GalaxyUserNoRoleException("No role found for " + email);
+		throw new GalaxyUserNoRoleException("No role found for " + email + " in Galaxy " + galaxyInstance.getGalaxyUrl());
 	}
 
 	/**
@@ -130,7 +130,8 @@ public class GalaxySearch {
 			}
 		}
 
-		throw new NoLibraryFoundException("No library found for id " + libraryId);
+		throw new NoLibraryFoundException("No library found for id " + libraryId +
+				" in Galaxy " + galaxyInstance.getGalaxyUrl());
 	}
 
 	/**
@@ -160,7 +161,8 @@ public class GalaxySearch {
 			return map;
 		}
 
-		throw new NoGalaxyContentFoundException("Could not find library content for id " + libraryId);
+		throw new NoGalaxyContentFoundException("Could not find library content for id " + libraryId +
+				" in Galaxy " + galaxyInstance.getGalaxyUrl());
 	}
 
 	/**
@@ -191,7 +193,8 @@ public class GalaxySearch {
 			}
 		}
 
-		throw new NoLibraryFoundException("No library could be found with name " + libraryName);
+		throw new NoLibraryFoundException("No library could be found with name " + libraryName +
+				" in Galaxy " + galaxyInstance.getGalaxyUrl());
 	}
 
 	/**
@@ -226,7 +229,8 @@ public class GalaxySearch {
 			}
 		}
 
-		throw new NoGalaxyContentFoundException("Could not find library content for id " + libraryId);
+		throw new NoGalaxyContentFoundException("Could not find library content for id " + libraryId +
+				" in Galaxy " + galaxyInstance.getGalaxyUrl());
 	}
 
 	/**
