@@ -42,12 +42,11 @@
 	
 	<oauth:client id="oauth2ClientFilter"  />
 	
-	<sec:http pattern="/**" create-session="never"
+	<sec:http pattern="/**" create-session="stateless"
 		entry-point-ref="oauthAuthenticationEntryPoint"
 		access-decision-manager-ref="accessDecisionManager"
 		authentication-manager-ref="clientAuthenticationManager">
 		<sec:anonymous enabled="false" />
-				
 		<!-- Read scope for GET requests -->
 		<sec:intercept-url pattern="/favicon.ico" access="IS_AUTHENTICATED_ANONYMOUSLY,IS_AUTHENTICATED_FULLY"/>
 		<sec:intercept-url pattern="/success" access="IS_AUTHENTICATED_FULLY" />   
@@ -68,9 +67,6 @@
 			client-details-service-ref="clientDetails" 
 			token-services-ref="tokenServices">
 		<oauth:authorization-code />
-		<oauth:implicit />
-		<oauth:refresh-token />
-		<oauth:client-credentials />
 		<oauth:password authentication-manager-ref="authenticationManager"/>
 	</oauth:authorization-server>
 	 
