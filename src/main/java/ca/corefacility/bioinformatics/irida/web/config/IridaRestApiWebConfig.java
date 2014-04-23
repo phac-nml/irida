@@ -68,7 +68,7 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
 		//restrict this view resolver to ONLY do oauth stuff.  We don't need it for other stuff and in fact it makes a mess.
 		String[] arr = {"/oauth*"};
-		resolver.setViewNames(arr);
+		//resolver.setViewNames(arr);
 		resolver.setOrder(2);
 		return resolver;
 	}

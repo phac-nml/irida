@@ -42,7 +42,7 @@
 	
 	<oauth:client id="oauth2ClientFilter"  />
 	
-	<sec:http pattern="/**" create-session="stateless"
+	<sec:http pattern="/**" create-session="never"
 		entry-point-ref="oauthAuthenticationEntryPoint"
 		access-decision-manager-ref="accessDecisionManager"
 		authentication-manager-ref="clientAuthenticationManager">
