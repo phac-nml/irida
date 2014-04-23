@@ -16,8 +16,8 @@
 	<oauth:resource id="nmlIridaResource" use-current-uri="true"
 		access-token-uri="http://bobloblaw:8080/oauth/token"
 		user-authorization-uri="http://bobloblaw:8080/oauth/authorize" 
-		client-id="linker"
-		client-secret="linkerSecret" 
+		client-id="webClient"
+		client-secret="barf" 
 		type="authorization_code" 
 		scope="read" />
 </beans>
