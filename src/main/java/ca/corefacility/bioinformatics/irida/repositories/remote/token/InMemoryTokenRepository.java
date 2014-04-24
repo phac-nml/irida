@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.repositories.remote.token;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,13 +7,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+
 /**
  * An Map implementation of {@link TokenRepository}
  * @author tom
  *
  */
 public class InMemoryTokenRepository implements TokenRepository{
-	private Map<String,Map<URI,String>> tokens;
+	private Map<String,Map<RemoteAPI,String>> tokens;
 	
 	/**
 	 * Create a new InMemoryTokenRepository
@@ -27,18 +28,18 @@ public class InMemoryTokenRepository implements TokenRepository{
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void addToken(URI uri,String token){
+	public void addToken(RemoteAPI remoteAPI,String token){
 		String username = getUserName();
-		tokens.get(username).put(uri, token);
+		tokens.get(username).put(remoteAPI, token);
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getToken(URI uri){
+	public String getToken(RemoteAPI remoteAPI){
 		String username = getUserName();
-		return tokens.get(username).get(uri);
+		return tokens.get(username).get(remoteAPI);
 	}
 	
 	/**
@@ -52,7 +53,7 @@ public class InMemoryTokenRepository implements TokenRepository{
 			String username = details.getUsername();
 			
 			if(! tokens.containsKey(username)){
-				Map<URI,String> userMap = new HashMap<>();
+				Map<RemoteAPI,String> userMap = new HashMap<>();
 				tokens.put(username, userMap);
 			}
 			

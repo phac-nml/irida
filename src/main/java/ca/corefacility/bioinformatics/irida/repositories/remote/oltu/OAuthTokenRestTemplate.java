@@ -10,12 +10,13 @@ import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.repositories.remote.token.TokenRepository;
 
 public class OAuthTokenRestTemplate extends RestTemplate{
 	private TokenRepository tokenRepository;
 	
-	private URI serviceURI;
+	private RemoteAPI remoteAPI;
 	private IridaOAuthErrorHandler errorHandler = new IridaOAuthErrorHandler();
 
 	public OAuthTokenRestTemplate(TokenRepository tokenRepository) {
@@ -39,11 +40,11 @@ public class OAuthTokenRestTemplate extends RestTemplate{
 	 */
 	@Override
 	protected ClientHttpRequest createRequest(URI uri, HttpMethod method) throws IOException {
-		String token = tokenRepository.getToken(serviceURI);
+		String token = tokenRepository.getToken(remoteAPI);
 		
 		if (token == null) {
-			logger.debug("No token found for service " + serviceURI);
-			throw new IridaOAuthException("No token fround for service",serviceURI);
+			logger.debug("No token found for service " + remoteAPI);
+			throw new IridaOAuthException("No token fround for service",remoteAPI);
 		}
 		
 		ClientHttpRequest createRequest = super.createRequest(uri, method);
@@ -57,12 +58,8 @@ public class OAuthTokenRestTemplate extends RestTemplate{
 		return errorHandler;
 	}
 	
-	public void setServiceURI(URI serviceURI){
-		this.serviceURI = serviceURI;
-		errorHandler.setService(serviceURI);
-	}
-	
-	public URI getServiceURI(){
-		return serviceURI;
+	public void setRemoteAPI(RemoteAPI remoteAPI){
+		this.remoteAPI = remoteAPI;
+		errorHandler.setRemoteAPI(remoteAPI);
 	}
 }

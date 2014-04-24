@@ -10,6 +10,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.repositories.remote.GenericRemoteRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.model.ListResourceWrapper;
 import ca.corefacility.bioinformatics.irida.repositories.remote.model.RemoteResource;
@@ -51,14 +52,15 @@ public abstract class OltuGenericRepository<Type extends RemoteResource> impleme
 		return exchange.getBody().getResource().getResources();
 	}
 
-	@Override
-	public void setBaseURI(URI baseURI) {
-		restTemplate.setServiceURI(baseURI);
-		resourcesURI = UriBuilder.fromUri(baseURI).path(relativeURI).build();
-	}
-
 	public OAuthTokenRestTemplate getRestTemplate() {
 		return restTemplate;
+	}
+	
+	public void setRemoteAPI(RemoteAPI remoteAPI){
+		restTemplate.setRemoteAPI(remoteAPI);
+		URI serviceURI = remoteAPI.getServiceURI();
+		resourcesURI = UriBuilder.fromUri(serviceURI).path(relativeURI).build();
+
 	}
 
 }
