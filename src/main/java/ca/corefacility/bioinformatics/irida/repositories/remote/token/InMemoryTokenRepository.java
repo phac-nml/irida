@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.repositories.remote.oltu;
+package ca.corefacility.bioinformatics.irida.repositories.remote.token;
 
 import java.net.URI;
 import java.util.HashMap;

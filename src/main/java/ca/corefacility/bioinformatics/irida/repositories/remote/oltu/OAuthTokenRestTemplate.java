@@ -10,6 +10,7 @@ import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
+import ca.corefacility.bioinformatics.irida.repositories.remote.token.TokenRepository;
 
 public class OAuthTokenRestTemplate extends RestTemplate{
 	private TokenRepository tokenRepository;

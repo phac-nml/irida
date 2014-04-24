@@ -11,10 +11,10 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 
-import ca.corefacility.bioinformatics.irida.repositories.remote.oltu.InMemoryTokenRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.oltu.OAuthTokenRestTemplate;
 import ca.corefacility.bioinformatics.irida.repositories.remote.oltu.OltuProjectRemoteRepository;
-import ca.corefacility.bioinformatics.irida.repositories.remote.oltu.TokenRepository;
+import ca.corefacility.bioinformatics.irida.repositories.remote.token.InMemoryTokenRepository;
+import ca.corefacility.bioinformatics.irida.repositories.remote.token.TokenRepository;
 
 @Configuration
 public class IridaRemoteRepositoriesConfig {

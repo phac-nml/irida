@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.repositories.remote.oltu;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +19,13 @@ public class IridaOAuthErrorHandler extends DefaultResponseErrorHandler{
 	public void handleError(ClientHttpResponse response) throws IOException{
 		
 		HttpStatus statusCode = response.getStatusCode();
-		System.out.println("handling " + statusCode.toString());
+		logger.trace("Checking error type " + statusCode.toString());
 		switch(statusCode){
 			case UNAUTHORIZED:
+				logger.trace("Throwing new IridaOAuthException for this error");
 				throw new IridaOAuthException("User is unauthorized for this service", service);
 			default:
+				logger.trace("Passing error to superclass");
 				super.handleError(response);
 		}
 	}
