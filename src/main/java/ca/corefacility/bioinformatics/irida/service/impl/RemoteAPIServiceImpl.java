@@ -38,16 +38,5 @@ public class RemoteAPIServiceImpl extends CRUDServiceImpl<Long, RemoteAPI> imple
 	public Iterable<RemoteAPI> findAll() {
 		return super.findAll();
 	}
-	
-	public void addStuff(){
-		try {
-			create(new RemoteAPI(new URI("http://localhost:8181"), "My local remote api"));
-			create(new RemoteAPI(new URI("http://bobloblaw:8181"), "My bobloblaw remote api"));
-		} catch (ConstraintViolationException | EntityExistsException | URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
 
 }

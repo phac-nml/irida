@@ -18,7 +18,5 @@ public interface RemoteAPIService extends CRUDService<Long, RemoteAPI> {
 	@Override
 	@PreAuthorize("permitAll")
 	public Iterable<RemoteAPI> findAll();
-	
-	public void addStuff();
-	
+		
 }
