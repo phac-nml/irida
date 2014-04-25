@@ -12,7 +12,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 
-import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteAPIRepository;
+import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteAPIRepositoryOld;
 import ca.corefacility.bioinformatics.irida.repositories.remote.oltu.OAuthTokenRestTemplate;
 import ca.corefacility.bioinformatics.irida.repositories.remote.oltu.OltuProjectRemoteRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.token.InMemoryTokenRepository;
@@ -51,8 +51,8 @@ public class IridaRemoteRepositoriesConfig {
 	}
 	
 	@Bean
-	public RemoteAPIRepository remoteAPIRepository() throws URISyntaxException{
-		return new RemoteAPIRepository();
+	public RemoteAPIRepositoryOld remoteAPIRepository() throws URISyntaxException{
+		return new RemoteAPIRepositoryOld();
 	}
 }
 	
