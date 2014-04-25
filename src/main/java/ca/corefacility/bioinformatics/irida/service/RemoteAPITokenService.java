@@ -9,7 +9,7 @@ public interface RemoteAPITokenService {
 	 * @param serviceURI The URI of the service root
 	 * @param token The token string
 	 */
-	public void addToken(RemoteAPI remoteAPI, RemoteAPIToken token);
+	public void addToken(RemoteAPIToken token);
 	
 	/**
 	 * Get a token for a given service 

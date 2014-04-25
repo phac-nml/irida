@@ -11,17 +11,20 @@ import org.springframework.web.client.RestTemplate;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.repositories.remote.token.TokenRepository;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
 public class OAuthTokenRestTemplate extends RestTemplate{
-	private TokenRepository tokenRepository;
+	private RemoteAPITokenService tokenService;
 	
 	private RemoteAPI remoteAPI;
 	private IridaOAuthErrorHandler errorHandler = new IridaOAuthErrorHandler();
 
-	public OAuthTokenRestTemplate(TokenRepository tokenRepository) {
+	public OAuthTokenRestTemplate(RemoteAPITokenService tokenService) {
 		super();
-		this.tokenRepository = tokenRepository;
+		this.tokenService = tokenService;
+		this.setErrorHandler(errorHandler);
 	}
 
 	/**
@@ -29,9 +32,9 @@ public class OAuthTokenRestTemplate extends RestTemplate{
 	 * @param tokenRepository
 	 * @param requestFactory
 	 */
-	public OAuthTokenRestTemplate(TokenRepository tokenRepository,	ClientHttpRequestFactory requestFactory) {
+	public OAuthTokenRestTemplate(RemoteAPITokenService tokenService,ClientHttpRequestFactory requestFactory) {
 		super(requestFactory);
-		this.tokenRepository = tokenRepository;
+		this.tokenService = tokenService;
 		this.setErrorHandler(errorHandler);
 	}
 	
@@ -40,7 +43,7 @@ public class OAuthTokenRestTemplate extends RestTemplate{
 	 */
 	@Override
 	protected ClientHttpRequest createRequest(URI uri, HttpMethod method) throws IOException {
-		String token = tokenRepository.getToken(remoteAPI);
+		RemoteAPIToken token = tokenService.getToken(remoteAPI);
 		
 		if (token == null) {
 			logger.debug("No token found for service " + remoteAPI);
@@ -48,7 +51,7 @@ public class OAuthTokenRestTemplate extends RestTemplate{
 		}
 		
 		ClientHttpRequest createRequest = super.createRequest(uri, method);
-		createRequest.getHeaders().add("Authorization", "Bearer " + token);
+		createRequest.getHeaders().add("Authorization", "Bearer " + token.getTokenString());
 		
 		return createRequest;
 	}

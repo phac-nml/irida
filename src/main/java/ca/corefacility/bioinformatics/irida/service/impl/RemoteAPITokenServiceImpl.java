@@ -29,7 +29,7 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
 	}
 
 	@Override
-	public void addToken(RemoteAPI remoteAPI, RemoteAPIToken token) {
+	public void addToken(RemoteAPIToken token) {
 		User user = userRepository.loadUserByUsername(getUserName());
 		token.setUser(user);
 		tokenRepository.save(token);

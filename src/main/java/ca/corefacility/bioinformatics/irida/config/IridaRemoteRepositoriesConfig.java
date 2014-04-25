@@ -7,6 +7,7 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.oltu.OAuthTokenR
 import ca.corefacility.bioinformatics.irida.repositories.remote.oltu.OltuProjectRemoteRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.token.InMemoryTokenRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.token.TokenRepository;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
 @Configuration
 public class IridaRemoteRepositoriesConfig {
@@ -17,16 +18,16 @@ public class IridaRemoteRepositoriesConfig {
 	}
 	
 	@Bean
-	public OAuthTokenRestTemplate oAuthTokenRestTemplate(){
-		OAuthTokenRestTemplate oAuthTokenRestTemplate = new OAuthTokenRestTemplate(tokenRepository());
+	public OAuthTokenRestTemplate oAuthTokenRestTemplate(RemoteAPITokenService tokenService){
+		OAuthTokenRestTemplate oAuthTokenRestTemplate = new OAuthTokenRestTemplate(tokenService);
 
 		return oAuthTokenRestTemplate;
 	}
 
 	
 	@Bean
-	public OltuProjectRemoteRepository oltuProjectRemoteRepository(){
-		return new OltuProjectRemoteRepository(oAuthTokenRestTemplate());
+	public OltuProjectRemoteRepository oltuProjectRemoteRepository(OAuthTokenRestTemplate restTemplate){
+		return new OltuProjectRemoteRepository(restTemplate);
 	}
 }
 	
