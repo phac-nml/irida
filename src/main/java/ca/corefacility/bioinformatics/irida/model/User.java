@@ -99,6 +99,9 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
 	private List<ProjectUserJoin> projects;
+	
+	@OneToMany(mappedBy="user")
+	private Collection<RemoteAPIToken> tokens;
 
 	/**
 	 * Construct an instance of {@link User} with no properties set.
