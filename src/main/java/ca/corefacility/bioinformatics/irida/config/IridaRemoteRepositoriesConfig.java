@@ -12,7 +12,6 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 
-import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteAPIRepositoryOld;
 import ca.corefacility.bioinformatics.irida.repositories.remote.oltu.OAuthTokenRestTemplate;
 import ca.corefacility.bioinformatics.irida.repositories.remote.oltu.OltuProjectRemoteRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.token.InMemoryTokenRepository;
@@ -29,30 +28,14 @@ public class IridaRemoteRepositoriesConfig {
 	@Bean
 	public OAuthTokenRestTemplate oAuthTokenRestTemplate(){
 		OAuthTokenRestTemplate oAuthTokenRestTemplate = new OAuthTokenRestTemplate(tokenRepository());
-		//List<HttpMessageConverter<?>> messageConverters = oAuthTokenRestTemplate.getMessageConverters();
-		//messageConverters.add(mappingJacksonHttpMessageConverter());
-		//oAuthTokenRestTemplate.setMessageConverters(messageConverters);
+
 		return oAuthTokenRestTemplate;
 	}
-	
-	@Bean 
-	public HttpMessageConverter<?> mappingJacksonHttpMessageConverter(){
-		//MappingJackson2HttpMessageConverter mappingJacksonHttpMessageConverter = new MappingJackson2HttpMessageConverter();
-		MappingJacksonHttpMessageConverter mappingJacksonHttpMessageConverter = new MappingJacksonHttpMessageConverter();
-		List<MediaType> mediaTypes = new ArrayList<>();
-		mediaTypes.add(MediaType.APPLICATION_JSON);
-		mappingJacksonHttpMessageConverter.setSupportedMediaTypes(mediaTypes);
-		return mappingJacksonHttpMessageConverter;
-	}
+
 	
 	@Bean
 	public OltuProjectRemoteRepository oltuProjectRemoteRepository(){
 		return new OltuProjectRemoteRepository(oAuthTokenRestTemplate());
-	}
-	
-	@Bean
-	public RemoteAPIRepositoryOld remoteAPIRepository() throws URISyntaxException{
-		return new RemoteAPIRepositoryOld();
 	}
 }
 	
