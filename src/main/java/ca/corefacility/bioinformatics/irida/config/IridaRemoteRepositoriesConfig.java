@@ -5,17 +5,10 @@ import org.springframework.context.annotation.Configuration;
 
 import ca.corefacility.bioinformatics.irida.repositories.remote.oltu.OAuthTokenRestTemplate;
 import ca.corefacility.bioinformatics.irida.repositories.remote.oltu.OltuProjectRemoteRepository;
-import ca.corefacility.bioinformatics.irida.repositories.remote.token.InMemoryTokenRepository;
-import ca.corefacility.bioinformatics.irida.repositories.remote.token.TokenRepository;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
 @Configuration
 public class IridaRemoteRepositoriesConfig {
-	
-	@Bean
-	public TokenRepository tokenRepository(){
-		return new InMemoryTokenRepository();
-	}
 	
 	@Bean
 	public OAuthTokenRestTemplate oAuthTokenRestTemplate(RemoteAPITokenService tokenService){

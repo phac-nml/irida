@@ -12,7 +12,6 @@ import org.springframework.web.client.RestTemplate;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
-import ca.corefacility.bioinformatics.irida.repositories.remote.token.TokenRepository;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
 public class OAuthTokenRestTemplate extends RestTemplate{
@@ -28,8 +27,8 @@ public class OAuthTokenRestTemplate extends RestTemplate{
 	}
 
 	/**
-	 * Create a new OAuthTokenRestTemplate with the given {@link TokenRepository} and {@link ClientHttpRequestFactory}
-	 * @param tokenRepository
+	 * Create a new OAuthTokenRestTemplate with the given {@link RemoteAPITokenService} and {@link ClientHttpRequestFactory}
+	 * @param tokenService
 	 * @param requestFactory
 	 */
 	public OAuthTokenRestTemplate(RemoteAPITokenService tokenService,ClientHttpRequestFactory requestFactory) {
