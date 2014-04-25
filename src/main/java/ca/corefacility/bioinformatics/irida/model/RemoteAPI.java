@@ -36,15 +36,21 @@ public class RemoteAPI implements Comparable<RemoteAPI>{
 	
 	private String description;
 	
+	private String clientId;
+	
+	private String clientSecret;
+	
 	@OneToMany(mappedBy="remoteApi")
 	private Collection<RemoteAPIToken> tokens;
 	
 	public RemoteAPI(){
 	}
 	
-	public RemoteAPI(URI serviceURI, String description){
+	public RemoteAPI(URI serviceURI, String description,String clientId, String clientSecret){
 		this.serviceURI = serviceURI;
 		this.description = description;
+		this.clientId = clientId;
+		this.clientSecret = clientSecret;
 	}
 	
 	/**
@@ -84,16 +90,45 @@ public class RemoteAPI implements Comparable<RemoteAPI>{
 		this.description = description;
 	}
 	
+	/**
+	 * @return the clientId
+	 */
+	public String getClientId() {
+		return clientId;
+	}
+
+	/**
+	 * @param clientId the clientId to set
+	 */
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
+	}
+
+	/**
+	 * @return the clientSecret
+	 */
+	public String getClientSecret() {
+		return clientSecret;
+	}
+
+	/**
+	 * @param clientSecret the clientSecret to set
+	 */
+	public void setClientSecret(String clientSecret) {
+		this.clientSecret = clientSecret;
+	}
+
 	@Override
 	public String toString() {
-		return "RemoteAPI [" + serviceURI + ", " + description + "]";
+		return "RemoteAPI [" + clientId + ", " + serviceURI + ", " + description + "]";
 	}
 
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof RemoteAPI) {
 			RemoteAPI p = (RemoteAPI) other;
-			return Objects.equals(serviceURI, p.serviceURI);
+			return Objects.equals(serviceURI, p.serviceURI) && Objects.equals(clientId, p.clientId)
+					&& Objects.equals(clientSecret, p.clientSecret);
 		}
 
 		return false;
@@ -106,7 +141,7 @@ public class RemoteAPI implements Comparable<RemoteAPI>{
 	
     @Override
     public int hashCode() {
-        return Objects.hash(serviceURI);
+        return Objects.hash(serviceURI,clientId,clientSecret);
     }   
 	
 }
