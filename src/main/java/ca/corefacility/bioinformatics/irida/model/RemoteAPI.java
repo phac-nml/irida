@@ -25,6 +25,7 @@ public class RemoteAPI implements Comparable<RemoteAPI>{
 	
 	@Transient
 	private URI serviceURI;
+	//keeping a string representation of the service URI so it's stored nicer in the database
 	@Column(name="serviceURI")
 	private String stringServiceURI;
 	
@@ -38,11 +39,18 @@ public class RemoteAPI implements Comparable<RemoteAPI>{
 		this.description = description;
 	}
 	
+	/**
+	 * Setting the proper service URI after load
+	 * @throws URISyntaxException
+	 */
 	@PostLoad
 	public void postLoad() throws URISyntaxException{
 		serviceURI = new URI(stringServiceURI);
 	}
 	
+	/**
+	 * Setting the string service URI before we store it in the database
+	 */
 	@PrePersist
 	@PreUpdate
 	public void prePersist() {
