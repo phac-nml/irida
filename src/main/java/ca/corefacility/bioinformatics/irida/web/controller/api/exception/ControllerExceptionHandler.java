@@ -114,8 +114,7 @@ public class ControllerExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleExistsException(EntityExistsException e) {
 		logger.info("A client attempted to create a new resource with an identifier that exists, "
 				+ "or modify a resource to have an identifier that already exists at " + new Date());
-		String message = "An entity already exists with that identifier.";
-		return new ResponseEntity<>(new ErrorResponse(message), HttpStatus.CONFLICT);
+		return new ResponseEntity<>(new ErrorResponse("An entity already exists with that identifier."), HttpStatus.CONFLICT);
 	}
 
 	/**
@@ -129,8 +128,7 @@ public class ControllerExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
 		logger.error("A client attempted to issue a request against an endpoint with an unsupported method: ["
 				+ e.getMethod() + "]");
-		String message = "This method is not supported at this endpoint.";
-		return new ResponseEntity<>(new ErrorResponse(message), HttpStatus.METHOD_NOT_ALLOWED);
+		return new ResponseEntity<>(new ErrorResponse("This method is not supported at this endpoint."), HttpStatus.METHOD_NOT_ALLOWED);
 	}
 
 	@ExceptionHandler(HttpMediaTypeNotSupportedException.class)
