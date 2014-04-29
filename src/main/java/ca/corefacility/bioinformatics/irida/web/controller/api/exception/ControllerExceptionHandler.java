@@ -37,7 +37,7 @@ public class ControllerExceptionHandler {
 
 	private static final MediaType[] ACCEPTABLE_MEDIA_TYPES_ARRAY = new MediaType[] { MediaType.APPLICATION_JSON,
 			MediaType.APPLICATION_XML };
-	private static final String ACCEPTABLE_MEDIA_TYPES = Arrays.toString(ACCEPTABLE_MEDIA_TYPES_ARRAY);
+	private static final String ACCEPTABLE_MEDIA_TYPES = Arrays.toString(ACCEPTABLE_MEDIA_TYPES_ARRAY);	
 
 	/**
 	 * Handle {@link Exception}.
@@ -49,7 +49,7 @@ public class ControllerExceptionHandler {
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleAllOtherExceptions(Exception e) {
 		logger.error("An exception happened at " + new Date() + ". The stack trace follows: ", e);
-		return new ResponseEntity<>(new ErrorResponse("Server error."), HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	/**
@@ -81,7 +81,7 @@ public class ControllerExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleNotFoundException(EntityNotFoundException e) {
 		logger.info("A client attempted to retrieve a resource with an identifier that does not exist at "
 				+ new Date() + ".");
-		return new ResponseEntity<>(new ErrorResponse("No such resource found."), HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
 	/**
@@ -128,7 +128,7 @@ public class ControllerExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
 		logger.error("A client attempted to issue a request against an endpoint with an unsupported method: ["
 				+ e.getMethod() + "]");
-		return new ResponseEntity<>(new ErrorResponse("This method is not supported at this endpoint."), HttpStatus.METHOD_NOT_ALLOWED);
+		return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
 	}
 
 	@ExceptionHandler(HttpMediaTypeNotSupportedException.class)
@@ -196,8 +196,7 @@ public class ControllerExceptionHandler {
 	 */
 	@ExceptionHandler(AccessDeniedException.class)
 	public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException e) {
-		ErrorResponse resp = new ErrorResponse("You do not have permissions to perform this action.");
-		return new ResponseEntity<>(resp, HttpStatus.FORBIDDEN);
+		return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 	}
 
 	/**
