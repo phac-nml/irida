@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.web.controller.api.exception.ControllerExceptionHandler;
+import ca.corefacility.bioinformatics.irida.web.controller.api.exception.ErrorResponse;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.support.IdentifiableTestEntity;
 
 /**
@@ -63,26 +64,26 @@ public class ControllerExceptionHandlerTest {
 
     @Test
     public void testHandleNotFoundException() {
-        ResponseEntity<String> response = controller.handleNotFoundException(new EntityNotFoundException("not found"));
+        ResponseEntity<ErrorResponse> response = controller.handleNotFoundException(new EntityNotFoundException("not found"));
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
     public void testHandleExistsException() {
-        ResponseEntity<String> response = controller.handleExistsException(new EntityExistsException("exists"));
+        ResponseEntity<ErrorResponse> response = controller.handleExistsException(new EntityExistsException("exists"));
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
     }
 
     @Test
     public void testHandleInvalidPropertyException() {
-        ResponseEntity<String> response = controller.handleInvalidPropertyException(
+        ResponseEntity<ErrorResponse> response = controller.handleInvalidPropertyException(
                 new InvalidPropertyException("invalid property"));
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
     public void testHandleOtherExceptions() {
-        ResponseEntity<String> response = controller.handleAllOtherExceptions(new Exception("exception"));
+        ResponseEntity<ErrorResponse> response = controller.handleAllOtherExceptions(new Exception("exception"));
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 }

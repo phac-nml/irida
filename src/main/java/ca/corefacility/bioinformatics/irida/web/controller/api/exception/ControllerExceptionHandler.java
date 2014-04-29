@@ -47,9 +47,9 @@ public class ControllerExceptionHandler {
 	 * @return an appropriate HTTP response.
 	 */
 	@ExceptionHandler(Exception.class)
-	public ResponseEntity<String> handleAllOtherExceptions(Exception e) {
+	public ResponseEntity<ErrorResponse> handleAllOtherExceptions(Exception e) {
 		logger.error("An exception happened at " + new Date() + ". The stack trace follows: ", e);
-		return new ResponseEntity<>("Server error.", HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<>(new ErrorResponse("Server error."), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	/**
@@ -62,10 +62,10 @@ public class ControllerExceptionHandler {
 	 * @return an appropriate HTTP response.
 	 */
 	@ExceptionHandler(InvalidPropertyException.class)
-	public ResponseEntity<String> handleInvalidPropertyException(InvalidPropertyException e) {
+	public ResponseEntity<ErrorResponse> handleInvalidPropertyException(InvalidPropertyException e) {
 		logger.error("A client attempted to update a resource with an" + " invalid property at " + new Date()
 				+ ". The stack trace follows: ", e);
-		return new ResponseEntity<>("Cannot update resource with supplied properties.", HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(new ErrorResponse("Cannot update resource with supplied properties."), HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -78,10 +78,10 @@ public class ControllerExceptionHandler {
 	 * @return an appropriate HTTP response.
 	 */
 	@ExceptionHandler(EntityNotFoundException.class)
-	public ResponseEntity<String> handleNotFoundException(EntityNotFoundException e) {
+	public ResponseEntity<ErrorResponse> handleNotFoundException(EntityNotFoundException e) {
 		logger.info("A client attempted to retrieve a resource with an identifier that does not exist at "
 				+ new Date() + ".");
-		return new ResponseEntity<>("No such resource found.", HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(new ErrorResponse("No such resource found."), HttpStatus.NOT_FOUND);
 	}
 
 	/**
@@ -111,10 +111,11 @@ public class ControllerExceptionHandler {
 	 * @return an appropriate HTTP response.
 	 */
 	@ExceptionHandler(EntityExistsException.class)
-	public ResponseEntity<String> handleExistsException(EntityExistsException e) {
+	public ResponseEntity<ErrorResponse> handleExistsException(EntityExistsException e) {
 		logger.info("A client attempted to create a new resource with an identifier that exists, "
 				+ "or modify a resource to have an identifier that already exists at " + new Date());
-		return new ResponseEntity<>("An entity already exists with that identifier.", HttpStatus.CONFLICT);
+		String message = "An entity already exists with that identifier.";
+		return new ResponseEntity<>(new ErrorResponse(message), HttpStatus.CONFLICT);
 	}
 
 	/**
@@ -125,18 +126,20 @@ public class ControllerExceptionHandler {
 	 * @return an appropriate HTTP response.
 	 */
 	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-	public ResponseEntity<String> handleMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+	public ResponseEntity<ErrorResponse> handleMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
 		logger.error("A client attempted to issue a request against an endpoint with an unsupported method: ["
 				+ e.getMethod() + "]");
-		return new ResponseEntity<>("This method is not supported at this endpoint.", HttpStatus.METHOD_NOT_ALLOWED);
+		String message = "This method is not supported at this endpoint.";
+		return new ResponseEntity<>(new ErrorResponse(message), HttpStatus.METHOD_NOT_ALLOWED);
 	}
 
 	@ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-	public ResponseEntity<String> handleMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException e) {
+	public ResponseEntity<ErrorResponse> handleMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException e) {
 		logger.error("A client attempted to issue a data submission against an endpoint with an unsupported "
 				+ "media type: [" + e.getContentType() + "]");
-		return new ResponseEntity<>("The content type you provided is not supported by this resource."
-				+ " Resources generally support " + ACCEPTABLE_MEDIA_TYPES, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+		String message = "The content type you provided is not supported by this resource."
+				+ " Resources generally support " + ACCEPTABLE_MEDIA_TYPES;
+		return new ResponseEntity<>(new ErrorResponse(message), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
 	}
 
 	/**
@@ -147,7 +150,7 @@ public class ControllerExceptionHandler {
 	 * @return an appropriate HTTP response.
 	 */
 	@ExceptionHandler(HttpMessageNotReadableException.class)
-	public ResponseEntity<String> handleInvalidJsonException(HttpMessageNotReadableException e) {
+	public ResponseEntity<ErrorResponse> handleInvalidJsonException(HttpMessageNotReadableException e) {
 		logger.debug("Client attempted to send invalid JSON.");
 		String message = "Your request could not be parsed.";
 		Throwable cause = e.getCause();
@@ -183,7 +186,7 @@ public class ControllerExceptionHandler {
 			}
 		}
 
-		return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(new ErrorResponse(message), HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -194,9 +197,9 @@ public class ControllerExceptionHandler {
 	 * @return a forbidden response.
 	 */
 	@ExceptionHandler(AccessDeniedException.class)
-	public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException e) {
-		String message = "You do not have permissions to perform this action.";
-		return new ResponseEntity<>(message, HttpStatus.FORBIDDEN);
+	public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException e) {
+		ErrorResponse resp = new ErrorResponse("You do not have permissions to perform this action.");
+		return new ResponseEntity<>(resp, HttpStatus.FORBIDDEN);
 	}
 
 	/**
