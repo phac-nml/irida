@@ -1,10 +1,12 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.integration.util;
 
 import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.path.json.JsonPath.from;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
 
 /**
@@ -20,6 +22,10 @@ public class ITestAuthUtils {
 	private static final String ROLE_USER = "user";
 	private static final String ROLE_MANAGER = "manager";
 	private static final String ROLE_ADMIN = "admin";
+	
+	private static final String CLIENT_ID = "testClient";
+	private static final String CLIENT_SECRET = "testClientSecret";
+	private static final String OAUTH_ENDPOINT = "/oauth/token";
 
 	static {
 		ROLE_TO_USER = new HashMap<>();
@@ -30,7 +36,21 @@ public class ITestAuthUtils {
 
 	private static RequestSpecification asRole(String role) {
 		UsernamePasswordPair pair = ROLE_TO_USER.get(role);
-		return given().auth().preemptive().basic(pair.username, pair.password);
+		String oAuthToken = getOAuthToken(pair.username,pair.password);
+		String authString = "Bearer " + oAuthToken;
+		return given().header("Authorization", authString);
+	}
+	
+	private static String getOAuthToken(String username, String password){
+		Response response = given().param("grant_type", "password")
+			.param("client_id", CLIENT_ID)
+			.param("client_secret", CLIENT_SECRET)
+			.param("username", username)
+			.param("password", password)
+			.get(OAUTH_ENDPOINT);
+		
+		String token = from(response.getBody().asString()).getString("access_token");
+		return token;
 	}
 
 	/**

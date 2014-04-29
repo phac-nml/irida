@@ -73,6 +73,7 @@
 		<org.springframework.hateoas.version>0.9.0.RELEASE</org.springframework.hateoas.version>
 		<org.springframework.security.version>3.2.0.RELEASE</org.springframework.security.version>
 		<org.springframework.plugin.version>0.8.0.RELEASE</org.springframework.plugin.version>
+		<springframework.security.oauth.version>1.0.5.RELEASE</springframework.security.oauth.version>
 
 		<!-- Test -->
 		<junit.version>4.11</junit.version>
@@ -160,6 +161,11 @@
 			<artifactId>spring-plugin-core</artifactId>
 			<version>${org.springframework.plugin.version}</version>
 		</dependency>
+		<dependency>
+        	<groupId>org.springframework.security.oauth</groupId>
+        	<artifactId>spring-security-oauth2</artifactId>
+        	<version>${springframework.security.oauth.version}</version>
+    	</dependency>
 
 		<!-- Test -->
 		<dependency>
