@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.config;
 
-import java.util.Arrays;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ViewResolver;
@@ -9,6 +7,8 @@ import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+
+import java.util.Arrays;
 
 /**
  * Replace JSP's with Thymeleaf templating.
@@ -31,7 +31,7 @@ public class ThymeleafConfiguration {
 	@Bean
 	public ViewResolver viewResolver() {
 		ContentNegotiatingViewResolver resolver = new ContentNegotiatingViewResolver();
-		resolver.setViewResolvers(Arrays.asList((ViewResolver) thymeleafViewResolver()));
+		resolver.setViewResolvers(Arrays.asList(thymeleafViewResolver()));
 		return resolver;
 	}
 
@@ -67,9 +67,9 @@ public class ThymeleafConfiguration {
 	/**
 	 * Create the actual {@link ThymeleafViewResolver}
 	 * 
-	 * @return {@link ThymeleafViewResolver}
+	 * @return {@link ViewResolver}
 	 */
-	private ThymeleafViewResolver thymeleafViewResolver() {
+	private ViewResolver thymeleafViewResolver() {
 		ThymeleafViewResolver resolver = new ThymeleafViewResolver();
 		resolver.setTemplateEngine(templateEngine());
 		return resolver;
