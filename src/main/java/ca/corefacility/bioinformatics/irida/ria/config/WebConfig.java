@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  */
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = { Constants.BASE_URL })
+@ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.ria" })
 public class WebConfig extends WebMvcConfigurerAdapter {
 
 }

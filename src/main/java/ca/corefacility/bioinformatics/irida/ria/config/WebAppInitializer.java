@@ -17,6 +17,10 @@ import javax.servlet.ServletRegistration;
  * 
  */
 public class WebAppInitializer implements WebApplicationInitializer {
+	private static final String DEFAULT_MAPPING_URL = "/*";
+	private static final String CONFIG_LOCATION = "ca.corefacility.bioinformatics.irida.ria.config";
+	private static final int STARTUP_LOAD_PRIORITY_HIGH = 1;
+
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
 		WebApplicationContext context = getContext();
@@ -25,10 +29,10 @@ public class WebAppInitializer implements WebApplicationInitializer {
 				context));
 
 		// Give this servlet a high priority for startup
-		dispatcher.setLoadOnStartup(Constants.STARTUP_LOAD_PRIORITY_HIGH);
+		dispatcher.setLoadOnStartup(STARTUP_LOAD_PRIORITY_HIGH);
 
 		// Add a servlet mapping
-		dispatcher.addMapping(Constants.DEFAULT_MAPPING_URL);
+		dispatcher.addMapping(DEFAULT_MAPPING_URL);
 	}
 
 	/**
@@ -42,7 +46,7 @@ public class WebAppInitializer implements WebApplicationInitializer {
 
 		// Give a hint to the context where classes marked with @Configuration
 		// are located.
-		context.setConfigLocation(Constants.CONFIG_LOCATION);
+		context.setConfigLocation(CONFIG_LOCATION);
 		return context;
 	}
 }
