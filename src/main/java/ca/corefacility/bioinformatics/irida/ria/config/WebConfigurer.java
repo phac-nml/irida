@@ -11,6 +11,5 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.ria" })
-public class WebConfig extends WebMvcConfigurerAdapter {
-
+public class WebConfigurer extends WebMvcConfigurerAdapter {
 }
