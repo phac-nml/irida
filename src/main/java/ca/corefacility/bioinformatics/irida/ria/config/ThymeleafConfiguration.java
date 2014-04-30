@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.config;
 
-import java.util.Arrays;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +9,8 @@ import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+
+import java.util.Arrays;
 
 /**
  * Replace JSP's with Thymeleaf templating.
@@ -23,7 +23,7 @@ public class ThymeleafConfiguration {
 	private static final String TEMPLATE_PREFIX = "/pages/";
 	private static final String TEMPLATE_SUFFIX = ".html";
 	private static final int TEMPLATE_ORDER = 1;
-	private static final String SPRING_PROFILE_DEVELOPMENT = "dev";
+	private static final String SPRING_PROFILE_PRODUCTION = "prod";
 	private static final boolean TEMPLATE_NOT_CACHEABLE = false;
 
 	@Autowired
@@ -55,7 +55,7 @@ public class ThymeleafConfiguration {
 
 		// Determine the spring profile that is being run.
 		// If it is in development we do not want the templates cached
-		if (env.acceptsProfiles(SPRING_PROFILE_DEVELOPMENT)) {
+		if (!env.acceptsProfiles(SPRING_PROFILE_PRODUCTION)) {
 			resolver.setCacheable(TEMPLATE_NOT_CACHEABLE);
 		}
 		return resolver;
