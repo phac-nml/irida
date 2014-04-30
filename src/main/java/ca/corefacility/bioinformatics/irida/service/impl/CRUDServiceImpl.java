@@ -139,7 +139,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType> implements
 				DirectFieldAccessor dfa = new DirectFieldAccessor(instance);
 				dfa.setPropertyValue(key, value);
 			} catch (IllegalArgumentException | NotWritablePropertyException | TypeMismatchException e) {
-				throw new InvalidPropertyException("Unable to access field [" + key + "]");
+				throw new InvalidPropertyException("Unable to access field [" + key + "]",valueType);
 			}
 		}
 
