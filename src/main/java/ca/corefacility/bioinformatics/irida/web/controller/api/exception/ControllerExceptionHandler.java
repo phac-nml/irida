@@ -3,9 +3,11 @@ package ca.corefacility.bioinformatics.irida.web.controller.api.exception;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.web.assembler.lookup.ModelLookup;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+import com.google.common.base.Joiner;
 import com.google.gson.Gson;
 
 import org.slf4j.Logger;
@@ -65,7 +67,17 @@ public class ControllerExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleInvalidPropertyException(InvalidPropertyException e) {
 		logger.error("A client attempted to update a resource with an" + " invalid property at " + new Date()
 				+ ". The stack trace follows: ", e);
-		return new ResponseEntity<>(new ErrorResponse("Cannot update resource with supplied properties."), HttpStatus.BAD_REQUEST);
+		
+		String message;
+		Class<? extends Object> affectedClass = e.getAffectedClass();
+		if(affectedClass != null){
+			List<String> properties = ModelLookup.getProperties(affectedClass);
+			message = "Cannot update resource with supplied properties. Available properties are: " + Joiner.on(", ").join(properties);
+		}
+		else{
+			message = "Cannot update resource with supplied properties: " + e.getMessage();
+		}
+		return new ResponseEntity<>(new ErrorResponse(message), HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -113,7 +125,7 @@ public class ControllerExceptionHandler {
 	@ExceptionHandler(EntityExistsException.class)
 	public ResponseEntity<ErrorResponse> handleExistsException(EntityExistsException e) {
 		logger.info("A client attempted to create a new resource with an identifier that exists, "
-				+ "or modify a resource to have an identifier that already exists at " + new Date());
+				+ "or modify a resource to have an identifier that already exists at " + new Date() + " : " + e.getMessage());
 		return new ResponseEntity<>(new ErrorResponse("An entity already exists with that identifier."), HttpStatus.CONFLICT);
 	}
 
