@@ -8,7 +8,7 @@ package ca.corefacility.bioinformatics.irida.exceptions;
  */
 public class InvalidPropertyException extends RuntimeException {
 
-	private static final long serialVersionUID = 8312518577495811389L;
+	private static final long serialVersionUID = -3928623996579573284L;
 	
 	private Class<? extends Object> affectedClass;
 
