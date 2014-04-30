@@ -71,7 +71,7 @@ public class CRUDServiceImplTest {
 		crudService.update(id, updatedProperties);
 	}
 
-	@Test(expected = InvalidPropertyException.class)
+	@Test
 	public void testUpdateWithBadPropertyName() {
 		IdentifiableTestEntity entity = new IdentifiableTestEntity();
 		entity.setId(1l);
@@ -79,10 +79,15 @@ public class CRUDServiceImplTest {
 		updatedProperties.put("noSuchField", new Object());
 		when(crudRepository.findOne(1l)).thenReturn(entity);
 
-		crudService.update(entity.getId(), updatedProperties);
+		try{
+			crudService.update(entity.getId(), updatedProperties);
+			fail();
+		}catch(InvalidPropertyException ex){
+			assertNotNull(ex.getAffectedClass());
+		}
 	}
 
-	@Test(expected = InvalidPropertyException.class)
+	@Test
 	public void testUpdateWithBadPropertyType() {
 		IdentifiableTestEntity entity = new IdentifiableTestEntity();
 		entity.setId(new Long(1));
@@ -90,7 +95,12 @@ public class CRUDServiceImplTest {
 		updatedProperties.put("integerValue", new Object());
 		when(crudRepository.findOne(1l)).thenReturn(entity);
 
-		crudService.update(entity.getId(), updatedProperties);
+		try{
+			crudService.update(entity.getId(), updatedProperties);
+			fail();
+		}catch(InvalidPropertyException ex){
+			assertNotNull(ex.getAffectedClass());
+		}
 	}
 
 	@Test

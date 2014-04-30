@@ -6,6 +6,7 @@ import static org.junit.Assert.*;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker.UploadEventListener;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
@@ -75,6 +77,9 @@ public class GalaxyAPITest {
 	private GalaxySearch galaxySearch;
 	@Mock
 	private GalaxyLibraryBuilder galaxyLibrary;
+	
+	@Mock
+	private UploadEventListener uploadEventListener;
 
 	final private GalaxyAccountEmail realAdminEmail = new GalaxyAccountEmail(
 			"admin@localhost");
@@ -484,8 +489,11 @@ public class GalaxyAPITest {
 	public void testBuildGalaxyLibraryNoUser() throws URISyntaxException,
 			MalformedURLException, UploadException {
 		setupBuildLibrary();
+		
+		URL url = new URL(galaxyURL);
 
-		when(galaxySearch.findUserWithEmail(fakeUserEmail)).thenThrow(new GalaxyUserNotFoundException());
+		when(galaxySearch.findUserWithEmail(fakeUserEmail))
+			.thenThrow(new GalaxyUserNotFoundException(fakeUserEmail, url));
 
 		workflowRESTAPI.buildGalaxyLibrary(libraryName, fakeUserEmail);
 	}
@@ -944,6 +952,50 @@ public class GalaxyAPITest {
 						eq(new GalaxyFolderName("testData2")));
 		verify(librariesClient, times(2)).uploadFilesystemPathsRequest(
 				eq(libraryId), any(FilesystemPathsLibraryUpload.class));
+	}
+	
+	/**
+	 * Tests that the sample progress listener receives events.
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws UploadException
+	 */
+	@Test
+	public void testSampleProgressMonitor() throws URISyntaxException,
+			MalformedURLException, UploadException {
+		setupLibraryFolders();
+		
+		String sampleFolderId1 = "3";
+		String sampleFolderId2 = "4";
+		
+		GalaxyFolderName sample1Name = new GalaxyFolderName("testData1");
+		GalaxyFolderName sample2Name = new GalaxyFolderName("testData2");
+
+		List<UploadSample> samples = new ArrayList<UploadSample>();
+		GalaxySample galaxySample1 = new GalaxySample(sample1Name, dataFilesSingle);
+		GalaxySample galaxySample2 = new GalaxySample(sample2Name, dataFilesSingle);
+		samples.add(galaxySample1);
+		samples.add(galaxySample2);
+
+		List<LibraryFolder> folders = new ArrayList<LibraryFolder>();
+		LibraryFolder sampleFolder1 = new LibraryFolder();
+		sampleFolder1.setName(illuminaFolderPath + "/"
+				+ galaxySample1.getSampleName());
+		sampleFolder1.setFolderId(sampleFolderId1);
+		LibraryFolder sampleFolder2 = new LibraryFolder();
+		sampleFolder2.setName(illuminaFolderPath + "/"
+				+ galaxySample2.getSampleName());
+		sampleFolder2.setFolderId(sampleFolderId2);
+		folders.add(sampleFolder1);
+		folders.add(sampleFolder2);
+
+		setupUploadSampleToLibrary(samples, folders, false);
+
+		workflowRESTAPI.addUploadEventListener(uploadEventListener);
+		
+		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
+		verify(uploadEventListener).sampleProgressUpdate(2, 0, sample1Name);
+		verify(uploadEventListener).sampleProgressUpdate(2, 1, sample2Name);
 	}
 
 	/**

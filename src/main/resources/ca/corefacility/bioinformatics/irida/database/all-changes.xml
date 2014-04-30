@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-	<!-- include everything in the changesets directory -->
-	<include file="changesets/1.0/initialschema-v1.0.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/1.0/initialdata-v1.0.xml" relativeToChangelogFile="true"/>
+    <!-- include everything in the changesets directory -->
+    <include file="changesets/1.0/initialschema-v1.0.xml" relativeToChangelogFile="true"/>
+    <include file="changesets/1.0/initialdata-v1.0.xml" relativeToChangelogFile="true"/>
 
-	<include file="changesets/1.1/updates-v1.1.xml" relativeToChangelogFile="true" />
-	<include file="changesets/1.1/rename-constraints.xml" relativeToChangelogFile="true" />
-	
-	<include file="changesets/1.2/insert-sequencer-role.xml" relativeToChangelogFile="true" />
-	
-	<include file="changesets/1.3/drop-client-role.xml" relativeToChangelogFile="true" />
+    <include file="changesets/1.1/updates-v1.1.xml" relativeToChangelogFile="true"/>
+    <include file="changesets/1.1/rename-constraints.xml" relativeToChangelogFile="true"/>
+
+    <include file="changesets/1.2/insert-sequencer-role.xml" relativeToChangelogFile="true"/>
+
+    <include file="changesets/1.3/drop-client-role.xml" relativeToChangelogFile="true"/>
+    
+    <include file="changesets/1.5/password_reset.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

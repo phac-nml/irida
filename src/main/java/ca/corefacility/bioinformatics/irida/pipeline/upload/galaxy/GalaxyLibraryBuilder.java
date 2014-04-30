@@ -79,7 +79,7 @@ public class GalaxyLibraryBuilder {
 			return persistedLibrary;
 		} else {
 			throw new CreateLibraryException("Could not create library named "
-					+ libraryName);
+					+ libraryName + " in Galaxy " + galaxyInstance.getGalaxyUrl());
 		}
 	}
 
@@ -118,7 +118,8 @@ public class GalaxyLibraryBuilder {
 
 		if (folder == null) {
 			throw new CreateLibraryException("Could not create library folder="
-					+ folderName + " within library " + library.getName());
+					+ folderName + " within library " + library.getName() +
+					" in Galaxy " + galaxyInstance.getGalaxyUrl());
 		} else {
 			return folder;
 		}
@@ -160,7 +161,8 @@ public class GalaxyLibraryBuilder {
 		if (folder == null) {
 			throw new CreateLibraryException("Could not create library folder="
 					+ folderName + " within folder " + libraryFolder.getName()
-					+ " in library " + library.getName());
+					+ " in library " + library.getName() +
+					" in Galaxy " + galaxyInstance.getGalaxyUrl());
 		} else {
 			return folder;
 		}
@@ -190,19 +192,8 @@ public class GalaxyLibraryBuilder {
 		checkNotNull(library.getId(), "library.getId() is null");
 		checkNotNull(userEmail, "userEmail is null");
 
-		Library changedLibrary = null;
 		Role userRole = galaxySearch.findUserRoleWithEmail(userEmail);
-		if (userRole == null) {
-			throw new GalaxyUserNoRoleException(
-					"Could not find a role for user with email=" + userEmail);
-		}
-
 		Role adminRole = galaxySearch.findUserRoleWithEmail(adminEmail);
-		if (adminRole == null) {
-			throw new GalaxyUserNoRoleException(
-					"Could not find a role for admin user with email="
-							+ adminEmail);
-		}
 
 		LibraryPermissions permissions = new LibraryPermissions();
 		permissions.getAccessInRoles().add(userRole.getId());
@@ -223,13 +214,14 @@ public class GalaxyLibraryBuilder {
 					+ userRole.getName() + "," + adminRole.getName()
 					+ " in Galaxy url=" + galaxyInstance.getGalaxyUrl());
 
-			changedLibrary = library;
-
-			return changedLibrary;
+			return library;
 		} else {
 			throw new ChangeLibraryPermissionsException(
 					"Could not change the owner for library="
-							+ library.getName());
+							+ library.getName() + " in Galaxy "
+							+ galaxyInstance.getGalaxyUrl()
+							+ ": response status=" + response.getClientResponseStatus() +
+							", message=\"" + response.getEntity(String.class) + "\"");
 		}
 	}
 }

@@ -4,7 +4,9 @@ import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,6 +70,8 @@ public class GalaxySearchTest {
 			"test_folder/illumina");
 	private static final GalaxyFolderPath INVALID_FOLDER_NAME = new GalaxyFolderPath(
 			"invalid_folder");
+	
+	private URL galaxyURL;
 
 	private List<Library> allLibrariesList;
 	private Map<String, LibraryContent> singleLibraryContentsAsMap;
@@ -77,9 +81,10 @@ public class GalaxySearchTest {
 	 * Setup objects for test.
 	 * @throws FileNotFoundException
 	 * @throws URISyntaxException
+	 * @throws MalformedURLException 
 	 */
 	@Before
-	public void setup() throws FileNotFoundException, URISyntaxException {
+	public void setup() throws FileNotFoundException, URISyntaxException, MalformedURLException {
 		MockitoAnnotations.initMocks(this);
 
 		setupRolesTest();
@@ -88,6 +93,9 @@ public class GalaxySearchTest {
 		setupLibraryContentTest();
 
 		galaxySearch = new GalaxySearch(galaxyInstance);
+		galaxyURL = new URL("http://localhost");
+		
+		when(galaxyInstance.getGalaxyUrl()).thenReturn(galaxyURL.toString());
 	}
 
 	/**
@@ -322,6 +330,15 @@ public class GalaxySearchTest {
 	@Test(expected=GalaxyUserNoRoleException.class)
 	public void testNoFindUserRoleWithEmail() throws GalaxyUserNoRoleException {
 		galaxySearch.findUserRoleWithEmail(new GalaxyAccountEmail("invalid@localhost"));
+	}
+	
+	/**
+	 * Tests finding a null user role
+	 * @throws GalaxyUserNoRoleException 
+	 */
+	@Test(expected=NullPointerException.class)
+	public void testNullFindUserRoleWithEmail() throws GalaxyUserNoRoleException {
+		galaxySearch.findUserRoleWithEmail(null);
 	}
 	
 	/**

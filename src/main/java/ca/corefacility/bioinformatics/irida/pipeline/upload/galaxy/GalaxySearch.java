@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 
 import static com.google.common.base.Preconditions.*;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -67,7 +69,7 @@ public class GalaxySearch {
 			}
 		}
 
-		throw new GalaxyUserNoRoleException("No role found for " + email);
+		throw new GalaxyUserNoRoleException("No role found for " + email + " in Galaxy " + galaxyInstance.getGalaxyUrl());
 	}
 
 	/**
@@ -91,7 +93,22 @@ public class GalaxySearch {
 			}
 		}
 
-		throw new GalaxyUserNotFoundException("No user found with email " + email);
+		throw new GalaxyUserNotFoundException(email, getGalaxyUrl());
+	}
+	
+	/**
+	 * Gets the URL of the Galaxy instance we are connected to.
+	 * 
+	 * @return A String of the URL of the Galaxy instance we are connected to.
+	 */
+	private URL getGalaxyUrl() {
+		try {
+			return new URL(galaxyInstance.getGalaxyUrl());
+		} catch (MalformedURLException e) {
+			// This should never really occur, don't force all calling methods
+			// to catch exception
+			throw new RuntimeException("Galaxy URL is malformed", e);
+		}
 	}
 
 	/**
@@ -113,7 +130,8 @@ public class GalaxySearch {
 			}
 		}
 
-		throw new NoLibraryFoundException("No library found for id " + libraryId);
+		throw new NoLibraryFoundException("No library found for id " + libraryId +
+				" in Galaxy " + galaxyInstance.getGalaxyUrl());
 	}
 
 	/**
@@ -143,7 +161,8 @@ public class GalaxySearch {
 			return map;
 		}
 
-		throw new NoGalaxyContentFoundException("Could not find library content for id " + libraryId);
+		throw new NoGalaxyContentFoundException("Could not find library content for id " + libraryId +
+				" in Galaxy " + galaxyInstance.getGalaxyUrl());
 	}
 
 	/**
@@ -174,7 +193,8 @@ public class GalaxySearch {
 			}
 		}
 
-		throw new NoLibraryFoundException("No library could be found with name " + libraryName);
+		throw new NoLibraryFoundException("No library could be found with name " + libraryName +
+				" in Galaxy " + galaxyInstance.getGalaxyUrl());
 	}
 
 	/**
@@ -209,7 +229,8 @@ public class GalaxySearch {
 			}
 		}
 
-		throw new NoGalaxyContentFoundException("Could not find library content for id " + libraryId);
+		throw new NoGalaxyContentFoundException("Could not find library content for id " + libraryId +
+				" in Galaxy " + galaxyInstance.getGalaxyUrl());
 	}
 
 	/**

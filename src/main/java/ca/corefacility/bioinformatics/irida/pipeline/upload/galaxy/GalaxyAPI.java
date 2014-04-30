@@ -6,6 +6,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,12 +24,14 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFound
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadFolderName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker.UploadEventListener;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 
@@ -71,7 +74,9 @@ public class GalaxyAPI {
 	private GalaxySearch galaxySearchAdmin;
 	private GalaxyLibraryBuilder galaxyLibrary;
 	private Uploader.DataStorage dataStorage = Uploader.DataStorage.REMOTE;
-
+	
+	private List<UploadEventListener> eventListeners = new LinkedList<UploadEventListener>();
+	
 	/**
 	 * Builds a new GalaxyAPI instance with the given information.
 	 * 
@@ -108,14 +113,10 @@ public class GalaxyAPI {
 		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance,
 				galaxySearchAdmin);
 
-		try {
-			if (!galaxySearchAdmin.galaxyUserExists(adminEmail)) {
-				throw new GalaxyConnectException(
-						"Could not create GalaxyInstance with URL=" + galaxyURL
-								+ ", adminEmail=" + adminEmail);
-			}
-		} catch (ClientHandlerException e) {
-			throw new GalaxyConnectException(e);
+		if (!isConnected()) {
+			throw new GalaxyConnectException(
+					"Could not create GalaxyInstance with URL=" + galaxyURL
+							+ ", adminEmail=" + adminEmail);
 		}
 	}
 
@@ -146,15 +147,11 @@ public class GalaxyAPI {
 		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance,
 				galaxySearchAdmin);
 
-		try {
-			if (!galaxySearchAdmin.galaxyUserExists(adminEmail)) {
-				throw new GalaxyConnectException(
-						"Could not create GalaxyInstance with URL="
-								+ galaxyInstance.getGalaxyUrl()
-								+ ", adminEmail=" + adminEmail);
-			}
-		} catch (ClientHandlerException e) {
-			throw new GalaxyConnectException(e);
+		if (!isConnected()) {
+			throw new GalaxyConnectException(
+					"Could not create GalaxyInstance with URL="
+							+ galaxyInstance.getGalaxyUrl()
+							+ ", adminEmail=" + adminEmail);
 		}
 	}
 
@@ -194,15 +191,11 @@ public class GalaxyAPI {
 		this.galaxyLibrary = galaxyLibrary;
 		this.galaxySearchAdmin = galaxySearch;
 
-		try {
-			if (!galaxySearch.galaxyUserExists(adminEmail)) {
-				throw new GalaxyConnectException(
-						"Could not use GalaxyInstance with URL="
-								+ galaxyInstance.getGalaxyUrl()
-								+ ", adminEmail=" + adminEmail);
-			}
-		} catch (ClientHandlerException e) {
-			throw new GalaxyConnectException(e);
+		if (!isConnected()) {
+			throw new GalaxyConnectException(
+					"Could not use GalaxyInstance with URL="
+							+ galaxyInstance.getGalaxyUrl()
+							+ ", adminEmail=" + adminEmail);
 		}
 	}
 
@@ -241,8 +234,7 @@ public class GalaxyAPI {
 
 		// make sure user exists and has a role before we create an empty library
 		if (!galaxySearchAdmin.galaxyUserExists(galaxyUserEmail)) {
-			throw new GalaxyUserNotFoundException(
-					"Could not find Galaxy user with email=" + galaxyUserEmail);
+			throw new GalaxyUserNotFoundException(galaxyUserEmail, getGalaxyUrl());
 		}
 
 		if (!galaxySearchAdmin.userRoleExistsFor(galaxyUserEmail)) {
@@ -389,8 +381,9 @@ public class GalaxyAPI {
 							+ galaxyInstance.getGalaxyUrl());
 				} else {
 					logger.debug("Failed to upload file to Galaxy, response \"" + uploadResponse.getStatus() + " " + 
-							uploadResponse.getClientResponseStatus() + "\" path="
-							+ samplePath(rootFolder, sample, file)
+							uploadResponse.getClientResponseStatus() + "\", " +
+							"response message=\"" + uploadResponse.getEntity(String.class) + "\""+
+							" path=" + samplePath(rootFolder, sample, file)
 							+ " from local path=" + file.getAbsolutePath()
 							+ " dataStorage=" + dataStorage
 							+ " in library name=" + library.getName() + " id="
@@ -478,8 +471,33 @@ public class GalaxyAPI {
 								+ galaxyInstance.getGalaxyUrl());
 			}
 		} else {
-			throw new GalaxyUserNotFoundException("Galaxy user with email "
-					+ galaxyUserEmail + " does not exist");
+			throw new GalaxyUserNotFoundException(galaxyUserEmail, getGalaxyUrl());
+		}
+	}
+	
+	/**
+	 * Gets a copy of the event listeners list.
+	 * @return  A copy of the event listeners list
+	 */
+	private synchronized List<UploadEventListener> getEventListenersCopy() {
+		List<UploadEventListener> eventListenersList = new LinkedList<UploadEventListener>();
+		for (UploadEventListener eventListener : eventListeners) {
+			eventListenersList.add(eventListener);
+		}
+		
+		return eventListenersList;
+	}
+	
+	/**
+	 * Updates all listeners about the progress of the upload.
+	 * @param totalSamples
+	 * @param currentSample
+	 * @param sampleName
+	 */
+	private void sampleProgressUpdate(int totalSamples, int currentSample, UploadFolderName sampleName) {
+		List<UploadEventListener> eventListenersList = getEventListenersCopy();
+		for (UploadEventListener eventListener : eventListenersList) {
+			eventListener.sampleProgressUpdate(totalSamples, currentSample, sampleName);
 		}
 	}
 
@@ -513,8 +531,9 @@ public class GalaxyAPI {
 		checkNotNull(libraryID, "libraryID is null");
 
 		boolean success = true;
+		int numberOfSamples = samples.size();
 
-		if (samples.size() > 0) {
+		if (numberOfSamples > 0) {
 			String errorSuffix = " in instance of galaxy with url="
 					+ galaxyInstance.getGalaxyUrl();
 
@@ -545,10 +564,17 @@ public class GalaxyAPI {
 				galaxyLibrary.createLibraryFolder(library, REFERENCES_FOLDER_NAME);
 			}
 
+			int currentSample = 0;
 			for (UploadSample sample : samples) {
 				if (sample != null) {
+					// message about current sample being worked on
+					sampleProgressUpdate(numberOfSamples, currentSample,
+							sample.getSampleName());
+					
 					success &= uploadSample(sample, illuminaFolder,
 							librariesClient, library, libraryContentMap);
+					
+					currentSample++;
 				} else {
 					throw new LibraryUploadException(
 							"Cannot upload a null sample" + errorSuffix);
@@ -609,5 +635,14 @@ public class GalaxyAPI {
 		} catch (ClientHandlerException e) {
 			return false;
 		}
+	}
+
+	/**
+	 * Adds a new upload event listener.
+	 * @param eventListener  The event listener to add.
+	 */
+	public synchronized void addUploadEventListener(UploadEventListener eventListener) {
+		checkNotNull(eventListener, "eventListener is null");
+		eventListeners.add(eventListener);
 	}
 }
