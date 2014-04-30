@@ -1,2 +1,3 @@
 IRIDA UI
 ========
+To run in dev: `mvn jetty:run -Dspring.profiles.active=dev`
