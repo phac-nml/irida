@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.View;
@@ -19,7 +20,6 @@ import org.springframework.web.servlet.config.annotation.ContentNegotiationConfi
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.view.BeanNameViewResolver;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
@@ -36,6 +36,7 @@ import com.google.common.collect.ImmutableMap;
  * Configuration for IRIDA REST API.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  * 
  */
 @Configuration
@@ -54,22 +55,12 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 	}
 
 	@Bean
-	public ViewResolver viewResolver() {
+	public ViewResolver viewResolver(ContentNegotiationManager contentNegotiationManager) {
 		ContentNegotiatingViewResolver resolver = new ContentNegotiatingViewResolver();
-		resolver.setViewResolvers(Arrays.asList((ViewResolver) new BeanNameViewResolver(),(ViewResolver)getViewResolver()));
+		resolver.setViewResolvers(Arrays.asList((ViewResolver)new InternalResourceViewResolver()));
 		resolver.setDefaultViews(defaultViews());
-		resolver.setOrder(1);
+		resolver.setContentNegotiationManager(contentNegotiationManager);
 
-		return resolver;
-	}
-	
-	
-	public ViewResolver getViewResolver(){
-		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-		//restrict this view resolver to ONLY do oauth stuff.  We don't need it for other stuff and in fact it makes a mess.
-		String[] arr = {"/oauth*"};
-		//resolver.setViewNames(arr);
-		resolver.setOrder(2);
 		return resolver;
 	}
 
