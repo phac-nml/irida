@@ -1,0 +1,13 @@
+{
+    "name": "irida-ui",
+    "version": "1.0.0",
+    "ignore": [
+        ".jshintrc",
+        "**/*.txt"
+    ],
+    "dependencies": {
+    },
+    "devDependencies": {
+        "bootstrap-sass": "twbs/bootstrap-sass#~3.1.1"
+    }
+}
