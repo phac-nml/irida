@@ -6,13 +6,16 @@ Install Development Environment
 
 ### Install Dependencies
 
+#### On Ubuntu
+
+1. Run: `./scripts/ubuntu_install.sh`
+2. You're done installing!
+
+#### Other Operating Systems
+
 1. Install [NodeJS](http://www.nodejs.org)
 1. Install `grunt-cli`: `sudo npm -g install grunt-cli`
-1. Install `bower`: `sudo npm -g install bower`
 1. Install `sass` and `compass`: `sudo gem update; sudo gem install sass; sudo gem install compass;`
-
-### Install Packages
-
 1. Install node packages: `sudo npm install`
 1. Install bower packages: `bower install`
 
