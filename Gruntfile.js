@@ -1,3 +1,9 @@
+/*
+ * Grunt configuration file.
+ * 
+ * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
+ */
+
 var proxySnippet = require('grunt-connect-proxy/lib/utils').proxyRequest;
 
 module.exports = function (grunt) {
@@ -7,10 +13,10 @@ module.exports = function (grunt) {
     require('time-grunt')(grunt);
 
     grunt.initConfig({
+        // Create variables for the path used in this project.
         path: {
-            // configurable paths
             app: require('./bower.json').appPath,
-            dist: 'src/main/webapp/dist'
+            static: require('./bower.json').appPath + '/static'
         },
         // Automatically inject Bower components into the app
         bowerInstall: {
@@ -23,22 +29,23 @@ module.exports = function (grunt) {
                 ignorePath: '<%= path.app %>/bower_components/'
             }
         },
-        // Empties folders to start fresh
+        // Empties folders to start fresh for both dev and production.
         clean: {
             dist: {
                 files: [{
                     dot: true,
                     src: [
-                        '<%= path.app %>/static/*',
+                        '<%= path.static %>/*',
                         '!<%= path.app %>/.git*'
                     ]
                 }]
             }
         },
+        // Used to compile the scss
         compass: {
             options: {
                 sassDir: '<%= path.app %>/scss',
-                cssDir: '<%= path.app %>/static/css',
+                cssDir: '<%= path.static %>/css',
                 relativeAssets: false,
                 assetCacheBuster: false,
                 raw: 'Sass::Script::Number.precision = 10\n'
@@ -49,14 +56,14 @@ module.exports = function (grunt) {
                 }
             }
         },
-
         // Run some tasks in parallel to speed up the build process
         concurrent: {
             dev: [
                 'compass:dev'
             ]
         },
-        // The actual grunt server settings
+        // The actual grunt server settings allows for live reload in the browser
+        // and proxying 9000 --> 8080
         connect: {
             proxies: [
                 {
@@ -88,6 +95,7 @@ module.exports = function (grunt) {
                 }
             }
         },
+        // Need to make sure the JavaScript files are consistent.
         jshint: {
             options: {
                 jshintrc: '.jshintrc',
@@ -95,6 +103,7 @@ module.exports = function (grunt) {
             },
             all: ['Gruntfile.js']
         },
+        // Watch for changes and do the right thing!
         watch: {
             bower: {
                 files: ['bower.json'],
@@ -110,12 +119,13 @@ module.exports = function (grunt) {
                 },
                 files: [
                     '<%= path.app %>/pages/index.html',
-                    '<%= path.app %>/static/css/{,*/}*.css',
+                    '<%= path.static %>/css/{,*/}*.css',
                 ]
             }
         }
     });
 
+    // Development task.
     grunt.registerTask('dev', [
         'clean:dist',
         'bowerInstall',
