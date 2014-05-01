@@ -24,7 +24,6 @@ public class ThymeleafConfiguration {
 	private static final String TEMPLATE_SUFFIX = ".html";
 	private static final Long TEMPLATE_CACHE_TIME = 3600000L;
 	private static final int TEMPLATE_ORDER = 1;
-	private static final String SPRING_PROFILE_PRODUCTION = "prod";
 	private static final boolean TEMPLATE_NOT_CACHEABLE = false;
 
 	@Autowired
@@ -56,7 +55,7 @@ public class ThymeleafConfiguration {
 
 		// Determine the spring profile that is being run.
 		// If it is in development we do not want the templates cached
-		if (env.acceptsProfiles(SPRING_PROFILE_PRODUCTION)) {
+		if (env.acceptsProfiles(WebConfigurer.SPRING_PROFILE_PRODUCTION)) {
 			resolver.setCacheTTLMs(TEMPLATE_CACHE_TIME);
 		} else {
 			resolver.setCacheable(TEMPLATE_NOT_CACHEABLE);
