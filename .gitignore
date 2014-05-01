@@ -1,1 +1,9 @@
 /target/
+
+/node_modules/
+
+/src/main/webapp/bower_components/
+
+/.sass-cache/
+
+/src/main/webapp/static/

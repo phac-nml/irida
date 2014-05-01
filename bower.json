@@ -1,0 +1,13 @@
+{
+  "name": "irida-ui",
+  "version": "1.0.0",
+  "appPath": "./src/main/webapp",
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt"
+  ],
+  "dependencies": {
+    "angular": "~1.2.16"
+  },
+  "devDependencies": {}
+}
