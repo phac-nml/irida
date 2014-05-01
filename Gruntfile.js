@@ -18,6 +18,22 @@ module.exports = function (grunt) {
             app: require('./bower.json').appPath,
             static: require('./bower.json').appPath + '/static'
         },
+        // Add vendor prefixed styles
+        autoprefixer: {
+            options: {
+                browsers: ['last 2 version', 'ie 8', 'ie 9']
+            },
+            dist: {
+                files: [
+                    {
+                        expand: true,
+                        cwd: '.tmp/styles/',
+                        src: '{,*/}*.css',
+                        dest: '<%= path.static %>/styles/'
+                    }
+                ]
+            }
+        },
         // Automatically inject Bower components into the app
         bowerInstall: {
             app: {
@@ -25,27 +41,31 @@ module.exports = function (grunt) {
                 ignorePath: '<%= path.app %>/'
             },
             sass: {
-                src: ['<%= path.app %>/scss/{,*/}*.{scss,sass}'],
+                src: ['<%= path.app %>/styles/{,*/}*.{scss,sass}'],
                 ignorePath: '<%= path.app %>/bower_components/'
             }
         },
         // Empties folders to start fresh for both dev and production.
         clean: {
             dist: {
-                files: [{
-                    dot: true,
-                    src: [
-                        '<%= path.static %>/*',
-                        '!<%= path.app %>/.git*'
-                    ]
-                }]
+                files: [
+                    {
+                        dot: true,
+                        src: [
+                            '.tmp',
+                            '<%= path.static %>/*',
+                            '!<%= path.app %>/.git*'
+                        ]
+                    }
+                ]
             }
         },
         // Used to compile the scss
         compass: {
             options: {
-                sassDir: '<%= path.app %>/scss',
-                cssDir: '<%= path.static %>/css',
+                sassDir: '<%= path.app %>/styles',
+                cssDir: '.tmp/styles',
+                importPath: '<%= path.app %>/bower_components',
                 relativeAssets: false,
                 assetCacheBuster: false,
                 raw: 'Sass::Script::Number.precision = 10\n'
@@ -84,6 +104,7 @@ module.exports = function (grunt) {
                 options: {
                     open: true,
                     base: [
+                        '.tmp',
                         '<%= path.app %>'
                     ],
                     middleware: function (connect) {
@@ -110,8 +131,8 @@ module.exports = function (grunt) {
                 tasks: ['bowerInstall']
             },
             compass: {
-                files: ['<%= path.app %>/scss/{,*/}*.scss'],
-                tasks: ['compass:dev']
+                files: ['<%= path.app %>/styles/{,*/}*.scss'],
+                tasks: ['compass:dev', 'autoprefixer']
             },
             livereload: {
                 options: {
@@ -119,7 +140,7 @@ module.exports = function (grunt) {
                 },
                 files: [
                     '<%= path.app %>/pages/index.html',
-                    '<%= path.static %>/css/{,*/}*.css',
+                    '<%= path.static %>/styles/{,*/}*.css',
                 ]
             }
         }
@@ -129,9 +150,22 @@ module.exports = function (grunt) {
     grunt.registerTask('dev', [
         'clean:dist',
         'bowerInstall',
-        'concurrent:dev',
+//        'concurrent:dev',
+        'compass:dev',
+        'autoprefixer',
         'configureProxies',
         'connect:livereload',
         'watch'
+    ]);
+
+    grunt.registerTask('build', [
+        'clean:dist'
+    ]);
+
+    grunt.registerTask('test', []);
+
+    grunt.registerTask('default', [
+        'test',
+        'build'
     ]);
 };
