@@ -22,7 +22,7 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("/css/**").addResourceLocations("/static/css/");
+		registry.addResourceHandler("/styles/**").addResourceLocations("/static/styles/");
 		registry.addResourceHandler("/js/**").addResourceLocations("/static/js/");
 
 		// Bower injects need components into the index.html. For development,
