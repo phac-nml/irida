@@ -23,7 +23,7 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/styles/**").addResourceLocations("/static/styles/");
-		registry.addResourceHandler("/js/**").addResourceLocations("/static/js/");
+		registry.addResourceHandler("/scripts/**").addResourceLocations("/scripts/js/");
 
 		// Bower injects need components into the index.html. For development,
 		// these files need to be served as is. In production these files will
