@@ -18,6 +18,10 @@ public class OAuth2ClientDetailsConfigDev extends OAuth2ClientDetailsConfigProd 
 		BaseClientDetails testClient = new BaseClientDetails("testClient", "NmlIrida", "read,write", "password","ROLE_CLIENT");
 		testClient.setClientSecret("testClientSecret");
 		clientStore.put("testClient", testClient);
+		
+		BaseClientDetails webClientDetails = new BaseClientDetails("webClient", "NmlIrida", "read,write", "password,authorization_code","ROLE_CLIENT");
+		webClientDetails.setClientSecret("webClientSecret");
+		clientStore.put("webClient", webClientDetails);
 	
 		return clientStore;
 	}

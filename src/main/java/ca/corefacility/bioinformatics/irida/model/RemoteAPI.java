@@ -20,7 +20,7 @@ import javax.persistence.Transient;
 import org.hibernate.envers.Audited;
 
 @Entity
-@Table(name = "remoteApi")
+@Table(name = "remote_api")
 @Audited
 public class RemoteAPI implements Comparable<RemoteAPI>{
 	

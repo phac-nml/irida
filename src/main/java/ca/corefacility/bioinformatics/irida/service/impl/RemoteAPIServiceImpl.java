@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.validation.ConstraintViolationException;

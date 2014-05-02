@@ -14,7 +14,6 @@ import org.springframework.security.oauth2.provider.token.InMemoryTokenStore;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
 @Configuration
-@ImportResource("classpath:/ca/corefacility/bioinformatics/irida/config/oauth-config.xml")
 @ComponentScan("ca.corefacility.bioinformatics.irida.config.oauth")
 public class IridaOAuth2Config {
 
