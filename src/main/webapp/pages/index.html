@@ -6,12 +6,23 @@
     <title></title>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
-    <link rel="stylesheet" th:href="@{/styles/main.css}"/>
+
+    <!-- build:css({.tmp,app}) styles/main.css -->
+    <link rel="stylesheet" href="/styles/main.css"/>
+    <!-- endbuild -->
 </head>
-<body>
-<h1 th:text="#{irida.welcome}">Hello World!</h1>
+<body ng-app="irida">
+<h1 id="title" th:text="#{irida.welcome}">Hello World!</h1>
+
+<!-- build:js scripts/vendor.js -->
 <!-- bower:js -->
 <script src="../bower_components/angular/angular.js"></script>
 <!-- endbower -->
+
+<!-- endbuild -->
+<!-- build:js({.tmp,app}) scripts/scripts.js -->
+<script src="../scripts/app.js"></script>
+<!-- endbuild -->
+
 </body>
 </html>
