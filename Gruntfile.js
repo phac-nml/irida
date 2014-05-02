@@ -74,6 +74,7 @@ module.exports = function (grunt) {
             options: {
                 sassDir: '<%= path.app %>/styles',
                 cssDir: '.tmp/styles',
+                clean: true,
                 javascriptsDir: '<%= path.app %>/scripts',
                 importPath: '<%= path.app %>/bower_components',
                 relativeAssets: false,
@@ -193,24 +194,35 @@ module.exports = function (grunt) {
                 jshintrc: '.jshintrc',
                 reporter: require('jshint-stylish')
             },
-            all: ['Gruntfile.js']
+            all: [
+                'Gruntfile.js',
+                '<%= path.app %>/scripts/{,*/}*.js'
+            ],
+            test: {
+                options: {
+                    jshintrc: 'src/test/javascript/.jshintrc'
+                },
+                src: ['test/spec/{,*/}*.js']
+            }
         },
         // ngmin tries to make the code safe for minification automatically by
         // using the Angular long form for dependency injection. It doesn't work on
         // things like resolve or inject so those have to be done manually.
         ngmin: {
             dist: {
-                files: [{
-                    expand: true,
-                    cwd: '.tmp/concat/scripts',
-                    src: '*.js',
-                    dest: '.tmp/concat/scripts'
-                }]
+                files: [
+                    {
+                        expand: true,
+                        cwd: '.tmp/concat/scripts',
+                        src: '*.js',
+                        dest: '.tmp/concat/scripts'
+                    }
+                ]
             }
         },
         protractor: {
             options: {
-                configFile: "node_modules/protractor/referenceConf.js", // Default config file
+                configFile: 'node_modules/protractor/referenceConf.js', // Default config file
                 keepAlive: true, // If false, the grunt process stops when the test fails.
                 noColor: false, // If true, protractor will not use colors in its output.
                 args: {
@@ -219,7 +231,7 @@ module.exports = function (grunt) {
             },
             dev: {
                 options: {
-                    configFile: "protractor.conf.js", // Target-specific config file
+                    configFile: 'protractor.conf.js', // Target-specific config file
                     args: {} // Target-specific arguments
                 }
             }
@@ -298,6 +310,13 @@ module.exports = function (grunt) {
                 files: ['<%= path.app %>/styles/{,*/}*.scss'],
                 tasks: ['compass:dev', 'autoprefixer']
             },
+            js: {
+                files: ['<%= path.app %>/scripts/{,*/}*.js'],
+                tasks: ['newer:jshint:all'],
+                options: {
+                    livereload: true
+                }
+            },
             livereload: {
                 options: {
                     livereload: '<%= connect.options.livereload %>'
@@ -332,22 +351,20 @@ module.exports = function (grunt) {
         'uglify',
         'rev',
         'usemin',
-        'replace'
+        'replace',
         'htmlmin',
         'clean:tmp'
     ]);
 
     grunt.registerTask('test-e2e', [
+        'clean:dist',
+        'concurrent:dev',
+        'autoprefixer',
         'protractor_webdriver',
         'protractor'
     ]);
 
-    grunt.registerTask('test', [
-        'clean:dist',
-        'concurrent:dev',
-        'autoprefixer',
-        'test-e2e'
-    ]);
+    grunt.registerTask('test', []);
 
     grunt.registerTask('default', ['build']);
 };
