@@ -57,6 +57,16 @@ module.exports = function (grunt) {
                         ]
                     }
                 ]
+            },
+            tmp: {
+                files: [
+                    {
+                        dot: true,
+                        src: [
+                            '.tmp'
+                        ]
+                    }
+                ]
             }
         },
         // Used to compile the scss
@@ -64,6 +74,7 @@ module.exports = function (grunt) {
             options: {
                 sassDir: '<%= path.app %>/styles',
                 cssDir: '.tmp/styles',
+                javascriptsDir: '<%= path.app %>/scripts',
                 importPath: '<%= path.app %>/bower_components',
                 relativeAssets: false,
                 assetCacheBuster: false,
@@ -157,12 +168,7 @@ module.exports = function (grunt) {
                 ]
             }
         },
-        // Minify CSS
-        cssmin: {
-            options: {
-                root: '<%= path.app %>'
-            }
-        },
+
         htmlmin: {
             dist: {
                 options: {
@@ -194,11 +200,12 @@ module.exports = function (grunt) {
         // things like resolve or inject so those have to be done manually.
         ngmin: {
             dist: {
-                expand: true,
-                dot: true,
-                cwd: '<%= path.app %>/scripts',
-                src: ['*.js'],
-                dest: '.tmp/scripts/'
+                files: [{
+                    expand: true,
+                    cwd: '.tmp/concat/scripts',
+                    src: '*.js',
+                    dest: '.tmp/concat/scripts'
+                }]
             }
         },
         protractor: {
@@ -228,8 +235,8 @@ module.exports = function (grunt) {
                 options: {
                     patterns: [
                         {
-                            match: /src="scripts\/(\w+)\.js"/g,
-                            replacement: 'th:src="@{/scripts/$1.js}"'
+                            match: /src="scripts\/([a-zA-Z0-9]+).(\w+)\.js"/g,
+                            replacement: 'th:src="@{/scripts/$1.$2.js}"'
                         },
                         {
                             match: /href="styles\/([a-zA-Z0-9]+).(\w+).css"/g,
@@ -318,14 +325,16 @@ module.exports = function (grunt) {
         'useminPrepare',
         'concurrent:dist',
         'autoprefixer:dist',
+        'concat',
         'ngmin',
         'copy:dist',
         'cssmin',
         'uglify',
         'rev',
         'usemin',
-        'replace',
-        'htmlmin'
+        'replace'
+        'htmlmin',
+        'clean:tmp'
     ]);
 
     grunt.registerTask('test-e2e', [
@@ -339,4 +348,6 @@ module.exports = function (grunt) {
         'autoprefixer',
         'test-e2e'
     ]);
+
+    grunt.registerTask('default', ['build']);
 };
