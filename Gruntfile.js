@@ -74,7 +74,6 @@ module.exports = function (grunt) {
             options: {
                 sassDir: '<%= path.app %>/styles',
                 cssDir: '.tmp/styles',
-                clean: true,
                 javascriptsDir: '<%= path.app %>/scripts',
                 importPath: '<%= path.app %>/bower_components',
                 relativeAssets: false,
