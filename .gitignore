@@ -9,3 +9,7 @@
 /src/main/webapp/static/
 
 /.tmp/
+
+.classpath
+.project
+.settings
