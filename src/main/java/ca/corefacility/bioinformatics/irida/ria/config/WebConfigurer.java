@@ -28,13 +28,13 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 		// Bower injects need components into the index.html. For development,
 		// these files need to be served as is. In production these files will
 		// be minified, concatenated, and moved into the /static/js/ folder.
-		if (!env.acceptsProfiles(SPRING_PROFILE_PRODUCTION)) {
-			registry.addResourceHandler("/bower_components/**").addResourceLocations("/bower_components/");
-			registry.addResourceHandler("/scripts/**").addResourceLocations("/scripts/");
-		}
-		else {
+		if (env.acceptsProfiles(SPRING_PROFILE_PRODUCTION)) {
 			// Scripts are concatenated and minified during build process.
 			registry.addResourceHandler("/scripts/**").addResourceLocations("/static/scripts/");
+		}
+		else {
+			registry.addResourceHandler("/bower_components/**").addResourceLocations("/bower_components/");
+			registry.addResourceHandler("/scripts/**").addResourceLocations("/scripts/");
 		}
 	}
 }
