@@ -22,14 +22,19 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		// CSS: default location "/static/styles" during development and production.
 		registry.addResourceHandler("/styles/**").addResourceLocations("/static/styles/");
-		registry.addResourceHandler("/scripts/**").addResourceLocations("/scripts/js/");
 
 		// Bower injects need components into the index.html. For development,
 		// these files need to be served as is. In production these files will
 		// be minified, concatenated, and moved into the /static/js/ folder.
 		if (!env.acceptsProfiles(SPRING_PROFILE_PRODUCTION)) {
 			registry.addResourceHandler("/bower_components/**").addResourceLocations("/bower_components/");
+			registry.addResourceHandler("/scripts/**").addResourceLocations("/scripts/");
+		}
+		else {
+			// Scripts are concatenated and minified during build process.
+			registry.addResourceHandler("/scripts/**").addResourceLocations("/static/scripts/");
 		}
 	}
 }
