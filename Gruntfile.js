@@ -153,7 +153,7 @@ module.exports = function (grunt) {
                         cwd: '<%= path.app %>/pages',
                         dest: '<%= path.static %>/',
                         src: [
-                            '*.html',
+                            '*.html'
                         ]
                     },
                     {
@@ -162,7 +162,7 @@ module.exports = function (grunt) {
                         cwd: '<%= path.app %>/views/',
                         dest: '<%= path.static %>/views',
                         src: [
-                            '*.html',
+                            '*.html'
                         ]
                     }
                 ]
@@ -245,10 +245,12 @@ module.exports = function (grunt) {
             dist: {
                 options: {
                     patterns: [
+                        // e.g. Replace src="/app.js" th:src="@{/12k23j3223k4.app.js}"
                         {
                             match: /src="scripts\/([a-zA-Z0-9]+).(\w+)\.js"/g,
                             replacement: 'th:src="@{/scripts/$1.$2.js}"'
                         },
+                        // e.g. Repalces href="main.css" ==> th:href="@{/3k24jk234jk32.main.css}"
                         {
                             match: /href="styles\/([a-zA-Z0-9]+).(\w+).css"/g,
                             replacement: 'th:href="@{/styles/$1.$2.css}"'
@@ -322,7 +324,7 @@ module.exports = function (grunt) {
                 },
                 files: [
                     '<%= path.app %>/pages/index.html',
-                    '<%= path.static %>/styles/{,*/}*.css',
+                    '<%= path.static %>/styles/{,*/}*.css'
                 ]
             }
         }
