@@ -30,6 +30,7 @@
         <maven-resources-plugin.version>2.6</maven-resources-plugin.version>
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <thymeleaf-spring4.version>2.1.2.RELEASE</thymeleaf-spring4.version>
+        <yeoman-maven-plugin.version>0.2</yeoman-maven-plugin.version>
     </properties>
 
     <inceptionYear>2014</inceptionYear>
@@ -65,8 +66,64 @@
         </developer>
     </developers>
 
-    <dependencies>
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <spring.profiles.acitive>dev</spring.profiles.acitive>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <spring.profiles.active>prod</spring.profiles.active>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- YEOMAN -->
+                    <plugin>
+                        <groupId>com.github.trecloux</groupId>
+                        <artifactId>yeoman-maven-plugin</artifactId>
+                        <version>${yeoman-maven-plugin.version}</version>
+                        <configuration>
+                            <yeomanProjectDirectory>${project.basedir}</yeomanProjectDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
 
+                    <!-- MAVEN CLEAN -->
+                    <plugin>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <version>2.5</version>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>.tmp</directory>
+                                </fileset>
+                                <fileset>
+                                    <directory>node_modules</directory>
+                                </fileset>
+                                <fileset>
+                                    <directory>.sass-cache</directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <dependencies>
         <!-- SPRING MVC -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -121,6 +178,7 @@
                     </webApp>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 </project>
