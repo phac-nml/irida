@@ -29,10 +29,18 @@ This will allow you to make changes to the front end and have them reloaded auto
 Development
 -----------
 
-1. Start jetty
+1. Start jetty: `mvn jetty:run`
 1. Start the `grunt` development environment: `grunt dev`
     1. Compiles the scss --> css
     1. Creates a watch (watches for changes to js, html, and scss files) and completes the appropriate actions.
     1. Starts a live reload server:
         1. Proxies requests from localhost:9000 --> localhost:8080
         1. Reloads localhost:9000 when changes occurs to the watched files
+
+Running Tests
+-------------
+1. During verify: `mvn verify -Pprod`
+
+Package
+-------
+`mvn package -Pprod`
