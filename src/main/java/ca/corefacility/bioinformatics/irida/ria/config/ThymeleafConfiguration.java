@@ -97,7 +97,6 @@ public class ThymeleafConfiguration {
 	public ResourceBundleMessageSource messageSource() {
 		ResourceBundleMessageSource source = new ResourceBundleMessageSource();
 		source.setBasename("i18n/messages");
-		source.setUseCodeAsDefaultMessage(true);
 		return source;
 	}
 }
