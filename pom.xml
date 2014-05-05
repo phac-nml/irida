@@ -112,6 +112,9 @@
                                 <fileset>
                                     <directory>node_modules</directory>
                                 </fileset>
+                                <fileset>
+                                    <directory>.sass-cache</directory>
+                                </fileset>
                             </filesets>
                         </configuration>
                     </plugin>
