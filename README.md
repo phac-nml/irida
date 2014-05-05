@@ -37,6 +37,12 @@ Development
         1. Proxies requests from localhost:9000 --> localhost:8080
         1. Reloads localhost:9000 when changes occurs to the watched files
 
+### Grunt
+
+1. `grunt dev`: development environment including live reload.
+1. `grunt build`: create production version (called during `mvn package -Pprod`.
+1. `grunt test-e2e`: run end to end testing.  Note: needs to have Jetty running `mvn jetty:run`.
+
 Running Tests
 -------------
 1. During verify: `mvn verify -Pprod`
