@@ -17,6 +17,8 @@ import java.nio.file.Path;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
@@ -37,6 +39,7 @@ public class FastqcFileProcessorTest {
 	private SequenceFileRepository sequenceFileRepository;
 	private OverrepresentedSequenceRepository overrepresentedSequenceRepository;
 	private SequenceFileOverrepresentedSequenceJoinRepository sfosRepository;
+	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessorTest.class);
 
 	private static final String SEQUENCE = "ACGTACGTN";
 	private static final String FASTQ_FILE_CONTENTS = "@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
@@ -52,23 +55,16 @@ public class FastqcFileProcessorTest {
 				sfosRepository);
 	}
 
-	@Test
+	@Test(expected = FileProcessorException.class)
 	public void testHandleFastaFile() throws IOException {
 		// fastqc fails to handle fasta files (there's no quality scores,
 		// dummy), but that's A-OK.
 		Path fasta = Files.createTempFile(null, null);
 		Files.write(fasta, FASTA_FILE_CONTENTS.getBytes());
 		SequenceFile sf = new SequenceFile(fasta);
+		Runtime.getRuntime().addShutdownHook(new DeleteFileOnExit(fasta));
 
-		try {
-			fileProcessor.process(sf);
-			fail();
-		} catch (FileProcessorException e) {
-		} catch (Exception e) {
-			fail();
-		}
-
-		Files.deleteIfExists(fasta);
+		fileProcessor.process(sf);
 	}
 
 	@Test
@@ -76,6 +72,8 @@ public class FastqcFileProcessorTest {
 		// fastqc shouldn't barf on a fastq file.
 		Path fastq = Files.createTempFile(null, null);
 		Files.write(fastq, FASTQ_FILE_CONTENTS.getBytes());
+		Runtime.getRuntime().addShutdownHook(new DeleteFileOnExit(fastq));
+
 
 		OverrepresentedSequence ovrs = new OverrepresentedSequence(SEQUENCE, 2, BigDecimal.valueOf(100.), "");
 		when(overrepresentedSequenceRepository.save(any(OverrepresentedSequence.class))).thenReturn(ovrs);
@@ -123,6 +121,24 @@ public class FastqcFileProcessorTest {
 		assertEquals("The count was not correct.", 2, overrepresentedSequence.getOverrepresentedSequenceCount());
 		assertEquals("The percent was not correct.", BigDecimal.valueOf(100.), overrepresentedSequence.getPercentage());
 
-		Files.deleteIfExists(fastq);
+	}
+	
+	private static final class DeleteFileOnExit extends Thread {
+		
+		private final Path fileToDelete;
+		
+		public DeleteFileOnExit(Path fileToDelete) {
+			this.fileToDelete = fileToDelete;
+		}
+
+		@Override
+		public void run() {
+			try {
+				Files.deleteIfExists(fileToDelete);
+			} catch (IOException e) {
+				logger.error("Couldn't delete path [" + fileToDelete + "]. This should be safe to ignore; FastQC opens an input stream on the file and never closes it.", e);
+			}
+		}
+		
 	}
 }
