@@ -356,8 +356,8 @@ module.exports = function (grunt) {
                 }
             },
             js_tests: {
-                files: ['<%= path.app %>/scripts/{,*/}*.js'],
-                tasks: ['protractor:auto', 'karma:unit']
+                files: ['<%= path.test %>/unit/{,*/}*.js'],
+                tasks: ['karma:unit']
             },
             livereload: {
                 options: {
@@ -399,7 +399,6 @@ module.exports = function (grunt) {
         'autoprefixer:dev',
         'configureProxies',
         'connect:livereload',
-        'protractor_webdriver',
         'watch'
     ]);
 
