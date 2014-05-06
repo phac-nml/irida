@@ -13,3 +13,5 @@
 .classpath
 .project
 .settings
+
+/coverage/
