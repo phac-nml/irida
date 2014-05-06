@@ -12,11 +12,15 @@ module.exports = function (grunt) {
     require('load-grunt-tasks')(grunt);
     require('time-grunt')(grunt);
 
+    var webapp_dir = require('./bower.json').appPath;
+
     grunt.initConfig({
         // Create variables for the path used in this project.
         path: {
-            app: require('./bower.json').appPath,
-            static: require('./bower.json').appPath + '/static'
+            app: webapp_dir,
+            static: webapp_dir + '/static',
+            bower: webapp_dir + '/bower_components',
+            test: './src/test/javascript'
         },
         // Add vendor prefixed styles
         autoprefixer: {
@@ -134,6 +138,13 @@ module.exports = function (grunt) {
                         ];
                     }
                 }
+            },
+            coverage: {
+                options: {
+                    base: 'coverage/',
+                    port: 5555,
+                    keepalive: true
+                }
             }
         },
         // Copy index during dev
@@ -199,10 +210,36 @@ module.exports = function (grunt) {
             ],
             test: {
                 options: {
-                    jshintrc: 'src/test/javascript/.jshintrc'
+                    jshintrc: '<%= path.test %>/.jshintrc'
                 },
-                src: ['test/spec/{,*/}*.js']
+                src: ['<%= path.test %>/{,*/}*.js']
             }
+        },
+        // Karma Testing
+        karma: {
+           unit: {
+               configFile: 'karma-unit.conf.js',
+               autowatch: false,
+               singleRun: true
+           },
+           unit_auto: {
+               configFile: 'karma-unit.conf.js',
+               autowatch: true,
+               singleRun: false
+           },
+           unit_coverage: {
+               configFile: 'karma-unit.conf.js',
+               autowatch: false,
+               singleRun: true,
+               reporters: ['progress', 'coverage'],
+               preprocessors: {
+                   '<%= path.app %>/scripts/*.js': ['coverage']
+               },
+               coverageReporter: {
+                   type: 'html',
+                   dir : 'coverage/'
+               }
+           }
         },
         // ngmin tries to make the code safe for minification automatically by
         // using the Angular long form for dependency injection. It doesn't work on
@@ -221,17 +258,17 @@ module.exports = function (grunt) {
         },
         protractor: {
             options: {
-                configFile: 'node_modules/protractor/referenceConf.js', // Default config file
+                configFile: 'protractor.conf.js', // Default config file
                 keepAlive: true, // If false, the grunt process stops when the test fails.
-                noColor: false, // If true, protractor will not use colors in its output.
-                args: {
-                    // Arguments passed to the command
-                }
+                noColor: false // If true, protractor will not use colors in its output.
             },
-            dev: {
+            singleRun: {},
+            auto: {
+                keepAlive: true,
                 options: {
-                    configFile: 'protractor.conf.js', // Target-specific config file
-                    args: {} // Target-specific arguments
+                    args: {
+                        seleniumPort: 4444
+                    }
                 }
             }
         },
@@ -318,6 +355,10 @@ module.exports = function (grunt) {
                     livereload: true
                 }
             },
+            js_tests: {
+                files: ['<%= path.app %>/scripts/{,*/}*.js'],
+                tasks: ['protractor:auto', 'karma:unit']
+            },
             livereload: {
                 options: {
                     livereload: '<%= connect.options.livereload %>'
@@ -330,6 +371,27 @@ module.exports = function (grunt) {
         }
     });
 
+    // Single run tests
+    grunt.registerTask('test', ['jshint', 'test:unit', 'test:e2e']);
+    grunt.registerTask('test:e2e', [
+        'clean:dist',
+        'concurrent:dev',
+        'autoprefixer',
+        'protractor_webdriver',
+        'protractor:singleRun'
+    ]);
+    grunt.registerTask('test:unit', ['karma:unit']);
+
+    //autotest and watch tests
+    grunt.registerTask('autotest', ['karma:unit_auto']);
+    grunt.registerTask('autotest:unit', ['karma:unit_auto']);
+    grunt.registerTask('autotest:e2e', ['connect:testserver','shell:selenium','watch:protractor']);
+
+    //coverage testing
+    grunt.registerTask('test:coverage', ['karma:unit_coverage']);
+    grunt.registerTask('coverage', ['karma:unit_coverage','open:coverage','connect:coverage']);
+
+
     // Development task.
     grunt.registerTask('dev', [
         'clean:dist',
@@ -337,6 +399,7 @@ module.exports = function (grunt) {
         'autoprefixer:dev',
         'configureProxies',
         'connect:livereload',
+        'protractor_webdriver',
         'watch'
     ]);
 
@@ -356,16 +419,6 @@ module.exports = function (grunt) {
         'htmlmin',
         'clean:tmp'
     ]);
-
-    grunt.registerTask('test-e2e', [
-        'clean:dist',
-        'concurrent:dev',
-        'autoprefixer',
-        'protractor_webdriver',
-        'protractor'
-    ]);
-
-    grunt.registerTask('test', []);
 
     grunt.registerTask('default', ['build']);
 };
