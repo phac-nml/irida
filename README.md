@@ -41,12 +41,21 @@ Development
 
 1. `grunt dev`: development environment including live reload.
 1. `grunt build`: create production version (called during `mvn package -Pprod`.
-1. `grunt test-e2e`: run end to end testing.  Note: needs to have Jetty running `mvn jetty:run`.
 
-Running Tests
--------------
+#### Single Run Tests
+
+1. `grunt test`: run all tests once end exit.  Note: needs to have Jetty running `mvn jetty:run`.
+1. `grunt test:e2e`: run end to end testing.  Note: needs to have Jetty running `mvn jetty:run`.
+    - Connect browser to test to `http://localhost:9876/`
+1. `grunt test:unit`: run unit tests.
+
+Maven
+-----
+
+#### Verify
+
 1. During verify: `mvn verify -Pprod`
 
-Package
--------
+#### Package
+
 `mvn package -Pprod`
