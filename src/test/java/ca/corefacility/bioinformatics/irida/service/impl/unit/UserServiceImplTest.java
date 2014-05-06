@@ -211,11 +211,16 @@ public class UserServiceImplTest {
 	@Test
 	public void testLoadUserByEmail(){
 		String email = "fbristow@gmail.com";
-		when(userRepository.loadUserByEmail(email)).thenReturn(user());
+		User u = user();
+		User u2 = user();
+		
+		when(userRepository.loadUserByEmail(email)).thenReturn(u);
+		
+		u2.setCreatedDate(u.getCreatedDate());
 		
 		User loadUserByEmail = userService.loadUserByEmail(email);
 		
-		assertEquals(user(), loadUserByEmail);
+		assertEquals(u2, loadUserByEmail);
 	}
 	
 	
@@ -235,6 +240,7 @@ public class UserServiceImplTest {
 		String firstName = "Franklin";
 		String lastName = "Bristow";
 		String phoneNumber = "7029";
-		return new User(username, email, password, firstName, lastName, phoneNumber);
+		User u = new User(username, email, password, firstName, lastName, phoneNumber);
+		return u;
 	}
 }
