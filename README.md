@@ -49,6 +49,11 @@ Development
     - Connect browser to test to `http://localhost:9876/`
 1. `grunt test:unit`: run unit tests.
 
+#### Unit Test Coverage
+1. `grunt test:coverage`.
+1. Creates `coverage/` + name of each browser auto tested.
+1. Within each folder there open the `index.html` to see a graphical representation of the coverage.
+
 Maven
 -----
 
