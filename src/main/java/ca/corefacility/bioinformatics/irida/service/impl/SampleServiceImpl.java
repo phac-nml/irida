@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.validation.Validator;
@@ -85,24 +86,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Override
 	@Transactional(readOnly = true)
 	public Sample getSampleForProject(Project project, Long identifier) throws EntityNotFoundException {
-
-		Sample s = null;
-
-		// confirm that the link between project and this identifier exists
-		List<Join<Project, Sample>> samplesForProject = psjRepository.getSamplesForProject(project);
-		for (Join<Project, Sample> join : samplesForProject) {
-			if (join.getObject().getId().equals(identifier)) {
-				// load the sample from the database
-				s = read(identifier);
-			}
-		}
-
-		if (s == null) {
+		Optional<Sample> sample = psjRepository.getSamplesForProject(project).stream().map(j -> j.getObject())
+				.filter(s -> s.getId().equals(identifier)).findFirst();
+		if (sample.isPresent()) {
+			return sample.get();
+		} else {
 			throw new EntityNotFoundException("Join between the project and this identifier doesn't exist");
 		}
-
-		// return sample to the caller
-		return s;
 	}
 
 	/**
@@ -115,8 +105,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		if (s != null) {
 			return s;
 		} else {
-			throw new EntityNotFoundException("No sample with external id [" + sampleId + "] in project [" + project.getId()
-					+ "]");
+			throw new EntityNotFoundException("No sample with external id [" + sampleId + "] in project ["
+					+ project.getId() + "]");
 		}
 	}
 
@@ -170,12 +160,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 					+ "] with other samples; the sample does not belong to project [" + project.getId() + "]");
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Sample read(Long id){
+	public Sample read(Long id) {
 		return super.read(id);
 	}
 }
