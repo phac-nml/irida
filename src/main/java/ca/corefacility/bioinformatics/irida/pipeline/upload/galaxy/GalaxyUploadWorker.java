@@ -93,10 +93,6 @@ public class GalaxyUploadWorker implements UploadWorker {
 	 */
 	private synchronized List<UploadEventListener> getEventListenersCopy() {
 		List<UploadEventListener> eventListenersList = new LinkedList<UploadEventListener>(eventListeners);
-		for (UploadEventListener eventListener : eventListeners) {
-			eventListenersList.add(eventListener);
-		}
-		
 		return eventListenersList;
 	}
 	
