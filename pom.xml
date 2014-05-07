@@ -413,18 +413,16 @@
 	
 		<!-- Dependencies -->
 		<junit.version>4.11</junit.version>
-		<slf4j.version>1.7.6</slf4j.version>
-		<!-- Can't upgrade guava to > 16 until jmchilton or apetkau depend on a 
-			newer version of Guava in galaxy-bootstrap (see: https://github.com/jmchilton/galaxy-bootstrap/issues/5) -->
-		<guava.version>15.0</guava.version>
+		<slf4j.version>1.7.7</slf4j.version>
+		<guava.version>17.0</guava.version>
 		<spring.version>4.0.3.RELEASE</spring.version>
 		<spring.security.version>3.2.3.RELEASE</spring.security.version>
-		<spring.data.jpa.version>1.5.1.RELEASE</spring.data.jpa.version>
+		<spring.data.jpa.version>1.5.2.RELEASE</spring.data.jpa.version>
 		<spring.security.oauth.version>1.0.5.RELEASE</spring.security.oauth.version>
 		<spring.data.envers.version>0.1.0.RELEASE</spring.data.envers.version>
 		<mockito.version>1.9.5</mockito.version>
-		<mysql.connector.version>5.1.28</mysql.connector.version>
-		<hibernate.version>4.3.4.Final</hibernate.version>
+		<mysql.connector.version>5.1.30</mysql.connector.version>
+		<hibernate.version>4.3.5.Final</hibernate.version>
 		<!-- Do NOT upgrade hsqldb; causes integration tests to fail when trying 
 			to save quality control data (specifically the binary charts) for sequence 
 			files. (fb; Jan 21, 2014) -->
@@ -434,12 +432,12 @@
 		<dbunit.version>2.4.9</dbunit.version>
 		<commons.dbcp.version>1.4</commons.dbcp.version>
 		<fastqc.version>0.10.1-nml-custom</fastqc.version>
-		<aspectj.version>1.7.4</aspectj.version>
+		<aspectj.version>1.8.0</aspectj.version>
 		<hibernate.validator.version>5.1.0.Final</hibernate.validator.version>
 		<javax.el-api.version>2.2</javax.el-api.version>
 		<el-ri.version>1.0</el-ri.version>
 		<com.github.jmchilton.blend4j.version>0.1-alpha-7</com.github.jmchilton.blend4j.version>
-		<com.github.jmchilton.galaxybootstrap.version>0.3.0-rc3</com.github.jmchilton.galaxybootstrap.version>
+		<com.github.jmchilton.galaxybootstrap.version>0.3.0-rc4-SNAPSHOT</com.github.jmchilton.galaxybootstrap.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.17</maven.failsafe.plugin.version>
