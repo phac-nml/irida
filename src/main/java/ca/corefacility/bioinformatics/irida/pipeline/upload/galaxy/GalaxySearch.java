@@ -1,13 +1,14 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
@@ -55,21 +56,23 @@ public class GalaxySearch {
 	 * @param email
 	 *            The email of the user to search.
 	 * @return A private Role object of the user with the corresponding email.
-	 * @throws GalaxyUserNoRoleException If no role for the user could be found.
+	 * @throws GalaxyUserNoRoleException
+	 *             If no role for the user could be found.
 	 */
 	public Role findUserRoleWithEmail(GalaxyAccountEmail email) throws GalaxyUserNoRoleException {
 		checkNotNull(email, "email is null");
 
 		RolesClient rolesClient = galaxyInstance.getRolesClient();
 		if (rolesClient != null) {
-			for (Role curr : rolesClient.getRoles()) {
-				if (email.getName().equals(curr.getName())) {
-					return curr;
-				}
+			Optional<Role> r = rolesClient.getRoles().stream().filter((role) -> role.getName().equals(email.getName()))
+					.findFirst();
+			if (r.isPresent()) {
+				return r.get();
 			}
 		}
 
-		throw new GalaxyUserNoRoleException("No role found for " + email + " in Galaxy " + galaxyInstance.getGalaxyUrl());
+		throw new GalaxyUserNoRoleException("No role found for " + email + " in Galaxy "
+				+ galaxyInstance.getGalaxyUrl());
 	}
 
 	/**
@@ -79,23 +82,24 @@ public class GalaxySearch {
 	 * @param email
 	 *            The email of the user to search.
 	 * @return A User object of the user with the corresponding email.
-	 * @throws GalaxyUserNotFoundException If the user could not be found.
+	 * @throws GalaxyUserNotFoundException
+	 *             If the user could not be found.
 	 */
 	public User findUserWithEmail(GalaxyAccountEmail email) throws GalaxyUserNotFoundException {
 		checkNotNull(email, "email is null");
 
 		UsersClient usersClient = galaxyInstance.getUsersClient();
 		if (usersClient != null) {
-			for (User curr : usersClient.getUsers()) {
-				if (email.getName().equals(curr.getEmail())) {
-					return curr;
-				}
+			Optional<User> u = usersClient.getUsers().stream()
+					.filter((user) -> user.getEmail().equals(email.getName())).findFirst();
+			if (u.isPresent()) {
+				return u.get();
 			}
 		}
 
 		throw new GalaxyUserNotFoundException(email, getGalaxyUrl());
 	}
-	
+
 	/**
 	 * Gets the URL of the Galaxy instance we are connected to.
 	 * 
@@ -117,21 +121,21 @@ public class GalaxySearch {
 	 * @param libraryId
 	 *            The libraryId to search for.
 	 * @return A Library object for this Galaxy library.
-	 * @throws NoLibraryFoundException If a library could not be found.
+	 * @throws NoLibraryFoundException
+	 *             If a library could not be found.
 	 */
 	public Library findLibraryWithId(String libraryId) throws NoLibraryFoundException {
 		checkNotNull(libraryId, "libraryId is null");
 
 		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
 		List<Library> libraries = librariesClient.getLibraries();
-		for (Library curr : libraries) {
-			if (libraryId.equals(curr.getId())) {
-				return curr;
-			}
+		Optional<Library> library = libraries.stream().filter((lib) -> lib.getId().equals(libraryId)).findFirst();
+		if (library.isPresent()) {
+			return library.get();
 		}
 
-		throw new NoLibraryFoundException("No library found for id " + libraryId +
-				" in Galaxy " + galaxyInstance.getGalaxyUrl());
+		throw new NoLibraryFoundException("No library found for id " + libraryId + " in Galaxy "
+				+ galaxyInstance.getGalaxyUrl());
 	}
 
 	/**
@@ -142,27 +146,23 @@ public class GalaxySearch {
 	 *            The library to get all contents from.
 	 * @return A Map mapping the path of the library content to the
 	 *         LibraryContent object.
-	 * @throws NoGalaxyContentFoundException If no library could be found.
+	 * @throws NoGalaxyContentFoundException
+	 *             If no library could be found.
 	 */
 	public Map<String, LibraryContent> libraryContentAsMap(String libraryId) throws NoGalaxyContentFoundException {
 		checkNotNull(libraryId, "libraryId is null");
 
 		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
-		List<LibraryContent> libraryContents = librariesClient
-				.getLibraryContents(libraryId);
+		List<LibraryContent> libraryContents = librariesClient.getLibraryContents(libraryId);
 
 		if (libraryContents != null) {
-			Map<String, LibraryContent> map = new HashMap<String, LibraryContent>();
-
-			for (LibraryContent content : libraryContents) {
-				map.put(content.getName(), content);
-			}
-			
+			Map<String, LibraryContent> map = libraryContents.stream().collect(
+					Collectors.toMap(LibraryContent::getName, Function.identity()));
 			return map;
 		}
 
-		throw new NoGalaxyContentFoundException("Could not find library content for id " + libraryId +
-				" in Galaxy " + galaxyInstance.getGalaxyUrl());
+		throw new NoGalaxyContentFoundException("Could not find library content for id " + libraryId + " in Galaxy "
+				+ galaxyInstance.getGalaxyUrl());
 	}
 
 	/**
@@ -171,7 +171,8 @@ public class GalaxySearch {
 	 * @param libraryName
 	 *            The name of the library to search for.
 	 * @return A list of Library objects matching the given name.
-	 * @throws NoLibraryFoundException If no libraries could be found.
+	 * @throws NoLibraryFoundException
+	 *             If no libraries could be found.
 	 */
 	public List<Library> findLibraryWithName(GalaxyProjectName libraryName) throws NoLibraryFoundException {
 		checkNotNull(libraryName, "libraryName is null");
@@ -180,21 +181,16 @@ public class GalaxySearch {
 		List<Library> allLibraries = librariesClient.getLibraries();
 
 		if (allLibraries != null) {
-			List<Library> libraries = new LinkedList<Library>();
+			List<Library> libraries = allLibraries.stream()
+					.filter((lib) -> lib.getName().equals(libraryName.getName())).collect(Collectors.toList());
 
-			for (Library curr : allLibraries) {
-				if (libraryName.getName().equals(curr.getName())) {
-					libraries.add(curr);
-				}
-			}
-			
 			if (libraries.size() > 0) {
 				return libraries;
 			}
 		}
 
-		throw new NoLibraryFoundException("No library could be found with name " + libraryName +
-				" in Galaxy " + galaxyInstance.getGalaxyUrl());
+		throw new NoLibraryFoundException("No library could be found with name " + libraryName + " in Galaxy "
+				+ galaxyInstance.getGalaxyUrl());
 	}
 
 	/**
@@ -208,29 +204,27 @@ public class GalaxySearch {
 	 *            instance of this folder name).
 	 * @return A LibraryContent within the given library with the given name, or
 	 *         null if no such folder exists.
-	 * @throws NoGalaxyContentFoundException If no Galaxy content was found.
+	 * @throws NoGalaxyContentFoundException
+	 *             If no Galaxy content was found.
 	 */
-	public LibraryContent findLibraryContentWithId(String libraryId,
-			GalaxyFolderPath folderPath) throws NoGalaxyContentFoundException {
+	public LibraryContent findLibraryContentWithId(String libraryId, GalaxyFolderPath folderPath)
+			throws NoGalaxyContentFoundException {
 		checkNotNull(libraryId, "libraryId is null");
 		checkNotNull(folderPath, "folderPath is null");
 
 		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
-		List<LibraryContent> libraryContents = librariesClient
-				.getLibraryContents(libraryId);
+		List<LibraryContent> libraryContents = librariesClient.getLibraryContents(libraryId);
 
 		if (libraryContents != null) {
-			for (LibraryContent content : libraryContents) {
-				if ("folder".equals(content.getType())) {
-					if (folderPath.getName().equals(content.getName())) {
-						return content;
-					}
-				}
+			Optional<LibraryContent> content = libraryContents.stream()
+					.filter(c -> c.getType().equals("folder") && c.getName().equals(folderPath.getName())).findFirst();
+			if (content.isPresent()) {
+				return content.get();
 			}
 		}
 
-		throw new NoGalaxyContentFoundException("Could not find library content for id " + libraryId +
-				" in Galaxy " + galaxyInstance.getGalaxyUrl());
+		throw new NoGalaxyContentFoundException("Could not find library content for id " + libraryId + " in Galaxy "
+				+ galaxyInstance.getGalaxyUrl());
 	}
 
 	/**
@@ -242,7 +236,7 @@ public class GalaxySearch {
 	 */
 	public boolean galaxyUserExists(GalaxyAccountEmail galaxyUserEmail) {
 		try {
-			return findUserWithEmail(galaxyUserEmail) != null;			
+			return findUserWithEmail(galaxyUserEmail) != null;
 		} catch (GalaxyUserNotFoundException e) {
 			return false;
 		}
@@ -250,7 +244,9 @@ public class GalaxySearch {
 
 	/**
 	 * Determines if a library with the given name exists.
-	 * @param libraryName The name of the library to check.
+	 * 
+	 * @param libraryName
+	 *            The name of the library to check.
 	 * @return True if a library with this name exists, false otherwise.
 	 */
 	public boolean libraryExists(GalaxyProjectName libraryName) {
@@ -263,14 +259,16 @@ public class GalaxySearch {
 	}
 
 	/**
-	 * Determine if the given folderPath exists within a library with
-	 * 	the given id.
-	 * @param libraryId  The id of the library to check.
-	 * @param folderPath  A path within this library to check.
+	 * Determine if the given folderPath exists within a library with the given
+	 * id.
+	 * 
+	 * @param libraryId
+	 *            The id of the library to check.
+	 * @param folderPath
+	 *            A path within this library to check.
 	 * @return True if this path exists within this library, false otherwise.
 	 */
-	public boolean libraryContentExists(String libraryId,
-			GalaxyFolderPath folderPath) {
+	public boolean libraryContentExists(String libraryId, GalaxyFolderPath folderPath) {
 		try {
 			LibraryContent content = findLibraryContentWithId(libraryId, folderPath);
 			return content != null;
@@ -280,9 +278,11 @@ public class GalaxySearch {
 	}
 
 	/**
-	 * Determins if a role exists for the given user.
-	 * @param galaxyUserEmail  The user to search for a role.
-	 * @return  True if a role exists for the user, false otherwise.
+	 * Determines if a role exists for the given user.
+	 * 
+	 * @param galaxyUserEmail
+	 *            The user to search for a role.
+	 * @return True if a role exists for the user, false otherwise.
 	 */
 	public boolean userRoleExistsFor(GalaxyAccountEmail galaxyUserEmail) {
 		try {
