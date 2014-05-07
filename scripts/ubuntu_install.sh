@@ -9,8 +9,8 @@ mkdir -p ~/.irida-npm;
 # Set up NodeJS
 tar -zxf node-v0.10.28-linux-x64.tar.gz;
 mv node-v0.10.28-linux-x64/ ~/.irida-npm/
-echo 'export PATH=$PATH:~/.irida-npm/node-v0.10.28-linux-x64/bin' >> ~/.bashrc;
-source ~/.bashrc;
+echo 'export PATH=$PATH:~/.irida-npm/node-v0.10.28-linux-x64/bin' >> ~/.irida-npm/bashrc;
+source ~/.irida-npm/bashrc;
 rm -r node-v0.10.28-linux-x64.tar.gz;
 
 # Install Sass and Compass
@@ -25,3 +25,5 @@ bower install;
 
 # Update webdriver
 webdriver-manager update;
+
+echo "Please add '
