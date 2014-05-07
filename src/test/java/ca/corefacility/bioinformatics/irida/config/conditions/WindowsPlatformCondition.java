@@ -13,10 +13,19 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
  */
 public class WindowsPlatformCondition implements Condition {
 
+	/**
+	 * Returns <code>true</code> if the current platform is Windows-based.
+	 * 
+	 * @return <code>true</code> if the current platform is Windows-based.
+	 */
+	public static boolean isWindows() {
+		return System.getProperty("os.name").toLowerCase().contains("win");
+	}
+
 	@Override
 	public boolean matches(ConditionContext context,
 			AnnotatedTypeMetadata metadata) {
-		return System.getProperty("os.name").toLowerCase().contains("win");
+		return isWindows();
 	}
 
 }

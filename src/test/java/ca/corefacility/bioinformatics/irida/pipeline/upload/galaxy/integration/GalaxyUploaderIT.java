@@ -25,6 +25,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
@@ -66,7 +67,7 @@ public class GalaxyUploaderIT {
 
 	@Before
 	public void setup() throws URISyntaxException {
-		Assume.assumeFalse(System.getProperty("os.name").toLowerCase().contains("win"));
+		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 		setupDataFiles();
 	}
 

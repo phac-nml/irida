@@ -18,7 +18,7 @@ public class NonWindowsPlatformCondition implements Condition {
 	 */
 	public boolean matches(ConditionContext context,
 			AnnotatedTypeMetadata metadata) {
-		return !System.getProperty("os.name").toLowerCase().contains("win");
+		return !WindowsPlatformCondition.isWindows();
 	}
 
 }
