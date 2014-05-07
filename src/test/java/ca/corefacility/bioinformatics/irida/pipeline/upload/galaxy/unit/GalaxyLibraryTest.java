@@ -210,6 +210,8 @@ public class GalaxyLibraryTest {
 				librariesClient.setLibraryPermissions(eq(LIBRARY_ID),
 						any(LibraryPermissions.class)))
 				.thenReturn(okayResponse);
+		when(galaxySearch.findUserRoleWithEmail(INVALID_EMAIL))
+			.thenThrow(new GalaxyUserNoRoleException());
 
 		galaxyLibrary.changeLibraryOwner(testLibrary, INVALID_EMAIL,
 				ADMIN_EMAIL);
@@ -227,6 +229,8 @@ public class GalaxyLibraryTest {
 				librariesClient.setLibraryPermissions(eq(LIBRARY_ID),
 						any(LibraryPermissions.class)))
 				.thenReturn(okayResponse);
+		when(galaxySearch.findUserRoleWithEmail(INVALID_EMAIL))
+			.thenThrow(new GalaxyUserNoRoleException());
 
 		galaxyLibrary
 				.changeLibraryOwner(testLibrary, USER_EMAIL, INVALID_EMAIL);

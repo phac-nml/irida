@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.validation.ConstraintViolationException;
 
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,8 +25,10 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.LocalGalaxyConfig;
+import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
+import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
@@ -48,8 +51,8 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {
-		IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class,
-		IridaApiTestMultithreadingConfig.class, LocalGalaxyConfig.class })
+	IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class,
+	IridaApiTestMultithreadingConfig.class, NonWindowsLocalGalaxyConfig.class, WindowsLocalGalaxyConfig.class  })
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
@@ -64,6 +67,7 @@ public class GalaxyUploaderIT {
 
 	@Before
 	public void setup() throws URISyntaxException {
+		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 		setupDataFiles();
 	}
 
@@ -111,7 +115,7 @@ public class GalaxyUploaderIT {
 		// I need to bring up a new version of Galaxy so I can connect to it,
 		// then shut it down
 		// without affecting other tests
-		LocalGalaxyConfig galaxyConfig = new LocalGalaxyConfig();
+		NonWindowsLocalGalaxyConfig galaxyConfig = new NonWindowsLocalGalaxyConfig();
 		LocalGalaxy newLocalGalaxy = galaxyConfig.localGalaxy();
 
 		// connect to running Galaxy first, so it passes all initial checks

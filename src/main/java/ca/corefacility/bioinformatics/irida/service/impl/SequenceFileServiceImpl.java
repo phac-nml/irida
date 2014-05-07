@@ -134,7 +134,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@ModifiesSequenceFile
 	public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
 		if (updatedFields.containsKey("fileRevisionNumber")) {
-			throw new InvalidPropertyException("File revision number cannot be updated manually.");
+			throw new InvalidPropertyException("File revision number cannot be updated manually.",SequenceFile.class);
 		}
 
 		ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
