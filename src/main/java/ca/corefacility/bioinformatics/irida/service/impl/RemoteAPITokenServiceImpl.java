@@ -28,10 +28,12 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
 		this.userRepository = userRepository;
 	}
 
+	@Transactional
 	@Override
 	public void addToken(RemoteAPIToken token) {
 		User user = userRepository.loadUserByUsername(getUserName());
 		token.setUser(user);
+		invalidateOldToken(token.getRemoteApi());
 		tokenRepository.save(token);
 	}
 
@@ -39,7 +41,7 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
 	public RemoteAPIToken getToken(RemoteAPI remoteAPI) {
 		User user = userRepository.loadUserByUsername(getUserName());
 		
-		return tokenRepository.readForApiAndUser(remoteAPI, user);
+		return tokenRepository.readTokenForApiAndUser(remoteAPI, user);
 	}
 	
 
@@ -57,5 +59,18 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * Set any previous token's validity bit to false
+	 * @param token
+	 */
+	@Transactional
+	protected void invalidateOldToken(RemoteAPI api){
+		RemoteAPIToken oldToken = getToken(api);
+		if(oldToken != null){
+			oldToken.setCurrent(false);
+			tokenRepository.save(oldToken);
+		}
 	}
 }

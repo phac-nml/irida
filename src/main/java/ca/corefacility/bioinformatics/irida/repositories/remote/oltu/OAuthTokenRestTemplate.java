@@ -48,6 +48,10 @@ public class OAuthTokenRestTemplate extends RestTemplate{
 			logger.debug("No token found for service " + remoteAPI);
 			throw new IridaOAuthException("No token fround for service",remoteAPI);
 		}
+		else if(token.isExpired()){
+			logger.debug("Token for service is expired " + remoteAPI);
+			throw new IridaOAuthException("Token is expired for service",remoteAPI);
+		}
 		
 		ClientHttpRequest createRequest = super.createRequest(uri, method);
 		createRequest.getHeaders().add("Authorization", "Bearer " + token.getTokenString());
