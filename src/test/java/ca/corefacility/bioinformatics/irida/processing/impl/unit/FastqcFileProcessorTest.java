@@ -136,7 +136,7 @@ public class FastqcFileProcessorTest {
 			try {
 				Files.deleteIfExists(fileToDelete);
 			} catch (IOException e) {
-				logger.error("Couldn't delete path [" + fileToDelete + "]. This should be safe to ignore; FastQC opens an input stream on the file and never closes it.", e);
+				logger.debug("Couldn't delete path [" + fileToDelete + "]. This should be safe to ignore; FastQC opens an input stream on the file and never closes it.");
 			}
 		}
 		
