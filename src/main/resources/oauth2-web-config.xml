@@ -48,7 +48,7 @@
 		authentication-manager-ref="clientAuthenticationManager">
 		<sec:anonymous enabled="false" />
 		<!-- Read scope for GET requests -->
-		<sec:intercept-url pattern="/favicon.ico" access="IS_AUTHENTICATED_ANONYMOUSLY,IS_AUTHENTICATED_FULLY"/>
+		<sec:intercept-url pattern="/favicon.ico" access="IS_AUTHENTICATED_FULLY" />
 		<sec:intercept-url pattern="/success" access="IS_AUTHENTICATED_FULLY" />   
 		<sec:intercept-url pattern="/**" method="GET" access="SCOPE_READ" />
 		<!-- Read and write scope for all other requests -->
