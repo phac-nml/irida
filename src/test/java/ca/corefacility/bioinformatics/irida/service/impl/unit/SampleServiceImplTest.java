@@ -63,12 +63,10 @@ public class SampleServiceImplTest {
 		List<Join<Project, Sample>> joins = new ArrayList<>();
 		joins.add(join);
 		when(psjRepository.getSamplesForProject(p)).thenReturn(joins);
-		when(sampleRepository.findOne(s.getId())).thenReturn(s);
 
 		sampleService.getSampleForProject(p, s.getId());
 
 		verify(psjRepository).getSamplesForProject(p);
-		verify(sampleRepository).findOne(s.getId());
 	}
 
 	@Test

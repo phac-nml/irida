@@ -30,7 +30,6 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.sequencefile.Mise
 import ca.corefacility.bioinformatics.irida.repositories.joins.sequencefile.SequenceFileOverrepresentedSequenceJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
@@ -152,12 +151,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 			builder.put("fileRevisionNumber", (Object) updatedRevision);
 			// add all keys from the updatedFields map that are NOT equal to
 			// "file"
-			builder.putAll(Maps.filterKeys(updatedFields, new Predicate<String>() {
-				@Override
-				public boolean apply(String input) {
-					return !input.equals(FILE_PROPERTY);
-				}
-			}));
+			builder.putAll(Maps.filterKeys(updatedFields, input -> !input.equals(FILE_PROPERTY)));
 		} else {
 			// the file isn't to be updated, so just keep all the keys that were
 			// originally supplied to the method.
