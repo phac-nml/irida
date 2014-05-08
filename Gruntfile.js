@@ -397,8 +397,8 @@ module.exports = function (grunt) {
 
     //autotest and watch tests
     grunt.registerTask('autotest', ['karma:unit_auto']);
-    grunt.registerTask('autotest:unit', ['karma:unit_auto']);
-    grunt.registerTask('autotest:e2e', ['connect:testserver','shell:selenium','watch:protractor']);
+    grunt.registerTask('autotest:unit', ['browserify:dev', 'karma:unit_auto']);
+    grunt.registerTask('autotest:e2e', ['browserify:dev', 'connect:testserver','shell:selenium','watch:protractor']);
 
     //coverage testing
     grunt.registerTask('test:coverage', ['browserify:dev', 'karma:unit_coverage']);
