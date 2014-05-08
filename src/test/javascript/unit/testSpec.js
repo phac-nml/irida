@@ -1,9 +1,18 @@
 describe('TEST PAGE', function () {
     'use strict';
 
-    beforeEach(module('app.projects'));
+    beforeEach(module('irida.projects'));
 
-    it('TEST IT SHOULD BE TRUE', inject(function () {
-        expect(true).toBeTruthy();
-    }));
+    describe('ProjectsMgrCtrl', function () {
+        var $scope;
+
+        beforeEach(inject(function ($rootScope, $controller) {
+            $scope = $rootScope.$new();
+            $controller('ProjectsMgrCtrl', {$scope: $scope});
+        }));
+
+        it('should have a title', function () {
+            expect($scope.data.title).toBe("Right Said Fred");
+        });
+    });
 });
