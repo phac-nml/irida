@@ -4,6 +4,7 @@
   "description": "Need to set this",
   "dependencies": {},
   "devDependencies": {
+    "browserify": "^3.46.0",
     "grunt": "^0.4.4",
     "grunt-autoprefixer": "^0.7.3",
     "grunt-concurrent": "^0.5.0",
