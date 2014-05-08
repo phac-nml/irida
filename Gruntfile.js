@@ -48,6 +48,14 @@ module.exports = function (grunt) {
                 ]
             }
         },
+        // Browserify
+        browserify: {
+            dev: {
+                files: {
+                    '<%= path.static %>/scripts/bundle.js': ['<%= path.app %>/scripts/app.js']
+                }
+            }
+        },
         // Empties folders to start fresh for both dev and production.
         clean: {
             dist: {
@@ -325,7 +333,7 @@ module.exports = function (grunt) {
                 flow: {
                     html: {
                         steps: {
-                            js: ['concat', 'uglifyjs'],
+                            js: [],
                             css: ['cssmin']
                         },
                         post: {}
@@ -348,9 +356,13 @@ module.exports = function (grunt) {
                 files: ['<%= path.app %>/styles/{,*/}*.scss'],
                 tasks: ['compass:dev', 'autoprefixer']
             },
+            copy: {
+                files: ['<%= path.app %>/pages/*'],
+                tasks: ['copy:dev']
+            },
             js: {
-                files: ['<%= path.app %>/scripts/{,*/}*.js'],
-                tasks: ['newer:jshint:all'],
+                files: ['<%= path.app %>/scripts/**/*.js'],
+                tasks: ['newer:jshint:all', 'browserify:dev'],
                 options: {
                     livereload: true
                 }
@@ -377,10 +389,11 @@ module.exports = function (grunt) {
         'clean:dist',
         'concurrent:dev',
         'autoprefixer',
+        'browserify:dev',
         'protractor_webdriver',
         'protractor:singleRun'
     ]);
-    grunt.registerTask('test:unit', ['karma:unit']);
+    grunt.registerTask('test:unit', ['browserify:dev', 'karma:unit']);
 
     //autotest and watch tests
     grunt.registerTask('autotest', ['karma:unit_auto']);
@@ -388,8 +401,7 @@ module.exports = function (grunt) {
     grunt.registerTask('autotest:e2e', ['connect:testserver','shell:selenium','watch:protractor']);
 
     //coverage testing
-    grunt.registerTask('test:coverage', ['karma:unit_coverage']);
-    grunt.registerTask('coverage', ['karma:unit_coverage','open:coverage','connect:coverage']);
+    grunt.registerTask('test:coverage', ['browserify:dev', 'karma:unit_coverage']);
 
 
     // Development task.
@@ -397,6 +409,7 @@ module.exports = function (grunt) {
         'clean:dist',
         'concurrent:dev',
         'autoprefixer:dev',
+        'browserify:dev',
         'configureProxies',
         'connect:livereload',
         'watch'
@@ -407,15 +420,13 @@ module.exports = function (grunt) {
         'useminPrepare',
         'concurrent:dist',
         'autoprefixer:dist',
-        'concat',
         'ngmin',
         'copy:dist',
+        'browserify:dev',
         'cssmin',
-        'uglify',
         'rev',
         'usemin',
         'replace',
-        'htmlmin',
         'clean:tmp'
     ]);
 

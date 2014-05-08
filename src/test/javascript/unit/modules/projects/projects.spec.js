@@ -1,4 +1,4 @@
-describe('TEST PAGE', function () {
+describe('irida.projects', function () {
     'use strict';
 
     beforeEach(module('irida.projects'));

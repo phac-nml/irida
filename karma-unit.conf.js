@@ -5,7 +5,7 @@ module.exports = function(config) {
         files : [
             app_path + '/static/scripts/bundle.js',
             app_path + '/bower_components/angular-mocks/angular-mocks.js',
-            test_path + '/unit/**/*.js'
+            test_path + '/unit/**/*spec.js'
         ],
         basePath: '',
         frameworks: ['jasmine'],

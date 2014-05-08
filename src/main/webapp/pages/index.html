@@ -6,18 +6,23 @@
     <title></title>
 
     <!-- build:css styles/vendor.css -->
-    <!-- bower:css -->
-    <link rel="stylesheet" href="../bower_components/bootstrap-css/css/bootstrap.min.css" />
-    <!-- endbower -->
+    <link rel="stylesheet" href="../bower_components/bootstrap-css/css/bootstrap.min.css"/>
     <!-- endbuild -->
 
-    <!-- build:css({.tmp,app}) styles/main.css -->
+    <!-- build:css(.tmp) styles/main.css -->
     <link rel="stylesheet" href="/styles/main.css"/>
     <!-- endbuild -->
 </head>
 <body ng-app="irida">
 <h1 id="title" th:text="#{irida.welcome}">Hello World!</h1>
 
-<script th:src="@{/scripts/bundle.js}"></script>
+<div ng-controller="ProjectsMgrCtrl">
+    <h2>Controller says: {{data.title}}</h2>
+</div>
+
+<!-- build:js scripts/bundle.js -->
+<script src="/scripts/bundle.js"></script>
+<!-- endbuild -->
+
 </body>
 </html>
