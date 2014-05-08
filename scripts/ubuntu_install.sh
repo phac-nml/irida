@@ -22,7 +22,7 @@ sudo apt-get install -y ruby-sass ruby-compass &> ~/.irida-npm/apt.log;
 
 # Install Grunt CLI, Protractor, Karma and Bower
 echo "Installing global npm packages. (tailf ~/.irida-npm/npm-global.log)"
-npm install -g grunt-cli protractor bower &> ~/.irida-npm/npm-global.log;
+npm install -g grunt-cli protractor bower browserify &> ~/.irida-npm/npm-global.log;
 
 # Install local dependencies
 echo "Installing local npm packages. (tailf ~/.irida-npm/npm-local.log)"
