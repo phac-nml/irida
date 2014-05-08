@@ -1,6 +1,8 @@
-var IndexPage = require("./pages/index_page");
+var IndexPage = require('./pages/index_page');
 
-describe("Index", function () {
+describe('Index', function () {
+    'use strict';
+
     var page = new IndexPage();
 
     it('Should say welcome', function () {

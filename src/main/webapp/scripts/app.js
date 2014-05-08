@@ -1,4 +1,4 @@
 'use strict';
 
 angular
-    .module('irida', []);
+    .module('irida', ['app.projects']);
