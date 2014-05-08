@@ -92,11 +92,7 @@ public class GalaxyUploadWorker implements UploadWorker {
 	 * @return  A copy of the event listeners list
 	 */
 	private synchronized List<UploadEventListener> getEventListenersCopy() {
-		List<UploadEventListener> eventListenersList = new LinkedList<UploadEventListener>();
-		for (UploadEventListener eventListener : eventListeners) {
-			eventListenersList.add(eventListener);
-		}
-		
+		List<UploadEventListener> eventListenersList = new LinkedList<UploadEventListener>(eventListeners);
 		return eventListenersList;
 	}
 	
@@ -105,10 +101,7 @@ public class GalaxyUploadWorker implements UploadWorker {
 	 * @param uploadResult  The result of the upload.
 	 */
 	private void finish(UploadResult uploadResult) {
-		List<UploadEventListener> eventListenersList = getEventListenersCopy();
-		for (UploadEventListener eventListener : eventListenersList) {
-			eventListener.finish(uploadResult);
-		}
+		getEventListenersCopy().forEach(listener -> listener.finish(uploadResult));
 	}
 	
 	/**
@@ -116,10 +109,7 @@ public class GalaxyUploadWorker implements UploadWorker {
 	 * @param uploadException  The exception that occured.
 	 */
 	private void exception(UploadException uploadException) {
-		List<UploadEventListener> eventListenersList = getEventListenersCopy();
-		for (UploadEventListener eventListener : eventListenersList) {
-			eventListener.exception(uploadException);
-		}
+		getEventListenersCopy().forEach(listener -> listener.exception(uploadException));
 	}
 	
 	/**

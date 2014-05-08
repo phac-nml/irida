@@ -32,7 +32,7 @@ import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
 @Service
 public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> implements MiseqRunService {
 	private static final Logger logger = LoggerFactory.getLogger(MiseqRunServiceImpl.class);
-	
+
 	private MiseqRunSequenceFileJoinRepository mrsfRepository;
 	private SampleSequenceFileJoinRepository ssfRepository;
 	private SampleRepository sampleRepository;
@@ -42,8 +42,8 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 	}
 
 	@Autowired
-	public MiseqRunServiceImpl(MiseqRunRepository repository, MiseqRunSequenceFileJoinRepository mrsfRepository, SampleSequenceFileJoinRepository ssfRepository, SampleRepository sampleRepository,
-			Validator validator) {
+	public MiseqRunServiceImpl(MiseqRunRepository repository, MiseqRunSequenceFileJoinRepository mrsfRepository,
+			SampleSequenceFileJoinRepository ssfRepository, SampleRepository sampleRepository, Validator validator) {
 		super(repository, validator, MiseqRun.class);
 		this.mrsfRepository = mrsfRepository;
 		this.ssfRepository = ssfRepository;
@@ -78,20 +78,20 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 	public MiseqRun create(MiseqRun o) {
 		return super.create(o);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	@Transactional
-	public void delete(Long id){
+	public void delete(Long id) {
 		Set<Sample> referencedSamples = new HashSet<>();
-		
+
 		logger.trace("Getting samples for miseq run " + id);
-		//Get the Files from the MiSeqRun to delete
+		// Get the Files from the MiSeqRun to delete
 		MiseqRun read = read(id);
 		List<Join<MiseqRun, SequenceFile>> filesForMiseqRun = mrsfRepository.getFilesForMiseqRun(read);
-		
+
 		//Get the Samples used in the MiSeqRun that is going to be deleted
 		for(Join<MiseqRun,SequenceFile> join : filesForMiseqRun){
 			Join<Sample, SequenceFile> sampleForSequenceFile = ssfRepository.getSampleForSequenceFile(join.getObject());
@@ -99,10 +99,11 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 			referencedSamples.add(sampleForSequenceFile.getSubject());
 		}
 		
-		//Delete the run
+
+		// Delete the run
 		logger.trace("Deleting MiSeq run");
 		super.delete(id);
-		
+
 		//Search if samples are empty.  If they are, delete the sample.
 		for(Sample sample: referencedSamples){
 			List<Join<Sample, SequenceFile>> filesForSample = ssfRepository.getFilesForSample(sample);
