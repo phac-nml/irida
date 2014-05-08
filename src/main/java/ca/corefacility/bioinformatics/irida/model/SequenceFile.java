@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.PrePersist;
@@ -26,7 +27,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
-import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileOverrepresentedSequenceJoin;
 
@@ -82,8 +82,8 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
     private String i5Index;
 	private Long fileRevisionNumber; //the filesystem file revision number
 	
-	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sequenceFile")
-	private List<MiseqRunSequenceFileJoin> miseqRuns;
+	@ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
+	private MiseqRun miseqRun;
 	
 	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sequenceFile")
 	private List<SampleSequenceFileJoin> samples;
@@ -375,12 +375,12 @@ public String getSamplePlate() {
 		this.fileRevisionNumber = fileRevisionNumber;
 	}
 	
-	public List<MiseqRunSequenceFileJoin> getMiseqRuns() {
-		return miseqRuns;
+	public MiseqRun getMiseqRun() {
+		return miseqRun;
 	}
 
-	public void setMiseqRuns(List<MiseqRunSequenceFileJoin> miseqRuns) {
-		this.miseqRuns = miseqRuns;
+	public void setMiseqRun(MiseqRun miseqRun) {
+		this.miseqRun = miseqRun;
 	}
 
 	public List<SampleSequenceFileJoin> getSamples() {

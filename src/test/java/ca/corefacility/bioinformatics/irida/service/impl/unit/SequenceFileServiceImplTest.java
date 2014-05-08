@@ -27,10 +27,10 @@ import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.repositories.MiseqRunRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileFilesystem;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sequencefile.MiseqRunSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sequencefile.SequenceFileOverrepresentedSequenceJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.impl.SequenceFileServiceImpl;
@@ -49,7 +49,7 @@ public class SequenceFileServiceImplTest {
 	private SequenceFileFilesystem fileRepository;
 	private SampleSequenceFileJoinRepository ssfRepository;
 	private SequenceFileOverrepresentedSequenceJoinRepository sfosRepository;
-	private MiseqRunSequenceFileJoinRepository mrsfRepository;
+	private MiseqRunRepository miseqRunRepository;
 	private Validator validator;
 
 	@Before
@@ -60,9 +60,9 @@ public class SequenceFileServiceImplTest {
 		fileRepository = mock(SequenceFileFilesystem.class);
 		ssfRepository = mock(SampleSequenceFileJoinRepository.class);
 		sfosRepository = mock(SequenceFileOverrepresentedSequenceJoinRepository.class);
-		mrsfRepository = mock(MiseqRunSequenceFileJoinRepository.class);
+		miseqRunRepository = mock(MiseqRunRepository.class);
 		sequenceFileService = new SequenceFileServiceImpl(crudRepository, fileRepository, ssfRepository,
-				sfosRepository, mrsfRepository, validator);
+				sfosRepository, miseqRunRepository, validator);
 	}
 
 	@Test

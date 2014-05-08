@@ -1,9 +1,9 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
@@ -28,7 +28,6 @@ import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -84,10 +83,9 @@ public class MiseqServiceImplIT {
 	private void testAddSequenceFileToMiseqRunAsRole(Role r) {
 		SequenceFile sf = asRole(r).sequenceFileService.read(1l);
 		MiseqRun miseqRun = asRole(r).miseqRunService.read(1l);
-		Join<MiseqRun, SequenceFile> j = asRole(r).miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
-		assertNotNull("Join was empty.", j);
-		assertEquals("Join had wrong sequence file.", sf, j.getObject());
-		assertEquals("Join had wrong miseq run.", miseqRun, j.getSubject());
+		asRole(r).miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
+		MiseqRun saved = asRole(r).miseqRunService.read(1l);
+		assertTrue("Saved miseq run should have seqence file", saved.getSequenceFiles().contains(sf));
 	}
 
 	@Test(expected = EntityExistsException.class)
@@ -107,10 +105,9 @@ public class MiseqServiceImplIT {
 		SequenceFile sf = asRole(Role.ROLE_ADMIN).sequenceFileService.read(2l);
 
 		try {
-			Join<MiseqRun, SequenceFile> j = asRole(Role.ROLE_ADMIN).miseqRunService.getMiseqRunForSequenceFile(sf);
+			MiseqRun j = asRole(Role.ROLE_ADMIN).miseqRunService.getMiseqRunForSequenceFile(sf);
 			assertNotNull("Join was empty.", j);
-			assertEquals("Join had wrong sequence file.", sf, j.getObject());
-			assertEquals("Join had wrong miseq run.", Long.valueOf(2l), j.getSubject().getId());
+			assertEquals("Join had wrong miseq run.", Long.valueOf(2l), j.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Test failed for unknown reason.");
@@ -133,18 +130,6 @@ public class MiseqServiceImplIT {
 	public void testReadMiseqRunAsSequencer() {
 		MiseqRun mr = asRole(Role.ROLE_SEQUENCER).miseqRunService.read(1L);
 		assertNotNull("Created run was not assigned an ID.", mr.getId());
-	}
-
-	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
-	public void testAddFileToMiseqRunAsSequencer() {
-		MiseqRun mr = asRole(Role.ROLE_SEQUENCER).miseqRunService.read(1L);
-		SequenceFile sf = asRole(Role.ROLE_SEQUENCER).sequenceFileService.read(1l);
-		Join<MiseqRun, SequenceFile> join = asRole(Role.ROLE_SEQUENCER).miseqRunService.addSequenceFileToMiseqRun(mr,
-				sf);
-		assertEquals("Wrong miseq run in join.", mr, join.getSubject());
-		assertEquals("Wrong sequence file in join.", sf, join.getObject());
 	}
 
 	@Test

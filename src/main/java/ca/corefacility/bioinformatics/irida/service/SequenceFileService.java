@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
@@ -71,7 +72,7 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 *            references from.
 	 * @return the references to {@link SequenceFile}.
 	 */
-	public List<Join<MiseqRun, SequenceFile>> getSequenceFilesForMiseqRun(MiseqRun miseqRun);
+	public Set<SequenceFile> getSequenceFilesForMiseqRun(MiseqRun miseqRun);
 
 	/**
 	 * Add an {@link OverrepresentedSequence} to a {@link SequenceFile}.

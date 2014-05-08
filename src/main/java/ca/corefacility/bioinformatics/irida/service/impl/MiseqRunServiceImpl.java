@@ -9,20 +9,17 @@ import javax.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.MiseqRunRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sequencefile.MiseqRunSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
 
 /**
@@ -33,21 +30,23 @@ import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
 public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> implements MiseqRunService {
 	private static final Logger logger = LoggerFactory.getLogger(MiseqRunServiceImpl.class);
 
-	private MiseqRunSequenceFileJoinRepository mrsfRepository;
 	private SampleSequenceFileJoinRepository ssfRepository;
 	private SampleRepository sampleRepository;
+	private MiseqRunRepository miseqRunRepository;
+	private SequenceFileRepository sequenceFileRepository;
 
 	protected MiseqRunServiceImpl() {
 		super(null, null, MiseqRun.class);
 	}
 
 	@Autowired
-	public MiseqRunServiceImpl(MiseqRunRepository repository, MiseqRunSequenceFileJoinRepository mrsfRepository,
+	public MiseqRunServiceImpl(MiseqRunRepository repository, SequenceFileRepository sequenceFileRepository,
 			SampleSequenceFileJoinRepository ssfRepository, SampleRepository sampleRepository, Validator validator) {
 		super(repository, validator, MiseqRun.class);
-		this.mrsfRepository = mrsfRepository;
+		this.miseqRunRepository = repository;
 		this.ssfRepository = ssfRepository;
 		this.sampleRepository = sampleRepository;
+		this.sequenceFileRepository = sequenceFileRepository;
 	}
 
 	/**
@@ -55,14 +54,11 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 	 */
 	@Override
 	@Transactional
-	public Join<MiseqRun, SequenceFile> addSequenceFileToMiseqRun(MiseqRun run, SequenceFile file) {
-		try {
-			MiseqRunSequenceFileJoin join = new MiseqRunSequenceFileJoin(run, file);
-			return mrsfRepository.save(join);
-		} catch (DataIntegrityViolationException e) {
-			throw new EntityExistsException("Sequence file [" + file.getId() + "] has already been added to MiseqRun ["
-					+ run.getId() + "]");
-		}
+	public void addSequenceFileToMiseqRun(MiseqRun runToAdd, SequenceFile file) {
+		// load the miseqRun from the database; the one we were passed lived outside of the current transaction.
+		MiseqRun run = miseqRunRepository.findOne(runToAdd.getId());
+		run.getSequenceFiles().add(file);
+		miseqRunRepository.save(run);
 	}
 
 	/**
@@ -70,8 +66,9 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public Join<MiseqRun, SequenceFile> getMiseqRunForSequenceFile(SequenceFile file) {
-		return mrsfRepository.getMiseqRunForSequenceFile(file);
+	public MiseqRun getMiseqRunForSequenceFile(SequenceFile file) {
+		SequenceFile loaded = sequenceFileRepository.findOne(file.getId());
+		return loaded.getMiseqRun();
 	}
 
 	@Override
@@ -90,11 +87,11 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 		logger.trace("Getting samples for miseq run " + id);
 		// Get the Files from the MiSeqRun to delete
 		MiseqRun read = read(id);
-		List<Join<MiseqRun, SequenceFile>> filesForMiseqRun = mrsfRepository.getFilesForMiseqRun(read);
+		Set<SequenceFile> filesForMiseqRun = read.getSequenceFiles();
 
 		//Get the Samples used in the MiSeqRun that is going to be deleted
-		for(Join<MiseqRun,SequenceFile> join : filesForMiseqRun){
-			Join<Sample, SequenceFile> sampleForSequenceFile = ssfRepository.getSampleForSequenceFile(join.getObject());
+		for(SequenceFile file : filesForMiseqRun){
+			Join<Sample, SequenceFile> sampleForSequenceFile = ssfRepository.getSampleForSequenceFile(file);
 			logger.trace("Sample " + sampleForSequenceFile.getSubject().getId() + " is used in this run");
 			referencedSamples.add(sampleForSequenceFile.getSubject());
 		}

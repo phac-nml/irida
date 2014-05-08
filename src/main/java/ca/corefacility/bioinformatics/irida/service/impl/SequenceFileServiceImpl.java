@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.validation.Validator;
 
@@ -23,10 +24,10 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileOverrepresentedSequenceJoin;
 import ca.corefacility.bioinformatics.irida.processing.annotations.ModifiesSequenceFile;
+import ca.corefacility.bioinformatics.irida.repositories.MiseqRunRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileFilesystem;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sequencefile.MiseqRunSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sequencefile.SequenceFileOverrepresentedSequenceJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
@@ -57,10 +58,11 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 * Reference to {@link SequenceFileOverrepresentedSequenceJoinRepository}.
 	 */
 	private SequenceFileOverrepresentedSequenceJoinRepository sfosRepository;
+	
 	/**
-	 * Reference to {@link MiseqRunSequenceFileJoinRepository}.
+	 * Reference to {@link MiseqRunRepository}
 	 */
-	private MiseqRunSequenceFileJoinRepository mrsfRepository;
+	private MiseqRunRepository miseqRunRepository;
 
 	protected SequenceFileServiceImpl() {
 		super(null, null, SequenceFile.class);
@@ -77,13 +79,12 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Autowired
 	public SequenceFileServiceImpl(SequenceFileRepository sequenceFileRepository,
 			SequenceFileFilesystem fileRepository, SampleSequenceFileJoinRepository ssfRepository,
-			SequenceFileOverrepresentedSequenceJoinRepository sfosRepository,
-			MiseqRunSequenceFileJoinRepository mrsfRepository, Validator validator) {
+			SequenceFileOverrepresentedSequenceJoinRepository sfosRepository, MiseqRunRepository miseqRunRepository, Validator validator) {
 		super(sequenceFileRepository, validator, SequenceFile.class);
 		this.fileRepository = fileRepository;
 		this.ssfRepository = ssfRepository;
 		this.sfosRepository = sfosRepository;
-		this.mrsfRepository = mrsfRepository;
+		this.miseqRunRepository = miseqRunRepository;
 	}
 
 	/**
@@ -187,8 +188,8 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<Join<MiseqRun, SequenceFile>> getSequenceFilesForMiseqRun(MiseqRun miseqRun) {
-		return mrsfRepository.getFilesForMiseqRun(miseqRun);
+	public Set<SequenceFile> getSequenceFilesForMiseqRun(MiseqRun miseqRun) {
+		return miseqRunRepository.findOne(miseqRun.getId()).getSequenceFiles();
 	}
 
 	@Override
