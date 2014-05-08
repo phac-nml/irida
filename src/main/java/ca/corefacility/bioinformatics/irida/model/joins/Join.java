@@ -1,7 +1,8 @@
 package ca.corefacility.bioinformatics.irida.model.joins;
 
+import java.util.Date;
+
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
-import ca.corefacility.bioinformatics.irida.model.Timestamped;
 
 /**
  * Interface that the join classes should extend. Classes that extend this can
@@ -16,8 +17,7 @@ import ca.corefacility.bioinformatics.irida.model.Timestamped;
  * @param <ObjectType>
  *            the type of the owned object
  */
-public interface Join<SubjectType extends IridaThing, ObjectType extends IridaThing>
-		extends Timestamped {
+public interface Join<SubjectType extends IridaThing, ObjectType extends IridaThing> {
 	/**
 	 * Get the owning object in the relationship.
 	 * 
@@ -47,4 +47,16 @@ public interface Join<SubjectType extends IridaThing, ObjectType extends IridaTh
 	 *            the owned object in the relationship.
 	 */
 	public void setObject(ObjectType object);
+	
+    /**
+     * Get the timestamp for this object
+     * @return A {@link Date} object of the timestamp
+     */
+    public Date getTimestamp();
+    
+    /**
+     * Set the timestamp for this object
+     * @param timestamp a {@link Date} timestamp to set for this object
+     */
+    public void setTimestamp(Date timestamp);
 }
