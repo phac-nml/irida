@@ -1,8 +1,8 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.validation.Validator;
 
@@ -85,24 +85,32 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 	@Override
 	@Transactional
 	public void delete(Long id) {
+		Set<Sample> referencedSamples = new HashSet<>();
+
 		logger.trace("Getting samples for miseq run " + id);
 		// Get the Files from the MiSeqRun to delete
 		MiseqRun read = read(id);
 		List<Join<MiseqRun, SequenceFile>> filesForMiseqRun = mrsfRepository.getFilesForMiseqRun(read);
 
-		// Get the Samples used in the MiSeqRun that is going to be deleted
-		Set<Sample> referencedSamples = filesForMiseqRun.stream()
-		// get a stream of samples related to the files
-				.map(j -> ssfRepository.getSampleForSequenceFile(j.getObject()).getSubject())
-				// convert the stream into a set of unique samples
-				.collect(Collectors.toSet());
+		//Get the Samples used in the MiSeqRun that is going to be deleted
+		for(Join<MiseqRun,SequenceFile> join : filesForMiseqRun){
+			Join<Sample, SequenceFile> sampleForSequenceFile = ssfRepository.getSampleForSequenceFile(join.getObject());
+			logger.trace("Sample " + sampleForSequenceFile.getSubject().getId() + " is used in this run");
+			referencedSamples.add(sampleForSequenceFile.getSubject());
+		}
+		
 
 		// Delete the run
 		logger.trace("Deleting MiSeq run");
 		super.delete(id);
 
-		// Search if samples are empty. If they are, delete the sample.
-		referencedSamples.stream().filter(s -> ssfRepository.getFilesForSample(s).isEmpty())
-				.forEach(s -> sampleRepository.delete(s.getId()));
+		//Search if samples are empty.  If they are, delete the sample.
+		for(Sample sample: referencedSamples){
+			List<Join<Sample, SequenceFile>> filesForSample = ssfRepository.getFilesForSample(sample);
+			if(filesForSample.isEmpty()){
+				logger.trace("Sample " + sample.getId() +" is empty.  Deleting sample");
+				sampleRepository.delete(sample.getId());
+			}
+		}
 	}
 }
