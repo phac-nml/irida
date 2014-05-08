@@ -13,6 +13,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -82,7 +83,8 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
     private String i5Index;
 	private Long fileRevisionNumber; //the filesystem file revision number
 	
-	@ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
+	@ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.REMOVE)
+	@JoinColumn(name = "miseqRun_id")
 	private MiseqRun miseqRun;
 	
 	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sequenceFile")
@@ -125,8 +127,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	public boolean equals(Object other) {
 		if (other instanceof SequenceFile) {
 			SequenceFile sampleFile = (SequenceFile) other;
-			return Objects.equals(file, sampleFile.file) && Objects.equals(createdDate, sampleFile.createdDate)
-					&& Objects.equals(modifiedDate, sampleFile.modifiedDate) && Objects.equals(id, sampleFile.id);
+			return Objects.equals(file, sampleFile.file);
 		}
 
 		return false;
@@ -134,7 +135,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(file, createdDate, modifiedDate, id);
+		return Objects.hash(file);
 	}
 
 	@Override

@@ -6,6 +6,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Set;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +87,8 @@ public class MiseqServiceImplIT {
 		MiseqRun miseqRun = asRole(r).miseqRunService.read(1l);
 		asRole(r).miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
 		MiseqRun saved = asRole(r).miseqRunService.read(1l);
-		assertTrue("Saved miseq run should have seqence file", saved.getSequenceFiles().contains(sf));
+		Set<SequenceFile> sequenceFilesForMiseqRun = sequenceFileService.getSequenceFilesForMiseqRun(saved);
+		assertTrue("Saved miseq run should have seqence file", sequenceFilesForMiseqRun.contains(sf));
 	}
 
 	@Test(expected = EntityExistsException.class)
@@ -106,7 +109,6 @@ public class MiseqServiceImplIT {
 
 		try {
 			MiseqRun j = asRole(Role.ROLE_ADMIN).miseqRunService.getMiseqRunForSequenceFile(sf);
-			assertNotNull("Join was empty.", j);
 			assertEquals("Join had wrong miseq run.", Long.valueOf(2l), j.getId());
 		} catch (Exception e) {
 			e.printStackTrace();

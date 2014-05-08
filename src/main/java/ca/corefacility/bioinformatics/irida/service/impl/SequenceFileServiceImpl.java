@@ -189,7 +189,10 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Override
 	@Transactional(readOnly = true)
 	public Set<SequenceFile> getSequenceFilesForMiseqRun(MiseqRun miseqRun) {
-		return miseqRunRepository.findOne(miseqRun.getId()).getSequenceFiles();
+		MiseqRun loaded = miseqRunRepository.findOne(miseqRun.getId());
+		// force hibernate to eager load the collection
+		loaded.getSequenceFiles().forEach(f -> f.getId());
+		return loaded.getSequenceFiles();
 	}
 
 	@Override

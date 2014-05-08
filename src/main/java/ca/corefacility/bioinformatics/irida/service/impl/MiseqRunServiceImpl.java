@@ -58,6 +58,7 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 		// load the miseqRun from the database; the one we were passed lived outside of the current transaction.
 		MiseqRun run = miseqRunRepository.findOne(runToAdd.getId());
 		run.getSequenceFiles().add(file);
+		file.setMiseqRun(run);
 		miseqRunRepository.save(run);
 	}
 
