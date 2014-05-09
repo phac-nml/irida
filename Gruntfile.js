@@ -236,6 +236,12 @@ module.exports = function (grunt) {
                 autoWatch: false,
                 singleRun: true
             },
+            dist: {
+                configFile: 'karma-phantom.conf.js',
+                autoWatch: false,
+                singleRun: true,
+                keepAlive: false
+            },
             auto: {
                 configFile: 'karma-unit.conf.js'
             },
@@ -396,7 +402,8 @@ module.exports = function (grunt) {
     ;
 
 // Single run tests
-    grunt.registerTask('test', ['jshint', 'karma:dev', 'test:e2e']);
+    grunt.registerTask('test', ['jshint', 'karma:dist']);
+    grunt.registerTask('testAll', ['jshint', 'karma:dev', 'test:e2e']);
     grunt.registerTask('test:e2e', [
         'clean:dist',
         'concurrent:dev',
