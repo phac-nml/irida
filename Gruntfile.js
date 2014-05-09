@@ -228,11 +228,6 @@ module.exports = function (grunt) {
             phantom: {
                 configFile: 'karma-phantom.conf.js'
             },
-            phantomWatch: {
-                configFile: 'karma-phantom.conf.js',
-                autowatch: false,
-                singleRun: true
-            },
             allBrowsers: {
                 configFile: 'karma-unit.conf.js',
                 autowatch: false,
@@ -375,8 +370,8 @@ module.exports = function (grunt) {
                 tasks: ['browserify:dev']
             },
             js: {
-                files: ['<%= path.app %>/static/scripts/*.js','<%= path.test %>/unit/**/*.js'],
-                tasks: ['newer:jshint:all', 'karma:phantomWatch'],
+                files: ['<%= path.app %>/static/scripts/*.js', '<%= path.test %>/unit/**/*.js'],
+                tasks: ['newer:jshint:all', 'karma:phantom'],
                 options: {
                     livereload: true
                 }
@@ -395,7 +390,7 @@ module.exports = function (grunt) {
     ;
 
 // Single run tests
-    grunt.registerTask('test', ['jshint', 'test:unit', 'test:e2e']);
+    grunt.registerTask('test', ['jshint', 'karma:phantom', 'test:e2e']);
     grunt.registerTask('test:e2e', [
         'clean:dist',
         'concurrent:dev',
@@ -405,11 +400,6 @@ module.exports = function (grunt) {
         'protractor:singleRun'
     ]);
     grunt.registerTask('test:unit', ['browserify:dev', 'karma:unit']);
-
-//autotest and watch tests
-    grunt.registerTask('autotest', ['karma:unit_auto']);
-    grunt.registerTask('autotest:unit', ['browserify:dev', 'karma:unit_auto']);
-    grunt.registerTask('autotest:e2e', ['browserify:dev', 'connect:testserver', 'shell:selenium', 'watch:protractor']);
 
 //coverage testing
     grunt.registerTask('test:coverage', ['browserify:dev', 'karma:unit_coverage']);
