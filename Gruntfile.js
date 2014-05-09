@@ -405,7 +405,7 @@ module.exports = function (grunt) {
         'protractor_webdriver',
         'protractor:singleRun'
     ]);
-    grunt.registerTask('test:unit', ['browserify:dev', 'karma:unit']);
+    grunt.registerTask('test:unit', ['browserify:dev', 'karma:dev']);
 
 //coverage testing
     grunt.registerTask('test:coverage', ['browserify:dev', 'karma:unit_coverage']);
