@@ -61,7 +61,7 @@ Maven
 
 1. During verify: `mvn verify -Pprod`
 
-#### Package (
+#### Package
 
 `mvn package -Pprod`
 
