@@ -10,9 +10,13 @@ module.exports = function (config) {
         basePath: '',
         frameworks: ['jasmine'],
         reporters: ['progress'],
-        browsers: ['Chrome', 'Firefox',],
-        autoWatch: true,
-        singleRun: false,
+        // web server port
+        port: 9876,
+        browsers: ['PhantomJS'],
+        // If browser does not capture in given timeout [ms], kill it
+        captureTimeout: 60000,
+        autoWatch: false,
+        singleRun: true,
         colors: true
     });
 };

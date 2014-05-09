@@ -16,6 +16,7 @@ Install Development Environment
 1. Install [NodeJS](http://www.nodejs.org)
 1. Install `grunt-cli`: `sudo npm -g install grunt-cli protractor`
 1. Install `sass` and `compass`: `sudo gem update; sudo gem install sass; sudo gem install compass;`
+1. Install Global NPM dependencies: `sudo npm install -g grunt-cli protractor bower browserify`;
 1. Install node packages: `sudo npm install`
 1. Install bower packages: `bower install`
 1. Update webdriver: `sudo webdriver-manager update`
@@ -44,10 +45,9 @@ Development
 
 #### Single Run Tests
 
-1. `grunt test`: run all tests once end exit.  Note: needs to have Jetty running `mvn jetty:run`.
+1. `grunt test`: run `jshint` and unit tests.
 1. `grunt test:e2e`: run end to end testing.  Note: needs to have Jetty running `mvn jetty:run`.
     - Connect browser to test to `http://localhost:9876/`
-1. `grunt test:unit`: run unit tests.
 
 #### Unit Test Coverage
 1. `grunt test:coverage`.
@@ -64,3 +64,4 @@ Maven
 #### Package
 
 `mvn package -Pprod`
+
