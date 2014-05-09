@@ -31,6 +31,9 @@ npm install &> ~/.irida-npm/npm-local.log;
 echo "Installing bower packages. (tailf ~/.irida-npm/bower.log)"
 bower install &> ~/.irida-npm/bower.log;
 
+echo "Creating the current front-end (tailf ~/.irida-npm/frontend-init.log)"
+grunt build &> ~/.irida-npm/frontend-init.log;
+
 # Update webdriver
 echo "Installing webdriver updates. (tailf ~/.irida-npm/webdriver.log)"
 webdriver-manager update &> ~/.irida-npm/webdriver.log;
