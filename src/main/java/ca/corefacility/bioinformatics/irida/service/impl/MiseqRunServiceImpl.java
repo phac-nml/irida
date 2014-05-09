@@ -32,7 +32,6 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 
 	private SampleSequenceFileJoinRepository ssfRepository;
 	private SampleRepository sampleRepository;
-	private MiseqRunRepository miseqRunRepository;
 	private SequenceFileRepository sequenceFileRepository;
 
 	protected MiseqRunServiceImpl() {
@@ -43,7 +42,6 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 	public MiseqRunServiceImpl(MiseqRunRepository repository, SequenceFileRepository sequenceFileRepository,
 			SampleSequenceFileJoinRepository ssfRepository, SampleRepository sampleRepository, Validator validator) {
 		super(repository, validator, MiseqRun.class);
-		this.miseqRunRepository = repository;
 		this.ssfRepository = ssfRepository;
 		this.sampleRepository = sampleRepository;
 		this.sequenceFileRepository = sequenceFileRepository;
@@ -54,12 +52,9 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 	 */
 	@Override
 	@Transactional
-	public void addSequenceFileToMiseqRun(MiseqRun runToAdd, SequenceFile file) {
-		// load the miseqRun from the database; the one we were passed lived outside of the current transaction.
-		MiseqRun run = miseqRunRepository.findOne(runToAdd.getId());
-		run.getSequenceFiles().add(file);
+	public void addSequenceFileToMiseqRun(MiseqRun run, SequenceFile file) {
 		file.setMiseqRun(run);
-		miseqRunRepository.save(run);
+		sequenceFileRepository.save(file);
 	}
 
 	/**
@@ -103,7 +98,7 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 		super.delete(id);
 
 		//Search if samples are empty.  If they are, delete the sample.
-		for(Sample sample: referencedSamples){
+		for(Sample sample : referencedSamples){
 			List<Join<Sample, SequenceFile>> filesForSample = ssfRepository.getFilesForSample(sample);
 			if(filesForSample.isEmpty()){
 				logger.trace("Sample " + sample.getId() +" is empty.  Deleting sample");

@@ -42,7 +42,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileOverrep
 @Table(name = "sequence_file")
 @Audited
 public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -76,21 +76,21 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	@Lob
 	private byte[] duplicationLevelChart;
 	private String samplePlate;
-    private String sampleWell;
-    private String i7IndexId;
-    private String i7Index;
-    private String i5IndexId;
-    private String i5Index;
-	private Long fileRevisionNumber; //the filesystem file revision number
-	
-	@ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.REMOVE)
+	private String sampleWell;
+	private String i7IndexId;
+	private String i7Index;
+	private String i5IndexId;
+	private String i5Index;
+	private Long fileRevisionNumber; // the filesystem file revision number
+
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "miseqRun_id")
 	private MiseqRun miseqRun;
-	
-	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sequenceFile")
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
 	private List<SampleSequenceFileJoin> samples;
-	
-	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sequenceFile")
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
 	private List<SequenceFileOverrepresentedSequenceJoin> overrepresentedSequences;
 
 	public SequenceFile() {
@@ -113,10 +113,10 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	}
 
 	@PostLoad
-	public void postLoad(){
+	public void postLoad() {
 		setRealPath();
 	}
-	
+
 	@PrePersist
 	@PreUpdate
 	public void prePersist() {
@@ -127,7 +127,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	public boolean equals(Object other) {
 		if (other instanceof SequenceFile) {
 			SequenceFile sampleFile = (SequenceFile) other;
-			return Objects.equals(file, sampleFile.file);
+			return Objects.equals(stringPath, sampleFile.stringPath);
 		}
 
 		return false;
@@ -135,7 +135,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(file);
+		return Objects.hash(stringPath);
 	}
 
 	@Override
@@ -266,13 +266,13 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	}
 
 	public void setStringPath() {
-		if(file != null){
-			 stringPath = file.toFile().toString();
+		if (file != null) {
+			stringPath = file.toFile().toString();
 		}
 	}
 
 	public void setRealPath() {
-		if(stringPath != null){
+		if (stringPath != null) {
 			file = Paths.get(stringPath);
 		}
 	}
@@ -320,53 +320,53 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 		this.modifiedDate = modifiedDate;
 	}
 
-public String getSamplePlate() {
-        return samplePlate;
-    }
+	public String getSamplePlate() {
+		return samplePlate;
+	}
 
-    public void setSamplePlate(String samplePlate) {
-        this.samplePlate = samplePlate;
-    }
+	public void setSamplePlate(String samplePlate) {
+		this.samplePlate = samplePlate;
+	}
 
-    public String getSampleWell() {
-        return sampleWell;
-    }
+	public String getSampleWell() {
+		return sampleWell;
+	}
 
-    public void setSampleWell(String sampleWell) {
-        this.sampleWell = sampleWell;
-    }
+	public void setSampleWell(String sampleWell) {
+		this.sampleWell = sampleWell;
+	}
 
-    public String getI7IndexId() {
-        return i7IndexId;
-    }
+	public String getI7IndexId() {
+		return i7IndexId;
+	}
 
-    public void setI7IndexId(String i7IndexId) {
-        this.i7IndexId = i7IndexId;
-    }
+	public void setI7IndexId(String i7IndexId) {
+		this.i7IndexId = i7IndexId;
+	}
 
-    public String getI7Index() {
-        return i7Index;
-    }
+	public String getI7Index() {
+		return i7Index;
+	}
 
-    public void setI7Index(String i7Index) {
-        this.i7Index = i7Index;
-    }
+	public void setI7Index(String i7Index) {
+		this.i7Index = i7Index;
+	}
 
-    public String getI5IndexId() {
-        return i5IndexId;
-    }
+	public String getI5IndexId() {
+		return i5IndexId;
+	}
 
-    public void setI5IndexId(String i5IndexId) {
-        this.i5IndexId = i5IndexId;
-    }
+	public void setI5IndexId(String i5IndexId) {
+		this.i5IndexId = i5IndexId;
+	}
 
-    public String getI5Index() {
-        return i5Index;
-    }
+	public String getI5Index() {
+		return i5Index;
+	}
 
-    public void setI5Index(String i5Index) {
-        this.i5Index = i5Index;
-    }
+	public void setI5Index(String i5Index) {
+		this.i5Index = i5Index;
+	}
 
 	public Long getFileRevisionNumber() {
 		return fileRevisionNumber;
@@ -375,7 +375,7 @@ public String getSamplePlate() {
 	public void setFileRevisionNumber(Long fileRevisionNumber) {
 		this.fileRevisionNumber = fileRevisionNumber;
 	}
-	
+
 	public MiseqRun getMiseqRun() {
 		return miseqRun;
 	}

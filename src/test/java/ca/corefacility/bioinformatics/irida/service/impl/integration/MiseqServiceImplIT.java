@@ -91,16 +91,6 @@ public class MiseqServiceImplIT {
 		assertTrue("Saved miseq run should have seqence file", sequenceFilesForMiseqRun.contains(sf));
 	}
 
-	@Test(expected = EntityExistsException.class)
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
-	public void testAddSequenceFileToMiseqRunMultiple() {
-		SequenceFile sf = asRole(Role.ROLE_SEQUENCER).sequenceFileService.read(1l);
-		MiseqRun miseqRun = asRole(Role.ROLE_SEQUENCER).miseqRunService.read(1l);
-		asRole(Role.ROLE_SEQUENCER).miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
-		asRole(Role.ROLE_SEQUENCER).miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
-	}
-
 	@Test
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
 	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")

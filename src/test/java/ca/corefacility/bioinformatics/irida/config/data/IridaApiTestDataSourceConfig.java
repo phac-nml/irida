@@ -43,7 +43,7 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 	@Bean
 	public JpaVendorAdapter jpaVendorAdapter() {
 		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
-		adapter.setShowSql(false);
+		adapter.setShowSql(true);
 		adapter.setGenerateDdl(true);
 		adapter.setDatabase(Database.HSQL);
 		return adapter;

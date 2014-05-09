@@ -14,9 +14,9 @@
 	<miseq_run id="3" />
 	
 	<sequence_file id="1" miseqRun_id="3" filePath="/FileThatMayNotExist"/>
-	<sequence_file id="2" miseqRun_id="2" filePath="/FileThatMayNotExist"/>
-	<sequence_file id="3" miseqRun_id="3" filePath="/FileThatMayNotExist"/>
-	<sequence_file id="4" miseqRun_id="3" filePath="/FileThatMayNotExist"/>
+	<sequence_file id="2" miseqRun_id="2" filePath="/FileThatMayNotExist1"/>
+	<sequence_file id="3" miseqRun_id="3" filePath="/FileThatMayNotExist2"/>
+	<sequence_file id="4" miseqRun_id="3" filePath="/FileThatMayNotExist3"/>
 	
 	<sample id="1" sampleName="sample" externalSampleId="sample1"/>
 	<sample id="2" sampleName="sample" externalSampleId="sample2"/>

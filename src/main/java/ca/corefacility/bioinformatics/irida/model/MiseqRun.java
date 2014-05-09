@@ -56,7 +56,7 @@ public class MiseqRun implements IridaThing, Comparable<MiseqRun>{
     @Temporal(TemporalType.TIMESTAMP)
     private Date modifiedDate;
 	
-	@OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.REMOVE, CascadeType.MERGE }, mappedBy = "miseqRun")
+	@OneToMany(fetch = FetchType.LAZY, cascade =  { CascadeType.REMOVE, CascadeType.MERGE }, mappedBy = "miseqRun", orphanRemoval = true)
 	private Set<SequenceFile> sequenceFiles;
 
     public MiseqRun(){
