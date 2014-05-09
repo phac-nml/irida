@@ -7,6 +7,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -195,6 +197,11 @@ public class SampleServiceImplTest {
 	private SequenceFile sf(Long id) {
 		SequenceFile sf = new SequenceFile();
 		sf.setId(id);
+		try {
+			sf.setFile(Files.createTempFile(null, null));
+		} catch (IOException e) {
+			
+		}
 		return sf;
 	}
 

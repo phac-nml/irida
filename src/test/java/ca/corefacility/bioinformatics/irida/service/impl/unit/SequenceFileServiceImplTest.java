@@ -68,9 +68,10 @@ public class SequenceFileServiceImplTest {
 	@Test
 	public void testCreateFile() throws IOException, NoSuchFieldException {
 		Path f = Files.createTempFile(null, null);
+		Path f2 = Files.createTempFile(null, null);
 
 		SequenceFile sf = new SequenceFile(f);
-		SequenceFile withIdentifier = new SequenceFile(f);
+		SequenceFile withIdentifier = new SequenceFile(f2);
 		withIdentifier.setId(new Long(1111));
 		when(crudRepository.save(sf)).thenReturn(withIdentifier);
 		when(fileRepository.writeSequenceFileToDisk(withIdentifier)).thenReturn(withIdentifier);
@@ -89,6 +90,7 @@ public class SequenceFileServiceImplTest {
 		verify(crudRepository).exists(withIdentifier.getId());
 		verify(crudRepository).findOne(withIdentifier.getId());
 		Files.delete(f);
+		Files.delete(f2);
 	}
 
 	@Test
