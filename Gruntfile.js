@@ -108,7 +108,8 @@ module.exports = function (grunt) {
         concurrent: {
             dev: [
                 'copy:dev',
-                'compass:dev'
+                'compass:dev',
+                'browserify:dev'
             ],
             dist: [
                 'compass:dist'
@@ -225,22 +226,22 @@ module.exports = function (grunt) {
         },
         // Karma Testing
         karma: {
-            phantom: {
-                configFile: 'karma-phantom.conf.js'
-            },
             allBrowsers: {
                 configFile: 'karma-unit.conf.js',
-                autowatch: false,
+                autoWatch: false,
                 singleRun: true
             },
-            unit_auto: {
-                configFile: 'karma-unit.conf.js',
-                autowatch: true,
-                singleRun: false
+            dev: {
+                configFile: 'karma-phantom.conf.js',
+                autoWatch: false,
+                singleRun: true
+            },
+            auto: {
+                configFile: 'karma-unit.conf.js'
             },
             unit_coverage: {
                 configFile: 'karma-unit.conf.js',
-                autowatch: false,
+                autoWatch: false,
                 singleRun: true,
                 reporters: ['progress', 'coverage'],
                 preprocessors: {
@@ -276,11 +277,9 @@ module.exports = function (grunt) {
             singleRun: {
             },
             auto: {
-                keepAlive: true,
                 options: {
-                    args: {
-                        seleniumPort: 4444
-                    }
+                    keepAlive: true,
+                    singleRun: false
                 }
             }
         },
@@ -367,14 +366,21 @@ module.exports = function (grunt) {
             },
             browserify: {
                 files: ['<%= path.app %>/scripts/**/*.js'],
-                tasks: ['browserify:dev']
-            },
-            js: {
-                files: ['<%= path.app %>/static/scripts/*.js', '<%= path.test %>/unit/**/*.js'],
-                tasks: ['newer:jshint:all', 'karma:phantom'],
+                tasks: ['browserify:dev', 'karma:dev'],
                 options: {
                     livereload: true
                 }
+            },
+            js: {
+                files: ['<%= path.app %>/static/scripts/*.js', '<%= path.test %>/unit/**/*.js'],
+                tasks: ['newer:jshint:all'],
+                options: {
+                    livereload: true
+                }
+            },
+            jsTest: {
+                files: ['<%= path.test %>/unit/**/*.js'],
+                tasks: ['karma:dev']
             },
             livereload: {
                 options: {
@@ -390,7 +396,7 @@ module.exports = function (grunt) {
     ;
 
 // Single run tests
-    grunt.registerTask('test', ['jshint', 'karma:phantom', 'test:e2e']);
+    grunt.registerTask('test', ['jshint', 'karma:dev', 'test:e2e']);
     grunt.registerTask('test:e2e', [
         'clean:dist',
         'concurrent:dev',
@@ -410,9 +416,9 @@ module.exports = function (grunt) {
         'clean:dist',
         'concurrent:dev',
         'autoprefixer:dev',
-        'browserify:dev',
         'configureProxies',
         'connect:livereload',
+        'protractor_webdriver',
         'watch'
     ]);
 

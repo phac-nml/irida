@@ -64,3 +64,10 @@ Maven
 #### Package
 
 `mvn package -Pprod`
+
+
+vm's
+====
+
+1. Install Virtual Box
+1. `curl -s https://raw.githubusercontent.com/xdissent/ievms/master/ievms.sh | env IEVMS_VERSIONS="8 9 10 11" bash`

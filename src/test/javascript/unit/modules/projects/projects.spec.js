@@ -12,7 +12,7 @@ describe('irida.projects', function () {
         }));
 
         it('should have a title', function () {
-            expect($scope.data.title).toBe("Right Said Fred!!");
+            expect($scope.data.title).toBe("Right Said Fred!");
         });
     });
 });

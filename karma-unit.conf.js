@@ -10,9 +10,9 @@ module.exports = function (config) {
         basePath: '',
         frameworks: ['jasmine'],
         reporters: ['progress'],
-        browsers: ['Chrome', 'Firefox', 'IE8 - WinXP'],
-        autoWatch: false,
-        singleRun: true,
+        browsers: ['Chrome', 'Firefox',],
+        autoWatch: true,
+        singleRun: false,
         colors: true
     });
 };

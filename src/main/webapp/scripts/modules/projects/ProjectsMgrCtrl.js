@@ -1,6 +1,6 @@
 module.exports = function ($scope) {
     'use strict';
     $scope.data = {
-        title: 'Right Said Fred!!'
+        title: 'Right Said Fred!'
     };
 };
