@@ -57,7 +57,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
-	@Column(name = "filePath")
+	@Column(name = "filePath", unique = true)
 	private String stringPath;
 
 	/* statistics computed by fastqc */
