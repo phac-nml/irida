@@ -53,7 +53,8 @@ module.exports = function (grunt) {
             dev: {
                 files: {
                     '<%= path.static %>/scripts/login.js': ['<%= path.app %>/scripts/login.js'],
-                    '<%= path.static %>/scripts/dashboard.js': ['<%= path.app %>/scripts/dashboard.js']
+                    '<%= path.static %>/scripts/dashboard.js': ['<%= path.app %>/scripts/dashboard.js'],
+                    '<%= path.static %>/scripts/projects.js': ['<%= path.app %>/scripts/projects.js']
                 }
             }
         },

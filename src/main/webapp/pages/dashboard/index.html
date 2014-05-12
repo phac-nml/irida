@@ -3,7 +3,7 @@
       lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <title></title>
+    <title>DASHBOARD</title>
     <!-- build:css styles/vendor.css -->
     <link rel="stylesheet" href="/bower_components/bootstrap-css/css/bootstrap.min.css"/>
     <!-- endbuild -->
@@ -13,10 +13,10 @@
     <!-- endbuild -->
 </head>
 <body ng-app="irida.dashboard">
-<h1 th:text="#{dashboard.welcome}">Hello Jello</h1>
+<h1 id="title" th:text="#{dashboard.welcome}">Hello Jello</h1>
 <h2 th:text="${hello}">BOB</h2>
 
-
+<script src="../../bower_components/angular/angular.min.js"></script>
 <!-- build:js scripts/dashboard.js -->
 <script src="/scripts/dashboard.js"></script>
 <!-- endbuild -->

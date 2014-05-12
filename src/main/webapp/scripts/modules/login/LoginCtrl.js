@@ -1,9 +1,8 @@
-module.exports = function ($location) {
+module.exports = function ($scope, $location) {
     'use strict';
-    var ctrl = this;
 
-    ctrl.error = false;
+    $scope.error = false;
     if ($location.absUrl().search('error') > -1) {
-        ctrl.error = true;
+        $scope.error = true;
     }
 };

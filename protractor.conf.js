@@ -20,7 +20,7 @@ exports.config = {
         'phantomjs.cli.args': ['--debug=true', '--webdriver-logfile=webdriver.log', '--webdriver-loglevel=DEBUG']
     },
 
-    specs: ['src/test/javascript/e2e/**/*_spec.js'],
+    specs: ['src/test/javascript/e2e/**/*.spec.js'],
 
     baseUrl: 'http://localhost:8080',
 

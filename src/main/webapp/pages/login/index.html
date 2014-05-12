@@ -3,7 +3,7 @@
       lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <title></title>
+    <title th:text="login.page.title">LOGIN</title>
     <!-- build:css styles/vendor.css -->
     <link rel="stylesheet" href="../../bower_components/bootstrap-css/css/bootstrap.min.css"/>
     <!-- endbuild -->
@@ -17,8 +17,8 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-lg-4 col-lg-offset-4 col-sm-8 col-sm-offset-2 panel panel-primary" ng-controller="LoginCtrl as ctrl">
-            <h1 th:text="#{irida.welcome}">HELLO JELLO</h1>
+        <div class="col-lg-4 col-lg-offset-4 col-sm-8 col-sm-offset-2 panel panel-primary" ng-controller="LoginCtrl">
+            <h1 id="title" th:text="#{irida.welcome}">HELLO JELLO</h1>
             <form class="form-signin" method="post" action="/login">
                 <h3 class="muted form-signin-heading">Please sign in</h3>
                 <div class="form-group" ng-class="{'has-error': ctrl.error}">
@@ -29,12 +29,13 @@
                     <label class="control-label" for="password">Password</label>
                     <input id="password" ng-model="password" type="password" class="form-control" placeholder="Password" name="password"/></div>
                 <button class="btn btn-success btn-block" type="submit">Sign in</button>
-                <div class="alert alert-danger" ng-show="ctrl.error">Incorrect Email or Password</div>
+                <div class="alert alert-danger" ng-show="error">Incorrect Email or Password</div>
             </form>
         </div>
     </div>
 </div>
 
+<script src="../../bower_components/angular/angular.min.js"></script>
 <!-- build:js scripts/login.js -->
 <script src="/scripts/login.js"></script>
 <!-- endbuild -->
