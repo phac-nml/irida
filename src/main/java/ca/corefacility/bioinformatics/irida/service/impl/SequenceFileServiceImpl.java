@@ -22,13 +22,12 @@ import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileOverrepresentedSequenceJoin;
 import ca.corefacility.bioinformatics.irida.processing.annotations.ModifiesSequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.MiseqRunRepository;
+import ca.corefacility.bioinformatics.irida.repositories.OverrepresentedSequenceRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileFilesystem;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sequencefile.SequenceFileOverrepresentedSequenceJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 import com.google.common.collect.ImmutableMap;
@@ -54,15 +53,13 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 * Reference to {@link SampleSequenceFileJoinRepository}.
 	 */
 	private SampleSequenceFileJoinRepository ssfRepository;
-	/**
-	 * Reference to {@link SequenceFileOverrepresentedSequenceJoinRepository}.
-	 */
-	private SequenceFileOverrepresentedSequenceJoinRepository sfosRepository;
-	
+
 	/**
 	 * Reference to {@link MiseqRunRepository}
 	 */
 	private MiseqRunRepository miseqRunRepository;
+
+	private OverrepresentedSequenceRepository overrepresentedSequenceRepository;
 
 	protected SequenceFileServiceImpl() {
 		super(null, null, SequenceFile.class);
@@ -79,12 +76,13 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Autowired
 	public SequenceFileServiceImpl(SequenceFileRepository sequenceFileRepository,
 			SequenceFileFilesystem fileRepository, SampleSequenceFileJoinRepository ssfRepository,
-			SequenceFileOverrepresentedSequenceJoinRepository sfosRepository, MiseqRunRepository miseqRunRepository, Validator validator) {
+			OverrepresentedSequenceRepository overrepresentedSequenceRepository, MiseqRunRepository miseqRunRepository,
+			Validator validator) {
 		super(sequenceFileRepository, validator, SequenceFile.class);
 		this.fileRepository = fileRepository;
 		this.ssfRepository = ssfRepository;
-		this.sfosRepository = sfosRepository;
 		this.miseqRunRepository = miseqRunRepository;
+		this.overrepresentedSequenceRepository = overrepresentedSequenceRepository;
 	}
 
 	/**
@@ -134,7 +132,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@ModifiesSequenceFile
 	public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
 		if (updatedFields.containsKey("fileRevisionNumber")) {
-			throw new InvalidPropertyException("File revision number cannot be updated manually.",SequenceFile.class);
+			throw new InvalidPropertyException("File revision number cannot be updated manually.", SequenceFile.class);
 		}
 
 		ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
@@ -196,9 +194,9 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	}
 
 	@Override
-	@Transactional(readOnly = true)
-	public Join<SequenceFile, OverrepresentedSequence> addOverrepresentedSequenceToSequenceFile(
-			SequenceFile sequenceFile, OverrepresentedSequence sequence) {
-		return sfosRepository.save(new SequenceFileOverrepresentedSequenceJoin(sequenceFile, sequence));
+	@Transactional
+	public void addOverrepresentedSequenceToSequenceFile(SequenceFile sequenceFile, OverrepresentedSequence sequence) {
+		sequence.setSequenceFile(sequenceFile);
+		overrepresentedSequenceRepository.save(sequence);
 	}
 }

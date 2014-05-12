@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -29,7 +30,6 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.envers.Audited;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileOverrepresentedSequenceJoin;
 
 /**
  * A file that may be stored somewhere on the file system and belongs to a
@@ -90,8 +90,8 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
 	private List<SampleSequenceFileJoin> samples;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
-	private List<SequenceFileOverrepresentedSequenceJoin> overrepresentedSequences;
+	@OneToMany(fetch = FetchType.LAZY, cascade =  { CascadeType.REMOVE, CascadeType.MERGE }, mappedBy = "sequenceFile", orphanRemoval = true)
+	private Set<OverrepresentedSequence> overrepresentedSequences;
 
 	public SequenceFile() {
 		createdDate = new Date();
@@ -392,11 +392,11 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 		this.samples = samples;
 	}
 
-	public List<SequenceFileOverrepresentedSequenceJoin> getOverrepresentedSequences() {
+	public Set<OverrepresentedSequence> getOverrepresentedSequences() {
 		return overrepresentedSequences;
 	}
 
-	public void setOverrepresentedSequences(List<SequenceFileOverrepresentedSequenceJoin> overrepresentedSequences) {
+	public void setOverrepresentedSequences(Set<OverrepresentedSequence> overrepresentedSequences) {
 		this.overrepresentedSequences = overrepresentedSequences;
 	}
 }

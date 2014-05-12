@@ -80,8 +80,7 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 * @param sequenceFile
 	 * @param sequence
 	 */
-	public Join<SequenceFile, OverrepresentedSequence> addOverrepresentedSequenceToSequenceFile(
-			SequenceFile sequenceFile, OverrepresentedSequence sequence);
+	public void addOverrepresentedSequenceToSequenceFile(SequenceFile sequenceFile, OverrepresentedSequence sequence);
 
 	/**
 	 * Update a {@link SequenceFile} without calling the file processors.

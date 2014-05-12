@@ -28,10 +28,10 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.MiseqRunRepository;
+import ca.corefacility.bioinformatics.irida.repositories.OverrepresentedSequenceRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileFilesystem;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sequencefile.SequenceFileOverrepresentedSequenceJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.impl.SequenceFileServiceImpl;
 
@@ -48,7 +48,7 @@ public class SequenceFileServiceImplTest {
 	private SequenceFileRepository crudRepository;
 	private SequenceFileFilesystem fileRepository;
 	private SampleSequenceFileJoinRepository ssfRepository;
-	private SequenceFileOverrepresentedSequenceJoinRepository sfosRepository;
+	private OverrepresentedSequenceRepository overrepresentedSequenceRepository;
 	private MiseqRunRepository miseqRunRepository;
 	private Validator validator;
 
@@ -59,10 +59,10 @@ public class SequenceFileServiceImplTest {
 		crudRepository = mock(SequenceFileRepository.class);
 		fileRepository = mock(SequenceFileFilesystem.class);
 		ssfRepository = mock(SampleSequenceFileJoinRepository.class);
-		sfosRepository = mock(SequenceFileOverrepresentedSequenceJoinRepository.class);
+		overrepresentedSequenceRepository = mock(OverrepresentedSequenceRepository.class);
 		miseqRunRepository = mock(MiseqRunRepository.class);
 		sequenceFileService = new SequenceFileServiceImpl(crudRepository, fileRepository, ssfRepository,
-				sfosRepository, miseqRunRepository, validator);
+				overrepresentedSequenceRepository, miseqRunRepository, validator);
 	}
 
 	@Test
