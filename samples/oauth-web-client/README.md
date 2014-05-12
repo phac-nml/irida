@@ -6,7 +6,6 @@ Requirements
 ------------
 * Maven.
 * An installation of the IRIDA API version 1.5 or higher that supports OAuth2 authorization_code clients.
-* A client and client_secret set up in the src/main/resources/oauth2.properties file that matches a client in the installed IRIDA API.
 
 Running
 -------
