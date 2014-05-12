@@ -47,36 +47,32 @@ import com.sun.jersey.api.client.ClientResponse;
 
 /**
  * A class defining an API for uploading samples to a remote Galaxy instance.
+ * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyAPI {
-	
+
 	/**
 	 * Sets default filetype for fastq files uploaded to Galaxy libraries.
 	 */
 	private static final String DEFAULT_FILE_TYPE = "fastqsanger";
-	
-	private static final Logger logger = LoggerFactory
-			.getLogger(GalaxyAPI.class);
 
-	private static final GalaxyFolderName ILLUMINA_FOLDER_NAME = new GalaxyFolderName(
-			"illumina_reads");
-	private static final GalaxyFolderName REFERENCES_FOLDER_NAME = new GalaxyFolderName(
-			"references");
-	private static final GalaxyFolderPath ILLUMINA_FOLDER_PATH = new GalaxyFolderPath(
-			"/illumina_reads");
-	private static final GalaxyFolderPath REFERENCES_FOLDER_PATH = new GalaxyFolderPath(
-			"/references");
+	private static final Logger logger = LoggerFactory.getLogger(GalaxyAPI.class);
+
+	private static final GalaxyFolderName ILLUMINA_FOLDER_NAME = new GalaxyFolderName("illumina_reads");
+	private static final GalaxyFolderName REFERENCES_FOLDER_NAME = new GalaxyFolderName("references");
+	private static final GalaxyFolderPath ILLUMINA_FOLDER_PATH = new GalaxyFolderPath("/illumina_reads");
+	private static final GalaxyFolderPath REFERENCES_FOLDER_PATH = new GalaxyFolderPath("/references");
 
 	private GalaxyInstance galaxyInstance;
 	private GalaxyAccountEmail adminEmail;
 	private GalaxySearch galaxySearchAdmin;
 	private GalaxyLibraryBuilder galaxyLibrary;
 	private Uploader.DataStorage dataStorage = Uploader.DataStorage.REMOTE;
-	
+
 	private List<UploadEventListener> eventListeners = new LinkedList<UploadEventListener>();
-	
+
 	/**
 	 * Builds a new GalaxyAPI instance with the given information.
 	 * 
@@ -92,31 +88,26 @@ public class GalaxyAPI {
 	 * @throws GalaxyConnectException
 	 *             If an error occred when connecting to Galaxy.
 	 */
-	public GalaxyAPI(URL galaxyURL, @Valid GalaxyAccountEmail adminEmail,
-			String adminAPIKey) throws ConstraintViolationException,
-			GalaxyConnectException {
+	public GalaxyAPI(URL galaxyURL, @Valid GalaxyAccountEmail adminEmail, String adminAPIKey)
+			throws ConstraintViolationException, GalaxyConnectException {
 		checkNotNull(galaxyURL, "galaxyURL is null");
 		checkNotNull(adminEmail, "adminEmail is null");
 		checkNotNull(adminAPIKey, "apiKey is null");
 
-		galaxyInstance = GalaxyInstanceFactory.get(galaxyURL.toString(),
-				adminAPIKey);
+		galaxyInstance = GalaxyInstanceFactory.get(galaxyURL.toString(), adminAPIKey);
 		this.adminEmail = adminEmail;
 
 		if (galaxyInstance == null) {
-			throw new RuntimeException(
-					"Could not create GalaxyInstance with URL=" + galaxyURL
-							+ ", adminEmail=" + adminEmail);
+			throw new RuntimeException("Could not create GalaxyInstance with URL=" + galaxyURL + ", adminEmail="
+					+ adminEmail);
 		}
 
 		galaxySearchAdmin = new GalaxySearch(galaxyInstance);
-		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance,
-				galaxySearchAdmin);
+		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxySearchAdmin);
 
 		if (!isConnected()) {
-			throw new GalaxyConnectException(
-					"Could not create GalaxyInstance with URL=" + galaxyURL
-							+ ", adminEmail=" + adminEmail);
+			throw new GalaxyConnectException("Could not create GalaxyInstance with URL=" + galaxyURL + ", adminEmail="
+					+ adminEmail);
 		}
 	}
 
@@ -134,8 +125,7 @@ public class GalaxyAPI {
 	 * @throws GalaxyConnectException
 	 *             If an issue connecting to Galaxy occurred.
 	 */
-	public GalaxyAPI(GalaxyInstance galaxyInstance,
-			@Valid GalaxyAccountEmail adminEmail)
+	public GalaxyAPI(GalaxyInstance galaxyInstance, @Valid GalaxyAccountEmail adminEmail)
 			throws ConstraintViolationException, GalaxyConnectException {
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
 		checkNotNull(adminEmail, "adminEmail is null");
@@ -144,14 +134,11 @@ public class GalaxyAPI {
 		this.adminEmail = adminEmail;
 
 		galaxySearchAdmin = new GalaxySearch(galaxyInstance);
-		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance,
-				galaxySearchAdmin);
+		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxySearchAdmin);
 
 		if (!isConnected()) {
-			throw new GalaxyConnectException(
-					"Could not create GalaxyInstance with URL="
-							+ galaxyInstance.getGalaxyUrl()
-							+ ", adminEmail=" + adminEmail);
+			throw new GalaxyConnectException("Could not create GalaxyInstance with URL="
+					+ galaxyInstance.getGalaxyUrl() + ", adminEmail=" + adminEmail);
 		}
 	}
 
@@ -176,10 +163,8 @@ public class GalaxyAPI {
 	 * @throws GalaxyConnectException
 	 *             If an issue connecting to Galaxy occurred.
 	 */
-	public GalaxyAPI(GalaxyInstance galaxyInstance,
-			@Valid GalaxyAccountEmail adminEmail, GalaxySearch galaxySearch,
-			GalaxyLibraryBuilder galaxyLibrary)
-			throws ConstraintViolationException, GalaxyConnectException {
+	public GalaxyAPI(GalaxyInstance galaxyInstance, @Valid GalaxyAccountEmail adminEmail, GalaxySearch galaxySearch,
+			GalaxyLibraryBuilder galaxyLibrary) throws ConstraintViolationException, GalaxyConnectException {
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
 		checkNotNull(adminEmail, "adminEmail is null");
 		checkNotNull(galaxySearch, "galaxySearch is null");
@@ -192,10 +177,8 @@ public class GalaxyAPI {
 		this.galaxySearchAdmin = galaxySearch;
 
 		if (!isConnected()) {
-			throw new GalaxyConnectException(
-					"Could not use GalaxyInstance with URL="
-							+ galaxyInstance.getGalaxyUrl()
-							+ ", adminEmail=" + adminEmail);
+			throw new GalaxyConnectException("Could not use GalaxyInstance with URL=" + galaxyInstance.getGalaxyUrl()
+					+ ", adminEmail=" + adminEmail);
 		}
 	}
 
@@ -220,45 +203,44 @@ public class GalaxyAPI {
 	 * @throws GalaxyUserNoRoleException
 	 *             If the passed Galaxy user has no role.
 	 */
-	public Library buildGalaxyLibrary(@Valid GalaxyProjectName libraryName,
-			@Valid GalaxyAccountEmail galaxyUserEmail)
-			throws CreateLibraryException, ConstraintViolationException,
-			ChangeLibraryPermissionsException, GalaxyUserNotFoundException,
-			GalaxyUserNoRoleException {
+	public Library buildGalaxyLibrary(@Valid GalaxyProjectName libraryName, @Valid GalaxyAccountEmail galaxyUserEmail)
+			throws CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException,
+			GalaxyUserNotFoundException, GalaxyUserNoRoleException {
 		checkNotNull(libraryName, "libraryName is null");
 		checkNotNull(galaxyUserEmail, "galaxyUser is null");
 
-		logger.debug("Attempt to create new library=" + libraryName
-				+ " owned by user=" + galaxyUserEmail + " under Galaxy url="
-				+ galaxyInstance.getGalaxyUrl());
+		logger.debug("Attempt to create new library=" + libraryName + " owned by user=" + galaxyUserEmail
+				+ " under Galaxy url=" + galaxyInstance.getGalaxyUrl());
 
-		// make sure user exists and has a role before we create an empty library
+		// make sure user exists and has a role before we create an empty
+		// library
 		if (!galaxySearchAdmin.galaxyUserExists(galaxyUserEmail)) {
 			throw new GalaxyUserNotFoundException(galaxyUserEmail, getGalaxyUrl());
 		}
 
 		if (!galaxySearchAdmin.userRoleExistsFor(galaxyUserEmail)) {
-			throw new GalaxyUserNoRoleException(
-					"Could not find role for Galaxy user with email="
-							+ galaxyUserEmail);
+			throw new GalaxyUserNoRoleException("Could not find role for Galaxy user with email=" + galaxyUserEmail);
 		}
 
 		Library library = galaxyLibrary.buildEmptyLibrary(libraryName);
 
-		return galaxyLibrary.changeLibraryOwner(library, galaxyUserEmail,
-				adminEmail);
+		return galaxyLibrary.changeLibraryOwner(library, galaxyUserEmail, adminEmail);
 	}
 
 	/**
 	 * Uploads the given file to the given library and LibraryFolder in Galaxy.
-	 * @param folder  The folder to place the file in Galaxy.
-	 * @param file  The file to upload.
-	 * @param librariesClient  The client used to connect to the Libraries Galaxy API. 
-	 * @param library  The library to upload the file to.
-	 * @return  A ClientResponse describing the status of the upload.
+	 * 
+	 * @param folder
+	 *            The folder to place the file in Galaxy.
+	 * @param file
+	 *            The file to upload.
+	 * @param librariesClient
+	 *            The client used to connect to the Libraries Galaxy API.
+	 * @param library
+	 *            The library to upload the file to.
+	 * @return A ClientResponse describing the status of the upload.
 	 */
-	private ClientResponse uploadFile(LibraryFolder folder, File file,
-			LibrariesClient librariesClient, Library library) {
+	private ClientResponse uploadFile(LibraryFolder folder, File file, LibrariesClient librariesClient, Library library) {
 		FilesystemPathsLibraryUpload upload = new FilesystemPathsLibraryUpload();
 		upload.setFolderId(folder.getId());
 
@@ -267,15 +249,18 @@ public class GalaxyAPI {
 		upload.setLinkData(DataStorage.LOCAL.equals(dataStorage));
 		upload.setFileType(DEFAULT_FILE_TYPE);
 
-		return librariesClient.uploadFilesystemPathsRequest(library.getId(),
-				upload);
+		return librariesClient.uploadFilesystemPathsRequest(library.getId(), upload);
 	}
 
 	/**
-	 * Constructs a String describing the path of the given sample within the given folder.
-	 * @param rootFolder  The folder the sample will be located within.
-	 * @param sample  The sample to find the path for.
-	 * @return  A String describing the path of the sample.
+	 * Constructs a String describing the path of the given sample within the
+	 * given folder.
+	 * 
+	 * @param rootFolder
+	 *            The folder the sample will be located within.
+	 * @param sample
+	 *            The sample to find the path for.
+	 * @return A String describing the path of the sample.
 	 */
 	private String samplePath(LibraryFolder rootFolder, UploadSample sample) {
 		String rootFolderName;
@@ -290,14 +275,17 @@ public class GalaxyAPI {
 
 	/**
 	 * Constructs a String describing the path of the given file for the given
-	 *  sample within the given folder.
-	 * @param rootFolder  The folder the sample will be located within.
-	 * @param sample  The sample to find the path for.
-	 * @param file  The file to find the path for.
-	 * @return  A String describing the path of the sample file.
+	 * sample within the given folder.
+	 * 
+	 * @param rootFolder
+	 *            The folder the sample will be located within.
+	 * @param sample
+	 *            The sample to find the path for.
+	 * @param file
+	 *            The file to find the path for.
+	 * @return A String describing the path of the sample file.
 	 */
-	private String samplePath(LibraryFolder rootFolder, UploadSample sample,
-			File file) {
+	private String samplePath(LibraryFolder rootFolder, UploadSample sample, File file) {
 		String rootFolderName;
 		if (rootFolder.getName().startsWith("/")) {
 			rootFolderName = rootFolder.getName().substring(1);
@@ -305,26 +293,32 @@ public class GalaxyAPI {
 			rootFolderName = rootFolder.getName();
 		}
 
-		return String.format("/%s/%s/%s", rootFolderName,
-				sample.getSampleName(), file.getName());
+		return String.format("/%s/%s/%s", rootFolderName, sample.getSampleName(), file.getName());
 	}
 
 	/**
 	 * Performs an upload of the sample files.
-	 * @param sample  The sample to upload.
-	 * @param rootFolder  The folder on Galaxy to place the sample files.
-	 * @param librariesClient  The connector to the Library Galaxy API.
-	 * @param library  The library to upload the sample to.
-	 * @param libraryMap  A map of existing content within this library
-	 *  (to make sure we don't make duplicate sample folders). 
+	 * 
+	 * @param sample
+	 *            The sample to upload.
+	 * @param rootFolder
+	 *            The folder on Galaxy to place the sample files.
+	 * @param librariesClient
+	 *            The connector to the Library Galaxy API.
+	 * @param library
+	 *            The library to upload the sample to.
+	 * @param libraryMap
+	 *            A map of existing content within this library (to make sure we
+	 *            don't make duplicate sample folders).
 	 * @return True if the upload was successful, false otherwise.
-	 * @throws LibraryUploadException  If there was an issue uploading the file.
-	 * @throws CreateLibraryException  If there was an issue creating a new library.
+	 * @throws LibraryUploadException
+	 *             If there was an issue uploading the file.
+	 * @throws CreateLibraryException
+	 *             If there was an issue creating a new library.
 	 */
-	private boolean uploadSample(UploadSample sample, LibraryFolder rootFolder,
-			LibrariesClient librariesClient, Library library,
-			Map<String, LibraryContent> libraryMap)
-			throws LibraryUploadException, CreateLibraryException {
+	private boolean uploadSample(UploadSample sample, LibraryFolder rootFolder, LibrariesClient librariesClient,
+			Library library, Map<String, LibraryContent> libraryMap) throws LibraryUploadException,
+			CreateLibraryException {
 		boolean success = false;
 		LibraryFolder persistedSampleFolder;
 
@@ -333,22 +327,17 @@ public class GalaxyAPI {
 		// if Galaxy already contains a folder for this sample, don't create a
 		// new folder
 		if (libraryMap.containsKey(expectedSamplePath)) {
-			LibraryContent persistedSampleFolderAsContent = libraryMap
-					.get(expectedSamplePath);
+			LibraryContent persistedSampleFolderAsContent = libraryMap.get(expectedSamplePath);
 
 			persistedSampleFolder = new LibraryFolder();
 			persistedSampleFolder.setId(persistedSampleFolderAsContent.getId());
-			persistedSampleFolder.setName(persistedSampleFolderAsContent
-					.getName());
+			persistedSampleFolder.setName(persistedSampleFolderAsContent.getName());
 		} else {
-			persistedSampleFolder = galaxyLibrary.createLibraryFolder(library,
-					rootFolder, sample.getSampleName());
+			persistedSampleFolder = galaxyLibrary.createLibraryFolder(library, rootFolder, sample.getSampleName());
 
-			logger.debug("Created Galaxy sample folder name="
-					+ expectedSamplePath + " id="
-					+ persistedSampleFolder.getId() + " in library name="
-					+ library.getName() + " id=" + library.getId()
-					+ " in Galaxy url=" + galaxyInstance.getGalaxyUrl());
+			logger.debug("Created Galaxy sample folder name=" + expectedSamplePath + " id="
+					+ persistedSampleFolder.getId() + " in library name=" + library.getName() + " id="
+					+ library.getId() + " in Galaxy url=" + galaxyInstance.getGalaxyUrl());
 		}
 
 		success = true;
@@ -358,37 +347,26 @@ public class GalaxyAPI {
 			String sampleFilePath = samplePath(rootFolder, sample, file);
 
 			if (libraryMap.containsKey(sampleFilePath)) {
-				logger.debug("File from local path=" + file.getAbsolutePath()
-						+ " alread exists on Galaxy path="
-						+ samplePath(rootFolder, sample, file)
-						+ " in library name=" + library.getName() + " id="
-						+ library.getId() + " in Galaxy url="
-						+ galaxyInstance.getGalaxyUrl() + " skipping upload");
+				logger.debug("File from local path=" + file.getAbsolutePath() + " alread exists on Galaxy path="
+						+ samplePath(rootFolder, sample, file) + " in library name=" + library.getName() + " id="
+						+ library.getId() + " in Galaxy url=" + galaxyInstance.getGalaxyUrl() + " skipping upload");
 			} else {
-				ClientResponse uploadResponse = uploadFile(
-						persistedSampleFolder, file, librariesClient, library);
+				ClientResponse uploadResponse = uploadFile(persistedSampleFolder, file, librariesClient, library);
 
-				success &= ClientResponse.Status.OK.equals(uploadResponse
-						.getClientResponseStatus());
+				success &= ClientResponse.Status.OK.equals(uploadResponse.getClientResponseStatus());
 
 				if (success) {
-					logger.debug("Uploaded file to Galaxy path="
-							+ samplePath(rootFolder, sample, file)
-							+ " from local path=" + file.getAbsolutePath()
-							+ " dataStorage=" + dataStorage
-							+ " in library name=" + library.getName() + " id="
-							+ library.getId() + " in Galaxy url="
+					logger.debug("Uploaded file to Galaxy path=" + samplePath(rootFolder, sample, file)
+							+ " from local path=" + file.getAbsolutePath() + " dataStorage=" + dataStorage
+							+ " in library name=" + library.getName() + " id=" + library.getId() + " in Galaxy url="
 							+ galaxyInstance.getGalaxyUrl());
 				} else {
-					logger.debug("Failed to upload file to Galaxy, response \"" + uploadResponse.getStatus() + " " + 
-							uploadResponse.getClientResponseStatus() + "\", " +
-							"response message=\"" + uploadResponse.getEntity(String.class) + "\""+
-							" path=" + samplePath(rootFolder, sample, file)
-							+ " from local path=" + file.getAbsolutePath()
-							+ " dataStorage=" + dataStorage
-							+ " in library name=" + library.getName() + " id="
-							+ library.getId() + " in Galaxy url="
-							+ galaxyInstance.getGalaxyUrl());
+					logger.debug("Failed to upload file to Galaxy, response \"" + uploadResponse.getStatus() + " "
+							+ uploadResponse.getClientResponseStatus() + "\", " + "response message=\""
+							+ uploadResponse.getEntity(String.class) + "\"" + " path="
+							+ samplePath(rootFolder, sample, file) + " from local path=" + file.getAbsolutePath()
+							+ " dataStorage=" + dataStorage + " in library name=" + library.getName() + " id="
+							+ library.getId() + " in Galaxy url=" + galaxyInstance.getGalaxyUrl());
 				}
 			}
 		}
@@ -425,16 +403,13 @@ public class GalaxyAPI {
 	 *             If no library with the given name can be found.
 	 * @throws GalaxyUserNoRoleException
 	 *             If the passed Galaxy user has no associated role.
-	 * @throws NoGalaxyContentFoundException If an error occured trying to find
-	 * 	content for the library.
+	 * @throws NoGalaxyContentFoundException
+	 *             If an error occured trying to find content for the library.
 	 */
-	public GalaxyUploadResult uploadSamples(@Valid List<UploadSample> samples,
-			@Valid GalaxyProjectName libraryName,
-			@Valid GalaxyAccountEmail galaxyUserEmail)
-			throws LibraryUploadException, CreateLibraryException,
-			ConstraintViolationException, ChangeLibraryPermissionsException,
-			GalaxyUserNotFoundException, NoLibraryFoundException,
-			GalaxyUserNoRoleException, NoGalaxyContentFoundException {
+	public GalaxyUploadResult uploadSamples(@Valid List<UploadSample> samples, @Valid GalaxyProjectName libraryName,
+			@Valid GalaxyAccountEmail galaxyUserEmail) throws LibraryUploadException, CreateLibraryException,
+			ConstraintViolationException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException,
+			NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
 		checkNotNull(libraryName, "libraryName is null");
 		checkNotNull(samples, "samples is null");
 		checkNotNull(galaxyUserEmail, "galaxyUserEmail is null");
@@ -444,7 +419,7 @@ public class GalaxyAPI {
 
 		Library uploadLibrary;
 		if (galaxySearchAdmin.galaxyUserExists(galaxyUserEmail)) {
-			
+
 			if (galaxySearchAdmin.libraryExists(libraryName)) {
 				List<Library> libraries = galaxySearchAdmin.findLibraryWithName(libraryName);
 				uploadLibrary = libraries.get(0); // gets first library returned
@@ -455,8 +430,7 @@ public class GalaxyAPI {
 
 			if (uploadFilesToLibrary(samples, uploadLibrary.getId())) {
 				try {
-					galaxyUploadResult = new GalaxyUploadResult(uploadLibrary,
-							libraryName, returnedOwner,
+					galaxyUploadResult = new GalaxyUploadResult(uploadLibrary, libraryName, returnedOwner,
 							galaxyInstance.getGalaxyUrl());
 				} catch (MalformedURLException e) {
 					throw new RuntimeException(e);
@@ -464,41 +438,38 @@ public class GalaxyAPI {
 
 				return galaxyUploadResult;
 			} else {
-				throw new LibraryUploadException(
-						"Could upload files to library " + libraryName + "id="
-								+ uploadLibrary.getId()
-								+ " in instance of galaxy with url="
-								+ galaxyInstance.getGalaxyUrl());
+				throw new LibraryUploadException("Could upload files to library " + libraryName + "id="
+						+ uploadLibrary.getId() + " in instance of galaxy with url=" + galaxyInstance.getGalaxyUrl());
 			}
 		} else {
 			throw new GalaxyUserNotFoundException(galaxyUserEmail, getGalaxyUrl());
 		}
 	}
-	
+
 	/**
 	 * Gets a copy of the event listeners list.
-	 * @return  A copy of the event listeners list
+	 * 
+	 * @return A copy of the event listeners list
 	 */
 	private synchronized List<UploadEventListener> getEventListenersCopy() {
 		List<UploadEventListener> eventListenersList = new LinkedList<UploadEventListener>();
 		for (UploadEventListener eventListener : eventListeners) {
 			eventListenersList.add(eventListener);
 		}
-		
+
 		return eventListenersList;
 	}
-	
+
 	/**
 	 * Updates all listeners about the progress of the upload.
+	 * 
 	 * @param totalSamples
 	 * @param currentSample
 	 * @param sampleName
 	 */
 	private void sampleProgressUpdate(int totalSamples, int currentSample, UploadFolderName sampleName) {
-		List<UploadEventListener> eventListenersList = getEventListenersCopy();
-		for (UploadEventListener eventListener : eventListenersList) {
-			eventListener.sampleProgressUpdate(totalSamples, currentSample, sampleName);
-		}
+		getEventListenersCopy().forEach(
+				listener -> listener.sampleProgressUpdate(totalSamples, currentSample, sampleName));
 	}
 
 	/**
@@ -520,12 +491,12 @@ public class GalaxyAPI {
 	 * @throws CreateLibraryException
 	 *             If an error occurred while attempting to build the data
 	 *             library.
-	 * @throws NoGalaxyContentFoundException If an error occured when attempting to find
-	 *  content for the library.
+	 * @throws NoGalaxyContentFoundException
+	 *             If an error occurred when attempting to find content for the
+	 *             library.
 	 */
-	public boolean uploadFilesToLibrary(@Valid List<UploadSample> samples,
-			String libraryID) throws LibraryUploadException,
-			ConstraintViolationException, NoLibraryFoundException,
+	public boolean uploadFilesToLibrary(@Valid List<UploadSample> samples, String libraryID)
+			throws LibraryUploadException, ConstraintViolationException, NoLibraryFoundException,
 			CreateLibraryException, NoGalaxyContentFoundException {
 		checkNotNull(samples, "samples are null");
 		checkNotNull(libraryID, "libraryID is null");
@@ -534,23 +505,20 @@ public class GalaxyAPI {
 		int numberOfSamples = samples.size();
 
 		if (numberOfSamples > 0) {
-			String errorSuffix = " in instance of galaxy with url="
-					+ galaxyInstance.getGalaxyUrl();
+			String errorSuffix = " in instance of galaxy with url=" + galaxyInstance.getGalaxyUrl();
 
-			LibrariesClient librariesClient = galaxyInstance
-					.getLibrariesClient();
+			LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
 
 			Library library = galaxySearchAdmin.findLibraryWithId(libraryID);
 
-			Map<String, LibraryContent> libraryContentMap
-				= galaxySearchAdmin.libraryContentAsMap(libraryID);
-			
+			Map<String, LibraryContent> libraryContentMap = galaxySearchAdmin.libraryContentAsMap(libraryID);
+
 			LibraryFolder illuminaFolder;
-			
+
 			if (galaxySearchAdmin.libraryContentExists(libraryID, ILLUMINA_FOLDER_PATH)) {
-				LibraryContent illuminaContent
-					= galaxySearchAdmin.findLibraryContentWithId(libraryID, ILLUMINA_FOLDER_PATH);
-				
+				LibraryContent illuminaContent = galaxySearchAdmin.findLibraryContentWithId(libraryID,
+						ILLUMINA_FOLDER_PATH);
+
 				illuminaFolder = new LibraryFolder();
 				illuminaFolder.setId(illuminaContent.getId());
 				illuminaFolder.setName(illuminaContent.getName());
@@ -568,16 +536,13 @@ public class GalaxyAPI {
 			for (UploadSample sample : samples) {
 				if (sample != null) {
 					// message about current sample being worked on
-					sampleProgressUpdate(numberOfSamples, currentSample,
-							sample.getSampleName());
-					
-					success &= uploadSample(sample, illuminaFolder,
-							librariesClient, library, libraryContentMap);
-					
+					sampleProgressUpdate(numberOfSamples, currentSample, sample.getSampleName());
+
+					success &= uploadSample(sample, illuminaFolder, librariesClient, library, libraryContentMap);
+
 					currentSample++;
 				} else {
-					throw new LibraryUploadException(
-							"Cannot upload a null sample" + errorSuffix);
+					throw new LibraryUploadException("Cannot upload a null sample" + errorSuffix);
 				}
 			}
 		}
@@ -627,7 +592,8 @@ public class GalaxyAPI {
 
 	/**
 	 * Whether or not the API is properly connected to an instance of Galaxy.
-	 * @return  True if there is a proper connection, false otherwise.
+	 * 
+	 * @return True if there is a proper connection, false otherwise.
 	 */
 	public boolean isConnected() {
 		try {
@@ -639,7 +605,9 @@ public class GalaxyAPI {
 
 	/**
 	 * Adds a new upload event listener.
-	 * @param eventListener  The event listener to add.
+	 * 
+	 * @param eventListener
+	 *            The event listener to add.
 	 */
 	public synchronized void addUploadEventListener(UploadEventListener eventListener) {
 		checkNotNull(eventListener, "eventListener is null");
