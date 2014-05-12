@@ -1,8 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -26,5 +28,12 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 		registry.addResourceHandler("/styles/**").addResourceLocations("/static/styles/");
 		registry.addResourceHandler("/scripts/**").addResourceLocations("/static/scripts/");
 		registry.addResourceHandler("/bower_components/**").addResourceLocations("/bower_components/");
+	}
+
+	@Bean
+	public ResourceBundleMessageSource messageSource() {
+		ResourceBundleMessageSource source = new ResourceBundleMessageSource();
+		source.setBasename("i18n/messages");
+		return source;
 	}
 }
