@@ -33,8 +33,8 @@
 		<sec:anonymous/>
 		<sec:intercept-url pattern="/login*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		
-		<sec:form-login authentication-failure-url="/login*"
-			default-target-url="/success" login-page="/login*"
+		<sec:form-login authentication-failure-url="/login"
+			default-target-url="/success" login-page="/login"
 			login-processing-url="/login.do" />
 		<sec:logout logout-success-url="/login" logout-url="/logout.do" />
 		<sec:custom-filter ref="oauth2ClientFilter" after="EXCEPTION_TRANSLATION_FILTER"/>
