@@ -33,6 +33,8 @@ public class WebAppInitializer implements WebApplicationInitializer {
 
 		// Add a servlet mapping
 		dispatcher.addMapping(DEFAULT_MAPPING_URL);
+
+		servletContext.setInitParameter("spring.profiles.default", "dev");
 	}
 
 	/**
