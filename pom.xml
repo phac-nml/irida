@@ -32,6 +32,8 @@
         <thymeleaf-spring4.version>2.1.2.RELEASE</thymeleaf-spring4.version>
         <yeoman-maven-plugin.version>0.2</yeoman-maven-plugin.version>
         <spring-security.version>3.2.3.RELEASE</spring-security.version>
+        <irida-api.version>1.5.0-SNAPSHOT</irida-api.version>
+        <slf4j.version>1.7.7</slf4j.version>
     </properties>
 
     <inceptionYear>2014</inceptionYear>
@@ -125,6 +127,13 @@
     </profiles>
 
     <dependencies>
+        <!-- IRIDA API -->
+        <dependency>
+            <groupId>ca.corefacility.bioinformatics</groupId>
+            <artifactId>irida-api</artifactId>
+            <version>${irida-api.version}</version>
+        </dependency>
+
         <!-- SPRING MVC -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -149,6 +158,18 @@
             <groupId>org.thymeleaf</groupId>
             <artifactId>thymeleaf-spring4</artifactId>
             <version>${thymeleaf-spring4.version}</version>
+        </dependency>
+
+        <!-- LOGGING -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
 
         <!-- JAVAX -->
