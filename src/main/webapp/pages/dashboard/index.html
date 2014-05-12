@@ -13,8 +13,14 @@
     <!-- endbuild -->
 </head>
 <body ng-app="irida.dashboard">
-<h1 id="title" th:text="#{dashboard.welcome}">Hello Jello</h1>
-<h2 th:text="${hello}">BOB</h2>
+<div class="row">
+
+    <div class="col-lg-12">
+        <h1 id="title" th:text="#{dashboard.welcome}">Hello Jello</h1>
+        <h2 th:text="${hello}">BOB</h2>
+        <a id="logout_btn" class="btn" href="/logout">Logout</a>
+    </div>
+</div>
 
 <script src="../../bower_components/angular/angular.min.js"></script>
 <!-- build:js scripts/dashboard.js -->
