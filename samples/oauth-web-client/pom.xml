@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>ca.nml</groupId>
-	<artifactId>oltutest</artifactId>
+	<artifactId>oauth-web-client</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 
