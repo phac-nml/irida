@@ -67,6 +67,9 @@
 
 		<!-- Jetty -->
 		<jetty.version>9.2.0.M0</jetty.version>
+		
+		<!-- Thymeleaf -->
+		<thymeleaf.version>2.1.2.RELEASE</thymeleaf.version>
 
 		<!-- Spring -->
 		<spring-framework.version>4.0.0.RELEASE</spring-framework.version>
@@ -250,6 +253,14 @@
 			<artifactId>commons-fileupload</artifactId>
 			<version>${commons.fileupload.version}</version>
 		</dependency>
+		
+ 		<dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf-spring4</artifactId>
+            <version>${thymeleaf.version}</version>
+        </dependency>
+            
+            
 	</dependencies>
 
 	<build>

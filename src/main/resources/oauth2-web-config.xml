@@ -18,25 +18,25 @@
 		<sec:access-denied-handler ref="oauthAccessDeniedHandler" />
 	</sec:http>
 	
-	<sec:http pattern="/oauth/authorize" authentication-manager-ref="authenticationManager" access-denied-page="/pages/login.html"
+	<sec:http pattern="/oauth/authorize" authentication-manager-ref="authenticationManager" access-denied-page="/login"
 		disable-url-rewriting="true">
 		<sec:intercept-url pattern="/oauth/authorize" access="ROLE_USER"/>
-		<sec:form-login authentication-failure-url="/pages/login.html"
-			default-target-url="/success" login-page="/pages/login.html"
+		<sec:form-login authentication-failure-url="/login"
+			default-target-url="/success" login-page="/login"
 			login-processing-url="/login.do" />
 			
 		<sec:custom-filter ref="oauth2ClientFilter" after="EXCEPTION_TRANSLATION_FILTER"/>
 	</sec:http>
 	
-	<sec:http pattern="/pages/*" authentication-manager-ref="authenticationManager" access-denied-page="/pages/login.html"
+	<sec:http pattern="/login*" authentication-manager-ref="authenticationManager" access-denied-page="/login"
 		disable-url-rewriting="true">
 		<sec:anonymous/>
-		<sec:intercept-url pattern="/pages/login.html" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/login*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		
-		<sec:form-login authentication-failure-url="/pages/login.html"
-			default-target-url="/success" login-page="/pages/login.html"
-			login-processing-url="/pages/login.do" />
-		<sec:logout logout-success-url="/pages/login.html" logout-url="/pages/logout.do" />
+		<sec:form-login authentication-failure-url="/login*"
+			default-target-url="/success" login-page="/login*"
+			login-processing-url="/login.do" />
+		<sec:logout logout-success-url="/login" logout-url="/logout.do" />
 		<sec:custom-filter ref="oauth2ClientFilter" after="EXCEPTION_TRANSLATION_FILTER"/>
 	</sec:http>
 	
@@ -49,7 +49,8 @@
 		<sec:anonymous enabled="false" />
 		<!-- Read scope for GET requests -->
 		<sec:intercept-url pattern="/favicon.ico" access="IS_AUTHENTICATED_FULLY" />
-		<sec:intercept-url pattern="/success" access="IS_AUTHENTICATED_FULLY" />   
+		<sec:intercept-url pattern="/success" access="IS_AUTHENTICATED_FULLY" />
+		<sec:intercept-url pattern="/test" access="IS_AUTHENTICATED_FULLY" />      
 		<sec:intercept-url pattern="/**" method="GET" access="SCOPE_READ" />
 		<!-- Read and write scope for all other requests -->
 		<sec:intercept-url pattern="/**" access="SCOPE_READ,SCOPE_WRITE" />

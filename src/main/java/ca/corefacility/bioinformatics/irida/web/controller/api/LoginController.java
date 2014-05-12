@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class LoginController {
 	@RequestMapping("/login")
 	public String login(){
-		return "redirect:/resources/login.html";
+		return "login";
 	}
 	
 	@RequestMapping("/success")

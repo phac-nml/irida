@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+  <title>IRIDA OAuth2 Approval Page</title>
+</head>
+
+<body>
+
+  <h1>IRIDA OAuth2 Approval Page</h1>
+
+  <div id="content">
+
+      <h2>Confirm access for <span th:text="${auth_request.clientId}">clientID</span></h2>
+	  <p>You are logged in as <span th:text="${principal.name}">user name</span>.</p>
+      <p>The client <span th:text="${auth_request.clientId}">clientID</span> is requesting access to your data on this IRIDA site.</p>  
+      <p>Approving this request will allow 
+      	<span th:text="${auth_request.clientId}">clientID</span> <span th:text="${scopes}">allowedScopes</span> access to the following resources on this site:
+      	<ul>
+      		<li>Projects</li>
+      		<li>Samples</li>
+      		<li>Sequence files</li>
+      	</ul>
+      	Note: <span th:text="${auth_request.clientId}">clientID</span> has been authorized as part of the IRIDA network by the site's administrators.
+      </p>
+
+	  <form id='confirmationForm' name='confirmationForm' action='/oauth/authorize' method='post'>
+	  	<input name='user_oauth_approval' value='true' type='hidden'/>
+	  	<label><input name='authorize' value='Authorize' type='submit'/></label>
+	  </form>
+	  <form id='denialForm' name='denialForm' action='/oauth/authorize' method='post'>
+	  	<input name='user_oauth_approval' value='false' type='hidden'/>
+	  	<label><input name='deny' value='Deny' type='submit'/></label>
+	  </form>
+  </div>
+
+</body>
+</html>
