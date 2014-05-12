@@ -52,7 +52,8 @@ module.exports = function (grunt) {
         browserify: {
             dev: {
                 files: {
-                    '<%= path.static %>/scripts/bundle.js': ['<%= path.app %>/scripts/app.js']
+                    '<%= path.static %>/scripts/login.js': ['<%= path.app %>/scripts/login.js'],
+                    '<%= path.static %>/scripts/dashboard.js': ['<%= path.app %>/scripts/dashboard.js']
                 }
             }
         },
@@ -64,8 +65,7 @@ module.exports = function (grunt) {
                         dot: true,
                         src: [
                             '.tmp',
-                            '<%= path.static %>/*',
-                            '!<%= path.app %>/.git*'
+                            '<%= path.static %>/*'
                         ]
                     }
                 ]
@@ -161,50 +161,9 @@ module.exports = function (grunt) {
             dev: {
                 expand: true,
                 dot: true,
-                cwd: '<%= path.app %>/pages',
-                dest: '<%= path.static %>/',
-                src: ['*.html']
-            },
-            dist: {
-                files: [
-                    {
-                        expand: true,
-                        dot: true,
-                        cwd: '<%= path.app %>/pages',
-                        dest: '<%= path.static %>/',
-                        src: [
-                            '*.html'
-                        ]
-                    },
-                    {
-                        expand: true,
-                        dot: true,
-                        cwd: '<%= path.app %>/views/',
-                        dest: '<%= path.static %>/views',
-                        src: [
-                            '*.html'
-                        ]
-                    }
-                ]
-            }
-        },
-
-        htmlmin: {
-            dist: {
-                options: {
-                    collapseWhitespace: true,
-                    collapseBooleanAttributes: true,
-                    removeCommentsFromCDATA: true,
-                    removeOptionalTags: true
-                },
-                files: [
-                    {
-                        expand: true,
-                        cwd: '<%= path.static %>',
-                        src: ['*.html', 'views/{,*/}*.html'],
-                        dest: '<%= path.static %>'
-                    }
-                ]
+                cwd: '<%= path.app %>/',
+                src: ['pages/**/*.html', 'views/**/*.html'],
+                dest: '<%= path.static %>/'
             }
         },
         // Need to make sure the JavaScript files are consistent.
@@ -313,8 +272,10 @@ module.exports = function (grunt) {
                 },
                 files: [
                     {
-                        src: ['<%= path.static %>/index.html'],
-                        dest: '<%= path.static %>/index.html'
+                        src: ['<%= path.static %>/pages/**/*.html'],
+                        dest: '<%= path.static %>/pages/',
+                        expand: true,
+                        flatten: false
                     }
                 ]
             }
@@ -336,13 +297,13 @@ module.exports = function (grunt) {
 // concat, minify and revision files. Creates configurations in memory so
 // additional tasks can operate on them
         useminPrepare: {
-            html: '<%= path.app %>/pages/index.html',
+            html: ['<%= path.app %>/pages/**/*.html', '<%= path.app %>/views/**/*.html'],
             options: {
                 dest: '<%= path.static %>',
                 flow: {
                     html: {
                         steps: {
-                            js: [],
+                            js: ['uglifyjs'],
                             css: ['cssmin']
                         },
                         post: {
@@ -354,7 +315,7 @@ module.exports = function (grunt) {
 
 // Performs rewrites based on rev and the useminPrepare configuration
         usemin: {
-            html: ['<%= path.static %>/{,*/}*.html'],
+            html: ['<%= path.static %>/pages/**/*.html', '<%= path.static %>/views/**/*.html'],
             css: ['<%= path.static %>/styles/{,*/}*.css'],
             options: {
                 assetsDirs: ['<%= path.static %>']
@@ -367,7 +328,7 @@ module.exports = function (grunt) {
                 tasks: ['compass:dev', 'autoprefixer']
             },
             copy: {
-                files: ['<%= path.app %>/pages/*'],
+                files: ['<%= path.app %>/pages/**/*.html'],
                 tasks: ['copy:dev']
             },
             browserify: {
@@ -393,7 +354,7 @@ module.exports = function (grunt) {
                     livereload: '<%= connect.options.livereload %>'
                 },
                 files: [
-                    '<%= path.app %>/pages/index.html',
+                    '<%= path.app %>/pages/{,*/}*.html',
                     '<%= path.static %>/styles/{,*/}*.css'
                 ]
             }
@@ -435,7 +396,7 @@ module.exports = function (grunt) {
         'concurrent:dist',
         'autoprefixer:dist',
         'ngmin',
-        'copy:dist',
+        'copy:dev',
         'browserify:dev',
         'cssmin',
         'rev',
