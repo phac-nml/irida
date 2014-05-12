@@ -66,6 +66,10 @@ public class ProjectUserJoin implements Join<Project, User> {
 		this.user = object;
 		this.projectRole = projectRole;
 	}
+	
+	public Long getId() {
+		return this.id;
+	}
 
 	@Override
 	public boolean equals(Object o) {

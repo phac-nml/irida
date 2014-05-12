@@ -70,6 +70,10 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
+	
+	public Long getId() {
+		return this.id;
+	}
 
 	@Override
 	public Project getSubject() {
