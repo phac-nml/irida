@@ -147,6 +147,6 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 	
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("/pages/**").addResourceLocations("/resources/");
+		registry.addResourceHandler("/**").addResourceLocations("/resources/");
 	}
 }
