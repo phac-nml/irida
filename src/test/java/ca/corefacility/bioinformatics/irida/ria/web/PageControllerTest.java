@@ -9,23 +9,29 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 /**
- * Unit test for {@link DashboardController}
+ * Unit Test for {@link PageController}
  * 
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
-public class DashboardControllerTest {
+public class PageControllerTest {
 	private MockMvc mockMvc;
 
 	@Before
 	public void setUp() {
-		DashboardController dashboardController = new DashboardController();
-		mockMvc = MockMvcBuilders.standaloneSetup(dashboardController).build();
+		PageController pageController = new PageController();
+		mockMvc = MockMvcBuilders.standaloneSetup(pageController).build();
 	}
 
 	@Test
-	public void testGetCorrectView() throws Exception {
+	public void testLoginModelAndView() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders.get("/login")).andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.view().name("pages/login/index"));
+	}
+
+	@Test
+	public void testMainModelAndView() throws Exception {
 		mockMvc.perform(MockMvcRequestBuilders.get("/")).andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.view().name("dashboard/index"))
+				.andExpect(MockMvcResultMatchers.view().name("pages/dashboard/index"))
 				.andExpect(MockMvcResultMatchers.model().attribute("hello", CoreMatchers.is("Hello IRIDA!")));
 	}
 }

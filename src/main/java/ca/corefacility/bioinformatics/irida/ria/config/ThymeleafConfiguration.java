@@ -27,7 +27,7 @@ public class ThymeleafConfiguration {
 	private static final Logger logger = LoggerFactory.getLogger(ThymeleafConfiguration.class);
 
 	private static final String TEMPLATE_MODE = "HTML5";
-	private static final String TEMPLATE_PREFIX = "/static/pages/";
+	private static final String TEMPLATE_PREFIX = "/static/";
 	private static final String TEMPLATE_SUFFIX = ".html";
 	private static final Long TEMPLATE_CACHE_TIME = 3600000L;
 	private static final int TEMPLATE_ORDER = 1;
