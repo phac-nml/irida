@@ -7,30 +7,20 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.Locale;
-
 /**
- * Stand in class to ensure that the web app is running properly.
+ * Controller for Dashboard Page
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Controller
-public class IndexController {
-	private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
-
-
-	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public String showLogin() {
-		return "login";
-	}
+public class DashboardController {
+	private static final Logger logger = LoggerFactory.getLogger(DashboardController.class);
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String showIndex(final Locale locale, final Model model) {
-		logger.debug("Locale is: {}", locale);
+	public String showIndex(final Model model) {
+		logger.debug("Displaying dashboard page.");
 
 		model.addAttribute("hello", "Hello IRIDA!");
-		return "dashboard";
+		return "dashboard/index";
 	}
-
 }
-
