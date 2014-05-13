@@ -12,6 +12,11 @@
     <link rel="stylesheet" href="/styles/main.css"/>
     <!-- endbuild -->
 
+    <style>
+        .ng-cloak {
+            display: none !important;
+        }
+    </style>
 </head>
 <body ng-app="irida.login">
 
@@ -33,7 +38,7 @@
                     <input id="password" ng-model="password" type="password" class="form-control" placeholder="Password"
                            name="password"/></div>
                 <button class="btn btn-success btn-block" type="submit">Sign in</button>
-                <div class="alert alert-danger" ng-show="error">Incorrect Email or Password</div>
+                <div class="ng-cloak alert alert-danger" ng-show="error">Incorrect Email or Password</div>
             </form>
         </div>
     </div>
