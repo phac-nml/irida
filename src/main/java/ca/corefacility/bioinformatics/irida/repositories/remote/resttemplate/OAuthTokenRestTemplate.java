@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.repositories.remote.oltu;
+package ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate;
 
 import java.io.IOException;
 import java.net.URI;

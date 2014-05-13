@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.repositories.RemoteApiTokenRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
-import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteApiTokenRepository;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
 @Transactional

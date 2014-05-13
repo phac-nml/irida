@@ -14,8 +14,13 @@ import org.hibernate.envers.Audited;
 
 import com.sun.istack.NotNull;
 
+/**
+ * OAuth2 token for communicating with a {@link RemoteAPI} for a given {@link User}
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @Entity
-@Table(name="remoteApiToken")
+@Table(name="remote_api_token")
 @Audited
 public class RemoteAPIToken {
 	@Id

@@ -19,6 +19,11 @@ import javax.persistence.Transient;
 
 import org.hibernate.envers.Audited;
 
+/**
+ * Description of a remote Irida API that this API can communicate with via OAuth2
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @Entity
 @Table(name = "remote_api")
 @Audited
