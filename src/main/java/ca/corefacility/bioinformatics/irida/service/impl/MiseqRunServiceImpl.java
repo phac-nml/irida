@@ -53,6 +53,8 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 	@Override
 	@Transactional
 	public void addSequenceFileToMiseqRun(MiseqRun run, SequenceFile file) {
+		// attach a copy of the file to the current transaction. 
+		file = sequenceFileRepository.findOne(file.getId());
 		file.setMiseqRun(run);
 		sequenceFileRepository.save(file);
 	}

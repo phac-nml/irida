@@ -6,6 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Set;
 
 import org.junit.Test;
@@ -27,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.Role;
+import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
@@ -152,6 +156,33 @@ public class MiseqServiceImplIT {
 		assertFalse("Sequence file should be deleted on cascade",asRole(Role.ROLE_ADMIN).sequenceFileService.exists(4L));
 		assertFalse("Sample should be deleted on cascade", sampleService.exists(2L));
 		assertTrue("This sample should not be removed", sampleService.exists(1L));
+	}
+	
+	/**
+	 * This test simulates a bug that happens from the REST API when uploading sequence files to samples, 
+	 * where a new sequence file is created, then detached from a transaction.
+	 * 
+	 * @throws IOException
+	 */
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
+	public void testAddDetachedRunToSequenceFile() throws IOException{
+		final String SEQUENCE = "ACGTACGTN";
+		final byte[] FASTQ_FILE_CONTENTS = ("@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
+				+ SEQUENCE + "\n+\n?????????").getBytes();
+		Path p = Files.createTempFile(null,  null);
+		Files.write(p, FASTQ_FILE_CONTENTS);
+		
+		SequenceFile sf = new SequenceFile();
+		sf.setFile(p);
+		Sample sample = asRole(Role.ROLE_ADMIN).sampleService.read(1L);
+		MiseqRun run = asRole(Role.ROLE_ADMIN).miseqRunService.read(2L);
+		
+		asRole(Role.ROLE_ADMIN).sequenceFileService.createSequenceFileInSample(sf, sample);
+		
+		miseqRunService.addSequenceFileToMiseqRun(run, sf);
+		
 	}
 
 	private MiseqServiceImplIT asRole(Role r) {
