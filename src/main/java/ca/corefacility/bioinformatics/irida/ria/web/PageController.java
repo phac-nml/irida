@@ -28,7 +28,7 @@ public class PageController {
 		logger.debug("Displaying dashboard page.");
 
 		model.addAttribute("hello", "Hello IRIDA!");
-		return "pages/dashboard.html";
+		return "pages/index.html";
 	}
 }
 
