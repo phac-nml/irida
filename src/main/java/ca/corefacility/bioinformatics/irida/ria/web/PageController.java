@@ -20,7 +20,7 @@ public class PageController {
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String showLogin() {
 		logger.debug("Displaying login page.");
-		return "pages/login/index";
+		return "pages/login.html";
 	}
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
@@ -28,7 +28,7 @@ public class PageController {
 		logger.debug("Displaying dashboard page.");
 
 		model.addAttribute("hello", "Hello IRIDA!");
-		return "pages/dashboard/index";
+		return "pages/dashboard.html";
 	}
 }
 
