@@ -1,10 +1,15 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,12 +28,11 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.Role;
+import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -84,20 +88,10 @@ public class MiseqServiceImplIT {
 	private void testAddSequenceFileToMiseqRunAsRole(Role r) {
 		SequenceFile sf = asRole(r).sequenceFileService.read(1l);
 		MiseqRun miseqRun = asRole(r).miseqRunService.read(1l);
-		Join<MiseqRun, SequenceFile> j = asRole(r).miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
-		assertNotNull("Join was empty.", j);
-		assertEquals("Join had wrong sequence file.", sf, j.getObject());
-		assertEquals("Join had wrong miseq run.", miseqRun, j.getSubject());
-	}
-
-	@Test(expected = EntityExistsException.class)
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
-	public void testAddSequenceFileToMiseqRunMultiple() {
-		SequenceFile sf = asRole(Role.ROLE_SEQUENCER).sequenceFileService.read(1l);
-		MiseqRun miseqRun = asRole(Role.ROLE_SEQUENCER).miseqRunService.read(1l);
-		asRole(Role.ROLE_SEQUENCER).miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
-		asRole(Role.ROLE_SEQUENCER).miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
+		asRole(r).miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
+		MiseqRun saved = asRole(r).miseqRunService.read(1l);
+		Set<SequenceFile> sequenceFilesForMiseqRun = sequenceFileService.getSequenceFilesForMiseqRun(saved);
+		assertTrue("Saved miseq run should have seqence file", sequenceFilesForMiseqRun.contains(sf));
 	}
 
 	@Test
@@ -107,10 +101,8 @@ public class MiseqServiceImplIT {
 		SequenceFile sf = asRole(Role.ROLE_ADMIN).sequenceFileService.read(2l);
 
 		try {
-			Join<MiseqRun, SequenceFile> j = asRole(Role.ROLE_ADMIN).miseqRunService.getMiseqRunForSequenceFile(sf);
-			assertNotNull("Join was empty.", j);
-			assertEquals("Join had wrong sequence file.", sf, j.getObject());
-			assertEquals("Join had wrong miseq run.", Long.valueOf(2l), j.getSubject().getId());
+			MiseqRun j = asRole(Role.ROLE_ADMIN).miseqRunService.getMiseqRunForSequenceFile(sf);
+			assertEquals("Join had wrong miseq run.", Long.valueOf(2l), j.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Test failed for unknown reason.");
@@ -133,18 +125,6 @@ public class MiseqServiceImplIT {
 	public void testReadMiseqRunAsSequencer() {
 		MiseqRun mr = asRole(Role.ROLE_SEQUENCER).miseqRunService.read(1L);
 		assertNotNull("Created run was not assigned an ID.", mr.getId());
-	}
-
-	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
-	public void testAddFileToMiseqRunAsSequencer() {
-		MiseqRun mr = asRole(Role.ROLE_SEQUENCER).miseqRunService.read(1L);
-		SequenceFile sf = asRole(Role.ROLE_SEQUENCER).sequenceFileService.read(1l);
-		Join<MiseqRun, SequenceFile> join = asRole(Role.ROLE_SEQUENCER).miseqRunService.addSequenceFileToMiseqRun(mr,
-				sf);
-		assertEquals("Wrong miseq run in join.", mr, join.getSubject());
-		assertEquals("Wrong sequence file in join.", sf, join.getObject());
 	}
 
 	@Test
@@ -176,6 +156,33 @@ public class MiseqServiceImplIT {
 		assertFalse("Sequence file should be deleted on cascade",asRole(Role.ROLE_ADMIN).sequenceFileService.exists(4L));
 		assertFalse("Sample should be deleted on cascade", sampleService.exists(2L));
 		assertTrue("This sample should not be removed", sampleService.exists(1L));
+	}
+	
+	/**
+	 * This test simulates a bug that happens from the REST API when uploading sequence files to samples, 
+	 * where a new sequence file is created, then detached from a transaction.
+	 * 
+	 * @throws IOException
+	 */
+	@Test
+	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
+	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
+	public void testAddDetachedRunToSequenceFile() throws IOException{
+		final String SEQUENCE = "ACGTACGTN";
+		final byte[] FASTQ_FILE_CONTENTS = ("@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
+				+ SEQUENCE + "\n+\n?????????").getBytes();
+		Path p = Files.createTempFile(null,  null);
+		Files.write(p, FASTQ_FILE_CONTENTS);
+		
+		SequenceFile sf = new SequenceFile();
+		sf.setFile(p);
+		Sample sample = asRole(Role.ROLE_ADMIN).sampleService.read(1L);
+		MiseqRun run = asRole(Role.ROLE_ADMIN).miseqRunService.read(2L);
+		
+		asRole(Role.ROLE_ADMIN).sequenceFileService.createSequenceFileInSample(sf, sample);
+		
+		miseqRunService.addSequenceFileToMiseqRun(run, sf);
+		
 	}
 
 	private MiseqServiceImplIT asRole(Role r) {

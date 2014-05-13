@@ -9,23 +9,18 @@
 		phoneNumber="867-5309" username="fbristow" system_role="ROLE_ADMIN"
 		credentialsNonExpired="true" enabled="true" />
 
-	<sequence_file id="1" />
-	<sequence_file id="2" />
-	<sequence_file id="3" />
-	<sequence_file id="4" />
-
 	<miseq_run id="1" />
 	<miseq_run id="2" />
 	<miseq_run id="3" />
 	
+	<sequence_file id="1" miseqRun_id="3" filePath="/FileThatMayNotExist"/>
+	<sequence_file id="2" miseqRun_id="2" filePath="/FileThatMayNotExist1"/>
+	<sequence_file id="3" miseqRun_id="3" filePath="/FileThatMayNotExist2"/>
+	<sequence_file id="4" miseqRun_id="3" filePath="/FileThatMayNotExist3"/>
+	
 	<sample id="1" sampleName="sample" externalSampleId="sample1"/>
 	<sample id="2" sampleName="sample" externalSampleId="sample2"/>
 	<project id="1" name="project 1"/>
-	
-	<miseqrun_sequencefile id="1" miseqRun_id="2" sequenceFile_id="2" />
-	<miseqrun_sequencefile id="2" miseqRun_id="3" sequenceFile_id="1" />
-	<miseqrun_sequencefile id="3" miseqRun_id="3" sequenceFile_id="3" />
-	<miseqrun_sequencefile id="4" miseqRun_id="3" sequenceFile_id="4" />
 	
 	<sequencefile_sample id="1" sequenceFile_id="1" sample_id="1"/>
 	<sequencefile_sample id="2" sequenceFile_id="2" sample_id="1"/>
@@ -37,12 +32,12 @@
 
 	<Revisions />
 	<USER_AUD />
-	<MISEQRUN_SEQUENCEFILE_AUD />
-	<MISEQRUN_SEQUENCEFILE />
 	<PROJECT_USER />
 	<PROJECT_USER_AUD />
 	<MISEQ_RUN_AUD />
 	<SEQUENCE_FILE_AUD />
 	<SAMPLE_AUD />
 	<SEQUENCEFILE_SAMPLE_AUD />
+	<OVERREPRESENTED_SEQUENCE />
+	<OVERREPRESENTED_SEQUENCE_AUD />
 </dataset>
