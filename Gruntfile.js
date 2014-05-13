@@ -48,16 +48,6 @@ module.exports = function (grunt) {
                 ]
             }
         },
-        // Browserify
-        browserify: {
-            dev: {
-                files: {
-                    '<%= path.static %>/scripts/login.js': ['<%= path.app %>/scripts/login.js'],
-                    '<%= path.static %>/scripts/dashboard.js': ['<%= path.app %>/scripts/dashboard.js'],
-                    '<%= path.static %>/scripts/projects.js': ['<%= path.app %>/scripts/projects.js']
-                }
-            }
-        },
         // Empties folders to start fresh for both dev and production.
         clean: {
             dist: {
@@ -109,8 +99,7 @@ module.exports = function (grunt) {
         concurrent: {
             dev: [
                 'copy:dev',
-                'compass:dev',
-                'browserify:dev'
+                'compass:dev'
             ],
             dist: [
                 'compass:dist'
@@ -160,6 +149,24 @@ module.exports = function (grunt) {
         // Copy index during dev
         copy: {
             dev: {
+                files: [
+                    {
+                        expand: true,
+                        dot: true,
+                        cwd: '<%= path.app %>/',
+                        src: ['pages/**/*.html', 'views/**/*.html'],
+                        dest: '<%= path.static %>/'
+                    },
+                    {
+                        expand: true,
+                        dot: true,
+                        cwd: '<%= path.app %>/',
+                        src: ['scripts/**/*.js'],
+                        dest: '<%= path.static %>/'
+                    }
+                ]
+            },
+            dist: {
                 expand: true,
                 dot: true,
                 cwd: '<%= path.app %>/',
@@ -211,7 +218,7 @@ module.exports = function (grunt) {
                 singleRun: true,
                 reporters: ['progress', 'coverage'],
                 preprocessors: {
-                    '<%= path.app %>/scripts/*.js': ['coverage']
+                    '<%= path.app %>/scripts/**/*.js': ['coverage']
                 },
                 coverageReporter: {
                     type: 'html',
@@ -227,9 +234,9 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: '.tmp/concat/scripts',
-                        src: '*.js',
-                        dest: '.tmp/concat/scripts'
+                        cwd: '<%= path.app %>/scripts/',
+                        src: '**/*.js',
+                        dest: '.tmp/scripts'
                     }
                 ]
             }
@@ -286,7 +293,6 @@ module.exports = function (grunt) {
             dist: {
                 files: {
                     src: [
-                        '<%= path.static %>/scripts/{,*/}*.js',
                         '<%= path.static %>/styles/{,*/}*.css',
                         '<%= path.static %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
                         '<%= path.static %>/styles/fonts/*'
@@ -294,73 +300,75 @@ module.exports = function (grunt) {
                 }
             }
         },
+        uglify: {
+            dist: {
+                files: [{
+                    expand: true,
+                    cwd: '.tmp/scripts/',
+                    src: '**/*.js',
+                    dest: '<%= path.static %>/scripts'
+                }]
+            }
+        },
 // Reads HTML for usemin blocks to enable smart builds that automatically
 // concat, minify and revision files. Creates configurations in memory so
 // additional tasks can operate on them
-        useminPrepare: {
-            html: ['<%= path.app %>/pages/**/*.html', '<%= path.app %>/views/**/*.html'],
-            options: {
-                dest: '<%= path.static %>',
-                flow: {
-                    html: {
-                        steps: {
-                            js: ['uglifyjs'],
-                            css: ['cssmin']
-                        },
-                        post: {
+            useminPrepare: {
+                html: ['<%= path.app %>/pages/**/*.html', '<%= path.app %>/views/**/*.html'],
+                options: {
+                    dest: '<%= path.static %>',
+                    flow: {
+                        html: {
+                            steps: {
+                                css: ['cssmin']
+                            },
+                            post: {
+                            }
                         }
                     }
                 }
-            }
-        },
+            },
 
 // Performs rewrites based on rev and the useminPrepare configuration
-        usemin: {
-            html: ['<%= path.static %>/pages/**/*.html', '<%= path.static %>/views/**/*.html'],
-            css: ['<%= path.static %>/styles/{,*/}*.css'],
-            options: {
-                assetsDirs: ['<%= path.static %>']
-            }
-        },
+            usemin: {
+                html: ['<%= path.static %>/pages/**/*.html', '<%= path.static %>/views/**/*.html'],
+                css: ['<%= path.static %>/styles/{,*/}*.css'],
+                options: {
+                    assetsDirs: ['<%= path.static %>']
+                }
+            },
 // Watch for changes and do the right thing!
-        watch: {
-            compass: {
-                files: ['<%= path.app %>/styles/**/*.scss'],
-                tasks: ['compass:dev', 'autoprefixer']
-            },
-            copy: {
-                files: ['<%= path.app %>/pages/**/*.html'],
-                tasks: ['copy:dev']
-            },
-            browserify: {
-                files: ['<%= path.app %>/scripts/**/*.js'],
-                tasks: ['browserify:dev', 'karma:dev'],
-                options: {
-                    livereload: true
-                }
-            },
-            js: {
-                files: ['<%= path.app %>/static/scripts/*.js', '<%= path.test %>/unit/**/*.js'],
-                tasks: ['newer:jshint:all'],
-                options: {
-                    livereload: true
-                }
-            },
-            jsTest: {
-                files: ['<%= path.test %>/unit/**/*.js'],
-                tasks: ['karma:dev']
-            },
-            livereload: {
-                options: {
-                    livereload: '<%= connect.options.livereload %>'
+            watch: {
+                compass: {
+                    files: ['<%= path.app %>/styles/**/*.scss'],
+                    tasks: ['compass:dev', 'autoprefixer']
                 },
-                files: [
-                    '<%= path.app %>/pages/{,*/}*.html',
-                    '<%= path.static %>/styles/{,*/}*.css'
-                ]
+                copy: {
+                    files: ['<%= path.app %>/pages/**/*.html'],
+                    tasks: ['copy:dev']
+                },
+                js: {
+                    files: ['<%= path.app %>/static/scripts/*.js', '<%= path.test %>/unit/**/*.js'],
+                    tasks: ['newer:jshint:all'],
+                    options: {
+                        livereload: true
+                    }
+                },
+                jsTest: {
+                    files: ['<%= path.test %>/unit/**/*.js'],
+                    tasks: ['karma:dev']
+                },
+                livereload: {
+                    options: {
+                        livereload: '<%= connect.options.livereload %>'
+                    },
+                    files: [
+                        '<%= path.app %>/pages/{,*/}*.html',
+                        '<%= path.static %>/styles/{,*/}*.css'
+                    ]
+                }
             }
-        }
-    })
+        })
     ;
 
 // Single run tests
@@ -370,14 +378,14 @@ module.exports = function (grunt) {
         'clean:dist',
         'concurrent:dev',
         'autoprefixer',
-        'browserify:dev',
+        'copy:dev',
         'protractor_webdriver',
         'protractor:singleRun'
     ]);
-    grunt.registerTask('test:unit', ['browserify:dev', 'karma:dev']);
+    grunt.registerTask('test:unit', ['karma:dev']);
 
 //coverage testing
-    grunt.registerTask('test:coverage', ['browserify:dev', 'karma:unit_coverage']);
+    grunt.registerTask('test:coverage', ['karma:unit_coverage']);
 
 
 // Development task.
@@ -397,9 +405,9 @@ module.exports = function (grunt) {
         'concurrent:dist',
         'autoprefixer:dist',
         'ngmin',
-        'copy:dev',
-        'browserify:dev',
+        'copy:dist',
         'cssmin',
+        'uglify',
         'rev',
         'usemin',
         'replace',
