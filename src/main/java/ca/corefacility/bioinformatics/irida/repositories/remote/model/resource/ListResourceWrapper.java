@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package ca.corefacility.bioinformatics.irida.repositories.remote.model;
+package ca.corefacility.bioinformatics.irida.repositories.remote.model.resource;
+
 
 /**
  *
  * @author tom
  * @param <Type>
  */
-public class ResourceWrapper <Type extends RemoteResource> {
-	private Type resource;
+public class ListResourceWrapper <Type extends RemoteResource> {
+	private ResourceList<Type> resource;
 
-	public Type getResource() {
+	public ResourceList<Type> getResource() {
 		return resource;
 	}
 
-	public void setResource(Type resource) {
+	public void setResource(ResourceList<Type> resource) {
 		this.resource = resource;
 	}    
 }

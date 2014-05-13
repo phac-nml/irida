@@ -3,9 +3,9 @@ package ca.corefacility.bioinformatics.irida.repositories.remote.oltu;
 import org.springframework.core.ParameterizedTypeReference;
 
 import ca.corefacility.bioinformatics.irida.repositories.remote.ProjectRemoteRepository;
-import ca.corefacility.bioinformatics.irida.repositories.remote.model.ListResourceWrapper;
 import ca.corefacility.bioinformatics.irida.repositories.remote.model.RemoteProject;
-import ca.corefacility.bioinformatics.irida.repositories.remote.model.ResourceWrapper;
+import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.ListResourceWrapper;
+import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.ResourceWrapper;
 
 public class OltuProjectRemoteRepository extends OltuGenericRepository<RemoteProject> implements ProjectRemoteRepository{
 

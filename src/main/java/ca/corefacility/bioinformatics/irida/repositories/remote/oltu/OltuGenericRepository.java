@@ -12,9 +12,9 @@ import org.springframework.http.ResponseEntity;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.repositories.remote.GenericRemoteRepository;
-import ca.corefacility.bioinformatics.irida.repositories.remote.model.ListResourceWrapper;
-import ca.corefacility.bioinformatics.irida.repositories.remote.model.RemoteResource;
-import ca.corefacility.bioinformatics.irida.repositories.remote.model.ResourceWrapper;
+import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.ListResourceWrapper;
+import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.RemoteResource;
+import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.ResourceWrapper;
 
 public abstract class OltuGenericRepository<Type extends RemoteResource> implements GenericRemoteRepository<Type> {
 
