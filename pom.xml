@@ -67,7 +67,7 @@
 
 		<!-- Jetty -->
 		<jetty.version>9.2.0.M0</jetty.version>
-		
+
 		<!-- Thymeleaf -->
 		<thymeleaf.version>2.1.2.RELEASE</thymeleaf.version>
 
@@ -92,7 +92,7 @@
 
 		<!-- REST-assured -->
 		<rest.assured.version>1.8.0</rest.assured.version>
-		
+
 		<!-- Groovy test version -->
 		<groovy.version>2.1.2</groovy.version>
 
@@ -165,10 +165,10 @@
 			<version>${org.springframework.plugin.version}</version>
 		</dependency>
 		<dependency>
-        	<groupId>org.springframework.security.oauth</groupId>
-        	<artifactId>spring-security-oauth2</artifactId>
-        	<version>${springframework.security.oauth.version}</version>
-    	</dependency>
+			<groupId>org.springframework.security.oauth</groupId>
+			<artifactId>spring-security-oauth2</artifactId>
+			<version>${springframework.security.oauth.version}</version>
+		</dependency>
 
 		<!-- Test -->
 		<dependency>
@@ -253,14 +253,14 @@
 			<artifactId>commons-fileupload</artifactId>
 			<version>${commons.fileupload.version}</version>
 		</dependency>
-		
- 		<dependency>
-            <groupId>org.thymeleaf</groupId>
-            <artifactId>thymeleaf-spring4</artifactId>
-            <version>${thymeleaf.version}</version>
-        </dependency>
-            
-            
+
+		<dependency>
+			<groupId>org.thymeleaf</groupId>
+			<artifactId>thymeleaf-spring4</artifactId>
+			<version>${thymeleaf.version}</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
