@@ -21,56 +21,60 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.envers.Audited;
 
 /**
- * Description of a remote Irida API that this API can communicate with via OAuth2
+ * Description of a remote Irida API that this API can communicate with via
+ * OAuth2
+ * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Entity
 @Table(name = "remote_api")
 @Audited
-public class RemoteAPI implements Comparable<RemoteAPI>{
-	
+public class RemoteAPI implements Comparable<RemoteAPI> {
+
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	
+
 	@Transient
 	private URI serviceURI;
-	//keeping a string representation of the service URI so it's stored nicer in the database
+	// keeping a string representation of the service URI so it's stored nicer
+	// in the database
 	@NotNull
-	@Column(name="serviceURI")
+	@Column(name = "serviceURI")
 	private String stringServiceURI;
-	
+
 	private String description;
-	
+
 	@NotNull
 	private String clientId;
-	
+
 	@NotNull
 	private String clientSecret;
-	
-	@OneToMany(mappedBy="remoteApi")
+
+	@OneToMany(mappedBy = "remoteApi")
 	private Collection<RemoteAPIToken> tokens;
-	
-	public RemoteAPI(){
+
+	public RemoteAPI() {
 	}
-	
-	public RemoteAPI(URI serviceURI, String description,String clientId, String clientSecret){
+
+	public RemoteAPI(URI serviceURI, String description, String clientId, String clientSecret) {
 		this.serviceURI = serviceURI;
 		this.description = description;
 		this.clientId = clientId;
 		this.clientSecret = clientSecret;
 	}
-	
+
 	/**
 	 * Setting the proper service URI after load
+	 * 
 	 * @throws URISyntaxException
 	 */
 	@PostLoad
-	public void postLoad() throws URISyntaxException{
+	public void postLoad() throws URISyntaxException {
 		serviceURI = new URI(stringServiceURI);
 	}
-	
+
 	/**
 	 * Setting the string service URI before we store it in the database
 	 */
@@ -79,55 +83,61 @@ public class RemoteAPI implements Comparable<RemoteAPI>{
 	public void prePersist() {
 		stringServiceURI = serviceURI.toString();
 	}
-	
+
 	/**
 	 * Get the entity id
+	 * 
 	 * @return
 	 */
 	public Long getId() {
 		return id;
 	}
-	
+
 	/**
-	 * Set the entity idea 
+	 * Set the entity idea
+	 * 
 	 * @param id
 	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
 	/**
 	 * Get the base URI of this remote api
+	 * 
 	 * @return
 	 */
 	public URI getServiceURI() {
 		return serviceURI;
 	}
-	
+
 	/**
 	 * Set the base URI of this remote service
+	 * 
 	 * @param serviceURI
 	 */
 	public void setServiceURI(URI serviceURI) {
 		this.serviceURI = serviceURI;
 	}
-	
+
 	/**
 	 * Get a description of the remote api
+	 * 
 	 * @return
 	 */
 	public String getDescription() {
 		return description;
 	}
-	
+
 	/**
 	 * Set the description for the remote api
+	 * 
 	 * @param description
 	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	/**
 	 * @return the clientId
 	 */
@@ -136,7 +146,8 @@ public class RemoteAPI implements Comparable<RemoteAPI>{
 	}
 
 	/**
-	 * @param clientId the clientId to set
+	 * @param clientId
+	 *            the clientId to set
 	 */
 	public void setClientId(String clientId) {
 		this.clientId = clientId;
@@ -150,7 +161,8 @@ public class RemoteAPI implements Comparable<RemoteAPI>{
 	}
 
 	/**
-	 * @param clientSecret the clientSecret to set
+	 * @param clientSecret
+	 *            the clientSecret to set
 	 */
 	public void setClientSecret(String clientSecret) {
 		this.clientSecret = clientSecret;
@@ -176,10 +188,10 @@ public class RemoteAPI implements Comparable<RemoteAPI>{
 	public int compareTo(RemoteAPI o) {
 		return serviceURI.compareTo(o.serviceURI);
 	}
-	
-    @Override
-    public int hashCode() {
-        return Objects.hash(serviceURI,clientId,clientSecret);
-    }   
-	
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(serviceURI, clientId, clientSecret);
+	}
+
 }
