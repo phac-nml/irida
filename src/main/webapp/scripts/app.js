@@ -4,7 +4,7 @@ define(['angularAMD', 'angular-route'], function (angularAMD) {
     app.config(function ($routeProvider) {
         $routeProvider
             .when('/dashboard', angularAMD.route({
-                templateUrl: '/dashboard/partial',
+                templateUrl: '/view/dashboard',
                 controller: 'DashboardCtrl',
                 controllerUrl: '/scripts/dashboard/controllers/dashboardCtrl.js'
             }))
