@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import ca.corefacility.bioinformatics.irida.exceptions.UserNotInSecurityContextException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.model.User;
@@ -17,7 +18,7 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
 @Transactional
 @Service
-public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
+public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 	private RemoteApiTokenRepository tokenRepository;
 	private UserRepository userRepository;
 
@@ -40,35 +41,40 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
 	@Override
 	public RemoteAPIToken getToken(RemoteAPI remoteAPI) {
 		User user = userRepository.loadUserByUsername(getUserName());
-		
+
 		return tokenRepository.readTokenForApiAndUser(remoteAPI, user);
 	}
-	
 
 	/**
 	 * Get the username of the currently logged in user.
+	 * 
 	 * @return String of the username of the currently logged in user
+	 * @throws UserNotInSecurityContextException
+	 *             if the currently logged in user could not be read from the
+	 *             security context
 	 */
-	private String getUserName(){
+	private String getUserName() throws UserNotInSecurityContextException {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication.getPrincipal() instanceof UserDetails) {
 			UserDetails details = (UserDetails) authentication.getPrincipal();
 			String username = details.getUsername();
-			
+
 			return username;
 		}
-		
-		return null;
+
+		throw new UserNotInSecurityContextException(
+				"The currently logged in user could not be read from the SecurityContextHolder");
 	}
-	
+
 	/**
-	 * Set any previous token's validity bit to false
+	 * Remove any old token for this user from the database
+	 * 
 	 * @param token
 	 */
 	@Transactional
-	protected void removeOldToken(RemoteAPI api){
+	protected void removeOldToken(RemoteAPI api) {
 		RemoteAPIToken oldToken = getToken(api);
-		if(oldToken != null){
+		if (oldToken != null) {
 			tokenRepository.delete(oldToken);
 		}
 	}
