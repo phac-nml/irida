@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.springframework.hateoas.ResourceSupport;
 
-import ca.corefacility.bioinformatics.irida.model.Timestamped;
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public abstract class Resource<Type extends Timestamped> extends ResourceSupport {
+public abstract class Resource<Type extends IridaThing> extends ResourceSupport {
 
 	/**
 	 * the resource exposed by this container (not serialized).
