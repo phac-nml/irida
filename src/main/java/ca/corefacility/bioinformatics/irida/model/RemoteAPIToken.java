@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -19,7 +20,7 @@ import org.hibernate.envers.Audited;
  *
  */
 @Entity
-@Table(name="remote_api_token")
+@Table(name="remote_api_token", uniqueConstraints= @UniqueConstraint(columnNames = { "user_id","remote_api_id" }))
 @Audited
 public class RemoteAPIToken {
 	@Id
@@ -31,9 +32,6 @@ public class RemoteAPIToken {
 	
 	@NotNull
 	private Date expiryDate;
-	
-	@NotNull
-	private boolean current = true;
 	
 	@ManyToOne
 	@JoinColumn(name="remote_api_id")
@@ -140,15 +138,5 @@ public class RemoteAPIToken {
 		long currentTimeMillis = System.currentTimeMillis();
 		return currentTimeMillis>expiryDate.getTime();
 	}
-
-	public boolean isCurrent() {
-		return current;
-	}
-
-	public void setCurrent(boolean current) {
-		this.current = current;
-	}
-	
-	
 	
 }
