@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -55,12 +56,10 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 
 	@NotNull(message = "{user.username.notnull}")
 	@Size(min = 3, message = "{user.username.size}")
-	// @Column(unique = true)
 	private String username;
 	@NotNull(message = "{user.email.notnull}")
 	@Size(min = 5, message = "{user.email.size}")
 	@Email(message = "{user.email.invalid}")
-	// @Column(unique = true)
 	private String email;
 	@NotNull(message = "{user.password.notnull}")
 	// passwords must be at least six characters long, but prohibit passwords
@@ -101,8 +100,12 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
 	private List<ProjectUserJoin> projects;
 	
+
 	@OneToMany(mappedBy="user")
 	private Collection<RemoteAPIToken> tokens;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
+	private Set<UserGroup> userGroups;
 
 	/**
 	 * Construct an instance of {@link User} with no properties set.
