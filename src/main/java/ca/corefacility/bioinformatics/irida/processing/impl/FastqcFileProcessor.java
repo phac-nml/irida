@@ -6,9 +6,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -29,12 +29,10 @@ import uk.ac.babraham.FastQC.Sequence.SequenceFactory;
 import uk.ac.babraham.FastQC.Sequence.QualityEncoding.PhredEncoding;
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileOverrepresentedSequenceJoin;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.OverrepresentedSequenceRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sequencefile.SequenceFileOverrepresentedSequenceJoinRepository;
 
 /**
  * Executes FastQC on a {@link SequenceFile} and stores the report in the
@@ -50,14 +48,11 @@ public class FastqcFileProcessor implements FileProcessor {
 
 	private SequenceFileRepository sequenceFileRepository;
 	private OverrepresentedSequenceRepository overrepresentedSequenceRepository;
-	private SequenceFileOverrepresentedSequenceJoinRepository sfosRepository;
 
 	public FastqcFileProcessor(SequenceFileRepository sequenceFileService,
-			OverrepresentedSequenceRepository overrepresentedSequenceService,
-			SequenceFileOverrepresentedSequenceJoinRepository sfosRepository) {
+			OverrepresentedSequenceRepository overrepresentedSequenceService) {
 		this.sequenceFileRepository = sequenceFileService;
 		this.overrepresentedSequenceRepository = overrepresentedSequenceService;
-		this.sfosRepository = sfosRepository;
 	}
 
 	/**
@@ -65,6 +60,7 @@ public class FastqcFileProcessor implements FileProcessor {
 	 */
 	@Override
 	public SequenceFile process(SequenceFile sequenceFile) throws FileProcessorException {
+		sequenceFile = sequenceFileRepository.findOne(sequenceFile.getId());
 		Path fileToProcess = sequenceFile.getFile();
 		try {
 			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory
@@ -88,15 +84,15 @@ public class FastqcFileProcessor implements FileProcessor {
 			handlePerBaseQualityScores(pbqs, sequenceFile);
 			handlePerSequenceQualityScores(psqs, sequenceFile);
 			handleDuplicationLevel(overRep.duplicationLevelModule(), sequenceFile);
+			Set<OverrepresentedSequence> overrepresentedSequences = handleOverRepresentedSequences(overRep);
+			
+			for (OverrepresentedSequence os : overrepresentedSequences) {
+				os.setSequenceFile(sequenceFile);
+				overrepresentedSequenceRepository.save(os);	
+			}
 
 			logger.trace("Calling sequenceFileService.update");
-			sequenceFile = sequenceFileRepository.save(sequenceFile);
-
-			Collection<OverrepresentedSequence> overrepresentedSequences = handleOverRepresentedSequences(overRep);
-			for (OverrepresentedSequence sequence : overrepresentedSequences) {
-				sequence = overrepresentedSequenceRepository.save(sequence);
-				sfosRepository.save(new SequenceFileOverrepresentedSequenceJoin(sequenceFile, sequence));
-			}
+			sequenceFileRepository.save(sequenceFile);			
 		} catch (Exception e) {
 			logger.error("FastQC failed to process the sequence file. Stack trace follows.", e);
 			throw new FileProcessorException("FastQC failed to parse the sequence file.");
@@ -194,15 +190,15 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * @return a collection of {@link OverrepresentedSequence} corresponding to
 	 *         the FastQC {@link OverRepresentedSeqs}.
 	 */
-	private Collection<OverrepresentedSequence> handleOverRepresentedSequences(OverRepresentedSeqs seqs) {
+	private Set<OverrepresentedSequence> handleOverRepresentedSequences(OverRepresentedSeqs seqs) {
 		// force FastQC to calculate the over-represented sequences
 		// seqs.raisesError();
 		OverrepresentedSeq[] sequences = seqs.getOverrepresentedSequences();
 		if (sequences == null) {
-			return Collections.emptyList();
+			return Collections.emptySet();
 		}
 
-		Collection<OverrepresentedSequence> overrepresentedSequences = new ArrayList<>(sequences.length);
+		Set<OverrepresentedSequence> overrepresentedSequences = new HashSet<>(sequences.length);
 
 		for (OverrepresentedSeq s : sequences) {
 			String sequenceString = s.seq();

@@ -10,7 +10,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 
 /**
  * Service layer for MiseqRun objects
@@ -42,11 +41,9 @@ public interface MiseqRunService extends CRUDService<Long, MiseqRun> {
 	 *            The {@link MiseqRun}
 	 * @param file
 	 *            The {@link SequenceFile}
-	 * @return A {@link Join<MiseqRun, SequenceFile>} describing the
-	 *         relationship
 	 */
 	@PreAuthorize("hasRole('ROLE_SEQUENCER')")
-	public Join<MiseqRun, SequenceFile> addSequenceFileToMiseqRun(MiseqRun run, SequenceFile file);
+	public void addSequenceFileToMiseqRun(MiseqRun run, SequenceFile file);
 
 	/**
 	 * Get the {@link MiseqRun} for the given {@link SequenceFile}
@@ -57,7 +54,7 @@ public interface MiseqRunService extends CRUDService<Long, MiseqRun> {
 	 *         relationship between the run and file
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#file, 'canReadSequenceFile')")
-	public Join<MiseqRun, SequenceFile> getMiseqRunForSequenceFile(SequenceFile file);
+	public MiseqRun getMiseqRunForSequenceFile(SequenceFile file);
 	
 	/**
 	 * Deletes a {@link MiseqRun} and cascades the delete to any empty {@link Sample}s.  If a Sample is empty after the delete, it will also be deleted.

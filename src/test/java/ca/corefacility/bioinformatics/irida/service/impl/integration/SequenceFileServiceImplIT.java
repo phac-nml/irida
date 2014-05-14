@@ -12,7 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
 import org.junit.Before;
@@ -40,7 +40,6 @@ import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.service.OverrepresentedSequenceService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
@@ -130,11 +129,11 @@ public class SequenceFileServiceImplIT {
 		sf = asRole(Role.ROLE_ADMIN, "tom").sequenceFileService.read(sf.getId());
 		assertEquals("Wrong version number after processing.", Long.valueOf(1), sf.getFileRevisionNumber());
 
-		List<Join<SequenceFile, OverrepresentedSequence>> overrepresentedSequences = asRole(Role.ROLE_ADMIN, "tom").overrepresentedSequenceService
+		Set<OverrepresentedSequence> overrepresentedSequences = asRole(Role.ROLE_ADMIN, "tom").overrepresentedSequenceService
 				.getOverrepresentedSequencesForSequenceFile(sf);
 		assertNotNull("No overrepresented sequences were found.", overrepresentedSequences);
 		assertEquals("Wrong number of overrepresented sequences were found.", 1, overrepresentedSequences.size());
-		OverrepresentedSequence overrepresentedSequence = overrepresentedSequences.iterator().next().getObject();
+		OverrepresentedSequence overrepresentedSequence = overrepresentedSequences.iterator().next();
 		assertEquals("Sequence was not the correct sequence.", SEQUENCE, overrepresentedSequence.getSequence());
 		assertEquals("The count was not correct.", 2, overrepresentedSequence.getOverrepresentedSequenceCount());
 		assertEquals("The percent was not correct.", new BigDecimal("100.00"), overrepresentedSequence.getPercentage());
@@ -178,11 +177,11 @@ public class SequenceFileServiceImplIT {
 		sf = asRole(Role.ROLE_ADMIN, "tom").sequenceFileService.read(sf.getId());
 		assertEquals("Wrong version number after processing.", Long.valueOf(2L), sf.getFileRevisionNumber());
 		assertFalse("File name is still gzipped.", sf.getFile().getFileName().toString().endsWith(".gz"));
-		List<Join<SequenceFile, OverrepresentedSequence>> overrepresentedSequences = asRole(Role.ROLE_ADMIN, "tom").overrepresentedSequenceService
+		Set<OverrepresentedSequence> overrepresentedSequences = asRole(Role.ROLE_ADMIN, "tom").overrepresentedSequenceService
 				.getOverrepresentedSequencesForSequenceFile(sf);
 		assertNotNull("No overrepresented sequences were found.", overrepresentedSequences);
 		assertEquals("Wrong number of overrepresented sequences were found.", 1, overrepresentedSequences.size());
-		OverrepresentedSequence overrepresentedSequence = overrepresentedSequences.iterator().next().getObject();
+		OverrepresentedSequence overrepresentedSequence = overrepresentedSequences.iterator().next();
 		assertEquals("Sequence was not the correct sequence.", SEQUENCE, overrepresentedSequence.getSequence());
 		assertEquals("The count was not correct.", 2, overrepresentedSequence.getOverrepresentedSequenceCount());
 		assertEquals("The percent was not correct.", new BigDecimal("100.00"), overrepresentedSequence.getPercentage());
