@@ -16,19 +16,19 @@ import org.springframework.web.servlet.ModelAndView;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.repositories.remote.ProjectRemoteRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.model.RemoteProject;
-import ca.corefacility.bioinformatics.irida.repositories.remote.oltu.OltuProjectRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 
 @Controller
 @Scope("session")
 public class ProjectsController {
-	private OltuProjectRemoteRepository repo; //the repository we're communicating with
+	private ProjectRemoteRepository repo; //the repository we're communicating with
 	private RemoteAPIService apiService; //a service to read information about remote apis
 	private OltuAuthorizationController authController; //a reference to the authorization controller
 	
 	@Autowired
-	public ProjectsController(OltuProjectRemoteRepository repo,OltuAuthorizationController authController,RemoteAPIService apiRepo){
+	public ProjectsController(ProjectRemoteRepository repo,OltuAuthorizationController authController,RemoteAPIService apiRepo){
 		this.repo = repo;
 		this.authController = authController;
 		this.apiService = apiRepo;
