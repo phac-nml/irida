@@ -134,9 +134,8 @@ public class RemoteAPIToken {
 	 * Test if this token has expired
 	 * @return true if this token has expired
 	 */
-	public boolean isExpired(){
-		long currentTimeMillis = System.currentTimeMillis();
-		return currentTimeMillis>expiryDate.getTime();
+	public boolean isExpired(){		
+		return (new Date()).after(expiryDate);
 	}
 	
 }
