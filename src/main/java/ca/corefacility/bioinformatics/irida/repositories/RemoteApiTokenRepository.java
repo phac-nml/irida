@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.repositories;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.history.RevisionRepository;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
@@ -12,7 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.User;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
-public interface RemoteApiTokenRepository extends CrudRepository<RemoteAPIToken, Long>{
+public interface RemoteApiTokenRepository extends CrudRepository<RemoteAPIToken, Long>, RevisionRepository<RemoteAPIToken, Long, Integer> {
 	
 	/**
 	 * Get a current API token from the repository for a given service and user

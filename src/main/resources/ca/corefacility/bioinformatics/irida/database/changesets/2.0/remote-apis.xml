@@ -33,17 +33,12 @@
 					referencedColumnNames="id" referencedTableName="Revisions" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
-			<column name="serviceURI" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
+			<column name="serviceURI" type="varchar(255)" />
 			<column name="description" type="text" />
-			<column name="clientId" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="clientSecret" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
+			<column name="clientId" type="varchar(255)" />
+			<column name="clientSecret" type="varchar(255)" />
 		</createTable>
+
 
 		<!-- Create remote api token tables -->
 		<createTable tableName="remote_api_token">
@@ -54,9 +49,6 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="expiryDate" type="datetime">
-				<constraints nullable="false"/>
-			</column>
-			<column name="current" type="tinyint(1)">
 				<constraints nullable="false" />
 			</column>
 			<column name="remote_api_id" type="bigint(20)">
@@ -69,6 +61,9 @@
 			</column>
 		</createTable>
 
+		<addUniqueConstraint columnNames="remote_api_id,user_id"
+			tableName="remote_api_token" constraintName="UK_remote_api_token_user" />
+
 		<createTable tableName="remote_api_token_AUD">
 			<column name="id" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false" />
@@ -78,15 +73,10 @@
 					referencedColumnNames="id" referencedTableName="Revisions" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
-			<column name="tokenString" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
+			<column name="tokenString" type="varchar(255)" />
 			<column name="expiryDate" type="datetime" />
-			<column name="current" type="tinyint(1)">
-				<constraints nullable="false" />
-			</column>
-			<column name="remote_api_id" type="bigint(20)"/>
-			<column name="user_id" type="bigint(20)"/>
+			<column name="remote_api_id" type="bigint(20)" />
+			<column name="user_id" type="bigint(20)" />
 		</createTable>
 	</changeSet>
 </databaseChangeLog>

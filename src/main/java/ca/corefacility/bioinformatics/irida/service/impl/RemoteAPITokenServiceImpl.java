@@ -33,7 +33,7 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
 	public void addToken(RemoteAPIToken token) {
 		User user = userRepository.loadUserByUsername(getUserName());
 		token.setUser(user);
-		invalidateOldToken(token.getRemoteApi());
+		removeOldToken(token.getRemoteApi());
 		tokenRepository.save(token);
 	}
 
@@ -66,11 +66,10 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
 	 * @param token
 	 */
 	@Transactional
-	protected void invalidateOldToken(RemoteAPI api){
+	protected void removeOldToken(RemoteAPI api){
 		RemoteAPIToken oldToken = getToken(api);
 		if(oldToken != null){
-			oldToken.setCurrent(false);
-			tokenRepository.save(oldToken);
+			tokenRepository.delete(oldToken);
 		}
 	}
 }

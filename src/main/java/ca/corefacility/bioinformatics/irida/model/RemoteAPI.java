@@ -80,21 +80,50 @@ public class RemoteAPI implements Comparable<RemoteAPI>{
 		stringServiceURI = serviceURI.toString();
 	}
 	
+	/**
+	 * Get the entity id
+	 * @return
+	 */
 	public Long getId() {
 		return id;
 	}
+	
+	/**
+	 * Set the entity idea 
+	 * @param id
+	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
+	
+	/**
+	 * Get the base URI of this remote api
+	 * @return
+	 */
 	public URI getServiceURI() {
 		return serviceURI;
 	}
+	
+	/**
+	 * Set the base URI of this remote service
+	 * @param serviceURI
+	 */
 	public void setServiceURI(URI serviceURI) {
 		this.serviceURI = serviceURI;
 	}
+	
+	/**
+	 * Get a description of the remote api
+	 * @return
+	 */
 	public String getDescription() {
 		return description;
 	}
+	
+	/**
+	 * Set the description for the remote api
+	 * @param description
+	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
