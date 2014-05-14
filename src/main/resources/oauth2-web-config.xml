@@ -42,13 +42,15 @@
 	
 	<oauth:client id="oauth2ClientFilter"  />
 	
+	<sec:http pattern="/favicon.ico" security="none" />
+	
 	<sec:http pattern="/**" create-session="never"
 		entry-point-ref="oauthAuthenticationEntryPoint"
 		access-decision-manager-ref="accessDecisionManager"
 		authentication-manager-ref="clientAuthenticationManager">
 		<sec:anonymous enabled="false" />
 		<!-- Read scope for GET requests -->
-		<sec:intercept-url pattern="/favicon.ico" access="IS_AUTHENTICATED_FULLY" />
+		
 		<sec:intercept-url pattern="/success" access="IS_AUTHENTICATED_FULLY" />
 		<sec:intercept-url pattern="/test" access="IS_AUTHENTICATED_FULLY" />      
 		<sec:intercept-url pattern="/**" method="GET" access="SCOPE_READ" />
