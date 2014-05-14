@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
-import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;

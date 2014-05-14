@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import ca.corefacility.bioinformatics.irida.model.Role;
-import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 
 /**

@@ -23,9 +23,9 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.Sample;
-import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;

@@ -1,9 +1,9 @@
 package ca.corefacility.bioinformatics.irida.repositories;
 
-import ca.corefacility.bioinformatics.irida.model.User;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import ca.corefacility.bioinformatics.irida.model.PasswordReset;
+import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
  * A repository to store password resets for a user.

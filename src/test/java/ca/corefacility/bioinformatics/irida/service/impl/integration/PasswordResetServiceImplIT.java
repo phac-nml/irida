@@ -24,9 +24,9 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.PasswordReset;
-import ca.corefacility.bioinformatics.irida.model.Role;
-import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 

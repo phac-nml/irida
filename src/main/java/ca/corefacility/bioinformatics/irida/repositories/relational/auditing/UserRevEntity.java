@@ -8,7 +8,7 @@ import javax.persistence.Table;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionEntity;
 
-import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
  * 

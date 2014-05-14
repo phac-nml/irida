@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.model;
+package ca.corefacility.bioinformatics.irida.model.user;
 
 import java.util.Objects;
 

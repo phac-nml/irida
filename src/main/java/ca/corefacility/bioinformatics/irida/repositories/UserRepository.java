@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
  * Specialized repository for {@link User}.

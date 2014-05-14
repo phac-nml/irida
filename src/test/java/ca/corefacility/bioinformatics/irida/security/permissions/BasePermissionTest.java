@@ -7,7 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

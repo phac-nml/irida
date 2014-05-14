@@ -8,7 +8,7 @@ import javax.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ca.corefacility.bioinformatics.irida.model.PasswordReset;
+import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.repositories.PasswordResetRepository;
 import ca.corefacility.bioinformatics.irida.service.PasswordResetService;
 

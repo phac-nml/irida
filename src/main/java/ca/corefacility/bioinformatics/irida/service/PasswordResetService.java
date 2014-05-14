@@ -2,7 +2,7 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import ca.corefacility.bioinformatics.irida.model.PasswordReset;
+import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 
 /**
  * Service for managing {@link PasswordReset} entities.
