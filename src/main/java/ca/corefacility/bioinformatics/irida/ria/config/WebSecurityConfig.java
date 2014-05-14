@@ -41,7 +41,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.and()
 
 				.formLogin().defaultSuccessUrl("/").loginPage("/login").failureUrl("/login?error=1").permitAll().and()
-				.logout().logoutSuccessUrl("/login").logoutUrl("/logout").permitAll().and().authorizeRequests().antMatchers("/bower_components/**").permitAll().anyRequest()
-				.authenticated().and();
+				.logout().logoutSuccessUrl("/login").logoutUrl("/logout").permitAll().and().authorizeRequests()
+				.antMatchers("/bower_components/**").permitAll().anyRequest().authenticated().and();
 	}
 }

@@ -39,6 +39,7 @@
         <junit.version>4.11</junit.version>
         <maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
         <jacoco-maven-plugin.version>0.7.0.201403182114</jacoco-maven-plugin.version>
+        <jackson.version>2.4.0-rc3</jackson.version>
     </properties>
 
     <inceptionYear>2014</inceptionYear>
@@ -183,6 +184,14 @@
             <artifactId>javax.servlet-api</artifactId>
             <version>${javax.servlet-api.version}</version>
         </dependency>
+
+        <!-- JACKSON -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
 
         <!-- TESTING -->
         <dependency>

@@ -6,7 +6,7 @@ define(['angularAMD', 'angular-route'], function (angularAMD) {
             .when('/dashboard', angularAMD.route({
                 templateUrl: '/dashboard/partial',
                 controller: 'DashboardCtrl',
-                controllerUrl: '/dashboard/controller'
+                controllerUrl: '/scripts/dashboard/controllers/dashboardCtrl.js'
             }))
             .otherwise({redirectTo: '/dashboard'});
     });

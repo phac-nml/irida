@@ -21,10 +21,4 @@ public class DashboardController {
 		logger.debug("Creating partial for dashboard view.");
 		return "views/dashboard.html";
 	}
-
-	@RequestMapping(value = "controller", method = RequestMethod.GET, produces = "application/json")
-	public String getDashboardController() {
-		logger.debug("Fetching the DashboardCtrl");
-		return "scripts/dashboard/controllers/dashboardCtrl.js";
-	}
 }
