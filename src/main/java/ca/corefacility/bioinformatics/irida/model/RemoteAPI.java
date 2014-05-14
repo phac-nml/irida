@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -11,14 +9,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.PostLoad;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.URL;
 
 /**
  * Description of a remote Irida API that this API can communicate with via
@@ -36,13 +31,10 @@ public class RemoteAPI implements Comparable<RemoteAPI> {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@Transient
-	private URI serviceURI;
-	// keeping a string representation of the service URI so it's stored nicer
-	// in the database
 	@NotNull
+	@URL
 	@Column(name = "serviceURI")
-	private String stringServiceURI;
+	private String serviceURI;
 
 	private String description;
 
@@ -58,30 +50,11 @@ public class RemoteAPI implements Comparable<RemoteAPI> {
 	public RemoteAPI() {
 	}
 
-	public RemoteAPI(URI serviceURI, String description, String clientId, String clientSecret) {
+	public RemoteAPI(String serviceURI, String description, String clientId, String clientSecret) {
 		this.serviceURI = serviceURI;
 		this.description = description;
 		this.clientId = clientId;
 		this.clientSecret = clientSecret;
-	}
-
-	/**
-	 * Setting the proper service URI after load
-	 * 
-	 * @throws URISyntaxException
-	 */
-	@PostLoad
-	public void postLoad() throws URISyntaxException {
-		serviceURI = new URI(stringServiceURI);
-	}
-
-	/**
-	 * Setting the string service URI before we store it in the database
-	 */
-	@PrePersist
-	@PreUpdate
-	public void prePersist() {
-		stringServiceURI = serviceURI.toString();
 	}
 
 	/**
@@ -107,7 +80,7 @@ public class RemoteAPI implements Comparable<RemoteAPI> {
 	 * 
 	 * @return
 	 */
-	public URI getServiceURI() {
+	public String getServiceURI() {
 		return serviceURI;
 	}
 
@@ -116,7 +89,7 @@ public class RemoteAPI implements Comparable<RemoteAPI> {
 	 * 
 	 * @param serviceURI
 	 */
-	public void setServiceURI(URI serviceURI) {
+	public void setServiceURI(String serviceURI) {
 		this.serviceURI = serviceURI;
 	}
 

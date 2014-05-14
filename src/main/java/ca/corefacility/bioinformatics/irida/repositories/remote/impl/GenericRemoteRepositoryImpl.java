@@ -91,7 +91,7 @@ public abstract class GenericRemoteRepositoryImpl<Type extends RemoteResource> i
 	 */
 	public void setRemoteAPI(RemoteAPI remoteAPI) {
 		restTemplate.setRemoteAPI(remoteAPI);
-		URI serviceURI = remoteAPI.getServiceURI();
+		String serviceURI = remoteAPI.getServiceURI();
 		resourcesURI = UriBuilder.fromUri(serviceURI).path(relativeURI).build();
 
 	}
