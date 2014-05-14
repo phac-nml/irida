@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import java.net.URISyntaxException;
-
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
@@ -24,7 +22,7 @@ public class RemoteAPIServiceImpl extends CRUDServiceImpl<Long, RemoteAPI> imple
 	}
 	
 	@Autowired
-	public RemoteAPIServiceImpl(RemoteAPIRepository repository, Validator validator) throws ConstraintViolationException, EntityExistsException, URISyntaxException {
+	public RemoteAPIServiceImpl(RemoteAPIRepository repository, Validator validator) throws ConstraintViolationException, EntityExistsException {
 		super(repository, validator, RemoteAPI.class);
 	}
 	
