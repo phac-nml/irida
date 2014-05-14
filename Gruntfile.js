@@ -102,6 +102,7 @@ module.exports = function (grunt) {
                 'compass:dev'
             ],
             dist: [
+                'copy:dist',
                 'compass:dist'
             ]
         },
@@ -172,6 +173,23 @@ module.exports = function (grunt) {
                 cwd: '<%= path.app %>/',
                 src: ['pages/**/*.html', 'views/**/*.html'],
                 dest: '<%= path.static %>/'
+            }
+        },
+
+        htmlmin: {
+            dist: {
+                options: {
+                    removeComments: true,
+                    collapseWhitespace: true,
+                    minifyJS: true,
+                    minifyCSS: true
+                },
+                files: [{
+                    expand: true,
+                    cwd: '<%= path.static %>/',
+                    src: ['pages/*.html', 'views/**/*.html'],
+                    dest: '<%= path.static %>'
+                }]
             }
         },
         // Need to make sure the JavaScript files are consistent.
@@ -273,15 +291,15 @@ module.exports = function (grunt) {
                         },
                         // e.g. Repalces href="main.css" ==> th:href="@{/3k24jk234jk32.main.css}"
                         {
-                            match: /href="styles\/([a-zA-Z0-9]+).(\w+).css"/g,
-                            replacement: 'th:href="@{/styles/$1.$2.css}"'
+                            match: /<link rel="stylesheet" href="styles\/([a-zA-Z0-9]+).(\w+).css">/g,
+                            replacement: '<link rel="stylesheet" th:href="@{/styles/$1.$2.css}"/>'
                         }
                     ]
                 },
                 files: [
                     {
                         src: ['<%= path.static %>/pages/**/*.html'],
-                        dest: '<%= path.static %>/pages/',
+                        dest: '',
                         expand: true,
                         flatten: false
                     }
@@ -405,7 +423,6 @@ module.exports = function (grunt) {
         'concurrent:dist',
         'autoprefixer:dist',
         'ngmin',
-        'copy:dist',
         'cssmin',
         'uglify',
         'rev',
