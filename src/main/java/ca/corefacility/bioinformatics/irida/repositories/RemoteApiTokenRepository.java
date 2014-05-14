@@ -16,12 +16,12 @@ import ca.corefacility.bioinformatics.irida.model.User;
 public interface RemoteApiTokenRepository extends CrudRepository<RemoteAPIToken, Long>, RevisionRepository<RemoteAPIToken, Long, Integer> {
 	
 	/**
-	 * Get a current API token from the repository for a given service and user
+	 * Get an API token from the repository for a given service and user
 	 * @param remoteApi the {@link RemoteAPI} to read a token for
 	 * @param user The {@link User} to get a token for
 	 * @return A current {@link RemoteAPIToken} if one exists 
 	 */
-	@Query("FROM RemoteAPIToken t WHERE t.remoteApi=?1 AND t.user=?2 AND current=TRUE")
+	@Query("FROM RemoteAPIToken t WHERE t.remoteApi=?1 AND t.user=?2")
 	public RemoteAPIToken readTokenForApiAndUser(RemoteAPI remoteApi,User user);
 	
 }
