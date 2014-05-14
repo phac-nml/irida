@@ -16,6 +16,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
@@ -36,13 +37,16 @@ public class RemoteAPI implements Comparable<RemoteAPI>{
 	@Transient
 	private URI serviceURI;
 	//keeping a string representation of the service URI so it's stored nicer in the database
+	@NotNull
 	@Column(name="serviceURI")
 	private String stringServiceURI;
 	
 	private String description;
 	
+	@NotNull
 	private String clientId;
 	
+	@NotNull
 	private String clientSecret;
 	
 	@OneToMany(mappedBy="remoteApi")

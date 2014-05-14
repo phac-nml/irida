@@ -9,10 +9,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
-
-import com.sun.istack.NotNull;
 
 /**
  * OAuth2 token for communicating with a {@link RemoteAPI} for a given {@link User}
@@ -37,11 +36,13 @@ public class RemoteAPIToken {
 	private boolean current = true;
 	
 	@ManyToOne
-	@JoinColumn(name="API_ID")
+	@JoinColumn(name="remote_api_id")
+	@NotNull
 	RemoteAPI remoteApi;
 	
 	@ManyToOne
-	@JoinColumn(name="USER_ID")
+	@JoinColumn(name="user_id")
+	@NotNull
 	User user;
 	
 	public RemoteAPIToken(){
