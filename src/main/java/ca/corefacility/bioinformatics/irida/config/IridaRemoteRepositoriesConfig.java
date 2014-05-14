@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import ca.corefacility.bioinformatics.irida.repositories.remote.impl.OltuProjectRemoteRepository;
+import ca.corefacility.bioinformatics.irida.repositories.remote.impl.ProjectRemoteRepositoryImpl;
 import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAuthTokenRestTemplate;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
@@ -19,8 +19,8 @@ public class IridaRemoteRepositoriesConfig {
 
 	
 	@Bean
-	public OltuProjectRemoteRepository oltuProjectRemoteRepository(OAuthTokenRestTemplate restTemplate){
-		return new OltuProjectRemoteRepository(restTemplate);
+	public ProjectRemoteRepositoryImpl oltuProjectRemoteRepository(OAuthTokenRestTemplate restTemplate){
+		return new ProjectRemoteRepositoryImpl(restTemplate);
 	}
 }
 	

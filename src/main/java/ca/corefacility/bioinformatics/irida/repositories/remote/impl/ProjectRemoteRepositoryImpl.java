@@ -13,7 +13,7 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAu
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
-public class OltuProjectRemoteRepository extends OltuGenericRepository<RemoteProject> implements ProjectRemoteRepository{
+public class ProjectRemoteRepositoryImpl extends GenericRemoteRepositoryImpl<RemoteProject> implements ProjectRemoteRepository{
 
 	public final static String relativeURI = "projects";
 	
@@ -22,10 +22,10 @@ public class OltuProjectRemoteRepository extends OltuGenericRepository<RemotePro
 	private static ParameterizedTypeReference<ResourceWrapper<RemoteProject>> objectTypeReference = new ParameterizedTypeReference<ResourceWrapper<RemoteProject>>() {};
 	
 	/**
-	 * Create a new {@link OltuProjectRemoteRepository} with the given rest template
+	 * Create a new {@link ProjectRemoteRepositoryImpl} with the given rest template
 	 * @param restTemplate a {@link OAuthTokenRestTemplate}
 	 */
-	public OltuProjectRemoteRepository(OAuthTokenRestTemplate restTemplate){
+	public ProjectRemoteRepositoryImpl(OAuthTokenRestTemplate restTemplate){
 		super(restTemplate,relativeURI,listTypeReference,objectTypeReference);
 	}
 }

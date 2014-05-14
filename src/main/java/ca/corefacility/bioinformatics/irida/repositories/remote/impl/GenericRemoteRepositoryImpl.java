@@ -26,7 +26,7 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAu
  *            The type of object to be stored in this repository (extends
  *            {@link RemoteResource})
  */
-public abstract class OltuGenericRepository<Type extends RemoteResource> implements GenericRemoteRepository<Type> {
+public abstract class GenericRemoteRepositoryImpl<Type extends RemoteResource> implements GenericRemoteRepository<Type> {
 
 	// the rest template to communicate with
 	private OAuthTokenRestTemplate restTemplate;
@@ -54,7 +54,7 @@ public abstract class OltuGenericRepository<Type extends RemoteResource> impleme
 	 *            A {@link ParameterizedTypeReference} for individual resources
 	 *            read by the rest template
 	 */
-	public OltuGenericRepository(OAuthTokenRestTemplate restTemplate, String relativeURI,
+	public GenericRemoteRepositoryImpl(OAuthTokenRestTemplate restTemplate, String relativeURI,
 			ParameterizedTypeReference<ListResourceWrapper<Type>> listTypeReference,
 			ParameterizedTypeReference<ResourceWrapper<Type>> objectTypeReference) {
 		this.restTemplate = restTemplate;
