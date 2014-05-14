@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.repositories.remote.oltu;
+package ca.corefacility.bioinformatics.irida.repositories.remote.impl;
 
 import java.net.URI;
 import java.util.List;
