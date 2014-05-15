@@ -212,12 +212,12 @@ module.exports = function (grunt) {
         // Karma Testing
         karma: {
             allBrowsers: {
-                configFile: 'karma-unit.conf.js',
+                configFile: 'karma.conf.js',
                 autoWatch: false,
                 singleRun: true
             },
             dev: {
-                configFile: 'karma-phantom.conf.js',
+                configFile: 'karma.conf.js',
                 autoWatch: false,
                 singleRun: true
             },
@@ -228,10 +228,10 @@ module.exports = function (grunt) {
                 keepAlive: false
             },
             auto: {
-                configFile: 'karma-unit.conf.js'
+                configFile: 'karma.conf.js'
             },
             unit_coverage: {
-                configFile: 'karma-unit.conf.js',
+                configFile: 'karma.conf.js',
                 autoWatch: false,
                 singleRun: true,
                 reporters: ['progress', 'coverage'],

@@ -6,13 +6,11 @@
         /**
          * @constructor
          */
-        var DashboardCtrl = function ($scope, $log) {
-            $log = $log.getInstance('DashboardCtrl');
-            $log.debug('constructor() ');
+        var DashboardCtrl = function ($scope) {
 
             $scope.message = 'Message from DashboardCtrl';
         };
 
-        return ['$scope', '$log', DashboardCtrl];
+        return ['$scope', DashboardCtrl];
     });
 })(define);
