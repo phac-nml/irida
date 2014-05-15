@@ -19,6 +19,6 @@ public class ViewController {
 	@RequestMapping(value = "dashboard", method = RequestMethod.GET)
 	public String getDashboardView() {
 		logger.debug("Creating partial for dashboard view.");
-		return "views/dashboard.html";
+		return "views/dashboard";
 	}
 }

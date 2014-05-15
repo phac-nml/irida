@@ -28,7 +28,7 @@ public class ThymeleafConfiguration {
 
 	private static final String TEMPLATE_MODE = "HTML5";
 	private static final String TEMPLATE_PREFIX = "/static/";
-	private static final String TEMPLATE_SUFFIX = "";
+	private static final String TEMPLATE_SUFFIX = ".html";
 	private static final Long TEMPLATE_CACHE_TIME = 3600000L;
 	private static final int TEMPLATE_ORDER = 1;
 	private static final boolean TEMPLATE_NOT_CACHEABLE = false;
