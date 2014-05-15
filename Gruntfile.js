@@ -1,6 +1,8 @@
+
+/*jshint camelcase: false */
 /*
  * Grunt configuration file.
- * 
+ *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 
@@ -195,43 +197,43 @@ module.exports = function (grunt) {
         // Need to make sure the JavaScript files are consistent.
         jshint: {
             options: {
-                jshintrc: '.jshintrc',
-                reporter: require('jshint-stylish')
+                jshintrc: '<%= path.test%>/config/.jshintrc',
+                reporter: require('jshint-stylish'),
+                globals: {
+                    'define': true
+                }
             },
             all: [
                 'Gruntfile.js',
                 '<%= path.app %>/scripts/{,*/}*.js'
             ],
             test: {
-                options: {
-                    jshintrc: '<%= path.test %>/.jshintrc'
-                },
                 src: ['<%= path.test %>/{,*/}*.js']
             }
         },
         // Karma Testing
         karma: {
             allBrowsers: {
-                configFile: 'karma.conf.js',
+                configFile: '<%= path.test %>/config/karma.conf.js',
                 autoWatch: false,
                 singleRun: true
             },
             dev: {
-                configFile: 'karma.conf.js',
+                configFile: '<%= path.test %>/config/karma.conf.js',
                 autoWatch: false,
                 singleRun: true
             },
             dist: {
-                configFile: 'karma-phantom.conf.js',
+                configFile: '<%= path.test %>/config/karma-phantom.conf.js',
                 autoWatch: false,
                 singleRun: true,
                 keepAlive: false
             },
             auto: {
-                configFile: 'karma.conf.js'
+                configFile: '<%= path.test %>/config/karma.conf.js'
             },
             unit_coverage: {
-                configFile: 'karma.conf.js',
+                configFile: '<%= path.test %>/config/karma.conf.js',
                 autoWatch: false,
                 singleRun: true,
                 reporters: ['progress', 'coverage'],
@@ -390,7 +392,7 @@ module.exports = function (grunt) {
     ;
 
 // Single run tests
-    grunt.registerTask('test', ['jshint', 'karma:dist']);
+    grunt.registerTask('test', ['jshint', 'karma:dev']);
     grunt.registerTask('testAll', ['jshint', 'karma:dev', 'test:e2e']);
     grunt.registerTask('test:e2e', [
         'clean:dist',
@@ -427,7 +429,7 @@ module.exports = function (grunt) {
         'uglify',
         'rev',
         'usemin',
-        'replace',
+        // 'replace',
         'clean:tmp'
     ]);
 

@@ -1,3 +1,4 @@
+/*jshint undef: false */
 /**
  * @author      Josh Adam
  * @author      Thomas Burleson
@@ -9,18 +10,18 @@
  *  Usages:
  *
  *      var user = {
- *              first : "Thomas",
- *              last  : "Burleson",
+ *              first : 'Thomas',
+ *              last  : 'Burleson',
  *              address : {
- *                  city : "West Des Moines",
- *                  state: "Iowa"
+ *                  city : 'West Des Moines',
+ *                  state: 'Iowa'
  *              },
  *              contact : {
- *                  email : "ThomasBurleson@Gmail.com"
- *                  url   : "http://www.gridlinked.info"
+ *                  email : 'ThomasBurleson@Gmail.com'
+ *                  url   : 'http://www.gridlinked.info'
  *              }
  *          },
- *          message = "Hello Mr. {first} {last}. How's life in {address.city}, {address.state} ?";
+ *          message = 'Hello Mr. {first} {last}. How's life in {address.city}, {address.state} ?';
  *
  *     return supplant( message, user );
  *
@@ -29,7 +30,7 @@
  *
  */
 (function (define) {
-    "use strict";
+    'use strict';
 
     define([], function () {
         // supplant() method from Crockfords `Remedial Javascript`
@@ -60,15 +61,15 @@
             return this;
         };
 
-        String.method("supplant", function (values, pattern) {
+        String.method('supplant', function (values, pattern) {
             var self = this;
             return supplant(self, values, pattern);
         });
 
 
         // Publish this global function...
-        return String.supplant = supplant;
-
+        String.supplant = supplant;
+        return String.supplant;
     });
 
 }(define));

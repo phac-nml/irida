@@ -1,3 +1,4 @@
+/*jshint undef: false */
 /**
  * @author     Josh Adam
  * @author     Thomas Burleson

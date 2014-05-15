@@ -6,11 +6,11 @@
     <title>DASHBOARD</title>
 
     <!-- build:css styles/vendor.css -->
-    <link rel="stylesheet" href="/bower_components/bootstrap-css/css/bootstrap.min.css"/>
+    <link rel="stylesheet" th:href="@{/bower_components/bootstrap-css/css/bootstrap.min.css}"/>
     <!-- endbuild -->
 
     <!-- build:css(.tmp) styles/main.css -->
-    <link rel="stylesheet" href="/styles/main.css"/>
+    <link rel="stylesheet" th:href="@{/styles/main.css}"/>
     <!-- endbuild -->
 </head>
 <body>
@@ -24,7 +24,7 @@
     <div ng-view=""></div>
 </div>
 
-<script src="/bower_components/headjs-notify/src/load.js"></script>
-<script src="scripts/boot.js"></script>
+<script th:src="@{/bower_components/headjs-notify/src/load.js}"></script>
+<script th:src="@{/scripts/boot.js}"></script>
 </body>
 </html>

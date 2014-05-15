@@ -1,11 +1,13 @@
 module.exports = function (config) {
-    var app_path = 'src/main/webapp',
-        test_path = 'src/test/javascript/';
+    'use strict';
+
+    var appPath = 'src/main/webapp',
+        testPath = 'src/test/javascript/';
 
     config.set({
 
         // base path, that will be used to resolve files and exclude
-        basePath: '',
+        basePath: '../../../../',
 
         /**
          *  frameworks to use; by specifying `requirejs` we do not have to manually
@@ -21,22 +23,22 @@ module.exports = function (config) {
 
             // Load these files in this order...
 
-                app_path + '/bower_components/jQuery/dist/jquery.min.js',
-                app_path + '/bower_components/angular/angular.js',
-                app_path + '/bower_components/angular-mocks/angular-mocks.js',
+                appPath + '/bower_components/jQuery/dist/jquery.min.js',
+                appPath + '/bower_components/angular/angular.js',
+                appPath + '/bower_components/angular-mocks/angular-mocks.js',
 
             // Use `included = false` to let requireJS load them as needed
             // ... listed here so they can be resolved relative to the baseURL
 
-            { pattern: app_path + '/scripts/**/*.js', included: false },
-            { pattern: test_path + '/unit/*.spec.js', included: false },
+            { pattern: appPath + '/scripts/**/*.js', included: false },
+            { pattern: testPath + '/unit/*.spec.js', included: false },
 
             // Load and run the RequireJS/Karma bootstrap
             //
             // NOTE: we do NOT use the application's bootstrap.js since this
             //       custom one will auto-run Karma once loaded.
 
-            test_path + '/config/karmaBoot.js'
+            testPath + '/config/karmaBoot.js'
         ],
 
         // list of files to exclude

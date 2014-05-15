@@ -1,4 +1,6 @@
+/*jshint undef: false */
 /**
+ * @author      Josh Adam
  * @author      Thomas Burleson
  * @date        November, 2013
  *
@@ -12,7 +14,7 @@
 
 (function (angular)
 {
-    "use strict";
+    'use strict';
 
     define( [], function()
     {
@@ -32,14 +34,14 @@
              */
             var reportError = function (reason)
                 {
-                    if(notifyFn != null)
+                    if(notifyFn !== null)
                     {
                         var error = (reason && reason.stack) ? reason : null,
-                            message = reason != null ? String(reason) : "";
+                            message = reason !== null ? String(reason) : '';
 
-                        if(error != null)
+                        if(error !== null)
                         {
-                            message = error.message + "\n" + error.stack;
+                            message = error.message + '\n' + error.stack;
                         }
 
                         notifyFn.apply(scope, [message]);
@@ -58,7 +60,7 @@
                         var result = angular.isFunction(actionFn) ? actionFn.apply(scope, args || []) : String(actionFn),
                             promise = (angular.isObject(result) && result.then) ? result : null;
 
-                        if(promise != null)
+                        if(promise !== null)
                         {
                             // Catch and report any promise rejection reason...
                             promise.then(null, reportError);

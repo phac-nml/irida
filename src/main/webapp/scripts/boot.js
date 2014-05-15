@@ -1,3 +1,4 @@
+/*jshint unused:false, undef: false */
 /**
  *  Use aysnc script loader, configure the application module (for AngularJS)
  *  and initialize the application ( which configures routing )

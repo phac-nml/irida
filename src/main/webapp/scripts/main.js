@@ -1,3 +1,4 @@
+/*jshint undef: false */
 /**
  * Now let's start our AngularJS app...
  * which uses RequireJS to load  packages and code

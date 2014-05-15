@@ -1,3 +1,4 @@
+/*jshint undef: false */
 /**
  * @author      Thomas Burleson
  * @date        November, 2013
@@ -56,7 +57,7 @@
                     this.versionSearchString = data[i].versionSearch || data[i].identity;
                     if(dataString)
                     {
-                        if(dataString.indexOf(data[i].subString) != -1)
+                        if(dataString.indexOf(data[i].subString) !== -1)
                         {
                             return data[i].identity;
                         }
@@ -74,7 +75,7 @@
             searchVersion: function (dataString)
             {
                 var index = dataString.indexOf(this.versionSearchString);
-                if(index == -1)
+                if(index === -1)
                 {
                     return;
                 }

@@ -7,15 +7,7 @@
 
     define(dependencies, function (DashboardCtrl) {
         describe('Dashboard Controller', function () {
-            var _scope,
-                appName = 'test.irida';
-
-            /**
-             * Load the `test module`
-             */
-//            beforeEach(function () {
-//                module(appName);
-//            });
+            var _scope;
 
             beforeEach(inject(function ($rootScope, $injector, $controller) {
                 _scope = $rootScope.$new();
