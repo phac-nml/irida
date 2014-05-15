@@ -10,7 +10,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 /**
  * Unit Test for {@link PageController}
- * 
+ *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class PageControllerTest {
@@ -25,13 +25,13 @@ public class PageControllerTest {
 	@Test
 	public void testLoginModelAndView() throws Exception {
 		mockMvc.perform(MockMvcRequestBuilders.get("/login")).andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.view().name("pages/login/index"));
+				.andExpect(MockMvcResultMatchers.view().name("pages/login"));
 	}
 
 	@Test
 	public void testMainModelAndView() throws Exception {
 		mockMvc.perform(MockMvcRequestBuilders.get("/")).andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.view().name("pages/dashboard/index"))
+				.andExpect(MockMvcResultMatchers.view().name("pages/index"))
 				.andExpect(MockMvcResultMatchers.model().attribute("hello", CoreMatchers.is("Hello IRIDA!")));
 	}
 }
