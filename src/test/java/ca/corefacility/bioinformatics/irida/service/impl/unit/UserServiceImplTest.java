@@ -217,6 +217,7 @@ public class UserServiceImplTest {
 		when(userRepository.loadUserByEmail(email)).thenReturn(u);
 		
 		u2.setCreatedDate(u.getCreatedDate());
+		u2.setModifiedDate(u.getModifiedDate());
 		
 		User loadUserByEmail = userService.loadUserByEmail(email);
 		
