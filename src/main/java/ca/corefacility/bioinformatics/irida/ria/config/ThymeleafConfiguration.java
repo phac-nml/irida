@@ -1,18 +1,25 @@
 package ca.corefacility.bioinformatics.irida.ria.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Description;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
+import org.thymeleaf.dialect.IDialect;
+import org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Replace JSP's with Thymeleaf templating.
@@ -21,6 +28,8 @@ import java.util.Arrays;
  */
 @Configuration
 public class ThymeleafConfiguration {
+	private static final Logger logger = LoggerFactory.getLogger(ThymeleafConfiguration.class);
+
 	private static final String TEMPLATE_MODE = "HTML5";
 	private static final String TEMPLATE_PREFIX = "/static/";
 	private static final String TEMPLATE_SUFFIX = ".html";
@@ -31,6 +40,19 @@ public class ThymeleafConfiguration {
 	@Autowired
 	private Environment env;
 
+	@Bean
+	public MessageSource messageSource() {
+		logger.info("Configuring ReloadableResourceBundleMessageSource.");
+
+		// TODO: Create one for each 'page'
+		String[] resources= {"classpath:/i18n/login", "classpath:/i18n/dashboard"};
+
+		ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
+		source.setBasenames(resources);
+		source.setDefaultEncoding("UTF-8");
+		return source;
+	}
+
 	/**
 	 * Add Thymeleaf as the view resolver.
 	 * 
@@ -38,6 +60,7 @@ public class ThymeleafConfiguration {
 	 */
 	@Bean
 	public ViewResolver viewResolver() {
+		logger.info("Configuring ViewResolver.");
 		ContentNegotiatingViewResolver resolver = new ContentNegotiatingViewResolver();
 		resolver.setViewResolvers(Arrays.asList(thymeleafViewResolver()));
 		return resolver;
@@ -77,6 +100,7 @@ public class ThymeleafConfiguration {
 	public SpringTemplateEngine templateEngine() {
 		SpringTemplateEngine engine = new SpringTemplateEngine();
 		engine.setTemplateResolver(templateResolver());
+		engine.setAdditionalDialects(additionalDialects());
 		return engine;
 	}
 
@@ -93,10 +117,9 @@ public class ThymeleafConfiguration {
 		return resolver;
 	}
 
-	@Bean
-	public ResourceBundleMessageSource messageSource() {
-		ResourceBundleMessageSource source = new ResourceBundleMessageSource();
-		source.setBasename("i18n/messages");
-		return source;
+	private Set<IDialect> additionalDialects() {
+		Set<IDialect> dialects = new HashSet<>();
+		dialects.add(new SpringSecurityDialect());
+		return dialects;
 	}
 }

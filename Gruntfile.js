@@ -1,6 +1,8 @@
+
+/*jshint camelcase: false */
 /*
  * Grunt configuration file.
- * 
+ *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 
@@ -48,14 +50,6 @@ module.exports = function (grunt) {
                 ]
             }
         },
-        // Browserify
-        browserify: {
-            dev: {
-                files: {
-                    '<%= path.static %>/scripts/bundle.js': ['<%= path.app %>/scripts/app.js']
-                }
-            }
-        },
         // Empties folders to start fresh for both dev and production.
         clean: {
             dist: {
@@ -64,8 +58,7 @@ module.exports = function (grunt) {
                         dot: true,
                         src: [
                             '.tmp',
-                            '<%= path.static %>/*',
-                            '!<%= path.app %>/.git*'
+                            '<%= path.static %>/*'
                         ]
                     }
                 ]
@@ -108,10 +101,10 @@ module.exports = function (grunt) {
         concurrent: {
             dev: [
                 'copy:dev',
-                'compass:dev',
-                'browserify:dev'
+                'compass:dev'
             ],
             dist: [
+                'copy:dist',
                 'compass:dist'
             ]
         },
@@ -159,99 +152,93 @@ module.exports = function (grunt) {
         // Copy index during dev
         copy: {
             dev: {
-                expand: true,
-                dot: true,
-                cwd: '<%= path.app %>/pages',
-                dest: '<%= path.static %>/',
-                src: ['*.html']
-            },
-            dist: {
                 files: [
                     {
                         expand: true,
                         dot: true,
-                        cwd: '<%= path.app %>/pages',
-                        dest: '<%= path.static %>/',
-                        src: [
-                            '*.html'
-                        ]
+                        cwd: '<%= path.app %>/',
+                        src: ['pages/**/*.html', 'views/**/*.html'],
+                        dest: '<%= path.static %>/'
                     },
                     {
                         expand: true,
                         dot: true,
-                        cwd: '<%= path.app %>/views/',
-                        dest: '<%= path.static %>/views',
-                        src: [
-                            '*.html'
-                        ]
+                        cwd: '<%= path.app %>/',
+                        src: ['scripts/**/*.js'],
+                        dest: '<%= path.static %>/'
                     }
                 ]
+            },
+            dist: {
+                expand: true,
+                dot: true,
+                cwd: '<%= path.app %>/',
+                src: ['pages/**/*.html', 'views/**/*.html'],
+                dest: '<%= path.static %>/'
             }
         },
 
         htmlmin: {
             dist: {
                 options: {
+                    removeComments: true,
                     collapseWhitespace: true,
-                    collapseBooleanAttributes: true,
-                    removeCommentsFromCDATA: true,
-                    removeOptionalTags: true
+                    minifyJS: true,
+                    minifyCSS: true
                 },
-                files: [
-                    {
-                        expand: true,
-                        cwd: '<%= path.static %>',
-                        src: ['*.html', 'views/{,*/}*.html'],
-                        dest: '<%= path.static %>'
-                    }
-                ]
+                files: [{
+                    expand: true,
+                    cwd: '<%= path.static %>/',
+                    src: ['pages/*.html', 'views/**/*.html'],
+                    dest: '<%= path.static %>'
+                }]
             }
         },
         // Need to make sure the JavaScript files are consistent.
         jshint: {
             options: {
-                jshintrc: '.jshintrc',
-                reporter: require('jshint-stylish')
+                jshintrc: '<%= path.test%>/config/.jshintrc',
+                reporter: require('jshint-stylish'),
+                globals: {
+                    'define': true
+                }
             },
             all: [
                 'Gruntfile.js',
                 '<%= path.app %>/scripts/{,*/}*.js'
             ],
             test: {
-                options: {
-                    jshintrc: '<%= path.test %>/.jshintrc'
-                },
                 src: ['<%= path.test %>/{,*/}*.js']
             }
         },
         // Karma Testing
         karma: {
             allBrowsers: {
-                configFile: 'karma-unit.conf.js',
+                configFile: '<%= path.test %>/config/karma.conf.js',
                 autoWatch: false,
                 singleRun: true
             },
             dev: {
-                configFile: 'karma-phantom.conf.js',
+                configFile: '<%= path.test %>/config/karma.conf.js',
                 autoWatch: false,
                 singleRun: true
             },
             dist: {
-                configFile: 'karma-phantom.conf.js',
+                configFile: '<%= path.test %>/config/karma-phantom.conf.js',
                 autoWatch: false,
                 singleRun: true,
                 keepAlive: false
             },
             auto: {
-                configFile: 'karma-unit.conf.js'
+                configFile: '<%= path.test %>/config/karma.conf.js'
             },
             unit_coverage: {
-                configFile: 'karma-unit.conf.js',
+                configFile: '<%= path.test %>/config/karma.conf.js',
                 autoWatch: false,
                 singleRun: true,
                 reporters: ['progress', 'coverage'],
                 preprocessors: {
-                    '<%= path.app %>/scripts/*.js': ['coverage']
+                    '<%= path.app %>/scripts/**/*.js': ['coverage']
                 },
                 coverageReporter: {
                     type: 'html',
@@ -267,9 +254,9 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: '.tmp/concat/scripts',
-                        src: '*.js',
-                        dest: '.tmp/concat/scripts'
+                        cwd: '<%= path.app %>/scripts/',
+                        src: '**/*.js',
+                        dest: '.tmp/scripts'
                     }
                 ]
             }
@@ -299,22 +286,19 @@ module.exports = function (grunt) {
             dist: {
                 options: {
                     patterns: [
-                        // e.g. Replace src="/app.js" th:src="@{/12k23j3223k4.app.js}"
-                        {
-                            match: /src="scripts\/([a-zA-Z0-9]+).(\w+)\.js"/g,
-                            replacement: 'th:src="@{/scripts/$1.$2.js}"'
-                        },
                         // e.g. Repalces href="main.css" ==> th:href="@{/3k24jk234jk32.main.css}"
                         {
-                            match: /href="styles\/([a-zA-Z0-9]+).(\w+).css"/g,
-                            replacement: 'th:href="@{/styles/$1.$2.css}"'
+                            match: /<link rel="stylesheet" href="(\w+)\/([a-z0-9]+)\.(\w+)\.css"\/>/g,
+                            replacement: '<link rel="stylesheet" th:href="@{/$1/$2.$3.css}"/>'
                         }
                     ]
                 },
                 files: [
                     {
-                        src: ['<%= path.static %>/index.html'],
-                        dest: '<%= path.static %>/index.html'
+                        src: ['<%= path.static %>/pages/*.html'],
+                        dest: '',
+                        expand: true,
+                        flatten: false
                     }
                 ]
             }
@@ -324,7 +308,6 @@ module.exports = function (grunt) {
             dist: {
                 files: {
                     src: [
-                        '<%= path.static %>/scripts/{,*/}*.js',
                         '<%= path.static %>/styles/{,*/}*.css',
                         '<%= path.static %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
                         '<%= path.static %>/styles/fonts/*'
@@ -332,90 +315,92 @@ module.exports = function (grunt) {
                 }
             }
         },
+        uglify: {
+            dist: {
+                files: [{
+                    expand: true,
+                    cwd: '.tmp/scripts/',
+                    src: '**/*.js',
+                    dest: '<%= path.static %>/scripts'
+                }]
+            }
+        },
 // Reads HTML for usemin blocks to enable smart builds that automatically
 // concat, minify and revision files. Creates configurations in memory so
 // additional tasks can operate on them
-        useminPrepare: {
-            html: '<%= path.app %>/pages/index.html',
-            options: {
-                dest: '<%= path.static %>',
-                flow: {
-                    html: {
-                        steps: {
-                            js: [],
-                            css: ['cssmin']
-                        },
-                        post: {
+            useminPrepare: {
+                html: ['<%= path.app %>/pages/**/*.html', '<%= path.app %>/views/**/*.html'],
+                options: {
+                    dest: '<%= path.static %>',
+                    flow: {
+                        html: {
+                            steps: {
+                                css: ['cssmin']
+                            },
+                            post: {
+                            }
                         }
                     }
                 }
-            }
-        },
+            },
 
 // Performs rewrites based on rev and the useminPrepare configuration
-        usemin: {
-            html: ['<%= path.static %>/{,*/}*.html'],
-            css: ['<%= path.static %>/styles/{,*/}*.css'],
-            options: {
-                assetsDirs: ['<%= path.static %>']
-            }
-        },
+            usemin: {
+                html: ['<%= path.static %>/pages/**/*.html', '<%= path.static %>/views/**/*.html'],
+                css: ['<%= path.static %>/styles/{,*/}*.css'],
+                options: {
+                    assetsDirs: ['<%= path.static %>']
+                }
+            },
 // Watch for changes and do the right thing!
-        watch: {
-            compass: {
-                files: ['<%= path.app %>/styles/**/*.scss'],
-                tasks: ['compass:dev', 'autoprefixer']
-            },
-            copy: {
-                files: ['<%= path.app %>/pages/*'],
-                tasks: ['copy:dev']
-            },
-            browserify: {
-                files: ['<%= path.app %>/scripts/**/*.js'],
-                tasks: ['browserify:dev', 'karma:dev'],
-                options: {
-                    livereload: true
-                }
-            },
-            js: {
-                files: ['<%= path.app %>/static/scripts/*.js', '<%= path.test %>/unit/**/*.js'],
-                tasks: ['newer:jshint:all'],
-                options: {
-                    livereload: true
-                }
-            },
-            jsTest: {
-                files: ['<%= path.test %>/unit/**/*.js'],
-                tasks: ['karma:dev']
-            },
-            livereload: {
-                options: {
-                    livereload: '<%= connect.options.livereload %>'
+            watch: {
+                compass: {
+                    files: ['<%= path.app %>/styles/**/*.scss'],
+                    tasks: ['compass:dev', 'autoprefixer']
                 },
-                files: [
-                    '<%= path.app %>/pages/index.html',
-                    '<%= path.static %>/styles/{,*/}*.css'
-                ]
+                copy: {
+                    files: ['<%= path.app %>/pages/**/*.html'],
+                    tasks: ['copy:dev']
+                },
+                js: {
+                    files: ['<%= path.app %>/static/scripts/*.js', '<%= path.test %>/unit/**/*.js'],
+                    tasks: ['newer:jshint:all'],
+                    options: {
+                        livereload: true
+                    }
+                },
+                jsTest: {
+                    files: ['<%= path.test %>/unit/**/*.js'],
+                    tasks: ['karma:dev']
+                },
+                livereload: {
+                    options: {
+                        livereload: '<%= connect.options.livereload %>'
+                    },
+                    files: [
+                        '<%= path.app %>/pages/{,*/}*.html',
+                        '<%= path.static %>/styles/{,*/}*.css'
+                    ]
+                }
             }
-        }
-    })
+        })
     ;
 
 // Single run tests
-    grunt.registerTask('test', ['jshint', 'karma:dist']);
+    grunt.registerTask('test', ['jshint', 'karma:dev']);
     grunt.registerTask('testAll', ['jshint', 'karma:dev', 'test:e2e']);
     grunt.registerTask('test:e2e', [
         'clean:dist',
         'concurrent:dev',
         'autoprefixer',
-        'browserify:dev',
+        'copy:dev',
         'protractor_webdriver',
         'protractor:singleRun'
     ]);
-    grunt.registerTask('test:unit', ['browserify:dev', 'karma:dev']);
+    grunt.registerTask('test:unit', ['karma:dev']);
 
 //coverage testing
-    grunt.registerTask('test:coverage', ['browserify:dev', 'karma:unit_coverage']);
+    grunt.registerTask('test:coverage', ['karma:unit_coverage']);
 
 
 // Development task.
@@ -435,9 +420,8 @@ module.exports = function (grunt) {
         'concurrent:dist',
         'autoprefixer:dist',
         'ngmin',
-        'copy:dist',
-        'browserify:dev',
         'cssmin',
+        'uglify',
         'rev',
         'usemin',
         'replace',

@@ -3,8 +3,9 @@ module.exports = function (config) {
         test_path = 'src/test/javascript';
     config.set({
         files: [
-                app_path + '/static/scripts/*bundle.js',
+                app_path + '/bower_components/angular/angular.js',
                 app_path + '/bower_components/angular-mocks/angular-mocks.js',
+                app_path + '/static/scripts/*.js',
                 test_path + '/unit/**/*spec.js'
         ],
         basePath: '',
