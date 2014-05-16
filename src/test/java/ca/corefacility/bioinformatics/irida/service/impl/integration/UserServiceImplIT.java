@@ -57,6 +57,8 @@ import com.google.common.collect.ImmutableMap;
 		IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class UserServiceImplIT {
 
 	@Autowired
@@ -81,16 +83,12 @@ public class UserServiceImplIT {
 	}
 
 	@Test(expected = AccessDeniedException.class)
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
 	public void testEditAdministratorAsManagerFail() {
 		// managers should *not* be able to edit administrator accounts.
 		userService.update(3L, ImmutableMap.of("enabled", (Object) Boolean.FALSE));
 	}
 
 	@Test(expected = AccessDeniedException.class)
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
 	public void testChangeSelfToAdministrator() {
 		// I should not be able to elevate myself to administrator.
 		asUser().userService.update(2L, ImmutableMap.of("systemRole", (Object) Role.ROLE_ADMIN));
@@ -113,8 +111,6 @@ public class UserServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
 	public void testCreateUserAsManagerSucceed() {
 		User u = new User("user", "user@user.us", "Password1", "User", "User", "7029");
 		u.setSystemRole(Role.ROLE_USER);
@@ -171,8 +167,6 @@ public class UserServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
 	public void testUpdateUserAsManagerSucceed() {
 		String updatedPhoneNumber = "123-4567";
 		Map<String, Object> properties = ImmutableMap.of("phoneNumber", (Object) updatedPhoneNumber);
@@ -181,8 +175,6 @@ public class UserServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
 	public void testUpdateOwnAccountSucceed() {
 		String updatedPhoneNumber = "456-7890";
 		Map<String, Object> properties = ImmutableMap.of("phoneNumber", (Object) updatedPhoneNumber);
@@ -197,8 +189,6 @@ public class UserServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
 	public void testUpdatePasswordWithCompleteLoginDetails() {
 		String updatedPassword = "NewPassword1";
 		User updated = userService.changePassword(1l, updatedPassword);
@@ -207,8 +197,6 @@ public class UserServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
 	public void testUpdatePasswordWithExpiredPassword() {
 		((User) SecurityContextHolder.getContext().getAuthentication().getDetails()).setCredentialsNonExpired(false);
 		SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
@@ -227,8 +215,6 @@ public class UserServiceImplIT {
 	}
 
 	@Test(expected = EntityExistsException.class)
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
 	public void testCreateDuplicateEmail() {
 		User u = new User("user", "manager@nowhere.com", "Password1", "User", "User", "7029");
 		u.setSystemRole(Role.ROLE_USER);
@@ -236,8 +222,6 @@ public class UserServiceImplIT {
 	}
 
 	@Test(expected = EntityExistsException.class)
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
 	public void testCreateDuplicateUsername() {
 		User u = new User("fbristow", "distinct@nowhere.com", "Password1", "User", "User", "7029");
 		u.setSystemRole(Role.ROLE_USER);
@@ -245,8 +229,6 @@ public class UserServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
 	public void testGetUserByUsername() {
 		String username = "fbristow";
 		User u = userService.getUserByUsername(username);
@@ -254,38 +236,29 @@ public class UserServiceImplIT {
 	}
 
 	@Test(expected = EntityNotFoundException.class)
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
 	public void testGetUserByInvalidUsername() {
 		String username = "random garbage";
 		userService.getUserByUsername(username);
 	}
-	
+
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
-	public void testLoadUserByEmail(){
+	public void testLoadUserByEmail() {
 		String email = "manager@nowhere.com";
-		
+
 		User loadUserByEmail = asAnonymous().userService.loadUserByEmail(email);
-		
+
 		assertEquals(email, loadUserByEmail.getEmail());
 	}
-	
-	
+
 	@Test(expected = EntityNotFoundException.class)
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
-	public void testLoadUserByEmailNotFound(){
+	public void testLoadUserByEmailNotFound() {
 		String email = "bademail@nowhere.com";
-		
+
 		userService.loadUserByEmail(email);
 
-	}	
+	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
 	public void testGetUsersForProject() {
 		Project p = projectService.read(1L);
 		Collection<Join<Project, User>> projectUsers = userService.getUsersForProject(p);
@@ -296,8 +269,6 @@ public class UserServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
 	public void testGetUsersAvailableForProject() {
 		Project p = projectService.read(1L);
 		List<User> usersAvailableForProject = userService.getUsersAvailableForProject(p);
@@ -307,8 +278,6 @@ public class UserServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
 	public void testBadPasswordUpdate() {
 		// a user should not be persisted with a bad password (like password1)
 		String password = "password1";
@@ -330,16 +299,12 @@ public class UserServiceImplIT {
 	}
 
 	@Test(expected = ConstraintViolationException.class)
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
 	public void testUpdatePasswordBadPassword() {
 		String password = "arguablynotagoodpassword";
 		asUser().userService.changePassword(1l, password);
 	}
 
 	@Test(expected = ConstraintViolationException.class)
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
 	public void testCreateBadPassword() {
 		User u = new User();
 		u.setPassword("not a good password");
@@ -384,14 +349,13 @@ public class UserServiceImplIT {
 		SecurityContextHolder.getContext().setAuthentication(auth);
 		return this;
 	}
-	
-	private UserServiceImplIT asAnonymous(){
+
+	private UserServiceImplIT asAnonymous() {
 		SecurityContextHolder.clearContext();
 		AnonymousAuthenticationToken anonymousToken = new AnonymousAuthenticationToken("nobody", "nobody",
 				ImmutableList.of(Role.ROLE_ANONYMOUS));
 		SecurityContextHolder.getContext().setAuthentication(anonymousToken);
-		
+
 		return this;
 	}
 }
-

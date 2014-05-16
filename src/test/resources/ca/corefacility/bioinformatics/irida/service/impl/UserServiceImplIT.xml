@@ -21,10 +21,5 @@
 	<project name="project" id="1" createdDate="2013-07-18 14:20:19.0"
 		modifiedDate="2013-07-18 14:20:19.0" />
 	<project_user project_id="1" user_id="1" projectRole="PROJECT_OWNER" />
-	<Revisions />
-	<USER_AUD />
-	<PROJECT_AUD />
-	<PROJECT_USER_AUD />
-	<PROJECT_SAMPLE />
-	<PROJECT_SAMPLE_AUD />
+
 </dataset>

@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+	<!-- Tables *must* be listed in the order that they can be deleted to satisfy 
+		referential integrity -->
+	<MISEQ_RUN />
+	<SAMPLE />
+	<SEQUENCE_FILE />
+	<OVERREPRESENTED_SEQUENCE />
+	<SYSTEM_ROLE />
+	<USER />
+	<PROJECT />
+	<PASSWORD_RESET />
+	<PROJECT_USER />
+	<SEQUENCEFILE_SAMPLE />
+	<PROJECT_SAMPLE />
+
+	<!-- All auditing table references *only* refer to the Revisions table, 
+		so they can all be listed in an arbitrary order *after* the Revisions table. -->
+	<Revisions />
+	<OVERREPRESENTED_SEQUENCE_AUD />
+	<PROJECT_USER_AUD />
+	<PROJECT_AUD />
+	<PROJECT_SAMPLE_AUD />
+	<PROJECT_USER_AUD />
+	<SEQUENCE_FILE_AUD />
+	<SEQUENCEFILE_SAMPLE_AUD />
+	<SYSTEM_ROLE_AUD />
+	<MISEQ_RUN_AUD />
+	<USER_AUD />
+	<SAMPLE_AUD />
+</dataset>

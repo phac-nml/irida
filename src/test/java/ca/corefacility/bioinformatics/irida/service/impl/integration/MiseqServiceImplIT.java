@@ -47,6 +47,8 @@ import com.google.common.collect.ImmutableList;
 		IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
+@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class MiseqServiceImplIT {
 	@Autowired
 	private MiseqRunService miseqRunService;
@@ -58,29 +60,21 @@ public class MiseqServiceImplIT {
 	private PasswordEncoder passwordEncoder;
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
 	public void testAddSequenceFileToMiseqRunAsSequencer() {
 		testAddSequenceFileToMiseqRunAsRole(Role.ROLE_SEQUENCER);
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
 	public void testAddSequenceFileToMiseqRunAsAdmin() {
 		testAddSequenceFileToMiseqRunAsRole(Role.ROLE_ADMIN);
 	}
 
 	@Test(expected = AccessDeniedException.class)
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
 	public void testAddSequenceFileToMiseqRunAsUser() {
 		testAddSequenceFileToMiseqRunAsRole(Role.ROLE_USER);
 	}
 
 	@Test(expected = AccessDeniedException.class)
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
 	public void testAddSequenceFileToMiseqRunAsManager() {
 		testAddSequenceFileToMiseqRunAsRole(Role.ROLE_MANAGER);
 	}
@@ -95,8 +89,6 @@ public class MiseqServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
 	public void testGetMiseqRunForSequenceFile() {
 		SequenceFile sf = asRole(Role.ROLE_ADMIN).sequenceFileService.read(2l);
 
@@ -110,8 +102,6 @@ public class MiseqServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
 	public void testCreateMiseqRunAsSequencer() {
 		MiseqRun mr = new MiseqRun();
 		mr.setProjectName("Project name.");
@@ -120,16 +110,12 @@ public class MiseqServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
 	public void testReadMiseqRunAsSequencer() {
 		MiseqRun mr = asRole(Role.ROLE_SEQUENCER).miseqRunService.read(1L);
 		assertNotNull("Created run was not assigned an ID.", mr.getId());
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
 	public void testCreateMiseqRunAsAdmin() {
 		MiseqRun r = new MiseqRun();
 		r.setProjectName("some project");
@@ -137,8 +123,6 @@ public class MiseqServiceImplIT {
 	}
 	
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
 	public void testDeleteCascadeToSequenceFile(){
 		assertTrue("Sequence file should exist before",asRole(Role.ROLE_ADMIN).sequenceFileService.exists(1L));
 		miseqRunService.delete(2L);
@@ -146,8 +130,6 @@ public class MiseqServiceImplIT {
 	}
 	
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
 	public void testDeleteCascadeToSample(){
 		assertTrue("Sequence file should exist before",asRole(Role.ROLE_ADMIN).sequenceFileService.exists(1L));
 		miseqRunService.delete(3L);
@@ -165,8 +147,6 @@ public class MiseqServiceImplIT {
 	 * @throws IOException
 	 */
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
 	public void testAddDetachedRunToSequenceFile() throws IOException{
 		final String SEQUENCE = "ACGTACGTN";
 		final byte[] FASTQ_FILE_CONTENTS = ("@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
