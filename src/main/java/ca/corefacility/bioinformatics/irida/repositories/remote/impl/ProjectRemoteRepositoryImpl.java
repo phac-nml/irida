@@ -19,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 @Repository
 public class ProjectRemoteRepositoryImpl extends GenericRemoteRepositoryImpl<RemoteProject> implements ProjectRemoteRepository{
 
-	public final static String relativeURI = "projects";
+	public final static String RELATIVE_URI = "projects";
 	
 	//the type references for this repo
 	private static ParameterizedTypeReference<ListResourceWrapper<RemoteProject>> listTypeReference = new ParameterizedTypeReference<ListResourceWrapper<RemoteProject>>() {};
@@ -31,6 +31,6 @@ public class ProjectRemoteRepositoryImpl extends GenericRemoteRepositoryImpl<Rem
 	 */
 	@Autowired
 	public ProjectRemoteRepositoryImpl(RemoteAPITokenService tokenService){
-		super(relativeURI,tokenService,listTypeReference,objectTypeReference);
+		super(RELATIVE_URI,tokenService,listTypeReference,objectTypeReference);
 	}
 }
