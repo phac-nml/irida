@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.L
 import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.RemoteResource;
 import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.ResourceWrapper;
 import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAuthTokenRestTemplate;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
 /**
  * Remote repository to request from remote IRIDA instances using OAuth2
@@ -28,12 +29,10 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAu
  */
 public abstract class GenericRemoteRepositoryImpl<Type extends RemoteResource> implements GenericRemoteRepository<Type> {
 
-	// the rest template to communicate with
-	private OAuthTokenRestTemplate restTemplate;
 	// relative URI to the resource collection
 	private String relativeURI;
-	// URI to the resources being stored in this repo
-	private URI resourcesURI;
+	// service storing api tokens for communication with the remote services
+	private RemoteAPITokenService tokenService;
 
 	// type references for the resources being read by this repository
 	protected ParameterizedTypeReference<ListResourceWrapper<Type>> listTypeReference;
@@ -47,6 +46,9 @@ public abstract class GenericRemoteRepositoryImpl<Type extends RemoteResource> i
 	 * @param relativeURI
 	 *            the relative URI to the resource collection for this repo (ex:
 	 *            projects)
+	 * @param tokenService
+	 *            service storing api tokens for communication with the remote
+	 *            APIs
 	 * @param listTypeReference
 	 *            A {@link ParameterizedTypeReference} for objects listed by the
 	 *            rest template
@@ -54,11 +56,11 @@ public abstract class GenericRemoteRepositoryImpl<Type extends RemoteResource> i
 	 *            A {@link ParameterizedTypeReference} for individual resources
 	 *            read by the rest template
 	 */
-	public GenericRemoteRepositoryImpl(OAuthTokenRestTemplate restTemplate, String relativeURI,
+	public GenericRemoteRepositoryImpl(String relativeURI, RemoteAPITokenService tokenService,
 			ParameterizedTypeReference<ListResourceWrapper<Type>> listTypeReference,
 			ParameterizedTypeReference<ResourceWrapper<Type>> objectTypeReference) {
-		this.restTemplate = restTemplate;
 		this.relativeURI = relativeURI;
+		this.tokenService = tokenService;
 		this.listTypeReference = listTypeReference;
 		this.objectTypeReference = objectTypeReference;
 	}
@@ -67,8 +69,9 @@ public abstract class GenericRemoteRepositoryImpl<Type extends RemoteResource> i
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Type read(Long id) {
-		URI resourceIdURI = UriBuilder.fromUri(resourcesURI).path(id.toString()).build();
+	public Type read(Long id, RemoteAPI remoteAPI) {
+		URI resourceIdURI = UriBuilder.fromUri(getResourceURI(remoteAPI)).path(id.toString()).build();
+		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
 		ResponseEntity<ResourceWrapper<Type>> exchange = restTemplate.exchange(resourceIdURI, HttpMethod.GET,
 				HttpEntity.EMPTY, objectTypeReference);
 
@@ -79,21 +82,24 @@ public abstract class GenericRemoteRepositoryImpl<Type extends RemoteResource> i
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Type> list() {
-		ResponseEntity<ListResourceWrapper<Type>> exchange = restTemplate.exchange(resourcesURI, HttpMethod.GET,
-				HttpEntity.EMPTY, listTypeReference);
+	public List<Type> list(RemoteAPI remoteAPI) {
+		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
+		ResponseEntity<ListResourceWrapper<Type>> exchange = restTemplate.exchange(getResourceURI(remoteAPI),
+				HttpMethod.GET, HttpEntity.EMPTY, listTypeReference);
 
 		return exchange.getBody().getResource().getResources();
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Get the URI for the resources you're trying to request
+	 * 
+	 * @param remoteAPI
+	 *            the RemoteAPI we're communicating with
+	 * @return the full URI for the resource type you're requesting
 	 */
-	public void setRemoteAPI(RemoteAPI remoteAPI) {
-		restTemplate.setRemoteAPI(remoteAPI);
+	private URI getResourceURI(RemoteAPI remoteAPI) {
 		String serviceURI = remoteAPI.getServiceURI();
-		resourcesURI = UriBuilder.fromUri(serviceURI).path(relativeURI).build();
-
+		return UriBuilder.fromUri(serviceURI).path(relativeURI).build();
 	}
 
 }

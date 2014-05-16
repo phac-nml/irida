@@ -15,19 +15,16 @@ public interface GenericRemoteRepository<Type extends RemoteResource> {
 	/**
 	 * Read an individual resource
 	 * @param id The ID of the resource to read
+	 * @param remoteAPI the API to read from
 	 * @return An object of Type
 	 */
-	public Type read(Long id);
+	public Type read(Long id, RemoteAPI remoteAPI);
 	
 	/**
 	 * List the resources available from this service
+	 * @param remoteAPI The API to read from
 	 * @return A List<Type> of the resources available
 	 */
-	public List<Type> list();
+	public List<Type> list(RemoteAPI remoteAPI);
 	
-	/**
-	 * Set the {@link RemoteAPI} to communicate with for this service
-	 * @param remoteAPI
-	 */
-	public void setRemoteAPI(RemoteAPI remoteAPI);
 }

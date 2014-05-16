@@ -7,6 +7,7 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.model.RemoteProj
 import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.ListResourceWrapper;
 import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.ResourceWrapper;
 import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAuthTokenRestTemplate;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
 /**
  * Remote repository for retrieving {@link RemoteProject}s
@@ -25,7 +26,7 @@ public class ProjectRemoteRepositoryImpl extends GenericRemoteRepositoryImpl<Rem
 	 * Create a new {@link ProjectRemoteRepositoryImpl} with the given rest template
 	 * @param restTemplate a {@link OAuthTokenRestTemplate}
 	 */
-	public ProjectRemoteRepositoryImpl(OAuthTokenRestTemplate restTemplate){
-		super(restTemplate,relativeURI,listTypeReference,objectTypeReference);
+	public ProjectRemoteRepositoryImpl(RemoteAPITokenService tokenService){
+		super(relativeURI,tokenService,listTypeReference,objectTypeReference);
 	}
 }

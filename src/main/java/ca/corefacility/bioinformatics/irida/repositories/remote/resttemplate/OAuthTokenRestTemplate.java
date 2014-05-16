@@ -27,9 +27,10 @@ public class OAuthTokenRestTemplate extends RestTemplate{
 	private RemoteAPI remoteAPI;
 	private IridaOAuthErrorHandler errorHandler = new IridaOAuthErrorHandler();
 
-	public OAuthTokenRestTemplate(RemoteAPITokenService tokenService) {
+	public OAuthTokenRestTemplate(RemoteAPITokenService tokenService, RemoteAPI remoteAPI) {
 		super();
 		this.tokenService = tokenService;
+		this.setRemoteAPI(remoteAPI);
 		this.setErrorHandler(errorHandler);
 	}
 
