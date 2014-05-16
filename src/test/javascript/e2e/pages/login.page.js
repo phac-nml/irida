@@ -6,7 +6,7 @@ var LandingPage = (function () {
 
     function LandingPage () {
         this.title = element(by.id('title'));
-        this.username_tf = element(by.model('username'));
+        this.email_tf = element(by.model('email'));
         this.password_tf = element(by.model('password'));
         this.button = element(by.css('.btn'));
     }
@@ -16,7 +16,7 @@ var LandingPage = (function () {
     };
 
     LandingPage.prototype.login = function () {
-        this.username_tf.sendKeys(username);
+        this.email_tf.sendKeys(username);
         this.password_tf.sendKeys(password);
         this.button.click();
     };
