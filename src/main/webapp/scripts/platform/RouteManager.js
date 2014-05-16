@@ -31,7 +31,7 @@
 
                 $routeProvider
                     .when('/dashboard', {
-                        templateUrl: '/view/dashboard',
+                        templateUrl: '/dashboard/view/main',
                         controller: 'DashboardCtrl'
                     })
                     .otherwise({

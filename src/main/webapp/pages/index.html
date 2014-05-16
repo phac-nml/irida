@@ -1,25 +1,26 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org"
       lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <title>DASHBOARD</title>
+    <title th:text="#{dashboard.page.title}">IRIDA Platform | Dashbaord</title>
 
     <!-- build:css styles/vendor.css -->
-    <link rel="stylesheet" th:href="@{/bower_components/bootstrap-css/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" href="/bower_components/bootstrap-css/css/bootstrap.min.css"/>
     <!-- endbuild -->
 
     <!-- build:css(.tmp) styles/main.css -->
-    <link rel="stylesheet" th:href="@{/styles/main.css}"/>
+    <link rel="stylesheet" href="/styles/main.css"/>
     <!-- endbuild -->
 </head>
 <body>
 <div class="row">
 
     <div class="col-lg-12">
-        <h1 id="title" th:text="#{dashboard.welcome}">Hello Jello</h1>
-        <h2 th:text="${hello}">BOB</h2>
-        <a id="logout_btn" class="btn" href="/logout">Logout</a>
+        <h1 id="title" th:text="#{dashboard.welcome}">Hello There</h1>
+        <h2 th:text="${name}">__USERNAME__</h2>
+        <a id="logout_btn" class="btn" href="/logout" th:text="#{dashboard.logout}">Logout</a>
     </div>
     <div ng-view=""></div>
 </div>
