@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UserNotInSecurityContextException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
@@ -38,10 +39,13 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
 	}
 
 	@Override
-	public RemoteAPIToken getToken(RemoteAPI remoteAPI) {
+	public RemoteAPIToken getToken(RemoteAPI remoteAPI) throws EntityNotFoundException{
 		User user = userRepository.loadUserByUsername(getUserName());
-		
-		return tokenRepository.readTokenForApiAndUser(remoteAPI, user);
+		RemoteAPIToken readTokenForApiAndUser = tokenRepository.readTokenForApiAndUser(remoteAPI, user);
+		if(readTokenForApiAndUser == null){
+			throw new EntityNotFoundException("Couldn't find an OAuth2 token for this API and User");
+		}
+		return readTokenForApiAndUser;
 	}
 	
 

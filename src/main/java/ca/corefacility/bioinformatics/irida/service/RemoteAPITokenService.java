@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 
@@ -16,5 +17,5 @@ public interface RemoteAPITokenService {
 	 * @param serviceURI The URI of the service root
 	 * @return A String OAuth2 token
 	 */
-	public RemoteAPIToken getToken(RemoteAPI remoteAPI);
+	public RemoteAPIToken getToken(RemoteAPI remoteAPI) throws EntityNotFoundException;
 }

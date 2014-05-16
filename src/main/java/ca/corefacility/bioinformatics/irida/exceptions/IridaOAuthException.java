@@ -31,6 +31,22 @@ public class IridaOAuthException extends RuntimeException {
 	}
 
 	/**
+	 * Create a new IridaOAuthException with the given message and service
+	 * 
+	 * @param message
+	 *            The message for this exception
+	 * @param service
+	 *            The service trying to be accessed when this exception was
+	 *            thrown
+	 * @param cause
+	 *            The reason this exception was thrown
+	 */
+	public IridaOAuthException(String message, RemoteAPI remoteAPI, Throwable cause) {
+		super(message, cause);
+		this.remoteAPI = remoteAPI;
+	}
+
+	/**
 	 * Get the service trying to be accessed when this exception was thrown
 	 * 
 	 * @return The URI of the service

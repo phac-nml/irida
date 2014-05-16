@@ -9,6 +9,7 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
@@ -50,13 +51,17 @@ public class OAuthTokenRestTemplate extends RestTemplate{
 	 */
 	@Override
 	protected ClientHttpRequest createRequest(URI uri, HttpMethod method) throws IOException {
-		RemoteAPIToken token = tokenService.getToken(remoteAPI);
+		RemoteAPIToken token;
 		
-		if (token == null) {
-			logger.debug("No token found for service " + remoteAPI);
-			throw new IridaOAuthException("No token fround for service",remoteAPI);
+		try{
+			token = tokenService.getToken(remoteAPI);
 		}
-		else if(token.isExpired()){
+		catch(EntityNotFoundException ex){
+			logger.debug("No token found for service " + remoteAPI);
+			throw new IridaOAuthException("No token fround for service",remoteAPI,ex);
+		}
+		
+		if(token.isExpired()){
 			logger.debug("Token for service is expired " + remoteAPI);
 			throw new IridaOAuthException("Token is expired for service",remoteAPI);
 		}
