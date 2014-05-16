@@ -16,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.repositories.RemoteApiTokenRepositor
 import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
-@Transactional
 @Service
 public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
 	private RemoteApiTokenRepository tokenRepository;
