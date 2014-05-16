@@ -7,6 +7,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.security.Principal;
+
 /**
  * User Login Page Controller
  *
@@ -24,10 +26,11 @@ public class PageController {
 	}
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String showIndex(final Model model) {
+	public String showIndex(final Model model, Principal principal) {
 		logger.debug("Displaying dashboard page.");
+		String name = principal.getName();
 
-		model.addAttribute("hello", "Hello IRIDA!");
+		model.addAttribute("name", name);
 		return "pages/index";
 	}
 }
