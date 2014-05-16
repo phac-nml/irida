@@ -11,12 +11,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.config.IridaRemoteRepositoriesConfig;
+import ca.corefacility.bioinformatics.irida.config.IridaOAuth2Config;
 
 @Configuration
 @ComponentScan(basePackages="ca.nml.oltutest")
 @EnableWebMvc
-@Import({SecurityConfig.class, IridaRemoteRepositoriesConfig.class, IridaApiServicesConfig.class})
+@Import({SecurityConfig.class, IridaOAuth2Config.class, IridaApiServicesConfig.class})
 public class MvcConfiguration extends WebMvcConfigurerAdapter{
 
 	@Bean

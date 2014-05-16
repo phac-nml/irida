@@ -6,6 +6,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -23,6 +25,8 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 @Controller
 @Scope("session")
 public class ProjectsController {
+	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
+
 	private ProjectRemoteRepository repo; //the repository we're communicating with
 	private RemoteAPIService apiService; //a service to read information about remote apis
 	private OltuAuthorizationController authController; //a reference to the authorization controller
@@ -44,9 +48,10 @@ public class ProjectsController {
 	public ModelAndView getData(@PathVariable("remoteId") Long apiId){
 		
 		RemoteAPI remoteAPI = apiService.read(apiId);
-		repo.setRemoteAPI(remoteAPI);
 		
-		List<RemoteProject> list = repo.list();
+		logger.debug("Listing from " + remoteAPI);
+		
+		List<RemoteProject> list = repo.list(remoteAPI);
 
 		ModelAndView modelAndView = new ModelAndView("data");
 		modelAndView.addObject("service",remoteAPI);
@@ -65,10 +70,9 @@ public class ProjectsController {
 	public ModelAndView readData(@PathVariable("id") Long id,@PathVariable("remoteId") Long apiId){
 		
 		RemoteAPI remoteAPI = apiService.read(apiId);
-		repo.setRemoteAPI(remoteAPI);
 		
-		System.out.println("reading " + id);
-		RemoteProject read = repo.read(id);
+		logger.debug("reading " + id + " from " + remoteAPI);
+		RemoteProject read = repo.read(id,remoteAPI);
 
 		ModelAndView modelAndView = new ModelAndView("onedata");
 		modelAndView.addObject("service",remoteAPI);

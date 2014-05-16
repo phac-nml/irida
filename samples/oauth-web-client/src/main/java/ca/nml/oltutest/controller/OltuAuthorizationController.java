@@ -52,7 +52,7 @@ public class OltuAuthorizationController {
 	}
 
 	public ModelAndView authenticate(RemoteAPI remoteAPI, String redirect) throws OAuthSystemException {
-		URI serviceURI = remoteAPI.getServiceURI();
+		String serviceURI = remoteAPI.getServiceURI();
 		URI serviceAuthLocation = UriBuilder.fromUri(serviceURI).path("oauth").path("authorize").build();
 
 		logger.debug("Service: " + remoteAPI);
@@ -95,7 +95,7 @@ public class OltuAuthorizationController {
 
 		logger.debug("got code " + code);
 		RemoteAPI remoteAPI = apiService.read(apiId);
-		URI serviceURI = remoteAPI.getServiceURI();
+		String serviceURI = remoteAPI.getServiceURI();
 
 		URI serviceTokenLocation = UriBuilder.fromUri(serviceURI).path("oauth").path("token").build();
 
