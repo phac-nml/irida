@@ -24,7 +24,7 @@ import org.hibernate.validator.constraints.URL;
  *
  */
 @Entity
-@Table(name = "remote_api", uniqueConstraints = @UniqueConstraint(columnNames = { "client_id" }))
+@Table(name = "remote_api", uniqueConstraints = {@UniqueConstraint(columnNames = { "clientId" }), @UniqueConstraint(columnNames="serviceURI")})
 @Audited
 public class RemoteAPI implements Comparable<RemoteAPI> {
 
@@ -40,11 +40,11 @@ public class RemoteAPI implements Comparable<RemoteAPI> {
 	private String description;
 
 	@NotNull
-	@Column(name = "client_id")
+	@Column(name = "clientId")
 	private String clientId;
 
 	@NotNull
-	@Column(name = "client_secret")
+	@Column(name = "clientSecret")
 	private String clientSecret;
 
 	@OneToMany(mappedBy = "remoteApi")

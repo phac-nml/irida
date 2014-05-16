@@ -13,7 +13,7 @@
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="serviceURI" type="varchar(255)">
-				<constraints nullable="false" />
+				<constraints nullable="false" unique="true" />
 			</column>
 			<column name="description" type="text" />
 			<column name="clientId" type="varchar(255)">
