@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UserNotInSecurityContextException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
@@ -91,7 +92,14 @@ public class RemoteAPITokenServiceImplTest {
 		verify(userRepo).loadUserByUsername(user.getUsername());
 		verify(tokenRepository).readTokenForApiAndUser(remoteAPI, user);
 	}
-
+	
+	@Test(expected=EntityNotFoundException.class)
+	public void testGetNotExisting() {
+		when(userRepo.loadUserByUsername(user.getUsername())).thenReturn(user);
+		when(tokenRepository.readTokenForApiAndUser(remoteAPI, user)).thenReturn(null);
+		
+		service.getToken(remoteAPI);
+	}
 
 
 }

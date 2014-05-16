@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +21,8 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
 @Service
 public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
+	private static final Logger logger = LoggerFactory.getLogger(RemoteAPITokenServiceImpl.class);
+
 	private RemoteApiTokenRepository tokenRepository;
 	private UserRepository userRepository;
 
@@ -72,7 +76,13 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
 	 */
 	@Transactional
 	protected void removeOldToken(RemoteAPI api){
-		RemoteAPIToken oldToken = getToken(api);
+		RemoteAPIToken oldToken = null;
+		try{
+			oldToken = getToken(api);
+		}catch(EntityNotFoundException ex){
+			logger.debug("No token found for service " + api);
+		}
+		
 		if(oldToken != null){
 			tokenRepository.delete(oldToken);
 		}
