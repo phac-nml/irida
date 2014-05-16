@@ -11,11 +11,15 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
+import org.thymeleaf.dialect.IDialect;
+import org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Replace JSP's with Thymeleaf templating.
@@ -96,6 +100,7 @@ public class ThymeleafConfiguration {
 	public SpringTemplateEngine templateEngine() {
 		SpringTemplateEngine engine = new SpringTemplateEngine();
 		engine.setTemplateResolver(templateResolver());
+		engine.setAdditionalDialects(additionalDialects());
 		return engine;
 	}
 
@@ -110,5 +115,11 @@ public class ThymeleafConfiguration {
 		ThymeleafViewResolver resolver = new ThymeleafViewResolver();
 		resolver.setTemplateEngine(templateEngine());
 		return resolver;
+	}
+
+	private Set<IDialect> additionalDialects() {
+		Set<IDialect> dialects = new HashSet<>();
+		dialects.add(new SpringSecurityDialect());
+		return dialects;
 	}
 }
