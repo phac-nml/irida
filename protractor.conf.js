@@ -3,9 +3,11 @@ exports.config = {
     seleniumArgs: ['-browserTimeout=60'],
 
     chromeOnly: false,
-    browserName: 'phantomjs',
+
     capabilities: {
-        'phantomjs.binary.path': './node_modules/karma-phantomjs-launcher/node_modules/phantomjs/bin/phantomjs'
+        'browserName': 'phantomjs',
+        'phantomjs.binary.path': './node_modules/phantomjs/bin/phantomjs'
+
     },
 
     specs: ['src/test/javascript/e2e/**/*.spec.js'],
