@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.repositories.remote.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.stereotype.Repository;
 
 import ca.corefacility.bioinformatics.irida.repositories.remote.ProjectRemoteRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.model.RemoteProject;
@@ -14,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
+@Repository
 public class ProjectRemoteRepositoryImpl extends GenericRemoteRepositoryImpl<RemoteProject> implements ProjectRemoteRepository{
 
 	public final static String relativeURI = "projects";
@@ -26,6 +29,7 @@ public class ProjectRemoteRepositoryImpl extends GenericRemoteRepositoryImpl<Rem
 	 * Create a new {@link ProjectRemoteRepositoryImpl} with the given rest template
 	 * @param restTemplate a {@link OAuthTokenRestTemplate}
 	 */
+	@Autowired
 	public ProjectRemoteRepositoryImpl(RemoteAPITokenService tokenService){
 		super(relativeURI,tokenService,listTypeReference,objectTypeReference);
 	}
