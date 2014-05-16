@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UserNotInSecurityContextException;
@@ -38,7 +38,10 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
 	public void addToken(RemoteAPIToken token) {
 		User user = userRepository.loadUserByUsername(getUserName());
 		token.setUser(user);
-		removeOldToken(token.getRemoteApi());
+		
+		//if an old token exists, get the old token's info so we can update it
+		token=getOldTokenId(token);
+		
 		tokenRepository.save(token);
 	}
 
@@ -74,17 +77,16 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
 	 * Remove any old token for this user from the database
 	 * @param token
 	 */
-	@Transactional
-	protected void removeOldToken(RemoteAPI api){
+	protected RemoteAPIToken getOldTokenId(RemoteAPIToken apiToken){
 		RemoteAPIToken oldToken = null;
 		try{
-			oldToken = getToken(api);
+			oldToken = getToken(apiToken.getRemoteApi());
+			logger.debug("Old token found for service " + apiToken.getRemoteApi());
+			apiToken.setId(oldToken.getId());
 		}catch(EntityNotFoundException ex){
-			logger.debug("No token found for service " + api);
+			logger.debug("No token found for service " + apiToken.getRemoteApi());
 		}
 		
-		if(oldToken != null){
-			tokenRepository.delete(oldToken);
-		}
+		return apiToken;
 	}
 }
