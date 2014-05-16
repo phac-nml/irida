@@ -9,8 +9,8 @@
 
 		<!-- Create remote api tables -->
 		<createTable tableName="remote_api">
-			<column name="id" type="bigint(20)">
-				<constraints primaryKey="true" nullable="false" />
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false"/>
 			</column>
 			<column name="serviceURI" type="varchar(255)">
 				<constraints nullable="false" unique="true" />
@@ -42,7 +42,7 @@
 
 		<!-- Create remote api token tables -->
 		<createTable tableName="remote_api_token">
-			<column name="id" type="bigint(20)">
+			<column name="id" type="bigint(20)" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="tokenString" type="varchar(255)">

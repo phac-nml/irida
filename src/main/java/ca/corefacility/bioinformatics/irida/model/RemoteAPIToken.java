@@ -20,7 +20,7 @@ import org.hibernate.envers.Audited;
  *
  */
 @Entity
-@Table(name="remote_api_token", uniqueConstraints= @UniqueConstraint(columnNames = { "user_id","remote_api_id" }))
+@Table(name="remote_api_token", uniqueConstraints= @UniqueConstraint(columnNames = { "user_id","remote_api_id" }, name="UK_remote_api_token_user"))
 @Audited
 public class RemoteAPIToken {
 	@Id
@@ -137,5 +137,44 @@ public class RemoteAPIToken {
 	public boolean isExpired(){		
 		return (new Date()).after(expiryDate);
 	}
+
+	/**
+	 * Hashcode using remoteAPI and tokenString
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((remoteApi == null) ? 0 : remoteApi.hashCode());
+		result = prime * result + ((tokenString == null) ? 0 : tokenString.hashCode());
+		return result;
+	}
+
+	/**
+	 * Equals method using remoteAPI and tokenString
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof RemoteAPIToken))
+			return false;
+		RemoteAPIToken other = (RemoteAPIToken) obj;
+		if (remoteApi == null) {
+			if (other.remoteApi != null)
+				return false;
+		} else if (!remoteApi.equals(other.remoteApi))
+			return false;
+		if (tokenString == null) {
+			if (other.tokenString != null)
+				return false;
+		} else if (!tokenString.equals(other.tokenString))
+			return false;
+		return true;
+	}
+	
+	
 	
 }

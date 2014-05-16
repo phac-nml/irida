@@ -70,7 +70,6 @@ public class RemoteAPITokenServiceImplTest {
 		verify(tokenRepository).save(remoteAPIToken);
 		verify(userRepo,times(2)).loadUserByUsername(user.getUsername());
 		verify(tokenRepository).readTokenForApiAndUser(remoteAPI, user);
-		verify(tokenRepository).delete(remoteAPIToken);
 	}
 	
 	@Test(expected=UserNotInSecurityContextException.class)
