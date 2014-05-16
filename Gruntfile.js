@@ -286,21 +286,16 @@ module.exports = function (grunt) {
             dist: {
                 options: {
                     patterns: [
-                        // e.g. Replace src="/app.js" th:src="@{/12k23j3223k4.app.js}"
-                        {
-                            match: /src="scripts\/([a-zA-Z0-9]+).(\w+)\.js"/g,
-                            replacement: 'th:src="@{/scripts/$1.$2.js}"'
-                        },
                         // e.g. Repalces href="main.css" ==> th:href="@{/3k24jk234jk32.main.css}"
                         {
-                            match: /<link rel="stylesheet" href="styles\/([a-zA-Z0-9]+).(\w+).css">/g,
-                            replacement: '<link rel="stylesheet" th:href="@{/styles/$1.$2.css}"/>'
+                            match: /<link rel="stylesheet" href="(\w+)\/([a-z0-9]+)\.(\w+)\.css"\/>/g,
+                            replacement: '<link rel="stylesheet" th:href="@{/$1/$2.$3.css}"/>'
                         }
                     ]
                 },
                 files: [
                     {
-                        src: ['<%= path.static %>/pages/**/*.html'],
+                        src: ['<%= path.static %>/pages/*.html'],
                         dest: '',
                         expand: true,
                         flatten: false
@@ -429,7 +424,7 @@ module.exports = function (grunt) {
         'uglify',
         'rev',
         'usemin',
-        // 'replace',
+        'replace',
         'clean:tmp'
     ]);
 
