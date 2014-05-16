@@ -198,6 +198,7 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -259,9 +260,7 @@
                 <version>${jacoco-maven-plugin.version}</version>
                 <configuration>
                     <excludes>
-                        <exclude>**/model/**</exclude>
                         <exclude>**/config/**</exclude>
-                        <exclude>**/exceptions/**</exclude>
                     </excludes>
                 </configuration>
                 <executions>
