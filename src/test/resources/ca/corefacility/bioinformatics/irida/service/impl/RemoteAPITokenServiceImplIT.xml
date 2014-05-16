@@ -19,4 +19,13 @@
 	<remote_api_AUD />
 	<remote_api_token_AUD />
 	<USER_AUD />
+	<PROJECT_AUD />
+	<PROJECT_USER_AUD />
+	<PROJECT_USER />
+	<SAMPLE_AUD />
+    <SEQUENCEFILE_SAMPLE />
+    <SEQUENCEFILE_SAMPLE_AUD />
+	<PROJECT_SAMPLE />
+	<PROJECT_SAMPLE_AUD />
+    <PASSWORD_RESET/>
 </dataset>
