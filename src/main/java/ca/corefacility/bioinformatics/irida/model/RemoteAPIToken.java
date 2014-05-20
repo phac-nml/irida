@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -143,36 +144,20 @@ public class RemoteAPIToken {
 	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((remoteApi == null) ? 0 : remoteApi.hashCode());
-		result = prime * result + ((tokenString == null) ? 0 : tokenString.hashCode());
-		return result;
+		return Objects.hash(remoteApi,tokenString);
 	}
 
 	/**
 	 * Equals method using remoteAPI and tokenString
 	 */
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof RemoteAPIToken))
-			return false;
-		RemoteAPIToken other = (RemoteAPIToken) obj;
-		if (remoteApi == null) {
-			if (other.remoteApi != null)
-				return false;
-		} else if (!remoteApi.equals(other.remoteApi))
-			return false;
-		if (tokenString == null) {
-			if (other.tokenString != null)
-				return false;
-		} else if (!tokenString.equals(other.tokenString))
-			return false;
-		return true;
+	public boolean equals(Object other) {	
+		if (other instanceof RemoteAPIToken) {
+			RemoteAPIToken p = (RemoteAPIToken) other;
+			return Objects.equals(remoteApi, p.remoteApi) && Objects.equals(tokenString, p.tokenString);
+		}
+
+		return false;
 	}
 	
 	
