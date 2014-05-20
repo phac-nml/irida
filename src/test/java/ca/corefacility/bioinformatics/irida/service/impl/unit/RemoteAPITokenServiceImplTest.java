@@ -14,7 +14,6 @@ import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.UserNotInSecurityContextException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.model.User;
@@ -72,7 +71,7 @@ public class RemoteAPITokenServiceImplTest {
 		verify(tokenRepository).readTokenForApiAndUser(remoteAPI, user);
 	}
 	
-	@Test(expected=UserNotInSecurityContextException.class)
+	@Test(expected=IllegalStateException.class)
 	public void testAddTokenNotLoggedIn() {
 		SecurityContextHolder.clearContext();
 				

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.UserNotInSecurityContextException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.model.User;
@@ -59,9 +58,8 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
 	/**
 	 * Get the username of the currently logged in user.
 	 * @return String of the username of the currently logged in user
-	 * @throws UserNotInSecurityContextException if the currently logged in user could not be read from the security context
 	 */
-	private String getUserName() throws UserNotInSecurityContextException{
+	private String getUserName() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
 			UserDetails details = (UserDetails) authentication.getPrincipal();
@@ -69,8 +67,7 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
 			
 			return username;
 		}
-		
-		throw new UserNotInSecurityContextException("The currently logged in user could not be read from the SecurityContextHolder");
+		throw new IllegalStateException("The currently logged in user could not be read from the SecurityContextHolder");
 	}
 	
 	/**
