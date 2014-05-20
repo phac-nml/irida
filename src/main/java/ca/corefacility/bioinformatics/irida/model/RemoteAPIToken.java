@@ -16,38 +16,40 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.envers.Audited;
 
 /**
- * OAuth2 token for communicating with a {@link RemoteAPI} for a given {@link User}
+ * OAuth2 token for communicating with a {@link RemoteAPI} for a given
+ * {@link User}
+ * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Entity
-@Table(name="remote_api_token", uniqueConstraints= @UniqueConstraint(columnNames = { "user_id","remote_api_id" }, name="UK_remote_api_token_user"))
+@Table(name = "remote_api_token", uniqueConstraints = @UniqueConstraint(columnNames = { "user_id", "remote_api_id" }, name = "UK_remote_api_token_user"))
 @Audited
 public class RemoteAPIToken {
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	
+
 	@NotNull
 	private String tokenString;
-	
+
 	@NotNull
 	private Date expiryDate;
-	
+
 	@ManyToOne
-	@JoinColumn(name="remote_api_id")
+	@JoinColumn(name = "remote_api_id")
 	@NotNull
 	RemoteAPI remoteApi;
-	
+
 	@ManyToOne
-	@JoinColumn(name="user_id")
+	@JoinColumn(name = "user_id")
 	@NotNull
 	User user;
-	
-	public RemoteAPIToken(){
+
+	public RemoteAPIToken() {
 	}
-	
-	public RemoteAPIToken(String tokenString, RemoteAPI remoteApi,Date expiryDate) {
+
+	public RemoteAPIToken(String tokenString, RemoteAPI remoteApi, Date expiryDate) {
 		super();
 		this.tokenString = tokenString;
 		this.remoteApi = remoteApi;
@@ -62,7 +64,8 @@ public class RemoteAPIToken {
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(Long id) {
 		this.id = id;
@@ -76,7 +79,8 @@ public class RemoteAPIToken {
 	}
 
 	/**
-	 * @param tokenString the tokenString to set
+	 * @param tokenString
+	 *            the tokenString to set
 	 */
 	public void setTokenString(String tokenString) {
 		this.tokenString = tokenString;
@@ -90,7 +94,8 @@ public class RemoteAPIToken {
 	}
 
 	/**
-	 * @param remoteApi the remoteApi to set
+	 * @param remoteApi
+	 *            the remoteApi to set
 	 */
 	public void setRemoteApi(RemoteAPI remoteApi) {
 		this.remoteApi = remoteApi;
@@ -104,7 +109,8 @@ public class RemoteAPIToken {
 	}
 
 	/**
-	 * @param user the user to set
+	 * @param user
+	 *            the user to set
 	 */
 	public void setUser(User user) {
 		this.user = user;
@@ -117,6 +123,7 @@ public class RemoteAPIToken {
 
 	/**
 	 * Get the date that this token expires
+	 * 
 	 * @return
 	 */
 	public Date getExpiryDate() {
@@ -125,17 +132,19 @@ public class RemoteAPIToken {
 
 	/**
 	 * Set the date that this token expires
+	 * 
 	 * @param expiryDate
 	 */
 	public void setExpiryDate(Date expiryDate) {
 		this.expiryDate = expiryDate;
 	}
-	
+
 	/**
 	 * Test if this token has expired
+	 * 
 	 * @return true if this token has expired
 	 */
-	public boolean isExpired(){		
+	public boolean isExpired() {
 		return (new Date()).after(expiryDate);
 	}
 
@@ -144,14 +153,14 @@ public class RemoteAPIToken {
 	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(remoteApi,tokenString);
+		return Objects.hash(remoteApi, tokenString);
 	}
 
 	/**
 	 * Equals method using remoteAPI and tokenString
 	 */
 	@Override
-	public boolean equals(Object other) {	
+	public boolean equals(Object other) {
 		if (other instanceof RemoteAPIToken) {
 			RemoteAPIToken p = (RemoteAPIToken) other;
 			return Objects.equals(remoteApi, p.remoteApi) && Objects.equals(tokenString, p.tokenString);
@@ -159,7 +168,5 @@ public class RemoteAPIToken {
 
 		return false;
 	}
-	
-	
-	
+
 }
