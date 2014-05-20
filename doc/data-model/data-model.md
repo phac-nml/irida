@@ -185,4 +185,4 @@ Decision
 --------
 This document is a proposal for implementation of two major components required by the IRIDA platform. The document will be distributed as a formal request for comments to the participants of the IRIDA platform and will change over time, including during development of the platform and related data models.
 
-[data-model-diagram]: ngs-archive-data-model.png
+[data-model-diagram]: images/ngs-archive-data-model.png
