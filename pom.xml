@@ -148,6 +148,11 @@
 			<artifactId>spring-web</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+		<dependency>
+        	<groupId>org.springframework.ws</groupId>
+        	<artifactId>spring-ws-test</artifactId>
+        	<version>${spring.ws.test.version}</version>
+   		</dependency>
 
 		<!-- Spring Security -->
 		<dependency>
@@ -425,6 +430,7 @@
 		<spring.data.jpa.version>1.5.2.RELEASE</spring.data.jpa.version>
 		<spring.security.oauth.version>1.0.5.RELEASE</spring.security.oauth.version>
 		<spring.data.envers.version>0.1.0.RELEASE</spring.data.envers.version>
+		<spring.ws.test.version>2.1.4.RELEASE</</spring.ws.test.version>
 		<mockito.version>1.9.5</mockito.version>
 		<mysql.connector.version>5.1.30</mysql.connector.version>
 		<hibernate.version>4.3.5.Final</hibernate.version>
