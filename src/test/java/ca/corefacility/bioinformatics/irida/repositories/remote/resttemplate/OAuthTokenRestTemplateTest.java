@@ -1,5 +1,11 @@
 package ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -11,9 +17,6 @@ import org.junit.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequest;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
@@ -22,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
 /**
  * Unit tests for OAuthTokenRestTemplate
+ * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
@@ -29,8 +33,8 @@ public class OAuthTokenRestTemplateTest {
 
 	private RemoteAPITokenService tokenService;
 	private OAuthTokenRestTemplate restTemplate;
-	RemoteAPI remoteAPI;
-	URI serviceURI;
+	private RemoteAPI remoteAPI;
+	private URI serviceURI;
 
 	@Before
 	public void setUp() throws URISyntaxException {
@@ -55,7 +59,7 @@ public class OAuthTokenRestTemplateTest {
 		List<String> list = createRequest.getHeaders().get("Authorization");
 		assertTrue(list.contains("Bearer " + tokenString));
 	}
-	
+
 	@Test(expected = IridaOAuthException.class)
 	public void testCreateRequestExpiredToken() throws URISyntaxException, IOException {
 		String tokenString = "token111111";
@@ -64,7 +68,7 @@ public class OAuthTokenRestTemplateTest {
 
 		restTemplate.createRequest(serviceURI, HttpMethod.GET);
 	}
-	
+
 	@Test(expected = IridaOAuthException.class)
 	public void testCreateRequestNoToken() throws URISyntaxException, IOException {
 		when(tokenService.getToken(remoteAPI)).thenThrow(new EntityNotFoundException("no token for this service"));
