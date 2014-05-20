@@ -68,21 +68,22 @@ public class OAuthTokenRestTemplateIT {
 
 		restTemplate.getForEntity(serviceURI, String.class);
 	}
-	
+
 	@Test(expected = IridaOAuthException.class)
 	public void testRequestNoToken() {
 		when(tokenService.getToken(remoteAPI)).thenThrow(new EntityNotFoundException("no token for this service"));
 
 		restTemplate.getForEntity(serviceURI, String.class);
 	}
-	
+
 	@Test(expected = IridaOAuthException.class)
-	public void testBadToken(){
+	public void testBadToken() {
 		String tokenString = "token111111";
 		RemoteAPIToken token = new RemoteAPIToken(tokenString, remoteAPI, new Date(System.currentTimeMillis() + 10000));
 		when(tokenService.getToken(remoteAPI)).thenReturn(token);
 
-		mockServer.expect(requestTo(serviceURI)).andExpect(method(HttpMethod.GET)).andRespond(withStatus(HttpStatus.UNAUTHORIZED));
+		mockServer.expect(requestTo(serviceURI)).andExpect(method(HttpMethod.GET))
+				.andRespond(withStatus(HttpStatus.UNAUTHORIZED));
 
 		restTemplate.getForEntity(serviceURI, String.class);
 	}
