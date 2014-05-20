@@ -16,7 +16,8 @@
     "underscore": "~1.6.0",
     "angular-sanitize": "~1.2.16",
     "sinon": "~1.9.1",
-    "jQuery": "~2.1.1"
+    "jQuery": "~2.1.1",
+    "mobile-angular-ui": "~1.1.0-beta.21"
   },
   "devDependencies": {}
 }

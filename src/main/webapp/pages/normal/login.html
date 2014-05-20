@@ -5,7 +5,7 @@
     <meta charset="UTF-8"/>
     <title th:text="#{login.page.title}">IRIDA Platform | Login</title>
     <!-- build:css styles/vendor.css -->
-    <link rel="stylesheet" href="../bower_components/bootstrap-css/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="../../bower_components/bootstrap-css/css/bootstrap.min.css"/>
     <!-- endbuild -->
 
     <!-- build:css(.tmp) styles/main.css -->
@@ -29,7 +29,7 @@
         <div class="col-lg-4 col-lg-offset-4 col-sm-8 col-sm-offset-2 panel panel-primary" ng-controller="LoginCtrl">
             <h1 id="title" th:text="#{login.welcome}">Welcome to the IRIDA Platform!</h1>
 
-            <form class="form-signin" method="post" action="/login">
+            <form name="loginForm" class="form-signin" method="post" action="/login">
                 <h3 class="muted form-signin-heading" th:text="#{login.signin-message}">Please sign in</h3>
 
                 <div class="form-group" ng-class="{'has-error': ctrl.error}">
@@ -63,6 +63,11 @@
                     $scope.error = true;
                 }
             }]);
+
+    window.onload = function () {
+        var hash = unescape(self.document.location.hash.substring(1));
+        document.loginForm.action = '/login#' + hash;
+    }
 </script>
 
 </body>

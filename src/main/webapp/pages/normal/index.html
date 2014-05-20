@@ -20,12 +20,12 @@
     <div class="col-lg-12">
         <h1 id="title" th:text="#{dashboard.welcome}">Hello There</h1>
         <h2 th:text="${name}">__USERNAME__</h2>
+        <a href="#/projects">Projects</a>
         <a id="logout_btn" class="btn" href="/logout" th:text="#{dashboard.logout}">Logout</a>
     </div>
     <div ng-view=""></div>
 </div>
 
-<script th:src="@{/bower_components/headjs-notify/src/load.js}"></script>
-<script th:src="@{/scripts/boot.js}"></script>
+<script data-main="/scripts/bootstrap.js" th:src="@{/bower_components/requirejs/require.js}"></script>
 </body>
 </html>
