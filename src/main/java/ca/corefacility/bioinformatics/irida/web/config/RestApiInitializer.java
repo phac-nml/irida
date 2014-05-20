@@ -29,7 +29,7 @@ public class RestApiInitializer implements WebApplicationInitializer {
 		registerSpringConfiguration(servletContext);
 		registerSpringDispatcherServlet(servletContext);
 		registerSpringSecurityFilterChain(servletContext);
-		registerHeadRequestFilter(servletContext);	
+		registerHeadRequestFilter(servletContext);
 
 		servletContext.setInitParameter("spring.profiles.default", "dev");
 	}
