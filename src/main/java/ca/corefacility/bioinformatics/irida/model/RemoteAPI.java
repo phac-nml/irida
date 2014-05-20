@@ -10,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -24,7 +23,7 @@ import org.hibernate.validator.constraints.URL;
  *
  */
 @Entity
-@Table(name = "remote_api", uniqueConstraints = {@UniqueConstraint(columnNames = { "clientId" }), @UniqueConstraint(columnNames="serviceURI")})
+@Table(name = "remote_api")
 @Audited
 public class RemoteAPI implements Comparable<RemoteAPI> {
 
@@ -34,13 +33,13 @@ public class RemoteAPI implements Comparable<RemoteAPI> {
 
 	@NotNull
 	@URL
-	@Column(name = "serviceURI")
+	@Column(name = "serviceURI", unique = true)
 	private String serviceURI;
 
 	private String description;
 
 	@NotNull
-	@Column(name = "clientId")
+	@Column(name = "clientId", unique = true)
 	private String clientId;
 
 	@NotNull
