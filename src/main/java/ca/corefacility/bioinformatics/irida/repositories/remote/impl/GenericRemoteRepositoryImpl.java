@@ -35,8 +35,8 @@ public abstract class GenericRemoteRepositoryImpl<Type extends RemoteResource> i
 	private RemoteAPITokenService tokenService;
 
 	// type references for the resources being read by this repository
-	protected ParameterizedTypeReference<ListResourceWrapper<Type>> listTypeReference;
-	protected ParameterizedTypeReference<ResourceWrapper<Type>> objectTypeReference;
+	final protected ParameterizedTypeReference<ListResourceWrapper<Type>> listTypeReference;
+	final protected ParameterizedTypeReference<ResourceWrapper<Type>> objectTypeReference;
 
 	/**
 	 * Create a new repository with the given rest template and object params
