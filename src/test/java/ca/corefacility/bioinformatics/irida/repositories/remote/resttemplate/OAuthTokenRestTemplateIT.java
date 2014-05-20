@@ -71,7 +71,6 @@ public class OAuthTokenRestTemplateIT {
 	
 	@Test(expected = IridaOAuthException.class)
 	public void testRequestNoToken() {
-		String tokenString = "token111111";
 		when(tokenService.getToken(remoteAPI)).thenThrow(new EntityNotFoundException("no token for this service"));
 
 		restTemplate.getForEntity(serviceURI, String.class);
