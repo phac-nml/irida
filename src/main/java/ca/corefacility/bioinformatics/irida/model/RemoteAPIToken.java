@@ -118,7 +118,7 @@ public class RemoteAPIToken {
 
 	@Override
 	public String toString() {
-		return "RemoteAPIToken [tokenString=" + tokenString + ", remoteApi=" + remoteApi + ", user=" + user + "]";
+		return String.format("RemoteAPIToken [tokenString=%s, remoteApi=%s, user=%s]", tokenString, remoteApi, user);
 	}
 
 	/**

@@ -145,7 +145,8 @@ public class RemoteAPI implements Comparable<RemoteAPI> {
 
 	@Override
 	public String toString() {
-		return "RemoteAPI [" + clientId + ", " + serviceURI + ", " + description + "]";
+		return String.format("RemoteAPI [clientId=%s, serviceURI=%s, description=%s]", clientId, serviceURI,
+				description);
 	}
 
 	@Override
