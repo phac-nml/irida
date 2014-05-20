@@ -13,6 +13,6 @@
 	<remote_api id="1" serviceURI="http://nowhere" clientId="client" clientSecret="secret" />
 	<remote_api id="2" serviceURI="http://nowhere2" clientId="client2" clientSecret="secret2" />
 	
-	<remote_api_token id="1" tokenString="123456789" expiryDate="2014-11-20 12:00:00" remote_api_id="1" user_id="1"/>
+	<remote_api_token id="1" tokenString="123456789" expiryDate="9999-11-20 12:00:00" remote_api_id="1" user_id="1"/>
 
 </dataset>
