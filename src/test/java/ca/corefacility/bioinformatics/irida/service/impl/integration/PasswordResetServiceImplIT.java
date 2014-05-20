@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,13 +31,9 @@ import ca.corefacility.bioinformatics.irida.service.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.UserService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
@@ -44,6 +43,8 @@ import java.util.Map;
 		IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/PasswordResetServiceImplIT.xml")
+@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class PasswordResetServiceImplIT {
 	@Autowired
 	private PasswordResetService passwordResetService;
@@ -58,8 +59,6 @@ public class PasswordResetServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/PasswordResetServiceImplIT.xml")
-	@DatabaseTearDown(value="/ca/corefacility/bioinformatics/irida/service/impl/PasswordResetServiceImplIT.xml", type=DatabaseOperation.TRUNCATE_TABLE)
 	public void testCreatePasswordReset() {
 		PasswordReset pw1 = pw();
 		passwordResetService.create(pw1);
@@ -71,8 +70,6 @@ public class PasswordResetServiceImplIT {
 	}
 
 	@Test(expected = EntityNotFoundException.class)
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/PasswordResetServiceImplIT.xml")
-	@DatabaseTearDown(value="/ca/corefacility/bioinformatics/irida/service/impl/PasswordResetServiceImplIT.xml", type=DatabaseOperation.TRUNCATE_TABLE)
 	public void testEnsureOnlyOneResetPerUser() {
 		PasswordReset pw1 = passwordResetService.create(pw());
 		passwordResetService.create(pw());
@@ -80,8 +77,6 @@ public class PasswordResetServiceImplIT {
 	}
 
 	@Test(expected = EntityNotFoundException.class)
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/PasswordResetServiceImplIT.xml")
-	@DatabaseTearDown(value="/ca/corefacility/bioinformatics/irida/service/impl/PasswordResetServiceImplIT.xml", type=DatabaseOperation.TRUNCATE_TABLE)
 	public void testDeletePasswordReset() {
 		PasswordReset pr = passwordResetService.read("12213-123123-123123-12312");
 		assertNotNull(pr);
@@ -90,8 +85,6 @@ public class PasswordResetServiceImplIT {
 	}
 
 	@Test(expected = UnsupportedOperationException.class)
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/PasswordResetServiceImplIT.xml")
-	@DatabaseTearDown(value="/ca/corefacility/bioinformatics/irida/service/impl/PasswordResetServiceImplIT.xml", type=DatabaseOperation.TRUNCATE_TABLE)
 	public void testCannotUpdateAPasswordReset() {
 		PasswordReset pr = passwordResetService.read("12213-123123-123123-12312");
 		Map<String, Object> change = new HashMap<>();

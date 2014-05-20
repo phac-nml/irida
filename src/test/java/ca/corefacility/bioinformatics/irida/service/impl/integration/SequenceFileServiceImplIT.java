@@ -44,6 +44,7 @@ import ca.corefacility.bioinformatics.irida.service.OverrepresentedSequenceServi
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
@@ -53,6 +54,8 @@ import com.google.common.collect.ImmutableList;
 		IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
+@DatabaseTearDown(value = "/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml", type = DatabaseOperation.DELETE_ALL)
 public class SequenceFileServiceImplIT {
 
 	private static final String SEQUENCE = "ACGTACGTN";
@@ -96,22 +99,16 @@ public class SequenceFileServiceImplIT {
 	}
 
 	@Test(expected = AccessDeniedException.class)
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 	public void testReadSequenceFileAsUserNoPermissions() {
 		asRole(Role.ROLE_USER, "fbristow").sequenceFileService.read(1L);
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 	public void testReadSequenceFileAsUserWithPermissions() {
 		asRole(Role.ROLE_USER, "fbristow1").sequenceFileService.read(1L);
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 	public void testCreateNotCompressedSequenceFile() throws IOException {
 		SequenceFile sf = new SequenceFile();
 		Path sequenceFile = Files.createTempFile(null, null);
@@ -153,8 +150,6 @@ public class SequenceFileServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 	public void testCreateCompressedSequenceFile() throws IOException {
 		SequenceFile sf = new SequenceFile();
 		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");

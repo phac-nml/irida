@@ -29,15 +29,4 @@
 	
 	<project_sample id="1" project_id="1" sample_id="1"/>
 	<project_user id="1" project_id="1" user_id="1" projectRole="PROJECT_USER"/>
-
-	<Revisions />
-	<USER_AUD />
-	<PROJECT_USER />
-	<PROJECT_USER_AUD />
-	<MISEQ_RUN_AUD />
-	<SEQUENCE_FILE_AUD />
-	<SAMPLE_AUD />
-	<SEQUENCEFILE_SAMPLE_AUD />
-	<OVERREPRESENTED_SEQUENCE />
-	<OVERREPRESENTED_SEQUENCE_AUD />
 </dataset>
