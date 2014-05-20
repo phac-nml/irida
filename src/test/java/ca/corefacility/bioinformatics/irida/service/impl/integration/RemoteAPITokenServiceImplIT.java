@@ -41,6 +41,8 @@ import com.google.common.collect.ImmutableList;
 		IridaApiTestDataSourceConfig.class })
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/RemoteAPITokenServiceImplIT.xml")
+@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class RemoteAPITokenServiceImplIT {
 	@Autowired
 	UserService userService;
@@ -65,8 +67,6 @@ public class RemoteAPITokenServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/RemoteAPITokenServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/RemoteAPITokenServiceImplIT.xml")
 	public void testGetToken() {
 		RemoteAPI api = apiService.read(1l);
 		RemoteAPIToken token = tokenService.getToken(api);
@@ -75,16 +75,12 @@ public class RemoteAPITokenServiceImplIT {
 	}
 
 	@Test(expected=EntityNotFoundException.class)
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/RemoteAPITokenServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/RemoteAPITokenServiceImplIT.xml")
 	public void testGetTokenNotExists() {
 		RemoteAPI api = apiService.read(2l);
 		tokenService.getToken(api);
 	}
 	
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/RemoteAPITokenServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/RemoteAPITokenServiceImplIT.xml")
 	public void addToken(){
 		RemoteAPI api = apiService.read(2l);
 		RemoteAPIToken token = new RemoteAPIToken("111111111", api, new Date());
@@ -97,8 +93,6 @@ public class RemoteAPITokenServiceImplIT {
 	}
 	
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/RemoteAPITokenServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/RemoteAPITokenServiceImplIT.xml")
 	public void addTokenExisting(){
 		RemoteAPI api = apiService.read(1l);
 		RemoteAPIToken originalToken = tokenService.getToken(api);
