@@ -287,7 +287,7 @@ Many large-scale, widely available products that deal with large, binary files (
 
 1. Transfer speed: is the performance of uploading over HTTP worse than FTP or some other file transfer protocol? NCBI uses Aspera connect as a file transfer protocol for uploading files. Given the limited bandwidth of some centers, the file transfer protocol may be of little concern in terms of file transfer performance. Furthermore, with a sufficiently fast connection to the API, a client may overload the web server by uploading large files.
 2. Reliability: what happens if the file transfer is interrupted during transmission? Is the client expected to re-submit a very large set of files to the server upon failure? Other file transfer protocols provide resilience over HTTP in terms of resuming file transmission after an interruption.
-3. Browser limitations: some popular web browsers have a limit of 2GB for file uploads (notably, Firefox and Internet Explorer). While the intended audience of this REST API is *explicitly does not* include web browsers, this is a realistic consideration.
+3. Browser limitations: some popular web browsers have a limit of 2GB for file uploads (notably, Firefox and Internet Explorer). While the intended audience of this REST API *explicitly does not* include web browsers, this is a realistic consideration.
 4. Web server limitations: systems administrators may not feel comfortable allowing large files to be uploaded via the web server. Most web servers allow the administrator to specify the maximum file upload size, and the maximum file upload size may be much smaller than the type of files needed to be submitted to a sequence data repository.
 
 Possible solutions to the problems exposed by uploading files over HTTP:
