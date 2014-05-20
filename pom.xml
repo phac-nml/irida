@@ -41,6 +41,7 @@
         <jacoco-maven-plugin.version>0.7.0.201403182114</jacoco-maven-plugin.version>
         <jackson.version>2.4.0-rc3</jackson.version>
         <thymeleaf-extras-springsecurity3.version>2.1.1.RELEASE</thymeleaf-extras-springsecurity3.version>
+        <spring-mobile-device.version>1.1.1.RELEASE</spring-mobile-device.version>
     </properties>
 
     <inceptionYear>2014</inceptionYear>
@@ -146,6 +147,13 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
+        </dependency>
+
+        <!-- SPRING MOBILE -->
+        <dependency>
+            <groupId>org.springframework.mobile</groupId>
+            <artifactId>spring-mobile-device</artifactId>
+            <version>${spring-mobile-device.version}</version>
         </dependency>
 
         <!-- SPRING SECURITY -->
