@@ -17,6 +17,6 @@ describe('Index', function () {
     });
 
     it('should have the correct title', function () {
-        expect(dashboardPage.title.getText()).toBe('Hello There');
+        expect(dashboardPage.title.getText()).toBe('This is the dashboard view');
     });
 });

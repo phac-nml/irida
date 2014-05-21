@@ -15,6 +15,6 @@ describe('Index', function () {
     it('Should be able to login', function () {
         loginPage.login();
         var dashboardPage = new DashboardPage();
-        expect(dashboardPage.title.getText()).toBe('Hello There');
+        expect(dashboardPage.title.getText()).toBe('This is the dashboard view');
     });
 });
