@@ -44,7 +44,12 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 		logger.info("Configuring ReloadableResourceBundleMessageSource.");
 
 		// TODO: Create one for each 'page'
-		String[] resources= {"classpath:/i18n/login", "classpath:/i18n/dashboard", "classpath:/i18n/projects"};
+		String[] resources= {
+				"classpath:/i18n/login",
+				"classpath:/i18n/global",
+				"classpath:/i18n/dashboard",
+				"classpath:/i18n/projects",
+				"classpath:/i18n/mobile"};
 
 		ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
 		source.setBasenames(resources);
