@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.impl;
+package ca.corefacility.bioinformatics.irida.service.impl.user;
 
 import java.util.Map;
 
@@ -9,8 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
-import ca.corefacility.bioinformatics.irida.repositories.PasswordResetRepository;
-import ca.corefacility.bioinformatics.irida.service.PasswordResetService;
+import ca.corefacility.bioinformatics.irida.repositories.user.PasswordResetRepository;
+import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 
 /**
  * Implementation for managing {@link PasswordReset}

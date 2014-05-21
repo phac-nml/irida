@@ -13,9 +13,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.PasswordResetRepository;
-import ca.corefacility.bioinformatics.irida.service.PasswordResetService;
-import ca.corefacility.bioinformatics.irida.service.impl.PasswordResetServiceImpl;
+import ca.corefacility.bioinformatics.irida.repositories.user.PasswordResetRepository;
+import ca.corefacility.bioinformatics.irida.service.impl.user.PasswordResetServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 
 import com.google.common.collect.ImmutableMap;
 

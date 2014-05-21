@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.repositories.relational.auditing;
 
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
 import org.hibernate.envers.RevisionListener;
 import org.slf4j.LoggerFactory;
