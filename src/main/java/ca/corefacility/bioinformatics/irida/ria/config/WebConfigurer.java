@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.config;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
+import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -127,6 +128,7 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 	private Set<IDialect> additionalDialects() {
 		Set<IDialect> dialects = new HashSet<>();
 		dialects.add(new SpringSecurityDialect());
+		dialects.add(new DataAttributeDialect());
 		return dialects;
 	}
 }
