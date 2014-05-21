@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.service.impl.integration.user;
 
 import static org.junit.Assert.*;
 
+import java.util.Collection;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,8 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.user.Group;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.user.GroupService;
@@ -42,6 +46,34 @@ public class GroupServiceImplIT {
 	private GroupService groupService;
 	@Autowired
 	private UserService userService;
+
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetUsersForGroup() {
+		Group g = groupService.read(1L);
+		User u = userService.read(3L);
+		Collection<Join<User, Group>> users = groupService.getUsersForGroup(g);
+		assertEquals("Wrong number of users for group.", 1, users.size());
+		assertEquals("Wrong user in group.", u, users.iterator().next().getSubject());
+	}
+
+	@Test(expected = EntityExistsException.class)
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testAddUserToGroupTwice() {
+		Group g = groupService.read(1L);
+		User u = userService.read(3L);
+		groupService.addUserToGroup(g, u);
+	}
+
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testAddUserToGroup() {
+		Group g = groupService.read(1L);
+		User u = userService.read(1L);
+		Join<User, Group> j = groupService.addUserToGroup(g, u);
+		assertEquals("Wrong group in join", g.getId(), j.getObject().getId());
+		assertEquals("Wrong user in join", u.getId(), j.getSubject().getId());
+	}
 
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
@@ -94,7 +126,7 @@ public class GroupServiceImplIT {
 		Group g = groupService.read(1L);
 		assertEquals("Loaded the wrong group", Long.valueOf(1l), g.getId());
 	}
-	
+
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testUpdateGroupAsAdmin() {
@@ -103,14 +135,14 @@ public class GroupServiceImplIT {
 		Group g = groupService.read(1L);
 		assertEquals("Name not persisted.", newName, g.getName());
 	}
-	
+
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "manager", roles = "MANAGER")
 	public void testUpdateGroupAsManager() {
 		String newName = "notGroup1";
 		groupService.update(1L, ImmutableMap.of("name", newName));
 	}
-	
+
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "user", roles = "MANAGER")
 	public void testUpdateGroupAsUser() {

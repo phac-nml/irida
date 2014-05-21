@@ -46,6 +46,14 @@ public class UserGroup implements Join<User, Group> {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
 
+	protected UserGroup() {
+	}
+
+	public UserGroup(User u, Group g) {
+		this.user = u;
+		this.logicalGroup = g;
+	}
+
 	public int hashCode() {
 		return Objects.hash(user, logicalGroup);
 	}
