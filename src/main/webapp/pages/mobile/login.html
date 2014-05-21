@@ -1,60 +1,57 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      lang="en">
-<head>
+      ng-app="myApp">
+<head lang="en">
     <meta charset="UTF-8"/>
-    <title th:text="#{login.page.title}">IRIDA Platform | Login</title>
-    <!-- build:css styles/vendor.css -->
-    <link rel="stylesheet" href="../../bower_components/mobile-angular-ui/dist/css/mobile-angular-ui-base.min.css"/>
-    <!-- endbuild -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <title th:text="#{irida.title}"></title>
 
-    <!-- build:css(.tmp) styles/main.css -->
-    <link rel="stylesheet" href="/styles/main.css"/>
-    <!-- endbuild -->
-
+    <link rel="stylesheet" href="/bower_components/onsenui/build/css/onsenui.css"/>
+    <link rel="stylesheet" href="/bower_components/onsenui/build/css/topcoat-mobile-onsen-ios7.min.css"/>
     <style>
-        .ng-cloak {
-            display: none !important;
+        .page {
+            padding: 8px;
         }
-
-        .btn {
-            margin-bottom: 1em;
+        input, button {
+            display: block;
+            width: 100%;
+        }
+        button {
+            margin: 8px 0 !important;
         }
     </style>
 </head>
-<body ng-app="irida.login">
+<body>
 
-<div class="container">
-    <div class="row">
-        <div class="col-lg-4 col-lg-offset-4 col-sm-8 col-sm-offset-2 panel panel-primary" ng-controller="LoginCtrl">
-            <h1 id="title" th:text="#{login.welcome}">Welcome to the IRIDA Platform!</h1>
-            <h2>THIS IS MOBILE VIEW</h2>
-            <form class="form-signin" method="post" action="/login">
-                <h3 class="muted form-signin-heading" th:text="#{login.signin-message}">Please sign in</h3>
-                <h4>Mobile Login Page</h4>
-                <div class="form-group" ng-class="{'has-error': ctrl.error}">
-                    <label class="control-label" for="username" th:text="#{login.email}">Email Address</label>
-                    <input id="username" ng-model="email" type="text" class="form-control"
-                           th:placeholder="#{login.email}"
-                           name="username"/>
+<div class="navigator-container">
+    <div class="topcoat-navigation-bar navigator-toolbar relative">
+        <div class="onsen_navigator-item onsen_navigator-title topcoat-navigation-bar__title topcoat-navigation-bar__line-height center animate-center">
+            IRIDA Login
+        </div>
+    </div>
+    <div class="relative navigator-content topcoat-page__bg">
+        <div class="navigator-page page">
+            <div class="page">
+                <div class="panel-body" ng-controller="LoginCtrl">
+                    <form name="loginForm" action="/login" method="post">
+                        <label for="email" th:text="#{login.email}">Email Address</label>
+                        <input id="email" class="topcoat-text-input" name="username" type="text" ng-model="email" th:placeholder="#{login.email}"/>
+                        <label for="password">Password</label>
+                        <input id="password" class="topcoat-text-input" name="password" type="password" ng-model="password" th:placeholder="#{login.password}"/>
+                        <button type="submit" class="effeckt-button topcoat-button topcoat-button--cta-large" th:text="#{login.btn.signin}">Login</button>
+                    </form>
+                    <div ng-show="error" th:text="#{login.error}">Incorrect Email or
+                        Password
+                    </div>
                 </div>
-                <div class="form-group" ng-class="{'has-error': ctrl.error}">
-                    <label class="control-label" for="password" th:text="#{login.password}">Password</label>
-                    <input id="password" ng-model="password" type="password" class="form-control"
-                           th:placeholder="#{login.password}"
-                           name="password"/></div>
-                <button class="btn btn-success btn-block" type="submit" th:text="#{login.btn.signin}">Sign in</button>
-                <div class="ng-cloak alert alert-danger" ng-show="error" th:text="#{login.error}">Incorrect Email or
-                    Password
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
 
-<script th:src="@{/bower_components/angular/angular.min.js}"></script>
+<script src="/bower_components/angular/angular.min.js"></script>
 <script>
-    angular.module('irida.login', [])
+    angular.module('myApp', [])
             .controller('LoginCtrl', ['$scope', '$location', function ($scope, $location) {
                 'use strict';
 
@@ -63,6 +60,10 @@
                     $scope.error = true;
                 }
             }]);
+    window.onload = function () {
+        var hash = unescape(self.document.location.hash.substring(1));
+        document.loginForm.action = '/login#' + hash;
+    }
 </script>
 
 </body>
