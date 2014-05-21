@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.impl.unit;
+package ca.corefacility.bioinformatics.irida.service.impl.unit.user;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
