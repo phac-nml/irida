@@ -15,6 +15,7 @@
 	<PROJECT_USER />
 	<SEQUENCEFILE_SAMPLE />
 	<PROJECT_SAMPLE />
+	<LOGICALGROUP />
 
 	<!-- All auditing table references *only* refer to the Revisions table, 
 		so they can all be listed in an arbitrary order *after* the Revisions table. -->
@@ -32,4 +33,5 @@
 	<SAMPLE_AUD />
 	<REMOTE_API_AUD />
 	<REMOTE_API_TOKEN_AUD />
+	<LOGICALGROUP_AUD />
 </dataset>
