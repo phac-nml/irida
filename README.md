@@ -17,7 +17,7 @@ Install Development Environment
 1. Install [NodeJS](http://www.nodejs.org)
 1. Install `grunt-cli`: `sudo npm -g install grunt-cli protractor`
 1. Install `sass` and `compass`: `sudo gem update; sudo gem install sass; sudo gem install compass;`
-1. Install Global NPM dependencies: `sudo npm install -g grunt-cli protractor bower browserify`;
+1. Install Global NPM dependencies: `sudo npm install -g grunt-cli protractor bower`;
 1. Install node packages: `sudo npm install`
 1. Install bower packages: `bower install`
 1. Update webdriver: `sudo webdriver-manager update`
