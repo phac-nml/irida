@@ -1,5 +1,6 @@
 exports.config = {
     seleniumAddress: 'http://localhost:4444/wd/hub',
+    seleniumPort: null,
     seleniumArgs: ['-browserTimeout=60'],
 
     chromeOnly: false,
@@ -10,7 +11,7 @@ exports.config = {
 
     },
 
-    specs: ['src/test/javascript/e2e/**/*.spec.js'],
+    specs: ['../e2e/**/*.spec.js'],
 
     baseUrl: 'http://localhost:8080',
 

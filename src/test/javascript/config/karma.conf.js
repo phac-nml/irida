@@ -23,8 +23,8 @@ module.exports = function (config) {
 
             // Load these files in this order...
 
-                appPath + '/bower_components/jQuery/dist/jquery.min.js',
                 appPath + '/bower_components/angular/angular.js',
+                appPath + '/bower_components/angular-route/angular-route.js',
                 appPath + '/bower_components/angular-mocks/angular-mocks.js',
 
             // Use `included = false` to let requireJS load them as needed
