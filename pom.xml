@@ -152,6 +152,7 @@
         	<groupId>org.springframework.ws</groupId>
         	<artifactId>spring-ws-test</artifactId>
         	<version>${spring.ws.test.version}</version>
+        	<scope>test</scope>
    		</dependency>
 
 		<!-- Spring Security -->
