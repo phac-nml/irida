@@ -12,12 +12,9 @@
     "angular-mocks": "1.2.16",
     "angular-route": "1.2.16",
     "requirejs": "~2.1.11",
-    "headjs-notify": "~0.9.7",
     "underscore": "~1.6.0",
     "angular-sanitize": "~1.2.16",
-    "sinon": "~1.9.1",
-    "jQuery": "~2.1.1",
-    "mobile-angular-ui": "~1.1.0-beta.21"
+    "onsenui": "~1.0.4"
   },
   "devDependencies": {}
 }
