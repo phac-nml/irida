@@ -17,7 +17,8 @@ require.config({
 require
 (
     ['app'],
-    function(app){
+    function () {
+        'use strict';
         angular.bootstrap(document, ['app']);
     }
 );

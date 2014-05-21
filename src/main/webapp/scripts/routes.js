@@ -1,6 +1,7 @@
 /*globals define:true */
-define([], function()
-{
+define([], function () {
+    'use strict';
+
     return {
         defaultRoutePath: '/dashboard',
         routes: {
