@@ -9,7 +9,8 @@ Install Development Environment
 #### On Ubuntu
 
 1. Run: `./scripts/ubuntu_install.sh`
-2. You're done installing!
+1. Add 'source ~/.irida-npm/bashrc' to your ~/.bashrc file.
+1. You're done installing!
 
 #### Other Operating Systems
 
