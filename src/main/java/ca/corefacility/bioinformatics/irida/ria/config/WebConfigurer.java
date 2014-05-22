@@ -1,9 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.config;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.ria.dialect.onsen.OnsenAttributeDialect;
+import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +28,9 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.ria.dialect.onsen.OnsenAttributeDialect;
-
-import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
@@ -126,7 +124,7 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 		LiteDeviceDelegatingViewResolver resolver = new LiteDeviceDelegatingViewResolver(delegate);
 		resolver.setMobilePrefix(TEMPLATE_MOBILE_PREFIX);
 		resolver.setNormalPrefix(TEMPLATE_NORMAL_PREFIX);
-	return resolver;
+		return resolver;
 	}
 
 	@Override
@@ -134,12 +132,16 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 		registry.addInterceptor(deviceResolverHandlerInterceptor());
 		registry.addInterceptor(sitePreferenceHandlerInterceptor());
 	}
-
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
 		argumentResolvers.add(sitePreferenceHandlerMethodArgumentResolver());
 	}
 
+	/**
+	 * This is to add additional Thymeleaf dialects.
+	 * 
+	 * @return A Set of thymeleaf dialects.
+	 */
 	private Set<IDialect> additionalDialects() {
 		Set<IDialect> dialects = new HashSet<>();
 		dialects.add(new SpringSecurityDialect());
