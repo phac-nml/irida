@@ -1292,7 +1292,7 @@ public class GalaxyAPIIT {
 				localGalaxy.getGalaxyInstanceAdmin());
 		assertNotNull(actualLibrary);
 		assertEquals(actualLibrary.getId(), actualUploadResult.getLibraryId());
-		assertEquals(new URL(localGalaxyURL + actualLibrary.getUrl()),
+		assertEquals(new URL(localGalaxyURL + "/" + GalaxyUploadResult.LIBRARY_API_BASE + actualUploadResult.getLibraryId()),
 				actualUploadResult.getLibraryAPIURL());
 
 		List<LibraryContent> libraryContents = localGalaxy
@@ -1336,7 +1336,7 @@ public class GalaxyAPIIT {
 				localGalaxy.getGalaxyInstanceAdmin());
 		assertNotNull(actualLibrary);
 		assertEquals(actualLibrary.getId(), actualUploadResult.getLibraryId());
-		assertEquals(new URL(localGalaxyURL + actualLibrary.getUrl()),
+		assertEquals(new URL(localGalaxyURL + "/" + GalaxyUploadResult.LIBRARY_API_BASE + actualUploadResult.getLibraryId()),
 				actualUploadResult.getLibraryAPIURL());
 
 		libraryContents = localGalaxy.getGalaxyInstanceAdmin()
@@ -1463,7 +1463,7 @@ public class GalaxyAPIIT {
 				localGalaxy.getGalaxyInstanceAdmin());
 		assertNotNull(actualLibrary);
 		assertEquals(actualLibrary.getId(), actualUploadResult.getLibraryId());
-		assertEquals(new URL(localGalaxyURL + actualLibrary.getUrl()),
+		assertEquals(new URL(localGalaxyURL + "/" + GalaxyUploadResult.LIBRARY_API_BASE + actualUploadResult.getLibraryId()),
 				actualUploadResult.getLibraryAPIURL());
 
 		List<LibraryContent> libraryContents = localGalaxy
