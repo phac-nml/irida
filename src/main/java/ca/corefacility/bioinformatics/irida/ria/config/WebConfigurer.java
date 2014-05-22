@@ -1,8 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.config;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.ria.dialect.onsen.OnsenAttributeDialect;
-import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,10 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.ria.dialect.onsen.OnsenAttributeDialect;
+
+import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 
 /**
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
@@ -55,7 +57,6 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 	public MessageSource messageSource() {
 		logger.info("Configuring ReloadableResourceBundleMessageSource.");
 
-		// TODO: Create one for each 'page'
 		String[] resources = { "classpath:/i18n/login", "classpath:/i18n/global", "classpath:/i18n/dashboard",
 				"classpath:/i18n/projects", "classpath:/i18n/mobile" };
 
