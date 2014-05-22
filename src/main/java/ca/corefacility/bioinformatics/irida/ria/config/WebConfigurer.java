@@ -1,16 +1,19 @@
 package ca.corefacility.bioinformatics.irida.ria.config;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.ria.dialect.onsen.OnsenAttributeDialect;
-import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.env.Environment;
 import org.springframework.mobile.device.DeviceResolverHandlerInterceptor;
 import org.springframework.mobile.device.site.SitePreferenceHandlerInterceptor;
 import org.springframework.mobile.device.site.SitePreferenceHandlerMethodArgumentResolver;
@@ -26,9 +29,10 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.ria.dialect.onsen.OnsenAttributeDialect;
+
+import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 
 /**
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
@@ -39,7 +43,15 @@ import java.util.Set;
 @Import({ IridaApiServicesConfig.class, WebSecurityConfig.class })
 public class WebConfigurer extends WebMvcConfigurerAdapter {
 	public static final String SPRING_PROFILE_PRODUCTION = "prod";
+	public static final String TEMPLATE_LOCATION = "/static/pages/";
+	public static final String TEMPLATE_SUFFIX = ".html";
+	public static final String TEMPLATE_MODE = "HTML5";
+	public static final String TEMPLATE_MOBILE_PREFIX = "mobile/";
+	public static final String TEMPLATE_NORMAL_PREFIX = "normal/";
+	public static final long TEMPLATE_CACHE_TTL_MS = 3600000L;
 	private static final Logger logger = LoggerFactory.getLogger(WebConfigurer.class);
+	@Autowired
+	private Environment env;
 
 	@Bean
 	public MessageSource messageSource() {
@@ -84,11 +96,17 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 	public ServletContextTemplateResolver templateResolver() {
 		logger.debug("Creating Template Resolvers.");
 		ServletContextTemplateResolver resolver = new ServletContextTemplateResolver();
-		resolver.setPrefix("/static/pages/");
-		resolver.setSuffix(".html");
-		resolver.setTemplateMode("HTML5");
+		resolver.setPrefix(TEMPLATE_LOCATION);
+		resolver.setSuffix(TEMPLATE_SUFFIX);
+		resolver.setTemplateMode(TEMPLATE_MODE);
 
-		resolver.setCacheable(false);
+		// Set template cache timeout if in production
+		// Don't cache at all if in development
+		if (env.acceptsProfiles(SPRING_PROFILE_PRODUCTION)) {
+			resolver.setCacheTTLMs(TEMPLATE_CACHE_TTL_MS);
+		} else {
+			resolver.setCacheable(false);
+		}
 		return resolver;
 	}
 
@@ -106,9 +124,9 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 		delegate.setTemplateEngine(templateEngine());
 		delegate.setOrder(1);
 		LiteDeviceDelegatingViewResolver resolver = new LiteDeviceDelegatingViewResolver(delegate);
-		resolver.setMobilePrefix("mobile/");
-		resolver.setNormalPrefix("normal/");
-		return resolver;
+		resolver.setMobilePrefix(TEMPLATE_MOBILE_PREFIX);
+		resolver.setNormalPrefix(TEMPLATE_NORMAL_PREFIX);
+	return resolver;
 	}
 
 	@Override
