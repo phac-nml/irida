@@ -35,8 +35,7 @@ public class OnsenDialectTemplateEngineTest {
 		templateEngine.addDialect(new OnsenAttributeDialect());
 
 		// Cannot use @{...} syntax without an IWebContext interface, therefore
-		// facking it
-		// wit ${baseUrl ...}
+		// faking it with ${baseUrl ...}
 		Map<String, String> model = new HashMap<>();
 		model.put("baseUrl", "");
 		String process = templateEngine.process("src/test/resources/test.html", new Context(Locale.CANADA, model));
