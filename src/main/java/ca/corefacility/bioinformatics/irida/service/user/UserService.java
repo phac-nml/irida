@@ -111,7 +111,7 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 * expired password.
 	 */
 	static final String CHANGE_PASSWORD_PERMISSIONS = "isFullyAuthenticated() or "
-			+ "(principal instanceof T(ca.corefacility.bioinformatics.irida.model.User) and !principal.isCredentialsNonExpired())";
+			+ "(principal instanceof T(ca.corefacility.bioinformatics.irida.model.user.User) and !principal.isCredentialsNonExpired())";
 
 	/**
 	 * {@inheritDoc}
@@ -125,7 +125,7 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 * permitted to create user accounts with a ROLE_USER role.
 	 */
 	static final String CREATE_USER_PERMISSIONS = "hasRole('ROLE_ADMIN') or "
-			+ "((#u.getSystemRole() == T(ca.corefacility.bioinformatics.irida.model.Role).ROLE_USER) and hasRole('ROLE_MANAGER'))";
+			+ "((#u.getSystemRole() == T(ca.corefacility.bioinformatics.irida.model.user.Role).ROLE_USER) and hasRole('ROLE_MANAGER'))";
 
 	/**
 	 * {@inheritDoc}
