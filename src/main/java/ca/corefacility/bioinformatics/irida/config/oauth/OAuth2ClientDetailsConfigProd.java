@@ -48,8 +48,6 @@ public class OAuth2ClientDetailsConfigProd implements OAuth2ClientDetailsConfig{
 		BaseClientDetails pythonLinkerClient = new BaseClientDetails("pythonLinker", "NmlIrida", "read", "password","ROLE_CLIENT");
 		pythonLinkerClient.setClientSecret("bySZBP5jNO9pSZTz3omFRtJs3XFAvshxGgvXIlZ2zjk");
 		clientStore.put("pythonLinker", pythonLinkerClient);
-		
-
 
 		return clientStore;
 	}

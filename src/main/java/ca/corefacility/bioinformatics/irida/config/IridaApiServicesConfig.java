@@ -28,7 +28,7 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
  */
 @Configuration
 @Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class,
-		GalaxyAPIConfig.class })
+		GalaxyAPIConfig.class, IridaOAuth2Config.class })
 @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.service")
 public class IridaApiServicesConfig {
 

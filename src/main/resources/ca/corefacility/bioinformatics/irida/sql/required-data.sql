@@ -252,3 +252,6 @@ INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES (no
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES (now(), 4, 48);
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES (now(), 4, 49);
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES (now(), 4, 50);
+
+-- remote apis
+insert into remote_api (clientId,clientSecret,description,serviceURI) values ("webClient","webClientSecret","A local testing api","http://localhost:8080");
