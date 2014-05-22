@@ -29,8 +29,8 @@
         <div class="col-lg-4 col-lg-offset-4 col-sm-8 col-sm-offset-2 panel panel-primary" ng-controller="LoginCtrl">
             <h1 id="title" th:text="#{login.welcome}">Welcome to the IRIDA Platform!</h1>
 
-            <form name="loginForm" class="form-signin" method="post" action="/login">
-                <h3 class="muted form-signin-heading" th:text="#{login.signin-message}">Please sign in</h3>
+            <form name="loginForm" class="form-signin" method="post" th:action="@{/login}">
+            <h3 class="muted form-signin-heading" th:text="#{login.signin-message}">Please sign in</h3>
 
                 <div class="form-group" ng-class="{'has-error': ctrl.error}">
                     <label class="control-label" for="username" th:text="#{login.email}">Email Address</label>
@@ -52,7 +52,7 @@
     </div>
 </div>
 
-<script th:src="@{/bower_components/angular/angular.min.js}"></script>
+<script th:src="@{/bower_components/angular/angular.min.js}" src="/bower_components/angular/angular.min.js"></script>
 <script>
     angular.module('irida.login', [])
             .controller('LoginCtrl', ['$scope', '$location', function ($scope, $location) {
@@ -66,7 +66,7 @@
 
     window.onload = function () {
         var hash = unescape(self.document.location.hash.substring(1));
-        document.loginForm.action = '/login#' + hash;
+        document.loginForm.action = document.loginForm.action + '#' + hash;
     }
 </script>
 

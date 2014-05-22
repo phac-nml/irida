@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org"
+      xmlns:data="http://www.thymeleaf.org"
       lang="en">
 <head>
     <meta charset="UTF-8"/>
@@ -21,11 +21,12 @@
         <h1 id="title" th:text="#{dashboard.welcome}">Hello There</h1>
         <h2 th:text="${name}">__USERNAME__</h2>
         <a href="#/projects">Projects</a>
-        <a id="logout_btn" class="btn" href="/logout" th:text="#{global.logout}">Logout</a>
+        <a id="logout_btn" class="btn" href="/logout" th:href="@{/logout}" th:text="#{global.logout}">Logout</a>
     </div>
     <div ng-view=""></div>
 </div>
 
-<script data-main="/scripts/bootstrap.js" th:src="@{/bower_components/requirejs/require.js}"></script>
+<script data:main="@{/scripts/bootstrap.js}" data-main="/scripts/bootstrap.js"
+        th:src="@{/bower_components/requirejs/require.js}" src="/bower_components/requirejs/require.js"></script>
 </body>
 </html>
