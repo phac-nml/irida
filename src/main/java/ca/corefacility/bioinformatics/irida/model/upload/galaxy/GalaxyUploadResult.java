@@ -63,15 +63,11 @@ public class GalaxyUploadResult implements UploadResult {
 	 */
 	private URL libraryToAPIURL(Library library, String galaxyURL)
 			throws MalformedURLException {
-		String urlPath = library.getUrl();
+		String urlPath = "api/libraries/" + library.getId();
 		String domainPath = galaxyURL;
 
 		if (domainPath.endsWith("/")) {
 			domainPath = domainPath.substring(0, domainPath.length() - 1);
-		}
-
-		if (urlPath.startsWith("/")) {
-			urlPath = urlPath.substring(1);
 		}
 
 		return new URL(domainPath + "/" + urlPath);
