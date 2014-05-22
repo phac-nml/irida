@@ -28,7 +28,7 @@ public class PageController {
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String showIndex(SitePreference sitePreference, Model model, Principal principal) {
-		logger.debug("Displaying dashboard page. With site pref: {}", sitePreference);
+		logger.debug("Displaying index page. With site pref: {}", sitePreference);
 		String name = principal.getName();
 
 		model.addAttribute("name", name);
