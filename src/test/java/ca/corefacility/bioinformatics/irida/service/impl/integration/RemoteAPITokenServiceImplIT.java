@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl.integration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.util.Date;
 
@@ -82,15 +83,28 @@ public class RemoteAPITokenServiceImplIT {
 	}
 	
 	@Test
-	public void addToken(){
+	public void testAddToken(){
 		RemoteAPI api = apiService.read(2l);
 		RemoteAPIToken token = new RemoteAPIToken("111111111", api, new Date());
-		tokenService.addToken(token);
+		tokenService.create(token);
 		
 		RemoteAPIToken readToken = tokenService.getToken(api);
 		
 		assertEquals(token,readToken);
 		
+	}
+	
+	@Test(expected=EntityNotFoundException.class)
+	public void testDeleteToken(){
+		RemoteAPI api = null;
+		try{
+			api = apiService.read(1l);
+			tokenService.delete(api);
+		}catch(EntityNotFoundException ex){
+			fail("Token should be able to be deleted");
+		}
+		
+		tokenService.getToken(api);
 	}
 	
 	@Test
@@ -99,7 +113,7 @@ public class RemoteAPITokenServiceImplIT {
 		RemoteAPIToken originalToken = tokenService.getToken(api);
 		
 		RemoteAPIToken token = new RemoteAPIToken("111111111", api, new Date());
-		tokenService.addToken(token);
+		tokenService.create(token);
 		
 		RemoteAPIToken readToken = tokenService.getToken(api);
 		

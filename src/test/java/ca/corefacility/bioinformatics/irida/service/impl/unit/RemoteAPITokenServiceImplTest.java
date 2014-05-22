@@ -52,7 +52,7 @@ public class RemoteAPITokenServiceImplTest {
 	public void testAddToken() {
 		when(userRepo.loadUserByUsername(user.getUsername())).thenReturn(user);
 		
-		service.addToken(remoteAPIToken);
+		service.create(remoteAPIToken);
 		
 		verify(tokenRepository).save(remoteAPIToken);
 		verify(userRepo,times(2)).loadUserByUsername(user.getUsername());
@@ -64,7 +64,7 @@ public class RemoteAPITokenServiceImplTest {
 		when(userRepo.loadUserByUsername(user.getUsername())).thenReturn(user);
 		when(tokenRepository.readTokenForApiAndUser(remoteAPI, user)).thenReturn(remoteAPIToken);
 		
-		service.addToken(remoteAPIToken);
+		service.create(remoteAPIToken);
 		
 		verify(tokenRepository).save(remoteAPIToken);
 		verify(userRepo,times(2)).loadUserByUsername(user.getUsername());
@@ -75,7 +75,7 @@ public class RemoteAPITokenServiceImplTest {
 	public void testAddTokenNotLoggedIn() {
 		SecurityContextHolder.clearContext();
 				
-		service.addToken(remoteAPIToken);
+		service.create(remoteAPIToken);
 	}
 
 	@Test

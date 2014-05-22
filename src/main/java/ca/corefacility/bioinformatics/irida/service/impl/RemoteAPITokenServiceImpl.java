@@ -32,9 +32,12 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
 		this.userRepository = userRepository;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Transactional
 	@Override
-	public void addToken(RemoteAPIToken token) {
+	public void create(RemoteAPIToken token) {
 		User user = userRepository.loadUserByUsername(getUserName());
 		token.setUser(user);
 		
@@ -44,6 +47,9 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
 		tokenRepository.save(token);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public RemoteAPIToken getToken(RemoteAPI remoteAPI) throws EntityNotFoundException{
 		User user = userRepository.loadUserByUsername(getUserName());
@@ -52,6 +58,17 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
 			throw new EntityNotFoundException("Couldn't find an OAuth2 token for this API and User");
 		}
 		return readTokenForApiAndUser;
+	}
+	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Transactional
+	@Override
+	public void delete(RemoteAPI remoteAPI) throws EntityNotFoundException {
+			RemoteAPIToken token = getToken(remoteAPI);
+			tokenRepository.delete(token);
 	}
 	
 
@@ -78,10 +95,10 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
 		RemoteAPIToken oldToken = null;
 		try{
 			oldToken = getToken(apiToken.getRemoteApi());
-			logger.debug("Old token found for service " + apiToken.getRemoteApi());
+			logger.trace("Old token found for service " + apiToken.getRemoteApi());
 			apiToken.setId(oldToken.getId());
 		}catch(EntityNotFoundException ex){
-			logger.debug("No token found for service " + apiToken.getRemoteApi());
+			logger.trace("No token found for service " + apiToken.getRemoteApi());
 		}
 		
 		return apiToken;
