@@ -1,7 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.config;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
-import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -25,9 +27,10 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.ria.dialect.onsen.OnsenAttributeDialect;
+
+import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 
 /**
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
@@ -37,8 +40,8 @@ import java.util.Set;
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.ria" })
 @Import({ IridaApiServicesConfig.class, WebSecurityConfig.class })
 public class WebConfigurer extends WebMvcConfigurerAdapter {
-	private static final Logger logger = LoggerFactory.getLogger(WebConfigurer.class);
 	public static final String SPRING_PROFILE_PRODUCTION = "prod";
+	private static final Logger logger = LoggerFactory.getLogger(WebConfigurer.class);
 
 	@Bean
 	public MessageSource messageSource() {
@@ -129,6 +132,7 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 		Set<IDialect> dialects = new HashSet<>();
 		dialects.add(new SpringSecurityDialect());
 		dialects.add(new DataAttributeDialect());
+		dialects.add(new OnsenAttributeDialect());
 		return dialects;
 	}
 }
