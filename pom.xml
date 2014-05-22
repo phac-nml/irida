@@ -149,11 +149,11 @@
 			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
-        	<groupId>org.springframework.ws</groupId>
-        	<artifactId>spring-ws-test</artifactId>
-        	<version>${spring.ws.test.version}</version>
-        	<scope>test</scope>
-   		</dependency>
+			<groupId>org.springframework.ws</groupId>
+			<artifactId>spring-ws-test</artifactId>
+			<version>${spring.ws.test.version}</version>
+			<scope>test</scope>
+		</dependency>
 
 		<!-- Spring Security -->
 		<dependency>
@@ -167,10 +167,10 @@
 			<version>${spring.security.version}</version>
 		</dependency>
 		<dependency>
-        	<groupId>org.springframework.security.oauth</groupId>
-        	<artifactId>spring-security-oauth2</artifactId>
-        	<version>${spring.security.oauth.version}</version>
-    	</dependency>
+			<groupId>org.springframework.security.oauth</groupId>
+			<artifactId>spring-security-oauth2</artifactId>
+			<version>${spring.security.oauth.version}</version>
+		</dependency>
 
 		<!-- Validation API -->
 		<dependency>
@@ -226,9 +226,9 @@
 			<version>${hibernate.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-			<version>${hsqldb.version}</version>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>${h2.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -293,6 +293,8 @@
 			<artifactId>galaxybootstrap</artifactId>
 			<version>${com.github.jmchilton.galaxybootstrap.version}</version>
 		</dependency>
+
+
 	</dependencies>
 	<build>
 		<finalName>irida-api</finalName>
@@ -421,7 +423,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
-	
+
 		<!-- Dependencies -->
 		<junit.version>4.11</junit.version>
 		<slf4j.version>1.7.7</slf4j.version>
@@ -435,10 +437,7 @@
 		<mockito.version>1.9.5</mockito.version>
 		<mysql.connector.version>5.1.30</mysql.connector.version>
 		<hibernate.version>4.3.5.Final</hibernate.version>
-		<!-- Do NOT upgrade hsqldb; causes integration tests to fail when trying 
-			to save quality control data (specifically the binary charts) for sequence 
-			files. (fb; Jan 21, 2014) -->
-		<hsqldb.version>2.2.8</hsqldb.version>
+		<h2.version>1.4.178</h2.version>
 		<jsr250.api.version>1.0</jsr250.api.version>
 		<spring.test.dbunit.version>1.1.0</spring.test.dbunit.version>
 		<dbunit.version>2.4.9</dbunit.version>

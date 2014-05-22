@@ -45,13 +45,13 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
 		adapter.setShowSql(false);
 		adapter.setGenerateDdl(true);
-		adapter.setDatabase(Database.HSQL);
+		adapter.setDatabase(Database.H2);
 		return adapter;
 	}
 
 	@Bean
 	public DataSource dataSource() {
-		return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.HSQL).build();
+		return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build();
 	}
 
 	@Override
