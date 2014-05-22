@@ -15,6 +15,8 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
+import ca.corefacility.bioinformatics.irida.model.user.User;
+
 /**
  * OAuth2 token for communicating with a {@link RemoteAPI} for a given
  * {@link User}
