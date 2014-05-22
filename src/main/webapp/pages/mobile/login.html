@@ -4,10 +4,12 @@
 <head lang="en">
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-    <title th:text="#{irida.title}"></title>
+    <title th:text="#{irida.title}">IRIDA Login</title>
 
+    <!-- build:css styles/mobile.css -->
     <link rel="stylesheet" href="/bower_components/onsenui/build/css/onsenui.css"/>
     <link rel="stylesheet" href="/bower_components/onsenui/build/css/topcoat-mobile-onsen-ios7.min.css"/>
+    <!-- endbuild -->
     <style>
         .page {
             padding: 8px;
@@ -33,8 +35,8 @@
         <div class="navigator-page page">
             <div class="page">
                 <div class="panel-body" ng-controller="LoginCtrl">
-                    <form name="loginForm" action="/login" method="post">
-                        <label for="email" th:text="#{login.email}">Email Address</label>
+                    <form name="loginForm" th:action="@{/login}" method="post">
+                    <label for="email" th:text="#{login.email}">Email Address</label>
                         <input id="email" class="topcoat-text-input" name="username" type="text" ng-model="email" th:placeholder="#{login.email}"/>
                         <label for="password">Password</label>
                         <input id="password" class="topcoat-text-input" name="password" type="password" ng-model="password" th:placeholder="#{login.password}"/>
@@ -49,7 +51,7 @@
     </div>
 </div>
 
-<script src="/bower_components/angular/angular.min.js"></script>
+<script th:src="@{/bower_components/angular/angular.min.js}"></script>
 <script>
     angular.module('myApp', [])
             .controller('LoginCtrl', ['$scope', '$location', function ($scope, $location) {
@@ -62,7 +64,7 @@
             }]);
     window.onload = function () {
         var hash = unescape(self.document.location.hash.substring(1));
-        document.loginForm.action = '/login#' + hash;
+        document.loginForm.action = document.loginForm.action + '#' + hash;
     }
 </script>
 
