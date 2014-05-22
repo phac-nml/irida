@@ -9,7 +9,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -37,9 +36,6 @@ public class Group implements IridaThing {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	private User owner;
-
 	@NotNull(message = "{group.name.notnull}")
 	@Size(min = 3, message = "{group.name.size}")
 	private String name;
@@ -59,14 +55,6 @@ public class Group implements IridaThing {
 
 	public void setUserGroups(Set<UserGroupJoin> userGroups) {
 		this.userGroups = userGroups;
-	}
-
-	public User getOwner() {
-		return owner;
-	}
-
-	public void setOwner(User owner) {
-		this.owner = owner;
 	}
 
 	public String getName() {

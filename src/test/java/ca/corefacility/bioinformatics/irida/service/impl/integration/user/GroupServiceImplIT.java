@@ -78,10 +78,8 @@ public class GroupServiceImplIT {
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testCreateGroupAsAdmin() {
-		User u = userService.read(1L);
 		Group g = new Group();
 		g.setName("group");
-		g.setOwner(u);
 		Group created = groupService.create(g);
 		assertNotNull("persisted group should be assigned an id.", created.getId());
 	}
@@ -89,20 +87,16 @@ public class GroupServiceImplIT {
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "manager", roles = "MANAGER")
 	public void testCreateGroupAsManager() {
-		User u = userService.read(2L);
 		Group g = new Group();
 		g.setName("group");
-		g.setOwner(u);
 		groupService.create(g);
 	}
 
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "user", roles = "USER")
 	public void testCreateGroupAsUser() {
-		User u = userService.read(3L);
 		Group g = new Group();
 		g.setName("group");
-		g.setOwner(u);
 		groupService.create(g);
 	}
 

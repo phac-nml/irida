@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
@@ -37,11 +38,17 @@ public class UserGroupJoin implements Join<User, Group> {
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "user_id")
+	@NotNull
 	private User user;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "logicalGroup_id")
+	@NotNull
 	private Group logicalGroup;
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@NotNull
+	private User owner;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;

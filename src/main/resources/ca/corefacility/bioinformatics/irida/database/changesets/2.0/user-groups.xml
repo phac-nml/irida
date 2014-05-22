@@ -14,11 +14,7 @@
 			<column name="createdDate" type="datetime" />
 			<column name="modifiedDate" type="datetime" />
 			<column name="name" type="varchar(255)" />
-			<column name="owner_id" type="bigint(20)" />
 		</createTable>
-		<addForeignKeyConstraint baseTableName="logicalGroup"
-			baseColumnNames="owner_id" constraintName="FK_LOGICAL_GROUP_OWNER"
-			referencedColumnNames="id" referencedTableName="user" />
 
 		<createTable tableName="logicalGroup_AUD">
 			<column name="id" type="bigint(20)">
@@ -33,7 +29,6 @@
 			<column name="createdDate" type="datetime" />
 			<column name="modifiedDate" type="datetime" />
 			<column name="name" type="varchar(255)" />
-			<column name="owner_id" type="bigint(20)" />
 		</createTable>
 
 		<!-- Create join tables for User and logicalGroup -->
