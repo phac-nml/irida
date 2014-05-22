@@ -10,6 +10,8 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
+ * This is used to during the processing of html templates to match onsen attributes.
+ *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class OnsenAttributeMatcher implements IProcessorMatcher<NestableAttributeHolderNode> {
