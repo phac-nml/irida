@@ -13,9 +13,15 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<irida.api.version>1.5.0-SNAPSHOT</irida.api.version>
 		<spring.version>4.0.3.RELEASE</spring.version>
 		<cglib.version>2.2.2</cglib.version>
 		<slf4j.version>1.7.5</slf4j.version>
+		<javax.servlet.version>2.4</javax.servlet.version>
+		<oltu.version>0.31</oltu.version>
+		<spring.security.version>3.2.0.RELEASE</spring.security.version>
+		<javax.servlet.api.version>2.3.1</javax.servlet.api.version>
+		<javax.jstl.version>1.2</javax.jstl.version>
 	</properties>
 
 	<dependencies>
@@ -60,40 +66,39 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
-			<version>2.4</version>
+			<version>${javax.servlet.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>javax.servlet.jsp</groupId>
-			<artifactId>javax.servlet.jsp-api</artifactId>
-			<version>2.3.1</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>jstl</artifactId>
-			<version>1.2</version>
-		</dependency>
-            
+        <dependency>
+        	<groupId>javax.servlet.jsp</groupId>
+ 			<artifactId>javax.servlet.jsp-api</artifactId>
+ 			<version>${javax.servlet.api.version}</version>
+ 			<scope>provided</scope>
+ 		</dependency>
+ 		<dependency>
+ 			<groupId>javax.servlet</groupId>
+ 			<artifactId>jstl</artifactId>
+ 			<version>${javax.jstl.version}</version>
+ 		</dependency>
 		<dependency>
 			<groupId>org.apache.oltu.oauth2</groupId>
 			<artifactId>org.apache.oltu.oauth2.client</artifactId>
-			<version>0.31</version>
+			<version>${oltu.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
-			<version>3.2.0.RELEASE</version>
+			<version>${spring.security.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
-			<version>3.2.0.RELEASE</version>
+			<version>${spring.security.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>ca.corefacility.bioinformatics</groupId>
 			<artifactId>irida-api</artifactId>
-			<version>1.5.0-SNAPSHOT</version>
+			<version>${irida.api.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
