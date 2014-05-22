@@ -1,4 +1,4 @@
-package ca.nml.oltutest.controller;
+package ca.corefacility.bioinformatics.irida.example.oauthClient.controller;
 
 import java.net.MalformedURLException;
 import java.util.List;

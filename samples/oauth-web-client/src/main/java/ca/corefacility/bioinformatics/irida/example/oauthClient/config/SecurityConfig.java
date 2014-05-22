@@ -1,4 +1,4 @@
-package ca.nml.oltutest.config;
+package ca.corefacility.bioinformatics.irida.example.oauthClient.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

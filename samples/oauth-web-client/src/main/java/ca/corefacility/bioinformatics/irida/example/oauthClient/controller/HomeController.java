@@ -1,4 +1,4 @@
-package ca.nml.oltutest.controller;
+package ca.corefacility.bioinformatics.irida.example.oauthClient.controller;
 
 import java.io.IOException;
 
