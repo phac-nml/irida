@@ -51,13 +51,13 @@ public class Group implements IridaThing {
 	private Date modifiedDate;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "logicalGroup")
-	private Set<UserGroup> userGroups;
+	private Set<UserGroupJoin> userGroups;
 
-	public Set<UserGroup> getUserGroups() {
+	public Set<UserGroupJoin> getUserGroups() {
 		return userGroups;
 	}
 
-	public void setUserGroups(Set<UserGroup> userGroups) {
+	public void setUserGroups(Set<UserGroupJoin> userGroups) {
 		this.userGroups = userGroups;
 	}
 

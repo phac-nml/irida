@@ -15,8 +15,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.user.Group;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.model.user.UserGroup;
-import ca.corefacility.bioinformatics.irida.repositories.joins.user.UserGroupRepository;
+import ca.corefacility.bioinformatics.irida.model.user.UserGroupJoin;
+import ca.corefacility.bioinformatics.irida.repositories.joins.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.GroupRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.user.GroupServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.GroupService;
@@ -33,7 +33,7 @@ public class GroupServiceImplTest {
 	@Mock
 	private GroupRepository groupRepository;
 	@Mock
-	private UserGroupRepository userGroupRepository;
+	private UserGroupJoinRepository userGroupRepository;
 	@Mock
 	private Validator validator;
 
@@ -47,7 +47,7 @@ public class GroupServiceImplTest {
 	public void testAddUserToGroupTwice() {
 		User u = new User();
 		Group g = new Group();
-		when(userGroupRepository.save(any(UserGroup.class))).thenThrow(
+		when(userGroupRepository.save(any(UserGroupJoin.class))).thenThrow(
 				new DataIntegrityViolationException("Already added."));
 		groupService.addUserToGroup(g, u);
 	}
@@ -56,7 +56,7 @@ public class GroupServiceImplTest {
 	public void testAddUserToGroup() {
 		User u = new User();
 		Group g = new Group();
-		UserGroup userGroup = new UserGroup(u, g);
+		UserGroupJoin userGroup = new UserGroupJoin(u, g);
 		when(userGroupRepository.save(userGroup)).thenReturn(userGroup);
 		groupService.addUserToGroup(g, u);
 		verify(userGroupRepository).save(userGroup);

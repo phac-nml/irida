@@ -14,8 +14,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.user.Group;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.model.user.UserGroup;
-import ca.corefacility.bioinformatics.irida.repositories.joins.user.UserGroupRepository;
+import ca.corefacility.bioinformatics.irida.model.user.UserGroupJoin;
+import ca.corefacility.bioinformatics.irida.repositories.joins.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.GroupRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.GroupService;
@@ -29,10 +29,10 @@ import ca.corefacility.bioinformatics.irida.service.user.GroupService;
 @Service
 public class GroupServiceImpl extends CRUDServiceImpl<Long, Group> implements GroupService {
 
-	private UserGroupRepository userGroupRepository;
+	private UserGroupJoinRepository userGroupRepository;
 
 	@Autowired
-	public GroupServiceImpl(GroupRepository repository, UserGroupRepository userGroupRepository, Validator validator) {
+	public GroupServiceImpl(GroupRepository repository, UserGroupJoinRepository userGroupRepository, Validator validator) {
 		super(repository, validator, Group.class);
 		this.userGroupRepository = userGroupRepository;
 	}
@@ -50,7 +50,7 @@ public class GroupServiceImpl extends CRUDServiceImpl<Long, Group> implements Gr
 	@Override
 	public Join<User, Group> addUserToGroup(Group g, User u) throws EntityNotFoundException, EntityExistsException {
 		try {
-			UserGroup ug = new UserGroup(u, g);
+			UserGroupJoin ug = new UserGroupJoin(u, g);
 			return userGroupRepository.save(ug);
 		} catch (DataIntegrityViolationException e) {
 			throw new EntityExistsException(String.format("The user [%s] already belongs to group [%s].", u.getId(),

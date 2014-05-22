@@ -8,16 +8,16 @@ import org.springframework.data.repository.CrudRepository;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.user.Group;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.model.user.UserGroup;
+import ca.corefacility.bioinformatics.irida.model.user.UserGroupJoin;
 
 /**
- * Repository for managing {@link UserGroup} -- the relationship between
+ * Repository for managing {@link UserGroupJoin} -- the relationship between
  * {@link User} and {@link Group}.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
-public interface UserGroupRepository extends CrudRepository<UserGroup, Long> {
+public interface UserGroupJoinRepository extends CrudRepository<UserGroupJoin, Long> {
 
 	/**
 	 * Get all {@link User} references in a {@link Group}.

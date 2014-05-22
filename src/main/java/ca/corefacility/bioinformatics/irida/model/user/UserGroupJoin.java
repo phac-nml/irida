@@ -29,7 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 @Entity
 @Table(name = "user_group", uniqueConstraints = @UniqueConstraint(columnNames = { "user_id", "logicalGroup_id" }))
 @Audited
-public class UserGroup implements Join<User, Group> {
+public class UserGroupJoin implements Join<User, Group> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -46,10 +46,10 @@ public class UserGroup implements Join<User, Group> {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
 
-	protected UserGroup() {
+	protected UserGroupJoin() {
 	}
 
-	public UserGroup(User u, Group g) {
+	public UserGroupJoin(User u, Group g) {
 		this.user = u;
 		this.logicalGroup = g;
 	}
@@ -59,8 +59,8 @@ public class UserGroup implements Join<User, Group> {
 	}
 
 	public boolean equals(Object o) {
-		if (o instanceof UserGroup) {
-			UserGroup ug = (UserGroup) o;
+		if (o instanceof UserGroupJoin) {
+			UserGroupJoin ug = (UserGroupJoin) o;
 			return Objects.equals(user, ug.user) && Objects.equals(logicalGroup, ug.logicalGroup);
 		}
 

@@ -106,7 +106,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	private Collection<RemoteAPIToken> tokens;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
-	private Set<UserGroup> userGroups;
+	private Set<UserGroupJoin> userGroups;
 
 	/**
 	 * Construct an instance of {@link User} with no properties set.
