@@ -121,7 +121,7 @@ public class OltuAuthorizationController {
 
 		Date expiry = new Date(currentTime + (expiresIn * ONE_SECOND_IN_MS));
 		RemoteAPIToken token = new RemoteAPIToken(accessToken, remoteAPI, expiry);
-		tokenService.addToken(token);
+		tokenService.create(token);
 
 		return new ModelAndView(new RedirectView(redirect));
 	}
