@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.dialect.onsen;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.Configuration;
 import org.thymeleaf.dom.Attribute;
