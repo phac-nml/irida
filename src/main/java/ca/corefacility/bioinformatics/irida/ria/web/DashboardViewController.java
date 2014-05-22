@@ -19,7 +19,7 @@ public class DashboardViewController {
 
 	@RequestMapping(value = "main", method = RequestMethod.GET)
 	public String getDashboardView(SitePreference sitePreference) {
-		logger.debug("Creating partial for dashboard view.");
+		logger.debug("Creating partial for dashboard view. Site pref: {}", sitePreference);
 		return "views/dashboard";
 	}
 }
