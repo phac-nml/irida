@@ -19,7 +19,7 @@ import org.thymeleaf.standard.expression.StandardExpressions;
 public class OnsenAttrProcessor extends AbstractAttrProcessor {
 
 	private final static int ONSEN_PROCESSOR_PRECEDENCE = 10000;
-ß
+
 	public OnsenAttrProcessor(IAttributeNameProcessorMatcher matcher) {
 		super(matcher);
 	}
