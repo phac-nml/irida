@@ -1,18 +1,19 @@
 /*globals define:true */
 define([], function () {
     'use strict';
+    var baseUrl = document.getElementById('baseUrl').value;
 
     return {
         defaultRoutePath: '/dashboard',
         routes: {
             '/dashboard': {
-                templateUrl: '/dashboard/view/main',
+                templateUrl: baseUrl + '/dashboard/view/main',
                 dependencies: [
                     'controllers/DashboardCtrl'
                 ]
             },
             '/projects': {
-                templateUrl: '/projects/view/main',
+                templateUrl: baseUrl + '/projects/view/main',
                 dependencies: [
                     'controllers/ProjectsCtrl'
                 ]
