@@ -38,7 +38,7 @@ module.exports = function (config) {
             // NOTE: we do NOT use the application's bootstrap.js since this
             //       custom one will auto-run Karma once loaded.
 
-            testPath + '/config/karmaBoot.js'
+                testPath + '/config/karmaBoot.js'
         ],
 
         // list of files to exclude

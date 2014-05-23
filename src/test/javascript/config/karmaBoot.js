@@ -18,7 +18,7 @@ requirejs.config
     paths: {
         'app' : 'scripts/app',
         'routes': 'scripts/routes',
-        'services/dependencyResolverFor': 'scripts/services/dependencyResolverFor',
+        'services/dependencyResolverFor': 'scripts/services/dependencyResolverFor'
     },
 
     // ask Require.js to load these files (all our tests)
