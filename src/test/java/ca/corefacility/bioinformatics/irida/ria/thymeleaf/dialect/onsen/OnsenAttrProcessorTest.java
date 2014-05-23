@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.thymeleaf.dialect.onsen;
 
-import static org.junit.Assert.*;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +13,8 @@ import org.thymeleaf.dom.Element;
 import org.thymeleaf.standard.expression.IStandardExpression;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
+
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link OnsenAttrProcessor}
