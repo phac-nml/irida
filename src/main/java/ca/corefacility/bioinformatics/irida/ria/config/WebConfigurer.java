@@ -30,7 +30,7 @@ import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.ria.dialect.onsen.OnsenAttributeDialect;
+import ca.corefacility.bioinformatics.irida.ria.thymeleaf.dialect.onsen.OnsenDialect;
 
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 
@@ -146,8 +146,8 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 	private Set<IDialect> additionalDialects() {
 		Set<IDialect> dialects = new HashSet<>();
 		dialects.add(new SpringSecurityDialect());
+		dialects.add(new OnsenDialect());
 		dialects.add(new DataAttributeDialect());
-		dialects.add(new OnsenAttributeDialect());
 		return dialects;
 	}
 }
