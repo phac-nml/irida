@@ -26,6 +26,7 @@
     <div ng-view=""></div>
 </div>
 
+<input id="baseUrl" type="hidden" th:value="@{/}" value="/"/>
 <script data:main="@{/scripts/bootstrap.js}" data-main="/scripts/bootstrap.js"
         th:src="@{/bower_components/requirejs/require.js}" src="/bower_components/requirejs/require.js"></script>
 </body>
