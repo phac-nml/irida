@@ -157,7 +157,7 @@ module.exports = function (grunt) {
                         expand: true,
                         dot: true,
                         cwd: '<%= path.app %>/',
-                        src: ['pages/**/*.html', 'views/**/*.html'],
+                        src: ['pages/**/*.html'],
                         dest: '<%= path.static %>/'
                     },
                     {
@@ -173,7 +173,7 @@ module.exports = function (grunt) {
                 expand: true,
                 dot: true,
                 cwd: '<%= path.app %>/',
-                src: ['pages/**/*.html', 'views/**/*.html'],
+                src: ['pages/**/*.html'],
                 dest: '<%= path.static %>/'
             }
         },
@@ -189,7 +189,7 @@ module.exports = function (grunt) {
                 files: [{
                     expand: true,
                     cwd: '<%= path.static %>/',
-                    src: ['pages/*.html', 'views/**/*.html'],
+                    src: ['pages/**/*.html'],
                     dest: '<%= path.static %>'
                 }]
             }
@@ -263,7 +263,7 @@ module.exports = function (grunt) {
         },
         protractor: {
             options: {
-                configFile: 'protractor.conf.js', // Default config file
+                configFile: '<%= path.test %>/config/protractor.conf.js', // Default config file
                 keepAlive: true, // If false, the grunt process stops when the test fails.
                 noColor: false // If true, protractor will not use colors in its output.
             },
@@ -295,7 +295,7 @@ module.exports = function (grunt) {
                 },
                 files: [
                     {
-                        src: ['<%= path.static %>/pages/*.html'],
+                        src: ['<%= path.static %>/pages/**/*.html'],
                         dest: '',
                         expand: true,
                         flatten: false
@@ -329,7 +329,7 @@ module.exports = function (grunt) {
 // concat, minify and revision files. Creates configurations in memory so
 // additional tasks can operate on them
             useminPrepare: {
-                html: ['<%= path.app %>/pages/**/*.html', '<%= path.app %>/views/**/*.html'],
+                html: ['<%= path.app %>/pages/**/*.html'],
                 options: {
                     dest: '<%= path.static %>',
                     flow: {
@@ -346,7 +346,7 @@ module.exports = function (grunt) {
 
 // Performs rewrites based on rev and the useminPrepare configuration
             usemin: {
-                html: ['<%= path.static %>/pages/**/*.html', '<%= path.static %>/views/**/*.html'],
+                html: ['<%= path.static %>/pages/**/*.html'],
                 css: ['<%= path.static %>/styles/{,*/}*.css'],
                 options: {
                     assetsDirs: ['<%= path.static %>']

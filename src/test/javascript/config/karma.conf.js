@@ -23,8 +23,8 @@ module.exports = function (config) {
 
             // Load these files in this order...
 
-                appPath + '/bower_components/jQuery/dist/jquery.min.js',
                 appPath + '/bower_components/angular/angular.js',
+                appPath + '/bower_components/angular-route/angular-route.js',
                 appPath + '/bower_components/angular-mocks/angular-mocks.js',
 
             // Use `included = false` to let requireJS load them as needed
@@ -38,7 +38,7 @@ module.exports = function (config) {
             // NOTE: we do NOT use the application's bootstrap.js since this
             //       custom one will auto-run Karma once loaded.
 
-            testPath + '/config/karmaBoot.js'
+                testPath + '/config/karmaBoot.js'
         ],
 
         // list of files to exclude

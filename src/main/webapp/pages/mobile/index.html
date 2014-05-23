@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:ons="http://www.thymeleaf.org"
+      ng-app="myApp">
+<head lang="en">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <title></title>
+
+    <!-- build:css styles/mobile.css -->
+    <link rel="stylesheet" href="../../bower_components/onsenui/build/css/onsenui.css"/>
+    <link rel="stylesheet" href="../../bower_components/onsenui/build/css/topcoat-mobile-onsen-ios7.min.css"/>
+    <!-- endbuild -->
+</head>
+<body>
+<ons-screen ons:page="@{/dashboard/view/main}" page="/dashboard/view/main"></ons-screen>
+<script src="/bower_components/angular/angular.min.js" th:src="@{/bower_components/angular/angular.min.js}"></script>
+<script src="/bower_components/onsenui/build/js/onsenui_all.js"
+        th:src="@{/bower_components/onsenui/build/js/onsenui_all.js}"></script>
+<script>
+    angular.module('myApp', ['onsen.directives']);
+</script>
+</body>
+</html>

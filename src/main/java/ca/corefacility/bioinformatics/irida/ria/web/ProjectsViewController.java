@@ -8,18 +8,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * Controllers for handling AngularJS request for the Dashboard
- * 
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Controller
-@RequestMapping("/dashboard/view/")
-public class DashboardViewController {
-	private static final Logger logger = LoggerFactory.getLogger(DashboardViewController.class);
+@RequestMapping("/projects/view")
+public class ProjectsViewController {
+	private static final Logger logger = LoggerFactory.getLogger(ProjectsViewController.class);
 
 	@RequestMapping(value = "main", method = RequestMethod.GET)
-	public String getDashboardView(SitePreference sitePreference) {
-		logger.debug("Creating partial for dashboard view. Site pref: {}", sitePreference);
-		return "views/dashboard";
+	public String getProjectsView(SitePreference sitePreference) {
+		logger.debug("Creating partial for projects main view.");
+		if(sitePreference.isMobile()){
+			return "views/404";
+		}
+		else {
+			return "views/projects";
+		}
 	}
 }
+
