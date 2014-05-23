@@ -8,7 +8,6 @@ import java.util.Map;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Description;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -102,7 +101,6 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 	 * @return {@link SpringTemplateEngine}
 	 */
 	@Bean
-	@Description("Thymeleaf template engine with Spring integration")
 	public SpringTemplateEngine templateEngine() {
 		SpringTemplateEngine engine = new SpringTemplateEngine();
 		engine.setTemplateResolver(templateResolver());
@@ -114,7 +112,7 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 	 * 
 	 * @return {@link ViewResolver}
 	 */
-	public ViewResolver thymeleafViewResolver() {
+	private ViewResolver thymeleafViewResolver() {
 		ThymeleafViewResolver resolver = new ThymeleafViewResolver();
 		resolver.setTemplateEngine(templateEngine());
 		return resolver;
