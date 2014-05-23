@@ -14,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.IridaOAuth2Config;
 
 @Configuration
-@ComponentScan(basePackages="ca.nml.oltutest")
+@ComponentScan(basePackages="ca.corefacility.bioinformatics.irida.example.oauthClient")
 @EnableWebMvc
 @Import({SecurityConfig.class, IridaOAuth2Config.class, IridaApiServicesConfig.class})
 public class MvcConfiguration extends WebMvcConfigurerAdapter{
