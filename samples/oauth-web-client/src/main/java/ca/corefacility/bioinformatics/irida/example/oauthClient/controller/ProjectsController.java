@@ -1,22 +1,16 @@
 package ca.corefacility.bioinformatics.irida.example.oauthClient.controller;
 
-import java.net.MalformedURLException;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.repositories.remote.ProjectRemoteRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.model.RemoteProject;
@@ -31,14 +25,10 @@ public class ProjectsController {
 	private ProjectRemoteRepository repo;
 	// a service to read information about remote apis
 	private RemoteAPIService apiService;
-	// a reference to the authorization controller
-	private OltuAuthorizationController authController;
 
 	@Autowired
-	public ProjectsController(ProjectRemoteRepository repo, OltuAuthorizationController authController,
-			RemoteAPIService apiRepo) {
+	public ProjectsController(ProjectRemoteRepository repo, RemoteAPIService apiRepo) {
 		this.repo = repo;
-		this.authController = authController;
 		this.apiService = apiRepo;
 	}
 
@@ -88,13 +78,5 @@ public class ProjectsController {
 		modelAndView.addObject("data", read);
 		modelAndView.addObject("apiId", id);
 		return modelAndView;
-	}
-
-	@ExceptionHandler(IridaOAuthException.class)
-	public ModelAndView handleOAuthException(HttpServletRequest request, IridaOAuthException ex)
-			throws OAuthSystemException, MalformedURLException {
-		String requestURI = request.getRequestURI();
-
-		return authController.authenticate(ex.getRemoteAPI(), requestURI);
 	}
 }
