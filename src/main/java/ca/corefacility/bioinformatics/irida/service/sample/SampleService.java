@@ -75,7 +75,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return A {@link Sample} with the given ID
 	 */
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
-	public Sample getSampleByExternalSampleId(Project project, String sampleId);
+	public Sample getSampleBySequencerSampleId(Project project, String sampleId);
 
 	/**
 	 * Move an instance of a {@link SequenceFile} associated with a

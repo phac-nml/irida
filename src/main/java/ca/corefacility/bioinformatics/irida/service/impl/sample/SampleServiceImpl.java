@@ -101,8 +101,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public Sample getSampleByExternalSampleId(Project project, String sampleId) {
-		Sample s = sampleRepository.getSampleByExternalSampleId(project, sampleId);
+	public Sample getSampleBySequencerSampleId(Project project, String sampleId) {
+		Sample s = sampleRepository.getSampleBySequencerSampleId(project, sampleId);
 		if (s != null) {
 			return s;
 		} else {

@@ -147,7 +147,7 @@ public class ProjectServiceImplTest {
 	public void testAddSampleToProjectNoSamplePersisted() {
 		Project p = project();
 		Sample s = new Sample();
-		s.setExternalSampleId("external");
+		s.setSequencerSampleId("external");
 		s.setSampleName("name");
 		Set<ConstraintViolation<Sample>> noViolations = new HashSet<>();
 
@@ -164,7 +164,7 @@ public class ProjectServiceImplTest {
 	public void testAddSampleToProjectNoSamplePersistedInvalidSample() {
 		Project p = project();
 		Sample s = new Sample();
-		s.setExternalSampleId("external");
+		s.setSequencerSampleId("external");
 		s.setSampleName("name");
 		Set<ConstraintViolation<Sample>> violations = new HashSet<>();
 		violations.add(ConstraintViolationImpl.forBeanValidation(null, null, Sample.class, null, null, null, null,
@@ -181,7 +181,7 @@ public class ProjectServiceImplTest {
 	public void testAddSampleToProjectAlreadyAdded() {
 		Project p = project();
 		Sample s = new Sample();
-		s.setExternalSampleId("external");
+		s.setSequencerSampleId("external");
 		s.setSampleName("name");
 		Set<ConstraintViolation<Sample>> noViolations = new HashSet<>();
 

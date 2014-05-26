@@ -48,8 +48,7 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	@NotNull(message = "{sample.external.id.notnull}")
 	@Size(min = 3, message = "{sample.external.id.too.short}")
 	@ValidSampleName
-	// @Column(unique = true)
-	private String externalSampleId;
+	private String sequencerSampleId;
 
 	@NotNull(message = "{sample.name.notnull}")
 	@Size(min = 3, message = "{sample.name.too.short}")
@@ -96,7 +95,7 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	 */
 	public Sample(String sampleName, String sampleId) {
 		this.sampleName = sampleName;
-		this.externalSampleId = sampleId;
+		this.sequencerSampleId = sampleId;
 	}
 
 	@Override
@@ -137,12 +136,12 @@ public class Sample implements IridaThing, Comparable<Sample> {
 		this.sampleName = sampleName;
 	}
 
-	public String getExternalSampleId() {
-		return externalSampleId;
+	public String getSequencerSampleId() {
+		return sequencerSampleId;
 	}
 
-	public void setExternalSampleId(String sampleId) {
-		this.externalSampleId = sampleId;
+	public void setSequencerSampleId(String sampleId) {
+		this.sequencerSampleId = sampleId;
 	}
 
 	public String getDescription() {

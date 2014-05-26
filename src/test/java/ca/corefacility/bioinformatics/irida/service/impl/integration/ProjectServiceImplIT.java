@@ -256,7 +256,7 @@ public class ProjectServiceImplIT {
 		Sample s = new Sample();
 		s.setSampleName("Samplename");
 		s.setDescription("Description");
-		s.setExternalSampleId("external");
+		s.setSequencerSampleId("external");
 
 		return s;
 	}
