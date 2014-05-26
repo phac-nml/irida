@@ -20,5 +20,6 @@
     
     <include file="changesets/2.0/data-model-cleanup.xml" relativeToChangelogFile="true"/>
     <include file="changesets/2.0/remote-apis.xml" relativeToChangelogFile="true"/>
+    <include file="changesets/2.0/user-groups.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.impl.integration;
+package ca.corefacility.bioinformatics.irida.service.impl.integration.user;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -26,6 +26,8 @@ import org.springframework.security.authentication.AuthenticationCredentialsNotF
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -39,12 +41,14 @@ import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultit
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.Role;
-import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.user.Group;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.UserService;
+import ca.corefacility.bioinformatics.irida.service.user.GroupService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -56,8 +60,9 @@ import com.google.common.collect.ImmutableMap;
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
 		IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
 @ActiveProfiles("test")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
-@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/UserServiceImplIT.xml")
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
+		WithSecurityContextTestExcecutionListener.class })
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/user/UserServiceImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class UserServiceImplIT {
 
@@ -67,6 +72,8 @@ public class UserServiceImplIT {
 	private ProjectService projectService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	@Autowired
+	private GroupService groupService;
 	@Autowired
 	private CRUDService<Long, User> crudUserService;
 
@@ -80,6 +87,16 @@ public class UserServiceImplIT {
 				ImmutableList.of(Role.ROLE_MANAGER));
 		auth.setDetails(u);
 		SecurityContextHolder.getContext().setAuthentication(auth);
+	}
+
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetUsersForGroup() {
+		Group g = groupService.read(1L);
+		User u = userService.read(3L);
+		Collection<Join<User, Group>> users = userService.getUsersForGroup(g);
+		assertEquals("Wrong number of users for group.", 1, users.size());
+		assertEquals("Wrong user in group.", u, users.iterator().next().getSubject());
 	}
 
 	@Test(expected = AccessDeniedException.class)

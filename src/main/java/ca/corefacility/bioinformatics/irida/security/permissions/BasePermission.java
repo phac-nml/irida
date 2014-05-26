@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.security.core.Authentication;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.Role;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
 
 /**
  * Generic super-class for permission types to extend from.

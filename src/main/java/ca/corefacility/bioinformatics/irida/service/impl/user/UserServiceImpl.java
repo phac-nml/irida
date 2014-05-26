@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.impl;
+package ca.corefacility.bioinformatics.irida.service.impl.user;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -26,12 +26,15 @@ import org.springframework.util.StringUtils;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.repositories.UserRepository;
+import ca.corefacility.bioinformatics.irida.model.user.Group;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
-import ca.corefacility.bioinformatics.irida.service.UserService;
+import ca.corefacility.bioinformatics.irida.repositories.joins.user.UserGroupJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -69,6 +72,10 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * passwords.
 	 */
 	private PasswordEncoder passwordEncoder;
+	/**
+	 * A reference to the user group join repository.
+	 */
+	private UserGroupJoinRepository userGroupRepository;
 
 	private static final Pattern USER_CONSTRAINT_PATTERN;
 
@@ -91,11 +98,12 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	@Autowired
 	public UserServiceImpl(UserRepository userRepository, ProjectUserJoinRepository pujRepository,
-			PasswordEncoder passwordEncoder, Validator validator) {
+			UserGroupJoinRepository userGroupJoinRepository, PasswordEncoder passwordEncoder, Validator validator) {
 		super(userRepository, validator, User.class);
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.pujRepository = pujRepository;
+		this.userGroupRepository = userGroupJoinRepository;
 	}
 
 	/**
@@ -244,6 +252,15 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	@Transactional(readOnly = true)
 	public Collection<Join<Project, User>> getUsersForProjectByRole(Project project, ProjectRole projectRole) {
 		return pujRepository.getUsersForProjectByRole(project, projectRole);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public Collection<Join<User, Group>> getUsersForGroup(Group g) throws EntityNotFoundException {
+		return userGroupRepository.getUsersForGroup(g);
 	}
 
 	/**

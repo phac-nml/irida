@@ -1,11 +1,13 @@
-package ca.corefacility.bioinformatics.irida.service;
+package ca.corefacility.bioinformatics.irida.service.user;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.user.Group;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -110,7 +112,7 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 * expired password.
 	 */
 	static final String CHANGE_PASSWORD_PERMISSIONS = "isFullyAuthenticated() or "
-			+ "(principal instanceof T(ca.corefacility.bioinformatics.irida.model.User) and !principal.isCredentialsNonExpired())";
+			+ "(principal instanceof T(ca.corefacility.bioinformatics.irida.model.user.User) and !principal.isCredentialsNonExpired())";
 
 	/**
 	 * {@inheritDoc}
@@ -124,7 +126,7 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 * permitted to create user accounts with a ROLE_USER role.
 	 */
 	static final String CREATE_USER_PERMISSIONS = "hasRole('ROLE_ADMIN') or "
-			+ "((#u.getSystemRole() == T(ca.corefacility.bioinformatics.irida.model.Role).ROLE_USER) and hasRole('ROLE_MANAGER'))";
+			+ "((#u.getSystemRole() == T(ca.corefacility.bioinformatics.irida.model.user.Role).ROLE_USER) and hasRole('ROLE_MANAGER'))";
 
 	/**
 	 * {@inheritDoc}
@@ -152,4 +154,17 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 */
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public Iterable<User> findAll();
+	
+
+	/**
+	 * Get the set of {@link User} that belong to a {@link Group}.
+	 * 
+	 * @param g
+	 *            the {@link Group} to get {@link User} relationships for.
+	 * @return the collection of {@link Join} types between {@link User} and the
+	 *         specified {@link Group}.
+	 * @throws EntityNotFoundException
+	 *             if the {@link Group} cannot be found.
+	 */
+	public Collection<Join<User, Group>> getUsersForGroup(Group g) throws EntityNotFoundException;
 }

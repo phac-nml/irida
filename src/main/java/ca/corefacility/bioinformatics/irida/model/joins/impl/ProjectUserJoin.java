@@ -22,9 +22,9 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.envers.Audited;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
  * A join table and class for users and projects.

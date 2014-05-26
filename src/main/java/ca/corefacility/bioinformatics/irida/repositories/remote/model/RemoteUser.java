@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.remote.model;
 
-import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.RemoteResource;
 
 import java.util.Date;

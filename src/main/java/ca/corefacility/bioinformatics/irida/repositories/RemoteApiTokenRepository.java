@@ -6,7 +6,7 @@ import org.springframework.data.repository.history.RevisionRepository;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
-import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
  * Repository for storing an reading {@link RemoteAPIToken}s
