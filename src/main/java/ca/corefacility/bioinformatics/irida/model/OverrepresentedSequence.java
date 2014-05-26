@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.model;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
@@ -11,15 +10,14 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
-
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileOverrepresentedSequenceJoin;
 
 /**
  * A {@link SequenceFile} may have 0 or more over-represented sequences.
@@ -48,11 +46,13 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 	private Date createdDate;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
-	
-	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sequence")
-	private List<SequenceFileOverrepresentedSequenceJoin> squenceFiles;
-	
-	public OverrepresentedSequence(){}
+
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "sequenceFile_id")
+	private SequenceFile sequenceFile;
+
+	public OverrepresentedSequence() {
+	}
 
 	public OverrepresentedSequence(String sequence, int count, BigDecimal percentage, String possibleSource) {
 		this.sequence = sequence;
@@ -78,7 +78,7 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 
 		return false;
 	}
-	
+
 	@Override
 	public int compareTo(OverrepresentedSequence o) {
 		return modifiedDate.compareTo(o.modifiedDate);
@@ -147,12 +147,12 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 		this.createdDate = timestamp;
 	}
 
-	public List<SequenceFileOverrepresentedSequenceJoin> getSquenceFiles() {
-		return squenceFiles;
+	public SequenceFile getSequenceFile() {
+		return sequenceFile;
 	}
 
-	public void setSquenceFiles(List<SequenceFileOverrepresentedSequenceJoin> squenceFiles) {
-		this.squenceFiles = squenceFiles;
+	public void setSequenceFile(SequenceFile sequenceFile) {
+		this.sequenceFile = sequenceFile;
 	}
 
 }

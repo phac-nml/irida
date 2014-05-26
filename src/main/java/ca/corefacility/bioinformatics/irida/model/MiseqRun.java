@@ -1,12 +1,11 @@
 
 package ca.corefacility.bioinformatics.irida.model;
 
-import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -57,8 +56,8 @@ public class MiseqRun implements IridaThing, Comparable<MiseqRun>{
     @Temporal(TemporalType.TIMESTAMP)
     private Date modifiedDate;
 	
-	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "miseqRun")
-	private List<MiseqRunSequenceFileJoin> sequenceFiles;
+	@OneToMany(fetch = FetchType.LAZY, cascade =  { CascadeType.REMOVE, CascadeType.MERGE }, mappedBy = "miseqRun", orphanRemoval = true)
+	private Set<SequenceFile> sequenceFiles;
 
     public MiseqRun(){
         createdDate = new Date();
@@ -167,11 +166,11 @@ public class MiseqRun implements IridaThing, Comparable<MiseqRun>{
         this.modifiedDate = modifiedDate;
     }
 
-	public List<MiseqRunSequenceFileJoin> getSequenceFiles() {
+	public Set<SequenceFile> getSequenceFiles() {
 		return sequenceFiles;
 	}
 
-	public void setSequenceFiles(List<MiseqRunSequenceFileJoin> sequenceFiles) {
+	public void setSequenceFiles(Set<SequenceFile> sequenceFiles) {
 		this.sequenceFiles = sequenceFiles;
 	}
 

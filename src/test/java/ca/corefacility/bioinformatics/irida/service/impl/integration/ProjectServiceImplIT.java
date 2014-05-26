@@ -28,14 +28,14 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.Sample;
-import ca.corefacility.bioinformatics.irida.model.User;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
-import ca.corefacility.bioinformatics.irida.service.UserService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -48,6 +48,8 @@ import com.google.common.collect.Sets;
 		IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
+@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectServiceImplIT {
 	@Autowired
 	private ProjectService projectService;
@@ -59,8 +61,6 @@ public class ProjectServiceImplIT {
 	private PasswordEncoder passwordEncoder;
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	public void testCreateProjectAsManager() {
 		try {
 			asRole(Role.ROLE_MANAGER).projectService.create(p());
@@ -73,8 +73,6 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	public void testCreateProjectAsUser() {
 		try {
 			asRole(Role.ROLE_USER).projectService.create(p());
@@ -87,8 +85,6 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	public void testCreateProjectAsAdmin() {
 		try {
 			asRole(Role.ROLE_ADMIN).projectService.create(p());
@@ -101,8 +97,6 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	public void testAddUserToProject() {
 		Project p = asRole(Role.ROLE_ADMIN).projectService.read(1L);
 		User u = asRole(Role.ROLE_ADMIN).userService.read(1L);
@@ -117,8 +111,6 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test(expected = EntityExistsException.class)
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	public void testAddUserToProjectTwice() {
 		Project p = asRole(Role.ROLE_ADMIN).projectService.read(1L);
 		User u = asRole(Role.ROLE_ADMIN).userService.read(1L);
@@ -127,8 +119,6 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	public void testAddTwoUsersToProject() {
 		Project p = asRole(Role.ROLE_ADMIN).projectService.read(1L);
 		User u1 = asRole(Role.ROLE_ADMIN).userService.read(1L);
@@ -146,8 +136,6 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	public void testRemoveUserFromProject() {
 		User u = asRole(Role.ROLE_ADMIN).userService.read(3l);
 		Project p = asRole(Role.ROLE_ADMIN).projectService.read(2l);
@@ -159,8 +147,6 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	public void testGetProjectsForUser() {
 		User u = asRole(Role.ROLE_ADMIN).userService.read(3l);
 
@@ -171,8 +157,6 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	public void testGetProjectsManagedBy() {
 		User u = asRole(Role.ROLE_ADMIN).userService.read(3l);
 
@@ -184,8 +168,6 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	public void testAddSampleToProject() {
 		Sample s = asRole(Role.ROLE_ADMIN).sampleService.read(1L);
 		Project p = asRole(Role.ROLE_ADMIN).projectService.read(1L);
@@ -199,8 +181,6 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test(expected = EntityExistsException.class)
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	public void testAddSampleToProjectTwice() {
 		Sample s = asRole(Role.ROLE_ADMIN).sampleService.read(1L);
 		Project p = asRole(Role.ROLE_ADMIN).projectService.read(1L);
@@ -210,8 +190,6 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	public void testRemoveSampleFromProject() {
 		Sample s = asRole(Role.ROLE_ADMIN).sampleService.read(1L);
 		Project p = asRole(Role.ROLE_ADMIN).projectService.read(2L);
@@ -223,22 +201,16 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	public void testReadProjectAsSequencerRole() {
 		asRole(Role.ROLE_SEQUENCER).projectService.read(1L);
 	}
 
 	@Test(expected = AccessDeniedException.class)
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	public void testRejectReadProjectAsUserRole() {
 		asRole(Role.ROLE_USER).projectService.read(3L);
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	public void testAddSampleToProjectAsSequencer() {
 		Project p = asRole(Role.ROLE_SEQUENCER).projectService.read(1L);
 		Sample s = s();
@@ -250,8 +222,6 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	public void testFindAllProjectsAsUser() {
 		List<Project> projects = (List<Project>) asUsername("user1", Role.ROLE_USER).projectService.findAll();
 		// this user should only have access to one project:
@@ -260,8 +230,6 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	public void testFindAllProjectsAsAdmin() {
 		List<Project> projects = (List<Project>) asUsername("user1", Role.ROLE_ADMIN).projectService.findAll();
 		// this admin should have access to 3 projects
@@ -270,8 +238,6 @@ public class ProjectServiceImplIT {
 	}
 	
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 	public void testUserHasProjectRole(){
 		User user = asRole(Role.ROLE_ADMIN).userService.read(3l);
 		Project project = asRole(Role.ROLE_ADMIN).projectService.read(2l);

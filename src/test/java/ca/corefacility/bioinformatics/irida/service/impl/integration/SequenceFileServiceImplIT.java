@@ -12,7 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
 import org.junit.Before;
@@ -37,14 +37,14 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
-import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.User;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.OverrepresentedSequenceService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
@@ -54,6 +54,8 @@ import com.google.common.collect.ImmutableList;
 		IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
+@DatabaseTearDown(value = "/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml", type = DatabaseOperation.DELETE_ALL)
 public class SequenceFileServiceImplIT {
 
 	private static final String SEQUENCE = "ACGTACGTN";
@@ -97,22 +99,16 @@ public class SequenceFileServiceImplIT {
 	}
 
 	@Test(expected = AccessDeniedException.class)
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 	public void testReadSequenceFileAsUserNoPermissions() {
 		asRole(Role.ROLE_USER, "fbristow").sequenceFileService.read(1L);
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 	public void testReadSequenceFileAsUserWithPermissions() {
 		asRole(Role.ROLE_USER, "fbristow1").sequenceFileService.read(1L);
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 	public void testCreateNotCompressedSequenceFile() throws IOException {
 		SequenceFile sf = new SequenceFile();
 		Path sequenceFile = Files.createTempFile(null, null);
@@ -130,11 +126,11 @@ public class SequenceFileServiceImplIT {
 		sf = asRole(Role.ROLE_ADMIN, "tom").sequenceFileService.read(sf.getId());
 		assertEquals("Wrong version number after processing.", Long.valueOf(1), sf.getFileRevisionNumber());
 
-		List<Join<SequenceFile, OverrepresentedSequence>> overrepresentedSequences = asRole(Role.ROLE_ADMIN, "tom").overrepresentedSequenceService
+		Set<OverrepresentedSequence> overrepresentedSequences = asRole(Role.ROLE_ADMIN, "tom").overrepresentedSequenceService
 				.getOverrepresentedSequencesForSequenceFile(sf);
 		assertNotNull("No overrepresented sequences were found.", overrepresentedSequences);
 		assertEquals("Wrong number of overrepresented sequences were found.", 1, overrepresentedSequences.size());
-		OverrepresentedSequence overrepresentedSequence = overrepresentedSequences.iterator().next().getObject();
+		OverrepresentedSequence overrepresentedSequence = overrepresentedSequences.iterator().next();
 		assertEquals("Sequence was not the correct sequence.", SEQUENCE, overrepresentedSequence.getSequence());
 		assertEquals("The count was not correct.", 2, overrepresentedSequence.getOverrepresentedSequenceCount());
 		assertEquals("The percent was not correct.", new BigDecimal("100.00"), overrepresentedSequence.getPercentage());
@@ -154,8 +150,6 @@ public class SequenceFileServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 	public void testCreateCompressedSequenceFile() throws IOException {
 		SequenceFile sf = new SequenceFile();
 		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");
@@ -178,11 +172,11 @@ public class SequenceFileServiceImplIT {
 		sf = asRole(Role.ROLE_ADMIN, "tom").sequenceFileService.read(sf.getId());
 		assertEquals("Wrong version number after processing.", Long.valueOf(2L), sf.getFileRevisionNumber());
 		assertFalse("File name is still gzipped.", sf.getFile().getFileName().toString().endsWith(".gz"));
-		List<Join<SequenceFile, OverrepresentedSequence>> overrepresentedSequences = asRole(Role.ROLE_ADMIN, "tom").overrepresentedSequenceService
+		Set<OverrepresentedSequence> overrepresentedSequences = asRole(Role.ROLE_ADMIN, "tom").overrepresentedSequenceService
 				.getOverrepresentedSequencesForSequenceFile(sf);
 		assertNotNull("No overrepresented sequences were found.", overrepresentedSequences);
 		assertEquals("Wrong number of overrepresented sequences were found.", 1, overrepresentedSequences.size());
-		OverrepresentedSequence overrepresentedSequence = overrepresentedSequences.iterator().next().getObject();
+		OverrepresentedSequence overrepresentedSequence = overrepresentedSequences.iterator().next();
 		assertEquals("Sequence was not the correct sequence.", SEQUENCE, overrepresentedSequence.getSequence());
 		assertEquals("The count was not correct.", 2, overrepresentedSequence.getOverrepresentedSequenceCount());
 		assertEquals("The percent was not correct.", new BigDecimal("100.00"), overrepresentedSequence.getPercentage());

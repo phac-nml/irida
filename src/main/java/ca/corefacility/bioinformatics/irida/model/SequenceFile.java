@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,7 +14,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.PrePersist;
@@ -26,9 +29,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
-import ca.corefacility.bioinformatics.irida.model.joins.impl.MiseqRunSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileOverrepresentedSequenceJoin;
 
 /**
  * A file that may be stored somewhere on the file system and belongs to a
@@ -41,7 +42,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.SequenceFileOverrep
 @Table(name = "sequence_file")
 @Audited
 public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -56,7 +57,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
-	@Column(name = "filePath")
+	@Column(name = "filePath", unique = true)
 	private String stringPath;
 
 	/* statistics computed by fastqc */
@@ -75,21 +76,22 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	@Lob
 	private byte[] duplicationLevelChart;
 	private String samplePlate;
-    private String sampleWell;
-    private String i7IndexId;
-    private String i7Index;
-    private String i5IndexId;
-    private String i5Index;
-	private Long fileRevisionNumber; //the filesystem file revision number
-	
-	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sequenceFile")
-	private List<MiseqRunSequenceFileJoin> miseqRuns;
-	
-	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sequenceFile")
+	private String sampleWell;
+	private String i7IndexId;
+	private String i7Index;
+	private String i5IndexId;
+	private String i5Index;
+	private Long fileRevisionNumber; // the filesystem file revision number
+
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "miseqRun_id")
+	private MiseqRun miseqRun;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
 	private List<SampleSequenceFileJoin> samples;
-	
-	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "sequenceFile")
-	private List<SequenceFileOverrepresentedSequenceJoin> overrepresentedSequences;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade =  { CascadeType.REMOVE, CascadeType.MERGE }, mappedBy = "sequenceFile", orphanRemoval = true)
+	private Set<OverrepresentedSequence> overrepresentedSequences;
 
 	public SequenceFile() {
 		createdDate = new Date();
@@ -111,10 +113,10 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	}
 
 	@PostLoad
-	public void postLoad(){
+	public void postLoad() {
 		setRealPath();
 	}
-	
+
 	@PrePersist
 	@PreUpdate
 	public void prePersist() {
@@ -125,8 +127,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	public boolean equals(Object other) {
 		if (other instanceof SequenceFile) {
 			SequenceFile sampleFile = (SequenceFile) other;
-			return Objects.equals(file, sampleFile.file) && Objects.equals(createdDate, sampleFile.createdDate)
-					&& Objects.equals(modifiedDate, sampleFile.modifiedDate) && Objects.equals(id, sampleFile.id);
+			return Objects.equals(stringPath, sampleFile.stringPath);
 		}
 
 		return false;
@@ -134,7 +135,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(file, createdDate, modifiedDate, id);
+		return Objects.hash(stringPath);
 	}
 
 	@Override
@@ -265,13 +266,13 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	}
 
 	public void setStringPath() {
-		if(file != null){
-			 stringPath = file.toFile().toString();
+		if (file != null) {
+			stringPath = file.toFile().toString();
 		}
 	}
 
 	public void setRealPath() {
-		if(stringPath != null){
+		if (stringPath != null) {
 			file = Paths.get(stringPath);
 		}
 	}
@@ -319,53 +320,53 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 		this.modifiedDate = modifiedDate;
 	}
 
-public String getSamplePlate() {
-        return samplePlate;
-    }
+	public String getSamplePlate() {
+		return samplePlate;
+	}
 
-    public void setSamplePlate(String samplePlate) {
-        this.samplePlate = samplePlate;
-    }
+	public void setSamplePlate(String samplePlate) {
+		this.samplePlate = samplePlate;
+	}
 
-    public String getSampleWell() {
-        return sampleWell;
-    }
+	public String getSampleWell() {
+		return sampleWell;
+	}
 
-    public void setSampleWell(String sampleWell) {
-        this.sampleWell = sampleWell;
-    }
+	public void setSampleWell(String sampleWell) {
+		this.sampleWell = sampleWell;
+	}
 
-    public String getI7IndexId() {
-        return i7IndexId;
-    }
+	public String getI7IndexId() {
+		return i7IndexId;
+	}
 
-    public void setI7IndexId(String i7IndexId) {
-        this.i7IndexId = i7IndexId;
-    }
+	public void setI7IndexId(String i7IndexId) {
+		this.i7IndexId = i7IndexId;
+	}
 
-    public String getI7Index() {
-        return i7Index;
-    }
+	public String getI7Index() {
+		return i7Index;
+	}
 
-    public void setI7Index(String i7Index) {
-        this.i7Index = i7Index;
-    }
+	public void setI7Index(String i7Index) {
+		this.i7Index = i7Index;
+	}
 
-    public String getI5IndexId() {
-        return i5IndexId;
-    }
+	public String getI5IndexId() {
+		return i5IndexId;
+	}
 
-    public void setI5IndexId(String i5IndexId) {
-        this.i5IndexId = i5IndexId;
-    }
+	public void setI5IndexId(String i5IndexId) {
+		this.i5IndexId = i5IndexId;
+	}
 
-    public String getI5Index() {
-        return i5Index;
-    }
+	public String getI5Index() {
+		return i5Index;
+	}
 
-    public void setI5Index(String i5Index) {
-        this.i5Index = i5Index;
-    }
+	public void setI5Index(String i5Index) {
+		this.i5Index = i5Index;
+	}
 
 	public Long getFileRevisionNumber() {
 		return fileRevisionNumber;
@@ -374,13 +375,13 @@ public String getSamplePlate() {
 	public void setFileRevisionNumber(Long fileRevisionNumber) {
 		this.fileRevisionNumber = fileRevisionNumber;
 	}
-	
-	public List<MiseqRunSequenceFileJoin> getMiseqRuns() {
-		return miseqRuns;
+
+	public MiseqRun getMiseqRun() {
+		return miseqRun;
 	}
 
-	public void setMiseqRuns(List<MiseqRunSequenceFileJoin> miseqRuns) {
-		this.miseqRuns = miseqRuns;
+	public void setMiseqRun(MiseqRun miseqRun) {
+		this.miseqRun = miseqRun;
 	}
 
 	public List<SampleSequenceFileJoin> getSamples() {
@@ -391,11 +392,11 @@ public String getSamplePlate() {
 		this.samples = samples;
 	}
 
-	public List<SequenceFileOverrepresentedSequenceJoin> getOverrepresentedSequences() {
+	public Set<OverrepresentedSequence> getOverrepresentedSequences() {
 		return overrepresentedSequences;
 	}
 
-	public void setOverrepresentedSequences(List<SequenceFileOverrepresentedSequenceJoin> overrepresentedSequences) {
+	public void setOverrepresentedSequences(Set<OverrepresentedSequence> overrepresentedSequences) {
 		this.overrepresentedSequences = overrepresentedSequences;
 	}
 }

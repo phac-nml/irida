@@ -23,9 +23,9 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.Role;
 import ca.corefacility.bioinformatics.irida.model.Sample;
-import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SampleService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -46,6 +46,8 @@ import com.google.common.collect.ImmutableList;
 		IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
+@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class SampleServiceImplIT {
 
 	@Autowired
@@ -73,8 +75,6 @@ public class SampleServiceImplIT {
 	 * Straightforward merging of samples all belonging to the same project.
 	 */
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
 	public void testMergeSamples() {
 		Sample mergeInto = sampleService.read(1l);
 		Project p = projectService.read(1l);
@@ -97,8 +97,6 @@ public class SampleServiceImplIT {
 	 * where they do not share the same project.
 	 */
 	@Test(expected = IllegalArgumentException.class)
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
 	public void testMergeSampleReject() {
 		Sample mergeInto = sampleService.read(1l);
 		Project p = projectService.read(1l);
@@ -107,24 +105,19 @@ public class SampleServiceImplIT {
 
 	@Test
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT_duplicateSampleIds.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT_duplicateSampleIds.xml")
 	public void testGetSampleByExternalIdDuplicates() {
-		Project p = projectService.read(1l);
+		Project p = projectService.read(7l);
 		Sample s = sampleService.getSampleByExternalSampleId(p, "external");
-		assertEquals("Should have retrieved sample with ID 1L.", Long.valueOf(1l), s.getId());
+		assertEquals("Should have retrieved sample with ID 1L.", Long.valueOf(7l), s.getId());
 	}
 
 	@Test(expected = EntityNotFoundException.class)
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
 	public void testgetSampleByExternalNotFound() {
 		Project p = projectService.read(1l);
 		sampleService.getSampleByExternalSampleId(p, "garbage");
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
 	public void testReadSampleByExternalIdAsSequencer() {
 		String externalId = "sample5";
 		Project p = asRole(Role.ROLE_SEQUENCER).projectService.read(3L);
@@ -135,8 +128,6 @@ public class SampleServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
 	public void testReadSampleAsSequencer() {
 		Long sampleID = 1L;
 		Sample s = asRole(Role.ROLE_SEQUENCER).sampleService.read(sampleID);
@@ -146,8 +137,6 @@ public class SampleServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
 	public void testGetSampleForProjectAsSequencer() {
 		Long sampleID = 2L;
 		Long projectID = 1L;
@@ -159,8 +148,6 @@ public class SampleServiceImplIT {
 	}
 
 	@Test
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
-	@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
 	public void testGetSampleForProjectAsUser() {
 		Long sampleID = 2L;
 		Sample s = asRole(Role.ROLE_USER).sampleService.read(sampleID);

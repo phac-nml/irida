@@ -54,6 +54,10 @@ public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 		this.sample = subject;
 		createdDate = new Date();
 	}
+	
+	public Long getId() {
+		return id;
+	}
 
 	@Override
 	public boolean equals(Object o) {

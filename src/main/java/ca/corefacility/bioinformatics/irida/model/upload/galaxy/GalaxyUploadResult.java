@@ -18,6 +18,9 @@ import com.github.jmchilton.blend4j.galaxy.beans.Library;
  *
  */
 public class GalaxyUploadResult implements UploadResult {
+	
+	public static final String LIBRARY_API_BASE = "api/libraries";
+	
 	private String libraryId;
 	private GalaxyProjectName libraryName;
 	private GalaxyAccountEmail ownerName;
@@ -63,15 +66,11 @@ public class GalaxyUploadResult implements UploadResult {
 	 */
 	private URL libraryToAPIURL(Library library, String galaxyURL)
 			throws MalformedURLException {
-		String urlPath = library.getUrl();
+		String urlPath = LIBRARY_API_BASE + library.getId();
 		String domainPath = galaxyURL;
 
 		if (domainPath.endsWith("/")) {
 			domainPath = domainPath.substring(0, domainPath.length() - 1);
-		}
-
-		if (urlPath.startsWith("/")) {
-			urlPath = urlPath.substring(1);
 		}
 
 		return new URL(domainPath + "/" + urlPath);

@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.config;
 
-
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +10,7 @@ import org.springframework.security.oauth2.provider.token.InMemoryTokenStore;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
 @Configuration
-@ComponentScan("ca.corefacility.bioinformatics.irida.config.oauth")
+@ComponentScan(basePackages={"ca.corefacility.bioinformatics.irida.config.oauth","ca.corefacility.bioinformatics.irida.repositories.remote"})
 public class IridaOAuth2Config {
 
 	@Bean
@@ -37,8 +35,5 @@ public class IridaOAuth2Config {
 
 		return clientDetailsUserDetailsService;
 	}
-
-
-
 
 }

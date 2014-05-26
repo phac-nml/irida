@@ -42,11 +42,11 @@
 		project_id="3" sample_id="5" />
 
 	<sequence_file id="1" createdDate="2013-07-18 14:20:19.0"
-		filePath="/" />
+		filePath="/sequenceFile1" />
 	<sequence_file id="2" createdDate="2013-07-18 14:20:19.0"
-		filePath="/" />
+		filePath="/sequenceFile2" />
 	<sequence_file id="3" createdDate="2013-07-18 14:20:19.0"
-		filePath="/" />
+		filePath="/sequenceFile3" />
 
 	<sequencefile_sample id="1" createdDate="2013-07-18 14:20:19.0"
 		sample_id="1" sequencefile_id="1" />
@@ -55,15 +55,4 @@
 	<sequencefile_sample id="3" createdDate="2013-07-18 14:20:19.0"
 		sample_id="3" sequencefile_id="3" />
 
-	<Revisions />
-	<USER_AUD />
-	<PROJECT_AUD />
-	<PROJECT_USER_AUD />
-	<PROJECT_USER />
-	<SAMPLE_AUD />
-	<PROJECT_SAMPLE_AUD />
-	<SEQUENCE_FILE_AUD />
-	<SEQUENCEFILE_SAMPLE_AUD />
-	<MISEQRUN_SEQUENCEFILE />
-	<MISEQRUN_SEQUENCEFILE_AUD />
 </dataset>

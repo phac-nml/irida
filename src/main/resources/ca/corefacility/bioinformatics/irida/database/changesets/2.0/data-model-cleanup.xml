@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="data-model-cleanup" author="fbristow">
+		<!-- fix up missing constraints on the password_reset table -->
+		<addForeignKeyConstraint baseTableName="password_reset"
+			baseColumnNames="user_id" constraintName="FK_PASSWORD_RESET_USER"
+			referencedColumnNames="id" referencedTableName="user" />
+
+		<!-- sequence file doesn't refer to a join table anymore; we're referring 
+			directly to a miseq run. -->
+		<addColumn tableName="sequence_file">
+			<column name="miseqRun_id" type="bigint(20)" />
+		</addColumn>
+		<addForeignKeyConstraint baseTableName="sequence_file"
+			baseColumnNames="miseqRun_id" constraintName="FK_SEQUENCE_FILE_MISEQ_RUN"
+			referencedColumnNames="id" referencedTableName="miseq_run" />
+		<addColumn tableName="sequence_file_AUD">
+			<column name="miseqRun_id" type="bigint(20)" />
+		</addColumn>
+
+		<!-- unique constraint on filename in the sequence file table; we use that 
+			as a way to calculate hashCode on sequence file -->
+		<addUniqueConstraint columnNames="filePath"
+			tableName="sequence_file" constraintName="UK_SEQUENCE_FILE_FILEPATH" />
+
+		<!-- copy miseqrun_id from the existing miseqrun_sequencefile table into 
+			sequence_file.miseqrun_id and sequence_file_AUD.miseqrun_id -->
+		<sql>
+			update sequence_file sf set sf.miseqRun_id = (select miseqRun_id
+			from miseqrun_sequencefile where sequenceFile_id = sf.id);
+			update
+			sequence_file_AUD sf set sf.miseqRun_id = (select miseqRun_id from
+			miseqrun_sequencefile where sequenceFile_id = sf.id);
+		</sql>
+
+
+		<!-- drop miseqrun_sequencefile and miseqrun_sequencefile_AUD -->
+		<dropTable tableName="miseqrun_sequencefile" />
+		<dropTable tableName="miseqrun_sequencefile_AUD" />
+
+		<!-- add sequence file foreign key to overrepresented sequence -->
+		<addColumn tableName="overrepresented_sequence">
+			<column name="sequenceFile_id" type="bigint(20)" />
+		</addColumn>
+		<addForeignKeyConstraint constraintName="FK_OVERREPRESENTED_SEQUENCE_SEQUENCE_FILE"
+			referencedTableName="sequence_file" baseColumnNames="sequenceFile_id"
+			baseTableName="overrepresented_sequence" referencedColumnNames="id" />
+		<addColumn tableName="overrepresented_sequence_AUD">
+			<column name="sequenceFile_id" type="bigint(20)" />
+		</addColumn>
+
+		<!-- copy foreign keys from join table into overrepresented sequence -->
+		<sql>
+			update overrepresented_sequence os set os.sequenceFile_id =
+			(select sequenceFile_id from sequencefile_overrepresentedsequence
+			where overrepresentedsequence_id = os.id);
+			update
+			overrepresented_sequence_AUD os set os.sequenceFile_id = (select
+			sequenceFile_id from sequencefile_overrepresentedsequence where
+			overrepresentedsequence_id = os.id);
+		</sql>
+
+		<dropTable tableName="sequencefile_overrepresentedsequence" />
+		<dropTable tableName="sequencefile_overrepresentedsequence_AUD" />
+	</changeSet>
+</databaseChangeLog>
