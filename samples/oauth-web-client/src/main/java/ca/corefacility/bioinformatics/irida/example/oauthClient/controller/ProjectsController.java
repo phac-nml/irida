@@ -27,63 +27,72 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 public class ProjectsController {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
-	private ProjectRemoteRepository repo; //the repository we're communicating with
-	private RemoteAPIService apiService; //a service to read information about remote apis
-	private OltuAuthorizationController authController; //a reference to the authorization controller
-	
+	// the repository we're communicating with
+	private ProjectRemoteRepository repo;
+	// a service to read information about remote apis
+	private RemoteAPIService apiService;
+	// a reference to the authorization controller
+	private OltuAuthorizationController authController;
+
 	@Autowired
-	public ProjectsController(ProjectRemoteRepository repo,OltuAuthorizationController authController,RemoteAPIService apiRepo){
+	public ProjectsController(ProjectRemoteRepository repo, OltuAuthorizationController authController,
+			RemoteAPIService apiRepo) {
 		this.repo = repo;
 		this.authController = authController;
 		this.apiService = apiRepo;
 	}
-	
+
 	/**
 	 * Get a list of projects for a given service
-	 * @param apiId the ID of the {@link RemoteAPI} we're talking to
+	 * 
+	 * @param apiId
+	 *            the ID of the {@link RemoteAPI} we're talking to
 	 * @return A model for a list of projects
 	 * @throws Exception
 	 */
 	@RequestMapping("/remote/{remoteId}/projects")
-	public ModelAndView getData(@PathVariable("remoteId") Long apiId){
-		
+	public ModelAndView getData(@PathVariable("remoteId") Long apiId) {
+
 		RemoteAPI remoteAPI = apiService.read(apiId);
-		
+
 		logger.debug("Listing from " + remoteAPI);
-		
+
 		List<RemoteProject> list = repo.list(remoteAPI);
 
 		ModelAndView modelAndView = new ModelAndView("data");
-		modelAndView.addObject("service",remoteAPI);
+		modelAndView.addObject("service", remoteAPI);
 		modelAndView.addObject("data", list);
-		modelAndView.addObject("apiId",apiId);
+		modelAndView.addObject("apiId", apiId);
 		return modelAndView;
 	}
-	
+
 	/**
 	 * Get a specific project
-	 * @param id the ID of the project to read
-	 * @param apiId the id of the API to communicate with
+	 * 
+	 * @param id
+	 *            the ID of the project to read
+	 * @param apiId
+	 *            the id of the API to communicate with
 	 * @return a modlel for a project
 	 */
 	@RequestMapping("/remote/{remoteId}/projects/{id}")
-	public ModelAndView readData(@PathVariable("id") Long id,@PathVariable("remoteId") Long apiId){
-		
+	public ModelAndView readData(@PathVariable("id") Long id, @PathVariable("remoteId") Long apiId) {
+
 		RemoteAPI remoteAPI = apiService.read(apiId);
-		
+
 		logger.debug("reading " + id + " from " + remoteAPI);
-		RemoteProject read = repo.read(id,remoteAPI);
+		RemoteProject read = repo.read(id, remoteAPI);
 
 		ModelAndView modelAndView = new ModelAndView("onedata");
-		modelAndView.addObject("service",remoteAPI);
+		modelAndView.addObject("service", remoteAPI);
 		modelAndView.addObject("data", read);
-		modelAndView.addObject("apiId",id);
+		modelAndView.addObject("apiId", id);
 		return modelAndView;
 	}
-	
-	
+
 	@ExceptionHandler(IridaOAuthException.class)
-	public ModelAndView handleOAuthException(HttpServletRequest request,IridaOAuthException ex) throws OAuthSystemException, MalformedURLException{
+	public ModelAndView handleOAuthException(HttpServletRequest request, IridaOAuthException ex)
+			throws OAuthSystemException, MalformedURLException {
 		String requestURI = request.getRequestURI();
 
 		return authController.authenticate(ex.getRemoteAPI(), requestURI);

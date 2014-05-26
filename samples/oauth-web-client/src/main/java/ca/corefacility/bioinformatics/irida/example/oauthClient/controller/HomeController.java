@@ -17,18 +17,18 @@ public class HomeController {
 
 	@Autowired
 	RemoteAPIService remoteService;
-	
-	@RequestMapping(value="/")
-	public ModelAndView test(HttpServletResponse response) throws IOException{
+
+	@RequestMapping(value = "/")
+	public ModelAndView test(HttpServletResponse response) throws IOException {
 		return new ModelAndView("home");
 	}
-	
-	@RequestMapping(value="/choose")
-	public ModelAndView choose(){
+
+	@RequestMapping(value = "/choose")
+	public ModelAndView choose() {
 		Iterable<RemoteAPI> list = remoteService.findAll();
 		ModelAndView modelAndView = new ModelAndView("choose");
 		modelAndView.addObject("apiList", list);
-		
+
 		return modelAndView;
 	}
 }

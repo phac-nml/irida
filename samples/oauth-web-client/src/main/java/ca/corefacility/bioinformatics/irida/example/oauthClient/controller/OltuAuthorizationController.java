@@ -37,7 +37,7 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 @Scope("session")
 public class OltuAuthorizationController {
 	private static final Logger logger = LoggerFactory.getLogger(OltuAuthorizationController.class);
-	
+
 	private static long ONE_SECOND_IN_MS = 1000;
 
 	private final String tokenRedirect = "http://localhost:8181/token";
@@ -76,9 +76,8 @@ public class OltuAuthorizationController {
 			@RequestParam("apiId") Long apiId, @RequestParam("redirect") String redirect) throws IOException,
 			OAuthSystemException, OAuthProblemException, URISyntaxException {
 
-		Long currentTime = System.currentTimeMillis(); // get the current time
-														// for the expiry
-														// calculation
+		// get the current time for the expiry calculation
+		Long currentTime = System.currentTimeMillis();
 
 		OAuthAuthzResponse oar = null;
 		String code = null;
