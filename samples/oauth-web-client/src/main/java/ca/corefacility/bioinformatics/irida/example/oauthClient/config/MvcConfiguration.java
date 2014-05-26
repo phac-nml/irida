@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.config.IridaOAuth2Config;
 public class MvcConfiguration extends WebMvcConfigurerAdapter{
 
 	@Bean
-	public ViewResolver getViewResolver(){
+	public ViewResolver viewResolver(){
 		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
 		resolver.setPrefix("/WEB-INF/views/");
 		resolver.setSuffix(".jsp");
