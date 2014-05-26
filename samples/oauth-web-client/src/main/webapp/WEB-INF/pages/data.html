@@ -1,0 +1,13 @@
+<!DOCTYPE HTML>
+
+<html>
+<body>
+<h1 th:text="#{data.list.title(${service})}">_Demo page displaying project list for serviceName_</h1>
+<table>
+    <tr th:each="one : ${data}">      
+        <td th:text="${one.name}">_Project Name_</td>
+        <td><a th:href="@{/remote/{apiId}/projects/{id}(apiId=${apiId},id=${one.id})}" th:text="${one.id}">_ID_</a></td>
+    </tr>
+</table>
+</body>
+</html>

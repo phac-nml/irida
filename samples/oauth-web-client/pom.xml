@@ -24,6 +24,8 @@
 		<javax.jstl.version>1.2</javax.jstl.version>
 		<maven.compiler.version>2.0.2</maven.compiler.version>
 		<eclipse.jetty.version>9.2.0.M0</eclipse.jetty.version>
+		<!-- Thymeleaf -->
+		<thymeleaf.version>2.1.3.RELEASE</thymeleaf.version>
 	</properties>
 
 	<dependencies>
@@ -104,6 +106,11 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.thymeleaf</groupId>
+			<artifactId>thymeleaf-spring4</artifactId>
+			<version>${thymeleaf.version}</version>
 		</dependency>
 	</dependencies>
 
