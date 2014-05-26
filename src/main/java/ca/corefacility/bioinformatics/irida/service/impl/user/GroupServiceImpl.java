@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.impl.user;
 
-import java.util.Collection;
 import java.util.Map;
 
 import javax.validation.Validator;
@@ -56,10 +55,5 @@ public class GroupServiceImpl extends CRUDServiceImpl<Long, Group> implements Gr
 			throw new EntityExistsException(String.format("The user [%s] already belongs to group [%s].", u.getId(),
 					g.getId()));
 		}
-	}
-
-	@Override
-	public Collection<Join<User, Group>> getUsersForGroup(Group g) throws EntityNotFoundException {
-		return userGroupRepository.getUsersForGroup(g);
 	}
 }

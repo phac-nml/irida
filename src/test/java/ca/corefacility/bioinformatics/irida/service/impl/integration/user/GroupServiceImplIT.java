@@ -1,8 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration.user;
 
-import static org.junit.Assert.*;
-
-import java.util.Collection;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,16 +45,6 @@ public class GroupServiceImplIT {
 	private GroupService groupService;
 	@Autowired
 	private UserService userService;
-
-	@Test
-	@WithMockUser(username = "admin", roles = "ADMIN")
-	public void testGetUsersForGroup() {
-		Group g = groupService.read(1L);
-		User u = userService.read(3L);
-		Collection<Join<User, Group>> users = groupService.getUsersForGroup(g);
-		assertEquals("Wrong number of users for group.", 1, users.size());
-		assertEquals("Wrong user in group.", u, users.iterator().next().getSubject());
-	}
 
 	@Test(expected = EntityExistsException.class)
 	@WithMockUser(username = "admin", roles = "ADMIN")

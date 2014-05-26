@@ -5,6 +5,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.user.Group;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
@@ -153,4 +154,17 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 */
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public Iterable<User> findAll();
+	
+
+	/**
+	 * Get the set of {@link User} that belong to a {@link Group}.
+	 * 
+	 * @param g
+	 *            the {@link Group} to get {@link User} relationships for.
+	 * @return the collection of {@link Join} types between {@link User} and the
+	 *         specified {@link Group}.
+	 * @throws EntityNotFoundException
+	 *             if the {@link Group} cannot be found.
+	 */
+	public Collection<Join<User, Group>> getUsersForGroup(Group g) throws EntityNotFoundException;
 }

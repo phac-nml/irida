@@ -45,10 +45,6 @@ public class UserGroupJoin implements Join<User, Group> {
 	@JoinColumn(name = "logicalGroup_id")
 	@NotNull
 	private Group logicalGroup;
-	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@NotNull
-	private User owner;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;

@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.user;
 
-import java.util.Collection;
 import java.util.Map;
 
 import javax.validation.ConstraintViolationException;
@@ -58,16 +57,4 @@ public interface GroupService extends CRUDService<Long, Group> {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Join<User, Group> addUserToGroup(Group g, User u) throws EntityNotFoundException, EntityExistsException;
-
-	/**
-	 * Get the set of {@link User} that belong to a {@link Group}.
-	 * 
-	 * @param g
-	 *            the {@link Group} to get {@link User} relationships for.
-	 * @return the collection of {@link Join} types between {@link User} and the
-	 *         specified {@link Group}.
-	 * @throws EntityNotFoundException
-	 *             if the {@link Group} cannot be found.
-	 */
-	public Collection<Join<User, Group>> getUsersForGroup(Group g) throws EntityNotFoundException;
 }

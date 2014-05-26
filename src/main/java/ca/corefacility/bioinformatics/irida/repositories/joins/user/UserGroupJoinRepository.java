@@ -26,6 +26,6 @@ public interface UserGroupJoinRepository extends CrudRepository<UserGroupJoin, L
 	 *            the {@link Group} whose members we want to load.
 	 * @return the collection of {@link User} associated with the {@link Group}.
 	 */
-	@Query("select j from UserGroup j where j.logicalGroup = ?1")
+	@Query("select j from UserGroupJoin j where j.logicalGroup = ?1")
 	public List<Join<User, Group>> getUsersForGroup(Group g);
 }
