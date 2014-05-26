@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.model;
+package ca.corefacility.bioinformatics.irida.model.sample;
 
 import java.util.Date;
 import java.util.List;
@@ -20,8 +20,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
 
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.validators.annotations.ValidSampleName;
 
 /**

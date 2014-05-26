@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectName;
 import ca.corefacility.bioinformatics.irida.validators.annotations.ValidSampleName;
 

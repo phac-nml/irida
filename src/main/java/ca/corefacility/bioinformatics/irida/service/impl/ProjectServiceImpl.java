@@ -18,16 +18,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
-import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 

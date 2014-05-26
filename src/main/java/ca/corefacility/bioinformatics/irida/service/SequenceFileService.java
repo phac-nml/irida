@@ -14,9 +14,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
-import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 /**
  * Service for managing {@link SequenceFile} entities.

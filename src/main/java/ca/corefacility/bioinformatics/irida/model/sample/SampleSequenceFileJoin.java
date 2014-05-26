@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.model.joins.impl;
+package ca.corefacility.bioinformatics.irida.model.sample;
 
 import java.util.Date;
 import java.util.Objects;
@@ -17,7 +17,6 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.envers.Audited;
 
-import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 

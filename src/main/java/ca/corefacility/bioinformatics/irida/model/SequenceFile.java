@@ -35,7 +35,8 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 
 /**
  * A file that may be stored somewhere on the file system and belongs to a

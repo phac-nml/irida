@@ -19,8 +19,8 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.envers.Audited;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 /**
  * 
