@@ -13,7 +13,7 @@
 			</column>
 			<column name="createdDate" type="datetime" />
 			<column name="modifiedDate" type="datetime" />
-			<column name="name" type="varchar(255)" />
+			<column name="name" type="varchar(255)" nullable="false" />
 		</createTable>
 
 		<createTable tableName="logicalGroup_AUD">
@@ -46,15 +46,15 @@
 					referencedTableName="user" referencedColumnNames="id" />
 			</column>
 		</createTable>
-		
+
 		<createTable tableName="user_group_AUD">
 			<column name="id" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" nullable="false"
-					foreignKeyName="FK_USER_GROUP_REVISION"
-					referencedColumnNames="id" referencedTableName="Revisions" />
+					foreignKeyName="FK_USER_GROUP_REVISION" referencedColumnNames="id"
+					referencedTableName="Revisions" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
 			<column name="createdDate" type="datetime" />
