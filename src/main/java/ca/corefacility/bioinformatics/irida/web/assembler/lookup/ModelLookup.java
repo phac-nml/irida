@@ -14,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.User;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.IdentifiableResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.miseqrun.MiseqRunResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
