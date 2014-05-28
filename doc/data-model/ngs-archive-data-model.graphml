@@ -412,7 +412,7 @@ permissions<y:LabelModel>
         <y:ProxyAutoBoundsNode>
           <y:Realizers active="0">
             <y:GroupNode>
-              <y:Geometry height="675.0" width="825.0" x="750.0" y="400.0"/>
+              <y:Geometry height="675.0" width="825.0" x="750.0" y="399.99999999999994"/>
               <y:Fill color="#CAECFF84" transparent="false"/>
               <y:BorderStyle color="#666699" type="dotted" width="1.0"/>
               <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#99CCFF" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="21.4609375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="825.0" x="0.0" y="0.0">Analyses</y:NodeLabel>
@@ -534,13 +534,11 @@ permissions<y:LabelModel>
         <node id="n4::n4">
           <data key="d6">
             <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
-              <y:Geometry height="129.85913074804137" width="145.0" x="1052.5" y="485.0704346259793"/>
+              <y:Geometry height="106.0" width="145.0" x="1052.5" y="485.07043462597926"/>
               <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
               <y:BorderStyle color="#000000" type="line" width="1.0"/>
               <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#B7C9E3" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="17.96875" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="59.8046875" x="42.59765625" y="4.0">Workflow</y:NodeLabel>
-              <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="101.78125" modelName="custom" textColor="#000000" visible="true" width="126.8125" x="2.0" y="29.968749999999943">id
-name
-description
+              <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="73.84375" modelName="custom" textColor="#000000" visible="true" width="126.8125" x="2.0" y="29.96875">id
 dateCreated
 version
 executionManagerId
@@ -1114,7 +1112,7 @@ authorizedGrantTypes
       <data key="d11">
         <y:PolyLineEdge>
           <y:Path sx="25.0" sy="-62.00191010309277" tx="-72.5" ty="0.0">
-            <y:Point x="925.0" y="550.0"/>
+            <y:Point x="925.0" y="538.0704346259793"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="crows_foot_many_optional" target="crows_foot_one"/>
@@ -1175,7 +1173,7 @@ authorizedGrantTypes
     <edge id="e17" source="n4::n4" target="n4">
       <data key="d11">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="-64.92956537402068" tx="-262.5" ty="-337.5">
+          <y:Path sx="0.0" sy="-53.0" tx="-262.5" ty="-337.5">
             <y:Point x="1125.0" y="375.0"/>
             <y:Point x="900.0" y="375.0"/>
           </y:Path>
@@ -1188,7 +1186,7 @@ authorizedGrantTypes
     <edge id="n4::e4" source="n4::n5" target="n4::n4">
       <data key="d11">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="-45.0" tx="0.0" ty="64.92956537402074"/>
+          <y:Path sx="0.0" sy="-45.0" tx="0.0" ty="53.00000000000006"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="crows_foot_one" target="crows_foot_one"/>
           <y:BendStyle smoothed="false"/>
