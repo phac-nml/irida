@@ -22,7 +22,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers("/scripts/**").antMatchers("/styles/**").antMatchers("/images/**");
+		web.ignoring().antMatchers("/scripts/**").antMatchers("/assets/**").antMatchers("/css/**")
+				.antMatchers("/styles/**").antMatchers("/images/**");
 	}
 
 	@Override
@@ -40,8 +41,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
 				.and()
 
-				.formLogin().defaultSuccessUrl("/").loginPage("/login").failureUrl("/login?error=1").permitAll().and()
-				.logout().logoutSuccessUrl("/login").logoutUrl("/logout").permitAll().and().authorizeRequests()
-				.antMatchers("/bower_components/**").permitAll().anyRequest().authenticated();
+				.logout().logoutSuccessUrl("/login").logoutUrl("/logout").permitAll().and()
+
+				.formLogin().defaultSuccessUrl("/dashboard").loginPage("/login").failureUrl("/login?error=1").and()
+				.authorizeRequests().regexMatchers("/login(\\?lang=[a-z]{2})?").permitAll().antMatchers("/")
+				.permitAll().antMatchers("/license").permitAll().antMatchers("/bower_components/**").permitAll()
+				.antMatchers("/**").fullyAuthenticated();
+
 	}
 }
