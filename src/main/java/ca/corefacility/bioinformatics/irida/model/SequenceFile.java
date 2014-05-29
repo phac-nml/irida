@@ -3,12 +3,16 @@ package ca.corefacility.bioinformatics.irida.model;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -17,6 +21,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.PrePersist;
@@ -75,13 +80,14 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	private byte[] perSequenceQualityScoreChart;
 	@Lob
 	private byte[] duplicationLevelChart;
-	private String samplePlate;
-	private String sampleWell;
-	private String i7IndexId;
-	private String i7Index;
-	private String i5IndexId;
-	private String i5Index;
+	
 	private Long fileRevisionNumber; // the filesystem file revision number
+	
+	@ElementCollection(fetch=FetchType.EAGER)
+	@MapKeyColumn(name="key_name")
+	@Column(name="value")
+	@CollectionTable(name="sequence_file_attributes", joinColumns=@JoinColumn(name="sequence_file_id"))
+	private Map<String,String> attributes;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "miseqRun_id")
@@ -97,6 +103,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 		createdDate = new Date();
 		modifiedDate = createdDate;
 		fileRevisionNumber = 1L;
+		attributes = new HashMap<>();
 	}
 
 	/**
@@ -320,54 +327,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 		this.modifiedDate = modifiedDate;
 	}
 
-	public String getSamplePlate() {
-		return samplePlate;
-	}
-
-	public void setSamplePlate(String samplePlate) {
-		this.samplePlate = samplePlate;
-	}
-
-	public String getSampleWell() {
-		return sampleWell;
-	}
-
-	public void setSampleWell(String sampleWell) {
-		this.sampleWell = sampleWell;
-	}
-
-	public String getI7IndexId() {
-		return i7IndexId;
-	}
-
-	public void setI7IndexId(String i7IndexId) {
-		this.i7IndexId = i7IndexId;
-	}
-
-	public String getI7Index() {
-		return i7Index;
-	}
-
-	public void setI7Index(String i7Index) {
-		this.i7Index = i7Index;
-	}
-
-	public String getI5IndexId() {
-		return i5IndexId;
-	}
-
-	public void setI5IndexId(String i5IndexId) {
-		this.i5IndexId = i5IndexId;
-	}
-
-	public String getI5Index() {
-		return i5Index;
-	}
-
-	public void setI5Index(String i5Index) {
-		this.i5Index = i5Index;
-	}
-
 	public Long getFileRevisionNumber() {
 		return fileRevisionNumber;
 	}
@@ -398,5 +357,21 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
 	public void setOverrepresentedSequences(Set<OverrepresentedSequence> overrepresentedSequences) {
 		this.overrepresentedSequences = overrepresentedSequences;
+	}
+	
+	public void addAttribute(String key,String value){
+		attributes.put(key, value);
+	}
+	
+	public Map<String,String> getAttributes(){
+		return attributes;
+	}
+	
+	public String getAttribute(String key){
+		return attributes.get(key);
+	}
+	
+	public void setAttributes(Map<String,String> attributes){
+		this.attributes = attributes;
 	}
 }
