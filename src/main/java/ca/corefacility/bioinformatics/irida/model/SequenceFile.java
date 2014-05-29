@@ -83,11 +83,13 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	
 	private Long fileRevisionNumber; // the filesystem file revision number
 	
-	@ElementCollection(fetch=FetchType.EAGER)
-	@MapKeyColumn(name="key_name")
-	@Column(name="value")
-	@CollectionTable(name="sequence_file_attributes", joinColumns=@JoinColumn(name="sequence_file_id"))
-	private Map<String,String> attributes;
+	// Key/value map of additional properties you could set on a sequence file.
+	// This may contain optional sequencer specific properties.
+	@ElementCollection(fetch = FetchType.EAGER)
+	@MapKeyColumn(name = "key_name")
+	@Column(name = "value")
+	@CollectionTable(name = "sequence_file_properties", joinColumns = @JoinColumn(name = "sequence_file_id"))
+	private Map<String, String> optionalProperties;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "miseqRun_id")
@@ -103,7 +105,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 		createdDate = new Date();
 		modifiedDate = createdDate;
 		fileRevisionNumber = 1L;
-		attributes = new HashMap<>();
+		optionalProperties = new HashMap<>();
 	}
 
 	/**
@@ -359,19 +361,37 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 		this.overrepresentedSequences = overrepresentedSequences;
 	}
 	
-	public void addAttribute(String key,String value){
-		attributes.put(key, value);
+	/**
+	 * Add one optional property to the map of properties
+	 * @param key The key of the property to add
+	 * @param value The value of the property to add
+	 */
+	public void addOptionalProperty(String key,String value){
+		optionalProperties.put(key, value);
 	}
 	
-	public Map<String,String> getAttributes(){
-		return attributes;
+	/**
+	 * Get the Map of optional properties
+	 * @return A Map<String,String> of all the optional propertie
+	 */
+	public Map<String,String> getOptionalProperties(){
+		return optionalProperties;
 	}
 	
-	public String getAttribute(String key){
-		return attributes.get(key);
+	/**
+	 * Get an individual optional property
+	 * @param key The key of the property to read
+	 * @return A String of the property's value
+	 */
+	public String getOptionalProperty(String key){
+		return optionalProperties.get(key);
 	}
 	
-	public void setAttributes(Map<String,String> attributes){
-		this.attributes = attributes;
+	/**
+	 * Set the Map of optional properties
+	 * @param optionalProperties A Map<String,String> of all the optional properties for this object
+	 */
+	public void setOptionalProperties(Map<String,String> optionalProperties){
+		this.optionalProperties = optionalProperties;
 	}
 }
