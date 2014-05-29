@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<!--[if lt IE 9]>
+<html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html xmlns:th="http://www.thymeleaf.org" class="no-js" lang="en">
+<!--<![endif]-->
+<head>
+    <meta charset="utf-8"/>
+    <title>Language selection - IRIDA Platform</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <meta name="description" content=""/>
+
+    <!--[if gte IE 9 | !IE ]><!-->
+    <link th:href="@{/assets/favicon.ico}" href="/assets/favicon.ico" rel="icon" type="image/x-icon"/>
+    <link rel="stylesheet" th:href="@{/css/wet-boew.min.css}" href="/css/wet-boew.min.css"/>
+    <!--<![endif]-->
+    <link rel="stylesheet" th:href="@{/css/theme-sp-pe.min.css}" href="/css/theme-sp-pe.min.css"/>
+
+    <!--[if lt IE 9]>
+    <link href="/assets/favicon.ico" rel="shortcut icon"/>
+    <link rel="stylesheet" href="/css/ie8-wet-boew.min.css"/>
+    <![endif]-->
+
+    <noscript>
+        <link rel="stylesheet" th:href="@{/css/noscript.min.css}" href="/css/noscript.min.css"/>
+    </noscript>
+
+
+</head>
+<body vocab="http://schema.org/" typeof="WebPage">
+<header role="banner">
+    <div id="wb-bnr" class="container">
+        <object id="gcwu-sig" type="image/svg+xml" tabindex="-1" role="img" th:data="@{/assets/sig-alt-en.svg}"
+                data="./assets/sig-alt-en.svg" aria-label="Government of Canada"></object>
+    </div>
+</header>
+<main role="main" property="mainContentOfPage" class="container">
+    <div class="col-md-12">
+
+        <h1>Welcome / <span lang="fr">Bienvenue</span></h1>
+        <section class="col-md-6">
+            <h2>IRIDA Platform</h2>
+            <a class="btn btn-lg btn-primary btn-block" th:href="@{/login?lang=en}" href="/login?lang=en">English</a>
+            <a class="btn btn-lg btn-default btn-block" th:href="@{/public/license.html}" href="license.html"
+               rel="license">Terms and conditions of use</a>
+        </section>
+
+        <section class="col-md-6" lang="fr">
+            <h2>Plate-forme IRIDA</h2>
+            <a class="btn btn-lg btn-primary btn-block" th:href="@{/login?lang=fr}"
+               href="/login?lang=fr">Fran&#231;ais</a>
+            <a class="btn btn-lg btn-default btn-block" th:href="@{/public/licence.html}" href="/public/licence.html"
+               rel="license">Conditions r&#233;gissant l'utilisation</a>
+        </section>
+
+    </div>
+</main>
+<footer role="contentinfo" class="container">
+    <object id="wmms" type="image/svg+xml" tabindex="-1" role="img" th:data="@{/assets/wmms-alt.svg}"
+            data="./assets/wmms-alt.svg" aria-label="Symbol of the Government of Canada"></object>
+</footer>
+</body>
+</html>
