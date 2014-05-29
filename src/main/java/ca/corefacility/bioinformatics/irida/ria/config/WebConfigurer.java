@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.config;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -19,10 +20,10 @@ import org.springframework.mobile.device.site.SitePreferenceHandlerInterceptor;
 import org.springframework.mobile.device.site.SitePreferenceHandlerMethodArgumentResolver;
 import org.springframework.mobile.device.view.LiteDeviceDelegatingViewResolver;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.thymeleaf.dialect.IDialect;
 import org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring4.SpringTemplateEngine;
@@ -49,20 +50,38 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 	public static final String TEMPLATE_MOBILE_PREFIX = "mobile/";
 	public static final String TEMPLATE_NORMAL_PREFIX = "normal/";
 	public static final long TEMPLATE_CACHE_TTL_MS = 3600000L;
+	public static final String LOCALE_CHANGE_PARAMETER = "lang";
+	public static final String DEFAULT_ENCODING = "UTF-8";
+	public static final String[] RESOURCE_LOCATION = new String[] { "classpath:/i18n/login", "classpath:/i18n/global",
+			"classpath:/i18n/dashboard", "classpath:/i18n/projects", "classpath:/i18n/mobile" };
 	private static final Logger logger = LoggerFactory.getLogger(WebConfigurer.class);
 	@Autowired
 	private Environment env;
 
 	@Bean
+	public LocaleChangeInterceptor localeChangeInterceptor() {
+		logger.debug("Configuring LocaleChangeInterceptor");
+		LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
+		localeChangeInterceptor.setParamName(LOCALE_CHANGE_PARAMETER);
+		return localeChangeInterceptor;
+	}
+
+	@Bean(name = "localeResolver")
+	public LocaleResolver localeResolver() {
+		logger.debug("Configuring LocaleResolver");
+		SessionLocaleResolver slr = new SessionLocaleResolver();
+		slr.setDefaultLocale(Locale.ENGLISH);
+		return slr;
+	}
+
+	@Bean
 	public MessageSource messageSource() {
 		logger.info("Configuring ReloadableResourceBundleMessageSource.");
 
-		String[] resources = { "classpath:/i18n/login", "classpath:/i18n/global", "classpath:/i18n/dashboard",
-				"classpath:/i18n/projects", "classpath:/i18n/mobile" };
-
 		ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
-		source.setBasenames(resources);
-		source.setDefaultEncoding("UTF-8");
+		source.setBasenames(RESOURCE_LOCATION);
+		source.setFallbackToSystemLocale(false);
+		source.setDefaultEncoding(DEFAULT_ENCODING);
 		return source;
 	}
 
@@ -72,6 +91,8 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 		// CSS: default location "/static/styles" during development and
 		// production.
 		registry.addResourceHandler("/styles/**").addResourceLocations("/static/styles/");
+		registry.addResourceHandler("/css/**").addResourceLocations("/css/");
+		registry.addResourceHandler("/assets/**").addResourceLocations("/assets/");
 		registry.addResourceHandler("/scripts/**").addResourceLocations("/static/scripts/");
 		registry.addResourceHandler("/bower_components/**").addResourceLocations("/bower_components/");
 	}
@@ -93,7 +114,7 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 
 	@Bean
 	public ServletContextTemplateResolver templateResolver() {
-		logger.debug("Creating Template Resolvers.");
+		logger.debug("Configuring Template Resolvers.");
 		ServletContextTemplateResolver resolver = new ServletContextTemplateResolver();
 		resolver.setPrefix(TEMPLATE_LOCATION);
 		resolver.setSuffix(TEMPLATE_SUFFIX);
@@ -111,6 +132,7 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 
 	@Bean
 	public SpringTemplateEngine templateEngine() {
+		logger.debug("Configuring SpringTemplateEngine");
 		SpringTemplateEngine engine = new SpringTemplateEngine();
 		engine.setTemplateResolver(templateResolver());
 		engine.setAdditionalDialects(additionalDialects());
@@ -119,6 +141,7 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 
 	@Bean
 	public LiteDeviceDelegatingViewResolver liteDeviceDelegatingViewResolver() {
+		logger.debug("Configuring LiteDeviceDelegatingViewResolver");
 		ThymeleafViewResolver delegate = new ThymeleafViewResolver();
 		delegate.setTemplateEngine(templateEngine());
 		delegate.setOrder(1);
@@ -129,10 +152,19 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 	}
 
 	@Override
+	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+		logger.debug("configureDefaultServletHandling");
+		configurer.enable();
+	}
+
+	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
+		logger.debug("Adding Interceptors to the Registry");
+		registry.addInterceptor(localeChangeInterceptor());
 		registry.addInterceptor(deviceResolverHandlerInterceptor());
 		registry.addInterceptor(sitePreferenceHandlerInterceptor());
 	}
+
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
 		argumentResolvers.add(sitePreferenceHandlerMethodArgumentResolver());
