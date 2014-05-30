@@ -9,10 +9,10 @@
     }
 
     require.config({
-        baseUrl: baseUrl + 'scripts',
+        baseUrl: baseUrl + 'resources/js',
         paths: {
-            'angular': baseUrl + 'bower_components/angular/angular',
-            'angular-route': baseUrl + 'bower_components/angular-route/angular-route'
+            'angular': baseUrl + 'resources/bower_components/angular/angular',
+            'angular-route': baseUrl + 'resources/bower_components/angular-route/angular-route'
         },
         shim: {
             'app': {
