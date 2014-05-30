@@ -44,7 +44,7 @@ import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDiale
 @Import({ IridaApiServicesConfig.class, WebSecurityConfig.class })
 public class WebConfigurer extends WebMvcConfigurerAdapter {
 	public static final String SPRING_PROFILE_PRODUCTION = "prod";
-	public static final String TEMPLATE_LOCATION = "/static/pages/";
+	public static final String TEMPLATE_LOCATION = "/pages/";
 	public static final String TEMPLATE_SUFFIX = ".html";
 	public static final String TEMPLATE_MODE = "HTML5";
 	public static final String TEMPLATE_MOBILE_PREFIX = "mobile/";
@@ -52,8 +52,7 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 	public static final long TEMPLATE_CACHE_TTL_MS = 3600000L;
 	public static final String LOCALE_CHANGE_PARAMETER = "lang";
 	public static final String DEFAULT_ENCODING = "UTF-8";
-	public static final String[] RESOURCE_LOCATION = new String[] { "classpath:/i18n/login", "classpath:/i18n/global",
-			"classpath:/i18n/dashboard", "classpath:/i18n/projects", "classpath:/i18n/mobile" };
+	public static final String RESOURCE_LOCATION = "classpath:/i18n/messages";
 	private static final Logger logger = LoggerFactory.getLogger(WebConfigurer.class);
 	@Autowired
 	private Environment env;
@@ -79,7 +78,7 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 		logger.info("Configuring ReloadableResourceBundleMessageSource.");
 
 		ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
-		source.setBasenames(RESOURCE_LOCATION);
+		source.setBasename(RESOURCE_LOCATION);
 		source.setFallbackToSystemLocale(false);
 		source.setDefaultEncoding(DEFAULT_ENCODING);
 		return source;
@@ -90,11 +89,8 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 		logger.debug("Configuring Resource Handlers");
 		// CSS: default location "/static/styles" during development and
 		// production.
-		registry.addResourceHandler("/styles/**").addResourceLocations("/static/styles/");
-		registry.addResourceHandler("/css/**").addResourceLocations("/css/");
-		registry.addResourceHandler("/assets/**").addResourceLocations("/assets/");
-		registry.addResourceHandler("/scripts/**").addResourceLocations("/static/scripts/");
-		registry.addResourceHandler("/bower_components/**").addResourceLocations("/bower_components/");
+		registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
+		registry.addResourceHandler("/public/**").addResourceLocations("/public/");
 	}
 
 	@Bean
