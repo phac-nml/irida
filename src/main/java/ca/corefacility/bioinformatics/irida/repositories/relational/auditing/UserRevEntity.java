@@ -24,6 +24,8 @@ public class UserRevEntity extends DefaultRevisionEntity {
 	@OneToOne
 	@JoinColumn(name = "user_id")
 	User user;
+	
+	String clientId;
 
 	public User getUser() {
 		return user;
@@ -31,6 +33,14 @@ public class UserRevEntity extends DefaultRevisionEntity {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+	
+	public String getClientId(){
+		return clientId;
+	}
+	
+	public void setClientId(String clientId){
+		this.clientId = clientId;
 	}
 
 }
