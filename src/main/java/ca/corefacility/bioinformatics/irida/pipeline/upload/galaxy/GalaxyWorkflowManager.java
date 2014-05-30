@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -193,23 +194,41 @@ public class GalaxyWorkflowManager {
 	}
 	
 	public static void main(String[] args) throws UploadException, GalaxyDatasetNotFoundException, InterruptedException, IOException {
-		File fastqFile = new File("/home/aaron/workspace/irida-api/cholera-files-subsample/fastq/2010EL-1749.fastq");
+		File fastqDir = new File("/home/aaron/workspace/irida-api/cholera-files-subsample/fastq");
+		File[] fastqFiles = fastqDir.listFiles(new FileFilter(){
+			public boolean accept(File pathname) {
+				return pathname.getName().endsWith("fastq");
+			}
+		});
 		
 		GalaxyInstance galaxyInstance = GalaxyInstanceFactory.get("http://galaxy-staging.corefacility.ca", "558a75474e8e3987104bdb430ffddaf2");
 		GalaxySearch galaxySearch = new GalaxySearch(galaxyInstance);
 		GalaxyHistory galaxyHistory = new GalaxyHistory(galaxyInstance, galaxySearch);
 		GalaxyWorkflowManager workflowSubmitter = new GalaxyWorkflowManager(galaxyInstance, galaxyHistory);
 		
-		WorkflowOutputs output = workflowSubmitter.runFastQCWorkflow(fastqFile, "3f5830403180d620");
-		
-		// poll history until workflow completed
-		WorkflowStatus status;
+		// for all input files
+		List<WorkflowOutputs> outputsList = new ArrayList<WorkflowOutputs>();
+		for (File fastqFile : fastqFiles) {
+			WorkflowOutputs outputs = workflowSubmitter.runFastQCWorkflow(fastqFile, "3f5830403180d620");
+			outputsList.add(outputs);
+		}
+
+		// poll history until all workflows completed
 		do {
-			Thread.sleep(5000);
-			status = workflowSubmitter.getStatusFor(output.getHistoryId());
-		} while (!WorkflowStatus.OK.equals(status));
-		
-		logger.debug(workflowSubmitter.getWorkflowInformationFor(output));
-		logger.debug("all download files " + workflowSubmitter.getWorkflowOutputFiles(output));
+			List<WorkflowOutputs> outputsCopyList = new ArrayList<WorkflowOutputs>(outputsList);
+			for (WorkflowOutputs output : outputsCopyList) {
+				
+				WorkflowStatus status =  workflowSubmitter.getStatusFor(output.getHistoryId());
+				if (WorkflowStatus.OK.equals(status)) {
+					outputsList.remove(output);
+					
+					logger.debug(workflowSubmitter.getWorkflowInformationFor(output));
+					logger.debug("all download files " + workflowSubmitter.getWorkflowOutputFiles(output));
+				}
+			}
+			
+			logger.debug("Workflows remaining: " + outputsList.size());
+			Thread.sleep(2000);
+		} while (outputsList.size() > 0);
 	}
 }
