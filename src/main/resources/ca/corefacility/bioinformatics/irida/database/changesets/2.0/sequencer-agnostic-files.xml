@@ -21,6 +21,8 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
+		
+		<addUniqueConstraint columnNames="sequence_file_id, property_key" tableName="sequence_file_properties" constraintName="UK_SEQUENCE_FILE_PROPERTY_KEY"/>
 
 		<createTable tableName="sequence_file_properties_AUD">
 			<column name="REV" type="int(11)">

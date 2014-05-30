@@ -30,6 +30,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -88,7 +89,8 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@MapKeyColumn(name = "property_key", nullable = false)
 	@Column(name = "property_value", nullable = false)
-	@CollectionTable(name = "sequence_file_properties", joinColumns = @JoinColumn(name = "sequence_file_id"))
+	@CollectionTable(name = "sequence_file_properties", joinColumns = @JoinColumn(name = "sequence_file_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
+			"sequence_file_id", "property_key" }, name = "UK_SEQUENCE_FILE_PROPERTY_KEY"))
 	private Map<String, String> optionalProperties;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
