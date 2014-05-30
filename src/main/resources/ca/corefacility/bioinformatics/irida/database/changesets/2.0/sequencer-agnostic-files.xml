@@ -43,7 +43,7 @@
 			SELECT id AS
 			sequence_file_id, "samplePlate" AS property_key, samplePlate AS
 			property_value
-			FROM sequence_file;
+			FROM sequence_file WHERE samplePlate IS NOT NULL;
 		</sql>
 
 		<sql>
@@ -52,7 +52,7 @@
 			SELECT id AS
 			sequence_file_id, "sampleWell" AS property_key, sampleWell AS
 			property_value
-			FROM sequence_file;
+			FROM sequence_file WHERE sampleWell IS NOT NULL;
 		</sql>
 		<sql>
 			INSERT INTO sequence_file_properties
@@ -60,7 +60,7 @@
 			SELECT id AS
 			sequence_file_id, "i7IndexId" AS property_key, i7IndexId AS
 			property_value
-			FROM sequence_file;
+			FROM sequence_file WHERE i7IndexId IS NOT NULL;
 		</sql>
 		<sql>
 			INSERT INTO sequence_file_properties
@@ -68,7 +68,7 @@
 			SELECT id AS
 			sequence_file_id, "i7Index" AS property_key, i7Index AS
 			property_value
-			FROM sequence_file;
+			FROM sequence_file WHERE i7Index IS NOT NULL;
 		</sql>
 		<sql>
 			INSERT INTO sequence_file_properties
@@ -76,7 +76,7 @@
 			SELECT id AS
 			sequence_file_id, "i5IndexId" AS property_key, i5IndexId AS
 			property_value
-			FROM sequence_file;
+			FROM sequence_file WHERE i5IndexId IS NOT NULL;
 		</sql>
 		<sql>
 			INSERT INTO sequence_file_properties
@@ -84,7 +84,7 @@
 			SELECT id AS
 			sequence_file_id, "i5Index" AS property_key, i5Index AS
 			property_value
-			FROM sequence_file;
+			FROM sequence_file WHERE i5Index IS NOT NULL;
 		</sql>
 
 		<!-- Drop the old MiSeq file specific properties from sequence_file -->
