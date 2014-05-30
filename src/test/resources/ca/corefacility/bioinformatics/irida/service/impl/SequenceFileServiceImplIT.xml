@@ -25,5 +25,8 @@
 		filePath="/" />
 	<sequencefile_sample id="1" createdDate="2013-07-18 14:20:19.0"
 		sample_id="1" sequencefile_id="1" />
+	
+	<sequence_file_properties sequence_file_id="1" property_key="samplePlate" property_value="5"/>
+	<sequence_file_properties sequence_file_id="1" property_key="sampleWell" property_value="10"/>
 
 </dataset>

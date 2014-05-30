@@ -11,7 +11,9 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
@@ -106,6 +108,25 @@ public class SequenceFileServiceImplIT {
 	@Test
 	public void testReadSequenceFileAsUserWithPermissions() {
 		asRole(Role.ROLE_USER, "fbristow1").sequenceFileService.read(1L);
+	}
+	
+	@Test
+	public void testReadOptionalProperties(){
+		SequenceFile read = asRole(Role.ROLE_USER, "fbristow1").sequenceFileService.read(1L);
+		assertEquals("5", read.getOptionalProperty("samplePlate"));
+		assertEquals("10", read.getOptionalProperty("sampleWell"));
+	}
+	
+	@Test
+	public void testAddAdditionalProperties(){
+		SequenceFile file = asRole(Role.ROLE_USER, "fbristow1").sequenceFileService.read(1L);
+		file.addOptionalProperty("index", "111");
+		Map<String,Object> changed = new HashMap<>();
+		changed.put("optionalProperties", file.getOptionalProperties());
+		asRole(Role.ROLE_USER, "fbristow1").sequenceFileService.updateWithoutProcessors(file.getId(), changed);
+		SequenceFile reread = asRole(Role.ROLE_USER, "fbristow1").sequenceFileService.read(1L);
+		assertNotNull(reread.getOptionalProperty("index"));
+		assertEquals("111",reread.getOptionalProperty("index"));
 	}
 
 	@Test

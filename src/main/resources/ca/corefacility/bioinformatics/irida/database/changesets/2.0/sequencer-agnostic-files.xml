@@ -7,7 +7,7 @@
 
 	<changeSet id="sequencer-agnostic-files" author="tom">
 
-		<!-- Create remote api tables -->
+		<!-- Create sequence properties tables -->
 		<createTable tableName="sequence_file_properties">
 			<column name="sequence_file_id" type="bigint(20)">
 				<constraints nullable="false"
@@ -32,6 +32,7 @@
 			<column name="property_value" type="text" />
 		</createTable>
 
+		<!-- Migrate MiSeq specific data from sequence_file to sequence_file_properties -->
 		<sql>
 			INSERT INTO sequence_file_properties (sequence_file_id,property_key,property_value)
 			SELECT id AS sequence_file_id, "samplePlate" AS property_key, samplePlate AS property_value 
@@ -64,6 +65,7 @@
 			FROM sequence_file;
 		</sql>
 		
+		<!-- Drop the old MiSeq file specific properties from sequence_file -->
 		<dropColumn tableName="sequence_file" columnName="samplePlate"/>
 		<dropColumn tableName="sequence_file" columnName="sampleWell"/>
 		<dropColumn tableName="sequence_file" columnName="i7IndexId"/>
