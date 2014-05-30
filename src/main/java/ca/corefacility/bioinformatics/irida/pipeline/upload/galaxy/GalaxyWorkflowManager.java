@@ -47,27 +47,57 @@ public class GalaxyWorkflowManager {
 	private GalaxyHistory galaxyHistory;
 	private GalaxyInstance galaxyInstance;
 	
-	private enum WorkflowStatus {
-		OK,
-		RUNNING,
-		QUEUED,
-		UNKNOWN;
+	private enum WorkflowState {
+		OK("ok"),
+		RUNNING("running"),
+		QUEUED("queued"),
+		UNKNOWN("unknown");
 		
-		private static Map<String, WorkflowStatus> statusMap = new HashMap<String, WorkflowStatus>();
+		private static Map<String, WorkflowState> stateMap = new HashMap<String, WorkflowState>();
+		private String stateString;
 		
 		static {
-			statusMap.put("ok", OK);
-			statusMap.put("running", RUNNING);
-			statusMap.put("queued", QUEUED);
+			stateMap.put(OK.toString(), OK);
+			stateMap.put(RUNNING.toString(), RUNNING);
+			stateMap.put(QUEUED.toString(), QUEUED);
 		}
 		
-		public static WorkflowStatus stringToStatus(String statusString) {
-			WorkflowStatus status = statusMap.get(statusString);
-			if (status == null) {
-				status = UNKNOWN;
+		private WorkflowState(String stateString){
+			this.stateString = stateString;
+		}
+		
+		public static WorkflowState stringToState(String stateString) {
+			WorkflowState state = stateMap.get(stateString);
+			if (state == null) {
+				state = UNKNOWN;
 			}
 			
-			return status;
+			return state;
+		}
+		
+		@Override
+		public String toString() {
+			return stateString;
+		}
+	}
+	
+	private class WorkflowStatus {
+		private WorkflowState state;
+		private float percentComplete;
+		
+		public WorkflowStatus(WorkflowState state, float percentComplete) {
+			checkNotNull(state, "state is null");
+			
+			this.state = state;
+			this.percentComplete = percentComplete;
+		}
+
+		public WorkflowState getState() {
+			return state;
+		}
+
+		public float getPercentComplete() {
+			return percentComplete;
 		}
 	}
 	
@@ -136,11 +166,41 @@ public class GalaxyWorkflowManager {
 		return output;
 	}
 	
+	private int getTotalHistoryItems(Map<String, List<String>> stateIds) {
+		int sum = 0;
+		
+		for (String stateKey : stateIds.keySet()) {
+			sum += stateIds.get(stateKey).size();
+		}
+		
+		return sum;
+	}
+	
+	private int getHistoryItemsInState(Map<String, List<String>> stateIds, WorkflowState state) {
+		return stateIds.get(state.toString()).size();
+	}
+	
+	private float getPercentComplete(Map<String, List<String>> stateIds) {
+		return 100.0f*(getHistoryItemsInState(stateIds, WorkflowState.OK)/(float)getTotalHistoryItems(stateIds));
+	}
+	
 	public WorkflowStatus getStatusFor(String historyId) {
+		WorkflowStatus workflowStatus;
+		
+		WorkflowState workflowState;
+		float percentComplete;
+		
 		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
 		HistoryDetails details = historiesClient.showHistory(historyId);
+		workflowState = WorkflowState.stringToState(details.getState());
+		
+		Map<String, List<String>> stateIds = details.getStateIds();
+		percentComplete = getPercentComplete(stateIds);
+		
+		workflowStatus = new WorkflowStatus(workflowState, percentComplete);
+		
 		logger.debug("Details for history " + details.getId() + ": state=" + details.getState());
-		return WorkflowStatus.stringToStatus(details.getState());
+		return workflowStatus;
 	}
 	
 	public String getWorkflowInformationFor(WorkflowOutputs output) {
@@ -200,6 +260,7 @@ public class GalaxyWorkflowManager {
 				return pathname.getName().endsWith("fastq");
 			}
 		});
+		//fastqFiles = new File[]{fastqFiles[0]};
 		
 		GalaxyInstance galaxyInstance = GalaxyInstanceFactory.get("http://galaxy-staging.corefacility.ca", "558a75474e8e3987104bdb430ffddaf2");
 		GalaxySearch galaxySearch = new GalaxySearch(galaxyInstance);
@@ -219,11 +280,13 @@ public class GalaxyWorkflowManager {
 			for (WorkflowOutputs output : outputsCopyList) {
 				
 				WorkflowStatus status =  workflowSubmitter.getStatusFor(output.getHistoryId());
-				if (WorkflowStatus.OK.equals(status)) {
+				if (WorkflowState.OK.equals(status.getState())) {
 					outputsList.remove(output);
 					
 					logger.debug(workflowSubmitter.getWorkflowInformationFor(output));
 					logger.debug("all download files " + workflowSubmitter.getWorkflowOutputFiles(output));
+				} else {
+					logger.debug("workflow " + output.getHistoryId() + " complete " + status.getPercentComplete());
 				}
 			}
 			
