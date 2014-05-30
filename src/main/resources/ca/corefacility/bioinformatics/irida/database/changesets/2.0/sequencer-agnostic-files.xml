@@ -17,7 +17,9 @@
 			<column name="property_key" type="varchar(255)">
 				<constraints nullable="false" />
 			</column>
-			<column name="property_value" type="text" />
+			<column name="property_value" type="text">
+				<constraints nullable="false" />
+			</column>
 		</createTable>
 
 		<createTable tableName="sequence_file_properties_AUD">
@@ -34,51 +36,69 @@
 
 		<!-- Migrate MiSeq specific data from sequence_file to sequence_file_properties -->
 		<sql>
-			INSERT INTO sequence_file_properties (sequence_file_id,property_key,property_value)
-			SELECT id AS sequence_file_id, "samplePlate" AS property_key, samplePlate AS property_value 
+			INSERT INTO sequence_file_properties
+			(sequence_file_id,property_key,property_value)
+			SELECT id AS
+			sequence_file_id, "samplePlate" AS property_key, samplePlate AS
+			property_value
 			FROM sequence_file;
 		</sql>
-		
+
 		<sql>
-			INSERT INTO sequence_file_properties (sequence_file_id,property_key,property_value)
-			SELECT id AS sequence_file_id, "sampleWell" AS property_key, sampleWell AS property_value 
-			FROM sequence_file;
-		</sql>
-		<sql>
-			INSERT INTO sequence_file_properties (sequence_file_id,property_key,property_value)
-			SELECT id AS sequence_file_id, "i7IndexId" AS property_key, i7IndexId AS property_value 
-			FROM sequence_file;
-		</sql>
-		<sql>
-			INSERT INTO sequence_file_properties (sequence_file_id,property_key,property_value)
-			SELECT id AS sequence_file_id, "i7Index" AS property_key, i7Index AS property_value 
+			INSERT INTO sequence_file_properties
+			(sequence_file_id,property_key,property_value)
+			SELECT id AS
+			sequence_file_id, "sampleWell" AS property_key, sampleWell AS
+			property_value
 			FROM sequence_file;
 		</sql>
 		<sql>
-			INSERT INTO sequence_file_properties (sequence_file_id,property_key,property_value)
-			SELECT id AS sequence_file_id, "i5IndexId" AS property_key, i5IndexId AS property_value 
+			INSERT INTO sequence_file_properties
+			(sequence_file_id,property_key,property_value)
+			SELECT id AS
+			sequence_file_id, "i7IndexId" AS property_key, i7IndexId AS
+			property_value
 			FROM sequence_file;
 		</sql>
 		<sql>
-			INSERT INTO sequence_file_properties (sequence_file_id,property_key,property_value)
-			SELECT id AS sequence_file_id, "i5Index" AS property_key, i5Index AS property_value 
+			INSERT INTO sequence_file_properties
+			(sequence_file_id,property_key,property_value)
+			SELECT id AS
+			sequence_file_id, "i7Index" AS property_key, i7Index AS
+			property_value
 			FROM sequence_file;
 		</sql>
-		
+		<sql>
+			INSERT INTO sequence_file_properties
+			(sequence_file_id,property_key,property_value)
+			SELECT id AS
+			sequence_file_id, "i5IndexId" AS property_key, i5IndexId AS
+			property_value
+			FROM sequence_file;
+		</sql>
+		<sql>
+			INSERT INTO sequence_file_properties
+			(sequence_file_id,property_key,property_value)
+			SELECT id AS
+			sequence_file_id, "i5Index" AS property_key, i5Index AS
+			property_value
+			FROM sequence_file;
+		</sql>
+
 		<!-- Drop the old MiSeq file specific properties from sequence_file -->
-		<dropColumn tableName="sequence_file" columnName="samplePlate"/>
-		<dropColumn tableName="sequence_file" columnName="sampleWell"/>
-		<dropColumn tableName="sequence_file" columnName="i7IndexId"/>
-		<dropColumn tableName="sequence_file" columnName="i7Index"/>
-		<dropColumn tableName="sequence_file" columnName="i5IndexId"/>
-		<dropColumn tableName="sequence_file" columnName="i5Index"/>
-		
-		<dropColumn tableName="sequence_file_AUD" columnName="samplePlate"/>
-		<dropColumn tableName="sequence_file_AUD" columnName="sampleWell"/>
-		<dropColumn tableName="sequence_file_AUD" columnName="i7IndexId"/>
-		<dropColumn tableName="sequence_file_AUD" columnName="i7Index"/>
-		<dropColumn tableName="sequence_file_AUD" columnName="i5IndexId"/>
-		<dropColumn tableName="sequence_file_AUD" columnName="i5Index"/>
+		<dropColumn tableName="sequence_file" columnName="samplePlate" />
+		<dropColumn tableName="sequence_file" columnName="sampleWell" />
+		<dropColumn tableName="sequence_file" columnName="i7IndexId" />
+		<dropColumn tableName="sequence_file" columnName="i7Index" />
+		<dropColumn tableName="sequence_file" columnName="i5IndexId" />
+		<dropColumn tableName="sequence_file" columnName="i5Index" />
+
+		<dropColumn tableName="sequence_file_AUD" columnName="samplePlate" />
+		<dropColumn tableName="sequence_file_AUD" columnName="sampleWell" />
+		<dropColumn tableName="sequence_file_AUD" columnName="i7IndexId" />
+		<dropColumn tableName="sequence_file_AUD" columnName="i7Index" />
+		<dropColumn tableName="sequence_file_AUD" columnName="i5IndexId" />
+		<dropColumn tableName="sequence_file_AUD" columnName="i5Index" />
 
 	</changeSet>
 </databaseChangeLog>

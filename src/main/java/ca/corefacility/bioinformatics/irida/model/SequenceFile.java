@@ -86,8 +86,8 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	// Key/value map of additional properties you could set on a sequence file.
 	// This may contain optional sequencer specific properties.
 	@ElementCollection(fetch = FetchType.EAGER)
-	@MapKeyColumn(name = "property_key")
-	@Column(name = "property_value")
+	@MapKeyColumn(name = "property_key", nullable = false)
+	@Column(name = "property_value", nullable = false)
 	@CollectionTable(name = "sequence_file_properties", joinColumns = @JoinColumn(name = "sequence_file_id"))
 	private Map<String, String> optionalProperties;
 
