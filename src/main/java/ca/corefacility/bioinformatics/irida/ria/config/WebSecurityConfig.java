@@ -22,8 +22,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers("/scripts/**").antMatchers("/assets/**").antMatchers("/css/**")
-				.antMatchers("/styles/**").antMatchers("/images/**");
+		web.ignoring().antMatchers("/resources/**").antMatchers("/public/**");
 	}
 
 	@Override
@@ -45,7 +44,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 				.formLogin().defaultSuccessUrl("/dashboard").loginPage("/login").failureUrl("/login?error=1").and()
 				.authorizeRequests().regexMatchers("/login(\\?lang=[a-z]{2})?").permitAll().antMatchers("/")
-				.permitAll().antMatchers("/license").permitAll().antMatchers("/bower_components/**").permitAll()
+				.permitAll().antMatchers("/license").permitAll().antMatchers("/resources/**").permitAll()
 				.antMatchers("/**").fullyAuthenticated();
 
 	}
