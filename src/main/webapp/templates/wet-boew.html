@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<header th:fragment="header" role="banner">
+    <div id="wb-bnr">
+        <div id="wb-bar">
+            <div class="container">
+                <div class="row">
+
+                    <object id="gcwu-sig" type="image/svg+xml" tabindex="-1" role="img"
+                            th:data="@{/resources/assets/sig-en.svg}" data="/resources/assets/sig-en.svg"
+                            aria-label="Government of Canada"></object>
+                    <ul id="gc-bar" class="list-inline">
+
+                        <li><a href="http://www.canada.ca/en/index.html" rel="external"
+                               th:text="#{wet.header.canadaUrl}">Canada.ca</a></li>
+                        <li><a href="http://www.canada.ca/en/services/index.html" rel="external"
+                               th:text="#{wet.header.services}">Services</a></li>
+                        <li><a href="http://www.canada.ca/en/gov/dept/index.html" rel="external"
+                               th:text="#{wet.header.departments}">Departments</a></li>
+                        <li><a th:href="'?lang=' + ((${#locale.language} == 'en') ? 'fr' : 'en')"
+                               th:text="( (${#locale.language} eq 'en')? 'Français' : 'English')">Fran&#231;ais</a></li>
+                    </ul>
+
+                    <section class="wb-mb-links col-xs-12 visible-sm visible-xs" id="wb-glb-mn">
+                        <h2>Menu</h2>U+00E9
+                        <ul class="pnl-btn list-inline text-right">
+                            <li><a href="#mb-pnl" title="Menu" aria-controls="mb-pnl"
+                                   class="overlay-lnk btn btn-xs btn-default" role="button"><span
+                                    class="glyphicon glyphicon-th-list"><span class="wb-inv"
+                                                                              th:text="#{wet.header.menu}">Menu</span></span></a>
+                            </li>
+                        </ul>
+                        <div id="mb-pnl"></div>
+
+                    </section>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div id="wb-sttl" class="col-md-5">
+                    <a th:href="@{/}" href="/">
+                        <span th:text="#{global.title}">IRIDA Platform</span>
+                    </a>
+
+                </div>
+                <object id="wmms" type="image/svg+xml" tabindex="-1" role="img" data="/resources/assets/wmms.svg"
+                        th:data="@{/resources/assets/wmms.svg}"
+                        aria-label="Symbol of the Government of Canada"></object>
+
+
+            </div>
+        </div>
+    </div>
+
+    <span data-trgt="mb-pnl" class="wb-menu hide"></span>
+</header>
+
+<footer th:fragment="footer" role="contentinfo" id="wb-info" class="visible-sm visible-md visible-lg wb-navcurr">
+    <div class="container">
+        <nav role="navigation">
+            <h2>Site information</h2>
+            <ul id="gc-tctr" class="list-inline">
+                <li><a rel="license" href="http://wet-boew.github.io/wet-boew/License-en.html"
+                       th:text="#{wet.footer.tc}">Terms and conditions</a></li>
+                <li><a href="http://www.tbs-sct.gc.ca/tbs-sct/common/trans-eng.asp"
+                       th:text="#{wet.footer.transparency}">Transparency</a></li>
+            </ul>
+
+            <div class="row">
+                <section class="col-sm-3">
+                    <h3>About</h3>
+                    <ul class="list-unstyled">
+                        <li><a th:href="@{'/public/about/index-' + ${#locale} + '.html'}"
+                               href="/public/about/index-en.html" th:text="#{wet.footer.about}">About the IRIDA
+                            Platform</a></li>
+                    </ul>
+                </section>
+                <section class="col-sm-3">
+                    <h3>Contact us</h3>
+                    <ul class="list-unstyled">
+                        <li><a href="https://github.com/wet-boew/wet-boew/issues/new" th:text="#{wet.footer.questions}">Questions
+                            or comments?</a></li>
+                    </ul>
+                </section>
+                <section class="col-sm-3">
+                    <h3>News</h3>
+                    <ul class="list-unstyled">
+                        <li><a href="https://github.com/wet-boew/wet-boew/pulse" th:text="#{wet.footer.recent}">Recent
+                            project activity</a></li>
+                        <li><a href="https://github.com/wet-boew/wet-boew/graphs" th:text="#{wet.footer.stats}">Project
+                            statistics</a></li>
+                    </ul>
+                </section>
+                <section class="col-sm-3">
+                    <h3>Stay connected</h3>
+                    <ul class="list-unstyled">
+                        <li><a href="https://twitter.com/WebExpToolkit" th:text="#{wet.footer.twitter}">Twitter</a></li>
+                    </ul>
+                </section>
+
+            </div>
+        </nav>
+    </div>
+    <div id="gc-info">
+        <div class="container" th:switch="${#locale.language}">
+            <nav role="navigation">
+                <h2>Government of Canada footer</h2>
+
+                <ul class="list-inline" th:case="'en'">
+
+                    <li><a href="http://healthycanadians.gc.ca"><span>Health</span>healthycanadians.gc.ca</a></li>
+                    <li><a href="http://travel.gc.ca"><span>Travel</span>travel.gc.ca</a></li>
+                    <li><a href="http://www.servicecanada.gc.ca/eng/home.shtml"><span>Service Canada</span>servicecanada.gc.ca</a>
+                    </li>
+                    <li><a href="http://www.jobbank.gc.ca"><span>Jobs</span>jobbank.gc.ca</a></li>
+                    <li><a href="http://actionplan.gc.ca/en"><span>Economy</span>actionplan.gc.ca</a></li>
+
+                    <li><a href="http://www.canada.ca/en/index.html">Canada.ca</a></li>
+                </ul>
+
+                <ul class="list-inline" th:case="'fr'">
+
+                    <li><a href="http://canadiensensante.gc.ca/"><span>Santé</span>canadiensensante.gc.ca/</a></li>
+                    <li><a href="http://voyage.gc.ca/"><span>Voyage</span>voyage.gc.ca</a></li>
+                    <li><a href="http://www.servicecanada.gc.ca/fra/accueil.shtml"><span>Service Canada</span>servicecanada.gc.ca</a>
+                    </li>
+                    <li><a href="http://www.guichetemplois.gc.ca/accueil-fra.do?lang=fra"><span>Offres d'emploi</span>guichetemplois.gc.ca</a>
+                    </li>
+                    <li><a href="http://actionplan.gc.ca/fr"><span>Économie</span>actionplan.gc.ca</a></li>
+
+                    <li><a href="http://www.canada.ca/en/index.html">Canada.ca</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</footer>
+</body>
+</html>
