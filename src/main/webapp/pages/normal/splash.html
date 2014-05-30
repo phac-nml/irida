@@ -20,20 +20,24 @@
           content="Date modified (YYYY-MM-DD) / Date de modification (AAAA-MM-JJ)"/>
     <meta name="dcterms.subject" title="scheme" content="French subject terms / Termes de sujet en français"/>
     <meta name="dcterms.language" title="ISO639-2" content="eng"/>
+    <!-- END META -->
 
     <!--[if gte IE 9 | !IE ]><!-->
-    <link th:href="@{/assets/favicon.ico}" href="/assets/favicon.ico" rel="icon" type="image/x-icon"/>
-    <link rel="stylesheet" th:href="@{/css/wet-boew.min.css}" href="/css/wet-boew.min.css"/>
+    <link th:href="@{/resources/assets/favicon.ico}" href="/resources/assets/favicon.ico" rel="icon"
+          type="image/x-icon"/>
+    <link rel="stylesheet" th:href="@{/resources/css/wet-boew.min.css}" href="/resources/css/wet-boew.min.css"/>
     <!--<![endif]-->
-    <link rel="stylesheet" th:href="@{/css/theme-sp-pe.min.css}" href="/css/theme-sp-pe.min.css"/>
+    <link rel="stylesheet" th:href="@{/resources/css/theme-sp-pe.min.css}" href="/resources/css/theme-sp-pe.min.css"/>
 
     <!--[if lt IE 9]>
-    <link th:href="@{/assets/favicon.ico}" href="/assets/favicon.ico" rel="shortcut icon"/>
-    <link rel="stylesheet" th:href="@{/css/ie8-wet-boew.min.css}" href="/css/ie8-wet-boew.min.css"/>
+    <link th:href="@{/assets/favicon.ico}" href="/resources/assets/favicon.ico" rel="shortcut icon"/>
+    <link rel="stylesheet" th:href="@{/css/ie8-wet-boew.min.css}" href="/resources/css/ie8-wet-boew.min.css"/>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
+    <script th:href="@{/scripts/wet-boew/ie8-wet-boew.min.js}" src="/resources/js/wet-boew/ie8-wet-boew.min.js"></script>
     <![endif]-->
 
     <noscript>
-        <link rel="stylesheet" th:href="@{/css/noscript.min.css}" href="/css/noscript.min.css"/>
+        <link rel="stylesheet" th:href="@{/css/noscript.min.css}" href="/resources/css/noscript.min.css"/>
     </noscript>
 
 
@@ -41,8 +45,9 @@
 <body vocab="http://schema.org/" typeof="WebPage">
 <header role="banner">
     <div id="wb-bnr" class="container">
-        <object id="gcwu-sig" type="image/svg+xml" tabindex="-1" role="img" th:data="@{/assets/sig-alt-en.svg}"
-                data="./assets/sig-alt-en.svg" aria-label="Government of Canada"></object>
+        <object id="gcwu-sig" type="image/svg+xml" tabindex="-1" role="img"
+                th:data="@{/resources/assets/sig-alt-en.svg}"
+                data="/resources/assets/sig-alt-en.svg" aria-label="Government of Canada"></object>
     </div>
 </header>
 <main role="main" property="mainContentOfPage" class="container">
@@ -67,8 +72,8 @@
     </div>
 </main>
 <footer role="contentinfo" class="container">
-    <object id="wmms" type="image/svg+xml" tabindex="-1" role="img" th:data="@{/assets/wmms-alt.svg}"
-            data="./assets/wmms-alt.svg" aria-label="Symbol of the Government of Canada"></object>
+    <object id="wmms" type="image/svg+xml" tabindex="-1" role="img" th:data="@{/resources/assets/wmms-alt.svg}"
+            data="/resources/assets/wmms-alt.svg" aria-label="Symbol of the Government of Canada"></object>
 </footer>
 </body>
 </html>
