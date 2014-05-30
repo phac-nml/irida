@@ -10,7 +10,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -140,6 +142,39 @@ public class GalaxyWorkflowManager {
 		return WorkflowStatus.stringToStatus(details.getState());
 	}
 	
+	public String getWorkflowInformationFor(WorkflowOutputs output) {
+		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
+		String outputInformation = "";
+		
+		for(String outputId : output.getOutputIds()) {
+			Dataset dataset = historiesClient.showDataset(output.getHistoryId(), outputId);
+			HistoryContentsProvenance provenance = historiesClient.showProvenance(output.getHistoryId(), outputId);
+			
+			outputInformation += "output " + dataset.getName() + " generated from " +
+					provenance.getToolId() + " with parameters " + provenance.getParameters();
+		}
+		
+		return outputInformation;
+	}
+	
+	public List<File> getWorkflowOutputFiles(WorkflowOutputs output) throws IOException {
+		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
+		List<File> files = new ArrayList<File>();
+		
+		// workflow complete
+		for(String outputId : output.getOutputIds()) {
+			Dataset dataset = historiesClient.showDataset(output.getHistoryId(), outputId);
+			URL downloadURL = new URL(dataset.getFullDownloadUrl());
+			logger.debug("download URL=" + downloadURL);
+			File outputFile = downloadURLToTempFile(downloadURL);
+			
+			logger.debug("output file " + dataset.getName() + " written to " + outputFile);
+			files.add(outputFile);
+		}
+		
+		return files;
+	}
+	
 	private File downloadURLToTempFile(URL url) throws IOException {
 		Path path = Files.createTempFile("galaxy_output", null);
 		InputStream in = url.openStream();
@@ -164,7 +199,6 @@ public class GalaxyWorkflowManager {
 		GalaxySearch galaxySearch = new GalaxySearch(galaxyInstance);
 		GalaxyHistory galaxyHistory = new GalaxyHistory(galaxyInstance, galaxySearch);
 		GalaxyWorkflowManager workflowSubmitter = new GalaxyWorkflowManager(galaxyInstance, galaxyHistory);
-		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
 		
 		WorkflowOutputs output = workflowSubmitter.runFastQCWorkflow(fastqFile, "3f5830403180d620");
 		
@@ -175,19 +209,7 @@ public class GalaxyWorkflowManager {
 			status = workflowSubmitter.getStatusFor(output.getHistoryId());
 		} while (!WorkflowStatus.OK.equals(status));
 		
-		// workflow complete
-		for(String outputId : output.getOutputIds()) {
-			Dataset dataset = historiesClient.showDataset(output.getHistoryId(), outputId);
-			HistoryContentsProvenance provenance = historiesClient.showProvenance(output.getHistoryId(), outputId);
-
-			logger.debug("output " + dataset.getName() + " generated from " +
-					provenance.getToolId() + " with parameters " + provenance.getParameters());
-			
-			URL downloadURL = new URL(dataset.getFullDownloadUrl());
-			logger.debug("download URL=" + downloadURL);
-			File outputFile = workflowSubmitter.downloadURLToTempFile(downloadURL);
-			
-			logger.debug("output file " + dataset.getName() + " written to " + outputFile);
-		}
+		logger.debug(workflowSubmitter.getWorkflowInformationFor(output));
+		logger.debug("all download files " + workflowSubmitter.getWorkflowOutputFiles(output));
 	}
 }
