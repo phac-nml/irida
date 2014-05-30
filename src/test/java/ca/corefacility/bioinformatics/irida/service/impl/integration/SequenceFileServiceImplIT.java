@@ -11,7 +11,9 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
@@ -26,6 +28,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -53,7 +57,7 @@ import com.google.common.collect.ImmutableList;
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
 		IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
 @ActiveProfiles("test")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class, WithSecurityContextTestExcecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 @DatabaseTearDown(value = "/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml", type = DatabaseOperation.DELETE_ALL)
 public class SequenceFileServiceImplIT {
@@ -75,40 +79,64 @@ public class SequenceFileServiceImplIT {
 
 	@Before
 	public void setUp() throws IOException {
-		User u = new User();
+		/*User u = new User();
 		u.setUsername("fbristow");
 		u.setPassword(passwordEncoder.encode("Password1"));
 		u.setSystemRole(Role.ROLE_SEQUENCER);
 		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
 				ImmutableList.of(Role.ROLE_SEQUENCER));
 		auth.setDetails(u);
-		SecurityContextHolder.getContext().setAuthentication(auth);
+		SecurityContextHolder.getContext().setAuthentication(auth);*/
 		Files.createDirectories(baseDirectory);
 	}
 
 	private SequenceFileServiceImplIT asRole(Role r, String username) {
-		User u = new User();
-		u.setUsername(username);
-		u.setPassword(passwordEncoder.encode("Password1"));
-		u.setSystemRole(r);
-		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
-				ImmutableList.of(r));
-		auth.setDetails(u);
-		SecurityContextHolder.getContext().setAuthentication(auth);
-		return this;
+	 		User u = new User();
+	 		u.setUsername(username);
+	 		u.setPassword(passwordEncoder.encode("Password1"));
+	 		u.setSystemRole(r);
+	 		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
+	 				ImmutableList.of(r));
+	 		auth.setDetails(u);
+	 		SecurityContextHolder.getContext().setAuthentication(auth);
+	 		return this;
 	}
-
+	
 	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username="fbristow",roles="USER")
 	public void testReadSequenceFileAsUserNoPermissions() {
-		asRole(Role.ROLE_USER, "fbristow").sequenceFileService.read(1L);
+		sequenceFileService.read(1L);
 	}
 
 	@Test
+	@WithMockUser(username="fbristow1",roles="USER")
 	public void testReadSequenceFileAsUserWithPermissions() {
-		asRole(Role.ROLE_USER, "fbristow1").sequenceFileService.read(1L);
+		sequenceFileService.read(1L);
+	}
+	
+	@Test
+	@WithMockUser(username="fbristow1",roles="USER")
+	public void testReadOptionalProperties(){
+		SequenceFile read = sequenceFileService.read(1L);
+		assertEquals("5", read.getOptionalProperty("samplePlate"));
+		assertEquals("10", read.getOptionalProperty("sampleWell"));
+	}
+	
+	@Test
+	@WithMockUser(username="fbristow1",roles="USER")
+	public void testAddAdditionalProperties(){
+		SequenceFile file = sequenceFileService.read(1L);
+		file.addOptionalProperty("index", "111");
+		Map<String,Object> changed = new HashMap<>();
+		changed.put("optionalProperties", file.getOptionalProperties());
+		sequenceFileService.updateWithoutProcessors(file.getId(), changed);
+		SequenceFile reread = sequenceFileService.read(1L);
+		assertNotNull(reread.getOptionalProperty("index"));
+		assertEquals("111",reread.getOptionalProperty("index"));
 	}
 
 	@Test
+	@WithMockUser(username="tom",roles="SEQUENCER")
 	public void testCreateNotCompressedSequenceFile() throws IOException {
 		SequenceFile sf = new SequenceFile();
 		Path sequenceFile = Files.createTempFile(null, null);
@@ -116,7 +144,7 @@ public class SequenceFileServiceImplIT {
 		sf.setFile(sequenceFile);
 
 		logger.trace("About to save the file.");
-		sf = sequenceFileService.create(sf);
+		sf = asRole(Role.ROLE_SEQUENCER, "fbristow").sequenceFileService.create(sf);
 		logger.trace("Finished saving the file.");
 
 		assertNotNull("ID wasn't assigned.", sf.getId());
@@ -150,6 +178,7 @@ public class SequenceFileServiceImplIT {
 	}
 
 	@Test
+	@WithMockUser(username="fbristow",roles="SEQUENCER")
 	public void testCreateCompressedSequenceFile() throws IOException {
 		SequenceFile sf = new SequenceFile();
 		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");

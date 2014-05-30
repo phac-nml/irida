@@ -3,12 +3,16 @@ package ca.corefacility.bioinformatics.irida.model;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -17,6 +21,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.PrePersist;
@@ -25,6 +30,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -75,13 +81,17 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	private byte[] perSequenceQualityScoreChart;
 	@Lob
 	private byte[] duplicationLevelChart;
-	private String samplePlate;
-	private String sampleWell;
-	private String i7IndexId;
-	private String i7Index;
-	private String i5IndexId;
-	private String i5Index;
+	
 	private Long fileRevisionNumber; // the filesystem file revision number
+	
+	// Key/value map of additional properties you could set on a sequence file.
+	// This may contain optional sequencer specific properties.
+	@ElementCollection(fetch = FetchType.EAGER)
+	@MapKeyColumn(name = "property_key", nullable = false)
+	@Column(name = "property_value", nullable = false)
+	@CollectionTable(name = "sequence_file_properties", joinColumns = @JoinColumn(name = "sequence_file_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
+			"sequence_file_id", "property_key" }, name = "UK_SEQUENCE_FILE_PROPERTY_KEY"))
+	private Map<String, String> optionalProperties;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "miseqRun_id")
@@ -97,6 +107,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 		createdDate = new Date();
 		modifiedDate = createdDate;
 		fileRevisionNumber = 1L;
+		optionalProperties = new HashMap<>();
 	}
 
 	/**
@@ -320,54 +331,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 		this.modifiedDate = modifiedDate;
 	}
 
-	public String getSamplePlate() {
-		return samplePlate;
-	}
-
-	public void setSamplePlate(String samplePlate) {
-		this.samplePlate = samplePlate;
-	}
-
-	public String getSampleWell() {
-		return sampleWell;
-	}
-
-	public void setSampleWell(String sampleWell) {
-		this.sampleWell = sampleWell;
-	}
-
-	public String getI7IndexId() {
-		return i7IndexId;
-	}
-
-	public void setI7IndexId(String i7IndexId) {
-		this.i7IndexId = i7IndexId;
-	}
-
-	public String getI7Index() {
-		return i7Index;
-	}
-
-	public void setI7Index(String i7Index) {
-		this.i7Index = i7Index;
-	}
-
-	public String getI5IndexId() {
-		return i5IndexId;
-	}
-
-	public void setI5IndexId(String i5IndexId) {
-		this.i5IndexId = i5IndexId;
-	}
-
-	public String getI5Index() {
-		return i5Index;
-	}
-
-	public void setI5Index(String i5Index) {
-		this.i5Index = i5Index;
-	}
-
 	public Long getFileRevisionNumber() {
 		return fileRevisionNumber;
 	}
@@ -398,5 +361,39 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
 	public void setOverrepresentedSequences(Set<OverrepresentedSequence> overrepresentedSequences) {
 		this.overrepresentedSequences = overrepresentedSequences;
+	}
+	
+	/**
+	 * Add one optional property to the map of properties
+	 * @param key The key of the property to add
+	 * @param value The value of the property to add
+	 */
+	public void addOptionalProperty(String key,String value){
+		optionalProperties.put(key, value);
+	}
+	
+	/**
+	 * Get the Map of optional properties
+	 * @return A Map<String,String> of all the optional propertie
+	 */
+	public Map<String,String> getOptionalProperties(){
+		return optionalProperties;
+	}
+	
+	/**
+	 * Get an individual optional property
+	 * @param key The key of the property to read
+	 * @return A String of the property's value
+	 */
+	public String getOptionalProperty(String key){
+		return optionalProperties.get(key);
+	}
+	
+	/**
+	 * Set the Map of optional properties
+	 * @param optionalProperties A Map<String,String> of all the optional properties for this object
+	 */
+	public void setOptionalProperties(Map<String,String> optionalProperties){
+		this.optionalProperties = optionalProperties;
 	}
 }

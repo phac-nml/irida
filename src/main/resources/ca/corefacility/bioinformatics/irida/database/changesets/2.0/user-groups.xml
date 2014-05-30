@@ -13,7 +13,9 @@
 			</column>
 			<column name="createdDate" type="datetime" />
 			<column name="modifiedDate" type="datetime" />
-			<column name="name" type="varchar(255)" nullable="false" />
+			<column name="name" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
 		</createTable>
 
 		<createTable tableName="logicalGroup_AUD">
