@@ -17,3 +17,5 @@
 /coverage/
 
 /src/main/webapp/config.codekit
+
+/src/main/webapp/resources/bower_components/
