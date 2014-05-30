@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="row">
+        <div class="col-lg-4 col-lg-offset-4 col-sm-8 col-sm-offset-2 panel panel-primary" ng-controller="LoginCtrl">
+            <h1 id="title" th:text="#{login.welcome}">Welcome to the IRIDA Platform!</h1>
+
+            <form name="loginForm" class="form-signin" method="post" th:action="@{/login}">
+                <h3 class="muted form-signin-heading" th:text="#{login.signin-message}">Please sign in</h3>
+
+                <div class="form-group" ng-class="{'has-error': ctrl.error}">
+                    <label class="control-label" for="username" th:text="#{login.email}">Email Address</label>
+                    <input id="username" ng-model="email" type="text" class="form-control"
+                           th:placeholder="#{login.email}"
+                           name="username"/>
+                </div>
+                <div class="form-group" ng-class="{'has-error': ctrl.error}">
+                    <label class="control-label" for="password" th:text="#{login.password}">Password</label>
+                    <input id="password" ng-model="password" type="password" class="form-control"
+                           th:placeholder="#{login.password}"
+                           name="password"/></div>
+                <button class="btn btn-success btn-block" type="submit" th:text="#{login.btn.signin}">Sign in</button>
+                <div class="ng-cloak alert alert-danger" ng-show="error" th:text="#{login.error}">Incorrect Email or
+                    Password
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

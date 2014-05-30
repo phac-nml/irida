@@ -2,7 +2,7 @@
 define(['routes', 'services/dependencyResolverFor'], function (config, dependencyResolverFor) {
     'use strict';
 
-    var app = angular.module('app', ['ngRoute']);
+    var app = angular.module('app', ['ngRoute', 'ui.bootstrap']);
 
     app.config(
         [

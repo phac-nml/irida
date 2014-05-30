@@ -1,33 +1,93 @@
 <!DOCTYPE html>
+<!--[if lt IE 9]>
+<html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:data="http://www.thymeleaf.org"
-      lang="en">
+      xmlns:data="https://github.com/mxab/thymeleaf-extras-data-attribute" class="no-js" lang="en"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="https://github.com/mxab/thymeleaf-extras-data-attribute ">
+<!--<![endif]-->
 <head>
     <meta charset="UTF-8"/>
-    <title th:text="#{dashboard.page.title}">IRIDA Platform | Dashbaord</title>
+    <title th:text="#{global.title}">IRIDA Platform</title>
 
-    <!-- build:css styles/vendor.css -->
-    <link rel="stylesheet" href="/bower_components/bootstrap-css/css/bootstrap.min.css"/>
-    <!-- endbuild -->
+    <!-- META DATA -->
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <meta name="description" content=""/>
+    <meta name="dcterms.title"
+          content="Language Selection Page - No search, language toggle, site menu or breadcrumb trail - Sélection de la langue page - Pas de recherche, langue bascule, menu du site ou fil d'Ariane - Plate-forme IRIDA"/>
+    <meta name="dcterms.creator" content="French name of the content author / Nom en français de l'auteur du contenu"/>
+    <meta name="dcterms.issued" title="W3CDTF"
+          content="Date published (YYYY-MM-DD) / Date de publication (AAAA-MM-JJ)"/>
+    <meta name="dcterms.modified" title="W3CDTF"
+          content="Date modified (YYYY-MM-DD) / Date de modification (AAAA-MM-JJ)"/>
+    <meta name="dcterms.subject" title="scheme" content="French subject terms / Termes de sujet en français"/>
+    <meta name="dcterms.language" title="ISO639-2" content="eng"/>
+    <!-- END META -->
 
-    <!-- build:css(.tmp) styles/main.css -->
-    <link rel="stylesheet" href="/styles/main.css"/>
-    <!-- endbuild -->
+    <!--[if gte IE 9 | !IE ]><!-->
+    <link th:href="@{/resources/assets/favicon.ico}" href="/resources/assets/favicon.ico" rel="icon"
+          type="image/x-icon"/>
+    <link rel="stylesheet" th:href="@{/resources/css/wet-boew.min.css}" href="/resources/css/wet-boew.min.css"/>
+    <!--<![endif]-->
+    <link rel="stylesheet" th:href="@{/resources/css/theme.min.css}" href="/resources/css/theme.min.css"/>
+    <link rel="stylesheet" th:href="@{/resources/css/main.css}" href="/resources/css/main.css"/>
+
+    <!--[if lt IE 9]>
+    <link th:href="@{/resources/assets/favicon.ico}" href="/resources/assets/favicon.ico" rel="shortcut icon"/>
+    <link rel="stylesheet" th:href="@{/resources/css/ie8-wet-boew.min.css}" href="/resources/css/ie8-wet-boew.min.css"/>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
+    <script th:href="@{/resources/js/wet-boew/ie8-wet-boew.min.js}"
+            src="/resources/js/wet-boew/ie8-wet-boew.min.js"></script>
+    <![endif]-->
+
+    <noscript>
+        <link rel="stylesheet" th:href="@{/resources/css/noscript.min.css}" href="/resources/css/noscript.min.css"/>
+    </noscript>
+
+    <style>
+        .ng-cloak {
+            display: none !important;
+        }
+    </style>
 </head>
-<body>
-<div class="row">
+<body vocab="http://schema.org/" typeof="WebPage">
+<div class="content-wrapper">
+    <div th:replace="../templates/wet-boew :: header"></div>
+    <main class="container content-inner" role="main" property="mainContentOfPage">
+        <div class="row">
+            <div class="navbar navbar-default" role="navigation">
+                <div class="container-fluid">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#">Link</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle">Dropdown <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Action</a></li>
+                                <li><a href="#">Another action</a></li>
+                                <li><a href="#">Something else here</a></li>
+                                <li class="divider"></li>
+                                <li><a id="logout_btn" class="btn" th:href="@{/logout}" href="/logout" th:text="#{global.logout}">Logout</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <h2 th:text="${name}">__USERNAME__</h2>
+                <a href="#/projects">Projects</a>
 
-    <div class="col-lg-12">
-        <h1 id="title" th:text="#{dashboard.welcome}">Hello There</h1>
-        <h2 th:text="${name}">__USERNAME__</h2>
-        <a href="#/projects">Projects</a>
-        <a id="logout_btn" class="btn" href="/logout" th:href="@{/logout}" th:text="#{global.logout}">Logout</a>
-    </div>
-    <div ng-view=""></div>
+            </div>
+            <div ng-view=""></div>
+        </div>
+    </main>
 </div>
+<div th:replace="../templates/wet-boew :: footer"></div>
+
 
 <input id="baseUrl" type="hidden" th:value="@{/}" value="/"/>
-<script data:main="@{/scripts/bootstrap.js}" data-main="/scripts/bootstrap.js"
-        th:src="@{/bower_components/requirejs/require.js}" src="/bower_components/requirejs/require.js"></script>
+<script data:main="@{/resources/js/bootstrap.js}" data-main="/scripts/bootstrap.js"
+        th:src="@{/resources/bower_components/requirejs/require.js}"
+        src="/resources/bower_components/requirejs/require.js"></script>
 </body>
 </html>

@@ -1,67 +1,93 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      lang="en">
+<!--[if lt IE 9]>
+<html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html xmlns:th="http://www.thymeleaf.org" class="no-js" lang="en">
+<!--<![endif]-->
 <head>
     <meta charset="UTF-8"/>
-    <title th:text="#{login.page.title}">IRIDA Platform | Login</title>
-    <!-- build:css styles/vendor.css -->
-    <link rel="stylesheet" href="../../bower_components/bootstrap-css/css/bootstrap.min.css"/>
-    <!-- endbuild -->
+    <title th:text="#{login.title}">IRIDA Platform | Login</title>
 
-    <!-- build:css(.tmp) styles/main.css -->
-    <link rel="stylesheet" href="/styles/main.css"/>
-    <!-- endbuild -->
+    <!-- META DATA -->
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <meta name="description" content=""/>
+    <meta name="dcterms.title"
+          content="Language Selection Page - No search, language toggle, site menu or breadcrumb trail - Sélection de la langue page - Pas de recherche, langue bascule, menu du site ou fil d'Ariane - Plate-forme IRIDA"/>
+    <meta name="dcterms.creator" content="French name of the content author / Nom en français de l'auteur du contenu"/>
+    <meta name="dcterms.issued" title="W3CDTF"
+          content="Date published (YYYY-MM-DD) / Date de publication (AAAA-MM-JJ)"/>
+    <meta name="dcterms.modified" title="W3CDTF"
+          content="Date modified (YYYY-MM-DD) / Date de modification (AAAA-MM-JJ)"/>
+    <meta name="dcterms.subject" title="scheme" content="French subject terms / Termes de sujet en français"/>
+    <meta name="dcterms.language" title="ISO639-2" content="eng"/>
+    <!-- END META -->
+
+    <!--[if gte IE 9 | !IE ]><!-->
+    <link th:href="@{/resources/assets/favicon.ico}" href="/resources/assets/favicon.ico" rel="icon"
+          type="image/x-icon"/>
+    <link rel="stylesheet" th:href="@{/resources/css/wet-boew.min.css}" href="/resources/css/wet-boew.min.css"/>
+    <!--<![endif]-->
+    <link rel="stylesheet" th:href="@{/resources/css/theme.min.css}" href="/resources/css/theme.min.css"/>
+    <link rel="stylesheet" th:href="@{/resources/css/main.css}" href="/resources/css/main.css"/>
+
+    <!--[if lt IE 9]>
+    <link th:href="@{/resources/assets/favicon.ico}" href="/resources/assets/favicon.ico" rel="shortcut icon"/>
+    <link rel="stylesheet" th:href="@{/resources/css/ie8-wet-boew.min.css}" href="/resources/css/ie8-wet-boew.min.css"/>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
+    <script th:href="@{/resources/js/wet-boew/ie8-wet-boew.min.js}"
+            src="/resources/js/wet-boew/ie8-wet-boew.min.js"></script>
+    <![endif]-->
+
+    <noscript>
+        <link rel="stylesheet" th:href="@{/resources/css/noscript.min.css}" href="/resources/css/noscript.min.css"/>
+    </noscript>
 
     <style>
         .ng-cloak {
             display: none !important;
         }
-
-        .btn {
-            margin-bottom: 1em;
-        }
     </style>
 </head>
-<body ng-app="irida.login">
+<body vocab="http://schema.org/" typeof="WebPage" ng-app="irida.login">
+<div class="content-wrapper">
+    <div th:replace="../templates/wet-boew :: header"></div>
+    <main class="container content-inner" role="main" property="mainContentOfPage">
+        <h1 class="page-header" th:text="#{login.title}"></h1>
 
-<div class="container">
-    <div class="row">
-        <div class="col-lg-4 col-lg-offset-4 col-sm-8 col-sm-offset-2 panel panel-primary" ng-controller="LoginCtrl">
-            <h1 id="title" th:text="#{login.welcome}">Welcome to the IRIDA Platform!</h1>
-
-            <form name="loginForm" class="form-signin" method="post" th:action="@{/login}">
-            <h3 class="muted form-signin-heading" th:text="#{login.signin-message}">Please sign in</h3>
-
-                <div class="form-group" ng-class="{'has-error': ctrl.error}">
-                    <label class="control-label" for="username" th:text="#{login.email}">Email Address</label>
-                    <input id="username" ng-model="email" type="text" class="form-control"
-                           th:placeholder="#{login.email}"
-                           name="username"/>
+        <section>
+            <div class="row" ng-controller="LoginCtrl as login">
+                <div class="col-md-6">
+                    <form name="loginForm" role="form" method="post" th:action="@{/login}" action="/login">
+                        <div class="alert alert-danger" ng-show="login.error">
+                            <strong th:text="#{login.error}"></strong>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1" th:text="#{global.email.label}">Email address</label>
+                            <!-- TODO: this needs to be an email field once set up in api project -->
+                            <input type="text" class="form-control input-full" id="exampleInputEmail1" name="username"
+                                   th:placeholder="#{global.email.placeholder}" placeholder="Enter email"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1" th:text="#{global.password.label}">Password</label>
+                            <input type="password" class="form-control input-full" id="exampleInputPassword1" name="password"
+                                   th:placeholder="#{global.password.placeholder}" placeholder="Password"/>
+                        </div>
+                        <button type="submit" class="btn btn-primary" th:text="#{global.btn.submit}">Submit</button>
+                    </form>
                 </div>
-                <div class="form-group" ng-class="{'has-error': ctrl.error}">
-                    <label class="control-label" for="password" th:text="#{login.password}">Password</label>
-                    <input id="password" ng-model="password" type="password" class="form-control"
-                           th:placeholder="#{login.password}"
-                           name="password"/></div>
-                <button class="btn btn-success btn-block" type="submit" th:text="#{login.btn.signin}">Sign in</button>
-                <div class="ng-cloak alert alert-danger" ng-show="error" th:text="#{login.error}">Incorrect Email or
-                    Password
-                </div>
-            </form>
-        </div>
-    </div>
+                <div class="col-md-6" th:text="#{login.summary}">PUDDING</div>
+            </div>
+        </section>
+    </main>
 </div>
+<div th:replace="../templates/wet-boew :: footer"></div>
 
-<script th:src="@{/bower_components/angular/angular.min.js}" src="/bower_components/angular/angular.min.js"></script>
+<script th:src="@{/resources/bower_components/angular/angular.min.js}" src="/resources/bower_components/angular/angular.min.js"></script>
 <script>
     angular.module('irida.login', [])
             .controller('LoginCtrl', ['$scope', '$location', function ($scope, $location) {
                 'use strict';
-
-                $scope.error = false;
-                if ($location.absUrl().search('error') > -1) {
-                    $scope.error = true;
-                }
+                this.error = $location.absUrl().search('error') > -1;
             }]);
 
     window.onload = function () {

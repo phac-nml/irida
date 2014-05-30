@@ -14,7 +14,8 @@
     "underscore": "~1.6.0",
     "angular-sanitize": "~1.2.16",
     "onsenui": "~1.0.4",
-    "wet-boew": "4.0.2"
+    "wet-boew": "4.0.2",
+    "bootstrap": "~3.1.1"
   },
   "devDependencies": {}
 }
