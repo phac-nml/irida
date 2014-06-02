@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.web.assembler.resource.sample;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import ca.corefacility.bioinformatics.irida.model.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.IdentifiableResource;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -32,10 +32,10 @@ public class SampleResource extends IdentifiableResource<Sample> {
     
     @XmlElement
     public String getExternalSampleId(){
-        return resource.getExternalSampleId();
+        return resource.getSequencerSampleId();
     }
     public void setExternalSampleId(String sampleId){
-        resource.setExternalSampleId(sampleId);
+        resource.setSequencerSampleId(sampleId);
     }
 
     @XmlElement

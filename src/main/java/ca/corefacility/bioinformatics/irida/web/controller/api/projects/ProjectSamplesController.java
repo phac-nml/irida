@@ -23,11 +23,11 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SampleService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
@@ -140,7 +140,7 @@ public class ProjectSamplesController {
 	public ModelAndView getProjectSampleByExternalId(@PathVariable Long projectId, @PathVariable String externalSampleId){
         Project p = projectService.read(projectId);
         
-        Sample sampleBySampleId = sampleService.getSampleByExternalSampleId(p, externalSampleId);
+        Sample sampleBySampleId = sampleService.getSampleBySequencerSampleId(p, externalSampleId);
 
         SampleResource sr = new SampleResource();
         sr.setResource(sampleBySampleId);
