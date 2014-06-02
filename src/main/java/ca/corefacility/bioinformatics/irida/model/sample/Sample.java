@@ -4,11 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -21,9 +17,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.biojava3.core.sequence.TaxonomyID;
 import org.hibernate.envers.Audited;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
@@ -31,6 +27,8 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.validators.annotations.Latitude;
 import ca.corefacility.bioinformatics.irida.validators.annotations.Longitude;
 import ca.corefacility.bioinformatics.irida.validators.annotations.ValidSampleName;
+import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmission;
+import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmissionOneOf;
 
 /**
  * A biological sample. Each sample may correspond to many files.
@@ -53,6 +51,12 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdDate;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifiedDate;
+
 	/**
 	 * Note: The unique constraint makes sense programmatically, however it does
 	 * not make sense to have a unique constraint for an external identifier
@@ -72,42 +76,145 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	@Lob
 	private String description;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
+	/**
+	 * The most descriptive organism name for this sample (to the species, if
+	 * relevant).
+	 */
+	@NotNull(message = "{sample.organism.notnull}", groups = NCBISubmission.class)
+	@Size(min = 3, message = "{sample.organism.too.short}")
+	private String organism;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date modifiedDate;
+	/**
+	 * identification or description of the specific individual from which this
+	 * sample was obtained
+	 */
+	@NotNull(message = "{sample.isolate.notnull}", groups = { NCBISubmission.class, NCBISubmissionOneOf.class })
+	@Size(min = 3, message = "{sample.isolate.too.short}")
+	private String isolate;
 
-	@Embedded
-	@AttributeOverrides({ @AttributeOverride(name = "id", column = @Column(name = "sampleTaxonomyId")),
-			@AttributeOverride(name = "dataSource", column = @Column(name = "sampleTaxonomyDataSource")) })
-	private TaxonomyID taxonomicId;
-
-	@OneToOne
-	private Host host;
-
-	/** microbial or eukaryotic strain name */
+	/**
+	 * microbial or eukaryotic strain name
+	 */
+	@NotNull(message = "{sample.strain.name.notnull}", groups = { NCBISubmission.class, NCBISubmissionOneOf.class })
 	@Size(min = 3, message = "{sample.strain.name.too.short}")
 	private String strain;
 
-	// collection_date is a *mandatory* attribute in NCBI BioSample.
-	private Date collectionDate;
-
-	// collected_by is a *mandatory* attribute in NCBI BioSample.
+	/**
+	 * Name of the person who collected the sample.
+	 */
+	@NotNull(message = "{sample.collected.by.notnull}", groups = NCBISubmission.class)
 	@Size(min = 3, message = "{sample.collected.by.too.short}")
 	private String collectedBy;
 
-	// probably want to use the disease ontology for this:
-	// http://purl.obolibrary.org/obo/DOID_0050117
-	private String disease;
+	/**
+	 * Date of sampling
+	 */
+	@NotNull(message = "{sample.collection.date.notnull}", groups = NCBISubmission.class)
+	private Date collectionDate;
 
-	// lat_lon is marked as a *mandatory* attribute in NCBI BioSample, but in
-	// practice many of the fields are shown as "missing".
+	/**
+	 * Geographical origin of the sample (country derived from
+	 * http://www.insdc.org/documents/country-qualifier-vocabulary).
+	 */
+	@NotNull(message = "{sample.geographic.location.name.notnull}", groups = NCBISubmission.class)
+	@Pattern(regexp = "\\w+(:\\w+(:\\w+)?)?", message = "{sample.geographic.location.name.pattern}")
+	@Size(min = 3, message = "{sample.geographic.location.name.too.short}")
+	private String geographicLocationName;
+
+	@NotNull(message = "{sample.host.notnull}", groups = NCBISubmission.class)
+	@OneToOne
+	private Host host;
+
+	/**
+	 * Describes the physical, environmental and/or local geographical source of
+	 * the biological sample from which the sample was derived.
+	 */
+	@NotNull(message = "{sample.isolation.source.notnull}", groups = NCBISubmission.class)
+	@Lob
+	private String isolationSource;
+
+	/**
+	 * lat_lon is marked as a *mandatory* attribute in NCBI BioSample, but in
+	 * practice many of the fields are shown as "missing".
+	 */
+	@NotNull(message = "{sample.latitude.notnull}", groups = NCBISubmission.class)
 	@Latitude
 	private String latitude;
 
+	@NotNull(message = "{sample.longitude.notnull}", groups = NCBISubmission.class)
 	@Longitude
 	private String longitude;
+
+	/**
+	 * Name of source institute and unique culture identifier. See the
+	 * description for the proper format and list of allowed institutes,
+	 * http://www.insdc.org/controlled-vocabulary-culturecollection-qualifier
+	 */
+	@NotNull(message = "{sample.culture.collection.notnull}", groups = NCBISubmission.class)
+	@Size(min = 1, message = "{sample.culture.collection.too.short}")
+	private String cultureCollection;
+
+	/**
+	 * observed genotype
+	 */
+	@Lob
+	private String genotype;
+
+	/**
+	 * Number of passages and passage method
+	 */
+	@Lob
+	private String passageHistory;
+
+	/**
+	 * Some bacterial specific pathotypes (example Eschericia coli - STEC, UPEC)
+	 */
+	private String pathotype;
+
+	/**
+	 * Taxonomy below subspecies; a variety (in bacteria, fungi or virus)
+	 * usually based on its antigenic properties. Same as serovar and serogroup.
+	 * e.g. serotype="H1N1" in Influenza A virus CY098518.
+	 */
+	private String serotype;
+
+	/**
+	 * Taxonomy below subspecies; a variety (in bacteria, fungi or virus)
+	 * usually based on its antigenic properties. Same as serovar and serotype.
+	 * Sometimes used as species identifier in bacteria with shaky taxonomy,
+	 * e.g. Leptospira, serovar saopaolo S76607 (65357 in Entrez).
+	 */
+	private String serovar;
+
+	/**
+	 * Identifier for the physical specimen. Use format:
+	 * "[<institution-code>:[<collection-code>:]]<specimen_id>", eg,
+	 * "UAM:Mamm:52179". Intended as a reference to the physical specimen that
+	 * remains after it was analyzed. If the specimen was destroyed in the
+	 * process of analysis, electronic images (e-vouchers) are an adequate
+	 * substitute for a physical voucher specimen. Ideally the specimens will be
+	 * deposited in a curated museum, herbarium, or frozen tissue collection,
+	 * but often they will remain in a personal or laboratory collection for
+	 * some time before they are deposited in a curated collection. There are
+	 * three forms of specimen_voucher qualifiers. If the text of the qualifier
+	 * includes one or more colons it is a 'structured voucher'. Structured
+	 * vouchers include institution-codes (and optional collection-codes) taken
+	 * from a controlled vocabulary maintained by the INSDC that denotes the
+	 * museum or herbarium collection where the specimen resides, please visit:
+	 * http://www.insdc.org/controlled-vocabulary-specimenvoucher-qualifier.
+	 */
+	private String specimenVoucher;
+
+	/**
+	 * Taxonomy below subspecies; sometimes used in viruses to denote subgroups
+	 * taken from a single isolate.
+	 */
+	private String subgroup;
+
+	/**
+	 * Used as classifier in viruses (e.g. HIV type 1, Group M, Subtype A).
+	 */
+	private String subtype;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sample")
 	private List<ProjectSampleJoin> projects;
@@ -246,14 +353,6 @@ public class Sample implements IridaThing, Comparable<Sample> {
 		this.createdDate = createdDate;
 	}
 
-	public TaxonomyID getTaxonomicId() {
-		return taxonomicId;
-	}
-
-	public void setTaxonomicId(TaxonomyID taxonomicId) {
-		this.taxonomicId = taxonomicId;
-	}
-
 	public Host getHost() {
 		return host;
 	}
@@ -286,14 +385,6 @@ public class Sample implements IridaThing, Comparable<Sample> {
 		this.collectedBy = collectedBy;
 	}
 
-	public String getDisease() {
-		return disease;
-	}
-
-	public void setDisease(String disease) {
-		this.disease = disease;
-	}
-
 	public String getLatitude() {
 		return latitude;
 	}
@@ -308,5 +399,109 @@ public class Sample implements IridaThing, Comparable<Sample> {
 
 	public void setLongitude(String longitude) {
 		this.longitude = longitude;
+	}
+
+	public String getOrganism() {
+		return organism;
+	}
+
+	public void setOrganism(String organism) {
+		this.organism = organism;
+	}
+
+	public String getIsolate() {
+		return isolate;
+	}
+
+	public void setIsolate(String isolate) {
+		this.isolate = isolate;
+	}
+
+	public String getGeographicLocationName() {
+		return geographicLocationName;
+	}
+
+	public void setGeographicLocationName(String geographicLocationName) {
+		this.geographicLocationName = geographicLocationName;
+	}
+
+	public String getIsolationSource() {
+		return isolationSource;
+	}
+
+	public void setIsolationSource(String isolationSource) {
+		this.isolationSource = isolationSource;
+	}
+
+	public String getCultureCollection() {
+		return cultureCollection;
+	}
+
+	public void setCultureCollection(String cultureCollection) {
+		this.cultureCollection = cultureCollection;
+	}
+
+	public String getGenotype() {
+		return genotype;
+	}
+
+	public void setGenotype(String genotype) {
+		this.genotype = genotype;
+	}
+
+	public String getPassageHistory() {
+		return passageHistory;
+	}
+
+	public void setPassageHistory(String passageHistory) {
+		this.passageHistory = passageHistory;
+	}
+
+	public String getPathotype() {
+		return pathotype;
+	}
+
+	public void setPathotype(String pathotype) {
+		this.pathotype = pathotype;
+	}
+
+	public String getSerotype() {
+		return serotype;
+	}
+
+	public void setSerotype(String serotype) {
+		this.serotype = serotype;
+	}
+
+	public String getSerovar() {
+		return serovar;
+	}
+
+	public void setSerovar(String serovar) {
+		this.serovar = serovar;
+	}
+
+	public String getSpecimenVoucher() {
+		return specimenVoucher;
+	}
+
+	public void setSpecimenVoucher(String specimenVoucher) {
+		this.specimenVoucher = specimenVoucher;
+	}
+
+	public String getSubgroup() {
+		return subgroup;
+	}
+
+	public void setSubgroup(String subgroup) {
+		this.subgroup = subgroup;
+	}
+
+	public String getSubtype() {
+		return subtype;
+	}
+
+	public void setSubtype(String subtype) {
+		this.subtype = subtype;
 	}
 }

@@ -32,7 +32,7 @@ public class SchemaExporter {
 		}
 		configuration.setProperty(Environment.USER, "test").setProperty(Environment.PASS, "test")
 				.setProperty(Environment.URL, "jdbc:mysql://localhost:3306/irida_test")
-				.setProperty(Environment.DIALECT, "org.hibernate.spatial.dialect.mysql.MySQLSpatial5InnoDBDialect")
+				.setProperty(Environment.DIALECT, "org.hibernate.dialect.MySQL5InnoDBDialect")
 				.setProperty(Environment.DRIVER, "com.mysql.jdbc.Driver");
 
 		new EnversSchemaGenerator(configuration).export().create(true, true);

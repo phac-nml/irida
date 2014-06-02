@@ -1,9 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model.sample;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,12 +7,17 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
-import org.biojava3.core.sequence.TaxonomyID;
 import org.hibernate.envers.Audited;
 
+import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmission;
+
 /**
- * A class to store host-specific metadata associated with a {@link Sample}.
+ * A class to store host-specific metadata associated with a {@link Sample}. See
+ * <a href=
+ * "https://submit.ncbi.nlm.nih.gov/biosample/template/?package=Pathogen.cl.1.0&action=definition"
+ * >NCBI BioSample Pathogen Attributes</a> for more information.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
@@ -30,22 +31,67 @@ public class Host {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@Embedded
-	@AttributeOverrides({ @AttributeOverride(name = "id", column = @Column(name = "hostTaxonomyId")),
-			@AttributeOverride(name = "dataSource", column = @Column(name = "hostTaxonomyDataSource")) })
-	@NotNull(message = "{host.taxonomy.notnull}")
-	private TaxonomyID hostTaxonomy;
+	/**
+	 * The natural (as opposed to laboratory) host to the organism from which
+	 * the sample was obtained. Use the full taxonomic name, eg, "Homo sapiens".
+	 */
+	@NotNull(message = "{host.taxonomy.notnull}", groups = NCBISubmission.class)
+	private String taxonomicName;
 
-	private Gender gender;
+	/**
+	 * Name of relevant disease, e.g. Salmonella gastroenteritis. Controlled
+	 * vocabulary, http://bioportal.bioontology.org/ontologies/1009 or
+	 * http://www.ncbi.nlm.nih.gov/mesh
+	 */
+	@NotNull(message = "{host.disease.notnull}", groups = NCBISubmission.class)
+	private String disease;
+
+	/**
+	 * Additional information not included in other defined vocabulary fields
+	 */
+	private String description;
+
+	/**
+	 * Final outcome of disease, e.g., death, chronic disease, recovery
+	 */
+	private String diseaseOutcome;
+
+	/**
+	 * Stage of disease at the time of sampling
+	 */
+	private String diseaseStage;
+
+	/**
+	 * Information regarding health state of the individual sampled at the time
+	 * of sampling
+	 */
+	private String healthState;
+
+	/**
+	 * Gender or physical sex of the host
+	 */
+	private Gender sex;
+
+	/**
+	 * a unique identifier by which each subject can be referred to,
+	 * de-identified, e.g. #131
+	 */
+	@Size(min = 1, message = "{host.subject.id.too.small}")
+	private String subjectId;
+
+	/**
+	 * Type of tissue the initial sample was taken from. Controlled vocabulary,
+	 * http://bioportal.bioontology.org/ontologies/1005)
+	 */
+	private String tissueSampleId;
 
 	@Min(value = 0, message = "{host.age.min.too.small}")
-	private int hostAgeMin;
+	private int age;
 
-	@Min(value = 0, message = "{host.age.max.too.small}")
-	private int hostAgeMax;
-
+	// values taken from BioSample pathogen package 1.0:
+	// https://submit.ncbi.nlm.nih.gov/biosample/template/?package=Pathogen.cl.1.0&action=definition
 	public static enum Gender {
-		MALE, FEMALE
+		MALE, FEMALE, NEUTER, HERMAPHRODITE, NOT_DETERMINED
 	}
 
 	public Long getId() {
@@ -56,35 +102,87 @@ public class Host {
 		this.id = id;
 	}
 
-	public Gender getGender() {
-		return gender;
+	public Gender getSex() {
+		return sex;
 	}
 
-	public void setGender(Gender gender) {
-		this.gender = gender;
+	public void getGender(Gender gender) {
+		this.sex = gender;
 	}
 
-	public TaxonomyID getHostTaxonomy() {
-		return hostTaxonomy;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setHostTaxonomy(TaxonomyID hostTaxonomy) {
-		this.hostTaxonomy = hostTaxonomy;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	public int getHostAgeMin() {
-		return hostAgeMin;
+	public String getDiseaseOutcome() {
+		return diseaseOutcome;
 	}
 
-	public void setHostAgeMin(int hostAgeMin) {
-		this.hostAgeMin = hostAgeMin;
+	public void setDiseaseOutcome(String diseaseOutcome) {
+		this.diseaseOutcome = diseaseOutcome;
 	}
 
-	public int getHostAgeMax() {
-		return hostAgeMax;
+	public String getDiseaseStage() {
+		return diseaseStage;
 	}
 
-	public void setHostAgeMax(int hostAgeMax) {
-		this.hostAgeMax = hostAgeMax;
+	public void setDiseaseStage(String diseaseStage) {
+		this.diseaseStage = diseaseStage;
+	}
+
+	public String getHealthState() {
+		return healthState;
+	}
+
+	public void setHealthState(String healthState) {
+		this.healthState = healthState;
+	}
+
+	public String getSubjectId() {
+		return subjectId;
+	}
+
+	public void setSubjectId(String subjectId) {
+		this.subjectId = subjectId;
+	}
+
+	public String getTissueSampleId() {
+		return tissueSampleId;
+	}
+
+	public void setTissueSampleId(String tissueSampleId) {
+		this.tissueSampleId = tissueSampleId;
+	}
+
+	public String getTaxonomicName() {
+		return taxonomicName;
+	}
+
+	public void setTaxonomicName(String taxonomicName) {
+		this.taxonomicName = taxonomicName;
+	}
+
+	public String getDisease() {
+		return disease;
+	}
+
+	public void setDisease(String disease) {
+		this.disease = disease;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	public void setSex(Gender sex) {
+		this.sex = sex;
 	}
 }
