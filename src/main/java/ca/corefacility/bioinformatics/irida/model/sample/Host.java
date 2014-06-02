@@ -106,8 +106,8 @@ public class Host {
 		return sex;
 	}
 
-	public void getGender(Gender gender) {
-		this.sex = gender;
+	public void setSex(Gender sex) {
+		this.sex = sex;
 	}
 
 	public String getDescription() {
@@ -180,9 +180,5 @@ public class Host {
 
 	public void setAge(Integer age) {
 		this.age = age;
-	}
-
-	public void setSex(Gender sex) {
-		this.sex = sex;
 	}
 }
