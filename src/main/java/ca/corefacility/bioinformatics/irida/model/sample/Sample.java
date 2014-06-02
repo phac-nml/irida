@@ -254,8 +254,23 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	public boolean equals(Object other) {
 		if (other instanceof Sample) {
 			Sample sample = (Sample) other;
-			return Objects.equals(createdDate, sample.createdDate) && Objects.equals(modifiedDate, sample.modifiedDate)
-					&& Objects.equals(sampleName, sample.sampleName) && Objects.equals(id, sample.id);
+			return Objects.equals(id, sample.id) && Objects.equals(createdDate, sample.createdDate)
+					&& Objects.equals(modifiedDate, sample.modifiedDate)
+					&& Objects.equals(sequencerSampleId, sample.sequencerSampleId)
+					&& Objects.equals(sampleName, sample.sampleName) && Objects.equals(description, sample.description)
+					&& Objects.equals(organism, sample.organism) && Objects.equals(isolate, sample.isolate)
+					&& Objects.equals(strain, sample.strain) && Objects.equals(collectedBy, sample.collectedBy)
+					&& Objects.equals(collectionDate, sample.collectionDate)
+					&& Objects.equals(geographicLocationName, sample.geographicLocationName)
+					&& Objects.equals(host, sample.host) && Objects.equals(isolationSource, sample.isolationSource)
+					&& Objects.equals(latitude, sample.latitude) && Objects.equals(longitude, sample.longitude)
+					&& Objects.equals(cultureCollection, sample.cultureCollection)
+					&& Objects.equals(genotype, sample.genotype)
+					&& Objects.equals(passageHistory, sample.passageHistory)
+					&& Objects.equals(pathotype, sample.pathotype) && Objects.equals(serotype, sample.serotype)
+					&& Objects.equals(serovar, sample.serovar)
+					&& Objects.equals(specimenVoucher, sample.specimenVoucher)
+					&& Objects.equals(subgroup, sample.subgroup) && Objects.equals(subtype, sample.subtype);
 		}
 
 		return false;
@@ -263,7 +278,10 @@ public class Sample implements IridaThing, Comparable<Sample> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(createdDate, sampleName, modifiedDate, id);
+		return Objects.hash(id, createdDate, modifiedDate, sequencerSampleId, sampleName, description, organism,
+				isolate, strain, collectedBy, collectionDate, geographicLocationName, host, isolationSource, latitude,
+				longitude, cultureCollection, genotype, passageHistory, pathotype, serotype, serovar, specimenVoucher,
+				subgroup, subtype);
 	}
 
 	@Override

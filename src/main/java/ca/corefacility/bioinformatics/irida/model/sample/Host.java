@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.sample;
 
+import java.util.Objects;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -92,6 +94,25 @@ public class Host {
 	// https://submit.ncbi.nlm.nih.gov/biosample/template/?package=Pathogen.cl.1.0&action=definition
 	public static enum Gender {
 		MALE, FEMALE, NEUTER, HERMAPHRODITE, NOT_DETERMINED
+	}
+
+	public int hashCode() {
+		return Objects.hash(id, taxonomicName, disease, description, diseaseOutcome, diseaseStage, healthState, sex,
+				subjectId, tissueSampleId, age);
+	}
+
+	public boolean equals(Object o) {
+		if (o instanceof Host) {
+			Host h = (Host) o;
+			return Objects.equals(id, h.id) && Objects.equals(taxonomicName, h.taxonomicName)
+					&& Objects.equals(disease, h.disease) && Objects.equals(description, h.description)
+					&& Objects.equals(diseaseOutcome, h.diseaseOutcome) && Objects.equals(diseaseStage, h.diseaseStage)
+					&& Objects.equals(healthState, h.healthState) && Objects.equals(sex, h.sex)
+					&& Objects.equals(subjectId, h.subjectId) && Objects.equals(tissueSampleId, h.tissueSampleId)
+					&& Objects.equals(age, h.age);
+		}
+
+		return false;
 	}
 
 	public Long getId() {
