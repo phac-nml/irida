@@ -50,9 +50,16 @@ public @interface WithMockOAuth2Client {
 	String password() default "password";
 
 	/**
-	 * The clientId of the client being mocked
+	 * The clientId of the client being mocked. Default is "client"
 	 * 
 	 * @return
 	 */
 	String clientId() default "client";
+
+	/**
+	 * Scope of OAuth2 client. Default is none
+	 * 
+	 * @return
+	 */
+	String[] scope() default "";
 }
