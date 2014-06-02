@@ -53,7 +53,7 @@ public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 		this.sample = subject;
 		createdDate = new Date();
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -62,14 +62,15 @@ public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 	public boolean equals(Object o) {
 		if (o instanceof SampleSequenceFileJoin) {
 			SampleSequenceFileJoin j = (SampleSequenceFileJoin) o;
-			return Objects.equals(sequenceFile, j.sequenceFile) && Objects.equals(sample, j.sample);
+			return Objects.equals(sequenceFile, j.sequenceFile) && Objects.equals(sample, j.sample)
+					&& Objects.equals(createdDate, j.createdDate);
 		}
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(sequenceFile, sample);
+		return Objects.hash(sequenceFile, sample, createdDate);
 	}
 
 	@Override
