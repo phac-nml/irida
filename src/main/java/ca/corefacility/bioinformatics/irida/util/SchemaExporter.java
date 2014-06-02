@@ -12,7 +12,6 @@ import javax.persistence.Entity;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.envers.tools.hbm2ddl.EnversSchemaGenerator;
-import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.springframework.core.annotation.AnnotationUtils;
 
 /**
@@ -33,13 +32,10 @@ public class SchemaExporter {
 		}
 		configuration.setProperty(Environment.USER, "test").setProperty(Environment.PASS, "test")
 				.setProperty(Environment.URL, "jdbc:mysql://localhost:3306/irida_test")
-				.setProperty(Environment.DIALECT, "org.hibernate.dialect.MySQL5Dialect")
+				.setProperty(Environment.DIALECT, "org.hibernate.spatial.dialect.mysql.MySQLSpatial5InnoDBDialect")
 				.setProperty(Environment.DRIVER, "com.mysql.jdbc.Driver");
 
-		SchemaExport schema = new EnversSchemaGenerator(configuration).export();
-		schema.setOutputFile("schema.sql");
-
-		schema.create(true, true);
+		new EnversSchemaGenerator(configuration).export().create(true, true);
 	}
 
 	/**

@@ -4,7 +4,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,20 +16,30 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.biojava3.core.sequence.TaxonomyID;
 import org.hibernate.envers.Audited;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.validators.annotations.Latitude;
+import ca.corefacility.bioinformatics.irida.validators.annotations.Longitude;
 import ca.corefacility.bioinformatics.irida.validators.annotations.ValidSampleName;
 
 /**
  * A biological sample. Each sample may correspond to many files.
+ * 
+ * A {@link Sample} comprises of many attributes. The attributes assigned to a
+ * {@link Sample} correspond to the NCBI Pathogen BioSample attributes. See <a
+ * href=
+ * "https://submit.ncbi.nlm.nih.gov/biosample/template/?package=Pathogen.cl.1.0&action=definition"
+ * >BioSample Attributes: Package Pathogen</a> for more information.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
@@ -63,6 +77,37 @@ public class Sample implements IridaThing, Comparable<Sample> {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
+
+	@Embedded
+	@AttributeOverrides({ @AttributeOverride(name = "id", column = @Column(name = "sampleTaxonomyId")),
+			@AttributeOverride(name = "dataSource", column = @Column(name = "sampleTaxonomyDataSource")) })
+	private TaxonomyID taxonomicId;
+
+	@OneToOne
+	private Host host;
+
+	/** microbial or eukaryotic strain name */
+	@Size(min = 3, message = "{sample.strain.name.too.short}")
+	private String strain;
+
+	// collection_date is a *mandatory* attribute in NCBI BioSample.
+	private Date collectionDate;
+
+	// collected_by is a *mandatory* attribute in NCBI BioSample.
+	@Size(min = 3, message = "{sample.collected.by.too.short}")
+	private String collectedBy;
+
+	// probably want to use the disease ontology for this:
+	// http://purl.obolibrary.org/obo/DOID_0050117
+	private String disease;
+
+	// lat_lon is marked as a *mandatory* attribute in NCBI BioSample, but in
+	// practice many of the fields are shown as "missing".
+	@Latitude
+	private String latitude;
+
+	@Longitude
+	private String longitude;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sample")
 	private List<ProjectSampleJoin> projects;
@@ -191,5 +236,77 @@ public class Sample implements IridaThing, Comparable<Sample> {
 
 	public void setSequenceFiles(List<SampleSequenceFileJoin> sequenceFiles) {
 		this.sequenceFiles = sequenceFiles;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public TaxonomyID getTaxonomicId() {
+		return taxonomicId;
+	}
+
+	public void setTaxonomicId(TaxonomyID taxonomicId) {
+		this.taxonomicId = taxonomicId;
+	}
+
+	public Host getHost() {
+		return host;
+	}
+
+	public void setHost(Host host) {
+		this.host = host;
+	}
+
+	public String getStrain() {
+		return strain;
+	}
+
+	public void setStrain(String strain) {
+		this.strain = strain;
+	}
+
+	public Date getCollectionDate() {
+		return collectionDate;
+	}
+
+	public void setCollectionDate(Date collectionDate) {
+		this.collectionDate = collectionDate;
+	}
+
+	public String getCollectedBy() {
+		return collectedBy;
+	}
+
+	public void setCollectedBy(String collectedBy) {
+		this.collectedBy = collectedBy;
+	}
+
+	public String getDisease() {
+		return disease;
+	}
+
+	public void setDisease(String disease) {
+		this.disease = disease;
+	}
+
+	public String getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(String latitude) {
+		this.latitude = latitude;
+	}
+
+	public String getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(String longitude) {
+		this.longitude = longitude;
 	}
 }

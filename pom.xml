@@ -59,6 +59,22 @@
 			<name>repo.springsource.org-releases</name>
 			<url>http://repo.springsource.org/libs-milestone-local</url>
 		</repository>
+		<repository>
+			<id>biojava.org</id>
+			<name>biojava.org-releases</name>
+			<url>http://biojava.org/download/maven/</url>
+		</repository>
+		<repository>
+			<id>OSGEO GeoTools repo</id>
+			<url>http://download.osgeo.org/webdav/geotools</url>
+		</repository>
+		<repository>
+			<id>Hibernate Spatial repo</id>
+			<url>http://www.hibernatespatial.org/repository</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -300,7 +316,12 @@
 			<version>${com.github.jmchilton.galaxybootstrap.version}</version>
 		</dependency>
 
-
+		<!-- biojava -->
+		<dependency>
+			<groupId>org.biojava</groupId>
+			<artifactId>biojava3-core</artifactId>
+			<version>${biojava.version}</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>irida-api</finalName>
@@ -455,6 +476,7 @@
 		<el-ri.version>1.0</el-ri.version>
 		<com.github.jmchilton.blend4j.version>0.1-alpha-7</com.github.jmchilton.blend4j.version>
 		<com.github.jmchilton.galaxybootstrap.version>0.3.0-rc4-SNAPSHOT</com.github.jmchilton.galaxybootstrap.version>
+		<biojava.version>3.0.8</biojava.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.17</maven.failsafe.plugin.version>

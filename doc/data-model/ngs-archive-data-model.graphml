@@ -328,8 +328,8 @@ dateCreated<y:LabelModel>
               <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
               <y:BorderStyle color="#000000" type="line" width="1.0"/>
               <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#B7C9E3" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="17.96875" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="48.994140625" x="48.7529296875" y="4.0">Sample</y:NodeLabel>
-              <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="227.5" modelName="custom" textColor="#000000" visible="true" width="122.365234375" x="2.0" y="29.968750000000227">id
-externalId
+             <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="199.5625" modelName="custom" textColor="#000000" visible="true" width="122.91015625" x="2.0" y="29.96875">id
+sequencerSampleId
 name
 description
 taxonomicId
@@ -339,8 +339,6 @@ collectedBy
 host
 hostAgeRange
 hostGender
-outbreakCode
-pfgePatterns
 disease
 geographicLocation
 dateCreated<y:LabelModel>
