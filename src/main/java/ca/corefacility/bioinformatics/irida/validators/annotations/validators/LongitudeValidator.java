@@ -15,7 +15,7 @@ import ca.corefacility.bioinformatics.irida.validators.annotations.Longitude;
  */
 public class LongitudeValidator implements ConstraintValidator<Longitude, String> {
 
-	private static final Pattern LONGITUDE_PATTERN = Pattern.compile("^-?(\\d){3}(\\.(\\d){1,2})?$");
+	private static final Pattern LONGITUDE_PATTERN = Pattern.compile("^-?(\\d){3}(\\.\\d+)?$");
 
 	private static final Float LONG_MIN = -180f;
 	private static final Float LONG_MAX = 180f;
