@@ -16,7 +16,7 @@ import ca.corefacility.bioinformatics.irida.validators.annotations.Latitude;
 public class LatitudeValidator implements ConstraintValidator<Latitude, String> {
 
 	private static final Pattern LATITUDE_PATTERN = Pattern.compile("^-?(\\d){2}(\\.(\\d){1,2})?$");
-	
+
 	private static final Float LAT_MIN = -90f;
 	private static final Float LAT_MAX = 90f;
 
@@ -26,13 +26,18 @@ public class LatitudeValidator implements ConstraintValidator<Latitude, String> 
 
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
+		// @Latitude does not imply @NotNull, so don't try to validate if the
+		// value is null.
+		if (value == null) {
+			return true;
+		}
 		// validate with the regex to match "-?(\d){2}.(\d){2}"
 		if (LATITUDE_PATTERN.matcher(value).matches()) {
 			Float latitude = Float.valueOf(value);
 			// let's now verify the range:
 			return latitude >= LAT_MIN && latitude <= LAT_MAX;
 		}
-		
+
 		return false;
 	}
 
