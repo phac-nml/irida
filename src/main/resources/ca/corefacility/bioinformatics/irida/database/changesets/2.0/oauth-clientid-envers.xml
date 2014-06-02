@@ -8,9 +8,7 @@
 	<changeSet id="oauth-clientid-envers" author="tom">
 		<!-- Add clientId column to revisions table -->
 		<addColumn tableName="Revisions">
-			<column name="clientId" type="varchar(255)" >
-				<constraints nullable="true"/>
-			</column>
+			<column name="clientId" type="varchar(255)" />
 		</addColumn>
 
 	</changeSet>
