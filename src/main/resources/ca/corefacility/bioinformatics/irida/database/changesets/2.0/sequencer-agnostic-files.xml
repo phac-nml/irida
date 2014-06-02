@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+	<changeSet id="sequencer-agnostic-files" author="tom">
+
+		<!-- Create sequence properties tables -->
+		<createTable tableName="sequence_file_properties">
+			<column name="sequence_file_id" type="bigint(20)">
+				<constraints nullable="false"
+					foreignKeyName="FK_SEQUENCE_PROPERTIES_SEQUENCE_FILE"
+					referencedColumnNames="id" referencedTableName="sequence_file" />
+			</column>
+			<column name="property_key" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="property_value" type="text">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		
+		<addUniqueConstraint columnNames="sequence_file_id, property_key" tableName="sequence_file_properties" constraintName="UK_SEQUENCE_FILE_PROPERTY_KEY"/>
+
+		<createTable tableName="sequence_file_properties_AUD">
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true"
+					foreignKeyName="FK_SEQUENCE_FILE_PROPERTIES_REVISION"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="sequence_file_id" type="bigint(20)" />
+			<column name="property_key" type="varchar(255)" />
+			<column name="property_value" type="text" />
+		</createTable>
+
+		<!-- Migrate MiSeq specific data from sequence_file to sequence_file_properties -->
+		<sql>
+			INSERT INTO sequence_file_properties
+			(sequence_file_id,property_key,property_value)
+			SELECT id AS
+			sequence_file_id, "samplePlate" AS property_key, samplePlate AS
+			property_value
+			FROM sequence_file WHERE samplePlate IS NOT NULL;
+		</sql>
+
+		<sql>
+			INSERT INTO sequence_file_properties
+			(sequence_file_id,property_key,property_value)
+			SELECT id AS
+			sequence_file_id, "sampleWell" AS property_key, sampleWell AS
+			property_value
+			FROM sequence_file WHERE sampleWell IS NOT NULL;
+		</sql>
+		<sql>
+			INSERT INTO sequence_file_properties
+			(sequence_file_id,property_key,property_value)
+			SELECT id AS
+			sequence_file_id, "i7IndexId" AS property_key, i7IndexId AS
+			property_value
+			FROM sequence_file WHERE i7IndexId IS NOT NULL;
+		</sql>
+		<sql>
+			INSERT INTO sequence_file_properties
+			(sequence_file_id,property_key,property_value)
+			SELECT id AS
+			sequence_file_id, "i7Index" AS property_key, i7Index AS
+			property_value
+			FROM sequence_file WHERE i7Index IS NOT NULL;
+		</sql>
+		<sql>
+			INSERT INTO sequence_file_properties
+			(sequence_file_id,property_key,property_value)
+			SELECT id AS
+			sequence_file_id, "i5IndexId" AS property_key, i5IndexId AS
+			property_value
+			FROM sequence_file WHERE i5IndexId IS NOT NULL;
+		</sql>
+		<sql>
+			INSERT INTO sequence_file_properties
+			(sequence_file_id,property_key,property_value)
+			SELECT id AS
+			sequence_file_id, "i5Index" AS property_key, i5Index AS
+			property_value
+			FROM sequence_file WHERE i5Index IS NOT NULL;
+		</sql>
+
+		<!-- Drop the old MiSeq file specific properties from sequence_file -->
+		<dropColumn tableName="sequence_file" columnName="samplePlate" />
+		<dropColumn tableName="sequence_file" columnName="sampleWell" />
+		<dropColumn tableName="sequence_file" columnName="i7IndexId" />
+		<dropColumn tableName="sequence_file" columnName="i7Index" />
+		<dropColumn tableName="sequence_file" columnName="i5IndexId" />
+		<dropColumn tableName="sequence_file" columnName="i5Index" />
+
+		<dropColumn tableName="sequence_file_AUD" columnName="samplePlate" />
+		<dropColumn tableName="sequence_file_AUD" columnName="sampleWell" />
+		<dropColumn tableName="sequence_file_AUD" columnName="i7IndexId" />
+		<dropColumn tableName="sequence_file_AUD" columnName="i7Index" />
+		<dropColumn tableName="sequence_file_AUD" columnName="i5IndexId" />
+		<dropColumn tableName="sequence_file_AUD" columnName="i5Index" />
+
+	</changeSet>
+</databaseChangeLog>
