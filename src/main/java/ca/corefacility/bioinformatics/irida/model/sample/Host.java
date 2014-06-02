@@ -86,7 +86,7 @@ public class Host {
 	private String tissueSampleId;
 
 	@Min(value = 0, message = "{host.age.min.too.small}")
-	private int age;
+	private Integer age;
 
 	// values taken from BioSample pathogen package 1.0:
 	// https://submit.ncbi.nlm.nih.gov/biosample/template/?package=Pathogen.cl.1.0&action=definition
@@ -174,11 +174,11 @@ public class Host {
 		this.disease = disease;
 	}
 
-	public int getAge() {
+	public Integer getAge() {
 		return age;
 	}
 
-	public void setAge(int age) {
+	public void setAge(Integer age) {
 		this.age = age;
 	}
 

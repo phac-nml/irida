@@ -122,7 +122,7 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	private String geographicLocationName;
 
 	@NotNull(message = "{sample.host.notnull}", groups = NCBISubmission.class)
-	@OneToOne
+	@OneToOne(fetch = FetchType.EAGER)
 	private Host host;
 
 	/**
