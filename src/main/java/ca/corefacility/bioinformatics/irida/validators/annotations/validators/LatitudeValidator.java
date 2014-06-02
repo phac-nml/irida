@@ -17,8 +17,8 @@ public class LatitudeValidator implements ConstraintValidator<Latitude, String> 
 
 	private static final Pattern LATITUDE_PATTERN = Pattern.compile("^-?(\\d){2}(\\.\\d+)?$");
 
-	private static final Float LAT_MIN = -90f;
-	private static final Float LAT_MAX = 90f;
+	private static final Double LAT_MIN = -90d;
+	private static final Double LAT_MAX = 90d;
 
 	@Override
 	public void initialize(Latitude constraintAnnotation) {
@@ -33,7 +33,7 @@ public class LatitudeValidator implements ConstraintValidator<Latitude, String> 
 		}
 		// validate with the regex to match "-?(\d){2}.(\d){2}"
 		if (LATITUDE_PATTERN.matcher(value).matches()) {
-			Float latitude = Float.valueOf(value);
+			Double latitude = Double.valueOf(value);
 			// let's now verify the range:
 			return latitude >= LAT_MIN && latitude <= LAT_MAX;
 		}
