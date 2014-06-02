@@ -59,22 +59,6 @@
 			<name>repo.springsource.org-releases</name>
 			<url>http://repo.springsource.org/libs-milestone-local</url>
 		</repository>
-		<repository>
-			<id>biojava.org</id>
-			<name>biojava.org-releases</name>
-			<url>http://biojava.org/download/maven/</url>
-		</repository>
-		<repository>
-			<id>OSGEO GeoTools repo</id>
-			<url>http://download.osgeo.org/webdav/geotools</url>
-		</repository>
-		<repository>
-			<id>Hibernate Spatial repo</id>
-			<url>http://www.hibernatespatial.org/repository</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
 	</repositories>
 
 	<dependencies>
