@@ -72,7 +72,7 @@ public class Host {
 	/**
 	 * Gender or physical sex of the host
 	 */
-	private Gender sex;
+	private Sex sex;
 
 	/**
 	 * a unique identifier by which each subject can be referred to,
@@ -92,7 +92,7 @@ public class Host {
 
 	// values taken from BioSample pathogen package 1.0:
 	// https://submit.ncbi.nlm.nih.gov/biosample/template/?package=Pathogen.cl.1.0&action=definition
-	public static enum Gender {
+	public static enum Sex {
 		MALE, FEMALE, NEUTER, HERMAPHRODITE, NOT_DETERMINED
 	}
 
@@ -123,11 +123,11 @@ public class Host {
 		this.id = id;
 	}
 
-	public Gender getSex() {
+	public Sex getSex() {
 		return sex;
 	}
 
-	public void setSex(Gender sex) {
+	public void setSex(Sex sex) {
 		this.sex = sex;
 	}
 
