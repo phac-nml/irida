@@ -25,12 +25,23 @@ public class UserRevEntity extends DefaultRevisionEntity {
 	@JoinColumn(name = "user_id")
 	User user;
 
+	// OAuth2 clientId will be populated if the user logged in via OAuth2
+	String clientId;
+
 	public User getUser() {
 		return user;
 	}
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public String getClientId() {
+		return clientId;
+	}
+
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
 	}
 
 }

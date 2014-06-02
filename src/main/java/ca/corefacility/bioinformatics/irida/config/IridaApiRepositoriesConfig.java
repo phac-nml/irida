@@ -4,8 +4,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+import org.hibernate.envers.AuditReader;
+import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.RevisionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,5 +82,10 @@ public class IridaApiRepositoriesConfig {
 	@Bean(initMethod = "initialize")
 	public RevisionListener revisionListener() {
 		return new UserRevListener();
+	}
+	
+	@Bean
+	public AuditReader auditReader(EntityManagerFactory entityManagerFactory){
+		return AuditReaderFactory.get(entityManagerFactory.createEntityManager());
 	}
 }
