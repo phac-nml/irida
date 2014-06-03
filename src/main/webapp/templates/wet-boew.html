@@ -42,8 +42,8 @@
         <div class="container">
             <div class="row">
                 <div id="wb-sttl" class="col-md-5">
-                    <a th:href="@{/}" href="/">
-                        <span th:text="#{global.title}">IRIDA Platform</span>
+                    <a href="#/dashbaord">
+                    <span th:text="#{global.title}">IRIDA Platform</span>
                     </a>
 
                 </div>
@@ -72,7 +72,7 @@
 
             <div class="row">
                 <section class="col-sm-3">
-                    <h3>About</h3>
+                    <h3 th:text="#{global.about}">About</h3>
                     <ul class="list-unstyled">
                         <li><a th:href="@{'/public/about/index-' + ${#locale} + '.html'}"
                                href="/public/about/index-en.html" th:text="#{wet.footer.about}">About the IRIDA
@@ -80,7 +80,7 @@
                     </ul>
                 </section>
                 <section class="col-sm-3">
-                    <h3>Contact us</h3>
+                    <h3 th:text="#{global.contact}">Contact us</h3>
                     <ul class="list-unstyled">
                         <li><a href="https://github.com/wet-boew/wet-boew/issues/new" th:text="#{wet.footer.questions}">Questions
                             or comments?</a></li>
