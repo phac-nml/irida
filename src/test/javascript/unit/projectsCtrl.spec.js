@@ -1,4 +1,4 @@
-define(['scripts/controllers/ProjectsCtrl'], function () {
+define(['controllers/ProjectsCtrl'], function () {
     'use strict';
 
     describe('The "ProjectsCtrl"', function () {
@@ -22,11 +22,11 @@ define(['scripts/controllers/ProjectsCtrl'], function () {
                 }
             ]);
 
-            $controller('ProjectsCtrl', {$scope: $scope});
+            $controller('ProjectsCtrl as ctrl', {$scope: $scope});
         });
 
         it('should display a welcome message', function () {
-            expect($scope.message).toBe('Message from ProjectsCtrl');
+            expect($scope.ctrl.message).toBe('Message from ProjectsCtrl');
         });
     });
 });

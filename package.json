@@ -6,7 +6,6 @@
   "devDependencies": {
     "grunt": "^0.4.4",
     "grunt-autoprefixer": "^0.7.3",
-    "grunt-browserify": "^2.0.8",
     "grunt-concurrent": "^0.5.0",
     "grunt-connect-proxy": "^0.1.10",
     "grunt-contrib-clean": "^0.5.0",

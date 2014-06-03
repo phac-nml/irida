@@ -1,4 +1,4 @@
-define(['scripts/controllers/DashboardCtrl'], function () {
+define(['controllers/DashboardCtrl'], function () {
     'use strict';
 
     describe('The "DashboardCtrl"', function () {
@@ -22,11 +22,11 @@ define(['scripts/controllers/DashboardCtrl'], function () {
                 }
             ]);
 
-            $controller('DashboardCtrl', {$scope: $scope});
+            $controller('DashboardCtrl as ctrl', {$scope: $scope});
         });
 
         it('should display a welcome message', function () {
-            expect($scope.message).toBe('Message from DashboardCtrl');
+            expect($scope.ctrl.message).toBe('Message from DashboardCtrl');
         });
     });
 });

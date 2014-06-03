@@ -12,7 +12,7 @@ var LandingPage = (function () {
     }
 
     LandingPage.prototype.visitPage = function() {
-        browser.get('/');
+        browser.get('/login');
     };
 
     LandingPage.prototype.login = function () {

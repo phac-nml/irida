@@ -1,3 +1,32 @@
-body {
-  background: lightblue;
+html, body {
+  height: 100%;
+}
+
+$footer-height: 270px;
+.content-wrapper {
+  min-height: 100%;
+}
+
+.content-inner {
+  overflow: auto;
+  padding-bottom: $footer-height;
+  background-color: #ffffff;
+  border-top: 3px solid #ccc;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+}
+
+footer {
+  position: relative;
+  margin-top: -$footer-height;
+  height: $footer-height;
+  clear: both;
+}
+
+// Forms
+.input-full {
+  width: 100%;
+}
+.navbar {
+  border-radius: 0;
 }
