@@ -1,10 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.config;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
+import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.ria.thymeleaf.dialect.onsen.OnsenDialect;
+import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +28,10 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.ria.thymeleaf.dialect.onsen.OnsenDialect;
-
-import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
@@ -52,7 +50,7 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 	public static final long TEMPLATE_CACHE_TTL_MS = 3600000L;
 	public static final String LOCALE_CHANGE_PARAMETER = "lang";
 	public static final String DEFAULT_ENCODING = "UTF-8";
-	public static final String RESOURCE_LOCATION = "classpath:/i18n/messages";
+	public static final String[] RESOURCE_LOCATIONS = {"classpath:/i18n/messages", "classpath:/i18n/mobile"};
 	private static final Logger logger = LoggerFactory.getLogger(WebConfigurer.class);
 	@Autowired
 	private Environment env;
@@ -78,7 +76,7 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 		logger.info("Configuring ReloadableResourceBundleMessageSource.");
 
 		ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
-		source.setBasename(RESOURCE_LOCATION);
+		source.setBasenames(RESOURCE_LOCATIONS);
 		source.setFallbackToSystemLocale(false);
 		source.setDefaultEncoding(DEFAULT_ENCODING);
 		return source;
