@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.impl;
+package ca.corefacility.bioinformatics.irida.service.impl.sample;
 
 import java.util.HashSet;
 import java.util.List;
@@ -13,15 +13,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
-import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
-import ca.corefacility.bioinformatics.irida.service.SampleService;
+import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
  * Service class for managing {@link Sample}.
@@ -100,8 +101,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public Sample getSampleByExternalSampleId(Project project, String sampleId) {
-		Sample s = sampleRepository.getSampleByExternalSampleId(project, sampleId);
+	public Sample getSampleBySequencerSampleId(Project project, String sampleId) {
+		Sample s = sampleRepository.getSampleBySequencerSampleId(project, sampleId);
 		if (s != null) {
 			return s;
 		} else {

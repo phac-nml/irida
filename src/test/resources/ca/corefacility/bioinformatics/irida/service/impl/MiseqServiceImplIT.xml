@@ -18,8 +18,8 @@
 	<sequence_file id="3" miseqRun_id="3" filePath="/FileThatMayNotExist2"/>
 	<sequence_file id="4" miseqRun_id="3" filePath="/FileThatMayNotExist3"/>
 	
-	<sample id="1" sampleName="sample" externalSampleId="sample1"/>
-	<sample id="2" sampleName="sample" externalSampleId="sample2"/>
+	<sample id="1" sampleName="sample" sequencerSampleId="sample1"/>
+	<sample id="2" sampleName="sample" sequencerSampleId="sample2"/>
 	<project id="1" name="project 1"/>
 	
 	<sequencefile_sample id="1" sequenceFile_id="1" sample_id="1"/>
