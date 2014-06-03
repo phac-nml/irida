@@ -19,7 +19,7 @@ import java.util.Locale;
 public class PageController {
 	private static final Logger logger = LoggerFactory.getLogger(PageController.class);
 
-	@RequestMapping(value = "/dashboard")
+	@RequestMapping(value = "/app")
 	public String showIndex(SitePreference sitePreference, Model model, Principal principal, Locale locale) {
 		logger.debug("Displaying dashboard page. With site pref: {}", sitePreference);
 		logger.debug(locale.getDisplayLanguage());
