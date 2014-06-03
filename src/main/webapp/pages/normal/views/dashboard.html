@@ -1,3 +1,5 @@
-<div ng-controller="DashboardCtrl">
-    <h1><span th:text="#{dashboard.intro}">TEST</span> THIS IS THE DASHBOARD VIEW OK IT IS! {{message}}</h1>
+<div ng-controller="DashboardCtrl as dashboard">
+    <h1 th:text="#{dashboard.intro}"></h1>
+
+    <h1>{{ dashboard.message }}</h1>
 </div>
