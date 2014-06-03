@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
 import org.junit.Test;
-import org.springframework.mobile.device.site.SitePreference;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -14,13 +14,11 @@ public class DashboardViewControllerTest {
 
 	@Test
 	public void testGetDashboardViewNormal() {
-		SitePreference preference = SitePreference.NORMAL;
-		assertEquals("views/dashboard", controller.getDashboardView(preference));
+		assertEquals("views/dashboard", controller.getDashboardView());
 	}
 
 	@Test
 	public void testGetDashboardViewMobile() {
-		SitePreference preference = SitePreference.MOBILE;
-		assertEquals("views/dashboard", controller.getDashboardView(preference));
+		assertEquals("views/dashboard", controller.getDashboardView());
 	}
 }

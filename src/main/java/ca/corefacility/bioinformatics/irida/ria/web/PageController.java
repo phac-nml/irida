@@ -1,13 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
-import java.security.Principal;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mobile.device.site.SitePreference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.security.Principal;
 
 /**
  * User Login Page Controller
