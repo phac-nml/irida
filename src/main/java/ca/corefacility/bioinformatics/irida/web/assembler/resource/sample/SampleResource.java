@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import ca.corefacility.bioinformatics.irida.model.sample.Host;
 import ca.corefacility.bioinformatics.irida.model.sample.Host.Sex;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.IdentifiableResource;
@@ -34,11 +35,11 @@ public class SampleResource extends IdentifiableResource<Sample> {
 	}
 
 	@XmlElement
-	public String getExternalSampleId() {
+	public String getSequencerSampleId() {
 		return resource.getSequencerSampleId();
 	}
 
-	public void setExternalSampleId(String sampleId) {
+	public void setSequencerSampleId(String sampleId) {
 		resource.setSequencerSampleId(sampleId);
 	}
 
@@ -206,91 +207,159 @@ public class SampleResource extends IdentifiableResource<Sample> {
 
 	@XmlElement
 	public String getHostTaxonomicName() {
-		return resource.getHost().getTaxonomicName();
+		if (resource.getHost() != null) {
+			return resource.getHost().getTaxonomicName();
+		} else {
+			return null;
+		}
 	}
 
 	public void setHostTaxonomicName(String taxonomicName) {
+
 		resource.getHost().setTaxonomicName(taxonomicName);
 	}
 
 	@XmlElement
 	public String getHostDisease() {
-		return resource.getHost().getDisease();
+		if (resource.getHost() != null) {
+			return resource.getHost().getDisease();
+		} else {
+			return null;
+		}
 	}
 
 	public void setHostDisease(String disease) {
+		if (resource.getHost() == null) {
+			resource.setHost(new Host());
+		}
 		resource.getHost().setDisease(disease);
 	}
 
 	@XmlElement
 	public String getHostDescription() {
-		return resource.getHost().getDescription();
+		if (resource.getHost() != null) {
+			return resource.getHost().getDescription();
+		} else {
+			return null;
+		}
 	}
 
 	public void setHostDescription(String description) {
+		if (resource.getHost() == null) {
+			resource.setHost(new Host());
+		}
 		resource.getHost().setDescription(description);
 	}
 
 	@XmlElement
 	public String getHostDiseaseOutcome() {
-		return resource.getHost().getDiseaseOutcome();
+		if (resource.getHost() != null) {
+			return resource.getHost().getDiseaseOutcome();
+		} else {
+			return null;
+		}
 	}
 
 	public void setHostDiseaseOutcome(String diseaseOutcome) {
+		if (resource.getHost() == null) {
+			resource.setHost(new Host());
+		}
 		resource.getHost().setDiseaseOutcome(diseaseOutcome);
 	}
 
 	@XmlElement
 	public String getHostDiseaseStage() {
-		return resource.getHost().getDiseaseStage();
+		if (resource.getHost() != null) {
+			return resource.getHost().getDiseaseStage();
+		} else {
+			return null;
+		}
 	}
 
 	public void setHostDiseaseStage(String diseaseStage) {
+		if (resource.getHost() == null) {
+			resource.setHost(new Host());
+		}
 		resource.getHost().setDiseaseStage(diseaseStage);
 	}
 
 	@XmlElement
 	public String getHostHealthState() {
-		return resource.getHost().getHealthState();
+		if (resource.getHost() != null) {
+			return resource.getHost().getHealthState();
+		} else {
+			return null;
+		}
 	}
 
 	public void setHostHealthState(String healthState) {
+		if (resource.getHost() == null) {
+			resource.setHost(new Host());
+		}
 		resource.getHost().setHealthState(healthState);
 	}
 
 	@XmlElement
 	public Sex getHostSex() {
-		return resource.getHost().getSex();
+		if (resource.getHost() != null) {
+			return resource.getHost().getSex();
+		} else {
+			return null;
+		}
 	}
 
 	public void setHostSex(Sex sex) {
+		if (resource.getHost() == null) {
+			resource.setHost(new Host());
+		}
 		resource.getHost().setSex(sex);
 	}
 
 	@XmlElement
 	public String getHostSubjectId() {
-		return resource.getHost().getSubjectId();
+		if (resource.getHost() != null) {
+			return resource.getHost().getSubjectId();
+		} else {
+			return null;
+		}
 	}
 
 	public void setHostSubjectId(String subjectId) {
+		if (resource.getHost() == null) {
+			resource.setHost(new Host());
+		}
 		resource.getHost().setSubjectId(subjectId);
 	}
-	
+
 	@XmlElement
 	public String getHostTissueSampleId() {
-		return resource.getHost().getTissueSampleId();
+		if (resource.getHost() != null) {
+			return resource.getHost().getTissueSampleId();
+		} else {
+			return null;
+		}
 	}
-	
+
 	public void setHostTissueSampleId(String tissueSampleId) {
+		if (resource.getHost() == null) {
+			resource.setHost(new Host());
+		}
 		resource.getHost().setTissueSampleId(tissueSampleId);
 	}
-	
+
 	@XmlElement
 	public Integer getHostAge() {
-		return resource.getHost().getAge();
+		if (resource.getHost() != null) {
+			return resource.getHost().getAge();
+		} else {
+			return null;
+		}
 	}
-	
+
 	public void setHostAge(Integer age) {
+		if (resource.getHost() == null) {
+			resource.setHost(new Host());
+		}
 		resource.getHost().setAge(age);
 	}
 }
