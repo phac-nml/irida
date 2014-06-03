@@ -22,6 +22,24 @@ define([], function () {
                 dependencies: [
                     'controllers/ProjectsCtrl'
                 ]
+            },
+            '/pipelines': {
+                templateUrl: baseUrl + 'pipelines/view/main',
+                dependencies: [
+                    'controllers/PipelinesCtrl'
+                ]
+            },
+            '/analysis': {
+                templateUrl: baseUrl + 'analysis/view/main',
+                dependencies: [
+                    'controllers/AnalysisCtrl'
+                ]
+            },
+            '/files': {
+                templateUrl: baseUrl + 'files/view/main',
+                dependencies: [
+                    'controllers/FilesCtrl'
+                ]
             }
         }
     };
