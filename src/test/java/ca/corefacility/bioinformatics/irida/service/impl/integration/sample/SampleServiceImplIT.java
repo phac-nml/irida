@@ -60,6 +60,17 @@ public class SampleServiceImplIT {
 	private SequenceFileService sequenceFileService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Test
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	public void testCreateSample() {
+		Sample s = new Sample();
+		String sampleName = "sampleName";
+		s.setSampleName(sampleName);
+		s.setSequencerSampleId("sampleId");
+		Sample saved = sampleService.create(s);
+		assertEquals("Wrong name was saved.", sampleName, saved.getSampleName());
+	}
 
 	/**
 	 * Straightforward merging of samples all belonging to the same project.
