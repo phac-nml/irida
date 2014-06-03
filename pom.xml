@@ -437,7 +437,7 @@
 		<spring.version>4.0.3.RELEASE</spring.version>
 		<spring.security.version>4.0.0.M1</spring.security.version>
 		<spring.data.jpa.version>1.5.2.RELEASE</spring.data.jpa.version>
-		<spring.security.oauth.version>1.0.5.RELEASE</spring.security.oauth.version>
+		<spring.security.oauth.version>2.0.1.RELEASE</spring.security.oauth.version>
 		<spring.data.envers.version>0.1.0.RELEASE</spring.data.envers.version>
 		<spring.ws.test.version>2.1.4.RELEASE</spring.ws.test.version>
 		<mockito.version>1.9.5</mockito.version>
