@@ -215,7 +215,9 @@ public class SampleResource extends IdentifiableResource<Sample> {
 	}
 
 	public void setHostTaxonomicName(String taxonomicName) {
-
+        if (resource.getHost() == null) {
+            resource.setHost(new Host());
+        }
 		resource.getHost().setTaxonomicName(taxonomicName);
 	}
 
