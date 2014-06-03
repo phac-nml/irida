@@ -91,7 +91,7 @@
 		<javax.servlet.version>3.1</javax.servlet.version>
 
 		<!-- REST-assured -->
-		<rest.assured.version>1.8.0</rest.assured.version>
+		<rest.assured.version>1.8.1</rest.assured.version>
 
 		<!-- Groovy test version -->
 		<groovy.version>2.1.2</groovy.version>
