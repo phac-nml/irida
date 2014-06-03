@@ -15,7 +15,7 @@ import ca.corefacility.bioinformatics.irida.validators.annotations.Latitude;
  */
 public class LatitudeValidator implements ConstraintValidator<Latitude, String> {
 
-	private static final Pattern LATITUDE_PATTERN = Pattern.compile("^-?(\\d){2}(\\.\\d+)?$");
+	private static final Pattern LATITUDE_PATTERN = Pattern.compile("^-?(\\d){1,2}(\\.\\d+)?$");
 
 	private static final Double LAT_MIN = -90d;
 	private static final Double LAT_MAX = 90d;
