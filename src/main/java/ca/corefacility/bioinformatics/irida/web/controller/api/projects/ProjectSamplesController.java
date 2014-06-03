@@ -136,11 +136,11 @@ public class ProjectSamplesController {
 
     }
 	
-	@RequestMapping(value = "/projects/{projectId}/samples/byExternalId/{externalSampleId}", method = RequestMethod.GET)
-	public ModelAndView getProjectSampleByExternalId(@PathVariable Long projectId, @PathVariable String externalSampleId){
+	@RequestMapping(value = "/projects/{projectId}/samples/bySequencerId/{seqeuncerId}", method = RequestMethod.GET)
+	public ModelAndView getProjectSampleBySequencerId(@PathVariable Long projectId, @PathVariable String seqeuncerId){
         Project p = projectService.read(projectId);
         
-        Sample sampleBySampleId = sampleService.getSampleBySequencerSampleId(p, externalSampleId);
+        Sample sampleBySampleId = sampleService.getSampleBySequencerSampleId(p, seqeuncerId);
 
         SampleResource sr = new SampleResource();
         sr.setResource(sampleBySampleId);
