@@ -62,15 +62,14 @@ public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 	public boolean equals(Object o) {
 		if (o instanceof SampleSequenceFileJoin) {
 			SampleSequenceFileJoin j = (SampleSequenceFileJoin) o;
-			return Objects.equals(sequenceFile, j.sequenceFile) && Objects.equals(sample, j.sample)
-					&& Objects.equals(createdDate, j.createdDate);
+			return Objects.equals(sequenceFile, j.sequenceFile) && Objects.equals(sample, j.sample);
 		}
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(sequenceFile, sample, createdDate);
+		return Objects.hash(sequenceFile, sample);
 	}
 
 	@Override
