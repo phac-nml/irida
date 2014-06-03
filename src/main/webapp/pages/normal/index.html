@@ -56,8 +56,14 @@
     <div th:replace="../templates/wet-boew :: header"></div>
     <main class="container content-inner" role="main" property="mainContentOfPage">
         <div class="row">
-            <div class="navbar navbar-default" role="navigation">
+            <div class="navbar navbar-inverse" role="navigation">
                 <div class="container-fluid">
+                    <ul class="nav navbar-nav">
+                        <li><a href="#/projects">Projects</a></li>
+                        <li><a href="#/pipelines">Pipelines</a></li>
+                        <li><a href="#/analysis">Analysis</a></li>
+                        <li><a href="#/files">Files</a></li>
+                    </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="#">Link</a></li>
                         <li class="dropdown">
@@ -67,19 +73,14 @@
                                 <li><a href="#">Another action</a></li>
                                 <li><a href="#">Something else here</a></li>
                                 <li class="divider"></li>
-                                <li><a id="logout_btn" class="btn" th:href="@{/logout}" href="/logout" th:text="#{global.logout}">Logout</a></li>
+                                <li><a th:href="@{/logout}" href="/logout" th:text="#{global.logout}">Logout</a></li>
                             </ul>
                         </li>
                     </ul>
                 </div>
             </div>
-            <div class="col-lg-12">
-                <h2 th:text="${name}">__USERNAME__</h2>
-                <a href="#/projects">Projects</a>
-
-            </div>
-            <div ng-view=""></div>
         </div>
+        <div class="row" ng-view=""></div>
     </main>
 </div>
 <div th:replace="../templates/wet-boew :: footer"></div>
