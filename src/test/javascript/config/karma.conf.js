@@ -23,14 +23,15 @@ module.exports = function (config) {
 
             // Load these files in this order...
 
-                appPath + '/bower_components/angular/angular.js',
-                appPath + '/bower_components/angular-route/angular-route.js',
-                appPath + '/bower_components/angular-mocks/angular-mocks.js',
+                appPath + '/resources/bower_components/angular/angular.js',
+                appPath + '/resources/bower_components/angular-route/angular-route.js',
+                appPath + '/resources/bower_components/angular-mocks/angular-mocks.js',
+                appPath + '/resources/bower_components/angular-ui-bootstrap-complete/ui-bootstrap.js',
 
             // Use `included = false` to let requireJS load them as needed
             // ... listed here so they can be resolved relative to the baseURL
 
-            { pattern: appPath + '/scripts/**/*.js', included: false },
+            { pattern: appPath + '/resources/js/**/*.js', included: false },
             { pattern: testPath + '/unit/*.spec.js', included: false },
 
             // Load and run the RequireJS/Karma bootstrap

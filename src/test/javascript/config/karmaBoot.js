@@ -13,12 +13,12 @@ for (var file in window.__karma__.files)
 requirejs.config
 ({
     // Karma serves files from '/base'
-    baseUrl: '/base/src/main/webapp/',
+    baseUrl: '/base/src/main/webapp/resources/js/',
 
     paths: {
-        'app' : 'scripts/app',
-        'routes': 'scripts/routes',
-        'services/dependencyResolverFor': 'scripts/services/dependencyResolverFor'
+        'app' : '/base/src/main/webapp/resources/js/app',
+        'routes': '/base/src/main/webapp/resources/js/routes',
+        'services/dependencyResolverFor': '/base/src/main/webapp/resources/js/services/dependencyResolverFor'
     },
 
     // ask Require.js to load these files (all our tests)
