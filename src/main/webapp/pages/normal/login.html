@@ -85,7 +85,7 @@
 <script th:src="@{/resources/bower_components/angular/angular.min.js}" src="/resources/bower_components/angular/angular.min.js"></script>
 <script>
     angular.module('irida.login', [])
-            .controller('LoginCtrl', ['$scope', '$location', function ($scope, $location) {
+            .controller('LoginCtrl', ['$location', function ($location) {
                 'use strict';
                 this.error = $location.absUrl().search('error') > -1;
             }]);
