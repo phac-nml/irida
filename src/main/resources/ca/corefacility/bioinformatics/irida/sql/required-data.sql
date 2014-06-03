@@ -255,3 +255,28 @@ INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES (no
 
 -- remote apis
 insert into remote_api (clientId,clientSecret,description,serviceURI) values ("webClient","webClientSecret","A local testing api","http://localhost:8080");
+
+-- client details
+insert into client_details (clientId, clientSecret, accessTokenValiditySeconds) values ("sequncer", "N9Ywc6GKWWZotzsJGutj3BZXJDRn65fXJqjrk29yTjI", 43200);
+insert into client_details (clientId, clientSecret, accessTokenValiditySeconds) values ("linker", "ZG5K1AFVSycE25ooxgcBRGCWFzSTfDnJ1DxSkdEmEho", 43200);
+insert into client_details (clientId, clientSecret, accessTokenValiditySeconds) values ("pythonLinker", "bySZBP5jNO9pSZTz3omFRtJs3XFAvshxGgvXIlZ2zjk", 43200);
+insert into client_details (clientId, clientSecret, accessTokenValiditySeconds) values ("testClient", "testClientSecret", 43200);
+insert into client_details (clientId, clientSecret, accessTokenValiditySeconds) values ("webClient", "webClientSecret", 43200);
+
+insert into client_details_scope (client_details_id,scope) values (1,"read"), (1,"write");
+insert into client_details_scope (client_details_id,scope) values (2,"read");
+insert into client_details_scope (client_details_id,scope) values (3,"read");
+insert into client_details_scope (client_details_id,scope) values (4,"read"), (4,"write");
+insert into client_details_scope (client_details_id,scope) values (5,"read"), (5,"write");
+
+insert into client_details_grant_types (client_details_id,grant_value) values (1,"password");
+insert into client_details_grant_types (client_details_id,grant_value) values (2,"password");
+insert into client_details_grant_types (client_details_id,grant_value) values (3,"password");
+insert into client_details_grant_types (client_details_id,grant_value) values (4,"password");
+insert into client_details_grant_types (client_details_id,grant_value) values (5,"password"), (5,"authorization_code");
+
+insert into client_details_resource_ids (client_details_id,resource_id) values (1,"NmlIrida");
+insert into client_details_resource_ids (client_details_id,resource_id) values (2,"NmlIrida");
+insert into client_details_resource_ids (client_details_id,resource_id) values (3,"NmlIrida");
+insert into client_details_resource_ids (client_details_id,resource_id) values (4,"NmlIrida");
+insert into client_details_resource_ids (client_details_id,resource_id) values (5,"NmlIrida");
