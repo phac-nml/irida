@@ -31,7 +31,7 @@ public class ProjectSamplesIntegrationTest {
 	public void testAddSampleToProject() {
 		Map<String, String> sample = new HashMap<>();
 		sample.put("sampleName", "sample_1");
-                sample.put("externalSampleId", "sample_1");
+                sample.put("sequencerSampleId", "sample_1");
 
 		// load a project
 		String projectUri = "/projects/1";

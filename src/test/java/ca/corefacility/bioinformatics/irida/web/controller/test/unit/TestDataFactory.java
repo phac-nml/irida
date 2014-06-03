@@ -5,8 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
@@ -31,7 +31,7 @@ public final class TestDataFactory {
     }
 
     /**
-     * Construct a simple {@link ca.corefacility.bioinformatics.irida.model.Sample}.
+     * Construct a simple {@link ca.corefacility.bioinformatics.irida.model.sample.Sample}.
      *
      * @return a sample with a name and identifier.
      */
