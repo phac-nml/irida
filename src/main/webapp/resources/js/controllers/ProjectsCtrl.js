@@ -1,8 +1,8 @@
 (function (define) {
     'use strict';
     define(['app'], function (app) {
-        app.controller('ProjectsCtrl', ['$scope', function ($scope) {
-            $scope.message = 'Message from ProjectsCtrl';
+        app.controller('ProjectsCtrl', [function () {
+            this.message = 'Message from ProjectsCtrl';
         }]);
     });
 })(define);
