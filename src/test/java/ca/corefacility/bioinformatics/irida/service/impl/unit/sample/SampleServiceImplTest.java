@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.impl.unit;
+package ca.corefacility.bioinformatics.irida.service.impl.unit.sample;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -20,16 +20,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleSequenceFileJoin;
-import ca.corefacility.bioinformatics.irida.repositories.SampleRepository;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
-import ca.corefacility.bioinformatics.irida.service.SampleService;
-import ca.corefacility.bioinformatics.irida.service.impl.SampleServiceImpl;
+import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.service.impl.sample.SampleServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
  * Unit tests for {@link SampleServiceImpl}.

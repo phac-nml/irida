@@ -1,16 +1,19 @@
-package ca.corefacility.bioinformatics.irida.service.impl.integration;
+package ca.corefacility.bioinformatics.irida.service.impl.integration.sample;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-import org.junit.Before;
+import java.util.Map;
+
+import javax.validation.ConstraintViolationException;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -23,17 +26,15 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.Sample;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
-import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SampleService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Integration tests for the sample service.
@@ -45,7 +46,8 @@ import com.google.common.collect.ImmutableList;
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
 		IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
 @ActiveProfiles("test")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
+		WithSecurityContextTestExcecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class SampleServiceImplIT {
@@ -58,23 +60,23 @@ public class SampleServiceImplIT {
 	private SequenceFileService sequenceFileService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-
-	@Before
-	public void setUp() {
-		User u = new User();
-		u.setUsername("fbristow");
-		u.setPassword(passwordEncoder.encode("Password1"));
-		u.setSystemRole(Role.ROLE_ADMIN);
-		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
-				ImmutableList.of(Role.ROLE_ADMIN));
-		auth.setDetails(u);
-		SecurityContextHolder.getContext().setAuthentication(auth);
+	
+	@Test
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	public void testCreateSample() {
+		Sample s = new Sample();
+		String sampleName = "sampleName";
+		s.setSampleName(sampleName);
+		s.setSequencerSampleId("sampleId");
+		Sample saved = sampleService.create(s);
+		assertEquals("Wrong name was saved.", sampleName, saved.getSampleName());
 	}
 
 	/**
 	 * Straightforward merging of samples all belonging to the same project.
 	 */
 	@Test
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testMergeSamples() {
 		Sample mergeInto = sampleService.read(1l);
 		Project p = projectService.read(1l);
@@ -97,6 +99,7 @@ public class SampleServiceImplIT {
 	 * where they do not share the same project.
 	 */
 	@Test(expected = IllegalArgumentException.class)
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testMergeSampleReject() {
 		Sample mergeInto = sampleService.read(1l);
 		Project p = projectService.read(1l);
@@ -104,56 +107,92 @@ public class SampleServiceImplIT {
 	}
 
 	@Test
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT_duplicateSampleIds.xml")
 	public void testGetSampleByExternalIdDuplicates() {
 		Project p = projectService.read(7l);
-		Sample s = sampleService.getSampleByExternalSampleId(p, "external");
+		Sample s = sampleService.getSampleBySequencerSampleId(p, "external");
 		assertEquals("Should have retrieved sample with ID 1L.", Long.valueOf(7l), s.getId());
 	}
 
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	@Test(expected = EntityNotFoundException.class)
 	public void testgetSampleByExternalNotFound() {
 		Project p = projectService.read(1l);
-		sampleService.getSampleByExternalSampleId(p, "garbage");
+		sampleService.getSampleBySequencerSampleId(p, "garbage");
 	}
 
 	@Test
+	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testReadSampleByExternalIdAsSequencer() {
 		String externalId = "sample5";
-		Project p = asRole(Role.ROLE_SEQUENCER).projectService.read(3L);
-		Sample s = asRole(Role.ROLE_SEQUENCER).sampleService.getSampleByExternalSampleId(p, externalId);
+		Project p = projectService.read(3L);
+		Sample s = sampleService.getSampleBySequencerSampleId(p, externalId);
 
 		assertNotNull("Sample was not populated.", s);
-		assertEquals("Wrong external id.", externalId, s.getExternalSampleId());
+		assertEquals("Wrong external id.", externalId, s.getSequencerSampleId());
 	}
 
 	@Test
+	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testReadSampleAsSequencer() {
 		Long sampleID = 1L;
-		Sample s = asRole(Role.ROLE_SEQUENCER).sampleService.read(sampleID);
+		Sample s = sampleService.read(sampleID);
 
 		assertNotNull("Sample was not populated.", s);
 		assertEquals("Wrong external id.", sampleID, s.getId());
 	}
 
 	@Test
+	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testGetSampleForProjectAsSequencer() {
 		Long sampleID = 2L;
 		Long projectID = 1L;
-		Project p = asRole(Role.ROLE_SEQUENCER).projectService.read(projectID);
-		Sample s = asRole(Role.ROLE_SEQUENCER).sampleService.getSampleForProject(p, sampleID);
+		Project p = projectService.read(projectID);
+		Sample s = sampleService.getSampleForProject(p, sampleID);
 
 		assertNotNull("Sample was not populated.", s);
 		assertEquals("Wrong external id.", sampleID, s.getId());
 	}
 
 	@Test
+	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testGetSampleForProjectAsUser() {
 		Long sampleID = 2L;
-		Sample s = asRole(Role.ROLE_USER).sampleService.read(sampleID);
+		Sample s = sampleService.read(sampleID);
 
 		assertNotNull("Sample was not populated.", s);
 		assertEquals("Wrong external id.", sampleID, s.getId());
+	}
+
+	@Test(expected = ConstraintViolationException.class)
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	public void testUpdateWithInvalidLatLong() {
+		Long sampleId = 2L;
+		Map<String, Object> properties = ImmutableMap.of("latitude", "not a geographic latitude", "longitude",
+				"not a geographic longitude");
+
+		sampleService.update(sampleId, properties);
+	}
+	
+	@Test(expected = ConstraintViolationException.class)
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	public void testUpdateWithInvalidRangeLatLong() {
+		Long sampleId = 2L;
+		Map<String, Object> properties = ImmutableMap.of("latitude", "-1000.00", "longitude", "1000.00");
+		sampleService.update(sampleId, properties);
+	}
+	
+	@Test
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	public void testUpdateLatLong() {
+		Long sampleId = 2L;
+		String latitude = "50.00";
+		String longitude = "-100.00";
+		Map<String, Object> properties = ImmutableMap.of("latitude", latitude, "longitude", longitude);
+		Sample s = sampleService.update(sampleId, properties);
+		assertEquals("Wrong latitude was stored.", latitude, s.getLatitude());
+		assertEquals("Wrong longitude was stored.", longitude, s.getLongitude());
 	}
 
 	private void assertSampleNotFound(Long id) {
@@ -164,17 +203,5 @@ public class SampleServiceImplIT {
 		} catch (Exception e) {
 			fail("Failed for unknown reason; ");
 		}
-	}
-
-	private SampleServiceImplIT asRole(Role r) {
-		User u = new User();
-		u.setUsername("fbristow");
-		u.setPassword(passwordEncoder.encode("Password1"));
-		u.setSystemRole(r);
-		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
-				ImmutableList.of(r));
-		auth.setDetails(u);
-		SecurityContextHolder.getContext().setAuthentication(auth);
-		return this;
 	}
 }
