@@ -1,39 +1,4 @@
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/main\.scss}line{font-family:\000031}}
-html, body {
-  height: 100%;
-}
-
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/main\.scss}line{font-family:\000036}}
-.content-wrapper {
-  min-height: 100%;
-}
-
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/main\.scss}line{font-family:\0000310}}
-.content-inner {
-  overflow: auto;
-  padding-bottom: 270px;
-  background-color: #ffffff;
-  border-top: 3px solid #ccc;
-  border-left: 1px solid #ccc;
-  border-right: 1px solid #ccc;
-}
-
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/main\.scss}line{font-family:\0000319}}
-footer {
-  position: relative;
-  margin-top: -270px;
-  height: 270px;
-  clear: both;
-}
-
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/main\.scss}line{font-family:\0000327}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/main\.scss}line{font-family:\000032}}
 .input-full {
   width: 100%;
 }
-
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/main\.scss}line{font-family:\0000330}}
-.navbar {
-  border-radius: 0;
-}
-
-/*# sourceMappingURL=main.css.map */
