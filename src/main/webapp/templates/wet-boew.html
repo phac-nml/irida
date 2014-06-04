@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link href="/resources/wet-theme/css/theme.min.css"/>
+</head>
 <body>
 <header th:fragment="header" role="banner">
     <div id="wb-bnr">
@@ -42,7 +45,7 @@
         <div class="container">
             <div class="row">
                 <div id="wb-sttl" class="col-md-5">
-                    <a href="#/dashbaord">
+                    <a th:href="@{/}" href="/">
                     <span th:text="#{global.title}">IRIDA Platform</span>
                     </a>
 
@@ -106,8 +109,8 @@
         </nav>
     </div>
     <div id="gc-info">
-        <div class="container" th:switch="${#locale.language}">
-            <nav role="navigation">
+        <div class="container">
+            <nav role="navigation" th:switch="${#locale.language}">
                 <h2>Government of Canada footer</h2>
 
                 <ul class="list-inline" th:case="'en'">
@@ -118,8 +121,7 @@
                     </li>
                     <li><a href="http://www.jobbank.gc.ca"><span>Jobs</span>jobbank.gc.ca</a></li>
                     <li><a href="http://actionplan.gc.ca/en"><span>Economy</span>actionplan.gc.ca</a></li>
-
-                    <li><a href="http://www.canada.ca/en/index.html">Canada.ca</a></li>
+                    <li id="canada-ca"><a href="http://www.canada.ca/en/index.html">Canada.ca</a></li>
                 </ul>
 
                 <ul class="list-inline" th:case="'fr'">
@@ -131,8 +133,7 @@
                     <li><a href="http://www.guichetemplois.gc.ca/accueil-fra.do?lang=fra"><span>Offres d'emploi</span>guichetemplois.gc.ca</a>
                     </li>
                     <li><a href="http://actionplan.gc.ca/fr"><span>Économie</span>actionplan.gc.ca</a></li>
-
-                    <li><a href="http://www.canada.ca/en/index.html">Canada.ca</a></li>
+                    <li id="canada-ca"><a href="http://www.canada.ca/fr/index.html">Canada.ca</a></li>
                 </ul>
             </nav>
         </div>
