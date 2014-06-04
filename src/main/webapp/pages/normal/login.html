@@ -23,11 +23,14 @@
     <!-- END META -->
 
     <!--[if gte IE 9 | !IE ]><!-->
-    <link th:href="@{/resources/wet/assets/favicon.ico}" href="/resources/wet/assets/favicon.ico" rel="icon"
+    <link th:href="@{/resources/wet-theme/assets/favicon.ico}" href="/resources/wet-theme/assets/favicon.ico" rel="icon"
           type="image/x-icon"/>
-    <link rel="stylesheet" th:href="@{/resources/wet/css/wet-boew.min.css}" href="/resources/wet/css/wet-boew.min.css"/>
+    <link rel="stylesheet" th:href="@{/resources/wet-theme/css/wet-boew.min.css}"
+          href="/resources/wet-theme/css/wet-boew.min.css"/>
     <!--<![endif]-->
-    <link rel="stylesheet" th:href="@{/resources/wet-theme/css/theme.min.css}" href="/resources/wet-theme/css/theme.min.css"/>
+    <link rel="stylesheet" th:href="@{/resources/css/main.css}" href="/resources/css/main.css"/>
+    <link rel="stylesheet" th:href="@{/resources/wet-theme/css/theme.min.css}"
+          href="/resources/wet-theme/css/theme.min.css"/>
 
     <!--[if lt IE 9]>
     <link th:href="@{/resources/assets/favicon.ico}" href="/resources/assets/favicon.ico" rel="shortcut icon"/>
@@ -40,60 +43,37 @@
     <noscript>
         <link rel="stylesheet" th:href="@{/resources/css/noscript.min.css}" href="/resources/css/noscript.min.css"/>
     </noscript>
-
-    <style>
-        .ng-cloak {
-            display: none !important;
-        }
-    </style>
 </head>
 <body vocab="http://schema.org/" typeof="WebPage" ng-app="irida.login">
-<div class="content-wrapper">
-    <div th:replace="../templates/wet-boew :: header"></div>
-    <main class="container content-inner" role="main" property="mainContentOfPage">
-        <h1 class="page-header" th:text="#{login.title}"></h1>
-
-        <section>
-            <div class="row" ng-controller="LoginCtrl as login">
-                <div class="col-md-6">
-                    <form name="loginForm" role="form" method="post" th:action="@{/login}" action="/login">
-                        <div class="alert alert-danger" ng-show="login.error">
-                            <strong th:text="#{login.error}"></strong>
-                        </div>
-                        <div class="form-group">
-                            <label for="exampleInputEmail1" th:text="#{global.email.label}">Email address</label>
-                            <!-- TODO: this needs to be an email field once set up in api project -->
-                            <input type="text" class="form-control input-full" id="exampleInputEmail1" name="username"
-                                   th:placeholder="#{global.email.placeholder}" placeholder="Enter email"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="exampleInputPassword1" th:text="#{global.password.label}">Password</label>
-                            <input type="password" class="form-control input-full" id="exampleInputPassword1" name="password"
-                                   th:placeholder="#{global.password.placeholder}" placeholder="Password"/>
-                        </div>
-                        <button type="submit" class="btn btn-primary" th:text="#{global.btn.submit}">Submit</button>
-                    </form>
-                </div>
-                <div class="col-md-6" th:text="#{login.summary}">PUDDING</div>
+<div th:replace="../templates/wet-boew :: header"></div>
+<main class="container" role="main" property="mainContentOfPage">
+    <h1 class="page-header" th:text="#{login.title}"></h1>
+    <section>
+        <div class="row" ng-controller="LoginCtrl as login">
+            <div class="col-md-6">
+                <form name="loginForm" role="form" method="post" th:action="@{/login}" action="/login">
+                    <div th:if="${error}" class="alert alert-danger">
+                        <strong th:text="#{login.error}"></strong>
+                    </div>
+                    <div class="form-group">
+                        <label for="emailTF" th:text="#{global.email.label}">Email address</label>
+                        <!-- TODO: this needs to be an email field once set up in api project -->
+                        <input type="text" class="form-control input-full" id="emailTF" name="username"
+                               th:placeholder="#{global.email.placeholder}" placeholder="Enter email"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="passwordTF" th:text="#{global.password.label}">Password</label>
+                        <input type="password" class="form-control input-full" id="passwordTF"
+                               name="password"
+                               th:placeholder="#{global.password.placeholder}" placeholder="Password"/>
+                    </div>
+                    <button type="submit" class="btn btn-primary" th:text="#{global.btn.submit}">Submit</button>
+                </form>
             </div>
-        </section>
-    </main>
-</div>
+            <div class="col-md-6" th:text="#{login.summary}">IRIDA Summary</div>
+        </div>
+    </section>
+</main>
 <div th:replace="../templates/wet-boew :: footer"></div>
-
-<script th:src="@{/resources/bower_components/angular/angular.min.js}" src="/resources/bower_components/angular/angular.min.js"></script>
-<script>
-    angular.module('irida.login', [])
-            .controller('LoginCtrl', ['$location', function ($location) {
-                'use strict';
-                this.error = $location.absUrl().search('error') > -1;
-            }]);
-
-    window.onload = function () {
-        var hash = unescape(self.document.location.hash.substring(1));
-        document.loginForm.action = document.loginForm.action + '#' + hash;
-    }
-</script>
-
 </body>
 </html>
