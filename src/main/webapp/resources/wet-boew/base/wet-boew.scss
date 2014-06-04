@@ -7,7 +7,7 @@
  */
 @import "../variables";
 
-@import "../../lib/bootstrap-sass-official/vendor/assets/stylesheets/bootstrap";
+@import "../../bower_components/bootstrap-sass-official/vendor/assets/stylesheets/bootstrap";
 
 /*
  Global placeholders
@@ -53,28 +53,28 @@
 @import "details/base";
 
 /*
- Plugins
+ Plugins - only enable as needed
  */
-@import "../plugins/cal-events/base";
-@import "../plugins/calendar/base";
-@import "../plugins/calendar/base";
-@import "../plugins/charts/base";
-@import "../plugins/footnotes/base";
-@import "../plugins/formvalid/base";
-@import "../plugins/lightbox/base";
-@import "../plugins/menu/base";
-@import "../plugins/multimedia/base";
-@import "../plugins/overlay/base";
-@import "../plugins/prettify/base";
-@import "../plugins/resize/base";
-@import "../plugins/session-timeout/base";
-@import "../plugins/share/base";
-@import "../plugins/tables/base";
-@import "../plugins/tabs/base";
-@import "../plugins/twitter/base";
-@import "../plugins/texthighlight/base";
-@import "../plugins/geomap/base";
-@import "../plugins/zebra/base";
+//@import "../plugins/cal-events/base";
+//@import "../plugins/calendar/base";
+//@import "../plugins/calendar/base";
+//@import "../plugins/charts/base";
+//@import "../plugins/footnotes/base";
+//@import "../plugins/formvalid/base";
+//@import "../plugins/lightbox/base";
+//@import "../plugins/menu/base";
+//@import "../plugins/multimedia/base";
+//@import "../plugins/overlay/base";
+//@import "../plugins/prettify/base";
+//@import "../plugins/resize/base";
+//@import "../plugins/session-timeout/base";
+//@import "../plugins/share/base"; // Don't currently need sharing:)
+//@import "../plugins/tables/base";
+//@import "../plugins/tabs/base";
+//@import "../plugins/twitter/base";
+//@import "../plugins/texthighlight/base";
+//@import "../plugins/geomap/base";
+//@import "../plugins/zebra/base";
 
 /*
  Polyfills
