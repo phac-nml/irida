@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 import org.junit.Test;
 import org.springframework.mobile.device.site.SitePreference;
+import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.Model;
 
 import static org.junit.Assert.assertEquals;
 
@@ -14,8 +16,8 @@ public class LoginControllerTest {
 
 	@Test
 	public void testShowLoginPage() {
-		SitePreference preference = SitePreference.NORMAL;
-		assertEquals("login", controller.showLogin(preference));
+		Model model = new ExtendedModelMap();
+		assertEquals("login", controller.showLogin(model, false));
 	}
 
 	@Test
