@@ -1,0 +1,177 @@
+/*
+ *
+ * Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
+ * wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html
+ *
+ */
+/*
+  @title: Small view and under (screen only)
+ */
+
+%small-view-display-none {
+	display: none;
+}
+
+#gcwu-sig {
+	@extend %small-view-display-none;
+}
+
+#wmms {
+	position: absolute;
+	top: 0.3em;
+	margin-left: 15px;
+	margin-top: 4px;
+}
+
+#gc-bar {
+	@extend %small-view-display-none;
+}
+
+#wb-bar {
+	min-height: 2.2em;
+}
+
+#wb-bnr {
+	background: {
+		color: $screen-sm-banner-gradient-end;
+		image: linear-gradient($screen-sm-banner-gradient-start, $screen-sm-banner-gradient-start, $screen-sm-banner-gradient-end);
+	}
+	filter: unquote("progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#{$screen-sm-banner-gradient-start}', endColorstr='#{$screen-sm-banner-gradient-end}')");
+}
+
+#wb-sttl {
+	position: relative;
+	a {
+		font-size: 1.5em;
+		text-shadow: 0 1px 1px $screen-sm-banner-text-shadow-color;
+	}
+}
+
+#wb-glb-mn {
+	.pnl-btn {
+		position: relative;
+		z-index: 2;
+		margin: 0;
+		float: right;
+		li {
+			padding: 4px 10px;
+			width: 100%;
+		}
+		a {
+			font-size: 1.5em;
+			display: block;
+			width: 100%;
+			color: $gc-header-footer-background-color;
+			line-height: 1em;
+		}
+	}
+}
+
+%small-view-under-color-fff {
+	color: #fff;
+}
+$gcwu-theme-mb-pnl-bg: #efefef;
+#mb-pnl {
+	background: $gcwu-theme-mb-pnl-bg;
+	header {
+		background-color: $screen-sm-menu-header-background-color;
+	}
+
+	nav {
+		a {
+			color: $screen-sm-menu-links-color;
+			text-decoration: none;
+		}
+	}
+
+	summary {
+		&:hover, &:focus {
+			background: transparent;
+		}
+	}
+
+	.modal-body {
+		background: $gcwu-theme-mb-pnl-bg;
+		padding: 0;
+	}
+
+	.srch-pnl {
+		.form-group {
+			float: left;
+			margin-right: 5px;
+			width: 75%;
+		}
+	}
+
+	#wb-srch-sub-imprt {
+		background: #146094;
+		border-color: #146094;
+		@extend %small-view-under-color-fff;
+		&:hover, &:focus, &:active {
+			background-color: #3276B1;
+			border-color: #285E8E;
+			@extend %small-view-under-color-fff;
+		}
+	}
+
+	.lng-ofr {
+		a {
+			color: $screen-sm-menu-links-color;
+			text-decoration: none;
+		}
+	}
+
+	.sec-pnl {
+		@extend %small-view-under-bg-color-fff;
+	}
+
+	.sm-pnl {
+		background: #146094;
+		a {
+			@extend %small-view-under-color-fff;
+		}
+		summary {
+			@extend %small-view-under-color-fff;
+			&:hover, &:focus {
+				@extend %small-view-under-color-fff;
+			}
+		}
+	}
+}
+
+#wb-bc {
+	@include linear-background($screen-sm-breadcrumb-bar-gradient-start, $screen-sm-breadcrumb-bar-gradient-end);
+}
+
+#gc-info {
+	display: none;
+}
+
+[dir=rtl] {
+	#mb-pnl {
+		.srch-pnl {
+			.form-group {
+				float: right;
+				margin-right: auto;
+				margin-left: 5px;
+				width: 75%;
+			}
+		}
+	}
+
+	#wmms {
+		left: auto;
+		right: 15px;
+	}
+
+	#wb-glb-mn {
+		> {
+			ul {
+				text-align: left;
+			}
+		}
+		.pnl-btn {
+			float: left;
+		}
+	}
+}

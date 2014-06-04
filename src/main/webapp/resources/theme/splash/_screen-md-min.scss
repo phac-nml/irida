@@ -1,0 +1,42 @@
+/*
+ *
+ * Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
+ * wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html
+ *
+ */
+/*
+  @title: Medium view and over (screen only) - Splash page
+ */
+
+main {
+	position: relative;
+
+	> {
+		div {
+			&:before {
+				content: " ";
+				position: absolute;
+				display:block;
+				background: url(../assets/sp-pe-leaf.jpg) no-repeat 50%;
+				height: 147px;
+				width: 100%;
+				top: 93px;
+				left: 0;
+			}
+		}
+	}
+
+	h2 {
+		min-height: 4em;
+	}
+
+	section {
+		+ {
+			section {
+				h2 {
+					text-align: right;
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,63 @@
+---
+{
+	"title": "Fils de syndication",
+	"language": "fr",
+	"category": "Plugiciels",
+	"description": "Affiche les articles d’un ou plus fils de syndication.",
+	"tag": "feeds",
+	"parentdir": "feeds",
+	"altLangPrefix": "feeds",
+	"css": ["demo/feeds"],
+	"dateModified": "2014-02-19"
+}
+---
+<p>Cette composante est un gadget logiciel permettant de regrouper et d’afficher des données d'un ou plusieurs fils de syndication. Les formats soutenus sont Atom, RSS et Media RSS.</p>
+
+<section>
+	<h2>Exemples</h2>
+	<section class="wb-feeds limit-5">
+		<h3>Communiqués de presse et rappels de la sécurité routière</h3>
+		<ul class="feeds-cont">
+			<li>
+				<a href="http://www.tc.gc.ca/medias/rss/routier.xml" rel="external">Communiqués de presse routière (Tous)</a>
+			</li>
+			<li>
+				<a href="http://wwwapps.tc.gc.ca/Saf-Sec-Sur/7/VRDB-BDRV/search-recherche/rss.aspx?lang=fra" rel="external">Rappels de la Sécurité Routière</a>
+			</li>
+		</ul>
+	</section>
+
+	<section class="wb-feeds limit-1">
+		<h3>Météo d'Ottawa</h3>
+		<ul class="feeds-cont">
+			<li>
+				<a href="http://weather.gc.ca/rss/city/on-118_f.xml" rel="external">Ottawa Ontario</a>
+			</li>
+		</ul>
+	</section>
+</section>
+
+<section>
+	<h2>Paramètres</h2>
+	<table class="table">
+		<thead>
+			<tr>
+				<th scope="col">Classe (paramètre)</th>
+				<th scope="col">Rôle</th>
+				<th scope="col">Détails</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><code>wb-feeds</code></td>
+				<td>Identificateur</td>
+				<td>Classe principale qui identifie le code utilisé pour le gadget des fils de syndication.</td>
+			</tr>
+			<tr>
+				<td><code>limit-<em>x</em></code></td>
+				<td>Affichage</td>
+				<td>Contrôle la quantité d'articles que le gadget des fils de syndication affichera.</td>
+			</tr>
+		</tbody>
+	</table>
+</section>

@@ -1,0 +1,310 @@
+/*
+  Multimedia Player Code
+ */
+
+$mm-progress-fg-color: #176ca7;
+$mm-progress-bg-color: #fff;
+$mm-cc-fg-color: #fff;
+$mm-cc-bg-color: #000;
+$mm-ctrl-fg-color: #fff;
+$mm-ctrl-bg-color: #000;
+
+%multimedia-display-none {
+	display: none;
+}
+
+@keyframes spin {
+	from {
+		transform: rotate(0);
+	}
+
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+%multimedia_loading {
+	bottom: 0;
+	content: " ";
+	height: 100px;
+	left: 0;
+	margin: auto;
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 100px;
+}
+
+%captions_hidden {
+	max-height: 0;
+	padding: 0;
+}
+
+.wb-mltmd {
+	// lets fight the FOUC
+	// base state
+	display: block;
+
+	video {
+		height: auto;
+		width: 100%;
+	}
+
+	.btn {
+		background: transparent;
+		border: 0;
+		border-top-left-radius: 0 !important;
+		border-top-right-radius: 0 !important;
+		color: $mm-ctrl-fg-color;
+	}
+
+	progress,
+	.btn {
+		&:focus {
+			outline: 1px dotted $mm-ctrl-fg-color;
+		}
+	}
+
+	&.audio {
+		.wb-mm-ovrly {
+			@extend %multimedia-display-none;
+		}
+
+		.btn.cc {
+			@extend %multimedia-display-none;
+		}
+
+		.lastpnl {
+			width: 3em;
+		}
+	}
+
+	.display {
+		background: #000;
+		position: relative;
+
+		.wb-mm-ovrly {
+			height: 100%;
+			position: absolute;
+			width: 100%;
+			z-index: 1;
+		}
+
+		video,
+		object,
+		iframe {
+			margin-bottom: -7px;
+			width: 100%;
+		}
+
+		&.waiting {
+			&:after {
+				@extend %multimedia_loading;
+				animation-duration: 1000ms;
+				animation-iteration-count: infinite;
+				animation-name: spin;
+				animation-timing-function: linear;
+				background: url("../assets/loading.png") center center no-repeat;
+				z-index: 2;
+			}
+
+			&:before {
+				@extend %multimedia_loading;
+				background: rgba(0, 0, 0, 0.7);
+				border-radius: 10px;
+				z-index: 1;
+			}
+		}
+	}
+
+	.wb-mm-ovrly {
+		background: transparent;
+		border: 0;
+		direction: ltr;
+		padding: 0;
+		text-indent: -9999px;
+
+		img {
+			width: 100%;
+		}
+
+		&.playing {
+			img {
+				visibility: hidden;
+			}
+
+			.errmsg {
+				display: none;
+			}
+		}
+	}
+
+	&.cc_on {
+		.wb-mm-cc {
+			max-height: 999em;
+			padding: 0.5em;
+		}
+
+		.cc {
+			opacity: 1;
+		}
+
+		&.youtube {
+			.wb-mm-cc {
+				@extend %captions_hidden;
+			}
+		}
+	}
+
+	//TODO: Remove this when captions works in chromeless api with controls
+	&.youtube {
+		.wb-mm-ctrls {
+			border-bottom: 10px solid #fff;
+			margin-top: -35px;
+		}
+	}
+
+	/*
+	  Light Skinning of mediacontrols
+	 */
+	&.skn-lt {
+		border-bottom: 1px solid #ddd;
+		color: #000;
+
+		.wb-mm-ctrls {
+			background: #fff;
+			color: #000;
+		}
+
+		.btn {
+			background: #fff;
+			border: 0;
+			color: #000;
+		}
+	}
+
+}
+
+.wb-mm-cc {
+	@extend %captions_hidden;
+	background-color: $mm-cc-bg-color;
+	color: $mm-cc-fg-color;
+	text-align: center;
+	transition: all 0.26s ease;
+}
+
+%pnl {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.wb-mm-ctrls {
+	background: $mm-ctrl-bg-color;
+	color: $mm-ctrl-fg-color;
+	display: table;
+	position: relative;
+	width: 100%;
+
+	.frstpnl {
+		@extend %pnl;
+		text-align: center;
+		width: 8em;
+	}
+
+	.lastpnl {
+		@extend %pnl;
+		text-align: center;
+		width: 6em;
+	}
+
+	.tline {
+		@extend %pnl;
+
+		.wb-mm-tmln-crrnt,
+		.wb-mm-tmln-ttl {
+			float: left;
+			margin: 0;
+		}
+
+		.wb-mm-tmln-ttl {
+			float: right;
+		}
+	}
+
+	.cc {
+		opacity: .5;
+	}
+
+	.wb-mm-txtonly {
+		span {
+			@extend %accessible-invisible;
+		}
+	}
+
+	/* Progress Bar */
+	progress {
+		/* Important Thing */
+		-webkit-appearance: none;
+		background: $mm-progress-bg-color;
+		border: 0;
+		color: $mm-progress-fg-color;
+		display: block;
+		height: 16px;
+		width: 100%;
+
+		&::-webkit-progress-bar {
+			background: $mm-progress-bg-color;
+		}
+
+		&::-webkit-progress-value {
+			background: $mm-progress-fg-color;
+		}
+
+		&::-moz-progress-bar {
+			background: $mm-progress-fg-color;
+		}
+	}
+
+	.progress {
+		height: 16px;
+	}
+}
+
+.xxsmallview {
+	.wb-mm-txtonly {
+		span {
+			~ {
+				span {
+					@extend %accessible-invisible-show;
+				}
+			}
+		}
+	}
+
+	.wb-mm-prgrss {
+		@extend %multimedia-display-none;
+	}
+}
+
+.mediumview,
+.largeview,
+.xlargeview,
+.xxlargeview {
+	.col-md-1,
+	.col-md-2,
+	.col-md-3 {
+		.wb-mm-txtonly {
+			span {
+				~ {
+					span {
+						@extend %accessible-invisible-show;
+					}
+				}
+			}
+		}
+
+		.wb-mm-prgrss {
+			@extend %multimedia-display-none;
+		}
+	}
+}

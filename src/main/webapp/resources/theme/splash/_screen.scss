@@ -1,0 +1,43 @@
+/*
+ *
+ * Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
+ * wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html
+ *
+ */
+/*
+  @title: All screen views - Splash page
+ */
+
+#gcwu-sig {
+	height: 1.5em;
+}
+
+#wmms {
+	height: 2.1em;
+	float: right;
+	margin-top: 10px;
+}
+
+header {
+	margin-top: 1.2em;
+}
+
+main {
+	> {
+		div {
+			background: url(../assets/sp-pe-bg.jpg) repeat-x center top;
+			margin-top: 10px;
+			padding-top: 20px;
+		}
+	}
+
+	h1 {
+		position: relative;
+		text-align: center;
+		margin: 0 0 30px 0;
+	}
+
+	h2 {
+		font-size: 180%;
+	}
+}

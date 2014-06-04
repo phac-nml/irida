@@ -1,0 +1,144 @@
+---
+{
+	"title": "Data Ajax",
+	"language": "en",
+	"category": "Plugins",
+	"description": "A basic AjaxLoader wrapper that inserts AJAXed-in content.",
+	"tag": "data-ajax",
+	"parentdir": "data-ajax",
+	"altLangPrefix": "data-ajax",
+	"css": ["demo/data-ajax"],
+	"dateModified": "2014-02-19"
+}
+---
+<p>A basic AjaxLoader wrapper that inserts AJAXed in content.</p>
+
+<section class="wb-prettify all-pre">
+	<h2>Insert content after an element (data-ajax-after)</h2>
+	<section>
+		<h3>Example</h3>
+		<section data-ajax-after="ajax/data-ajax-extra-en.html" class="original">
+			<h4>Hello World</h4>
+			<p>Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text.</p>
+		</section>
+		<section data-ajax-after="ajax/data-ajax-extra-2-en.html" class="original">
+			<h4>Hello World - Part 2</h4>
+			<p>Different example text. Different example text. Different example text. Different example text. Different example text. Different example text.</p>
+		</section>
+		<details>
+			<summary>View code</summary>
+			<pre><code>&lt;section data-ajax-after="ajax/data-ajax-extra-en.html" class="original"&gt;
+	&lt;h4&gt;Hello World&lt;/h4&gt;
+	&lt;p&gt;Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text.&lt;/p&gt;
+&lt;/section&gt;
+&lt;section data-ajax-after="ajax/data-ajax-extra-2-en.html" class="original"&gt;
+	&lt;h4&gt;Hello World - Part 2&lt;/h4&gt;
+	&lt;p&gt;Different example text. Different example text. Different example text. Different example text. Different example text. Different example text.&lt;/p&gt;
+&lt;/section&gt;</code></pre>
+		</details>
+	</section>
+</section>
+
+<section>
+	<h2>Append content to an element (data-ajax-append)</h2>
+	<section>
+		<h3>Example</h3>
+		<div data-ajax-append="ajax/data-ajax-extra-en.html" class="original">
+			<p>Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text.</p>
+		</div>
+		<div data-ajax-append="ajax/data-ajax-extra-2-en.html" class="original">
+			<p>Different example text. Different example text. Different example text. Different example text. Different example text. Different example text.</p>
+		</div>
+		<details>
+			<summary>View code</summary>
+			<pre><code>&lt;div data-ajax-append="ajax/data-ajax-extra-en.html" class="original"&gt;
+	&lt;p&gt;Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div data-ajax-append="ajax/data-ajax-extra-2-en.html" class="original"&gt;
+	&lt;p&gt;Different example text. Different example text. Different example text. Different example text. Different example text. Different example text.&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+		</details>
+	</section>
+</section>
+
+<section>
+	<h2>Insert content before an element (data-ajax-before)</h2>
+	<section>
+		<h3>Example</h3>
+		<section data-ajax-before="ajax/data-ajax-extra-en.html" class="original">
+			<h4>Hello World</h4>
+			<p>Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text.</p>
+		</section>
+		<section data-ajax-before="ajax/data-ajax-extra-2-en.html" class="original">
+			<h4>Hello World - Part 2</h4>
+			<p>Different example text. Different example text. Different example text. Different example text. Different example text. Different example text.</p>
+		</section>
+		<details>
+			<summary>View code</summary>
+			<pre><code>&lt;section data-ajax-before="ajax/data-ajax-extra-en.html" class="original"&gt;
+	&lt;h4&gt;Hello World&lt;/h4&gt;
+	&lt;p&gt;Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text.&lt;/p&gt;
+&lt;/section&gt;
+&lt;section data-ajax-before="ajax/data-ajax-extra-2-en.html" class="original"&gt;
+	&lt;h4&gt;Hello World - Part 2&lt;/h4&gt;
+	&lt;p&gt;Different example text. Different example text. Different example text. Different example text. Different example text. Different example text.&lt;/p&gt;
+&lt;/section&gt;</code></pre>
+		</details>
+	</section>
+</section>
+
+<section>
+	<h2>Prepend content to an element (data-ajax-prepend)</h2>
+	<section>
+		<h3>Example</h3>
+		<div data-ajax-prepend="ajax/data-ajax-extra-en.html" class="original">
+			<p>Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text.</p>
+		</div>
+		<div data-ajax-prepend="ajax/data-ajax-extra-2-en.html" class="original">
+			<p>Different example text. Different example text. Different example text. Different example text. Different example text. Different example text.</p>
+		</div>
+		<details>
+			<summary>View code</summary>
+			<pre><code>&lt;div data-ajax-prepend="ajax/data-ajax-extra-en.html" class="original"&gt;
+	&lt;p&gt;Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div data-ajax-prepend="ajax/data-ajax-extra-2-en.html" class="original"&gt;
+	&lt;p&gt;Different example text. Different example text. Different example text. Different example text. Different example text. Different example text.&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+		</details>
+	</section>
+</section>
+
+<section>
+	<h2>Replaces an element (data-ajax-replace)</h2>
+	<section>
+		<h3>Example</h3>
+		<div data-ajax-replace="ajax/data-ajax-extra-en.html" class="original">
+			<section>
+				<h4>Hello World</h4>
+				<p>Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text.</p>
+			</section>
+		</div>
+		<div data-ajax-replace="ajax/data-ajax-extra-2-en.html" class="original">
+			<section>
+				<h4>Hello World - Part 2</h4>
+				<p>Different example text. Different example text. Different example text. Different example text. Different example text. Different example text.</p>
+			</section>
+		</div>
+		<details>
+			<summary>View code</summary>
+			<pre><code>&lt;div data-ajax-replace="ajax/data-ajax-extra-en.html" class="original"&gt;
+	&lt;section&gt;
+		&lt;h4&gt;Hello World&lt;/h4&gt;
+		&lt;p&gt;Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text. Example text.&lt;/p&gt;
+	&lt;/section&gt;
+&lt;/div&gt;
+&lt;div data-ajax-replace="ajax/data-ajax-extra-2-en.html" class="original"&gt;
+	&lt;section&gt;
+		&lt;h4&gt;Hello World - Part 2&lt;/h4&gt;
+		&lt;p&gt;Different example text. Different example text. Different example text. Different example text. Different example text. Different example text.&lt;/p&gt;
+	&lt;/section&gt;
+&lt;/div&gt;</code></pre>
+		</details>
+	</section>
+</section>

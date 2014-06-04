@@ -1,0 +1,179 @@
+/*
+ * Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
+ * wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html
+ */
+@import "sprites/sprites";
+
+.wb-share {
+	.shr-lnk {
+		font-size: 115%;
+		line-height: 32px;
+		margin-bottom: 8px;
+		min-height: 32px;
+		text-align: left;
+		text-decoration: none;
+		width: 100%;
+
+		&:before {
+			content: " ";
+			display: inline-block;
+			height: 32px;
+			margin-right: 0.6em;
+			vertical-align: middle;
+			width: 32px;
+		}
+	}
+
+	// TODO: Convert @include to @extend when libsass supports nested extends
+	.bitly {
+		&:before {
+			@include bitly;
+		}
+	}
+
+	.blogger {
+		&:before {
+			@include blogger;
+		}
+	}
+
+	.delicious {
+		&:before {
+			@include delicious;
+		}
+	}
+
+	.digg {
+		&:before {
+			@include digg;
+		}
+	}
+
+	.diigo {
+		&:before {
+			@include diigo;
+		}
+	}
+
+	.email {
+		&:before {
+			content: "\2709";
+			display: inline-block;
+			font-family: "Glyphicons Halflings";
+			font-size: 32px;
+			margin-right: 0.3em;
+		}
+	}
+
+	.facebook {
+		&:before {
+			@include facebook;
+		}
+	}
+
+	.feed {
+		&:before {
+			@include feed;
+		}
+	}
+
+	.gmail {
+		&:before {
+			@include gmail;
+		}
+	}
+
+	.googleplus {
+		&:before {
+			@include googleplus;
+		}
+	}
+
+	.linkedin {
+		&:before {
+			@include linkedin;
+		}
+	}
+
+	.myspace {
+		&:before {
+			@include myspace;
+		}
+	}
+
+	.pinterest {
+		&:before {
+			@include pinterest;
+		}
+	}
+
+	.reddit {
+		&:before {
+			@include reddit;
+		}
+	}
+
+	.stumbleupon {
+		&:before {
+			@include stumbleupon;
+		}
+	}
+
+	.technorati {
+		&:before {
+			@include technorati;
+		}
+	}
+
+	.tumblr {
+		&:before {
+			@include tumblr;
+		}
+	}
+
+	.twitter {
+		&:before {
+			@include twitter;
+		}
+	}
+
+	.yahoomail {
+		&:before {
+			@include yahoomail;
+		}
+	}
+
+	.shr-pg {
+		text-align: left;
+	}
+
+	ul {
+		list-style-type: none;
+		margin: 10px;
+		padding: 0;
+	}
+}
+
+[dir=rtl] {
+	.wb-share {
+		.shr-lnk {
+			text-align: right;
+
+			&:before {
+				margin-left: 0.4em;
+				margin-right: auto;
+			}
+		}
+
+		.email {
+			&:before {
+				margin-left: 0.6em;
+				margin-right: auto;
+			}
+		}
+
+		.shr-pg {
+			text-align: right;
+		}
+	}
+}

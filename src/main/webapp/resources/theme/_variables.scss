@@ -1,0 +1,66 @@
+/*
+ *
+ * Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
+ * wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html
+ *
+ */
+
+@import "../lib/wet-boew/src/variables";
+
+$gc-header-footer-background-color: #000;
+$gc-header-footer-text-color: #FFF;
+$gc-header-footer-divider-color: $gc-header-footer-text-color;
+$screen-sm-banner-gradient-start: #4474AD;
+$screen-sm-banner-gradient-end: #174F88;
+$screen-sm-banner-text-shadow-color: #044062;
+$screen-sm-breadcrumb-bar-gradient-start: #F0EFEF;
+$screen-sm-breadcrumb-bar-gradient-end: #DFDFDD;
+$screen-sm-menu-header-background-color: #174F88;
+$screen-sm-menu-links-color: #000;
+$screen-md-banner-text-shadow-color: #333;
+$screen-md-menubar-gradient-start: #146094;
+$screen-md-menubar-gradient-end: #23447E;
+$screen-md-menubar-text-color: #FFF;
+$screen-md-menubar-top-border-color: #87AEC9;
+$screen-md-menubar-side-border-color: #15527D;
+$screen-md-submenu-background-color: #CCC;
+$screen-md-submenu-text-color: #000;
+$screen-md-submenu-shadow-color: rgba(0, 0, 0, 0.5);
+$screen-md-submenu-bottom-border-color: #0F315B;
+$screen-md-menubar-bottom-border-color: $screen-md-submenu-background-color;
+$screen-md-menuitem-left-border-color: #999;
+$screen-md-menuitem-hover-border-color: $screen-md-menubar-bottom-border-color;
+$screen-md-search-button-gradient-start: #F0F0F0;
+$screen-md-search-button-gradient-end: #CCCCCC; /* Shorthand can't be used because it doesn't work with IE 8 & 9 gradients */
+$screen-md-page-border-color: #CCC;
+$screen-md-sec-menuitem-top-background-color: #DDD;
+$screen-md-sec-menuitem-border-color: #CCC;
+$screen-md-footer-background-color: #EFEFEF;
+$screen-md-notices-border-color: #999;
+$screen-md-canadaca-divider-color: #666;
+
+@mixin linear-background($start-color, $end-color, $reverse_default: 0) {
+	background: {
+		@if $reverse_default == 1 {
+			color: $start-color;
+		} @else {
+			color: $end-color;
+		}
+		image: linear-gradient($start-color, $end-color);
+	}
+	filter: unquote("progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#{$start-color}', endColorstr='#{$end-color}')");
+}
+
+@mixin navigation-links {
+	a {
+		&:link,
+		&:visited {
+			text-decoration: none;
+		}
+
+		&:hover,
+		&:focus {
+			text-decoration: underline;
+		}
+	}
+}

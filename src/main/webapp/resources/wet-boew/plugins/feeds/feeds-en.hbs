@@ -1,0 +1,63 @@
+---
+{
+	"title": "Feeds",
+	"language": "en",
+	"category": "Plugins",
+	"description": "Aggregates and displays entries from one or more Web feeds.",
+	"tag": "feeds",
+	"parentdir": "feeds",
+	"altLangPrefix": "feeds",
+	"css": ["demo/feeds"],
+	"dateModified": "2014-02-19"
+}
+---
+<p>This feature provides a widget for aggregating and displaying the entries from one or more Web feeds on a Web page. Supported Web feed formats are Atom, RSS, and Media RSS.</p>
+
+<section>
+	<h2>Examples</h2>
+	<section class="wb-feeds limit-5">
+		<h3>Road News Releases and Safety Recalls</h3>
+		<ul class="feeds-cont">
+			<li>
+				<a href="http://www.tc.gc.ca/mediaroom/rss/road.xml" rel="external">Road News Releases (All)</a>
+			</li>
+			<li>
+				<a href="http://wwwapps.tc.gc.ca/Saf-Sec-Sur/7/VRDB-BDRV/search-recherche/rss.aspx?lang=eng" rel="external">Road Safety Recalls</a>
+			</li>
+		</ul>
+	</section>
+
+	<section class="wb-feeds limit-1">
+		<h3>Ottawa Weather</h3>
+		<ul class="feeds-cont">
+			<li>
+				<a href="http://weather.gc.ca/rss/city/on-118_e.xml" rel="external">Ottawa Ontario</a>
+			</li>
+		</ul>
+	</section>
+</section>
+
+<section>
+	<h2>Parameters</h2>
+	<table class="table">
+		<thead>
+			<tr>
+				<th scope="col">Class (parameter)</th>
+				<th scope="col">Role</th>
+				<th scope="col">Details</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><code>wb-feeds</code></td>
+				<td>Identifier</td>
+				<td>Main targeting class that identifies the code block used for the Web feeds widget.</td>
+			</tr>
+			<tr>
+				<td><code>limit-<em>x</em></code></td>
+				<td>Display</td>
+				<td>Controls the amount of items the Web feeds widget will display.</td>
+			</tr>
+		</tbody>
+	</table>
+</section>

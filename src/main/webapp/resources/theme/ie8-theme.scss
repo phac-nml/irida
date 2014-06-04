@@ -1,0 +1,14 @@
+@charset "utf-8";
+/*!
+ *
+ * Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
+ * wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html
+ *
+ */
+
+@import "variables";
+
+/* Medium view and over */
+@media screen and (min-width: $screen-md-min) {
+	@import "views/screen-md-min-ie8";
+}

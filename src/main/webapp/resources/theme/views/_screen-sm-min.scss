@@ -1,0 +1,60 @@
+/*
+ *
+ * Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
+ * wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html
+ *
+ */
+/*
+  @title: Small view and over (screen only)
+ */
+
+#wb-info {
+	@include navigation-links;
+	background: $screen-md-footer-background-color url(../assets/sft-deco.gif) repeat-x scroll center top;
+
+	> {
+		.container {
+			background: transparent url(../assets/sft-deco-leaf.gif) no-repeat top center;
+		}
+	}
+
+	h2, h3 {
+		font: {
+			size: 120%;
+			weight: 700;
+		}
+	}
+}
+
+#gc-tctr {
+	padding: {
+		top: 5px;
+		right: 0;
+	}
+	margin-bottom: 0;
+
+	> {
+		:first-child {
+			border-right: 1px solid $screen-md-notices-border-color;
+			padding-right: 10px;
+			line-height: 1.5
+		}
+	}
+}
+
+[dir=rtl] {
+	#gc-tctr {
+		> {
+			:first-child {
+				border: {
+					left: 1px solid $screen-md-notices-border-color;
+					right: 0;
+				}
+				padding: {
+					left: 10px;
+					right: 0;
+				}
+			}
+		}
+	}
+}
