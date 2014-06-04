@@ -1,0 +1,113 @@
+/*
+ * Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
+ * wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html
+ */
+
+@import "../../variables";
+
+%fnote-link-highlight {
+	background-color: $clrDark;
+	border-color: $clrDark;
+	color: $clrWhite !important;
+}
+
+%fnote-link-background-light-border-medium-padding-whitespace {
+	background-color: $clrLight;
+	border: 1px solid $clrMedium;
+	padding: 0 4px 1px;
+	white-space: nowrap;
+}
+
+.fn-lnk {
+	@extend %fnote-link-background-light-border-medium-padding-whitespace;
+
+	&:hover,
+	&:focus {
+		@extend %fnote-link-highlight;
+	}
+}
+
+.wb-fnote {
+	border-color: $clrMedium;
+	border-style: solid;
+	border-width: 1px 0;
+	margin: 2em 10px 0;
+
+	h2 {
+		margin-left: 0;
+		margin-right: 0;
+		margin-top: $spacing;
+	}
+
+	dl {
+		margin: 0;
+	}
+
+	dt {
+		@extend %accessible-invisible;
+	}
+
+	dd {
+		border: 1px solid transparent;
+		margin: $spacing 0;
+		position: relative;
+
+		&:focus {
+			background-color: $clrLight;
+			border-color: $clrDark;
+
+			.fn-rtn {
+				a {
+					@extend %fnote-link-highlight;
+				}
+			}
+		}
+	}
+
+	p {
+		margin: 0 0 0 ($spacing + $ddRtnWidth);
+		padding: 0 $spacing $spacing;
+
+		&:first-child {
+			padding-top: $spacing;
+		}
+	}
+
+	.fn-rtn {
+		margin: 0;
+		overflow: hidden;
+		padding-right: 0;
+		padding-top: $spacing;
+		position: absolute;
+		top: 0;
+		width: $ddRtnWidth;
+
+		a {
+			@extend %fnote-link-background-light-border-medium-padding-whitespace;
+			display: inline-block;
+			padding-bottom: 0;
+
+			&:hover,
+			&:focus {
+				@extend %fnote-link-highlight;
+			}
+		}
+	}
+}
+
+/* Right to left (RTL) SCSS */
+[dir="rtl"] {
+	.wb-fnote {
+		p {
+			margin-left: 0;
+			margin-right: 3.125em;
+			padding-left: 0;
+			padding-right: 0.375em;
+		}
+
+		.fn-rtn {
+			margin-right: 0;
+			padding-right: 0;
+		}
+	}
+}

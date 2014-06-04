@@ -1,0 +1,322 @@
+/*
+* jQuery Mobile v1.3.2
+* http://jquerymobile.com
+*
+* Copyright 2010, 2013 jQuery Foundation, Inc. and other contributors
+* Released under the MIT license.
+* http://jquery.org/license
+*
+*/
+
+.in {
+	animation-duration: 350ms;
+	animation-timing-function: ease-out;
+}
+
+.out {
+	animation-duration: 225ms;
+	animation-timing-function: ease-in;
+}
+
+.pop {
+	transform-origin: 50% 50%;
+
+	.in {
+		animation-duration: 350ms;
+		animation-name: popin;
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	.out {
+		animation-duration: 100ms;
+		animation-name: fadeout;
+		opacity: 0;
+	}
+
+	&.reverse {
+		.in {
+			animation-name: fadein;
+		}
+
+		.out {
+			animation-name: popout;
+			transform: scale(0.8);
+		}
+	}
+}
+
+@keyframes popin {
+	from {
+		opacity: 0;
+		transform: scale(0.8);
+	}
+
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@keyframes popout {
+	from {
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	to {
+		opacity: 0;
+		transform: scale(0.8);
+	}
+}
+
+/* keyframes for slidein from sides */
+@keyframes slideinfromright {
+	from {
+		transform: translateX(100%);
+	}
+
+	to {
+		transform: translateX(0);
+	}
+}
+
+@keyframes slideinfromleft {
+	from {
+		transform: translateX(-100%);
+	}
+
+	to {
+		transform: translateX(0);
+	}
+}
+
+/* keyframes for slideout to sides */
+@keyframes slideouttoleft {
+	from {
+		transform: translateX(0);
+	}
+
+	to {
+		transform: translateX(-100%);
+	}
+}
+
+@keyframes slideouttoright {
+	from {
+		transform: translateX(0);
+	}
+
+	to {
+		transform: translateX(100%);
+	}
+}
+
+.slide {
+	.out,
+	.in {
+		animation-duration: 350ms;
+		animation-timing-function: ease-out;
+	}
+
+	.out {
+		animation-name: slideouttoleft;
+		transform: translateX(-100%);
+	}
+
+	.in {
+		animation-name: slideinfromright;
+		transform: translateX(0);
+	}
+
+	&.reverse {
+		.out {
+			animation-name: slideouttoright;
+			transform: translateX(100%);
+		}
+
+		.in {
+			animation-name: slideouttoright;
+			transform: translateX(100%);
+		}
+	}
+
+}
+
+/* slide down */
+.slidedown {
+	.out {
+		animation-duration: 100ms;
+		animation-name: fadeout;
+	}
+
+	.in {
+		animation-duration: 250ms;
+		animation-name: slideinfromtop;
+		transform: translateY(0);
+	}
+
+	&.reverse {
+		.out {
+			animation-duration: 200ms;
+			animation-name: slideouttotop;
+			transform: translateY(-100%);
+		}
+
+		.in {
+			animation-duration: 150ms;
+			animation-name: fadein;
+		}
+	}
+}
+
+@keyframes slideinfromtop {
+	from {
+		transform: translateY(-100%);
+	}
+
+	to {
+		transform: translateY(0);
+	}
+}
+
+@keyframes slideouttotop {
+	from {
+		transform: translateY(0);
+	}
+
+	to {
+		transform: translateY(-100%);
+	}
+}
+
+@keyframes fadein {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes fadeout {
+	from {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+	}
+}
+
+
+.fade {
+	.out {
+		animation-duration: 125ms;
+		animation-name: fadeout;
+		opacity: 0;
+	}
+
+	.in {
+		animation-duration: 225ms;
+		animation-name: fadein;
+		opacity: 1;
+	}
+}
+
+/* keyframes for slideout to sides */
+@keyframes slideouttoleft {
+	from {
+		transform: translateX(0);
+	}
+
+	to {
+		transform: translateX(-100%);
+	}
+}
+
+@keyframes slideouttoright {
+	from {
+		transform: translateX(0);
+	}
+
+	to {
+		transform: translateX(100%);
+	}
+}
+
+.slidefade {
+	.out {
+		animation-duration: 225ms;
+		animation-name: slideouttoleft;
+		transform: translateX(-100%);
+	}
+
+	.in {
+		animation-duration: 200ms;
+		animation-name: fadein;
+		transform: translateX(0);
+	}
+
+	&.reverse {
+		.out {
+			animation-duration: 200ms;
+			animation-name: slideouttoright;
+			transform: translateX(100%);
+		}
+
+		.in {
+			animation-duration: 200ms;
+			animation-name: fadein;
+			transform: translateX(0);
+		}
+	}
+}
+
+/* slide up */
+.slideup {
+	.out {
+		animation-duration: 100ms;
+		animation-name: fadeout;
+	}
+
+	.in {
+		animation-duration: 250ms;
+		animation-name: slideinfrombottom;
+		transform: translateY(0);
+	}
+
+	&.reverse {
+		.in {
+			animation-duration: 150ms;
+			animation-name: fadein;
+		}
+
+		.out {
+			animation-duration: 200ms;
+			animation-name: slideouttobottom;
+			transform: translateY(100%);
+		}
+	}
+}
+
+@keyframes slideinfrombottom {
+	from {
+		transform: translateY(100%);
+	}
+
+	to {
+		transform: translateY(0);
+	}
+}
+
+@keyframes slideouttobottom {
+	from {
+		transform: translateY(0);
+	}
+
+	to {
+		transform: translateY(100%);
+	}
+}
