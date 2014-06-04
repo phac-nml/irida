@@ -3,13 +3,14 @@
  * wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html
  */
 .wb-tabs {
-	&.carousel-s1 {
-		li[role="presentation"] {
-			@extend %accessible-invisible-xxSmallView;
-		}
-	}
+  &.carousel-s1 {
+    li[role="presentation"] {
+      //          This mixin cannot be found, but should not cause a problem since we do not plan on implementing the smaller view ports.
+      //			@extend %accessible-invisible-xxSmallView;
+    }
+  }
 
-	.tab-count {
-		display: none !important;
-	}
+  .tab-count {
+    display: none !important;
+  }
 }
