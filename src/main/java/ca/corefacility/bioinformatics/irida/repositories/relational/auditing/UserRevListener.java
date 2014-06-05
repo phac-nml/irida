@@ -8,8 +8,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 
 /**
  *
@@ -35,6 +37,9 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
                 throw new IllegalStateException("User could not be read by username so revision could not be created");
             }
             
+            //Add the client ID if the user is connected via OAuth2
+            setClientId(rev);
+            
             logger.trace("Revision created by user " + userByUsername.getUsername());
         }
         catch(NullPointerException ex){
@@ -53,5 +58,23 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
     public void initialize(){
         urepo = applicationContext.getBean(UserRepository.class);
     }
+    
+	/**
+	 * Add the OAuth2 client ID to the revision listener if the user is
+	 * connecting via OAuth2
+	 * 
+	 * @param entity
+	 *            The revision entity to modify if necessary
+	 */
+	private void setClientId(UserRevEntity entity) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		// If the user is connecting via OAuth2 this object will be an
+		// OAuth2Authentication
+		if (auth instanceof OAuth2Authentication) {
+			logger.trace("Found OAuth2Authentication in session.  Storing clientId in revision.");
+			OAuth2Authentication oAuth = (OAuth2Authentication) auth;
+			entity.setClientId(oAuth.getAuthorizationRequest().getClientId());
+		}
+	}
     
 }

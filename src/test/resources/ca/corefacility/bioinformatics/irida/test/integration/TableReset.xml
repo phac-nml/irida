@@ -3,8 +3,10 @@
 	<!-- Tables *must* be listed in the order that they can be deleted to satisfy 
 		referential integrity -->
 	<MISEQ_RUN />
+	<HOST />
 	<SAMPLE />
 	<SEQUENCE_FILE />
+	<SEQUENCE_FILE_PROPERTIES />
 	<OVERREPRESENTED_SEQUENCE />
 	<SYSTEM_ROLE />
 	<USER />
@@ -27,6 +29,7 @@
 	<PROJECT_SAMPLE_AUD />
 	<PROJECT_USER_AUD />
 	<SEQUENCE_FILE_AUD />
+	<SEQUENCE_FILE_PROPERTIES_AUD />
 	<SEQUENCEFILE_SAMPLE_AUD />
 	<SYSTEM_ROLE_AUD />
 	<MISEQ_RUN_AUD />
@@ -36,4 +39,5 @@
 	<REMOTE_API_TOKEN_AUD />
 	<LOGICALGROUP_AUD />
 	<USER_GROUP_AUD />
+	<HOST_AUD />
 </dataset>

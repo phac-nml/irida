@@ -21,5 +21,7 @@
     <include file="changesets/2.0/data-model-cleanup.xml" relativeToChangelogFile="true"/>
     <include file="changesets/2.0/remote-apis.xml" relativeToChangelogFile="true"/>
     <include file="changesets/2.0/user-groups.xml" relativeToChangelogFile="true"/>
-
+    <include file="changesets/2.0/sequencer-agnostic-files.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/oauth-clientid-envers.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/samples.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

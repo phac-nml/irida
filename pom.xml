@@ -299,8 +299,6 @@
 			<artifactId>galaxybootstrap</artifactId>
 			<version>${com.github.jmchilton.galaxybootstrap.version}</version>
 		</dependency>
-
-
 	</dependencies>
 	<build>
 		<finalName>irida-api</finalName>

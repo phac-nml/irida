@@ -8,8 +8,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
-import ca.corefacility.bioinformatics.irida.model.Sample;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 /**
  * Service layer for MiseqRun objects

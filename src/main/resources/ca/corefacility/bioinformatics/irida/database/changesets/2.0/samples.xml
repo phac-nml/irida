@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="samples" author="fbristow">
+
+		<!-- rename externalSampleId to sequencerSampleId on the sample table -->
+		<renameColumn newColumnName="sequencerSampleId"
+			columnDataType="varchar(255)" oldColumnName="externalSampleId"
+			tableName="sample" />
+		<renameColumn newColumnName="sequencerSampleId"
+			columnDataType="varchar(255)" oldColumnName="externalSampleId"
+			tableName="sample_AUD" />
+
+		<!-- add new properties that we're storing for sample -->
+		<addColumn tableName="sample">
+			<column name="collectedBy" type="varchar(255)" />
+			<column name="collectionDate" type="datetime" />
+			<column name="cultureCollection" type="varchar(255)" />
+			<column name="genotype" type="longtext" />
+			<column name="geographicLocationName" type="varchar(255)" />
+			<column name="isolate" type="varchar(255)" />
+			<column name="isolationSource" type="longtext" />
+			<column name="latitude" type="varchar(255)" />
+			<column name="longitude" type="varchar(255)" />
+			<column name="organism" type="varchar(255)" />
+			<column name="passageHistory" type="longtext" />
+			<column name="pathotype" type="varchar(255)" />
+			<column name="serotype" type="varchar(255)" />
+			<column name="serovar" type="varchar(255)" />
+			<column name="subgroup" type="varchar(255)" />
+			<column name="subtype" type="varchar(255)" />
+			<column name="host_id" type="bigint(20)" />
+		</addColumn>
+		<addColumn tableName="sample_AUD">
+			<column name="collectedBy" type="varchar(255)" />
+			<column name="collectionDate" type="datetime" />
+			<column name="cultureCollection" type="varchar(255)" />
+			<column name="genotype" type="longtext" />
+			<column name="geographicLocationName" type="varchar(255)" />
+			<column name="isolate" type="varchar(255)" />
+			<column name="isolationSource" type="longtext" />
+			<column name="latitude" type="varchar(255)" />
+			<column name="longitude" type="varchar(255)" />
+			<column name="organism" type="varchar(255)" />
+			<column name="passageHistory" type="longtext" />
+			<column name="pathotype" type="varchar(255)" />
+			<column name="serotype" type="varchar(255)" />
+			<column name="serovar" type="varchar(255)" />
+			<column name="subgroup" type="varchar(255)" />
+			<column name="subtype" type="varchar(255)" />
+			<column name="host_id" type="bigint(20)" />
+		</addColumn>
+
+		<!-- Add host table for storing more sample properties -->
+		<createTable tableName="host">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="age" type="int(11)" />
+			<column name="description" type="varchar(255)" />
+			<column name="disease" type="varchar(255)" />
+			<column name="diseaseOutcome" type="varchar(255)" />
+			<column name="diseaseStage" type="varchar(255)" />
+			<column name="healthState" type="varchar(255)" />
+			<column name="sex" type="int(11)" />
+			<column name="subjectId" type="varchar(255)" />
+			<column name="taxonomicName" type="varchar(255)" />
+			<column name="tissueSampleId" type="varchar(255)" />
+		</createTable>
+		<createTable tableName="host_AUD">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_HOST_REVISION" referencedColumnNames="id"
+					referencedTableName="Revisions" />
+			</column>
+			<column name="age" type="int(11)" />
+			<column name="description" type="varchar(255)" />
+			<column name="disease" type="varchar(255)" />
+			<column name="diseaseOutcome" type="varchar(255)" />
+			<column name="diseaseStage" type="varchar(255)" />
+			<column name="healthState" type="varchar(255)" />
+			<column name="sex" type="int(11)" />
+			<column name="subjectId" type="varchar(255)" />
+			<column name="taxonomicName" type="varchar(255)" />
+			<column name="tissueSampleId" type="varchar(255)" />
+		</createTable>
+
+		<!-- add foreign key between sample and host -->
+		<addForeignKeyConstraint baseTableName="sample"
+			baseColumnNames="host_id" constraintName="FK_SAMPLE_HOST"
+			referencedColumnNames="id" referencedTableName="host" />
+	</changeSet>
+</databaseChangeLog>
