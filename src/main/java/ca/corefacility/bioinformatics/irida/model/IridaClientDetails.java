@@ -30,6 +30,13 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+/**
+ * Object representing a client that has been registered to communicate with
+ * this API via OAuth2
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @Entity
 @Table(name = "client_details", uniqueConstraints = { @UniqueConstraint(columnNames = "clientId", name = "UK_CLIENT_DETAILS_CLIENT_ID") })
 @Audited
@@ -72,12 +79,12 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	@Column(name = "uri")
 	@CollectionTable(name = "client_details_redirect_uri", joinColumns = @JoinColumn(name = "client_details_id"))
 	private Set<String> registeredRedirectUri;
-	
+
 	@NotNull
-	@Column(name="token_validity")
+	@Column(name = "token_validity")
 	private Integer accessTokenValiditySeconds;
-	
-	@Column(name="refresh_validity")
+
+	@Column(name = "refresh_validity")
 	private Integer refreshTokenValiditySeconds;
 
 	@ElementCollection(fetch = FetchType.EAGER)
