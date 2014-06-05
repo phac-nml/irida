@@ -131,8 +131,10 @@ public class GalaxyWorkflowManager {
 	 * @throws InterruptedException 
 	 * @throws IOException 
 	 */
-	public WorkflowOutputs runFastQCWorkflow(File fastqFile, String workflowId) throws UploadException, GalaxyDatasetNotFoundException, InterruptedException, IOException {
-		checkNotNull(fastqFile, "files are null");
+	public WorkflowOutputs runFastQCWorkflow(Path fastqPath, String workflowId) throws UploadException, GalaxyDatasetNotFoundException, InterruptedException, IOException {
+		checkNotNull(fastqPath, "files are null");
+		File fastqFile = fastqPath.toFile();
+		
 		checkArgument(fastqFile.exists(), "fastqFile " + fastqFile + " does not exist");
 		checkWorkflowIdValid(workflowId);
 		
@@ -142,7 +144,7 @@ public class GalaxyWorkflowManager {
 		WorkflowDetails workflowDetails = workflowsClient.showWorkflow(workflowId);
 		
 		// upload dataset to history
-		Dataset inputDataset = galaxyHistory.fileToHistory(fastqFile.toPath(), workflowHistory);
+		Dataset inputDataset = galaxyHistory.fileToHistory(fastqPath, workflowHistory);
 		
 		// setup workflow inputs
 		String workflowInput1Id = null;
@@ -260,7 +262,8 @@ public class GalaxyWorkflowManager {
 				return pathname.getName().endsWith("fastq");
 			}
 		});
-		//fastqFiles = new File[]{fastqFiles[0]};
+		fastqFiles = new File[]{fastqFiles[0]};
+		Path fastqPath = fastqFiles[0].toPath();
 		
 		GalaxyInstance galaxyInstance = GalaxyInstanceFactory.get("http://galaxy-staging.corefacility.ca", "558a75474e8e3987104bdb430ffddaf2");
 		GalaxySearch galaxySearch = new GalaxySearch(galaxyInstance);
@@ -269,10 +272,8 @@ public class GalaxyWorkflowManager {
 		
 		// for all input files
 		List<WorkflowOutputs> outputsList = new ArrayList<WorkflowOutputs>();
-		for (File fastqFile : fastqFiles) {
-			WorkflowOutputs outputs = workflowSubmitter.runFastQCWorkflow(fastqFile, "3f5830403180d620");
-			outputsList.add(outputs);
-		}
+		WorkflowOutputs outputs = workflowSubmitter.runFastQCWorkflow(fastqPath, "3f5830403180d620");
+		outputsList.add(outputs);
 
 		// poll history until all workflows completed
 		do {
