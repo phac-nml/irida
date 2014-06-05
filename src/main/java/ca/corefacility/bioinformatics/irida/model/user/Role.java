@@ -26,7 +26,7 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 	 * Constant reference for administrative role.
 	 */
 	public static final Role ROLE_ANONYMOUS = new Role("ROLE_ANONYMOUS");
-	
+
 	/**
 	 * Constant reference for administrative role.
 	 */
@@ -45,6 +45,11 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 	 * Constant reference for the sequencer role.
 	 */
 	public static final Role ROLE_SEQUENCER = new Role("ROLE_SEQUENCER");
+
+	/**
+	 * Constant reference for the OAuth2 client role
+	 */
+	public static final Role ROLE_CLIENT = new Role("ROLE_CLIENT");
 
 	@Id
 	private String name;
