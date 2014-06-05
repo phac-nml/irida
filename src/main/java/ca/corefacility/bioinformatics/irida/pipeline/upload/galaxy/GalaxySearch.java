@@ -15,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleEx
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
@@ -103,6 +104,27 @@ public class GalaxySearch {
 		}
 
 		throw new GalaxyUserNotFoundException(email, getGalaxyUrl());
+	}
+	
+	/**
+	 * Gets a Galaxy history with the given history id.
+	 * @param historyId  The history id to get a history for.
+	 * @return  The corresponding History object.
+	 * @throws NoGalaxyHistoryException If no history was found.
+	 */
+	public History getGalaxyHistory(String historyId) throws NoGalaxyHistoryException {
+		checkNotNull(historyId, "historyId is null");
+		
+		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
+		List<History> galaxyHistories = historiesClient.getHistories();
+		
+		for (History history : galaxyHistories) {
+			if (historyId.equals(history.getId())) {
+				return history;
+			}
+		}
+		
+		throw new NoGalaxyHistoryException("No history for id " + historyId);
 	}
 
 	/**

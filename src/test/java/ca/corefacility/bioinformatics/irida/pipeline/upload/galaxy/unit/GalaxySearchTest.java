@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFo
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
@@ -55,7 +57,7 @@ public class GalaxySearchTest {
 	private LibrariesClient librariesClient;
 	@Mock
 	private GalaxyInstance galaxyInstance;
-	
+		
 	@Mock private HistoriesClient historiesClient;
 
 	private GalaxySearch galaxySearch;
@@ -80,6 +82,7 @@ public class GalaxySearchTest {
 	
 	private static final String FILENAME = "filename";
 	private static final String HISTORY_ID = "1";
+	private static final String INVALID_HISTORY_ID = "2";
 	private static final String DATA_ID = "2";
 	
 	private List<HistoryContents> datasetHistoryContents;
@@ -236,6 +239,31 @@ public class GalaxySearchTest {
 		}
 
 		return newLibraries;
+	}
+	
+	/**
+	 * Tests getting a History.
+	 * @throws NoGalaxyHistoryException 
+	 */
+	@Test
+	public void testGetHistory() throws NoGalaxyHistoryException {
+		List<History> historyList = new LinkedList<History>();
+		historyList.add(history);
+		
+		when(historiesClient.getHistories()).thenReturn(historyList);
+		
+		History history = galaxySearch.getGalaxyHistory(HISTORY_ID);
+		assertNotNull(history);
+		assertEquals(HISTORY_ID, history.getId());
+	}
+	
+	/**
+	 * Tests not getting a History.
+	 * @throws NoGalaxyHistoryException 
+	 */
+	@Test(expected=NoGalaxyHistoryException.class)
+	public void testGetNoHistory() throws NoGalaxyHistoryException {
+		galaxySearch.getGalaxyHistory(INVALID_HISTORY_ID);
 	}
 
 	/**
