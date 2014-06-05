@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
@@ -123,16 +124,19 @@ public class GalaxyWorkflowManager {
 	}
 	
 	/**
-	 * Starts the execution of a workflow with the given list of files and a given workflow ID.
+	 * Starts the execution of a workflow with a single fastq file and the given workflow id.
 	 * @param fastqFile  A fastq file to start the fastqc workflow. 
 	 * @param workflowId  The id of the workflow to start.
-	 * @throws GalaxyDatasetNotFoundException 
-	 * @throws UploadException 
-	 * @throws InterruptedException 
-	 * @throws IOException 
+	 * @throws GalaxyDatasetNotFoundException If there was an error uploading the Galaxy dataset.
+	 * @throws UploadException If there was an error uploading the Galaxy dataset.
+	 * @throws IOException If there was an error with the file.
+	 * @throws WorkflowException If there was an error with running the workflow.
 	 */
-	public WorkflowOutputs runFastQCWorkflow(Path fastqPath, String workflowId) throws UploadException, GalaxyDatasetNotFoundException, InterruptedException, IOException {
+	public WorkflowOutputs runSingleFileWorkflow(Path fastqPath, String workflowId, String workflowInputLabel)
+			throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException {
 		checkNotNull(fastqPath, "files are null");
+		checkNotNull(workflowInputLabel, "workflowInputLabel is null");
+		
 		File fastqFile = fastqPath.toFile();
 		
 		checkArgument(fastqFile.exists(), "fastqFile " + fastqFile + " does not exist");
@@ -147,25 +151,29 @@ public class GalaxyWorkflowManager {
 		Dataset inputDataset = galaxyHistory.fileToHistory(fastqPath, workflowHistory);
 		
 		// setup workflow inputs
-		String workflowInput1Id = null;
+		String workflowInputId = null;
 		for(final Map.Entry<String, WorkflowInputDefinition> inputEntry : workflowDetails.getInputs().entrySet()) {
 			final String label = inputEntry.getValue().getLabel();
-			if(label.equals("fastq")) {
-				workflowInput1Id = inputEntry.getKey();
+			if(label.equals(workflowInputLabel)) {
+				workflowInputId = inputEntry.getKey();
 			}
 		}
 
-		WorkflowInputs inputs = new WorkflowInputs();
-		inputs.setDestination(new WorkflowInputs.ExistingHistory(workflowHistory.getId()));
-		inputs.setWorkflowId(workflowDetails.getId());
-		inputs.setInput(workflowInput1Id, new WorkflowInputs.WorkflowInput(inputDataset.getId(), WorkflowInputs.InputSourceType.HDA));
-		
-		// execute workflow
-		WorkflowOutputs output = workflowsClient.runWorkflow(inputs);
-
-		logger.debug("Running workflow in history " + output.getHistoryId());
-		
-		return output;
+		if (workflowInputId != null) {
+			WorkflowInputs inputs = new WorkflowInputs();
+			inputs.setDestination(new WorkflowInputs.ExistingHistory(workflowHistory.getId()));
+			inputs.setWorkflowId(workflowDetails.getId());
+			inputs.setInput(workflowInputId, new WorkflowInputs.WorkflowInput(inputDataset.getId(), WorkflowInputs.InputSourceType.HDA));
+			
+			// execute workflow
+			WorkflowOutputs output = workflowsClient.runWorkflow(inputs);
+	
+			logger.debug("Running workflow in history " + output.getHistoryId());
+			
+			return output;
+		} else {
+			throw new WorkflowException("Could not find workflow input: " + workflowInputId);
+		}
 	}
 	
 	private int getTotalHistoryItems(Map<String, List<String>> stateIds) {
@@ -255,7 +263,7 @@ public class GalaxyWorkflowManager {
 		return path.toFile();
 	}
 	
-	public static void main(String[] args) throws UploadException, GalaxyDatasetNotFoundException, InterruptedException, IOException {
+	public static void main(String[] args) throws UploadException, GalaxyDatasetNotFoundException, InterruptedException, IOException, WorkflowException {
 		File fastqDir = new File("/home/aaron/workspace/irida-api/cholera-files-subsample/fastq");
 		File[] fastqFiles = fastqDir.listFiles(new FileFilter(){
 			public boolean accept(File pathname) {
@@ -265,14 +273,14 @@ public class GalaxyWorkflowManager {
 		fastqFiles = new File[]{fastqFiles[0]};
 		Path fastqPath = fastqFiles[0].toPath();
 		
-		GalaxyInstance galaxyInstance = GalaxyInstanceFactory.get("http://galaxy-staging.corefacility.ca", "558a75474e8e3987104bdb430ffddaf2");
+		GalaxyInstance galaxyInstance = GalaxyInstanceFactory.get("http://localhost:8090", "4a88bc2bc57fe0ebf4cb4c6d8a464c02");
 		GalaxySearch galaxySearch = new GalaxySearch(galaxyInstance);
 		GalaxyHistory galaxyHistory = new GalaxyHistory(galaxyInstance, galaxySearch);
 		GalaxyWorkflowManager workflowSubmitter = new GalaxyWorkflowManager(galaxyInstance, galaxyHistory);
 		
 		// for all input files
 		List<WorkflowOutputs> outputsList = new ArrayList<WorkflowOutputs>();
-		WorkflowOutputs outputs = workflowSubmitter.runFastQCWorkflow(fastqPath, "3f5830403180d620");
+		WorkflowOutputs outputs = workflowSubmitter.runSingleFileWorkflow(fastqPath, "f2db41e1fa331b3e", "fastq");
 		outputsList.add(outputs);
 
 		// poll history until all workflows completed
