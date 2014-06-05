@@ -111,4 +111,32 @@ public class GalaxyWorkflowManagerIT {
 			assertNotNull(dataset);
 		}
 	}
+	
+	/**
+	 * Tests attempting to run a workflow that does not exist.
+	 * @throws UploadException
+	 * @throws GalaxyDatasetNotFoundException
+	 * @throws IOException
+	 * @throws WorkflowException
+	 */
+	@Test(expected=WorkflowException.class)
+	public void testInvalidWorkflow() throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException {
+		String invalidWorkflowId = localGalaxy.getInvalidWorkflowId();
+		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
+		galaxyWorkflowManager.runSingleFileWorkflow(dataFile, invalidWorkflowId, workflowInputLabel);
+	}
+	
+	/**
+	 * Tests attempting to run a workflow with an invalid input name.
+	 * @throws UploadException
+	 * @throws GalaxyDatasetNotFoundException
+	 * @throws IOException
+	 * @throws WorkflowException
+	 */
+	@Test(expected=WorkflowException.class)
+	public void testInvalidWorkflowInput() throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException {
+		String workflowId = localGalaxy.getSingleInputWorkflowId();
+		String invalidWorkflowLabel = localGalaxy.getInvalidWorkflowLabel();
+		galaxyWorkflowManager.runSingleFileWorkflow(dataFile, workflowId, invalidWorkflowLabel);
+	}
 }

@@ -71,6 +71,7 @@ public class LocalGalaxy {
 	private String singleInputWorkflowLabel;
 	
 	private String invalidWorkflowId;
+	private String invalidWorkflowLabel = "invalid";
 
 	/**
 	 * Method to cleanup the running instance of Galaxy when finished with tests.
@@ -472,5 +473,21 @@ public class LocalGalaxy {
 	 */
 	public void setupWorkflows() {
 		setupWorkflowSingleInput();
+	}
+
+	/**
+	 * Gets a workflow id that is invalid.
+	 * @return  An invalid workflow id.
+	 */
+	public String getInvalidWorkflowId() {
+		return invalidWorkflowId;
+	}
+
+	/**
+	 * Gets an invalid workflow label.
+	 * @return  An invalid workflow label.
+	 */
+	public String getInvalidWorkflowLabel() {
+		return invalidWorkflowLabel;
 	}
 }

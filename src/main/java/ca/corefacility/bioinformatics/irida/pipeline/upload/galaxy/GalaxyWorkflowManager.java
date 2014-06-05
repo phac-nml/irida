@@ -115,11 +115,19 @@ public class GalaxyWorkflowManager {
 		this.galaxyInstance = galaxyInstance;
 	}
 	
-	private void checkWorkflowIdValid(String workflowId) {
+	private void checkWorkflowIdValid(String workflowId) throws WorkflowException {
 		checkNotNull(workflowId, "workflow id is null");
+		boolean invalid = false;
+		
 		WorkflowsClient workflowsClient = galaxyInstance.getWorkflowsClient();
-		if (workflowsClient.showWorkflow(workflowId) == null) {
-			throw new RuntimeException("workflow with id " + workflowId + " does not exist in Galaxy instance");
+		try {
+			invalid = workflowsClient.showWorkflow(workflowId) == null;
+		} catch (RuntimeException e) {
+			invalid = true;
+		}
+		
+		if (invalid) {
+			throw new WorkflowException("workflow with id " + workflowId + " does not exist in Galaxy instance");
 		}
 	}
 	
