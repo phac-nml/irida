@@ -73,7 +73,7 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
 		if (auth instanceof OAuth2Authentication) {
 			logger.trace("Found OAuth2Authentication in session.  Storing clientId in revision.");
 			OAuth2Authentication oAuth = (OAuth2Authentication) auth;
-			entity.setClientId(oAuth.getOAuth2Request().getClientId());
+			entity.setClientId(oAuth.getAuthorizationRequest().getClientId());
 		}
 	}
     
