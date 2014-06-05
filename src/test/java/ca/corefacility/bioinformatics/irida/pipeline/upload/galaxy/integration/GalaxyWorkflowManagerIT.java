@@ -89,12 +89,8 @@ public class GalaxyWorkflowManagerIT {
 	@Test
 	public void testExecuteWorkflow() throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException, NoGalaxyHistoryException, URISyntaxException {
 		
-		Path workflowFile = Paths.get(GalaxyWorkflowManagerIT.class.getResource(
-				"GalaxyWorkflowSingleInput.ga").toURI());
-		
-		// build workflow
-		String workflowId = localGalaxy.constructTestWorkflow(workflowFile);
-		String workflowInputLabel = "fastq";
+		String workflowId = localGalaxy.getSingleInputWorkflowId();
+		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
 		
 		WorkflowOutputs workflowOutput = 
 				galaxyWorkflowManager.runSingleFileWorkflow(dataFile, workflowId, workflowInputLabel);

@@ -3,10 +3,12 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import javax.annotation.PreDestroy;
@@ -64,6 +66,11 @@ public class LocalGalaxy {
 	private GalaxyInstance galaxyInstanceAdmin;
 	private GalaxyInstance galaxyInstanceUser1;
 	private GalaxyInstance galaxyInstanceUser2;
+	
+	private String singleInputWorkflowId;
+	private String singleInputWorkflowLabel;
+	
+	private String invalidWorkflowId;
 
 	/**
 	 * Method to cleanup the running instance of Galaxy when finished with tests.
@@ -404,7 +411,7 @@ public class LocalGalaxy {
 	 * @return  The id of the workflow constructed.
 	 * @throws IOException If there was an error reading the workflow file.
 	 */
-	public String constructTestWorkflow(Path workflowFile) throws IOException,RuntimeException {
+	private String constructTestWorkflow(Path workflowFile) throws IOException,RuntimeException {
 		checkNotNull(workflowFile, "workflowFile is null");
 				
 		String content = readFile(workflowFile);
@@ -418,5 +425,52 @@ public class LocalGalaxy {
 			throw new RuntimeException("Error building workflow from file " + workflowFile + " in Galaxy " + 
 					galaxyURL);
 		}
+	}
+	
+	/**
+	 * Sets up the single input workflow.
+	 */
+	private void setupWorkflowSingleInput() {
+		try {
+			Path workflowFile = Paths.get(LocalGalaxy.class.getResource(
+					"GalaxyWorkflowSingleInput.ga").toURI());
+			
+			// build workflow
+			singleInputWorkflowId = constructTestWorkflow(workflowFile);
+			singleInputWorkflowLabel = "fastq";
+			
+			// find a workflow id that's invalid
+			int id = 1;
+			invalidWorkflowId = "" + id;
+			while (invalidWorkflowId.equals(singleInputWorkflowId)) {
+				id++;
+				invalidWorkflowId = "" + id;
+			}
+		} catch (URISyntaxException | IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Gets the workflow id for a single input workflow.
+	 * @return  The id of the workflow.
+	 */
+	public String getSingleInputWorkflowId() {
+		return singleInputWorkflowId;
+	}
+
+	/**
+	 * Gets the input label for the single input workflow.
+	 * @return  The input label for the single input workflow.
+	 */
+	public String getSingleInputWorkflowLabel() {
+		return singleInputWorkflowLabel;
+	}
+
+	/**
+	 * Sets up all workflows for this local galaxy.
+	 */
+	public void setupWorkflows() {
+		setupWorkflowSingleInput();
 	}
 }

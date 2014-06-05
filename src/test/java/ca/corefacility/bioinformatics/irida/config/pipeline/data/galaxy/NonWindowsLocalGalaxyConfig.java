@@ -160,6 +160,8 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 						localGalaxy.getGalaxyURL().toString(),
 						localGalaxy.getUser2APIKey()));
 				
+				localGalaxy.setupWorkflows();
+				
 				return localGalaxy;
 			} catch (Exception e) {
 				// If Galaxy failed to build, we don't want it to re-build on every test
