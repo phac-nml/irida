@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
+import org.springframework.security.authentication.AnonymousAuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -66,7 +67,18 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userRepository).passwordEncoder(passwordEncoder());
-		auth.authenticationProvider(authenticationProvider());
+		auth.authenticationProvider(authenticationProvider()).authenticationProvider(anonymousAuthenticationProvider());
+	}
+	
+	/**
+	 * Authentication provider for anonymous requests. Will be used for
+	 * username/password grants requesting /oauth/token.
+	 * 
+	 * @return
+	 */
+	private AuthenticationProvider anonymousAuthenticationProvider(){
+		AnonymousAuthenticationProvider anonymousAuthenticationProvider = new AnonymousAuthenticationProvider("anonymousTokenAuthProvider");
+		return anonymousAuthenticationProvider;
 	}
 
 	@Bean

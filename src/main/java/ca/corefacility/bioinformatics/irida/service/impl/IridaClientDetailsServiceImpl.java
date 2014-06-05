@@ -20,17 +20,17 @@ import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
  *
  */
 @Service("clientDetails")
-public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaClientDetails> implements
-		IridaClientDetailsService {
+public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaClientDetails> implements IridaClientDetailsService {
 	private ClientDetailsRepository clientDetailsRepository;
 
 	@Autowired
 	public IridaClientDetailsServiceImpl(ClientDetailsRepository repository, Validator validator) {
-		super(repository, validator, IridaClientDetails.class);
+		super(repository, validator,IridaClientDetails.class);
+		this.clientDetailsRepository = repository;
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * {@inheritDoc} 
 	 */
 	@Override
 	public ClientDetails loadClientByClientId(String clientId) throws ClientRegistrationException {
