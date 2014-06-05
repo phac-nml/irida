@@ -1,11 +1,17 @@
 package ca.corefacility.bioinformatics.irida.service;
 
+import java.util.Map;
+
+import javax.validation.ConstraintViolationException;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.ClientRegistrationException;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 
 /**
@@ -18,21 +24,25 @@ public interface IridaClientDetailsService extends ClientDetailsService, CRUDSer
 
 	@PreAuthorize("permitAll()")
 	public ClientDetails loadClientByClientId(String clientId) throws ClientRegistrationException;
+
 	/**
-	 * Add a new {@link IridaClientDetails} object to the database
-	 * @param entity the new object to add
-	 * @return the persisted entity
+	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public IridaClientDetails create(IridaClientDetails entity);
-	
+
 	/**
-	 * Delete an {@link IridaClientDetails} object from the database
-	 * @param id The ID to delete
-	 * @throws EntityNotFoundException if the entity does not exist
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@Override
+	public IridaClientDetails update(Long id, Map<String, Object> updatedProperties) throws EntityExistsException,
+			EntityNotFoundException, ConstraintViolationException, InvalidPropertyException;
+
+	/**
+	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void delete(Long id) throws EntityNotFoundException;
-	
 
 }
