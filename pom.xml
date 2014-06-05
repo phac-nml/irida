@@ -46,7 +46,7 @@
         <powermock.version>1.5.4</powermock.version>
         <jsoup.version>1.7.3</jsoup.version>
         <spring-test-mvc-htmlunit.version>1.0.0.M1</spring-test-mvc-htmlunit.version>
-        <selenium-htmlunit-driver.version>2.42.0</selenium-htmlunit-driver.version>
+        <selenium-driver.version>2.40.0</selenium-driver.version>
     </properties>
 
     <inceptionYear>2014</inceptionYear>
@@ -283,7 +283,13 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-htmlunit-driver</artifactId>
-            <version>${selenium-htmlunit-driver.version}</version>
+            <version>${selenium-driver.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-support</artifactId>
+            <version>${selenium-driver.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
