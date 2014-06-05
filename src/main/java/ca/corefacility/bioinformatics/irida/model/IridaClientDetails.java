@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.model;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,6 +35,10 @@ import com.google.common.collect.Maps;
 @Audited
 public class IridaClientDetails implements ClientDetails, IridaThing {
 	private static final long serialVersionUID = -1593194281520695701L;
+
+	// 12 hours
+	public final static Integer DEFAULT_TOKEN_VALIDITY = 43200;
+	public final static Integer DEFAULT_REFRESH_TOKEN_VALIDITY = 43200;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -79,6 +84,47 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 
 	private Date modifiedDate;
 	private Date createdDate;
+
+	/**
+	 * Default constructor with empty scopes, grant types, resource ids,
+	 * redirect uris, and additional information
+	 */
+	public IridaClientDetails() {
+		createdDate = new Date();
+		modifiedDate = new Date();
+		accessTokenValiditySeconds = DEFAULT_TOKEN_VALIDITY;
+		refreshTokenValiditySeconds = DEFAULT_REFRESH_TOKEN_VALIDITY;
+
+		resourceIds = new HashSet<>();
+		scope = new HashSet<>();
+		authorizedGrantTypes = new HashSet<>();
+		registeredRedirectUri = new HashSet<>();
+		additionalInformation = new HashMap<>();
+	}
+
+	/**
+	 * Construct new IridaClientDetails with the following params
+	 * 
+	 * @param clientId
+	 *            The ID of the client for this object
+	 * @param clientSecret
+	 *            The Client Secret for this client
+	 * @param resourceIds
+	 *            The resource IDs this client will access
+	 * @param scope
+	 *            The scopes this client can access
+	 * @param authorizedGrantTypes
+	 *            The grant types allowed for this client
+	 */
+	public IridaClientDetails(String clientId, String clientSecret, Set<String> resourceIds, Set<String> scope,
+			Set<String> authorizedGrantTypes) {
+		this();
+		this.clientId = clientId;
+		this.resourceIds = resourceIds;
+		this.clientSecret = clientSecret;
+		this.scope = scope;
+		this.authorizedGrantTypes = authorizedGrantTypes;
+	}
 
 	/**
 	 * {@inheritDoc}
