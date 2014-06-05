@@ -1,6 +1,13 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 
 import javax.annotation.PreDestroy;
 
@@ -11,6 +18,8 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
+import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
+import com.github.jmchilton.blend4j.galaxy.beans.Workflow;
 import com.github.jmchilton.galaxybootstrap.BootStrapper;
 import com.github.jmchilton.galaxybootstrap.BootStrapper.GalaxyDaemon;
 import com.github.jmchilton.galaxybootstrap.GalaxyProperties;
@@ -46,7 +55,7 @@ public class LocalGalaxy {
 	private GalaxyAccountEmail user2Name;
 	private String user2Password;
 	private String user2APIKey;
-
+	
 	private GalaxyAccountEmail nonExistentGalaxyAdminName;
 	private GalaxyAccountEmail nonExistentGalaxyUserName;
 
@@ -376,5 +385,38 @@ public class LocalGalaxy {
 	public void setInvalidGalaxyUserName(
 			UploaderAccountName invalidGalaxyUserName) {
 		this.invalidGalaxyUserName = invalidGalaxyUserName;
+	}
+	
+	private String readFile(Path file) throws IOException {
+		String fileContents = "";
+		List<String> lines = Files.readAllLines(file, Charset.defaultCharset());
+
+		for (String line : lines) {
+			fileContents += line + "\n";
+		}
+		
+		return fileContents;
+	}
+	
+	/**
+	 * Constructs a workflow in the test Galaxy with the given workflow file.
+	 * @param workflowFile  The file to construct a workflow from.
+	 * @return  The id of the workflow constructed.
+	 * @throws IOException If there was an error reading the workflow file.
+	 */
+	public String constructTestWorkflow(Path workflowFile) throws IOException,RuntimeException {
+		checkNotNull(workflowFile, "workflowFile is null");
+				
+		String content = readFile(workflowFile);
+		
+		WorkflowsClient workflowsClient = galaxyInstanceAdmin.getWorkflowsClient();
+		Workflow workflow = workflowsClient.importWorkflow(content);
+		
+		if (workflow != null && workflow.getId() != null) {	
+			return workflow.getId();
+		} else {
+			throw new RuntimeException("Error building workflow from file " + workflowFile + " in Galaxy " + 
+					galaxyURL);
+		}
 	}
 }
