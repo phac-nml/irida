@@ -24,14 +24,14 @@
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>4.0.3.RELEASE</spring.version>
-        <jetty-maven-plugin.version>9.2.0.M0</jetty-maven-plugin.version>
+        <jetty-maven-plugin.version>9.2.0.v20140526</jetty-maven-plugin.version>
         <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
         <maven-war-plugin.version>2.4</maven-war-plugin.version>
         <maven-resources-plugin.version>2.6</maven-resources-plugin.version>
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <thymeleaf-spring4.version>2.1.2.RELEASE</thymeleaf-spring4.version>
         <yeoman-maven-plugin.version>0.2</yeoman-maven-plugin.version>
-        <spring-security.version>3.2.3.RELEASE</spring-security.version>
+        <spring-security.version>4.0.0.M1</spring-security.version>
         <irida-api.version>1.5.0-SNAPSHOT</irida-api.version>
         <slf4j.version>1.7.7</slf4j.version>
         <mockito.version>1.9.5</mockito.version>
@@ -47,6 +47,8 @@
         <jsoup.version>1.7.3</jsoup.version>
         <spring-test-mvc-htmlunit.version>1.0.0.M1</spring-test-mvc-htmlunit.version>
         <selenium-driver.version>2.40.0</selenium-driver.version>
+        <maven-failsafe-plugin.version>2.13</maven-failsafe-plugin.version>
+        <spring-security-test.version>4.0.0.M1</spring-security-test.version>
     </properties>
 
     <inceptionYear>2014</inceptionYear>
@@ -274,8 +276,14 @@
             <version>${jsoup.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
-            <groupId>org.springframework</groupId>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <version>${spring-security-test.version}</version>
+        </dependency>
+        <dependency>
+        <groupId>org.springframework</groupId>
             <artifactId>spring-test-mvc-htmlunit</artifactId>
             <version>${spring-test-mvc-htmlunit.version}</version>
             <scope>test</scope>
@@ -296,6 +304,7 @@
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
             <version>1.4.01</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -331,7 +340,24 @@
                 </configuration>
             </plugin>
 
-            <!-- SUREFIRE -->
+            <!-- FAILSAFE (integration testing) -->
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven-failsafe-plugin.version}</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- SUREFIRE (unit testing) -->
 
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -370,6 +396,7 @@
                             <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut/</outputDirectory>
                         </configuration>
                     </execution>
+
                 </executions>
             </plugin>
 
@@ -383,7 +410,30 @@
                     <webApp>
                         <contextPath>/</contextPath>
                     </webApp>
+                    <stopPort>8995</stopPort>
+                    <stopKey>STOP</stopKey>
+                    <stopWait>10</stopWait>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>start-jetty</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <scanIntervalSeconds>0</scanIntervalSeconds>
+                            <daemon>true</daemon>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-jetty</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>
