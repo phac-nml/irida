@@ -35,6 +35,8 @@ import com.google.common.base.Joiner;
 @Import(IridaOAuth2Config.class)
 public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
+	private static final String ANONYMOUS_AUTHENTICATION_KEY = "anonymousTokenAuthProvider";
+	
 	private static final String[] ROLE_HIERARCHIES = new String[] { "ROLE_ADMIN > ROLE_MANAGER",
 			"ROLE_MANAGER > ROLE_USER", "ROLE_ADMIN > ROLE_SEQUENCER" };
 
@@ -77,7 +79,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	 * @return
 	 */
 	private AuthenticationProvider anonymousAuthenticationProvider(){
-		AnonymousAuthenticationProvider anonymousAuthenticationProvider = new AnonymousAuthenticationProvider("anonymousTokenAuthProvider");
+		AnonymousAuthenticationProvider anonymousAuthenticationProvider = new AnonymousAuthenticationProvider(ANONYMOUS_AUTHENTICATION_KEY);
 		return anonymousAuthenticationProvider;
 	}
 
