@@ -72,8 +72,12 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	@Column(name = "uri")
 	@CollectionTable(name = "client_details_redirect_uri", joinColumns = @JoinColumn(name = "client_details_id"))
 	private Set<String> registeredRedirectUri;
+	
 	@NotNull
+	@Column(name="token_validity")
 	private Integer accessTokenValiditySeconds;
+	
+	@Column(name="refresh_validity")
 	private Integer refreshTokenValiditySeconds;
 
 	@ElementCollection(fetch = FetchType.EAGER)
