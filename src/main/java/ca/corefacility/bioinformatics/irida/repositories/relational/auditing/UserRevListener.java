@@ -2,7 +2,7 @@ package ca.corefacility.bioinformatics.irida.repositories.relational.auditing;
 
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.ClientDetailsRepository;
+import ca.corefacility.bioinformatics.irida.repositories.IridaClientDetailsRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
 import org.hibernate.envers.RevisionListener;
@@ -23,7 +23,7 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(UserRevListener.class); 
     private static ApplicationContext applicationContext;
     private static UserRepository urepo;
-    private static ClientDetailsRepository clientRepo;
+    private static IridaClientDetailsRepository clientRepo;
 
     @Override
     public void newRevision(Object revisionEntity) {
@@ -60,7 +60,7 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
     
     public void initialize(){
         urepo = applicationContext.getBean(UserRepository.class);
-        clientRepo = applicationContext.getBean(ClientDetailsRepository.class);
+        clientRepo = applicationContext.getBean(IridaClientDetailsRepository.class);
     }
     
 	/**

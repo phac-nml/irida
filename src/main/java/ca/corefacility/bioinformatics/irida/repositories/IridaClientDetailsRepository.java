@@ -6,7 +6,7 @@ import org.springframework.data.repository.history.RevisionRepository;
 
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 
-public interface ClientDetailsRepository extends PagingAndSortingRepository<IridaClientDetails, Long>,
+public interface IridaClientDetailsRepository extends PagingAndSortingRepository<IridaClientDetails, Long>,
 		RevisionRepository<IridaClientDetails, Long, Integer> {
 
 	@Query("from IridaClientDetails d where d.clientId = ?1")
