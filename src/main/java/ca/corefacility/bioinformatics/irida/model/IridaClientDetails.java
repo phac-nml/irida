@@ -24,6 +24,9 @@ import org.hibernate.envers.Audited;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.provider.ClientDetails;
 
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @Entity
@@ -146,7 +149,7 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	 */
 	@Override
 	public Collection<GrantedAuthority> getAuthorities() {
-		return null;
+		return Lists.newArrayList(Role.ROLE_CLIENT);
 	}
 
 	/**
@@ -163,14 +166,6 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	@Override
 	public Integer getRefreshTokenValiditySeconds() {
 		return refreshTokenValiditySeconds;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isAutoApprove(String scope) {
-		return false;
 	}
 
 	/**

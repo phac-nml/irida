@@ -3,27 +3,31 @@ package ca.corefacility.bioinformatics.irida.config.oauth;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.oauth2.provider.BaseClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.client.BaseClientDetails;
-import org.springframework.security.oauth2.provider.client.InMemoryClientDetailsService;
+import org.springframework.security.oauth2.provider.InMemoryClientDetailsService;
+
+import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
 @Configuration
 @Profile("prod")
 public class OAuth2ClientDetailsConfigProd implements OAuth2ClientDetailsConfig{
+	
+	@Autowired
+	IridaClientDetailsService iridaDetailsService;
+	
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	@Bean
 	public ClientDetailsService clientDetails() {
-		InMemoryClientDetailsService inMemoryClientDetailsService = new InMemoryClientDetailsService();
-
-		inMemoryClientDetailsService.setClientDetailsStore(clientDetailsList());
-		return inMemoryClientDetailsService;
+		return iridaDetailsService;
 	}
 	
 	/**
