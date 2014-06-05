@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
  * 
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
-public class LoginPageTest {
+public class LoginPageIT {
 	@Autowired
 	private WebApplicationContext context;
 
