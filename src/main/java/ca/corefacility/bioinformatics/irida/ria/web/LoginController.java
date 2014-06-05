@@ -4,7 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mobile.device.site.SitePreference;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
@@ -20,8 +22,9 @@ public class LoginController {
 	}
 
 	@RequestMapping(value = "/login")
-	public String showLogin(SitePreference sitePreference) {
-		logger.debug("Displaying login page. With site pref: {}", sitePreference);
+	public String showLogin(Model model, @RequestParam(value = "error", required = false, defaultValue = "false") Boolean hasError) {
+		logger.debug("Displaying login page.");
+		model.addAttribute("error", hasError);
 		return "login";
 	}
 }

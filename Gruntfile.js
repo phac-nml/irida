@@ -20,8 +20,7 @@ module.exports = function (grunt) {
         // Create variables for the path used in this project.
         path: {
             app: webapp_dir,
-            static: webapp_dir + '/static',
-            bower: webapp_dir + '/bower_components',
+            bower: webapp_dir + '/resources/bower_components',
             test: './src/test/javascript'
         },
         // Add vendor prefixed styles
@@ -35,17 +34,7 @@ module.exports = function (grunt) {
                         expand: true,
                         cwd: '.tmp/styles/',
                         src: '{,*/}*.css',
-                        dest: '<%= path.static %>/styles/'
-                    }
-                ]
-            },
-            dist: {
-                files: [
-                    {
-                        expand: true,
-                        cwd: '.tmp/styles/',
-                        src: '{,*/}*.css',
-                        dest: '.tmp/styles/'
+                        dest: '<%= path.app %>/resources/css/'
                     }
                 ]
             }
@@ -57,8 +46,7 @@ module.exports = function (grunt) {
                     {
                         dot: true,
                         src: [
-                            '.tmp',
-                            '<%= path.static %>/*'
+                            '.tmp'
                         ]
                     }
                 ]
@@ -80,7 +68,7 @@ module.exports = function (grunt) {
                 sassDir: '<%= path.app %>/styles',
                 cssDir: '.tmp/styles',
                 javascriptsDir: '<%= path.app %>/scripts',
-                importPath: '<%= path.app %>/bower_components',
+                importPath: '<%= path.app %>/resources/bower_components',
                 relativeAssets: false,
                 assetCacheBuster: false,
                 raw: 'Sass::Script::Number.precision = 10\n'
@@ -100,7 +88,7 @@ module.exports = function (grunt) {
         // Run some tasks in parallel to speed up the build process
         concurrent: {
             dev: [
-                'copy:dev',
+//                'copy:dev',
                 'compass:dev'
             ],
             dist: [
@@ -358,28 +346,29 @@ module.exports = function (grunt) {
                     files: ['<%= path.app %>/styles/**/*.scss'],
                     tasks: ['compass:dev', 'autoprefixer']
                 },
-                copy: {
-                    files: ['<%= path.app %>/pages/**/*.html'],
-                    tasks: ['copy:dev']
-                },
+//                copy: {
+//                    files: ['<%= path.app %>/pages/**/*.html'],
+//                    tasks: ['copy:dev']
+//                },
                 js: {
-                    files: ['<%= path.app %>/static/scripts/*.js', '<%= path.test %>/unit/**/*.js'],
+                    files: ['<%= path.app %>/resources/js/*.js'],
                     tasks: ['newer:jshint:all'],
                     options: {
                         livereload: true
                     }
                 },
-                jsTest: {
-                    files: ['<%= path.test %>/unit/**/*.js'],
-                    tasks: ['karma:dev']
-                },
+//                jsTest: {
+//                    files: ['<%= path.test %>/unit/**/*.js'],
+//                    tasks: ['karma:dev']
+//                },
                 livereload: {
                     options: {
                         livereload: '<%= connect.options.livereload %>'
                     },
                     files: [
                         '<%= path.app %>/pages/{,*/}*.html',
-                        '<%= path.static %>/styles/{,*/}*.css'
+                        '<%= path.app %>/templates/{,*/}*.html',
+                        '<%= path.app %>/resources/css/{,*/}*.css'
                     ]
                 }
             }
@@ -405,8 +394,7 @@ module.exports = function (grunt) {
 
 // Development task.
     grunt.registerTask('dev', [
-        'clean:dist',
-        'concurrent:dev',
+        'compass:dev',
         'autoprefixer:dev',
         'configureProxies',
         'connect:livereload',
