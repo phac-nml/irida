@@ -60,6 +60,6 @@ public class LoginPageIT {
 	public void testGoodLogout() throws Exception {
 		loginPage.login(LoginPage.GOOD_USERNAME, LoginPage.GOOD_PASSWORD);
 		assertEquals("The 'test' user is logged in and redirected.", driver.getCurrentUrl(),
-				"http://localhost:8080/app");
+				"http://localhost:8080/dashboard");
 	}
 }
