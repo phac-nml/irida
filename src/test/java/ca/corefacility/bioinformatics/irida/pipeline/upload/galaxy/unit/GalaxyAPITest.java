@@ -11,7 +11,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -54,7 +53,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrary
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
-import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.FilesystemPathsLibraryUpload;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
@@ -1307,12 +1305,5 @@ public class GalaxyAPITest {
 		when(galaxySearch.galaxyUserExists(realAdminEmail)).thenThrow(uniformInterfaceException);
 		
 		assertFalse(workflowRESTAPI.isConnected());
-	}
-	
-	@Test(expected=GalaxyConnectException.class)
-	public void testNotConnectedInvalidHttpStatus() throws ConstraintViolationException, GalaxyConnectException, IOException {
-		GalaxyInstance galaxyInstance = GalaxyInstanceFactory.get(
-				new URL("http://localhost:6006").toString(), "1");
-		new GalaxyAPI(galaxyInstance, new GalaxyAccountEmail("a@b.c"));
 	}
 }
