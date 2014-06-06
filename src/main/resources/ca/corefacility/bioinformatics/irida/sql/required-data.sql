@@ -273,7 +273,7 @@ insert into client_details_grant_types (client_details_id,grant_value) values (1
 insert into client_details_grant_types (client_details_id,grant_value) values (2,"password");
 insert into client_details_grant_types (client_details_id,grant_value) values (3,"password");
 insert into client_details_grant_types (client_details_id,grant_value) values (4,"password");
-insert into client_details_grant_types (client_details_id,grant_value) values (5,"password"), (5,"authorization_code");
+insert into client_details_grant_types (client_details_id,grant_value) values (5,"authorization_code");
 
 insert into client_details_resource_ids (client_details_id,resource_id) values (1,"NmlIrida");
 insert into client_details_resource_ids (client_details_id,resource_id) values (2,"NmlIrida");
