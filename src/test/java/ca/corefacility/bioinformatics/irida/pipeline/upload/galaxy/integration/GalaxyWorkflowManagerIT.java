@@ -36,6 +36,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWo
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistory;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowManager;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowManager.WorkflowState;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowManager.WorkflowStatus;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
@@ -116,6 +118,13 @@ public class GalaxyWorkflowManagerIT {
 			Dataset dataset = historiesClient.showDataset(workflowOutput.getHistoryId(), outputId);
 			assertNotNull(dataset);
 		}
+		
+		// test get workflow status
+		WorkflowStatus workflowStatus = 
+				galaxyWorkflowManager.getStatusFor(workflowOutput.getHistoryId());
+		assertFalse(WorkflowState.UNKNOWN.equals(workflowStatus.getState()));
+		float percentComplete = workflowStatus.getPercentComplete();
+		assertTrue(0.0f <= percentComplete && percentComplete <= 100.0f);
 	}
 	
 	/**

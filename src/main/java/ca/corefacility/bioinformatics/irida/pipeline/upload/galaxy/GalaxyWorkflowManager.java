@@ -51,7 +51,12 @@ public class GalaxyWorkflowManager {
 	private GalaxyHistory galaxyHistory;
 	private GalaxyInstance galaxyInstance;
 	
-	private enum WorkflowState {
+	/**
+	 * Defines the state of a workflow.
+	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+	 *
+	 */
+	public enum WorkflowState {
 		OK("ok"),
 		RUNNING("running"),
 		QUEUED("queued"),
@@ -85,7 +90,12 @@ public class GalaxyWorkflowManager {
 		}
 	}
 	
-	private class WorkflowStatus {
+	/**
+	 * Defines the status of a workflow.
+	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+	 *
+	 */
+	public class WorkflowStatus {
 		private WorkflowState state;
 		private float percentComplete;
 		
