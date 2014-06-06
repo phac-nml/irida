@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,9 +26,6 @@ import org.hibernate.envers.Audited;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.provider.ClientDetails;
 
-import ca.corefacility.bioinformatics.irida.model.user.Role;
-
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -92,6 +90,12 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	@Column(name = "info_value")
 	@CollectionTable(name = "client_details_additional_information", joinColumns = @JoinColumn(name = "client_details_id"))
 	private Map<String, String> additionalInformation;
+	
+	@ElementCollection(fetch = FetchType.EAGER)
+	@MapKeyColumn(name = "authority_key")
+	@Column(name = "authority_value")
+	@CollectionTable(name = "client_details_authorities", joinColumns = @JoinColumn(name = "client_details_id"))
+	Collection<ClientRole> authorities;
 
 	private Date modifiedDate;
 	private Date createdDate;
@@ -128,13 +132,14 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	 *            The grant types allowed for this client
 	 */
 	public IridaClientDetails(String clientId, String clientSecret, Set<String> resourceIds, Set<String> scope,
-			Set<String> authorizedGrantTypes) {
+			Set<String> authorizedGrantTypes, Collection<ClientRole> authorities) {
 		this();
 		this.clientId = clientId;
 		this.resourceIds = resourceIds;
 		this.clientSecret = clientSecret;
 		this.scope = scope;
 		this.authorizedGrantTypes = authorizedGrantTypes;
+		this.authorities = authorities;
 	}
 
 	/**
@@ -206,7 +211,9 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	 */
 	@Override
 	public Collection<GrantedAuthority> getAuthorities() {
-		return Lists.newArrayList(Role.ROLE_CLIENT);
+		ArrayList<GrantedAuthority> roles = new ArrayList<>();
+		authorities.forEach(authority -> roles.add(authority));
+		return roles;
 	}
 
 	/**
