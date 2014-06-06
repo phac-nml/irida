@@ -8,11 +8,13 @@ import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
@@ -308,5 +311,32 @@ public class GalaxyWorkflowManager {
 			logger.debug("Workflows remaining: " + outputsList.size());
 			Thread.sleep(2000);
 		} while (outputsList.size() > 0);
+	}
+
+	/**
+	 * Gets a list of download URLs for the given passed WorkflowOutputs.
+	 * @param workflowOutputs  A list of WorkflowOutputs to find the download URLs for.
+	 * @return  A list of download URLs for each workflow output.
+	 * @throws GalaxyOutputsForWorkflowException 
+	 */
+	public List<URL> getWorkflowOutputDownloadURLs(
+			WorkflowOutputs workflowOutputs) throws GalaxyOutputsForWorkflowException {
+		checkNotNull(workflowOutputs, "workflowOutputs is null");
+		
+		List<URL> workflowDownloadURLs = new LinkedList<URL>();
+		
+		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
+		
+		try {
+			for(String outputId : workflowOutputs.getOutputIds()) {
+				Dataset dataset = historiesClient.showDataset(workflowOutputs.getHistoryId(), outputId);
+				URL downloadURL = new URL(dataset.getFullDownloadUrl());
+				workflowDownloadURLs.add(downloadURL);
+			}
+			
+			return workflowDownloadURLs;
+		} catch (RuntimeException | MalformedURLException e) {
+			throw new GalaxyOutputsForWorkflowException(e);
+		}
 	}
 }

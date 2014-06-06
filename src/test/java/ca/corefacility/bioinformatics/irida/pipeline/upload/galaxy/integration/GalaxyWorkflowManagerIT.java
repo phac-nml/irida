@@ -4,8 +4,11 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.junit.Assume;
 import org.junit.Before;
@@ -29,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistory;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowManager;
@@ -63,6 +67,8 @@ public class GalaxyWorkflowManagerIT {
 	private HistoriesClient historiesClient;
 	private GalaxySearch galaxySearch;
 	private GalaxyWorkflowManager galaxyWorkflowManager;
+	
+	private static final String INVALID_HISTORY_ID = "1";
 
 	@Before
 	public void setup() throws URISyntaxException {
@@ -110,6 +116,57 @@ public class GalaxyWorkflowManagerIT {
 			Dataset dataset = historiesClient.showDataset(workflowOutput.getHistoryId(), outputId);
 			assertNotNull(dataset);
 		}
+	}
+	
+	/**
+	 * Tests getting download URLs for workflow outputs. 
+	 * @throws UploadException
+	 * @throws GalaxyDatasetNotFoundException
+	 * @throws IOException
+	 * @throws WorkflowException
+	 * @throws NoGalaxyHistoryException
+	 * @throws URISyntaxException 
+	 */
+	@Test
+	public void testGetWorkflowOutputFiles() throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException, NoGalaxyHistoryException, URISyntaxException {
+		
+		String workflowId = localGalaxy.getSingleInputWorkflowId();
+		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
+		
+		WorkflowOutputs workflowOutput = 
+				galaxyWorkflowManager.runSingleFileWorkflow(dataFile, workflowId, workflowInputLabel);
+		
+		List<URL> outputURLs = galaxyWorkflowManager.getWorkflowOutputDownloadURLs(workflowOutput);
+		assertNotNull(outputURLs);
+		assertEquals(1, outputURLs.size());
+		
+		URL singleOutputURL = outputURLs.get(0);
+		assertNotNull(singleOutputURL);
+	}
+	
+	/**
+	 * Tests getting download URLs for invalid workflow outputs.
+	 * @throws UploadException
+	 * @throws GalaxyDatasetNotFoundException
+	 * @throws IOException
+	 * @throws WorkflowException
+	 * @throws NoGalaxyHistoryException
+	 * @throws URISyntaxException 
+	 */
+	@Test(expected=GalaxyOutputsForWorkflowException.class)
+	public void testGetWorkflowNoOutputFiles() throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException, NoGalaxyHistoryException, URISyntaxException {
+		
+		String workflowId = localGalaxy.getSingleInputWorkflowId();
+		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
+		
+		WorkflowOutputs workflowOutput = 
+				galaxyWorkflowManager.runSingleFileWorkflow(dataFile, workflowId, workflowInputLabel);
+		
+		List<String> fakeOutputIds = new LinkedList<String>();
+		fakeOutputIds.add(INVALID_HISTORY_ID);
+		workflowOutput.seOutputIds(fakeOutputIds);
+		
+		galaxyWorkflowManager.getWorkflowOutputDownloadURLs(workflowOutput);
 	}
 	
 	/**
