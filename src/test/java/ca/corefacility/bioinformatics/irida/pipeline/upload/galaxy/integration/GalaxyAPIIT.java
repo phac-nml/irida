@@ -8,8 +8,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
-
-
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -1525,6 +1523,7 @@ public class GalaxyAPIIT {
 		assertTrue(galaxyAPI.isConnected());
 	}
 	
+	
 	/**
 	 * Builds a thread used to send http responses back to the user.
 	 * @return  A thread which will send a specific http response back to the user.
@@ -1534,7 +1533,9 @@ public class GalaxyAPIIT {
 		final int unusedPort = invalidGalaxyURL.getPort();
 		
 		Thread serverThread = new Thread(){
-
+			
+			private int NUMBER_CONNECTIONS = 2;
+			
 			@Override
 			public void run() {
 				super.run();
@@ -1542,20 +1543,21 @@ public class GalaxyAPIIT {
 				ServerSocket server;
 				try {
 					server = new ServerSocket(unusedPort);
-	
-					Socket connection = server.accept();
-					
-					String response = 
-							"HTTP/1.0 403 Forbidden \r\n" +
-							"Content-Length: 0\r\n" +
-						    "\r\n";
-					
-					DataOutputStream output = new DataOutputStream(connection.getOutputStream());
-					output.write(response.getBytes());
-					output.close();
+					for (int i = 0; i < NUMBER_CONNECTIONS; i++) {
+						Socket connection = server.accept();
+						
+						String response = 
+								
+								"HTTP/1.1 403 Forbidden\r\n" +
+								"\r\n";
+						
+						DataOutputStream output = new DataOutputStream(connection.getOutputStream());
+						output.write(response.getBytes());
+						output.close();
+					}
 					
 					server.close();
-				
+					
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -1573,11 +1575,11 @@ public class GalaxyAPIIT {
 	 */
 	@Test(expected=GalaxyConnectException.class)
 	public void testNotConnectedInvalidHttpStatus() throws ConstraintViolationException, GalaxyConnectException, IOException {
-		Thread serverThread = buildHttpServerInvalidHttpCode(localGalaxy.getInvalidGalaxyURL());
+		Thread serverThread = buildHttpServerInvalidHttpCode(localGalaxy.getTestGalaxyURL());
 		serverThread.start();
 		
 		GalaxyInstance galaxyInstance = GalaxyInstanceFactory.get(
-				localGalaxy.getInvalidGalaxyURL().toString(), "1");
-		new GalaxyAPI(galaxyInstance, localGalaxy.getAdminName());
+				localGalaxy.getTestGalaxyURL().toString(), "1");
+		new GalaxyAPI(galaxyInstance, new GalaxyAccountEmail("a@b.c"));
 	}
 }

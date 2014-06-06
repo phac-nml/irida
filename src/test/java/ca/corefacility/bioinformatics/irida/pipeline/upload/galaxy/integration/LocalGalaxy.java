@@ -34,6 +34,7 @@ public class LocalGalaxy {
 
 	private URL galaxyURL;
 	private URL invalidGalaxyURL;
+	private URL testGalaxyURL;
 
 	private GalaxyAccountEmail adminName;
 	private String adminPassword;
@@ -376,5 +377,21 @@ public class LocalGalaxy {
 	public void setInvalidGalaxyUserName(
 			UploaderAccountName invalidGalaxyUserName) {
 		this.invalidGalaxyUserName = invalidGalaxyUserName;
+	}
+
+	/**
+	 * Sets a url used for testing purposes.
+	 * @param testGalaxyURL  A url used for testing purposes.
+	 */
+	public void setTestGalaxyURL(URL testGalaxyURL) {
+		this.testGalaxyURL = testGalaxyURL;
+	}
+	
+	/**
+	 * Gets a URL for testing purposes.
+	 * @return  A URL for testing purposes.
+	 */
+	public URL getTestGalaxyURL() {
+		return testGalaxyURL;
 	}
 }
