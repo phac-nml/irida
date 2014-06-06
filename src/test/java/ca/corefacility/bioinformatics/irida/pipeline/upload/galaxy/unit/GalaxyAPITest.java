@@ -1,7 +1,14 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.unit;
 
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
@@ -55,6 +62,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.github.jmchilton.blend4j.galaxy.beans.User;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.UniformInterfaceException;
 
 /**
  * Unit tests for the Galaxy API.
@@ -80,6 +88,9 @@ public class GalaxyAPITest {
 	
 	@Mock
 	private UploadEventListener uploadEventListener;
+	
+	@Mock
+	private UniformInterfaceException uniformInterfaceException;
 
 	final private GalaxyAccountEmail realAdminEmail = new GalaxyAccountEmail(
 			"admin@localhost");
@@ -1282,6 +1293,16 @@ public class GalaxyAPITest {
 	@Test
 	public void testIsConnectedInvalidException() {
 		when(galaxySearch.galaxyUserExists(realAdminEmail)).thenThrow(new ClientHandlerException());
+		
+		assertFalse(workflowRESTAPI.isConnected());
+	}
+	
+	/**
+	 * Tests checking for connection in case of Galaxy improperly connected (exception).
+	 */
+	@Test
+	public void testIsConnectedInvalidNewException() {
+		when(galaxySearch.galaxyUserExists(realAdminEmail)).thenThrow(uniformInterfaceException);
 		
 		assertFalse(workflowRESTAPI.isConnected());
 	}

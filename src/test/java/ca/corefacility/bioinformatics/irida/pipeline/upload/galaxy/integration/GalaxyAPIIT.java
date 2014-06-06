@@ -8,12 +8,17 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
+
+
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -69,6 +74,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.ProgressUpdat
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.UploadEventListenerTracker;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
+import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
@@ -1517,5 +1523,61 @@ public class GalaxyAPIIT {
 	@Test
 	public void testIsConnected() {
 		assertTrue(galaxyAPI.isConnected());
+	}
+	
+	/**
+	 * Builds a thread used to send http responses back to the user.
+	 * @return  A thread which will send a specific http response back to the user.
+	 * @throws IOException
+	 */
+	private Thread buildHttpServerInvalidHttpCode(URL invalidGalaxyURL) throws IOException {
+		final int unusedPort = invalidGalaxyURL.getPort();
+		
+		Thread serverThread = new Thread(){
+
+			@Override
+			public void run() {
+				super.run();
+				
+				ServerSocket server;
+				try {
+					server = new ServerSocket(unusedPort);
+	
+					Socket connection = server.accept();
+					
+					String response = 
+							"HTTP/1.0 403 Forbidden \r\n" +
+							"Content-Length: 0\r\n" +
+						    "\r\n";
+					
+					DataOutputStream output = new DataOutputStream(connection.getOutputStream());
+					output.write(response.getBytes());
+					output.close();
+					
+					server.close();
+				
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		
+		return serverThread;
+	}
+	
+	/**
+	 * Tests case of GalaxyAPI not connected and getting an invalid http status code.
+	 * @throws GalaxyConnectException 
+	 * @throws ConstraintViolationException 
+	 * @throws IOException 
+	 */
+	@Test(expected=GalaxyConnectException.class)
+	public void testNotConnectedInvalidHttpStatus() throws ConstraintViolationException, GalaxyConnectException, IOException {
+		Thread serverThread = buildHttpServerInvalidHttpCode(localGalaxy.getInvalidGalaxyURL());
+		serverThread.start();
+		
+		GalaxyInstance galaxyInstance = GalaxyInstanceFactory.get(
+				localGalaxy.getInvalidGalaxyURL().toString(), "1");
+		new GalaxyAPI(galaxyInstance, localGalaxy.getAdminName());
 	}
 }
