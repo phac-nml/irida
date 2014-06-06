@@ -133,21 +133,19 @@ public class GalaxyWorkflowManager {
 	
 	/**
 	 * Starts the execution of a workflow with a single fastq file and the given workflow id.
-	 * @param fastqFile  A fastq file to start the fastqc workflow. 
+	 * @param inputFile  An input file to start the workflow. 
 	 * @param workflowId  The id of the workflow to start.
 	 * @throws GalaxyDatasetNotFoundException If there was an error uploading the Galaxy dataset.
 	 * @throws UploadException If there was an error uploading the Galaxy dataset.
 	 * @throws IOException If there was an error with the file.
 	 * @throws WorkflowException If there was an error with running the workflow.
 	 */
-	public WorkflowOutputs runSingleFileWorkflow(Path fastqPath, String workflowId, String workflowInputLabel)
+	public WorkflowOutputs runSingleFileWorkflow(Path inputFile, String workflowId, String workflowInputLabel)
 			throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException {
-		checkNotNull(fastqPath, "files are null");
+		checkNotNull(inputFile, "file is null");
 		checkNotNull(workflowInputLabel, "workflowInputLabel is null");
-		
-		File fastqFile = fastqPath.toFile();
-		
-		checkArgument(fastqFile.exists(), "fastqFile " + fastqFile + " does not exist");
+				
+		checkArgument(inputFile.toFile().exists(), "inputFile " + inputFile + " does not exist");
 		checkWorkflowIdValid(workflowId);
 		
 		WorkflowsClient workflowsClient = galaxyInstance.getWorkflowsClient();
@@ -156,7 +154,7 @@ public class GalaxyWorkflowManager {
 		WorkflowDetails workflowDetails = workflowsClient.showWorkflow(workflowId);
 		
 		// upload dataset to history
-		Dataset inputDataset = galaxyHistory.fileToHistory(fastqPath, workflowHistory);
+		Dataset inputDataset = galaxyHistory.fileToHistory(inputFile, workflowHistory);
 		
 		// setup workflow inputs
 		String workflowInputId = null;
