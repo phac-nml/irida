@@ -3,17 +3,10 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -25,14 +18,14 @@ import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
+import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
-import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
-import com.github.jmchilton.blend4j.galaxy.beans.HistoryContentsProvenance;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputDefinition;
@@ -50,70 +43,6 @@ public class GalaxyWorkflowManager {
 		
 	private GalaxyHistory galaxyHistory;
 	private GalaxyInstance galaxyInstance;
-	
-	/**
-	 * Defines the state of a workflow.
-	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
-	 *
-	 */
-	public enum WorkflowState {
-		OK("ok"),
-		RUNNING("running"),
-		QUEUED("queued"),
-		UNKNOWN("unknown");
-		
-		private static Map<String, WorkflowState> stateMap = new HashMap<String, WorkflowState>();
-		private String stateString;
-		
-		static {
-			stateMap.put(OK.toString(), OK);
-			stateMap.put(RUNNING.toString(), RUNNING);
-			stateMap.put(QUEUED.toString(), QUEUED);
-		}
-		
-		private WorkflowState(String stateString){
-			this.stateString = stateString;
-		}
-		
-		public static WorkflowState stringToState(String stateString) {
-			WorkflowState state = stateMap.get(stateString);
-			if (state == null) {
-				state = UNKNOWN;
-			}
-			
-			return state;
-		}
-		
-		@Override
-		public String toString() {
-			return stateString;
-		}
-	}
-	
-	/**
-	 * Defines the status of a workflow.
-	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
-	 *
-	 */
-	public class WorkflowStatus {
-		private WorkflowState state;
-		private float percentComplete;
-		
-		public WorkflowStatus(WorkflowState state, float percentComplete) {
-			checkNotNull(state, "state is null");
-			
-			this.state = state;
-			this.percentComplete = percentComplete;
-		}
-
-		public WorkflowState getState() {
-			return state;
-		}
-
-		public float getPercentComplete() {
-			return percentComplete;
-		}
-	}
 	
 	/**
 	 * Constructs a new GalaxyWorkflowSubmitter with the given information.
@@ -213,6 +142,11 @@ public class GalaxyWorkflowManager {
 		return 100.0f*(getHistoryItemsInState(stateIds, WorkflowState.OK)/(float)getTotalHistoryItems(stateIds));
 	}
 	
+	/**
+	 * Given a history id returns the status for the given workflow.
+	 * @param historyId  The history id to use to find a workflow.
+	 * @return  The WorkflowStatus for the given workflow.
+	 */
 	public WorkflowStatus getStatusFor(String historyId) {
 		WorkflowStatus workflowStatus;
 		
@@ -230,97 +164,6 @@ public class GalaxyWorkflowManager {
 		
 		logger.debug("Details for history " + details.getId() + ": state=" + details.getState());
 		return workflowStatus;
-	}
-	
-	public String getWorkflowInformationFor(WorkflowOutputs output) {
-		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
-		String outputInformation = "";
-		
-		for(String outputId : output.getOutputIds()) {
-			Dataset dataset = historiesClient.showDataset(output.getHistoryId(), outputId);
-			HistoryContentsProvenance provenance = historiesClient.showProvenance(output.getHistoryId(), outputId);
-			
-			outputInformation += "output " + dataset.getName() + " generated from " +
-					provenance.getToolId() + " with parameters " + provenance.getParameters();
-		}
-		
-		return outputInformation;
-	}
-	
-	public List<File> getWorkflowOutputFiles(WorkflowOutputs output) throws IOException {
-		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
-		List<File> files = new ArrayList<File>();
-		
-		// workflow complete
-		for(String outputId : output.getOutputIds()) {
-			Dataset dataset = historiesClient.showDataset(output.getHistoryId(), outputId);
-			URL downloadURL = new URL(dataset.getFullDownloadUrl());
-			logger.debug("download URL=" + downloadURL);
-			File outputFile = downloadURLToTempFile(downloadURL);
-			
-			logger.debug("output file " + dataset.getName() + " written to " + outputFile);
-			files.add(outputFile);
-		}
-		
-		return files;
-	}
-	
-	private File downloadURLToTempFile(URL url) throws IOException {
-		Path path = Files.createTempFile("galaxy_output", null);
-		InputStream in = url.openStream();
-		FileOutputStream fos = new FileOutputStream(path.toFile());
-
-		int length = -1;
-		byte[] buffer = new byte[4096];// buffer for portion of data from
-		                                // connection
-		while ((length = in.read(buffer)) > -1) {
-		    fos.write(buffer, 0, length);
-		}
-		fos.close();
-		in.close();
-		
-		return path.toFile();
-	}
-	
-	public static void main(String[] args) throws UploadException, GalaxyDatasetNotFoundException, InterruptedException, IOException, WorkflowException {
-		File fastqDir = new File("/home/aaron/workspace/irida-api/cholera-files-subsample/fastq");
-		File[] fastqFiles = fastqDir.listFiles(new FileFilter(){
-			public boolean accept(File pathname) {
-				return pathname.getName().endsWith("fastq");
-			}
-		});
-		fastqFiles = new File[]{fastqFiles[0]};
-		Path fastqPath = fastqFiles[0].toPath();
-		
-		GalaxyInstance galaxyInstance = GalaxyInstanceFactory.get("http://localhost:8090", "4a88bc2bc57fe0ebf4cb4c6d8a464c02");
-		GalaxySearch galaxySearch = new GalaxySearch(galaxyInstance);
-		GalaxyHistory galaxyHistory = new GalaxyHistory(galaxyInstance, galaxySearch);
-		GalaxyWorkflowManager workflowSubmitter = new GalaxyWorkflowManager(galaxyInstance, galaxyHistory);
-		
-		// for all input files
-		List<WorkflowOutputs> outputsList = new ArrayList<WorkflowOutputs>();
-		WorkflowOutputs outputs = workflowSubmitter.runSingleFileWorkflow(fastqPath, "f2db41e1fa331b3e", "fastq");
-		outputsList.add(outputs);
-
-		// poll history until all workflows completed
-		do {
-			List<WorkflowOutputs> outputsCopyList = new ArrayList<WorkflowOutputs>(outputsList);
-			for (WorkflowOutputs output : outputsCopyList) {
-				
-				WorkflowStatus status =  workflowSubmitter.getStatusFor(output.getHistoryId());
-				if (WorkflowState.OK.equals(status.getState())) {
-					outputsList.remove(output);
-					
-					logger.debug(workflowSubmitter.getWorkflowInformationFor(output));
-					logger.debug("all download files " + workflowSubmitter.getWorkflowOutputFiles(output));
-				} else {
-					logger.debug("workflow " + output.getHistoryId() + " complete " + status.getPercentComplete());
-				}
-			}
-			
-			logger.debug("Workflows remaining: " + outputsList.size());
-			Thread.sleep(2000);
-		} while (outputsList.size() > 0);
 	}
 
 	/**

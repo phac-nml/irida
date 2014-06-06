@@ -33,11 +33,11 @@ import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
+import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistory;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowManager;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowManager.WorkflowState;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowManager.WorkflowStatus;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
