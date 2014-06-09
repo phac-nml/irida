@@ -37,7 +37,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("dev")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/LoginPageIT.xml")
-@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/ria/test/integration/TableReset.xml")
+@DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class LoginPageIT {
 
 	private LoginPage loginPage;
