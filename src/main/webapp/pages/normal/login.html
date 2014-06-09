@@ -1,51 +1,12 @@
 <!DOCTYPE html>
-<!--[if lt IE 9]>
-<html class="no-js lt-ie9" lang="en"><![endif]-->
-<!--[if gt IE 8]><!-->
-<html xmlns:th="http://www.thymeleaf.org" class="no-js" lang="en">
-<!--<![endif]-->
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="templates/wetboew">
 <head>
-    <meta charset="UTF-8"/>
-    <title th:text="#{login.title}">IRIDA Platform | Login</title>
-
-    <!-- META DATA -->
-    <meta content="width=device-width, initial-scale=1" name="viewport"/>
-    <meta name="description" content=""/>
-    <meta name="dcterms.title"
-          content="Language Selection Page - No search, language toggle, site menu or breadcrumb trail - Sélection de la langue page - Pas de recherche, langue bascule, menu du site ou fil d'Ariane - Plate-forme IRIDA"/>
-    <meta name="dcterms.creator" content="French name of the content author / Nom en français de l'auteur du contenu"/>
-    <meta name="dcterms.issued" title="W3CDTF"
-          content="Date published (YYYY-MM-DD) / Date de publication (AAAA-MM-JJ)"/>
-    <meta name="dcterms.modified" title="W3CDTF"
-          content="Date modified (YYYY-MM-DD) / Date de modification (AAAA-MM-JJ)"/>
-    <meta name="dcterms.subject" title="scheme" content="French subject terms / Termes de sujet en français"/>
-    <meta name="dcterms.language" title="ISO639-2" content="eng"/>
-    <!-- END META -->
-
-    <!--[if gte IE 9 | !IE ]><!-->
-    <link th:href="@{/resources/wet-theme/assets/favicon.ico}" href="/resources/wet-theme/assets/favicon.ico" rel="icon"
-          type="image/x-icon"/>
-    <link rel="stylesheet" th:href="@{/resources/wet-theme/css/wet-boew.min.css}"
-          href="/resources/wet-theme/css/wet-boew.min.css"/>
-    <!--<![endif]-->
-    <link rel="stylesheet" th:href="@{/resources/css/main.css}" href="/resources/css/main.css"/>
-    <link rel="stylesheet" th:href="@{/resources/wet-theme/css/theme.min.css}"
-          href="/resources/wet-theme/css/theme.min.css"/>
-
-    <!--[if lt IE 9]>
-    <link th:href="@{/resources/wet-theme/assets/favicon.ico}" href="/resources/wet-theme/assets/favicon.ico"
-          rel="shortcut icon"/>
-    <link rel="stylesheet" th:href="@{/resources/wet-theme/css/ie8-wet-boew.min.css}"
-          href="/resources/wet-theme/css/ie8-wet-boew.min.css"/>
-    <![endif]-->
-
-    <noscript>
-        <link rel="stylesheet" th:href="@{/resources/css/noscript.min.css}" href="/resources/css/noscript.min.css"/>
-    </noscript>
+<title>THIS IS SOMETHING WRONG</title>
 </head>
-<body vocab="http://schema.org/" typeof="WebPage" ng-app="irida.login">
-<div th:replace="../templates/wet-boew :: header"></div>
-<main class="container" role="main" property="mainContentOfPage">
+<body>
+<main layout:fragment="content" class="container" role="main" property="mainContentOfPage">
     <h1 class="page-header" th:text="#{login.title}"></h1>
     <section>
         <div class="row" ng-controller="LoginCtrl as login">
@@ -73,6 +34,5 @@
         </div>
     </section>
 </main>
-<div th:replace="../templates/wet-boew :: footer"></div>
 </body>
 </html>

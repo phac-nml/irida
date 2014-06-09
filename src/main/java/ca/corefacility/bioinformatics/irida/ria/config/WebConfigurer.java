@@ -1,12 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.config;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
+import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +24,14 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.thymeleaf.dialect.IDialect;
 import org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.spring4.dialect.SpringStandardDialect;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.ria.thymeleaf.dialect.onsen.OnsenDialect;
-
-import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
@@ -177,8 +173,8 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 		Set<IDialect> dialects = new HashSet<>();
 		dialects.add(new SpringSecurityDialect());
 		dialects.add(new LayoutDialect());
-		dialects.add(new OnsenDialect());
-		dialects.add(new DataAttributeDialect());
+//		dialects.add(new DataAttributeDialect());
+//		dialects.add(new OnsenDialect());
 		return dialects;
 	}
 }
