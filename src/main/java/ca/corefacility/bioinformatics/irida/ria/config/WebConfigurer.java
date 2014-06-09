@@ -18,6 +18,7 @@ import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.thymeleaf.dialect.IDialect;
+import org.thymeleaf.extras.conditionalcomments.dialect.ConditionalCommentsDialect;
 import org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
@@ -139,6 +140,7 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 		Set<IDialect> dialects = new HashSet<>();
 		dialects.add(new SpringSecurityDialect());
 		dialects.add(new LayoutDialect());
+		dialects.add(new ConditionalCommentsDialect());
 		return dialects;
 	}
 }
