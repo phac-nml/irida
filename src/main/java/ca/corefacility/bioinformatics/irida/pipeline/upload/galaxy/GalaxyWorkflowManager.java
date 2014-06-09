@@ -66,13 +66,12 @@ public class GalaxyWorkflowManager {
 	 */
 	private void checkWorkflowIdValid(String workflowId) throws WorkflowException {
 		checkNotNull(workflowId, "workflow id is null");
-		boolean invalid = false;
+		boolean invalid = true;
 		
-		WorkflowsClient workflowsClient = galaxyInstance.getWorkflowsClient();
 		try {
+			WorkflowsClient workflowsClient = galaxyInstance.getWorkflowsClient();
 			invalid = workflowsClient.showWorkflow(workflowId) == null;
-		} catch (RuntimeException e) {
-			invalid = true;
+		} catch (Exception e) {
 		}
 		
 		if (invalid) {
