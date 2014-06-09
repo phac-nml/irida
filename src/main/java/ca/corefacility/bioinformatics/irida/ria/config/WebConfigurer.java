@@ -24,7 +24,6 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.thymeleaf.dialect.IDialect;
 import org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring4.SpringTemplateEngine;
-import org.thymeleaf.spring4.dialect.SpringStandardDialect;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
@@ -50,7 +49,7 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 	public static final long TEMPLATE_CACHE_TTL_MS = 3600000L;
 	public static final String LOCALE_CHANGE_PARAMETER = "lang";
 	public static final String DEFAULT_ENCODING = "UTF-8";
-	public static final String[] RESOURCE_LOCATIONS = {"classpath:/i18n/messages", "classpath:/i18n/mobile"};
+	public static final String[] RESOURCE_LOCATIONS = { "classpath:/i18n/messages", "classpath:/i18n/mobile" };
 	private static final Logger logger = LoggerFactory.getLogger(WebConfigurer.class);
 	@Autowired
 	private Environment env;
@@ -173,8 +172,11 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 		Set<IDialect> dialects = new HashSet<>();
 		dialects.add(new SpringSecurityDialect());
 		dialects.add(new LayoutDialect());
-//		dialects.add(new DataAttributeDialect());
-//		dialects.add(new OnsenDialect());
+
+		// TODO: These were used with angularjs and requirejs. Are will still
+		// going to use them?
+		// dialects.add(new DataAttributeDialect());
+		// dialects.add(new OnsenDialect());
 		return dialects;
 	}
 }
