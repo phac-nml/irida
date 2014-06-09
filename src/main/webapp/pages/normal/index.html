@@ -1,68 +1,12 @@
 <!DOCTYPE html>
-<!--[if lt IE 9]>
-<html class="no-js lt-ie9" lang="en"><![endif]-->
-<!--[if gt IE 8]><!-->
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:data="https://github.com/mxab/thymeleaf-extras-data-attribute" class="no-js" lang="en"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="https://github.com/mxab/thymeleaf-extras-data-attribute ">
-<!--<![endif]-->
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="templates/wetboew">
 <head>
-    <meta charset="UTF-8"/>
-    <title th:text="#{global.title}">IRIDA Platform</title>
-
-    <!-- META DATA -->
-    <meta content="width=device-width, initial-scale=1" name="viewport"/>
-    <meta name="description" content=""/>
-    <meta name="dcterms.title"
-          content="Language Selection Page - No search, language toggle, site menu or breadcrumb trail - Sélection de la langue page - Pas de recherche, langue bascule, menu du site ou fil d'Ariane - Plate-forme IRIDA"/>
-    <meta name="dcterms.creator" content="French name of the content author / Nom en français de l'auteur du contenu"/>
-    <meta name="dcterms.issued" title="W3CDTF"
-          content="Date published (YYYY-MM-DD) / Date de publication (AAAA-MM-JJ)"/>
-    <meta name="dcterms.modified" title="W3CDTF"
-          content="Date modified (YYYY-MM-DD) / Date de modification (AAAA-MM-JJ)"/>
-    <meta name="dcterms.subject" title="scheme" content="French subject terms / Termes de sujet en français"/>
-    <meta name="dcterms.language" title="ISO639-2" content="eng"/>
-    <!-- END META -->
-
-    <!--[if gte IE 9 | !IE ]><!-->
-    <link th:href="@{/resources/assets/favicon.ico}" href="/resources/assets/favicon.ico" rel="icon"
-          type="image/x-icon"/>
-    <link rel="stylesheet" th:href="@{/resources/css/wet-boew.min.css}" href="/resources/css/wet-boew.min.css"/>
-    <!--<![endif]-->
-    <link rel="stylesheet" th:href="@{/resources/css/theme.min.css}" href="/resources/css/theme.min.css"/>
-    <link rel="stylesheet" th:href="@{/resources/css/main.css}" href="/resources/css/main.css"/>
-
-    <!--[if lt IE 9]>
-    <link th:href="@{/resources/assets/favicon.ico}" href="/resources/assets/favicon.ico" rel="shortcut icon"/>
-    <link rel="stylesheet" th:href="@{/resources/wet-theme/css/ie8-wet-boew.min.css}" href="/resources/wet-theme/css/ie8-wet-boew.min.css"/>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
-    <![endif]-->
-
-    <noscript>
-        <link rel="stylesheet" th:href="@{/resources/css/noscript.min.css}" href="/resources/css/noscript.min.css"/>
-    </noscript>
+    <title th:text="#{dashboard.title}">THIS IS SOMETHING WRONG</title>
 </head>
-<body vocab="http://schema.org/" typeof="WebPage">
-<div class="content-wrapper">
-    <div th:replace="../templates/wet-boew :: header"></div>
-    <nav role="navigation" id="wb-sm" data-ajax-fetch="./ajax/sitemenu-en.html" data-trgt="mb-pnl" class="wb-menu visible-md visible-lg" typeof="SiteNavigationElement">
-        <div class="container nvbar">
-            <h2>Site menu</h2>
-            <div class="row">
-                <ul class="list-inline menu">
-
-                    <li><a href="./index-en.html">WET project</a></li>
-                    <li><a href="http://wet-boew.github.io/wet-boew/docs/start-en.html#implement">Implement WET</a></li>
-                    <li><a href="http://wet-boew.github.io/wet-boew/docs/start-en.html">Contribute to WET</a></li>
-
-                </ul>
-            </div>
-        </div>
-
-    </nav>
-    <div th:replace="../templates/sitemenu-en :: menu"></div>
-    <main class="container content-inner" role="main" property="mainContentOfPage">
+<body>
+<main layout:fragment="content" class="container" role="main" property="mainContentOfPage">
         <div class="row">
             <div class="navbar navbar-inverse" role="navigation">
                 <div class="container-fluid">
@@ -90,7 +34,5 @@
         </div>
         <div class="row" ng-view=""></div>
     </main>
-</div>
-<div th:replace="../templates/wet-boew :: footer"></div>
 </body>
 </html>
