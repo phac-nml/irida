@@ -34,6 +34,8 @@
 			<column name="subgroup" type="varchar(255)" />
 			<column name="subtype" type="varchar(255)" />
 			<column name="host_id" type="bigint(20)" />
+			<column name="specimenVoucher" type="varchar(255)" />
+			<column name="strain" type="varchar(255)" />
 		</addColumn>
 		<addColumn tableName="sample_AUD">
 			<column name="collectedBy" type="varchar(255)" />
@@ -53,6 +55,8 @@
 			<column name="subgroup" type="varchar(255)" />
 			<column name="subtype" type="varchar(255)" />
 			<column name="host_id" type="bigint(20)" />
+			<column name="specimenVoucher" type="varchar(255)" />
+			<column name="strain" type="varchar(255)" />
 		</addColumn>
 
 		<!-- Add host table for storing more sample properties -->
