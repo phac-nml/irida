@@ -263,6 +263,14 @@ insert into client_details (clientId, clientSecret, token_validity) values ("pyt
 insert into client_details (clientId, clientSecret, token_validity) values ("testClient", "testClientSecret", 43200);
 insert into client_details (clientId, clientSecret, token_validity) values ("webClient", "webClientSecret", 43200);
 
+insert into client_role (name, description) values ("ROLE_CLIENT","A basic OAuth2 client");
+
+insert into client_details_authorities (client_details_id,authority_name) values (1,"ROLE_CLIENT");
+insert into client_details_authorities (client_details_id,authority_name) values (2,"ROLE_CLIENT");
+insert into client_details_authorities (client_details_id,authority_name) values (3,"ROLE_CLIENT");
+insert into client_details_authorities (client_details_id,authority_name) values (4,"ROLE_CLIENT");
+insert into client_details_authorities (client_details_id,authority_name) values (5,"ROLE_CLIENT");
+
 insert into client_details_scope (client_details_id,scope) values (1,"read"), (1,"write");
 insert into client_details_scope (client_details_id,scope) values (2,"read");
 insert into client_details_scope (client_details_id,scope) values (3,"read");

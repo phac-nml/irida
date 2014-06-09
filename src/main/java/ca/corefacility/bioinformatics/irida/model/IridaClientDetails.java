@@ -17,6 +17,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -90,11 +92,9 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	@Column(name = "info_value")
 	@CollectionTable(name = "client_details_additional_information", joinColumns = @JoinColumn(name = "client_details_id"))
 	private Map<String, String> additionalInformation;
-	
-	@ElementCollection(fetch = FetchType.EAGER)
-	@MapKeyColumn(name = "authority_key")
-	@Column(name = "authority_value")
-	@CollectionTable(name = "client_details_authorities", joinColumns = @JoinColumn(name = "client_details_id"))
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "client_details_authorities", joinColumns = @JoinColumn(name = "client_details_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "authority_name", nullable = false))
 	Collection<ClientRole> authorities;
 
 	private Date modifiedDate;
@@ -115,6 +115,7 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 		authorizedGrantTypes = new HashSet<>();
 		registeredRedirectUri = new HashSet<>();
 		additionalInformation = new HashMap<>();
+		authorities = new HashSet<>();
 	}
 
 	/**
@@ -341,6 +342,14 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 		}
 
 		this.additionalInformation = newMap;
+	}
+
+	/**
+	 * @param authorities
+	 *            the authorities to set
+	 */
+	public void setAuthorities(Collection<ClientRole> authorities) {
+		this.authorities = authorities;
 	}
 
 	@Override
