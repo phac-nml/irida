@@ -2,6 +2,11 @@ package ca.corefacility.bioinformatics.irida.exceptions.galaxy;
 
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 
+/**
+ * An exception in getting outputs from Galaxy for a workflow.
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ */
 public class GalaxyOutputsForWorkflowException extends WorkflowException {
 
 	private static final long serialVersionUID = 5281884851300317788L;

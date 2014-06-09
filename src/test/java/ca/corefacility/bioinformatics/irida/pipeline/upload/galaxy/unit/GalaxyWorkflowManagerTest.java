@@ -4,7 +4,9 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -20,6 +22,7 @@ import org.mockito.MockitoAnnotations;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistory;
@@ -52,8 +55,8 @@ public class GalaxyWorkflowManagerTest {
 	@Mock private WorkflowDetails workflowDetails;
 	@Mock private History workflowHistory;
 	@Mock private Dataset inputDataset;
-	
 	@Mock private UniformInterfaceException uniformInterfaceException;
+	@Mock private Dataset downloadDataset;
 	
 	private GalaxyWorkflowManager galaxyWorkflowManager;
 		
@@ -225,5 +228,47 @@ public class GalaxyWorkflowManagerTest {
 		when(workflowsClient.runWorkflow(any(WorkflowInputs.class))).thenReturn(workflowOutputs);
 		
 		galaxyWorkflowManager.runSingleFileWorkflow(dataFile, INVALID_WORKFLOW_ID, VALID_INPUT_LABEL);
+	}
+	
+	/**
+	 * Tests getting a list of workflow output download URLs for each workflow output.
+	 * @throws GalaxyOutputsForWorkflowException
+	 * @throws MalformedURLException
+	 */
+	@Test
+	public void testGetWorkflowOutputDownloadURLs() throws GalaxyOutputsForWorkflowException, MalformedURLException {
+		String outputId = "1";
+		String downloadString = "http://localhost/download";
+		URL downloadURL = new URL(downloadString);
+		List<String> outputIds = Arrays.asList(outputId);
+		WorkflowOutputs workflowOutputs = new WorkflowOutputs();
+		workflowOutputs.setHistoryId(VALID_WORKFLOW_ID);
+		workflowOutputs.seOutputIds(outputIds);
+		
+		when(historiesClient.showDataset(VALID_WORKFLOW_ID, outputId)).thenReturn(downloadDataset);
+		when(downloadDataset.getFullDownloadUrl()).thenReturn(downloadString);
+		
+		List<URL> urls = galaxyWorkflowManager.getWorkflowOutputDownloadURLs(workflowOutputs);
+		assertEquals(Arrays.asList(downloadURL), urls);
+	}
+	
+	/**
+	 * Tests getting a list of workflow output download URLs from invalid workflow id.
+	 * @throws GalaxyOutputsForWorkflowException
+	 * @throws MalformedURLException
+	 */
+	@Test(expected=GalaxyOutputsForWorkflowException.class)
+	public void testGetWorkflowOutputDownloadURLsInvalid() throws GalaxyOutputsForWorkflowException, MalformedURLException {
+		String outputId = "1";
+		String downloadString = "http://localhost/download";
+		List<String> outputIds = Arrays.asList(outputId);
+		WorkflowOutputs workflowOutputs = new WorkflowOutputs();
+		workflowOutputs.setHistoryId(INVALID_WORKFLOW_ID);
+		workflowOutputs.seOutputIds(outputIds);
+		
+		when(historiesClient.showDataset(VALID_WORKFLOW_ID, outputId)).thenReturn(downloadDataset);
+		when(downloadDataset.getFullDownloadUrl()).thenReturn(downloadString);
+		
+		galaxyWorkflowManager.getWorkflowOutputDownloadURLs(workflowOutputs);
 	}
 }
