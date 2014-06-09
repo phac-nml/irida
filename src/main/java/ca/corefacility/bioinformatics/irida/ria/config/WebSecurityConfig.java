@@ -40,7 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
 				.and()
 
-				.formLogin().defaultSuccessUrl("/app").loginPage("/login").failureUrl("/login?error=true").permitAll().and()
+				.formLogin().defaultSuccessUrl("/dashboard").loginPage("/login").failureUrl("/login?error=true").permitAll().and()
 				.logout().logoutSuccessUrl("/login").logoutUrl("/logout").permitAll().and()
 
 				.authorizeRequests().regexMatchers("/login((\\?lang=[a-z]{2}|#.*))?").permitAll().antMatchers("/")
