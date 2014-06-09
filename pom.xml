@@ -422,6 +422,18 @@
 					<changeLogFile>${liquibase.config.changeLogFile}</changeLogFile>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>${maven.jar.plugin.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -461,6 +473,7 @@
 		<maven.jacoco.plugin.version>0.7.0.201403182114</maven.jacoco.plugin.version>
 		<maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
 		<maven.liquibase.plugin.version>3.1.1</maven.liquibase.plugin.version>
+		<maven.jar.plugin.version>2.4</maven.jar.plugin.version>
 
 		<!-- project configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
