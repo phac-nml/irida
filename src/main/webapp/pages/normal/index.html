@@ -35,21 +35,12 @@
 
     <!--[if lt IE 9]>
     <link th:href="@{/resources/assets/favicon.ico}" href="/resources/assets/favicon.ico" rel="shortcut icon"/>
-    <link rel="stylesheet" th:href="@{/resources/css/ie8-wet-boew.min.css}" href="/resources/css/ie8-wet-boew.min.css"/>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
-    <script th:href="@{/resources/js/wet-boew/ie8-wet-boew.min.js}"
-            src="/resources/js/wet-boew/ie8-wet-boew.min.js"></script>
+    <link rel="stylesheet" th:href="@{/resources/wet-theme/css/ie8-wet-boew.min.css}" href="/resources/wet-theme/css/ie8-wet-boew.min.css"/>
     <![endif]-->
 
     <noscript>
         <link rel="stylesheet" th:href="@{/resources/css/noscript.min.css}" href="/resources/css/noscript.min.css"/>
     </noscript>
-
-    <style>
-        .ng-cloak {
-            display: none !important;
-        }
-    </style>
 </head>
 <body vocab="http://schema.org/" typeof="WebPage">
 <div class="content-wrapper">
@@ -84,11 +75,5 @@
     </main>
 </div>
 <div th:replace="../templates/wet-boew :: footer"></div>
-
-
-<input id="baseUrl" type="hidden" th:value="@{/}" value="/"/>
-<script data:main="@{/resources/js/bootstrap.js}" data-main="/scripts/bootstrap.js"
-        th:src="@{/resources/bower_components/requirejs/require.js}"
-        src="/resources/bower_components/requirejs/require.js"></script>
 </body>
 </html>
