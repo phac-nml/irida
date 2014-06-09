@@ -36,6 +36,7 @@
     <!--[if lt IE 9]>
     <link th:href="@{/resources/assets/favicon.ico}" href="/resources/assets/favicon.ico" rel="shortcut icon"/>
     <link rel="stylesheet" th:href="@{/resources/wet-theme/css/ie8-wet-boew.min.css}" href="/resources/wet-theme/css/ie8-wet-boew.min.css"/>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
     <![endif]-->
 
     <noscript>
@@ -45,6 +46,22 @@
 <body vocab="http://schema.org/" typeof="WebPage">
 <div class="content-wrapper">
     <div th:replace="../templates/wet-boew :: header"></div>
+    <nav role="navigation" id="wb-sm" data-ajax-fetch="./ajax/sitemenu-en.html" data-trgt="mb-pnl" class="wb-menu visible-md visible-lg" typeof="SiteNavigationElement">
+        <div class="container nvbar">
+            <h2>Site menu</h2>
+            <div class="row">
+                <ul class="list-inline menu">
+
+                    <li><a href="./index-en.html">WET project</a></li>
+                    <li><a href="http://wet-boew.github.io/wet-boew/docs/start-en.html#implement">Implement WET</a></li>
+                    <li><a href="http://wet-boew.github.io/wet-boew/docs/start-en.html">Contribute to WET</a></li>
+
+                </ul>
+            </div>
+        </div>
+
+    </nav>
+    <div th:replace="../templates/sitemenu-en :: menu"></div>
     <main class="container content-inner" role="main" property="mainContentOfPage">
         <div class="row">
             <div class="navbar navbar-inverse" role="navigation">
