@@ -50,6 +50,7 @@
         <maven-failsafe-plugin.version>2.13</maven-failsafe-plugin.version>
         <spring.test.dbunit.version>1.1.0</spring.test.dbunit.version>
         <dbunit.version>2.4.9</dbunit.version>
+        <thymeleaf-layout-dialect.version>1.2.4</thymeleaf-layout-dialect.version>
     </properties>
 
     <inceptionYear>2014</inceptionYear>
@@ -199,6 +200,11 @@
             <groupId>com.github.mxab.thymeleaf.extras</groupId>
             <artifactId>thymeleaf-extras-data-attribute</artifactId>
             <version>${thymeleaf-extras-data-attribute.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>nz.net.ultraq.thymeleaf</groupId>
+            <artifactId>thymeleaf-layout-dialect</artifactId>
+            <version>${thymeleaf-layout-dialect.version}</version>
         </dependency>
 
         <!-- LOGGING -->
