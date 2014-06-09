@@ -84,6 +84,7 @@
 					foreignKeyName="FK_HOST_REVISION" referencedColumnNames="id"
 					referencedTableName="Revisions" />
 			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
 			<column name="age" type="int(11)" />
 			<column name="description" type="varchar(255)" />
 			<column name="disease" type="varchar(255)" />
