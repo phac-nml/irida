@@ -29,7 +29,6 @@
 	
 	<sec:http pattern="/oauth/authorize" authentication-manager-ref="authenticationManager" access-denied-page="/login"
 		disable-url-rewriting="true">
-		<sec:anonymous enabled="true" username="nobody" granted-authority="ANONYMOUS"/>
 		<sec:intercept-url pattern="/oauth/authorize" access="ROLE_USER"/>
 		<sec:form-login authentication-failure-url="/login"
 			default-target-url="/success" login-page="/login"
