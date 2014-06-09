@@ -14,8 +14,8 @@ import org.openqa.selenium.support.PageFactory;
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class LoginPage {
-	public static final String GOOD_USERNAME = "test";
-	public static final String GOOD_PASSWORD = "password1";
+	public static final String GOOD_USERNAME = "mrtest";
+	public static final String GOOD_PASSWORD = "Password1";
 	public static final String BAD_USERNAME = "badman";
 	public static final String BAD_PASSWORD = "notapassword";
 

@@ -1,16 +1,25 @@
 package ca.corefacility.bioinformatics.irida.ria.integration;
 
-import static org.junit.Assert.assertEquals;
-
+import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import static org.junit.Assert.assertEquals;
 
 /**
  * <p>
@@ -20,9 +29,14 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
  * 
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
+		IridaApiPropertyPlaceholderConfig.class })
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
+@ActiveProfiles("dev")
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/LoginPageIT.xml")
+@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/ria/test/integration/TableReset.xml")
 public class LoginPageIT {
-	@Autowired
-	private WebApplicationContext context;
 
 	private LoginPage loginPage;
 	private WebDriver driver;
@@ -57,9 +71,9 @@ public class LoginPageIT {
 	}
 
 	@Test
-	public void testGoodLogout() throws Exception {
+	public void testGoodLogin() throws Exception {
 		loginPage.login(LoginPage.GOOD_USERNAME, LoginPage.GOOD_PASSWORD);
-		assertEquals("The 'test' user is logged in and redirected.", driver.getCurrentUrl(),
-				"http://localhost:8080/app");
+		assertEquals("The 'test' user is logged in and redirected.", "http://localhost:8080/app",
+				driver.getCurrentUrl());
 	}
 }
