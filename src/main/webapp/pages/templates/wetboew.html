@@ -8,7 +8,7 @@
 <head>
     <meta charset="UTF-8"/>
     <!-- TODO: add layout dialect title here-->
-    <title th:text="#{login.title}">IRIDA Platform | Login</title>
+    <title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE" th:text="#{global.title}">IRIDA Platform</title>
 
     <!-- META DATA -->
     <meta content="width=device-width, initial-scale=1" name="viewport"/>
