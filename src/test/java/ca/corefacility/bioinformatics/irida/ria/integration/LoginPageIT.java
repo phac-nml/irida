@@ -1,11 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +15,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import static org.junit.Assert.assertEquals;
+import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
  * <p>
@@ -73,7 +75,7 @@ public class LoginPageIT {
 	@Test
 	public void testGoodLogin() throws Exception {
 		loginPage.login(LoginPage.GOOD_USERNAME, LoginPage.GOOD_PASSWORD);
-		assertEquals("The 'test' user is logged in and redirected.", "http://localhost:8080/app",
+		assertEquals("The 'test' user is logged in and redirected.", "http://localhost:8080/dashboard",
 				driver.getCurrentUrl());
 	}
 }
