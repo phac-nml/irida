@@ -48,7 +48,8 @@
         <spring-test-mvc-htmlunit.version>1.0.0.M1</spring-test-mvc-htmlunit.version>
         <selenium-driver.version>2.40.0</selenium-driver.version>
         <maven-failsafe-plugin.version>2.13</maven-failsafe-plugin.version>
-        <spring-security-test.version>4.0.0.M1</spring-security-test.version>
+        <spring.test.dbunit.version>1.1.0</spring.test.dbunit.version>
+        <dbunit.version>2.4.9</dbunit.version>
     </properties>
 
     <inceptionYear>2014</inceptionYear>
@@ -280,7 +281,7 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
-            <version>${spring-security-test.version}</version>
+            <version>${spring-security.version}</version>
         </dependency>
         <dependency>
         <groupId>org.springframework</groupId>
@@ -306,15 +307,22 @@
             <version>1.4.01</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>3.9</version>
+            <groupId>com.github.springtestdbunit</groupId>
+            <artifactId>spring-test-dbunit</artifactId>
+            <version>${spring.test.dbunit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.dbunit</groupId>
+            <artifactId>dbunit</artifactId>
+            <version>${dbunit.version}</version>
+            <type>jar</type>
+            <scope>test</scope>
             <exclusions>
                 <exclusion>
-                    <artifactId>xml-apis</artifactId>
-                    <groupId>xml-apis</groupId>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
