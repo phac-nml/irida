@@ -1,11 +1,16 @@
 package ca.corefacility.bioinformatics.irida.exceptions;
 
+/**
+ * Exception that gets thrown when there is an issue running a workflow.
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ */
 public class WorkflowException extends Exception {
 
 	private static final long serialVersionUID = -5418939764042687991L;
 
 	/**
-	 * Constructs a new UploadException with no information.
+	 * Constructs a new WorkflowException with no information.
 	 */
 	public WorkflowException() {
 		super();

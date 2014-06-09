@@ -57,6 +57,11 @@ public class GalaxyWorkflowManager {
 		this.galaxyInstance = galaxyInstance;
 	}
 	
+	/**
+	 * Checks whether or not the given workflow id is valid.
+	 * @param workflowId  A workflow id to check.
+	 * @throws WorkflowException  If the workflow id is invalid.
+	 */
 	private void checkWorkflowIdValid(String workflowId) throws WorkflowException {
 		checkNotNull(workflowId, "workflow id is null");
 		boolean invalid = false;
@@ -124,6 +129,11 @@ public class GalaxyWorkflowManager {
 		}
 	}
 	
+	/**
+	 * Gets the total number of history items for a given list of state ids.
+	 * @param stateIds  A list of state ids to search through.
+	 * @return  The total number of history items.
+	 */
 	private int getTotalHistoryItems(Map<String, List<String>> stateIds) {
 		int sum = 0;
 		
@@ -134,10 +144,21 @@ public class GalaxyWorkflowManager {
 		return sum;
 	}
 	
+	/**
+	 * Gets the total number of history items within the given workflow state.
+	 * @param stateIds  The list of history items to search through.
+	 * @param state  A state to search for.
+	 * @return  The number of history items in this state.
+	 */
 	private int getHistoryItemsInState(Map<String, List<String>> stateIds, WorkflowState state) {
 		return stateIds.get(state.toString()).size();
 	}
 	
+	/**
+	 * Gets the percentage completed running of items within the given list of history items.
+	 * @param stateIds  The list of history items.
+	 * @return  The percent of history items that are finished running.
+	 */
 	private float getPercentComplete(Map<String, List<String>> stateIds) {
 		return 100.0f*(getHistoryItemsInState(stateIds, WorkflowState.OK)/(float)getTotalHistoryItems(stateIds));
 	}
