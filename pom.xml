@@ -48,7 +48,6 @@
         <spring-test-mvc-htmlunit.version>1.0.0.M1</spring-test-mvc-htmlunit.version>
         <selenium-driver.version>2.40.0</selenium-driver.version>
         <maven-failsafe-plugin.version>2.13</maven-failsafe-plugin.version>
-        <spring-security-test.version>4.0.0.M1</spring-security-test.version>
     </properties>
 
     <inceptionYear>2014</inceptionYear>
@@ -280,7 +279,7 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
-            <version>${spring-security-test.version}</version>
+            <version>${spring-security.version}</version>
         </dependency>
         <dependency>
         <groupId>org.springframework</groupId>
@@ -305,18 +304,6 @@
             <artifactId>xml-apis</artifactId>
             <version>1.4.01</version>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>3.9</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>xml-apis</artifactId>
-                    <groupId>xml-apis</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 
