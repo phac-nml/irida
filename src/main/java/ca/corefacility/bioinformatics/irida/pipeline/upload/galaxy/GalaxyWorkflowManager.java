@@ -31,6 +31,8 @@ import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputDefinition;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
+import com.sun.jersey.api.client.ClientHandlerException;
+import com.sun.jersey.api.client.UniformInterfaceException;
 
 /**
  * Handles submission of workflows to Galaxy.
@@ -167,24 +169,31 @@ public class GalaxyWorkflowManager {
 	 * Given a history id returns the status for the given workflow.
 	 * @param historyId  The history id to use to find a workflow.
 	 * @return  The WorkflowStatus for the given workflow.
+	 * @throws WorkflowException If there was an exception when attempting to get the status for a history.
 	 */
-	public WorkflowStatus getStatusFor(String historyId) {
+	public WorkflowStatus getStatusFor(String historyId) throws WorkflowException {
 		WorkflowStatus workflowStatus;
 		
 		WorkflowState workflowState;
 		float percentComplete;
 		
 		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
-		HistoryDetails details = historiesClient.showHistory(historyId);
-		workflowState = WorkflowState.stringToState(details.getState());
 		
-		Map<String, List<String>> stateIds = details.getStateIds();
-		percentComplete = getPercentComplete(stateIds);
-		
-		workflowStatus = new WorkflowStatus(workflowState, percentComplete);
-		
-		logger.debug("Details for history " + details.getId() + ": state=" + details.getState());
-		return workflowStatus;
+		try {
+			HistoryDetails details = historiesClient.showHistory(historyId);
+			workflowState = WorkflowState.stringToState(details.getState());
+			
+			Map<String, List<String>> stateIds = details.getStateIds();
+			percentComplete = getPercentComplete(stateIds);
+			
+			workflowStatus = new WorkflowStatus(workflowState, percentComplete);
+			
+			logger.debug("Details for history " + details.getId() + ": state=" + details.getState());
+			
+			return workflowStatus;
+		} catch (ClientHandlerException | UniformInterfaceException e) {
+			throw new WorkflowException(e);
+		}
 	}
 
 	/**
