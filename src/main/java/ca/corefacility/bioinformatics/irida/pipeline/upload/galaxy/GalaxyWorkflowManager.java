@@ -6,6 +6,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
@@ -97,7 +98,7 @@ public class GalaxyWorkflowManager {
 		checkNotNull(inputFileType, "inputFileType is null");
 		checkNotNull(workflowInputLabel, "workflowInputLabel is null");
 				
-		checkArgument(inputFile.toFile().exists(), "inputFile " + inputFile + " does not exist");
+		checkArgument(Files.exists(inputFile), "inputFile " + inputFile + " does not exist");
 		checkWorkflowIdValid(workflowId);
 		
 		WorkflowsClient workflowsClient = galaxyInstance.getWorkflowsClient();
