@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- DataAjaxFragmentStart -->
+
+<div class="pnl-strt container visible-md visible-lg nvbar">
+    <h2>Site menu</h2>
+    <div class="row">
+        <ul class="list-inline menu" role="menubar">
+            <li><a href="#projects" class="item">Projects</a>
+                <ul class="sm list-unstyled" id="projects" role="menu">
+                    <li><a href="http://wet-boew.github.io/v4.0-ci/index-en.html#about">About the Web Experience Toolkit</a></li>
+                    <li><a href="http://wet-boew.github.io/v4.0-ci/index-en.html#benefits">Benefits</a></li>
+                    <li><a href="http://wet-boew.github.io/wet-boew/docs/ref/accolades-en.html">Accolades for WET</a></li>
+                    <li><a href="https://github.com/wet-boew/wet-boew/">Main project page</a></li>
+                    <li><a href="http://wet-boew.github.io/v4.0-ci/License-en.html">Terms and conditions</a></li>
+                    <li><a href="http://wet-boew.github.io/wet-boew/docs/versions/rdmp-en.html">Roadmap of past and future releases</a></li>
+                    <li><a href="http://wet-boew.github.io/wet-boew/docs/versions/index-en.html">Version history</a></li>
+                    <li><a href="http://www.tbs-sct.gc.ca/ws-nw/index-eng.asp">About the Web Standards</a></li>
+                </ul>
+            </li>
+            <li><a href="#implement" class="item">Implement WET</a>
+                <ul class="sm list-unstyled" id="implement" role="menu">
+                    <li><a href="http://wet-boew.github.io/wet-boew/docs/start-en.html">Getting started with WET</a></li>
+                    <li><a href="http://wet-boew.github.io/wet-boew/docs/versions/dwnld-en.html">Download WET</a></li>
+                    <li><a href="http://wet-boew.github.io/v4.0-ci/demos/index-en.html">Working examples</a></li>
+                    <li><a href="http://wet-boew.github.io/wet-boew/docs/index-en.html">Documentation</a></li>
+                </ul>
+            </li>
+            <li class="pull-right"><a href="#contribute" class="item" th:text="${name}">Settings</a>
+                <ul class="sm list-unstyled" id="contribute" role="menu">
+                    <li><a th:href="@{/logout}" href="/logout">Logout</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+<!-- DataAjaxFragmentEnd -->
+</html>
