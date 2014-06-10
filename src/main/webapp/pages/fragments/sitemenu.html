@@ -10,9 +10,9 @@
     <h2>Site menu</h2>
     <div class="row">
         <ul class="list-inline menu" role="menubar">
-            <li><a href="#projects" class="item">Projects</a>
+            <li><a href="#projects" class="item" th:text="#{nav.main.project}">Projects</a>
                 <ul class="sm list-unstyled" id="projects" role="menu">
-                    <li><a href="#">Create New Project</a></li>
+                    <li><a href="#" th:text="#{nav.main.project-create}">Create New Project</a></li>
                 </ul>
             </li>
             <li><a href="#pipelines" class="item" th:text="#{nav.main.pipelines}">Pipelines</a>

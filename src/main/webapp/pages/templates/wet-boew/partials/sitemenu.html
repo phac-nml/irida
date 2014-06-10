@@ -13,9 +13,9 @@
         <div class="row">
             <ul class="list-inline menu">
 
-                <li><a th:href="@{/projects}" href="/projects">Projects</a></li>
-                <li><a th:href="@{/pipelines}">Pipelines</a></li>
-                <li class="pull-right"><a th:href="@{/logout}" href="/logout">Settings</a></li>
+                <li><a th:href="@{/projects}" href="/projects" th:text="#{nav.main.project}">Projects</a></li>
+                <li><a th:href="@{/pipelines}"  th:text="#{nav.main.pipelines}">Pipelines</a></li>
+                <li class="pull-right"><a th:href="@{/logout}" href="/logout" th:text="#{nav.main.settings}">Settings</a></li>
 
             </ul>
         </div>
