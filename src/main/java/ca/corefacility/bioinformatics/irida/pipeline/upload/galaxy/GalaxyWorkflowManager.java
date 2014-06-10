@@ -153,13 +153,7 @@ public class GalaxyWorkflowManager {
 	 * @return  The total number of history items.
 	 */
 	private int countTotalHistoryItems(Map<String, List<String>> stateIds) {
-		int sum = 0;
-		
-		for (String stateKey : stateIds.keySet()) {
-			sum += stateIds.get(stateKey).size();
-		}
-		
-		return sum;
+		return stateIds.values().stream().mapToInt(List::size).sum();
 	}
 	
 	/**
