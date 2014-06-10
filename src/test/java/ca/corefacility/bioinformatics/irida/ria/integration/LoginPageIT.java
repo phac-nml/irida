@@ -1,7 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.integration;
 
-import static org.junit.Assert.assertEquals;
-
+import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,13 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import static org.junit.Assert.assertEquals;
 
 /**
  * <p>
@@ -45,7 +43,10 @@ public class LoginPageIT {
 
 	@Before
 	public void setup() {
-		driver = new HtmlUnitDriver(true);
+		// By default htmlunit does not have javascript enabled.  This is because it has a different javascrript engine (Rhino)
+		// that has some quirks. (https://code.google.com/p/selenium/wiki/HtmlUnitDriver)
+		// wet-boew javascript fails if this is on.
+		driver = new HtmlUnitDriver();
 		loginPage = LoginPage.to(driver);
 	}
 

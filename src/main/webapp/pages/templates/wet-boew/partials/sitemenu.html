@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link href="/resources/wet-theme/css/theme.min.css"/>
+</head>
+<body>
+<nav th:fragment="menu-en" role="navigation" id="wb-sm" data-trgt="mb-pnl"
+     class="wb-menu visible-md visible-lg" typeof="SiteNavigationElement">
+    <div class="pnl-strt container visible-md visible-lg nvbar">
+    <div class="row">
+        <ul class="list-inline menu" role="menubar">
+            <li><a href="#projects" class="item" th:text="#{nav.main.project}">Projects</a>
+                <ul class="sm list-unstyled" id="projects" role="menu">
+                    <li><a href="#" th:text="#{nav.main.project-create}">Create New Project</a></li>
+                </ul>
+            </li>
+            <li><a href="#pipelines" class="item" th:text="#{nav.main.pipelines}">Pipelines</a>
+                <ul class="sm list-unstyled">
+                    <li><a href="#">Run New Pipeline</a></li>
+                    <li><a href="#">View Running Pipelines</a></li>
+                </ul>
+            </li>
+            <li class="pull-right"><a href="#contribute" class="item" th:text="#{nav.main.settings}">Settings</a>
+                <ul class="sm list-unstyled" id="contribute" role="menu">
+                    <li><a href="#" th:text="#{nav.main.account}"></a></li>
+                    <li><a th:href="@{/logout}" href="/logout" th:text="#{nav.main.logout}">Logout</a></li>
+                </ul>
+            </li>
+        </ul>
+        </div>
+    </div>
+
+</nav>
+</body>
+</html>

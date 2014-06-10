@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="templates/wetboew">
+      layout:decorator="templates/wet-boew/wet-layout">
 <head>
 <title th:text="#{login.title}">THIS IS SOMETHING WRONG</title>
 </head>
 <body>
-<main layout:fragment="content" class="container" role="main" property="mainContentOfPage">
+<main layout:fragment="content" class="container main-container" role="main" property="mainContentOfPage">
     <h1 class="page-header" th:text="#{login.title}"></h1>
     <section>
         <div class="row" ng-controller="LoginCtrl as login">
@@ -19,7 +19,7 @@
                         <label for="emailTF" th:text="#{global.email.label}">Email address</label>
                         <!-- TODO: this needs to be an email field once set up in api project -->
                         <input type="text" class="form-control input-full" id="emailTF" name="username"
-                               th:placeholder="#{global.email.placeholder}" placeholder="Enter email"/>
+                               th:placeholder="#{global.email.placeholder}" autofocus="true" placeholder="Enter email"/>
                     </div>
                     <div class="form-group">
                         <label for="passwordTF" th:text="#{global.password.label}">Password</label>
