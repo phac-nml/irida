@@ -23,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWo
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 
-import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
@@ -46,19 +45,23 @@ public class GalaxyWorkflowManager {
 	private static final Logger logger = LoggerFactory.getLogger(GalaxyWorkflowManager.class);
 		
 	private GalaxyHistoriesService galaxyHistory;
-	private GalaxyInstance galaxyInstance;
+	private HistoriesClient historiesClient;
+	private WorkflowsClient workflowsClient;
 	
 	/**
 	 * Constructs a new GalaxyWorkflowSubmitter with the given information.
 	 * @param galaxyInstance  A Galaxyinstance defining the Galaxy to submit to.
 	 * @param galaxyHistory  A GalaxyHistory for methods on operating with Galaxy histories.
 	 */
-	public GalaxyWorkflowManager(GalaxyInstance galaxyInstance, GalaxyHistoriesService galaxyHistory) {
-		checkNotNull(galaxyInstance, "galaxyInstance is null");
+	public GalaxyWorkflowManager(HistoriesClient historiesClient,
+			WorkflowsClient workflowsClient, GalaxyHistoriesService galaxyHistory) {
+		checkNotNull(historiesClient, "historiesClient is null");
+		checkNotNull(workflowsClient, "workflowsClient is null");
 		checkNotNull(galaxyHistory, "galaxyHistory is null");
 		
 		this.galaxyHistory = galaxyHistory;
-		this.galaxyInstance = galaxyInstance;
+		this.historiesClient = historiesClient;
+		this.workflowsClient = workflowsClient;
 	}
 	
 	/**
@@ -71,7 +74,6 @@ public class GalaxyWorkflowManager {
 		boolean invalid = true;
 		
 		try {
-			WorkflowsClient workflowsClient = galaxyInstance.getWorkflowsClient();
 			invalid = workflowsClient.showWorkflow(workflowId) == null;
 		} catch (Exception e) {
 		}
@@ -123,9 +125,7 @@ public class GalaxyWorkflowManager {
 				
 		checkArgument(Files.exists(inputFile), "inputFile " + inputFile + " does not exist");
 		checkWorkflowIdValid(workflowId);
-		
-		WorkflowsClient workflowsClient = galaxyInstance.getWorkflowsClient();
-		
+				
 		History workflowHistory = galaxyHistory.newHistoryForWorkflow();
 		WorkflowDetails workflowDetails = workflowsClient.showWorkflow(workflowId);
 		
@@ -186,9 +186,7 @@ public class GalaxyWorkflowManager {
 		
 		WorkflowState workflowState;
 		float percentComplete;
-		
-		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
-		
+				
 		try {
 			HistoryDetails details = historiesClient.showHistory(historyId);
 			workflowState = WorkflowState.stringToState(details.getState());
@@ -217,9 +215,7 @@ public class GalaxyWorkflowManager {
 		checkNotNull(workflowOutputs, "workflowOutputs is null");
 		
 		List<URL> workflowDownloadURLs = new LinkedList<URL>();
-		
-		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
-		
+				
 		try {
 			for(String outputId : workflowOutputs.getOutputIds()) {
 				Dataset dataset = historiesClient.showDataset(workflowOutputs.getHistoryId(), outputId);

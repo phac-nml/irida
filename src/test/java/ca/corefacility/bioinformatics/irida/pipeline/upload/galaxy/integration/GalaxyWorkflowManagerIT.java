@@ -43,6 +43,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflo
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
+import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
@@ -70,6 +71,8 @@ public class GalaxyWorkflowManagerIT {
 	
 	private GalaxyInstance galaxyAdminInstance;
 	private HistoriesClient historiesClient;
+	private ToolsClient toolsClient;
+	private WorkflowsClient workflowsClient;
 	private GalaxySearch galaxySearch;
 	private GalaxyWorkflowManager galaxyWorkflowManager;
 	
@@ -94,11 +97,13 @@ public class GalaxyWorkflowManagerIT {
 		assertFalse(Files.exists(dataFileNotExists));
 		
 		galaxyAdminInstance = localGalaxy.getGalaxyInstanceAdmin();
-		ToolsClient toolsClient = galaxyAdminInstance.getToolsClient();
+		toolsClient = galaxyAdminInstance.getToolsClient();
+		workflowsClient = galaxyAdminInstance.getWorkflowsClient();
 		historiesClient = galaxyAdminInstance.getHistoriesClient();
 		galaxySearch = new GalaxySearch(galaxyAdminInstance);
 		GalaxyHistoriesService galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, galaxySearch);
-		galaxyWorkflowManager = new GalaxyWorkflowManager(galaxyAdminInstance, galaxyHistory);
+		galaxyWorkflowManager 
+			= new GalaxyWorkflowManager(historiesClient, workflowsClient, galaxyHistory);
 	}
 	
 	/**

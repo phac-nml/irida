@@ -28,7 +28,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowManager;
 
-import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
@@ -48,7 +47,6 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 public class GalaxyWorkflowManagerTest {
 
 	@Mock private GalaxyHistoriesService galaxyHistory;
-	@Mock private GalaxyInstance galaxyInstance;
 	@Mock private HistoriesClient historiesClient;
 	@Mock private HistoryDetails historyDetails;
 	@Mock private WorkflowsClient workflowsClient;
@@ -86,10 +84,7 @@ public class GalaxyWorkflowManagerTest {
 	public void setup() throws URISyntaxException {
 		MockitoAnnotations.initMocks(this);
 		
-		when(galaxyInstance.getHistoriesClient()).thenReturn(historiesClient);
-		when(galaxyInstance.getWorkflowsClient()).thenReturn(workflowsClient);
-		
-		galaxyWorkflowManager = new GalaxyWorkflowManager(galaxyInstance, galaxyHistory);
+		galaxyWorkflowManager = new GalaxyWorkflowManager(historiesClient, workflowsClient, galaxyHistory);
 		
 		dataFile = Paths.get(this.getClass().getResource("testData1.fastq")
 				.toURI());
