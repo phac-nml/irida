@@ -75,6 +75,10 @@ public class GalaxyWorkflowManagerTest {
 	
 	private Map<String, WorkflowInputDefinition> workflowInputs;
 	
+	/**
+	 * Sets up variables for workflow tests.
+	 * @throws URISyntaxException
+	 */
 	@Before
 	public void setup() throws URISyntaxException {
 		MockitoAnnotations.initMocks(this);

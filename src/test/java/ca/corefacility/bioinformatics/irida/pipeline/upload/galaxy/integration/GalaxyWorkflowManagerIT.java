@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -64,6 +65,7 @@ public class GalaxyWorkflowManagerIT {
 	private LocalGalaxy localGalaxy;
 
 	private Path dataFile;
+	private Path dataFileNotExists;
 	
 	private GalaxyInstance galaxyAdminInstance;
 	private HistoriesClient historiesClient;
@@ -73,10 +75,15 @@ public class GalaxyWorkflowManagerIT {
 	private static final String INVALID_HISTORY_ID = "1";
 
 	@Before
-	public void setup() throws URISyntaxException {
+	public void setup() throws URISyntaxException, IOException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 		dataFile = Paths.get(GalaxyWorkflowManagerIT.class.getResource(
 				"testData1.fastq").toURI());
+		
+		File tempFile = File.createTempFile("temp", ".temp");
+		tempFile.delete();
+		assertFalse(tempFile.exists());
+		dataFileNotExists = tempFile.toPath();
 		
 		galaxyAdminInstance = localGalaxy.getGalaxyInstanceAdmin();
 		historiesClient = galaxyAdminInstance.getHistoriesClient();
@@ -204,5 +211,19 @@ public class GalaxyWorkflowManagerIT {
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		String invalidWorkflowLabel = localGalaxy.getInvalidWorkflowLabel();
 		galaxyWorkflowManager.runSingleFileWorkflow(dataFile, workflowId, invalidWorkflowLabel);
+	}
+	
+	/**
+	 * Tests attempting to run a workflow with an invalid input file.
+	 * @throws UploadException
+	 * @throws GalaxyDatasetNotFoundException
+	 * @throws IOException
+	 * @throws WorkflowException
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void testInvalidWorkflowInputFile() throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException {
+		String workflowId = localGalaxy.getSingleInputWorkflowId();
+		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
+		galaxyWorkflowManager.runSingleFileWorkflow(dataFileNotExists, workflowId, workflowInputLabel);
 	}
 }
