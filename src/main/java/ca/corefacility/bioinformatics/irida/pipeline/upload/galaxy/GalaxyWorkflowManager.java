@@ -81,6 +81,28 @@ public class GalaxyWorkflowManager {
 	}
 	
 	/**
+	 * Given a WorkflowDetails an a workflowInputLabel find the corresponding id for this input.
+	 * @param workflowDetails  The WorkflowDetails describing the workflow.
+	 * @param workflowInputLabel  The label defining the input to search for.
+	 * @return  The id of the input corresponding to the passed label.
+	 * @throws WorkflowException  If no such input id could be found.
+	 */
+	private String getWorkflowInputId(WorkflowDetails workflowDetails, String workflowInputLabel) throws WorkflowException {
+		
+		Map<String, WorkflowInputDefinition> workflowInputMap = workflowDetails.getInputs();
+		
+		for (String key : workflowInputMap.keySet()) {
+			WorkflowInputDefinition inputDefinition = workflowInputMap.get(key);
+			
+			if (workflowInputLabel.equals(inputDefinition.getLabel())) {
+				return key;
+			}
+		}
+		
+		throw new WorkflowException("Cannot find workflowInputId for input label " + workflowInputLabel);
+	}
+	
+	/**
 	 * Starts the execution of a workflow with a single fastq file and the given workflow id.
 	 * @param inputFile  An input file to start the workflow.
 	 * @param inputFileType The file type of the input file.
@@ -109,30 +131,19 @@ public class GalaxyWorkflowManager {
 		// upload dataset to history
 		Dataset inputDataset = galaxyHistory.fileToHistory(inputFile, inputFileType, workflowHistory);
 		
-		// setup workflow inputs
-		String workflowInputId = null;
-		for(final Map.Entry<String, WorkflowInputDefinition> inputEntry : workflowDetails.getInputs().entrySet()) {
-			final String label = inputEntry.getValue().getLabel();
-			if(label.equals(workflowInputLabel)) {
-				workflowInputId = inputEntry.getKey();
-			}
-		}
+		String workflowInputId = getWorkflowInputId(workflowDetails, workflowInputLabel);
 
-		if (workflowInputId != null) {
-			WorkflowInputs inputs = new WorkflowInputs();
-			inputs.setDestination(new WorkflowInputs.ExistingHistory(workflowHistory.getId()));
-			inputs.setWorkflowId(workflowDetails.getId());
-			inputs.setInput(workflowInputId, new WorkflowInputs.WorkflowInput(inputDataset.getId(), WorkflowInputs.InputSourceType.HDA));
-			
-			// execute workflow
-			WorkflowOutputs output = workflowsClient.runWorkflow(inputs);
-	
-			logger.debug("Running workflow in history " + output.getHistoryId());
-			
-			return output;
-		} else {
-			throw new WorkflowException("Could not find workflow input: " + workflowInputId);
-		}
+		WorkflowInputs inputs = new WorkflowInputs();
+		inputs.setDestination(new WorkflowInputs.ExistingHistory(workflowHistory.getId()));
+		inputs.setWorkflowId(workflowDetails.getId());
+		inputs.setInput(workflowInputId, new WorkflowInputs.WorkflowInput(inputDataset.getId(), WorkflowInputs.InputSourceType.HDA));
+		
+		// execute workflow
+		WorkflowOutputs output = workflowsClient.runWorkflow(inputs);
+
+		logger.debug("Running workflow in history " + output.getHistoryId());
+		
+		return output;
 	}
 	
 	/**
