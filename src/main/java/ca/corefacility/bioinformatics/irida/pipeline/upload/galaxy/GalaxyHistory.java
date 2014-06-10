@@ -93,11 +93,8 @@ public class GalaxyHistory {
 		
 		ToolsClient toolsClient = galaxyInstance.getToolsClient();
 		
-		//Map<String, String> extraParameters;
 		FileUploadRequest uploadRequest = new FileUploadRequest(history.getId(), file);
 		uploadRequest.setFileType("fastqsanger");
-		//extraParameters = uploadRequest.getExtraParameters();
-		//extraParameters.put("link_data_only", "link_to_files");
 		
 		ClientResponse clientResponse = 
 				toolsClient.uploadRequest(uploadRequest);
