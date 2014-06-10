@@ -19,9 +19,7 @@ public class AjaxFragmentControllerTest {
 
 
 	@Test
-	public void indexPageNormal() {
-		Model model = new ExtendedModelMap();
-		Principal principal = () -> "tester";
-		assertEquals("fragments/sitemenu", controller.getSiteMenu(model, principal));
+	public void testGetSiteMenu() {
+		assertEquals("fragments/sitemenu", controller.getSiteMenu());
 	}
 }

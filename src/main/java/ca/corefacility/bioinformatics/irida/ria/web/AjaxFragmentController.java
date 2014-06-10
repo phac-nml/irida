@@ -1,11 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
-import java.security.Principal;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -19,9 +16,8 @@ public class AjaxFragmentController {
 	private static final Logger logger = LoggerFactory.getLogger(AjaxFragmentController.class);
 
 	@RequestMapping(value = "/sitemenu")
-	public String getSiteMenu(Model model, Principal principal) {
-		String name = principal.getName();
-		model.addAttribute("name", name);
+	public String getSiteMenu() {
+		logger.debug("Creating site menu.");
 		return "fragments/sitemenu";
 	}
 }
