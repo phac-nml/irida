@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+	<!-- Main client details -->
+	<changeSet id="client-details" author="tom">
+		<createTable tableName="client_details">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="token_validity" type="int(11)">
+				<constraints nullable="false" />
+			</column>
+			<column name="refresh_validity" type="int(11)" />
+			<column name="clientId" type="varchar(255)">
+				<constraints nullable="false" unique="true"
+					uniqueConstraintName="UK_CLIENT_DETAILS_CLIENT_ID" />
+			</column>
+			<column name="clientSecret" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="createdDate" type="datetime" />
+			<column name="modifiedDate" type="datetime" />
+		</createTable>
+
+		<createTable tableName="client_details_AUD">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="token_validity" type="int(11)">
+			</column>
+			<column name="refresh_validity" type="int(11)" />
+			<column name="clientId" type="varchar(255)" />
+			<column name="clientSecret" type="varchar(255)" />
+			<column name="createdDate" type="datetime" />
+			<column name="modifiedDate" type="datetime" />
+		</createTable>
+
+		<!-- Additional information about a client -->
+		<createTable tableName="client_details_additional_information">
+			<column name="client_details_id" type="bigint(20)">
+				<constraints referencedTableName="client_details"
+					referencedColumnNames="id" primaryKey="true" nullable="false" />
+			</column>
+			<column name="info_key" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="info_value" type="varchar(255)" />
+		</createTable>
+
+		<createTable tableName="client_details_additional_information_AUD">
+			<column name="client_details_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="info_key" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="info_value" type="varchar(255)">
+				<constraints primaryKey="true" />
+			</column>
+		</createTable>
+
+
+		<!-- Grant types allowed for a client -->
+		<createTable tableName="client_details_grant_types">
+			<column name="client_details_id" type="bigint(20)">
+				<constraints referencedTableName="client_details"
+					referencedColumnNames="id" primaryKey="true" nullable="false" />
+			</column>
+			<column name="grant_value" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+		</createTable>
+
+		<createTable tableName="client_details_grant_types_AUD">
+			<column name="client_details_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="grant_value" type="varchar(255)">
+				<constraints primaryKey="true" />
+			</column>
+		</createTable>
+
+		<!-- Roles of a client -->
+		<createTable tableName="client_details_authorities">
+			<column name="client_details_id" type="bigint(20)">
+				<constraints referencedTableName="client_details"
+					referencedColumnNames="id" primaryKey="true" nullable="false" />
+			</column>
+			<column name="authority_name" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+		</createTable>
+
+		<createTable tableName="client_details_authorities_AUD">
+			<column name="client_details_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="authority_name" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+		</createTable>
+
+		<!-- Allowed grant types for a client -->
+		<createTable tableName="client_details_grant_types">
+			<column name="client_details_id" type="bigint(20)">
+				<constraints referencedTableName="client_details"
+					referencedColumnNames="id" primaryKey="true" nullable="false" />
+			</column>
+			<column name="grant_value" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+		</createTable>
+
+		<createTable tableName="client_details_grant_types_AUD">
+			<column name="client_details_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="grant_value" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+		</createTable>
+
+		<!-- Resource ids this client is allowed to access -->
+		<createTable tableName="client_details_resource_ids">
+			<column name="client_details_id" type="bigint(20)">
+				<constraints referencedTableName="client_details"
+					referencedColumnNames="id" primaryKey="true" nullable="false" />
+			</column>
+			<column name="resource_id" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+		</createTable>
+
+		<createTable tableName="client_details_resource_ids_AUD">
+			<column name="client_details_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="resource_id" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+		</createTable>
+
+		<!-- Allowed scopes for this client -->
+		<createTable tableName="client_details_scope">
+			<column name="client_details_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="scope" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+		</createTable>
+	</changeSet>
+</databaseChangeLog>
