@@ -21,3 +21,5 @@
 /src/main/webapp/resources/bower_components/
 
 *.css.map
+
+/src/main/webapp/resources/css/main.css.map
