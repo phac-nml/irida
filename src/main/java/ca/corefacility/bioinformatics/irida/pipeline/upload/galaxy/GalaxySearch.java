@@ -118,9 +118,11 @@ public class GalaxySearch {
 		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
 		List<History> galaxyHistories = historiesClient.getHistories();
 		
-		for (History history : galaxyHistories) {
-			if (historyId.equals(history.getId())) {
-				return history;
+		if (galaxyHistories != null) {
+			Optional<History> h = galaxyHistories.stream().
+					filter((history) -> historyId.equals(history.getId())).findFirst();
+			if (h.isPresent()) {
+				return h.get();
 			}
 		}
 		
@@ -323,11 +325,10 @@ public class GalaxySearch {
 		List<HistoryContents> historyContentsList =
 				historiesClient.showHistoryContents(history.getId());
 
-		for (HistoryContents contents : historyContentsList) {
-			if (filename.equals(contents.getName())) {
-				dataId = contents.getId();
-				break;
-			}
+		Optional<HistoryContents> h = historyContentsList.stream().
+				filter((historyContents) -> filename.equals(historyContents.getName())).findFirst();
+		if (h.isPresent()) {
+			dataId = h.get().getId();
 		}
 		
 		if (dataId != null) {
