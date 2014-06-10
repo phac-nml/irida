@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -75,11 +76,6 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	@CollectionTable(name = "client_details_grant_types", joinColumns = @JoinColumn(name = "client_details_id"))
 	private Set<String> authorizedGrantTypes;
 
-	@ElementCollection(fetch = FetchType.EAGER)
-	@Column(name = "uri")
-	@CollectionTable(name = "client_details_redirect_uri", joinColumns = @JoinColumn(name = "client_details_id"))
-	private Set<String> registeredRedirectUri;
-
 	@NotNull
 	@Column(name = "token_validity")
 	private Integer accessTokenValiditySeconds;
@@ -113,7 +109,6 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 		resourceIds = new HashSet<>();
 		scope = new HashSet<>();
 		authorizedGrantTypes = new HashSet<>();
-		registeredRedirectUri = new HashSet<>();
 		additionalInformation = new HashMap<>();
 		authorities = new HashSet<>();
 	}
@@ -200,11 +195,11 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * No allowed predefined redirect URIs
 	 */
 	@Override
 	public Set<String> getRegisteredRedirectUri() {
-		return registeredRedirectUri;
+		return Collections.emptySet();
 	}
 
 	/**
@@ -301,14 +296,6 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	 */
 	public void setAuthorizedGrantTypes(Set<String> authorizedGrantTypes) {
 		this.authorizedGrantTypes = authorizedGrantTypes;
-	}
-
-	/**
-	 * @param registeredRedirectUri
-	 *            the registeredRedirectUri to set
-	 */
-	public void setRegisteredRedirectUri(Set<String> registeredRedirectUri) {
-		this.registeredRedirectUri = registeredRedirectUri;
 	}
 
 	/**
