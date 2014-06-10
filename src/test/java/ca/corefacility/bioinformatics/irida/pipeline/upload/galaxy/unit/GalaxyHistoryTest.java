@@ -44,6 +44,8 @@ public class GalaxyHistoryTest {
 	private final String libraryFileId = "1";
 	private final String historyId = "2";
 	
+	private static final String FILE_TYPE = "fastqsanger";
+	
 	private Path dataFile;
 	
 	@Before
@@ -96,7 +98,7 @@ public class GalaxyHistoryTest {
 		when(galaxySearch.getDatasetForFileInHistory(filename, createdHistory)).
 			thenReturn(dataset);
 		
-		assertEquals(dataset, galaxyHistory.fileToHistory(dataFile, createdHistory));
+		assertEquals(dataset, galaxyHistory.fileToHistory(dataFile, "fastqsanger", createdHistory));
 	}
 	
 	@Test(expected=UploadException.class)
@@ -108,7 +110,7 @@ public class GalaxyHistoryTest {
 		when(toolsClient.uploadRequest(any(FileUploadRequest.class))).
 			thenReturn(invalidResponse);
 		
-		galaxyHistory.fileToHistory(dataFile, createdHistory);
+		galaxyHistory.fileToHistory(dataFile, FILE_TYPE, createdHistory);
 	}
 	
 	@Test(expected=GalaxyDatasetNotFoundException.class)
@@ -122,6 +124,6 @@ public class GalaxyHistoryTest {
 			thenReturn(okayResponse);
 		when(galaxySearch.getDatasetForFileInHistory(filename, createdHistory)).thenThrow(new GalaxyDatasetNotFoundException());
 		
-		galaxyHistory.fileToHistory(dataFile, createdHistory);
+		galaxyHistory.fileToHistory(dataFile, FILE_TYPE, createdHistory);
 	}
 }

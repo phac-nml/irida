@@ -53,6 +53,9 @@ public class GalaxyHistoryIT {
 	private GalaxyHistory galaxyHistory;
 	
 	private Path dataFile;
+	
+	private static final String FILE_TYPE = "fastqsanger";
+	private static final String INVALID_FILE_TYPE = "invalid";
 
 	/**
 	 * Sets up files for history tests.
@@ -108,11 +111,22 @@ public class GalaxyHistoryIT {
 	public void testFileToHistory() throws UploadException, GalaxyDatasetNotFoundException {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		String filename = dataFile.toFile().getName();
-		Dataset actualDataset = galaxyHistory.fileToHistory(dataFile, history);
+		Dataset actualDataset = galaxyHistory.fileToHistory(dataFile, FILE_TYPE, history);
 		assertNotNull(actualDataset);
 		
 		String dataId = Util.getIdForFileInHistory(filename, history.getId(),
 				localGalaxy.getGalaxyInstanceAdmin());
 		assertEquals(dataId, actualDataset.getId());
+	}
+	
+	/**
+	 * Tests failure to upload file to history due to invalid file type.
+	 * @throws GalaxyDatasetNotFoundException 
+	 * @throws UploadException 
+	 */
+	@Test(expected=UploadException.class)
+	public void testFileToHistoryInvalidType() throws UploadException, GalaxyDatasetNotFoundException {
+		History history = galaxyHistory.newHistoryForWorkflow();
+		galaxyHistory.fileToHistory(dataFile, INVALID_FILE_TYPE, history);
 	}
 }

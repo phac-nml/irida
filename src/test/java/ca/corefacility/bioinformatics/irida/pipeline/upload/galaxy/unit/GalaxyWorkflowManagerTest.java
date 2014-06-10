@@ -69,6 +69,9 @@ public class GalaxyWorkflowManagerTest {
 	private static final String VALID_INPUT_LABEL = "fastq";
 	private static final String INVALID_INPUT_LABEL = "invalid";
 	
+	private static final String FILE_TYPE = "fastqsanger";
+	private static final String INVALID_FILE_TYPE = "invalid";
+	
 	private static final float delta = 0.00001f;
 	
 	private Path dataFile;
@@ -188,11 +191,11 @@ public class GalaxyWorkflowManagerTest {
 		
 		when(galaxyHistory.newHistoryForWorkflow()).thenReturn(workflowHistory);
 		when(workflowHistory.getId()).thenReturn(VALID_HISTORY_ID);
-		when(galaxyHistory.fileToHistory(dataFile, workflowHistory)).thenReturn(inputDataset);
+		when(galaxyHistory.fileToHistory(dataFile, FILE_TYPE, workflowHistory)).thenReturn(inputDataset);
 		when(workflowsClient.runWorkflow(any(WorkflowInputs.class))).thenReturn(workflowOutputs);
 		
 		WorkflowOutputs expectedOutputs =
-				galaxyWorkflowManager.runSingleFileWorkflow(dataFile, VALID_WORKFLOW_ID, VALID_INPUT_LABEL);
+				galaxyWorkflowManager.runSingleFileWorkflow(dataFile, FILE_TYPE, VALID_WORKFLOW_ID, VALID_INPUT_LABEL);
 		assertNotNull(expectedOutputs);
 	}
 	
@@ -209,10 +212,10 @@ public class GalaxyWorkflowManagerTest {
 		
 		when(galaxyHistory.newHistoryForWorkflow()).thenReturn(workflowHistory);
 		when(workflowHistory.getId()).thenReturn(VALID_HISTORY_ID);
-		when(galaxyHistory.fileToHistory(dataFile, workflowHistory)).thenReturn(inputDataset);
+		when(galaxyHistory.fileToHistory(dataFile, FILE_TYPE, workflowHistory)).thenReturn(inputDataset);
 		when(workflowsClient.runWorkflow(any(WorkflowInputs.class))).thenReturn(workflowOutputs);
 		
-		galaxyWorkflowManager.runSingleFileWorkflow(dataFile, VALID_WORKFLOW_ID, INVALID_INPUT_LABEL);
+		galaxyWorkflowManager.runSingleFileWorkflow(dataFile, FILE_TYPE, VALID_WORKFLOW_ID, INVALID_INPUT_LABEL);
 	}
 	
 	/**
@@ -228,10 +231,30 @@ public class GalaxyWorkflowManagerTest {
 		
 		when(galaxyHistory.newHistoryForWorkflow()).thenReturn(workflowHistory);
 		when(workflowHistory.getId()).thenReturn(VALID_HISTORY_ID);
-		when(galaxyHistory.fileToHistory(dataFile, workflowHistory)).thenReturn(inputDataset);
+		when(galaxyHistory.fileToHistory(dataFile, FILE_TYPE, workflowHistory)).thenReturn(inputDataset);
 		when(workflowsClient.runWorkflow(any(WorkflowInputs.class))).thenReturn(workflowOutputs);
 		
-		galaxyWorkflowManager.runSingleFileWorkflow(dataFile, INVALID_WORKFLOW_ID, VALID_INPUT_LABEL);
+		galaxyWorkflowManager.runSingleFileWorkflow(dataFile, FILE_TYPE, INVALID_WORKFLOW_ID, VALID_INPUT_LABEL);
+	}
+	
+	/**
+	 * Tests running a workflow with an invalid input file type.
+	 * @throws UploadException
+	 * @throws GalaxyDatasetNotFoundException
+	 * @throws IOException
+	 * @throws WorkflowException
+	 */
+	@Test(expected=UploadException.class)
+	public void testRunSingleFileWorkflowInvalidFileType() throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException {
+		WorkflowOutputs workflowOutputs = new WorkflowOutputs();
+		
+		when(galaxyHistory.newHistoryForWorkflow()).thenReturn(workflowHistory);
+		when(workflowHistory.getId()).thenReturn(VALID_HISTORY_ID);
+		when(galaxyHistory.fileToHistory(dataFile, INVALID_FILE_TYPE, workflowHistory))
+			.thenThrow(new UploadException(""));
+		when(workflowsClient.runWorkflow(any(WorkflowInputs.class))).thenReturn(workflowOutputs);
+		
+		galaxyWorkflowManager.runSingleFileWorkflow(dataFile, INVALID_FILE_TYPE, VALID_WORKFLOW_ID, VALID_INPUT_LABEL);
 	}
 	
 	/**

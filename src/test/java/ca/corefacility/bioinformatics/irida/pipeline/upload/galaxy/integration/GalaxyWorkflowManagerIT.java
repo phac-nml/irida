@@ -73,6 +73,9 @@ public class GalaxyWorkflowManagerIT {
 	private GalaxyWorkflowManager galaxyWorkflowManager;
 	
 	private static final String INVALID_HISTORY_ID = "1";
+	
+	private static final String FILE_TYPE = "fastqsanger";
+	private static final String INVALID_FILE_TYPE = "invalid";
 
 	/**
 	 * Sets up files and objects for workflow tests.
@@ -113,7 +116,7 @@ public class GalaxyWorkflowManagerIT {
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
 		
 		WorkflowOutputs workflowOutput = 
-				galaxyWorkflowManager.runSingleFileWorkflow(dataFile, workflowId, workflowInputLabel);
+				galaxyWorkflowManager.runSingleFileWorkflow(dataFile, FILE_TYPE, workflowId, workflowInputLabel);
 		assertNotNull(workflowOutput);
 		assertNotNull(workflowOutput.getHistoryId());
 		
@@ -155,7 +158,7 @@ public class GalaxyWorkflowManagerIT {
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
 		
 		WorkflowOutputs workflowOutput = 
-				galaxyWorkflowManager.runSingleFileWorkflow(dataFile, workflowId, workflowInputLabel);
+				galaxyWorkflowManager.runSingleFileWorkflow(dataFile, FILE_TYPE, workflowId, workflowInputLabel);
 		
 		List<URL> outputURLs = galaxyWorkflowManager.getWorkflowOutputDownloadURLs(workflowOutput);
 		assertNotNull(outputURLs);
@@ -181,7 +184,7 @@ public class GalaxyWorkflowManagerIT {
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
 		
 		WorkflowOutputs workflowOutput = 
-				galaxyWorkflowManager.runSingleFileWorkflow(dataFile, workflowId, workflowInputLabel);
+				galaxyWorkflowManager.runSingleFileWorkflow(dataFile, FILE_TYPE, workflowId, workflowInputLabel);
 		
 		List<String> fakeOutputIds = new LinkedList<String>();
 		fakeOutputIds.add(INVALID_HISTORY_ID);
@@ -201,7 +204,7 @@ public class GalaxyWorkflowManagerIT {
 	public void testInvalidWorkflow() throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException {
 		String invalidWorkflowId = localGalaxy.getInvalidWorkflowId();
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
-		galaxyWorkflowManager.runSingleFileWorkflow(dataFile, invalidWorkflowId, workflowInputLabel);
+		galaxyWorkflowManager.runSingleFileWorkflow(dataFile, FILE_TYPE, invalidWorkflowId, workflowInputLabel);
 	}
 	
 	/**
@@ -215,7 +218,7 @@ public class GalaxyWorkflowManagerIT {
 	public void testInvalidWorkflowInput() throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException {
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		String invalidWorkflowLabel = localGalaxy.getInvalidWorkflowLabel();
-		galaxyWorkflowManager.runSingleFileWorkflow(dataFile, workflowId, invalidWorkflowLabel);
+		galaxyWorkflowManager.runSingleFileWorkflow(dataFile, FILE_TYPE, workflowId, invalidWorkflowLabel);
 	}
 	
 	/**
@@ -229,6 +232,20 @@ public class GalaxyWorkflowManagerIT {
 	public void testInvalidWorkflowInputFile() throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException {
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
-		galaxyWorkflowManager.runSingleFileWorkflow(dataFileNotExists, workflowId, workflowInputLabel);
+		galaxyWorkflowManager.runSingleFileWorkflow(dataFileNotExists, FILE_TYPE, workflowId, workflowInputLabel);
+	}
+	
+	/**
+	 * Tests attempting to run a workflow with an invalid input file type.
+	 * @throws UploadException
+	 * @throws GalaxyDatasetNotFoundException
+	 * @throws IOException
+	 * @throws WorkflowException
+	 */
+	@Test(expected=UploadException.class)
+	public void testInvalidWorkflowInputFileType() throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException {
+		String workflowId = localGalaxy.getSingleInputWorkflowId();
+		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
+		galaxyWorkflowManager.runSingleFileWorkflow(dataFile, INVALID_FILE_TYPE, workflowId, workflowInputLabel);
 	}
 }
