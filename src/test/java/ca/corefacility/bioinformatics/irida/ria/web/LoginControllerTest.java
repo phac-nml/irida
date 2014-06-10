@@ -1,10 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
-import org.springframework.mobile.device.site.SitePreference;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Unit Tests for {@link LoginController}
@@ -22,7 +21,6 @@ public class LoginControllerTest {
 
 	@Test
 	public void testShowSplashPage() {
-		SitePreference preference = SitePreference.NORMAL;
-		assertEquals("splash", controller.showSplash(preference));
+		assertEquals("splash", controller.showSplash());
 	}
 }
