@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -16,9 +15,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
@@ -111,14 +109,11 @@ public class GalaxyWorkflowManager {
 	 * @param inputFileType The file type of the input file.
 	 * @param workflowId  The id of the workflow to start.
 	 * @param workflowInputLabel The label of a workflow input in Galaxy.
-	 * @throws GalaxyDatasetNotFoundException If there was an error uploading the Galaxy dataset.
-	 * @throws UploadException If there was an error uploading the Galaxy dataset.
-	 * @throws IOException If there was an error with the file.
-	 * @throws WorkflowException If there was an error with running the workflow.
+	 * @throws ExecutionManagerException If there was an error executing the workflow.
 	 */
 	public WorkflowOutputs runSingleFileWorkflow(Path inputFile, String inputFileType,
 			String workflowId, String workflowInputLabel)
-			throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException {
+			throws ExecutionManagerException {
 		checkNotNull(inputFile, "file is null");
 		checkNotNull(inputFileType, "inputFileType is null");
 		checkNotNull(workflowInputLabel, "workflowInputLabel is null");
@@ -179,9 +174,9 @@ public class GalaxyWorkflowManager {
 	 * Given a history id returns the status for the given workflow.
 	 * @param historyId  The history id to use to find a workflow.
 	 * @return  The WorkflowStatus for the given workflow.
-	 * @throws WorkflowException If there was an exception when attempting to get the status for a history.
+	 * @throws ExecutionManagerException If there was an exception when attempting to get the status for a history.
 	 */
-	public WorkflowStatus getStatusForHistory(String historyId) throws WorkflowException {
+	public WorkflowStatus getStatusForHistory(String historyId) throws ExecutionManagerException {
 		WorkflowStatus workflowStatus;
 		
 		WorkflowState workflowState;
@@ -208,7 +203,8 @@ public class GalaxyWorkflowManager {
 	 * Gets a list of download URLs for the given passed WorkflowOutputs.
 	 * @param workflowOutputs  A list of WorkflowOutputs to find the download URLs for.
 	 * @return  A list of download URLs for each workflow output.
-	 * @throws GalaxyOutputsForWorkflowException 
+	 * @throws GalaxyOutputsForWorkflowException If there was an error getting information about
+	 * 	the workflow outputs.
 	 */
 	public List<URL> getWorkflowOutputDownloadURLs(
 			WorkflowOutputs workflowOutputs) throws GalaxyOutputsForWorkflowException {

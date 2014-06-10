@@ -1,11 +1,13 @@
 package ca.corefacility.bioinformatics.irida.exceptions.galaxy;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+
 /**
  * An exception that gets thrown when there is no history in Galaxy that can be found.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class NoGalaxyHistoryException extends Exception {
+public class NoGalaxyHistoryException extends ExecutionManagerException {
 
 	private static final long serialVersionUID = 6482869317425193110L;
 

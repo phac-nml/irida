@@ -29,10 +29,9 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
@@ -108,15 +107,10 @@ public class GalaxyWorkflowManagerIT {
 	
 	/**
 	 * Tests executing a single workflow in Galaxy.
-	 * @throws UploadException
-	 * @throws GalaxyDatasetNotFoundException
-	 * @throws IOException
-	 * @throws WorkflowException
-	 * @throws NoGalaxyHistoryException
-	 * @throws URISyntaxException 
+	 * @throws ExecutionManagerException
 	 */
 	@Test
-	public void testExecuteWorkflow() throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException, NoGalaxyHistoryException, URISyntaxException {
+	public void testExecuteWorkflow() throws ExecutionManagerException {
 		
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
@@ -150,15 +144,10 @@ public class GalaxyWorkflowManagerIT {
 	
 	/**
 	 * Tests getting download URLs for workflow outputs. 
-	 * @throws UploadException
-	 * @throws GalaxyDatasetNotFoundException
-	 * @throws IOException
-	 * @throws WorkflowException
-	 * @throws NoGalaxyHistoryException
-	 * @throws URISyntaxException 
+	 * @throws ExecutionManagerException
 	 */
 	@Test
-	public void testGetWorkflowOutputFiles() throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException, NoGalaxyHistoryException, URISyntaxException {
+	public void testGetWorkflowOutputFiles() throws ExecutionManagerException {
 		
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
@@ -176,15 +165,10 @@ public class GalaxyWorkflowManagerIT {
 	
 	/**
 	 * Tests getting download URLs for invalid workflow outputs.
-	 * @throws UploadException
-	 * @throws GalaxyDatasetNotFoundException
-	 * @throws IOException
-	 * @throws WorkflowException
-	 * @throws NoGalaxyHistoryException
-	 * @throws URISyntaxException 
+	 * @throws ExecutionManagerException
 	 */
 	@Test(expected=GalaxyOutputsForWorkflowException.class)
-	public void testGetWorkflowNoOutputFiles() throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException, NoGalaxyHistoryException, URISyntaxException {
+	public void testGetWorkflowNoOutputFiles() throws ExecutionManagerException {
 		
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
@@ -201,13 +185,10 @@ public class GalaxyWorkflowManagerIT {
 	
 	/**
 	 * Tests attempting to run a workflow that does not exist.
-	 * @throws UploadException
-	 * @throws GalaxyDatasetNotFoundException
-	 * @throws IOException
-	 * @throws WorkflowException
+	 * @throws ExecutionManagerException
 	 */
 	@Test(expected=WorkflowException.class)
-	public void testInvalidWorkflow() throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException {
+	public void testInvalidWorkflow() throws ExecutionManagerException {
 		String invalidWorkflowId = localGalaxy.getInvalidWorkflowId();
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
 		galaxyWorkflowManager.runSingleFileWorkflow(dataFile, FILE_TYPE, invalidWorkflowId, workflowInputLabel);
@@ -215,13 +196,10 @@ public class GalaxyWorkflowManagerIT {
 	
 	/**
 	 * Tests attempting to run a workflow with an invalid input name.
-	 * @throws UploadException
-	 * @throws GalaxyDatasetNotFoundException
-	 * @throws IOException
-	 * @throws WorkflowException
+	 * @throws ExecutionManagerException
 	 */
 	@Test(expected=WorkflowException.class)
-	public void testInvalidWorkflowInput() throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException {
+	public void testInvalidWorkflowInput() throws ExecutionManagerException {
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		String invalidWorkflowLabel = localGalaxy.getInvalidWorkflowLabel();
 		galaxyWorkflowManager.runSingleFileWorkflow(dataFile, FILE_TYPE, workflowId, invalidWorkflowLabel);
@@ -229,13 +207,10 @@ public class GalaxyWorkflowManagerIT {
 	
 	/**
 	 * Tests attempting to run a workflow with an invalid input file.
-	 * @throws UploadException
-	 * @throws GalaxyDatasetNotFoundException
-	 * @throws IOException
-	 * @throws WorkflowException
+	 * @throws ExecutionManagerException
 	 */
 	@Test(expected=IllegalArgumentException.class)
-	public void testInvalidWorkflowInputFile() throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException {
+	public void testInvalidWorkflowInputFile() throws ExecutionManagerException {
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
 		galaxyWorkflowManager.runSingleFileWorkflow(dataFileNotExists, FILE_TYPE, workflowId, workflowInputLabel);
@@ -243,13 +218,10 @@ public class GalaxyWorkflowManagerIT {
 	
 	/**
 	 * Tests attempting to run a workflow with an invalid input file type.
-	 * @throws UploadException
-	 * @throws GalaxyDatasetNotFoundException
-	 * @throws IOException
-	 * @throws WorkflowException
+	 * @throws ExecutionManagerException
 	 */
 	@Test(expected=UploadException.class)
-	public void testInvalidWorkflowInputFileType() throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException {
+	public void testInvalidWorkflowInputFileType() throws ExecutionManagerException {
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
 		galaxyWorkflowManager.runSingleFileWorkflow(dataFile, INVALID_FILE_TYPE, workflowId, workflowInputLabel);

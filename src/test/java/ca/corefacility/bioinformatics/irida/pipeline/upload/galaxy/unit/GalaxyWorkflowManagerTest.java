@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.unit;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -19,9 +18,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
@@ -102,10 +101,10 @@ public class GalaxyWorkflowManagerTest {
 	
 	/**
 	 * Tests getting status for a completed/ok workflow state.
-	 * @throws WorkflowException 
+	 * @throws ExecutionManagerException 
 	 */
 	@Test
-	public void testGetStatusOkState() throws WorkflowException {
+	public void testGetStatusOkState() throws ExecutionManagerException {
 		Map<String, List<String>> validStateIds = new HashMap<String,List<String>>();
 		validStateIds.put("ok", Arrays.asList("1", "2"));
 		validStateIds.put("running", Arrays.asList());
@@ -123,10 +122,10 @@ public class GalaxyWorkflowManagerTest {
 	
 	/**
 	 * Tests getting status for a running workflow state.
-	 * @throws WorkflowException 
+	 * @throws ExecutionManagerException 
 	 */
 	@Test
-	public void testGetStatusRunningState() throws WorkflowException {
+	public void testGetStatusRunningState() throws ExecutionManagerException {
 		Map<String, List<String>> validStateIds = new HashMap<String,List<String>>();
 		validStateIds.put("ok", Arrays.asList());
 		validStateIds.put("running", Arrays.asList("1", "2"));
@@ -144,10 +143,10 @@ public class GalaxyWorkflowManagerTest {
 	
 	/**
 	 * Tests getting status for a running workflow state.
-	 * @throws WorkflowException 
+	 * @throws ExecutionManagerException 
 	 */
 	@Test
-	public void testGetStatusPartialCompleteState() throws WorkflowException {
+	public void testGetStatusPartialCompleteState() throws ExecutionManagerException {
 		Map<String, List<String>> validStateIds = new HashMap<String,List<String>>();
 		validStateIds.put("ok", Arrays.asList("1"));
 		validStateIds.put("running", Arrays.asList("2"));
@@ -165,23 +164,20 @@ public class GalaxyWorkflowManagerTest {
 	
 	/**
 	 * Tests getting status for an invalid history.
-	 * @throws WorkflowException 
+	 * @throws ExecutionManagerException 
 	 */
 	@Test(expected=WorkflowException.class)
-	public void testGetStatusInvalidHistory() throws WorkflowException {
+	public void testGetStatusInvalidHistory() throws ExecutionManagerException {
 		when(historiesClient.showHistory(INVALID_HISTORY_ID)).thenThrow(uniformInterfaceException);
 		galaxyWorkflowManager.getStatusForHistory(INVALID_HISTORY_ID);
 	}
 	
 	/**
 	 * Tests running a single file workflow.
-	 * @throws UploadException
-	 * @throws GalaxyDatasetNotFoundException
-	 * @throws IOException
-	 * @throws WorkflowException
+	 * @throws ExecutionManagerException
 	 */
 	@Test
-	public void testRunSingleFileWorkflowValid() throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException {
+	public void testRunSingleFileWorkflowValid() throws ExecutionManagerException {
 		WorkflowOutputs workflowOutputs = new WorkflowOutputs();
 		
 		when(galaxyHistory.newHistoryForWorkflow()).thenReturn(workflowHistory);
@@ -196,13 +192,10 @@ public class GalaxyWorkflowManagerTest {
 	
 	/**
 	 * Tests running a workflow with an invalid input label.
-	 * @throws UploadException
-	 * @throws GalaxyDatasetNotFoundException
-	 * @throws IOException
-	 * @throws WorkflowException
+	 * @throws ExecutionManagerException
 	 */
 	@Test(expected=WorkflowException.class)
-	public void testRunSingleFileWorkflowInvalidInput() throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException {
+	public void testRunSingleFileWorkflowInvalidInput() throws ExecutionManagerException {
 		WorkflowOutputs workflowOutputs = new WorkflowOutputs();
 		
 		when(galaxyHistory.newHistoryForWorkflow()).thenReturn(workflowHistory);
@@ -215,13 +208,10 @@ public class GalaxyWorkflowManagerTest {
 	
 	/**
 	 * Tests running a workflow with an invalid workflow id.
-	 * @throws UploadException
-	 * @throws GalaxyDatasetNotFoundException
-	 * @throws IOException
-	 * @throws WorkflowException
+	 * @throws ExecutionManagerException
 	 */
 	@Test(expected=WorkflowException.class)
-	public void testRunSingleFileWorkflowInvalidWorkflowId() throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException {
+	public void testRunSingleFileWorkflowInvalidWorkflowId() throws ExecutionManagerException {
 		WorkflowOutputs workflowOutputs = new WorkflowOutputs();
 		
 		when(galaxyHistory.newHistoryForWorkflow()).thenReturn(workflowHistory);
@@ -234,13 +224,10 @@ public class GalaxyWorkflowManagerTest {
 	
 	/**
 	 * Tests running a workflow with an invalid input file type.
-	 * @throws UploadException
-	 * @throws GalaxyDatasetNotFoundException
-	 * @throws IOException
-	 * @throws WorkflowException
+	 * @throws ExecutionManagerException
 	 */
 	@Test(expected=UploadException.class)
-	public void testRunSingleFileWorkflowInvalidFileType() throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException {
+	public void testRunSingleFileWorkflowInvalidFileType() throws ExecutionManagerException {
 		WorkflowOutputs workflowOutputs = new WorkflowOutputs();
 		
 		when(galaxyHistory.newHistoryForWorkflow()).thenReturn(workflowHistory);
