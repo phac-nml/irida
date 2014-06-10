@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,15 +92,15 @@ public class GalaxyWorkflowManager {
 		
 		Map<String, WorkflowInputDefinition> workflowInputMap = workflowDetails.getInputs();
 		
-		for (String key : workflowInputMap.keySet()) {
-			WorkflowInputDefinition inputDefinition = workflowInputMap.get(key);
-			
-			if (workflowInputLabel.equals(inputDefinition.getLabel())) {
-				return key;
-			}
-		}
+		Optional<Map.Entry<String, WorkflowInputDefinition>> e = 
+				workflowInputMap.entrySet().stream().filter((entry) -> 
+				workflowInputLabel.equals(entry.getValue().getLabel())).findFirst();
 		
-		throw new WorkflowException("Cannot find workflowInputId for input label " + workflowInputLabel);
+		if (e.isPresent()) {
+			return e.get().getKey();
+		} else {
+			throw new WorkflowException("Cannot find workflowInputId for input label " + workflowInputLabel);
+		}
 	}
 	
 	/**
