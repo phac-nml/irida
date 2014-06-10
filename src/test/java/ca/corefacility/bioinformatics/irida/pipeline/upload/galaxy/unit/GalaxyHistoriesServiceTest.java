@@ -12,7 +12,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient.FileUploadRequest;
@@ -34,7 +33,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
  */
 public class GalaxyHistoriesServiceTest {
 
-	@Mock private GalaxyInstance galaxyInstance;
 	@Mock private HistoriesClient historiesClient;
 	@Mock private ToolsClient toolsClient;
 	@Mock private ClientResponse invalidResponse;
@@ -52,9 +50,6 @@ public class GalaxyHistoriesServiceTest {
 	public void setup() throws URISyntaxException {
 		MockitoAnnotations.initMocks(this);
 		
-		when(galaxyInstance.getHistoriesClient()).thenReturn(historiesClient);
-		when(galaxyInstance.getToolsClient()).thenReturn(toolsClient);
-		
 		when(okayResponse.getClientResponseStatus()).thenReturn(
 				ClientResponse.Status.OK);
 		when(invalidResponse.getClientResponseStatus()).thenReturn(
@@ -69,7 +64,8 @@ public class GalaxyHistoriesServiceTest {
 		
 		when(historiesClient.create(any(History.class))).thenReturn(newHistory);
 		
-		GalaxyHistoriesService galaxyHistory = new GalaxyHistoriesService(galaxyInstance, galaxySearch);
+		GalaxyHistoriesService galaxyHistory 
+			= new GalaxyHistoriesService(historiesClient, toolsClient, galaxySearch);
 		assertEquals(newHistory, galaxyHistory.newHistoryForWorkflow());
 	}
 	
@@ -82,13 +78,15 @@ public class GalaxyHistoriesServiceTest {
 		when(historiesClient.createHistoryDataset(any(String.class),
 				any(HistoryDataset.class))).thenReturn(historyDetails);
 		
-		GalaxyHistoriesService galaxyHistory = new GalaxyHistoriesService(galaxyInstance, galaxySearch);
+		GalaxyHistoriesService galaxyHistory
+			= new GalaxyHistoriesService(historiesClient, toolsClient, galaxySearch);
 		assertNotNull(galaxyHistory.libraryDatasetToHistory(libraryFileId, createdHistory));
 	}
 	
 	@Test
 	public void testFileToHistorySuccess() throws GalaxyDatasetNotFoundException, UploadException {
-		GalaxyHistoriesService galaxyHistory = new GalaxyHistoriesService(galaxyInstance, galaxySearch);
+		GalaxyHistoriesService galaxyHistory
+			= new GalaxyHistoriesService(historiesClient, toolsClient, galaxySearch);
 		String filename = dataFile.toFile().getName();
 		History createdHistory = new History();
 		Dataset dataset = new Dataset();
@@ -103,7 +101,8 @@ public class GalaxyHistoriesServiceTest {
 	
 	@Test(expected=UploadException.class)
 	public void testFileToHistoryFailUpload() throws GalaxyDatasetNotFoundException, UploadException {
-		GalaxyHistoriesService galaxyHistory = new GalaxyHistoriesService(galaxyInstance, galaxySearch);
+		GalaxyHistoriesService galaxyHistory
+			= new GalaxyHistoriesService(historiesClient, toolsClient, galaxySearch);
 		History createdHistory = new History();
 		createdHistory.setId(historyId);
 		
@@ -115,7 +114,8 @@ public class GalaxyHistoriesServiceTest {
 	
 	@Test(expected=GalaxyDatasetNotFoundException.class)
 	public void testFileToHistoryFailFindDataset() throws GalaxyDatasetNotFoundException, UploadException {
-		GalaxyHistoriesService galaxyHistory = new GalaxyHistoriesService(galaxyInstance, galaxySearch);
+		GalaxyHistoriesService galaxyHistory
+			= new GalaxyHistoriesService(historiesClient, toolsClient, galaxySearch);
 		String filename = dataFile.toFile().getName();
 		History createdHistory = new History();
 		createdHistory.setId(historyId);

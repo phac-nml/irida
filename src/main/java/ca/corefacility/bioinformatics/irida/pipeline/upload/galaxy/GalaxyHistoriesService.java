@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 
-import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient.FileUploadRequest;
@@ -32,20 +31,25 @@ public class GalaxyHistoriesService {
 	
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyHistoriesService.class);
-	
-	private GalaxyInstance galaxyInstance;
+
+	private HistoriesClient historiesClient;
+	private ToolsClient toolsClient;
 	private GalaxySearch galaxySearch;
 	
 	/**
 	 * Builds a new GalaxyHistory with the given Galaxy instance and GalaxySearch objects.
-	 * @param galaxyInstance  The Galaxy Instance to use to connect to Galaxy.
+	 * @param historiesClient  The HistoriesClient for interacting with Galaxy histories.
+	 * @param toolsClient  The ToolsClient for interacting with tools in Galaxy.
 	 * @param galaxySearch The GalaxySearch object to use.
 	 */
-	public GalaxyHistoriesService(GalaxyInstance galaxyInstance, GalaxySearch galaxySearch) {
-		checkNotNull(galaxyInstance, "galaxyInstance is null");
+	public GalaxyHistoriesService(HistoriesClient historiesClient,
+			ToolsClient toolsClient, GalaxySearch galaxySearch) {
+		checkNotNull(historiesClient, "historiesClient is null");
+		checkNotNull(toolsClient, "toolsClient is null");
 		checkNotNull(galaxySearch, "galaxySearch is null");
 		
-		this.galaxyInstance = galaxyInstance;
+		this.historiesClient = historiesClient;
+		this.toolsClient = toolsClient;
 		this.galaxySearch = galaxySearch;
 	}
 	
@@ -54,8 +58,6 @@ public class GalaxyHistoriesService {
 	 * @return  A new History for running a workflow.
 	 */
 	public History newHistoryForWorkflow() {
-		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
-
 		History history = new History();
 		history.setName(UUID.randomUUID().toString());
 		return historiesClient.create(history);
@@ -70,9 +72,7 @@ public class GalaxyHistoriesService {
 	public HistoryDetails libraryDatasetToHistory(String libraryFileId, History history) {
 		checkNotNull(libraryFileId, "libraryFileId is null");
 		checkNotNull(history, "history is null");
-		
-		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
-		
+				
 		HistoryDataset historyDataset = new HistoryDataset();
 		historyDataset.setSource(Source.LIBRARY);
 		historyDataset.setContent(libraryFileId);
@@ -98,9 +98,7 @@ public class GalaxyHistoriesService {
 		checkState(path.toFile().exists(), "path " + path + " does not exist");
 		
 		File file = path.toFile();
-		
-		ToolsClient toolsClient = galaxyInstance.getToolsClient();
-		
+				
 		FileUploadRequest uploadRequest = new FileUploadRequest(history.getId(), file);
 		uploadRequest.setFileType(fileType);
 		

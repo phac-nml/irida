@@ -19,6 +19,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
+import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -66,8 +67,10 @@ public class GalaxyHistoriesServiceIT {
 		setupDataFiles();
 		
 		GalaxyInstance galaxyInstanceAdmin = localGalaxy.getGalaxyInstanceAdmin();
+		HistoriesClient historiesClient = galaxyInstanceAdmin.getHistoriesClient();
+		ToolsClient toolsClient = galaxyInstanceAdmin.getToolsClient();
 		GalaxySearch galaxySearch = new GalaxySearch(galaxyInstanceAdmin);
-		galaxyHistory = new GalaxyHistoriesService(galaxyInstanceAdmin, galaxySearch);
+		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, galaxySearch);
 
 	}
 	
