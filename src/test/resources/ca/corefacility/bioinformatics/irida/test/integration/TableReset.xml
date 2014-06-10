@@ -2,44 +2,44 @@
 <dataset>
 	<!-- Tables *must* be listed in the order that they can be deleted to satisfy 
 		referential integrity -->
-	<MISEQ_RUN />
-	<HOST />
-	<SAMPLE />
-	<SEQUENCE_FILE />
-	<SEQUENCE_FILE_PROPERTIES />
-	<OVERREPRESENTED_SEQUENCE />
-	<SYSTEM_ROLE />
-	<USER />
-	<PROJECT />
-	<CLIENT_DETAILS />
-	<PASSWORD_RESET />
-	<REMOTE_API />
-	<REMOTE_API_TOKEN />
-	<PROJECT_USER />
-	<SEQUENCEFILE_SAMPLE />
-	<PROJECT_SAMPLE />
-	<LOGICALGROUP />
-	<USER_GROUP />
+	<miseq_run />
+	<host />
+	<sample />
+	<sequence_file />
+	<sequence_file_properties />
+	<overrepresented_sequence />
+	<system_role />
+	<user />
+	<project />
+	<client_details />
+	<password_reset />
+	<remote_api />
+	<remote_api_token />
+	<project_user />
+	<sequencefile_sample />
+	<project_sample />
+	<logicalGroup />
+	<user_group />
 
 	<!-- All auditing table references *only* refer to the Revisions table, 
 		so they can all be listed in an arbitrary order *after* the Revisions table. -->
 	<Revisions />
-	<OVERREPRESENTED_SEQUENCE_AUD />
-	<PROJECT_USER_AUD />
-	<PROJECT_AUD />
-	<PROJECT_SAMPLE_AUD />
-	<PROJECT_USER_AUD />
-	<SEQUENCE_FILE_AUD />
-	<SEQUENCE_FILE_PROPERTIES_AUD />
-	<SEQUENCEFILE_SAMPLE_AUD />
-	<SYSTEM_ROLE_AUD />
-	<MISEQ_RUN_AUD />
-	<USER_AUD />
-	<SAMPLE_AUD />
-	<REMOTE_API_AUD />
-	<REMOTE_API_TOKEN_AUD />
-	<LOGICALGROUP_AUD />
-	<USER_GROUP_AUD />
-	<HOST_AUD />
-	<CLIENT_DETAILS_AUD />
+	<overrepresented_sequence_AUD />
+	<project_user_AUD />
+	<project_AUD />
+	<project_sample_AUD />
+	<project_user_AUD />
+	<sequence_file_AUD />
+	<sequence_file_properties_AUD />
+	<sequencefile_sample_AUD />
+	<system_role_AUD />
+	<miseq_run_AUD />
+	<user_AUD />
+	<sample_AUD />
+	<remote_api_AUD />
+	<remote_api_token_AUD />
+	<logicalGroup_AUD />
+	<user_group_AUD />
+	<host_AUD />
+	<client_details_AUD />
 </dataset>

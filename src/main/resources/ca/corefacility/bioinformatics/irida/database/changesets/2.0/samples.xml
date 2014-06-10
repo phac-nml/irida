@@ -34,6 +34,8 @@
 			<column name="subgroup" type="varchar(255)" />
 			<column name="subtype" type="varchar(255)" />
 			<column name="host_id" type="bigint(20)" />
+			<column name="specimenVoucher" type="varchar(255)" />
+			<column name="strain" type="varchar(255)" />
 		</addColumn>
 		<addColumn tableName="sample_AUD">
 			<column name="collectedBy" type="varchar(255)" />
@@ -53,6 +55,8 @@
 			<column name="subgroup" type="varchar(255)" />
 			<column name="subtype" type="varchar(255)" />
 			<column name="host_id" type="bigint(20)" />
+			<column name="specimenVoucher" type="varchar(255)" />
+			<column name="strain" type="varchar(255)" />
 		</addColumn>
 
 		<!-- Add host table for storing more sample properties -->
@@ -80,6 +84,7 @@
 					foreignKeyName="FK_HOST_REVISION" referencedColumnNames="id"
 					referencedTableName="Revisions" />
 			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
 			<column name="age" type="int(11)" />
 			<column name="description" type="varchar(255)" />
 			<column name="disease" type="varchar(255)" />

@@ -10,19 +10,23 @@
 		<!-- Create sequence properties tables -->
 		<createTable tableName="sequence_file_properties">
 			<column name="sequence_file_id" type="bigint(20)">
-				<constraints nullable="false"
+				<constraints nullable="false" primaryKey="true"
 					foreignKeyName="FK_SEQUENCE_PROPERTIES_SEQUENCE_FILE"
 					referencedColumnNames="id" referencedTableName="sequence_file" />
 			</column>
 			<column name="property_key" type="varchar(255)">
-				<constraints nullable="false" />
+				<constraints nullable="false" primaryKey="true" />
 			</column>
-			<column name="property_value" type="text">
+			<column name="property_value" type="varchar(255)">
 				<constraints nullable="false" />
 			</column>
 		</createTable>
-		
-		<addUniqueConstraint columnNames="sequence_file_id, property_key" tableName="sequence_file_properties" constraintName="UK_SEQUENCE_FILE_PROPERTY_KEY"/>
+
+		<addUniqueConstraint columnNames="sequence_file_id, property_key"
+			tableName="sequence_file_properties" constraintName="UK_SEQUENCE_FILE_PROPERTY_KEY" />
+		<addForeignKeyConstraint constraintName="FK_SEQUENCE_FILE_PROPERTIES"
+			referencedTableName="sequence_file" baseColumnNames="sequence_file_id"
+			baseTableName="sequence_file_properties" referencedColumnNames="id" />
 
 		<createTable tableName="sequence_file_properties_AUD">
 			<column name="REV" type="int(11)">
@@ -31,9 +35,15 @@
 					referencedColumnNames="id" referencedTableName="Revisions" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
-			<column name="sequence_file_id" type="bigint(20)" />
-			<column name="property_key" type="varchar(255)" />
-			<column name="property_value" type="text" />
+			<column name="sequence_file_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="property_key" type="varchar(255)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="property_value" type="varchar(255)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
 		</createTable>
 
 		<!-- Migrate MiSeq specific data from sequence_file to sequence_file_properties -->

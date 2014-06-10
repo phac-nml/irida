@@ -260,6 +260,14 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		}
 		URL wrongGalaxyURL = new URL("http://localhost:" + wrongPort + "/");
 		localGalaxy.setInvalidGalaxyURL(wrongGalaxyURL);
+		
+		// setup another port for running tests on
+		int wrongPort2 = (galaxyPort + 2);
+		if (wrongPort2 > largestPort) {
+			wrongPort2 = galaxyPort - 2;
+		}
+		URL wrongGalaxyURL2 = new URL("http://localhost:" + wrongPort2 + "/");
+		localGalaxy.setTestGalaxyURL(wrongGalaxyURL2);
 
 		return galaxyProperties;
 	}

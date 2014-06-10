@@ -44,6 +44,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.UniformInterfaceException;
 
 /**
  * A class defining an API for uploading samples to a remote Galaxy instance.
@@ -598,7 +599,7 @@ public class GalaxyAPI {
 	public boolean isConnected() {
 		try {
 			return galaxySearchAdmin.galaxyUserExists(adminEmail);
-		} catch (ClientHandlerException e) {
+		} catch (ClientHandlerException | UniformInterfaceException e) {
 			return false;
 		}
 	}
