@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="/resources/wet-theme/css/theme.min.css"/>
+    <link rel="stylesheet" href="/resources/wet-theme/css/wet-boew.min.css"/>
+</head>
 <!-- DataAjaxFragmentStart -->
 
 <div class="pnl-strt container visible-md visible-lg nvbar">
@@ -9,6 +13,12 @@
             <li><a href="#projects" class="item">Projects</a>
                 <ul class="sm list-unstyled" id="projects" role="menu">
                     <li><a href="#">Create New Project</a></li>
+                </ul>
+            </li>
+            <li><a href="#pipelines" class="item" th:text="#{nav.main.pipelines}">Pipelines</a>
+                <ul class="sm list-unstyled">
+                    <li><a href="#">Run New Pipeline</a></li>
+                    <li><a href="#">View Running Pipelines</a></li>
                 </ul>
             </li>
             <li class="pull-right"><a href="#contribute" class="item" th:text="#{nav.main.settings}">Settings</a>
