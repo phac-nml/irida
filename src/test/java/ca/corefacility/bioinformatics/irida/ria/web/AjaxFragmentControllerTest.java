@@ -1,10 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
 import org.junit.Test;
-import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
-
-import java.security.Principal;
 
 import static org.junit.Assert.assertEquals;
 
@@ -20,6 +16,6 @@ public class AjaxFragmentControllerTest {
 
 	@Test
 	public void testGetSiteMenu() {
-		assertEquals("fragments/sitemenu", controller.getSiteMenu());
+		assertEquals("fragments/sitemenu", controller.getGenericFrag("sitemenu"));
 	}
 }
