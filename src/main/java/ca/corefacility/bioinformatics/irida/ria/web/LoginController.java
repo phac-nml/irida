@@ -27,7 +27,8 @@ public class LoginController {
 	}
 
 	@RequestMapping(value = "/login")
-	public String showLogin(Model model, @RequestParam(value = "error", required = false, defaultValue = "false") Boolean hasError) {
+	public String showLogin(Model model,
+			@RequestParam(value = "error", required = false, defaultValue = "false") Boolean hasError) {
 		logger.debug("Displaying login page.");
 		if (isAuthenticated()) {
 			return "forward:/dashboard";
