@@ -2,3 +2,11 @@
 .input-full {
   width: 100%;
 }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/main\.scss}line{font-family:\000039}}
+.menu > .pull-right > ul {
+  position: absolute;
+  right: 0;
+}
+
+/*# sourceMappingURL=main.css.map */
