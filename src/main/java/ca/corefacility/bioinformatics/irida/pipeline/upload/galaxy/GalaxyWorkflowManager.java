@@ -148,11 +148,11 @@ public class GalaxyWorkflowManager {
 	}
 	
 	/**
-	 * Gets the total number of history items for a given list of state ids.
+	 * Count the total number of history items for a given list of state ids.
 	 * @param stateIds  A list of state ids to search through.
 	 * @return  The total number of history items.
 	 */
-	private int getTotalHistoryItems(Map<String, List<String>> stateIds) {
+	private int countTotalHistoryItems(Map<String, List<String>> stateIds) {
 		int sum = 0;
 		
 		for (String stateKey : stateIds.keySet()) {
@@ -163,12 +163,12 @@ public class GalaxyWorkflowManager {
 	}
 	
 	/**
-	 * Gets the total number of history items within the given workflow state.
+	 * Count the total number of history items within the given workflow state.
 	 * @param stateIds  The list of history items to search through.
 	 * @param state  A state to search for.
 	 * @return  The number of history items in this state.
 	 */
-	private int getHistoryItemsInState(Map<String, List<String>> stateIds, WorkflowState state) {
+	private int countHistoryItemsInState(Map<String, List<String>> stateIds, WorkflowState state) {
 		return stateIds.get(state.toString()).size();
 	}
 	
@@ -178,7 +178,7 @@ public class GalaxyWorkflowManager {
 	 * @return  The percent of history items that are finished running.
 	 */
 	private float getPercentComplete(Map<String, List<String>> stateIds) {
-		return 100.0f*(getHistoryItemsInState(stateIds, WorkflowState.OK)/(float)getTotalHistoryItems(stateIds));
+		return 100.0f*(countHistoryItemsInState(stateIds, WorkflowState.OK)/(float)countTotalHistoryItems(stateIds));
 	}
 	
 	/**
