@@ -136,7 +136,7 @@ public class GalaxyWorkflowManagerIT {
 		
 		// test get workflow status
 		WorkflowStatus workflowStatus = 
-				galaxyWorkflowManager.getStatusFor(workflowOutput.getHistoryId());
+				galaxyWorkflowManager.getStatusForHistory(workflowOutput.getHistoryId());
 		assertFalse(WorkflowState.UNKNOWN.equals(workflowStatus.getState()));
 		float percentComplete = workflowStatus.getPercentComplete();
 		assertTrue(0.0f <= percentComplete && percentComplete <= 100.0f);

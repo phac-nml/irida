@@ -174,7 +174,7 @@ public class GalaxyWorkflowManager {
 	 * @return  The WorkflowStatus for the given workflow.
 	 * @throws WorkflowException If there was an exception when attempting to get the status for a history.
 	 */
-	public WorkflowStatus getStatusFor(String historyId) throws WorkflowException {
+	public WorkflowStatus getStatusForHistory(String historyId) throws WorkflowException {
 		WorkflowStatus workflowStatus;
 		
 		WorkflowState workflowState;

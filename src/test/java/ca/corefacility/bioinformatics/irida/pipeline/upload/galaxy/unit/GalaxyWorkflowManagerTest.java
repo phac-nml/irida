@@ -120,7 +120,7 @@ public class GalaxyWorkflowManagerTest {
 		when(historyDetails.getState()).thenReturn("ok");
 		when(historyDetails.getStateIds()).thenReturn(validStateIds);
 		
-		WorkflowStatus status = galaxyWorkflowManager.getStatusFor(VALID_HISTORY_ID);
+		WorkflowStatus status = galaxyWorkflowManager.getStatusForHistory(VALID_HISTORY_ID);
 		
 		assertEquals(WorkflowState.OK, status.getState());
 		assertEquals(100.0f, status.getPercentComplete(), delta);
@@ -141,7 +141,7 @@ public class GalaxyWorkflowManagerTest {
 		when(historyDetails.getState()).thenReturn("running");
 		when(historyDetails.getStateIds()).thenReturn(validStateIds);
 		
-		WorkflowStatus status = galaxyWorkflowManager.getStatusFor(VALID_HISTORY_ID);
+		WorkflowStatus status = galaxyWorkflowManager.getStatusForHistory(VALID_HISTORY_ID);
 		
 		assertEquals(WorkflowState.RUNNING, status.getState());
 		assertEquals(0.0f, status.getPercentComplete(), delta);
@@ -162,7 +162,7 @@ public class GalaxyWorkflowManagerTest {
 		when(historyDetails.getState()).thenReturn("running");
 		when(historyDetails.getStateIds()).thenReturn(validStateIds);
 		
-		WorkflowStatus status = galaxyWorkflowManager.getStatusFor(VALID_HISTORY_ID);
+		WorkflowStatus status = galaxyWorkflowManager.getStatusForHistory(VALID_HISTORY_ID);
 		
 		assertEquals(WorkflowState.RUNNING, status.getState());
 		assertEquals(50.0f, status.getPercentComplete(), delta);
@@ -175,7 +175,7 @@ public class GalaxyWorkflowManagerTest {
 	@Test(expected=WorkflowException.class)
 	public void testGetStatusInvalidHistory() throws WorkflowException {
 		when(historiesClient.showHistory(INVALID_HISTORY_ID)).thenThrow(uniformInterfaceException);
-		galaxyWorkflowManager.getStatusFor(INVALID_HISTORY_ID);
+		galaxyWorkflowManager.getStatusForHistory(INVALID_HISTORY_ID);
 	}
 	
 	/**
