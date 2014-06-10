@@ -14,7 +14,7 @@ public enum WorkflowState {
 	QUEUED("queued"),
 	UNKNOWN("unknown");
 	
-	private static Map<String, WorkflowState> stateMap = new HashMap<String, WorkflowState>();
+	private static Map<String, WorkflowState> stateMap = new HashMap<>();
 	private String stateString;
 	
 	static {
