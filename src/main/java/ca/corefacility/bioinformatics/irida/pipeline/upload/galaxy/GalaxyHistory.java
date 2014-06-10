@@ -75,6 +75,14 @@ public class GalaxyHistory {
 				history.getId(), historyDataset);
 	}
 	
+	/**
+	 * Uploads a file to a given history.
+	 * @param path  The path to the file to upload.
+	 * @param history  The history to upload the file into.
+	 * @return A Dataset object for the uploaded file.
+	 * @throws UploadException  If there was an issue uploading the file to Galaxy.
+	 * @throws GalaxyDatasetNotFoundException If a Dataset could not be found for the uploaded file to Galaxy.
+	 */
 	public Dataset fileToHistory(Path path, History history) throws UploadException, GalaxyDatasetNotFoundException {
 		checkNotNull(path, "path is null");
 		checkNotNull(history, "history is null");
