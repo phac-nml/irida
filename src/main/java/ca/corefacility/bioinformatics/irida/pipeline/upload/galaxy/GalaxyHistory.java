@@ -4,6 +4,9 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 
@@ -26,6 +29,9 @@ import static com.google.common.base.Preconditions.*;
  *
  */
 public class GalaxyHistory {
+	
+	private static final Logger logger = LoggerFactory
+			.getLogger(GalaxyHistory.class);
 	
 	private GalaxyInstance galaxyInstance;
 	private GalaxySearch galaxySearch;
@@ -99,12 +105,19 @@ public class GalaxyHistory {
 		ClientResponse clientResponse = 
 				toolsClient.uploadRequest(uploadRequest);
 		
-		if (clientResponse != null &&
-			ClientResponse.Status.OK.equals(clientResponse.getClientResponseStatus())) {
+		if (clientResponse == null) {
+			throw new UploadException("Could not upload " + file + " to history " + history.getId() +
+					" ClientResponse is null");
+		} else if (!ClientResponse.Status.OK.equals(clientResponse.getClientResponseStatus())) {
+			String message = "Could not upload " + file + " to history " + history.getId() +
+					" ClientResponse: " + clientResponse.getClientResponseStatus() + " " +
+					clientResponse.getEntity(String.class);
 			
-			return galaxySearch.getDatasetForFileInHistory(file.getName(), history);
+			logger.error(message);
+			
+			throw new UploadException(message);
 		} else {
-			throw new UploadException("Could not upload " + file + " to history " + history.getId());
+			return galaxySearch.getDatasetForFileInHistory(file.getName(), history);
 		}
 	}
 }
