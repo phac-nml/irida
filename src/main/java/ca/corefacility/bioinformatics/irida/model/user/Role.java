@@ -26,7 +26,7 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 	 * Constant reference for administrative role.
 	 */
 	public static final Role ROLE_ANONYMOUS = new Role("ROLE_ANONYMOUS");
-
+	
 	/**
 	 * Constant reference for administrative role.
 	 */
