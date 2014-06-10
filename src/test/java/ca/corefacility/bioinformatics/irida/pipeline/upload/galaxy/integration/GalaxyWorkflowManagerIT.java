@@ -74,6 +74,11 @@ public class GalaxyWorkflowManagerIT {
 	
 	private static final String INVALID_HISTORY_ID = "1";
 
+	/**
+	 * Sets up files and objects for workflow tests.
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 */
 	@Before
 	public void setup() throws URISyntaxException, IOException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());

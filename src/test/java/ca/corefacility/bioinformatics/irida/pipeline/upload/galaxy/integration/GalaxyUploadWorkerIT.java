@@ -58,6 +58,10 @@ public class GalaxyUploadWorkerIT {
 
 	private List<Path> dataFilesSingle;
 
+	/**
+	 * Sets up files and objects for upload tests.
+	 * @throws URISyntaxException
+	 */
 	@Before
 	public void setup() throws URISyntaxException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());

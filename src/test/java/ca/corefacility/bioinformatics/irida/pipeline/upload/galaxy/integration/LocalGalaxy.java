@@ -27,11 +27,7 @@ import com.github.jmchilton.galaxybootstrap.BootStrapper.GalaxyDaemon;
 import com.github.jmchilton.galaxybootstrap.GalaxyProperties;
 
 /**
- * An class containing information about the running instance of Galaxy for integration testing.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
- *
- */
-/**
+ * A class containing information about the running instance of Galaxy for integration testing.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
@@ -396,6 +392,12 @@ public class LocalGalaxy {
 		this.invalidGalaxyUserName = invalidGalaxyUserName;
 	}
 	
+	/**
+	 * Reads the given file into a string.
+	 * @param file  The file to read.
+	 * @return  A string of the file contents.
+	 * @throws IOException
+	 */
 	private String readFile(Path file) throws IOException {
 		String fileContents = "";
 		List<String> lines = Files.readAllLines(file, Charset.defaultCharset());

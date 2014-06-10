@@ -54,6 +54,10 @@ public class GalaxyHistoryIT {
 	
 	private Path dataFile;
 
+	/**
+	 * Sets up files for history tests.
+	 * @throws URISyntaxException
+	 */
 	@Before
 	public void setup() throws URISyntaxException {
 		setupDataFiles();

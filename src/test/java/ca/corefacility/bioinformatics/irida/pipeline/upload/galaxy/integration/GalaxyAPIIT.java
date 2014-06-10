@@ -110,6 +110,10 @@ public class GalaxyAPIIT {
 	private List<Path> dataFilesSingle;
 	private List<Path> dataFilesDouble;
 
+	/**
+	 * Sets up variables and files for Galaxy API tests.
+	 * @throws URISyntaxException
+	 */
 	@Before
 	public void setup() throws URISyntaxException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
