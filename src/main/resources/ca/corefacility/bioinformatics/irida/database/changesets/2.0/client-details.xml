@@ -3,10 +3,32 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
 	<!-- Main client details -->
 	<changeSet id="client-details" author="tom">
+
+		<createTable tableName="client_role">
+			<column name="name" type="varchar(255)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="description" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="client_role_AUD">
+			<column name="name" type="varchar(255)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_CLIENT_ROLE_REVISION" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="description" type="varchar(255)" />
+		</createTable>
+
 		<createTable tableName="client_details">
 			<column name="id" type="bigint(20)" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
@@ -32,7 +54,7 @@
 			</column>
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" referencedColumnNames="id"
-					referencedTableName="Revisions" />
+					referencedTableName="Revisions" foreignKeyName="FK_CLIENT_DETAILS_REVISION" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
 			<column name="token_validity" type="int(11)">
@@ -48,7 +70,8 @@
 		<createTable tableName="client_details_additional_information">
 			<column name="client_details_id" type="bigint(20)">
 				<constraints referencedTableName="client_details"
-					referencedColumnNames="id" primaryKey="true" nullable="false" />
+					referencedColumnNames="id" primaryKey="true" nullable="false"
+					foreignKeyName="FK_CLIENT_DETAILS_INFO" />
 			</column>
 			<column name="info_key" type="varchar(255)">
 				<constraints nullable="false" primaryKey="true" />
@@ -62,7 +85,7 @@
 			</column>
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" referencedColumnNames="id"
-					referencedTableName="Revisions" />
+					referencedTableName="Revisions" foreignKeyName="FK_CLIENT_DETAILS_INFO_REVISION" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
 			<column name="info_key" type="varchar(255)">
@@ -73,40 +96,17 @@
 			</column>
 		</createTable>
 
-
-		<!-- Grant types allowed for a client -->
-		<createTable tableName="client_details_grant_types">
-			<column name="client_details_id" type="bigint(20)">
-				<constraints referencedTableName="client_details"
-					referencedColumnNames="id" primaryKey="true" nullable="false" />
-			</column>
-			<column name="grant_value" type="varchar(255)">
-				<constraints nullable="false" primaryKey="true" />
-			</column>
-		</createTable>
-
-		<createTable tableName="client_details_grant_types_AUD">
-			<column name="client_details_id" type="bigint(20)">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="REV" type="int(11)">
-				<constraints primaryKey="true" referencedColumnNames="id"
-					referencedTableName="Revisions" />
-			</column>
-			<column name="REVTYPE" type="tinyint(4)" />
-			<column name="grant_value" type="varchar(255)">
-				<constraints primaryKey="true" />
-			</column>
-		</createTable>
-
 		<!-- Roles of a client -->
 		<createTable tableName="client_details_authorities">
 			<column name="client_details_id" type="bigint(20)">
 				<constraints referencedTableName="client_details"
-					referencedColumnNames="id" primaryKey="true" nullable="false" />
+					referencedColumnNames="id" primaryKey="true" nullable="false"
+					foreignKeyName="FK_CLIENT_DETAILS_AUTHORITIES" />
 			</column>
 			<column name="authority_name" type="varchar(255)">
-				<constraints nullable="false" primaryKey="true" />
+				<constraints nullable="false" primaryKey="true"
+					referencedTableName="client_role" referencedColumnNames="name"
+					foreignKeyName="FK_CLIENT_DETAILS_ROLE" />
 			</column>
 		</createTable>
 
@@ -116,7 +116,7 @@
 			</column>
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" referencedColumnNames="id"
-					referencedTableName="Revisions" />
+					referencedTableName="Revisions" foreignKeyName="FK_CLIENT_DETAILS_AUTHORITIES_REVISION" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
 			<column name="authority_name" type="varchar(255)">
@@ -128,7 +128,8 @@
 		<createTable tableName="client_details_grant_types">
 			<column name="client_details_id" type="bigint(20)">
 				<constraints referencedTableName="client_details"
-					referencedColumnNames="id" primaryKey="true" nullable="false" />
+					referencedColumnNames="id" primaryKey="true" nullable="false"
+					foreignKeyName="FK_CLIENT_DETAILS_GRANT_TYPES" />
 			</column>
 			<column name="grant_value" type="varchar(255)">
 				<constraints nullable="false" primaryKey="true" />
@@ -141,7 +142,7 @@
 			</column>
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" referencedColumnNames="id"
-					referencedTableName="Revisions" />
+					referencedTableName="Revisions" foreignKeyName="FK_CLIENT_DETAILS_GRANT_TYPES_REVISION" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
 			<column name="grant_value" type="varchar(255)">
@@ -153,7 +154,8 @@
 		<createTable tableName="client_details_resource_ids">
 			<column name="client_details_id" type="bigint(20)">
 				<constraints referencedTableName="client_details"
-					referencedColumnNames="id" primaryKey="true" nullable="false" />
+					referencedColumnNames="id" primaryKey="true" nullable="false"
+					foreignKeyName="FK_CLIENT_DETAILS_RESOURCE_IDS" />
 			</column>
 			<column name="resource_id" type="varchar(255)">
 				<constraints nullable="false" primaryKey="true" />
@@ -166,7 +168,7 @@
 			</column>
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" referencedColumnNames="id"
-					referencedTableName="Revisions" />
+					referencedTableName="Revisions" foreignKeyName="FK_CLIENT_DETAILS_RESOURCE_IDS_REVISION" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
 			<column name="resource_id" type="varchar(255)">
@@ -177,11 +179,22 @@
 		<!-- Allowed scopes for this client -->
 		<createTable tableName="client_details_scope">
 			<column name="client_details_id" type="bigint(20)">
+				<constraints referencedTableName="client_details"
+					referencedColumnNames="id" primaryKey="true" nullable="false"
+					foreignKeyName="FK_CLIENT_DETAILS_SCOPE" />
+			</column>
+			<column name="scope" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+		</createTable>
+
+		<createTable tableName="client_details_scope_AUD">
+			<column name="client_details_id" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" referencedColumnNames="id"
-					referencedTableName="Revisions" />
+					referencedTableName="Revisions" foreignKeyName="FK_CLIENT_DETAILS_SCOPE_REVISION" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
 			<column name="scope" type="varchar(255)">
