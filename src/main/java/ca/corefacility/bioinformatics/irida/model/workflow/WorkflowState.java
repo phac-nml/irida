@@ -17,10 +17,13 @@ public enum WorkflowState {
 	private static Map<String, WorkflowState> stateMap = new HashMap<>();
 	private String stateString;
 	
+	/**
+	 * Sets of a Map used to convert a string to a WorkflowState
+	 */
 	static {
-		stateMap.put(OK.toString(), OK);
-		stateMap.put(RUNNING.toString(), RUNNING);
-		stateMap.put(QUEUED.toString(), QUEUED);
+		for (WorkflowState state : WorkflowState.values()) {
+			stateMap.put(state.toString(), state);
+		}
 	}
 	
 	private WorkflowState(String stateString){
