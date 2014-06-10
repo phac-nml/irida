@@ -1,9 +1,16 @@
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/main\.scss}line{font-family:\000032}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/main\.scss}line{font-family:\000031}}
+main.main-container {
+  background-color: #fff;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/main\.scss}line{font-family:\000038}}
 .input-full {
   width: 100%;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/main\.scss}line{font-family:\000039}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/main\.scss}line{font-family:\0000315}}
 .menu > .pull-right > ul {
   position: absolute;
   right: 0;
