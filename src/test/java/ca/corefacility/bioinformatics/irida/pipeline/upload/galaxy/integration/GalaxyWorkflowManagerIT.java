@@ -36,7 +36,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryExc
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistory;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowManager;
 
@@ -96,7 +96,7 @@ public class GalaxyWorkflowManagerIT {
 		galaxyAdminInstance = localGalaxy.getGalaxyInstanceAdmin();
 		historiesClient = galaxyAdminInstance.getHistoriesClient();
 		galaxySearch = new GalaxySearch(galaxyAdminInstance);
-		GalaxyHistory galaxyHistory = new GalaxyHistory(galaxyAdminInstance, galaxySearch);
+		GalaxyHistoriesService galaxyHistory = new GalaxyHistoriesService(galaxyAdminInstance, galaxySearch);
 		galaxyWorkflowManager = new GalaxyWorkflowManager(galaxyAdminInstance, galaxyHistory);
 	}
 	

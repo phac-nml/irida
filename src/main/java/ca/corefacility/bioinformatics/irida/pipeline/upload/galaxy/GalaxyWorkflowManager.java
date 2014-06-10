@@ -43,7 +43,7 @@ public class GalaxyWorkflowManager {
 	
 	private static final Logger logger = LoggerFactory.getLogger(GalaxyWorkflowManager.class);
 		
-	private GalaxyHistory galaxyHistory;
+	private GalaxyHistoriesService galaxyHistory;
 	private GalaxyInstance galaxyInstance;
 	
 	/**
@@ -51,7 +51,7 @@ public class GalaxyWorkflowManager {
 	 * @param galaxyInstance  A Galaxyinstance defining the Galaxy to submit to.
 	 * @param galaxyHistory  A GalaxyHistory for methods on operating with Galaxy histories.
 	 */
-	public GalaxyWorkflowManager(GalaxyInstance galaxyInstance, GalaxyHistory galaxyHistory) {
+	public GalaxyWorkflowManager(GalaxyInstance galaxyInstance, GalaxyHistoriesService galaxyHistory) {
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
 		checkNotNull(galaxyHistory, "galaxyHistory is null");
 		

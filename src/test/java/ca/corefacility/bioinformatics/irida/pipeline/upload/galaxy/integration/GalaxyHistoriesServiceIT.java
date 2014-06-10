@@ -30,7 +30,7 @@ import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsL
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistory;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
 
 /**
@@ -45,12 +45,12 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
-public class GalaxyHistoryIT {
+public class GalaxyHistoriesServiceIT {
 	
 	@Autowired
 	private LocalGalaxy localGalaxy;
 	
-	private GalaxyHistory galaxyHistory;
+	private GalaxyHistoriesService galaxyHistory;
 	
 	private Path dataFile;
 	
@@ -67,7 +67,7 @@ public class GalaxyHistoryIT {
 		
 		GalaxyInstance galaxyInstanceAdmin = localGalaxy.getGalaxyInstanceAdmin();
 		GalaxySearch galaxySearch = new GalaxySearch(galaxyInstanceAdmin);
-		galaxyHistory = new GalaxyHistory(galaxyInstanceAdmin, galaxySearch);
+		galaxyHistory = new GalaxyHistoriesService(galaxyInstanceAdmin, galaxySearch);
 
 	}
 	

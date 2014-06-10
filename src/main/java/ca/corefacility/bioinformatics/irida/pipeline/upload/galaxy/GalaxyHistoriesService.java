@@ -28,10 +28,10 @@ import static com.google.common.base.Preconditions.*;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxyHistory {
+public class GalaxyHistoriesService {
 	
 	private static final Logger logger = LoggerFactory
-			.getLogger(GalaxyHistory.class);
+			.getLogger(GalaxyHistoriesService.class);
 	
 	private GalaxyInstance galaxyInstance;
 	private GalaxySearch galaxySearch;
@@ -41,7 +41,7 @@ public class GalaxyHistory {
 	 * @param galaxyInstance  The Galaxy Instance to use to connect to Galaxy.
 	 * @param galaxySearch The GalaxySearch object to use.
 	 */
-	public GalaxyHistory(GalaxyInstance galaxyInstance, GalaxySearch galaxySearch) {
+	public GalaxyHistoriesService(GalaxyInstance galaxyInstance, GalaxySearch galaxySearch) {
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
 		checkNotNull(galaxySearch, "galaxySearch is null");
 		

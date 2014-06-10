@@ -24,7 +24,7 @@ import com.sun.jersey.api.client.ClientResponse;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistory;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
 
 /**
@@ -32,7 +32,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxyHistoryTest {
+public class GalaxyHistoriesServiceTest {
 
 	@Mock private GalaxyInstance galaxyInstance;
 	@Mock private HistoriesClient historiesClient;
@@ -69,7 +69,7 @@ public class GalaxyHistoryTest {
 		
 		when(historiesClient.create(any(History.class))).thenReturn(newHistory);
 		
-		GalaxyHistory galaxyHistory = new GalaxyHistory(galaxyInstance, galaxySearch);
+		GalaxyHistoriesService galaxyHistory = new GalaxyHistoriesService(galaxyInstance, galaxySearch);
 		assertEquals(newHistory, galaxyHistory.newHistoryForWorkflow());
 	}
 	
@@ -82,13 +82,13 @@ public class GalaxyHistoryTest {
 		when(historiesClient.createHistoryDataset(any(String.class),
 				any(HistoryDataset.class))).thenReturn(historyDetails);
 		
-		GalaxyHistory galaxyHistory = new GalaxyHistory(galaxyInstance, galaxySearch);
+		GalaxyHistoriesService galaxyHistory = new GalaxyHistoriesService(galaxyInstance, galaxySearch);
 		assertNotNull(galaxyHistory.libraryDatasetToHistory(libraryFileId, createdHistory));
 	}
 	
 	@Test
 	public void testFileToHistorySuccess() throws GalaxyDatasetNotFoundException, UploadException {
-		GalaxyHistory galaxyHistory = new GalaxyHistory(galaxyInstance, galaxySearch);
+		GalaxyHistoriesService galaxyHistory = new GalaxyHistoriesService(galaxyInstance, galaxySearch);
 		String filename = dataFile.toFile().getName();
 		History createdHistory = new History();
 		Dataset dataset = new Dataset();
@@ -103,7 +103,7 @@ public class GalaxyHistoryTest {
 	
 	@Test(expected=UploadException.class)
 	public void testFileToHistoryFailUpload() throws GalaxyDatasetNotFoundException, UploadException {
-		GalaxyHistory galaxyHistory = new GalaxyHistory(galaxyInstance, galaxySearch);
+		GalaxyHistoriesService galaxyHistory = new GalaxyHistoriesService(galaxyInstance, galaxySearch);
 		History createdHistory = new History();
 		createdHistory.setId(historyId);
 		
@@ -115,7 +115,7 @@ public class GalaxyHistoryTest {
 	
 	@Test(expected=GalaxyDatasetNotFoundException.class)
 	public void testFileToHistoryFailFindDataset() throws GalaxyDatasetNotFoundException, UploadException {
-		GalaxyHistory galaxyHistory = new GalaxyHistory(galaxyInstance, galaxySearch);
+		GalaxyHistoriesService galaxyHistory = new GalaxyHistoriesService(galaxyInstance, galaxySearch);
 		String filename = dataFile.toFile().getName();
 		History createdHistory = new History();
 		createdHistory.setId(historyId);

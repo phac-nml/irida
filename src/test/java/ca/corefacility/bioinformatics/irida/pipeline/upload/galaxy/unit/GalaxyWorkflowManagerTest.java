@@ -25,7 +25,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFo
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistory;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowManager;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
@@ -47,7 +47,7 @@ import com.sun.jersey.api.client.UniformInterfaceException;
  */
 public class GalaxyWorkflowManagerTest {
 
-	@Mock private GalaxyHistory galaxyHistory;
+	@Mock private GalaxyHistoriesService galaxyHistory;
 	@Mock private GalaxyInstance galaxyInstance;
 	@Mock private HistoriesClient historiesClient;
 	@Mock private HistoryDetails historyDetails;
