@@ -2,10 +2,10 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 
 import static org.junit.Assert.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
@@ -88,10 +88,9 @@ public class GalaxyWorkflowManagerIT {
 		dataFile = Paths.get(GalaxyWorkflowManagerIT.class.getResource(
 				"testData1.fastq").toURI());
 		
-		File tempFile = File.createTempFile("temp", ".temp");
-		tempFile.delete();
-		assertFalse(tempFile.exists());
-		dataFileNotExists = tempFile.toPath();
+		dataFileNotExists = Files.createTempFile("temp", ".temp");
+		Files.delete(dataFileNotExists);
+		assertFalse(Files.exists(dataFileNotExists));
 		
 		galaxyAdminInstance = localGalaxy.getGalaxyInstanceAdmin();
 		historiesClient = galaxyAdminInstance.getHistoriesClient();
