@@ -43,7 +43,10 @@ public class LoginPageIT {
 
 	@Before
 	public void setup() {
-		driver = new HtmlUnitDriver(false);
+		// By default htmlunit does not have javascript enabled.  This is because it has a different javascrript engine (Rhino)
+		// that has some quirks. (https://code.google.com/p/selenium/wiki/HtmlUnitDriver)
+		// wet-boew javascript fails if this is on.
+		driver = new HtmlUnitDriver();
 		loginPage = LoginPage.to(driver);
 	}
 
