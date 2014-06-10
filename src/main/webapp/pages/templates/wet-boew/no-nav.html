@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<!--[if lt IE 9]>
+<html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" class="no-js"
+      lang="en">
+<!--<![endif]-->
+<head>
+    <meta charset="UTF-8"/>
+    <!-- TODO: add layout dialect title here-->
+    <title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE" th:text="#{global.title}">IRIDA Platform</title>
+
+    <!-- META DATA -->
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <meta name="description" content=""/>
+    <meta name="dcterms.title"
+          content="Language Selection Page - No search, language toggle, site menu or breadcrumb trail - Sélection de la langue page - Pas de recherche, langue bascule, menu du site ou fil d'Ariane - Plate-forme IRIDA"/>
+    <meta name="dcterms.creator" content="French name of the content author / Nom en français de l'auteur du contenu"/>
+    <meta name="dcterms.issued" title="W3CDTF"
+          content="Date published (YYYY-MM-DD) / Date de publication (AAAA-MM-JJ)"/>
+    <meta name="dcterms.modified" title="W3CDTF"
+          content="Date modified (YYYY-MM-DD) / Date de modification (AAAA-MM-JJ)"/>
+    <meta name="dcterms.subject" title="scheme" content="French subject terms / Termes de sujet en français"/>
+    <meta name="dcterms.language" title="ISO639-2" content="eng"/>
+    <!-- END META -->
+
+    <!--[if gte IE 9 | !IE ]><!-->
+    <link th:href="@{/resources/wet-theme/assets/favicon.ico}" href="/resources/wet-theme/assets/favicon.ico" rel="icon"
+          type="image/x-icon"/>
+    <link rel="stylesheet" th:href="@{/resources/wet-theme/css/wet-boew.min.css}"
+          href="/resources/wet-theme/css/wet-boew.min.css"/>
+    <!--<![endif]-->
+    <link rel="stylesheet" th:href="@{/resources/css/main.css}" href="/resources/css/main.css"/>
+    <link rel="stylesheet" th:href="@{/resources/wet-theme/css/theme.min.css}"
+          href="/resources/wet-theme/css/theme.min.css"/>
+
+    <!--[if lt IE 9]>
+    <link th:href="@{/resources/wet-theme/assets/favicon.ico}" href="/resources/wet-theme/assets/favicon.ico"
+          rel="shortcut icon"/>
+    <link rel="stylesheet" th:href="@{/resources/wet-theme/css/ie8-wet-boew.min.css}"
+          href="/resources/wet-theme/css/ie8-wet-boew.min.css"/>
+    <script src="/resources/wet-theme/js/jquery-1.11.1.min.js" th:src="@{/resources/wet-theme/js/jquery-1.11.1.min.js}"></script>
+    <script src="/resources/wet-theme/js/ie8-wet-boew.min.js" th:src="@{/resources/wet-theme/js/ie8-wet-boew.min.js}"></script>
+    <![endif]-->
+
+    <noscript>
+        <link rel="stylesheet" th:href="@{/resources/css/noscript.min.css}" href="/resources/css/noscript.min.css"/>
+    </noscript>
+</head>
+<body>
+<!-- HEADER -->
+<header role="banner">
+    <div id="wb-bnr">
+        <div id="wb-bar">
+            <div class="container">
+                <div class="row">
+
+                    <object id="gcwu-sig" type="image/svg+xml" tabindex="-1" role="img"
+                            th:data="@{/resources/assets/sig-en.svg}" data="/resources/assets/sig-en.svg"
+                            aria-label="Government of Canada"></object>
+                    <ul id="gc-bar" class="list-inline">
+
+                        <li><a href="http://www.canada.ca/en/index.html" rel="external"
+                               th:text="#{wet.header.canadaUrl}">Canada.ca</a></li>
+                        <li><a href="http://www.canada.ca/en/services/index.html" rel="external"
+                               th:text="#{wet.header.services}">Services</a></li>
+                        <li><a href="http://www.canada.ca/en/gov/dept/index.html" rel="external"
+                               th:text="#{wet.header.departments}">Departments</a></li>
+                        <li><a th:href="'?lang=' + ((${#locale.language} == 'en') ? 'fr' : 'en')"
+                               th:text="( (${#locale.language} eq 'en')? 'Français' : 'English')">Fran&#231;ais</a></li>`
+                        <li th:if="${name}"><a th:href="@{/logout}" href="/logout" th:text="${name}">USERNAME</a></li>
+                    </ul>
+
+                    <section class="wb-mb-links col-xs-12 visible-sm visible-xs" id="wb-glb-mn">
+                        <h2>Menu</h2>
+                        <ul class="pnl-btn list-inline text-right">
+                            <li><a href="#mb-pnl" title="Menu" aria-controls="mb-pnl"
+                                   class="overlay-lnk btn btn-xs btn-default" role="button"><span
+                                    class="glyphicon glyphicon-th-list"><span class="wb-inv"
+                                                                              th:text="#{wet.header.menu}">Menu</span></span></a>
+                            </li>
+                        </ul>
+                        <div id="mb-pnl"></div>
+
+                    </section>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div id="wb-sttl" class="col-md-5">
+                    <a th:href="@{/}" href="/">
+                        <span th:text="#{global.title}">IRIDA Platform</span>
+                    </a>
+
+                </div>
+                <object id="wmms" type="image/svg+xml" tabindex="-1" role="img" data="/resources/assets/wmms.svg"
+                        th:data="@{/resources/assets/wmms.svg}"
+                        aria-label="Symbol of the Government of Canada"></object>
+
+
+            </div>
+        </div>
+    </div>
+
+    <span data-trgt="mb-pnl" class="wb-menu hide"></span>
+</header>
+<!-- END HEADER -->
+
+<!-- MAIN CONTENT -->
+<main layout:fragment="content">
+    <p>Page content goes here</p>
+</main>
+
+<!-- FOOTER -->
+<footer th:fragment="footer" role="contentinfo" id="wb-info" class="visible-sm visible-md visible-lg wb-navcurr">
+    <div class="container">
+        <nav role="navigation">
+            <h2>Site information</h2>
+            <ul id="gc-tctr" class="list-inline">
+                <li><a rel="license" href="http://wet-boew.github.io/wet-boew/License-en.html"
+                       th:text="#{wet.footer.tc}">Terms and conditions</a></li>
+                <li><a href="http://www.tbs-sct.gc.ca/tbs-sct/common/trans-eng.asp"
+                       th:text="#{wet.footer.transparency}">Transparency</a></li>
+            </ul>
+
+            <div class="row">
+                <section class="col-sm-3">
+                    <h3 th:text="#{global.about}">About</h3>
+                    <ul class="list-unstyled">
+                        <li><a th:href="@{'/public/about/index-' + ${#locale} + '.html'}"
+                               href="/public/about/index-en.html" th:text="#{wet.footer.about}">About the IRIDA
+                            Platform</a></li>
+                    </ul>
+                </section>
+                <section class="col-sm-3">
+                    <h3 th:text="#{global.contact}">Contact us</h3>
+                    <ul class="list-unstyled">
+                        <li><a href="https://github.com/wet-boew/wet-boew/issues/new" th:text="#{wet.footer.questions}">Questions
+                            or comments?</a></li>
+                    </ul>
+                </section>
+                <section class="col-sm-3">
+                    <h3>News</h3>
+                    <ul class="list-unstyled">
+                        <li><a href="https://github.com/wet-boew/wet-boew/pulse" th:text="#{wet.footer.recent}">Recent
+                            project activity</a></li>
+                        <li><a href="https://github.com/wet-boew/wet-boew/graphs" th:text="#{wet.footer.stats}">Project
+                            statistics</a></li>
+                    </ul>
+                </section>
+                <section class="col-sm-3">
+                    <h3>Stay connected</h3>
+                    <ul class="list-unstyled">
+                        <li><a href="https://twitter.com/WebExpToolkit" th:text="#{wet.footer.twitter}">Twitter</a></li>
+                    </ul>
+                </section>
+
+            </div>
+        </nav>
+    </div>
+    <div id="gc-info">
+        <div class="container">
+            <nav role="navigation" th:switch="${#locale.language}">
+                <h2>Government of Canada footer</h2>
+
+                <ul class="list-inline" th:case="'en'">
+
+                    <li><a href="http://healthycanadians.gc.ca"><span>Health</span>healthycanadians.gc.ca</a></li>
+                    <li><a href="http://travel.gc.ca"><span>Travel</span>travel.gc.ca</a></li>
+                    <li><a href="http://www.servicecanada.gc.ca/eng/home.shtml"><span>Service Canada</span>servicecanada.gc.ca</a>
+                    </li>
+                    <li><a href="http://www.jobbank.gc.ca"><span>Jobs</span>jobbank.gc.ca</a></li>
+                    <li><a href="http://actionplan.gc.ca/en"><span>Economy</span>actionplan.gc.ca</a></li>
+                    <li id="canada-ca"><a href="http://www.canada.ca/en/index.html">Canada.ca</a></li>
+                </ul>
+
+                <ul class="list-inline" th:case="'fr'">
+
+                    <li><a href="http://canadiensensante.gc.ca/"><span>Santé</span>canadiensensante.gc.ca</a></li>
+                    <li><a href="http://voyage.gc.ca/"><span>Voyage</span>voyage.gc.ca</a></li>
+                    <li><a href="http://www.servicecanada.gc.ca/fra/accueil.shtml"><span>Service Canada</span>servicecanada.gc.ca</a>
+                    </li>
+                    <li><a href="http://www.guichetemplois.gc.ca/accueil-fra.do?lang=fra"><span>Offres d'emploi</span>guichetemplois.gc.ca</a>
+                    </li>
+                    <li><a href="http://actionplan.gc.ca/fr"><span>Économie</span>actionplan.gc.ca</a></li>
+                    <li id="canada-ca"><a href="http://www.canada.ca/fr/index.html">Canada.ca</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <!--[if gte IE 9 | !IE ]><!-->
+    <script src="/resources/wet-theme/js/jquery-2.1.1.min.js"></script>
+    <script src="/resources/wet-theme/js/wet-boew.min.js"></script>
+    <!--<![endif]-->
+    <!--[if lt IE 9]>
+    <script src="/resources/wet-theme/js/ie8-wet-boew2.min.js"></script>
+    <![endif]-->
+</footer>
+</body>
+</html>

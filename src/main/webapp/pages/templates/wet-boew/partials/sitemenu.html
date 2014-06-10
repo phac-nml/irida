@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+        xmlns:data="https://github.com/mxab/thymeleaf-extras-data-attribute">
+<head>
+    <link href="/resources/wet-theme/css/theme.min.css"/>
+</head>
+<body>
+<nav th:fragment="menu-en" role="navigation" id="wb-sm" data:ajax-fetch="@{/fragments/sitemenu}" data-ajax-fetch="/fragments/sitemenu" data-trgt="mb-pnl"
+     class="wb-menu visible-md visible-lg" typeof="SiteNavigationElement">
+    <div class="container nvbar">
+        <h2>Site menu</h2>
+
+        <div class="row">
+            <ul class="list-inline menu">
+
+                <li><a th:href="@{/projects}" href="/projects">Projects</a></li>
+                <li><a href="http://wet-boew.github.io/wet-boew/docs/start-en.html#implement">Implement WET</a></li>
+                <li class="pull-right"><a th:href="@{/logout}" href="/logout">Settings</a></li>
+
+            </ul>
+        </div>
+    </div>
+
+</nav>
+</body>
+</html>
