@@ -1,38 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="templates/wetboew">
+      layout:decorator="templates/wet-boew/content">
 <head>
     <title th:text="#{dashboard.title}">THIS IS SOMETHING WRONG</title>
 </head>
 <body>
 <main layout:fragment="content" class="container" role="main" property="mainContentOfPage">
-        <div class="row">
-            <div class="navbar navbar-inverse" role="navigation">
-                <div class="container-fluid">
-                    <ul class="nav navbar-nav">
-                        <li><a href="#/projects">Projects</a></li>
-                        <li><a href="#/pipelines">Pipelines</a></li>
-                        <li><a href="#/analysis">Analysis</a></li>
-                        <li><a href="#/files">Files</a></li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href="#">Link</a></li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle">Dropdown <b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">Action</a></li>
-                                <li><a href="#">Another action</a></li>
-                                <li><a href="#">Something else here</a></li>
-                                <li class="divider"></li>
-                                <li><a th:href="@{/logout}" href="/logout" th:text="#{global.logout}">Logout</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="row" ng-view=""></div>
-    </main>
+
+</main>
 </body>
 </html>
