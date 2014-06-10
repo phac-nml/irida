@@ -84,12 +84,14 @@ public class GalaxyWorkflowManager {
 	 * @param inputFile  An input file to start the workflow.
 	 * @param inputFileType The file type of the input file.
 	 * @param workflowId  The id of the workflow to start.
+	 * @param workflowInputLabel The label of a workflow input in Galaxy.
 	 * @throws GalaxyDatasetNotFoundException If there was an error uploading the Galaxy dataset.
 	 * @throws UploadException If there was an error uploading the Galaxy dataset.
 	 * @throws IOException If there was an error with the file.
 	 * @throws WorkflowException If there was an error with running the workflow.
 	 */
-	public WorkflowOutputs runSingleFileWorkflow(Path inputFile, String inputFileType, String workflowId, String workflowInputLabel)
+	public WorkflowOutputs runSingleFileWorkflow(Path inputFile, String inputFileType,
+			String workflowId, String workflowInputLabel)
 			throws UploadException, GalaxyDatasetNotFoundException, IOException, WorkflowException {
 		checkNotNull(inputFile, "file is null");
 		checkNotNull(inputFileType, "inputFileType is null");
