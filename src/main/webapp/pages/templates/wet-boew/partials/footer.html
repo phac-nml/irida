@@ -8,7 +8,7 @@
 <footer th:fragment="footer" role="contentinfo" id="wb-info" class="visible-sm visible-md visible-lg wb-navcurr">
     <div class="container">
         <nav role="navigation">
-            <h2>Site information</h2>
+            <h2 th:text="#{wet.footer.site-info}">Site information</h2>
             <ul id="gc-tctr" class="list-inline">
                 <li><a rel="license" href="http://wet-boew.github.io/wet-boew/License-en.html"
                        th:text="#{wet.footer.tc}">Terms and conditions</a></li>
@@ -18,7 +18,7 @@
 
             <div class="row">
                 <section class="col-sm-3">
-                    <h3 th:text="#{global.about}">About</h3>
+                    <h3 th:text="#{wet.footer.about}">About</h3>
                     <ul class="list-unstyled">
                         <li><a th:href="@{'/public/about/index-' + ${#locale} + '.html'}"
                                href="/public/about/index-en.html" th:text="#{wet.footer.about}">About the IRIDA
@@ -26,7 +26,7 @@
                     </ul>
                 </section>
                 <section class="col-sm-3">
-                    <h3 th:text="#{global.contact}">Contact us</h3>
+                    <h3 th:text="#{wet.footer.contact}">Contact us</h3>
                     <ul class="list-unstyled">
                         <li><a href="https://github.com/wet-boew/wet-boew/issues/new" th:text="#{wet.footer.questions}">Questions
                             or comments?</a></li>
@@ -54,8 +54,6 @@
     <div id="gc-info">
         <div class="container">
             <nav role="navigation" th:switch="${#locale.language}">
-                <h2>Government of Canada footer</h2>
-
                 <ul class="list-inline" th:case="'en'">
 
                     <li><a href="http://healthycanadians.gc.ca"><span>Health</span>healthycanadians.gc.ca</a></li>
