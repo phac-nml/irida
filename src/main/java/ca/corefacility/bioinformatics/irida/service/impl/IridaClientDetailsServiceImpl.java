@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.ClientRegistrationException;
+import org.springframework.security.oauth2.provider.NoSuchClientException;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -41,7 +42,11 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 	 */
 	@Override
 	public ClientDetails loadClientByClientId(String clientId) throws ClientRegistrationException {
-		return clientDetailsRepository.loadClientDetailsByClientId(clientId);
+		IridaClientDetails client = clientDetailsRepository.loadClientDetailsByClientId(clientId);
+		if(client == null){
+			throw new NoSuchClientException("Client with this clientId does not exist: " + clientId);
+		}
+		return client;
 	}
 
 	/**
