@@ -317,9 +317,6 @@ public class GalaxySearch {
 		checkNotNull(filename, "filename is null");
 		checkNotNull(history, "history is null");
 		
-		Dataset dataset;
-		String dataId = null;
-		
 		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
 		
 		List<HistoryContents> historyContentsList =
@@ -328,22 +325,17 @@ public class GalaxySearch {
 		Optional<HistoryContents> h = historyContentsList.stream().
 				filter((historyContents) -> filename.equals(historyContents.getName())).findFirst();
 		if (h.isPresent()) {
-			dataId = h.get().getId();
-		}
-		
-		if (dataId != null) {
-			dataset = historiesClient.showDataset(history.getId(), dataId);
-			
-			if (dataset != null) {
-				return dataset;
-			} else {
-				throw new GalaxyDatasetNotFoundException("dataset for file " + filename +
-						" not found in Galaxy history " + history.getId());
+			String dataId = h.get().getId();
+			if (dataId != null) {
+				Dataset dataset = historiesClient.showDataset(history.getId(), dataId);	
+				if (dataset != null) {
+					return dataset;
+				}
 			}
-		} else {
-			throw new GalaxyDatasetNotFoundException("dataset for file " + filename +
-					" not found in Galaxy history " + history.getId());
 		}
+
+		throw new GalaxyDatasetNotFoundException("dataset for file " + filename +
+				" not found in Galaxy history " + history.getId());
 	}
 
 	/**
