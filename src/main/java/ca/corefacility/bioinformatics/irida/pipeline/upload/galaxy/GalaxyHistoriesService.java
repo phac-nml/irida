@@ -65,9 +65,9 @@ public class GalaxyHistoriesService {
 	
 	/**
 	 * Transfers a dataset from a Galaxy library into a history for a workflow.
-	 * @param libraryFileId
-	 * @param history
-	 * @return
+	 * @param libraryFileId The id of a file within a Galaxy library.
+	 * @param history The history to transfer this library dataset into.
+	 * @return A HistoryDetails object describing the details of the created history dataset.
 	 */
 	public HistoryDetails libraryDatasetToHistory(String libraryFileId, History history) {
 		checkNotNull(libraryFileId, "libraryFileId is null");
