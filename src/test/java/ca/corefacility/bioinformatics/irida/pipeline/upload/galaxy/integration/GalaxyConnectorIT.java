@@ -45,6 +45,9 @@ public class GalaxyConnectorIT {
 	@Autowired
 	private LocalGalaxy localGalaxy;
 
+	/**
+	 * Sets up information for Galaxy connector tests.
+	 */
 	@Before
 	public void setup() {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());

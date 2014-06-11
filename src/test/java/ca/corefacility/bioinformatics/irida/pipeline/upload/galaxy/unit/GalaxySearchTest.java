@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,9 +18,11 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
@@ -28,9 +31,13 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectNam
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
+import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.RolesClient;
 import com.github.jmchilton.blend4j.galaxy.UsersClient;
+import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
+import com.github.jmchilton.blend4j.galaxy.beans.History;
+import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.Role;
@@ -50,6 +57,8 @@ public class GalaxySearchTest {
 	private LibrariesClient librariesClient;
 	@Mock
 	private GalaxyInstance galaxyInstance;
+		
+	@Mock private HistoriesClient historiesClient;
 
 	private GalaxySearch galaxySearch;
 
@@ -71,6 +80,14 @@ public class GalaxySearchTest {
 	private static final GalaxyFolderPath INVALID_FOLDER_NAME = new GalaxyFolderPath(
 			"invalid_folder");
 	
+	private static final String FILENAME = "filename";
+	private static final String HISTORY_ID = "1";
+	private static final String INVALID_HISTORY_ID = "2";
+	private static final String DATA_ID = "2";
+	
+	private List<HistoryContents> datasetHistoryContents;
+	private History history;
+	
 	private URL galaxyURL;
 
 	private List<Library> allLibrariesList;
@@ -86,16 +103,31 @@ public class GalaxySearchTest {
 	@Before
 	public void setup() throws FileNotFoundException, URISyntaxException, MalformedURLException {
 		MockitoAnnotations.initMocks(this);
+		
+		when(galaxyInstance.getHistoriesClient()).thenReturn(historiesClient);
 
 		setupRolesTest();
 		setupUserTest();
 		setupLibraryTest();
 		setupLibraryContentTest();
+		setupHistories();
 
 		galaxySearch = new GalaxySearch(galaxyInstance);
 		galaxyURL = new URL("http://localhost");
 		
 		when(galaxyInstance.getGalaxyUrl()).thenReturn(galaxyURL.toString());
+	}
+	
+	private void setupHistories() {
+
+		history = new History();
+		history.setId(HISTORY_ID);
+		
+		HistoryContents datasetHistoryContent = new HistoryContents();
+		datasetHistoryContent.setName(FILENAME);
+		datasetHistoryContent.setId(DATA_ID);
+		datasetHistoryContents = new ArrayList<HistoryContents>();
+		datasetHistoryContents.add(datasetHistoryContent);
 	}
 
 	/**
@@ -207,6 +239,31 @@ public class GalaxySearchTest {
 		}
 
 		return newLibraries;
+	}
+	
+	/**
+	 * Tests getting a History.
+	 * @throws NoGalaxyHistoryException 
+	 */
+	@Test
+	public void testGetHistory() throws NoGalaxyHistoryException {
+		List<History> historyList = new LinkedList<History>();
+		historyList.add(history);
+		
+		when(historiesClient.getHistories()).thenReturn(historyList);
+		
+		History history = galaxySearch.getGalaxyHistory(HISTORY_ID);
+		assertNotNull(history);
+		assertEquals(HISTORY_ID, history.getId());
+	}
+	
+	/**
+	 * Tests not getting a History.
+	 * @throws NoGalaxyHistoryException 
+	 */
+	@Test(expected=NoGalaxyHistoryException.class)
+	public void testGetNoHistory() throws NoGalaxyHistoryException {
+		galaxySearch.getGalaxyHistory(INVALID_HISTORY_ID);
 	}
 
 	/**
@@ -453,5 +510,40 @@ public class GalaxySearchTest {
 	public void testFindLibraryContentWithIdInvalidLibraryId() throws NoGalaxyContentFoundException {
 		galaxySearch.findLibraryContentWithId(INVALID_LIBRARY_ID,
 				FOLDER_PATH);
+	}
+	
+	/**
+	 * Tests getting a valid history dataset given a file name and history.
+	 * @throws GalaxyDatasetNotFoundException 
+	 */
+	@Test
+	public void testGetDatasetForFileInHistory() throws GalaxyDatasetNotFoundException {
+		Dataset dataset = new Dataset();
+		
+		when(historiesClient.showHistoryContents(HISTORY_ID)).thenReturn(datasetHistoryContents);
+		when(historiesClient.showDataset(HISTORY_ID, DATA_ID)).thenReturn(dataset);
+		
+		assertNotNull(galaxySearch.getDatasetForFileInHistory(FILENAME, history));
+	}
+	
+	/**
+	 * Tests getting an invalid history dataset given a file name and history.
+	 * @throws GalaxyDatasetNotFoundException 
+	 */
+	@Test(expected=GalaxyDatasetNotFoundException.class)
+	public void testGetDatasetForFileInHistoryNoHistoryContents() throws GalaxyDatasetNotFoundException {		
+		galaxySearch.getDatasetForFileInHistory(FILENAME, history);
+	}
+	
+	
+	/**
+	 * Tests getting an invalid history dataset given a file name and history.
+	 * @throws GalaxyDatasetNotFoundException 
+	 */
+	@Test(expected=GalaxyDatasetNotFoundException.class)
+	public void testGetDatasetForFileInHistoryNoDataset() throws GalaxyDatasetNotFoundException {
+		when(historiesClient.showHistoryContents(HISTORY_ID)).thenReturn(datasetHistoryContents);
+		
+		galaxySearch.getDatasetForFileInHistory(FILENAME, history);
 	}
 }

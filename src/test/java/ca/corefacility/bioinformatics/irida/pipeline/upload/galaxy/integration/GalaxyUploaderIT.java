@@ -65,12 +65,20 @@ public class GalaxyUploaderIT {
 
 	private List<Path> dataFilesSingle;
 
+	/**
+	 * Sets up files for upload tests.
+	 * @throws URISyntaxException
+	 */
 	@Before
 	public void setup() throws URISyntaxException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 		setupDataFiles();
 	}
 
+	/**
+	 * Setup data files for tests.
+	 * @throws URISyntaxException
+	 */
 	private void setupDataFiles() throws URISyntaxException {
 		Path dataFile1 = Paths.get(GalaxyUploaderIT.class.getResource(
 				"testData1.fastq").toURI());

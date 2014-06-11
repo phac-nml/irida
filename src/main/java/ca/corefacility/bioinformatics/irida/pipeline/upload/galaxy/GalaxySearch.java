@@ -10,18 +10,24 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
+import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.RolesClient;
 import com.github.jmchilton.blend4j.galaxy.UsersClient;
+import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
+import com.github.jmchilton.blend4j.galaxy.beans.History;
+import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.Role;
@@ -98,6 +104,29 @@ public class GalaxySearch {
 		}
 
 		throw new GalaxyUserNotFoundException(email, getGalaxyUrl());
+	}
+	
+	/**
+	 * Gets a Galaxy history with the given history id.
+	 * @param historyId  The history id to get a history for.
+	 * @return  The corresponding History object.
+	 * @throws NoGalaxyHistoryException If no history was found.
+	 */
+	public History getGalaxyHistory(String historyId) throws NoGalaxyHistoryException {
+		checkNotNull(historyId, "historyId is null");
+		
+		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
+		List<History> galaxyHistories = historiesClient.getHistories();
+		
+		if (galaxyHistories != null) {
+			Optional<History> h = galaxyHistories.stream().
+					filter((history) -> historyId.equals(history.getId())).findFirst();
+			if (h.isPresent()) {
+				return h.get();
+			}
+		}
+		
+		throw new NoGalaxyHistoryException("No history for id " + historyId);
 	}
 
 	/**
@@ -275,6 +304,38 @@ public class GalaxySearch {
 		} catch (NoGalaxyContentFoundException e) {
 			return false;
 		}
+	}
+	
+	/**
+	 * Gets a Dataset object for a file with the given name in the given history.
+	 * @param filename  The name of the file to get a Dataset object for.
+	 * @param history  The history to look for the dataset.
+	 * @return The corresponding dataset for the given file name.
+	 * @throws GalaxyDatasetNotFoundException  If the dataset could not be found.
+	 */
+	public Dataset getDatasetForFileInHistory(String filename, History history) throws GalaxyDatasetNotFoundException {
+		checkNotNull(filename, "filename is null");
+		checkNotNull(history, "history is null");
+		
+		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
+		
+		List<HistoryContents> historyContentsList =
+				historiesClient.showHistoryContents(history.getId());
+
+		Optional<HistoryContents> h = historyContentsList.stream().
+				filter((historyContents) -> filename.equals(historyContents.getName())).findFirst();
+		if (h.isPresent()) {
+			String dataId = h.get().getId();
+			if (dataId != null) {
+				Dataset dataset = historiesClient.showDataset(history.getId(), dataId);	
+				if (dataset != null) {
+					return dataset;
+				}
+			}
+		}
+
+		throw new GalaxyDatasetNotFoundException("dataset for file " + filename +
+				" not found in Galaxy history " + history.getId());
 	}
 
 	/**
