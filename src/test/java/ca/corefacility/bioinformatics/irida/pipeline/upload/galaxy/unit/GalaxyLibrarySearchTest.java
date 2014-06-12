@@ -22,7 +22,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundExce
 import ca.corefacility.bioinformatics.irida.model.upload.UploadProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrarySearch;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
@@ -33,11 +33,11 @@ import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 
 /**
- * Unit tests for GalaxySearch.
+ * Unit tests for GalaxyLibrarySearch.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxySearchTest {
+public class GalaxyLibrarySearchTest {
 	@Mock
 	private RolesClient rolesClient;
 	@Mock
@@ -49,7 +49,7 @@ public class GalaxySearchTest {
 		
 	@Mock private HistoriesClient historiesClient;
 
-	private GalaxySearch galaxySearch;
+	private GalaxyLibrarySearch galaxySearch;
 
 	private static final String LIBRARY_ID = "1";
 	private static final String LIBRARY_ID_2 = "2";
@@ -90,8 +90,8 @@ public class GalaxySearchTest {
 		setupLibraryTest();
 		setupLibraryContentTest();
 		
-		galaxySearch = new GalaxySearch(galaxyInstance);
 		galaxyURL = new URL("http://localhost");
+		galaxySearch = new GalaxyLibrarySearch(librariesClient, galaxyURL);
 		
 		when(galaxyInstance.getGalaxyUrl()).thenReturn(galaxyURL.toString());
 	}

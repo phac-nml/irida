@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -13,31 +14,35 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundExce
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 
-import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 
 /**
- * Class containing methods used to search for information within a Galaxy
- * instance.
+ * Class containing methods used to search for library information in Galaxy
  * 
- * @author aaron
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * 
  */
-public class GalaxySearch {
-	private GalaxyInstance galaxyInstance;
+public class GalaxyLibrarySearch {
+	
+	private LibrariesClient librariesClient;
+	private URL galaxyURL;
 
 	/**
-	 * Builds a new Galaxy search object around the passed GalaxyInstance.
+	 * Builds a new GalaxyLibrarySearch object around the passed LibrariesClient.
 	 * 
-	 * @param galaxyInstance
-	 *            The GalaxyInstance object used to connect to Galaxy.
+	 * @param librariesClient
+	 *            The LibrariesClient to use.
+	 *  @param galaxyURL
+	 *            The URL to the Galaxy instance.
 	 */
-	public GalaxySearch(GalaxyInstance galaxyInstance) {
-		checkNotNull(galaxyInstance, "galaxyInstance is null");
+	public GalaxyLibrarySearch(LibrariesClient librariesClient, URL galaxyURL) {
+		checkNotNull(librariesClient, "librariesClient is null");
+		checkNotNull(galaxyURL, "galaxyURL is null");
 
-		this.galaxyInstance = galaxyInstance;
+		this.librariesClient = librariesClient;
+		this.galaxyURL = galaxyURL;
 	}
 
 	/**
@@ -52,7 +57,6 @@ public class GalaxySearch {
 	public Library findLibraryWithId(String libraryId) throws NoLibraryFoundException {
 		checkNotNull(libraryId, "libraryId is null");
 
-		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
 		List<Library> libraries = librariesClient.getLibraries();
 		Optional<Library> library = libraries.stream().filter((lib) -> lib.getId().equals(libraryId)).findFirst();
 		if (library.isPresent()) {
@@ -60,7 +64,7 @@ public class GalaxySearch {
 		}
 
 		throw new NoLibraryFoundException("No library found for id " + libraryId + " in Galaxy "
-				+ galaxyInstance.getGalaxyUrl());
+				+ galaxyURL);
 	}
 
 	/**
@@ -77,7 +81,6 @@ public class GalaxySearch {
 	public Map<String, LibraryContent> libraryContentAsMap(String libraryId) throws NoGalaxyContentFoundException {
 		checkNotNull(libraryId, "libraryId is null");
 
-		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
 		List<LibraryContent> libraryContents = librariesClient.getLibraryContents(libraryId);
 
 		if (libraryContents != null) {
@@ -87,7 +90,7 @@ public class GalaxySearch {
 		}
 
 		throw new NoGalaxyContentFoundException("Could not find library content for id " + libraryId + " in Galaxy "
-				+ galaxyInstance.getGalaxyUrl());
+				+ galaxyURL);
 	}
 
 	/**
@@ -102,7 +105,6 @@ public class GalaxySearch {
 	public List<Library> findLibraryWithName(GalaxyProjectName libraryName) throws NoLibraryFoundException {
 		checkNotNull(libraryName, "libraryName is null");
 
-		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
 		List<Library> allLibraries = librariesClient.getLibraries();
 
 		if (allLibraries != null) {
@@ -115,7 +117,7 @@ public class GalaxySearch {
 		}
 
 		throw new NoLibraryFoundException("No library could be found with name " + libraryName + " in Galaxy "
-				+ galaxyInstance.getGalaxyUrl());
+				+ galaxyURL);
 	}
 
 	/**
@@ -137,7 +139,6 @@ public class GalaxySearch {
 		checkNotNull(libraryId, "libraryId is null");
 		checkNotNull(folderPath, "folderPath is null");
 
-		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
 		List<LibraryContent> libraryContents = librariesClient.getLibraryContents(libraryId);
 
 		if (libraryContents != null) {
@@ -149,7 +150,7 @@ public class GalaxySearch {
 		}
 
 		throw new NoGalaxyContentFoundException("Could not find library content for id " + libraryId + " in Galaxy "
-				+ galaxyInstance.getGalaxyUrl());
+				+ galaxyURL);
 	}
 
 	/**

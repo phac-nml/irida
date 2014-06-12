@@ -51,7 +51,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrarySearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUserSearch;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
@@ -90,7 +90,7 @@ public class GalaxyAPITest {
 	private ClientResponse invalidResponse;
 
 	@Mock
-	private GalaxySearch galaxySearch;
+	private GalaxyLibrarySearch galaxySearch;
 	@Mock
 	private GalaxyRoleSearch galaxyRoleSearch;
 	@Mock

@@ -68,7 +68,7 @@ public class GalaxyAPI {
 
 	private GalaxyInstance galaxyInstance;
 	private GalaxyAccountEmail adminEmail;
-	private GalaxySearch galaxySearchAdmin;
+	private GalaxyLibrarySearch galaxySearchAdmin;
 	private GalaxyRoleSearch galaxyRoleSearchAdmin;
 	private GalaxyUserSearch galaxyUserSearchAdmin;
 	private GalaxyLibraryBuilder galaxyLibrary;
@@ -105,7 +105,7 @@ public class GalaxyAPI {
 					+ adminEmail);
 		}
 		
-		galaxySearchAdmin = new GalaxySearch(galaxyInstance);
+		galaxySearchAdmin = new GalaxyLibrarySearch(galaxyInstance.getLibrariesClient(), galaxyURL);
 		galaxyRoleSearchAdmin = new GalaxyRoleSearch(galaxyInstance.getRolesClient(),
 				galaxyURL);
 		galaxyUserSearchAdmin = new GalaxyUserSearch(galaxyInstance.getUsersClient(), galaxyURL);
@@ -146,7 +146,7 @@ public class GalaxyAPI {
 			throw new RuntimeException(e);
 		}
 		
-		galaxySearchAdmin = new GalaxySearch(galaxyInstance);
+		galaxySearchAdmin = new GalaxyLibrarySearch(galaxyInstance.getLibrariesClient(), galaxyURL);
 		galaxyRoleSearchAdmin = new GalaxyRoleSearch(galaxyInstance.getRolesClient(),
 				galaxyURL);
 		galaxyUserSearchAdmin = new GalaxyUserSearch(galaxyInstance.getUsersClient(), galaxyURL);
@@ -184,7 +184,7 @@ public class GalaxyAPI {
 	 *             If an issue connecting to Galaxy occurred.
 	 */
 	public GalaxyAPI(GalaxyInstance galaxyInstance, @Valid GalaxyAccountEmail adminEmail, 
-			GalaxySearch galaxySearch, GalaxyRoleSearch galaxyRoleSearch, GalaxyUserSearch galaxyUserSearch,
+			GalaxyLibrarySearch galaxySearch, GalaxyRoleSearch galaxyRoleSearch, GalaxyUserSearch galaxyUserSearch,
 			GalaxyLibraryBuilder galaxyLibrary) throws ConstraintViolationException, GalaxyConnectException {
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
 		checkNotNull(adminEmail, "adminEmail is null");

@@ -68,7 +68,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrarySearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.ProgressUpdate;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.UploadEventListenerTracker;
 
@@ -985,13 +985,15 @@ public class GalaxyAPIIT {
 	public void testUploadSampleToExistingLibrary() throws URISyntaxException,
 			MalformedURLException, ConstraintViolationException,
 			UploadException, InterruptedException {
-		GalaxySearch galaxySearchAdmin = new GalaxySearch(
-				localGalaxy.getGalaxyInstanceAdmin());
+		GalaxyLibrarySearch galaxySearchAdmin = new GalaxyLibrarySearch(
+				localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient(),
+				localGalaxy.getGalaxyURL());
 		GalaxyRoleSearch galaxyRoleSearchAdmin = new GalaxyRoleSearch(
 				localGalaxy.getGalaxyInstanceAdmin().getRolesClient(),
 				localGalaxy.getGalaxyURL());
-		GalaxySearch galaxySearchUser1 = new GalaxySearch(
-				localGalaxy.getGalaxyInstanceUser1());
+		GalaxyLibrarySearch galaxySearchUser1 = new GalaxyLibrarySearch(
+				localGalaxy.getGalaxyInstanceUser1().getLibrariesClient(),
+				localGalaxy.getGalaxyURL());
 		GalaxyLibraryBuilder galaxyLibrary = new GalaxyLibraryBuilder(
 				localGalaxy.getGalaxyInstanceAdmin(), galaxyRoleSearchAdmin);
 		UploadResult expectedUploadResult;
@@ -1140,12 +1142,15 @@ public class GalaxyAPIIT {
 	public void testUploadSampleToExistingLibraryDifferentUsers()
 			throws URISyntaxException, MalformedURLException,
 			ConstraintViolationException, UploadException {
-		GalaxySearch galaxySearchAdmin = new GalaxySearch(
-				localGalaxy.getGalaxyInstanceAdmin());
-		GalaxySearch galaxySearchUser1 = new GalaxySearch(
-				localGalaxy.getGalaxyInstanceUser1());
-		GalaxySearch galaxySearchUser2 = new GalaxySearch(
-				localGalaxy.getGalaxyInstanceUser2());
+		GalaxyLibrarySearch galaxySearchAdmin = new GalaxyLibrarySearch(
+				localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient(),
+				localGalaxy.getGalaxyURL());
+		GalaxyLibrarySearch galaxySearchUser1 = new GalaxyLibrarySearch(
+				localGalaxy.getGalaxyInstanceUser1().getLibrariesClient(),
+				localGalaxy.getGalaxyURL());
+		GalaxyLibrarySearch galaxySearchUser2 = new GalaxyLibrarySearch(
+				localGalaxy.getGalaxyInstanceUser2().getLibrariesClient(),
+				localGalaxy.getGalaxyURL());
 
 		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"testUploadSampleToExistingLibraryDifferentUsers");
