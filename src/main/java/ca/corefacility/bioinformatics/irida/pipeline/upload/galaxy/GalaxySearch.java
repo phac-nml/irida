@@ -2,27 +2,21 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
-import com.github.jmchilton.blend4j.galaxy.UsersClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
-import com.github.jmchilton.blend4j.galaxy.beans.User;
 
 /**
  * Class containing methods used to search for information within a Galaxy
@@ -44,46 +38,6 @@ public class GalaxySearch {
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
 
 		this.galaxyInstance = galaxyInstance;
-	}
-
-	/**
-	 * Given an email, finds a corresponding User object in Galaxy with that
-	 * email.
-	 * 
-	 * @param email
-	 *            The email of the user to search.
-	 * @return A User object of the user with the corresponding email.
-	 * @throws GalaxyUserNotFoundException
-	 *             If the user could not be found.
-	 */
-	public User findUserWithEmail(GalaxyAccountEmail email) throws GalaxyUserNotFoundException {
-		checkNotNull(email, "email is null");
-
-		UsersClient usersClient = galaxyInstance.getUsersClient();
-		if (usersClient != null) {
-			Optional<User> u = usersClient.getUsers().stream()
-					.filter((user) -> user.getEmail().equals(email.getName())).findFirst();
-			if (u.isPresent()) {
-				return u.get();
-			}
-		}
-
-		throw new GalaxyUserNotFoundException(email, getGalaxyUrl());
-	}
-
-	/**
-	 * Gets the URL of the Galaxy instance we are connected to.
-	 * 
-	 * @return A String of the URL of the Galaxy instance we are connected to.
-	 */
-	private URL getGalaxyUrl() {
-		try {
-			return new URL(galaxyInstance.getGalaxyUrl());
-		} catch (MalformedURLException e) {
-			// This should never really occur, don't force all calling methods
-			// to catch exception
-			throw new RuntimeException("Galaxy URL is malformed", e);
-		}
 	}
 
 	/**
@@ -196,21 +150,6 @@ public class GalaxySearch {
 
 		throw new NoGalaxyContentFoundException("Could not find library content for id " + libraryId + " in Galaxy "
 				+ galaxyInstance.getGalaxyUrl());
-	}
-
-	/**
-	 * Determines if the passed Galaxy user exists within the Galaxy instance.
-	 * 
-	 * @param galaxyUserEmail
-	 *            The user email address to check.
-	 * @return True if this user exists, false otherwise.
-	 */
-	public boolean galaxyUserExists(GalaxyAccountEmail galaxyUserEmail) {
-		try {
-			return findUserWithEmail(galaxyUserEmail) != null;
-		} catch (GalaxyUserNotFoundException e) {
-			return false;
-		}
 	}
 
 	/**

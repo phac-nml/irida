@@ -17,11 +17,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadProjectName;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
@@ -33,7 +31,6 @@ import com.github.jmchilton.blend4j.galaxy.RolesClient;
 import com.github.jmchilton.blend4j.galaxy.UsersClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
-import com.github.jmchilton.blend4j.galaxy.beans.User;
 
 /**
  * Unit tests for GalaxySearch.
@@ -90,7 +87,6 @@ public class GalaxySearchTest {
 		
 		when(galaxyInstance.getHistoriesClient()).thenReturn(historiesClient);
 
-		setupUserTest();
 		setupLibraryTest();
 		setupLibraryContentTest();
 		
@@ -98,27 +94,6 @@ public class GalaxySearchTest {
 		galaxyURL = new URL("http://localhost");
 		
 		when(galaxyInstance.getGalaxyUrl()).thenReturn(galaxyURL.toString());
-	}
-
-	/**
-	 * Setup users.
-	 */
-	private void setupUserTest() {
-		when(galaxyInstance.getUsersClient()).thenReturn(usersClient);
-
-		User user1 = new User();
-		user1.setEmail("user1@localhost");
-		user1.setId("1");
-
-		User user2 = new User();
-		user2.setEmail("user2@localhost");
-		user2.setId("2");
-
-		List<User> userList = new ArrayList<User>();
-		userList.add(user1);
-		userList.add(user2);
-
-		when(usersClient.getUsers()).thenReturn(userList);
 	}
 
 	/**
@@ -290,47 +265,6 @@ public class GalaxySearchTest {
 	@Test
 	public void testNoLibraryContentExists() {
 		assertFalse(galaxySearch.libraryContentExists(INVALID_LIBRARY_ID, ILLUMINA_FOLDER_NAME));
-	}
-
-	/**
-	 * Tests finding a user.
-	 * @throws GalaxyUserNotFoundException 
-	 */
-	@Test
-	public void testFindUserWithEmail() throws GalaxyUserNotFoundException {
-		User foundUser = galaxySearch.findUserWithEmail(new GalaxyAccountEmail(
-				"user1@localhost"));
-		assertNotNull(foundUser);
-		assertEquals("user1@localhost", foundUser.getEmail());
-		assertEquals("1", foundUser.getId());
-	}
-
-	/**
-	 * Tests not finding a user.
-	 * @throws GalaxyUserNotFoundException 
-	 */
-	@Test(expected=GalaxyUserNotFoundException.class)
-	public void testNoFindUserWithEmail() throws GalaxyUserNotFoundException {
-		galaxySearch.findUserWithEmail(new GalaxyAccountEmail(
-				"invalid@localhost"));
-	}
-
-	/**
-	 * Tests if user exists.
-	 */
-	@Test
-	public void testUserDoesExist() {
-		assertTrue(galaxySearch.galaxyUserExists(new GalaxyAccountEmail(
-				"user1@localhost")));
-	}
-
-	/**
-	 * Tests if user does not exist.
-	 */
-	@Test
-	public void testUserDoesNotExist() {
-		assertFalse(galaxySearch.galaxyUserExists(new GalaxyAccountEmail(
-				"invalid@localhost")));
 	}
 
 	/**

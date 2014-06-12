@@ -70,6 +70,7 @@ public class GalaxyAPI {
 	private GalaxyAccountEmail adminEmail;
 	private GalaxySearch galaxySearchAdmin;
 	private GalaxyRoleSearch galaxyRoleSearchAdmin;
+	private GalaxyUserSearch galaxyUserSearchAdmin;
 	private GalaxyLibraryBuilder galaxyLibrary;
 	private Uploader.DataStorage dataStorage = Uploader.DataStorage.REMOTE;
 
@@ -107,6 +108,7 @@ public class GalaxyAPI {
 		galaxySearchAdmin = new GalaxySearch(galaxyInstance);
 		galaxyRoleSearchAdmin = new GalaxyRoleSearch(galaxyInstance.getRolesClient(),
 				galaxyURL);
+		galaxyUserSearchAdmin = new GalaxyUserSearch(galaxyInstance.getUsersClient(), galaxyURL);
 		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxyRoleSearchAdmin);
 
 		if (!isConnected()) {
@@ -147,6 +149,7 @@ public class GalaxyAPI {
 		galaxySearchAdmin = new GalaxySearch(galaxyInstance);
 		galaxyRoleSearchAdmin = new GalaxyRoleSearch(galaxyInstance.getRolesClient(),
 				galaxyURL);
+		galaxyUserSearchAdmin = new GalaxyUserSearch(galaxyInstance.getUsersClient(), galaxyURL);
 		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxyRoleSearchAdmin);
 
 		if (!isConnected()) {
@@ -171,6 +174,8 @@ public class GalaxyAPI {
 	 *            A GalaxySearch object.
 	 * @param galaxyRoleSearch
 	 *            A GalaxyRoleSearch object.
+	 * @param galaxyUserSearch
+	 * 	          A GalaxyUserSearch object.
 	 * @param galaxyLibrary
 	 *            A GalaxyLibrary object.
 	 * @throws ConstraintViolationException
@@ -179,12 +184,13 @@ public class GalaxyAPI {
 	 *             If an issue connecting to Galaxy occurred.
 	 */
 	public GalaxyAPI(GalaxyInstance galaxyInstance, @Valid GalaxyAccountEmail adminEmail, 
-			GalaxySearch galaxySearch, GalaxyRoleSearch galaxyRoleSearch,
+			GalaxySearch galaxySearch, GalaxyRoleSearch galaxyRoleSearch, GalaxyUserSearch galaxyUserSearch,
 			GalaxyLibraryBuilder galaxyLibrary) throws ConstraintViolationException, GalaxyConnectException {
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
 		checkNotNull(adminEmail, "adminEmail is null");
 		checkNotNull(galaxySearch, "galaxySearch is null");
 		checkNotNull(galaxyRoleSearch, "galaxyRoleSearch is null");
+		checkNotNull(galaxyUserSearch, "galaxyUserSearch is null");
 		checkNotNull(galaxyLibrary, "galaxyLibrary is null");
 
 		this.galaxyInstance = galaxyInstance;
@@ -192,6 +198,7 @@ public class GalaxyAPI {
 
 		this.galaxyLibrary = galaxyLibrary;
 		this.galaxySearchAdmin = galaxySearch;
+		this.galaxyUserSearchAdmin = galaxyUserSearch;
 		this.galaxyRoleSearchAdmin = galaxyRoleSearch;
 
 		if (!isConnected()) {
@@ -232,7 +239,7 @@ public class GalaxyAPI {
 
 		// make sure user exists and has a role before we create an empty
 		// library
-		if (!galaxySearchAdmin.galaxyUserExists(galaxyUserEmail)) {
+		if (!galaxyUserSearchAdmin.galaxyUserExists(galaxyUserEmail)) {
 			throw new GalaxyUserNotFoundException(galaxyUserEmail, getGalaxyUrl());
 		}
 
@@ -436,7 +443,7 @@ public class GalaxyAPI {
 		GalaxyAccountEmail returnedOwner = null;
 
 		Library uploadLibrary;
-		if (galaxySearchAdmin.galaxyUserExists(galaxyUserEmail)) {
+		if (galaxyUserSearchAdmin.galaxyUserExists(galaxyUserEmail)) {
 
 			if (galaxySearchAdmin.libraryExists(libraryName)) {
 				List<Library> libraries = galaxySearchAdmin.findLibraryWithName(libraryName);
@@ -615,7 +622,7 @@ public class GalaxyAPI {
 	 */
 	public boolean isConnected() {
 		try {
-			return galaxySearchAdmin.galaxyUserExists(adminEmail);
+			return galaxyUserSearchAdmin.galaxyUserExists(adminEmail);
 		} catch (ClientHandlerException | UniformInterfaceException e) {
 			return false;
 		}
