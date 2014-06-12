@@ -35,14 +35,14 @@ public class ClientRole implements GrantedAuthority, Comparable<ClientRole> {
 	@NotNull
 	private String description;
 
-	public ClientRole() {
+	private ClientRole() {
 	}
 
-	public ClientRole(String name) {
+	private ClientRole(String name) {
 		this.name = name;
 	}
 
-	public ClientRole(String name, String description) {
+	private ClientRole(String name, String description) {
 		this.name = name;
 		this.description = description;
 	}
