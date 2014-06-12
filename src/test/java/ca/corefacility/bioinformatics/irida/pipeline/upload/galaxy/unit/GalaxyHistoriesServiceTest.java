@@ -74,7 +74,7 @@ public class GalaxyHistoriesServiceTest {
 		when(invalidResponse.getClientResponseStatus()).thenReturn(
 				ClientResponse.Status.FORBIDDEN);
 		
-		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, galaxySearch);
+		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient);
 		
 		dataFile = Paths.get(this.getClass().getResource("testData1.fastq").toURI());
 

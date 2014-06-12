@@ -38,23 +38,19 @@ public class GalaxyHistoriesService {
 
 	private HistoriesClient historiesClient;
 	private ToolsClient toolsClient;
-	private GalaxySearch galaxySearch;
 	
 	/**
-	 * Builds a new GalaxyHistory with the given Galaxy instance and GalaxySearch objects.
+	 * Builds a new GalaxyHistory object for working with Galaxy Histories.
 	 * @param historiesClient  The HistoriesClient for interacting with Galaxy histories.
 	 * @param toolsClient  The ToolsClient for interacting with tools in Galaxy.
-	 * @param galaxySearch The GalaxySearch object to use.
 	 */
 	public GalaxyHistoriesService(HistoriesClient historiesClient,
-			ToolsClient toolsClient, GalaxySearch galaxySearch) {
+			ToolsClient toolsClient) {
 		checkNotNull(historiesClient, "historiesClient is null");
 		checkNotNull(toolsClient, "toolsClient is null");
-		checkNotNull(galaxySearch, "galaxySearch is null");
 		
 		this.historiesClient = historiesClient;
 		this.toolsClient = toolsClient;
-		this.galaxySearch = galaxySearch;
 	}
 	
 	/**

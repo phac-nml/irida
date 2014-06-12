@@ -36,7 +36,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWo
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowManager;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
@@ -72,7 +71,6 @@ public class GalaxyWorkflowManagerIT {
 	private HistoriesClient historiesClient;
 	private ToolsClient toolsClient;
 	private WorkflowsClient workflowsClient;
-	private GalaxySearch galaxySearch;
 	private GalaxyWorkflowManager galaxyWorkflowManager;
 	
 	private static final String INVALID_HISTORY_ID = "1";
@@ -99,8 +97,7 @@ public class GalaxyWorkflowManagerIT {
 		toolsClient = galaxyAdminInstance.getToolsClient();
 		workflowsClient = galaxyAdminInstance.getWorkflowsClient();
 		historiesClient = galaxyAdminInstance.getHistoriesClient();
-		galaxySearch = new GalaxySearch(galaxyAdminInstance);
-		GalaxyHistoriesService galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, galaxySearch);
+		GalaxyHistoriesService galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient);
 		galaxyWorkflowManager 
 			= new GalaxyWorkflowManager(historiesClient, workflowsClient, galaxyHistory);
 	}
