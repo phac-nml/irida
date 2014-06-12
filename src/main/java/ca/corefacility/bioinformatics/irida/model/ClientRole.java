@@ -88,5 +88,15 @@ public class ClientRole implements GrantedAuthority, Comparable<ClientRole> {
 	public int compareTo(ClientRole r) {
 		return name.compareTo(r.name);
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ClientRole) {
+			ClientRole r = (ClientRole) obj;
+			return Objects.equals(name, r.name);
+		}
+
+		return false;
+	}
 
 }
