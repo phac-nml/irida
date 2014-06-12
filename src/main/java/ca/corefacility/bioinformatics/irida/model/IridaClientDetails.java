@@ -318,14 +318,9 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	 */
 	public void setAdditionalInformation(Map<String, Object> additionalInformation) {
 		Map<String, String> newMap = new HashMap<>();
-		for (Map.Entry<String, Object> entry : additionalInformation.entrySet()) {
-			try {
-				newMap.put(entry.getKey(), (String) entry.getValue());
-			} catch (ClassCastException ex) {
-				throw new IllegalArgumentException("Cannot cast object to String with key: " + entry.getKey(), ex);
-			}
-		}
-
+		// create the new map by calling toString on all the values. I don't
+		// think we'll see non-string values here.
+		additionalInformation.entrySet().forEach(entry -> newMap.put(entry.getKey(), entry.getValue().toString()));
 		this.additionalInformation = newMap;
 	}
 
