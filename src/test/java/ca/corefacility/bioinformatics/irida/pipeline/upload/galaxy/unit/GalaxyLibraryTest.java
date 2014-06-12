@@ -27,7 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEma
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
 
 /**
  * Unit tests for GalaxyLibrary.
@@ -38,7 +38,7 @@ public class GalaxyLibraryTest {
 	@Mock
 	private GalaxyInstance galaxyInstance;
 	@Mock
-	private GalaxySearch galaxySearch;
+	private GalaxyRoleSearch galaxyRoleSearch;
 	@Mock
 	private LibrariesClient librariesClient;
 	@Mock
@@ -78,7 +78,7 @@ public class GalaxyLibraryTest {
 		setupPermissionsTest();
 		setupFoldersTest();
 
-		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxySearch);
+		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxyRoleSearch);
 	}
 
 	/**
@@ -114,11 +114,11 @@ public class GalaxyLibraryTest {
 		Role adminRole = new Role();
 		adminRole.setName(ADMIN_EMAIL.getName());
 
-		when(galaxySearch.findUserRoleWithEmail(USER_EMAIL)).thenReturn(
+		when(galaxyRoleSearch.findUserRoleWithEmail(USER_EMAIL)).thenReturn(
 				userRole);
-		when(galaxySearch.findUserRoleWithEmail(ADMIN_EMAIL)).thenReturn(
+		when(galaxyRoleSearch.findUserRoleWithEmail(ADMIN_EMAIL)).thenReturn(
 				adminRole);
-		when(galaxySearch.findUserRoleWithEmail(INVALID_EMAIL))
+		when(galaxyRoleSearch.findUserRoleWithEmail(INVALID_EMAIL))
 				.thenReturn(null);
 	}
 
@@ -210,7 +210,7 @@ public class GalaxyLibraryTest {
 				librariesClient.setLibraryPermissions(eq(LIBRARY_ID),
 						any(LibraryPermissions.class)))
 				.thenReturn(okayResponse);
-		when(galaxySearch.findUserRoleWithEmail(INVALID_EMAIL))
+		when(galaxyRoleSearch.findUserRoleWithEmail(INVALID_EMAIL))
 			.thenThrow(new GalaxyUserNoRoleException());
 
 		galaxyLibrary.changeLibraryOwner(testLibrary, INVALID_EMAIL,
@@ -229,7 +229,7 @@ public class GalaxyLibraryTest {
 				librariesClient.setLibraryPermissions(eq(LIBRARY_ID),
 						any(LibraryPermissions.class)))
 				.thenReturn(okayResponse);
-		when(galaxySearch.findUserRoleWithEmail(INVALID_EMAIL))
+		when(galaxyRoleSearch.findUserRoleWithEmail(INVALID_EMAIL))
 			.thenThrow(new GalaxyUserNoRoleException());
 
 		galaxyLibrary

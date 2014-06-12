@@ -11,7 +11,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
@@ -23,14 +22,12 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectNam
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
-import com.github.jmchilton.blend4j.galaxy.RolesClient;
 import com.github.jmchilton.blend4j.galaxy.UsersClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
-import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.github.jmchilton.blend4j.galaxy.beans.User;
 
 /**
@@ -53,32 +50,6 @@ public class GalaxySearch {
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
 
 		this.galaxyInstance = galaxyInstance;
-	}
-
-	/**
-	 * Given an email, finds a corresponding users private Role object in Galaxy
-	 * with that email.
-	 * 
-	 * @param email
-	 *            The email of the user to search.
-	 * @return A private Role object of the user with the corresponding email.
-	 * @throws GalaxyUserNoRoleException
-	 *             If no role for the user could be found.
-	 */
-	public Role findUserRoleWithEmail(GalaxyAccountEmail email) throws GalaxyUserNoRoleException {
-		checkNotNull(email, "email is null");
-
-		RolesClient rolesClient = galaxyInstance.getRolesClient();
-		if (rolesClient != null) {
-			Optional<Role> r = rolesClient.getRoles().stream().filter((role) -> role.getName().equals(email.getName()))
-					.findFirst();
-			if (r.isPresent()) {
-				return r.get();
-			}
-		}
-
-		throw new GalaxyUserNoRoleException("No role found for " + email + " in Galaxy "
-				+ galaxyInstance.getGalaxyUrl());
 	}
 
 	/**
@@ -336,21 +307,5 @@ public class GalaxySearch {
 
 		throw new GalaxyDatasetNotFoundException("dataset for file " + filename +
 				" not found in Galaxy history " + history.getId());
-	}
-
-	/**
-	 * Determines if a role exists for the given user.
-	 * 
-	 * @param galaxyUserEmail
-	 *            The user to search for a role.
-	 * @return True if a role exists for the user, false otherwise.
-	 */
-	public boolean userRoleExistsFor(GalaxyAccountEmail galaxyUserEmail) {
-		try {
-			Role role = findUserRoleWithEmail(galaxyUserEmail);
-			return role != null;
-		} catch (GalaxyUserNoRoleException e) {
-			return false;
-		}
 	}
 }

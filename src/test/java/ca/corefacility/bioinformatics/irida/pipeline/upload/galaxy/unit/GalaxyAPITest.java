@@ -50,10 +50,12 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker.UploadE
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
+import com.github.jmchilton.blend4j.galaxy.RolesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.FilesystemPathsLibraryUpload;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
@@ -77,12 +79,16 @@ public class GalaxyAPITest {
 	@Mock
 	private LibrariesClient librariesClient;
 	@Mock
+	private RolesClient rolesClient;
+	@Mock
 	private ClientResponse okayResponse;
 	@Mock
 	private ClientResponse invalidResponse;
 
 	@Mock
 	private GalaxySearch galaxySearch;
+	@Mock
+	private GalaxyRoleSearch galaxyRoleSearch;
 	@Mock
 	private GalaxyLibraryBuilder galaxyLibrary;
 	
@@ -147,11 +153,12 @@ public class GalaxyAPITest {
 		when(galaxyInstance.getApiKey()).thenReturn(realAdminAPIKey);
 		when(galaxyInstance.getLibrariesClient()).thenReturn(librariesClient);
 		when(galaxyInstance.getGalaxyUrl()).thenReturn(galaxyURL);
+		when(galaxyInstance.getRolesClient()).thenReturn(rolesClient);
 
 		when(galaxySearch.galaxyUserExists(realAdminEmail)).thenReturn(true);
 
 		workflowRESTAPI = new GalaxyAPI(galaxyInstance, realAdminEmail,
-				galaxySearch, galaxyLibrary);
+				galaxySearch, galaxyRoleSearch, galaxyLibrary);
 		workflowRESTAPI.setDataStorage(Uploader.DataStorage.REMOTE);
 
 		// setup files
@@ -196,14 +203,14 @@ public class GalaxyAPITest {
 		when(galaxySearch.findUserWithEmail(realUserEmail))
 				.thenReturn(realUser);
 		when(galaxySearch.galaxyUserExists(realUserEmail)).thenReturn(true);
-		when(galaxySearch.findUserRoleWithEmail(realUserEmail)).thenReturn(
+		when(galaxyRoleSearch.findUserRoleWithEmail(realUserEmail)).thenReturn(
 				realUserRole);
-		when(galaxySearch.userRoleExistsFor(realUserEmail)).thenReturn(true);
+		when(galaxyRoleSearch.userRoleExistsFor(realUserEmail)).thenReturn(true);
 		when(galaxySearch.findLibraryWithId(libraryId)).thenReturn(
 				returnedLibrary);
-		when(galaxySearch.findUserRoleWithEmail(realAdminEmail)).thenReturn(
+		when(galaxyRoleSearch.findUserRoleWithEmail(realAdminEmail)).thenReturn(
 				realAdminRole);
-		when(galaxySearch.userRoleExistsFor(realAdminEmail)).thenReturn(true);
+		when(galaxyRoleSearch.userRoleExistsFor(realAdminEmail)).thenReturn(true);
 		when(galaxyLibrary.buildEmptyLibrary(libraryName)).thenReturn(
 				returnedLibrary);
 		when(
@@ -244,14 +251,14 @@ public class GalaxyAPITest {
 				.thenReturn(realUser);
 		when(galaxySearch.galaxyUserExists(realUserEmail))
 			.thenReturn(true);
-		when(galaxySearch.findUserRoleWithEmail(realUserEmail)).thenReturn(
+		when(galaxyRoleSearch.findUserRoleWithEmail(realUserEmail)).thenReturn(
 				realUserRole);
-		when(galaxySearch.userRoleExistsFor(realUserEmail)).thenReturn(true);
+		when(galaxyRoleSearch.userRoleExistsFor(realUserEmail)).thenReturn(true);
 		when(galaxySearch.findLibraryWithId(libraryId)).thenReturn(
 				existingLibrary);
-		when(galaxySearch.findUserRoleWithEmail(realAdminEmail)).thenReturn(
+		when(galaxyRoleSearch.findUserRoleWithEmail(realAdminEmail)).thenReturn(
 				realAdminRole);
-		when(galaxySearch.userRoleExistsFor(realAdminEmail)).thenReturn(true);
+		when(galaxyRoleSearch.userRoleExistsFor(realAdminEmail)).thenReturn(true);
 		when(galaxySearch.findLibraryWithName(libraryName)).thenReturn(
 				libraries);
 		when(galaxySearch.libraryExists(libraryName)).thenReturn(true);
@@ -537,7 +544,7 @@ public class GalaxyAPITest {
 		when(galaxySearch.findUserWithEmail(realUserEmail))
 				.thenReturn(realUser);
 		when(galaxySearch.galaxyUserExists(realUserEmail)).thenReturn(true);
-		when(galaxySearch.userRoleExistsFor(realUserEmail))
+		when(galaxyRoleSearch.userRoleExistsFor(realUserEmail))
 				.thenReturn(false);
 
 		workflowRESTAPI.buildGalaxyLibrary(libraryName, realUserEmail);

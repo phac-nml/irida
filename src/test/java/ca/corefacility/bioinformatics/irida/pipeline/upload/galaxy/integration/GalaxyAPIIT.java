@@ -67,6 +67,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResu
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.ProgressUpdate;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.UploadEventListenerTracker;
@@ -106,7 +107,7 @@ public class GalaxyAPIIT {
 
 	@Autowired
 	private GalaxyAPI galaxyAPI;
-
+	
 	private List<Path> dataFilesSingle;
 	private List<Path> dataFilesDouble;
 
@@ -118,7 +119,7 @@ public class GalaxyAPIIT {
 	public void setup() throws URISyntaxException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 		galaxyAPI.setDataStorage(Uploader.DataStorage.REMOTE);
-
+		
 		setupDataFiles();
 	}
 
@@ -986,10 +987,13 @@ public class GalaxyAPIIT {
 			UploadException, InterruptedException {
 		GalaxySearch galaxySearchAdmin = new GalaxySearch(
 				localGalaxy.getGalaxyInstanceAdmin());
+		GalaxyRoleSearch galaxyRoleSearchAdmin = new GalaxyRoleSearch(
+				localGalaxy.getGalaxyInstanceAdmin().getRolesClient(),
+				localGalaxy.getGalaxyURL());
 		GalaxySearch galaxySearchUser1 = new GalaxySearch(
 				localGalaxy.getGalaxyInstanceUser1());
 		GalaxyLibraryBuilder galaxyLibrary = new GalaxyLibraryBuilder(
-				localGalaxy.getGalaxyInstanceAdmin(), galaxySearchAdmin);
+				localGalaxy.getGalaxyInstanceAdmin(), galaxyRoleSearchAdmin);
 		UploadResult expectedUploadResult;
 
 		GalaxyProjectName libraryName = new GalaxyProjectName(

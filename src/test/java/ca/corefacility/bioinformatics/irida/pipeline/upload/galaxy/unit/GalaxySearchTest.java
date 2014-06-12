@@ -19,7 +19,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
@@ -40,7 +39,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
-import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.github.jmchilton.blend4j.galaxy.beans.User;
 
 /**
@@ -106,7 +104,6 @@ public class GalaxySearchTest {
 		
 		when(galaxyInstance.getHistoriesClient()).thenReturn(historiesClient);
 
-		setupRolesTest();
 		setupUserTest();
 		setupLibraryTest();
 		setupLibraryContentTest();
@@ -128,27 +125,6 @@ public class GalaxySearchTest {
 		datasetHistoryContent.setId(DATA_ID);
 		datasetHistoryContents = new ArrayList<HistoryContents>();
 		datasetHistoryContents.add(datasetHistoryContent);
-	}
-
-	/**
-	 * Setup user roles.
-	 */
-	private void setupRolesTest() {
-		when(galaxyInstance.getRolesClient()).thenReturn(rolesClient);
-
-		Role role1 = new Role();
-		role1.setName("role1@localhost");
-		role1.setId("1");
-
-		Role role2 = new Role();
-		role2.setName("role2@localhost");
-		role2.setId("2");
-
-		List<Role> roleList = new ArrayList<Role>();
-		roleList.add(role1);
-		roleList.add(role2);
-
-		when(rolesClient.getRoles()).thenReturn(roleList);
 	}
 
 	/**
@@ -366,52 +342,6 @@ public class GalaxySearchTest {
 	@Test
 	public void testNoLibraryContentExists() {
 		assertFalse(galaxySearch.libraryContentExists(INVALID_LIBRARY_ID, ILLUMINA_FOLDER_NAME));
-	}
-
-	/**
-	 * Tests finding a user role.
-	 * @throws GalaxyUserNoRoleException 
-	 */
-	@Test
-	public void testFindUserRoleWithEmail() throws GalaxyUserNoRoleException {
-		Role foundRole = galaxySearch.findUserRoleWithEmail(new GalaxyAccountEmail("role1@localhost"));
-		assertNotNull(foundRole);
-		assertEquals("role1@localhost", foundRole.getName());
-		assertEquals("1", foundRole.getId());
-	}
-
-	/**
-	 * Tests no finding a user role.
-	 * @throws GalaxyUserNoRoleException 
-	 */
-	@Test(expected=GalaxyUserNoRoleException.class)
-	public void testNoFindUserRoleWithEmail() throws GalaxyUserNoRoleException {
-		galaxySearch.findUserRoleWithEmail(new GalaxyAccountEmail("invalid@localhost"));
-	}
-	
-	/**
-	 * Tests finding a null user role
-	 * @throws GalaxyUserNoRoleException 
-	 */
-	@Test(expected=NullPointerException.class)
-	public void testNullFindUserRoleWithEmail() throws GalaxyUserNoRoleException {
-		galaxySearch.findUserRoleWithEmail(null);
-	}
-	
-	/**
-	 * Tests finding a user role.
-	 */
-	@Test
-	public void testUserRoleExistsFor() {
-		assertTrue(galaxySearch.userRoleExistsFor(new GalaxyAccountEmail("role1@localhost")));
-	}
-	
-	/**
-	 * Tests not finding a user role.
-	 */
-	@Test
-	public void testNoUserRoleExistsFor() {
-		assertFalse(galaxySearch.userRoleExistsFor(new GalaxyAccountEmail("invalid@localhost")));
 	}
 
 	/**

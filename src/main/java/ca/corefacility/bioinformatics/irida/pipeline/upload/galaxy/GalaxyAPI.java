@@ -69,6 +69,7 @@ public class GalaxyAPI {
 	private GalaxyInstance galaxyInstance;
 	private GalaxyAccountEmail adminEmail;
 	private GalaxySearch galaxySearchAdmin;
+	private GalaxyRoleSearch galaxyRoleSearchAdmin;
 	private GalaxyLibraryBuilder galaxyLibrary;
 	private Uploader.DataStorage dataStorage = Uploader.DataStorage.REMOTE;
 
@@ -102,9 +103,11 @@ public class GalaxyAPI {
 			throw new RuntimeException("Could not create GalaxyInstance with URL=" + galaxyURL + ", adminEmail="
 					+ adminEmail);
 		}
-
+		
 		galaxySearchAdmin = new GalaxySearch(galaxyInstance);
-		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxySearchAdmin);
+		galaxyRoleSearchAdmin = new GalaxyRoleSearch(galaxyInstance.getRolesClient(),
+				galaxyURL);
+		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxyRoleSearchAdmin);
 
 		if (!isConnected()) {
 			throw new GalaxyConnectException("Could not create GalaxyInstance with URL=" + galaxyURL + ", adminEmail="
@@ -134,8 +137,17 @@ public class GalaxyAPI {
 		this.galaxyInstance = galaxyInstance;
 		this.adminEmail = adminEmail;
 
+		URL galaxyURL;
+		try {
+			galaxyURL = new URL(galaxyInstance.getGalaxyUrl());
+		} catch (MalformedURLException e) {
+			throw new RuntimeException(e);
+		}
+		
 		galaxySearchAdmin = new GalaxySearch(galaxyInstance);
-		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxySearchAdmin);
+		galaxyRoleSearchAdmin = new GalaxyRoleSearch(galaxyInstance.getRolesClient(),
+				galaxyURL);
+		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxyRoleSearchAdmin);
 
 		if (!isConnected()) {
 			throw new GalaxyConnectException("Could not create GalaxyInstance with URL="
@@ -157,6 +169,8 @@ public class GalaxyAPI {
 	 *            filesystem as the archive.
 	 * @param galaxySearch
 	 *            A GalaxySearch object.
+	 * @param galaxyRoleSearch
+	 *            A GalaxyRoleSearch object.
 	 * @param galaxyLibrary
 	 *            A GalaxyLibrary object.
 	 * @throws ConstraintViolationException
@@ -164,11 +178,13 @@ public class GalaxyAPI {
 	 * @throws GalaxyConnectException
 	 *             If an issue connecting to Galaxy occurred.
 	 */
-	public GalaxyAPI(GalaxyInstance galaxyInstance, @Valid GalaxyAccountEmail adminEmail, GalaxySearch galaxySearch,
+	public GalaxyAPI(GalaxyInstance galaxyInstance, @Valid GalaxyAccountEmail adminEmail, 
+			GalaxySearch galaxySearch, GalaxyRoleSearch galaxyRoleSearch,
 			GalaxyLibraryBuilder galaxyLibrary) throws ConstraintViolationException, GalaxyConnectException {
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
 		checkNotNull(adminEmail, "adminEmail is null");
 		checkNotNull(galaxySearch, "galaxySearch is null");
+		checkNotNull(galaxyRoleSearch, "galaxyRoleSearch is null");
 		checkNotNull(galaxyLibrary, "galaxyLibrary is null");
 
 		this.galaxyInstance = galaxyInstance;
@@ -176,6 +192,7 @@ public class GalaxyAPI {
 
 		this.galaxyLibrary = galaxyLibrary;
 		this.galaxySearchAdmin = galaxySearch;
+		this.galaxyRoleSearchAdmin = galaxyRoleSearch;
 
 		if (!isConnected()) {
 			throw new GalaxyConnectException("Could not use GalaxyInstance with URL=" + galaxyInstance.getGalaxyUrl()
@@ -219,7 +236,7 @@ public class GalaxyAPI {
 			throw new GalaxyUserNotFoundException(galaxyUserEmail, getGalaxyUrl());
 		}
 
-		if (!galaxySearchAdmin.userRoleExistsFor(galaxyUserEmail)) {
+		if (!galaxyRoleSearchAdmin.userRoleExistsFor(galaxyUserEmail)) {
 			throw new GalaxyUserNoRoleException("Could not find role for Galaxy user with email=" + galaxyUserEmail);
 		}
 

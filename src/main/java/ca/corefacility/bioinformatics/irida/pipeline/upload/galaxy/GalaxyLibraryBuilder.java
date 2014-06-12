@@ -33,23 +33,23 @@ public class GalaxyLibraryBuilder {
 			.getLogger(GalaxyLibraryBuilder.class);
 
 	private GalaxyInstance galaxyInstance;
-	private GalaxySearch galaxySearch;
+	private GalaxyRoleSearch galaxyRoleSearch;
 
 	/**
 	 * Creates a new GalaxyLibrary object for working with Galaxy libraries.
 	 * 
 	 * @param galaxyInstance
 	 *            The GalaxyInstance object to work with.
-	 * @param galaxySearch
-	 *            The GalaxySearch object to use for searching.
+	 *  @param galaxyRoleSearch
+	 *             The GalaxyRoleSearch used to search for Galaxy Roles.
 	 */
 	public GalaxyLibraryBuilder(GalaxyInstance galaxyInstance,
-			GalaxySearch galaxySearch) {
+				GalaxyRoleSearch galaxyRoleSearch) {
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
-		checkNotNull(galaxySearch, "galaxySearch is null");
+		checkNotNull(galaxyRoleSearch, "galaxyRoleSearch is null");
 
 		this.galaxyInstance = galaxyInstance;
-		this.galaxySearch = galaxySearch;
+		this.galaxyRoleSearch = galaxyRoleSearch;
 	}
 
 	/**
@@ -192,8 +192,8 @@ public class GalaxyLibraryBuilder {
 		checkNotNull(library.getId(), "library.getId() is null");
 		checkNotNull(userEmail, "userEmail is null");
 
-		Role userRole = galaxySearch.findUserRoleWithEmail(userEmail);
-		Role adminRole = galaxySearch.findUserRoleWithEmail(adminEmail);
+		Role userRole = galaxyRoleSearch.findUserRoleWithEmail(userEmail);
+		Role adminRole = galaxyRoleSearch.findUserRoleWithEmail(adminEmail);
 
 		LibraryPermissions permissions = new LibraryPermissions();
 		permissions.getAccessInRoles().add(userRole.getId());
