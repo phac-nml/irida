@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -9,12 +11,14 @@ import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient.FileUploadRequest;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
+import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset.Source;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
@@ -117,7 +121,60 @@ public class GalaxyHistoriesService {
 			
 			throw new UploadException(message);
 		} else {
-			return galaxySearch.getDatasetForFileInHistory(file.getName(), history);
+			return getDatasetForFileInHistory(file.getName(), history);
 		}
+	}
+	
+	
+	/**
+	 * Gets a Galaxy history with the given history id.
+	 * @param historyId  The history id to get a history for.
+	 * @return  The corresponding History object.
+	 * @throws NoGalaxyHistoryException If no history was found.
+	 */
+	public History getGalaxyHistory(String historyId) throws NoGalaxyHistoryException {
+		checkNotNull(historyId, "historyId is null");
+		
+		List<History> galaxyHistories = historiesClient.getHistories();
+		
+		if (galaxyHistories != null) {
+			Optional<History> h = galaxyHistories.stream().
+					filter((history) -> historyId.equals(history.getId())).findFirst();
+			if (h.isPresent()) {
+				return h.get();
+			}
+		}
+		
+		throw new NoGalaxyHistoryException("No history for id " + historyId);
+	}
+	
+	/**
+	 * Gets a Dataset object for a file with the given name in the given history.
+	 * @param filename  The name of the file to get a Dataset object for.
+	 * @param history  The history to look for the dataset.
+	 * @return The corresponding dataset for the given file name.
+	 * @throws GalaxyDatasetNotFoundException  If the dataset could not be found.
+	 */
+	public Dataset getDatasetForFileInHistory(String filename, History history) throws GalaxyDatasetNotFoundException {
+		checkNotNull(filename, "filename is null");
+		checkNotNull(history, "history is null");
+				
+		List<HistoryContents> historyContentsList =
+				historiesClient.showHistoryContents(history.getId());
+
+		Optional<HistoryContents> h = historyContentsList.stream().
+				filter((historyContents) -> filename.equals(historyContents.getName())).findFirst();
+		if (h.isPresent()) {
+			String dataId = h.get().getId();
+			if (dataId != null) {
+				Dataset dataset = historiesClient.showDataset(history.getId(), dataId);	
+				if (dataset != null) {
+					return dataset;
+				}
+			}
+		}
+
+		throw new GalaxyDatasetNotFoundException("dataset for file " + filename +
+				" not found in Galaxy history " + history.getId());
 	}
 }
