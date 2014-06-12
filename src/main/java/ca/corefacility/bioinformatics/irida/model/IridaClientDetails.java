@@ -317,7 +317,7 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	 *            the additionalInformation to set
 	 */
 	public void setAdditionalInformation(Map<String, Object> additionalInformation) {
-		Map<String, String> newMap = new HashMap<String, String>();
+		Map<String, String> newMap = new HashMap<>();
 		for (Map.Entry<String, Object> entry : additionalInformation.entrySet()) {
 			try {
 				newMap.put(entry.getKey(), (String) entry.getValue());
