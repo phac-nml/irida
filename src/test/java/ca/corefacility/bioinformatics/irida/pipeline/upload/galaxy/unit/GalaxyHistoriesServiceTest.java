@@ -61,6 +61,10 @@ public class GalaxyHistoriesServiceTest {
 	
 	private Path dataFile;
 	
+	/**
+	 * Sets up objects for history tests.
+	 * @throws URISyntaxException
+	 */
 	@Before
 	public void setup() throws URISyntaxException {
 		MockitoAnnotations.initMocks(this);
@@ -90,6 +94,9 @@ public class GalaxyHistoriesServiceTest {
 		return Arrays.asList(datasetHistoryContent);
 	}
 	
+	/**
+	 * Tests building a new history.
+	 */
 	@Test
 	public void testCreateNewHistory() {
 		History newHistory = new History();
@@ -99,6 +106,9 @@ public class GalaxyHistoriesServiceTest {
 		assertEquals(newHistory, galaxyHistory.newHistoryForWorkflow());
 	}
 	
+	/**
+	 * Tests moving a library dataset to a history.
+	 */
 	@Test
 	public void testLibraryDatasetToHistory() {
 		HistoryDetails historyDetails = new HistoryDetails();
@@ -111,6 +121,11 @@ public class GalaxyHistoriesServiceTest {
 		assertNotNull(galaxyHistory.libraryDatasetToHistory(libraryFileId, createdHistory));
 	}
 	
+	/**
+	 * Tests uploading a file to a history.
+	 * @throws GalaxyDatasetNotFoundException
+	 * @throws UploadException
+	 */
 	@Test
 	public void testFileToHistorySuccess() throws GalaxyDatasetNotFoundException, UploadException {
 		String filename = dataFile.toFile().getName();
@@ -126,6 +141,11 @@ public class GalaxyHistoriesServiceTest {
 		assertEquals(dataset, galaxyHistory.fileToHistory(dataFile, "fastqsanger", createdHistory));
 	}
 	
+	/**
+	 * Tests failing to upload a file to a history.
+	 * @throws GalaxyDatasetNotFoundException
+	 * @throws UploadException
+	 */
 	@Test(expected=UploadException.class)
 	public void testFileToHistoryFailUpload() throws GalaxyDatasetNotFoundException, UploadException {
 		History createdHistory = new History();
@@ -137,6 +157,11 @@ public class GalaxyHistoriesServiceTest {
 		galaxyHistory.fileToHistory(dataFile, FILE_TYPE, createdHistory);
 	}
 	
+	/**
+	 * Tests failing to find a Dataset object after uploading a file to a history.
+	 * @throws GalaxyDatasetNotFoundException
+	 * @throws UploadException
+	 */
 	@Test(expected=GalaxyDatasetNotFoundException.class)
 	public void testFileToHistoryFailFindDataset() throws GalaxyDatasetNotFoundException, UploadException {
 		String filename = dataFile.toFile().getName();
