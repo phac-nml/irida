@@ -60,7 +60,6 @@ public class WithMockOAuth2SecurityContextFactory implements WithSecurityContext
 				principal.getAuthorities());
 
 		//Create the authorization request and OAuth2Authentication object
-		//OAuth2Request oAuth2Request = new OAuth2Request(null, clientId, authorities, true, scopeCollection, null, null, null, null);
 		AuthorizationRequest authRequest = new DefaultAuthorizationRequest(clientId, scopeCollection);
 		OAuth2Authentication oAuth = new OAuth2Authentication(authRequest, authentication);
 		
