@@ -207,9 +207,7 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	 */
 	@Override
 	public Collection<GrantedAuthority> getAuthorities() {
-		ArrayList<GrantedAuthority> roles = new ArrayList<>();
-		authorities.forEach(authority -> roles.add(authority));
-		return roles;
+		return new ArrayList<>(authorities);
 	}
 
 	/**
