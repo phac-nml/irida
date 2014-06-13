@@ -261,14 +261,6 @@ public class ProjectServiceImplIT {
 	}
 	
 	@Test
-	@WithMockUser(username="user1", password="password1", roles="USER")
-	public void testlistPagedProjectsForUser(){
-		User user = userService.read(3l);
-		Page<ProjectUserJoin> searchPagedProjectsForUser = projectService.getPagedProjectsForUser(user, 0, 10, Direction.ASC);
-		assertEquals(2,searchPagedProjectsForUser.getTotalElements());
-	}
-	
-	@Test
 	@WithMockUser(username="user1", password="password1", roles="ADMIN")
 	public void testSearchProjects(){
 		Page<Project> searchProjects = projectService.searchProjects("2", 0, 10, Direction.ASC);

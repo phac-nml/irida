@@ -113,18 +113,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	public Page<ProjectUserJoin> searchPagedProjectsForUser(User user, String searchTerm, int page, int size, Direction order, String... sortProperties);
 	
 	/**
-	 * List all {@link Project}s associated with a particular {@link User}.
-	 * 
-	 * @param user the user to get projects for.
-	 * @param page The page number to read
-	 * @param size The size of the pages to read
-	 * @param order The order to sort in
-	 * @param sortProperties The properties to sort on
-	 * @return The matching projects
-	 */
-	public Page<ProjectUserJoin> getPagedProjectsForUser(User user, int page, int size, Direction order, String... sortProperties);
-
-	/**
 	 * Get all {@link Project}s associated with a particular {@link User} where
 	 * that user has a {@link ProjectRole}.PROJECT_OWNER role on the project.
 	 * 

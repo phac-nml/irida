@@ -196,15 +196,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Page<ProjectUserJoin> getPagedProjectsForUser(User user, int page, int size, Direction order,
-			String... sortProperties) {
-		return searchPagedProjectsForUser(user, "", page, size, order, sortProperties);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public List<Join<Project, User>> getProjectsForUserWithRole(User user, ProjectRole role) {
 		return pujRepository.getProjectsForUserWithRole(user, role);
 	}
