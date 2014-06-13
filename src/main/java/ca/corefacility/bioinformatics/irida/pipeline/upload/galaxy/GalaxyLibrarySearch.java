@@ -17,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectNam
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
+import com.sun.jersey.api.client.UniformInterfaceException;
 
 /**
  * Class containing methods used to search for library information in Galaxy
@@ -81,12 +82,17 @@ public class GalaxyLibrarySearch {
 	public Map<String, LibraryContent> libraryContentAsMap(String libraryId) throws NoGalaxyContentFoundException {
 		checkNotNull(libraryId, "libraryId is null");
 
-		List<LibraryContent> libraryContents = librariesClient.getLibraryContents(libraryId);
-
-		if (libraryContents != null) {
-			Map<String, LibraryContent> map = libraryContents.stream().collect(
-					Collectors.toMap(LibraryContent::getName, Function.identity()));
-			return map;
+		try {
+			List<LibraryContent> libraryContents = librariesClient.getLibraryContents(libraryId);
+	
+			if (libraryContents != null) {
+				Map<String, LibraryContent> map = libraryContents.stream().collect(
+						Collectors.toMap(LibraryContent::getName, Function.identity()));
+				return map;
+			}
+		} catch (UniformInterfaceException e) {
+			throw new NoGalaxyContentFoundException("Could not find library content for id " + libraryId + " in Galaxy "
+					+ galaxyURL, e);
 		}
 
 		throw new NoGalaxyContentFoundException("Could not find library content for id " + libraryId + " in Galaxy "

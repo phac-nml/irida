@@ -21,11 +21,9 @@ import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
 
 import com.github.jmchilton.blend4j.galaxy.beans.Role;
-import com.github.jmchilton.blend4j.galaxy.beans.User;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 
 /**

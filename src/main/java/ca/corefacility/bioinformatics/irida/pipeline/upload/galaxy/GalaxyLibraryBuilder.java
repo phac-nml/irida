@@ -224,6 +224,6 @@ public class GalaxyLibraryBuilder {
 							+ galaxyURL
 							+ ": response status=" + response.getClientResponseStatus() +
 							", message=\"" + response.getEntity(String.class) + "\"");
-		}
+		} 
 	}
 }
