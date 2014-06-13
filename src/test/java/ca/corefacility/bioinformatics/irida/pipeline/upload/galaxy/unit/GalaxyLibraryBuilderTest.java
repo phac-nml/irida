@@ -35,7 +35,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSea
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxyLibraryTest {
+public class GalaxyLibraryBuilderTest {
 	@Mock
 	private GalaxyRoleSearch galaxyRoleSearch;
 	@Mock
