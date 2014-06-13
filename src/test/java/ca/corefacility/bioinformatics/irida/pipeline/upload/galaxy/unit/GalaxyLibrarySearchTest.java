@@ -24,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrarySearch;
 
-import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.RolesClient;
@@ -45,9 +44,7 @@ public class GalaxyLibrarySearchTest {
 	@Mock
 	private LibrariesClient librariesClient;
 	@Mock
-	private GalaxyInstance galaxyInstance;
-		
-	@Mock private HistoriesClient historiesClient;
+	private HistoriesClient historiesClient;
 
 	private GalaxyLibrarySearch galaxySearch;
 
@@ -85,23 +82,17 @@ public class GalaxyLibrarySearchTest {
 	public void setup() throws FileNotFoundException, URISyntaxException, MalformedURLException {
 		MockitoAnnotations.initMocks(this);
 		
-		when(galaxyInstance.getHistoriesClient()).thenReturn(historiesClient);
-
 		setupLibraryTest();
 		setupLibraryContentTest();
 		
 		galaxyURL = new URL("http://localhost");
-		galaxySearch = new GalaxyLibrarySearch(librariesClient, galaxyURL);
-		
-		when(galaxyInstance.getGalaxyUrl()).thenReturn(galaxyURL.toString());
+		galaxySearch = new GalaxyLibrarySearch(librariesClient, galaxyURL);		
 	}
 
 	/**
 	 * Setup libraries.
 	 */
 	private void setupLibraryTest() {
-		when(galaxyInstance.getLibrariesClient()).thenReturn(librariesClient);
-
 		Library library = new Library(LIBRARY_NAME.getName());
 		library.setId(LIBRARY_ID);
 
