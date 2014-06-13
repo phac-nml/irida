@@ -12,10 +12,14 @@ import java.util.Set;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -47,7 +51,7 @@ import com.google.common.collect.Sets;
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
 		IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
 @ActiveProfiles("test")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class, WithSecurityContextTestExcecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectServiceImplIT {
@@ -152,7 +156,7 @@ public class ProjectServiceImplIT {
 
 		Collection<Join<Project, User>> projects = asRole(Role.ROLE_ADMIN).projectService.getProjectsForUser(u);
 
-		assertEquals("User should have one project.", 1, projects.size());
+		assertEquals("User should have 2 projects.", 2, projects.size());
 		assertEquals("User should be on project 2.", Long.valueOf(2l), projects.iterator().next().getSubject().getId());
 	}
 
@@ -226,7 +230,7 @@ public class ProjectServiceImplIT {
 		List<Project> projects = (List<Project>) asUsername("user1", Role.ROLE_USER).projectService.findAll();
 		// this user should only have access to one project:
 
-		assertEquals("Wrong number of projects.", 1, projects.size());
+		assertEquals("Wrong number of projects.", 2, projects.size());
 	}
 
 	@Test
@@ -242,6 +246,25 @@ public class ProjectServiceImplIT {
 		User user = asRole(Role.ROLE_ADMIN).userService.read(3l);
 		Project project = asRole(Role.ROLE_ADMIN).projectService.read(2l);
 		assertTrue(asRole(Role.ROLE_ADMIN).projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER));
+	}
+	
+	@Test
+	@WithMockUser(username="user1", password="password1", roles="USER")
+	public void testSearchPagedProjectsForUser(){
+		User user = userService.read(3l);
+		Page<Join<Project, User>> searchPagedProjectsForUser = projectService.searchPagedProjectsForUser(user, "2", 0, 10, Direction.ASC);
+		assertEquals(1,searchPagedProjectsForUser.getTotalElements());
+		
+		searchPagedProjectsForUser = projectService.searchPagedProjectsForUser(user, "project", 0, 10, Direction.ASC);
+		assertEquals(2,searchPagedProjectsForUser.getTotalElements());
+	}
+	
+	@Test
+	@WithMockUser(username="user1", password="password1", roles="USER")
+	public void testlistPagedProjectsForUser(){
+		User user = userService.read(3l);
+		Page<Join<Project, User>> searchPagedProjectsForUser = projectService.getPagedProjectsForUser(user, 0, 10, Direction.ASC);
+		assertEquals(2,searchPagedProjectsForUser.getTotalElements());
 	}
 
 	private Project p() {

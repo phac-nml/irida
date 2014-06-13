@@ -11,6 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -153,6 +156,27 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional(readOnly = true)
 	public List<Join<Project, User>> getProjectsForUser(User user) {
 		return pujRepository.getProjectsForUser(user);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public Page<Join<Project, User>> searchPagedProjectsForUser(User user, String term, int page, int size, Direction order, String... sortProperties){
+		if(sortProperties.length == 0){
+			sortProperties = new String[]{CREATED_DATE_SORT_PROPERTY};
+		}
+		return pujRepository.getPagedProjectsForUserWithSearch(user,term, new PageRequest(page, size, order, sortProperties));
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Page<Join<Project, User>> getPagedProjectsForUser(User user, int page, int size, Direction order,
+			String... sortProperties) {
+		return searchPagedProjectsForUser(user, "", page, size, order, sortProperties);
 	}
 
 	/**

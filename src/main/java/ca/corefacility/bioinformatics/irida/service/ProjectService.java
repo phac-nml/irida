@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -84,6 +86,31 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return the projects associated with the user.
 	 */
 	public List<Join<Project, User>> getProjectsForUser(User user);
+	
+	/**
+	 * Search all {@link Project}s associated with a particular {@link User}.
+	 * 
+	 * @param user the user to get projects for.
+	 * @param searchTerm The search term in the Project name
+	 * @param page The page number to read
+	 * @param size The size of the pages to read
+	 * @param order The order to sort in
+	 * @param sortProperties The properties to sort on
+	 * @return The matching projects
+	 */
+	public Page<Join<Project, User>> searchPagedProjectsForUser(User user, String searchTerm, int page, int size, Direction order, String... sortProperties);
+	
+	/**
+	 * List all {@link Project}s associated with a particular {@link User}.
+	 * 
+	 * @param user the user to get projects for.
+	 * @param page The page number to read
+	 * @param size The size of the pages to read
+	 * @param order The order to sort in
+	 * @param sortProperties The properties to sort on
+	 * @return The matching projects
+	 */
+	public Page<Join<Project, User>> getPagedProjectsForUser(User user, int page, int size, Direction order, String... sortProperties);
 
 	/**
 	 * Get all {@link Project}s associated with a particular {@link User} where
