@@ -18,11 +18,6 @@ import org.springframework.security.web.authentication.AnonymousAuthenticationFi
  */
 public class UnauthenticatedAnonymousAuthenticationFilter extends AnonymousAuthenticationFilter {
 
-	@Deprecated
-	public UnauthenticatedAnonymousAuthenticationFilter() {
-		super();
-	}
-
 	/**
 	 * Creates a filter with a principal named "anonymousUser" and the single
 	 * authority "ROLE_ANONYMOUS".
