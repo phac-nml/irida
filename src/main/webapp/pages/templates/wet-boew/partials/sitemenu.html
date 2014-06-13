@@ -11,6 +11,7 @@
         <ul class="list-inline menu" role="menubar">
             <li><a href="#projects" class="item" th:text="#{nav.main.project}">Projects</a>
                 <ul class="sm list-unstyled" id="projects" role="menu">
+                    <li><a href="/projects" th:href="@{/projects}" th:text="#{nav.main.project}">List Projects</a></li>
                     <li><a href="#" th:text="#{nav.main.project-create}">Create New Project</a></li>
                 </ul>
             </li>
