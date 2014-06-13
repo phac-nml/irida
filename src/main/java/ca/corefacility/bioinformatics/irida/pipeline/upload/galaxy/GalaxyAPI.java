@@ -109,7 +109,8 @@ public class GalaxyAPI {
 		galaxyRoleSearchAdmin = new GalaxyRoleSearch(galaxyInstance.getRolesClient(),
 				galaxyURL);
 		galaxyUserSearchAdmin = new GalaxyUserSearch(galaxyInstance.getUsersClient(), galaxyURL);
-		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxyRoleSearchAdmin);
+		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance.getLibrariesClient(),
+				galaxyRoleSearchAdmin, galaxyURL);
 
 		if (!isConnected()) {
 			throw new GalaxyConnectException("Could not create GalaxyInstance with URL=" + galaxyURL + ", adminEmail="
@@ -150,7 +151,8 @@ public class GalaxyAPI {
 		galaxyRoleSearchAdmin = new GalaxyRoleSearch(galaxyInstance.getRolesClient(),
 				galaxyURL);
 		galaxyUserSearchAdmin = new GalaxyUserSearch(galaxyInstance.getUsersClient(), galaxyURL);
-		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxyRoleSearchAdmin);
+		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance.getLibrariesClient(),
+				galaxyRoleSearchAdmin, galaxyURL);
 
 		if (!isConnected()) {
 			throw new GalaxyConnectException("Could not create GalaxyInstance with URL="

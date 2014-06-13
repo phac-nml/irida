@@ -4,14 +4,15 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
@@ -36,8 +37,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSea
  */
 public class GalaxyLibraryTest {
 	@Mock
-	private GalaxyInstance galaxyInstance;
-	@Mock
 	private GalaxyRoleSearch galaxyRoleSearch;
 	@Mock
 	private LibrariesClient librariesClient;
@@ -54,6 +53,8 @@ public class GalaxyLibraryTest {
 	private final static GalaxyAccountEmail INVALID_EMAIL = new GalaxyAccountEmail(
 			"invalid@localhost");
 	private final static String ROOT_FOLDER_ID = "10";
+	
+	private static URL galaxyURL;
 
 	private Library testLibrary;
 	private GalaxyLibraryBuilder galaxyLibrary;
@@ -63,11 +64,14 @@ public class GalaxyLibraryTest {
 	 * @throws FileNotFoundException
 	 * @throws URISyntaxException
 	 * @throws GalaxyUserNoRoleException
+	 * @throws MalformedURLException 
 	 */
 	@Before
 	public void setup() throws FileNotFoundException, URISyntaxException,
-			GalaxyUserNoRoleException {
+			GalaxyUserNoRoleException, MalformedURLException {
 		MockitoAnnotations.initMocks(this);
+		
+		galaxyURL = new URL("http://localhost");
 
 		when(okayResponse.getClientResponseStatus()).thenReturn(
 				ClientResponse.Status.OK);
@@ -78,7 +82,8 @@ public class GalaxyLibraryTest {
 		setupPermissionsTest();
 		setupFoldersTest();
 
-		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxyRoleSearch);
+		galaxyLibrary = new GalaxyLibraryBuilder(librariesClient,
+				galaxyRoleSearch, galaxyURL);
 	}
 
 	/**
@@ -88,8 +93,6 @@ public class GalaxyLibraryTest {
 		testLibrary = new Library();
 		testLibrary.setName("test");
 		testLibrary.setId(LIBRARY_ID);
-
-		when(galaxyInstance.getLibrariesClient()).thenReturn(librariesClient);
 	}
 
 	/**

@@ -995,7 +995,8 @@ public class GalaxyAPIIT {
 				localGalaxy.getGalaxyInstanceUser1().getLibrariesClient(),
 				localGalaxy.getGalaxyURL());
 		GalaxyLibraryBuilder galaxyLibrary = new GalaxyLibraryBuilder(
-				localGalaxy.getGalaxyInstanceAdmin(), galaxyRoleSearchAdmin);
+				localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient(),
+				galaxyRoleSearchAdmin, localGalaxy.getGalaxyURL());
 		UploadResult expectedUploadResult;
 
 		GalaxyProjectName libraryName = new GalaxyProjectName(
