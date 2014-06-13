@@ -1,5 +1,6 @@
-package ca.corefacility.bioinformatics.irida.ria.web;
+package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
+import ca.corefacility.bioinformatics.irida.ria.web.DashboardController;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

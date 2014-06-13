@@ -1,9 +1,12 @@
-package ca.corefacility.bioinformatics.irida.ria.web;
+package ca.corefacility.bioinformatics.irida.ria.unit.web;
+
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
+
+import ca.corefacility.bioinformatics.irida.ria.web.LoginController;
 
 /**
  * Unit Tests for {@link LoginController}
