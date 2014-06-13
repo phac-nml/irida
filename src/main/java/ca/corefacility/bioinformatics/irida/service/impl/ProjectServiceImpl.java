@@ -163,7 +163,10 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		return pujRepository.getProjectsForUser(user);
 	}
 	
-	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Page<Project> searchProjects(String name, int page, int size, Direction order, String... sortProperties) {
 		if (sortProperties.length == 0) {
 			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
