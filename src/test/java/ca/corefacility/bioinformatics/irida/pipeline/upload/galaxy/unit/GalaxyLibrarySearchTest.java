@@ -24,10 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrarySearch;
 
-import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
-import com.github.jmchilton.blend4j.galaxy.RolesClient;
-import com.github.jmchilton.blend4j.galaxy.UsersClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 
@@ -37,14 +34,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
  *
  */
 public class GalaxyLibrarySearchTest {
-	@Mock
-	private RolesClient rolesClient;
-	@Mock
-	private UsersClient usersClient;
-	@Mock
-	private LibrariesClient librariesClient;
-	@Mock
-	private HistoriesClient historiesClient;
+	@Mock private LibrariesClient librariesClient;
 
 	private GalaxyLibrarySearch galaxySearch;
 
