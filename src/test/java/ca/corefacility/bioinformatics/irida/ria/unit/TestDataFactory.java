@@ -27,6 +27,11 @@ public class TestDataFactory {
 	public static final String PROJECT_NAME = "test_project";
 	private static final Project project = new Project(PROJECT_NAME);
 
+	/**
+	 * Creates a Page of Projects for testing.
+	 * 
+	 * @return Page of Projects (1 project)
+	 */
 	public static Page<Project> getProjectsPage() {
 		return new Page<Project>() {
 			@Override
@@ -109,6 +114,11 @@ public class TestDataFactory {
 		};
 	}
 
+	/**
+	 * Mocks a List of Project and Samples
+	 * 
+	 * @return A list of {@link ProjectSampleJoin}
+	 */
 	public static List<Join<Project, Sample>> getSamplesForProject() {
 		List<Join<Project, Sample>> list = new ArrayList<>();
 		for (int i = 0; i < NUM_PROJECT_SAMPLES; i++) {
@@ -117,6 +127,11 @@ public class TestDataFactory {
 		return list;
 	}
 
+	/**
+	 * Mocks a List of Project and Users
+	 * 
+	 * @return A list of {@link ProjectUserJoin}
+	 */
 	public static List<Join<Project, User>> getUsersForProject() {
 		List<Join<Project, User>> list = new ArrayList<>();
 		for (int i = 0; i < NUM_PROJECT_USERS; i++) {
@@ -125,6 +140,11 @@ public class TestDataFactory {
 		return list;
 	}
 
+	/**
+	 * Accessor for a static project.
+	 * 
+	 * @return Static project
+	 */
 	public static Project getProject() {
 		return project;
 	}
