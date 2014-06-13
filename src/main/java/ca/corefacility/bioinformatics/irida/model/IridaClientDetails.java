@@ -94,6 +94,7 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	Collection<ClientRole> authorities;
 
 	private Date modifiedDate;
+	@NotNull
 	private Date createdDate;
 
 	/**
