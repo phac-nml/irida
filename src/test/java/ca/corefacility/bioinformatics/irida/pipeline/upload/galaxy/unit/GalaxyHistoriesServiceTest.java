@@ -30,7 +30,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrarySearch;
 
 /**
  * Tests the GalaxyHistory class
@@ -43,7 +42,6 @@ public class GalaxyHistoriesServiceTest {
 	@Mock private ToolsClient toolsClient;
 	@Mock private ClientResponse invalidResponse;
 	@Mock private ClientResponse okayResponse;
-	@Mock private GalaxyLibrarySearch galaxySearch;
 	
 	private GalaxyHistoriesService galaxyHistory;
 	
