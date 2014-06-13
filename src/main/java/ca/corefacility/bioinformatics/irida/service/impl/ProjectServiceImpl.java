@@ -31,10 +31,10 @@ import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-
 import static org.springframework.data.jpa.domain.Specifications.*;
 
 /**
@@ -50,7 +50,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private ProjectSampleJoinRepository psjRepository;
 	private SampleRepository sampleRepository;
 	private UserRepository userRepository;
-
+	private ProjectRepository projectRepository;
+	
 	protected ProjectServiceImpl() {
 		super(null, null, Project.class);
 	}
@@ -60,6 +61,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
 			ProjectSampleJoinRepository psjRepository, Validator validator) {
 		super(projectRepository, validator, Project.class);
+		this.projectRepository = projectRepository;
 		this.sampleRepository = sampleRepository;
 		this.userRepository = userRepository;
 		this.pujRepository = pujRepository;
@@ -159,6 +161,16 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional(readOnly = true)
 	public List<Join<Project, User>> getProjectsForUser(User user) {
 		return pujRepository.getProjectsForUser(user);
+	}
+	
+	
+	public Page<Project> searchProjects(String name, int page, int size, Direction order, String... sortProperties) {
+		if (sortProperties.length == 0) {
+			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
+		}
+
+		return projectRepository.findAll(ProjectSpecification.searchProjectName(name), new PageRequest(page, size,
+				order, sortProperties));
 	}
 
 	/**
