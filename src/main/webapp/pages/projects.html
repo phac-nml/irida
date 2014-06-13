@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="templates/wet-boew/wet-layout">
+<head>
+    <title th:text="#{projects.title}">THIS IS SOMETHING WRONG</title>
+</head>
+<body>
+<main layout:fragment="content" class="container main-container" role="main" property="mainContentOfPage">
+    <h1>Projects Page</h1>
+    <table id="projectsTable" class="wb-tables table table-striped table-hover"
+           data-wb-tables='{ &quot;processing&quot; : true, &quot;serverSide&quot; : true, &quot;ajax&quot; : &quot;/projects/ajax/list&quot;, &quot;stateSave&quot; : true, &quot;stateDuration&quot; : -1, &quot;columns&quot; : &lbrack; &lbrace; &quot;data&quot; : &quot;id&quot; &rbrace;, &lbrace; &quot;data&quot; : &quot;name&quot; &rbrace;, &lbrace; &quot;data&quot; : &quot;samples&quot;, &quot;orderable&quot; : false &rbrace;, &lbrace; &quot;data&quot; : &quot;collaborators&quot;, &quot;orderable&quot; : false &rbrace;, &lbrace; &quot;data&quot; : &quot;createdDate&quot; &rbrace;, &lbrace; &quot;data&quot; : &quot;modifiedDate&quot; &rbrace; &rbrack; }'>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Samples</th>
+            <th>Collaborators</th>
+            <th>Date Created</th>
+            <th>Modified Date</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</main>
+
+<script layout:fragment="scripts" th:inline="javascript">
+    /*<![CDATA[*/
+    $(document).ready(function () {
+        $('#projectsTable').find('tbody').on('click', 'tr', function () {
+            var id = $(this).find('td:first').text();
+            window.location = [[@{/projects/}]] + id;
+        });
+    });
+    /*]]>*/
+</script>
+</body>
+</html>
