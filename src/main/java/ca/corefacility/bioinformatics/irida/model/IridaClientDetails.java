@@ -250,13 +250,6 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	}
 
 	/**
-	 * @return the serialversionuid
-	 */
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
-	/**
 	 * @param clientId
 	 *            the clientId to set
 	 */
