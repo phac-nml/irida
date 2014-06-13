@@ -267,6 +267,15 @@ public class ProjectServiceImplIT {
 		Page<ProjectUserJoin> searchPagedProjectsForUser = projectService.getPagedProjectsForUser(user, 0, 10, Direction.ASC);
 		assertEquals(2,searchPagedProjectsForUser.getTotalElements());
 	}
+	
+	@Test
+	@WithMockUser(username="user1", password="password1", roles="ADMIN")
+	public void testSearchProjects(){
+		Page<Project> searchProjects = projectService.searchProjects("2", 0, 10, Direction.ASC);
+		assertEquals(1,searchProjects.getTotalElements());
+		Project next = searchProjects.iterator().next();
+		assertEquals("project2",next.getName());
+	}
 
 	private Project p() {
 		Project p = new Project();
