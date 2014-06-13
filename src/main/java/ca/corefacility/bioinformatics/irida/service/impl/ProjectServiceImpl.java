@@ -31,8 +31,11 @@ import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+
+import static org.springframework.data.jpa.domain.Specifications.*;
 
 /**
  * A specialized service layer for projects.
@@ -62,12 +65,12 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.pujRepository = pujRepository;
 		this.psjRepository = psjRepository;
 	}
-	
+
 	@Override
 	public Iterable<Project> findAll() {
 		return super.findAll();
 	}
-	
+
 	@Override
 	public Project read(Long id) {
 		return super.read(id);
@@ -157,24 +160,28 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public List<Join<Project, User>> getProjectsForUser(User user) {
 		return pujRepository.getProjectsForUser(user);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public Page<Join<Project, User>> searchPagedProjectsForUser(User user, String term, int page, int size, Direction order, String... sortProperties){
-		if(sortProperties.length == 0){
-			sortProperties = new String[]{CREATED_DATE_SORT_PROPERTY};
+	public Page<ProjectUserJoin> searchPagedProjectsForUser(User user, String term, int page, int size,
+			Direction order, String... sortProperties) {
+		if (sortProperties.length == 0) {
+			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
 		}
-		return pujRepository.getPagedProjectsForUserWithSearch(user,term, new PageRequest(page, size, order, sortProperties));
+		return pujRepository.findAll(
+				where(ProjectUserJoinSpecification.projectHasUser(user)).and(
+						ProjectUserJoinSpecification.projectSearchName(term)), new PageRequest(page, size, order,
+						sortProperties));
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Page<Join<Project, User>> getPagedProjectsForUser(User user, int page, int size, Direction order,
+	public Page<ProjectUserJoin> getPagedProjectsForUser(User user, int page, int size, Direction order,
 			String... sortProperties) {
 		return searchPagedProjectsForUser(user, "", page, size, order, sortProperties);
 	}
@@ -193,6 +200,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	public boolean userHasProjectRole(User user, Project project, ProjectRole projectRole) {
 		List<Join<Project, User>> projects = getProjectsForUserWithRole(user, projectRole);
-		return projects.contains(new ProjectUserJoin(project, user,projectRole));
+		return projects.contains(new ProjectUserJoin(project, user, projectRole));
 	}
 }

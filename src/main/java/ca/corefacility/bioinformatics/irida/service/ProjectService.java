@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -98,7 +99,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @param sortProperties The properties to sort on
 	 * @return The matching projects
 	 */
-	public Page<Join<Project, User>> searchPagedProjectsForUser(User user, String searchTerm, int page, int size, Direction order, String... sortProperties);
+	public Page<ProjectUserJoin> searchPagedProjectsForUser(User user, String searchTerm, int page, int size, Direction order, String... sortProperties);
 	
 	/**
 	 * List all {@link Project}s associated with a particular {@link User}.
@@ -110,7 +111,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @param sortProperties The properties to sort on
 	 * @return The matching projects
 	 */
-	public Page<Join<Project, User>> getPagedProjectsForUser(User user, int page, int size, Direction order, String... sortProperties);
+	public Page<ProjectUserJoin> getPagedProjectsForUser(User user, int page, int size, Direction order, String... sortProperties);
 
 	/**
 	 * Get all {@link Project}s associated with a particular {@link User} where

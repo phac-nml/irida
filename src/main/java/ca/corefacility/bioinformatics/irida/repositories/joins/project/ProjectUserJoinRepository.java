@@ -2,8 +2,7 @@ package ca.corefacility.bioinformatics.irida.repositories.joins.project;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -20,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
-public interface ProjectUserJoinRepository extends CrudRepository<ProjectUserJoin, Long> {
+public interface ProjectUserJoinRepository extends CrudRepository<ProjectUserJoin, Long>, JpaSpecificationExecutor<ProjectUserJoin> {
 	/**
 	 * Get all {@link User}s associated with a project.
 	 * 
@@ -55,22 +54,6 @@ public interface ProjectUserJoinRepository extends CrudRepository<ProjectUserJoi
 	 */
 	@Query("select j from ProjectUserJoin j where j.user = ?1")
 	public List<Join<Project, User>> getProjectsForUser(User user);
-
-	/**
-	 * Search the projects for a given user with a given search term
-	 * 
-	 * @param user
-	 *            The user to get projects for
-	 * @param searchTerm
-	 *            The term in the project name to search for
-	 * @param pageRequest
-	 *            The page request to page for
-	 * @return A Page of {@link ProjectUserJoin}s describing the projects
-	 *         associated with the user.
-	 */
-	@Query("select j from ProjectUserJoin j where j.user = ?1 AND j.project.name like %?2% ")
-	public Page<Join<Project, User>> getPagedProjectsForUserWithSearch(User user, String searchTerm,
-			Pageable pageRequest);
 
 	/**
 	 * Get all {@link Project}s associated with a particular {@link User} where

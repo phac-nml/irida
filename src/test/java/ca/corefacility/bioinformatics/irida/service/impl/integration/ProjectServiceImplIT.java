@@ -34,6 +34,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -252,7 +253,7 @@ public class ProjectServiceImplIT {
 	@WithMockUser(username="user1", password="password1", roles="USER")
 	public void testSearchPagedProjectsForUser(){
 		User user = userService.read(3l);
-		Page<Join<Project, User>> searchPagedProjectsForUser = projectService.searchPagedProjectsForUser(user, "2", 0, 10, Direction.ASC);
+		Page<ProjectUserJoin> searchPagedProjectsForUser = projectService.searchPagedProjectsForUser(user, "2", 0, 10, Direction.ASC);
 		assertEquals(1,searchPagedProjectsForUser.getTotalElements());
 		
 		searchPagedProjectsForUser = projectService.searchPagedProjectsForUser(user, "project", 0, 10, Direction.ASC);
@@ -263,7 +264,7 @@ public class ProjectServiceImplIT {
 	@WithMockUser(username="user1", password="password1", roles="USER")
 	public void testlistPagedProjectsForUser(){
 		User user = userService.read(3l);
-		Page<Join<Project, User>> searchPagedProjectsForUser = projectService.getPagedProjectsForUser(user, 0, 10, Direction.ASC);
+		Page<ProjectUserJoin> searchPagedProjectsForUser = projectService.getPagedProjectsForUser(user, 0, 10, Direction.ASC);
 		assertEquals(2,searchPagedProjectsForUser.getTotalElements());
 	}
 
