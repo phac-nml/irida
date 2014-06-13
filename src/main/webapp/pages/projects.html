@@ -9,15 +9,15 @@
 <main layout:fragment="content" class="container main-container" role="main" property="mainContentOfPage">
     <h1>Projects Page</h1>
     <table id="projectsTable" class="wb-tables table table-striped table-hover"
-           data-wb-tables='{ &quot;processing&quot; : true, &quot;serverSide&quot; : true, &quot;ajax&quot; : &quot;/projects/ajax/list&quot;, &quot;stateSave&quot; : true, &quot;stateDuration&quot; : -1, &quot;columns&quot; : &lbrack; &lbrace; &quot;data&quot; : &quot;id&quot; &rbrace;, &lbrace; &quot;data&quot; : &quot;name&quot; &rbrace;, &lbrace; &quot;data&quot; : &quot;samples&quot;, &quot;orderable&quot; : false &rbrace;, &lbrace; &quot;data&quot; : &quot;collaborators&quot;, &quot;orderable&quot; : false &rbrace;, &lbrace; &quot;data&quot; : &quot;createdDate&quot; &rbrace;, &lbrace; &quot;data&quot; : &quot;modifiedDate&quot; &rbrace; &rbrack; }'>
+           data-wb-tables='{ &quot;processing&quot; : true, &quot;serverSide&quot; : true, &quot;ajax&quot; : &quot;/projects/ajax/list&quot;, &quot;stateSave&quot; : true, &quot;stateDuration&quot; : -1, &quot;columns&quot; : &lbrack; &lbrace; &quot;data&quot; : &quot;id&quot;, &quot;visible&quot; : false &rbrace;, &lbrace; &quot;data&quot; : &quot;name&quot; &rbrace;, &lbrace; &quot;data&quot; : &quot;samples&quot;, &quot;orderable&quot; : false &rbrace;, &lbrace; &quot;data&quot; : &quot;collaborators&quot;, &quot;orderable&quot; : false &rbrace;, &lbrace; &quot;data&quot; : &quot;createdDate&quot; &rbrace;, &lbrace; &quot;data&quot; : &quot;modifiedDate&quot; &rbrace; &rbrack; }'>
         <thead>
         <tr>
             <th>ID</th>
-            <th>Name</th>
-            <th>Samples</th>
-            <th>Collaborators</th>
-            <th>Date Created</th>
-            <th>Modified Date</th>
+            <th th:text="#{projects.table.name}">Name</th>
+            <th th:text="#{projects.table.samples}">Samples</th>
+            <th th:text="#{projects.table.collaborators}">Collaborators</th>
+            <th th:text="#{projects.table.created}">Date Created</th>
+            <th th:text="#{projects.table.modified}">Modified Date</th>
         </tr>
         </thead>
         <tbody></tbody>
