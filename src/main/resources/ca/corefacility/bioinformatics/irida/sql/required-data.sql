@@ -257,11 +257,11 @@ INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES (no
 insert into remote_api (clientId,clientSecret,description,serviceURI) values ("webClient","webClientSecret","A local testing api","http://localhost:8080");
 
 -- client details
-insert into client_details (clientId, clientSecret, token_validity) values ("sequencer", "N9Ywc6GKWWZotzsJGutj3BZXJDRn65fXJqjrk29yTjI", 43200);
-insert into client_details (clientId, clientSecret, token_validity) values ("linker", "ZG5K1AFVSycE25ooxgcBRGCWFzSTfDnJ1DxSkdEmEho", 43200);
-insert into client_details (clientId, clientSecret, token_validity) values ("pythonLinker", "bySZBP5jNO9pSZTz3omFRtJs3XFAvshxGgvXIlZ2zjk", 43200);
-insert into client_details (clientId, clientSecret, token_validity) values ("testClient", "testClientSecret", 43200);
-insert into client_details (clientId, clientSecret, token_validity) values ("webClient", "webClientSecret", 43200);
+insert into client_details (clientId, clientSecret, token_validity, createdDate) values ("sequencer", "N9Ywc6GKWWZotzsJGutj3BZXJDRn65fXJqjrk29yTjI", 43200,now());
+insert into client_details (clientId, clientSecret, token_validity, createdDate) values ("linker", "ZG5K1AFVSycE25ooxgcBRGCWFzSTfDnJ1DxSkdEmEho", 43200,now());
+insert into client_details (clientId, clientSecret, token_validity, createdDate) values ("pythonLinker", "bySZBP5jNO9pSZTz3omFRtJs3XFAvshxGgvXIlZ2zjk", 43200,now());
+insert into client_details (clientId, clientSecret, token_validity, createdDate) values ("testClient", "testClientSecret", 43200,now());
+insert into client_details (clientId, clientSecret, token_validity, createdDate) values ("webClient", "webClientSecret", 43200,now());
 
 insert into client_role (name, description) values ("ROLE_CLIENT","A basic OAuth2 client");
 
