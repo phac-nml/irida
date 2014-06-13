@@ -59,8 +59,7 @@
 					referencedTableName="Revisions" foreignKeyName="FK_CLIENT_DETAILS_REVISION" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
-			<column name="token_validity" type="int(11)">
-			</column>
+			<column name="token_validity" type="int(11)" />
 			<column name="refresh_validity" type="int(11)" />
 			<column name="clientId" type="varchar(255)" />
 			<column name="clientSecret" type="varchar(255)" />
@@ -102,13 +101,11 @@
 		<createTable tableName="client_details_authorities">
 			<column name="client_details_id" type="bigint(20)">
 				<constraints referencedTableName="client_details"
-					referencedColumnNames="id" primaryKey="true" nullable="false"
-					foreignKeyName="FK_CLIENT_DETAILS_AUTHORITIES" />
+					referencedColumnNames="id" nullable="false" foreignKeyName="FK_CLIENT_DETAILS_AUTHORITIES" />
 			</column>
 			<column name="authority_name" type="varchar(255)">
-				<constraints nullable="false" primaryKey="true"
-					referencedTableName="client_role" referencedColumnNames="name"
-					foreignKeyName="FK_CLIENT_DETAILS_ROLE" />
+				<constraints nullable="false" referencedTableName="client_role"
+					referencedColumnNames="name" foreignKeyName="FK_CLIENT_DETAILS_ROLE" />
 			</column>
 		</createTable>
 
@@ -288,8 +285,9 @@
 		</insert>
 
 		<addColumn tableName="Revisions">
-			<column name="client_id" type="bigint(20)" >
-				<constraints referencedTableName="client_details" referencedColumnNames="id" foreignKeyName="FK_REVISIONS_CLIENT_DETAILS"/>
+			<column name="client_id" type="bigint(20)">
+				<constraints referencedTableName="client_details"
+					referencedColumnNames="id" foreignKeyName="FK_REVISIONS_CLIENT_DETAILS" />
 			</column>
 		</addColumn>
 
