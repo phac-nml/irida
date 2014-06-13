@@ -151,7 +151,7 @@ public class GalaxyLibrarySearchTest {
 	 * @throws NoLibraryFoundException
 	 */
 	@Test
-	public void testFindLibrary() throws NoLibraryFoundException {
+	public void testFindLibraryById() throws NoLibraryFoundException {
 		Library library = galaxySearch.findLibraryWithId(LIBRARY_ID);
 		assertNotNull(library);
 		assertEquals(LIBRARY_ID, library.getId());
@@ -163,7 +163,7 @@ public class GalaxyLibrarySearchTest {
 	 * @throws NoLibraryFoundException 
 	 */
 	@Test(expected=NoLibraryFoundException.class)
-	public void testNoFindLibrary() throws NoLibraryFoundException {
+	public void testNoFindLibraryById() throws NoLibraryFoundException {
 		galaxySearch.findLibraryWithId(INVALID_LIBRARY_ID);
 	}
 
