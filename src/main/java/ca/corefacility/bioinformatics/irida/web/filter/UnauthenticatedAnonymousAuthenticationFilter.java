@@ -30,7 +30,9 @@ public class UnauthenticatedAnonymousAuthenticationFilter extends AnonymousAuthe
 	}
 
 	/**
-	 *
+	 * Create a new UnauthenticatedAnonymousAuthenticationFilter with the given
+	 * key, principal, and authorities.
+	 * 
 	 * @param key
 	 *            key the key to identify tokens created by this filter
 	 * @param principal
@@ -42,6 +44,12 @@ public class UnauthenticatedAnonymousAuthenticationFilter extends AnonymousAuthe
 		super(key, principal, authorities);
 	}
 
+	/**
+	 * Create the anonymous auth token with Authenticated set to false
+	 * 
+	 * @param request
+	 *            the incoming request
+	 */
 	@Override
 	protected Authentication createAuthentication(HttpServletRequest request) {
 		Authentication createAuthentication = super.createAuthentication(request);
