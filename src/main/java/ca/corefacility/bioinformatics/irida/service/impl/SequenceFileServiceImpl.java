@@ -23,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.processing.annotations.ModifiesSequenceFile;
-import ca.corefacility.bioinformatics.irida.repositories.MiseqRunRepository;
 import ca.corefacility.bioinformatics.irida.repositories.OverrepresentedSequenceRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileFilesystem;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
@@ -55,11 +54,14 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	private SampleSequenceFileJoinRepository ssfRepository;
 
 	/**
-	 * Reference to {@link MiseqRunRepository}
+	 * Reference to {@link OverrepresentedSequenceRepository}.
 	 */
-	private MiseqRunRepository miseqRunRepository;
-
 	private OverrepresentedSequenceRepository overrepresentedSequenceRepository;
+
+	/**
+	 * Reference to {@link SequenceFileRepository}.
+	 */
+	private SequenceFileRepository sequenceFileRepository;
 
 	protected SequenceFileServiceImpl() {
 		super(null, null, SequenceFile.class);
@@ -76,12 +78,11 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Autowired
 	public SequenceFileServiceImpl(SequenceFileRepository sequenceFileRepository,
 			SequenceFileFilesystem fileRepository, SampleSequenceFileJoinRepository ssfRepository,
-			OverrepresentedSequenceRepository overrepresentedSequenceRepository, MiseqRunRepository miseqRunRepository,
-			Validator validator) {
+			OverrepresentedSequenceRepository overrepresentedSequenceRepository, Validator validator) {
 		super(sequenceFileRepository, validator, SequenceFile.class);
+		this.sequenceFileRepository = sequenceFileRepository;
 		this.fileRepository = fileRepository;
 		this.ssfRepository = ssfRepository;
-		this.miseqRunRepository = miseqRunRepository;
 		this.overrepresentedSequenceRepository = overrepresentedSequenceRepository;
 	}
 
@@ -187,10 +188,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Override
 	@Transactional(readOnly = true)
 	public Set<SequenceFile> getSequenceFilesForMiseqRun(MiseqRun miseqRun) {
-		MiseqRun loaded = miseqRunRepository.findOne(miseqRun.getId());
-		// force hibernate to eager load the collection
-		loaded.getSequenceFiles().forEach(f -> f.getId());
-		return loaded.getSequenceFiles();
+		return sequenceFileRepository.findSequenceFilesForMiseqRun(miseqRun);
 	}
 
 	@Override

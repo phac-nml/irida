@@ -163,14 +163,6 @@ public class MiseqRun implements IridaThing, Comparable<MiseqRun>{
         this.modifiedDate = modifiedDate;
     }
 
-	public Set<SequenceFile> getSequenceFiles() {
-		return sequenceFiles;
-	}
-
-	public void setSequenceFiles(Set<SequenceFile> sequenceFiles) {
-		this.sequenceFiles = sequenceFiles;
-	}
-
     @Override
     public int hashCode() {
         return Objects.hash(createdDate,modifiedDate,application,assay,chemistry,description,experimentName,investigatorName,projectName,workflow);

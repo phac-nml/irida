@@ -85,7 +85,7 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 		logger.trace("Getting samples for miseq run " + id);
 		// Get the Files from the MiSeqRun to delete
 		MiseqRun read = read(id);
-		Set<SequenceFile> filesForMiseqRun = read.getSequenceFiles();
+		Set<SequenceFile> filesForMiseqRun = sequenceFileRepository.findSequenceFilesForMiseqRun(read);
 
 		//Get the Samples used in the MiSeqRun that is going to be deleted
 		for(SequenceFile file : filesForMiseqRun){
