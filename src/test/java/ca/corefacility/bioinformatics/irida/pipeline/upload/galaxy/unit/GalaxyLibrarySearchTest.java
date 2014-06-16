@@ -213,7 +213,7 @@ public class GalaxyLibrarySearchTest {
 	 * Tests checking existence of library.
 	 */
 	@Test
-	public void testLibraryExists() {
+	public void testLibraryExistsByName() {
 		assertTrue(galaxySearch.existsByName(LIBRARY_NAME));
 	}
 	
@@ -221,8 +221,24 @@ public class GalaxyLibrarySearchTest {
 	 * Tests checking non-existence of library.
 	 */
 	@Test
-	public void testNoLibraryExists() {
+	public void testNoLibraryExistsByName() {
 		assertFalse(galaxySearch.existsByName(INVALID_LIBRARY_NAME));
+	}
+	
+	/**
+	 * Tests checking existence of library by id.
+	 */
+	@Test
+	public void testLibraryExistsById() {
+		assertTrue(galaxySearch.exists(LIBRARY_ID));
+	}
+	
+	/**
+	 * Tests checking non-existence of library by id.
+	 */
+	@Test
+	public void testNoLibraryExistsById() {
+		assertFalse(galaxySearch.exists(INVALID_LIBRARY_ID));
 	}
 	
 	/**

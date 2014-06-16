@@ -68,7 +68,7 @@ public class GalaxyRoleSearchTest {
 	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test
-	public void testFindUserRoleWithEmail() throws ExecutionManagerObjectNotFoundException {
+	public void testFindByIdSuccess() throws ExecutionManagerObjectNotFoundException {
 		Role foundRole = galaxyRoleSearch.findById(new GalaxyAccountEmail("role1@localhost"));
 		assertNotNull(foundRole);
 		assertEquals("role1@localhost", foundRole.getName());
@@ -80,7 +80,7 @@ public class GalaxyRoleSearchTest {
 	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test(expected=GalaxyUserNoRoleException.class)
-	public void testNoFindUserRoleWithEmail() throws ExecutionManagerObjectNotFoundException {
+	public void testFindByIdFail() throws ExecutionManagerObjectNotFoundException {
 		galaxyRoleSearch.findById(new GalaxyAccountEmail("invalid@localhost"));
 	}
 	
@@ -89,7 +89,7 @@ public class GalaxyRoleSearchTest {
 	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test(expected=NullPointerException.class)
-	public void testNullFindUserRoleWithEmail() throws ExecutionManagerObjectNotFoundException {
+	public void testFindByIdNull() throws ExecutionManagerObjectNotFoundException {
 		galaxyRoleSearch.findById(null);
 	}
 	
@@ -97,7 +97,7 @@ public class GalaxyRoleSearchTest {
 	 * Tests finding a user role.
 	 */
 	@Test
-	public void testUserRoleExistsFor() {
+	public void testExistsSuccess() {
 		assertTrue(galaxyRoleSearch.exists(new GalaxyAccountEmail("role1@localhost")));
 	}
 	
@@ -105,7 +105,7 @@ public class GalaxyRoleSearchTest {
 	 * Tests not finding a user role.
 	 */
 	@Test
-	public void testNoUserRoleExistsFor() {
+	public void testExistsFail() {
 		assertFalse(galaxyRoleSearch.exists(new GalaxyAccountEmail("invalid@localhost")));
 	}
 }

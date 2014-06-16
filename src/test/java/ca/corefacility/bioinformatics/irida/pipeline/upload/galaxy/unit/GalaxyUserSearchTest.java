@@ -69,7 +69,7 @@ public class GalaxyUserSearchTest {
 	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test
-	public void testFindUserWithEmail() throws ExecutionManagerObjectNotFoundException {
+	public void testFindByIdSuccess() throws ExecutionManagerObjectNotFoundException {
 		User foundUser = galaxyUserSearch.findById(new GalaxyAccountEmail(
 				"user1@localhost"));
 		assertNotNull(foundUser);
@@ -82,7 +82,7 @@ public class GalaxyUserSearchTest {
 	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test(expected=GalaxyUserNotFoundException.class)
-	public void testNoFindUserWithEmail() throws ExecutionManagerObjectNotFoundException {
+	public void testFindByIdFail() throws ExecutionManagerObjectNotFoundException {
 		galaxyUserSearch.findById(new GalaxyAccountEmail(
 				"invalid@localhost"));
 	}
@@ -91,7 +91,7 @@ public class GalaxyUserSearchTest {
 	 * Tests if user exists.
 	 */
 	@Test
-	public void testUserDoesExist() {
+	public void testExistsSuccess() {
 		assertTrue(galaxyUserSearch.exists(new GalaxyAccountEmail(
 				"user1@localhost")));
 	}
@@ -100,7 +100,7 @@ public class GalaxyUserSearchTest {
 	 * Tests if user does not exist.
 	 */
 	@Test
-	public void testUserDoesNotExist() {
+	public void testExistsFail() {
 		assertFalse(galaxyUserSearch.exists(new GalaxyAccountEmail(
 				"invalid@localhost")));
 	}
