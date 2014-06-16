@@ -69,7 +69,8 @@ public class GalaxyAPI {
 
 	private GalaxyInstance galaxyInstance;
 	private GalaxyAccountEmail adminEmail;
-	private GalaxyLibrarySearch galaxySearchAdmin;
+	private GalaxyLibrarySearch galaxyLibrarySearchAdmin;
+	private GalaxyLibraryContentSearch galaxyLibraryContentSearchAdmin;
 	private GalaxyRoleSearch galaxyRoleSearchAdmin;
 	private GalaxyUserSearch galaxyUserSearchAdmin;
 	private GalaxyLibraryBuilder galaxyLibrary;
@@ -106,7 +107,8 @@ public class GalaxyAPI {
 					+ adminEmail);
 		}
 		
-		galaxySearchAdmin = new GalaxyLibrarySearch(galaxyInstance.getLibrariesClient(), galaxyURL);
+		galaxyLibrarySearchAdmin = new GalaxyLibrarySearch(galaxyInstance.getLibrariesClient(), galaxyURL);
+		galaxyLibraryContentSearchAdmin = new GalaxyLibraryContentSearch(galaxyInstance.getLibrariesClient(), galaxyURL);
 		galaxyRoleSearchAdmin = new GalaxyRoleSearch(galaxyInstance.getRolesClient(),
 				galaxyURL);
 		galaxyUserSearchAdmin = new GalaxyUserSearch(galaxyInstance.getUsersClient(), galaxyURL);
@@ -148,7 +150,8 @@ public class GalaxyAPI {
 			throw new RuntimeException(e);
 		}
 		
-		galaxySearchAdmin = new GalaxyLibrarySearch(galaxyInstance.getLibrariesClient(), galaxyURL);
+		galaxyLibrarySearchAdmin = new GalaxyLibrarySearch(galaxyInstance.getLibrariesClient(), galaxyURL);
+		galaxyLibraryContentSearchAdmin = new GalaxyLibraryContentSearch(galaxyInstance.getLibrariesClient(), galaxyURL);
 		galaxyRoleSearchAdmin = new GalaxyRoleSearch(galaxyInstance.getRolesClient(),
 				galaxyURL);
 		galaxyUserSearchAdmin = new GalaxyUserSearch(galaxyInstance.getUsersClient(), galaxyURL);
@@ -173,8 +176,10 @@ public class GalaxyAPI {
 	 * @param dataStorage
 	 *            If uploaded files will exist on the same or a separate
 	 *            filesystem as the archive.
-	 * @param galaxySearch
-	 *            A GalaxySearch object.
+	 * @param galaxyLibrarySearch
+	 *            A GalaxyLibrarySearch object.
+	 * @param galaxyLibraryContentSearch
+	 *            A GalaxyLibraryContentSearch object.
 	 * @param galaxyRoleSearch
 	 *            A GalaxyRoleSearch object.
 	 * @param galaxyUserSearch
@@ -187,11 +192,13 @@ public class GalaxyAPI {
 	 *             If an issue connecting to Galaxy occurred.
 	 */
 	public GalaxyAPI(GalaxyInstance galaxyInstance, @Valid GalaxyAccountEmail adminEmail, 
-			GalaxyLibrarySearch galaxySearch, GalaxyRoleSearch galaxyRoleSearch, GalaxyUserSearch galaxyUserSearch,
+			GalaxyLibrarySearch galaxyLibrarySearch, GalaxyLibraryContentSearch galaxyLibraryContentSearch,
+			GalaxyRoleSearch galaxyRoleSearch, GalaxyUserSearch galaxyUserSearch,
 			GalaxyLibraryBuilder galaxyLibrary) throws ConstraintViolationException, GalaxyConnectException {
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
 		checkNotNull(adminEmail, "adminEmail is null");
-		checkNotNull(galaxySearch, "galaxySearch is null");
+		checkNotNull(galaxyLibrarySearch, "galaxyLibrarySearch is null");
+		checkNotNull(galaxyLibraryContentSearch, "galaxyLibraryContentSearch is null");
 		checkNotNull(galaxyRoleSearch, "galaxyRoleSearch is null");
 		checkNotNull(galaxyUserSearch, "galaxyUserSearch is null");
 		checkNotNull(galaxyLibrary, "galaxyLibrary is null");
@@ -200,7 +207,8 @@ public class GalaxyAPI {
 		this.adminEmail = adminEmail;
 
 		this.galaxyLibrary = galaxyLibrary;
-		this.galaxySearchAdmin = galaxySearch;
+		this.galaxyLibrarySearchAdmin = galaxyLibrarySearch;
+		this.galaxyLibraryContentSearchAdmin = galaxyLibraryContentSearch;
 		this.galaxyUserSearchAdmin = galaxyUserSearch;
 		this.galaxyRoleSearchAdmin = galaxyRoleSearch;
 
@@ -442,8 +450,8 @@ public class GalaxyAPI {
 		Library uploadLibrary;
 		if (galaxyUserSearchAdmin.exists(galaxyUserEmail)) {
 
-			if (galaxySearchAdmin.existsByName(libraryName)) {
-				List<Library> libraries = galaxySearchAdmin.findByName(libraryName);
+			if (galaxyLibrarySearchAdmin.existsByName(libraryName)) {
+				List<Library> libraries = galaxyLibrarySearchAdmin.findByName(libraryName);
 				uploadLibrary = libraries.get(0); // gets first library returned
 			} else {
 				uploadLibrary = buildGalaxyLibrary(libraryName, galaxyUserEmail);
@@ -529,14 +537,14 @@ public class GalaxyAPI {
 
 			LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
 
-			Library library = galaxySearchAdmin.findById(libraryID);
+			Library library = galaxyLibrarySearchAdmin.findById(libraryID);
 
-			Map<String, LibraryContent> libraryContentMap = galaxySearchAdmin.libraryContentAsMap(libraryID);
+			Map<String, LibraryContent> libraryContentMap = galaxyLibraryContentSearchAdmin.libraryContentAsMap(libraryID);
 
 			LibraryFolder illuminaFolder;
 
-			if (galaxySearchAdmin.libraryContentExists(libraryID, ILLUMINA_FOLDER_PATH)) {
-				LibraryContent illuminaContent = galaxySearchAdmin.findLibraryContentWithId(libraryID,
+			if (galaxyLibraryContentSearchAdmin.libraryContentExists(libraryID, ILLUMINA_FOLDER_PATH)) {
+				LibraryContent illuminaContent = galaxyLibraryContentSearchAdmin.findLibraryContentWithId(libraryID,
 						ILLUMINA_FOLDER_PATH);
 
 				illuminaFolder = new LibraryFolder();
@@ -548,7 +556,7 @@ public class GalaxyAPI {
 
 			// create references folder if it doesn't exist, but we don't need
 			// to put anything into it.
-			if (!galaxySearchAdmin.libraryContentExists(libraryID, REFERENCES_FOLDER_PATH)) {
+			if (!galaxyLibraryContentSearchAdmin.libraryContentExists(libraryID, REFERENCES_FOLDER_PATH)) {
 				galaxyLibrary.createLibraryFolder(library, REFERENCES_FOLDER_NAME);
 			}
 

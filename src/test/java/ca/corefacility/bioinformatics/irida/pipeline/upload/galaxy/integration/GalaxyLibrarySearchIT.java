@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 import static org.junit.Assert.*;
 
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,17 +21,12 @@ import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderName;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrarySearch;
 
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
-import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
-import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 
 /**
@@ -76,42 +70,6 @@ public class GalaxyLibrarySearchIT {
 		Library createdLibrary = librariesClient.createLibrary(library);
 		
 		return createdLibrary;
-	}
-	
-	/**
-	 * Builds a Galaxy library with the given name and content.
-	 * @param libraryName  The name of the library to build.
-	 * @param folderName  The folder name in the library to build.
-	 * @return The combined Library and LibraryContent objects of the library.
-	 */
-	private Library buildLibrary(GalaxyProjectName libraryName, GalaxyFolderName folderName) {
-		Library library = new Library();
-		library.setName(libraryName.getName());
-		
-		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient();
-		Library createdLibrary = librariesClient.createLibrary(library);
-		assertNotNull(createdLibrary);
-		
-		LibraryContent rootContent = librariesClient.getRootFolder(createdLibrary.getId());
-		
-		LibraryFolder folder = new LibraryFolder();
-		folder.setFolderId(rootContent.getId());
-		folder.setName(folderName.getName());
-		librariesClient.createFolder(createdLibrary.getId(), folder);
-		
-		List<LibraryContent> contents = librariesClient.getLibraryContents(createdLibrary.getId());
-		assertEquals(2, contents.size());
-		
-		return createdLibrary;
-	}
-	
-	/**
-	 * Converts GalaxyFolderName (no leading '/') to a path (leading '/')
-	 * @param name  The name to convert.
-	 * @return  The same name, but with a leading '/'.
-	 */
-	private GalaxyFolderPath folderNameToPath(GalaxyFolderName name) {
-		return new GalaxyFolderPath("/" + name.getName());
 	}
 	
 	/**
@@ -197,90 +155,5 @@ public class GalaxyLibrarySearchIT {
 	@Test(expected=NoLibraryFoundException.class)
 	public void testFindGalaxyLibraryByIdFail() throws ExecutionManagerObjectNotFoundException {
 		galaxyLibrarySearch.findById("invalid_id");
-	}
-	
-	/**
-	 * Tests library content exists success.
-	 * @throws NoLibraryFoundException
-	 */
-	@Test
-	public void testGalaxyLibraryContentExists() {
-		GalaxyProjectName libraryName =
-				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyLibraryContentExists");
-		GalaxyFolderName folderName = new GalaxyFolderName("folder");
-		Library createdLibrary = buildLibrary(libraryName, folderName);
-		assertTrue(galaxyLibrarySearch.libraryContentExists(createdLibrary.getId(),
-				folderNameToPath(folderName)));
-	}
-	
-	/**
-	 * Tests library content not exists.
-	 * @throws NoLibraryFoundException
-	 */
-	@Test
-	public void testGalaxyLibraryContentNotExists() {
-		GalaxyProjectName libraryName =
-				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyLibraryContentNotExists");
-		GalaxyFolderName folderName = new GalaxyFolderName("folder");
-		Library createdLibrary = buildLibrary(libraryName, folderName);
-		assertFalse(galaxyLibrarySearch.libraryContentExists(createdLibrary.getId(),
-				new GalaxyFolderPath("/invalid_folder")));
-	}
-	
-	/**
-	 * Tests find library content success.
-	 * @throws NoGalaxyContentFoundException 
-	 */
-	@Test
-	public void testGalaxyFindLibraryContentSuccess() throws NoGalaxyContentFoundException {
-		GalaxyProjectName libraryName =
-				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyFindLibraryContentSuccess");
-		GalaxyFolderName folderName = new GalaxyFolderName("folder");
-		Library createdLibrary = buildLibrary(libraryName, folderName);
-		LibraryContent foundContent =galaxyLibrarySearch.findLibraryContentWithId(createdLibrary.getId(),
-				folderNameToPath(folderName));
-		assertNotNull(foundContent);
-		assertEquals(folderNameToPath(folderName).getName(), foundContent.getName());	
-	}
-	
-	/**
-	 * Tests find library content fail.
-	 * @throws NoGalaxyContentFoundException 
-	 */
-	@Test(expected=NoGalaxyContentFoundException.class)
-	public void testGalaxyFindLibraryContentFail() throws NoGalaxyContentFoundException {
-		GalaxyProjectName libraryName =
-				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyFindLibraryContentFail");
-		GalaxyFolderName folderName = new GalaxyFolderName("folder");
-		Library createdLibrary = buildLibrary(libraryName, folderName);
-		galaxyLibrarySearch.findLibraryContentWithId(createdLibrary.getId(),
-				new GalaxyFolderPath("/invalid_name"));
-	}
-	
-	/**
-	 * Tests getting library content as a map success.
-	 * @throws NoGalaxyContentFoundException 
-	 */
-	@Test
-	public void testGalaxyLibraryContentAsMapSuccess() throws NoGalaxyContentFoundException {
-		GalaxyProjectName libraryName =
-				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyLibraryContentAsMapSuccess");
-		GalaxyFolderName folderName = new GalaxyFolderName("folder");
-		Library createdLibrary = buildLibrary(libraryName, folderName);
-		Map<String, LibraryContent> foundContent = 
-				galaxyLibrarySearch.libraryContentAsMap(createdLibrary.getId());
-		assertNotNull(foundContent);
-		assertEquals(2, foundContent.size());
-		assertTrue(foundContent.containsKey(folderNameToPath(folderName).getName()));
-		assertTrue(foundContent.containsKey("/"));
-	}
-	
-	/**
-	 * Tests getting library content as a map fail.
-	 * @throws NoGalaxyContentFoundException 
-	 */
-	@Test(expected=NoGalaxyContentFoundException.class)
-	public void testGalaxyLibraryContentAsMapFail() throws NoGalaxyContentFoundException {
-		galaxyLibrarySearch.libraryContentAsMap("1");
 	}
 }
