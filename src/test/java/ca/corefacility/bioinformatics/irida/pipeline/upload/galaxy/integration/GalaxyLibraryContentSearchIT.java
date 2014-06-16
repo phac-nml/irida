@@ -112,18 +112,34 @@ public class GalaxyLibraryContentSearchIT {
 				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyLibraryContentExists");
 		GalaxyFolderName folderName = new GalaxyFolderName("folder");
 		Library createdLibrary = buildLibrary(libraryName, folderName);
+		assertTrue(galaxyLibraryContentSearch.exists(createdLibrary.getId()));
 		assertTrue(galaxyLibraryContentSearch.libraryContentExists(createdLibrary.getId(),
 				folderNameToPath(folderName)));
 	}
 	
 	/**
-	 * Tests library content not exists.
+	 * Tests library content not exists (invalid library id).
 	 * @throws NoLibraryFoundException
 	 */
 	@Test
-	public void testGalaxyLibraryContentNotExists() {
+	public void testGalaxyLibraryContentNotExistsLibraryId() {
 		GalaxyProjectName libraryName =
-				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyLibraryContentNotExists");
+				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyLibraryContentNotExistsLibraryId");
+		GalaxyFolderName folderName = new GalaxyFolderName("folder");
+		buildLibrary(libraryName, folderName);
+		assertFalse(galaxyLibraryContentSearch.exists("invalid"));
+		assertFalse(galaxyLibraryContentSearch.libraryContentExists("invalid",
+				folderNameToPath(folderName)));
+	}
+	
+	/**
+	 * Tests library content not exists (invalid folder).
+	 * @throws NoLibraryFoundException
+	 */
+	@Test
+	public void testGalaxyLibraryContentNotExistsFolder() {
+		GalaxyProjectName libraryName =
+				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyLibraryContentNotExistsFolder");
 		GalaxyFolderName folderName = new GalaxyFolderName("folder");
 		Library createdLibrary = buildLibrary(libraryName, folderName);
 		assertFalse(galaxyLibraryContentSearch.libraryContentExists(createdLibrary.getId(),
@@ -140,10 +156,24 @@ public class GalaxyLibraryContentSearchIT {
 				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyFindLibraryContentSuccess");
 		GalaxyFolderName folderName = new GalaxyFolderName("folder");
 		Library createdLibrary = buildLibrary(libraryName, folderName);
+		assertNotNull(galaxyLibraryContentSearch.findById(createdLibrary.getId()));
 		LibraryContent foundContent = galaxyLibraryContentSearch.findLibraryContentWithId(createdLibrary.getId(),
 				folderNameToPath(folderName));
 		assertNotNull(foundContent);
 		assertEquals(folderNameToPath(folderName).getName(), foundContent.getName());	
+	}
+	
+	/**
+	 * Tests find library content fail (findById).
+	 * @throws ExecutionManagerObjectNotFoundException 
+	 */
+	@Test(expected=NoGalaxyContentFoundException.class)
+	public void testGalaxyFindLibraryContentByIdFail() throws ExecutionManagerObjectNotFoundException {
+		GalaxyProjectName libraryName =
+				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyFindLibraryContentByIdFail");
+		GalaxyFolderName folderName = new GalaxyFolderName("folder");
+		buildLibrary(libraryName, folderName);
+		galaxyLibraryContentSearch.findById("invalid");
 	}
 	
 	/**

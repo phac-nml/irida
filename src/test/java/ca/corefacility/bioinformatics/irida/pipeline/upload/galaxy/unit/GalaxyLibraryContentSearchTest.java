@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -121,6 +122,40 @@ public class GalaxyLibraryContentSearchTest {
 
 		when(librariesClient.getLibraryContents(INVALID_LIBRARY_ID))
 				.thenReturn(null);
+	}
+	
+	/**
+	 * Tests finding library contents by id (exists).
+	 * @throws ExecutionManagerObjectNotFoundException 
+	 */
+	@Test
+	public void testfindByIdExists() throws ExecutionManagerObjectNotFoundException {
+		assertNotNull(galaxyLibraryContentSearch.findById(LIBRARY_ID));
+	}
+	
+	/**
+	 * Tests finding library contents by id (not exists).
+	 * @throws ExecutionManagerObjectNotFoundException 
+	 */
+	@Test(expected=NoGalaxyContentFoundException.class)
+	public void testfindByIdNotExists() throws ExecutionManagerObjectNotFoundException {
+		galaxyLibraryContentSearch.findById(INVALID_LIBRARY_ID);
+	}
+	
+	/**
+	 * Tests exists library contents by id (exists).
+	 */
+	@Test
+	public void testLibraryContentFindByIdExists() {
+		assertTrue(galaxyLibraryContentSearch.exists(LIBRARY_ID));
+	}
+	
+	/**
+	 * Tests exists library contents by id (not exists).
+	 */
+	@Test
+	public void testLibraryContentFindByIdNotExists() {
+		assertFalse(galaxyLibraryContentSearch.exists(INVALID_LIBRARY_ID));
 	}
 	
 	/**
