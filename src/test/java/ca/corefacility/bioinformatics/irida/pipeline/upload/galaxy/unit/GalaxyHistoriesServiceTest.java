@@ -26,6 +26,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.sun.jersey.api.client.ClientResponse;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
@@ -176,27 +177,27 @@ public class GalaxyHistoriesServiceTest {
 	
 	/**
 	 * Tests getting a History.
-	 * @throws NoGalaxyHistoryException 
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test
-	public void testGetHistory() throws NoGalaxyHistoryException {
+	public void testGetHistory() throws ExecutionManagerObjectNotFoundException {
 		List<History> historyList = new LinkedList<History>();
 		historyList.add(history);
 		
 		when(historiesClient.getHistories()).thenReturn(historyList);
 		
-		History history = galaxyHistory.getGalaxyHistory(HISTORY_ID);
+		History history = galaxyHistory.findById(HISTORY_ID);
 		assertNotNull(history);
 		assertEquals(HISTORY_ID, history.getId());
 	}
 	
 	/**
 	 * Tests not getting a History.
-	 * @throws NoGalaxyHistoryException 
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test(expected=NoGalaxyHistoryException.class)
-	public void testGetNoHistory() throws NoGalaxyHistoryException {
-		galaxyHistory.getGalaxyHistory(INVALID_HISTORY_ID);
+	public void testGetNoHistory() throws ExecutionManagerObjectNotFoundException {
+		galaxyHistory.findById(INVALID_HISTORY_ID);
 	}
 	
 	

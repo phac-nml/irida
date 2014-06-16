@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
@@ -31,7 +32,7 @@ import static com.google.common.base.Preconditions.*;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxyHistoriesService {
+public class GalaxyHistoriesService extends GalaxySearch<History, String> {
 	
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyHistoriesService.class);
@@ -121,29 +122,6 @@ public class GalaxyHistoriesService {
 		}
 	}
 	
-	
-	/**
-	 * Gets a Galaxy history with the given history id.
-	 * @param historyId  The history id to get a history for.
-	 * @return  The corresponding History object.
-	 * @throws NoGalaxyHistoryException If no history was found.
-	 */
-	public History getGalaxyHistory(String historyId) throws NoGalaxyHistoryException {
-		checkNotNull(historyId, "historyId is null");
-		
-		List<History> galaxyHistories = historiesClient.getHistories();
-		
-		if (galaxyHistories != null) {
-			Optional<History> h = galaxyHistories.stream().
-					filter((history) -> historyId.equals(history.getId())).findFirst();
-			if (h.isPresent()) {
-				return h.get();
-			}
-		}
-		
-		throw new NoGalaxyHistoryException("No history for id " + historyId);
-	}
-	
 	/**
 	 * Gets a Dataset object for a file with the given name in the given history.
 	 * @param filename  The name of the file to get a Dataset object for.
@@ -172,5 +150,26 @@ public class GalaxyHistoriesService {
 
 		throw new GalaxyDatasetNotFoundException("dataset for file " + filename +
 				" not found in Galaxy history " + history.getId());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public History findById(String id)
+			throws ExecutionManagerObjectNotFoundException {
+		checkNotNull(id, "id is null");
+		
+		List<History> galaxyHistories = historiesClient.getHistories();
+		
+		if (galaxyHistories != null) {
+			Optional<History> h = galaxyHistories.stream().
+					filter((history) -> id.equals(history.getId())).findFirst();
+			if (h.isPresent()) {
+				return h.get();
+			}
+		}
+		
+		throw new NoGalaxyHistoryException("No history for id " + id);
 	}
 }
