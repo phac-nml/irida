@@ -266,9 +266,9 @@ public class GalaxyAPITest {
 		when(galaxyRoleSearch.findById(realAdminEmail)).thenReturn(
 				realAdminRole);
 		when(galaxyRoleSearch.exists(realAdminEmail)).thenReturn(true);
-		when(galaxySearch.findLibraryWithName(libraryName)).thenReturn(
+		when(galaxySearch.findByName(libraryName)).thenReturn(
 				libraries);
-		when(galaxySearch.libraryExists(libraryName)).thenReturn(true);
+		when(galaxySearch.existsByName(libraryName)).thenReturn(true);
 		when(galaxySearch.libraryContentAsMap(libraryId))
 				.thenReturn(libraryMap);
 	}
@@ -1093,12 +1093,12 @@ public class GalaxyAPITest {
 		setupUploadSampleToLibrary(samples, folders, false);
 
 		when(galaxyUserSearch.exists(realUserEmail)).thenReturn(true);
-		when(galaxySearch.libraryExists(libraryName)).thenReturn(false);
+		when(galaxySearch.existsByName(libraryName)).thenReturn(false);
 
 		assertEquals(expectedUploadResult, workflowRESTAPI.uploadSamples(
 				samples, libraryName, realUserEmail));
 		assertTrue(expectedUploadResult.newLocationCreated());
-		verify(galaxySearch).libraryExists(libraryName);
+		verify(galaxySearch).existsByName(libraryName);
 		verify(galaxyLibrary).buildEmptyLibrary(libraryName);
 		verify(galaxyLibrary).changeLibraryOwner(any(Library.class),
 				eq(realUserEmail), eq(realAdminEmail));
@@ -1179,8 +1179,8 @@ public class GalaxyAPITest {
 		assertEquals(expectedUploadResult, workflowRESTAPI.uploadSamples(
 				samples, libraryName, realUserEmail));
 		assertFalse(expectedUploadResult.newLocationCreated());
-		verify(galaxySearch).libraryExists(libraryName);
-		verify(galaxySearch).findLibraryWithName(libraryName);
+		verify(galaxySearch).existsByName(libraryName);
+		verify(galaxySearch).findByName(libraryName);
 		verify(galaxyLibrary, never()).buildEmptyLibrary(libraryName);
 		verify(galaxyLibrary, never()).changeLibraryOwner(any(Library.class),
 				eq(realUserEmail), eq(realAdminEmail));

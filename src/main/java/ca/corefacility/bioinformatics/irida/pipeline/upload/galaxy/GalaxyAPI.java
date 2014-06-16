@@ -442,8 +442,8 @@ public class GalaxyAPI {
 		Library uploadLibrary;
 		if (galaxyUserSearchAdmin.exists(galaxyUserEmail)) {
 
-			if (galaxySearchAdmin.libraryExists(libraryName)) {
-				List<Library> libraries = galaxySearchAdmin.findLibraryWithName(libraryName);
+			if (galaxySearchAdmin.existsByName(libraryName)) {
+				List<Library> libraries = galaxySearchAdmin.findByName(libraryName);
 				uploadLibrary = libraries.get(0); // gets first library returned
 			} else {
 				uploadLibrary = buildGalaxyLibrary(libraryName, galaxyUserEmail);

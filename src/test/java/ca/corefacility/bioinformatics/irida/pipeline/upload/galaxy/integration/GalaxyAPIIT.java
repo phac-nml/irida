@@ -1027,12 +1027,12 @@ public class GalaxyAPIIT {
 
 		// user 1 should have access to library
 		List<Library> libraries = galaxySearchUser1
-				.findLibraryWithName(libraryName);
+				.findByName(libraryName);
 		assertEquals("The number of libraries with name " + libraryName
 				+ " is not one", 1, libraries.size());
 
 		// admin should have access to library
-		libraries = galaxySearchAdmin.findLibraryWithName(libraryName);
+		libraries = galaxySearchAdmin.findByName(libraryName);
 		assertEquals("The number of libraries with name " + libraryName
 				+ " is not one", 1, libraries.size());
 
@@ -1110,7 +1110,7 @@ public class GalaxyAPIIT {
 		assertEquals("fastqsanger",datasetData2.getDataType());
 
 		// no duplicate folders or libraries for user1
-		libraries = galaxySearchUser1.findLibraryWithName(libraryName);
+		libraries = galaxySearchUser1.findByName(libraryName);
 		assertEquals("The number of libraries with name " + libraryName
 				+ " is not one", 1, libraries.size());
 		sampleFolderCount = countNumberOfFolderPaths(libraryContents,
@@ -1127,7 +1127,7 @@ public class GalaxyAPIIT {
 				referencesFolderCount);
 
 		// no duplicate libraries for admin
-		libraries = galaxySearchAdmin.findLibraryWithName(libraryName);
+		libraries = galaxySearchAdmin.findByName(libraryName);
 		assertEquals("The number of libraries with name " + libraryName
 				+ " is not one", 1, libraries.size());
 	}
@@ -1164,10 +1164,10 @@ public class GalaxyAPIIT {
 
 		// library should be visible to user 1 and admin
 		assertNotNull(galaxySearchUser1.findById(libraryId));
-		assertEquals(1, galaxySearchUser1.findLibraryWithName(libraryName)
+		assertEquals(1, galaxySearchUser1.findByName(libraryName)
 				.size());
 		assertNotNull(galaxySearchAdmin.findById(libraryId));
-		assertEquals(1, galaxySearchAdmin.findLibraryWithName(libraryName)
+		assertEquals(1, galaxySearchAdmin.findByName(libraryName)
 				.size());
 
 		// library should not be visible to user 2
@@ -1177,7 +1177,7 @@ public class GalaxyAPIIT {
 		} catch (NoLibraryFoundException e) {}
 		
 		try {
-			galaxySearchUser2.findLibraryWithName(libraryName);
+			galaxySearchUser2.findByName(libraryName);
 			fail("Library found for user 2");
 		} catch (NoLibraryFoundException e) {}
 
@@ -1200,10 +1200,10 @@ public class GalaxyAPIIT {
 
 		// library should be visible to user 1 and admin
 		assertNotNull(galaxySearchUser1.findById(libraryId));
-		assertEquals(1, galaxySearchUser1.findLibraryWithName(libraryName)
+		assertEquals(1, galaxySearchUser1.findByName(libraryName)
 				.size());
 		assertNotNull(galaxySearchAdmin.findById(libraryId));
-		assertEquals(1, galaxySearchAdmin.findLibraryWithName(libraryName)
+		assertEquals(1, galaxySearchAdmin.findByName(libraryName)
 				.size());
 
 		// library should not be visible to user 2 (user 2 shared with user 1,
@@ -1214,7 +1214,7 @@ public class GalaxyAPIIT {
 		} catch (NoLibraryFoundException e) {}
 		
 		try {
-			galaxySearchUser2.findLibraryWithName(libraryName);
+			galaxySearchUser2.findByName(libraryName);
 			fail("Library found for user 2");
 		} catch (NoLibraryFoundException e) {}
 

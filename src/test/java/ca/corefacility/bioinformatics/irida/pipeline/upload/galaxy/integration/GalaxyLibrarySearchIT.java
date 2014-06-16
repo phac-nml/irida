@@ -121,7 +121,7 @@ public class GalaxyLibrarySearchIT {
 	public void testGalaxyLibraryExists() {
 		GalaxyProjectName libraryName = new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyLibraryExists");
 		buildLibrary(libraryName);
-		assertTrue(galaxyLibrarySearch.libraryExists(libraryName));
+		assertTrue(galaxyLibrarySearch.existsByName(libraryName));
 	}
 	
 	/**
@@ -130,32 +130,32 @@ public class GalaxyLibrarySearchIT {
 	@Test
 	public void testGalaxyLibraryNotExists() {
 		GalaxyProjectName libraryName = new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyLibraryNotExists");
-		assertFalse(galaxyLibrarySearch.libraryExists(libraryName));
+		assertFalse(galaxyLibrarySearch.existsByName(libraryName));
 	}
 	
 	/**
 	 * Tests finding a library success.
-	 * @throws NoLibraryFoundException
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test
-	public void testFindGalaxyLibraryByNameSuccess() throws NoLibraryFoundException {
+	public void testFindGalaxyLibraryByNameSuccess() throws ExecutionManagerObjectNotFoundException {
 		GalaxyProjectName libraryName =
 				new GalaxyProjectName("GalaxyLibrarySearchIT_testFindGalaxyLibraryByNameSuccess");
 		buildLibrary(libraryName);
-		List<Library> librariesFound = galaxyLibrarySearch.findLibraryWithName(libraryName);
+		List<Library> librariesFound = galaxyLibrarySearch.findByName(libraryName);
 		assertEquals(1, librariesFound.size());
 		assertEquals(libraryName.getName(), librariesFound.get(0).getName());
 	}
 	
 	/**
 	 * Tests finding a library fail.
-	 * @throws NoLibraryFoundException
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test(expected=NoLibraryFoundException.class)
-	public void testFindGalaxyLibraryByNameFail() throws NoLibraryFoundException {
+	public void testFindGalaxyLibraryByNameFail() throws ExecutionManagerObjectNotFoundException {
 		GalaxyProjectName libraryName =
 				new GalaxyProjectName("GalaxyLibrarySearchIT_testFindGalaxyLibraryByNameFail");
-		galaxyLibrarySearch.findLibraryWithName(libraryName);
+		galaxyLibrarySearch.findByName(libraryName);
 	}
 	
 	/**

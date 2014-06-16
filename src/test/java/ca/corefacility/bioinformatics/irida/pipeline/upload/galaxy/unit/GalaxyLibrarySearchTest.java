@@ -170,12 +170,12 @@ public class GalaxyLibrarySearchTest {
 
 	/**
 	 * Tests finding a library by name.
-	 * @throws NoLibraryFoundException 
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test
-	public void testFindLibraryByName() throws NoLibraryFoundException {
+	public void testFindLibraryByName() throws ExecutionManagerObjectNotFoundException {
 		List<Library> libraries = galaxySearch
-				.findLibraryWithName(LIBRARY_NAME);
+				.findByName(LIBRARY_NAME);
 		List<Library> returnedLibraries = convertLibraryToArrayList(libraries);
 		assertEquals(allLibrariesList, returnedLibraries);
 
@@ -184,7 +184,7 @@ public class GalaxyLibrarySearchTest {
 		newLibrary.setId(LIBRARY_ID_2);
 		allLibrariesList.add(newLibrary);
 
-		libraries = galaxySearch.findLibraryWithName(LIBRARY_NAME);
+		libraries = galaxySearch.findByName(LIBRARY_NAME);
 		returnedLibraries = convertLibraryToArrayList(libraries);
 		assertEquals(allLibrariesList, returnedLibraries);
 
@@ -195,18 +195,18 @@ public class GalaxyLibrarySearchTest {
 		newLibrary.setId(LIBRARY_ID_3);
 		allLibrariesList.add(newLibrary);
 
-		libraries = galaxySearch.findLibraryWithName(LIBRARY_NAME);
+		libraries = galaxySearch.findByName(LIBRARY_NAME);
 		returnedLibraries = convertLibraryToArrayList(libraries);
 		assertEquals(expectedList, returnedLibraries);
 	}
 
 	/**
 	 * Tests finding invalid library.
-	 * @throws NoLibraryFoundException 
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test(expected=NoLibraryFoundException.class)
-	public void testInvalidFindLibraryByName() throws NoLibraryFoundException {
-		galaxySearch.findLibraryWithName(INVALID_LIBRARY_NAME);
+	public void testInvalidFindLibraryByName() throws ExecutionManagerObjectNotFoundException {
+		galaxySearch.findByName(INVALID_LIBRARY_NAME);
 	}
 	
 	/**
@@ -214,7 +214,7 @@ public class GalaxyLibrarySearchTest {
 	 */
 	@Test
 	public void testLibraryExists() {
-		assertTrue(galaxySearch.libraryExists(LIBRARY_NAME));
+		assertTrue(galaxySearch.existsByName(LIBRARY_NAME));
 	}
 	
 	/**
@@ -222,7 +222,7 @@ public class GalaxyLibrarySearchTest {
 	 */
 	@Test
 	public void testNoLibraryExists() {
-		assertFalse(galaxySearch.libraryExists(INVALID_LIBRARY_NAME));
+		assertFalse(galaxySearch.existsByName(INVALID_LIBRARY_NAME));
 	}
 	
 	/**

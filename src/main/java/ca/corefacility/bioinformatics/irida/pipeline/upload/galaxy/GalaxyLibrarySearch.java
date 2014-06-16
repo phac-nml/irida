@@ -14,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFou
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.DataSourceSearch;
 
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
@@ -26,7 +27,7 @@ import com.sun.jersey.api.client.UniformInterfaceException;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * 
  */
-public class GalaxyLibrarySearch extends GalaxySearch<Library, String> {
+public class GalaxyLibrarySearch implements DataSourceSearch<Library, String, GalaxyProjectName>{
 	
 	private LibrariesClient librariesClient;
 	private URL galaxyURL;
@@ -79,33 +80,6 @@ public class GalaxyLibrarySearch extends GalaxySearch<Library, String> {
 	}
 
 	/**
-	 * Given a library name, searches for a list of matching Library objects.
-	 * 
-	 * @param libraryName
-	 *            The name of the library to search for.
-	 * @return A list of Library objects matching the given name.
-	 * @throws NoLibraryFoundException
-	 *             If no libraries could be found.
-	 */
-	public List<Library> findLibraryWithName(GalaxyProjectName libraryName) throws NoLibraryFoundException {
-		checkNotNull(libraryName, "libraryName is null");
-
-		List<Library> allLibraries = librariesClient.getLibraries();
-
-		if (allLibraries != null) {
-			List<Library> libraries = allLibraries.stream()
-					.filter((lib) -> lib.getName().equals(libraryName.getName())).collect(Collectors.toList());
-
-			if (libraries.size() > 0) {
-				return libraries;
-			}
-		}
-
-		throw new NoLibraryFoundException("No library could be found with name " + libraryName + " in Galaxy "
-				+ galaxyURL);
-	}
-
-	/**
 	 * Given a libraryId and a folder name, search for the corresponding
 	 * LibraryContent object within this library.
 	 * 
@@ -136,22 +110,6 @@ public class GalaxyLibrarySearch extends GalaxySearch<Library, String> {
 
 		throw new NoGalaxyContentFoundException("Could not find library content for id " + libraryId + " in Galaxy "
 				+ galaxyURL);
-	}
-
-	/**
-	 * Determines if a library with the given name exists.
-	 * 
-	 * @param libraryName
-	 *            The name of the library to check.
-	 * @return True if a library with this name exists, false otherwise.
-	 */
-	public boolean libraryExists(GalaxyProjectName libraryName) {
-		try {
-			List<Library> libraries = findLibraryWithName(libraryName);
-			return libraries != null && libraries.size() > 0;
-		} catch (NoLibraryFoundException e) {
-			return false;
-		}
 	}
 
 	/**
@@ -190,5 +148,52 @@ public class GalaxyLibrarySearch extends GalaxySearch<Library, String> {
 
 		throw new NoLibraryFoundException("No library found for id " + id + " in Galaxy "
 				+ galaxyURL);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean exists(String id) {
+		try {
+			return findById(id) != null;
+		} catch (ExecutionManagerObjectNotFoundException e) {
+			return false;
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<Library> findByName(GalaxyProjectName name)
+			throws ExecutionManagerObjectNotFoundException {
+		checkNotNull(name, "name is null");
+
+		List<Library> allLibraries = librariesClient.getLibraries();
+
+		if (allLibraries != null) {
+			List<Library> libraries = allLibraries.stream()
+					.filter((lib) -> lib.getName().equals(name.getName())).collect(Collectors.toList());
+
+			if (libraries.size() > 0) {
+				return libraries;
+			}
+		}
+
+		throw new NoLibraryFoundException("No library could be found with name " + name + " in Galaxy "
+				+ galaxyURL);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean existsByName(GalaxyProjectName name) {
+		try {
+			return findByName(name) != null;
+		} catch (ExecutionManagerObjectNotFoundException e) {
+			return false;
+		}
 	}
 }
