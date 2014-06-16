@@ -200,6 +200,26 @@ public class GalaxyHistoriesServiceTest {
 		galaxyHistory.findById(INVALID_HISTORY_ID);
 	}
 	
+	/**
+	 * Tests checking for the existence of a history.
+	 */
+	@Test
+	public void testHistoryExists() {
+		List<History> historyList = new LinkedList<History>();
+		historyList.add(history);
+		
+		when(historiesClient.getHistories()).thenReturn(historyList);
+		
+		assertTrue(galaxyHistory.exists(HISTORY_ID));
+	}
+	
+	/**
+	 * Tests checking for non-existence of a galaxy history.
+	 */
+	@Test
+	public void testNoHistoryExists() {
+		assertFalse(galaxyHistory.exists(INVALID_HISTORY_ID));
+	}
 	
 	/**
 	 * Tests getting a valid history dataset given a file name and history.

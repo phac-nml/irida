@@ -13,6 +13,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNot
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.ExecutionManagerSearch;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
@@ -32,7 +33,7 @@ import static com.google.common.base.Preconditions.*;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxyHistoriesService extends GalaxySearch<History, String> {
+public class GalaxyHistoriesService implements ExecutionManagerSearch<History, String> {
 	
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyHistoriesService.class);
@@ -171,5 +172,17 @@ public class GalaxyHistoriesService extends GalaxySearch<History, String> {
 		}
 		
 		throw new NoGalaxyHistoryException("No history for id " + id);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean exists(String id) {
+		try {
+			return findById(id) != null;
+		} catch (ExecutionManagerObjectNotFoundException e) {
+			return false;
+		}
 	}
 }
