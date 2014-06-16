@@ -338,22 +338,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	public void setMiseqRun(MiseqRun miseqRun) {
 		this.miseqRun = miseqRun;
 	}
-
-	public List<SampleSequenceFileJoin> getSamples() {
-		return samples;
-	}
-
-	public void setSamples(List<SampleSequenceFileJoin> samples) {
-		this.samples = samples;
-	}
-
-	public Set<OverrepresentedSequence> getOverrepresentedSequences() {
-		return overrepresentedSequences;
-	}
-
-	public void setOverrepresentedSequences(Set<OverrepresentedSequence> overrepresentedSequences) {
-		this.overrepresentedSequences = overrepresentedSequences;
-	}
 	
 	/**
 	 * Add one optional property to the map of properties
