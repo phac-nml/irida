@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
@@ -40,18 +41,18 @@ public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "sample_id")
 	private Sample sample;
-
+	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
+	private final Date createdDate;
 
 	public SampleSequenceFileJoin() {
 		createdDate = new Date();
 	}
 
 	public SampleSequenceFileJoin(Sample subject, SequenceFile object) {
+		this();
 		this.sequenceFile = object;
 		this.sample = subject;
-		createdDate = new Date();
 	}
 
 	public Long getId() {
@@ -95,10 +96,5 @@ public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 	@Override
 	public Date getTimestamp() {
 		return createdDate;
-	}
-
-	@Override
-	public void setTimestamp(Date timestamp) {
-		this.createdDate = timestamp;
 	}
 }

@@ -44,9 +44,9 @@ public class Project implements IridaThing, Comparable<Project> {
 	@Size(min = 5, message = "{project.name.size}")
 	@ValidProjectName
 	private String name;
-
+	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
+	private final Date createdDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
@@ -125,11 +125,6 @@ public class Project implements IridaThing, Comparable<Project> {
 	@Override
 	public Date getTimestamp() {
 		return createdDate;
-	}
-
-	@Override
-	public void setTimestamp(Date date) {
-		this.createdDate = date;
 	}
 
 	@Override

@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
@@ -32,14 +33,30 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 @Audited
 public class ProjectSampleJoin implements Join<Project, Sample> {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	Long id;
+
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "project_id")
+	private Project project;
+
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "sample_id")
+	private Sample sample;
+
+	@NotNull
+	@Temporal(TemporalType.TIMESTAMP)
+	private final Date createdDate;
+
 	public ProjectSampleJoin() {
 		createdDate = new Date();
 	}
 
 	public ProjectSampleJoin(Project subject, Sample object) {
+		this();
 		this.project = subject;
 		this.sample = object;
-		createdDate = new Date();
 	}
 
 	@Override
@@ -56,21 +73,6 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 		return Objects.hash(project, sample);
 	}
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	Long id;
-
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "project_id")
-	private Project project;
-
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "sample_id")
-	private Sample sample;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
-	
 	public Long getId() {
 		return this.id;
 	}
@@ -98,10 +100,5 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 	@Override
 	public Date getTimestamp() {
 		return createdDate;
-	}
-
-	@Override
-	public void setTimestamp(Date timestamp) {
-		this.createdDate = timestamp;
 	}
 }

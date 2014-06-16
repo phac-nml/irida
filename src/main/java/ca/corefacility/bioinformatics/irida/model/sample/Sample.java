@@ -50,9 +50,9 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-
+	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
+	private final Date createdDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
@@ -234,6 +234,7 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	 *            The name of the sample
 	 */
 	public Sample(String sampleName) {
+		this();
 		this.sampleName = sampleName;
 	}
 
@@ -246,6 +247,7 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	 *            The ID of the sample
 	 */
 	public Sample(String sampleName, String sampleId) {
+		this();
 		this.sampleName = sampleName;
 		this.sequencerSampleId = sampleId;
 	}
@@ -333,11 +335,6 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	}
 
 	@Override
-	public void setTimestamp(Date date) {
-		this.createdDate = date;
-	}
-
-	@Override
 	public Date getModifiedDate() {
 		return modifiedDate;
 	}
@@ -365,10 +362,6 @@ public class Sample implements IridaThing, Comparable<Sample> {
 
 	public Date getCreatedDate() {
 		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
 	}
 
 	public Host getHost() {

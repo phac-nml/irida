@@ -57,9 +57,9 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	@NotNull(message = "{sequencefile.file.notnull}")
 	@Transient
 	private Path file;
-
+	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
+	private final Date createdDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
@@ -201,10 +201,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 		return createdDate;
 	}
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
 	public String getStringPath() {
 		return stringPath;
 	}
@@ -315,11 +311,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	@Override
 	public Date getTimestamp() {
 		return createdDate;
-	}
-
-	@Override
-	public void setTimestamp(Date date) {
-		this.createdDate = date;
 	}
 
 	@Override
