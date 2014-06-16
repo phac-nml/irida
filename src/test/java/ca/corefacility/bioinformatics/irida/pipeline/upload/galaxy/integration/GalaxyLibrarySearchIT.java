@@ -172,6 +172,23 @@ public class GalaxyLibrarySearchIT {
 		assertEquals(library.getName(), libraryFound.getName());
 	}
 	
+	/**
+	 * Tests that a Galaxy library exists.
+	 */
+	@Test
+	public void testGalaxyLibraryExistsById() {
+		GalaxyProjectName libraryName = new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyLibraryExistsById");
+		Library library = buildLibrary(libraryName);
+		assertTrue(galaxyLibrarySearch.exists(library.getId()));
+	}
+	
+	/**
+	 * Tests that a Galaxy library does not exist.
+	 */
+	@Test
+	public void testLibraryNotExistsById() {
+		assertFalse(galaxyLibrarySearch.exists("invalid"));
+	}
 	
 	/**
 	 * Tests finding a library by id fail.
