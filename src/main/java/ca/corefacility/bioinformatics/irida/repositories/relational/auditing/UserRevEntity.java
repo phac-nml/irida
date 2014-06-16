@@ -8,6 +8,7 @@ import javax.persistence.Table;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionEntity;
 
+import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
@@ -24,9 +25,10 @@ public class UserRevEntity extends DefaultRevisionEntity {
 	@OneToOne
 	@JoinColumn(name = "user_id")
 	User user;
-
-	// OAuth2 clientId will be populated if the user logged in via OAuth2
-	String clientId;
+	
+	@OneToOne
+	@JoinColumn(name = "client_id")
+	IridaClientDetails client;
 
 	public User getUser() {
 		return user;
@@ -36,12 +38,12 @@ public class UserRevEntity extends DefaultRevisionEntity {
 		this.user = user;
 	}
 
-	public String getClientId() {
-		return clientId;
+	public IridaClientDetails getClient() {
+		return client;
 	}
 
-	public void setClientId(String clientId) {
-		this.clientId = clientId;
+	public void setClient(IridaClientDetails client) {
+		this.client = client;
 	}
 
 }

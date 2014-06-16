@@ -24,4 +24,5 @@
     <include file="changesets/2.0/sequencer-agnostic-files.xml" relativeToChangelogFile="true"/>
 	<include file="changesets/2.0/oauth-clientid-envers.xml" relativeToChangelogFile="true"/>
 	<include file="changesets/2.0/samples.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/client-details.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
