@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUserSearch;
 
@@ -57,7 +58,7 @@ public class GalaxyUserSearchIT {
 	 */
 	@Test
 	public void testGalaxyUserExists() {
-		assertTrue(galaxyUserSearch.galaxyUserExists(localGalaxy.getAdminName()));
+		assertTrue(galaxyUserSearch.exists(localGalaxy.getAdminName()));
 	}
 	
 	/**
@@ -65,25 +66,25 @@ public class GalaxyUserSearchIT {
 	 */
 	@Test
 	public void testGalaxyUserDoesNotExist() {
-		assertFalse(galaxyUserSearch.galaxyUserExists(localGalaxy.getNonExistentGalaxyAdminName()));
+		assertFalse(galaxyUserSearch.exists(localGalaxy.getNonExistentGalaxyAdminName()));
 	}
 	
 	/**
 	 * Tests successfull finding a user by email.
-	 * @throws GalaxyUserNotFoundException
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test
-	public void testFindUserWithEmailSuccess() throws GalaxyUserNotFoundException {
-		User user = galaxyUserSearch.findUserWithEmail(localGalaxy.getAdminName());
+	public void testFindUserWithEmailSuccess() throws ExecutionManagerObjectNotFoundException {
+		User user = galaxyUserSearch.findById(localGalaxy.getAdminName());
 		assertEquals(localGalaxy.getAdminName().getName(),user.getEmail());
 	}
 	
 	/**
 	 * Tests failure to find a user by email.
-	 * @throws GalaxyUserNotFoundException
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test(expected=GalaxyUserNotFoundException.class)
-	public void testFindUserWithEmailFail() throws GalaxyUserNotFoundException {
-		galaxyUserSearch.findUserWithEmail(localGalaxy.getNonExistentGalaxyAdminName());
+	public void testFindUserWithEmailFail() throws ExecutionManagerObjectNotFoundException {
+		galaxyUserSearch.findById(localGalaxy.getNonExistentGalaxyAdminName());
 	}
 }

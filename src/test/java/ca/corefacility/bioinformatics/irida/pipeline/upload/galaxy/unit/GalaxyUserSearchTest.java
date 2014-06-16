@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUserSearch;
@@ -65,11 +66,11 @@ public class GalaxyUserSearchTest {
 	
 	/**
 	 * Tests finding a user.
-	 * @throws GalaxyUserNotFoundException 
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test
-	public void testFindUserWithEmail() throws GalaxyUserNotFoundException {
-		User foundUser = galaxyUserSearch.findUserWithEmail(new GalaxyAccountEmail(
+	public void testFindUserWithEmail() throws ExecutionManagerObjectNotFoundException {
+		User foundUser = galaxyUserSearch.findById(new GalaxyAccountEmail(
 				"user1@localhost"));
 		assertNotNull(foundUser);
 		assertEquals("user1@localhost", foundUser.getEmail());
@@ -78,11 +79,11 @@ public class GalaxyUserSearchTest {
 
 	/**
 	 * Tests not finding a user.
-	 * @throws GalaxyUserNotFoundException 
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test(expected=GalaxyUserNotFoundException.class)
-	public void testNoFindUserWithEmail() throws GalaxyUserNotFoundException {
-		galaxyUserSearch.findUserWithEmail(new GalaxyAccountEmail(
+	public void testNoFindUserWithEmail() throws ExecutionManagerObjectNotFoundException {
+		galaxyUserSearch.findById(new GalaxyAccountEmail(
 				"invalid@localhost"));
 	}
 
@@ -91,7 +92,7 @@ public class GalaxyUserSearchTest {
 	 */
 	@Test
 	public void testUserDoesExist() {
-		assertTrue(galaxyUserSearch.galaxyUserExists(new GalaxyAccountEmail(
+		assertTrue(galaxyUserSearch.exists(new GalaxyAccountEmail(
 				"user1@localhost")));
 	}
 
@@ -100,7 +101,7 @@ public class GalaxyUserSearchTest {
 	 */
 	@Test
 	public void testUserDoesNotExist() {
-		assertFalse(galaxyUserSearch.galaxyUserExists(new GalaxyAccountEmail(
+		assertFalse(galaxyUserSearch.exists(new GalaxyAccountEmail(
 				"invalid@localhost")));
 	}
 }

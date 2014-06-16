@@ -241,7 +241,7 @@ public class GalaxyAPI {
 
 		// make sure user exists and has a role before we create an empty
 		// library
-		if (!galaxyUserSearchAdmin.galaxyUserExists(galaxyUserEmail)) {
+		if (!galaxyUserSearchAdmin.exists(galaxyUserEmail)) {
 			throw new GalaxyUserNotFoundException(galaxyUserEmail, getGalaxyUrl());
 		}
 
@@ -445,7 +445,7 @@ public class GalaxyAPI {
 		GalaxyAccountEmail returnedOwner = null;
 
 		Library uploadLibrary;
-		if (galaxyUserSearchAdmin.galaxyUserExists(galaxyUserEmail)) {
+		if (galaxyUserSearchAdmin.exists(galaxyUserEmail)) {
 
 			if (galaxySearchAdmin.libraryExists(libraryName)) {
 				List<Library> libraries = galaxySearchAdmin.findLibraryWithName(libraryName);
@@ -624,7 +624,7 @@ public class GalaxyAPI {
 	 */
 	public boolean isConnected() {
 		try {
-			return galaxyUserSearchAdmin.galaxyUserExists(adminEmail);
+			return galaxyUserSearchAdmin.exists(adminEmail);
 		} catch (ClientHandlerException | UniformInterfaceException e) {
 			return false;
 		}

@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URL;
 import java.util.Optional;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 
@@ -16,7 +17,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.User;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxyUserSearch {
+public class GalaxyUserSearch extends GalaxySearch<User, GalaxyAccountEmail> {
 
 	private URL galaxyURL;
 	private UsersClient usersClient;
@@ -33,43 +34,22 @@ public class GalaxyUserSearch {
 		this.usersClient = usersClient;
 		this.galaxyURL = galaxyURL;
 	}
-	
+
 	/**
-	 * Given an email, finds a corresponding User object in Galaxy with that
-	 * email.
-	 * 
-	 * @param email
-	 *            The email of the user to search.
-	 * @return A User object of the user with the corresponding email.
-	 * @throws GalaxyUserNotFoundException
-	 *             If the user could not be found.
+	 * {@inheritDoc}
 	 */
-	public User findUserWithEmail(GalaxyAccountEmail email) throws GalaxyUserNotFoundException {
-		checkNotNull(email, "email is null");
+	@Override
+	public User findById(GalaxyAccountEmail id) throws ExecutionManagerObjectNotFoundException {
+		checkNotNull(id, "id is null");
 
 		if (usersClient != null) {
 			Optional<User> u = usersClient.getUsers().stream()
-					.filter((user) -> user.getEmail().equals(email.getName())).findFirst();
+					.filter((user) -> user.getEmail().equals(id.getName())).findFirst();
 			if (u.isPresent()) {
 				return u.get();
 			}
 		}
 
-		throw new GalaxyUserNotFoundException(email, galaxyURL);
-	}
-
-	/**
-	 * Determines if the passed Galaxy user exists within the Galaxy instance.
-	 * 
-	 * @param galaxyUserEmail
-	 *            The user email address to check.
-	 * @return True if this user exists, false otherwise.
-	 */
-	public boolean galaxyUserExists(GalaxyAccountEmail galaxyUserEmail) {
-		try {
-			return findUserWithEmail(galaxyUserEmail) != null;
-		} catch (GalaxyUserNotFoundException e) {
-			return false;
-		}
+		throw new GalaxyUserNotFoundException(id, galaxyURL);
 	}
 }

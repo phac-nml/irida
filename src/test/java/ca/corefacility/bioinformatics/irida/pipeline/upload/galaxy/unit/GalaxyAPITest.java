@@ -162,7 +162,7 @@ public class GalaxyAPITest {
 		when(galaxyInstance.getRolesClient()).thenReturn(rolesClient);
 		when(galaxyInstance.getUsersClient()).thenReturn(usersClient);
 
-		when(galaxyUserSearch.galaxyUserExists(realAdminEmail)).thenReturn(true);
+		when(galaxyUserSearch.exists(realAdminEmail)).thenReturn(true);
 
 		workflowRESTAPI = new GalaxyAPI(galaxyInstance, realAdminEmail,
 				galaxySearch, galaxyRoleSearch, galaxyUserSearch, galaxyLibrary);
@@ -207,9 +207,9 @@ public class GalaxyAPITest {
 		realAdminRole.setName(realAdminEmail.getName());
 		realAdminRole.setId(adminRoleId);
 
-		when(galaxyUserSearch.findUserWithEmail(realUserEmail))
+		when(galaxyUserSearch.findById(realUserEmail))
 				.thenReturn(realUser);
-		when(galaxyUserSearch.galaxyUserExists(realUserEmail)).thenReturn(true);
+		when(galaxyUserSearch.exists(realUserEmail)).thenReturn(true);
 		when(galaxyRoleSearch.findUserRoleWithEmail(realUserEmail)).thenReturn(
 				realUserRole);
 		when(galaxyRoleSearch.userRoleExistsFor(realUserEmail)).thenReturn(true);
@@ -254,9 +254,9 @@ public class GalaxyAPITest {
 		realAdminRole.setName(realAdminEmail.getName());
 		realAdminRole.setId(adminRoleId);
 
-		when(galaxyUserSearch.findUserWithEmail(realUserEmail))
+		when(galaxyUserSearch.findById(realUserEmail))
 				.thenReturn(realUser);
-		when(galaxyUserSearch.galaxyUserExists(realUserEmail))
+		when(galaxyUserSearch.exists(realUserEmail))
 			.thenReturn(true);
 		when(galaxyRoleSearch.findUserRoleWithEmail(realUserEmail)).thenReturn(
 				realUserRole);
@@ -517,7 +517,7 @@ public class GalaxyAPITest {
 		
 		URL url = new URL(galaxyURL);
 
-		when(galaxyUserSearch.findUserWithEmail(fakeUserEmail))
+		when(galaxyUserSearch.findById(fakeUserEmail))
 			.thenThrow(new GalaxyUserNotFoundException(fakeUserEmail, url));
 
 		workflowRESTAPI.buildGalaxyLibrary(libraryName, fakeUserEmail);
@@ -548,9 +548,9 @@ public class GalaxyAPITest {
 	@Test(expected = GalaxyUserNoRoleException.class)
 	public void testBuildGalaxyLibraryNoUserRole() throws URISyntaxException,
 			ConstraintViolationException, UploadException {
-		when(galaxyUserSearch.findUserWithEmail(realUserEmail))
+		when(galaxyUserSearch.findById(realUserEmail))
 				.thenReturn(realUser);
-		when(galaxyUserSearch.galaxyUserExists(realUserEmail)).thenReturn(true);
+		when(galaxyUserSearch.exists(realUserEmail)).thenReturn(true);
 		when(galaxyRoleSearch.userRoleExistsFor(realUserEmail))
 				.thenReturn(false);
 
@@ -1092,7 +1092,7 @@ public class GalaxyAPITest {
 
 		setupUploadSampleToLibrary(samples, folders, false);
 
-		when(galaxyUserSearch.galaxyUserExists(realUserEmail)).thenReturn(true);
+		when(galaxyUserSearch.exists(realUserEmail)).thenReturn(true);
 		when(galaxySearch.libraryExists(libraryName)).thenReturn(false);
 
 		assertEquals(expectedUploadResult, workflowRESTAPI.uploadSamples(
@@ -1143,7 +1143,7 @@ public class GalaxyAPITest {
 
 		setupUploadSampleToLibrary(samples, folders, false);
 
-		when(galaxyUserSearch.galaxyUserExists(realUserEmail)).thenReturn(false);
+		when(galaxyUserSearch.exists(realUserEmail)).thenReturn(false);
 		workflowRESTAPI.uploadSamples(samples, libraryName, realUserEmail);
 	}
 
@@ -1174,7 +1174,7 @@ public class GalaxyAPITest {
 
 		setupUploadSampleToLibrary(samples, folders, true);
 
-		when(galaxyUserSearch.galaxyUserExists(realUserEmail)).thenReturn(true);
+		when(galaxyUserSearch.exists(realUserEmail)).thenReturn(true);
 
 		assertEquals(expectedUploadResult, workflowRESTAPI.uploadSamples(
 				samples, libraryName, realUserEmail));
@@ -1286,7 +1286,7 @@ public class GalaxyAPITest {
 	 */
 	@Test
 	public void testIsConnectedValid() {
-		when(galaxyUserSearch.galaxyUserExists(realAdminEmail)).thenReturn(true);
+		when(galaxyUserSearch.exists(realAdminEmail)).thenReturn(true);
 		
 		assertTrue(workflowRESTAPI.isConnected());
 	}
@@ -1296,7 +1296,7 @@ public class GalaxyAPITest {
 	 */
 	@Test
 	public void testIsConnectedInvalid() {
-		when(galaxyUserSearch.galaxyUserExists(realAdminEmail)).thenReturn(false);
+		when(galaxyUserSearch.exists(realAdminEmail)).thenReturn(false);
 		
 		assertFalse(workflowRESTAPI.isConnected());
 	}
@@ -1306,7 +1306,7 @@ public class GalaxyAPITest {
 	 */
 	@Test
 	public void testIsConnectedInvalidException() {
-		when(galaxyUserSearch.galaxyUserExists(realAdminEmail)).thenThrow(new ClientHandlerException());
+		when(galaxyUserSearch.exists(realAdminEmail)).thenThrow(new ClientHandlerException());
 		
 		assertFalse(workflowRESTAPI.isConnected());
 	}
@@ -1316,7 +1316,7 @@ public class GalaxyAPITest {
 	 */
 	@Test
 	public void testIsConnectedInvalidNewException() {
-		when(galaxyUserSearch.galaxyUserExists(realAdminEmail)).thenThrow(uniformInterfaceException);
+		when(galaxyUserSearch.exists(realAdminEmail)).thenThrow(uniformInterfaceException);
 		
 		assertFalse(workflowRESTAPI.isConnected());
 	}
