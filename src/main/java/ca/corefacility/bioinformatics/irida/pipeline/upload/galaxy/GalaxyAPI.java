@@ -508,18 +508,16 @@ public class GalaxyAPI {
 	 * @throws ConstraintViolationException
 	 *             If one of the GalaxySamples is invalid (assumes this object
 	 *             is managed by Spring).
-	 * @throws NoLibraryFoundException
-	 *             If no library could be found with the given id.
 	 * @throws CreateLibraryException
 	 *             If an error occurred while attempting to build the data
 	 *             library.
 	 * @throws NoGalaxyContentFoundException
 	 *             If an error occurred when attempting to find content for the
 	 *             library.
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	public boolean uploadFilesToLibrary(@Valid List<UploadSample> samples, String libraryID)
-			throws LibraryUploadException, ConstraintViolationException, NoLibraryFoundException,
-			CreateLibraryException, NoGalaxyContentFoundException {
+			throws LibraryUploadException, ConstraintViolationException, CreateLibraryException, NoGalaxyContentFoundException, ExecutionManagerObjectNotFoundException {
 		checkNotNull(samples, "samples are null");
 		checkNotNull(libraryID, "libraryID is null");
 
@@ -531,7 +529,7 @@ public class GalaxyAPI {
 
 			LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
 
-			Library library = galaxySearchAdmin.findLibraryWithId(libraryID);
+			Library library = galaxySearchAdmin.findById(libraryID);
 
 			Map<String, LibraryContent> libraryContentMap = galaxySearchAdmin.libraryContentAsMap(libraryID);
 

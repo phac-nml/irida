@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderName;
@@ -159,14 +160,14 @@ public class GalaxyLibrarySearchIT {
 	
 	/**
 	 * Tests finding a library by id success.
-	 * @throws NoLibraryFoundException
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test
-	public void testFindGalaxyLibraryByIdSuccess() throws NoLibraryFoundException {
+	public void testFindGalaxyLibraryByIdSuccess() throws ExecutionManagerObjectNotFoundException {
 		GalaxyProjectName libraryName =
 				new GalaxyProjectName("GalaxyLibrarySearchIT_testFindGalaxyLibraryByIdSuccess");
 		Library library = buildLibrary(libraryName);
-		Library libraryFound = galaxyLibrarySearch.findLibraryWithId(library.getId());
+		Library libraryFound = galaxyLibrarySearch.findById(library.getId());
 		assertNotNull(libraryFound);
 		assertEquals(library.getName(), libraryFound.getName());
 	}
@@ -174,11 +175,11 @@ public class GalaxyLibrarySearchIT {
 	
 	/**
 	 * Tests finding a library by id fail.
-	 * @throws NoLibraryFoundException
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test(expected=NoLibraryFoundException.class)
-	public void testFindGalaxyLibraryByIdFail() throws NoLibraryFoundException {
-		galaxyLibrarySearch.findLibraryWithId("invalid_id");
+	public void testFindGalaxyLibraryByIdFail() throws ExecutionManagerObjectNotFoundException {
+		galaxyLibrarySearch.findById("invalid_id");
 	}
 	
 	/**

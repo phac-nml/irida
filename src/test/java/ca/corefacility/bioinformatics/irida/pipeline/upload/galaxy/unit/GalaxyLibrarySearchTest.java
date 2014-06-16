@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadProjectName;
@@ -148,11 +149,11 @@ public class GalaxyLibrarySearchTest {
 
 	/**
 	 * Tests finding a library.
-	 * @throws NoLibraryFoundException
+	 * @throws ExecutionManagerObjectNotFoundException
 	 */
 	@Test
-	public void testFindLibraryById() throws NoLibraryFoundException {
-		Library library = galaxySearch.findLibraryWithId(LIBRARY_ID);
+	public void testFindLibraryById() throws ExecutionManagerObjectNotFoundException {
+		Library library = galaxySearch.findById(LIBRARY_ID);
 		assertNotNull(library);
 		assertEquals(LIBRARY_ID, library.getId());
 		assertEquals(LIBRARY_NAME.getName(), library.getName());
@@ -160,11 +161,11 @@ public class GalaxyLibrarySearchTest {
 
 	/**
 	 * Tests not finding a library.
-	 * @throws NoLibraryFoundException 
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test(expected=NoLibraryFoundException.class)
-	public void testNoFindLibraryById() throws NoLibraryFoundException {
-		galaxySearch.findLibraryWithId(INVALID_LIBRARY_ID);
+	public void testNoFindLibraryById() throws ExecutionManagerObjectNotFoundException {
+		galaxySearch.findById(INVALID_LIBRARY_ID);
 	}
 
 	/**

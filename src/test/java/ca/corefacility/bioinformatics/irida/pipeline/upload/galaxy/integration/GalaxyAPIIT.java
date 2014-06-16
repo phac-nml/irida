@@ -1013,7 +1013,7 @@ public class GalaxyAPIIT {
 				libraryName, null, localGalaxy.getGalaxyURL().toString());
 
 		// build initial folders within library
-		Library library = galaxySearchUser1.findLibraryWithId(libraryId);
+		Library library = galaxySearchUser1.findById(libraryId);
 		assertNotNull(library);
 		LibraryFolder illuminaFolder = galaxyLibrary.createLibraryFolder(
 				library, new GalaxyFolderName("illumina_reads"));
@@ -1163,16 +1163,16 @@ public class GalaxyAPIIT {
 		assertNotNull(libraryId);
 
 		// library should be visible to user 1 and admin
-		assertNotNull(galaxySearchUser1.findLibraryWithId(libraryId));
+		assertNotNull(galaxySearchUser1.findById(libraryId));
 		assertEquals(1, galaxySearchUser1.findLibraryWithName(libraryName)
 				.size());
-		assertNotNull(galaxySearchAdmin.findLibraryWithId(libraryId));
+		assertNotNull(galaxySearchAdmin.findById(libraryId));
 		assertEquals(1, galaxySearchAdmin.findLibraryWithName(libraryName)
 				.size());
 
 		// library should not be visible to user 2
 		try {
-			galaxySearchUser2.findLibraryWithId(libraryId);
+			galaxySearchUser2.findById(libraryId);
 			fail("Library found for user 2");
 		} catch (NoLibraryFoundException e) {}
 		
@@ -1199,17 +1199,17 @@ public class GalaxyAPIIT {
 				localGalaxy.getUser2Name()));
 
 		// library should be visible to user 1 and admin
-		assertNotNull(galaxySearchUser1.findLibraryWithId(libraryId));
+		assertNotNull(galaxySearchUser1.findById(libraryId));
 		assertEquals(1, galaxySearchUser1.findLibraryWithName(libraryName)
 				.size());
-		assertNotNull(galaxySearchAdmin.findLibraryWithId(libraryId));
+		assertNotNull(galaxySearchAdmin.findById(libraryId));
 		assertEquals(1, galaxySearchAdmin.findLibraryWithName(libraryName)
 				.size());
 
 		// library should not be visible to user 2 (user 2 shared with user 1,
 		// but did not gain access)
 		try {
-			galaxySearchUser2.findLibraryWithId(libraryId);
+			galaxySearchUser2.findById(libraryId);
 			fail("Library found for user 2");
 		} catch (NoLibraryFoundException e) {}
 		

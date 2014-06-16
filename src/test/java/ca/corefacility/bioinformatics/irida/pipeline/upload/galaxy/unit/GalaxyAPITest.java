@@ -213,7 +213,7 @@ public class GalaxyAPITest {
 		when(galaxyRoleSearch.findById(realUserEmail)).thenReturn(
 				realUserRole);
 		when(galaxyRoleSearch.exists(realUserEmail)).thenReturn(true);
-		when(galaxySearch.findLibraryWithId(libraryId)).thenReturn(
+		when(galaxySearch.findById(libraryId)).thenReturn(
 				returnedLibrary);
 		when(galaxyRoleSearch.findById(realAdminEmail)).thenReturn(
 				realAdminRole);
@@ -261,7 +261,7 @@ public class GalaxyAPITest {
 		when(galaxyRoleSearch.findById(realUserEmail)).thenReturn(
 				realUserRole);
 		when(galaxyRoleSearch.exists(realUserEmail)).thenReturn(true);
-		when(galaxySearch.findLibraryWithId(libraryId)).thenReturn(
+		when(galaxySearch.findById(libraryId)).thenReturn(
 				existingLibrary);
 		when(galaxyRoleSearch.findById(realAdminEmail)).thenReturn(
 				realAdminRole);
@@ -344,7 +344,7 @@ public class GalaxyAPITest {
 				galaxyLibrary.createLibraryFolder(any(Library.class),
 						eq(referencesFolderName))).thenReturn(referencesFolder);
 
-		when(galaxySearch.findLibraryWithId(nonExistentLibraryId)).thenThrow(
+		when(galaxySearch.findById(nonExistentLibraryId)).thenThrow(
 				new NoLibraryFoundException());
 	}
 

@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
@@ -25,7 +26,7 @@ import com.sun.jersey.api.client.UniformInterfaceException;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * 
  */
-public class GalaxyLibrarySearch {
+public class GalaxyLibrarySearch extends GalaxySearch<Library, String> {
 	
 	private LibrariesClient librariesClient;
 	private URL galaxyURL;
@@ -44,28 +45,6 @@ public class GalaxyLibrarySearch {
 
 		this.librariesClient = librariesClient;
 		this.galaxyURL = galaxyURL;
-	}
-
-	/**
-	 * Given a library ID, searches for the corresponding Library object.
-	 * 
-	 * @param libraryId
-	 *            The libraryId to search for.
-	 * @return A Library object for this Galaxy library.
-	 * @throws NoLibraryFoundException
-	 *             If a library could not be found.
-	 */
-	public Library findLibraryWithId(String libraryId) throws NoLibraryFoundException {
-		checkNotNull(libraryId, "libraryId is null");
-
-		List<Library> libraries = librariesClient.getLibraries();
-		Optional<Library> library = libraries.stream().filter((lib) -> lib.getId().equals(libraryId)).findFirst();
-		if (library.isPresent()) {
-			return library.get();
-		}
-
-		throw new NoLibraryFoundException("No library found for id " + libraryId + " in Galaxy "
-				+ galaxyURL);
 	}
 
 	/**
@@ -192,5 +171,24 @@ public class GalaxyLibrarySearch {
 		} catch (NoGalaxyContentFoundException e) {
 			return false;
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Library findById(String id)
+			throws ExecutionManagerObjectNotFoundException {
+		checkNotNull(id, "id is null");
+
+		List<Library> libraries = librariesClient.getLibraries();
+		Optional<Library> library = libraries.stream()
+				.filter((lib) -> lib.getId().equals(id)).findFirst();
+		if (library.isPresent()) {
+			return library.get();
+		}
+
+		throw new NoLibraryFoundException("No library found for id " + id + " in Galaxy "
+				+ galaxyURL);
 	}
 }
