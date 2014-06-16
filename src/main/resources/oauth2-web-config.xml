@@ -8,15 +8,24 @@
 		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
-	
+
 	<sec:http pattern="/oauth/token" create-session="stateless"
 		authentication-manager-ref="clientAuthenticationManager">
-		<sec:anonymous enabled="false" />
 		<sec:http-basic entry-point-ref="clientAuthenticationEntryPoint" />
+
+		<!-- Anonymous filter added for allowing lookup of client details -->
+		<sec:custom-filter ref="anonymousAuthFilter" before="BASIC_AUTH_FILTER" />
 		<sec:custom-filter ref="clientCredentialsTokenEndpointFilter"
 			after="BASIC_AUTH_FILTER" />
 		<sec:access-denied-handler ref="oauthAccessDeniedHandler" />
 	</sec:http>
+
+	<!-- Custom anonymous authentication filter to set authenticated=false on 
+		AnonymousAuthenticationToken -->
+	<bean id="anonymousAuthFilter"
+		class="ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousAuthenticationFilter">
+		<constructor-arg value="anonymousTokenAuthProvider" />
+	</bean>
 	
 	<sec:http pattern="/oauth/authorize" authentication-manager-ref="authenticationManager" access-denied-page="/login"
 		disable-url-rewriting="true">
