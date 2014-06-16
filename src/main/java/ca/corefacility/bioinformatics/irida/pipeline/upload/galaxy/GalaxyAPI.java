@@ -16,6 +16,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.ChangeLibraryPermissionsException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
@@ -225,14 +226,12 @@ public class GalaxyAPI {
 	 * @throws ChangeLibraryPermissionsException
 	 *             If an error occured while attempting to change the library
 	 *             permissions.
-	 * @throws GalaxyUserNotFoundException
-	 *             If the passed Galaxy user does not exist.
-	 * @throws GalaxyUserNoRoleException
-	 *             If the passed Galaxy user has no role.
+	 * @throws ExecutionManagerObjectNotFoundException
+	 *             If users or roles do not exist within the execution manager.
 	 */
 	public Library buildGalaxyLibrary(@Valid GalaxyProjectName libraryName, @Valid GalaxyAccountEmail galaxyUserEmail)
 			throws CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException,
-			GalaxyUserNotFoundException, GalaxyUserNoRoleException {
+			ExecutionManagerObjectNotFoundException {
 		checkNotNull(libraryName, "libraryName is null");
 		checkNotNull(galaxyUserEmail, "galaxyUser is null");
 
@@ -245,7 +244,7 @@ public class GalaxyAPI {
 			throw new GalaxyUserNotFoundException(galaxyUserEmail, getGalaxyUrl());
 		}
 
-		if (!galaxyRoleSearchAdmin.userRoleExistsFor(galaxyUserEmail)) {
+		if (!galaxyRoleSearchAdmin.exists(galaxyUserEmail)) {
 			throw new GalaxyUserNoRoleException("Could not find role for Galaxy user with email=" + galaxyUserEmail);
 		}
 
@@ -424,19 +423,15 @@ public class GalaxyAPI {
 	 * @throws ChangeLibraryPermissionsException
 	 *             If an error occurred while attempting to change the library
 	 *             permissions.
-	 * @throws GalaxyUserNotFoundException
-	 *             If the passed Galaxy user does not exist.
 	 * @throws NoLibraryFoundException
 	 *             If no library with the given name can be found.
-	 * @throws GalaxyUserNoRoleException
-	 *             If the passed Galaxy user has no associated role.
 	 * @throws NoGalaxyContentFoundException
 	 *             If an error occured trying to find content for the library.
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	public GalaxyUploadResult uploadSamples(@Valid List<UploadSample> samples, @Valid GalaxyProjectName libraryName,
 			@Valid GalaxyAccountEmail galaxyUserEmail) throws LibraryUploadException, CreateLibraryException,
-			ConstraintViolationException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException,
-			NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
+			ConstraintViolationException, ChangeLibraryPermissionsException, NoLibraryFoundException, NoGalaxyContentFoundException, ExecutionManagerObjectNotFoundException {
 		checkNotNull(libraryName, "libraryName is null");
 		checkNotNull(samples, "samples is null");
 		checkNotNull(galaxyUserEmail, "galaxyUserEmail is null");

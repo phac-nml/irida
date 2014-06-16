@@ -7,9 +7,9 @@ import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.ChangeLibraryPermissionsException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadFolderName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
@@ -183,19 +183,17 @@ public class GalaxyLibraryBuilder {
 	 * @return The Library we changed the owner of.
 	 * @throws ChangeLibraryPermissionsException
 	 *             If an error occurred changing the library permissions.
-	 * @throws GalaxyUserNoRoleException
-	 *             If no corresponding roles for the Galaxy users could be
-	 *             found.
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	public Library changeLibraryOwner(Library library,
 			GalaxyAccountEmail userEmail, GalaxyAccountEmail adminEmail)
-			throws ChangeLibraryPermissionsException, GalaxyUserNoRoleException {
+			throws ChangeLibraryPermissionsException, ExecutionManagerObjectNotFoundException {
 		checkNotNull(library, "library is null");
 		checkNotNull(library.getId(), "library.getId() is null");
 		checkNotNull(userEmail, "userEmail is null");
 
-		Role userRole = galaxyRoleSearch.findUserRoleWithEmail(userEmail);
-		Role adminRole = galaxyRoleSearch.findUserRoleWithEmail(adminEmail);
+		Role userRole = galaxyRoleSearch.findById(userEmail);
+		Role adminRole = galaxyRoleSearch.findById(adminEmail);
 
 		LibraryPermissions permissions = new LibraryPermissions();
 		permissions.getAccessInRoles().add(userRole.getId());

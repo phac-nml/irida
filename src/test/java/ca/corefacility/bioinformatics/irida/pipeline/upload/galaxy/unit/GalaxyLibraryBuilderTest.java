@@ -21,6 +21,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.LibraryPermissions;
 import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.sun.jersey.api.client.ClientResponse;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.ChangeLibraryPermissionsException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
@@ -63,12 +64,12 @@ public class GalaxyLibraryBuilderTest {
 	 * Setup objects for library test.
 	 * @throws FileNotFoundException
 	 * @throws URISyntaxException
-	 * @throws GalaxyUserNoRoleException
 	 * @throws MalformedURLException 
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Before
 	public void setup() throws FileNotFoundException, URISyntaxException,
-			GalaxyUserNoRoleException, MalformedURLException {
+			MalformedURLException, ExecutionManagerObjectNotFoundException {
 		MockitoAnnotations.initMocks(this);
 		
 		galaxyURL = new URL("http://localhost");
@@ -108,20 +109,20 @@ public class GalaxyLibraryBuilderTest {
 
 	/**
 	 * Setup permissions for users.
-	 * @throws GalaxyUserNoRoleException
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
-	private void setupPermissionsTest() throws GalaxyUserNoRoleException {
+	private void setupPermissionsTest() throws ExecutionManagerObjectNotFoundException {
 		Role userRole = new Role();
 		userRole.setName(USER_EMAIL.getName());
 
 		Role adminRole = new Role();
 		adminRole.setName(ADMIN_EMAIL.getName());
 
-		when(galaxyRoleSearch.findUserRoleWithEmail(USER_EMAIL)).thenReturn(
+		when(galaxyRoleSearch.findById(USER_EMAIL)).thenReturn(
 				userRole);
-		when(galaxyRoleSearch.findUserRoleWithEmail(ADMIN_EMAIL)).thenReturn(
+		when(galaxyRoleSearch.findById(ADMIN_EMAIL)).thenReturn(
 				adminRole);
-		when(galaxyRoleSearch.findUserRoleWithEmail(INVALID_EMAIL))
+		when(galaxyRoleSearch.findById(INVALID_EMAIL))
 				.thenReturn(null);
 	}
 
@@ -182,11 +183,11 @@ public class GalaxyLibraryBuilderTest {
 	/**
 	 * Tests change the library owner.
 	 * @throws ChangeLibraryPermissionsException
-	 * @throws GalaxyUserNoRoleException
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test
 	public void testChangeLibraryOwner()
-			throws ChangeLibraryPermissionsException, GalaxyUserNoRoleException {
+			throws ChangeLibraryPermissionsException, ExecutionManagerObjectNotFoundException {
 		when(
 				librariesClient.setLibraryPermissions(eq(LIBRARY_ID),
 						any(LibraryPermissions.class)))
@@ -204,16 +205,16 @@ public class GalaxyLibraryBuilderTest {
 	/**
 	 * Test change library owner to invalid user.
 	 * @throws ChangeLibraryPermissionsException
-	 * @throws GalaxyUserNoRoleException
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test(expected = GalaxyUserNoRoleException.class)
 	public void testChangeLibraryOwnerInvalidUser()
-			throws ChangeLibraryPermissionsException, GalaxyUserNoRoleException {
+			throws ChangeLibraryPermissionsException, ExecutionManagerObjectNotFoundException {
 		when(
 				librariesClient.setLibraryPermissions(eq(LIBRARY_ID),
 						any(LibraryPermissions.class)))
 				.thenReturn(okayResponse);
-		when(galaxyRoleSearch.findUserRoleWithEmail(INVALID_EMAIL))
+		when(galaxyRoleSearch.findById(INVALID_EMAIL))
 			.thenThrow(new GalaxyUserNoRoleException());
 
 		galaxyLibrary.changeLibraryOwner(testLibrary, INVALID_EMAIL,
@@ -223,16 +224,16 @@ public class GalaxyLibraryBuilderTest {
 	/**
 	 * Tests change library owner with invalid admin user.
 	 * @throws ChangeLibraryPermissionsException
-	 * @throws GalaxyUserNoRoleException
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test(expected = GalaxyUserNoRoleException.class)
 	public void testChangeLibraryOwnerInvalidAdmin()
-			throws ChangeLibraryPermissionsException, GalaxyUserNoRoleException {
+			throws ChangeLibraryPermissionsException, ExecutionManagerObjectNotFoundException {
 		when(
 				librariesClient.setLibraryPermissions(eq(LIBRARY_ID),
 						any(LibraryPermissions.class)))
 				.thenReturn(okayResponse);
-		when(galaxyRoleSearch.findUserRoleWithEmail(INVALID_EMAIL))
+		when(galaxyRoleSearch.findById(INVALID_EMAIL))
 			.thenThrow(new GalaxyUserNoRoleException());
 
 		galaxyLibrary
@@ -242,11 +243,11 @@ public class GalaxyLibraryBuilderTest {
 	/**
 	 * Tests error changing library owner.
 	 * @throws ChangeLibraryPermissionsException
-	 * @throws GalaxyUserNoRoleException
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test(expected = ChangeLibraryPermissionsException.class)
 	public void testChangeLibraryOwnerInvalidResponse()
-			throws ChangeLibraryPermissionsException, GalaxyUserNoRoleException {
+			throws ChangeLibraryPermissionsException, ExecutionManagerObjectNotFoundException {
 		when(
 				librariesClient.setLibraryPermissions(eq(LIBRARY_ID),
 						any(LibraryPermissions.class))).thenReturn(

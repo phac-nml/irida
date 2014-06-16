@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
 
@@ -59,7 +60,7 @@ public class GalaxyRoleSearchIT {
 	 */
 	@Test
 	public void testGalaxyRoleExists() {
-		assertTrue(galaxyRoleSearch.userRoleExistsFor(localGalaxy.getAdminName()));
+		assertTrue(galaxyRoleSearch.exists(localGalaxy.getAdminName()));
 	}
 	
 	/**
@@ -67,25 +68,25 @@ public class GalaxyRoleSearchIT {
 	 */
 	@Test
 	public void testGalaxyRoleDoesNotExist() {
-		assertFalse(galaxyRoleSearch.userRoleExistsFor(localGalaxy.getNonExistentGalaxyAdminName()));
+		assertFalse(galaxyRoleSearch.exists(localGalaxy.getNonExistentGalaxyAdminName()));
 	}
 	
 	/**
 	 * Tests successfull finding a role by email.
-	 * @throws GalaxyUserNoRoleException 
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test
-	public void testFindUserRoleWithEmailSuccess() throws GalaxyUserNoRoleException {
-		Role role = galaxyRoleSearch.findUserRoleWithEmail(localGalaxy.getAdminName());
+	public void testFindUserRoleWithEmailSuccess() throws ExecutionManagerObjectNotFoundException {
+		Role role = galaxyRoleSearch.findById(localGalaxy.getAdminName());
 		assertEquals(localGalaxy.getAdminName().getName(),role.getName());
 	}
 	
 	/**
 	 * Tests failure to find a role by email.
-	 * @throws GalaxyUserNoRoleException 
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test(expected=GalaxyUserNoRoleException.class)
-	public void testFindUserRoleWithEmailFailure() throws GalaxyUserNoRoleException {
-		galaxyRoleSearch.findUserRoleWithEmail(localGalaxy.getNonExistentGalaxyAdminName());
+	public void testFindUserRoleWithEmailFailure() throws ExecutionManagerObjectNotFoundException {
+		galaxyRoleSearch.findById(localGalaxy.getNonExistentGalaxyAdminName());
 	}
 }
