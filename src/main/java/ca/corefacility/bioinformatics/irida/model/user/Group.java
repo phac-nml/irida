@@ -53,14 +53,6 @@ public class Group implements IridaThing {
 		this.createdDate = new Date();
 	}
 
-	public Set<UserGroupJoin> getUserGroups() {
-		return userGroups;
-	}
-
-	public void setUserGroups(Set<UserGroupJoin> userGroups) {
-		this.userGroups = userGroups;
-	}
-
 	public String getName() {
 		return name;
 	}
