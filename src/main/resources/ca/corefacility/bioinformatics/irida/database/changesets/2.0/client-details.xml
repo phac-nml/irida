@@ -46,7 +46,7 @@
 			<column name="clientSecret" type="varchar(255)">
 				<constraints nullable="false" />
 			</column>
-			<column name="createdDate" type="datetime">
+			<column name="createdDate" type="datetime" defaultValue="now()">
 				<constraints nullable="false" />
 			</column>
 			<column name="modifiedDate" type="datetime" />
@@ -209,95 +209,12 @@
 			<column name="description" value="A basic IRIDA OAuth2 client" />
 		</insert>
 
-		<!-- Insert old client details into new tables -->
-		<!-- Sequencer -->
-		<insert tableName="client_details">
-			<column name="id" value="1" />
-			<column name="clientId" value="sequencer" />
-			<column name="clientSecret" value="N9Ywc6GKWWZotzsJGutj3BZXJDRn65fXJqjrk29yTjI" />
-			<column name="token_validity" value="43200" />
-		</insert>
-		<insert tableName="client_details_authorities">
-			<column name="client_details_id" value="1" />
-			<column name="authority_name" value="ROLE_CLIENT"></column>
-		</insert>
-		<insert tableName="client_details_grant_types">
-			<column name="client_details_id" value="1" />
-			<column name="grant_value" value="password" />
-		</insert>
-		<insert tableName="client_details_resource_ids">
-			<column name="client_details_id" value="1" />
-			<column name="resource_id" value="NmlIrida" />
-		</insert>
-		<insert tableName="client_details_scope">
-			<column name="client_details_id" value="1" />
-			<column name="scope" value="read" />
-		</insert>
-		<insert tableName="client_details_scope">
-			<column name="client_details_id" value="1" />
-			<column name="scope" value="write" />
-		</insert>
-
-		<!-- Linker -->
-		<insert tableName="client_details">
-			<column name="id" value="2" />
-			<column name="clientId" value="linker" />
-			<column name="clientSecret" value="ZG5K1AFVSycE25ooxgcBRGCWFzSTfDnJ1DxSkdEmEho" />
-			<column name="token_validity" value="43200" />
-		</insert>
-		<insert tableName="client_details_authorities">
-			<column name="client_details_id" value="2" />
-			<column name="authority_name" value="ROLE_CLIENT"></column>
-		</insert>
-		<insert tableName="client_details_grant_types">
-			<column name="client_details_id" value="2" />
-			<column name="grant_value" value="password" />
-		</insert>
-		<insert tableName="client_details_resource_ids">
-			<column name="client_details_id" value="2" />
-			<column name="resource_id" value="NmlIrida" />
-		</insert>
-		<insert tableName="client_details_scope">
-			<column name="client_details_id" value="2" />
-			<column name="scope" value="read" />
-		</insert>
-
-		<!-- python linker -->
-		<insert tableName="client_details">
-			<column name="id" value="3" />
-			<column name="clientId" value="pythonLinker" />
-			<column name="clientSecret" value="bySZBP5jNO9pSZTz3omFRtJs3XFAvshxGgvXIlZ2zjk" />
-			<column name="token_validity" value="43200" />
-		</insert>
-		<insert tableName="client_details_authorities">
-			<column name="client_details_id" value="3" />
-			<column name="authority_name" value="ROLE_CLIENT"></column>
-		</insert>
-		<insert tableName="client_details_grant_types">
-			<column name="client_details_id" value="3" />
-			<column name="grant_value" value="password" />
-		</insert>
-		<insert tableName="client_details_resource_ids">
-			<column name="client_details_id" value="3" />
-			<column name="resource_id" value="NmlIrida" />
-		</insert>
-		<insert tableName="client_details_scope">
-			<column name="client_details_id" value="3" />
-			<column name="scope" value="read" />
-		</insert>
-
 		<addColumn tableName="Revisions">
 			<column name="client_id" type="bigint(20)">
 				<constraints referencedTableName="client_details"
 					referencedColumnNames="id" foreignKeyName="FK_REVISIONS_CLIENT_DETAILS" />
 			</column>
 		</addColumn>
-
-		<sql>
-			UPDATE Revisions r INNER JOIN client_details c ON
-			c.clientId=r.clientId SET
-			r.client_id=c.id
-		</sql>
 
 		<dropColumn tableName="Revisions" columnName="clientId" />
 
