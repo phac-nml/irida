@@ -152,20 +152,4 @@ public class Project implements IridaThing, Comparable<Project> {
 	public void setRemoteURL(String remoteURL) {
 		this.remoteURL = remoteURL;
 	}
-
-	public List<ProjectUserJoin> getUsers() {
-		return users;
-	}
-
-	public void setUsers(List<ProjectUserJoin> users) {
-		this.users = users;
-	}
-
-	public List<ProjectSampleJoin> getSamples() {
-		return samples;
-	}
-
-	public void setSamples(List<ProjectSampleJoin> samples) {
-		this.samples = samples;
-	}
 }
