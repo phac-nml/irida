@@ -1,13 +1,25 @@
 #!/usr/bin/perl
 
 use DBI;
+use Getopt::Long;
 use strict;
 use warnings;
 
 my $username = "test";
 my $password = "test";
-my $dbstring = "dbi:mysql:irida_test:localhost";
-my $file = shift;
+my $db = "irida_test";
+my $host = "localhost";
+my $file;
+
+GetOptions(
+        'u|username=s'=>\$username,
+        'p|password=s'=>\$password,
+        'd|db=s'=>\$db,
+        'h|host=s'=>\$host,
+	'i|input=s'=>\$file
+);
+
+my $dbstring = "dbi:mysql:$db:$host";
 
 open(FILE,$file) or die "Can't open data file";
 

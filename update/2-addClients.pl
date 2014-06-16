@@ -1,12 +1,23 @@
 #!/usr/bin/perl
 
 use DBI;
+use Getopt::Long;
 use strict;
 use warnings;
 
 my $username = "test";
 my $password = "test";
-my $dbstring = "dbi:mysql:irida_test:localhost";
+my $db = "irida_test";
+my $host = "localhost";
+
+GetOptions(
+        'u|username=s'=>\$username,
+        'p|password=s'=>\$password,
+        'd|db=s'=>\$db,
+        'h|host=s'=>\$host
+);
+
+my $dbstring = "dbi:mysql:$db:$host";
 
 my @client_details = (
 	{id=>1,clientId=>"sequencer", clientSecret=>"N9Ywc6GKWWZotzsJGutj3BZXJDRn65fXJqjrk29yTjI",token_validity=>43200},
