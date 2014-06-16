@@ -344,22 +344,6 @@ public class Sample implements IridaThing, Comparable<Sample> {
 		this.modifiedDate = modifiedDate;
 	}
 
-	public List<ProjectSampleJoin> getProjects() {
-		return projects;
-	}
-
-	public void setProjects(List<ProjectSampleJoin> projects) {
-		this.projects = projects;
-	}
-
-	public List<SampleSequenceFileJoin> getSequenceFiles() {
-		return sequenceFiles;
-	}
-
-	public void setSequenceFiles(List<SampleSequenceFileJoin> sequenceFiles) {
-		this.sequenceFiles = sequenceFiles;
-	}
-
 	public Date getCreatedDate() {
 		return createdDate;
 	}
