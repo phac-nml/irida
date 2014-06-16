@@ -22,6 +22,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
@@ -93,8 +95,10 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	@JoinTable(name = "client_details_authorities", joinColumns = @JoinColumn(name = "client_details_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "authority_name", nullable = false))
 	Collection<ClientRole> authorities;
 
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 	@NotNull
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
 
 	/**
