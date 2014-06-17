@@ -11,6 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,8 @@ import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
@@ -44,6 +49,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private ProjectSampleJoinRepository psjRepository;
 	private SampleRepository sampleRepository;
 	private UserRepository userRepository;
+	private ProjectRepository projectRepository;
 
 	protected ProjectServiceImpl() {
 		super(null, null, Project.class);
@@ -54,17 +60,18 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
 			ProjectSampleJoinRepository psjRepository, Validator validator) {
 		super(projectRepository, validator, Project.class);
+		this.projectRepository = projectRepository;
 		this.sampleRepository = sampleRepository;
 		this.userRepository = userRepository;
 		this.pujRepository = pujRepository;
 		this.psjRepository = psjRepository;
 	}
-	
+
 	@Override
 	public Iterable<Project> findAll() {
 		return super.findAll();
 	}
-	
+
 	@Override
 	public Project read(Long id) {
 		return super.read(id);
@@ -159,6 +166,33 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@Override
+	public Page<Project> searchProjectsByName(String name, int page, int size, Direction order, String... sortProperties) {
+		if (sortProperties.length == 0) {
+			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
+		}
+
+		return projectRepository.findAll(ProjectSpecification.searchProjectName(name), new PageRequest(page, size,
+				order, sortProperties));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public Page<ProjectUserJoin> searchProjectsByNameForUser(User user, String term, int page, int size, Direction order,
+			String... sortProperties) {
+		if (sortProperties.length == 0) {
+			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
+		}
+		return pujRepository.findAll(ProjectUserJoinSpecification.searchProjectNameWithUser(term, user),
+				new PageRequest(page, size, order, sortProperties));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public List<Join<Project, User>> getProjectsForUserWithRole(User user, ProjectRole role) {
 		return pujRepository.getProjectsForUserWithRole(user, role);
 	}
@@ -169,6 +203,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	public boolean userHasProjectRole(User user, Project project, ProjectRole projectRole) {
 		List<Join<Project, User>> projects = getProjectsForUserWithRole(user, projectRole);
-		return projects.contains(new ProjectUserJoin(project, user,projectRole));
+		return projects.contains(new ProjectUserJoin(project, user, projectRole));
 	}
 }

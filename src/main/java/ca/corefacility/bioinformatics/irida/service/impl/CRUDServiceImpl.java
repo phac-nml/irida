@@ -33,7 +33,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType> implements
 		CRUDService<KeyType, ValueType> {
 	private static final String NO_SUCH_ID_EXCEPTION = "No such identifier exists in the database.";
 
-	private static final String CREATED_DATE_SORT_PROPERTY = "createdDate";
+	protected static final String CREATED_DATE_SORT_PROPERTY = "createdDate";
 
 	protected final PagingAndSortingRepository<ValueType, KeyType> repository;
 	protected final Validator validator;

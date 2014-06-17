@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories;
 
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.history.RevisionRepository;
 
@@ -12,6 +13,6 @@ import ca.corefacility.bioinformatics.irida.model.Project;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public interface ProjectRepository extends PagingAndSortingRepository<Project, Long>,
-		RevisionRepository<Project, Long, Integer> {
+		RevisionRepository<Project, Long, Integer>, JpaSpecificationExecutor<Project> {
 
 }

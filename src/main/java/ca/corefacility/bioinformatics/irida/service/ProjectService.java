@@ -2,12 +2,15 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -77,6 +80,17 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	public void removeSampleFromProject(Project project, Sample sample);
 
 	/**
+	 * Search for Projects with a given partial name
+	 * @param name The name to search
+	 * @param page The page number to read
+	 * @param size The size of the pages to read
+	 * @param order The order to sort in
+	 * @param sortProperties The properties to sort on
+	 * @return The matching projects
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Page<Project> searchProjectsByName(String name, int page, int size, Direction order, String... sortProperties);
+	/**
 	 * Get all {@link Project}s associated with a particular {@link User}.
 	 * 
 	 * @param user
@@ -84,7 +98,20 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return the projects associated with the user.
 	 */
 	public List<Join<Project, User>> getProjectsForUser(User user);
-
+	
+	/**
+	 * Search all {@link Project}s associated with a particular {@link User}.
+	 * 
+	 * @param user the user to get projects for.
+	 * @param searchTerm The search term in the Project name
+	 * @param page The page number to read
+	 * @param size The size of the pages to read
+	 * @param order The order to sort in
+	 * @param sortProperties The properties to sort on
+	 * @return The matching projects
+	 */
+	public Page<ProjectUserJoin> searchProjectsByNameForUser(User user, String searchTerm, int page, int size, Direction order, String... sortProperties);
+	
 	/**
 	 * Get all {@link Project}s associated with a particular {@link User} where
 	 * that user has a {@link ProjectRole}.PROJECT_OWNER role on the project.

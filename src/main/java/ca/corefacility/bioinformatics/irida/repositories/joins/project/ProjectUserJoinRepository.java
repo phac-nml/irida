@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.repositories.joins.project;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -18,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
-public interface ProjectUserJoinRepository extends CrudRepository<ProjectUserJoin, Long> {
+public interface ProjectUserJoinRepository extends CrudRepository<ProjectUserJoin, Long>, JpaSpecificationExecutor<ProjectUserJoin> {
 	/**
 	 * Get all {@link User}s associated with a project.
 	 * 
