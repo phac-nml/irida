@@ -19,7 +19,8 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
  * 
  */
 @Configuration
-@PropertySource(value = { "classpath:/ca/corefacility/bioinformatics/irida/config/jdbc.dev.properties",
+@PropertySource(value = {
+		"classpath:/ca/corefacility/bioinformatics/irida/config/jdbc.${spring.profiles.active:dev}.properties",
 		"classpath:/ca/corefacility/bioinformatics/irida/config/filesystem.properties", "file:/etc/irida/irida.conf" }, ignoreResourceNotFound = true)
 public class IridaApiPropertyPlaceholderConfig {
 
