@@ -54,6 +54,7 @@
         <attoparser.version>1.3</attoparser.version>
         <thymeleaf.version>2.1.3.RELEASE</thymeleaf.version>
         <thymeleaf-extras-data-attribute.version>1.3</thymeleaf-extras-data-attribute.version>
+        <chromedriver.version>2.9</chromedriver.version>
     </properties>
 
     <inceptionYear>2014</inceptionYear>
@@ -329,6 +330,13 @@
             <version>${selenium-driver.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>pl.oakfusion</groupId>
+            <artifactId>chromedriver</artifactId>
+            <version>${chromedriver.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
