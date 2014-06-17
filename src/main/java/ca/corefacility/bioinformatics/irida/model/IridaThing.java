@@ -23,10 +23,4 @@ public interface IridaThing {
      * @return A {@link Date} object of the timestamp
      */
     public Date getTimestamp();
-    
-    /**
-     * Set the timestamp for this object
-     * @param timestamp a {@link Date} timestamp to set for this object
-     */
-    public void setTimestamp(Date timestamp);
 }

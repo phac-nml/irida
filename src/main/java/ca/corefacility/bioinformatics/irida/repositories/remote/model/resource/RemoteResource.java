@@ -34,12 +34,6 @@ public interface RemoteResource {
 	public void setLinks(List<Map<String, String>> links);
 	
 	/**
-	 * Set the date this resource was created
-	 * @param dateCreated
-	 */
-	public void setDateCreated(Date dateCreated);
-	
-	/**
 	 * Get the date this resource was created
 	 * @return
 	 */

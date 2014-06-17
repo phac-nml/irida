@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.OverrepresentedSequenceRepository;
-import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.OverrepresentedSequenceService;
 
 /**
@@ -22,26 +21,25 @@ import ca.corefacility.bioinformatics.irida.service.OverrepresentedSequenceServi
 @Service
 public class OverrepresentedSequenceServiceImpl extends CRUDServiceImpl<Long, OverrepresentedSequence> implements
 		OverrepresentedSequenceService {
-
-	private SequenceFileRepository sequenceFileRepository;
+	/**
+	 * Reference to {@link OverrepresentedSequenceRepository}.
+	 */
+	private OverrepresentedSequenceRepository overrepresentedSequenceRepository;
 
 	protected OverrepresentedSequenceServiceImpl() {
 		super(null, null, OverrepresentedSequence.class);
 	}
 
 	@Autowired
-	public OverrepresentedSequenceServiceImpl(OverrepresentedSequenceRepository repository,
-			SequenceFileRepository sequenceFileRepository, Validator validator) {
+	public OverrepresentedSequenceServiceImpl(OverrepresentedSequenceRepository repository, Validator validator) {
 		super(repository, validator, OverrepresentedSequence.class);
-		this.sequenceFileRepository = sequenceFileRepository;
+		this.overrepresentedSequenceRepository = repository;
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public Set<OverrepresentedSequence> getOverrepresentedSequencesForSequenceFile(SequenceFile sequenceFile) {
-		SequenceFile loaded = sequenceFileRepository.findOne(sequenceFile.getId());
-		loaded.getOverrepresentedSequences().forEach(os -> os.getId());
-		return loaded.getOverrepresentedSequences();
+		return overrepresentedSequenceRepository.findOverrepresentedSequencesForSequenceFile(sequenceFile);
 	}
 
 }

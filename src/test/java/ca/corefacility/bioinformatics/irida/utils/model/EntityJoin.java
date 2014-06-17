@@ -74,10 +74,4 @@ public class EntityJoin implements Join<IdentifiableTestEntity, OtherEntity>{
 	public Date getTimestamp() {
 		return createdDate;
 	}
-
-	@Override
-	public void setTimestamp(Date timestamp) {
-		createdDate = timestamp;
-	}
-
 }

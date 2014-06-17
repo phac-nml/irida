@@ -45,14 +45,16 @@ public class UserGroupJoin implements Join<User, Group> {
 	@JoinColumn(name = "logicalGroup_id")
 	@NotNull
 	private Group logicalGroup;
-
+	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
+	private final Date createdDate;
 
 	protected UserGroupJoin() {
+		this.createdDate = new Date();
 	}
 
 	public UserGroupJoin(User u, Group g) {
+		this();
 		this.user = u;
 		this.logicalGroup = g;
 	}
@@ -99,10 +101,4 @@ public class UserGroupJoin implements Join<User, Group> {
 	public Date getTimestamp() {
 		return createdDate;
 	}
-
-	@Override
-	public void setTimestamp(Date timestamp) {
-		this.createdDate = timestamp;
-	}
-
 }

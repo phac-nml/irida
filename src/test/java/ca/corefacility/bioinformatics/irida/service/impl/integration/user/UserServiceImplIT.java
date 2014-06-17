@@ -354,7 +354,6 @@ public class UserServiceImplIT {
 		u.setEmail("differentUser@nowhere.com");
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
-			u.setCreatedDate(sdf.parse("2013-07-18 14:20:19.0"));
 			u.setModifiedDate(sdf.parse("2013-07-18 14:20:19.0"));
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block

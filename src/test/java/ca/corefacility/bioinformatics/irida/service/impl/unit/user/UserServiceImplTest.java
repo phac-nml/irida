@@ -56,7 +56,8 @@ public class UserServiceImplTest {
 		passwordEncoder = mock(PasswordEncoder.class);
 		pujRepository = mock(ProjectUserJoinRepository.class);
 		userGroupJoinRepository = mock(UserGroupJoinRepository.class);
-		userService = new UserServiceImpl(userRepository, pujRepository, userGroupJoinRepository, passwordEncoder, validator);
+		userService = new UserServiceImpl(userRepository, pujRepository, userGroupJoinRepository, passwordEncoder,
+				validator);
 	}
 
 	@Test(expected = EntityNotFoundException.class)
@@ -210,29 +211,27 @@ public class UserServiceImplTest {
 
 		userService.create(u);
 	}
-	
+
 	@Test
-	public void testLoadUserByEmail(){
+	public void testLoadUserByEmail() {
 		String email = "fbristow@gmail.com";
 		User u = user();
 		User u2 = user();
-		
+
 		when(userRepository.loadUserByEmail(email)).thenReturn(u);
-		
-		u2.setCreatedDate(u.getCreatedDate());
+
 		u2.setModifiedDate(u.getModifiedDate());
-		
+
 		User loadUserByEmail = userService.loadUserByEmail(email);
-		
+
 		assertEquals(u2, loadUserByEmail);
 	}
-	
-	
+
 	@Test(expected = EntityNotFoundException.class)
-	public void testLoadUserByEmailNotFound(){
+	public void testLoadUserByEmailNotFound() {
 		String email = "bademail@nowhere.com";
 		when(userRepository.loadUserByEmail(email)).thenReturn(null);
-		
+
 		userService.loadUserByEmail(email);
 
 	}

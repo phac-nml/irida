@@ -43,7 +43,7 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 	private String possibleSource;
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
+	private final Date createdDate;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
@@ -52,14 +52,15 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 	private SequenceFile sequenceFile;
 
 	public OverrepresentedSequence() {
+		this.createdDate = new Date();
 	}
 
 	public OverrepresentedSequence(String sequence, int count, BigDecimal percentage, String possibleSource) {
+		this();
 		this.sequence = sequence;
 		this.overrepresentedSequenceCount = count;
 		this.percentage = percentage;
 		this.possibleSource = possibleSource;
-		this.createdDate = new Date();
 	}
 
 	@Override
@@ -140,11 +141,6 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 	@Override
 	public Date getTimestamp() {
 		return createdDate;
-	}
-
-	@Override
-	public void setTimestamp(Date timestamp) {
-		this.createdDate = timestamp;
 	}
 
 	public SequenceFile getSequenceFile() {
