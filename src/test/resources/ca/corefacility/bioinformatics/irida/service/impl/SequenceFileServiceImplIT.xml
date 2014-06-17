@@ -16,7 +16,8 @@
 
 	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
 		projectDescription="description" remoteURL="somewhere" />
-	<project_user project_id="1" user_id="2" projectRole="PROJECT_OWNER" />
+	<project_user project_id="1" user_id="2" projectRole="PROJECT_OWNER"
+		createdDate="2013-07-18 14:20:19.0" />
 	<sample id="1" createdDate="2013-07-18 14:20:19.0" description="description1"
 		sequencerSampleId="sample1" sampleName="sample1" />
 	<project_sample id="1" createdDate="2013-07-18 14:20:19.0"
@@ -25,8 +26,10 @@
 		filePath="/" />
 	<sequencefile_sample id="1" createdDate="2013-07-18 14:20:19.0"
 		sample_id="1" sequencefile_id="1" />
-	
-	<sequence_file_properties sequence_file_id="1" property_key="samplePlate" property_value="5"/>
-	<sequence_file_properties sequence_file_id="1" property_key="sampleWell" property_value="10"/>
+
+	<sequence_file_properties sequence_file_id="1"
+		property_key="samplePlate" property_value="5" />
+	<sequence_file_properties sequence_file_id="1"
+		property_key="sampleWell" property_value="10" />
 
 </dataset>

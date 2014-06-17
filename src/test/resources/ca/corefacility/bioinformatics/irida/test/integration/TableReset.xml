@@ -11,6 +11,7 @@
 	<system_role />
 	<user />
 	<project />
+	<client_details />
 	<password_reset />
 	<remote_api />
 	<remote_api_token />
@@ -40,4 +41,5 @@
 	<logicalGroup_AUD />
 	<user_group_AUD />
 	<host_AUD />
+	<client_details_AUD />
 </dataset>

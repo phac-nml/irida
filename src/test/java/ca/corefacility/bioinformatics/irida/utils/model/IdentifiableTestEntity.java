@@ -96,11 +96,6 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
     }
 
     @Override
-    public void setTimestamp(Date date) {
-        this.createdDate = date;
-    }
-
-    @Override
     public int hashCode() {
         return Objects.hash(nonNull,integerValue,createdDate);
     }

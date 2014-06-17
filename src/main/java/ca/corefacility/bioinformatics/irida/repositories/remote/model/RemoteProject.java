@@ -30,10 +30,6 @@ public class RemoteProject extends Project implements RemoteResource{
 		this.links = links;
 	}
 	
-	public void setDateCreated(Date dateCreated){
-		this.setTimestamp(dateCreated);
-	}
-	
 	public Date getDateCreated(){
 		return getTimestamp();
 	}

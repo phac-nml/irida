@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="created-date-not-null" author="fbristow">
+		<!-- Add not null constraints for creation date column for all tables. -->
+		<addNotNullConstraint tableName="miseq_run"
+			columnName="createdDate" columnDataType="datetime" />
+		<addNotNullConstraint tableName="project"
+			columnName="createdDate" columnDataType="datetime" />
+		<addNotNullConstraint tableName="project_sample"
+			columnName="createdDate" columnDataType="datetime" />
+		<addNotNullConstraint tableName="project_user"
+			columnName="createdDate" columnDataType="datetime" />
+		<addNotNullConstraint tableName="sample"
+			columnName="createdDate" columnDataType="datetime" />
+		<addNotNullConstraint tableName="sequence_file"
+			columnName="createdDate" columnDataType="datetime" />
+		<addNotNullConstraint tableName="sequencefile_sample"
+			columnName="createdDate" columnDataType="datetime" />
+		<addNotNullConstraint tableName="user"
+			columnName="createdDate" columnDataType="datetime" />
+	</changeSet>
+</databaseChangeLog>

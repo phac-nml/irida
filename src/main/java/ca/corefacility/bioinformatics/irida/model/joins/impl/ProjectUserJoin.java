@@ -51,9 +51,9 @@ public class ProjectUserJoin implements Join<Project, User> {
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private ProjectRole projectRole;
-
+	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
+	private final Date createdDate;
 
 	public ProjectUserJoin() {
 		createdDate = new Date();
@@ -66,7 +66,7 @@ public class ProjectUserJoin implements Join<Project, User> {
 		this.user = object;
 		this.projectRole = projectRole;
 	}
-	
+
 	public Long getId() {
 		return this.id;
 	}
@@ -109,11 +109,6 @@ public class ProjectUserJoin implements Join<Project, User> {
 	@Override
 	public Date getTimestamp() {
 		return createdDate;
-	}
-
-	@Override
-	public void setTimestamp(Date timestamp) {
-		this.createdDate = timestamp;
 	}
 
 	/**

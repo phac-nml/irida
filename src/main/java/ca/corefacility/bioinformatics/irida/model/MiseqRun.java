@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
@@ -50,8 +51,9 @@ public class MiseqRun implements IridaThing, Comparable<MiseqRun>{
     
     private String chemistry;
         
+    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate;
+    private final Date createdDate;
     
     @Temporal(TemporalType.TIMESTAMP)
     private Date modifiedDate;
@@ -152,11 +154,6 @@ public class MiseqRun implements IridaThing, Comparable<MiseqRun>{
     }
 
     @Override
-    public void setTimestamp(Date date) {
-        this.createdDate = date;
-    }
-
-    @Override
     public Date getModifiedDate() {
         return modifiedDate;
     }
@@ -165,14 +162,6 @@ public class MiseqRun implements IridaThing, Comparable<MiseqRun>{
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
-
-	public Set<SequenceFile> getSequenceFiles() {
-		return sequenceFiles;
-	}
-
-	public void setSequenceFiles(Set<SequenceFile> sequenceFiles) {
-		this.sequenceFiles = sequenceFiles;
-	}
 
     @Override
     public int hashCode() {

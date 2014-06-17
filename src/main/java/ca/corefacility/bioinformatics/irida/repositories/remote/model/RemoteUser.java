@@ -37,11 +37,6 @@ public class RemoteUser extends User implements RemoteResource{
 	}
 
 	@Override
-	public void setDateCreated(Date dateCreated) {
-		this.setTimestamp(dateCreated);
-	}
-
-	@Override
 	public Date getDateCreated() {
 		return this.getTimestamp();
 	}

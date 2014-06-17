@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+	<client_details id="1" clientId="testClient" clientSecret="xxxxxxxx" token_validity="100000" createdDate="2013-07-18 14:20:19.0" />
+</dataset>

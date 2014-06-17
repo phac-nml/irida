@@ -87,9 +87,9 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	@JoinColumn(name = "system_role")
 	@NotNull(message = "{user.systemRole.notnull}")
 	private Role systemRole;
-
+	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
+	private final Date createdDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
@@ -314,11 +314,6 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	}
 
 	@Override
-	public void setTimestamp(Date date) {
-		this.createdDate = date;
-	}
-
-	@Override
 	public Date getModifiedDate() {
 		return modifiedDate;
 	}
@@ -348,19 +343,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 		return createdDate;
 	}
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
 	public void setSystemRole(Role systemRole) {
 		this.systemRole = systemRole;
-	}
-
-	public List<ProjectUserJoin> getProjects() {
-		return projects;
-	}
-
-	public void setProjects(List<ProjectUserJoin> projects) {
-		this.projects = projects;
 	}
 }

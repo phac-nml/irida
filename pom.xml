@@ -463,7 +463,7 @@
 		<hibernate.validator.version>5.1.0.Final</hibernate.validator.version>
 		<javax.el-api.version>2.2</javax.el-api.version>
 		<el-ri.version>1.0</el-ri.version>
-		<com.github.jmchilton.blend4j.version>0.1-alpha-7</com.github.jmchilton.blend4j.version>
+		<com.github.jmchilton.blend4j.version>0.1-alpha-8</com.github.jmchilton.blend4j.version>
 		<com.github.jmchilton.galaxybootstrap.version>0.3.0-rc4-SNAPSHOT</com.github.jmchilton.galaxybootstrap.version>
 
 		<!-- plugins -->
