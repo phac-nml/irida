@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderName
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.LibraryContentId;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker.UploadEventListener;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
@@ -543,9 +544,9 @@ public class GalaxyAPI {
 
 			LibraryFolder illuminaFolder;
 
-			if (galaxyLibraryContentSearchAdmin.libraryContentExists(libraryID, ILLUMINA_FOLDER_PATH)) {
-				LibraryContent illuminaContent = galaxyLibraryContentSearchAdmin.findLibraryContentWithId(libraryID,
-						ILLUMINA_FOLDER_PATH);
+			if (galaxyLibraryContentSearchAdmin.exists(new LibraryContentId(libraryID, ILLUMINA_FOLDER_PATH))) {
+				LibraryContent illuminaContent = galaxyLibraryContentSearchAdmin.
+						findById(new LibraryContentId(libraryID, ILLUMINA_FOLDER_PATH));
 
 				illuminaFolder = new LibraryFolder();
 				illuminaFolder.setId(illuminaContent.getId());
@@ -556,7 +557,7 @@ public class GalaxyAPI {
 
 			// create references folder if it doesn't exist, but we don't need
 			// to put anything into it.
-			if (!galaxyLibraryContentSearchAdmin.libraryContentExists(libraryID, REFERENCES_FOLDER_PATH)) {
+			if (!galaxyLibraryContentSearchAdmin.exists(new LibraryContentId(libraryID, REFERENCES_FOLDER_PATH))) {
 				galaxyLibrary.createLibraryFolder(library, REFERENCES_FOLDER_NAME);
 			}
 

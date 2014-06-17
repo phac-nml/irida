@@ -30,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundExce
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.LibraryContentId;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryContentSearch;
 
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
@@ -112,9 +113,9 @@ public class GalaxyLibraryContentSearchIT {
 				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyLibraryContentExists");
 		GalaxyFolderName folderName = new GalaxyFolderName("folder");
 		Library createdLibrary = buildLibrary(libraryName, folderName);
-		assertTrue(galaxyLibraryContentSearch.exists(createdLibrary.getId()));
-		assertTrue(galaxyLibraryContentSearch.libraryContentExists(createdLibrary.getId(),
-				folderNameToPath(folderName)));
+		LibraryContentId libraryContentId = 
+				new LibraryContentId(createdLibrary.getId(), folderNameToPath(folderName));
+		assertTrue(galaxyLibraryContentSearch.exists(libraryContentId));
 	}
 	
 	/**
@@ -127,9 +128,9 @@ public class GalaxyLibraryContentSearchIT {
 				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyLibraryContentNotExistsLibraryId");
 		GalaxyFolderName folderName = new GalaxyFolderName("folder");
 		buildLibrary(libraryName, folderName);
-		assertFalse(galaxyLibraryContentSearch.exists("invalid"));
-		assertFalse(galaxyLibraryContentSearch.libraryContentExists("invalid",
-				folderNameToPath(folderName)));
+		LibraryContentId libraryContentId = 
+				new LibraryContentId("invalid", folderNameToPath(folderName));
+		assertFalse(galaxyLibraryContentSearch.exists(libraryContentId));
 	}
 	
 	/**
@@ -142,8 +143,9 @@ public class GalaxyLibraryContentSearchIT {
 				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyLibraryContentNotExistsFolder");
 		GalaxyFolderName folderName = new GalaxyFolderName("folder");
 		Library createdLibrary = buildLibrary(libraryName, folderName);
-		assertFalse(galaxyLibraryContentSearch.libraryContentExists(createdLibrary.getId(),
-				new GalaxyFolderPath("/invalid_folder")));
+		LibraryContentId libraryContentId = 
+				new LibraryContentId(createdLibrary.getId(), new GalaxyFolderPath("/invalid_folder"));
+		assertFalse(galaxyLibraryContentSearch.exists(libraryContentId));
 	}
 	
 	/**
@@ -156,9 +158,9 @@ public class GalaxyLibraryContentSearchIT {
 				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyFindLibraryContentSuccess");
 		GalaxyFolderName folderName = new GalaxyFolderName("folder");
 		Library createdLibrary = buildLibrary(libraryName, folderName);
-		assertNotNull(galaxyLibraryContentSearch.findById(createdLibrary.getId()));
-		LibraryContent foundContent = galaxyLibraryContentSearch.findLibraryContentWithId(createdLibrary.getId(),
-				folderNameToPath(folderName));
+		LibraryContentId libraryContentId = 
+				new LibraryContentId(createdLibrary.getId(), folderNameToPath(folderName));
+		LibraryContent foundContent = galaxyLibraryContentSearch.findById(libraryContentId);
 		assertNotNull(foundContent);
 		assertEquals(folderNameToPath(folderName).getName(), foundContent.getName());	
 	}
@@ -173,7 +175,9 @@ public class GalaxyLibraryContentSearchIT {
 				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyFindLibraryContentByIdFail");
 		GalaxyFolderName folderName = new GalaxyFolderName("folder");
 		buildLibrary(libraryName, folderName);
-		galaxyLibraryContentSearch.findById("invalid");
+		LibraryContentId libraryContentId = 
+				new LibraryContentId("invalid", folderNameToPath(folderName));
+		galaxyLibraryContentSearch.findById(libraryContentId);
 	}
 	
 	/**
@@ -186,8 +190,9 @@ public class GalaxyLibraryContentSearchIT {
 				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyFindLibraryContentFail");
 		GalaxyFolderName folderName = new GalaxyFolderName("folder");
 		Library createdLibrary = buildLibrary(libraryName, folderName);
-		galaxyLibraryContentSearch.findLibraryContentWithId(createdLibrary.getId(),
-				new GalaxyFolderPath("/invalid_name"));
+		LibraryContentId libraryContentId = 
+				new LibraryContentId(createdLibrary.getId(), new GalaxyFolderPath("/invalid_name"));
+		galaxyLibraryContentSearch.findById(libraryContentId);
 	}
 	
 	/**

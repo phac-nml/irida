@@ -15,9 +15,9 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.LibraryContentId;
 
-public class GalaxyLibraryContentSearch extends GalaxySearch<List<LibraryContent>, String> {
+public class GalaxyLibraryContentSearch extends GalaxySearch<LibraryContent, LibraryContentId> {
 
 	private LibrariesClient librariesClient;
 	private URL galaxyURL;
@@ -39,26 +39,49 @@ public class GalaxyLibraryContentSearch extends GalaxySearch<List<LibraryContent
 	}
 	
 	/**
+	 * Gets a list of library contents given a library id.
+	 * @param libraryId  The library id to search for a list of library contents.
+	 * @return  A list of library contents.
+	 * @throws NoGalaxyContentFoundException  If no library contents could be found.
+	 */
+	private List<LibraryContent> getLibraryContents(String libraryId)
+			throws NoGalaxyContentFoundException {
+		
+		try {
+			List<LibraryContent> libraryContents = librariesClient.getLibraryContents(libraryId);
+			
+			if (libraryContents != null) {
+				return libraryContents;
+			}
+			
+		} catch (UniformInterfaceException e) {
+			throw new NoGalaxyContentFoundException("Could not find library content for id " + libraryId + " in Galaxy "
+					+ galaxyURL, e);
+		}
+		
+		throw new NoGalaxyContentFoundException("Could not find library content for id " + libraryId + " in Galaxy "
+				+ galaxyURL);
+	}
+	
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<LibraryContent> findById(String id)
+	public LibraryContent findById(LibraryContentId id)
 			throws ExecutionManagerObjectNotFoundException {
 		checkNotNull(id, "id is null");
 
-		try {
-			List<LibraryContent> libraryContents = librariesClient.getLibraryContents(id);
-	
-			if (libraryContents == null) {
-				throw new NoGalaxyContentFoundException("Could not find library content for id " + id + " in Galaxy "
-						+ galaxyURL);
-			} else {
-				return libraryContents;
-			}
-		} catch (UniformInterfaceException e) {
-			throw new NoGalaxyContentFoundException("Could not find library content for id " + id + " in Galaxy "
-					+ galaxyURL, e);
+		List<LibraryContent> libraryContents = getLibraryContents(id.getLibraryId());
+
+		Optional<LibraryContent> content = libraryContents.stream()
+				.filter(c -> c.getType().equals("folder") && 
+						c.getName().equals(id.getFolderPath().getName())).findFirst();
+		if (content.isPresent()) {
+			return content.get();
 		}
+		
+		throw new NoGalaxyContentFoundException("Could not find library content for id " + id + " in Galaxy "
+				+ galaxyURL);
 	}
 	
 
@@ -72,60 +95,12 @@ public class GalaxyLibraryContentSearch extends GalaxySearch<List<LibraryContent
 	 *         LibraryContent object.
 	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
-	public Map<String, LibraryContent> libraryContentAsMap(String libraryId) throws ExecutionManagerObjectNotFoundException {
-		checkNotNull(libraryId, "libraryId is null");
-
-		List<LibraryContent> libraryContents = findById(libraryId);
-
-		return libraryContents.stream().collect(Collectors.toMap(LibraryContent::getName, Function.identity()));
-	}
-	
-	/**
-	 * Given a libraryId and a folder name, search for the corresponding
-	 * LibraryContent object within this library.
-	 * 
-	 * @param libraryId
-	 *            The ID of the library to search for.
-	 * @param folderName
-	 *            The name of the folder to search for (only finds first
-	 *            instance of this folder name).
-	 * @return A LibraryContent within the given library with the given name, or
-	 *         null if no such folder exists.
-	 * @throws ExecutionManagerObjectNotFoundException 
-	 */
-	public LibraryContent findLibraryContentWithId(String libraryId, GalaxyFolderPath folderPath)
+	public Map<String, LibraryContent> libraryContentAsMap(String libraryId)
 			throws ExecutionManagerObjectNotFoundException {
 		checkNotNull(libraryId, "libraryId is null");
-		checkNotNull(folderPath, "folderPath is null");
 
-		List<LibraryContent> libraryContents = findById(libraryId);
-
-		Optional<LibraryContent> content = libraryContents.stream()
-				.filter(c -> c.getType().equals("folder") && c.getName().equals(folderPath.getName())).findFirst();
-		if (content.isPresent()) {
-			return content.get();
-		}
-
-		throw new NoGalaxyContentFoundException("Could not find library content for id " + libraryId + " in Galaxy "
-				+ galaxyURL);
-	}
-	
-	/**
-	 * Determine if the given folderPath exists within a library with the given
-	 * id.
-	 * 
-	 * @param libraryId
-	 *            The id of the library to check.
-	 * @param folderPath
-	 *            A path within this library to check.
-	 * @return True if this path exists within this library, false otherwise.
-	 */
-	public boolean libraryContentExists(String libraryId, GalaxyFolderPath folderPath) {
-		try {
-			LibraryContent content = findLibraryContentWithId(libraryId, folderPath);
-			return content != null;
-		} catch (ExecutionManagerObjectNotFoundException e) {
-			return false;
-		}
+		List<LibraryContent> libraryContents = getLibraryContents(libraryId);
+		
+		return libraryContents.stream().collect(Collectors.toMap(LibraryContent::getName, Function.identity()));
 	}
 }

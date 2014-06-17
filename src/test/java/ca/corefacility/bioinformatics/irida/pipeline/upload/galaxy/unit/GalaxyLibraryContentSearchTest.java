@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNot
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.LibraryContentId;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryContentSearch;
 
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
@@ -44,6 +45,13 @@ public class GalaxyLibraryContentSearchTest {
 			"test_folder/illumina");
 	private static final GalaxyFolderPath INVALID_FOLDER_NAME = new GalaxyFolderPath(
 			"invalid_folder");
+	
+	private static final LibraryContentId CONTENT_FOLDER_ID =
+			new LibraryContentId(LIBRARY_ID, FOLDER_PATH);
+	private static final LibraryContentId INVALID_LIBRARY_CONTENT_FOLDER_ID =
+			new LibraryContentId(INVALID_LIBRARY_ID, FOLDER_PATH);
+	private static final LibraryContentId LIBRARY_INVALID_FOLDER_ID =
+			new LibraryContentId(LIBRARY_ID, INVALID_FOLDER_NAME);
 	
 	@Mock private LibrariesClient librariesClient;
 	
@@ -130,16 +138,25 @@ public class GalaxyLibraryContentSearchTest {
 	 */
 	@Test
 	public void testfindByIdExists() throws ExecutionManagerObjectNotFoundException {
-		assertNotNull(galaxyLibraryContentSearch.findById(LIBRARY_ID));
+		assertNotNull(galaxyLibraryContentSearch.findById(CONTENT_FOLDER_ID));
 	}
 	
 	/**
-	 * Tests finding library contents by id (not exists).
+	 * Tests finding library contents by id (invalid library, valid folder).
 	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test(expected=NoGalaxyContentFoundException.class)
-	public void testfindByIdNotExists() throws ExecutionManagerObjectNotFoundException {
-		galaxyLibraryContentSearch.findById(INVALID_LIBRARY_ID);
+	public void testfindByIdNotExistsLibrary() throws ExecutionManagerObjectNotFoundException {
+		galaxyLibraryContentSearch.findById(INVALID_LIBRARY_CONTENT_FOLDER_ID);
+	}
+	
+	/**
+	 * Tests finding library contents by id (valid library, invalid folder)).
+	 * @throws ExecutionManagerObjectNotFoundException 
+	 */
+	@Test(expected=NoGalaxyContentFoundException.class)
+	public void testFindByIdNotExistsFolder() throws ExecutionManagerObjectNotFoundException {
+		galaxyLibraryContentSearch.findById(LIBRARY_INVALID_FOLDER_ID);
 	}
 	
 	/**
@@ -147,52 +164,23 @@ public class GalaxyLibraryContentSearchTest {
 	 */
 	@Test
 	public void testLibraryContentFindByIdExists() {
-		assertTrue(galaxyLibraryContentSearch.exists(LIBRARY_ID));
+		assertTrue(galaxyLibraryContentSearch.exists(CONTENT_FOLDER_ID));
 	}
 	
 	/**
-	 * Tests exists library contents by id (not exists).
+	 * Tests exists library contents by id (valid library, invalid folder).
 	 */
 	@Test
-	public void testLibraryContentFindByIdNotExists() {
-		assertFalse(galaxyLibraryContentSearch.exists(INVALID_LIBRARY_ID));
+	public void testLibraryContentFindByIdNotExistsLibrary() {
+		assertFalse(galaxyLibraryContentSearch.exists(INVALID_LIBRARY_CONTENT_FOLDER_ID));
 	}
 	
 	/**
-	 * Tests checking existence of library content.
+	 * Tests exists library contents by id (invalid library, valid folder).
 	 */
 	@Test
-	public void testLibraryContentExists() {
-		assertTrue(galaxyLibraryContentSearch.libraryContentExists(LIBRARY_ID_MULTIPLE_CONTENTS, ILLUMINA_FOLDER_NAME));
-	}
-	
-	/**
-	 * Tests checking non-existence of library content (no content).
-	 */
-	@Test
-	public void testLibraryNoContentExists() {
-		assertFalse(galaxyLibraryContentSearch.libraryContentExists(LIBRARY_ID_MULTIPLE_CONTENTS, INVALID_FOLDER_NAME));
-	}
-	
-	/**
-	 * Tests checking non-existence of library content (no library).
-	 */
-	@Test
-	public void testNoLibraryContentExists() {
-		assertFalse(galaxyLibraryContentSearch.libraryContentExists(INVALID_LIBRARY_ID, ILLUMINA_FOLDER_NAME));
-	}
-
-	/**
-	 * Tests finding library content with library id.
-	 * @throws ExecutionManagerObjectNotFoundException 
-	 */
-	@Test
-	public void testFindLibraryContentWithId()
-			throws ExecutionManagerObjectNotFoundException {
-		LibraryContent validFolder = galaxyLibraryContentSearch.findLibraryContentWithId(
-				LIBRARY_ID, FOLDER_PATH);
-		assertEquals("folder", validFolder.getType());
-		assertEquals(FOLDER_PATH.getName(), validFolder.getName());
+	public void testLibraryContentFindByIdNotExistsFolder() {
+		assertFalse(galaxyLibraryContentSearch.exists(LIBRARY_INVALID_FOLDER_ID));
 	}
 
 	/**
@@ -217,25 +205,5 @@ public class GalaxyLibraryContentSearchTest {
 	@Test(expected=NoGalaxyContentFoundException.class)
 	public void testLibraryContentAsMapNoContent() throws ExecutionManagerObjectNotFoundException {
 		galaxyLibraryContentSearch.libraryContentAsMap(INVALID_LIBRARY_ID);
-	}
-
-	/**
-	 * Tests finding library content with invalid folder.
-	 * @throws ExecutionManagerObjectNotFoundException 
-	 */
-	@Test(expected=NoGalaxyContentFoundException.class)
-	public void testFindLibraryContentWithIdInvalidFolder() throws ExecutionManagerObjectNotFoundException {
-		galaxyLibraryContentSearch.findLibraryContentWithId(LIBRARY_ID,
-				INVALID_FOLDER_NAME);
-	}
-
-	/**
-	 * Tests finding library content with invalid library id.
-	 * @throws ExecutionManagerObjectNotFoundException 
-	 */
-	@Test(expected=NoGalaxyContentFoundException.class)
-	public void testFindLibraryContentWithIdInvalidLibraryId() throws ExecutionManagerObjectNotFoundException {
-		galaxyLibraryContentSearch.findLibraryContentWithId(INVALID_LIBRARY_ID,
-				FOLDER_PATH);
 	}
 }
