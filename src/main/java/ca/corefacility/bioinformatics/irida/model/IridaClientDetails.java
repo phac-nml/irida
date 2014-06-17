@@ -99,7 +99,7 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	private Date modifiedDate;
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
+	private final Date createdDate;
 
 	/**
 	 * Default constructor with empty scopes, grant types, resource ids,
@@ -349,10 +349,4 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	public Date getTimestamp() {
 		return createdDate;
 	}
-
-	@Override
-	public void setTimestamp(Date timestamp) {
-		this.createdDate = timestamp;
-	}
-
 }

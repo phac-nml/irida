@@ -18,7 +18,7 @@ public class PasswordReset implements Comparable<PasswordReset> {
 
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
+	private final Date createdDate;
 
 	@OneToOne
 	@NotNull
@@ -29,10 +29,11 @@ public class PasswordReset implements Comparable<PasswordReset> {
 	private String id;
 
 	protected PasswordReset() {
+		this.createdDate = new Date();
 	}
 
 	public PasswordReset(User user) {
-		this.createdDate = new Date();
+		this();
 		this.user = user;
 		this.id = UUID.randomUUID().toString();
 	}

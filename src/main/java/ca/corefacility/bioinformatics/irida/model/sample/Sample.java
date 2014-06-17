@@ -50,9 +50,9 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-
+	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
+	private final Date createdDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
@@ -234,6 +234,7 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	 *            The name of the sample
 	 */
 	public Sample(String sampleName) {
+		this();
 		this.sampleName = sampleName;
 	}
 
@@ -246,6 +247,7 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	 *            The ID of the sample
 	 */
 	public Sample(String sampleName, String sampleId) {
+		this();
 		this.sampleName = sampleName;
 		this.sequencerSampleId = sampleId;
 	}
@@ -333,11 +335,6 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	}
 
 	@Override
-	public void setTimestamp(Date date) {
-		this.createdDate = date;
-	}
-
-	@Override
 	public Date getModifiedDate() {
 		return modifiedDate;
 	}
@@ -347,28 +344,8 @@ public class Sample implements IridaThing, Comparable<Sample> {
 		this.modifiedDate = modifiedDate;
 	}
 
-	public List<ProjectSampleJoin> getProjects() {
-		return projects;
-	}
-
-	public void setProjects(List<ProjectSampleJoin> projects) {
-		this.projects = projects;
-	}
-
-	public List<SampleSequenceFileJoin> getSequenceFiles() {
-		return sequenceFiles;
-	}
-
-	public void setSequenceFiles(List<SampleSequenceFileJoin> sequenceFiles) {
-		this.sequenceFiles = sequenceFiles;
-	}
-
 	public Date getCreatedDate() {
 		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
 	}
 
 	public Host getHost() {
