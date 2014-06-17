@@ -17,7 +17,7 @@ import com.sun.jersey.api.client.ClientHandlerException;
 
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
-
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.ChangeLibraryPermissionsException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
@@ -31,7 +31,6 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
-
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploadWorker;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.UploadEventListenerTracker;
@@ -82,13 +81,12 @@ public class GalaxyUploadWorkerTest {
 	 * @throws LibraryUploadException
 	 * @throws CreateLibraryException
 	 * @throws ChangeLibraryPermissionsException
-	 * @throws GalaxyUserNotFoundException
 	 * @throws NoLibraryFoundException
-	 * @throws GalaxyUserNoRoleException
 	 * @throws NoGalaxyContentFoundException
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test
-	public void testUpload() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
+	public void testUpload() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, NoLibraryFoundException, NoGalaxyContentFoundException, ExecutionManagerObjectNotFoundException {
 		when(galaxyAPI.uploadSamples(samples, dataLocation, userName)).thenReturn(uploadResult);
 		
 		GalaxyUploadWorker worker = new GalaxyUploadWorker(galaxyAPI, samples, dataLocation, userName);
@@ -143,13 +141,12 @@ public class GalaxyUploadWorkerTest {
 	 * @throws LibraryUploadException
 	 * @throws CreateLibraryException
 	 * @throws ChangeLibraryPermissionsException
-	 * @throws GalaxyUserNotFoundException
 	 * @throws NoLibraryFoundException
-	 * @throws GalaxyUserNoRoleException
 	 * @throws NoGalaxyContentFoundException
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test
-	public void testUploadSuccess() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
+	public void testUploadSuccess() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, NoLibraryFoundException, NoGalaxyContentFoundException, ExecutionManagerObjectNotFoundException {
 		when(galaxyAPI.uploadSamples(samples, dataLocation, userName)).thenReturn(uploadResult);
 		
 		UploadEventListenerTracker eventListener = new UploadEventListenerTracker();
@@ -177,13 +174,12 @@ public class GalaxyUploadWorkerTest {
 	 * @throws LibraryUploadException
 	 * @throws CreateLibraryException
 	 * @throws ChangeLibraryPermissionsException
-	 * @throws GalaxyUserNotFoundException
 	 * @throws NoLibraryFoundException
-	 * @throws GalaxyUserNoRoleException
 	 * @throws NoGalaxyContentFoundException
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test
-	public void testUploadSuccessSeparateThread() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
+	public void testUploadSuccessSeparateThread() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, NoLibraryFoundException, NoGalaxyContentFoundException, ExecutionManagerObjectNotFoundException {
 		when(galaxyAPI.uploadSamples(samples, dataLocation, userName)).thenReturn(uploadResult);
 		
 		UploadEventListenerTracker eventListener = new UploadEventListenerTracker();
@@ -213,13 +209,12 @@ public class GalaxyUploadWorkerTest {
 	 * @throws LibraryUploadException
 	 * @throws CreateLibraryException
 	 * @throws ChangeLibraryPermissionsException
-	 * @throws GalaxyUserNotFoundException
 	 * @throws NoLibraryFoundException
-	 * @throws GalaxyUserNoRoleException
 	 * @throws NoGalaxyContentFoundException
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test
-	public void testUploadException() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
+	public void testUploadException() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, NoLibraryFoundException, NoGalaxyContentFoundException, ExecutionManagerObjectNotFoundException {
 		UploadException uploadException = new LibraryUploadException("exception");
 		UploadEventListenerTracker eventListener = new UploadEventListenerTracker();
 		
@@ -248,13 +243,12 @@ public class GalaxyUploadWorkerTest {
 	 * @throws LibraryUploadException
 	 * @throws CreateLibraryException
 	 * @throws ChangeLibraryPermissionsException
-	 * @throws GalaxyUserNotFoundException
 	 * @throws NoLibraryFoundException
-	 * @throws GalaxyUserNoRoleException
 	 * @throws NoGalaxyContentFoundException
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test
-	public void testUploadExceptionMultiThread() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
+	public void testUploadExceptionMultiThread() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, NoLibraryFoundException, NoGalaxyContentFoundException, ExecutionManagerObjectNotFoundException {
 		UploadException uploadException = new LibraryUploadException("exception");
 		UploadEventListenerTracker eventListener = new UploadEventListenerTracker();
 		
@@ -285,13 +279,12 @@ public class GalaxyUploadWorkerTest {
 	 * @throws LibraryUploadException
 	 * @throws CreateLibraryException
 	 * @throws ChangeLibraryPermissionsException
-	 * @throws GalaxyUserNotFoundException
 	 * @throws NoLibraryFoundException
-	 * @throws GalaxyUserNoRoleException
 	 * @throws NoGalaxyContentFoundException
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	@Test
-	public void testUploadNoGalaxyConnection() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException, NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
+	public void testUploadNoGalaxyConnection() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, NoLibraryFoundException, NoGalaxyContentFoundException, ExecutionManagerObjectNotFoundException {
 		UploadEventListenerTracker eventListener = new UploadEventListenerTracker();
 		
 		when(galaxyAPI.uploadSamples(samples, dataLocation, userName)).thenThrow(

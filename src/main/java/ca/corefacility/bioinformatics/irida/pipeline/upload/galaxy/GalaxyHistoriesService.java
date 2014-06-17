@@ -2,19 +2,25 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.ExecutionManagerSearch;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient.FileUploadRequest;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
+import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset.Source;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
@@ -27,30 +33,26 @@ import static com.google.common.base.Preconditions.*;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxyHistoriesService {
+public class GalaxyHistoriesService implements ExecutionManagerSearch<History, String> {
 	
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyHistoriesService.class);
 
 	private HistoriesClient historiesClient;
 	private ToolsClient toolsClient;
-	private GalaxySearch galaxySearch;
 	
 	/**
-	 * Builds a new GalaxyHistory with the given Galaxy instance and GalaxySearch objects.
+	 * Builds a new GalaxyHistory object for working with Galaxy Histories.
 	 * @param historiesClient  The HistoriesClient for interacting with Galaxy histories.
 	 * @param toolsClient  The ToolsClient for interacting with tools in Galaxy.
-	 * @param galaxySearch The GalaxySearch object to use.
 	 */
 	public GalaxyHistoriesService(HistoriesClient historiesClient,
-			ToolsClient toolsClient, GalaxySearch galaxySearch) {
+			ToolsClient toolsClient) {
 		checkNotNull(historiesClient, "historiesClient is null");
 		checkNotNull(toolsClient, "toolsClient is null");
-		checkNotNull(galaxySearch, "galaxySearch is null");
 		
 		this.historiesClient = historiesClient;
 		this.toolsClient = toolsClient;
-		this.galaxySearch = galaxySearch;
 	}
 	
 	/**
@@ -117,7 +119,70 @@ public class GalaxyHistoriesService {
 			
 			throw new UploadException(message);
 		} else {
-			return galaxySearch.getDatasetForFileInHistory(file.getName(), history);
+			return getDatasetForFileInHistory(file.getName(), history);
+		}
+	}
+	
+	/**
+	 * Gets a Dataset object for a file with the given name in the given history.
+	 * @param filename  The name of the file to get a Dataset object for.
+	 * @param history  The history to look for the dataset.
+	 * @return The corresponding dataset for the given file name.
+	 * @throws GalaxyDatasetNotFoundException  If the dataset could not be found.
+	 */
+	public Dataset getDatasetForFileInHistory(String filename, History history) throws GalaxyDatasetNotFoundException {
+		checkNotNull(filename, "filename is null");
+		checkNotNull(history, "history is null");
+				
+		List<HistoryContents> historyContentsList =
+				historiesClient.showHistoryContents(history.getId());
+
+		Optional<HistoryContents> h = historyContentsList.stream().
+				filter((historyContents) -> filename.equals(historyContents.getName())).findFirst();
+		if (h.isPresent()) {
+			String dataId = h.get().getId();
+			if (dataId != null) {
+				Dataset dataset = historiesClient.showDataset(history.getId(), dataId);	
+				if (dataset != null) {
+					return dataset;
+				}
+			}
+		}
+
+		throw new GalaxyDatasetNotFoundException("dataset for file " + filename +
+				" not found in Galaxy history " + history.getId());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public History findById(String id)
+			throws ExecutionManagerObjectNotFoundException {
+		checkNotNull(id, "id is null");
+		
+		List<History> galaxyHistories = historiesClient.getHistories();
+		
+		if (galaxyHistories != null) {
+			Optional<History> h = galaxyHistories.stream().
+					filter((history) -> id.equals(history.getId())).findFirst();
+			if (h.isPresent()) {
+				return h.get();
+			}
+		}
+		
+		throw new NoGalaxyHistoryException("No history for id " + id);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean exists(String id) {
+		try {
+			return findById(id) != null;
+		} catch (ExecutionManagerObjectNotFoundException e) {
+			return false;
 		}
 	}
 }
