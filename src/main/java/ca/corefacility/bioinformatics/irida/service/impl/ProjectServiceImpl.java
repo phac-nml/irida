@@ -188,7 +188,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		}
 		return pujRepository.findAll(
 				where(ProjectUserJoinSpecification.projectHasUser(user)).and(
-						ProjectUserJoinSpecification.projectSearchName(term)), new PageRequest(page, size, order,
+						ProjectUserJoinSpecification.searchProjectName(term)), new PageRequest(page, size, order,
 						sortProperties));
 	}
 

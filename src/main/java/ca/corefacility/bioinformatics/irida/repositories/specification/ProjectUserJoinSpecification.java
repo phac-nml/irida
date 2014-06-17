@@ -36,7 +36,7 @@ public class ProjectUserJoinSpecification {
 	 * @param name The name to search
 	 * @return
 	 */
-	public static Specification<ProjectUserJoin> projectSearchName(String name) {
+	public static Specification<ProjectUserJoin> searchProjectName(String name) {
 		return new Specification<ProjectUserJoin>() {
 			@Override
 			public Predicate toPredicate(Root<ProjectUserJoin> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
