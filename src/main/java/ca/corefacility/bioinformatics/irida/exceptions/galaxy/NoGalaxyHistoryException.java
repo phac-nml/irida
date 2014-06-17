@@ -1,13 +1,13 @@
 package ca.corefacility.bioinformatics.irida.exceptions.galaxy;
 
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 
 /**
  * An exception that gets thrown when there is no history in Galaxy that can be found.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class NoGalaxyHistoryException extends ExecutionManagerException {
+public class NoGalaxyHistoryException extends ExecutionManagerObjectNotFoundException {
 
 	private static final long serialVersionUID = 6482869317425193110L;
 

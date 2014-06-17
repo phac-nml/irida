@@ -67,7 +67,8 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResu
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrarySearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.ProgressUpdate;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.UploadEventListenerTracker;
 
@@ -106,7 +107,7 @@ public class GalaxyAPIIT {
 
 	@Autowired
 	private GalaxyAPI galaxyAPI;
-
+	
 	private List<Path> dataFilesSingle;
 	private List<Path> dataFilesDouble;
 
@@ -118,7 +119,7 @@ public class GalaxyAPIIT {
 	public void setup() throws URISyntaxException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 		galaxyAPI.setDataStorage(Uploader.DataStorage.REMOTE);
-
+		
 		setupDataFiles();
 	}
 
@@ -984,12 +985,18 @@ public class GalaxyAPIIT {
 	public void testUploadSampleToExistingLibrary() throws URISyntaxException,
 			MalformedURLException, ConstraintViolationException,
 			UploadException, InterruptedException {
-		GalaxySearch galaxySearchAdmin = new GalaxySearch(
-				localGalaxy.getGalaxyInstanceAdmin());
-		GalaxySearch galaxySearchUser1 = new GalaxySearch(
-				localGalaxy.getGalaxyInstanceUser1());
+		GalaxyLibrarySearch galaxySearchAdmin = new GalaxyLibrarySearch(
+				localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient(),
+				localGalaxy.getGalaxyURL());
+		GalaxyRoleSearch galaxyRoleSearchAdmin = new GalaxyRoleSearch(
+				localGalaxy.getGalaxyInstanceAdmin().getRolesClient(),
+				localGalaxy.getGalaxyURL());
+		GalaxyLibrarySearch galaxySearchUser1 = new GalaxyLibrarySearch(
+				localGalaxy.getGalaxyInstanceUser1().getLibrariesClient(),
+				localGalaxy.getGalaxyURL());
 		GalaxyLibraryBuilder galaxyLibrary = new GalaxyLibraryBuilder(
-				localGalaxy.getGalaxyInstanceAdmin(), galaxySearchAdmin);
+				localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient(),
+				galaxyRoleSearchAdmin, localGalaxy.getGalaxyURL());
 		UploadResult expectedUploadResult;
 
 		GalaxyProjectName libraryName = new GalaxyProjectName(
@@ -1006,7 +1013,7 @@ public class GalaxyAPIIT {
 				libraryName, null, localGalaxy.getGalaxyURL().toString());
 
 		// build initial folders within library
-		Library library = galaxySearchUser1.findLibraryWithId(libraryId);
+		Library library = galaxySearchUser1.findById(libraryId);
 		assertNotNull(library);
 		LibraryFolder illuminaFolder = galaxyLibrary.createLibraryFolder(
 				library, new GalaxyFolderName("illumina_reads"));
@@ -1020,12 +1027,12 @@ public class GalaxyAPIIT {
 
 		// user 1 should have access to library
 		List<Library> libraries = galaxySearchUser1
-				.findLibraryWithName(libraryName);
+				.findByName(libraryName);
 		assertEquals("The number of libraries with name " + libraryName
 				+ " is not one", 1, libraries.size());
 
 		// admin should have access to library
-		libraries = galaxySearchAdmin.findLibraryWithName(libraryName);
+		libraries = galaxySearchAdmin.findByName(libraryName);
 		assertEquals("The number of libraries with name " + libraryName
 				+ " is not one", 1, libraries.size());
 
@@ -1103,7 +1110,7 @@ public class GalaxyAPIIT {
 		assertEquals("fastqsanger",datasetData2.getDataType());
 
 		// no duplicate folders or libraries for user1
-		libraries = galaxySearchUser1.findLibraryWithName(libraryName);
+		libraries = galaxySearchUser1.findByName(libraryName);
 		assertEquals("The number of libraries with name " + libraryName
 				+ " is not one", 1, libraries.size());
 		sampleFolderCount = countNumberOfFolderPaths(libraryContents,
@@ -1120,7 +1127,7 @@ public class GalaxyAPIIT {
 				referencesFolderCount);
 
 		// no duplicate libraries for admin
-		libraries = galaxySearchAdmin.findLibraryWithName(libraryName);
+		libraries = galaxySearchAdmin.findByName(libraryName);
 		assertEquals("The number of libraries with name " + libraryName
 				+ " is not one", 1, libraries.size());
 	}
@@ -1136,12 +1143,15 @@ public class GalaxyAPIIT {
 	public void testUploadSampleToExistingLibraryDifferentUsers()
 			throws URISyntaxException, MalformedURLException,
 			ConstraintViolationException, UploadException {
-		GalaxySearch galaxySearchAdmin = new GalaxySearch(
-				localGalaxy.getGalaxyInstanceAdmin());
-		GalaxySearch galaxySearchUser1 = new GalaxySearch(
-				localGalaxy.getGalaxyInstanceUser1());
-		GalaxySearch galaxySearchUser2 = new GalaxySearch(
-				localGalaxy.getGalaxyInstanceUser2());
+		GalaxyLibrarySearch galaxySearchAdmin = new GalaxyLibrarySearch(
+				localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient(),
+				localGalaxy.getGalaxyURL());
+		GalaxyLibrarySearch galaxySearchUser1 = new GalaxyLibrarySearch(
+				localGalaxy.getGalaxyInstanceUser1().getLibrariesClient(),
+				localGalaxy.getGalaxyURL());
+		GalaxyLibrarySearch galaxySearchUser2 = new GalaxyLibrarySearch(
+				localGalaxy.getGalaxyInstanceUser2().getLibrariesClient(),
+				localGalaxy.getGalaxyURL());
 
 		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"testUploadSampleToExistingLibraryDifferentUsers");
@@ -1153,21 +1163,21 @@ public class GalaxyAPIIT {
 		assertNotNull(libraryId);
 
 		// library should be visible to user 1 and admin
-		assertNotNull(galaxySearchUser1.findLibraryWithId(libraryId));
-		assertEquals(1, galaxySearchUser1.findLibraryWithName(libraryName)
+		assertNotNull(galaxySearchUser1.findById(libraryId));
+		assertEquals(1, galaxySearchUser1.findByName(libraryName)
 				.size());
-		assertNotNull(galaxySearchAdmin.findLibraryWithId(libraryId));
-		assertEquals(1, galaxySearchAdmin.findLibraryWithName(libraryName)
+		assertNotNull(galaxySearchAdmin.findById(libraryId));
+		assertEquals(1, galaxySearchAdmin.findByName(libraryName)
 				.size());
 
 		// library should not be visible to user 2
 		try {
-			galaxySearchUser2.findLibraryWithId(libraryId);
+			galaxySearchUser2.findById(libraryId);
 			fail("Library found for user 2");
 		} catch (NoLibraryFoundException e) {}
 		
 		try {
-			galaxySearchUser2.findLibraryWithName(libraryName);
+			galaxySearchUser2.findByName(libraryName);
 			fail("Library found for user 2");
 		} catch (NoLibraryFoundException e) {}
 
@@ -1189,22 +1199,22 @@ public class GalaxyAPIIT {
 				localGalaxy.getUser2Name()));
 
 		// library should be visible to user 1 and admin
-		assertNotNull(galaxySearchUser1.findLibraryWithId(libraryId));
-		assertEquals(1, galaxySearchUser1.findLibraryWithName(libraryName)
+		assertNotNull(galaxySearchUser1.findById(libraryId));
+		assertEquals(1, galaxySearchUser1.findByName(libraryName)
 				.size());
-		assertNotNull(galaxySearchAdmin.findLibraryWithId(libraryId));
-		assertEquals(1, galaxySearchAdmin.findLibraryWithName(libraryName)
+		assertNotNull(galaxySearchAdmin.findById(libraryId));
+		assertEquals(1, galaxySearchAdmin.findByName(libraryName)
 				.size());
 
 		// library should not be visible to user 2 (user 2 shared with user 1,
 		// but did not gain access)
 		try {
-			galaxySearchUser2.findLibraryWithId(libraryId);
+			galaxySearchUser2.findById(libraryId);
 			fail("Library found for user 2");
 		} catch (NoLibraryFoundException e) {}
 		
 		try {
-			galaxySearchUser2.findLibraryWithName(libraryName);
+			galaxySearchUser2.findByName(libraryName);
 			fail("Library found for user 2");
 		} catch (NoLibraryFoundException e) {}
 
