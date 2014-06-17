@@ -110,7 +110,7 @@ public class GalaxyLibraryContentSearchIT {
 	@Test
 	public void testGalaxyLibraryContentExists() {
 		GalaxyProjectName libraryName =
-				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyLibraryContentExists");
+				new GalaxyProjectName("GalaxyLibraryContentSearchIT_testGalaxyLibraryContentExists");
 		GalaxyFolderName folderName = new GalaxyFolderName("folder");
 		Library createdLibrary = buildLibrary(libraryName, folderName);
 		LibraryContentId libraryContentId = 
@@ -125,7 +125,7 @@ public class GalaxyLibraryContentSearchIT {
 	@Test
 	public void testGalaxyLibraryContentNotExistsLibraryId() {
 		GalaxyProjectName libraryName =
-				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyLibraryContentNotExistsLibraryId");
+				new GalaxyProjectName("GalaxyLibraryContentSearchIT_testGalaxyLibraryContentNotExistsLibraryId");
 		GalaxyFolderName folderName = new GalaxyFolderName("folder");
 		buildLibrary(libraryName, folderName);
 		LibraryContentId libraryContentId = 
@@ -140,7 +140,7 @@ public class GalaxyLibraryContentSearchIT {
 	@Test
 	public void testGalaxyLibraryContentNotExistsFolder() {
 		GalaxyProjectName libraryName =
-				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyLibraryContentNotExistsFolder");
+				new GalaxyProjectName("GalaxyLibraryContentSearchIT_testGalaxyLibraryContentNotExistsFolder");
 		GalaxyFolderName folderName = new GalaxyFolderName("folder");
 		Library createdLibrary = buildLibrary(libraryName, folderName);
 		LibraryContentId libraryContentId = 
@@ -155,7 +155,7 @@ public class GalaxyLibraryContentSearchIT {
 	@Test
 	public void testGalaxyFindLibraryContentSuccess() throws ExecutionManagerObjectNotFoundException {
 		GalaxyProjectName libraryName =
-				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyFindLibraryContentSuccess");
+				new GalaxyProjectName("GalaxyLibraryContentSearchIT_testGalaxyFindLibraryContentSuccess");
 		GalaxyFolderName folderName = new GalaxyFolderName("folder");
 		Library createdLibrary = buildLibrary(libraryName, folderName);
 		LibraryContentId libraryContentId = 
@@ -172,7 +172,7 @@ public class GalaxyLibraryContentSearchIT {
 	@Test(expected=NoGalaxyContentFoundException.class)
 	public void testGalaxyFindLibraryContentByIdFail() throws ExecutionManagerObjectNotFoundException {
 		GalaxyProjectName libraryName =
-				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyFindLibraryContentByIdFail");
+				new GalaxyProjectName("GalaxyLibraryContentSearchIT_testGalaxyFindLibraryContentByIdFail");
 		GalaxyFolderName folderName = new GalaxyFolderName("folder");
 		buildLibrary(libraryName, folderName);
 		LibraryContentId libraryContentId = 
@@ -187,7 +187,7 @@ public class GalaxyLibraryContentSearchIT {
 	@Test(expected=NoGalaxyContentFoundException.class)
 	public void testGalaxyFindLibraryContentFail() throws ExecutionManagerObjectNotFoundException {
 		GalaxyProjectName libraryName =
-				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyFindLibraryContentFail");
+				new GalaxyProjectName("GalaxyLibraryContentSearchIT_testGalaxyFindLibraryContentFail");
 		GalaxyFolderName folderName = new GalaxyFolderName("folder");
 		Library createdLibrary = buildLibrary(libraryName, folderName);
 		LibraryContentId libraryContentId = 
@@ -202,7 +202,7 @@ public class GalaxyLibraryContentSearchIT {
 	@Test
 	public void testGalaxyLibraryContentAsMapSuccess() throws ExecutionManagerObjectNotFoundException {
 		GalaxyProjectName libraryName =
-				new GalaxyProjectName("GalaxyLibrarySearchIT_testGalaxyLibraryContentAsMapSuccess");
+				new GalaxyProjectName("GalaxyLibraryContentSearchIT_testGalaxyLibraryContentAsMapSuccess");
 		GalaxyFolderName folderName = new GalaxyFolderName("folder");
 		Library createdLibrary = buildLibrary(libraryName, folderName);
 		Map<String, LibraryContent> foundContent = 
