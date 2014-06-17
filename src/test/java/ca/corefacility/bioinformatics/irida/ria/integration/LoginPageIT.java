@@ -19,8 +19,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import java.net.MalformedURLException;
-
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -44,7 +42,7 @@ public class LoginPageIT {
 	private WebDriver driver;
 
 	@Before
-	public void setup() throws MalformedURLException {
+	public void setup() {
 		driver = new ChromeDriver();
 		loginPage = LoginPage.to(driver);
 	}
