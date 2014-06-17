@@ -181,7 +181,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public Page<ProjectUserJoin> searchPagedProjectsForUser(User user, String term, int page, int size,
+	public Page<ProjectUserJoin> searchProjectsForUser(User user, String term, int page, int size,
 			Direction order, String... sortProperties) {
 		if (sortProperties.length == 0) {
 			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
