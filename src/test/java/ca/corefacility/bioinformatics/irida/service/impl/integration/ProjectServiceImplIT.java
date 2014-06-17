@@ -253,17 +253,17 @@ public class ProjectServiceImplIT {
 	@WithMockUser(username="user1", password="password1", roles="USER")
 	public void testSearchProjectsForUser(){
 		User user = userService.read(3l);
-		Page<ProjectUserJoin> searchPagedProjectsForUser = projectService.searchProjectsForUser(user, "2", 0, 10, Direction.ASC);
+		Page<ProjectUserJoin> searchPagedProjectsForUser = projectService.searchProjectsByNameForUser(user, "2", 0, 10, Direction.ASC);
 		assertEquals(1,searchPagedProjectsForUser.getTotalElements());
 		
-		searchPagedProjectsForUser = projectService.searchProjectsForUser(user, "project", 0, 10, Direction.ASC);
+		searchPagedProjectsForUser = projectService.searchProjectsByNameForUser(user, "project", 0, 10, Direction.ASC);
 		assertEquals(2,searchPagedProjectsForUser.getTotalElements());
 	}
 	
 	@Test
 	@WithMockUser(username="user1", password="password1", roles="ADMIN")
 	public void testSearchProjects(){
-		Page<Project> searchProjects = projectService.searchProjects("2", 0, 10, Direction.ASC);
+		Page<Project> searchProjects = projectService.searchProjectsByName("2", 0, 10, Direction.ASC);
 		assertEquals(1,searchProjects.getTotalElements());
 		Project next = searchProjects.iterator().next();
 		assertEquals("project2",next.getName());

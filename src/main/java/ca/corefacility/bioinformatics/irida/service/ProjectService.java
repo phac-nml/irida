@@ -89,7 +89,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return The matching projects
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public Page<Project> searchProjects(String name, int page, int size, Direction order, String... sortProperties);
+	public Page<Project> searchProjectsByName(String name, int page, int size, Direction order, String... sortProperties);
 	/**
 	 * Get all {@link Project}s associated with a particular {@link User}.
 	 * 
@@ -110,7 +110,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @param sortProperties The properties to sort on
 	 * @return The matching projects
 	 */
-	public Page<ProjectUserJoin> searchProjectsForUser(User user, String searchTerm, int page, int size, Direction order, String... sortProperties);
+	public Page<ProjectUserJoin> searchProjectsByNameForUser(User user, String searchTerm, int page, int size, Direction order, String... sortProperties);
 	
 	/**
 	 * Get all {@link Project}s associated with a particular {@link User} where

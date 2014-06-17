@@ -166,7 +166,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Page<Project> searchProjects(String name, int page, int size, Direction order, String... sortProperties) {
+	public Page<Project> searchProjectsByName(String name, int page, int size, Direction order, String... sortProperties) {
 		if (sortProperties.length == 0) {
 			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
 		}
@@ -180,7 +180,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public Page<ProjectUserJoin> searchProjectsForUser(User user, String term, int page, int size, Direction order,
+	public Page<ProjectUserJoin> searchProjectsByNameForUser(User user, String term, int page, int size, Direction order,
 			String... sortProperties) {
 		if (sortProperties.length == 0) {
 			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
