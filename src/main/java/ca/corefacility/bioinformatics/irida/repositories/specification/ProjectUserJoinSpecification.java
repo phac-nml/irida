@@ -12,35 +12,28 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
  * Specification for searching {@link ProjectUserJoin}s
+ * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class ProjectUserJoinSpecification {
 
 	/**
-	 * Get the projects that have a given user
-	 * @param user The user to search
+	 * Get a {@link ProjectUserJoin} where the project name contains the given
+	 * search string and have a given {@link User}
+	 * 
+	 * @param name
+	 *            The name to search
+	 * @param user
+	 *            The user to search
 	 * @return
 	 */
-	public static Specification<ProjectUserJoin> projectHasUser(User user) {
+	public static Specification<ProjectUserJoin> searchProjectNameWithUser(String name, User user) {
 		return new Specification<ProjectUserJoin>() {
 			@Override
 			public Predicate toPredicate(Root<ProjectUserJoin> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-				return cb.equal(root.get("user"), user);
-			}
-		};
-	}
-	
-	/**
-	 * Get a {@link ProjectUserJoin} where the project name contains the given search string
-	 * @param name The name to search
-	 * @return
-	 */
-	public static Specification<ProjectUserJoin> searchProjectName(String name) {
-		return new Specification<ProjectUserJoin>() {
-			@Override
-			public Predicate toPredicate(Root<ProjectUserJoin> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-				return cb.like(root.get("project").get("name"), "%"+name+"%");
+				return cb.and(cb.like(root.get("project").get("name"), "%" + name + "%"),
+						cb.equal(root.get("user"), user));
 			}
 		};
 	}

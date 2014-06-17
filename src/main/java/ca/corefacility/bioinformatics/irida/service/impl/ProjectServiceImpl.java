@@ -35,7 +35,6 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSp
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import static org.springframework.data.jpa.domain.Specifications.*;
 
 /**
  * A specialized service layer for projects.
@@ -51,7 +50,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private SampleRepository sampleRepository;
 	private UserRepository userRepository;
 	private ProjectRepository projectRepository;
-	
+
 	protected ProjectServiceImpl() {
 		super(null, null, Project.class);
 	}
@@ -162,7 +161,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public List<Join<Project, User>> getProjectsForUser(User user) {
 		return pujRepository.getProjectsForUser(user);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -181,15 +180,13 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public Page<ProjectUserJoin> searchProjectsForUser(User user, String term, int page, int size,
-			Direction order, String... sortProperties) {
+	public Page<ProjectUserJoin> searchProjectsForUser(User user, String term, int page, int size, Direction order,
+			String... sortProperties) {
 		if (sortProperties.length == 0) {
 			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
 		}
-		return pujRepository.findAll(
-				where(ProjectUserJoinSpecification.projectHasUser(user)).and(
-						ProjectUserJoinSpecification.searchProjectName(term)), new PageRequest(page, size, order,
-						sortProperties));
+		return pujRepository.findAll(ProjectUserJoinSpecification.searchProjectNameWithUser(term, user),
+				new PageRequest(page, size, order, sortProperties));
 	}
 
 	/**
