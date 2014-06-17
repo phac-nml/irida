@@ -32,7 +32,6 @@ import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultit
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
 
 /**
  * Tests for building Galaxy histories.
@@ -69,8 +68,7 @@ public class GalaxyHistoriesServiceIT {
 		GalaxyInstance galaxyInstanceAdmin = localGalaxy.getGalaxyInstanceAdmin();
 		HistoriesClient historiesClient = galaxyInstanceAdmin.getHistoriesClient();
 		ToolsClient toolsClient = galaxyInstanceAdmin.getToolsClient();
-		GalaxySearch galaxySearch = new GalaxySearch(galaxyInstanceAdmin);
-		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, galaxySearch);
+		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient);
 
 	}
 	

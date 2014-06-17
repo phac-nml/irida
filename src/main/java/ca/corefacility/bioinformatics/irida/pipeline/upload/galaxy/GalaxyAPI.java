@@ -16,6 +16,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.ChangeLibraryPermissionsException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
@@ -31,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderName
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.LibraryContentId;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker.UploadEventListener;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
@@ -68,7 +70,10 @@ public class GalaxyAPI {
 
 	private GalaxyInstance galaxyInstance;
 	private GalaxyAccountEmail adminEmail;
-	private GalaxySearch galaxySearchAdmin;
+	private GalaxyLibrarySearch galaxyLibrarySearchAdmin;
+	private GalaxyLibraryContentSearch galaxyLibraryContentSearchAdmin;
+	private GalaxyRoleSearch galaxyRoleSearchAdmin;
+	private GalaxyUserSearch galaxyUserSearchAdmin;
 	private GalaxyLibraryBuilder galaxyLibrary;
 	private Uploader.DataStorage dataStorage = Uploader.DataStorage.REMOTE;
 
@@ -102,9 +107,14 @@ public class GalaxyAPI {
 			throw new RuntimeException("Could not create GalaxyInstance with URL=" + galaxyURL + ", adminEmail="
 					+ adminEmail);
 		}
-
-		galaxySearchAdmin = new GalaxySearch(galaxyInstance);
-		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxySearchAdmin);
+		
+		galaxyLibrarySearchAdmin = new GalaxyLibrarySearch(galaxyInstance.getLibrariesClient(), galaxyURL);
+		galaxyLibraryContentSearchAdmin = new GalaxyLibraryContentSearch(galaxyInstance.getLibrariesClient(), galaxyURL);
+		galaxyRoleSearchAdmin = new GalaxyRoleSearch(galaxyInstance.getRolesClient(),
+				galaxyURL);
+		galaxyUserSearchAdmin = new GalaxyUserSearch(galaxyInstance.getUsersClient(), galaxyURL);
+		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance.getLibrariesClient(),
+				galaxyRoleSearchAdmin, galaxyURL);
 
 		if (!isConnected()) {
 			throw new GalaxyConnectException("Could not create GalaxyInstance with URL=" + galaxyURL + ", adminEmail="
@@ -134,8 +144,20 @@ public class GalaxyAPI {
 		this.galaxyInstance = galaxyInstance;
 		this.adminEmail = adminEmail;
 
-		galaxySearchAdmin = new GalaxySearch(galaxyInstance);
-		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance, galaxySearchAdmin);
+		URL galaxyURL;
+		try {
+			galaxyURL = new URL(galaxyInstance.getGalaxyUrl());
+		} catch (MalformedURLException e) {
+			throw new RuntimeException(e);
+		}
+		
+		galaxyLibrarySearchAdmin = new GalaxyLibrarySearch(galaxyInstance.getLibrariesClient(), galaxyURL);
+		galaxyLibraryContentSearchAdmin = new GalaxyLibraryContentSearch(galaxyInstance.getLibrariesClient(), galaxyURL);
+		galaxyRoleSearchAdmin = new GalaxyRoleSearch(galaxyInstance.getRolesClient(),
+				galaxyURL);
+		galaxyUserSearchAdmin = new GalaxyUserSearch(galaxyInstance.getUsersClient(), galaxyURL);
+		galaxyLibrary = new GalaxyLibraryBuilder(galaxyInstance.getLibrariesClient(),
+				galaxyRoleSearchAdmin, galaxyURL);
 
 		if (!isConnected()) {
 			throw new GalaxyConnectException("Could not create GalaxyInstance with URL="
@@ -155,8 +177,14 @@ public class GalaxyAPI {
 	 * @param dataStorage
 	 *            If uploaded files will exist on the same or a separate
 	 *            filesystem as the archive.
-	 * @param galaxySearch
-	 *            A GalaxySearch object.
+	 * @param galaxyLibrarySearch
+	 *            A GalaxyLibrarySearch object.
+	 * @param galaxyLibraryContentSearch
+	 *            A GalaxyLibraryContentSearch object.
+	 * @param galaxyRoleSearch
+	 *            A GalaxyRoleSearch object.
+	 * @param galaxyUserSearch
+	 * 	          A GalaxyUserSearch object.
 	 * @param galaxyLibrary
 	 *            A GalaxyLibrary object.
 	 * @throws ConstraintViolationException
@@ -164,18 +192,26 @@ public class GalaxyAPI {
 	 * @throws GalaxyConnectException
 	 *             If an issue connecting to Galaxy occurred.
 	 */
-	public GalaxyAPI(GalaxyInstance galaxyInstance, @Valid GalaxyAccountEmail adminEmail, GalaxySearch galaxySearch,
+	public GalaxyAPI(GalaxyInstance galaxyInstance, @Valid GalaxyAccountEmail adminEmail, 
+			GalaxyLibrarySearch galaxyLibrarySearch, GalaxyLibraryContentSearch galaxyLibraryContentSearch,
+			GalaxyRoleSearch galaxyRoleSearch, GalaxyUserSearch galaxyUserSearch,
 			GalaxyLibraryBuilder galaxyLibrary) throws ConstraintViolationException, GalaxyConnectException {
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
 		checkNotNull(adminEmail, "adminEmail is null");
-		checkNotNull(galaxySearch, "galaxySearch is null");
+		checkNotNull(galaxyLibrarySearch, "galaxyLibrarySearch is null");
+		checkNotNull(galaxyLibraryContentSearch, "galaxyLibraryContentSearch is null");
+		checkNotNull(galaxyRoleSearch, "galaxyRoleSearch is null");
+		checkNotNull(galaxyUserSearch, "galaxyUserSearch is null");
 		checkNotNull(galaxyLibrary, "galaxyLibrary is null");
 
 		this.galaxyInstance = galaxyInstance;
 		this.adminEmail = adminEmail;
 
 		this.galaxyLibrary = galaxyLibrary;
-		this.galaxySearchAdmin = galaxySearch;
+		this.galaxyLibrarySearchAdmin = galaxyLibrarySearch;
+		this.galaxyLibraryContentSearchAdmin = galaxyLibraryContentSearch;
+		this.galaxyUserSearchAdmin = galaxyUserSearch;
+		this.galaxyRoleSearchAdmin = galaxyRoleSearch;
 
 		if (!isConnected()) {
 			throw new GalaxyConnectException("Could not use GalaxyInstance with URL=" + galaxyInstance.getGalaxyUrl()
@@ -199,14 +235,12 @@ public class GalaxyAPI {
 	 * @throws ChangeLibraryPermissionsException
 	 *             If an error occured while attempting to change the library
 	 *             permissions.
-	 * @throws GalaxyUserNotFoundException
-	 *             If the passed Galaxy user does not exist.
-	 * @throws GalaxyUserNoRoleException
-	 *             If the passed Galaxy user has no role.
+	 * @throws ExecutionManagerObjectNotFoundException
+	 *             If users or roles do not exist within the execution manager.
 	 */
 	public Library buildGalaxyLibrary(@Valid GalaxyProjectName libraryName, @Valid GalaxyAccountEmail galaxyUserEmail)
 			throws CreateLibraryException, ConstraintViolationException, ChangeLibraryPermissionsException,
-			GalaxyUserNotFoundException, GalaxyUserNoRoleException {
+			ExecutionManagerObjectNotFoundException {
 		checkNotNull(libraryName, "libraryName is null");
 		checkNotNull(galaxyUserEmail, "galaxyUser is null");
 
@@ -215,11 +249,11 @@ public class GalaxyAPI {
 
 		// make sure user exists and has a role before we create an empty
 		// library
-		if (!galaxySearchAdmin.galaxyUserExists(galaxyUserEmail)) {
+		if (!galaxyUserSearchAdmin.exists(galaxyUserEmail)) {
 			throw new GalaxyUserNotFoundException(galaxyUserEmail, getGalaxyUrl());
 		}
 
-		if (!galaxySearchAdmin.userRoleExistsFor(galaxyUserEmail)) {
+		if (!galaxyRoleSearchAdmin.exists(galaxyUserEmail)) {
 			throw new GalaxyUserNoRoleException("Could not find role for Galaxy user with email=" + galaxyUserEmail);
 		}
 
@@ -398,19 +432,15 @@ public class GalaxyAPI {
 	 * @throws ChangeLibraryPermissionsException
 	 *             If an error occurred while attempting to change the library
 	 *             permissions.
-	 * @throws GalaxyUserNotFoundException
-	 *             If the passed Galaxy user does not exist.
 	 * @throws NoLibraryFoundException
 	 *             If no library with the given name can be found.
-	 * @throws GalaxyUserNoRoleException
-	 *             If the passed Galaxy user has no associated role.
 	 * @throws NoGalaxyContentFoundException
 	 *             If an error occured trying to find content for the library.
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	public GalaxyUploadResult uploadSamples(@Valid List<UploadSample> samples, @Valid GalaxyProjectName libraryName,
 			@Valid GalaxyAccountEmail galaxyUserEmail) throws LibraryUploadException, CreateLibraryException,
-			ConstraintViolationException, ChangeLibraryPermissionsException, GalaxyUserNotFoundException,
-			NoLibraryFoundException, GalaxyUserNoRoleException, NoGalaxyContentFoundException {
+			ConstraintViolationException, ChangeLibraryPermissionsException, NoLibraryFoundException, NoGalaxyContentFoundException, ExecutionManagerObjectNotFoundException {
 		checkNotNull(libraryName, "libraryName is null");
 		checkNotNull(samples, "samples is null");
 		checkNotNull(galaxyUserEmail, "galaxyUserEmail is null");
@@ -419,10 +449,10 @@ public class GalaxyAPI {
 		GalaxyAccountEmail returnedOwner = null;
 
 		Library uploadLibrary;
-		if (galaxySearchAdmin.galaxyUserExists(galaxyUserEmail)) {
+		if (galaxyUserSearchAdmin.exists(galaxyUserEmail)) {
 
-			if (galaxySearchAdmin.libraryExists(libraryName)) {
-				List<Library> libraries = galaxySearchAdmin.findLibraryWithName(libraryName);
+			if (galaxyLibrarySearchAdmin.existsByName(libraryName)) {
+				List<Library> libraries = galaxyLibrarySearchAdmin.findByName(libraryName);
 				uploadLibrary = libraries.get(0); // gets first library returned
 			} else {
 				uploadLibrary = buildGalaxyLibrary(libraryName, galaxyUserEmail);
@@ -487,18 +517,16 @@ public class GalaxyAPI {
 	 * @throws ConstraintViolationException
 	 *             If one of the GalaxySamples is invalid (assumes this object
 	 *             is managed by Spring).
-	 * @throws NoLibraryFoundException
-	 *             If no library could be found with the given id.
 	 * @throws CreateLibraryException
 	 *             If an error occurred while attempting to build the data
 	 *             library.
 	 * @throws NoGalaxyContentFoundException
 	 *             If an error occurred when attempting to find content for the
 	 *             library.
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	public boolean uploadFilesToLibrary(@Valid List<UploadSample> samples, String libraryID)
-			throws LibraryUploadException, ConstraintViolationException, NoLibraryFoundException,
-			CreateLibraryException, NoGalaxyContentFoundException {
+			throws LibraryUploadException, ConstraintViolationException, CreateLibraryException, NoGalaxyContentFoundException, ExecutionManagerObjectNotFoundException {
 		checkNotNull(samples, "samples are null");
 		checkNotNull(libraryID, "libraryID is null");
 
@@ -510,15 +538,15 @@ public class GalaxyAPI {
 
 			LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
 
-			Library library = galaxySearchAdmin.findLibraryWithId(libraryID);
+			Library library = galaxyLibrarySearchAdmin.findById(libraryID);
 
-			Map<String, LibraryContent> libraryContentMap = galaxySearchAdmin.libraryContentAsMap(libraryID);
+			Map<String, LibraryContent> libraryContentMap = galaxyLibraryContentSearchAdmin.libraryContentAsMap(libraryID);
 
 			LibraryFolder illuminaFolder;
 
-			if (galaxySearchAdmin.libraryContentExists(libraryID, ILLUMINA_FOLDER_PATH)) {
-				LibraryContent illuminaContent = galaxySearchAdmin.findLibraryContentWithId(libraryID,
-						ILLUMINA_FOLDER_PATH);
+			if (galaxyLibraryContentSearchAdmin.exists(new LibraryContentId(libraryID, ILLUMINA_FOLDER_PATH))) {
+				LibraryContent illuminaContent = galaxyLibraryContentSearchAdmin.
+						findById(new LibraryContentId(libraryID, ILLUMINA_FOLDER_PATH));
 
 				illuminaFolder = new LibraryFolder();
 				illuminaFolder.setId(illuminaContent.getId());
@@ -529,7 +557,7 @@ public class GalaxyAPI {
 
 			// create references folder if it doesn't exist, but we don't need
 			// to put anything into it.
-			if (!galaxySearchAdmin.libraryContentExists(libraryID, REFERENCES_FOLDER_PATH)) {
+			if (!galaxyLibraryContentSearchAdmin.exists(new LibraryContentId(libraryID, REFERENCES_FOLDER_PATH))) {
 				galaxyLibrary.createLibraryFolder(library, REFERENCES_FOLDER_NAME);
 			}
 
@@ -598,7 +626,7 @@ public class GalaxyAPI {
 	 */
 	public boolean isConnected() {
 		try {
-			return galaxySearchAdmin.galaxyUserExists(adminEmail);
+			return galaxyUserSearchAdmin.exists(adminEmail);
 		} catch (ClientHandlerException | UniformInterfaceException e) {
 			return false;
 		}
