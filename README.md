@@ -17,10 +17,9 @@ Install Development Environment
 1. Install [NodeJS](http://www.nodejs.org)
 1. Install `grunt-cli`: `sudo npm -g install grunt-cli protractor`
 1. Install `sass` and `compass`: `sudo gem update; sudo gem install sass; sudo gem install compass;`
-1. Install Global NPM dependencies: `sudo npm install -g grunt-cli protractor bower`;
+1. Install Global NPM dependencies: `sudo npm install -g grunt-cli bower`;
 1. Install node packages: `sudo npm install`
 1. Install bower packages: `bower install`
-1. Update webdriver: `sudo webdriver-manager update`
 
 ### Install Live Reload Browser Extensions
 
@@ -51,24 +50,13 @@ Development
 ### Grunt
 
 1. `grunt dev`: development environment including live reload.
-1. `grunt build`: create production version (called during `mvn package -Pprod`.
-
-#### Single Run Tests
-
-1. `./scripts/test_unit.sh` or `grunt test`: runs `jshint` and unit tests.
-1. `./scripts/test_e2e.sh` or `grunt test:e2e`: run end to end testing.  Note: needs to have Jetty running `mvn jetty:run`.
-    - Connect browser to test to `http://localhost:9876/`
-
-#### Unit Test Coverage
-1. `grunt test:coverage`.
-1. Creates `coverage/` + name of each browser auto tested.
-1. Within each folder there open the `index.html` to see a graphical representation of the coverage.
 
 Maven
 -----
 
 #### Verify
 
+1. Start `chromedriver`: `./scripts/integration_server.sh`
 1. During verify: `mvn verify -Pprod`
 
 #### Package
