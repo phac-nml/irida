@@ -69,7 +69,7 @@ public class LibraryContentId {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof LibraryContentId))
 			return false;
 		LibraryContentId other = (LibraryContentId) obj;
 		
