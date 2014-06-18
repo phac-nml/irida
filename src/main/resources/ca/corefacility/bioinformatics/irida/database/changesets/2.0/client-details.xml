@@ -46,7 +46,7 @@
 			<column name="clientSecret" type="varchar(255)">
 				<constraints nullable="false" />
 			</column>
-			<column name="createdDate" type="datetime" defaultValue="now()">
+			<column name="createdDate" type="datetime">
 				<constraints nullable="false" />
 			</column>
 			<column name="modifiedDate" type="datetime" />
