@@ -8,11 +8,11 @@
 <body>
 <main layout:fragment="content" class="container main-container" role="main" property="mainContentOfPage">
     <h1>Projects Page</h1>
-    <table id="projectsTable" class="wb-tables table table-striped table-hover"
-           data-wb-tables='{ &quot;processing&quot; : true, &quot;serverSide&quot; : true, &quot;ajax&quot; : &quot;/projects/ajax/list&quot;, &quot;stateSave&quot; : true, &quot;stateDuration&quot; : -1, &quot;columns&quot; : &lbrack; &lbrace; &quot;data&quot; : &quot;id&quot;, &quot;visible&quot; : false &rbrace;, &lbrace; &quot;data&quot; : &quot;name&quot; &rbrace;, &lbrace; &quot;data&quot; : &quot;samples&quot;, &quot;orderable&quot; : false &rbrace;, &lbrace; &quot;data&quot; : &quot;collaborators&quot;, &quot;orderable&quot; : false &rbrace;, &lbrace; &quot;data&quot; : &quot;createdDate&quot; &rbrace;, &lbrace; &quot;data&quot; : &quot;modifiedDate&quot; &rbrace; &rbrack; }'>
+    <table id="projectsTable" class="table table-striped table-hover">
         <thead>
         <tr>
             <th>ID</th>
+            <th>Role</th>
             <th th:text="#{projects.table.name}">Name</th>
             <th th:text="#{projects.table.samples}">Samples</th>
             <th th:text="#{projects.table.collaborators}">Collaborators</th>
@@ -23,16 +23,43 @@
         <tbody></tbody>
     </table>
 </main>
-
-<script layout:fragment="scripts" th:inline="javascript">
-    /*<![CDATA[*/
+<div layout:fragment="scripts" th:inline="javascript">
+    <script src="/resources/wet-theme/js/deps/jquery.dataTables.min.js"></script>
+    <script>    /*<![CDATA[*/
     $(document).ready(function () {
-        $('#projectsTable').find('tbody').on('click', 'tr', function () {
+        var $projectsTable = $('#projectsTable');
+        $projectsTable.DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: '/projects/ajax/list',
+            stateSave: true,
+            stateDuration: -1,
+            columnDefs: [
+                {
+                    'render': function (data, type, row) {
+                        if(data === 'PROJECT_OWNER') {
+                            return '<span class="glyphicon glyphicon-tower"></span>'
+                        }
+                        else {
+                            return '<span class="glyphicon glyphicon-user"></span>'
+                        }
+                    },
+                    'targets': 1
+                },
+                {
+                    'render': function (data, type, row) {
+                        return '<a href="' + [[@{/projects/}]] + row[0] + '">' + data + '</a>';
+                    },
+                    'targets': 2
+                }
+            ]
+        });
+        $projectsTable.find('tbody').on('click', 'tr', function () {
             var id = $(this).find('td:first').text();
-            window.location = [[@{/projects/}]] + id;
+            window.location = [[@{/projects/}]]+id;
         });
     });
-    /*]]>*/
-</script>
+    /*]]>*/</script>
+</div>
 </body>
 </html>
