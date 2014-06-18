@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -45,9 +46,11 @@ public class Project implements IridaThing, Comparable<Project> {
 	@NotNull(message = "{project.name.notnull}")
 	@Size(min = 5, message = "{project.name.size}")
 	@ValidProjectName
+	@Column(nullable = false)
 	private String name;
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(nullable = false)
 	private final Date createdDate;
 
 	@Temporal(TemporalType.TIMESTAMP)

@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -57,10 +58,12 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 
 	@NotNull(message = "{user.username.notnull}")
 	@Size(min = 3, message = "{user.username.size}")
+	@Column(nullable = false)
 	private String username;
 	@NotNull(message = "{user.email.notnull}")
 	@Size(min = 5, message = "{user.email.size}")
 	@Email(message = "{user.email.invalid}")
+	@Column(nullable = false)
 	private String email;
 	@NotNull(message = "{user.password.notnull}")
 	// passwords must be at least six characters long, but prohibit passwords
@@ -70,25 +73,31 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	@Pattern.List({ @Pattern(regexp = "^.*[A-Z].*$", message = "{user.password.uppercase}"),
 			@Pattern(regexp = "^.*[0-9].*$", message = "{user.password.number}"),
 			@Pattern(regexp = "^.*[a-z].*$", message = "{user.password.lowercase}") })
+	@Column(nullable = false)
 	private String password;
 	@NotNull(message = "{user.firstName.notnull}")
 	@Size(min = 2, message = "{user.firstName.size}")
+	@Column(nullable = false)
 	private String firstName;
 	@NotNull(message = "{user.lastName.notnull}")
 	@Size(min = 2, message = "{user.lastName.size}")
+	@Column(nullable = false)
 	private String lastName;
 	@NotNull(message = "{user.phoneNumber.notnull}")
 	@Size(min = 4, message = "{user.phoneNumber.size}")
+	@Column(nullable = false)
 	private String phoneNumber;
 	@NotNull
+	@Column(nullable = false)
 	private boolean enabled = true;
 
 	@ManyToOne
-	@JoinColumn(name = "system_role")
+	@JoinColumn(name = "system_role", nullable = false)
 	@NotNull(message = "{user.systemRole.notnull}")
 	private Role systemRole;
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(nullable = false)
 	private final Date createdDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -101,7 +110,6 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
 	private List<ProjectUserJoin> projects;
 	
-
 	@OneToMany(mappedBy="user")
 	private Collection<RemoteAPIToken> tokens;
 

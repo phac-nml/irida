@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -50,9 +51,11 @@ public class ProjectUserJoin implements Join<Project, User> {
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
 	private ProjectRole projectRole;
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(nullable = false)
 	private final Date createdDate;
 
 	public ProjectUserJoin() {

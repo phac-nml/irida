@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model;
 
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -33,6 +34,7 @@ public class ClientRole implements GrantedAuthority, Comparable<ClientRole> {
 	private String name;
 
 	@NotNull
+	@Column(nullable = false)
 	private String description;
 
 	private ClientRole() {

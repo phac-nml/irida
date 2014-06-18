@@ -33,17 +33,17 @@ public class RemoteAPI implements Comparable<RemoteAPI> {
 
 	@NotNull
 	@URL
-	@Column(name = "serviceURI", unique = true)
+	@Column(name = "serviceURI", unique = true, nullable = false)
 	private String serviceURI;
 
 	private String description;
 
 	@NotNull
-	@Column(name = "clientId", unique = true)
+	@Column(name = "clientId", unique = true, nullable = false)
 	private String clientId;
 
 	@NotNull
-	@Column(name = "clientSecret")
+	@Column(name = "clientSecret", nullable = false)
 	private String clientSecret;
 
 	@OneToMany(mappedBy = "remoteApi")

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -54,6 +55,7 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	private Long id;
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(nullable = false)
 	private final Date createdDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -68,11 +70,13 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	@NotNull(message = "{sample.external.id.notnull}")
 	@Size(min = 3, message = "{sample.external.id.too.short}")
 	@ValidSampleName
+	@Column(nullable = false)
 	private String sequencerSampleId;
 
 	@NotNull(message = "{sample.name.notnull}")
 	@Size(min = 3, message = "{sample.name.too.short}")
 	@ValidSampleName
+	@Column(nullable = false)
 	private String sampleName;
 
 	@Lob
