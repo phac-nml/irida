@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.model.user;
 
 import java.util.Objects;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -49,8 +48,8 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 
 	@Id
 	private String name;
+	
 	@NotNull
-	@Column(nullable = false)
 	private String description;
 
 	private Role() {

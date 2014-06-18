@@ -6,7 +6,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -54,7 +53,6 @@ public class MiseqRun implements IridaThing, Comparable<MiseqRun>{
         
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false)
     private final Date createdDate;
     
     @Temporal(TemporalType.TIMESTAMP)

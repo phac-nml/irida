@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -35,21 +34,21 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 	private Long id;
 
 	@NotNull(message = "{overrepresented.sequence.sequence.notnull}")
-	@Column(nullable = false)
 	private String sequence;
+	
 	@NotNull(message = "{overrepresented.sequence.sequence.count.notnull}")
-	@Column(nullable = false)
 	private int overrepresentedSequenceCount;
+	
 	@NotNull(message = "{overrepresented.sequence.percentage.notnull}")
-	@Column(nullable = false)
 	private BigDecimal percentage;
+	
 	@NotNull(message = "{overrepresented.sequence.possibleSource.notnull}")
-	@Column(nullable = false)
 	private String possibleSource;
+	
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable = false)
 	private final Date createdDate;
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 

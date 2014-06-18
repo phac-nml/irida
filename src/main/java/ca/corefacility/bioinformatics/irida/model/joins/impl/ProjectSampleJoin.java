@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -48,7 +47,6 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable = false)
 	private final Date createdDate;
 
 	public ProjectSampleJoin() {

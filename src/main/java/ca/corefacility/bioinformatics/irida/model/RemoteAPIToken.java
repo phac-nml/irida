@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.model;
 import java.util.Date;
 import java.util.Objects;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -34,11 +33,9 @@ public class RemoteAPIToken {
 	private Long id;
 
 	@NotNull
-	@Column(nullable = false)
 	private String tokenString;
 
 	@NotNull
-	@Column(nullable = false)
 	private Date expiryDate;
 
 	@ManyToOne

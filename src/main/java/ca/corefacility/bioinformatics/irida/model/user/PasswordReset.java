@@ -18,7 +18,6 @@ public class PasswordReset implements Comparable<PasswordReset> {
 
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable = false)
 	private final Date createdDate;
 
 	@OneToOne

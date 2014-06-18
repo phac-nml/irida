@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -42,9 +41,9 @@ public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "sample_id")
 	private Sample sample;
+	
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable = false)
 	private final Date createdDate;
 
 	public SampleSequenceFileJoin() {

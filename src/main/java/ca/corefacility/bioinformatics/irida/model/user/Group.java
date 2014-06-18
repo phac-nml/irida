@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -39,11 +38,10 @@ public class Group implements IridaThing {
 
 	@NotNull(message = "{group.name.notnull}")
 	@Size(min = 3, message = "{group.name.size}")
-	@Column(nullable = false)
 	private String name;
+	
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable = false)
 	private final Date createdDate;
 
 	@Temporal(TemporalType.TIMESTAMP)

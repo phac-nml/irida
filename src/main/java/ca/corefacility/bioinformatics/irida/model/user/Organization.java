@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.model.user;
 import java.util.Date;
 import java.util.Objects;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,6 +15,9 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.URL;
+
+import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 /**
  * An organization or institution responsible for producing data related to
@@ -35,16 +37,13 @@ public class Organization {
 
 	@NotNull(message = "{organization.centre.name.notnull}")
 	@Size(min = 3, message = "{organization.centre.name.size}")
-	@Column(nullable = false)
 	private String centreName;
 
 	@NotNull(message = "{organization.href.notnull}")
 	@URL(message = "{organization.href.url}")
-	@Column(nullable = false)
 	private String href;
 
 	@NotNull
-	@Column(nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;
 

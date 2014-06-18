@@ -55,7 +55,6 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	Long id;
 
 	@NotNull
-	@Column(nullable = false)
 	private String clientId;
 
 	@NotNull
@@ -65,7 +64,6 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	private Set<String> resourceIds;
 
 	@NotNull
-	@Column(nullable = false)
 	private String clientSecret;
 
 	@NotNull
@@ -81,7 +79,7 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	private Set<String> authorizedGrantTypes;
 
 	@NotNull
-	@Column(name = "token_validity", nullable = false)
+	@Column(name = "token_validity")
 	private Integer accessTokenValiditySeconds;
 
 	@Column(name = "refresh_validity")
@@ -101,7 +99,6 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	private Date modifiedDate;
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable = false)
 	private final Date createdDate;
 
 	/**
