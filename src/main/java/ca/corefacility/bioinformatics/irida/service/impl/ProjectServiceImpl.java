@@ -180,11 +180,16 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public Page<ProjectUserJoin> searchProjectsByNameForUser(User user, String term, int page, int size, Direction order,
-			String... sortProperties) {
+	public Page<ProjectUserJoin> searchProjectsByNameForUser(User user, String term, int page, int size,
+			Direction order, String... sortProperties) {
 		if (sortProperties.length == 0) {
 			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
 		}
+		// Drilling down into project for the sort properties
+		for (int i = 0; i < sortProperties.length; i++) {
+			sortProperties[i] = "project." + sortProperties[i]; 
+		}
+
 		return pujRepository.findAll(ProjectUserJoinSpecification.searchProjectNameWithUser(term, user),
 				new PageRequest(page, size, order, sortProperties));
 	}
