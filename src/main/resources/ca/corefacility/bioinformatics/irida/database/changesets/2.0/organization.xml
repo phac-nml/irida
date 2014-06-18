@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+	<changeSet id="user-project-organization" author="fbristow">
+
+		<createTable tableName="organization">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="centreName" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="href" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="createdDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="modifiedDate" type="datetime" />
+		</createTable>
+		<addColumn tableName="project">
+			<column name="organization_id" type="bigint(20)">
+				<constraints foreignKeyName="FK_PROJECT_ORGANIZATION"
+					referencedTableName="organization" referencedColumnNames="id" />
+			</column>
+		</addColumn>
+		<addColumn tableName="sample">
+			<column name="organization_id" type="bigint(20)">
+				<constraints foreignKeyName="FK_SAMPLE_ORGANIZATION"
+					referencedTableName="organization" referencedColumnNames="id" />
+			</column>
+		</addColumn>
+
+		<createTable tableName="organization_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_ORGANIZATION_REVISION" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="centreName" type="varchar(255)"/>
+			<column name="href" type="varchar(255)"/>
+			<column name="createdDate" type="datetime"/>
+			<column name="modifiedDate" type="datetime" />
+		</createTable>
+
+		<addColumn tableName="project_AUD">
+			<column name="organization_id" type="bigint(20)" />
+		</addColumn>
+		<addColumn tableName="sample_AUD">
+			<column name="organization_id" type="bigint(20)" />
+		</addColumn>
+	</changeSet>
+</databaseChangeLog>
