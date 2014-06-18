@@ -25,7 +25,6 @@
 	<include file="changesets/2.0/oauth-clientid-envers.xml" relativeToChangelogFile="true"/>
 	<include file="changesets/2.0/samples.xml" relativeToChangelogFile="true"/>
 	<include file="changesets/2.0/client-details.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/2.0/created-date-not-null.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/2.0/organization.xml" relativeToChangelogFile="true"/>
 	<include file="changesets/2.0/add-not-null-constraints.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/organization.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
