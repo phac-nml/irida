@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -43,10 +43,7 @@ public class LoginPageIT {
 
 	@Before
 	public void setup() {
-		// By default htmlunit does not have javascript enabled.  This is because it has a different javascrript engine (Rhino)
-		// that has some quirks. (https://code.google.com/p/selenium/wiki/HtmlUnitDriver)
-		// wet-boew javascript fails if this is on.
-		driver = new HtmlUnitDriver();
+		driver = new ChromeDriver();
 		loginPage = LoginPage.to(driver);
 	}
 

@@ -21,10 +21,8 @@
     <project id="1" createdDate="2013-07-18 14:20:19.0" name="project" />
     <project id="2" createdDate="2013-07-18 14:20:19.0" name="project2" />
     <project id="3" createdDate="2013-07-18 14:20:19.0" name="project3" />
-    <sample id="1" sequencerSampleId="external" sampleName="sample" />
 
-    <project_user id="1" project_id="2" user_id="3"
+    <project_user id="1" project_id="2" user_id="3" createdDate="2013-07-18 14:20:19.0"
                   projectRole="PROJECT_OWNER" />
-    <project_sample id="1" project_id="2" sample_id="1" />
 
 </dataset>
