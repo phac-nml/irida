@@ -41,6 +41,7 @@ public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "sample_id")
 	private Sample sample;
+	
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;

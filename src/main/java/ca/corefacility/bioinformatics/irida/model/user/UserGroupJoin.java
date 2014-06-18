@@ -37,14 +37,15 @@ public class UserGroupJoin implements Join<User, Group> {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "user_id", nullable = false)
 	@NotNull
 	private User user;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "logicalGroup_id")
+	@JoinColumn(name = "logicalGroup_id", nullable = false)
 	@NotNull
 	private Group logicalGroup;
+	
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;

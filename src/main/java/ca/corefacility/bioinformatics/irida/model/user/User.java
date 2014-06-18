@@ -58,10 +58,12 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	@NotNull(message = "{user.username.notnull}")
 	@Size(min = 3, message = "{user.username.size}")
 	private String username;
+
 	@NotNull(message = "{user.email.notnull}")
 	@Size(min = 5, message = "{user.email.size}")
 	@Email(message = "{user.email.invalid}")
 	private String email;
+	
 	@NotNull(message = "{user.password.notnull}")
 	// passwords must be at least six characters long, but prohibit passwords
 	// longer than 1024 (who's going to remember a password that long anyway?)
@@ -71,22 +73,27 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 			@Pattern(regexp = "^.*[0-9].*$", message = "{user.password.number}"),
 			@Pattern(regexp = "^.*[a-z].*$", message = "{user.password.lowercase}") })
 	private String password;
+	
 	@NotNull(message = "{user.firstName.notnull}")
 	@Size(min = 2, message = "{user.firstName.size}")
 	private String firstName;
+	
 	@NotNull(message = "{user.lastName.notnull}")
 	@Size(min = 2, message = "{user.lastName.size}")
 	private String lastName;
+	
 	@NotNull(message = "{user.phoneNumber.notnull}")
 	@Size(min = 4, message = "{user.phoneNumber.size}")
 	private String phoneNumber;
+	
 	@NotNull
 	private boolean enabled = true;
 
 	@ManyToOne
-	@JoinColumn(name = "system_role")
+	@JoinColumn(name = "system_role", nullable = false)
 	@NotNull(message = "{user.systemRole.notnull}")
 	private Role systemRole;
+
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;
@@ -101,7 +108,6 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
 	private List<ProjectUserJoin> projects;
 	
-
 	@OneToMany(mappedBy="user")
 	private Collection<RemoteAPIToken> tokens;
 

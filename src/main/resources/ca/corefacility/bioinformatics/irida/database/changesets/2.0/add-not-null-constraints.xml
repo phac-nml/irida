@@ -5,7 +5,7 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-	<changeSet id="created-date-not-null" author="fbristow">
+	<changeSet id="add-not-null-constraints" author="fbristow">
 		<!-- Add not null constraints for creation date column for all tables. -->
 		<addNotNullConstraint tableName="miseq_run"
 			columnName="createdDate" columnDataType="datetime" />
@@ -23,5 +23,19 @@
 			columnName="createdDate" columnDataType="datetime" />
 		<addNotNullConstraint tableName="user"
 			columnName="createdDate" columnDataType="datetime" />
+		<addNotNullConstraint tableName="logicalGroup"
+			columnName="createdDate" columnDataType="datetime" />
+		<addNotNullConstraint tableName="password_reset"
+			columnName="createdDate" columnDataType="datetime" />
+		<addNotNullConstraint tableName="sample"
+			columnName="sequencerSampleId" columnDataType="varchar(255)" />
+		<addNotNullConstraint tableName="user"
+			columnName="system_role" columnDataType="varchar(255)" />
+		<addNotNullConstraint tableName="user_group"
+			columnName="createdDate" columnDataType="datetime" />
+		<addNotNullConstraint tableName="user_group"
+			columnName="logicalGroup_id" columnDataType="bigint(20)" />
+		<addNotNullConstraint tableName="user_group"
+			columnName="user_id" columnDataType="bigint(20)" />
 	</changeSet>
 </databaseChangeLog>

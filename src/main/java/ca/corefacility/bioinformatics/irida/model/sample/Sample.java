@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -24,6 +25,7 @@ import org.hibernate.envers.Audited;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.user.Organization;
 import ca.corefacility.bioinformatics.irida.validators.annotations.Latitude;
 import ca.corefacility.bioinformatics.irida.validators.annotations.Longitude;
 import ca.corefacility.bioinformatics.irida.validators.annotations.ValidSampleName;
@@ -221,6 +223,9 @@ public class Sample implements IridaThing, Comparable<Sample> {
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sample")
 	private List<SampleSequenceFileJoin> sequenceFiles;
+	
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	private Organization organization;
 
 	public Sample() {
 		createdDate = new Date();
@@ -272,7 +277,8 @@ public class Sample implements IridaThing, Comparable<Sample> {
 					&& Objects.equals(pathotype, sample.pathotype) && Objects.equals(serotype, sample.serotype)
 					&& Objects.equals(serovar, sample.serovar)
 					&& Objects.equals(specimenVoucher, sample.specimenVoucher)
-					&& Objects.equals(subgroup, sample.subgroup) && Objects.equals(subtype, sample.subtype);
+					&& Objects.equals(subgroup, sample.subgroup) && Objects.equals(subtype, sample.subtype)
+					&& Objects.equals(organization, sample.organization);
 		}
 
 		return false;
@@ -283,7 +289,7 @@ public class Sample implements IridaThing, Comparable<Sample> {
 		return Objects.hash(id, createdDate, modifiedDate, sequencerSampleId, sampleName, description, organism,
 				isolate, strain, collectedBy, collectionDate, geographicLocationName, host, isolationSource, latitude,
 				longitude, cultureCollection, genotype, passageHistory, pathotype, serotype, serovar, specimenVoucher,
-				subgroup, subtype);
+				subgroup, subtype, organization);
 	}
 
 	@Override
@@ -498,5 +504,13 @@ public class Sample implements IridaThing, Comparable<Sample> {
 
 	public void setSubtype(String subtype) {
 		this.subtype = subtype;
+	}
+
+	public Organization getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(Organization organization) {
+		this.organization = organization;
 	}
 }

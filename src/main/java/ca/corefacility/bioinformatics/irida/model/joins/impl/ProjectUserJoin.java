@@ -51,6 +51,7 @@ public class ProjectUserJoin implements Join<Project, User> {
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private ProjectRole projectRole;
+	
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;

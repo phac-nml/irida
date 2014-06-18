@@ -48,6 +48,7 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 
 	@Id
 	private String name;
+	
 	@NotNull
 	private String description;
 

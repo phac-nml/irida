@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -23,6 +24,7 @@ import org.hibernate.validator.constraints.URL;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.user.Organization;
 import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectName;
 
 /**
@@ -44,6 +46,7 @@ public class Project implements IridaThing, Comparable<Project> {
 	@Size(min = 5, message = "{project.name.size}")
 	@ValidProjectName
 	private String name;
+
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;
@@ -62,6 +65,9 @@ public class Project implements IridaThing, Comparable<Project> {
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
 	private List<ProjectSampleJoin> samples;
+
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	private Organization organization;
 
 	public Project() {
 		createdDate = new Date();
@@ -93,7 +99,7 @@ public class Project implements IridaThing, Comparable<Project> {
 		if (other instanceof Project) {
 			Project p = (Project) other;
 			return Objects.equals(createdDate, p.createdDate) && Objects.equals(modifiedDate, p.modifiedDate)
-					&& Objects.equals(name, p.name) && Objects.equals(id, p.id);
+					&& Objects.equals(name, p.name) && Objects.equals(organization, p.organization);
 		}
 
 		return false;
@@ -101,7 +107,7 @@ public class Project implements IridaThing, Comparable<Project> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(createdDate, modifiedDate, name, id);
+		return Objects.hash(createdDate, modifiedDate, name, organization);
 	}
 
 	public String getName() {
@@ -151,5 +157,13 @@ public class Project implements IridaThing, Comparable<Project> {
 
 	public void setRemoteURL(String remoteURL) {
 		this.remoteURL = remoteURL;
+	}
+
+	public Organization getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(Organization organization) {
+		this.organization = organization;
 	}
 }

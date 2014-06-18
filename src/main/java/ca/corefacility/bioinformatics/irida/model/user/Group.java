@@ -39,6 +39,7 @@ public class Group implements IridaThing {
 	@NotNull(message = "{group.name.notnull}")
 	@Size(min = 3, message = "{group.name.size}")
 	private String name;
+	
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;
