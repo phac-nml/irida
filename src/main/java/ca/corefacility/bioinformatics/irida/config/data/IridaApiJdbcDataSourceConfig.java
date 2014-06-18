@@ -15,7 +15,7 @@ import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 @Configuration
-@Profile({ "dev", "prod" })
+@Profile({ "dev", "prod", "it" })
 public class IridaApiJdbcDataSourceConfig implements DataConfig {
 
 	@Autowired
