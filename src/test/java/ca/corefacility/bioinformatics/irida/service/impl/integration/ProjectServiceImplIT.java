@@ -46,6 +46,7 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -237,9 +238,9 @@ public class ProjectServiceImplIT {
 	@Test
 	public void testFindAllProjectsAsAdmin() {
 		List<Project> projects = (List<Project>) asUsername("user1", Role.ROLE_ADMIN).projectService.findAll();
-		// this admin should have access to 3 projects
+		// this admin should have access to 5 projects
 
-		assertEquals("Wrong number of projects.", 3, projects.size());
+		assertEquals("Wrong number of projects.", 5, projects.size());
 	}
 	
 	@Test
@@ -253,20 +254,43 @@ public class ProjectServiceImplIT {
 	@WithMockUser(username="user1", password="password1", roles="USER")
 	public void testSearchProjectsForUser(){
 		User user = userService.read(3l);
+		//test searches
 		Page<ProjectUserJoin> searchPagedProjectsForUser = projectService.searchProjectsByNameForUser(user, "2", 0, 10, Direction.ASC);
 		assertEquals(1,searchPagedProjectsForUser.getTotalElements());
 		
 		searchPagedProjectsForUser = projectService.searchProjectsByNameForUser(user, "project", 0, 10, Direction.ASC);
 		assertEquals(2,searchPagedProjectsForUser.getTotalElements());
+		
+		//test sorting
+		searchPagedProjectsForUser = projectService.searchProjectsByNameForUser(user, "project", 0, 10, Direction.ASC,"name");
+		Page<ProjectUserJoin> searchDesc = projectService.searchProjectsByNameForUser(user, "project", 0, 10, Direction.DESC,"name");
+		assertEquals(2,searchPagedProjectsForUser.getTotalElements());
+		
+		List<ProjectUserJoin> reversed = Lists.reverse(searchDesc.getContent());
+		List<ProjectUserJoin> forward = searchPagedProjectsForUser.getContent();
+		assertEquals(reversed.size(),forward.size());
+		for(int i=0;i<reversed.size();i++){
+			assertEquals(forward.get(i), reversed.get(i));
+		}
 	}
 	
 	@Test
 	@WithMockUser(username="user1", password="password1", roles="ADMIN")
 	public void testSearchProjects(){
-		Page<Project> searchProjects = projectService.searchProjectsByName("2", 0, 10, Direction.ASC);
-		assertEquals(1,searchProjects.getTotalElements());
-		Project next = searchProjects.iterator().next();
-		assertEquals("project2",next.getName());
+		//search for a number
+		Page<Project> searchFor2 = projectService.searchProjectsByName("2", 0, 10, Direction.ASC,"name");
+		assertEquals(2,searchFor2.getTotalElements());
+		Project next = searchFor2.iterator().next();
+		assertTrue(next.getName().contains("2"));
+		
+		//search descending
+		Page<Project> searchDesc = projectService.searchProjectsByName("2", 0, 10, Direction.DESC,"name");
+		List<Project> reversed = Lists.reverse(searchDesc.getContent());
+		List<Project> forward = searchFor2.getContent();
+		assertEquals(reversed.size(),forward.size());
+		for(int i=0;i<reversed.size();i++){
+			assertEquals(forward.get(i), reversed.get(i));
+		}
 	}
 
 	private Project p() {
