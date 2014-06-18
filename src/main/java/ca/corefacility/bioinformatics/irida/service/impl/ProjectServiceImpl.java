@@ -45,6 +45,8 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implements ProjectService {
 
 	private static final Logger logger = LoggerFactory.getLogger(ProjectServiceImpl.class);
+	private static final String USER_JOIN_PROJECT_PROPERTY = "project";
+	
 	private ProjectUserJoinRepository pujRepository;
 	private ProjectSampleJoinRepository psjRepository;
 	private SampleRepository sampleRepository;
@@ -187,7 +189,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		}
 		// Drilling down into project for the sort properties
 		for (int i = 0; i < sortProperties.length; i++) {
-			sortProperties[i] = "project." + sortProperties[i]; 
+			sortProperties[i] = USER_JOIN_PROJECT_PROPERTY + "." + sortProperties[i]; 
 		}
 
 		return pujRepository.findAll(ProjectUserJoinSpecification.searchProjectNameWithUser(term, user),
