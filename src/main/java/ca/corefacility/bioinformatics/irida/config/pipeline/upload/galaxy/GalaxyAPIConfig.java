@@ -27,7 +27,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyConnect
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
 
 @Configuration
-@Profile({ "dev", "prod" })
+@Profile({ "dev", "prod", "it" })
 public class GalaxyAPIConfig {
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyAPIConfig.class);
