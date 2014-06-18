@@ -52,6 +52,7 @@ public class Organization {
 
 	public Organization() {
 		this.createdDate = new Date();
+		this.modifiedDate = createdDate;
 	}
 
 	public boolean equals(Object o) {
