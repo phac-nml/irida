@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -30,6 +33,10 @@ import java.util.Map;
 @RequestMapping(value = "/projects")
 public class ProjectsController {
 
+	public static final String SORT_BY_NAME = "name";
+	public static final String SORT_BY_CREATED_DATE = "createdDate";
+	public static final String SORT_BY_MODIFIED_DATE = "modifiedDate";
+	public static final String SORT_ASCENDING = "asc";
 	private ProjectService projectService;
 	private SampleService sampleService;
 	private UserService userService;
@@ -49,6 +56,7 @@ public class ProjectsController {
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody
 	Map<String, Object> getAjaxProjectList(final Principal principal, WebRequest request) {
+		User user = userService.getUserByUsername(principal.getName());
 
 		int start = Integer.parseInt(request.getParameter(DataTable.REQUEST_PARAM_START));
 		int length = Integer.parseInt(request.getParameter(DataTable.REQUEST_PARAM_LENGTH));
@@ -57,24 +65,23 @@ public class ProjectsController {
 		String sortString;
 		switch (sortColumn) {
 			case "0":
-				sortString = "name";
+				sortString = SORT_BY_NAME;
 				break;
 			case "3":
-				sortString = "createdDate";
+				sortString = SORT_BY_CREATED_DATE;
 				break;
 			case "4":
-				sortString = "modifiedDate";
+				sortString = SORT_BY_MODIFIED_DATE;
 				break;
 			default:
-				sortString = "name";
+				sortString = SORT_BY_NAME;
 		}
-		Sort.Direction sortDirection = request.getParameter(DataTable.REQUEST_PARAM_SORT_DIRECTION).equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-		// TODO: implement search
+		Sort.Direction sortDirection = request.getParameter(DataTable.REQUEST_PARAM_SORT_DIRECTION).equals(SORT_ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
 		String searchValue = request.getParameter(DataTable.REQUEST_PARAM_SEARCH_VALUE);
 
 		int pageNum = (int) Math.floor(start / length);
-		Page<Project> page = projectService.searchProjects(searchValue, pageNum, length, sortDirection, sortString);
-		List<Project> projectList = page.getContent();
+		Page<ProjectUserJoin> page = projectService.searchProjectsByNameForUser(user, searchValue, pageNum, length, sortDirection, sortString);
+		List<ProjectUserJoin> projectList = page.getContent();
 
 		Map<String, Object> map = new HashMap<>();
 		map.put(DataTable.RESPONSE_PARAM_DRAW, draw);
@@ -82,17 +89,19 @@ public class ProjectsController {
 		map.put(DataTable.RESPONSE_PARAM_RECORDS_FILTERED, page.getTotalElements());
 
 		// Create the format required by DataTable
-		List<Map<String, String>> projectsData = new ArrayList<>();
-		for (Project p : projectList) {
-			Map<String, String> pList = new HashMap<>();
-			pList.put("id", String.valueOf(p.getId()));
-			pList.put("name", p.getName());
-			pList.put("samples", String.valueOf(sampleService.getSamplesForProject(p).size()));
-			pList.put("collaborators", String.valueOf(userService.getUsersForProject(p).size()));
-			pList.put("createdDate", String.valueOf(Formats.DATE.format(p.getTimestamp())));
-			pList.put("modifiedDate", String.valueOf(Formats.DATE.format(p.getModifiedDate())));
-
-			projectsData.add(pList);
+		List<List<String>> projectsData = new ArrayList<>();
+		for (ProjectUserJoin projectUserJoin : projectList) {
+			Project p = projectUserJoin.getSubject();
+			ProjectRole role = projectUserJoin.getProjectRole();
+			List<String> l = new ArrayList<>();
+			l.add(String.valueOf(p.getId()));
+			l.add(role.toString());
+			l.add(p.getName());
+			l.add(String.valueOf(sampleService.getSamplesForProject(p).size()));
+			l.add(String.valueOf(userService.getUsersForProject(p).size()));
+			l.add(String.valueOf(Formats.DATE.format(p.getTimestamp())));
+			l.add(String.valueOf(Formats.DATE.format(p.getModifiedDate())));
+			projectsData.add(l);
 		}
 		map.put(DataTable.RESPONSE_PARAM_DATA, projectsData);
 		return map;
