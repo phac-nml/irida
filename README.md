@@ -56,8 +56,7 @@ Maven
 
 #### Verify
 
-1. Start `chromedriver`: `./scripts/integration_server.sh`
-1. During verify: `mvn verify -Pprod`
+1. During verify: `mvn verify -Dspring.profiles.active=it`
 
 #### Package
 
