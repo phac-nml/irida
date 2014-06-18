@@ -21,6 +21,8 @@
 	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project" />
 	<project id="2" createdDate="2013-07-18 14:20:19.0" name="project2" />
 	<project id="3" createdDate="2013-07-18 14:20:19.0" name="project3" />
+	<project id="4" createdDate="2013-07-18 14:21:19.0" name="project4" />
+	<project id="5" createdDate="2013-07-18 14:22:19.0" name="project22" />
 	<sample id="1" sequencerSampleId="external" sampleName="sample"
 		createdDate="2013-07-18 14:20:19.0" />
 
