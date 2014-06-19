@@ -27,8 +27,7 @@
     <script src="/resources/wet-theme/js/deps/jquery.dataTables.min.js"></script>
     <script>    /*<![CDATA[*/
     $(document).ready(function () {
-        var $projectsTable = $('#projectsTable');
-        $projectsTable.DataTable({
+        $('#projectsTable').DataTable({
             processing: true,
             serverSide: true,
             ajax: '/projects/ajax/list',
