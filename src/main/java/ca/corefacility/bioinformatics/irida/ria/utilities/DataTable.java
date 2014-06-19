@@ -5,7 +5,7 @@ package ca.corefacility.bioinformatics.irida.ria.utilities;
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
-public class DataTable {
+public interface DataTable {
 	/**
 	 * Request Parameters
 	 */
