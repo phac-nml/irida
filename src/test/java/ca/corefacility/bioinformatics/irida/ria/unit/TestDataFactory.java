@@ -24,16 +24,18 @@ public class TestDataFactory {
 	public static final int NUM_PROJECT_SAMPLES = 12;
 	public static final int NUM_PROJECT_USERS = 50;
 	public static final long NUM_TOTAL_ELEMENTS = 100L;
+	public static final String USER_NAME = "testme";
 	public static final String PROJECT_NAME = "test_project";
 	private static final Project project = new Project(PROJECT_NAME);
+	private static final User user = new User(USER_NAME, null, null, null, null, null);
 
 	/**
 	 * Creates a Page of Projects for testing.
 	 * 
 	 * @return Page of Projects (1 project)
 	 */
-	public static Page<Project> getProjectsPage() {
-		return new Page<Project>() {
+	public static Page<ProjectUserJoin> getProjectsPage() {
+		return new Page<ProjectUserJoin>() {
 			@Override
 			public int getNumber() {
 				return 0;
@@ -98,7 +100,7 @@ public class TestDataFactory {
 			@SuppressWarnings("unchecked")
 			public List getContent() {
 				ArrayList<Object> list = new ArrayList<>();
-				list.add(project);
+				list.add(new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER));
 				return list;
 			}
 
@@ -138,6 +140,10 @@ public class TestDataFactory {
 			list.add(new ProjectUserJoin(project, new User(), ProjectRole.PROJECT_USER));
 		}
 		return list;
+	}
+
+	public static User getUser() {
+		return user;
 	}
 
 	/**

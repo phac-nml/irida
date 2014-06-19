@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
@@ -53,12 +54,12 @@ public class ProjectsControllerTest {
 
 	@Test
 	public void testGetAjaxProjectList() {
-		Page<Project> projectsPage = TestDataFactory.getProjectsPage();
+		Page<ProjectUserJoin> projectsPage = TestDataFactory.getProjectsPage();
 		List<Join<Project, Sample>> samplesJoin = TestDataFactory.getSamplesForProject();
 		List<Join<Project, User>> usersJoin = TestDataFactory.getUsersForProject();
 		Project project = TestDataFactory.getProject();
 		int requestDraw = 1;
-		Principal principal = () -> "admin";
+		Principal principal = () -> TestDataFactory.USER_NAME;
 
 		MockHttpServletRequest req = new MockHttpServletRequest();
 		req.setParameter(DataTable.REQUEST_PARAM_DRAW, String.valueOf(requestDraw));
@@ -70,22 +71,24 @@ public class ProjectsControllerTest {
 
 		WebRequest request = new ServletWebRequest(req);
 
-		when(projectService.searchProjects("", 0, 10, Sort.Direction.ASC, "name")).thenReturn(projectsPage);
+		when(userService.getUserByUsername(TestDataFactory.USER_NAME)).thenReturn(TestDataFactory.getUser());
+		when(projectService.searchProjectsByNameForUser(TestDataFactory.getUser(), "", 0, 10, Sort.Direction.ASC, "name")).thenReturn(projectsPage);
 		when(sampleService.getSamplesForProject(project)).thenReturn(samplesJoin);
 		when(userService.getUsersForProject(project)).thenReturn(usersJoin);
+		
 
 		Map<String, Object> response = controller.getAjaxProjectList(principal, request);
 
 		assertEquals("Has the correct draw number", requestDraw, response.get(DataTable.RESPONSE_PARAM_DRAW));
 
 		Object listObject = response.get(DataTable.RESPONSE_PARAM_DATA);
-		List<Map<String, String>> projectList = null;
+		List<List<String>> projectList = null;
 		assertTrue(listObject instanceof List);
-		projectList = (List<Map<String, String>>)listObject;
-		Map<String, String> projectMap = projectList.get(0);
+		projectList = (List<List<String>>)listObject;
+		List<String> data = projectList.get(0);
 
-		assertEquals("Has the correct project name", TestDataFactory.PROJECT_NAME, projectMap.get("name"));
-		assertEquals("Has the correct number of samples", TestDataFactory.NUM_PROJECT_SAMPLES, Integer.parseInt(projectMap.get("samples")));
-		assertEquals("Has the correct number of collaborators", TestDataFactory.NUM_PROJECT_USERS, Integer.parseInt(projectMap.get("collaborators")));
+		assertEquals("Has the correct project name", TestDataFactory.PROJECT_NAME, data.get(2));
+		assertEquals("Has the correct number of samples", TestDataFactory.NUM_PROJECT_SAMPLES, Integer.parseInt(data.get(3)));
+		assertEquals("Has the correct number of collaborators", TestDataFactory.NUM_PROJECT_USERS, Integer.parseInt(data.get(4)));
 	}
 }
