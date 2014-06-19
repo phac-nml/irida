@@ -30,10 +30,11 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
+import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -51,7 +52,7 @@ import com.google.common.collect.ImmutableList;
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class MiseqServiceImplIT {
 	@Autowired
-	private MiseqRunService miseqRunService;
+	private SequencingRunService miseqRunService;
 	@Autowired
 	private SequenceFileService sequenceFileService;
 	@Autowired
@@ -81,9 +82,9 @@ public class MiseqServiceImplIT {
 
 	private void testAddSequenceFileToMiseqRunAsRole(Role r) {
 		SequenceFile sf = asRole(r).sequenceFileService.read(1l);
-		MiseqRun miseqRun = asRole(r).miseqRunService.read(1l);
-		asRole(r).miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
-		MiseqRun saved = asRole(r).miseqRunService.read(1l);
+		SequencingRun miseqRun = asRole(r).miseqRunService.read(1l);
+		asRole(r).miseqRunService.addSequenceFileToSequencingRun(miseqRun, sf);
+		SequencingRun saved = asRole(r).miseqRunService.read(1l);
 		Set<SequenceFile> sequenceFilesForMiseqRun = sequenceFileService.getSequenceFilesForMiseqRun(saved);
 		assertTrue("Saved miseq run should have seqence file", sequenceFilesForMiseqRun.contains(sf));
 	}
@@ -93,7 +94,7 @@ public class MiseqServiceImplIT {
 		SequenceFile sf = asRole(Role.ROLE_ADMIN).sequenceFileService.read(2l);
 
 		try {
-			MiseqRun j = asRole(Role.ROLE_ADMIN).miseqRunService.getMiseqRunForSequenceFile(sf);
+			SequencingRun j = asRole(Role.ROLE_ADMIN).miseqRunService.getSequencingRunForSequenceFile(sf);
 			assertEquals("Join had wrong miseq run.", Long.valueOf(2l), j.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -105,13 +106,13 @@ public class MiseqServiceImplIT {
 	public void testCreateMiseqRunAsSequencer() {
 		MiseqRun mr = new MiseqRun();
 		mr.setProjectName("Project name.");
-		mr = asRole(Role.ROLE_SEQUENCER).miseqRunService.create(mr);
-		assertNotNull("Created run was not assigned an ID.", mr.getId());
+		SequencingRun returned = asRole(Role.ROLE_SEQUENCER).miseqRunService.create(mr);
+		assertNotNull("Created run was not assigned an ID.", returned.getId());
 	}
 
 	@Test
 	public void testReadMiseqRunAsSequencer() {
-		MiseqRun mr = asRole(Role.ROLE_SEQUENCER).miseqRunService.read(1L);
+		SequencingRun mr = asRole(Role.ROLE_SEQUENCER).miseqRunService.read(1L);
 		assertNotNull("Created run was not assigned an ID.", mr.getId());
 	}
 
@@ -157,11 +158,11 @@ public class MiseqServiceImplIT {
 		SequenceFile sf = new SequenceFile();
 		sf.setFile(p);
 		Sample sample = asRole(Role.ROLE_ADMIN).sampleService.read(1L);
-		MiseqRun run = asRole(Role.ROLE_ADMIN).miseqRunService.read(2L);
+		SequencingRun run = asRole(Role.ROLE_ADMIN).miseqRunService.read(2L);
 		
 		asRole(Role.ROLE_ADMIN).sequenceFileService.createSequenceFileInSample(sf, sample);
 		
-		miseqRunService.addSequenceFileToMiseqRun(run, sf);
+		miseqRunService.addSequenceFileToSequencingRun(run, sf);
 		
 	}
 

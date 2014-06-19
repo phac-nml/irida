@@ -15,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
@@ -72,7 +73,7 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 *            references from.
 	 * @return the references to {@link SequenceFile}.
 	 */
-	public Set<SequenceFile> getSequenceFilesForMiseqRun(MiseqRun miseqRun);
+	public Set<SequenceFile> getSequenceFilesForMiseqRun(SequencingRun miseqRun);
 
 	/**
 	 * Add an {@link OverrepresentedSequence} to a {@link SequenceFile}.

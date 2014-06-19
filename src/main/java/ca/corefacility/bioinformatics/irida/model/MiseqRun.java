@@ -1,22 +1,12 @@
 
 package ca.corefacility.bioinformatics.irida.model;
 
-import java.util.Date;
 import java.util.Objects;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.OneToMany;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
@@ -26,13 +16,10 @@ import org.hibernate.envers.Audited;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Entity
+@Inheritance(strategy=InheritanceType.JOINED)
 @Table(name="miseq_run")
 @Audited
-public class MiseqRun implements IridaThing, Comparable<MiseqRun>{
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+public class MiseqRun extends SequencingRun implements IridaThing {
     
     private String investigatorName;
     
@@ -45,34 +32,10 @@ public class MiseqRun implements IridaThing, Comparable<MiseqRun>{
     private String application;
     
     private String assay;
-    
-	@Lob
-    private String description;
+
     
     private String chemistry;
-        
-    @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
-    private final Date createdDate;
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date modifiedDate;
-	
-	@OneToMany(fetch = FetchType.LAZY, cascade =  { CascadeType.REMOVE, CascadeType.MERGE }, mappedBy = "miseqRun", orphanRemoval = true)
-	private Set<SequenceFile> sequenceFiles;
 
-    public MiseqRun(){
-        createdDate = new Date();
-        modifiedDate = createdDate;
-    }
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getInvestigatorName() {
         return investigatorName;
@@ -122,13 +85,7 @@ public class MiseqRun implements IridaThing, Comparable<MiseqRun>{
         this.assay = assay;
     }
 
-    public String getDescription() {
-        return description;
-    }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public String getChemistry() {
         return chemistry;
@@ -137,35 +94,18 @@ public class MiseqRun implements IridaThing, Comparable<MiseqRun>{
     public void setChemistry(String chemistry) {
         this.chemistry = chemistry;
     }
-    
-    @Override
-    public int compareTo(MiseqRun p) {
-        return modifiedDate.compareTo(p.modifiedDate);
-    }
+
 
     @Override
     public String getLabel() {
         return projectName;
     }
 
-    @Override
-    public Date getTimestamp() {
-        return createdDate;
-    }
 
-    @Override
-    public Date getModifiedDate() {
-        return modifiedDate;
-    }
-
-    @Override
-    public void setModifiedDate(Date modifiedDate) {
-        this.modifiedDate = modifiedDate;
-    }
 
     @Override
     public int hashCode() {
-        return Objects.hash(createdDate,modifiedDate,application,assay,chemistry,description,experimentName,investigatorName,projectName,workflow);
+        return Objects.hash(super.hashCode(),application,assay,chemistry,experimentName,investigatorName,projectName,workflow);
     }    
 
     @Override
@@ -177,16 +117,14 @@ public class MiseqRun implements IridaThing, Comparable<MiseqRun>{
             return false;
         }
         final MiseqRun other = (MiseqRun) obj;
-        if (Objects.equals(this.investigatorName, other.investigatorName)
+        if (super.equals(obj)
+        		&& Objects.equals(this.investigatorName, other.investigatorName)
                 && Objects.equals(this.projectName, other.projectName) 
                 && Objects.equals(this.experimentName, other.experimentName)
                 && Objects.equals(this.workflow, other.workflow)
                 && Objects.equals(this.application, other.application)
                 && Objects.equals(this.assay, other.assay)
-                && Objects.equals(this.description, other.description)
-                && Objects.equals(this.chemistry, other.chemistry)
-                && Objects.equals(this.createdDate, other.createdDate)
-                && Objects.equals(this.modifiedDate, other.modifiedDate)) {
+                && Objects.equals(this.chemistry, other.chemistry)) {
             return true;
         }
         
@@ -195,7 +133,7 @@ public class MiseqRun implements IridaThing, Comparable<MiseqRun>{
 
     @Override
     public String toString() {
-        return "MiseqRun{" + "id=" + id + ", investigatorName=" + investigatorName + ", projectName=" + projectName + ", description=" + description + ", createdDate=" + createdDate + '}';
+        return "MiseqRun{" + "id=" + getId() + ", investigatorName=" + investigatorName + ", projectName=" + projectName +  '}';
     }
 
 }

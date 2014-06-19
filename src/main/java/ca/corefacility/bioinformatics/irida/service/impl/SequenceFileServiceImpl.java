@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
@@ -187,8 +188,8 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 
 	@Override
 	@Transactional(readOnly = true)
-	public Set<SequenceFile> getSequenceFilesForMiseqRun(MiseqRun miseqRun) {
-		return sequenceFileRepository.findSequenceFilesForMiseqRun(miseqRun);
+	public Set<SequenceFile> getSequenceFilesForMiseqRun(SequencingRun miseqRun) {
+		return sequenceFileRepository.findSequenceFilesForSequencingRun(miseqRun);
 	}
 
 	@Override
