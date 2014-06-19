@@ -12,8 +12,8 @@
         <thead>
         <tr>
             <th th:text="#{projects.table.id}">ID</th>
-            <th th:text="#{projects.table.role}">Role</th>
             <th th:text="#{projects.table.name}">Name</th>
+            <th th:text="#{projects.table.role}">Role</th>
             <th th:text="#{projects.table.samples}">Samples</th>
             <th th:text="#{projects.table.collaborators}">Collaborators</th>
             <th th:text="#{projects.table.created}">Date Created</th>
@@ -43,13 +43,13 @@
                             return '<span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;' + [[#{project.role.collaborator}]];
                         }
                     },
-                    'targets': 1
+                    'targets': 2
                 },
                 {
                     'render': function (data, type, row) {
                         return '<a href="' + [[@{/projects/}]] + row[0] + '">' + data + '</a>';
                     },
-                    'targets': 2
+                    'targets': 1
                 }
             ]
         });
