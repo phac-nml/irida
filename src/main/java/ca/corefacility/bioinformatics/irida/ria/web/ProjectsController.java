@@ -95,8 +95,8 @@ public class ProjectsController {
 			ProjectRole role = projectUserJoin.getProjectRole();
 			List<String> l = new ArrayList<>();
 			l.add(String.valueOf(p.getId()));
-			l.add(role.toString());
 			l.add(p.getName());
+			l.add(role.toString());
 			l.add(String.valueOf(sampleService.getSamplesForProject(p).size()));
 			l.add(String.valueOf(userService.getUsersForProject(p).size()));
 			l.add(String.valueOf(Formats.DATE.format(p.getTimestamp())));
