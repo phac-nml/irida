@@ -1,4 +1,3 @@
-
 package ca.corefacility.bioinformatics.irida.model.run;
 
 import java.util.Objects;
@@ -16,123 +15,115 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Entity
-@Table(name="miseq_run")
+@Table(name = "miseq_run")
 @Audited
 public class MiseqRun extends SequencingRun implements IridaThing {
-    
-    private String investigatorName;
-    
-    private String projectName;
-    
-    private String experimentName;
-    
-    private String workflow;
-    
-    private String application;
-    
-    private String assay;
 
-    
-    private String chemistry;
+	private String investigatorName;
 
+	private String projectName;
 
-    public String getInvestigatorName() {
-        return investigatorName;
-    }
+	private String experimentName;
 
-    public void setInvestigatorName(String investigatorName) {
-        this.investigatorName = investigatorName;
-    }
+	private String workflow;
 
-    public String getProjectName() {
-        return projectName;
-    }
+	private String application;
 
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
+	private String assay;
 
-    public String getExperimentName() {
-        return experimentName;
-    }
+	private String chemistry;
 
-    public void setExperimentName(String experimentName) {
-        this.experimentName = experimentName;
-    }
+	public String getInvestigatorName() {
+		return investigatorName;
+	}
 
-    public String getWorkflow() {
-        return workflow;
-    }
+	public void setInvestigatorName(String investigatorName) {
+		this.investigatorName = investigatorName;
+	}
 
-    public void setWorkflow(String workflow) {
-        this.workflow = workflow;
-    }
+	public String getProjectName() {
+		return projectName;
+	}
 
-    public String getApplication() {
-        return application;
-    }
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
 
-    public void setApplication(String application) {
-        this.application = application;
-    }
+	public String getExperimentName() {
+		return experimentName;
+	}
 
-    public String getAssay() {
-        return assay;
-    }
+	public void setExperimentName(String experimentName) {
+		this.experimentName = experimentName;
+	}
 
-    public void setAssay(String assay) {
-        this.assay = assay;
-    }
+	public String getWorkflow() {
+		return workflow;
+	}
 
+	public void setWorkflow(String workflow) {
+		this.workflow = workflow;
+	}
 
+	public String getApplication() {
+		return application;
+	}
 
-    public String getChemistry() {
-        return chemistry;
-    }
+	public void setApplication(String application) {
+		this.application = application;
+	}
 
-    public void setChemistry(String chemistry) {
-        this.chemistry = chemistry;
-    }
+	public String getAssay() {
+		return assay;
+	}
 
+	public void setAssay(String assay) {
+		this.assay = assay;
+	}
 
-    @Override
-    public String getLabel() {
-        return projectName;
-    }
+	public String getChemistry() {
+		return chemistry;
+	}
 
+	public void setChemistry(String chemistry) {
+		this.chemistry = chemistry;
+	}
 
+	@Override
+	public String getLabel() {
+		return projectName;
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(),application,assay,chemistry,experimentName,investigatorName,projectName,workflow);
-    }    
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), application, assay, chemistry, experimentName, investigatorName,
+				projectName, workflow);
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final MiseqRun other = (MiseqRun) obj;
-        if (super.equals(obj)
-        		&& Objects.equals(this.investigatorName, other.investigatorName)
-                && Objects.equals(this.projectName, other.projectName) 
-                && Objects.equals(this.experimentName, other.experimentName)
-                && Objects.equals(this.workflow, other.workflow)
-                && Objects.equals(this.application, other.application)
-                && Objects.equals(this.assay, other.assay)
-                && Objects.equals(this.chemistry, other.chemistry)) {
-            return true;
-        }
-        
-        return false;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final MiseqRun other = (MiseqRun) obj;
+		if (super.equals(obj) && Objects.equals(this.investigatorName, other.investigatorName)
+				&& Objects.equals(this.projectName, other.projectName)
+				&& Objects.equals(this.experimentName, other.experimentName)
+				&& Objects.equals(this.workflow, other.workflow) && Objects.equals(this.application, other.application)
+				&& Objects.equals(this.assay, other.assay) && Objects.equals(this.chemistry, other.chemistry)) {
+			return true;
+		}
 
-    @Override
-    public String toString() {
-        return "MiseqRun{" + "id=" + getId() + ", investigatorName=" + investigatorName + ", projectName=" + projectName +  '}';
-    }
+		return false;
+	}
+
+	@Override
+	public String toString() {
+		return "MiseqRun{" + "id=" + getId() + ", investigatorName=" + investigatorName + ", projectName="
+				+ projectName + '}';
+	}
 
 }
