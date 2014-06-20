@@ -76,10 +76,11 @@ public class ProjectsPageIT {
 
 	@Test
 	public void sortByName() {
-		List<WebElement> ascElements = projectsPage.getProjectColumn();
 		projectsPage.clickProjectNameHeader();
+		List<WebElement> ascElements = projectsPage.getProjectColumn();
 		assertTrue("Projects page is sorted Ascending", checkSortedAscending(ascElements));
 
+		projectsPage.clickProjectNameHeader();
 		projectsPage.clickProjectNameHeader();
 		List<WebElement> desElements = projectsPage.getProjectColumn();
 		assertTrue("Projects page is sorted Descending", checkSortedDescending(desElements));
