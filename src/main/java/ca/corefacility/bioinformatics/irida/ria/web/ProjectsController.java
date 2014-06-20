@@ -40,8 +40,8 @@ public class ProjectsController {
 	public static final String SORT_ASCENDING = "asc";
 	public static final String COLUMN_PROJECT_ID = "0";
 	public static final String COLUMN_NAME = "1";
-	public static final String COLUMN_DATE_CREATED = "3";
-	public static final String COLUMN_DATE_MODIFIED = "4";
+	public static final String COLUMN_DATE_CREATED = "5";
+	public static final String COLUMN_DATE_MODIFIED = "6";
 	private ProjectService projectService;
 	private SampleService sampleService;
 	private UserService userService;
@@ -68,6 +68,10 @@ public class ProjectsController {
 		int draw = Integer.parseInt(request.getParameter(DataTable.REQUEST_PARAM_DRAW));
 		String sortColumn = request.getParameter(DataTable.REQUEST_PARAM_SORT_COLUMN);
 		String sortString;
+
+		// If there is a sort by column set the correct name to sort by.
+		// The default should be by date modified since that is what the
+		// user would have most recently used.
 		switch (sortColumn) {
 			case COLUMN_PROJECT_ID:
 				sortString = SORT_BY_ID;
@@ -82,7 +86,7 @@ public class ProjectsController {
 				sortString = SORT_BY_MODIFIED_DATE;
 				break;
 			default:
-				sortString = SORT_BY_NAME;
+				sortString = SORT_BY_MODIFIED_DATE;
 		}
 		Sort.Direction sortDirection = request.getParameter(DataTable.REQUEST_PARAM_SORT_DIRECTION).equals(SORT_ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
 		String searchValue = request.getParameter(DataTable.REQUEST_PARAM_SEARCH_VALUE);
@@ -102,7 +106,7 @@ public class ProjectsController {
 			Project p = projectUserJoin.getSubject();
 			ProjectRole role = projectUserJoin.getProjectRole();
 			List<String> l = new ArrayList<>();
-			l.add(String.valueOf(p.getId()));
+			l.add(p.getId().toString());
 			l.add(p.getName());
 			l.add(role.toString());
 			l.add(String.valueOf(sampleService.getSamplesForProject(p).size()));
