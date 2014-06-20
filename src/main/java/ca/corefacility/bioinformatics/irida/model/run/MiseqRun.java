@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
@@ -25,6 +26,7 @@ public class MiseqRun extends SequencingRun implements IridaThing {
 
 	private String experimentName;
 
+	@NotNull
 	private String workflow;
 
 	private String application;

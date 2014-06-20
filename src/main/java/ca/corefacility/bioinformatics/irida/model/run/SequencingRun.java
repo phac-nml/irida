@@ -27,7 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 @Entity
 @Table(name = "sequencing_run")
 @Audited
-@Inheritance(strategy=InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class SequencingRun implements IridaThing, Comparable<SequencingRun> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
