@@ -15,7 +15,7 @@ if [ ! -e node-v0.10.28-linux-x64 ] ; then
 fi
 
 # Install chromedriver for testing
-if [ ! -e bin/chromedriver ] ; then
+if [ ! -e bin/phantomjs ] ; then
     echo "Installing phantomjs(tailf ~/.irida-npm/phantomsjs.log)"
     mkdir -p bin
     pushd bin > /dev/null
