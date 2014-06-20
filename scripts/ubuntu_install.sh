@@ -22,7 +22,7 @@ if [ ! -e bin/chromedriver ] ; then
     # Downlod chromedriver
     wget 'https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-x86_64.tar.bz2'
     tar xvfj phantomjs-1.9.7-linux-x86_64.tar.bz2 &> ~/.irida-npm/phantomjs.log
-    ﻿mv phantomjs-1.9.7-linux-x86_64/bin/phantomjs ~/.irida-npm/bin/
+    mv phantomjs-1.9.7-linux-x86_64/bin/phantomjs ~/.irida-npm/bin/
     rm -r phantomjs-1.9.7-linux-x86_64*
     popd > /dev/null
     echo 'export PATH=~/.irida-npm/bin:$PATH' > ~/.irida-npm/bashrc
