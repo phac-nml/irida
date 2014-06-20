@@ -53,7 +53,7 @@
 <!-- HEADER -->
 <div th:replace="templates/wet-boew/partials/header :: header">HEADER</div>
 
-<div sec:authorize="hasRole('ROLE_USER') || hasRole('ROLE_ADMIN')">
+<div sec:authorize="isFullyAuthenticated()">
     <!-- This will only be displayed if the user is logged in -->
     <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
 </div>
