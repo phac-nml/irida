@@ -6,21 +6,23 @@ pushd ~/.irida-npm > /dev/null
 
 # Set up NodeJS
 if [ ! -e node-v0.10.28-linux-x64 ] ; then
+    echo "Installing nodejs(tailf ~/.irida-npm/nodejs.log)"
     # Download NodeJS
-    wget -nc http://nodejs.org/dist/v0.10.26/node-v0.10.26-linux-x64.tar.gz
-    tar -zxf node-v0.10.26-linux-x64.tar.gz;
+    wget -nc 'http://nodejs.org/dist/v0.10.26/node-v0.10.26-linux-x64.tar.gz'
+    tar -zxf node-v0.10.26-linux-x64.tar.gz &> ~/.irida-npm/nodejs.log
     echo 'export PATH=~/.irida-npm/node-v0.10.26-linux-x64/bin:$PATH' > ~/.irida-npm/bashrc
     source ~/.irida-npm/bashrc;
 fi
 
 # Install chromedriver for testing
 if [ ! -e bin/chromedriver ] ; then
+    echo "Installing phantomjs(tailf ~/.irida-npm/phantomsjs.log)"
     mkdir -p bin
     pushd bin > /dev/null
     # Downlod chromedriver
-    wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-x86_64.tar.bz2
-    tar xvfj phantomjs-1.9.7-linux-x86_64.tar.bz2
-    ﻿cp phantomjs-1.9.7-linux-x86_64/bin/phantomjs ~/.irida-npm/bin/
+    wget 'https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-x86_64.tar.bz2'
+    tar xvfj phantomjs-1.9.7-linux-x86_64.tar.bz2 &> ~/.irida-npm/phantomjs.log
+    ﻿mv phantomjs-1.9.7-linux-x86_64/bin/phantomjs ~/.irida-npm/bin/
     rm -r phantomjs-1.9.7-linux-x86_64*
     popd > /dev/null
     echo 'export PATH=~/.irida-npm/bin:$PATH' > ~/.irida-npm/bashrc
@@ -30,12 +32,12 @@ fi
 popd > /dev/null
 
 # Install Sass and Compass
-echo "Installing ruby-sass and ruby-compass (tailf ~/.irida-npm/apt.log)";
-sudo apt-get install -y ruby-sass ruby-compass &> ~/.irida-npm/apt.log;
+echo "Installing ruby-sass and ruby-compass (tailf ~/.irida-npm/apt.log)"
+sudo apt-get install -y ruby-sass ruby-compass &> ~/.irida-npm/apt.log
 
 # Install Grunt CLI, Protractor, Karma and Bower
 echo "Installing global npm packages. (tailf ~/.irida-npm/npm-global.log)"
-npm install -g grunt-cli protractor bower &> ~/.irida-npm/npm-global.log;
+npm install -g grunt-cli protractor bower &> ~/.irida-npm/npm-global.log
 
 # Install local dependencies
 echo "Installing local npm packages. (tailf ~/.irida-npm/npm-local.log)"
