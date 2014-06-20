@@ -81,7 +81,6 @@ public class ProjectsPageIT {
 		assertTrue("Projects page is sorted Ascending", checkSortedAscending(ascElements));
 
 		projectsPage.clickProjectNameHeader();
-		projectsPage.clickProjectNameHeader();
 		List<WebElement> desElements = projectsPage.getProjectColumn();
 		assertTrue("Projects page is sorted Descending", checkSortedDescending(desElements));
 	}
