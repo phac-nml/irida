@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
-public class Formats {
+public interface Formats {
 	/**
 	 * Default format for {@link java.util.Date} in DataTables
 	 */
