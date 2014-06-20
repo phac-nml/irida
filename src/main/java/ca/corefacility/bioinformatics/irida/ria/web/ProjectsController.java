@@ -111,8 +111,8 @@ public class ProjectsController {
 			l.add(role.toString());
 			l.add(String.valueOf(sampleService.getSamplesForProject(p).size()));
 			l.add(String.valueOf(userService.getUsersForProject(p).size()));
-			l.add(String.valueOf(Formats.DATE.format(p.getTimestamp())));
-			l.add(String.valueOf(Formats.DATE.format(p.getModifiedDate())));
+			l.add(Formats.DATE.format(p.getTimestamp()));
+			l.add(Formats.DATE.format(p.getModifiedDate()));
 			projectsData.add(l);
 		}
 		map.put(DataTable.RESPONSE_PARAM_DATA, projectsData);
