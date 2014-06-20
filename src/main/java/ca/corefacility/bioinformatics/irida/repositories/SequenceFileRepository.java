@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.history.RevisionRepository;
 
-import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.SequencingRun;
+import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 
 /**
  * A repository to store information about sequence files. This repository will

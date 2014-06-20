@@ -1,5 +1,5 @@
 
-package ca.corefacility.bioinformatics.irida.model;
+package ca.corefacility.bioinformatics.irida.model.run;
 
 import java.util.Objects;
 
@@ -10,13 +10,14 @@ import javax.persistence.Table;
 
 import org.hibernate.envers.Audited;
 
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
+
 /**
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Entity
-@Inheritance(strategy=InheritanceType.JOINED)
 @Table(name="miseq_run")
 @Audited
 public class MiseqRun extends SequencingRun implements IridaThing {

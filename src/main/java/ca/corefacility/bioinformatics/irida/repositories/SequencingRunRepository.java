@@ -2,7 +2,7 @@ package ca.corefacility.bioinformatics.irida.repositories;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import ca.corefacility.bioinformatics.irida.model.SequencingRun;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 
 /**
  * 

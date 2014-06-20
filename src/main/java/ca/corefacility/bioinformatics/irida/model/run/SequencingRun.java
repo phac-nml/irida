@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.model;
+package ca.corefacility.bioinformatics.irida.model.run;
 
 import java.util.Date;
 import java.util.Objects;
@@ -10,6 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -19,9 +21,13 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+
 @Entity
 @Table(name = "sequencing_run")
 @Audited
+@Inheritance(strategy=InheritanceType.JOINED)
 public abstract class SequencingRun implements IridaThing, Comparable<SequencingRun> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
