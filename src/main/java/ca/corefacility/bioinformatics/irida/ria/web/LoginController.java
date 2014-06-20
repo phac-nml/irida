@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class LoginController {
 	private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
+	public static final String SPLASH_PAGE = "splash";
+	public static final String LOGIN_PAGE = "login";
 
 	@RequestMapping(value = "/")
 	public String showSplash() {
@@ -22,7 +24,7 @@ public class LoginController {
 		if (isAuthenticated()) {
 			return "forward:/dashboard";
 		} else {
-			return "splash";
+			return SPLASH_PAGE;
 		}
 	}
 
@@ -34,7 +36,7 @@ public class LoginController {
 			return "forward:/dashboard";
 		} else {
 			model.addAttribute("error", hasError);
-			return "login";
+			return LOGIN_PAGE;
 		}
 	}
 

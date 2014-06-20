@@ -32,6 +32,7 @@ import java.util.Map;
 @Controller
 @RequestMapping(value = "/projects")
 public class ProjectsController {
+	public static final String PROJECTS_PAGE = "projects";
 	public static final String SORT_BY_ID = "id";
 	public static final String SORT_BY_NAME = "name";
 	public static final String SORT_BY_CREATED_DATE = "createdDate";
@@ -54,7 +55,7 @@ public class ProjectsController {
 
 	@RequestMapping(value = "")
 	public String getProjectsPage() {
-		return "projects";
+		return PROJECTS_PAGE;
 	}
 
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
