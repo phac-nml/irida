@@ -24,7 +24,7 @@
     </table>
 </main>
 <div layout:fragment="scripts" th:inline="javascript">
-    <script src="/resources/wet-theme/js/deps/jquery.dataTables.min.js"></script>
+    <script th:src="@{/resources/wet-theme/js/deps/jquery.dataTables.min.js}" src="/resources/wet-theme/js/deps/jquery.dataTables.min.js"></script>
     <script>    /*<![CDATA[*/
     $(document).ready(function () {
         $('#projectsTable').DataTable({
@@ -33,6 +33,7 @@
             ajax: '/projects/ajax/list',
             stateSave: true,
             stateDuration: -1,
+            order: [[6, "desc"]],
             columnDefs: [
                 {
                     'render': function (data, type, row) {
