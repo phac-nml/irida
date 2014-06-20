@@ -32,11 +32,15 @@ import java.util.Map;
 @Controller
 @RequestMapping(value = "/projects")
 public class ProjectsController {
-
+	public static final String SORT_BY_ID = "id";
 	public static final String SORT_BY_NAME = "name";
 	public static final String SORT_BY_CREATED_DATE = "createdDate";
 	public static final String SORT_BY_MODIFIED_DATE = "modifiedDate";
 	public static final String SORT_ASCENDING = "asc";
+	public static final String COLUMN_PROJECT_ID = "0";
+	public static final String COLUMN_NAME = "1";
+	public static final String COLUMN_DATE_CREATED = "3";
+	public static final String COLUMN_DATE_MODIFIED = "4";
 	private ProjectService projectService;
 	private SampleService sampleService;
 	private UserService userService;
@@ -64,13 +68,16 @@ public class ProjectsController {
 		String sortColumn = request.getParameter(DataTable.REQUEST_PARAM_SORT_COLUMN);
 		String sortString;
 		switch (sortColumn) {
-			case "0":
+			case COLUMN_PROJECT_ID:
+				sortString = SORT_BY_ID;
+				break;
+			case COLUMN_NAME:
 				sortString = SORT_BY_NAME;
 				break;
-			case "3":
+			case COLUMN_DATE_CREATED:
 				sortString = SORT_BY_CREATED_DATE;
 				break;
-			case "4":
+			case COLUMN_DATE_MODIFIED:
 				sortString = SORT_BY_MODIFIED_DATE;
 				break;
 			default:
