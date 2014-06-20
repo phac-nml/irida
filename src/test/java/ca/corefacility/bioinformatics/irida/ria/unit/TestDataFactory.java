@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,8 +27,8 @@ public class TestDataFactory {
 	public static final long NUM_TOTAL_ELEMENTS = 100L;
 	public static final String USER_NAME = "testme";
 	public static final String PROJECT_NAME = "test_project";
-	private static final Project project = new Project(PROJECT_NAME);
 	private static final User user = new User(USER_NAME, null, null, null, null, null);
+	private static Project project = null;
 
 	/**
 	 * Creates a Page of Projects for testing.
@@ -152,6 +153,11 @@ public class TestDataFactory {
 	 * @return Static project
 	 */
 	public static Project getProject() {
+		if(project == null) {
+			project = new Project(PROJECT_NAME);
+			project.setId(1L);
+			project.setModifiedDate(new Date());
+		}
 		return project;
 	}
 }
