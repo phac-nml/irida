@@ -4,8 +4,6 @@ package ca.corefacility.bioinformatics.irida.model.run;
 import java.util.Objects;
 
 import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
 import org.hibernate.envers.Audited;
