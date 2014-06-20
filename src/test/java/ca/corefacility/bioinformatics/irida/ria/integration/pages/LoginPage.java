@@ -39,7 +39,19 @@ public class LoginPage {
 		return PageFactory.initElements(driver, LoginPage.class);
 	}
 
-	public void login(String username, String password) {
+	public void doBadUsernameLogin() {
+		login(BAD_USERNAME, GOOD_PASSWORD);
+	}
+
+	public void doBadPasswordLogin() {
+		login(GOOD_USERNAME, BAD_PASSWORD);
+	}
+
+	public void doLogin() {
+		login(GOOD_USERNAME, GOOD_PASSWORD);
+	}
+
+	private void login(String username, String password) {
 		this.username.sendKeys(username);
 		this.password.sendKeys(password);
 		this.submit.click();

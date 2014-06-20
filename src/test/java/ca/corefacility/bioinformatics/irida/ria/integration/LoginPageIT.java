@@ -56,7 +56,7 @@ public class LoginPageIT {
 
 	@Test
 	public void testBadUsername() throws Exception {
-		loginPage.login(LoginPage.BAD_USERNAME, LoginPage.GOOD_PASSWORD);
+		loginPage.doBadUsernameLogin();
 		assertEquals("Should update the url with '?error=true'", driver.getCurrentUrl(),
 				"http://localhost:8080/login?error=true");
 		assertEquals("Should display error on bad login", loginPage.getError(), "Incorrect Email or Password");
@@ -64,7 +64,7 @@ public class LoginPageIT {
 
 	@Test
 	public void testBadPassword() throws Exception {
-		loginPage.login(LoginPage.GOOD_USERNAME, LoginPage.BAD_PASSWORD);
+		loginPage.doBadPasswordLogin();
 		assertEquals("Should update the url with '?error=true'", driver.getCurrentUrl(),
 				"http://localhost:8080/login?error=true");
 		assertEquals("Should display error on bad login", loginPage.getError(), "Incorrect Email or Password");
@@ -72,7 +72,7 @@ public class LoginPageIT {
 
 	@Test
 	public void testGoodLogin() throws Exception {
-		loginPage.login(LoginPage.GOOD_USERNAME, LoginPage.GOOD_PASSWORD);
+		loginPage.doLogin();
 		assertEquals("The 'test' user is logged in and redirected.", "http://localhost:8080/dashboard",
 				driver.getCurrentUrl());
 	}

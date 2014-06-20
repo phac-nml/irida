@@ -39,8 +39,10 @@
           rel="shortcut icon"/>
     <link rel="stylesheet" th:href="@{/resources/wet-theme/css/ie8-wet-boew.min.css}"
           href="/resources/wet-theme/css/ie8-wet-boew.min.css"/>
-    <script src="/resources/wet-theme/js/jquery-1.11.1.min.js" th:src="@{/resources/wet-theme/js/jquery-1.11.1.min.js}"></script>
-    <script src="/resources/wet-theme/js/ie8-wet-boew.min.js" th:src="@{/resources/wet-theme/js/ie8-wet-boew.min.js}"></script>
+    <script src="/resources/wet-theme/js/jquery-1.11.1.min.js"
+            th:src="@{/resources/wet-theme/js/jquery-1.11.1.min.js}"></script>
+    <script src="/resources/wet-theme/js/ie8-wet-boew.min.js"
+            th:src="@{/resources/wet-theme/js/ie8-wet-boew.min.js}"></script>
     <![endif]-->
 
     <noscript>
@@ -51,7 +53,7 @@
 <!-- HEADER -->
 <div th:replace="templates/wet-boew/partials/header :: header">HEADER</div>
 
-<div sec:authorize="hasRole('ROLE_USER')">
+<div sec:authorize="isFullyAuthenticated()">
     <!-- This will only be displayed if the user is logged in -->
     <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
 </div>
@@ -64,11 +66,16 @@
 <div th:replace="templates/wet-boew/partials/footer :: footer">FOOTER</div>
 
 <!--[if gte IE 9 | !IE ]><!-->
-<script src="/resources/wet-theme/js/jquery-2.1.1.min.js"></script>
-<script src="/resources/wet-theme/js/wet-boew.min.js"></script>
+<script th:src="@{/resources/wet-theme/js/jquery-2.1.1.min.js}"
+        src="/resources/wet-theme/js/jquery-2.1.1.min.js"></script>
+<script th:src="@{/resources/wet-theme/js/wet-boew.min.js}" src="/resources/wet-theme/js/wet-boew.min.js"></script>
 <!--<![endif]-->
 <!--[if lt IE 9]>
-<script src="/resources/wet-theme/js/ie8-wet-boew2.min.js"></script>
+<script th:src="@{/resources/wet-theme/js/ie8-wet-boew2.min.js}"
+        src="/resources/wet-theme/js/ie8-wet-boew2.min.js"></script>
 <![endif]-->
+
+<!-- any custom scripts for pages go here.-->
+<div layout:fragment="scripts"></div>
 </body>
 </html>

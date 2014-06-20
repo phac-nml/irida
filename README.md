@@ -56,7 +56,7 @@ Maven
 
 #### Verify
 
-1. During verify: `mvn verify -Dspring.profiles.active=it`
+1. During verify: `mvn verify`
 
 #### Package
 
