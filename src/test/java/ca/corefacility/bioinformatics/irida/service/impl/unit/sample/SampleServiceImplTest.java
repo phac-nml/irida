@@ -164,8 +164,10 @@ public class SampleServiceImplTest {
 		s2.setId(2l);
 		Project p1 = new Project();
 		p1.setId(1l);
+		p1.setName("project 1");
 		Project p2 = new Project();
 		p2.setId(2l);
+		p2.setName("project 2");
 
 		List<Join<Project, Sample>> p1_s1 = new ArrayList<>();
 		p1_s1.add(new ProjectSampleJoin(p1, s1));
