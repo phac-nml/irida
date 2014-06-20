@@ -75,7 +75,7 @@ public class ProjectsControllerTest {
 		WebRequest request = new ServletWebRequest(req);
 
 		when(userService.getUserByUsername(TestDataFactory.USER_NAME)).thenReturn(TestDataFactory.getUser());
-		when(projectService.searchProjectsByNameForUser(TestDataFactory.getUser(), "", 0, 10, Sort.Direction.ASC, "name")).thenReturn(projectsPage);
+		when(projectService.searchProjectsByNameForUser(TestDataFactory.getUser(), "", 0, 10, Sort.Direction.ASC, "id")).thenReturn(projectsPage);
 		when(sampleService.getSamplesForProject(project)).thenReturn(samplesJoin);
 		when(userService.getUsersForProject(project)).thenReturn(usersJoin);
 		
