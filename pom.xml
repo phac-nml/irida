@@ -77,6 +77,8 @@
 		<org.springframework.security.version>4.0.0.M1</org.springframework.security.version>
 		<org.springframework.plugin.version>0.8.0.RELEASE</org.springframework.plugin.version>
 		<springframework.security.oauth.version>1.0.5.RELEASE</springframework.security.oauth.version>
+		<spring.test.dbunit.version>1.1.0</spring.test.dbunit.version>
+		<dbunit.version>2.4.9</dbunit.version>
 
 		<!-- Test -->
 		<junit.version>4.11</junit.version>
@@ -88,7 +90,7 @@
 		<gson.version>2.2.4</gson.version>
 
 		<!-- JavaEE web API version -->
-		<javax.servlet.version>3.1</javax.servlet.version>
+		<javax.servlet-api.version>3.1.0</javax.servlet-api.version>
 
 		<!-- REST-assured -->
 		<rest.assured.version>2.3.2</rest.assured.version>
@@ -102,6 +104,7 @@
 		<!-- jaxb -->
 		<jaxb-api.version>2.2.7</jaxb-api.version>
 		<jaxb-impl.version>2.2.7-b53</jaxb-impl.version>
+
 
 		<!-- plugins -->
 		<plugin.maven.compiler.version>3.1</plugin.maven.compiler.version>
@@ -125,6 +128,14 @@
 			<groupId>ca.corefacility.bioinformatics</groupId>
 			<artifactId>irida-api</artifactId>
 			<version>${irida.api.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>ca.corefacility.bioinformatics</groupId>
+			<artifactId>irida-api</artifactId>
+			<version>${irida.api.version}</version>
+			<scope>test</scope>
+			<type>test-jar</type>
 		</dependency>
 
 		<!-- Spring -->
@@ -193,6 +204,25 @@
 			<version>${spring-framework.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.github.springtestdbunit</groupId>
+			<artifactId>spring-test-dbunit</artifactId>
+			<version>${spring.test.dbunit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.dbunit</groupId>
+			<artifactId>dbunit</artifactId>
+			<version>${dbunit.version}</version>
+			<type>jar</type>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
 		<!-- logging -->
 		<dependency>
@@ -220,12 +250,10 @@
 			<version>${gson.version}</version>
 		</dependency>
 
-
-		<!-- glassfish java ee 6 implementation -->
 		<dependency>
-			<groupId>org.glassfish</groupId>
-			<artifactId>javax.servlet</artifactId>
-			<version>${javax.servlet.version}</version>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${javax.servlet-api.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -240,8 +268,6 @@
 			<artifactId>thymeleaf-spring4</artifactId>
 			<version>${thymeleaf.version}</version>
 		</dependency>
-
-
 	</dependencies>
 
 	<build>
@@ -287,6 +313,14 @@
 						<configuration>
 							<scanIntervalSeconds>0</scanIntervalSeconds>
 							<daemon>true</daemon>
+							<systemProperties>
+								<systemProperty>
+									<!-- Setting spring profile for integration tests to "it". Also 
+										done in failsafe plugin -->
+									<name>spring.profiles.active</name>
+									<value>it</value>
+								</systemProperty>
+							</systemProperties>
 						</configuration>
 					</execution>
 					<execution>
@@ -316,6 +350,9 @@
 							</value>
 						</property>
 					</properties>
+					<systemPropertyVariables>
+						<spring.profiles.active>it</spring.profiles.active>
+					</systemPropertyVariables>
 				</configuration>
 				<executions>
 					<execution>
