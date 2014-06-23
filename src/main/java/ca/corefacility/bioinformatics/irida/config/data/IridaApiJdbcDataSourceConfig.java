@@ -54,8 +54,14 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		Properties properties = new Properties();
 		properties.setProperty("hibernate.dialect", environment.getProperty("hibernate.dialect"));
 		properties.setProperty("hibernate.hbm2ddl.auto", environment.getProperty("hibernate.hbm2ddl.auto"));
-		properties.setProperty("hibernate.hbm2ddl.import_files",
-				environment.getProperty("hibernate.hbm2ddl.import_files"));
+
+		// if import_files is empty it tries to load any properties file it can
+		// find. Stopping this here.
+		String importFiles = environment.getProperty("hibernate.hbm2ddl.import_files");
+		if (!importFiles.isEmpty()) {
+			properties.setProperty("hibernate.hbm2ddl.import_files", importFiles);
+		}
+
 		properties.setProperty("org.hibernate.envers.store_data_at_delete",
 				environment.getProperty("org.hibernate.envers.store_data_at_delete"));
 		properties.setProperty("show_sql", "false");
