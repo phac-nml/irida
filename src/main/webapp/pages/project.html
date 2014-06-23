@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="templates/wet-boew/content">
+<head>
+    <title th:text="${project.label}">THIS IS SOMETHING WRONG</title>
+</head>
+<body>
+<div class="container" layout:fragment="content">
+    <div class="row">
+        <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
+        <main class="col-md-9 col-md-push-3" role="main" property="mainContentOfPage">
+            <h1 id="wb-cont" property="name" th:text="${project.label}">__PROJECT_NAME__</h1>
+        </main>
+        <div class="col-md-3 col-md-pull-9 visible-md visible-lg">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title" >Project Details</h3>
+                </div>
+                <div class="panel-body">
+                    <ul class="nav nav-pills nav-stacked">
+                        <li><span class="glyphicon glyphicon-tower"></span>&nbsp;Owner<span class="pull-right" th:text="${owner.label}">__DATE_CREATED__</span></li>
+                        <li><span class="glyphicon glyphicon-calendar"></span>&nbsp;Created<span class="pull-right" th:text="${#calendars.format(project.timestamp, 'dd MMM yyyy')}">__DATE_CREATED__</span></li>
+                        <li><span class="glyphicon glyphicon-calendar"></span>&nbsp;Modified<span class="pull-right" th:text="${#calendars.format(project.modifiedDate, 'dd MMM yyyy')}">__DATE_CREATED__</span></li>
+                        <li><span class="glyphicon glyphicon-user"></span>&nbsp;Collaborators<span class="pull-right" th:text="${users}">__USERS__</span></li>
+                        <li><span class="glyphicon glyphicon-file"></span>&nbsp;Samples<span class="pull-right" th:text="${samples}">__SAMPLES__</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div layout:fragment="scripts" th:inline="javascript">
+
+</div>
+</body>
+</html>
