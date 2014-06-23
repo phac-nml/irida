@@ -72,7 +72,7 @@ public class ProjectSamplesIntegrationTest {
 
 	@Test
 	public void testDeleteSampleFromProject() {
-		String projectUri = "/projects/4";
+		String projectUri = "http://localhost:8080/projects/4";
 
 		// load the project
 		String projectJson = asUser().get(projectUri).asString();
