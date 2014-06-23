@@ -13,6 +13,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.util.StringUtils;
 
 @Configuration
 @Profile({ "dev", "prod", "it" })
@@ -58,7 +59,8 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		// if import_files is empty it tries to load any properties file it can
 		// find. Stopping this here.
 		String importFiles = environment.getProperty("hibernate.hbm2ddl.import_files");
-		if (!importFiles.isEmpty()) {
+
+		if (!StringUtils.isEmpty(importFiles.isEmpty())) {
 			properties.setProperty("hibernate.hbm2ddl.import_files", importFiles);
 		}
 
