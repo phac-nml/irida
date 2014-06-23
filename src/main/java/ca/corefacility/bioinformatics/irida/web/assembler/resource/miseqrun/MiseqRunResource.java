@@ -1,78 +1,83 @@
 
 package ca.corefacility.bioinformatics.irida.web.assembler.resource.miseqrun;
 
-import ca.corefacility.bioinformatics.irida.model.MiseqRun;
+import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.IdentifiableResource;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
+ * Resource class for a MiseqRun
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @XmlRootElement(name = "miseqRun")
-public class MiseqRunResource extends IdentifiableResource<MiseqRun> {
+public class MiseqRunResource extends IdentifiableResource<SequencingRun> {
+	
+	MiseqRun miseqRun;
 
     public MiseqRunResource() {
-        super(new MiseqRun());
+        this(new MiseqRun());
     }
 
     public MiseqRunResource(MiseqRun miseqRun) {
         super(miseqRun);
+        this.miseqRun = miseqRun;
     }
     
     @XmlElement
     public String getInvestigatorName() {
-        return resource.getInvestigatorName();
+        return miseqRun.getInvestigatorName();
     }
 
     public void setInvestigatorName(String investigatorName) {
-        resource.setInvestigatorName(investigatorName);
+    	miseqRun.setInvestigatorName(investigatorName);
     }
 
     @XmlElement
     public String getProjectName() {
-        return resource.getProjectName();
+        return miseqRun.getProjectName();
     }
 
     public void setProjectName(String projectName) {
-        resource.setProjectName(projectName);
+    	miseqRun.setProjectName(projectName);
     }
 
     @XmlElement
     public String getExperimentName() {
-        return resource.getExperimentName();
+        return miseqRun.getExperimentName();
     }
 
     public void setExperimentName(String experimentName) {
-        resource.setExperimentName(experimentName);
+    	miseqRun.setExperimentName(experimentName);
     }
 
     @XmlElement
     public String getWorkflow() {
-        return resource.getWorkflow();
+        return miseqRun.getWorkflow();
     }
 
     public void setWorkflow(String workflow) {
-        resource.setWorkflow(workflow);
+    	miseqRun.setWorkflow(workflow);
     }
 
     @XmlElement
     public String getApplication() {
-        return resource.getApplication();
+        return miseqRun.getApplication();
     }
 
     public void setApplication(String application) {
-        resource.setApplication(application);
+    	miseqRun.setApplication(application);
     }
 
     @XmlElement
     public String getAssay() {
-        return resource.getAssay();
+        return miseqRun.getAssay();
     }
 
     public void setAssay(String assay) {
-        this.setAssay(assay);
+    	miseqRun.setAssay(assay);
     }
 
     @XmlElement
@@ -86,11 +91,11 @@ public class MiseqRunResource extends IdentifiableResource<MiseqRun> {
 
     @XmlElement
     public String getChemistry() {
-        return resource.getChemistry();
+        return miseqRun.getChemistry();
     }
 
     public void setChemistry(String chemistry) {
-        resource.setChemistry(chemistry);
+    	miseqRun.setChemistry(chemistry);
     }    
     
 }

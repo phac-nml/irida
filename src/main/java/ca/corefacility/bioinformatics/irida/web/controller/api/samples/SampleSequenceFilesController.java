@@ -25,14 +25,14 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
@@ -82,14 +82,14 @@ public class SampleSequenceFilesController {
 	/**
 	 * Reference to the {@link MiseqRunService}
 	 */
-	private MiseqRunService miseqRunService;
+	private SequencingRunService miseqRunService;
 
 	protected SampleSequenceFilesController() {
 	}
 
 	@Autowired
 	public SampleSequenceFilesController(SequenceFileService sequenceFileService, SampleService sampleService,
-			ProjectService projectService, MiseqRunService miseqRunService) {
+			ProjectService projectService, SequencingRunService miseqRunService) {
 		this.sequenceFileService = sequenceFileService;
 		this.sampleService = sampleService;
 		this.projectService = projectService;
@@ -176,7 +176,7 @@ public class SampleSequenceFilesController {
 		logger.trace("Wrote temp file to " + target);
 		
 		SequenceFile sf;
-		MiseqRun miseqRun = null;
+		SequencingRun miseqRun = null;
 		
 		if(fileResource != null){
 			sf = fileResource.getResource();
@@ -198,7 +198,7 @@ public class SampleSequenceFilesController {
 		logger.trace("Created seqfile in sample " + sampleSequenceFileRelationship.getObject().getId());
 		
 		if(miseqRun != null){
-			miseqRunService.addSequenceFileToMiseqRun(miseqRun, sf);
+			miseqRunService.addSequenceFileToSequencingRun(miseqRun, sf);
 			logger.trace("Added seqfile to miseqrun");
 		}
 

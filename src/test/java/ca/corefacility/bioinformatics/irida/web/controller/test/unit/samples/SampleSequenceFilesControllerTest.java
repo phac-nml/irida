@@ -33,9 +33,9 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
-import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
@@ -56,14 +56,14 @@ public class SampleSequenceFilesControllerTest {
 	private SequenceFileService sequenceFileService;
 	private SampleService sampleService;
 	private ProjectService projectService;
-	private MiseqRunService miseqRunService;
+	private SequencingRunService miseqRunService;
 
 	@Before
 	public void setUp() {
 		sampleService = mock(SampleService.class);
 		sequenceFileService = mock(SequenceFileService.class);
 		projectService = mock(ProjectService.class);
-		miseqRunService= mock(MiseqRunService.class);
+		miseqRunService= mock(SequencingRunService.class);
 
 		controller = new SampleSequenceFilesController(sequenceFileService, sampleService, projectService,miseqRunService);
 	}
