@@ -11,7 +11,14 @@
 	<system_role />
 	<user />
 	<project />
+
 	<client_details />
+	<client_role />
+	<client_details_authorities />
+	<client_details_resource_ids />
+	<client_details_grant_types />
+	<client_details_scope />
+
 	<password_reset />
 	<remote_api />
 	<remote_api_token />
@@ -41,5 +48,10 @@
 	<logicalGroup_AUD />
 	<user_group_AUD />
 	<host_AUD />
+	<client_details_scope_AUD />
+	<client_details_grant_types_AUD />
+	<client_details_resource_ids_AUD />
+	<client_details_authorities_AUD />
+	<client_role_AUD />
 	<client_details_AUD />
 </dataset>
