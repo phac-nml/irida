@@ -1,0 +1,76 @@
+OAuth2 Authorization for IRIDA
+==============================
+This document will describe how a client application can communicate with the IRIDA REST API using OAuth2 Authorization.
+
+Terms
+-----
+* REST API - A web API used to create, read, update, or delete resources via HTTP.  See http://en.wikipedia.org/wiki/Representational_state_transfer.
+* Client - An application which communicates with IRIDA via its REST API.
+* Client id - An identifier for a Client shared between the Client and REST API.
+* Client secret - A password for a Client shared between the Client and REST API.
+* Token - A string of characters used to authorize a User to access a given REST API resource.
+
+Introduction
+------------
+In order for a user to access a resource on the REST API, they must first obtain an OAuth2 token from that API.  This token allows a given client and user access to a given resource on the API.  The token is stored by both the client and API.  When the client makes a request to the API they pass along their token which is compared to a list of active issued tokens, then the client is given or denied access based on the validity of that token.
+
+To obtain a token for the API one must be requested with the correct client information.  If you're connecting through the web it is suggested you use the "authorization_code" grant type.  This will enable the OAuth2 web authorization flow.
+
+For the user, this will happen in 4 steps:
+
+1. User requests a page requiring an OAuth2 connection to IRIDA.
+2. User is presented with a login page for the IRIDA REST API.
+3. User is asked to verify access to their protected resources.
+4. User is redirected back to your web service and displayed the requested resources.
+
+On the server:
+
+1. Your web service requests a resource from IRIDA REST API and receives HTTP 401 (Unauthorized).  This begins the OAuth2 authorization_code flow.
+2. Your web server redirects the user to */oauth/authorization* (with some parameters).  This will present the user with a login page.
+3. Once the user logs in and authorizes your client, they are redirected back to your web service.  This redirect will contain a ?code=XXXX parameter which is the *authorization_code*.
+4. Your service sends the authorization code to */oauth/token*.  The API will send a response containing an OAuth2 token.
+5. Your service may then request resources from the API including the header "Authorization: Bearer TOKENSTRING"
+
+While this description sounds fairly complicated, whatever web framework you're using will likely provide an OAuth2 package or library for handling OAuth2 client authorizations.  An incomplete list can be found at http://oauth.net/2/ (look under "Client Libraries"), but you can find more on your web framework's website.
+
+Adding a Client
+---------------
+Before a client is authorized to view resources, they must be registered as a Client in IRIDA.  Currently there is no user interface for registering clients, but for testing purposes they can be added to the database manually.
+
+The *clientId* and *clientSecret* should be unique for your client.
+
+> INSERT INTO client_details (clientId,clientSecret,token_validity) VALUES (?,?,43200);
+
+Find what ID was generated in *client_details* for the client you inserted.  Use that id for *client_details_id* in the remaining *INSERT* statements.
+
+> INSERT INTO client_details_authorities (client_details_id,authority_name) values (?,"ROLE_CLIENT");
+
+> INSERT INTO client_details_scope (client_details_id,scope) values (?,"read");
+
+> INSERT INTO client_details_grant_types (client_details_id,grant_value) values (?,"authorization_code");
+
+> INSERT INTO client_details_resource_ids (client_details_id,resource_id) values (?,"NmlIrida");
+
+Obtaining a Token
+-----------------
+Whatever OAuth2 client library you're using should provide some method to request an OAuth2 token from a server.  The implementation may differ slightly but it should provide a way to set some common *client details* arguments.  You can generally use the following values:
+
+* Grant type - authorization_code
+* Authorization location - /oauth/authorize
+* Token endpoint - /oauth/token
+* Scope - read
+* Redirect URI - A URI on your site where an authorization code will be sent.
+
+Often these libraries will obtain tokens in 2 steps.  The first step will send a request to */oauth/authorize* on the IRIDA API to obtain an authorization code.  The second will exchange the authorization code for a OAuth2 token.  This token can then be used to request protected resources from the REST API.
+
+After this authorization occurs, the user will not have to re-authorize your service for as long as the token is valid (12 hours by default).  This will require your web service to have some method of storing OAuth2 tokens for a user, otherwise a new token will have to be obtained for each request.
+
+Using a Token to Access Protected Resources
+-------------------------------------
+When an OAuth2 token has been obtained it can be used to access protected resource on the IRIDA API.  The token is sent to the REST API using an HTTP header.  Again most OAuth2 libraries will have a method to request resources using this token, but if not they can be easily used with most HTTP request libraries.
+
+A *Bearer Authorization* header must be added to the HTTP request using the obtained token.  If the token string is "12345", this header will be of the form:
+
+> Authorization: Bearer 12345
+
+If the token is valid, you will receive your requested resources.  If not you should receive a HTTP 403 error.
