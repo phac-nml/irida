@@ -1,7 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.DataTable;
@@ -9,20 +11,21 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import com.google.common.collect.Iterables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Controller for all project related views
@@ -33,6 +36,8 @@ import java.util.Map;
 @RequestMapping(value = "/projects")
 public class ProjectsController {
 	public static final String PROJECTS_PAGE = "projects";
+	public static final String SPECIFIC_PROJECT_PAGE = "project";
+	public static final String ERROR_PAGE = "error";
 	public static final String SORT_BY_ID = "id";
 	public static final String SORT_BY_NAME = "name";
 	public static final String SORT_BY_CREATED_DATE = "createdDate";
@@ -56,6 +61,39 @@ public class ProjectsController {
 	@RequestMapping(value = "")
 	public String getProjectsPage() {
 		return PROJECTS_PAGE;
+	}
+
+	@RequestMapping(value = "/{projectId}")
+	public String getProjectSpecificPage(@PathVariable Long projectId, final Principal principal, final Model model) {
+		User user = userService.getUserByUsername(principal.getName());
+		String page = null;
+		try {
+			Project project = projectService.read(projectId);
+			model.addAttribute("project", project);
+
+			// TODO: (Josh - 14-06-23) Get the project owner (Tom is looking into this).
+			Join<Project, User> ownerJoin = Iterables.getFirst(userService.getUsersForProjectByRole(project, ProjectRole.PROJECT_OWNER), null);
+			User owner = null;
+			if (ownerJoin != null) {
+				owner = ownerJoin.getObject();
+			}
+			model.addAttribute("owner", owner);
+
+			int sampleSize = sampleService.getSamplesForProject(project).size();
+			model.addAttribute("samples", sampleSize);
+
+			int userSize = userService.getUsersForProject(project).size();
+			model.addAttribute("users", userSize);
+
+			// TODO: (Josh - 14-06-23) Get list of recent activities on project.
+			// TODO: (Josh - 14-06-23) Get associated projects.
+			page = SPECIFIC_PROJECT_PAGE;
+		} catch (EntityNotFoundException e) {
+			page = ERROR_PAGE;
+		} catch (AccessDeniedException e) {
+			page = ERROR_PAGE;
+		}
+		return page;
 	}
 
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -118,4 +156,5 @@ public class ProjectsController {
 		map.put(DataTable.RESPONSE_PARAM_DATA, projectsData);
 		return map;
 	}
+
 }
