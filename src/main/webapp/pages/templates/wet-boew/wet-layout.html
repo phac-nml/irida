@@ -3,7 +3,6 @@
 <html class="no-js lt-ie9" lang="en"><![endif]-->
 <!--[if gt IE 8]><!-->
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="https://github.com/thymeleaf/thymeleaf-extras-springsecurity3"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" class="no-js"
       lang="en">
 <!--<![endif]-->
@@ -53,14 +52,8 @@
 <!-- HEADER -->
 <div th:replace="templates/wet-boew/partials/header :: header">HEADER</div>
 
-<div sec:authorize="isFullyAuthenticated()">
-    <!-- This will only be displayed if the user is logged in -->
-    <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
+<div layout:fragment="content">
 </div>
-
-<main layout:fragment="content">
-    <p>Page content goes here - THIS GETS REPLACED</p>
-</main>
 
 <!-- FOOTER -->
 <div th:replace="templates/wet-boew/partials/footer :: footer">FOOTER</div>
