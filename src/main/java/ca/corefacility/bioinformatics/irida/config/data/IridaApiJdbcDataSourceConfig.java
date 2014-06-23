@@ -60,7 +60,7 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		// find. Stopping this here.
 		String importFiles = environment.getProperty("hibernate.hbm2ddl.import_files");
 
-		if (!StringUtils.isEmpty(importFiles.isEmpty())) {
+		if (!StringUtils.isEmpty(importFiles)) {
 			properties.setProperty("hibernate.hbm2ddl.import_files", importFiles);
 		}
 
