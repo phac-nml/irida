@@ -1,8 +1,5 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.miseqrun;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +28,13 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.projects.Projects
  */
 @Controller
 @RequestMapping(value = "/sequencingrun")
-public class MiseqRunController extends GenericController<SequencingRun, SequencingRunResource> {
-	private static final Logger logger = LoggerFactory.getLogger(MiseqRunController.class);
+public class SequencingRunController extends GenericController<SequencingRun, SequencingRunResource> {
+	private static final Logger logger = LoggerFactory.getLogger(SequencingRunController.class);
 
 	/**
 	 * Default constructor. Should not be used.
 	 */
-	protected MiseqRunController() {
+	protected SequencingRunController() {
 	}
 
 	/**
@@ -48,7 +45,7 @@ public class MiseqRunController extends GenericController<SequencingRun, Sequenc
 	 *            the {@link MiseqRunService} to be used by this controller.
 	 */
 	@Autowired
-	public MiseqRunController(SequencingRunService service) {
+	public SequencingRunController(SequencingRunService service) {
 		super(service, SequencingRun.class, SequencingRunResource.class);
 
 	}

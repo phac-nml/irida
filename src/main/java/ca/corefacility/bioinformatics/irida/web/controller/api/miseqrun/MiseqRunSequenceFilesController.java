@@ -63,7 +63,7 @@ public class MiseqRunSequenceFilesController {
         // then add the user to the project with the specified role.
         miseqRunService.addSequenceFileToSequencingRun(run, file);
 
-        String location = linkTo(MiseqRunController.class).slash(miseqrunId).slash("sequenceFiles").slash(seqId).withSelfRel().getHref();
+        String location = linkTo(SequencingRunController.class).slash(miseqrunId).slash("sequenceFiles").slash(seqId).withSelfRel().getHref();
 
         MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
         responseHeaders.add(HttpHeaders.LOCATION, location);
