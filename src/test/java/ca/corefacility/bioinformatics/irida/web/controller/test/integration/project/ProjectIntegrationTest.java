@@ -13,8 +13,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 import com.jayway.restassured.response.Response;
@@ -24,6 +37,13 @@ import com.jayway.restassured.response.Response;
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
+		IridaApiPropertyPlaceholderConfig.class })
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
+@ActiveProfiles("it")
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/project/ProjectIntegrationTest.xml")
+@DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectIntegrationTest {
 
 	private static final String PROJECTS = "/projects";
@@ -67,23 +87,15 @@ public class ProjectIntegrationTest {
 
 	@Test
 	public void testGetProject() {
-		Map<String, String> project = new HashMap<>();
-		String projectName = "new project";
-		project.put("name", projectName);
-		Response r = asUser().and().body(project).post(PROJECTS);
-		String location = r.getHeader(HttpHeaders.LOCATION);
-		asUser().expect().body("resource.name", equalTo(projectName)).and()
-				.body("resource.links.rel", hasItems("self", "project/users", "project/samples")).when().get(location);
+		asUser().expect().body("resource.name", equalTo("project22")).and()
+				.body("resource.links.rel", hasItems("self", "project/users", "project/samples")).when().get(PROJECTS + "/5");
 	}
 
 	@Test
 	public void testUpdateProjectName() {
 		Map<String, String> project = new HashMap<>();
-		String projectName = "new project";
 		String updatedName = "updated new project";
-		project.put("name", projectName);
-		Response r = asUser().body(project).post(PROJECTS);
-		String location = r.getHeader(HttpHeaders.LOCATION);
+		String location = PROJECTS + "/5";
 		project.put("name", updatedName);
 		asUser().body(project).expect().statusCode(HttpStatus.OK.value()).when().patch(location);
 		asUser().expect().body("resource.name", equalTo(updatedName)).when().get(location);
@@ -97,7 +109,7 @@ public class ProjectIntegrationTest {
 
 	@Test
 	public void testDeleteProject() {
-		String projectUri = "http://localhost:8080/projects/99";
+		String projectUri = "http://localhost:8080/projects/5";
 		asUser().expect().body("resource.links.rel", hasItems("collection")).and()
 				.body("resource.links.href", hasItems("http://localhost:8080/projects")).when().delete(projectUri);
 	}
@@ -110,7 +122,7 @@ public class ProjectIntegrationTest {
 	 */
 	@Test
 	public void verifyExistenceOfProjectWithHEAD() {
-		String projectUri = "http://localhost:8080/projects/3";
+		String projectUri = "http://localhost:8080/projects/5";
 		asUser().expect().statusCode(HttpStatus.OK.value()).when().head(projectUri);
 		asUser().given().header("Accept", MediaType.JSON_UTF_8.toString()).expect().statusCode(HttpStatus.OK.value())
 				.when().head(projectUri);
