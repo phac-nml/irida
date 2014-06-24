@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
-import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
@@ -34,11 +33,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.projects.Projects
 @RequestMapping(value = "/sequencingrun")
 public class MiseqRunController extends GenericController<SequencingRun, SequencingRunResource> {
 	private static final Logger logger = LoggerFactory.getLogger(MiseqRunController.class);
-
-	private static Map<Class<? extends SequencingRun>, Class<? extends SequencingRunResource>> classes = new HashMap<>();
-	static {
-		classes.put(MiseqRun.class, MiseqRunResource.class);
-	}
 
 	/**
 	 * Default constructor. Should not be used.
@@ -65,6 +59,10 @@ public class MiseqRunController extends GenericController<SequencingRun, Sequenc
 		return create(representation);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * Looking through the SequencingRun classes for the correct resource class
+	 */
 	@Override
 	protected SequencingRunResource getResourceInstance(SequencingRun entity) throws InstantiationException,
 			IllegalAccessException {
