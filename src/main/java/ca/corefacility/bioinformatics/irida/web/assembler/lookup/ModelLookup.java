@@ -12,11 +12,13 @@ import java.util.Map;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.IdentifiableResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.miseqrun.MiseqRunResource;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.miseqrun.SequencingRunResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
@@ -38,7 +40,8 @@ public class ModelLookup {
 		classes.put(Sample.class, SampleResource.class);
 		classes.put(User.class, UserResource.class);
 		classes.put(SequenceFile.class, SequenceFileResource.class);
-		classes.put(SequencingRun.class, MiseqRunResource.class);
+		classes.put(SequencingRun.class, SequencingRunResource.class);
+		classes.put(MiseqRun.class, MiseqRunResource.class);
 	}
 
 	/**

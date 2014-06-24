@@ -2,8 +2,6 @@
 package ca.corefacility.bioinformatics.irida.web.assembler.resource.miseqrun;
 
 import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
-import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.IdentifiableResource;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -13,7 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @XmlRootElement(name = "miseqRun")
-public class MiseqRunResource extends IdentifiableResource<SequencingRun> {
+public class MiseqRunResource extends SequencingRunResource {
 	
 	MiseqRun miseqRun;
 
@@ -78,15 +76,6 @@ public class MiseqRunResource extends IdentifiableResource<SequencingRun> {
 
     public void setAssay(String assay) {
     	miseqRun.setAssay(assay);
-    }
-
-    @XmlElement
-    public String getDescription() {
-        return resource.getDescription();
-    }
-
-    public void setDescription(String description) {
-        resource.setDescription(description);
     }
 
     @XmlElement
