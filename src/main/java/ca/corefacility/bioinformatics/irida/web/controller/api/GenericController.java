@@ -121,13 +121,13 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 		ResourceCollection<ResourceType> resources = new ResourceCollection<>();
 		try {
 			for (Type entity : entities) {
-				ResourceType resource = resourceType.newInstance();
+				ResourceType resource = getResourceInstance(entity);
 				resource.setResource(entity);
 				resource.add(linkTo(getClass()).slash(entity.getId()).withSelfRel());
 				resources.add(resource);
 			}
 		} catch (InstantiationException | IllegalAccessException e) {
-			throw new GenericsException("Could not initialize resourceType: [" + resourceType + "]");
+			throw new GenericsException("Could not initialize resourceType: [" + resourceType + "]",e);
 		}
 
 		resources.add(linkTo(getClass()).withSelfRel());
@@ -159,7 +159,7 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 		// prepare the resource for serialization to the client.
 		ResourceType resource = null;
 		try {
-			resource = resourceType.newInstance();
+			resource = getResourceInstance(t);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new GenericsException("Failed to construct an instance of ResourceType for [" + getClass() + "]");
 		}
@@ -275,5 +275,18 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 		modelMap.addAttribute(RESOURCE_NAME, rootResource);
 		// respond to the client
 		return modelMap;
+	}
+	
+	/**
+	 * Get an instance of the resource class for a Type
+	 * @param entity the entity to get a resource instance for
+	 * @return An instance of ResourceType
+	 * @throws InstantiationException If the resource instance cannot be created
+	 * @throws IllegalAccessException If the resource instance cannot be created
+	 */
+	protected ResourceType getResourceInstance(Type entity) throws InstantiationException, IllegalAccessException{
+		logger.trace("Instantiating instance of " + resourceType);
+		ResourceType resource = resourceType.newInstance();
+		return resource;
 	}
 }
