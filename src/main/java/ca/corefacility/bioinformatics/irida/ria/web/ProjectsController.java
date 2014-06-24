@@ -91,10 +91,12 @@ public class ProjectsController {
 			// TODO: (Josh - 14-06-23) Get associated projects.
 			page = SPECIFIC_PROJECT_PAGE;
 		} catch (EntityNotFoundException e) {
-			page = ERROR_PAGE;
-		} catch (AccessDeniedException e) {
-			page = ERROR_PAGE;
-		}
+            // TODO: (Josh - 2014-06-24) Format error page if project is not found.
+            page = ERROR_PAGE;
+        } catch (AccessDeniedException e) {
+            // TODO: (Josh - 2014-06-24) Format error page if user does not have access.
+            page = ERROR_PAGE;
+        }
 		return page;
 	}
 
