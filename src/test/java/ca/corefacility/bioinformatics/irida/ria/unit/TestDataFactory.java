@@ -1,5 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.unit;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -7,14 +16,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Generates test data for unit tests.
@@ -26,8 +27,9 @@ public class TestDataFactory {
 	public static final int NUM_PROJECT_USERS = 50;
 	public static final long NUM_TOTAL_ELEMENTS = 100L;
 	public static final String USER_NAME = "testme";
-	public static final String PROJECT_NAME = "test_project";
 	private static final User user = new User(USER_NAME, null, null, null, null, null);
+	public static final String PROJECT_NAME = "test_project";
+	public static final Long PROJECT_ID = 1L;
 	private static Project project = null;
 
 	/**
@@ -155,7 +157,7 @@ public class TestDataFactory {
 	public static Project getProject() {
 		if(project == null) {
 			project = new Project(PROJECT_NAME);
-			project.setId(1L);
+			project.setId(PROJECT_ID);
 			project.setModifiedDate(new Date());
 		}
 		return project;
