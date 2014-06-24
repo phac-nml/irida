@@ -11,8 +11,8 @@
         <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
         <div class="col-md-12">
             <main role="main" property="mainContentOfPage">
-            <h1>Projects Page</h1>
-            <table id="projectsTable" class="table table-striped table-hover">
+                <h1 th:text="#{projects.title}">Projects</h1>
+                <table id="projectsTable" class="table table-striped table-hover">
                 <thead>
                 <tr>
                     <th th:text="#{projects.table.id}">ID</th>
