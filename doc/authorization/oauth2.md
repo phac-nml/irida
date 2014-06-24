@@ -52,6 +52,8 @@ Find what ID was generated in *client_details* for the client you inserted.  Use
 
 > INSERT INTO client_details_resource_ids (client_details_id,resource_id) values (?,"NmlIrida");
 
+In the near future there will be a user interface available in the irida-ui project to add and manage *client_details*.  At that time this documentation will be updated to reflect these changes.
+
 Obtaining a Token
 -----------------
 Whatever OAuth2 client library you're using should provide some method to request an OAuth2 token from a server.  The implementation may differ slightly but it should provide a way to set some common *client details* arguments.  You can generally use the following values:
