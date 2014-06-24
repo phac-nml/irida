@@ -9,7 +9,8 @@
 <div class="container" layout:fragment="content">
     <div class="row">
         <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
-        <main role="main" property="mainContentOfPage">
+        <div class="col-md-12">
+            <main role="main" property="mainContentOfPage">
             <h1>Projects Page</h1>
             <table id="projectsTable" class="table table-striped table-hover">
                 <thead>
@@ -25,7 +26,8 @@
                 </thead>
                 <tbody></tbody>
             </table>
-        </main>
+            </main>
+        </div>
     </div>
 </div>
 <div layout:fragment="scripts">
@@ -35,6 +37,7 @@
         /*<![CDATA[*/
         $(document).ready(function () {
             $('#projectsTable').DataTable({
+                dom: "<'top'ilf>rt<'bottom'p><'clear'>",
                 processing: true,
                 serverSide: true,
                 ajax: '/projects/ajax/list',
