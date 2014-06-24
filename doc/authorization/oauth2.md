@@ -13,7 +13,7 @@ Terms
 
 Introduction
 ------------
-In order for a user to access a resource on the REST API, they must first obtain an OAuth2 token from that API.  This token allows a given client and user access to a given resource on the API.  The token is stored by both the client and API.  When the client makes a request to the API they pass along their token which is compared to a list of active issued tokens, then the client is given or denied access based on the validity of that token.
+In order for a user to access a resource on the REST API, they must first obtain an OAuth2 token from that API.  This token allows a given client and user access to a given resource on the API.  The token is stored by both the client and API.  When the client makes a request to the API they pass along their token which is compared to a list of active issued tokens, then the client is granted or denied access based on the validity of that token.
 
 To obtain a token for the API one must be requested with the correct client information.  If you're connecting through the web it is suggested you use the "authorization_code" grant type.  This will enable the OAuth2 web authorization flow.
 
