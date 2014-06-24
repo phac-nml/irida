@@ -25,7 +25,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Controller for all project related views
@@ -71,7 +74,6 @@ public class ProjectsController {
 			Project project = projectService.read(projectId);
 			model.addAttribute("project", project);
 
-			// TODO: (Josh - 14-06-23) Get the project owner (Tom is looking into this).
 			Join<Project, User> ownerJoin = Iterables.getFirst(userService.getUsersForProjectByRole(project, ProjectRole.PROJECT_OWNER), null);
 			User owner = null;
 			if (ownerJoin != null) {
