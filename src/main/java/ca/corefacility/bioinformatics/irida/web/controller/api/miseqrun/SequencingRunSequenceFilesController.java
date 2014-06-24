@@ -29,7 +29,7 @@ import com.google.common.net.HttpHeaders;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Controller
-public class MiseqRunSequenceFilesController {
+public class SequencingRunSequenceFilesController {
 
     private SequencingRunService miseqRunService;
     private SequenceFileService sequencefileService;
@@ -39,7 +39,7 @@ public class MiseqRunSequenceFilesController {
     public static final String SEQUENCEFILE_ID_KEY = "sequenceFileId";
     
     @Autowired
-    public MiseqRunSequenceFilesController(SequencingRunService service, SequenceFileService sequencefileService) {
+    public SequencingRunSequenceFilesController(SequencingRunService service, SequenceFileService sequencefileService) {
         this.miseqRunService = service;
         this.sequencefileService = sequencefileService;
     }
@@ -50,8 +50,8 @@ public class MiseqRunSequenceFilesController {
      * @param representation the JSON key-value pair that contains the identifier for the sequenceFile
      * @return a response indicating that the collection was modified.
      */
-    @RequestMapping(value = "/miseqrun/{miseqrunId}/sequenceFiles", method = RequestMethod.POST)
-    public ResponseEntity<String> addSequenceFileToMiseqRun(@PathVariable Long miseqrunId,
+    @RequestMapping(value = "/sequencingrun/{sequencingrunId}/sequenceFiles", method = RequestMethod.POST)
+    public ResponseEntity<String> addSequenceFileToMiseqRun(@PathVariable Long sequencingrunId,
                                                    @RequestBody Map<String, String> representation) {
         
         String stringId = representation.get(SEQUENCEFILE_ID_KEY);
@@ -59,11 +59,11 @@ public class MiseqRunSequenceFilesController {
         // first, get the SequenceFile
         SequenceFile file = sequencefileService.read(seqId);
         // then, get the miseq run
-        SequencingRun run = miseqRunService.read(miseqrunId);
+        SequencingRun run = miseqRunService.read(sequencingrunId);
         // then add the user to the project with the specified role.
         miseqRunService.addSequenceFileToSequencingRun(run, file);
 
-        String location = linkTo(SequencingRunController.class).slash(miseqrunId).slash("sequenceFiles").slash(seqId).withSelfRel().getHref();
+        String location = linkTo(SequencingRunController.class).slash(sequencingrunId).slash("sequenceFiles").slash(seqId).withSelfRel().getHref();
 
         MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
         responseHeaders.add(HttpHeaders.LOCATION, location);
