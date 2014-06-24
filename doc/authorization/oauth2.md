@@ -1,6 +1,6 @@
 OAuth2 Authorization for IRIDA
 ==============================
-This document will describe how a client application can communicate with the IRIDA REST API using OAuth2 Authorization.
+This document describes how a client application can communicate with the IRIDA REST API using OAuth2 Authorization.
 
 Terms
 -----
