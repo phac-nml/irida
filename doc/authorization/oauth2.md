@@ -108,6 +108,7 @@ Examples
 --------
 ### Perl
 * [NGS Archive Linker](https://irida.corefacility.ca/gitlab/irida/irida-tools/blob/development/scripts/ngsArchiveLinker/ngsArchiveLinker.pl) - An example of a Perl script that connects to the IRIDA API via the OAuth2 *password* grant.  It uses the [OAuth::Lite2::Client::UsernameAndPassword](http://search.cpan.org/~ritou/OAuth-Lite2-0.08/lib/OAuth/Lite2/Client/UsernameAndPassword.pm) package.  The script retrieves a token from the API in the *getToken* subroutine, then sets an *Authorization: Bearer* header to be used for all requests.  Some example code can be seen below:
+ 
 ```perl
 my $client = OAuth::Lite2::Client::UsernameAndPassword->new(
         id               => $client_id,
@@ -122,6 +123,7 @@ my $tokenstr = getToken($url, $username, $password, $client_id, $client_secret);
 $head->authorization("Bearer $tokenstr");
 my $request = HTTP::Request->new("GET",$url,$headers);
 ...
+
 ```
 
 ### Python
@@ -145,6 +147,7 @@ access_token = oauth_service.get_access_token(decoder=decoder,**params)
 session = oauth_service.get_session(access_token)
 response = session.get(url)
 ...
+
 ```
 
 ### Java
