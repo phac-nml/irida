@@ -72,7 +72,7 @@ public class ProjectsController {
 	 * 
 	 * @return The name of the page.
 	 */
-	@RequestMapping(value = "")
+	@RequestMapping
 	public String getProjectsPage() {
 		return PROJECTS_PAGE;
 	}
