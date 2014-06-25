@@ -32,8 +32,6 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-import com.google.common.collect.Iterables;
-
 /**
  * Controller for all project related views
  * 
@@ -94,8 +92,8 @@ public class ProjectsController {
 			Project project = projectService.read(projectId);
 			model.addAttribute("project", project);
 
-			Join<Project, User> ownerJoin = Iterables.getFirst(
-					userService.getUsersForProjectByRole(project, ProjectRole.PROJECT_OWNER), null);
+			Join<Project, User> ownerJoin = userService.getUsersForProjectByRole(project, ProjectRole.PROJECT_OWNER)
+					.iterator().next();
 			User owner = null;
 			if (ownerJoin != null) {
 				owner = ownerJoin.getObject();
