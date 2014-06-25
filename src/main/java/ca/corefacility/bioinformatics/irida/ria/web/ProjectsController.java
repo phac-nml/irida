@@ -53,9 +53,9 @@ public class ProjectsController {
 	private static final String COLUMN_DATE_CREATED = "5";
 	private static final String COLUMN_DATE_MODIFIED = "6";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
-	private ProjectService projectService;
-	private SampleService sampleService;
-	private UserService userService;
+	private final ProjectService projectService;
+	private final SampleService sampleService;
+	private final UserService userService;
 
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService) {
