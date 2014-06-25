@@ -37,14 +37,14 @@ import java.util.Set;
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.ria" })
 @Import({ IridaApiServicesConfig.class, WebSecurityConfig.class })
 public class WebConfigurer extends WebMvcConfigurerAdapter {
-	public static final String SPRING_PROFILE_PRODUCTION = "prod";
-	public static final String TEMPLATE_LOCATION = "/pages/";
-	public static final String TEMPLATE_SUFFIX = ".html";
-	public static final String TEMPLATE_MODE = "HTML5";
-	public static final long TEMPLATE_CACHE_TTL_MS = 3600000L;
-	public static final String LOCALE_CHANGE_PARAMETER = "lang";
-	public static final String DEFAULT_ENCODING = "UTF-8";
-	public static final String[] RESOURCE_LOCATIONS = { "classpath:/i18n/messages", "classpath:/i18n/mobile" };
+	private static final String SPRING_PROFILE_PRODUCTION = "prod";
+	private static final String TEMPLATE_LOCATION = "/pages/";
+	private static final String TEMPLATE_SUFFIX = ".html";
+	private static final String TEMPLATE_MODE = "HTML5";
+	private static final long TEMPLATE_CACHE_TTL_MS = 3600000L;
+	private static final String LOCALE_CHANGE_PARAMETER = "lang";
+	private static final String DEFAULT_ENCODING = "UTF-8";
+	private static final String[] RESOURCE_LOCATIONS = { "classpath:/i18n/messages", "classpath:/i18n/mobile" };
 	private static final Logger logger = LoggerFactory.getLogger(WebConfigurer.class);
 	@Autowired
 	private Environment env;
@@ -135,7 +135,7 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 	/**
 	 * This is to add additional Thymeleaf dialects.
 	 * 
-	 * @return A Set of thymeleaf dialects.
+	 * @return A Set of Thymeleaf dialects.
 	 */
 	private Set<IDialect> additionalDialects() {
 		Set<IDialect> dialects = new HashSet<>();
