@@ -1,5 +1,24 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.security.Principal;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.Model;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
+
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -11,22 +30,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.web.context.request.ServletWebRequest;
-import org.springframework.web.context.request.WebRequest;
-
-import java.security.Principal;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link }
@@ -34,6 +37,8 @@ import static org.mockito.Mockito.when;
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectsControllerTest {
+	public static final String PROJECT_DETAILS_PAGE = "project_details";
+	public static final String PROJECTS_PAGE = "projects";
 	private static final int PROJECT_NAME_TABLE_LOCATION = 1;
 	private static final int PROJECT_NUM_SAMPLES_TABLE_LOCATION = 3;
 	private static final int PROJECT_NUM_USERS_TABLE_LOCATION = 4;
@@ -52,7 +57,7 @@ public class ProjectsControllerTest {
 
 	@Test
 	public void showAllProjects() {
-		assertEquals("projects", controller.getProjectsPage());
+		assertEquals(PROJECTS_PAGE, controller.getProjectsPage());
 	}
 
 	@Test
@@ -93,5 +98,13 @@ public class ProjectsControllerTest {
 		assertEquals("Has the correct project name", TestDataFactory.PROJECT_NAME, data.get(PROJECT_NAME_TABLE_LOCATION));
 		assertEquals("Has the correct number of samples", TestDataFactory.NUM_PROJECT_SAMPLES, Integer.parseInt(data.get(PROJECT_NUM_SAMPLES_TABLE_LOCATION)));
 		assertEquals("Has the correct number of collaborators", TestDataFactory.NUM_PROJECT_USERS, Integer.parseInt(data.get(PROJECT_NUM_USERS_TABLE_LOCATION)));
+	}
+
+	@Test
+	public void testGetSpecificProjectPage() {
+		Model model = new ExtendedModelMap();
+		Long projectId = 1L;
+		assertEquals("Returns the correct Project Page", PROJECT_DETAILS_PAGE,
+				controller.getProjectSpecificPage(projectId, model));
 	}
 }
