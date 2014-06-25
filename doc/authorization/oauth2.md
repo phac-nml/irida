@@ -83,27 +83,6 @@ A *Bearer Authorization* header must be added to the HTTP request using the obta
 
 If the token is valid, you will receive your requested resources.  If not you should receive a HTTP 403 error.
 
-Adding a Client
----------------
-Before a client is authorized to view resources, they must be registered as a Client in IRIDA.  Currently there is no user interface for registering clients, but for testing purposes they can be added to the database manually.
-
-The *clientId* and *clientSecret* should be unique for your client.
-
-```sql
-INSERT INTO client_details (clientId,clientSecret,token_validity) VALUES (?,?,43200);
-```
-
-Find what ID was generated in *client_details* for the client you inserted.  Use that id for *client_details_id* in the remaining *INSERT* statements.
-```sql
-INSERT INTO client_details_authorities (client_details_id,authority_name) values (?,"ROLE_CLIENT");
-INSERT INTO client_details_scope (client_details_id,scope) values (?,"read");
-INSERT INTO client_details_grant_types (client_details_id,grant_value) values (?,"authorization_code");
-INSERT INTO client_details_resource_ids (client_details_id,resource_id) values (?,"NmlIrida");
-```
-
-In the near future there will be a user interface available in the irida-ui project to add and manage client_details. At that time this documentation will be updated to reflect these changes.
-
-
 Examples
 --------
 ### Perl
@@ -151,3 +130,23 @@ response = session.get(url)
 ### Java
 * [MiSeq Uploader](https://irida.corefacility.ca/gitlab/irida/irida-tools/tree/master) - This application uses [Spring Security OAuth](http://projects.spring.io/spring-security-oauth/) to send files to the IRIDA API using the OAuth2 *password* grant.
 * [IRIDA OAuth2 Web Client Demo](https://irida.corefacility.ca/gitlab/irida/irida-web/tree/master/samples/oauth-web-client) - This is a sample web application demoing the use of the *authorization_code* OAuth2 grant type using [Spring Security OAuth](http://projects.spring.io/spring-security-oauth/).
+
+Adding a Client
+---------------
+Before a client is authorized to view resources, they must be registered as a Client in IRIDA.  Currently there is no user interface for registering clients, but for testing purposes they can be added to the database manually.
+
+The *clientId* and *clientSecret* should be unique for your client.
+
+```sql
+INSERT INTO client_details (clientId,clientSecret,token_validity) VALUES (?,?,43200);
+```
+
+Find what ID was generated in *client_details* for the client you inserted.  Use that id for *client_details_id* in the remaining *INSERT* statements.
+```sql
+INSERT INTO client_details_authorities (client_details_id,authority_name) values (?,"ROLE_CLIENT");
+INSERT INTO client_details_scope (client_details_id,scope) values (?,"read");
+INSERT INTO client_details_grant_types (client_details_id,grant_value) values (?,"authorization_code");
+INSERT INTO client_details_resource_ids (client_details_id,resource_id) values (?,"NmlIrida");
+```
+
+In the near future there will be a user interface available in the irida-ui project to add and manage client_details. At that time this documentation will be updated to reflect these changes.
