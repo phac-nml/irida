@@ -29,7 +29,7 @@ public class ProjectDetailsPage {
 	}
 
 	public String getOrganism() {
-		WebElement organism = driver.findElement(By.id("project-ogranism"));
+		WebElement organism = driver.findElement(By.id("project-organism"));
 		return organism.getText();
 	}
 
