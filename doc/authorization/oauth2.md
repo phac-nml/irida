@@ -4,7 +4,7 @@ This document will describe how a client application can communicate with the IR
 
 Terms
 -----
-* REST API - A web API used to create, read, update, or delete resources via HTTP.  See http://en.wikipedia.org/wiki/Representational_state_transfer.
+* REST API - A web API used to create, read, update, or delete resources via HTTP.  See [Wikipedia](http://en.wikipedia.org/wiki/Representational_state_transfer).
 * Client - An application which communicates with IRIDA via its REST API.
 * Client id - An identifier for a Client shared between the Client and REST API.
 * Client secret - A password for a Client shared between the Client and REST API.
@@ -75,3 +75,15 @@ A *Bearer Authorization* header must be added to the HTTP request using the obta
 > Authorization: Bearer 12345
 
 If the token is valid, you will receive your requested resources.  If not you should receive a HTTP 403 error.
+
+Examples
+--------
+###Perl
+An example of a Perl script that connects to the IRIDA API via the OAuth2 *password* grant.  It uses the [OAuth::Lite2::Client::UsernameAndPassword](http://search.cpan.org/~ritou/OAuth-Lite2-0.08/lib/OAuth/Lite2/Client/UsernameAndPassword.pm) package.  The script retrieves a token from the API in the *getToken* subroutine, then sets an *Authorization: Bearer* header to be used for all requests.
+
+[NGS Archive Linker](https://irida.corefacility.ca/gitlab/irida/irida-tools/blob/development/scripts/ngsArchiveLinker/ngsArchiveLinker.pl)
+
+###Python
+Uses [OAuth2Service](http://rauth.readthedocs.org/en/latest/) to contact the IRIDA API via the OAuth2 *password* grant.  The script retrieves a token in the *get_access_token(oauth_service, username, password)* subroutine then sets the token credentials for each request in *ngs_request(url, oauth_service, access_token)*.
+
+[NGS Galaxy Linker](https://irida.corefacility.ca/gitlab/irida/irida-tools/blob/development/scripts/ngsArchiveLinker/ngs2galaxy.py)
