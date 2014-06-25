@@ -108,7 +108,7 @@ Examples
 --------
 ### Perl
 * [NGS Archive Linker](https://irida.corefacility.ca/gitlab/irida/irida-tools/blob/development/scripts/ngsArchiveLinker/ngsArchiveLinker.pl) - An example of a Perl script that connects to the IRIDA API via the OAuth2 *password* grant.  It uses the [OAuth::Lite2::Client::UsernameAndPassword](http://search.cpan.org/~ritou/OAuth-Lite2-0.08/lib/OAuth/Lite2/Client/UsernameAndPassword.pm) package.  The script retrieves a token from the API in the *getToken* subroutine, then sets an *Authorization: Bearer* header to be used for all requests.  
-* 
+
 ### Python
 * [NGS Archive Galaxy Linker](https://irida.corefacility.ca/gitlab/irida/irida-tools/blob/development/scripts/ngsArchiveLinker/ngs2galaxy.py) - This application uses [OAuth2Service](http://rauth.readthedocs.org/en/latest/) to contact the IRIDA API via the OAuth2 *password* grant.  The script retrieves a token in the *get_access_token(oauth_service, username, password)* subroutine then sets the token credentials for each request in *ngs_request(url, oauth_service, access_token)*.  
 
