@@ -15,7 +15,7 @@ Terms
 
 Authorization Grant Type
 ------------------------
-###Introduction
+### Introduction
 A client must provide the correct credentials to obtain a token from the API. If your client is connecting to the REST API via a web service, you will use the "authorization_code" grant type. This will enable the OAuth2 web authorization flow.
 
 For the user, this will happen in 4 steps:
@@ -35,7 +35,7 @@ On the server things are a little more complicated:
 
 While this description sounds fairly complicated, whatever web framework you're using will likely provide an OAuth2 package or library for handling OAuth2 client authorizations.  An incomplete list can be found at http://oauth.net/2/ (look under "Client Libraries"), but you can find more on your web framework's website.
 
-###Obtaining a Token
+### Obtaining a Token
 Whatever OAuth2 client library you're using should provide some method to request an OAuth2 token from a server.  The implementation may differ slightly but it should provide a way to set some common *client details* arguments.  You can generally use the following values:
 
 * Grant type - authorization_code
@@ -52,7 +52,7 @@ After this authorization occurs, the user will not have to re-authorize your ser
 
 Password Grant Type
 -------------------
-###Introduction
+### Introduction
 Similar to the *authorization_code* grant type, the *password* grant allows an application to retrieve an OAuth2 token from the REST API, then use it to request resources.  The *password* grant type differs in that it can be easily used from a desktop application as it doesn't require the user to log in via a web browser.  The user will provide their IRIDA username and password directly to the application where it will be used to request an OAuth2 token.  Although the *password* grant type is less complicated for the user and developer, the *authorization_code* grant is preferred because it doesn't require the user to pass their username and password directly to the client application.
 
 In the client application:
@@ -60,7 +60,7 @@ In the client application:
 1. The client application sends the username, password, client id, and client secret to */oauth/token*.  The API will send a response containing an OAuth2 token.
 2. Your service may then request resources from the API using the token.
 
-###Obtaining a Token
+### Obtaining a Token
 Whatever OAuth2 client library you're using should provide some method to request an OAuth2 token from a server.  The implementation may differ slightly but it should provide a way to set some common *client details* arguments.  You can generally use the following values:
 
 * Grant type - password
@@ -106,11 +106,12 @@ In the near future there will be a user interface available in the irida-ui proj
 
 Examples
 --------
-###Perl
+### Perl
 * [NGS Archive Linker](https://irida.corefacility.ca/gitlab/irida/irida-tools/blob/development/scripts/ngsArchiveLinker/ngsArchiveLinker.pl) - An example of a Perl script that connects to the IRIDA API via the OAuth2 *password* grant.  It uses the [OAuth::Lite2::Client::UsernameAndPassword](http://search.cpan.org/~ritou/OAuth-Lite2-0.08/lib/OAuth/Lite2/Client/UsernameAndPassword.pm) package.  The script retrieves a token from the API in the *getToken* subroutine, then sets an *Authorization: Bearer* header to be used for all requests.  
-###Python
+* 
+### Python
 * [NGS Archive Galaxy Linker](https://irida.corefacility.ca/gitlab/irida/irida-tools/blob/development/scripts/ngsArchiveLinker/ngs2galaxy.py) - This application uses [OAuth2Service](http://rauth.readthedocs.org/en/latest/) to contact the IRIDA API via the OAuth2 *password* grant.  The script retrieves a token in the *get_access_token(oauth_service, username, password)* subroutine then sets the token credentials for each request in *ngs_request(url, oauth_service, access_token)*.  
 
-###Java
+### Java
 * [MiSeq Uploader](https://irida.corefacility.ca/gitlab/irida/irida-tools/tree/master) - This application uses [Spring Security OAuth](http://projects.spring.io/spring-security-oauth/) to send files to the IRIDA API using the OAuth2 *password* grant.
 * [IRIDA OAuth2 Web Client Demo](https://irida.corefacility.ca/gitlab/irida/irida-web/tree/master/samples/oauth-web-client) - This is a sample web application demoing the use of the *authorization_code* OAuth2 grant type using [Spring Security OAuth](http://projects.spring.io/spring-security-oauth/).
