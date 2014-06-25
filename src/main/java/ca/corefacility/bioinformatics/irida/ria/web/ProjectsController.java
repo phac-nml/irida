@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -52,6 +54,7 @@ public class ProjectsController {
 	public static final String COLUMN_NAME = "1";
 	public static final String COLUMN_DATE_CREATED = "5";
 	public static final String COLUMN_DATE_MODIFIED = "6";
+	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 	private ProjectService projectService;
 	private SampleService sampleService;
 	private UserService userService;
@@ -85,6 +88,7 @@ public class ProjectsController {
 	 */
 	@RequestMapping(value = "/{projectId}")
 	public String getProjectSpecificPage(@PathVariable Long projectId, final Model model) {
+		logger.debug("Getting project information for [Project " + projectId + "]");
 		String page;
 		try {
 			Project project = projectService.read(projectId);
@@ -114,7 +118,7 @@ public class ProjectsController {
 		} catch (AccessDeniedException e) {
 			// TODO: (Josh - 2014-06-24) Format error page if user does not have
 			// access. These should probably be redirects.
-		page = ERROR_PAGE;
+			page = ERROR_PAGE;
 		}
 		return page;
 	}
