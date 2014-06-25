@@ -68,6 +68,8 @@ public class Project implements IridaThing, Comparable<Project> {
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	private Organization organization;
+	
+	private String organism;
 
 	public Project() {
 		createdDate = new Date();
@@ -165,5 +167,13 @@ public class Project implements IridaThing, Comparable<Project> {
 
 	public void setOrganization(Organization organization) {
 		this.organization = organization;
+	}
+
+	public String getOrganism() {
+		return organism;
+	}
+
+	public void setOrganism(String organism) {
+		this.organism = organism;
 	}
 }
