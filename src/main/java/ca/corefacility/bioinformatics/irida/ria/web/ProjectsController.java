@@ -40,18 +40,18 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 @Controller
 @RequestMapping(value = "/projects")
 public class ProjectsController {
-	public static final String PROJECTS_PAGE = "projects";
-	public static final String SPECIFIC_PROJECT_PAGE = "project_details";
-	public static final String ERROR_PAGE = "error";
-	public static final String SORT_BY_ID = "id";
-	public static final String SORT_BY_NAME = "name";
-	public static final String SORT_BY_CREATED_DATE = "createdDate";
-	public static final String SORT_BY_MODIFIED_DATE = "modifiedDate";
-	public static final String SORT_ASCENDING = "asc";
-	public static final String COLUMN_PROJECT_ID = "0";
-	public static final String COLUMN_NAME = "1";
-	public static final String COLUMN_DATE_CREATED = "5";
-	public static final String COLUMN_DATE_MODIFIED = "6";
+	private static final String PROJECTS_PAGE = "projects";
+	private static final String SPECIFIC_PROJECT_PAGE = "project_details";
+	private static final String ERROR_PAGE = "error";
+	private static final String SORT_BY_ID = "id";
+	private static final String SORT_BY_NAME = "name";
+	private static final String SORT_BY_CREATED_DATE = "createdDate";
+	private static final String SORT_BY_MODIFIED_DATE = "modifiedDate";
+	private static final String SORT_ASCENDING = "asc";
+	private static final String COLUMN_PROJECT_ID = "0";
+	private static final String COLUMN_NAME = "1";
+	private static final String COLUMN_DATE_CREATED = "5";
+	private static final String COLUMN_DATE_MODIFIED = "6";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 	private ProjectService projectService;
 	private SampleService sampleService;
