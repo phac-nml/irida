@@ -1,6 +1,6 @@
 OAuth2 Authorization for IRIDA
 ==============================
-This document will describe how a client application can communicate with the IRIDA REST API using OAuth2 Authorization.
+This document describes how a client application can communicate with the IRIDA REST API using OAuth2 Authorization.
 
 In order for a user to access a resource on the REST API, they must first obtain an OAuth2 token from that API.  This token allows a given client and user access to a given resource on the API.  The token is stored by both the client and API.  When the client makes a request to the API they pass along their token which is compared to a list of active issued tokens, then the client is given or denied access based on the validity of that token.
 
