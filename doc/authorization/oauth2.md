@@ -123,7 +123,6 @@ my $tokenstr = getToken($url, $username, $password, $client_id, $client_secret);
 $head->authorization("Bearer $tokenstr");
 my $request = HTTP::Request->new("GET",$url,$headers);
 ...
-
 ```
 
 ### Python
@@ -147,7 +146,6 @@ access_token = oauth_service.get_access_token(decoder=decoder,**params)
 session = oauth_service.get_session(access_token)
 response = session.get(url)
 ...
-
 ```
 
 ### Java
