@@ -9,8 +9,13 @@
 <div class="container" layout:fragment="content">
     <div class="row">
         <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
+    </div>
+    <div class="row">
+        <div class="col-md-12"><h1 id="wb-cont" property="name" th:text="${project.label}">__PROJECT_NAME__</h1></div>
+    </div>
+    <div class="row">
         <main class="col-md-9 col-md-push-3" role="main" property="mainContentOfPage">
-            <h1 id="wb-cont" property="name" th:text="${project.label}">__PROJECT_NAME__</h1>
+            <h3>This is where the project recent activities will go.</h3>
         </main>
         <div class="col-md-3 col-md-pull-9 visible-md visible-lg">
             <div class="panel panel-info">
@@ -18,13 +23,32 @@
                     <h3 class="panel-title" th:text="#{project.details}">Project Details</h3>
                 </div>
                 <div class="panel-body">
-                    <ul class="nav nav-pills nav-stacked">
-                        <li><span class="glyphicon glyphicon-tower"></span>&nbsp;Owner<span class="pull-right" th:text="${owner.label}">__DATE_CREATED__</span></li>
-                        <li><span class="glyphicon glyphicon-calendar"></span>&nbsp;Created<span class="pull-right" th:text="${#calendars.format(project.timestamp, 'dd MMM yyyy')}">__DATE_CREATED__</span></li>
-                        <li><span class="glyphicon glyphicon-calendar"></span>&nbsp;Modified<span class="pull-right" th:text="${#calendars.format(project.modifiedDate, 'dd MMM yyyy')}">__DATE_CREATED__</span></li>
-                        <li><span class="glyphicon glyphicon-user"></span>&nbsp;Collaborators<span class="pull-right" th:text="${users}">__USERS__</span></li>
-                        <li><span class="glyphicon glyphicon-file"></span>&nbsp;Samples<span class="pull-right" th:text="${samples}">__SAMPLES__</span></li>
+                    <ul class="nav nav-pills nav-stacked" th:inline="text">
+                        <li th:if="${project.organism}"><span class="glyphicon glyphicon-leaf"></span>&nbsp;[[#{project.organism}]]<span class="pull-right" id="project-organism" th:text="${project.organism}"></span></li>
+                        <li><span class="glyphicon glyphicon-tower"></span>&nbsp;[[#{project.owner}]]<span class="pull-right" id="project-owner"
+                                                                                            th:text="${owner.label}">__DATE_CREATED__</span>
+                        </li>
+                        <li><span class="glyphicon glyphicon-calendar"></span>&nbsp;[[#{project.created}]]<span class="pull-right" id="project-created"
+                                                                                                 th:text="${#calendars.format(project.timestamp, 'dd MMM yyyy')}">__DATE_CREATED__</span>
+                        </li>
+                        <li><span class="glyphicon glyphicon-calendar"></span>&nbsp;[[#{project.modified}]]<span class="pull-right" id="project-modified"
+                                                                                                  th:text="${#calendars.format(project.modifiedDate, 'dd MMM yyyy')}">__DATE_CREATED__</span>
+                        </li>
+                        <li><span class="glyphicon glyphicon-user"></span>&nbsp;[[#{project.collaborators}]]<span class="pull-right" id="project-users"
+                                                                                                   th:text="${users}">__USERS__</span>
+                        </li>
+                        <li><span class="glyphicon glyphicon-file"></span>&nbsp;[[#{project.samples}]]<span class="pull-right" id="project-samples"
+                                                                                             th:text="${samples}">__SAMPLES__</span>
+                        </li>
                     </ul>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title" th:text="#{project.associated}">Associated Projects</h3>
+                </div>
+                <div class="panel-body">
+                    <p>List of associated project with ability to connect to them.</p>
                 </div>
             </div>
         </div>
