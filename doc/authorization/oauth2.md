@@ -89,17 +89,17 @@ Before a client is authorized to view resources, they must be registered as a Cl
 
 The *clientId* and *clientSecret* should be unique for your client.
 
-> INSERT INTO client_details (clientId,clientSecret,token_validity) VALUES (?,?,43200);
+```sql
+INSERT INTO client_details (clientId,clientSecret,token_validity) VALUES (?,?,43200);
+```
 
 Find what ID was generated in *client_details* for the client you inserted.  Use that id for *client_details_id* in the remaining *INSERT* statements.
-
-> INSERT INTO client_details_authorities (client_details_id,authority_name) values (?,"ROLE_CLIENT");
-
-> INSERT INTO client_details_scope (client_details_id,scope) values (?,"read");
-
-> INSERT INTO client_details_grant_types (client_details_id,grant_value) values (?,"authorization_code");
-
-> INSERT INTO client_details_resource_ids (client_details_id,resource_id) values (?,"NmlIrida");
+```sql
+INSERT INTO client_details_authorities (client_details_id,authority_name) values (?,"ROLE_CLIENT");
+INSERT INTO client_details_scope (client_details_id,scope) values (?,"read");
+INSERT INTO client_details_grant_types (client_details_id,grant_value) values (?,"authorization_code");
+INSERT INTO client_details_resource_ids (client_details_id,resource_id) values (?,"NmlIrida");
+```
 
 In the near future there will be a user interface available in the irida-ui project to add and manage client_details. At that time this documentation will be updated to reflect these changes.
 
@@ -107,10 +107,45 @@ In the near future there will be a user interface available in the irida-ui proj
 Examples
 --------
 ### Perl
-* [NGS Archive Linker](https://irida.corefacility.ca/gitlab/irida/irida-tools/blob/development/scripts/ngsArchiveLinker/ngsArchiveLinker.pl) - An example of a Perl script that connects to the IRIDA API via the OAuth2 *password* grant.  It uses the [OAuth::Lite2::Client::UsernameAndPassword](http://search.cpan.org/~ritou/OAuth-Lite2-0.08/lib/OAuth/Lite2/Client/UsernameAndPassword.pm) package.  The script retrieves a token from the API in the *getToken* subroutine, then sets an *Authorization: Bearer* header to be used for all requests.  
+* [NGS Archive Linker](https://irida.corefacility.ca/gitlab/irida/irida-tools/blob/development/scripts/ngsArchiveLinker/ngsArchiveLinker.pl) - An example of a Perl script that connects to the IRIDA API via the OAuth2 *password* grant.  It uses the [OAuth::Lite2::Client::UsernameAndPassword](http://search.cpan.org/~ritou/OAuth-Lite2-0.08/lib/OAuth/Lite2/Client/UsernameAndPassword.pm) package.  The script retrieves a token from the API in the *getToken* subroutine, then sets an *Authorization: Bearer* header to be used for all requests.  Some example code can be seen below:
+```perl
+my $client = OAuth::Lite2::Client::UsernameAndPassword->new(
+        id               => $client_id,
+        secret           => $client_secret,
+        access_token_uri => $base_url."/oauth/token");
+
+my $token = $client->get_access_token(username=>$username,password=>$password);
+my $tokenstr = $token->access_token;
+
+my $head = new HTTP::Headers;
+my $tokenstr = getToken($url, $username, $password, $client_id, $client_secret);
+$head->authorization("Bearer $tokenstr");
+my $request = HTTP::Request->new("GET",$url,$headers);
+...
+```
 
 ### Python
-* [NGS Archive Galaxy Linker](https://irida.corefacility.ca/gitlab/irida/irida-tools/blob/development/scripts/ngsArchiveLinker/ngs2galaxy.py) - This application uses [OAuth2Service](http://rauth.readthedocs.org/en/latest/) to contact the IRIDA API via the OAuth2 *password* grant.  The script retrieves a token in the *get_access_token(oauth_service, username, password)* subroutine then sets the token credentials for each request in *ngs_request(url, oauth_service, access_token)*.  
+* [NGS Archive Galaxy Linker](https://irida.corefacility.ca/gitlab/irida/irida-tools/blob/development/scripts/ngsArchiveLinker/ngs2galaxy.py) - This application uses [OAuth2Service](http://rauth.readthedocs.org/en/latest/) to contact the IRIDA API via the OAuth2 *password* grant.  The script retrieves a token in the *get_access_token(oauth_service, username, password)* subroutine then sets the token credentials for each request in *ngs_request(url, oauth_service, access_token)*.  Some example code is below:
+
+```python
+oauth_serv = OAuth2Service(
+    client_id=clientId,
+    client_secret=clientSecret,
+    name="irida",
+    access_token_url = baseURL + "oauth/token",
+    base_url=baseURL)
+
+params = {'data' : {'grant_type' : 'password',
+        'client_id' : clientId,
+        'client_secret' : clientSecret,
+        'username' : username,
+        'password' : password}}
+
+access_token = oauth_service.get_access_token(decoder=decoder,**params)
+session = oauth_service.get_session(access_token)
+response = session.get(url)
+...
+```
 
 ### Java
 * [MiSeq Uploader](https://irida.corefacility.ca/gitlab/irida/irida-tools/tree/master) - This application uses [Spring Security OAuth](http://projects.spring.io/spring-security-oauth/) to send files to the IRIDA API using the OAuth2 *password* grant.
