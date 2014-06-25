@@ -6,8 +6,13 @@
     <title th:text="#{dashboard.title}">THIS IS SOMETHING WRONG</title>
 </head>
 <body>
-<main layout:fragment="content" class="container main-container" role="main" property="mainContentOfPage">
+<div class="container" layout:fragment="content">
+    <div class="row">
+        <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
+        <main role="main" property="mainContentOfPage">
 
-</main>
+        </main>
+    </div>
+</div>
 </body>
 </html>
