@@ -79,7 +79,9 @@ When an OAuth2 token has been obtained it can be used to access protected resour
 
 A *Bearer Authorization* header must be added to the HTTP request using the obtained token.  If the token string is "12345", this header will be of the form:
 
-> Authorization: Bearer 12345
+```http
+Authorization: Bearer 12345
+```
 
 If the token is valid, you will receive your requested resources.  If not you should receive a HTTP 403 error.
 
