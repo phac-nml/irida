@@ -14,16 +14,31 @@ if [ ! -e node-v0.10.28-linux-x64 ] ; then
     source ~/.irida-npm/bashrc;
 fi
 
-# Install chromedriver for testing
+# Install phantomjs for testing
 if [ ! -e bin/phantomjs ] ; then
     echo "Installing phantomjs(tailf ~/.irida-npm/phantomsjs.log)"
     mkdir -p bin
     pushd bin > /dev/null
-    # Downlod chromedriver
+    # Downlod phantomsjs
     wget 'https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-x86_64.tar.bz2'
     tar xvfj phantomjs-1.9.7-linux-x86_64.tar.bz2 &> ~/.irida-npm/phantomjs.log
     mv phantomjs-1.9.7-linux-x86_64/bin/phantomjs ~/.irida-npm/bin/
     rm -r phantomjs-1.9.7-linux-x86_64*
+    popd > /dev/null
+    echo 'export PATH=~/.irida-npm/bin:$PATH' > ~/.irida-npm/bashrc
+    source ~/.irida-npm/bashrc;
+fi
+
+# Install chromedriver for testing
+if [ ! -e bin/chromedriver ] ; then
+    echo "Installing chromedriver (tailf ~/.irida-npm/chromedriver.log)"
+    mkdir -p bin
+    pushd bin > /dev/null
+    # Downlod chromedriver
+    wget 'http://chromedriver.storage.googleapis.com/2.10/chromedriver_linux64.zip'
+    unzip chromedriver_linux64.zip
+    mv chromedriver ~/.irida-npm/bin/
+    rm -r chromedriver_linux64.zip
     popd > /dev/null
     echo 'export PATH=~/.irida-npm/bin:$PATH' > ~/.irida-npm/bashrc
     source ~/.irida-npm/bashrc;
