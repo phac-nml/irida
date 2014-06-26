@@ -7,7 +7,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
  * Created by josh on 14-06-19.
  */
 public class Ajax {
-	public static ExpectedCondition waitForAjax(final long timeout) {
+	public static ExpectedCondition<Boolean> waitForAjax(final long timeout) {
 		return driver -> {
 			final long startTime = System.currentTimeMillis();
 			final JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;

@@ -47,10 +47,6 @@ public class ProjectsController {
 	private static final String SORT_BY_CREATED_DATE = "createdDate";
 	private static final String SORT_BY_MODIFIED_DATE = "modifiedDate";
 	private static final String SORT_ASCENDING = "asc";
-	private static final String COLUMN_PROJECT_ID = "0";
-	private static final String COLUMN_NAME = "1";
-	private static final String COLUMN_DATE_CREATED = "5";
-	private static final String COLUMN_DATE_MODIFIED = "6";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 	private final ProjectService projectService;
 	private final SampleService sampleService;

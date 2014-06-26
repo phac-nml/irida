@@ -3,8 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -14,7 +12,6 @@ import org.slf4j.LoggerFactory;
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectDetailsPage {
-	private static final Logger logger = LoggerFactory.getLogger(ProjectDetailsPage.class);
 
 	private WebDriver driver;
 

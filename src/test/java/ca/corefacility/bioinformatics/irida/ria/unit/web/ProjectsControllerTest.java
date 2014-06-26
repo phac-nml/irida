@@ -6,18 +6,19 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
-import org.springframework.web.context.request.ServletWebRequest;
-import org.springframework.web.context.request.WebRequest;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -75,22 +76,13 @@ public class ProjectsControllerTest {
 		assertEquals(PROJECTS_PAGE, controller.getProjectsPage());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetAjaxProjectList() {
 		List<Join<Project, Sample>> samplesJoin = getSamplesForProject();
 		List<Join<Project, User>> usersJoin = getUsersForProject();
 		String requestDraw = "1";
 		Principal principal = () -> USER_NAME;
-
-		MockHttpServletRequest req = new MockHttpServletRequest();
-		req.setParameter(DataTable.REQUEST_PARAM_DRAW, requestDraw);
-		req.setParameter(DataTable.REQUEST_PARAM_LENGTH, "10");
-		req.setParameter(DataTable.REQUEST_PARAM_SEARCH_VALUE, "");
-		req.setParameter(DataTable.REQUEST_PARAM_SORT_COLUMN, "0");
-		req.setParameter(DataTable.REQUEST_PARAM_SORT_DIRECTION, "asc");
-		req.setParameter(DataTable.REQUEST_PARAM_START, "0");
-
-		WebRequest request = new ServletWebRequest(req);
 
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
 		when(projectService.searchProjectsByNameForUser(user, "", 0, 10, Sort.Direction.ASC, "id")).thenReturn(getProjectsPage());
