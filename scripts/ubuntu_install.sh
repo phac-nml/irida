@@ -11,7 +11,6 @@ if [ ! -e node-v0.10.28-linux-x64 ] ; then
     wget -nc 'http://nodejs.org/dist/v0.10.26/node-v0.10.26-linux-x64.tar.gz'
     tar -zxf node-v0.10.26-linux-x64.tar.gz &> ~/.irida-npm/nodejs.log
     echo 'export PATH=~/.irida-npm/node-v0.10.26-linux-x64/bin:$PATH' > ~/.irida-npm/bashrc
-    source ~/.irida-npm/bashrc;
 fi
 
 # Install phantomjs for testing
@@ -26,7 +25,6 @@ if [ ! -e bin/phantomjs ] ; then
     rm -r phantomjs-1.9.7-linux-x86_64*
     popd > /dev/null
     echo 'export PATH=~/.irida-npm/bin:$PATH' > ~/.irida-npm/bashrc
-    source ~/.irida-npm/bashrc;
 fi
 
 # Install chromedriver for testing
@@ -41,7 +39,6 @@ if [ ! -e bin/chromedriver ] ; then
     rm -r chromedriver_linux64.zip
     popd > /dev/null
     echo 'export PATH=~/.irida-npm/bin:$PATH' > ~/.irida-npm/bashrc
-    source ~/.irida-npm/bashrc;
 fi
 
 popd > /dev/null
