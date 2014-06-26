@@ -98,7 +98,7 @@ public class ProjectsControllerTest {
 		when(userService.getUsersForProject(project)).thenReturn(usersJoin);
 		
 
-		Map<String, Object> response = controller.getAjaxProjectList(principal, request);
+		Map<String, Object> response = controller.getAjaxProjectList(principal, 0, 10, 1, 0, "asc", "");
 
 		assertEquals("Has the correct draw number", Integer.parseInt(requestDraw), response.get(DataTable.RESPONSE_PARAM_DRAW));
 

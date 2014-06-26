@@ -14,8 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.WebRequest;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
@@ -28,6 +28,8 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for all project related views
@@ -53,6 +55,9 @@ public class ProjectsController {
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final UserService userService;
+
+	private final ImmutableMap<Integer, String> COLUMN_SORT_MAP = ImmutableMap.<Integer, String> builder()
+			.put(0, SORT_BY_ID).put(1, SORT_BY_NAME).put(5, SORT_BY_CREATED_DATE).put(6, SORT_BY_MODIFIED_DATE).build();
 
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService) {
@@ -89,11 +94,12 @@ public class ProjectsController {
 			Project project = projectService.read(projectId);
 			model.addAttribute("project", project);
 
-			Collection<Join<Project, User>> ownerJoinList = userService.getUsersForProjectByRole(project, ProjectRole.PROJECT_OWNER);
-            User owner = null;
-            if (ownerJoinList.size() > 0) {
-                owner = (ownerJoinList.iterator().next()).getObject();
-            }
+			Collection<Join<Project, User>> ownerJoinList = userService.getUsersForProjectByRole(project,
+					ProjectRole.PROJECT_OWNER);
+			User owner = null;
+			if (ownerJoinList.size() > 0) {
+				owner = (ownerJoinList.iterator().next()).getObject();
+			}
 			model.addAttribute("owner", owner);
 
 			int sampleSize = sampleService.getSamplesForProject(project).size();
@@ -129,37 +135,24 @@ public class ProjectsController {
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody
-	Map<String, Object> getAjaxProjectList(final Principal principal, WebRequest request) {
+	Map<String, Object> getAjaxProjectList(final Principal principal,
+			@RequestParam(DataTable.REQUEST_PARAM_START) Integer start,
+			@RequestParam(DataTable.REQUEST_PARAM_LENGTH) Integer length,
+			@RequestParam(DataTable.REQUEST_PARAM_DRAW) Integer draw,
+			@RequestParam(value = DataTable.REQUEST_PARAM_SORT_COLUMN, defaultValue = "6") Integer sortColumn,
+			@RequestParam(value = DataTable.REQUEST_PARAM_SORT_DIRECTION, defaultValue = "desc") String direction,
+			@RequestParam(DataTable.REQUEST_PARAM_SEARCH_VALUE) String searchValue) {
 		User user = userService.getUserByUsername(principal.getName());
 
-		int start = Integer.parseInt(request.getParameter(DataTable.REQUEST_PARAM_START));
-		int length = Integer.parseInt(request.getParameter(DataTable.REQUEST_PARAM_LENGTH));
-		int draw = Integer.parseInt(request.getParameter(DataTable.REQUEST_PARAM_DRAW));
-		String sortColumn = request.getParameter(DataTable.REQUEST_PARAM_SORT_COLUMN);
 		String sortString;
 
-		// If there is a sort by column set the correct name to sort by.
-		// The default should be by date modified since that is what the
-		// user would have most recently used.
-		switch (sortColumn) {
-		case COLUMN_PROJECT_ID:
-			sortString = SORT_BY_ID;
-			break;
-		case COLUMN_NAME:
-			sortString = SORT_BY_NAME;
-			break;
-		case COLUMN_DATE_CREATED:
-			sortString = SORT_BY_CREATED_DATE;
-			break;
-		case COLUMN_DATE_MODIFIED:
-			sortString = SORT_BY_MODIFIED_DATE;
-			break;
-		default:
+		if (COLUMN_SORT_MAP.containsKey(sortColumn)) {
+			sortString = COLUMN_SORT_MAP.get(sortColumn);
+		} else {
 			sortString = SORT_BY_MODIFIED_DATE;
 		}
-		Sort.Direction sortDirection = request.getParameter(DataTable.REQUEST_PARAM_SORT_DIRECTION).equals(
-				SORT_ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
-		String searchValue = request.getParameter(DataTable.REQUEST_PARAM_SEARCH_VALUE);
+
+		Sort.Direction sortDirection = direction.equals(SORT_ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
 
 		int pageNum = (int) Math.floor(start / length);
 		Page<ProjectUserJoin> page = projectService.searchProjectsByNameForUser(user, searchValue, pageNum, length,
