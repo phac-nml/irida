@@ -1,10 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,12 +89,11 @@ public class ProjectsController {
 			Project project = projectService.read(projectId);
 			model.addAttribute("project", project);
 
-			Join<Project, User> ownerJoin = userService.getUsersForProjectByRole(project, ProjectRole.PROJECT_OWNER)
-					.iterator().next();
-			User owner = null;
-			if (ownerJoin != null) {
-				owner = ownerJoin.getObject();
-			}
+			Collection<Join<Project, User>> ownerJoinList = userService.getUsersForProjectByRole(project, ProjectRole.PROJECT_OWNER);
+            User owner = null;
+            if (ownerJoinList.size() > 0) {
+                owner = (ownerJoinList.iterator().next()).getObject();
+            }
 			model.addAttribute("owner", owner);
 
 			int sampleSize = sampleService.getSamplesForProject(project).size();
