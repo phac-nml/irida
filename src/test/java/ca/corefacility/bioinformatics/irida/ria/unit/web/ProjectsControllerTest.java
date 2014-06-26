@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 import java.security.Principal;
 import java.util.*;
 
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
@@ -23,6 +22,7 @@ import org.springframework.web.context.request.WebRequest;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -117,9 +117,10 @@ public class ProjectsControllerTest {
 	public void testGetSpecificProjectPage() {
 		Model model = new ExtendedModelMap();
 		Long projectId = 1L;
-        when(userService.getUsersForProjectByRole(getProject(), ProjectRole.PROJECT_OWNER)).thenReturn(getUsersForProjectByRole());
-        assertEquals("Returns the correct Project Page", PROJECT_DETAILS_PAGE,
-                controller.getProjectSpecificPage(projectId, model));
+		when(userService.getUsersForProjectByRole(getProject(), ProjectRole.PROJECT_OWNER)).thenReturn(
+				getUsersForProjectByRole());
+		assertEquals("Returns the correct Project Page", PROJECT_DETAILS_PAGE,
+				controller.getProjectSpecificPage(projectId, model));
 	}
 
 	/**
@@ -185,6 +186,7 @@ public class ProjectsControllerTest {
 			}
 
 			@Override
+			@SuppressWarnings("unchecked")
 			public Iterator iterator() {
 				return null;
 			}
@@ -210,35 +212,36 @@ public class ProjectsControllerTest {
 	}
 
 	private Project getProject() {
-        if(project == null) {
-            project = new Project(PROJECT_NAME);
-            project.setId(PROJECT_ID);
-            project.setModifiedDate(new Date(PROJECT_MODIFIED_DATE));
-        }
+		if (project == null) {
+			project = new Project(PROJECT_NAME);
+			project.setId(PROJECT_ID);
+			project.setModifiedDate(new Date(PROJECT_MODIFIED_DATE));
+		}
 		return project;
 	}
 
-    private List<Join<Project, Sample>> getSamplesForProject() {
-        List<Join<Project, Sample>> join = new ArrayList<>();
-        for (int i = 0; i < NUM_PROJECT_SAMPLES; i++) {
-            join.add(new ProjectSampleJoin(getProject(), new Sample("sample" + i)));
-        }
-        return join;
-    }
+	private List<Join<Project, Sample>> getSamplesForProject() {
+		List<Join<Project, Sample>> join = new ArrayList<>();
+		for (int i = 0; i < NUM_PROJECT_SAMPLES; i++) {
+			join.add(new ProjectSampleJoin(getProject(), new Sample("sample" + i)));
+		}
+		return join;
+	}
 
-    private List<Join<Project, User>> getUsersForProject() {
-        List<Join<Project, User>> join = new ArrayList<>();
-        for (int i = 0; i < NUM_PROJECT_USERS; i++) {
-            Project p = new Project("project" + i);
-            p.setId(new Long(i));
-            join.add(new ProjectUserJoin(p, new User("user" + i, null, null, null, null, null), ProjectRole.PROJECT_USER));
-        }
-        return join;
-    }
+	private List<Join<Project, User>> getUsersForProject() {
+		List<Join<Project, User>> join = new ArrayList<>();
+		for (int i = 0; i < NUM_PROJECT_USERS; i++) {
+			Project p = new Project("project" + i);
+			p.setId(new Long(i));
+			join.add(new ProjectUserJoin(p, new User("user" + i, null, null, null, null, null),
+					ProjectRole.PROJECT_USER));
+		}
+		return join;
+	}
 
-    private List<Join<Project, User>> getUsersForProjectByRole() {
-        List<Join<Project, User>> list = new ArrayList<>();
-        list.add(new ProjectUserJoin(getProject(), user, ProjectRole.PROJECT_OWNER));
-        return list;
-    }
+	private List<Join<Project, User>> getUsersForProjectByRole() {
+		List<Join<Project, User>> list = new ArrayList<>();
+		list.add(new ProjectUserJoin(getProject(), user, ProjectRole.PROJECT_OWNER));
+		return list;
+	}
 }
