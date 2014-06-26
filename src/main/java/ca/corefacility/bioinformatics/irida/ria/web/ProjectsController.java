@@ -52,6 +52,7 @@ public class ProjectsController {
 	private final SampleService sampleService;
 	private final UserService userService;
 
+    // Key is the column number in the datatable.
 	private final ImmutableMap<Integer, String> COLUMN_SORT_MAP = ImmutableMap.<Integer, String> builder()
 			.put(0, SORT_BY_ID).put(1, SORT_BY_NAME).put(5, SORT_BY_CREATED_DATE).put(6, SORT_BY_MODIFIED_DATE).build();
 
