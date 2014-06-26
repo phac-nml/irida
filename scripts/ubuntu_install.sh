@@ -10,7 +10,6 @@ if [ ! -e node-v0.10.28-linux-x64 ] ; then
     # Download NodeJS
     wget -nc 'http://nodejs.org/dist/v0.10.26/node-v0.10.26-linux-x64.tar.gz'
     tar -zxf node-v0.10.26-linux-x64.tar.gz &> ~/.irida-client/nodejs.log
-    echo 'export PATH=~/.irida-client/node-v0.10.26-linux-x64/bin:$PATH' > ~/.irida-client/bashrc
 fi
 
 # Install phantomjs for testing
@@ -24,7 +23,6 @@ if [ ! -e bin/phantomjs ] ; then
     mv phantomjs-1.9.7-linux-x86_64/bin/phantomjs ~/.irida-client/bin/
     rm -r phantomjs-1.9.7-linux-x86_64*
     popd > /dev/null
-    echo 'export PATH=~/.irida-client/bin:$PATH' > ~/.irida-client/bashrc
 fi
 
 # Install chromedriver for testing
@@ -38,9 +36,8 @@ if [ ! -e bin/chromedriver ] ; then
     mv chromedriver ~/.irida-client/bin/
     rm -r chromedriver_linux64.zip
     popd > /dev/null
-    echo 'export PATH=~/.irida-client/bin:$PATH' > ~/.irida-client/bashrc
 fi
-
+echo 'export PATH=~/.irida-client/bin:~/.irida-client/node-v0.10.26-linux-x64/bin:$PATH' > ~/.irida-client/bashrc
 popd > /dev/null
 
 # Install Sass and Compass
