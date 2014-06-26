@@ -186,15 +186,13 @@ public class ProjectsControllerTest {
 			}
 
 			@Override
-			@SuppressWarnings("unchecked")
-			public Iterator iterator() {
+			public Iterator<ProjectUserJoin> iterator() {
 				return null;
 			}
 
 			@Override
-			@SuppressWarnings("unchecked")
-			public List getContent() {
-				ArrayList<Object> list = new ArrayList<>();
+			public List<ProjectUserJoin> getContent() {
+				List<ProjectUserJoin> list = new ArrayList<>();
 				list.add(new ProjectUserJoin(getProject(), user, ProjectRole.PROJECT_OWNER));
 				return list;
 			}
