@@ -151,7 +151,7 @@ public class ProjectsController {
 
 		Sort.Direction sortDirection = direction.equals(SORT_ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
 
-		int pageNum = (int) Math.floor(start / length);
+		int pageNum = start / length;
 		Page<ProjectUserJoin> page = projectService.searchProjectsByNameForUser(user, searchValue, pageNum, length,
 				sortDirection, sortString);
 		List<ProjectUserJoin> projectList = page.getContent();
