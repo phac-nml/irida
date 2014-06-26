@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class LoginController {
 	private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
-	public static final String SPLASH_PAGE = "splash";
-	public static final String LOGIN_PAGE = "login";
+	private static final String SPLASH_PAGE = "splash";
+	private static final String LOGIN_PAGE = "login";
 
 	@RequestMapping(value = "/")
 	public String showSplash() {

@@ -9,7 +9,7 @@
 <main layout:fragment="content" class="container main-container" role="main" property="mainContentOfPage">
     <h1 class="page-header" th:text="#{login.title}"></h1>
     <section>
-        <div class="row" ng-controller="LoginCtrl as login">
+        <div class="row">
             <div class="col-md-6">
                 <form name="loginForm" role="form" method="post" th:action="@{/login}" action="/login">
                     <div th:if="${error}" class="alert alert-danger">
