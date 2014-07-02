@@ -187,7 +187,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 
 	@Override
 	@Transactional(readOnly = true)
-	public Set<SequenceFile> getSequenceFilesForMiseqRun(SequencingRun miseqRun) {
+	public Set<SequenceFile> getSequenceFilesForSequencingRun(SequencingRun miseqRun) {
 		return sequenceFileRepository.findSequenceFilesForSequencingRun(miseqRun);
 	}
 

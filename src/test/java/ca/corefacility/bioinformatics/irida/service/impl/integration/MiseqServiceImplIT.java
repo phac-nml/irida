@@ -85,7 +85,7 @@ public class MiseqServiceImplIT {
 		SequencingRun miseqRun = asRole(r).miseqRunService.read(1l);
 		asRole(r).miseqRunService.addSequenceFileToSequencingRun(miseqRun, sf);
 		SequencingRun saved = asRole(r).miseqRunService.read(1l);
-		Set<SequenceFile> sequenceFilesForMiseqRun = sequenceFileService.getSequenceFilesForMiseqRun(saved);
+		Set<SequenceFile> sequenceFilesForMiseqRun = sequenceFileService.getSequenceFilesForSequencingRun(saved);
 		assertTrue("Saved miseq run should have seqence file", sequenceFilesForMiseqRun.contains(sf));
 	}
 
