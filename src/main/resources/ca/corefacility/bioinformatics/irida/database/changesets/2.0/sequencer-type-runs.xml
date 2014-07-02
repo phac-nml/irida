@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+	<changeSet id="sequencer-type-runs" author="tom">
+
+		<!-- Create sequencing_run -->
+		<createTable tableName="sequencing_run">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="description" type="longtext" />
+			<column name="createdDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="modifiedDate" type="datetime" />
+		</createTable>
+
+		<createTable tableName="sequencing_run_AUD">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_SEQUENCING_RUN_REVISION" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="description" type="longtext" />
+			<column name="createdDate" type="datetime" />
+			<column name="modifiedDate" type="datetime" />
+		</createTable>
+
+		<!-- Transfer legacy data -->
+		<sql>
+			INSERT INTO sequencing_run (id, description, createdDate,
+			modifiedDate) SELECT id,description,createdDate,modifidiedDate FROM
+			miseq_run
+		</sql>
+
+		<!-- Drop legacy columns -->
+		<dropColumn tableName="miseq_run" columnName="description" />
+		<dropColumn tableName="miseq_run_AUD" columnName="description" />
+		<dropColumn tableName="miseq_run" columnName="createdDate" />
+		<dropColumn tableName="miseq_run_AUD" columnName="createdDate" />
+		<dropColumn tableName="miseq_run" columnName="modifiedDate" />
+		<dropColumn tableName="miseq_run_AUD" columnName="modifiedDate" />
+
+	</changeSet>
+</databaseChangeLog>
