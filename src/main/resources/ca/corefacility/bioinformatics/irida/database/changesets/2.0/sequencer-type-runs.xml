@@ -40,6 +40,18 @@
 			miseq_run
 		</sql>
 
+		<!-- Update referenced column names -->
+		<renameColumn tableName="sequence_file" oldColumnName="miseqRun_id"
+			newColumnName="sequencingRun_id" columnDataType="bigint(20)" />
+
+		<!-- Update FK from sequence_file -->
+		<dropForeignKeyConstraint baseTableName="sequence_file"
+			constraintName="FK_SEQUENCE_FILE_MISEQ_RUN" />
+
+		<addForeignKeyConstraint constraintName="FK_SEQUENCE_FILE_SEQUENCING_RUN"
+			referencedTableName="sequencing_run" baseColumnNames="sequencingRun_id"
+			baseTableName="sequence_file" referencedColumnNames="id" />
+
 		<!-- Drop legacy columns -->
 		<dropColumn tableName="miseq_run" columnName="description" />
 		<dropColumn tableName="miseq_run_AUD" columnName="description" />
@@ -48,13 +60,29 @@
 		<dropColumn tableName="miseq_run" columnName="modifiedDate" />
 		<dropColumn tableName="miseq_run_AUD" columnName="modifiedDate" />
 
-		<!-- Add FK to sequencing_run -->
+		<!-- add new notnull to miseq_run.workflow -->
+		<addNotNullConstraint tableName="miseq_run"
+			columnName="workflow" columnDataType="varchar(255)" />
+
+		<!-- remove autoincrement from id. Need to create a new temporary column, 
+			transfer the ids, drop the old id, then rename the column -->
+		<addColumn tableName="miseq_run">
+			<column name="tmp_id" type="bigint(20)" />
+		</addColumn>
+
+		<sql>
+			UPDATE miseq_run SET tmp_id = id;
+		</sql>
+
+		<dropColumn tableName="miseq_run" columnName="id" />
+
+		<renameColumn tableName="miseq_run" oldColumnName="tmp_id"
+			newColumnName="id" columnDataType="bigint(20)" />
+
+		<!-- Add FK from miseq_run to sequencing_run -->
 		<addForeignKeyConstraint constraintName="FK_MISEQ_RUN_SEQUENCING_RUN"
 			referencedTableName="sequencing_run" baseColumnNames="id"
 			baseTableName="miseq_run" referencedColumnNames="id" />
-
-		<addNotNullConstraint tableName="miseq_run"
-			columnName="workflow" columnDataType="varchar(255)"/>
 
 	</changeSet>
 </databaseChangeLog>
