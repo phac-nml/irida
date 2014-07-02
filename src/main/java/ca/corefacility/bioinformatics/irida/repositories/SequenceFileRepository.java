@@ -24,10 +24,10 @@ public interface SequenceFileRepository extends PagingAndSortingRepository<Seque
 	 * Get the collection of {@link SequenceFile} created as part of a
 	 * {@link MiseqRun}.
 	 * 
-	 * @param miseqRun
+	 * @param sequencingRun
 	 *            the run to load the files for.
 	 * @return the files created as part of a run.
 	 */
 	@Query("select f from SequenceFile f where f.sequencingRun = ?1")
-	public Set<SequenceFile> findSequenceFilesForSequencingRun(SequencingRun miseqRun);
+	public Set<SequenceFile> findSequenceFilesForSequencingRun(SequencingRun sequencingRun);
 }
