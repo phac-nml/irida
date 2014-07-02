@@ -40,6 +40,13 @@
 			miseq_run
 		</sql>
 
+		<sql>
+			INSERT INTO sequencing_run_AUD (id, REV, REVTYPE, description,
+			createdDate, modifiedDate)
+			SELECT id, REV, REVTYPE, description,
+			createdDate, modifiedDate FROM miseq_run_AUD;
+		</sql>
+
 		<!-- Update referenced column names -->
 		<renameColumn tableName="sequence_file" oldColumnName="miseqRun_id"
 			newColumnName="sequencingRun_id" columnDataType="bigint(20)" />
