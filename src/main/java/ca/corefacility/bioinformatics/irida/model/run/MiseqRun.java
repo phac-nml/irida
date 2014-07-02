@@ -26,6 +26,10 @@ public class MiseqRun extends SequencingRun implements IridaThing {
 
 	private String experimentName;
 
+	/*
+	 * Workflow is the only required field we're capturing from the Miseq Sample
+	 * Sheet reference guide.
+	 */
 	@NotNull
 	private String workflow;
 
