@@ -1,5 +1,5 @@
 
-package ca.corefacility.bioinformatics.irida.web.controller.api.miseqrun;
+package ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
