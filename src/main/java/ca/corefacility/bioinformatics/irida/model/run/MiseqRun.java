@@ -107,7 +107,7 @@ public class MiseqRun extends SequencingRun implements IridaThing {
 		if (obj == null) {
 			return false;
 		}
-		if (getClass() != obj.getClass()) {
+		if (!(obj instanceof MiseqRun)) {
 			return false;
 		}
 		final MiseqRun other = (MiseqRun) obj;
