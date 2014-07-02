@@ -87,6 +87,14 @@ public abstract class SequencingRun implements IridaThing, Comparable<Sequencing
 	public int compareTo(SequencingRun p) {
 		return modifiedDate.compareTo(p.modifiedDate);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getLabel(){
+		return "SequencingRun " + createdDate;
+	}
 
 	@Override
 	public int hashCode() {
