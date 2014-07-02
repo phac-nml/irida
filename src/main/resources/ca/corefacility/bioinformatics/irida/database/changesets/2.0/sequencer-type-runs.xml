@@ -53,5 +53,8 @@
 			referencedTableName="sequencing_run" baseColumnNames="id"
 			baseTableName="miseq_run" referencedColumnNames="id" />
 
+		<addNotNullConstraint tableName="miseq_run"
+			columnName="workflow" columnDataType="varchar(255)"/>
+
 	</changeSet>
 </databaseChangeLog>
