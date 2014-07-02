@@ -36,7 +36,7 @@
 		<!-- Transfer legacy data -->
 		<sql>
 			INSERT INTO sequencing_run (id, description, createdDate,
-			modifiedDate) SELECT id,description,createdDate,modifidiedDate FROM
+			modifiedDate) SELECT id,description,createdDate,modifiedDate FROM
 			miseq_run
 		</sql>
 
@@ -47,6 +47,11 @@
 		<dropColumn tableName="miseq_run_AUD" columnName="createdDate" />
 		<dropColumn tableName="miseq_run" columnName="modifiedDate" />
 		<dropColumn tableName="miseq_run_AUD" columnName="modifiedDate" />
+
+		<!-- Add FK to sequencing_run -->
+		<addForeignKeyConstraint constraintName="FK_MISEQ_RUN_SEQUENCING_RUN"
+			referencedTableName="sequencing_run" baseColumnNames="id"
+			baseTableName="miseq_run" referencedColumnNames="id" />
 
 	</changeSet>
 </databaseChangeLog>
