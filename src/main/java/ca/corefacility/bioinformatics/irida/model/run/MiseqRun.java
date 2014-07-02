@@ -93,7 +93,7 @@ public class MiseqRun extends SequencingRun implements IridaThing {
 
 	@Override
 	public String getLabel() {
-		return projectName;
+		return "MiseqRun: " + projectName;
 	}
 
 	@Override

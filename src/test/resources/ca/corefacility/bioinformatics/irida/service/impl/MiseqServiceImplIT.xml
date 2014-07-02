@@ -12,10 +12,15 @@
 	<sequencing_run id="1" createdDate="2013-07-18 14:20:19.0" />
 	<sequencing_run id="2" createdDate="2013-07-18 14:20:19.0" />
 	<sequencing_run id="3" createdDate="2013-07-18 14:20:19.0" />
+	<sequencing_run id="4" createdDate="2013-07-18 14:20:19.0" />
+	<sequencing_run id="5" createdDate="2013-07-18 14:20:19.0" />
 	
 	<miseq_run id="1" workflow="Test workflow"/>
 	<miseq_run id="2" workflow="Test workflow"/>
 	<miseq_run id="3" workflow="Test workflow"/>
+	
+	<sequencing_run_entity id="4" data="test data 4"/>
+	<sequencing_run_entity id="5" data="test data 5"/>
 
 	<sequence_file id="1" sequencingRun_id="3" filePath="/FileThatMayNotExist"
 		createdDate="2013-07-18 14:20:19.0" />

@@ -50,7 +50,7 @@ import com.google.common.collect.ImmutableList;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class MiseqServiceImplIT {
+public class SequencingRunServiceImplIT {
 	@Autowired
 	private SequencingRunService miseqRunService;
 	@Autowired
@@ -105,7 +105,7 @@ public class MiseqServiceImplIT {
 	@Test
 	public void testCreateMiseqRunAsSequencer() {
 		MiseqRun mr = new MiseqRun();
-		mr.setProjectName("Project name.");
+		mr.setWorkflow("Workflow name.");
 		SequencingRun returned = asRole(Role.ROLE_SEQUENCER).miseqRunService.create(mr);
 		assertNotNull("Created run was not assigned an ID.", returned.getId());
 	}
@@ -119,7 +119,7 @@ public class MiseqServiceImplIT {
 	@Test
 	public void testCreateMiseqRunAsAdmin() {
 		MiseqRun r = new MiseqRun();
-		r.setProjectName("some project");
+		r.setWorkflow("some workflow");
 		asRole(Role.ROLE_ADMIN).miseqRunService.create(r);
 	}
 	
@@ -166,7 +166,7 @@ public class MiseqServiceImplIT {
 		
 	}
 
-	private MiseqServiceImplIT asRole(Role r) {
+	private SequencingRunServiceImplIT asRole(Role r) {
 		User u = new User();
 		u.setUsername("fbristow");
 		u.setPassword(passwordEncoder.encode("Password1"));
