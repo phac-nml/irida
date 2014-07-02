@@ -128,7 +128,7 @@ public class SequencingRunServiceImplIT {
 	
 	@Test
 	public void testDeleteCascadeToSequenceFile(){
-		assertTrue("Sequence file should exist before",asRole(Role.ROLE_ADMIN).sequenceFileService.exists(1L));
+		assertTrue("Sequence file should exist before",asRole(Role.ROLE_ADMIN).sequenceFileService.exists(2L));
 		miseqRunService.delete(2L);
 		assertFalse("Sequence file should be deleted on cascade",asRole(Role.ROLE_ADMIN).sequenceFileService.exists(2L));
 	}
