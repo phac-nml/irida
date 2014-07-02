@@ -18,6 +18,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -29,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.SequencingRunEntity;
 import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -47,7 +50,7 @@ import com.google.common.collect.ImmutableList;
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
 		IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
 @ActiveProfiles("test")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class, WithSecurityContextTestExcecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/MiseqServiceImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class SequencingRunServiceImplIT {
@@ -139,6 +142,27 @@ public class SequencingRunServiceImplIT {
 		assertFalse("Sequence file should be deleted on cascade",asRole(Role.ROLE_ADMIN).sequenceFileService.exists(4L));
 		assertFalse("Sample should be deleted on cascade", sampleService.exists(2L));
 		assertTrue("This sample should not be removed", sampleService.exists(1L));
+	}
+	
+	@Test
+	@WithMockUser(username="fbristow", password="password1", roles="ADMIN")
+	public void testListAllSequencingRuns(){
+		Iterable<SequencingRun> findAll = miseqRunService.findAll();
+		assertNotNull(findAll);
+		boolean foundMiseq = false;
+		boolean foundTestEntity = false;
+		for(SequencingRun run : findAll){
+			assertNotNull(run);
+			if(run instanceof MiseqRun){
+				foundMiseq = true;
+			}
+			else if(run instanceof SequencingRunEntity){
+				foundTestEntity = true;
+			}
+		}
+		
+		assertTrue(foundMiseq);
+		assertTrue(foundTestEntity);
 	}
 	
 	/**
