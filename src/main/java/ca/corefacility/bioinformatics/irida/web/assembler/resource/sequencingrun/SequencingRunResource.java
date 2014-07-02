@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.web.assembler.resource.miseqrun;
+package ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencingrun;
 
 import javax.xml.bind.annotation.XmlElement;
 

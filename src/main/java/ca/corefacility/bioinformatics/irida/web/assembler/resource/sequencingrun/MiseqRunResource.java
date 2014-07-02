@@ -1,5 +1,5 @@
 
-package ca.corefacility.bioinformatics.irida.web.assembler.resource.miseqrun;
+package ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencingrun;
 
 import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 

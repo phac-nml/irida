@@ -17,11 +17,11 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.IdentifiableResource;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.miseqrun.MiseqRunResource;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.miseqrun.SequencingRunResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencingrun.MiseqRunResource;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencingrun.SequencingRunResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
 
 /**
