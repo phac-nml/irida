@@ -46,13 +46,21 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
 
+/**
+ * Test for SequencingRunServiceImplIT.
+ * NOTE: This class uses a separate table reset file at 
+ * /ca/corefacility/bioinformatics/irida/service/impl/SequencingRunServiceTableReset.xml
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
 		IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class, WithSecurityContextTestExcecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequencingRunServiceImplIT.xml")
-@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
+@DatabaseTearDown({"/ca/corefacility/bioinformatics/irida/service/impl/SequencingRunServiceTableReset.xml"})
 public class SequencingRunServiceImplIT {
 	@Autowired
 	private SequencingRunService miseqRunService;
