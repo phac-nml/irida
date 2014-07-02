@@ -313,6 +313,10 @@
 							<goal>verify</goal>
 						</goals>
 						<configuration>
+							<!-- Uncomment below to disable Galaxy integration tests -->
+							<!-- <excludes>
+                        		<exclude>/ca/corefacility/bioinformatics/irida/pipeline/upload/galaxy/**</exclude>
+                    		</excludes> -->
 							<argLine>${failsafeArgLine}</argLine>
 							<systemPropertyVariables>
 								<test.galaxy.revision>${test.galaxy.revision}</test.galaxy.revision>
