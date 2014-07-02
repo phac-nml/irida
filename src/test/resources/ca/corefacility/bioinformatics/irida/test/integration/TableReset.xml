@@ -4,7 +4,6 @@
 		referential integrity -->
 	<sequencing_run />
 	<miseq_run />
-	<sequencing_run_entity />
 	<host />
 	<sample />
 	<sequence_file />
@@ -40,7 +39,6 @@
 	<project_user_AUD />
 	<sequencing_run_AUD />
 	<miseq_run_AUD />
-	<sequencing_run_entity_AUD />
 	<sequence_file_AUD />
 	<sequence_file_properties_AUD />
 	<sequencefile_sample_AUD />
