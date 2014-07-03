@@ -2,6 +2,7 @@
 package ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencingrun;
 
 import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -22,6 +23,16 @@ public class MiseqRunResource extends SequencingRunResource {
     public MiseqRunResource(MiseqRun miseqRun) {
         super(miseqRun);
         this.miseqRun = miseqRun;
+    }
+    
+    /**
+     * {@inheritDoc}
+     * Overriding here to set the local resource as well as the parent one
+     */
+    @Override
+    public void setResource(SequencingRun resource) {
+    	miseqRun = (MiseqRun) resource;
+    	super.setResource(resource);
     }
     
     @XmlElement
