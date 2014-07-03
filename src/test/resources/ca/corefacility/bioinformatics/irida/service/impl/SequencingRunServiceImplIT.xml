@@ -9,17 +9,26 @@
 		phoneNumber="867-5309" username="fbristow" system_role="ROLE_ADMIN"
 		credentialsNonExpired="true" enabled="true" />
 
-	<miseq_run id="1" createdDate="2013-07-18 14:20:19.0" />
-	<miseq_run id="2" createdDate="2013-07-18 14:20:19.0" />
-	<miseq_run id="3" createdDate="2013-07-18 14:20:19.0" />
+	<sequencing_run id="1" createdDate="2013-07-18 14:20:19.0" />
+	<sequencing_run id="2" createdDate="2013-07-18 14:20:19.0" />
+	<sequencing_run id="3" createdDate="2013-07-18 14:20:19.0" />
+	<sequencing_run id="4" createdDate="2013-07-18 14:20:19.0" />
+	<sequencing_run id="5" createdDate="2013-07-18 14:20:19.0" />
+	
+	<miseq_run id="1" workflow="Test workflow"/>
+	<miseq_run id="2" workflow="Test workflow"/>
+	<miseq_run id="3" workflow="Test workflow"/>
+	
+	<sequencing_run_entity id="4" data="test data 4"/>
+	<sequencing_run_entity id="5" data="test data 5"/>
 
-	<sequence_file id="1" miseqRun_id="3" filePath="/FileThatMayNotExist"
+	<sequence_file id="1" sequencingRun_id="3" filePath="/FileThatMayNotExist"
 		createdDate="2013-07-18 14:20:19.0" />
-	<sequence_file id="2" miseqRun_id="2" filePath="/FileThatMayNotExist1"
+	<sequence_file id="2" sequencingRun_id="2" filePath="/FileThatMayNotExist1"
 		createdDate="2013-07-18 14:20:19.0" />
-	<sequence_file id="3" miseqRun_id="3" filePath="/FileThatMayNotExist2"
+	<sequence_file id="3" sequencingRun_id="3" filePath="/FileThatMayNotExist2"
 		createdDate="2013-07-18 14:20:19.0" />
-	<sequence_file id="4" miseqRun_id="3" filePath="/FileThatMayNotExist3"
+	<sequence_file id="4" sequencingRun_id="3" filePath="/FileThatMayNotExist3"
 		createdDate="2013-07-18 14:20:19.0" />
 
 	<sample id="1" sampleName="sample" sequencerSampleId="sample1"

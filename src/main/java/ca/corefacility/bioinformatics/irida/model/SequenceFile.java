@@ -35,6 +35,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 
@@ -96,8 +97,8 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	private Map<String, String> optionalProperties;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "miseqRun_id")
-	private MiseqRun miseqRun;
+	@JoinColumn(name = "sequencingRun_id")
+	private SequencingRun sequencingRun;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
 	private List<SampleSequenceFileJoin> samples;
@@ -332,12 +333,12 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 		this.fileRevisionNumber = fileRevisionNumber;
 	}
 
-	public MiseqRun getMiseqRun() {
-		return miseqRun;
+	public SequencingRun getSequencingRun() {
+		return sequencingRun;
 	}
 
-	public void setMiseqRun(MiseqRun miseqRun) {
-		this.miseqRun = miseqRun;
+	public void setSequencingRun(SequencingRun sequencingRun) {
+		this.sequencingRun = sequencingRun;
 	}
 	
 	/**

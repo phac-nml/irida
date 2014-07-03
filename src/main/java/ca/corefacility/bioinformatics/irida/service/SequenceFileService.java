@@ -12,10 +12,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 /**
@@ -65,14 +65,14 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 
 	/**
 	 * Get a {@link List} of {@link SequenceFile} references for a specific
-	 * {@link MiseqRun}.
+	 * {@link SequencingRun}.
 	 * 
-	 * @param miseqRun
-	 *            the {@link MiseqRun} to get the {@link SequenceFile}
+	 * @param sequencingRun
+	 *            the {@link SequencingRun} to get the {@link SequenceFile}
 	 *            references from.
 	 * @return the references to {@link SequenceFile}.
 	 */
-	public Set<SequenceFile> getSequenceFilesForMiseqRun(MiseqRun miseqRun);
+	public Set<SequenceFile> getSequenceFilesForSequencingRun(SequencingRun sequencingRun);
 
 	/**
 	 * Add an {@link OverrepresentedSequence} to a {@link SequenceFile}.

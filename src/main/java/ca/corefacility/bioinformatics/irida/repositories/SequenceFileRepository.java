@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.history.RevisionRepository;
 
-import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 
 /**
  * A repository to store information about sequence files. This repository will
@@ -21,12 +21,12 @@ public interface SequenceFileRepository extends PagingAndSortingRepository<Seque
 		RevisionRepository<SequenceFile, Long, Integer> {
 	/**
 	 * Get the collection of {@link SequenceFile} created as part of a
-	 * {@link MiseqRun}.
+	 * {@link SequencingRun}.
 	 * 
-	 * @param miseqRun
+	 * @param sequencingRun
 	 *            the run to load the files for.
 	 * @return the files created as part of a run.
 	 */
-	@Query("select f from SequenceFile f where f.miseqRun = ?1")
-	public Set<SequenceFile> findSequenceFilesForMiseqRun(MiseqRun miseqRun);
+	@Query("select f from SequenceFile f where f.sequencingRun = ?1")
+	public Set<SequenceFile> findSequenceFilesForSequencingRun(SequencingRun sequencingRun);
 }

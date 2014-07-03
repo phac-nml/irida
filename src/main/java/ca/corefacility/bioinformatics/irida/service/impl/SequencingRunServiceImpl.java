@@ -12,36 +12,36 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ca.corefacility.bioinformatics.irida.model.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.repositories.MiseqRunRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SequencingRunRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
+import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
 /**
  * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Service
-public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> implements MiseqRunService {
-	private static final Logger logger = LoggerFactory.getLogger(MiseqRunServiceImpl.class);
+public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRun> implements SequencingRunService {
+	private static final Logger logger = LoggerFactory.getLogger(SequencingRunServiceImpl.class);
 
 	private SampleSequenceFileJoinRepository ssfRepository;
 	private SampleRepository sampleRepository;
 	private SequenceFileRepository sequenceFileRepository;
 
-	protected MiseqRunServiceImpl() {
-		super(null, null, MiseqRun.class);
+	protected SequencingRunServiceImpl() {
+		super(null, null, SequencingRun.class);
 	}
 
 	@Autowired
-	public MiseqRunServiceImpl(MiseqRunRepository repository, SequenceFileRepository sequenceFileRepository,
+	public SequencingRunServiceImpl(SequencingRunRepository repository, SequenceFileRepository sequenceFileRepository,
 			SampleSequenceFileJoinRepository ssfRepository, SampleRepository sampleRepository, Validator validator) {
-		super(repository, validator, MiseqRun.class);
+		super(repository, validator, SequencingRun.class);
 		this.ssfRepository = ssfRepository;
 		this.sampleRepository = sampleRepository;
 		this.sequenceFileRepository = sequenceFileRepository;
@@ -52,10 +52,10 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 	 */
 	@Override
 	@Transactional
-	public void addSequenceFileToMiseqRun(MiseqRun run, SequenceFile file) {
+	public void addSequenceFileToSequencingRun(SequencingRun run, SequenceFile file) {
 		// attach a copy of the file to the current transaction. 
 		file = sequenceFileRepository.findOne(file.getId());
-		file.setMiseqRun(run);
+		file.setSequencingRun(run);
 		sequenceFileRepository.save(file);
 	}
 
@@ -64,13 +64,13 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public MiseqRun getMiseqRunForSequenceFile(SequenceFile file) {
+	public SequencingRun getSequencingRunForSequenceFile(SequenceFile file) {
 		SequenceFile loaded = sequenceFileRepository.findOne(file.getId());
-		return loaded.getMiseqRun();
+		return loaded.getSequencingRun();
 	}
 
 	@Override
-	public MiseqRun create(MiseqRun o) {
+	public SequencingRun create(SequencingRun o) {
 		return super.create(o);
 	}
 
@@ -82,13 +82,13 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 	public void delete(Long id) {
 		Set<Sample> referencedSamples = new HashSet<>();
 
-		logger.trace("Getting samples for miseq run " + id);
-		// Get the Files from the MiSeqRun to delete
-		MiseqRun read = read(id);
-		Set<SequenceFile> filesForMiseqRun = sequenceFileRepository.findSequenceFilesForMiseqRun(read);
+		logger.trace("Getting samples for SequencingRun " + id);
+		// Get the Files from the SequencingRun to delete
+		SequencingRun read = read(id);
+		Set<SequenceFile> filesForSequencingRun = sequenceFileRepository.findSequenceFilesForSequencingRun(read);
 
-		//Get the Samples used in the MiSeqRun that is going to be deleted
-		for(SequenceFile file : filesForMiseqRun){
+		//Get the Samples used in the SequencingRun that is going to be deleted
+		for(SequenceFile file : filesForSequencingRun){
 			Join<Sample, SequenceFile> sampleForSequenceFile = ssfRepository.getSampleForSequenceFile(file);
 			logger.trace("Sample " + sampleForSequenceFile.getSubject().getId() + " is used in this run");
 			referencedSamples.add(sampleForSequenceFile.getSubject());
@@ -96,7 +96,7 @@ public class MiseqRunServiceImpl extends CRUDServiceImpl<Long, MiseqRun> impleme
 		
 
 		// Delete the run
-		logger.trace("Deleting MiSeq run");
+		logger.trace("Deleting SequencingRun");
 		super.delete(id);
 
 		//Search if samples are empty.  If they are, delete the sample.

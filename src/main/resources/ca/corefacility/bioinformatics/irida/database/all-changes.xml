@@ -28,4 +28,5 @@
 	<include file="changesets/2.0/add-not-null-constraints.xml" relativeToChangelogFile="true"/>
 	<include file="changesets/2.0/organization.xml" relativeToChangelogFile="true"/>
 	<include file="changesets/2.0/add-organism-project.xml" relativeToChangelogFile="true" />
+	<include file="changesets/2.0/sequencer-type-runs.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
