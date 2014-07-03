@@ -47,13 +47,13 @@
 			createdDate, modifiedDate FROM miseq_run_AUD;
 		</sql>
 
-		<!-- Update referenced column names -->
-		<renameColumn tableName="sequence_file" oldColumnName="miseqRun_id"
-			newColumnName="sequencingRun_id" columnDataType="bigint(20)" />
-
 		<!-- Update FK from sequence_file -->
 		<dropForeignKeyConstraint baseTableName="sequence_file"
 			constraintName="FK_SEQUENCE_FILE_MISEQ_RUN" />
+
+		<!-- Update referenced column names -->
+		<renameColumn tableName="sequence_file" oldColumnName="miseqRun_id"
+			newColumnName="sequencingRun_id" columnDataType="bigint(20)" />
 
 		<addForeignKeyConstraint constraintName="FK_SEQUENCE_FILE_SEQUENCING_RUN"
 			referencedTableName="sequencing_run" baseColumnNames="sequencingRun_id"
