@@ -224,6 +224,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	public RelatedProject addRelatedProject(Project subject, Project relatedProject) {
+		if (subject.equals(relatedProject)) {
+			throw new IllegalArgumentException("Project cannot be related to itself");
+		}
 
 		try {
 			RelatedProject relation = relatedProjectRepository.save(new RelatedProject(subject, relatedProject));
