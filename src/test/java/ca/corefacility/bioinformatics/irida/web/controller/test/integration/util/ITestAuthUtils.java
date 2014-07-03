@@ -32,6 +32,7 @@ public class ITestAuthUtils {
 		ROLE_TO_USER = new HashMap<>();
 		ROLE_TO_USER.put(ROLE_ADMIN, new UsernamePasswordPair("admin", "password1"));
 		ROLE_TO_USER.put(ROLE_USER, new UsernamePasswordPair("fbristow", "password1"));
+		ROLE_TO_USER.put(ROLE_MANAGER, new UsernamePasswordPair("manager", "password1"));
 		ROLE_TO_USER.put(ROLE_SEQUENCER, new UsernamePasswordPair("uploader", "password1"));
 	}
 
