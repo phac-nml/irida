@@ -31,6 +31,7 @@ import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.web.config.processing.IridaWebMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.web.spring.view.FastaView;
 import ca.corefacility.bioinformatics.irida.web.spring.view.FastqView;
 import ca.corefacility.bioinformatics.irida.web.spring.view.GenbankView;
@@ -46,8 +47,8 @@ import com.google.common.collect.ImmutableMap;
  */
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.web.controller.api")
-@Import({ IridaApiServicesConfig.class, IridaRestApiSecurityConfig.class })
+@ComponentScan(basePackages = {"ca.corefacility.bioinformatics.irida.web.controller.api"})
+@Import({ IridaApiServicesConfig.class, IridaRestApiSecurityConfig.class, IridaWebMultithreadingConfig.class})
 public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 
 	private static final long TEN_GIGABYTES = 10737418240l;
