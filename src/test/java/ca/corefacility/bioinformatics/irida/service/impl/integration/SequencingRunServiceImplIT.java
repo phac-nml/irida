@@ -15,8 +15,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
@@ -35,16 +33,13 @@ import ca.corefacility.bioinformatics.irida.model.SequencingRunEntity;
 import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableList;
 
 /**
  * Test for SequencingRunServiceImplIT.
@@ -72,40 +67,45 @@ public class SequencingRunServiceImplIT {
 	private PasswordEncoder passwordEncoder;
 
 	@Test
+	@WithMockUser(username="fbristow", password="password1", roles="SEQUENCER")
 	public void testAddSequenceFileToMiseqRunAsSequencer() {
-		testAddSequenceFileToMiseqRunAsRole(Role.ROLE_SEQUENCER);
+		testAddSequenceFileToMiseqRun();
 	}
 
 	@Test
+	@WithMockUser(username="fbristow", password="password1", roles="ADMIN")
 	public void testAddSequenceFileToMiseqRunAsAdmin() {
-		testAddSequenceFileToMiseqRunAsRole(Role.ROLE_ADMIN);
+		testAddSequenceFileToMiseqRun();
 	}
 
 	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username="fbristow", password="password1", roles="USER")
 	public void testAddSequenceFileToMiseqRunAsUser() {
-		testAddSequenceFileToMiseqRunAsRole(Role.ROLE_USER);
+		testAddSequenceFileToMiseqRun();
 	}
 
 	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username="fbristow", password="password1", roles="MANAGER")
 	public void testAddSequenceFileToMiseqRunAsManager() {
-		testAddSequenceFileToMiseqRunAsRole(Role.ROLE_MANAGER);
+		testAddSequenceFileToMiseqRun();
 	}
 
-	private void testAddSequenceFileToMiseqRunAsRole(Role r) {
-		SequenceFile sf = asRole(r).sequenceFileService.read(1l);
-		SequencingRun miseqRun = asRole(r).miseqRunService.read(1l);
-		asRole(r).miseqRunService.addSequenceFileToSequencingRun(miseqRun, sf);
-		SequencingRun saved = asRole(r).miseqRunService.read(1l);
+	private void testAddSequenceFileToMiseqRun() {
+		SequenceFile sf = sequenceFileService.read(1l);
+		SequencingRun miseqRun = miseqRunService.read(1l);
+		miseqRunService.addSequenceFileToSequencingRun(miseqRun, sf);
+		SequencingRun saved = miseqRunService.read(1l);
 		Set<SequenceFile> sequenceFilesForMiseqRun = sequenceFileService.getSequenceFilesForSequencingRun(saved);
 		assertTrue("Saved miseq run should have seqence file", sequenceFilesForMiseqRun.contains(sf));
 	}
 
 	@Test
+	@WithMockUser(username="fbristow", password="password1", roles="ADMIN")
 	public void testGetMiseqRunForSequenceFile() {
-		SequenceFile sf = asRole(Role.ROLE_ADMIN).sequenceFileService.read(2l);
+		SequenceFile sf = sequenceFileService.read(2l);
 
 		try {
-			SequencingRun j = asRole(Role.ROLE_ADMIN).miseqRunService.getSequencingRunForSequenceFile(sf);
+			SequencingRun j = miseqRunService.getSequencingRunForSequenceFile(sf);
 			assertEquals("Join had wrong miseq run.", Long.valueOf(2l), j.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -114,40 +114,45 @@ public class SequencingRunServiceImplIT {
 	}
 
 	@Test
+	@WithMockUser(username="fbristow", password="password1", roles="SEQUENCER")
 	public void testCreateMiseqRunAsSequencer() {
 		MiseqRun mr = new MiseqRun();
 		mr.setWorkflow("Workflow name.");
-		SequencingRun returned = asRole(Role.ROLE_SEQUENCER).miseqRunService.create(mr);
+		SequencingRun returned = miseqRunService.create(mr);
 		assertNotNull("Created run was not assigned an ID.", returned.getId());
 	}
 
 	@Test
+	@WithMockUser(username="fbristow", password="password1", roles="SEQUENCER")
 	public void testReadMiseqRunAsSequencer() {
-		SequencingRun mr = asRole(Role.ROLE_SEQUENCER).miseqRunService.read(1L);
+		SequencingRun mr = miseqRunService.read(1L);
 		assertNotNull("Created run was not assigned an ID.", mr.getId());
 	}
 
 	@Test
+	@WithMockUser(username="fbristow", password="password1", roles="ADMIN")
 	public void testCreateMiseqRunAsAdmin() {
 		MiseqRun r = new MiseqRun();
 		r.setWorkflow("some workflow");
-		asRole(Role.ROLE_ADMIN).miseqRunService.create(r);
+		miseqRunService.create(r);
 	}
 	
 	@Test
+	@WithMockUser(username="fbristow", password="password1", roles="ADMIN")
 	public void testDeleteCascadeToSequenceFile(){
-		assertTrue("Sequence file should exist before",asRole(Role.ROLE_ADMIN).sequenceFileService.exists(2L));
+		assertTrue("Sequence file should exist before",sequenceFileService.exists(2L));
 		miseqRunService.delete(2L);
-		assertFalse("Sequence file should be deleted on cascade",asRole(Role.ROLE_ADMIN).sequenceFileService.exists(2L));
+		assertFalse("Sequence file should be deleted on cascade",sequenceFileService.exists(2L));
 	}
 	
 	@Test
+	@WithMockUser(username="fbristow", password="password1", roles="ADMIN")
 	public void testDeleteCascadeToSample(){
-		assertTrue("Sequence file should exist before",asRole(Role.ROLE_ADMIN).sequenceFileService.exists(1L));
+		assertTrue("Sequence file should exist before",sequenceFileService.exists(1L));
 		miseqRunService.delete(3L);
-		assertFalse("Sequence file should be deleted on cascade",asRole(Role.ROLE_ADMIN).sequenceFileService.exists(1L));
-		assertFalse("Sequence file should be deleted on cascade",asRole(Role.ROLE_ADMIN).sequenceFileService.exists(3L));
-		assertFalse("Sequence file should be deleted on cascade",asRole(Role.ROLE_ADMIN).sequenceFileService.exists(4L));
+		assertFalse("Sequence file should be deleted on cascade",sequenceFileService.exists(1L));
+		assertFalse("Sequence file should be deleted on cascade",sequenceFileService.exists(3L));
+		assertFalse("Sequence file should be deleted on cascade",sequenceFileService.exists(4L));
 		assertFalse("Sample should be deleted on cascade", sampleService.exists(2L));
 		assertTrue("This sample should not be removed", sampleService.exists(1L));
 	}
@@ -180,6 +185,7 @@ public class SequencingRunServiceImplIT {
 	 * @throws IOException
 	 */
 	@Test
+	@WithMockUser(username="fbristow", password="password1", roles="ADMIN")
 	public void testAddDetachedRunToSequenceFile() throws IOException{
 		final String SEQUENCE = "ACGTACGTN";
 		final byte[] FASTQ_FILE_CONTENTS = ("@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
@@ -189,24 +195,12 @@ public class SequencingRunServiceImplIT {
 		
 		SequenceFile sf = new SequenceFile();
 		sf.setFile(p);
-		Sample sample = asRole(Role.ROLE_ADMIN).sampleService.read(1L);
-		SequencingRun run = asRole(Role.ROLE_ADMIN).miseqRunService.read(2L);
+		Sample sample = sampleService.read(1L);
+		SequencingRun run = miseqRunService.read(2L);
 		
-		asRole(Role.ROLE_ADMIN).sequenceFileService.createSequenceFileInSample(sf, sample);
+		sequenceFileService.createSequenceFileInSample(sf, sample);
 		
 		miseqRunService.addSequenceFileToSequencingRun(run, sf);
 		
-	}
-
-	private SequencingRunServiceImplIT asRole(Role r) {
-		User u = new User();
-		u.setUsername("fbristow");
-		u.setPassword(passwordEncoder.encode("Password1"));
-		u.setSystemRole(r);
-		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
-				ImmutableList.of(r));
-		auth.setDetails(u);
-		SecurityContextHolder.getContext().setAuthentication(auth);
-		return this;
 	}
 }
