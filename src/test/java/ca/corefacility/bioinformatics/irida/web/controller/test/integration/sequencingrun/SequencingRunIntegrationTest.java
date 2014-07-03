@@ -3,8 +3,8 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.integration.seq
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asAdmin;
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asSequencer;
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
-import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.is;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,11 +39,21 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/sequencingrun/SequencingRunIntegrationTest.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class SequencingRunIntegrationTest {
+	
+	//TODO: When more run types are available test that they are represented in listing and reading
 
-	// @Test
-	public void testGetAllUsers() {
+	@Test
+	public void testListRuns() {
+		asAdmin().expect().and().body("resource.resources.description", hasItems("run 1", "run 2", "run 3")).and()
+				.body("resource.resources.workflow", hasItems("Test workflow 1", "Test workflow 2", "Test workflow 3"))
+				.and().when().get("/sequencingrun");
+	}
+
+	@Test
+	public void testGetRun() {
 		asAdmin().expect().body("resource.links.rel", hasItems("self")).and()
-				.body("resource.resources.username", hasItem("fbristow")).when().get("/users");
+				.body("resource.description", is("run 2")).and().body("resource.workflow", is("Test workflow 2"))
+				.when().get("/sequencingrun/2");
 	}
 
 	@Test
@@ -66,7 +76,7 @@ public class SequencingRunIntegrationTest {
 		asSequencer().given().body(run).expect().response().statusCode(HttpStatus.SC_CREATED).when()
 				.post("/sequencingrun/miseqrun");
 	}
-	
+
 	@Test
 	public void testPostSequencingRunFail() {
 		Map<String, String> run = createRun();
