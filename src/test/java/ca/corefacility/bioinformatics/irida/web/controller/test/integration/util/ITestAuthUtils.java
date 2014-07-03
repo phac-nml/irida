@@ -22,6 +22,7 @@ public class ITestAuthUtils {
 	private static final String ROLE_USER = "user";
 	private static final String ROLE_MANAGER = "manager";
 	private static final String ROLE_ADMIN = "admin";
+	private static final String ROLE_SEQUENCER = "sequencer";
 	
 	private static final String CLIENT_ID = "testClient";
 	private static final String CLIENT_SECRET = "testClientSecret";
@@ -31,7 +32,7 @@ public class ITestAuthUtils {
 		ROLE_TO_USER = new HashMap<>();
 		ROLE_TO_USER.put(ROLE_ADMIN, new UsernamePasswordPair("admin", "password1"));
 		ROLE_TO_USER.put(ROLE_USER, new UsernamePasswordPair("fbristow", "password1"));
-		ROLE_TO_USER.put(ROLE_MANAGER, new UsernamePasswordPair("manager", "password1"));
+		ROLE_TO_USER.put(ROLE_SEQUENCER, new UsernamePasswordPair("uploader", "password1"));
 	}
 
 	private static RequestSpecification asRole(String role) {
@@ -78,6 +79,15 @@ public class ITestAuthUtils {
 	 */
 	public static RequestSpecification asAdmin() {
 		return asRole(ROLE_ADMIN);
+	}
+	
+	/**
+	 * Execute an HTTP request as a sequencer.
+	 * 
+	 * @return a {@link RequestSpecification} with admin privileges.
+	 */
+	public static RequestSpecification asSequencer() {
+		return asRole(ROLE_SEQUENCER);
 	}
 
 	private static class UsernamePasswordPair {
