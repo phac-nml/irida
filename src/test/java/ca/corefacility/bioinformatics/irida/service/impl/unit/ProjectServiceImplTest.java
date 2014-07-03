@@ -38,6 +38,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.RelatedProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -53,6 +54,7 @@ public class ProjectServiceImplTest {
 	private UserRepository userRepository;
 	private ProjectUserJoinRepository pujRepository;
 	private ProjectSampleJoinRepository psjRepository;
+	private RelatedProjectRepository relatedProjectRepository;
 	private Validator validator;
 
 	@Before
@@ -63,8 +65,9 @@ public class ProjectServiceImplTest {
 		userRepository = mock(UserRepository.class);
 		pujRepository = mock(ProjectUserJoinRepository.class);
 		psjRepository = mock(ProjectSampleJoinRepository.class);
+		relatedProjectRepository = mock(RelatedProjectRepository.class);
 		projectService = new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
-				psjRepository, validator);
+				psjRepository, relatedProjectRepository, validator);
 	}
 
 	@After
