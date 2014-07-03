@@ -40,7 +40,6 @@ public class ModelLookup {
 		classes.put(Sample.class, SampleResource.class);
 		classes.put(User.class, UserResource.class);
 		classes.put(SequenceFile.class, SequenceFileResource.class);
-		classes.put(SequencingRun.class, SequencingRunResource.class);
 		classes.put(MiseqRun.class, MiseqRunResource.class);
 	}
 
