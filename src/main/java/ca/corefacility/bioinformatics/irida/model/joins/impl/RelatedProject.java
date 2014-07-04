@@ -17,9 +17,18 @@ import org.hibernate.envers.Audited;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
+/**
+ * Relationship between two {@link Project}s. A {@link Project} can have a list
+ * of {@link RelatedProject}s where it will search for {@link Sample}s.
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @Entity
-@Table(name="related_project", uniqueConstraints = @UniqueConstraint(columnNames = { "subject_id", "relatedProject_id" }))
+@Table(name = "related_project", uniqueConstraints = @UniqueConstraint(columnNames = { "subject_id",
+		"relatedProject_id" }))
 @Audited
 public class RelatedProject implements Join<Project, Project> {
 
@@ -88,7 +97,6 @@ public class RelatedProject implements Join<Project, Project> {
 	@Override
 	public void setObject(Project object) {
 		this.relatedProject = object;
-
 	}
 
 	@Override
