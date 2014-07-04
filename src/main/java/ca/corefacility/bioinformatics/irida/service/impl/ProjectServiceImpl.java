@@ -251,8 +251,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<RelatedProjectJoin> getProjectsRelatedToProject(Project project) {
-		return relatedProjectRepository.getProjectsRelatedToProject(project);
+	public List<RelatedProjectJoin> getReverseRelatedProjects(Project project) {
+		return relatedProjectRepository.getReverseRelatedProjects(project);
 	}
 
 	/**

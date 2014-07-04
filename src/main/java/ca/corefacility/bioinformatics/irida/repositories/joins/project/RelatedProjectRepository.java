@@ -42,5 +42,5 @@ public interface RelatedProjectRepository extends CrudRepository<RelatedProjectJ
 	 * @return A List of {@link RelatedProjectJoin}s
 	 */
 	@Query("FROM RelatedProjectJoin r WHERE r.relatedProject=?")
-	public List<RelatedProjectJoin> getProjectsRelatedToProject(Project project);
+	public List<RelatedProjectJoin> getReverseRelatedProjects(Project project);
 }

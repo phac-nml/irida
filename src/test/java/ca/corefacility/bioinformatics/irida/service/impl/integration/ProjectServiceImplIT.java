@@ -334,7 +334,7 @@ public class ProjectServiceImplIT {
 	@WithMockUser(username="user2", password="password1", roles="USER")
 	public void testGetProjectsRelatedTo(){
 		Project p8 = projectService.read(8l);
-		List<RelatedProjectJoin> relatedProjects = projectService.getProjectsRelatedToProject(p8);
+		List<RelatedProjectJoin> relatedProjects = projectService.getReverseRelatedProjects(p8);
 		assertFalse(relatedProjects.isEmpty());
 		
 		for(RelatedProjectJoin rp : relatedProjects){
