@@ -68,7 +68,6 @@ public class FastqcFileProcessor implements FileProcessor {
 	 */
 	@Override
 	public SequenceFile process(final SequenceFile sequenceFile) throws FileProcessorException {
-		// sequenceFile = sequenceFileRepository.findOne(sequenceFile.getId());
 		Path fileToProcess = sequenceFile.getFile();
 		AnalysisFastQC analysis = new AnalysisFastQC(ImmutableSet.of(sequenceFile));
 		try {
