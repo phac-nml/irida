@@ -94,7 +94,7 @@ public class FastqcFileProcessor implements FileProcessor {
 			Set<OverrepresentedSequence> overrepresentedSequences = handleOverRepresentedSequences(overRep);
 
 			for (OverrepresentedSequence os : overrepresentedSequences) {
-				os.setSequenceFile(sequenceFile);
+				os.setAnalysisFastQC(analysis);
 				overrepresentedSequenceRepository.save(os);
 			}
 

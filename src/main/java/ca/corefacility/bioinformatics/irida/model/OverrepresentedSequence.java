@@ -19,6 +19,8 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+
 /**
  * A {@link SequenceFile} may have 0 or more over-represented sequences.
  * 
@@ -35,26 +37,26 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 
 	@NotNull(message = "{overrepresented.sequence.sequence.notnull}")
 	private String sequence;
-	
+
 	@NotNull(message = "{overrepresented.sequence.sequence.count.notnull}")
 	private int overrepresentedSequenceCount;
-	
+
 	@NotNull(message = "{overrepresented.sequence.percentage.notnull}")
 	private BigDecimal percentage;
-	
+
 	@NotNull(message = "{overrepresented.sequence.possibleSource.notnull}")
 	private String possibleSource;
-	
+
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "sequenceFile_id")
-	private SequenceFile sequenceFile;
+	@JoinColumn(name = "analysis_id")
+	private AnalysisFastQC analysis;
 
 	public OverrepresentedSequence() {
 		this.createdDate = new Date();
@@ -148,12 +150,12 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 		return createdDate;
 	}
 
-	public SequenceFile getSequenceFile() {
-		return sequenceFile;
+	public AnalysisFastQC getAnalysisFastQC() {
+		return analysis;
 	}
 
-	public void setSequenceFile(SequenceFile sequenceFile) {
-		this.sequenceFile = sequenceFile;
+	public void setAnalysisFastQC(AnalysisFastQC analysis) {
+		this.analysis = analysis;
 	}
 
 }
