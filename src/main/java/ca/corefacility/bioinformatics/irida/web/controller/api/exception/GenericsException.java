@@ -13,4 +13,13 @@ public class GenericsException extends RuntimeException {
 	public GenericsException(String message) {
         super(message);
     }
+
+	/**
+	 * Construct a GenericsException with a given message and cause
+	 * @param message Why the exception is being thrown
+	 * @param cause What caused th exception
+	 */
+	public GenericsException(String message, Throwable cause) {
+        super(message,cause);
+    }
 }

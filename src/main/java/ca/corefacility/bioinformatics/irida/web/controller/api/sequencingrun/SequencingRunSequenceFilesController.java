@@ -1,5 +1,5 @@
 
-package ca.corefacility.bioinformatics.irida.web.controller.api.miseqrun;
+package ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
@@ -16,10 +16,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import ca.corefacility.bioinformatics.irida.model.MiseqRun;
+import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.service.MiseqRunService;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
 import com.google.common.net.HttpHeaders;
 
@@ -28,9 +29,9 @@ import com.google.common.net.HttpHeaders;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Controller
-public class MiseqRunSequenceFilesController {
+public class SequencingRunSequenceFilesController {
 
-    private MiseqRunService miseqRunService;
+    private SequencingRunService miseqRunService;
     private SequenceFileService sequencefileService;
     /**
      * key used in map when adding sequencefile to miseqrun.
@@ -38,7 +39,7 @@ public class MiseqRunSequenceFilesController {
     public static final String SEQUENCEFILE_ID_KEY = "sequenceFileId";
     
     @Autowired
-    public MiseqRunSequenceFilesController(MiseqRunService service, SequenceFileService sequencefileService) {
+    public SequencingRunSequenceFilesController(SequencingRunService service, SequenceFileService sequencefileService) {
         this.miseqRunService = service;
         this.sequencefileService = sequencefileService;
     }
@@ -49,8 +50,8 @@ public class MiseqRunSequenceFilesController {
      * @param representation the JSON key-value pair that contains the identifier for the sequenceFile
      * @return a response indicating that the collection was modified.
      */
-    @RequestMapping(value = "/miseqrun/{miseqrunId}/sequenceFiles", method = RequestMethod.POST)
-    public ResponseEntity<String> addSequenceFileToMiseqRun(@PathVariable Long miseqrunId,
+    @RequestMapping(value = "/sequencingrun/{sequencingrunId}/sequenceFiles", method = RequestMethod.POST)
+    public ResponseEntity<String> addSequenceFileToMiseqRun(@PathVariable Long sequencingrunId,
                                                    @RequestBody Map<String, String> representation) {
         
         String stringId = representation.get(SEQUENCEFILE_ID_KEY);
@@ -58,11 +59,11 @@ public class MiseqRunSequenceFilesController {
         // first, get the SequenceFile
         SequenceFile file = sequencefileService.read(seqId);
         // then, get the miseq run
-        MiseqRun run = miseqRunService.read(miseqrunId);
+        SequencingRun run = miseqRunService.read(sequencingrunId);
         // then add the user to the project with the specified role.
-        miseqRunService.addSequenceFileToMiseqRun(run, file);
+        miseqRunService.addSequenceFileToSequencingRun(run, file);
 
-        String location = linkTo(MiseqRunController.class).slash(miseqrunId).slash("sequenceFiles").slash(seqId).withSelfRel().getHref();
+        String location = linkTo(SequencingRunController.class).slash(sequencingrunId).slash("sequenceFiles").slash(seqId).withSelfRel().getHref();
 
         MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
         responseHeaders.add(HttpHeaders.LOCATION, location);
