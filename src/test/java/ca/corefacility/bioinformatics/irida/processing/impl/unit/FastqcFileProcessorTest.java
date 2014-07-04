@@ -19,13 +19,15 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
+import ca.corefacility.bioinformatics.irida.repositories.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.OverrepresentedSequenceRepository;
-import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 
 /**
  * Tests for {@link FastqcFileProcessor}.
@@ -35,8 +37,9 @@ import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
  */
 public class FastqcFileProcessorTest {
 	private FastqcFileProcessor fileProcessor;
-	private SequenceFileRepository sequenceFileRepository;
+	private AnalysisRepository analysisRepository;
 	private OverrepresentedSequenceRepository overrepresentedSequenceRepository;
+	private MessageSource messageSource;
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessorTest.class);
 
 	private static final String SEQUENCE = "ACGTACGTN";
@@ -46,9 +49,10 @@ public class FastqcFileProcessorTest {
 
 	@Before
 	public void setUp() {
-		sequenceFileRepository = mock(SequenceFileRepository.class);
+		analysisRepository = mock(AnalysisRepository.class);
 		overrepresentedSequenceRepository = mock(OverrepresentedSequenceRepository.class);
-		fileProcessor = new FastqcFileProcessor(sequenceFileRepository, overrepresentedSequenceRepository);
+		messageSource = mock(MessageSource.class);
+		fileProcessor = new FastqcFileProcessor(overrepresentedSequenceRepository, analysisRepository, messageSource);
 	}
 
 	@Test(expected = FileProcessorException.class)
@@ -59,7 +63,6 @@ public class FastqcFileProcessorTest {
 		Files.write(fasta, FASTA_FILE_CONTENTS.getBytes());
 		SequenceFile sf = new SequenceFile(fasta);
 		Runtime.getRuntime().addShutdownHook(new DeleteFileOnExit(fasta));
-		when(sequenceFileRepository.findOne(any())).thenReturn(sf);
 
 		fileProcessor.process(sf);
 	}
@@ -73,10 +76,9 @@ public class FastqcFileProcessorTest {
 
 		OverrepresentedSequence ovrs = new OverrepresentedSequence(SEQUENCE, 2, BigDecimal.valueOf(100.), "");
 		when(overrepresentedSequenceRepository.save(any(OverrepresentedSequence.class))).thenReturn(ovrs);
-		ArgumentCaptor<SequenceFile> argument = ArgumentCaptor.forClass(SequenceFile.class);
+		ArgumentCaptor<AnalysisFastQC> argument = ArgumentCaptor.forClass(AnalysisFastQC.class);
 
 		SequenceFile sf = new SequenceFile(fastq);
-		when(sequenceFileRepository.findOne(any())).thenReturn(sf);
 		sf.setId(1L);
 		try {
 			fileProcessor.process(sf);
@@ -85,8 +87,8 @@ public class FastqcFileProcessorTest {
 			fail();
 		}
 
-		verify(sequenceFileRepository).save(argument.capture());
-		SequenceFile updated = argument.getValue();
+		verify(analysisRepository).save(argument.capture());
+		AnalysisFastQC updated = argument.getValue();
 		assertEquals("GC Content was not set correctly.", Short.valueOf((short) 50), updated.getGcContent());
 		assertEquals("Filtered sequences was not 0.", Integer.valueOf(0), updated.getFilteredSequences());
 		assertEquals("File type was not correct.", "Conventional base calls", updated.getFileType());

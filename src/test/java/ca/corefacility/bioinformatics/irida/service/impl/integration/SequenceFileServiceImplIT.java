@@ -79,14 +79,6 @@ public class SequenceFileServiceImplIT {
 
 	@Before
 	public void setUp() throws IOException {
-		/*User u = new User();
-		u.setUsername("fbristow");
-		u.setPassword(passwordEncoder.encode("Password1"));
-		u.setSystemRole(Role.ROLE_SEQUENCER);
-		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
-				ImmutableList.of(Role.ROLE_SEQUENCER));
-		auth.setDetails(u);
-		SecurityContextHolder.getContext().setAuthentication(auth);*/
 		Files.createDirectories(baseDirectory);
 	}
 

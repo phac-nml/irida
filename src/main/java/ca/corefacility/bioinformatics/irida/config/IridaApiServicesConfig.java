@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.config;
 
 import javax.validation.Validator;
 
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +17,8 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
+import ca.corefacility.bioinformatics.irida.repositories.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.OverrepresentedSequenceRepository;
-import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 /**
@@ -31,12 +32,19 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 		GalaxyAPIConfig.class, IridaOAuth2Config.class })
 @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.service")
 public class IridaApiServicesConfig {
+	
+	@Bean
+	public MessageSource messageSource() {
+		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+		messageSource.setBasename("ca.corefacility.bioinformatics.irida.messages.messages");
+		return messageSource;
+	}
 
 	@Bean
-	public FileProcessingChain fileProcessorChain(SequenceFileRepository sequenceFileRepository,
+	public FileProcessingChain fileProcessorChain(AnalysisRepository analysisRepository, 
 			SequenceFileService sequenceFileService, OverrepresentedSequenceRepository overrepresentedSequenceRepository) {
 		return new DefaultFileProcessingChain(new GzipFileProcessor(sequenceFileService), new FastqcFileProcessor(
-				sequenceFileRepository, overrepresentedSequenceRepository));
+				overrepresentedSequenceRepository, analysisRepository, messageSource()));
 	}
 
 	@Bean
