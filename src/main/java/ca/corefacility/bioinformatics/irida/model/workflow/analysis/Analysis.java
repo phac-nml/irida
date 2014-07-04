@@ -67,13 +67,19 @@ public class Analysis implements IridaThing {
 	@CollectionTable(name = "analysis_properties", joinColumns = @JoinColumn(name = "analysis_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
 			"analysis_id", "property_key" }, name = "UK_ANALYSIS_PROPERTY_KEY"))
 	private Map<String, String> additionalProperties;
-	
+
+	@NotNull
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	private Set<SequenceFile> inputFiles;
-
-	public Analysis() {
+	
+	private Analysis() {
 		this.createdDate = new Date();
 		this.modifiedDate = createdDate;
+	}
+
+	public Analysis(Set<SequenceFile> inputFiles) {
+		this();
+		this.inputFiles = inputFiles;
 	}
 
 	public int hashCode() {

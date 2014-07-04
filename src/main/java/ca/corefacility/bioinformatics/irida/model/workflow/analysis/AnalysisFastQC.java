@@ -1,11 +1,19 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+
+import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 
 /**
  * Specific implementation of {@link Analysis} for storing properties created by
@@ -45,8 +53,18 @@ public class AnalysisFastQC extends Analysis {
 	@Lob
 	private byte[] duplicationLevelChart;
 
-	public AnalysisFastQC() {
-		super();
+	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.REMOVE, CascadeType.MERGE }, mappedBy = "analysis", orphanRemoval = true)
+	private Set<OverrepresentedSequence> overrepresentedSequences;
+
+	/**
+	 * Required for hibernate, should not be used anywhere else, so private.
+	 */
+	private AnalysisFastQC() {
+		super(null);
+	}
+
+	public AnalysisFastQC(Set<SequenceFile> inputFiles) {
+		super(inputFiles);
 	}
 
 	/**
@@ -153,5 +171,13 @@ public class AnalysisFastQC extends Analysis {
 
 	public void setTotalBases(Long totalBases) {
 		this.totalBases = totalBases;
+	}
+
+	public Set<OverrepresentedSequence> getOverrepresentedSequences() {
+		return overrepresentedSequences;
+	}
+
+	public void setOverrepresentedSequences(Set<OverrepresentedSequence> overrepresentedSequences) {
+		this.overrepresentedSequences = overrepresentedSequences;
 	}
 }

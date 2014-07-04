@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
+import com.google.common.collect.ImmutableSet;
+
 import uk.ac.babraham.FastQC.Graphs.LineGraph;
 import uk.ac.babraham.FastQC.Graphs.QualityBoxPlot;
 import uk.ac.babraham.FastQC.Modules.BasicStats;
@@ -68,7 +70,7 @@ public class FastqcFileProcessor implements FileProcessor {
 	public SequenceFile process(final SequenceFile sequenceFile) throws FileProcessorException {
 		// sequenceFile = sequenceFileRepository.findOne(sequenceFile.getId());
 		Path fileToProcess = sequenceFile.getFile();
-		AnalysisFastQC analysis = new AnalysisFastQC();
+		AnalysisFastQC analysis = new AnalysisFastQC(ImmutableSet.of(sequenceFile));
 		try {
 			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory
 					.getSequenceFile(fileToProcess.toFile());
@@ -102,6 +104,7 @@ public class FastqcFileProcessor implements FileProcessor {
 			analysis.setDescription(messageSource.getMessage("fastqc.file.processor.analysis.description", null,
 					LocaleContextHolder.getLocale()));
 			analysis.setExecutionManagerAnalysisId("internal-fastqc");
+
 			analysisRepository.save(analysis);
 		} catch (Exception e) {
 			logger.error("FastQC failed to process the sequence file. Stack trace follows.", e);

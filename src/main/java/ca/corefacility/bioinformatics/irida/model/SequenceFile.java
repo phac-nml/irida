@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -87,9 +86,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
 	private List<SampleSequenceFileJoin> samples;
-
-	@OneToMany(fetch = FetchType.LAZY, cascade =  { CascadeType.REMOVE, CascadeType.MERGE }, mappedBy = "sequenceFile", orphanRemoval = true)
-	private Set<OverrepresentedSequence> overrepresentedSequences;
 
 	public SequenceFile() {
 		createdDate = new Date();
