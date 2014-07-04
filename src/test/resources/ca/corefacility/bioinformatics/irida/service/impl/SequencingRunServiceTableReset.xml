@@ -9,10 +9,16 @@
 	<sample />
 	<sequence_file />
 	<sequence_file_properties />
-	<overrepresented_sequence />
 	<system_role />
 	<user />
 	<project />
+
+	<analysis />
+	<analysis_fastqc />
+	<overrepresented_sequence />
+	<analysis_properties />
+	<analysis_sequence_file />
+	<overrepresented_sequence />
 
 	<client_details />
 	<client_role />
@@ -58,4 +64,8 @@
 	<client_details_authorities_AUD />
 	<client_role_AUD />
 	<client_details_AUD />
+	<analysis_AUD />
+	<analysis_fastqc_AUD />
+	<analysis_properties_AUD />
+	<analysis_sequence_file_AUD />
 </dataset>
