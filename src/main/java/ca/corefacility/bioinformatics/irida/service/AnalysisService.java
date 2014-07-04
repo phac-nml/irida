@@ -23,4 +23,17 @@ public interface AnalysisService extends CRUDService<Long, Analysis> {
 	 *         .
 	 */
 	public Set<Analysis> getAnalysesForSequenceFile(SequenceFile file);
+
+	/**
+	 * Get all types of {@link Analysis} generated for a specific
+	 * {@link SequenceFile} with a specific subtype of {@link Analysis}.
+	 * 
+	 * @param file
+	 *            the {@link SequenceFile} to get {@link Analysis} objects for.
+	 * @param analysisType
+	 *            the specific subtype of {@link Analysis} to load.
+	 * @return the {@link Analysis} objects created for the {@link SequenceFile}
+	 *         .
+	 */
+	public <T extends Analysis> Set<T> getAnalysesForSequenceFile(SequenceFile file, Class<T> analysisType);
 }

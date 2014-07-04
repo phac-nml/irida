@@ -44,7 +44,6 @@ import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -148,14 +147,11 @@ public class SequenceFileServiceImplIT {
 		sf = asRole(Role.ROLE_ADMIN, "tom").sequenceFileService.read(sf.getId());
 		assertEquals("Wrong version number after processing.", Long.valueOf(1), sf.getFileRevisionNumber());
 		
-		Set<Analysis> analyses = asRole(Role.ROLE_ADMIN, "tom").analysisService.getAnalysesForSequenceFile(sf);
+		Set<AnalysisFastQC> analyses = asRole(Role.ROLE_ADMIN, "tom").analysisService.getAnalysesForSequenceFile(sf, AnalysisFastQC.class);
 		assertEquals("Only one analysis should be generated automatically.", 1, analyses.size());
-		Analysis analysis = analyses.iterator().next();
+		AnalysisFastQC analysis = analyses.iterator().next();
 		
-		assertTrue("The only analysis should be a FastQC analysis", analysis instanceof AnalysisFastQC);
-		AnalysisFastQC fastqcAnalysis = (AnalysisFastQC) analysis;
-
-		Set<OverrepresentedSequence> overrepresentedSequences = fastqcAnalysis.getOverrepresentedSequences();
+		Set<OverrepresentedSequence> overrepresentedSequences = analysis.getOverrepresentedSequences();
 		assertNotNull("No overrepresented sequences were found.", overrepresentedSequences);
 		assertEquals("Wrong number of overrepresented sequences were found.", 1, overrepresentedSequences.size());
 		OverrepresentedSequence overrepresentedSequence = overrepresentedSequences.iterator().next();
@@ -202,14 +198,11 @@ public class SequenceFileServiceImplIT {
 		assertEquals("Wrong version number after processing.", Long.valueOf(2L), sf.getFileRevisionNumber());
 		assertFalse("File name is still gzipped.", sf.getFile().getFileName().toString().endsWith(".gz"));
 		
-		Set<Analysis> analyses = asRole(Role.ROLE_ADMIN, "tom").analysisService.getAnalysesForSequenceFile(sf);
+		Set<AnalysisFastQC> analyses = asRole(Role.ROLE_ADMIN, "tom").analysisService.getAnalysesForSequenceFile(sf, AnalysisFastQC.class);
 		assertEquals("Only one analysis should be generated automatically.", 1, analyses.size());
-		Analysis analysis = analyses.iterator().next();
-		
-		assertTrue("The only analysis should be a FastQC analysis", analysis instanceof AnalysisFastQC);
-		AnalysisFastQC fastqcAnalysis = (AnalysisFastQC) analysis;
+		AnalysisFastQC analysis = analyses.iterator().next();
 
-		Set<OverrepresentedSequence> overrepresentedSequences = fastqcAnalysis.getOverrepresentedSequences();
+		Set<OverrepresentedSequence> overrepresentedSequences = analysis.getOverrepresentedSequences();
 		assertNotNull("No overrepresented sequences were found.", overrepresentedSequences);
 		assertEquals("Wrong number of overrepresented sequences were found.", 1, overrepresentedSequences.size());
 		OverrepresentedSequence overrepresentedSequence = overrepresentedSequences.iterator().next();
