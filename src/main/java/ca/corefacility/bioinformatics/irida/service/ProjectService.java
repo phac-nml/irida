@@ -172,6 +172,14 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	public List<RelatedProjectJoin> getRelatedProjects(Project project);
 	
 	/**
+	 * Get all {@link RelatedProjectJoin}s where the given Project is the relatedProject property.
+	 * @param project The child project
+	 * @return A list of {@link RelatedProjectJoin}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	public List<RelatedProjectJoin> getProjectsRelatedToProject(Project project);
+	
+	/**
 	 * Remove a {@link RelatedProjectJoin}
 	 * @param relatedProject The {@link RelatedProjectJoin} to remove
 	 */

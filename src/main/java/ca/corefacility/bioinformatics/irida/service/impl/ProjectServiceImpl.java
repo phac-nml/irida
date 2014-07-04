@@ -229,7 +229,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		}
 
 		try {
-			RelatedProjectJoin relation = relatedProjectRepository.save(new RelatedProjectJoin(subject, relatedProject));
+			RelatedProjectJoin relation = relatedProjectRepository
+					.save(new RelatedProjectJoin(subject, relatedProject));
 			return relation;
 		} catch (DataIntegrityViolationException e) {
 			throw new EntityExistsException("Project " + subject.getLabel() + " is already related to "
@@ -244,6 +245,14 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	public List<RelatedProjectJoin> getRelatedProjects(Project project) {
 		return relatedProjectRepository.getRelatedProjectsForProject(project);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<RelatedProjectJoin> getProjectsRelatedToProject(Project project) {
+		return relatedProjectRepository.getProjectsRelatedToProject(project);
 	}
 
 	/**

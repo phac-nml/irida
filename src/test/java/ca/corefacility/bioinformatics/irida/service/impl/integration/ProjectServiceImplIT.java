@@ -1,8 +1,10 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import java.util.Collection;
@@ -313,6 +315,32 @@ public class ProjectServiceImplIT {
 		Project p8 = projectService.read(8l);
 		
 		projectService.addRelatedProject(p6, p8);
+	}
+	
+	@Test
+	@WithMockUser(username="user2", password="password1", roles="USER")
+	public void testGetRelatedProjects(){
+		Project p6 = projectService.read(6l);
+		List<RelatedProjectJoin> relatedProjects = projectService.getRelatedProjects(p6);
+		assertFalse(relatedProjects.isEmpty());
+		
+		for(RelatedProjectJoin rp : relatedProjects){
+			assertEquals(p6, rp.getSubject());
+			assertNotEquals(p6,rp.getObject());
+		}	
+	}
+	
+	@Test
+	@WithMockUser(username="user2", password="password1", roles="USER")
+	public void testGetProjectsRelatedTo(){
+		Project p8 = projectService.read(8l);
+		List<RelatedProjectJoin> relatedProjects = projectService.getProjectsRelatedToProject(p8);
+		assertFalse(relatedProjects.isEmpty());
+		
+		for(RelatedProjectJoin rp : relatedProjects){
+			assertEquals(p8, rp.getObject());
+			assertNotEquals(p8,rp.getSubject());
+		}	
 	}
 	
 	@Test(expected=AccessDeniedException.class)
