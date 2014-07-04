@@ -160,7 +160,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @param relatedProject The project to be added to the parent
 	 * @return a {@link RelatedProjectJoin} describing the relationship
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#subject,'isProjectOwner') and hasPermission(#relatedProject,'isProjectOwner')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#subject,'isProjectOwner') and hasPermission(#relatedProject,'canReadProject')")
 	public RelatedProjectJoin addRelatedProject(Project subject, Project relatedProject);
 	
 	/**

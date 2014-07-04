@@ -345,11 +345,11 @@ public class ProjectServiceImplIT {
 	
 	@Test(expected=AccessDeniedException.class)
 	@WithMockUser(username="user2", password="password1", roles="USER")
-	public void testAddRelatedProjectNotOwner(){
+	public void testAddRelatedProjectNotAllowed(){
 		Project p6 = projectService.read(6l);
-		Project p4 = projectService.read(4l);
+		Project p3 = projectService.read(3l);
 		
-		projectService.addRelatedProject(p6, p4);
+		projectService.addRelatedProject(p6, p3);
 	}
 
 	private Project p() {
