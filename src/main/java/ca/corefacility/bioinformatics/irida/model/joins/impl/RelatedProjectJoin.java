@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
@@ -38,13 +39,17 @@ public class RelatedProjectJoin implements Join<Project, Project> {
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "subject_id")
+	@NotNull
 	private Project subject;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "relatedProject_id")
+	@NotNull
 	private Project relatedProject;
 
 	private Date modifiedDate;
+
+	@NotNull
 	private Date createdDate;
 
 	public RelatedProjectJoin() {
