@@ -35,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProject;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -240,7 +241,7 @@ public class ProjectServiceImplIT {
 		List<Project> projects = (List<Project>) asUsername("user1", Role.ROLE_ADMIN).projectService.findAll();
 		// this admin should have access to 5 projects
 
-		assertEquals("Wrong number of projects.", 5, projects.size());
+		assertEquals("Wrong number of projects.", 8, projects.size());
 	}
 	
 	@Test
@@ -291,6 +292,36 @@ public class ProjectServiceImplIT {
 		for(int i=0;i<reversed.size();i++){
 			assertEquals(forward.get(i), reversed.get(i));
 		}
+	}
+	
+	@Test
+	@WithMockUser(username="user2", password="password1", roles="USER")
+	public void testAddRelatedProject(){
+		Project p6 = projectService.read(6l);
+		Project p7 = projectService.read(7l);
+		
+		RelatedProject rp = projectService.addRelatedProject(p6, p7);
+		assertNotNull(rp);
+		assertEquals(rp.getSubject(), p6);
+		assertEquals(rp.getObject(), p7);
+	}
+	
+	@Test(expected=EntityExistsException.class)
+	@WithMockUser(username="user2", password="password1", roles="USER")
+	public void testAddExistingRelatedProject(){
+		Project p6 = projectService.read(6l);
+		Project p8 = projectService.read(8l);
+		
+		projectService.addRelatedProject(p6, p8);
+	}
+	
+	@Test(expected=AccessDeniedException.class)
+	@WithMockUser(username="user2", password="password1", roles="USER")
+	public void testAddRelatedProjectNotOwner(){
+		Project p6 = projectService.read(6l);
+		Project p4 = projectService.read(4l);
+		
+		projectService.addRelatedProject(p6, p4);
 	}
 
 	private Project p() {
