@@ -36,7 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProject;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
@@ -220,16 +220,16 @@ public class ProjectServiceImplTest {
 		Project p1 = new Project("project 1");
 		Project p2 = new Project("project 2");
 
-		RelatedProject rp = new RelatedProject(p1, p2);
+		RelatedProjectJoin rp = new RelatedProjectJoin(p1, p2);
 
-		when(relatedProjectRepository.save(any(RelatedProject.class))).thenReturn(rp);
+		when(relatedProjectRepository.save(any(RelatedProjectJoin.class))).thenReturn(rp);
 
-		RelatedProject returned = projectService.addRelatedProject(p1, p2);
+		RelatedProjectJoin returned = projectService.addRelatedProject(p1, p2);
 
 		assertNotNull(returned);
 		assertEquals(rp, returned);
 
-		verify(relatedProjectRepository).save(any(RelatedProject.class));
+		verify(relatedProjectRepository).save(any(RelatedProjectJoin.class));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -244,7 +244,7 @@ public class ProjectServiceImplTest {
 		Project p1 = new Project("project 1");
 		Project p2 = new Project("project 2");
 
-		when(relatedProjectRepository.save(any(RelatedProject.class))).thenThrow(
+		when(relatedProjectRepository.save(any(RelatedProjectJoin.class))).thenThrow(
 				new DataIntegrityViolationException("relation already exists"));
 
 		projectService.addRelatedProject(p1, p2);
@@ -256,14 +256,14 @@ public class ProjectServiceImplTest {
 		Project p2 = new Project("project 2");
 		Project p3 = new Project("project 3");
 
-		List<RelatedProject> relatedProjectList = Lists.newArrayList(new RelatedProject(p1, p2), new RelatedProject(p1,
+		List<RelatedProjectJoin> relatedProjectList = Lists.newArrayList(new RelatedProjectJoin(p1, p2), new RelatedProjectJoin(p1,
 				p3));
 
 		when(relatedProjectRepository.getRelatedProjectsForProject(p1)).thenReturn(relatedProjectList);
 
-		List<RelatedProject> relatedProjects = projectService.getRelatedProjects(p1);
+		List<RelatedProjectJoin> relatedProjects = projectService.getRelatedProjects(p1);
 		assertFalse(relatedProjects.isEmpty());
-		for (RelatedProject rp : relatedProjects) {
+		for (RelatedProjectJoin rp : relatedProjects) {
 			assertEquals(p1,rp.getSubject());
 		}
 		

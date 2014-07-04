@@ -11,7 +11,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProject;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -155,12 +155,12 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	public Iterable<Project> findAll();
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#subject,'isProjectOwner') and hasPermission(#relatedProject,'isProjectOwner')")
-	public RelatedProject addRelatedProject(Project subject, Project relatedProject);
+	public RelatedProjectJoin addRelatedProject(Project subject, Project relatedProject);
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
-	public List<RelatedProject> getRelatedProjects(Project project);
+	public List<RelatedProjectJoin> getRelatedProjects(Project project);
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project.subject, 'isProjectOwner')")
-	public void removeRelatedProject(RelatedProject relatedProject);
+	public void removeRelatedProject(RelatedProjectJoin relatedProject);
 	
 }

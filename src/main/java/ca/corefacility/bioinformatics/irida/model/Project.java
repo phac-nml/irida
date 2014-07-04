@@ -24,7 +24,7 @@ import org.hibernate.validator.constraints.URL;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProject;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.user.Organization;
 import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectName;
 
@@ -68,10 +68,10 @@ public class Project implements IridaThing, Comparable<Project> {
 	private List<ProjectSampleJoin> samples;
 	
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "subject")
-	private List<RelatedProject> relatedProjects;
+	private List<RelatedProjectJoin> relatedProjects;
 	
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "relatedProject")
-	private List<RelatedProject> projectsRelatedTo;
+	private List<RelatedProjectJoin> projectsRelatedTo;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	private Organization organization;

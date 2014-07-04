@@ -6,15 +6,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProject;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 
 /**
- * Repository for managing {@link RelatedProject}s
+ * Repository for managing {@link RelatedProjectJoin}s
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
-public interface RelatedProjectRepository extends CrudRepository<RelatedProject, Long>{
+public interface RelatedProjectRepository extends CrudRepository<RelatedProjectJoin, Long>{
 	
 	@Query("FROM RelatedProject r WHERE r.subject=?")
-	public List<RelatedProject> getRelatedProjectsForProject(Project project); 
+	public List<RelatedProjectJoin> getRelatedProjectsForProject(Project project); 
 }

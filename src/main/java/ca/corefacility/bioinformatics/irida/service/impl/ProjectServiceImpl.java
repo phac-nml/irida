@@ -25,7 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProject;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
@@ -223,13 +223,13 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@Override
-	public RelatedProject addRelatedProject(Project subject, Project relatedProject) {
+	public RelatedProjectJoin addRelatedProject(Project subject, Project relatedProject) {
 		if (subject.equals(relatedProject)) {
 			throw new IllegalArgumentException("Project cannot be related to itself");
 		}
 
 		try {
-			RelatedProject relation = relatedProjectRepository.save(new RelatedProject(subject, relatedProject));
+			RelatedProjectJoin relation = relatedProjectRepository.save(new RelatedProjectJoin(subject, relatedProject));
 			return relation;
 		} catch (DataIntegrityViolationException e) {
 			throw new EntityExistsException("Project " + subject.getLabel() + " is already related to "
@@ -242,12 +242,12 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<RelatedProject> getRelatedProjects(Project project) {
+	public List<RelatedProjectJoin> getRelatedProjects(Project project) {
 		return relatedProjectRepository.getRelatedProjectsForProject(project);
 	}
 
 	@Override
-	public void removeRelatedProject(RelatedProject relatedProject) {
+	public void removeRelatedProject(RelatedProjectJoin relatedProject) {
 		relatedProjectRepository.delete(relatedProject);
 	}
 }

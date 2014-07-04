@@ -21,7 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 /**
  * Relationship between two {@link Project}s. A {@link Project} can have a list
- * of {@link RelatedProject}s where it will search for {@link Sample}s.
+ * of {@link RelatedProjectJoin}s where it will search for {@link Sample}s.
  * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
@@ -30,7 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 @Table(name = "related_project", uniqueConstraints = @UniqueConstraint(columnNames = { "subject_id",
 		"relatedProject_id" }))
 @Audited
-public class RelatedProject implements Join<Project, Project> {
+public class RelatedProjectJoin implements Join<Project, Project> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -47,12 +47,12 @@ public class RelatedProject implements Join<Project, Project> {
 	private Date modifiedDate;
 	private Date createdDate;
 
-	public RelatedProject() {
+	public RelatedProjectJoin() {
 		createdDate = new Date();
 		modifiedDate = createdDate;
 	}
 
-	public RelatedProject(Project subject, Project object) {
+	public RelatedProjectJoin(Project subject, Project object) {
 		this();
 		this.subject = subject;
 		this.relatedProject = object;

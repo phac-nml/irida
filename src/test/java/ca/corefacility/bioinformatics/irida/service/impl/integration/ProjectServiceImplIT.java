@@ -35,7 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProject;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -300,7 +300,7 @@ public class ProjectServiceImplIT {
 		Project p6 = projectService.read(6l);
 		Project p7 = projectService.read(7l);
 		
-		RelatedProject rp = projectService.addRelatedProject(p6, p7);
+		RelatedProjectJoin rp = projectService.addRelatedProject(p6, p7);
 		assertNotNull(rp);
 		assertEquals(rp.getSubject(), p6);
 		assertEquals(rp.getObject(), p7);
