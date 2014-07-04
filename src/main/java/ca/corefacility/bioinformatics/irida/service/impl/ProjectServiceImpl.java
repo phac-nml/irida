@@ -246,6 +246,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		return relatedProjectRepository.getRelatedProjectsForProject(project);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void removeRelatedProject(RelatedProjectJoin relatedProject) {
 		relatedProjectRepository.delete(relatedProject);

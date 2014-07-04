@@ -154,12 +154,27 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	@PostFilter("hasPermission(filterObject, 'canReadProject')")
 	public Iterable<Project> findAll();
 	
+	/**
+	 * Add a related {@link Project} to the given {@link Project}
+	 * @param subject The parent project
+	 * @param relatedProject The project to be added to the parent
+	 * @return a {@link RelatedProjectJoin} describing the relationship
+	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#subject,'isProjectOwner') and hasPermission(#relatedProject,'isProjectOwner')")
 	public RelatedProjectJoin addRelatedProject(Project subject, Project relatedProject);
 	
+	/**
+	 * Get all {@link RelatedProjectJoin}s for a given {@link Project}
+	 * @param project The parent project
+	 * @return A list of {@link RelatedProjectJoin}
+	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public List<RelatedProjectJoin> getRelatedProjects(Project project);
 	
+	/**
+	 * Remove a {@link RelatedProjectJoin}
+	 * @param relatedProject The {@link RelatedProjectJoin} to remove
+	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project.subject, 'isProjectOwner')")
 	public void removeRelatedProject(RelatedProjectJoin relatedProject);
 	
