@@ -25,11 +25,13 @@ import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.RelatedProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
@@ -46,12 +48,13 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 
 	private static final Logger logger = LoggerFactory.getLogger(ProjectServiceImpl.class);
 	private static final String USER_JOIN_PROJECT_PROPERTY = "project";
-	
+
 	private ProjectUserJoinRepository pujRepository;
 	private ProjectSampleJoinRepository psjRepository;
 	private SampleRepository sampleRepository;
 	private UserRepository userRepository;
 	private ProjectRepository projectRepository;
+	private RelatedProjectRepository relatedProjectRepository;
 
 	protected ProjectServiceImpl() {
 		super(null, null, Project.class);
@@ -60,13 +63,15 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Autowired
 	public ProjectServiceImpl(ProjectRepository projectRepository, SampleRepository sampleRepository,
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
-			ProjectSampleJoinRepository psjRepository, Validator validator) {
+			ProjectSampleJoinRepository psjRepository, RelatedProjectRepository relatedProjectRepository,
+			Validator validator) {
 		super(projectRepository, validator, Project.class);
 		this.projectRepository = projectRepository;
 		this.sampleRepository = sampleRepository;
 		this.userRepository = userRepository;
 		this.pujRepository = pujRepository;
 		this.psjRepository = psjRepository;
+		this.relatedProjectRepository = relatedProjectRepository;
 	}
 
 	@Override
@@ -168,7 +173,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Page<Project> searchProjectsByName(String name, int page, int size, Direction order, String... sortProperties) {
+	public Page<Project> searchProjectsByName(String name, int page, int size, Direction order,
+			String... sortProperties) {
 		if (sortProperties.length == 0) {
 			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
 		}
@@ -189,7 +195,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		}
 		// Drilling down into project for the sort properties
 		for (int i = 0; i < sortProperties.length; i++) {
-			sortProperties[i] = USER_JOIN_PROJECT_PROPERTY + "." + sortProperties[i]; 
+			sortProperties[i] = USER_JOIN_PROJECT_PROPERTY + "." + sortProperties[i];
 		}
 
 		return pujRepository.findAll(ProjectUserJoinSpecification.searchProjectNameWithUser(term, user),
@@ -211,5 +217,49 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public boolean userHasProjectRole(User user, Project project, ProjectRole projectRole) {
 		List<Join<Project, User>> projects = getProjectsForUserWithRole(user, projectRole);
 		return projects.contains(new ProjectUserJoin(project, user, projectRole));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public RelatedProjectJoin addRelatedProject(Project subject, Project relatedProject) {
+		if (subject.equals(relatedProject)) {
+			throw new IllegalArgumentException("Project cannot be related to itself");
+		}
+
+		try {
+			RelatedProjectJoin relation = relatedProjectRepository
+					.save(new RelatedProjectJoin(subject, relatedProject));
+			return relation;
+		} catch (DataIntegrityViolationException e) {
+			throw new EntityExistsException("Project " + subject.getLabel() + " is already related to "
+					+ relatedProject.getLabel(), e);
+		}
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<RelatedProjectJoin> getRelatedProjects(Project project) {
+		return relatedProjectRepository.getRelatedProjectsForProject(project);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<RelatedProjectJoin> getReverseRelatedProjects(Project project) {
+		return relatedProjectRepository.getReverseRelatedProjects(project);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void removeRelatedProject(RelatedProjectJoin relatedProject) {
+		relatedProjectRepository.delete(relatedProject);
 	}
 }

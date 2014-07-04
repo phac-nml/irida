@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl.unit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -27,17 +28,21 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.RelatedProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -53,6 +58,7 @@ public class ProjectServiceImplTest {
 	private UserRepository userRepository;
 	private ProjectUserJoinRepository pujRepository;
 	private ProjectSampleJoinRepository psjRepository;
+	private RelatedProjectRepository relatedProjectRepository;
 	private Validator validator;
 
 	@Before
@@ -63,8 +69,9 @@ public class ProjectServiceImplTest {
 		userRepository = mock(UserRepository.class);
 		pujRepository = mock(ProjectUserJoinRepository.class);
 		psjRepository = mock(ProjectSampleJoinRepository.class);
+		relatedProjectRepository = mock(RelatedProjectRepository.class);
 		projectService = new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
-				psjRepository, validator);
+				psjRepository, relatedProjectRepository, validator);
 	}
 
 	@After
@@ -201,11 +208,66 @@ public class ProjectServiceImplTest {
 		User u = new User();
 
 		List<Join<Project, User>> joins = new ArrayList<>();
-		joins.add(new ProjectUserJoin(p, u,ProjectRole.PROJECT_OWNER));
+		joins.add(new ProjectUserJoin(p, u, ProjectRole.PROJECT_OWNER));
 
 		when(pujRepository.getProjectsForUserWithRole(u, ProjectRole.PROJECT_OWNER)).thenReturn(joins);
 
 		assertTrue("User has ownership of project.", projectService.userHasProjectRole(u, p, ProjectRole.PROJECT_OWNER));
+	}
+
+	@Test
+	public void testAddRelatedProject() {
+		Project p1 = new Project("project 1");
+		Project p2 = new Project("project 2");
+
+		RelatedProjectJoin rp = new RelatedProjectJoin(p1, p2);
+
+		when(relatedProjectRepository.save(any(RelatedProjectJoin.class))).thenReturn(rp);
+
+		RelatedProjectJoin returned = projectService.addRelatedProject(p1, p2);
+
+		assertNotNull(returned);
+		assertEquals(rp, returned);
+
+		verify(relatedProjectRepository).save(any(RelatedProjectJoin.class));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddSameRelatedProject() {
+		Project p1 = new Project("project 1");
+
+		projectService.addRelatedProject(p1, p1);
+	}
+
+	@Test(expected = EntityExistsException.class)
+	public void testAlreadyRelatedProject() {
+		Project p1 = new Project("project 1");
+		Project p2 = new Project("project 2");
+
+		when(relatedProjectRepository.save(any(RelatedProjectJoin.class))).thenThrow(
+				new DataIntegrityViolationException("relation already exists"));
+
+		projectService.addRelatedProject(p1, p2);
+	}
+
+	@Test
+	public void testGetRelatedProjects() {
+		Project p1 = new Project("project 1");
+		Project p2 = new Project("project 2");
+		Project p3 = new Project("project 3");
+
+		List<RelatedProjectJoin> relatedProjectList = Lists.newArrayList(new RelatedProjectJoin(p1, p2), new RelatedProjectJoin(p1,
+				p3));
+
+		when(relatedProjectRepository.getRelatedProjectsForProject(p1)).thenReturn(relatedProjectList);
+
+		List<RelatedProjectJoin> relatedProjects = projectService.getRelatedProjects(p1);
+		assertFalse(relatedProjects.isEmpty());
+		for (RelatedProjectJoin rp : relatedProjects) {
+			assertEquals(p1,rp.getSubject());
+		}
+		
+		verify(relatedProjectRepository).getRelatedProjectsForProject(p1);
 	}
 
 	private Project project() {

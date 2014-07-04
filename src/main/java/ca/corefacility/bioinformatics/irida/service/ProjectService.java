@@ -11,6 +11,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -152,4 +153,37 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@PostFilter("hasPermission(filterObject, 'canReadProject')")
 	public Iterable<Project> findAll();
+	
+	/**
+	 * Add a related {@link Project} to the given {@link Project}
+	 * @param subject The parent project
+	 * @param relatedProject The project to be added to the parent
+	 * @return a {@link RelatedProjectJoin} describing the relationship
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#subject,'isProjectOwner') and hasPermission(#relatedProject,'canReadProject')")
+	public RelatedProjectJoin addRelatedProject(Project subject, Project relatedProject);
+	
+	/**
+	 * Get all {@link RelatedProjectJoin}s for a given {@link Project}
+	 * @param project The parent project
+	 * @return A list of {@link RelatedProjectJoin}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	public List<RelatedProjectJoin> getRelatedProjects(Project project);
+	
+	/**
+	 * Get all {@link RelatedProjectJoin}s where the given Project is the relatedProject property.
+	 * @param project The child project
+	 * @return A list of {@link RelatedProjectJoin}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	public List<RelatedProjectJoin> getReverseRelatedProjects(Project project);
+	
+	/**
+	 * Remove a {@link RelatedProjectJoin}
+	 * @param relatedProject The {@link RelatedProjectJoin} to remove
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project.subject, 'isProjectOwner')")
+	public void removeRelatedProject(RelatedProjectJoin relatedProject);
+	
 }

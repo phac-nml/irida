@@ -1,8 +1,10 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import java.util.Collection;
@@ -35,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -240,7 +243,7 @@ public class ProjectServiceImplIT {
 		List<Project> projects = (List<Project>) asUsername("user1", Role.ROLE_ADMIN).projectService.findAll();
 		// this admin should have access to 5 projects
 
-		assertEquals("Wrong number of projects.", 5, projects.size());
+		assertEquals("Wrong number of projects.", 8, projects.size());
 	}
 	
 	@Test
@@ -291,6 +294,62 @@ public class ProjectServiceImplIT {
 		for(int i=0;i<reversed.size();i++){
 			assertEquals(forward.get(i), reversed.get(i));
 		}
+	}
+	
+	@Test
+	@WithMockUser(username="user2", password="password1", roles="USER")
+	public void testAddRelatedProject(){
+		Project p6 = projectService.read(6l);
+		Project p7 = projectService.read(7l);
+		
+		RelatedProjectJoin rp = projectService.addRelatedProject(p6, p7);
+		assertNotNull(rp);
+		assertEquals(rp.getSubject(), p6);
+		assertEquals(rp.getObject(), p7);
+	}
+	
+	@Test(expected=EntityExistsException.class)
+	@WithMockUser(username="user2", password="password1", roles="USER")
+	public void testAddExistingRelatedProject(){
+		Project p6 = projectService.read(6l);
+		Project p8 = projectService.read(8l);
+		
+		projectService.addRelatedProject(p6, p8);
+	}
+	
+	@Test
+	@WithMockUser(username="user2", password="password1", roles="USER")
+	public void testGetRelatedProjects(){
+		Project p6 = projectService.read(6l);
+		List<RelatedProjectJoin> relatedProjects = projectService.getRelatedProjects(p6);
+		assertFalse(relatedProjects.isEmpty());
+		
+		for(RelatedProjectJoin rp : relatedProjects){
+			assertEquals(p6, rp.getSubject());
+			assertNotEquals(p6,rp.getObject());
+		}	
+	}
+	
+	@Test
+	@WithMockUser(username="user2", password="password1", roles="USER")
+	public void testGetProjectsRelatedTo(){
+		Project p8 = projectService.read(8l);
+		List<RelatedProjectJoin> relatedProjects = projectService.getReverseRelatedProjects(p8);
+		assertFalse(relatedProjects.isEmpty());
+		
+		for(RelatedProjectJoin rp : relatedProjects){
+			assertEquals(p8, rp.getObject());
+			assertNotEquals(p8,rp.getSubject());
+		}	
+	}
+	
+	@Test(expected=AccessDeniedException.class)
+	@WithMockUser(username="user2", password="password1", roles="USER")
+	public void testAddRelatedProjectNotAllowed(){
+		Project p6 = projectService.read(6l);
+		Project p3 = projectService.read(3l);
+		
+		projectService.addRelatedProject(p6, p3);
 	}
 
 	private Project p() {
