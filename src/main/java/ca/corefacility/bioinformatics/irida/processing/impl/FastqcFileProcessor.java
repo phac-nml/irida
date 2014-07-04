@@ -17,8 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
-import com.google.common.collect.ImmutableSet;
-
 import uk.ac.babraham.FastQC.Graphs.LineGraph;
 import uk.ac.babraham.FastQC.Graphs.QualityBoxPlot;
 import uk.ac.babraham.FastQC.Modules.BasicStats;
@@ -38,7 +36,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.AnalysisRepository;
-import ca.corefacility.bioinformatics.irida.repositories.OverrepresentedSequenceRepository;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Executes FastQC on a {@link SequenceFile} and stores the report in the
@@ -52,13 +51,10 @@ import ca.corefacility.bioinformatics.irida.repositories.OverrepresentedSequence
 public class FastqcFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessor.class);
 
-	private final OverrepresentedSequenceRepository overrepresentedSequenceRepository;
 	private final AnalysisRepository analysisRepository;
 	private final MessageSource messageSource;
 
-	public FastqcFileProcessor(OverrepresentedSequenceRepository overrepresentedSequenceService,
-			AnalysisRepository analysisRepository, MessageSource messageSource) {
-		this.overrepresentedSequenceRepository = overrepresentedSequenceService;
+	public FastqcFileProcessor(AnalysisRepository analysisRepository, MessageSource messageSource) {
 		this.analysisRepository = analysisRepository;
 		this.messageSource = messageSource;
 	}
@@ -94,12 +90,8 @@ public class FastqcFileProcessor implements FileProcessor {
 			handleDuplicationLevel(overRep.duplicationLevelModule(), analysis);
 			Set<OverrepresentedSequence> overrepresentedSequences = handleOverRepresentedSequences(overRep);
 
-			for (OverrepresentedSequence os : overrepresentedSequences) {
-				os.setAnalysisFastQC(analysis);
-				overrepresentedSequenceRepository.save(os);
-			}
-
 			logger.trace("Saving FastQC analysis.");
+			analysis.setOverrepresentedSequences(overrepresentedSequences);
 			analysis.setDescription(messageSource.getMessage("fastqc.file.processor.analysis.description", null,
 					LocaleContextHolder.getLocale()));
 			analysis.setExecutionManagerAnalysisId("internal-fastqc");

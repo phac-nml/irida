@@ -4,15 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.AnalysisRepository;
-import ca.corefacility.bioinformatics.irida.repositories.OverrepresentedSequenceRepository;
 
 /**
  * Tests for {@link FastqcFileProcessor}.
@@ -38,7 +36,6 @@ import ca.corefacility.bioinformatics.irida.repositories.OverrepresentedSequence
 public class FastqcFileProcessorTest {
 	private FastqcFileProcessor fileProcessor;
 	private AnalysisRepository analysisRepository;
-	private OverrepresentedSequenceRepository overrepresentedSequenceRepository;
 	private MessageSource messageSource;
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessorTest.class);
 
@@ -50,9 +47,8 @@ public class FastqcFileProcessorTest {
 	@Before
 	public void setUp() {
 		analysisRepository = mock(AnalysisRepository.class);
-		overrepresentedSequenceRepository = mock(OverrepresentedSequenceRepository.class);
 		messageSource = mock(MessageSource.class);
-		fileProcessor = new FastqcFileProcessor(overrepresentedSequenceRepository, analysisRepository, messageSource);
+		fileProcessor = new FastqcFileProcessor(analysisRepository, messageSource);
 	}
 
 	@Test(expected = FileProcessorException.class)
@@ -74,8 +70,6 @@ public class FastqcFileProcessorTest {
 		Files.write(fastq, FASTQ_FILE_CONTENTS.getBytes());
 		Runtime.getRuntime().addShutdownHook(new DeleteFileOnExit(fastq));
 
-		OverrepresentedSequence ovrs = new OverrepresentedSequence(SEQUENCE, 2, BigDecimal.valueOf(100.), "");
-		when(overrepresentedSequenceRepository.save(any(OverrepresentedSequence.class))).thenReturn(ovrs);
 		ArgumentCaptor<AnalysisFastQC> argument = ArgumentCaptor.forClass(AnalysisFastQC.class);
 
 		SequenceFile sf = new SequenceFile(fastq);
@@ -110,11 +104,10 @@ public class FastqcFileProcessorTest {
 		assertNotNull("Duplication level chart was not created.", updated.getDuplicationLevelChart());
 		assertTrue("Duplication level chart was not created.", ((byte[]) updated.getDuplicationLevelChart()).length > 0);
 
-		ArgumentCaptor<OverrepresentedSequence> overrepresentedSequenceCaptor = ArgumentCaptor
-				.forClass(OverrepresentedSequence.class);
 
-		verify(overrepresentedSequenceRepository).save(overrepresentedSequenceCaptor.capture());
-		OverrepresentedSequence overrepresentedSequence = overrepresentedSequenceCaptor.getValue();
+		Iterator<OverrepresentedSequence> ovrs = updated.getOverrepresentedSequences().iterator();
+		assertTrue("No overrepresented sequences added to analysis.", ovrs.hasNext());
+		OverrepresentedSequence overrepresentedSequence = updated.getOverrepresentedSequences().iterator().next();
 		assertEquals("Sequence was not the correct sequence.", SEQUENCE, overrepresentedSequence.getSequence());
 		assertEquals("The count was not correct.", 2, overrepresentedSequence.getOverrepresentedSequenceCount());
 		assertEquals("The percent was not correct.", BigDecimal.valueOf(100.), overrepresentedSequence.getPercentage());

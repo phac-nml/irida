@@ -47,7 +47,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
-import ca.corefacility.bioinformatics.irida.service.OverrepresentedSequenceService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -72,8 +71,6 @@ public class SequenceFileServiceImplIT {
 
 	@Autowired
 	private SequenceFileService sequenceFileService;
-	@Autowired
-	private OverrepresentedSequenceService overrepresentedSequenceService;
 	@Autowired
 	private AnalysisService analysisService;
 	@Autowired

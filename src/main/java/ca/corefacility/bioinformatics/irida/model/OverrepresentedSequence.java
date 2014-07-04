@@ -4,22 +4,16 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
-
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 
 /**
  * A {@link SequenceFile} may have 0 or more over-represented sequences.
@@ -53,10 +47,6 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
-
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "analysis_id")
-	private AnalysisFastQC analysis;
 
 	public OverrepresentedSequence() {
 		this.createdDate = new Date();
@@ -149,13 +139,4 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 	public Date getTimestamp() {
 		return createdDate;
 	}
-
-	public AnalysisFastQC getAnalysisFastQC() {
-		return analysis;
-	}
-
-	public void setAnalysisFastQC(AnalysisFastQC analysis) {
-		this.analysis = analysis;
-	}
-
 }

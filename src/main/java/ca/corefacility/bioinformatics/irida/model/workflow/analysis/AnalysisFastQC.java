@@ -53,7 +53,7 @@ public class AnalysisFastQC extends Analysis {
 	@Lob
 	private byte[] duplicationLevelChart;
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.REMOVE, CascadeType.MERGE }, mappedBy = "analysis", orphanRemoval = true)
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<OverrepresentedSequence> overrepresentedSequences;
 
 	/**

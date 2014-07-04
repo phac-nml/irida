@@ -16,6 +16,7 @@
 	<analysis />
 	<analysis_fastqc />
 	<overrepresented_sequence />
+	<analysis_fastqc_overrepresented_sequence />
 	<analysis_properties />
 	<analysis_sequence_file />
 
@@ -67,4 +68,5 @@
 	<analysis_fastqc_AUD />
 	<analysis_properties_AUD />
 	<analysis_sequence_file_AUD />
+	<analysis_fastqc_overrepresented_sequence_AUD />
 </dataset>

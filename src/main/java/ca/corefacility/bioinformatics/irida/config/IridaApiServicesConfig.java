@@ -18,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessin
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.AnalysisRepository;
-import ca.corefacility.bioinformatics.irida.repositories.OverrepresentedSequenceRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 /**
@@ -32,7 +31,7 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 		GalaxyAPIConfig.class, IridaOAuth2Config.class })
 @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.service")
 public class IridaApiServicesConfig {
-	
+
 	@Bean
 	public MessageSource messageSource() {
 		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
@@ -41,10 +40,10 @@ public class IridaApiServicesConfig {
 	}
 
 	@Bean
-	public FileProcessingChain fileProcessorChain(AnalysisRepository analysisRepository, 
-			SequenceFileService sequenceFileService, OverrepresentedSequenceRepository overrepresentedSequenceRepository) {
+	public FileProcessingChain fileProcessorChain(AnalysisRepository analysisRepository,
+			SequenceFileService sequenceFileService) {
 		return new DefaultFileProcessingChain(new GzipFileProcessor(sequenceFileService), new FastqcFileProcessor(
-				overrepresentedSequenceRepository, analysisRepository, messageSource()));
+				analysisRepository, messageSource()));
 	}
 
 	@Bean

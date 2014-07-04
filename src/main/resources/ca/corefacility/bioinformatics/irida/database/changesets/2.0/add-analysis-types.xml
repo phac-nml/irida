@@ -261,19 +261,54 @@
 		<dropColumn tableName="sequence_file_AUD" columnName="totalBases" />
 		<dropColumn tableName="sequence_file_AUD" columnName="totalSequences" />
 
-		<!-- modify overrepresented sequence to refer to an analysis instead of 
-			sequence file, again, relying on the ids being equal. -->
+		<!-- Create mapping tables between analysis_fastqc and overrepresented_sequence -->
+		<createTable tableName="analysis_fastqc_overrepresented_sequence">
+			<column name="analysis_fastqc_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					referencedTableName="analysis_fastqc" referencedColumnNames="id"
+					foreignKeyName="FK_FASTQC_OVERREPRESENTED_FASTQC" />
+			</column>
+			<column name="overrepresentedSequences_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					referencedTableName="overrepresented_sequence"
+					referencedColumnNames="id" foreignKeyName="FK_FASTQC_OVERREPRESENTED_OVERREPRESENTED"
+					unique="true" uniqueConstraintName="UK_FASTQC_OVERREPRESENTED_OVERREPRESENTED" />
+			</column>
+		</createTable>
+		<createTable tableName="analysis_fastqc_overrepresented_sequence_AUD">
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_FASTQC_OVERREPRESENTED_REVISION"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="analysis_fastqc_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="overrepresentedSequences_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+		</createTable>
+
+		<!-- copy sequenceFile_id from overepresented_sequence into analysis_fastqc_overrepresented_sequence 
+			(again, analysis_id == sequenceFile_id), then drop the column from overrepresented_sequence -->
+		<sql>
+			INSERT INTO
+			analysis_fastqc_overrepresented_sequence(analysis_fastqc_id,
+			overrepresentedSequences_id) SELECT sequenceFile_id, id FROM
+			overrepresented_sequence;
+
+			INSERT INTO
+			analysis_fastqc_overrepresented_sequence_AUD(analysis_fastqc_id,
+			overrepresentedSequences_id, REV, REVTYPE) SELECT sequenceFile_id,
+			id, REV, REVTYPE FROM overrepresented_sequence_AUD;
+		</sql>
+
 		<dropForeignKeyConstraint baseTableName="overrepresented_sequence"
 			constraintName="FK_OVERREPRESENTED_SEQUENCE_SEQUENCE_FILE" />
-		<renameColumn tableName="overrepresented_sequence"
-			oldColumnName="sequenceFile_id" newColumnName="analysis_id"
-			columnDataType="bigint(20)" />
-		<addForeignKeyConstraint constraintName="FK_OVERREPRESENTED_SEQUENCE_ANALYSIS"
-			referencedTableName="analysis_fastqc" referencedColumnNames="id"
-			baseTableName="overrepresented_sequence" baseColumnNames="analysis_id" />
-
-		<renameColumn tableName="overrepresented_sequence_AUD"
-			oldColumnName="sequenceFile_id" newColumnName="analysis_id"
-			columnDataType="bigint(20)" />
+		<dropColumn tableName="overrepresented_sequence"
+			columnName="sequenceFile_id" />
+		<dropColumn tableName="overrepresented_sequence_AUD"
+			columnName="sequenceFile_id" />
 	</changeSet>
 </databaseChangeLog>
