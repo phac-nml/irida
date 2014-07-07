@@ -260,6 +260,16 @@ INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES (no
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES (now(), 4, 49);
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES (now(), 4, 50);
 
+-- related projects
+insert into related_project (`subject_id`, `relatedProject_id`, `createdDate`) VALUES (1,2,now());
+insert into related_project (`subject_id`, `relatedProject_id`, `createdDate`) VALUES (1,3,now());
+insert into related_project (`subject_id`, `relatedProject_id`, `createdDate`) VALUES (1,4,now());
+insert into related_project (`subject_id`, `relatedProject_id`, `createdDate`) VALUES (4,3,now());
+insert into related_project (`subject_id`, `relatedProject_id`, `createdDate`) VALUES (3,2,now());
+insert into related_project (`subject_id`, `relatedProject_id`, `createdDate`) VALUES (5,10,now());
+insert into related_project (`subject_id`, `relatedProject_id`, `createdDate`) VALUES (3,1,now());
+insert into related_project (`subject_id`, `relatedProject_id`, `createdDate`) VALUES (2,5,now());
+
 -- remote apis
 insert into remote_api (clientId,clientSecret,description,serviceURI) values ("webClient","webClientSecret","A local testing api","http://localhost:8080");
 
