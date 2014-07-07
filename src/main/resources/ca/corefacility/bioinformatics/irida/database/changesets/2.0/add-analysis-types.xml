@@ -296,12 +296,14 @@
 			INSERT INTO
 			analysis_fastqc_overrepresented_sequence(analysis_fastqc_id,
 			overrepresentedSequences_id) SELECT sequenceFile_id, id FROM
-			overrepresented_sequence;
+			overrepresented_sequence WHERE sequenceFile_id IS NOT NULL;
 
-			INSERT INTO
+			INSERT
+			INTO
 			analysis_fastqc_overrepresented_sequence_AUD(analysis_fastqc_id,
 			overrepresentedSequences_id, REV, REVTYPE) SELECT sequenceFile_id,
-			id, REV, REVTYPE FROM overrepresented_sequence_AUD;
+			id, REV, REVTYPE FROM overrepresented_sequence_AUD WHERE
+			sequenceFile_id IS NOT NULL;
 		</sql>
 
 		<dropForeignKeyConstraint baseTableName="overrepresented_sequence"
