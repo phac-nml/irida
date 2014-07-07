@@ -42,40 +42,6 @@ public class SequenceFileResource extends IdentifiableResource<SequenceFile> {
             return resource.getFile().getFileName().toString();
     }
 
-    @XmlElement
-    public String getFileType() {
-            return resource.getFileType();
-    }
-
-    @XmlElement
-    public String getEncoding() {
-            return resource.getEncoding();
-    }
-
-    @XmlElement
-    public Integer getTotalSequences() {
-            return resource.getTotalSequences();
-    }
-
-    @XmlElement
-    public Integer getFilteredSequences() {
-            return resource.getFilteredSequences();
-    }
-
-    @XmlElement
-    public Integer getMinLength() {
-            return resource.getMinLength();
-    }
-
-    @XmlElement
-    public Integer getMaxLength() {
-            return resource.getMaxLength();
-    }
-
-    @XmlElement
-    public Short getGcContent() {
-            return resource.getGcContent();
-    }
 
     @JsonIgnore
     public Path getPath() {
