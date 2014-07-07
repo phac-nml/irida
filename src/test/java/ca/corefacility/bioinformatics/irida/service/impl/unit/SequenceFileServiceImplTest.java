@@ -27,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
-import ca.corefacility.bioinformatics.irida.repositories.OverrepresentedSequenceRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileFilesystem;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
@@ -47,7 +46,6 @@ public class SequenceFileServiceImplTest {
 	private SequenceFileRepository crudRepository;
 	private SequenceFileFilesystem fileRepository;
 	private SampleSequenceFileJoinRepository ssfRepository;
-	private OverrepresentedSequenceRepository overrepresentedSequenceRepository;
 	private Validator validator;
 
 	@Before
@@ -57,9 +55,7 @@ public class SequenceFileServiceImplTest {
 		crudRepository = mock(SequenceFileRepository.class);
 		fileRepository = mock(SequenceFileFilesystem.class);
 		ssfRepository = mock(SampleSequenceFileJoinRepository.class);
-		overrepresentedSequenceRepository = mock(OverrepresentedSequenceRepository.class);
-		sequenceFileService = new SequenceFileServiceImpl(crudRepository, fileRepository, ssfRepository,
-				overrepresentedSequenceRepository, validator);
+		sequenceFileService = new SequenceFileServiceImpl(crudRepository, fileRepository, ssfRepository, validator);
 	}
 
 	@Test

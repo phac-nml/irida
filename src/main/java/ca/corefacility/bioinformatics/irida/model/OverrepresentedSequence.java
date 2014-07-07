@@ -4,14 +4,10 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -35,26 +31,22 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 
 	@NotNull(message = "{overrepresented.sequence.sequence.notnull}")
 	private String sequence;
-	
+
 	@NotNull(message = "{overrepresented.sequence.sequence.count.notnull}")
 	private int overrepresentedSequenceCount;
-	
+
 	@NotNull(message = "{overrepresented.sequence.percentage.notnull}")
 	private BigDecimal percentage;
-	
+
 	@NotNull(message = "{overrepresented.sequence.possibleSource.notnull}")
 	private String possibleSource;
-	
+
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
-
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "sequenceFile_id")
-	private SequenceFile sequenceFile;
 
 	public OverrepresentedSequence() {
 		this.createdDate = new Date();
@@ -147,13 +139,4 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 	public Date getTimestamp() {
 		return createdDate;
 	}
-
-	public SequenceFile getSequenceFile() {
-		return sequenceFile;
-	}
-
-	public void setSequenceFile(SequenceFile sequenceFile) {
-		this.sequenceFile = sequenceFile;
-	}
-
 }

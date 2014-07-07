@@ -16,14 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.processing.annotations.ModifiesSequenceFile;
-import ca.corefacility.bioinformatics.irida.repositories.OverrepresentedSequenceRepository;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileFilesystem;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
@@ -54,11 +52,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	private SampleSequenceFileJoinRepository ssfRepository;
 
 	/**
-	 * Reference to {@link OverrepresentedSequenceRepository}.
-	 */
-	private OverrepresentedSequenceRepository overrepresentedSequenceRepository;
-
-	/**
 	 * Reference to {@link SequenceFileRepository}.
 	 */
 	private SequenceFileRepository sequenceFileRepository;
@@ -77,13 +70,11 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	@Autowired
 	public SequenceFileServiceImpl(SequenceFileRepository sequenceFileRepository,
-			SequenceFileFilesystem fileRepository, SampleSequenceFileJoinRepository ssfRepository,
-			OverrepresentedSequenceRepository overrepresentedSequenceRepository, Validator validator) {
+			SequenceFileFilesystem fileRepository, SampleSequenceFileJoinRepository ssfRepository, Validator validator) {
 		super(sequenceFileRepository, validator, SequenceFile.class);
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.fileRepository = fileRepository;
 		this.ssfRepository = ssfRepository;
-		this.overrepresentedSequenceRepository = overrepresentedSequenceRepository;
 	}
 
 	/**
@@ -189,12 +180,5 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Transactional(readOnly = true)
 	public Set<SequenceFile> getSequenceFilesForSequencingRun(SequencingRun miseqRun) {
 		return sequenceFileRepository.findSequenceFilesForSequencingRun(miseqRun);
-	}
-
-	@Override
-	@Transactional
-	public void addOverrepresentedSequenceToSequenceFile(SequenceFile sequenceFile, OverrepresentedSequence sequence) {
-		sequence.setSequenceFile(sequenceFile);
-		overrepresentedSequenceRepository.save(sequence);
 	}
 }

@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -19,7 +18,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
@@ -70,20 +68,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	private String stringPath;
 
 	/* statistics computed by fastqc */
-	private String fileType;
-	private String encoding;
-	private Integer totalSequences;
-	private Integer filteredSequences;
-	private Long totalBases;
-	private Integer minLength;
-	private Integer maxLength;
-	private Short gcContent;
-	@Lob
-	private byte[] perBaseQualityScoreChart;
-	@Lob
-	private byte[] perSequenceQualityScoreChart;
-	@Lob
-	private byte[] duplicationLevelChart;
 	
 	private Long fileRevisionNumber; // the filesystem file revision number
 	
@@ -102,9 +86,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
 	private List<SampleSequenceFileJoin> samples;
-
-	@OneToMany(fetch = FetchType.LAZY, cascade =  { CascadeType.REMOVE, CascadeType.MERGE }, mappedBy = "sequenceFile", orphanRemoval = true)
-	private Set<OverrepresentedSequence> overrepresentedSequences;
 
 	public SequenceFile() {
 		createdDate = new Date();
@@ -157,48 +138,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 		return modifiedDate.compareTo(other.modifiedDate);
 	}
 
-	/**
-	 * Box and whisker plot showing per-base quality scores as a PNG-formatted
-	 * image in a byte array.
-	 * 
-	 * @return
-	 */
-	public byte[] getPerBaseQualityScoreChart() {
-		return perBaseQualityScoreChart;
-	}
-
-	public void setPerBaseQualityScoreChart(byte[] perBaseQualityScoreChart) {
-		this.perBaseQualityScoreChart = perBaseQualityScoreChart;
-	}
-
-	/**
-	 * Line chartshowing per-sequence quality scores as a PNG-formatted image in
-	 * a byte array.
-	 * 
-	 * @return
-	 */
-	public byte[] getPerSequenceQualityScoreChart() {
-		return perSequenceQualityScoreChart;
-	}
-
-	public void setPerSequenceQualityScoreChart(byte[] perSequenceQualityScoreChart) {
-		this.perSequenceQualityScoreChart = perSequenceQualityScoreChart;
-	}
-
-	/**
-	 * Line chartshowing duplication-level as a PNG-formatted image in a byte
-	 * array.
-	 * 
-	 * @return
-	 */
-	public byte[] getDuplicationLevelChart() {
-		return duplicationLevelChart;
-	}
-
-	public void setDuplicationLevelChart(byte[] duplicationLevelChart) {
-		this.duplicationLevelChart = duplicationLevelChart;
-	}
-
 	public Date getCreatedDate() {
 		return createdDate;
 	}
@@ -209,70 +148,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
 	public void setStringPath(String stringPath) {
 		this.stringPath = stringPath;
-	}
-
-	public String getFileType() {
-		return fileType;
-	}
-
-	public void setFileType(String fileType) {
-		this.fileType = fileType;
-	}
-
-	public String getEncoding() {
-		return encoding;
-	}
-
-	public void setEncoding(String encoding) {
-		this.encoding = encoding;
-	}
-
-	public Integer getTotalSequences() {
-		return totalSequences;
-	}
-
-	public void setTotalSequences(Integer totalSequences) {
-		this.totalSequences = totalSequences;
-	}
-
-	public Integer getFilteredSequences() {
-		return filteredSequences;
-	}
-
-	public void setFilteredSequences(Integer filteredSequences) {
-		this.filteredSequences = filteredSequences;
-	}
-
-	public Integer getMinLength() {
-		return minLength;
-	}
-
-	public void setMinLength(Integer minLength) {
-		this.minLength = minLength;
-	}
-
-	public Integer getMaxLength() {
-		return maxLength;
-	}
-
-	public void setMaxLength(Integer maxLength) {
-		this.maxLength = maxLength;
-	}
-
-	public Short getGcContent() {
-		return gcContent;
-	}
-
-	public void setGcContent(Short gcContent) {
-		this.gcContent = gcContent;
-	}
-
-	public Long getTotalBases() {
-		return totalBases;
-	}
-
-	public void setTotalBases(Long totalBases) {
-		this.totalBases = totalBases;
 	}
 
 	public void setStringPath() {
