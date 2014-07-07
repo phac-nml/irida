@@ -33,7 +33,7 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 public class IridaApiServicesConfig {
 
 	@Bean
-	public MessageSource messageSource() {
+	public MessageSource apiMessageSource() {
 		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
 		messageSource.setBasename("ca.corefacility.bioinformatics.irida.messages.messages");
 		return messageSource;
@@ -43,7 +43,7 @@ public class IridaApiServicesConfig {
 	public FileProcessingChain fileProcessorChain(AnalysisRepository analysisRepository,
 			SequenceFileService sequenceFileService) {
 		return new DefaultFileProcessingChain(new GzipFileProcessor(sequenceFileService), new FastqcFileProcessor(
-				analysisRepository, messageSource()));
+				analysisRepository, apiMessageSource()));
 	}
 
 	@Bean
