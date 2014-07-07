@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.repositories.user;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.history.RevisionRepository;
@@ -17,7 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public interface UserRepository extends PagingAndSortingRepository<User, Long>, UserDetailsService,
-		RevisionRepository<User, Long, Integer> {
+		RevisionRepository<User, Long, Integer>, JpaSpecificationExecutor<User> {
 
 	/**
 	 * Get a user from the database with the supplied username.
