@@ -50,8 +50,8 @@ public class ProjectDetailsPageIT {
 	public static final String PROJECT_MODIFIED_DATE = "18 Jul 2013";
 	public static final String PROJECT_ORGANISM = "E. coli";
 
-	public static final ImmutableList<String> ASSOCIATED_PROJECTS = new ImmutableList.Builder<String>().add("project2")
-			.add("project3").add("project5").build();
+	public static final ImmutableList<String> ASSOCIATED_PROJECTS = ImmutableList
+			.of("project2", "project3", "project5");
 
 	private WebDriver driver;
 	private ProjectDetailsPage detailsPage;
