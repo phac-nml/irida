@@ -21,9 +21,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.Lists;
@@ -42,16 +45,19 @@ public class UsersController {
 	private static final String ERROR_PAGE = "error";
 	private static final String SORT_BY_ID = "id";
 	private static final String SORT_ASCENDING = "asc";
+	private static final int MAX_DISPLAY_PROJECTS = 10;
 	private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
 
 	private final UserService userService;
+	private ProjectService projectService;
 
 	private final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "username", "email", "lastName",
 			"firstName", "systemRole", "createdDate", "modifiedDate");
 
 	@Autowired
-	public UsersController(UserService userService) {
+	public UsersController(UserService userService, ProjectService projectService) {
 		this.userService = userService;
+		this.projectService = projectService;
 	}
 
 	/**
@@ -80,8 +86,21 @@ public class UsersController {
 		logger.debug("Getting project information for [User " + userId + "]");
 		String page;
 		try {
-			User read = userService.read(userId);
-			model.addAttribute("user", read);
+			User user = userService.read(userId);
+			model.addAttribute("user", user);
+
+			// TODO: Only display this for ADMIN users and the currently logged
+			// in user
+			List<Join<Project, User>> projectsForUser = projectService.getProjectsForUser(user);
+			int totalProjects = projectsForUser.size();
+			// Trimming down the number of projects if there are too many
+			if (totalProjects > MAX_DISPLAY_PROJECTS) {
+				projectsForUser = projectsForUser.subList(0, MAX_DISPLAY_PROJECTS);
+			}
+
+			model.addAttribute("projects", projectsForUser);
+			model.addAttribute("totalProjects", totalProjects);
+
 			page = SPECIFIC_USER_PAGE;
 		} catch (EntityNotFoundException e) {
 			// TODO: (Josh - 2014-06-24) Format error page if project is not
