@@ -82,7 +82,7 @@ public class UsersController {
 	 */
 
 	@RequestMapping(value = "/{userId}")
-	public String getProjectSpecificPage(@PathVariable Long userId, final Model model) {
+	public String getUserSpecificPage(@PathVariable Long userId, final Model model) {
 		logger.debug("Getting project information for [User " + userId + "]");
 		String page;
 		try {
