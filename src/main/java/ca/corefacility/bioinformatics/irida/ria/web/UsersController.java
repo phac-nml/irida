@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,11 +13,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
@@ -33,8 +41,8 @@ import com.google.common.collect.Lists;
 @Controller
 @RequestMapping(value = "/users")
 public class UsersController {
-	private static final String USERS_PAGE = "users";
-	private static final String SPECIFIC_USER_PAGE = "user_details";
+	private static final String USERS_PAGE = "user/list";
+	private static final String SPECIFIC_USER_PAGE = "user/user_details";
 	private static final String ERROR_PAGE = "error";
 	private static final String SORT_BY_ID = "id";
 	private static final String SORT_ASCENDING = "asc";
@@ -64,40 +72,32 @@ public class UsersController {
 	/**
 	 * Request for a specific project details page.
 	 * 
-	 * @param projectId
+	 * @param userId
 	 *            The id for the project to show details for.
 	 * @param model
 	 *            Spring model to populate the html page.
 	 * @return The name of the project details page.
 	 */
-	/*
-	 * @RequestMapping(value = "/{projectId}") public String
-	 * getProjectSpecificPage(@PathVariable Long projectId, final Model model) {
-	 * logger.debug("Getting project information for [Project " + projectId +
-	 * "]"); String page; try { Project project =
-	 * projectService.read(projectId); model.addAttribute("project", project);
-	 * 
-	 * Collection<Join<Project, User>> ownerJoinList =
-	 * userService.getUsersForProjectByRole(project, ProjectRole.PROJECT_OWNER);
-	 * User owner = null; if (ownerJoinList.size() > 0) { owner =
-	 * (ownerJoinList.iterator().next()).getObject(); }
-	 * model.addAttribute("owner", owner);
-	 * 
-	 * int sampleSize = sampleService.getSamplesForProject(project).size();
-	 * model.addAttribute("samples", sampleSize);
-	 * 
-	 * int userSize = userService.getUsersForProject(project).size();
-	 * model.addAttribute("users", userSize);
-	 * 
-	 * // TODO: (Josh - 14-06-23) Get list of recent activities on project. //
-	 * TODO: (Josh - 14-06-23) Get associated projects. page =
-	 * SPECIFIC_PROJECT_PAGE; } catch (EntityNotFoundException e) { // TODO:
-	 * (Josh - 2014-06-24) Format error page if project is not // found. These
-	 * should probably be redirects. page = ERROR_PAGE; } catch
-	 * (AccessDeniedException e) { // TODO: (Josh - 2014-06-24) Format error
-	 * page if user does not have // access. These should probably be redirects.
-	 * page = ERROR_PAGE; } return page; }
-	 */
+
+	@RequestMapping(value = "/{userId}")
+	public String getProjectSpecificPage(@PathVariable Long userId, final Model model) {
+		logger.debug("Getting project information for [User " + userId + "]");
+		String page;
+		try {
+			User read = userService.read(userId);
+			model.addAttribute("user", read);
+			page = SPECIFIC_USER_PAGE;
+		} catch (EntityNotFoundException e) {
+			// TODO: (Josh - 2014-06-24) Format error page if project is not
+			// found. These should probably be redirects.
+			page = ERROR_PAGE;
+		} catch (AccessDeniedException e) {
+			// TODO: (Josh - 2014-06-24) Format error page if user does not have
+			// access. These should probably be redirects.
+			page = ERROR_PAGE;
+		}
+		return page;
+	}
 
 	/**
 	 * Handles AJAX request for getting a list of projects available to the
