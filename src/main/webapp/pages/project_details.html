@@ -65,17 +65,29 @@
 <div layout:fragment="scripts" th:inline="javascript">
     <script>
         $(function() {
-            $(".glyphicon-eye-open").qtip({
+            $(".authorized").qtip({
                 content: {
                     text: /*[[#{project.associated.rights}]]*/ 'You can view this project.'
+                },
+                position: {
+                    at: 'bottom left',
+                    adjust: {
+                        x: 20
+                    }
                 },
                 style: {
                     classes: "qtip-green"
                 }
             });
-            $(".glyphicon-lock").qtip({
+            $(".unauthorized").qtip({
                 content: {
                     text: /*[[#{project.associated.norights}]]*/ 'You do not have authorization to view this project.'
+                },
+                position: {
+                    at: 'bottom left',
+                    adjust: {
+                        x: 20
+                    }
                 },
                 style: {
                     classes: "qtip-red"
