@@ -52,4 +52,9 @@ public class ProjectDetailsPage {
         List<String> names = divs.stream().map(WebElement::getText).collect(Collectors.toList());
         return names;
     }
+
+	public String getProjectWithNoRights() {
+		WebElement lock = driver.findElement(By.cssSelector(".unauthorized .project-name"));
+		return lock.getText();
+	}
 }
