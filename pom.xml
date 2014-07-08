@@ -392,34 +392,6 @@
                 </configuration>
             </plugin>
 
-            <!-- FAILSAFE (integration testing) -->
-            <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${maven-failsafe-plugin.version}</version>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                    <!-- Setting spring profile for integration tests to "it".  Also done in jetty plugin -->
-                    <systemPropertyVariables>
-                   		<spring.profiles.active>it</spring.profiles.active>
-                   	</systemPropertyVariables>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- SUREFIRE (unit testing) -->
-
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
-            </plugin>
-
             <!-- JACOCO -->
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -452,8 +424,60 @@
                             <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut/</outputDirectory>
                         </configuration>
                     </execution>
-
+                    <execution>
+                        <id>pre-integration-test</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <destFile>${jacoco.it.execution.data.file}</destFile>
+                            <propertyName>failsafeArgLine</propertyName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>post-integration-test</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>${jacoco.it.execution.data.file}</dataFile>
+                            <outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
+                        </configuration>
+                    </execution>
                 </executions>
+            </plugin>
+
+            <!-- FAILSAFE (integration testing) -->
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven-failsafe-plugin.version}</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <!-- Setting spring profile for integration tests to "it".  Also done in jetty plugin -->
+                    <systemPropertyVariables>
+                   		<spring.profiles.active>it</spring.profiles.active>
+                   	</systemPropertyVariables>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- SUREFIRE (unit testing) -->
+
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <argLine>${surefireArgLine}</argLine>
+                </configuration>
             </plugin>
 
             <!-- JETTY -->
@@ -486,6 +510,7 @@
 									<name>spring.profiles.active</name>
 									<value>it</value>
 								</systemProperty>
+
 							</systemProperties>
                         </configuration>
                     </execution>

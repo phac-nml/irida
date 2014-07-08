@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -12,7 +15,6 @@ import org.openqa.selenium.WebElement;
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectDetailsPage {
-
 	private WebDriver driver;
 
 	public ProjectDetailsPage(WebDriver driver, Long projectId) {
@@ -44,4 +46,19 @@ public class ProjectDetailsPage {
 		WebElement date = driver.findElement(By.id("project-modified"));
 		return date.getText();
 	}
+
+	public List<String> getAssociatedProjects() {
+        List<WebElement> divs = driver.findElements(By.className("project-name"));
+        return divs.stream().map(WebElement::getText).collect(Collectors.toList());
+    }
+
+	public String getProjectWithNoRights() {
+		WebElement lock = driver.findElement(By.cssSelector(".unauthorized .project-name"));
+		return lock.getText();
+	}
+
+    public List<String> getProjectsWithRights() {
+        List<WebElement> names = driver.findElements(By.cssSelector(".authorized .project-name"));
+        return names.stream().map(WebElement::getText).collect(Collectors.toList());
+    }
 }

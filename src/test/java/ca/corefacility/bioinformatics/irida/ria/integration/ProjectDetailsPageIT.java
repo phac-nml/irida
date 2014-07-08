@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.integration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -23,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectDetails
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableList;
 
 /**
  * <p>
@@ -46,7 +50,11 @@ public class ProjectDetailsPageIT {
 	public static final String PROJECT_MODIFIED_DATE = "18 Jul 2013";
 	public static final String PROJECT_ORGANISM = "E. coli";
 
-	private WebDriver driver;
+    public static final ImmutableList<String> ASSOCIATED_PROJECTS_WITH_RIGHTS = ImmutableList
+			.of("project2", "project3");
+    public static final String ASSOCIATED_PROJECT_NO_RIGHTS = "project5";
+
+    private WebDriver driver;
 	private ProjectDetailsPage detailsPage;
 
 	@Before
@@ -75,4 +83,16 @@ public class ProjectDetailsPageIT {
 		assertEquals("Should have the correct date format for modified date", PROJECT_MODIFIED_DATE,
 				detailsPage.getModifiedDate());
 	}
+
+	@Test
+	public void hasTheCorrectAssociatedProjects() {
+		List<String> projectsDiv = detailsPage.getAssociatedProjects();
+		assertEquals("Has the correct number of associated projects", 3, projectsDiv.size());
+
+        assertEquals("Has project with no rights", ASSOCIATED_PROJECT_NO_RIGHTS, detailsPage.getProjectWithNoRights());
+        List<String> projectsWithRights = detailsPage.getProjectsWithRights();
+        for (String project : ASSOCIATED_PROJECTS_WITH_RIGHTS) {
+            assertTrue("Contains projects with authorization", projectsWithRights.contains(project));
+        }
+    }
 }
