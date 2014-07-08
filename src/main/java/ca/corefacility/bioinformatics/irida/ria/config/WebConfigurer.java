@@ -73,6 +73,7 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 		source.setBasenames(RESOURCE_LOCATIONS);
 		source.setFallbackToSystemLocale(false);
 		source.setDefaultEncoding(DEFAULT_ENCODING);
+		source.setCacheSeconds(0);
 		return source;
 	}
 

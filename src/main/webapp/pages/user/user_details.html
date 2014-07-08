@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="templates/wet-boew/wet-layout">
+<head>
+    <title th:text="${user.label}">_USER PAGE_</title>
+</head>
+<body>
+<div class="container" layout:fragment="content">
+    <div class="row">
+        <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">_MENU_</div>
+    </div>
+    <div class="row">
+        <div class="col-md-12"><h1 id="wb-cont" property="name" th:text="${user.label}">__USER NAME__</h1>
+        </div>
+    </div>
+    <div class="row">
+        <main class="col-md-6 col-md-push-6" role="main" property="mainContentOfPage">
+            <h3>This is where other user information will go.</h3>
+        </main>
+        <div class="col-md-6 col-md-pull-6 visible-md visible-lg">
+            <div class="panel panel-info">
+                <div class="panel-heading clearfix">
+                	<h3 class="panel-title pull-left" th:text="#{user.details}">_User Details_</h3>
+                	<span class="pull-right">Edit</span>
+                </div>
+                    
+                <div class="panel-body">
+                    <ul class="nav nav-pills nav-stacked" th:inline="text">
+                    	<li>
+                    		<span class="glyphicon glyphicon-barcode"></span>&nbsp;[[#{users.id}]]<span
+                                class="pull-right" id="user-id"
+                                th:text="${user.id}">_USER_ID_</span>
+                    	</li>
+                    	<li>
+                    		<span class="glyphicon glyphicon-user"></span>&nbsp;[[#{users.username}]]<span
+                                class="pull-right" id="user-username"
+                                th:text="${user.username}">_USERNAME_</span>
+                    	</li>
+                    	<li>
+                    		<span class="glyphicon glyphicon-tag"></span>&nbsp;[[#{user.name}]]<span
+                                class="pull-right" id="user-name"
+                                th:text="${user.label}">_NAME_</span>
+                    	</li>
+                    	<li>
+                    		<span class="glyphicon glyphicon-envelope"></span>&nbsp;[[#{users.email}]]<span
+                                class="pull-right" id="user-email"
+                                th:text="${user.email}">_EMAIL@EMAIL.com_</span>
+                    	</li>
+                    	<li>
+                    		<span class="glyphicon glyphicon-earphone"></span>&nbsp;[[#{user.phone}]]<span
+                                class="pull-right" id="user-phone"
+                                th:text="${user.phoneNumber}">_123-456-7890_</span>
+                    	</li>
+                    	<li>
+                    		<span class="glyphicon glyphicon-stats"></span>&nbsp;[[#{users.role}]]<span
+                                class="pull-right" id="user-role"
+                                th:text="${user.systemRole.displayName}">_ROLE_</span>
+                    	</li>
+                        <li><span class="glyphicon glyphicon-calendar"></span>&nbsp;[[#{user.created}]]<span
+                                class="pull-right" id="user-created"
+                                th:text="${#calendars.format(user.createdDate, 'dd MMM yyyy')}">_DATE_CREATED_</span>
+                        </li>
+                        <li><span class="glyphicon glyphicon-calendar"></span>&nbsp;[[#{user.modified}]]<span
+                                class="pull-right" id="user-modified"
+                                th:text="${#calendars.format(user.modifiedDate, 'dd MMM yyyy')}">__DATE_CREATED__</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div layout:fragment="scripts" th:inline="javascript">
+
+</div>
+</body>
+</html>
