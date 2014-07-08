@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
@@ -52,7 +53,7 @@ public class ProjectsController {
 	private final SampleService sampleService;
 	private final UserService userService;
 
-    // Key is the column number in the datatable.
+	// Key is the column number in the datatable.
 	private final ImmutableMap<Integer, String> COLUMN_SORT_MAP = ImmutableMap.<Integer, String> builder()
 			.put(0, SORT_BY_ID).put(1, SORT_BY_NAME).put(5, SORT_BY_CREATED_DATE).put(6, SORT_BY_MODIFIED_DATE).build();
 
@@ -84,7 +85,7 @@ public class ProjectsController {
 	 * @return The name of the project details page.
 	 */
 	@RequestMapping(value = "/{projectId}")
-	public String getProjectSpecificPage(@PathVariable Long projectId, final Model model) {
+	public String getProjectSpecificPage(@PathVariable Long projectId, final Model model, final Principal principal) {
 		logger.debug("Getting project information for [Project " + projectId + "]");
 		String page;
 		try {
@@ -106,7 +107,12 @@ public class ProjectsController {
 			model.addAttribute("users", userSize);
 
 			// TODO: (Josh - 14-06-23) Get list of recent activities on project.
-			// TODO: (Josh - 14-06-23) Get associated projects.
+
+			// Add any associated projects
+			User currentUser = userService.getUserByUsername(principal.getName());
+			List<Map<String, String>> associatedProjects = getAssociatedProjects(project, currentUser);
+			model.addAttribute("associatedProjects", associatedProjects);
+
 			page = SPECIFIC_PROJECT_PAGE;
 		} catch (EntityNotFoundException e) {
 			// TODO: (Josh - 2014-06-24) Format error page if project is not
@@ -180,4 +186,31 @@ public class ProjectsController {
 		return map;
 	}
 
+	private List<Map<String, String>> getAssociatedProjects(Project currentProject, User currentUser) {
+		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(currentProject);
+
+		// Need to know if the user has rights to view the project
+		List<Join<Project, User>> userProjectJoin = projectService.getProjectsForUser(currentUser);
+
+		List<Map<String, String>> projects = new ArrayList<>();
+		// Create a quick lookup list
+		Map<Long, Boolean> usersProjects = new HashMap<>(userProjectJoin.size());
+		for (Join<Project, User> join : userProjectJoin) {
+			usersProjects.put(join.getSubject().getId(), true);
+		}
+
+		for (RelatedProjectJoin rpj : relatedProjectJoins) {
+			Project project = rpj.getObject();
+
+			Map<String, String> map = new HashMap<>();
+			map.put("name", project.getLabel());
+			map.put("id", project.getId().toString());
+			map.put("auth", usersProjects.containsKey(project.getId()) ? "authorized" : "");
+
+			// TODO: (Josh - 2014-07-07) Will need to add remote location
+			// information here.
+			projects.add(map);
+		}
+		return projects;
+	}
 }

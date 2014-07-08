@@ -1,0 +1,16 @@
+<div id="associated-projects" layout:fragment="list">
+    <div th:if="${ #lists.isEmpty( projects ) }">
+        <p th:text="#{project.associated.none}">This is an area to store similar projects that would be run together on
+                                                a pipeline.</p>
+    </div>
+    <div th:if="${not #lists.isEmpty( projects ) }">
+        <div th:each="project : ${projects}" th:switch="${project.auth}">
+            <div class="authorized" th:case="'authorized'" >
+                <span class="glyphicon glyphicon-eye-open"></span>&nbsp;
+                <a class="project-name" th:href="@{${project.id}}" th:text="${project.name}">__PROJECT_NAME__</a></div>
+            <div class="unauthorized" th:case="''"><span class="glyphicon glyphicon-lock"></span>&nbsp;&nbsp;<span class="project-name" th:text="${project.name}">__PROJECT_NAME__</span></div>
+        </div>
+    </div>
+</div>
+
+
