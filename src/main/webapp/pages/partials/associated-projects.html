@@ -5,10 +5,10 @@
     </div>
     <div th:if="${not #lists.isEmpty( projects ) }">
         <div th:each="project : ${projects}" th:switch="${project.auth}">
-            <div th:case="'authorized'" >
+            <div class="authorized" th:case="'authorized'" >
                 <span class="glyphicon glyphicon-eye-open"></span>&nbsp;
                 <a class="project-name" th:href="@{${project.id}}" th:text="${project.name}">__PROJECT_NAME__</a></div>
-            <div th:case="''"><span class="glyphicon glyphicon-lock"></span>&nbsp;&nbsp;<span class="project-name" th:text="${project.name}">__PROJECT_NAME__</span></div>
+            <div class="unauthorized" th:case="''"><span class="glyphicon glyphicon-lock"></span>&nbsp;&nbsp;<span class="project-name" th:text="${project.name}">__PROJECT_NAME__</span></div>
         </div>
     </div>
 </div>
