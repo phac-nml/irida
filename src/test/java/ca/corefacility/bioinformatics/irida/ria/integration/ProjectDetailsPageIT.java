@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.integration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -23,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectDetails
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableList;
 
 /**
  * <p>
@@ -45,6 +49,9 @@ public class ProjectDetailsPageIT {
 	public static final String PROJECT_CREATED_DATE = "12 Jul 2013";
 	public static final String PROJECT_MODIFIED_DATE = "18 Jul 2013";
 	public static final String PROJECT_ORGANISM = "E. coli";
+
+	public static final ImmutableList<String> ASSOCIATED_PROJECTS = new ImmutableList.Builder<String>().add("project2")
+			.add("project3").add("project5").build();
 
 	private WebDriver driver;
 	private ProjectDetailsPage detailsPage;
@@ -74,5 +81,15 @@ public class ProjectDetailsPageIT {
 				detailsPage.getCreatedDate());
 		assertEquals("Should have the correct date format for modified date", PROJECT_MODIFIED_DATE,
 				detailsPage.getModifiedDate());
+	}
+
+	@Test
+	public void hasTheCorrectAssociatedProjects() {
+		List<String> projectsDiv = detailsPage.getAssociatedProjects();
+		assertEquals("Has the correct number of associated projects", 3, projectsDiv.size());
+
+		for (String project : ASSOCIATED_PROJECTS) {
+			assertTrue("Contains the correct project names (" + project + ")", ASSOCIATED_PROJECTS.contains(project));
+		}
 	}
 }
