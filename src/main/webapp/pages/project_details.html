@@ -19,14 +19,14 @@
             <h3>This is where the project recent activities will go.</h3>
         </main>
         <div class="col-md-3 col-md-pull-9 visible-md visible-lg">
-            <div class="panel panel-info">
+            <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <h3 class="panel-title" th:text="#{project.details}">Project Details</h3>
+                    <b class="panel-title" th:text="#{project.details}">Project Details</b>
                 </div>
                 <div class="panel-body">
                     <ul class="nav nav-pills nav-stacked" th:inline="text">
                         <li th:if="${project.organism}"><span class="glyphicon glyphicon-leaf"></span>&nbsp;[[#{project.organism}]]<span
-                                class="pull-right" id="project-organism" th:text="${project.organism}"></span>
+                                class="pull-right" id="project-organism"><i th:text="${project.organism}"></i></span>
                         </li>
                         <li><span class="glyphicon glyphicon-tower"></span>&nbsp;[[#{project.owner}]]<span
                                 class="pull-right" id="project-owner"
@@ -51,19 +51,38 @@
                     </ul>
                 </div>
             </div>
-            <div class="panel panel-default">
+            <div class="panel panel-info">
                 <div class="panel-heading">
-                    <h3 class="panel-title" th:text="#{project.associated}">Associated Projects</h3>
+                    <b class="panel-title" th:text="#{project.associated.title}">Associated Projects</b>
                 </div>
                 <div class="panel-body">
-                    <p>List of associated project with ability to connect to them.</p>
+                    <div layout:replace="partials/associated-projects :: list (projects=${associatedProjects})"></div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
-
+    <script>
+        $(function() {
+            $(".glyphicon-eye-open").qtip({
+                content: {
+                    text: /*[[#{project.associated.rights}]]*/ 'You can view this project.'
+                },
+                style: {
+                    classes: "qtip-green"
+                }
+            });
+            $(".glyphicon-lock").qtip({
+                content: {
+                    text: /*[[#{project.associated.norights}]]*/ 'You do not have authorization to view this project.'
+                },
+                style: {
+                    classes: "qtip-red"
+                }
+            });
+        });
+    </script>
 </div>
 </body>
 </html>
