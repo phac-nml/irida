@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -74,13 +75,13 @@ public class UsersController {
 	}
 
 	/**
-	 * Request for a specific project details page.
+	 * Request for a specific user details page.
 	 * 
 	 * @param userId
-	 *            The id for the project to show details for.
+	 *            The id for the user to show details for.
 	 * @param model
 	 *            Spring model to populate the html page.
-	 * @return The name of the project details page.
+	 * @return The name of the user details page.
 	 */
 	@RequestMapping(value = "/{userId}")
 	public String getUserSpecificPage(@PathVariable Long userId, final Model model) {
@@ -102,6 +103,27 @@ public class UsersController {
 		model.addAttribute("totalProjects", totalProjects);
 
 		page = SPECIFIC_USER_PAGE;
+
+		return page;
+	}
+
+	/**
+	 * Get the user edit page
+	 * 
+	 * @param userId
+	 *            The ID of the user to get
+	 * @param model
+	 *            The model for the returned view
+	 * @return The user edit view
+	 */
+	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.GET)
+	public String getEditUserPage(@PathVariable Long userId, Model model) {
+		logger.trace("Getting edit project page for [User " + userId + "]");
+		String page;
+		User user = userService.read(userId);
+		model.addAttribute("user", user);
+
+		page = EDIT_USER_PAGE;
 
 		return page;
 	}
