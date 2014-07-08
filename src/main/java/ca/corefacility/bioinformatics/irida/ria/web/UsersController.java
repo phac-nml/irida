@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,6 +43,7 @@ import com.google.common.collect.Lists;
 public class UsersController {
 	private static final String USERS_PAGE = "user/list";
 	private static final String SPECIFIC_USER_PAGE = "user/user_details";
+	private static final String EDIT_USER_PAGE = "user/edit";
 	private static final String ERROR_PAGE = "error";
 	private static final String SORT_BY_ID = "id";
 	private static final String SORT_ASCENDING = "asc";
@@ -80,37 +82,27 @@ public class UsersController {
 	 *            Spring model to populate the html page.
 	 * @return The name of the project details page.
 	 */
-
 	@RequestMapping(value = "/{userId}")
 	public String getUserSpecificPage(@PathVariable Long userId, final Model model) {
 		logger.debug("Getting project information for [User " + userId + "]");
 		String page;
-		try {
-			User user = userService.read(userId);
-			model.addAttribute("user", user);
+		User user = userService.read(userId);
+		model.addAttribute("user", user);
 
-			// TODO: Only display this for ADMIN users and the currently logged
-			// in user
-			List<Join<Project, User>> projectsForUser = projectService.getProjectsForUser(user);
-			int totalProjects = projectsForUser.size();
-			// Trimming down the number of projects if there are too many
-			if (totalProjects > MAX_DISPLAY_PROJECTS) {
-				projectsForUser = projectsForUser.subList(0, MAX_DISPLAY_PROJECTS);
-			}
-
-			model.addAttribute("projects", projectsForUser);
-			model.addAttribute("totalProjects", totalProjects);
-
-			page = SPECIFIC_USER_PAGE;
-		} catch (EntityNotFoundException e) {
-			// TODO: (Josh - 2014-06-24) Format error page if project is not
-			// found. These should probably be redirects.
-			page = ERROR_PAGE;
-		} catch (AccessDeniedException e) {
-			// TODO: (Josh - 2014-06-24) Format error page if user does not have
-			// access. These should probably be redirects.
-			page = ERROR_PAGE;
+		// TODO: Only display this for ADMIN users and the currently logged
+		// in user
+		List<Join<Project, User>> projectsForUser = projectService.getProjectsForUser(user);
+		int totalProjects = projectsForUser.size();
+		// Trimming down the number of projects if there are too many
+		if (totalProjects > MAX_DISPLAY_PROJECTS) {
+			projectsForUser = projectsForUser.subList(0, MAX_DISPLAY_PROJECTS);
 		}
+
+		model.addAttribute("projects", projectsForUser);
+		model.addAttribute("totalProjects", totalProjects);
+
+		page = SPECIFIC_USER_PAGE;
+
 		return page;
 	}
 
@@ -168,6 +160,11 @@ public class UsersController {
 
 		map.put(DataTable.RESPONSE_PARAM_DATA, usersData);
 		return map;
+	}
+
+	@ExceptionHandler({ AccessDeniedException.class, EntityNotFoundException.class })
+	public String handleAccessDenied() {
+		return ERROR_PAGE;
 	}
 
 }
