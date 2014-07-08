@@ -6,11 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.DataTable;
@@ -109,10 +106,42 @@ public class ProjectsControllerTest {
 	public void testGetSpecificProjectPage() {
 		Model model = new ExtendedModelMap();
 		Long projectId = 1L;
+        Principal principal = () -> USER_NAME;
+        List<Join<Project, User>> projects = getProjectsForUser();
 		when(userService.getUsersForProjectByRole(getProject(), ProjectRole.PROJECT_OWNER)).thenReturn(
 				getUsersForProjectByRole());
+        when(projectService.getProjectsForUser(user)).thenReturn(projects);
+        when(projectService.getRelatedProjects(getProject())).thenReturn(getUserProjectJoin(projects));
+
 		assertEquals("Returns the correct Project Page", PROJECT_DETAILS_PAGE,
-				controller.getProjectSpecificPage(projectId, model));
+				controller.getProjectSpecificPage(projectId, model, principal));
+        
+	}
+
+	private List<Join<Project, User>> getProjectsForUser() {
+		List<Join<Project, User>> projects = new ArrayList<>();
+		for (int i = 0; i < 10; i++) {
+			Project p = new Project("project" + i);
+			p.setId(1L + i);
+			projects.add(new ProjectUserJoin(p, user, ProjectRole.PROJECT_USER));
+		}
+		return projects;
+	}
+
+	private List<RelatedProjectJoin> getUserProjectJoin(List<Join<Project, User>> projects) {
+		List<RelatedProjectJoin> join = new ArrayList<>();
+		Project objectProject = getProject();
+		for (Join<Project, User> j : projects) {
+			Project p = j.getSubject();
+			join.add(new RelatedProjectJoin(objectProject, p));
+		}
+		// Add a couple that do not have authorization
+		for (int i = 10; i < 15; i++) {
+			Project p = new Project("project" + i);
+			p.setId(1L + i);
+			join.add(new RelatedProjectJoin(objectProject, p));
+		}
+		return join;
 	}
 
 	/**
