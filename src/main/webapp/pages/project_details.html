@@ -51,6 +51,12 @@
                     </ul>
                 </div>
             </div>
+            <div class="list-group">
+                <a class="list-group-item active" href="#">Project Dashboard</a>
+                <a class="list-group-item" th:href="@{__${#httpServletRequest.requestURI}__/samples}"><span class="badge" th:text="${samples}"></span>Samples</a>
+                <a class="list-group-item" th:href="@{__${#httpServletRequest.requestURI}__/collaborators}"><span class="badge" th:text="${users}"></span>Collaborators</a>
+                <a class="list-group-item" th:href="@{__${#httpServletRequest.requestURI}__/analysis}">Analysis</a>
+            </div>
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <b class="panel-title" th:text="#{project.associated.title}">Associated Projects</b>
