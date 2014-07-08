@@ -49,7 +49,16 @@ public class ProjectDetailsPage {
 
 	public List<String> getAssociatedProjects() {
         List<WebElement> divs = driver.findElements(By.className("project-name"));
-        List<String> names = divs.stream().map(WebElement::getText).collect(Collectors.toList());
-        return names;
+        return divs.stream().map(WebElement::getText).collect(Collectors.toList());
+    }
+
+	public String getProjectWithNoRights() {
+		WebElement lock = driver.findElement(By.cssSelector(".unauthorized .project-name"));
+		return lock.getText();
+	}
+
+    public List<String> getProjectsWithRights() {
+        List<WebElement> names = driver.findElements(By.cssSelector(".authorized .project-name"));
+        return names.stream().map(WebElement::getText).collect(Collectors.toList());
     }
 }

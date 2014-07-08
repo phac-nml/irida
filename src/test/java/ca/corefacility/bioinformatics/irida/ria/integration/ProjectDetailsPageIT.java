@@ -50,10 +50,11 @@ public class ProjectDetailsPageIT {
 	public static final String PROJECT_MODIFIED_DATE = "18 Jul 2013";
 	public static final String PROJECT_ORGANISM = "E. coli";
 
-	public static final ImmutableList<String> ASSOCIATED_PROJECTS = new ImmutableList.Builder<String>().add("project2")
-			.add("project3").add("project5").build();
+    public static final ImmutableList<String> ASSOCIATED_PROJECTS_WITH_RIGHTS = ImmutableList
+			.of("project2", "project3");
+    public static final String ASSOCIATED_PROJECT_NO_RIGHTS = "project5";
 
-	private WebDriver driver;
+    private WebDriver driver;
 	private ProjectDetailsPage detailsPage;
 
 	@Before
@@ -88,8 +89,10 @@ public class ProjectDetailsPageIT {
 		List<String> projectsDiv = detailsPage.getAssociatedProjects();
 		assertEquals("Has the correct number of associated projects", 3, projectsDiv.size());
 
-		for (String project : ASSOCIATED_PROJECTS) {
-			assertTrue("Contains the correct project names (" + project + ")", ASSOCIATED_PROJECTS.contains(project));
-		}
-	}
+        assertEquals("Has project with no rights", ASSOCIATED_PROJECT_NO_RIGHTS, detailsPage.getProjectWithNoRights());
+        List<String> projectsWithRights = detailsPage.getProjectsWithRights();
+        for (String project : ASSOCIATED_PROJECTS_WITH_RIGHTS) {
+            assertTrue("Contains projects with authorization", projectsWithRights.contains(project));
+        }
+    }
 }

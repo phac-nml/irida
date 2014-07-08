@@ -28,23 +28,23 @@
                         <li th:if="${project.organism}"><span class="glyphicon glyphicon-leaf"></span>&nbsp;[[#{project.organism}]]<span
                                 class="pull-right" id="project-organism"><i th:text="${project.organism}"></i></span>
                         </li>
-                        <li><span class="glyphicon glyphicon-tower"></span>&nbsp;[[#{project.owner}]]<span
+                        <li th:if="${owner} != null"><span class="glyphicon glyphicon-tower"></span>&nbsp;[[#{project.owner}]]<span
                                 class="pull-right" id="project-owner"
                                 th:text="${owner.label}">__DATE_CREATED__</span>
                         </li>
-                        <li><span class="glyphicon glyphicon-calendar"></span>&nbsp;[[#{project.created}]]<span
+                        <li th:if="${project.timestamp}"><span class="glyphicon glyphicon-calendar"></span>&nbsp;[[#{project.created}]]<span
                                 class="pull-right" id="project-created"
                                 th:text="${#calendars.format(project.timestamp, 'dd MMM yyyy')}">__DATE_CREATED__</span>
                         </li>
-                        <li><span class="glyphicon glyphicon-calendar"></span>&nbsp;[[#{project.modified}]]<span
+                        <li th:if="${project.modifiedDate}"><span class="glyphicon glyphicon-calendar"></span>&nbsp;[[#{project.modified}]]<span
                                 class="pull-right" id="project-modified"
                                 th:text="${#calendars.format(project.modifiedDate, 'dd MMM yyyy')}">__DATE_CREATED__</span>
                         </li>
-                        <li><span class="glyphicon glyphicon-user"></span>&nbsp;[[#{project.collaborators}]]<span
+                        <li th:if="${users}"><span class="glyphicon glyphicon-user"></span>&nbsp;[[#{project.collaborators}]]<span
                                 class="pull-right" id="project-users"
                                 th:text="${users}">__USERS__</span>
                         </li>
-                        <li><span class="glyphicon glyphicon-file"></span>&nbsp;[[#{project.samples}]]<span
+                        <li th:if="${samples}"><span class="glyphicon glyphicon-file"></span>&nbsp;[[#{project.samples}]]<span
                                 class="pull-right" id="project-samples"
                                 th:text="${samples}">__SAMPLES__</span>
                         </li>
@@ -71,17 +71,29 @@
 <div layout:fragment="scripts" th:inline="javascript">
     <script>
         $(function() {
-            $(".glyphicon-eye-open").qtip({
+            $(".authorized").qtip({
                 content: {
                     text: /*[[#{project.associated.rights}]]*/ 'You can view this project.'
+                },
+                position: {
+                    at: 'bottom left',
+                    adjust: {
+                        x: 20
+                    }
                 },
                 style: {
                     classes: "qtip-green"
                 }
             });
-            $(".glyphicon-lock").qtip({
+            $(".unauthorized").qtip({
                 content: {
                     text: /*[[#{project.associated.norights}]]*/ 'You do not have authorization to view this project.'
+                },
+                position: {
+                    at: 'bottom left',
+                    adjust: {
+                        x: 20
+                    }
                 },
                 style: {
                     classes: "qtip-red"
