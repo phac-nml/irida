@@ -20,12 +20,12 @@ public class UsersPage {
 	}
 	
 	public int usersTableSize() {
-		WebElement element = driver.findElement(By.xpath("//table[@id='usersTable']/tbody"));
+		WebElement element = driver.findElement(By.id("user-table-body"));
 		return element.findElements(By.tagName("tr")).size();
 	}
 	
 	public void clickUsernameHeader(){
-		WebElement header = driver.findElement(By.xpath("//table[@id='usersTable']/thead/tr/th[2]"));
+		WebElement header = driver.findElement(By.id("username-header"));
 		header.click();
 		waitForAjax();
 	}
