@@ -1,3 +1,15 @@
+$color-primary: rgba(37, 114, 180, 1.0);
+$color-success: #5cb85c;
+$color-info: #5bc0de;
+$color-warning: #f0ad4e;
+$color-danger: #d9534f;
+$color-grey-lighter: lighten(#000, 93.5);
+$color-grey-light: lighten(#000, 47.6);
+$color-grey: lighten(#000, 33.5);
+$color-grey-dark: lighten(#000, 20);
+$color-grey-darker: lighten(#000, 13.5);
+$color-text: $color-grey-dark;
+
 // Forms
 .input-full {
   width: 100%;
@@ -6,7 +18,78 @@
 // MAIN NAV
 // This allows for the setting tab to be displayed on the right
 // and still have its dropdown menu appear within the correct area.
-.menu > .pull-right > ul {
+.menu > .pull-right ul {
   position: absolute;
   right: 0;
+}
+
+.navbar-sm {
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid $color-grey-lighter;
+  height: 20px;
+  &.navbar {
+    min-height: 2.4em;
+  }
+  li.active {
+    &::after {
+      content: '';
+      display: block;
+      border: 6px solid transparent;
+      border-bottom-color: #fff;
+      width: 0;
+      height: 0;
+      margin-left: -6px;
+      position: relative;
+      left: 50%;
+      bottom: 11px;
+    }
+  }
+  .navbar-nav.nav a {
+    text-decoration: none;
+    line-height: 2.4em;
+    padding: 0 20px;
+    .badge {
+      line-height: 1.5em;
+      font-size: 10px;
+      background-color: $color-grey-lighter;
+      color: darken($color-grey-lighter, 30);
+      position: relative;
+      top: -2px;
+      right: -3px;
+    }
+  }
+}
+
+b.list-group-item {
+  background-color: $color-grey-lighter;
+}
+
+.panel .details {
+  li {
+    border-bottom: 1px solid $color-grey-lighter;
+    line-height: 2em;
+  }
+  .glyphicon {
+    color: $color-grey-light;
+    margin-right: .5em;
+  }
+  em {
+    font-style: normal;
+  }
+}
+
+#associated-projects {
+  a.disabled {
+    color: $color-text;
+    border-top: lightgray 1px solid;
+    text-decoration: none;
+    cursor: not-allowed;
+  }
+  .glyphicon-lock {
+    color: $color-danger;
+  }
+  .glyphicon-eye-open {
+    color: $color-success;
+  }
 }

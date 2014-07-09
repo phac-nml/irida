@@ -38,6 +38,7 @@ if [ ! -e bin/chromedriver ] ; then
     popd > /dev/null
 fi
 echo 'export PATH=~/.irida-client/bin:~/.irida-client/node-v0.10.26-linux-x64/bin:$PATH' > ~/.irida-client/bashrc
+source ~/.irida-client/bashrc
 popd > /dev/null
 
 # Install Sass and Compass
