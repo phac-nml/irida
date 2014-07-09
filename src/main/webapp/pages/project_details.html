@@ -49,7 +49,7 @@
                                 th:text="${#calendars.format(project.timestamp, 'dd MMM yyyy')}">__DATE_CREATED__</span>
                         </li>
                         <li th:if="${project.modifiedDate} != null"><span class="glyphicon glyphicon-calendar"></span><em th:text="#{project.modified}"></em><span
-                                class="pull-right" id="project-modified" data:livestamp="${project.timestamp}">__DATE_CREATED__</span>
+                                class="pull-right" id="project-modified" data:livestamp="${project.modifiedDate}" th:title="${#calendars.format(project.modifiedDate, 'dd MMM yyyy HH:mm')}">__DATE_CREATED__</span>
                         </li>
                     </ul>
                 </div>
