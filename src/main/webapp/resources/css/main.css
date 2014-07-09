@@ -1,12 +1,59 @@
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/main\.scss}line{font-family:\000032}}
 .input-full {
-  width: 100%;
-}
+  width: 100%; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/main\.scss}line{font-family:\000039}}
-.menu > .pull-right > ul {
+.menu > .pull-right ul {
   position: absolute;
-  right: 0;
-}
+  right: 0; }
 
-/*# sourceMappingURL=main.css.map */
+.navbar-sm {
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid #eeeeee;
+  height: 20px; }
+  .navbar-sm.navbar {
+    min-height: 2.4em; }
+  .navbar-sm li.active::after {
+    content: '';
+    display: block;
+    border: 6px solid transparent;
+    border-bottom-color: #fff;
+    width: 0;
+    height: 0;
+    margin-left: -6px;
+    position: relative;
+    left: 50%;
+    bottom: 11px; }
+  .navbar-sm .navbar-nav.nav a {
+    text-decoration: none;
+    line-height: 2.4em;
+    padding: 0 20px; }
+    .navbar-sm .navbar-nav.nav a .badge {
+      line-height: 1.5em;
+      font-size: 10px;
+      background-color: #eeeeee;
+      color: #a2a2a2;
+      position: relative;
+      top: -2px;
+      right: -3px; }
+
+b.list-group-item {
+  background-color: #eeeeee; }
+
+.panel .details li {
+  border-bottom: 1px solid #eeeeee;
+  line-height: 2em; }
+.panel .details .glyphicon {
+  color: #797979;
+  margin-right: .5em; }
+.panel .details em {
+  font-style: normal; }
+
+#associated-projects a.disabled {
+  color: #333333;
+  border-top: lightgray 1px solid;
+  text-decoration: none;
+  cursor: not-allowed; }
+#associated-projects .glyphicon-lock {
+  color: #d9534f; }
+#associated-projects .glyphicon-eye-open {
+  color: #5cb85c; }
