@@ -83,7 +83,7 @@
                 </div>
                     
                 <div class="panel-body">
-                	<table id="usersTable" class="table table-striped table-hover">
+                	<table id="projectsTable" class="table table-striped table-hover">
                 		<thead>
                 			<tr>
                 				<th th:text="#{user.projects.id}">_ID_</th>
@@ -93,9 +93,9 @@
                 		</thead>
                 		<tbody>
                 			<tr th:each="project,iterStat : ${projects}">
-                				<td th:text="${project.subject.id}">_PROJECT_NAME_</td>
+                				<td th:text="${project.subject.id}">_PROJECT_ID_</td>
                 				<td th:text="${project.subject.name}">_PROJECT_NAME_</td>
-                    			<td th:text="${projectRoles[iterStat.index]}">_PROJECT_ROLE_</td>
+                    			<td class="project-role" ><span class="project-role-icon"></span>&nbsp;<span class="project-role-name" th:title="${project.projectRole}" th:text="${projectRoles[iterStat.index]}">_PROJECT_ROLE_</span></td>
                 			</tr>
                 		</tbody>
             		</table>
@@ -106,7 +106,18 @@
     </div>
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
-
+	<script th:inline="javascript">
+		var roleClass = new Array();
+		roleClass["PROJECT_USER"] = "glyphicon glyphicon-user";
+		roleClass["PROJECT_OWNER"] = "glyphicon glyphicon-tower";
+        $(document).ready(function () {
+            $('#projectsTable').find(".project-role").each(function(index,element){
+            	var iconSpan = $(element).find(".project-role-icon");
+            	var rolename = $(element).find(".project-role-name").attr("title");
+            	iconSpan.addClass(roleClass[rolename]);
+            });
+        });
+    </script>
 </div>
 </body>
 </html>
