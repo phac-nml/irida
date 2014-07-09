@@ -9,7 +9,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.util.StringUtils;
 
 /**
  * Roles for authorization in the application.
@@ -23,12 +22,11 @@ import org.springframework.util.StringUtils;
 public class Role implements Comparable<Role>, GrantedAuthority {
 	private static final long serialVersionUID = 7595149386708058927L;
 
-	private static final String ROLE_PREFIX = "ROLE_";
 	/**
 	 * Constant reference for administrative role.
 	 */
 	public static final Role ROLE_ANONYMOUS = new Role("ROLE_ANONYMOUS");
-
+	
 	/**
 	 * Constant reference for administrative role.
 	 */
@@ -50,7 +48,7 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 
 	@Id
 	private String name;
-
+	
 	@NotNull
 	private String description;
 
@@ -106,17 +104,6 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 	@Override
 	public String getAuthority() {
 		return name;
-	}
-
-	/**
-	 * Get the display name for this role. It will generally return a
-	 * capatalized version of "name" without the "ROLE_" prefix.
-	 * 
-	 * @return Display name for this Role
-	 */
-	public String getDisplayName() {
-		int lastIndexOf = name.lastIndexOf(ROLE_PREFIX);
-		return StringUtils.capitalize(name.substring(lastIndexOf + ROLE_PREFIX.length()).toLowerCase());
 	}
 
 	/**
