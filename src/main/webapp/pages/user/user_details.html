@@ -108,14 +108,18 @@
 <div layout:fragment="scripts" th:inline="javascript">
 	<!-- Add the project role icons to the project role names -->
 	<script th:inline="javascript">
+		//set up an array of the role names mapping to their icons
 		var roleClass = new Array();
 		roleClass["PROJECT_USER"] = "glyphicon glyphicon-user";
 		roleClass["PROJECT_OWNER"] = "glyphicon glyphicon-tower";
         $(document).ready(function () {
+        	//add the icon if it exists
             $('#projectsTable').find(".project-role").each(function(index,element){
             	var iconSpan = $(element).find(".project-role-icon");
             	var rolename = $(element).find(".project-role-name").attr("title");
-            	iconSpan.addClass(roleClass[rolename]);
+            	if(roleClass[rolename]){
+            		iconSpan.addClass(roleClass[rolename]);
+            	}
             });
         });
     </script>
