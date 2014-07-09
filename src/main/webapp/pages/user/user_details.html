@@ -43,8 +43,11 @@
                     	</li>
                     	<li>
                     		<span class="glyphicon glyphicon-envelope"></span>&nbsp;[[#{users.email}]]
-                    		<span class="pull-right" id="user-email"
-                                th:text="${user.email}">_EMAIL@EMAIL.com_</span>
+                    		<span class="pull-right" id="user-email">
+                    			<a th:href="'mailto:'+${user.email}" href="mailto:someone@nowhere.com">
+                    				<span id="user-email" th:text="${user.email}">_EMAIL_</span>
+                    			</a>
+                    		</span>
                     	</li>
                     	<li>
                     		<span class="glyphicon glyphicon-earphone"></span>&nbsp;[[#{user.phone}]]
