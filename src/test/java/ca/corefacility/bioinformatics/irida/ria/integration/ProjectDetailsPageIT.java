@@ -3,9 +3,9 @@ package ca.corefacility.bioinformatics.irida.ria.integration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -105,8 +105,8 @@ public class ProjectDetailsPageIT {
 	 */
 	private String getFormattedModifiedDate() {
 		// Need to format the expected modified date
-		DateTime current = DateTime.now();
-		int years = current.getYear() - MODIFIED_DATE_DB_YEAR;
+		LocalDateTime time = LocalDateTime.now();
+		int years = time.getYear() - MODIFIED_DATE_DB_YEAR;
 		String modifiedDate;
 		if (years == 1) {
 			modifiedDate = "a year ago";
