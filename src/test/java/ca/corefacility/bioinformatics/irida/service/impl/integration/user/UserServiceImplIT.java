@@ -20,6 +20,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -333,6 +335,20 @@ public class UserServiceImplIT {
 		u.setSystemRole(Role.ROLE_USER);
 
 		userService.create(u);
+	}
+	
+	@Test
+	public void testSearchUser(){
+		String search = "Mr";
+		Page<User> searchUser = userService.searchUser(search, 0, 10, Direction.ASC, "id");
+		assertEquals(3,searchUser.getContent().size());
+		for(User u : searchUser){
+			assertTrue(u.getFirstName().contains("Mr"));
+		}
+		
+		search = "User";
+		searchUser = userService.searchUser(search, 0, 10, Direction.ASC, "id");
+		assertEquals(2,searchUser.getContent().size());
 	}
 
 	@Test(expected = AccessDeniedException.class)

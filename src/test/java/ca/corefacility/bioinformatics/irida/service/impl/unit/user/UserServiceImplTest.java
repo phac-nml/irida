@@ -20,6 +20,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -34,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.service.impl.user.UserServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
 /**
  * Testing the behavior of {@link UserServiceImpl}
@@ -234,6 +240,27 @@ public class UserServiceImplTest {
 
 		userService.loadUserByEmail(email);
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testSearchUser(){
+		int page = 1;
+		int size = 10;
+		Direction order = Direction.ASC;
+		String sortProperties = "id";
+		String searchString = "tom";
+		
+		
+		Page<User> userPage = new PageImpl<>(Lists.newArrayList(new User(1l, "tom", "tom@nowhere.com", "123456798", "Tom",
+				"Matthews", "1234"), new User(2l, "tomorrow", "tomorrow@somewhere.com", "ABCDEFGHIJ", "Tommorrow", "Sillyname", "5678")));
+		
+		when(userRepository.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(userPage);
+		
+		Page<User> searchUser = userService.searchUser(searchString, page, size, order, sortProperties);
+		assertEquals(userPage, searchUser);
+		
+		verify(userRepository).findAll(any(Specification.class), any(PageRequest.class));
 	}
 
 	private User user() {
