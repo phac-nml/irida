@@ -31,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
@@ -83,7 +84,7 @@ public class UsersController {
 	 *            Spring model to populate the html page.
 	 * @return The name of the user details page.
 	 */
-	@RequestMapping(value = "/{userId}")
+	@RequestMapping(value = "/{userId}", method=RequestMethod.GET)
 	public String getUserSpecificPage(@PathVariable Long userId, final Model model) {
 		logger.debug("Getting project information for [User " + userId + "]");
 		String page;
@@ -105,6 +106,31 @@ public class UsersController {
 		page = SPECIFIC_USER_PAGE;
 
 		return page;
+	}
+	
+	/**
+	 * Request for a specific user details page.
+	 * 
+	 * @param userId
+	 *            The id for the user to show details for.
+	 * @param model
+	 *            Spring model to populate the html page.
+	 * @return The name of the user details page.
+	 */
+	@RequestMapping(value = "/{userId}", method=RequestMethod.POST)
+	public String updateUser(@PathVariable Long userId, @RequestParam Map<String,String> params, final Model model) {
+		logger.debug("Updating user " + userId);
+		
+		Map<String,Object> updatedValues = new HashMap<>();
+		
+		for(String key : params.keySet()){
+			String value = params.get(key);
+			if(!Strings.isNullOrEmpty(value)){
+				updatedValues.put(key, value);
+			}
+		}
+
+		return "redirect:/users/"+userId;
 	}
 
 	/**

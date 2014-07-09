@@ -23,7 +23,7 @@
                 	<h3 class="panel-title" th:text="#{user.edit.details}">_Edit User Details_</h3>
                 </div>
                 <div class="panel-body">
-	            	<form action="/users/1" th:action="@{/users/{id}(id=${user.id})}">
+	            	<form action="/users/1" th:action="@{/users/{id}(id=${user.id})}" method="post">
 	            		<fieldset>
 	            			<div class="form-group">
 	  							<label class="col-md-4" th:text="#{user.firstName}" for="firstName">_First Name_</label>  
