@@ -42,7 +42,7 @@ import com.google.common.collect.ImmutableMap;
 public class ProjectsController {
 	private static final String PROJECTS_PAGE = "projects";
 	private static final String SPECIFIC_PROJECT_PAGE = "project_details";
-    private static final String CREATE_NEW_PROJECT_PAGE = "projects_new";
+    private static final String CREATE_NEW_PROJECT_PAGE = "projects/project-new";
 	private static final String ERROR_PAGE = "error";
 	private static final String SORT_BY_ID = "id";
 	private static final String SORT_BY_NAME = "name";
