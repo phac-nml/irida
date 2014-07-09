@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
@@ -97,6 +98,13 @@ public class UsersController {
 		String page;
 		User user = userService.read(userId);
 		model.addAttribute("user", user);
+		
+		Locale locale = LocaleContextHolder.getLocale();
+		
+		String roleMessageName = "systemrole." + user.getSystemRole().getName();
+		String systemRole = messageSource.getMessage(roleMessageName, null, locale);
+		
+		model.addAttribute("systemRole",systemRole);
 
 		// TODO: Only display this for ADMIN users and the currently logged
 		// in user
@@ -106,8 +114,19 @@ public class UsersController {
 		if (totalProjects > MAX_DISPLAY_PROJECTS) {
 			projectsForUser = projectsForUser.subList(0, MAX_DISPLAY_PROJECTS);
 		}
+		
+		List<String> projectRoles = new ArrayList<>();
+		for(Join<Project,User> join : projectsForUser){
+			ProjectUserJoin pujoin = (ProjectUserJoin) join;
+			
+			String proleMessageName = "projectRole." + pujoin.getProjectRole().toString();
+			String projectRole = messageSource.getMessage(proleMessageName, null, locale);
+			
+			projectRoles.add(projectRole);
+		}
 
 		model.addAttribute("projects", projectsForUser);
+		model.addAttribute("projectRoles",projectRoles);
 		model.addAttribute("totalProjects", totalProjects);
 
 		page = SPECIFIC_USER_PAGE;

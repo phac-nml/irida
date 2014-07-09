@@ -54,7 +54,7 @@
                     	<li>
                     		<span class="glyphicon glyphicon-stats"></span>&nbsp;[[#{users.role}]]
                     		<span class="pull-right" id="user-role"
-                                th:text="${user.systemRole.displayName}">_ROLE_</span>
+                                th:text="${systemRole}">_ROLE_</span>
                     	</li>
                         <li>
                         	<span class="glyphicon glyphicon-calendar"></span>&nbsp;[[#{user.created}]]
@@ -89,10 +89,10 @@
                 			</tr>
                 		</thead>
                 		<tbody>
-                			<tr th:each="project : ${projects}">
+                			<tr th:each="project,iterStat : ${projects}">
                 				<td th:text="${project.subject.id}">_PROJECT_NAME_</td>
                 				<td th:text="${project.subject.name}">_PROJECT_NAME_</td>
-                    			<td th:text="${project.projectRole.displayName}">_PROJECT_ROLE_</td>
+                    			<td th:text="${projectRoles[iterStat.index]}">_PROJECT_ROLE_</td>
                 			</tr>
                 		</tbody>
             		</table>
