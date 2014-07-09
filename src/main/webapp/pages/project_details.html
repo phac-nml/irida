@@ -21,7 +21,7 @@
                 </ul>
             </div>
         </nav>
-        <main class="col-md-9 col-md-push-3" role="main" property="mainContentOfPage">
+        <main class="col-md-9" role="main" property="mainContentOfPage">
             <div class="row">
                 <div class="col-md-9">
                     <h1 id="wb-cont" property="name" th:text="${project.label}">__PROJECT_NAME__</h1>
@@ -29,7 +29,7 @@
             </div>
             <h3>This is where the project recent activities will go.</h3>
         </main>
-        <div class="col-md-3 col-md-pull-9 visible-md visible-lg">
+        <div class="col-md-3 visible-md visible-lg">
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <b class="panel-title" th:text="#{project.details}">Project Details</b>
@@ -68,10 +68,10 @@
                     text: /*[[#{project.associated.rights}]]*/ 'You can view this project.'
                 },
                 position: {
-                    at: 'right center',
-                    my: 'left center',
+                    at: 'left center',
+                    my: 'right center',
                     adjust: {
-                        x: -10
+                        x: 10
                     }
                 },
                 style: {
@@ -83,10 +83,10 @@
                     text: /*[[#{project.associated.norights}]]*/ 'You do not have authorization to view this project.'
                 },
                 position: {
-                    at: 'right center',
-                    my: 'left center',
+                    at: 'left center',
+                    my: 'right center',
                     adjust: {
-                        x: -10
+                        x: 10
                     }
                 },
                 style: {
