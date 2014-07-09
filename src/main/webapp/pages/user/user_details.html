@@ -95,7 +95,12 @@
                 			<tr th:each="project,iterStat : ${projects}">
                 				<td th:text="${project.subject.id}">_PROJECT_ID_</td>
                 				<td th:text="${project.subject.name}">_PROJECT_NAME_</td>
-                    			<td class="project-role" ><span class="project-role-icon"></span>&nbsp;<span class="project-role-name" th:title="${project.projectRole}" th:text="${projectRoles[iterStat.index]}">_PROJECT_ROLE_</span></td>
+                    			<td class="project-role" >
+                    				<span class="project-role-icon"></span>&nbsp;
+                    				<span class="project-role-name" th:title="${project.projectRole}" th:text="${projectRoles[iterStat.index]}">
+                    					_PROJECT_ROLE_
+                    				</span>
+                    			</td>
                 			</tr>
                 		</tbody>
             		</table>
