@@ -4,11 +4,14 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.DataTable;
@@ -58,10 +62,13 @@ public class UsersController {
 	private final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "username", "email", "lastName",
 			"firstName", "systemRole", "createdDate", "modifiedDate");
 
+	private MessageSource messageSource;
+
 	@Autowired
-	public UsersController(UserService userService, ProjectService projectService) {
+	public UsersController(UserService userService, ProjectService projectService, MessageSource messageSource) {
 		this.userService = userService;
 		this.projectService = projectService;
+		this.messageSource = messageSource;
 	}
 
 	/**
@@ -187,15 +194,20 @@ public class UsersController {
 
 		Page<User> userPage = userService.searchUser(searchValue, pageNum, length, sortDirection, sortString);
 
+		Locale locale = LocaleContextHolder.getLocale();
 		List<List<String>> usersData = new ArrayList<>();
 		for (User user : userPage) {
+			//getting internationalized system role from the message source
+			String roleMessageName = "systemrole." + user.getSystemRole().getName();
+			String systemRole = messageSource.getMessage(roleMessageName, null, locale);
+			
 			List<String> row = new ArrayList<>();
 			row.add(user.getId().toString());
 			row.add(user.getUsername());
 			row.add(user.getLastName());
 			row.add(user.getFirstName());
 			row.add(user.getEmail());
-			row.add(user.getSystemRole().getDisplayName());
+			row.add(systemRole);
 			row.add(Formats.DATE.format(user.getCreatedDate()));
 			row.add(Formats.DATE.format(user.getModifiedDate()));
 			usersData.add(row);

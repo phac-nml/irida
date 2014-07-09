@@ -15,17 +15,17 @@
                 <table id="usersTable" class="table table-striped table-hover">
                 <thead>
                 <tr>
-                    <th th:text="#{users.id}">_ID_</th>
-                    <th th:text="#{users.username}">_Username_</th>
-                    <th th:text="#{users.lastName}">_Last Name_</th>
-                    <th th:text="#{users.firstName}">_First Name_</th>
-                    <th th:text="#{users.email}">Email</th>
-                    <th th:text="#{users.role}">_Role_</th>
-                    <th th:text="#{users.created}">_Date Created_</th>
-                    <th th:text="#{users.modified}">_Modified Date_</th>
+                    <th id="userId-header" th:text="#{users.id}">_ID_</th>
+                    <th id="username-header" th:text="#{users.username}">_Username_</th>
+                    <th id="lastName-header" th:text="#{users.lastName}">_Last Name_</th>
+                    <th id="firstName-header" th:text="#{users.firstName}">_First Name_</th>
+                    <th id="email-header" th:text="#{users.email}">Email</th>
+                    <th id="role-header" th:text="#{users.role}">_Role_</th>
+                    <th id="created-header" th:text="#{users.created}">_Date Created_</th>
+                    <th id="modified-header" th:text="#{users.modified}">_Modified Date_</th>
                 </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody id="user-table-body"></tbody>
             </table>
             </main>
         </div>

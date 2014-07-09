@@ -1,16 +1,21 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
@@ -46,12 +51,14 @@ public class UsersControllerTest {
 	private UserService userService;
 	private ProjectService projectService;
 	private UsersController controller;
+	private MessageSource messageSource;
 
 	@Before
 	public void setUp() {
 		userService = mock(UserService.class);
 		projectService = mock(ProjectService.class);
-		controller = new UsersController(userService,projectService);
+		messageSource = mock(MessageSource.class);
+		controller = new UsersController(userService,projectService,messageSource);
 	}
 
 	@Test
@@ -65,6 +72,7 @@ public class UsersControllerTest {
 		Principal principal = () -> USER_NAME;
 
 		when(userService.searchUser("", 0, 10, Sort.Direction.ASC, "id")).thenReturn(userPage);
+		when(messageSource.getMessage(any(String.class), eq(null), any(Locale.class))).thenReturn("User");
 
 		Map<String, Object> response = controller.getAjaxProjectList(principal, 0, 10, 1, 0, "asc", "");
 
@@ -77,6 +85,7 @@ public class UsersControllerTest {
 		assertEquals("tom", list.get(USERNAME_TABLE_LOCATION));
 
 		verify(userService).searchUser("", 0, 10, Sort.Direction.ASC, "id");
+		verify(messageSource,times(2)).getMessage(any(String.class), eq(null), any(Locale.class));
 	}
 
 }
