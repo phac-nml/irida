@@ -10,52 +10,57 @@
     <div class="row">
         <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
     </div>
-    <div class="row naved-content">
+    <div class="row">
+        <nav class="navbar navbar-default navbar-sm" role="navigation">
+            <div class="container">
+                <ul class="nav navbar-nav" th:inline="text">
+                    <li class="active"><a th:href="@{__${#httpServletRequest.requestURI}__}"><span class="glyphicon glyphicon-home"></span></a></li>
+                    <li><a th:href="@{'/projects/' + ${project.getId()} + '/samples'}">[[#{project.samples}]]<span class="badge" th:text="${samples}"></span> </a></li>
+                    <li><a th:href="@{'/projects/' + ${project.getId()} + '/collaborators'}">[[#{project.collaborators}]]<span class="badge" th:text="${users}"></span></a></li>
+                    <li><a th:href="@{'/projects/' + ${project.getId()} + '/analysis'}">[[#{project.analysis}]]</a></li>
+                </ul>
+            </div>
+        </nav>
         <main class="col-md-9 col-md-push-3" role="main" property="mainContentOfPage">
             <div class="row">
                 <div class="col-md-9">
                     <h1 id="wb-cont" property="name" th:text="${project.label}">__PROJECT_NAME__</h1>
                 </div>
-                <div class="col-md-3" th:inline="text">
-                    <ul class="nav nav-pills nav-stacked">
-                        <li th:if="${project.organism}"><span class="glyphicon glyphicon-leaf"></span>&nbsp;[[#{project.organism}]]<span
-                                class="pull-right" id="project-organism"><i th:text="${project.organism}"></i></span>
-                        </li>
-                        <li th:if="${owner} != null"><span class="glyphicon glyphicon-tower"></span>&nbsp;[[#{project.owner}]]<span
-                                class="pull-right" id="project-owner"
-                                th:text="${owner.label}">__DATE_CREATED__</span>
-                        </li>
-                        <li th:if="${project.timestamp}"><span class="glyphicon glyphicon-calendar"></span>&nbsp;[[#{project.created}]]<span
-                                class="pull-right" id="project-created"
-                                th:text="${#calendars.format(project.timestamp, 'dd MMM yyyy')}">__DATE_CREATED__</span>
-                        </li>
-                        <li th:if="${project.modifiedDate}"><span class="glyphicon glyphicon-calendar"></span>&nbsp;[[#{project.modified}]]<span
-                                class="pull-right" id="project-modified"
-                                th:text="${#calendars.format(project.modifiedDate, 'dd MMM yyyy')}">__DATE_CREATED__</span>
-                        </li>
-                    </ul>
-                </div>
             </div>
             <h3>This is where the project recent activities will go.</h3>
         </main>
         <div class="col-md-3 col-md-pull-9 visible-md visible-lg">
-            <div class="list-group">
-                <a class="list-group-item active" href="#">Project Dashboard</a>
-                <a class="list-group-item" th:href="@{__${#httpServletRequest.requestURI}__/samples}"><span
-                        class="badge" th:text="${samples}"></span>Samples</a>
-                <a class="list-group-item" th:href="@{__${#httpServletRequest.requestURI}__/collaborators}"><span
-                        class="badge" th:text="${users}"></span>Collaborators</a>
-                <a class="list-group-item" th:href="@{__${#httpServletRequest.requestURI}__/analysis}">Analysis</a>
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <b class="panel-title" th:text="#{project.details}">Project Details</b>
+                </div>
+                <div class="panel-body">
+                    <ul class="nav nav-pills nav-stacked details">
+                        <li><span class="glyphicon glyphicon-barcode"></span><em th:text="#{project.id}"></em><span class="pull-right" th:text="${project.getId()}"></span></li>
+                        <li th:if="${project.organism} != null"><span class="glyphicon glyphicon-leaf"></span><em th:text="#{project.organism}"></em><span
+                                class="pull-right" id="project-organism"><i th:text="${project.organism}"></i></span>
+                        </li>
+                        <li th:if="${owner} != null"><span class="glyphicon glyphicon-tower"></span><em th:text="#{project.owner}"></em><span
+                                class="pull-right" id="project-owner"
+                                th:text="${owner.label}">__DATE_CREATED__</span>
+                        </li>
+                        <li th:if="${project.timestamp} != null"><span class="glyphicon glyphicon-calendar"></span><em th:text="#{project.created}"></em><span
+                                class="pull-right" id="project-created"
+                                th:text="${#calendars.format(project.timestamp, 'dd MMM yyyy')}">__DATE_CREATED__</span>
+                        </li>
+                        <li th:if="${project.modifiedDate} != null"><span class="glyphicon glyphicon-calendar"></span><em th:text="#{project.modified}"></em><span
+                                class="pull-right" id="project-modified" data:livestamp="${project.timestamp}">__DATE_CREATED__</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <div class="list-group">
-                <span class="list-group-item active" th:text="#{project.associated.title}">Associated Projects</span>
-
-                <div layout:replace="partials/associated-projects :: list (projects=${associatedProjects})"></div>
-            </div>
+            <div layout:replace="partials/associated-projects :: list (title=#{project.associated.title}, projects=${associatedProjects})"></div>
         </div>
     </div>
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
+    <script th:src="@{/resources/bower_components/moment/min/moment-with-langs.min.js}" src="/resources/bower_components/moment/min/moment-with-langs.min.js"></script>
+    <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}" src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
     <script>
         $(function () {
             $(".authorized").qtip({
@@ -63,9 +68,10 @@
                     text: /*[[#{project.associated.rights}]]*/ 'You can view this project.'
                 },
                 position: {
-                    at: 'bottom left',
+                    at: 'right center',
+                    my: 'left center',
                     adjust: {
-                        x: 20
+                        x: -10
                     }
                 },
                 style: {
@@ -77,9 +83,10 @@
                     text: /*[[#{project.associated.norights}]]*/ 'You do not have authorization to view this project.'
                 },
                 position: {
-                    at: 'bottom left',
+                    at: 'right center',
+                    my: 'left center',
                     adjust: {
-                        x: 20
+                        x: -10
                     }
                 },
                 style: {
