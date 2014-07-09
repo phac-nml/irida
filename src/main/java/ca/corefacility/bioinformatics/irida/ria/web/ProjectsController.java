@@ -42,6 +42,7 @@ import com.google.common.collect.ImmutableMap;
 public class ProjectsController {
 	private static final String PROJECTS_PAGE = "projects";
 	private static final String SPECIFIC_PROJECT_PAGE = "project_details";
+    private static final String CREATE_NEW_PROJECT_PAGE = "projects_new";
 	private static final String ERROR_PAGE = "error";
 	private static final String SORT_BY_ID = "id";
 	private static final String SORT_BY_NAME = "name";
@@ -126,16 +127,24 @@ public class ProjectsController {
 		return page;
 	}
 
-	/**
-	 * Handles AJAX request for getting a list of projects available to the
-	 * logged in user. Produces JSON.
-	 * 
-	 * @param principal
-	 *            The currently logged in user.
-	 * @param request
-	 *            Contains the parameters for the datatable.
-	 * @return JSON value of the projects.
-	 */
+    @RequestMapping("/new")
+    public String getCreateProjectPage() {
+        return CREATE_NEW_PROJECT_PAGE;
+    }
+
+    /**
+     * Handles AJAX request for getting a list of projects available to the
+     * logged in user. Produces JSON.
+     * 
+     * @param principal
+     * @param start
+     * @param length
+     * @param draw
+     * @param sortColumn
+     * @param direction
+     * @param searchValue
+     * @return
+     */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody
 	Map<String, Object> getAjaxProjectList(final Principal principal,
