@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
@@ -175,6 +176,8 @@ public class UsersController {
 			@RequestParam(required = false) String confirmPassword, Model model) {
 		logger.debug("Updating user " + userId);
 
+		Locale locale = LocaleContextHolder.getLocale();
+
 		Map<String, String> errors = new HashMap<>();
 
 		Map<String, Object> updatedValues = new HashMap<>();
@@ -199,7 +202,10 @@ public class UsersController {
 
 		if (!Strings.isNullOrEmpty(password) || !Strings.isNullOrEmpty(confirmPassword)) {
 			if (!password.equals(confirmPassword)) {
-				errors.put("password", "Passwords do not match.");
+				
+				errors.put("password", messageSource.getMessage("user.edit.password.match", null, locale));
+			} else {
+				updatedValues.put("password", password);
 			}
 		}
 
@@ -214,12 +220,18 @@ public class UsersController {
 				String errorKey = violation.getPropertyPath().toString();
 				errors.put(errorKey, violation.getMessage());
 			}
+		} catch (DataIntegrityViolationException e) {
+			logger.debug(e.getMessage());
+			if (e.getMessage().contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
+				errors.put("email", messageSource.getMessage("user.edit.emailConflict", null, locale));
+			}
 		}
 
-		String returnView = getEditUserPage(userId, model);
+		// if there are errors, add them and return the edit page
+		String returnView;
 		if (!errors.isEmpty()) {
 			model.addAttribute("errors", errors);
-
+			returnView = getEditUserPage(userId, model);
 		} else {
 			returnView = "redirect:/users/" + userId;
 		}
