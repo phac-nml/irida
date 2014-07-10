@@ -10,13 +10,17 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.validation.ConstraintViolationException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
@@ -100,83 +104,125 @@ public class UsersControllerTest {
 		Principal principal = () -> USER_NAME;
 		Long userId = 1l;
 		String roleString = "User";
-		
+
 		ExtendedModelMap model = new ExtendedModelMap();
 		User user = new User(userId, USER_NAME, null, null, null, null, null);
 		user.setSystemRole(Role.ROLE_USER);
-		
+
 		@SuppressWarnings("unchecked")
-		List<Join<Project,User>> joins = Lists.newArrayList(new ProjectUserJoin(new Project("good project"), user, ProjectRole.PROJECT_USER));
+		List<Join<Project, User>> joins = Lists.newArrayList(new ProjectUserJoin(new Project("good project"), user,
+				ProjectRole.PROJECT_USER));
 
 		when(userService.read(userId)).thenReturn(user);
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
-		when(messageSource.getMessage(eq("systemrole."+ Role.ROLE_USER.getName()), eq(null), any(Locale.class))).thenReturn(roleString);
+		when(messageSource.getMessage(eq("systemrole." + Role.ROLE_USER.getName()), eq(null), any(Locale.class)))
+				.thenReturn(roleString);
 		when(projectService.getProjectsForUser(user)).thenReturn(joins);
 
 		String userSpecificPage = controller.getUserSpecificPage(userId, model, principal);
 
 		assertEquals("user/user_details", userSpecificPage);
-		assertEquals(user,model.get("user"));
+		assertEquals(user, model.get("user"));
 		assertEquals(roleString, model.get("systemRole"));
-		assertEquals(true,model.get("canEditUser"));
+		assertEquals(true, model.get("canEditUser"));
 		assertEquals(joins, model.get("projects"));
-		
+
 		verify(userService).read(userId);
 		verify(userService).getUserByUsername(USER_NAME);
-		verify(messageSource).getMessage(eq("systemrole."+ Role.ROLE_USER.getName()), eq(null), any(Locale.class));
+		verify(messageSource).getMessage(eq("systemrole." + Role.ROLE_USER.getName()), eq(null), any(Locale.class));
 		verify(projectService).getProjectsForUser(user);
 	}
-	
+
 	@Test
 	public void testGetOtherUsersSpecificPage() {
 		Principal principal = () -> USER_NAME;
 		Long userId = 1l;
 		String roleString = "User";
-		
+
 		ExtendedModelMap model = new ExtendedModelMap();
-		
+
 		User puser = new User(userId, USER_NAME, null, null, null, null, null);
 		puser.setSystemRole(Role.ROLE_USER);
-		
+
 		User user = new User(userId, "tom", null, null, null, null, null);
 		user.setSystemRole(Role.ROLE_USER);
-		
+
 		@SuppressWarnings("unchecked")
-		List<Join<Project,User>> joins = Lists.newArrayList(new ProjectUserJoin(new Project("good project"), user, ProjectRole.PROJECT_USER));
+		List<Join<Project, User>> joins = Lists.newArrayList(new ProjectUserJoin(new Project("good project"), user,
+				ProjectRole.PROJECT_USER));
 
 		when(userService.read(userId)).thenReturn(user);
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
-		when(messageSource.getMessage(eq("systemrole."+ Role.ROLE_USER.getName()), eq(null), any(Locale.class))).thenReturn(roleString);
+		when(messageSource.getMessage(eq("systemrole." + Role.ROLE_USER.getName()), eq(null), any(Locale.class)))
+				.thenReturn(roleString);
 		when(projectService.getProjectsForUser(user)).thenReturn(joins);
 
 		String userSpecificPage = controller.getUserSpecificPage(userId, model, principal);
 
 		assertEquals("user/user_details", userSpecificPage);
-		assertEquals(false,model.get("canEditUser"));
-		
+		assertEquals(false, model.get("canEditUser"));
+
 		verify(userService).read(userId);
 		verify(userService).getUserByUsername(USER_NAME);
-		verify(messageSource).getMessage(eq("systemrole."+ Role.ROLE_USER.getName()), eq(null), any(Locale.class));
+		verify(messageSource).getMessage(eq("systemrole." + Role.ROLE_USER.getName()), eq(null), any(Locale.class));
 		verify(projectService).getProjectsForUser(user);
 	}
-	
+
 	@Test
-	public void getEditUsersPage(){
+	public void testGetEditUsersPage() {
 		Long userId = 1l;
 		ExtendedModelMap model = new ExtendedModelMap();
-		
+
 		User user = new User(userId, USER_NAME, null, null, null, null, null);
-		
+
 		when(userService.read(userId)).thenReturn(user);
 
 		String editUserPage = controller.getEditUserPage(userId, model);
-		
-		assertEquals("user/edit",editUserPage);
+
+		assertEquals("user/edit", editUserPage);
 		assertEquals(user, model.get("user"));
 		assertTrue(model.containsAttribute("errors"));
-		
+
 		verify(userService).read(userId);
 	}
-	
+
+	@Test
+	public void testSubmitEditUser() {
+		Long userId = 1l;
+		ExtendedModelMap model = new ExtendedModelMap();
+		String firstName = "NewFirst";
+		Map<String, Object> expected = new HashMap<>();
+		expected.put("firstName", firstName);
+
+		String updateUser = controller.updateUser(userId, firstName, null, null, null, null, null, model);
+
+		assertEquals("redirect:/users/1", updateUser);
+
+		verify(userService).update(userId, expected);
+	}
+
+	@Test
+	public void testSubmitEditUserError() {
+		Long userId = 1l;
+		ExtendedModelMap model = new ExtendedModelMap();
+		String email = "existing@email.com";
+		Map<String, Object> expected = new HashMap<>();
+		expected.put("email", email);
+
+		DataIntegrityViolationException dataIntegrityViolationException = new DataIntegrityViolationException(
+				"Exception: " + User.USER_EMAIL_CONSTRAINT_NAME);
+
+		when(userService.update(userId, expected)).thenThrow(dataIntegrityViolationException);
+
+		String updateUser = controller.updateUser(userId, null, null, email, null, null, null, model);
+
+		assertEquals("user/edit", updateUser);
+		assertTrue(model.containsKey("errors"));
+		@SuppressWarnings("rawtypes")
+		Map modelMap = (Map) model.get("errors");
+		assertTrue(modelMap.containsKey("email"));
+
+		verify(userService).update(userId, expected);
+	}
 
 }
