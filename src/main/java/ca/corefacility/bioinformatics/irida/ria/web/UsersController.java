@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -249,9 +250,9 @@ public class UsersController {
 	 * @return The user edit view
 	 */
 	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.GET)
+	@PreAuthorize("hasPermission(#userId, 'canUpdateUser')")
 	public String getEditUserPage(@PathVariable Long userId, Model model) {
 		logger.trace("Getting edit project page for [User " + userId + "]");
-		String page;
 		User user = userService.read(userId);
 		model.addAttribute("user", user);
 
@@ -270,9 +271,7 @@ public class UsersController {
 			model.addAttribute("errors", new HashMap<String, String>());
 		}
 
-		page = EDIT_USER_PAGE;
-
-		return page;
+		return EDIT_USER_PAGE;
 	}
 
 	/**
