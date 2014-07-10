@@ -20,6 +20,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -100,7 +102,7 @@ public class UsersController {
 	 * @return The name of the user details page.
 	 */
 	@RequestMapping(value = "/{userId}", method = RequestMethod.GET)
-	public String getUserSpecificPage(@PathVariable Long userId, final Model model) {
+	public String getUserSpecificPage(@PathVariable("userId") Long userId, final Model model, Principal principal) {
 		logger.debug("Getting project information for [User " + userId + "]");
 		String page;
 		User user = userService.read(userId);
@@ -110,6 +112,9 @@ public class UsersController {
 
 		String roleMessageName = "systemrole." + user.getSystemRole().getName();
 		String systemRole = messageSource.getMessage(roleMessageName, null, locale);
+
+		boolean canEditUser = canEditUser(principal, user);
+		model.addAttribute("canEditUser", canEditUser);
 
 		model.addAttribute("systemRole", systemRole);
 
@@ -175,7 +180,7 @@ public class UsersController {
 
 		if (!Strings.isNullOrEmpty(systemRole)) {
 			Role newRole = Role.valueOf(systemRole);
-			
+
 			updatedValues.put("systemRole", newRole);
 		}
 
@@ -224,16 +229,16 @@ public class UsersController {
 		String page;
 		User user = userService.read(userId);
 		model.addAttribute("user", user);
-		
+
 		Locale locale = LocaleContextHolder.getLocale();
 
-		Map<String,String> roleNames = new HashMap<>();
-		for(Role role : allowedRoles){
+		Map<String, String> roleNames = new HashMap<>();
+		for (Role role : allowedRoles) {
 			String roleMessageName = "systemrole." + role.getName();
 			String roleName = messageSource.getMessage(roleMessageName, null, locale);
 			roleNames.put(role.getName(), roleName);
 		}
-		
+
 		model.addAttribute("allowedRoles", roleNames);
 
 		if (!model.containsAttribute("errors")) {
@@ -310,6 +315,22 @@ public class UsersController {
 	public String handleAccessDenied(Exception e) {
 		logger.error(e.getMessage());
 		return ERROR_PAGE;
+	}
+
+	/**
+	 * Check if the logged in user is allowed to edit the given user.
+	 * 
+	 * @param principal
+	 *            The currently logged in principal
+	 * @param user
+	 *            The user to edit
+	 * @return boolean if the principal can edit the user
+	 */
+	private boolean canEditUser(Principal principal, User user) {
+		String principalName = principal.getName();
+		User readPrincipal = userService.getUserByUsername(principalName);
+
+		return user.equals(readPrincipal) || readPrincipal.getAuthorities().contains(Role.ROLE_ADMIN);
 	}
 
 }
