@@ -35,7 +35,7 @@ import com.google.common.collect.Lists;
  */
 public class UsersControllerTest {
 	// HTML page names
-	private static final String PROJECTS_PAGE = "user/list";
+	private static final String USERS_PAGE = "user/list";
 
 	// DATATABLES position for project information
 	private static final int USER_ID_TABLE_LOCATION = 0;
@@ -62,8 +62,8 @@ public class UsersControllerTest {
 	}
 
 	@Test
-	public void showAllProjects() {
-		assertEquals(PROJECTS_PAGE, controller.getUsersPage());
+	public void showAllUsers() {
+		assertEquals(USERS_PAGE, controller.getUsersPage());
 	}
 
 	@Test
@@ -74,7 +74,7 @@ public class UsersControllerTest {
 		when(userService.searchUser("", 0, 10, Sort.Direction.ASC, "id")).thenReturn(userPage);
 		when(messageSource.getMessage(any(String.class), eq(null), any(Locale.class))).thenReturn("User");
 
-		Map<String, Object> response = controller.getAjaxProjectList(principal, 0, 10, 1, 0, "asc", "");
+		Map<String, Object> response = controller.getAjaxUserList(principal, 0, 10, 1, 0, "asc", "");
 
 		@SuppressWarnings("unchecked")
 		List<List<String>> userList = (List<List<String>>) response.get(DataTable.RESPONSE_PARAM_DATA);

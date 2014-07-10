@@ -286,7 +286,7 @@ public class UsersController {
 	 * @return JSON value of the projects.
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Object> getAjaxProjectList(final Principal principal,
+	public @ResponseBody Map<String, Object> getAjaxUserList(final Principal principal,
 			@RequestParam(DataTable.REQUEST_PARAM_START) Integer start,
 			@RequestParam(DataTable.REQUEST_PARAM_LENGTH) Integer length,
 			@RequestParam(DataTable.REQUEST_PARAM_DRAW) Integer draw,
