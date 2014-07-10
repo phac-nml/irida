@@ -98,9 +98,12 @@ public class UsersController {
 	 * @param userId
 	 *            The id for the user to show details for.
 	 * @param model
-	 *            Spring model to populate the html page.
-	 * @return The name of the user details page.
+	 *            Spring model to populate the html page
+	 * @param principal
+	 *            the currently logged in user
+	 * @return The name of the user/details page
 	 */
+
 	@RequestMapping(value = "/{userId}", method = RequestMethod.GET)
 	public String getUserSpecificPage(@PathVariable("userId") Long userId, final Model model, Principal principal) {
 		logger.debug("Getting project information for [User " + userId + "]");
@@ -162,13 +165,25 @@ public class UsersController {
 	}
 
 	/**
-	 * Request for a specific user details page.
+	 * Submit a user edit
 	 * 
 	 * @param userId
-	 *            The id for the user to show details for.
+	 *            The id of the user to edit (required)
+	 * @param firstName
+	 *            The firstname to update
+	 * @param lastName
+	 *            the lastname to update
+	 * @param email
+	 *            the email to update
+	 * @param systemRole
+	 *            the role to update
+	 * @param password
+	 *            the password to update
+	 * @param confirmPassword
+	 *            password confirmation
 	 * @param model
-	 *            Spring model to populate the html page.
-	 * @return The name of the user details page.
+	 *            The model to work on
+	 * @return The name of the user view
 	 */
 	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.POST)
 	public String updateUser(@PathVariable Long userId, @RequestParam(required = false) String firstName,
@@ -275,14 +290,22 @@ public class UsersController {
 	}
 
 	/**
-	 * Handles AJAX request for getting a list of projects available to the
-	 * logged in user. Produces JSON.
+	 * Get the listing of users
 	 * 
 	 * @param principal
-	 *            The currently logged in user.
-	 * @param request
-	 *            Contains the parameters for the datatable.
-	 * @return JSON value of the projects.
+	 *            The logged in user
+	 * @param start
+	 *            The start page
+	 * @param length
+	 *            The length of a page
+	 * @param draw
+	 * @param sortColumn
+	 *            The column to sort on
+	 * @param direction
+	 *            The direction to sort
+	 * @param searchValue
+	 *            The value to search with
+	 * @return A Model Map<String,Object> containing the users to list
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> getAjaxUserList(final Principal principal,
