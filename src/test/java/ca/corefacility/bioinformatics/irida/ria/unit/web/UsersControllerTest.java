@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.http.auth.BasicUserPrincipal;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
@@ -22,7 +21,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -161,5 +159,24 @@ public class UsersControllerTest {
 		verify(messageSource).getMessage(eq("systemrole."+ Role.ROLE_USER.getName()), eq(null), any(Locale.class));
 		verify(projectService).getProjectsForUser(user);
 	}
+	
+	@Test
+	public void getEditUsersPage(){
+		Long userId = 1l;
+		ExtendedModelMap model = new ExtendedModelMap();
+		
+		User user = new User(userId, USER_NAME, null, null, null, null, null);
+		
+		when(userService.read(userId)).thenReturn(user);
+
+		String editUserPage = controller.getEditUserPage(userId, model);
+		
+		assertEquals("user/edit",editUserPage);
+		assertEquals(user, model.get("user"));
+		assertTrue(model.containsAttribute("errors"));
+		
+		verify(userService).read(userId);
+	}
+	
 
 }
