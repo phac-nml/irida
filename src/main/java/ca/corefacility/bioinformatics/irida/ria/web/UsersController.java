@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +31,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -62,7 +65,7 @@ public class UsersController {
 
 	private final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "username", "email", "lastName",
 			"firstName", "systemRole", "createdDate", "modifiedDate");
-
+	
 	private MessageSource messageSource;
 
 	@Autowired
@@ -92,19 +95,19 @@ public class UsersController {
 	 *            Spring model to populate the html page.
 	 * @return The name of the user details page.
 	 */
-	@RequestMapping(value = "/{userId}", method=RequestMethod.GET)
+	@RequestMapping(value = "/{userId}", method = RequestMethod.GET)
 	public String getUserSpecificPage(@PathVariable Long userId, final Model model) {
 		logger.debug("Getting project information for [User " + userId + "]");
 		String page;
 		User user = userService.read(userId);
 		model.addAttribute("user", user);
-		
+
 		Locale locale = LocaleContextHolder.getLocale();
-		
+
 		String roleMessageName = "systemrole." + user.getSystemRole().getName();
 		String systemRole = messageSource.getMessage(roleMessageName, null, locale);
-		
-		model.addAttribute("systemRole",systemRole);
+
+		model.addAttribute("systemRole", systemRole);
 
 		// TODO: Only display this for ADMIN users and the currently logged
 		// in user
@@ -114,26 +117,26 @@ public class UsersController {
 		if (totalProjects > MAX_DISPLAY_PROJECTS) {
 			projectsForUser = projectsForUser.subList(0, MAX_DISPLAY_PROJECTS);
 		}
-		
+
 		List<String> projectRoles = new ArrayList<>();
-		for(Join<Project,User> join : projectsForUser){
+		for (Join<Project, User> join : projectsForUser) {
 			ProjectUserJoin pujoin = (ProjectUserJoin) join;
-			
+
 			String proleMessageName = "projectRole." + pujoin.getProjectRole().toString();
 			String projectRole = messageSource.getMessage(proleMessageName, null, locale);
-			
+
 			projectRoles.add(projectRole);
 		}
 
 		model.addAttribute("projects", projectsForUser);
-		model.addAttribute("projectRoles",projectRoles);
+		model.addAttribute("projectRoles", projectRoles);
 		model.addAttribute("totalProjects", totalProjects);
 
 		page = SPECIFIC_USER_PAGE;
 
 		return page;
 	}
-	
+
 	/**
 	 * Request for a specific user details page.
 	 * 
@@ -143,20 +146,61 @@ public class UsersController {
 	 *            Spring model to populate the html page.
 	 * @return The name of the user details page.
 	 */
-	@RequestMapping(value = "/{userId}", method=RequestMethod.POST)
-	public String updateUser(@PathVariable Long userId, @RequestParam Map<String,String> params, final Model model) {
+	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.POST)
+	public String updateUser(@PathVariable Long userId, @RequestParam(required = false) String firstName,
+			@RequestParam(required = false) String lastName, @RequestParam(required = false) String email,
+			@RequestParam(required = false) String role, @RequestParam(required = false) String password,
+			@RequestParam(required = false) String confirmPassword, Model model) {
 		logger.debug("Updating user " + userId);
-		
-		Map<String,Object> updatedValues = new HashMap<>();
-		
-		for(String key : params.keySet()){
-			String value = params.get(key);
-			if(!Strings.isNullOrEmpty(value)){
-				updatedValues.put(key, value);
+
+		Map<String, String> errors = new HashMap<>();
+
+		Map<String, Object> updatedValues = new HashMap<>();
+
+		if (!Strings.isNullOrEmpty(firstName)) {
+			updatedValues.put("firstName", firstName);
+		}
+
+		if (!Strings.isNullOrEmpty(lastName)) {
+			updatedValues.put("lastName", lastName);
+		}
+
+		if (!Strings.isNullOrEmpty(email)) {
+			updatedValues.put("email", email);
+		}
+
+		if (!Strings.isNullOrEmpty(role)) {
+			updatedValues.put("role", role);
+		}
+
+		if (!Strings.isNullOrEmpty(password) || !Strings.isNullOrEmpty(confirmPassword)) {
+			if (!password.equals(confirmPassword)) {
+				errors.put("password", "Passwords do not match.");
 			}
 		}
 
-		return "redirect:/users/"+userId;
+		try {
+			userService.update(userId, updatedValues);
+		} catch (ConstraintViolationException ex) {
+			logger.debug("User provided data threw ConstrainViolation");
+			Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
+
+			for (ConstraintViolation<?> violation : constraintViolations) {
+				logger.debug(violation.getMessage());
+				String errorKey = violation.getPropertyPath().toString();
+				errors.put(errorKey, violation.getMessage());
+			}
+		}
+
+		String returnView = getEditUserPage(userId, model);
+		if (!errors.isEmpty()) {
+			model.addAttribute("errors", errors);
+
+		} else {
+			returnView = "redirect:/users/" + userId;
+		}
+
+		return returnView;
 	}
 
 	/**
@@ -174,6 +218,12 @@ public class UsersController {
 		String page;
 		User user = userService.read(userId);
 		model.addAttribute("user", user);
+		
+		
+
+		if (!model.containsAttribute("errors")) {
+			model.addAttribute("errors", new HashMap<String, String>());
+		}
 
 		page = EDIT_USER_PAGE;
 
@@ -216,10 +266,10 @@ public class UsersController {
 		Locale locale = LocaleContextHolder.getLocale();
 		List<List<String>> usersData = new ArrayList<>();
 		for (User user : userPage) {
-			//getting internationalized system role from the message source
+			// getting internationalized system role from the message source
 			String roleMessageName = "systemrole." + user.getSystemRole().getName();
 			String systemRole = messageSource.getMessage(roleMessageName, null, locale);
-			
+
 			List<String> row = new ArrayList<>();
 			row.add(user.getId().toString());
 			row.add(user.getUsername());
