@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web;
 import java.security.Principal;
 import java.util.*;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
@@ -32,6 +31,10 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableMap;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.ws.rs.GET;
+
 /**
  * Controller for all project related views
  * 
@@ -43,7 +46,7 @@ public class ProjectsController {
 	private static final String PROJECTS_PAGE = "projects";
 	private static final String SPECIFIC_PROJECT_PAGE = "project_details";
 	private static final String CREATE_NEW_PROJECT_PAGE = "projects/project-new";
-    private static final String CREATE_NEW_PROJECT_USERS_PAGE = "projects/project-new-contacts";
+	private static final String CREATE_NEW_PROJECT_USERS_PAGE = "projects/project-new-contacts";
 	private static final String ERROR_PAGE = "error";
 	private static final String SORT_BY_ID = "id";
 	private static final String SORT_BY_NAME = "name";
@@ -128,28 +131,47 @@ public class ProjectsController {
 		return page;
 	}
 
-	@RequestMapping("/new")
-	public String getCreateProjectPage() {
-		return CREATE_NEW_PROJECT_PAGE;
-	}
+	@RequestMapping(value = "/new", method = RequestMethod.GET)
+	public String getCreateProjectPage(final Model model) {
+        if(!model.containsAttribute("errors")){
+            model.addAttribute("errors", new HashMap<>());
+        }
+        return CREATE_NEW_PROJECT_PAGE;
+    }
 
-	@RequestMapping("/new/create")
-	public String createNewProject(final Model model, @RequestParam String name,
+	@RequestMapping(value = "/new", method = RequestMethod.POST)
+	public String createNewProject(final Model model, @RequestParam(required = false, defaultValue = "") String name,
 			@RequestParam(required = false, defaultValue = "") String organism,
 			@RequestParam(required = false, defaultValue = "") String description,
 			@RequestParam(required = false, defaultValue = "") String wiki) {
-		Project p = new Project(name);
-		Project project = projectService.create(p);
 
-		Map<String, Object> map = new HashMap<>();
-		map.put("remoteURL", wiki);
-		map.put("organism", organism);
-		map.put("projectDescription", description);
-		projectService.update(project.getId(), map);
+
+        Project p = new Project(name);
+        Project project = null;
+        try {
+            project = projectService.create(p);
+        } catch (EntityExistsException e) {
+            e.printStackTrace();
+        } catch (ConstraintViolationException e) {
+            Map<String, String> errors = new HashMap<>();
+            for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
+                String message = violation.getMessage();
+                String field = violation.getPropertyPath().toString();
+                errors.put(field, message);
+            }
+            model.addAttribute("errors", errors);
+            return getCreateProjectPage(model);
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("remoteURL", wiki);
+        map.put("organism", organism);
+        map.put("projectDescription", description);
+        projectService.update(project.getId(), map);
 
         model.addAttribute("project", project);
         return CREATE_NEW_PROJECT_USERS_PAGE;
-	}
+    }
 
 	/**
 	 * Handles AJAX request for getting a list of projects available to the
