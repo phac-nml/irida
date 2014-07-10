@@ -29,10 +29,13 @@
     <link rel="stylesheet" th:href="@{/resources/wet-theme/css/wet-boew.min.css}"
           href="/resources/wet-theme/css/wet-boew.min.css"/>
     <!--<![endif]-->
+
     <link rel="stylesheet" th:href="@{/resources/wet-theme/css/theme.min.css}"
           href="/resources/wet-theme/css/theme.min.css"/>
     <link rel="stylesheet" th:href="@{/resources/bower_components/qtip2/jquery.qtip.min.css}"
           href="/resources/bower_components/qtip2/jquery.qtip.min.css"/>
+    <link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}"
+          href="/resources/bower_components/select2/select2.css"/>
     <link rel="stylesheet" th:href="@{/resources/css/main.css}" href="/resources/css/main.css"/>
 
     <!--[if lt IE 9]>
@@ -61,12 +64,16 @@
 <div th:replace="templates/wet-boew/partials/footer :: footer">FOOTER</div>
 
 <!--[if gte IE 9 | !IE ]><!-->
-<script th:src="@{/resources/wet-theme/js/jquery-2.1.1.min.js}"
-        src="/resources/wet-theme/js/jquery-2.1.1.min.js"></script>
+<script th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"
+        src="/resources/bower_components/jquery/dist/jquery.min.js"></script>
 <script th:src="@{/resources/wet-theme/js/wet-boew.min.js}" src="/resources/wet-theme/js/wet-boew.min.js"></script>
 <!--<![endif]-->
+
+<script th:src="@{/resources/bower_components/select2/select2.min.js}"
+        src="/resources/bower_components/select2/select2.min.js"></script>
 <script th:src="@{/resources/bower_components/qtip2/jquery.qtip.min.js}"
         src="/resources/bower_components/qtip2/jquery.qtip.min.js"></script>
+
 <!--[if lt IE 9]>
 <script th:src="@{/resources/wet-theme/js/ie8-wet-boew2.min.js}"
         src="/resources/wet-theme/js/ie8-wet-boew2.min.js"></script>
