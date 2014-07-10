@@ -145,6 +145,22 @@ public class UsersController {
 	}
 
 	/**
+	 * Get the currently logged in user's page
+	 * 
+	 * @param model
+	 *            The model to pass on
+	 * @param principal
+	 *            The currently logged in user
+	 * @return getUserSpecificPage for the currently logged in user
+	 */
+	@RequestMapping("/current")
+	public String getLoggedInUserPage(Model model, Principal principal) {
+		User readPrincipal = userService.getUserByUsername(principal.getName());
+
+		return getUserSpecificPage(readPrincipal.getId(), model, principal);
+	}
+
+	/**
 	 * Request for a specific user details page.
 	 * 
 	 * @param userId
