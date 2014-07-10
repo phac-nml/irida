@@ -62,7 +62,7 @@ public class UsersController {
 	private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
 
 	private final UserService userService;
-	private ProjectService projectService;
+	private final ProjectService projectService;
 
 	private final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "username", "email", "lastName",
 			"firstName", "systemRole", "createdDate", "modifiedDate");
@@ -70,7 +70,7 @@ public class UsersController {
 	private final List<Role> allowedRoles = Lists.newArrayList(Role.ROLE_ADMIN, Role.ROLE_MANAGER, Role.ROLE_USER,
 			Role.ROLE_SEQUENCER);
 
-	private MessageSource messageSource;
+	private final MessageSource messageSource;
 
 	@Autowired
 	public UsersController(UserService userService, ProjectService projectService, MessageSource messageSource) {
@@ -102,22 +102,23 @@ public class UsersController {
 	@RequestMapping(value = "/{userId}", method = RequestMethod.GET)
 	public String getUserSpecificPage(@PathVariable("userId") Long userId, final Model model, Principal principal) {
 		logger.debug("Getting project information for [User " + userId + "]");
-		String page;
+
+		// add the user to the model
 		User user = userService.read(userId);
 		model.addAttribute("user", user);
 
 		Locale locale = LocaleContextHolder.getLocale();
 
+		// add the user's role to the model
 		String roleMessageName = "systemrole." + user.getSystemRole().getName();
 		String systemRole = messageSource.getMessage(roleMessageName, null, locale);
+		model.addAttribute("systemRole", systemRole);
 
+		// check if we should show an edit button
 		boolean canEditUser = canEditUser(principal, user);
 		model.addAttribute("canEditUser", canEditUser);
 
-		model.addAttribute("systemRole", systemRole);
-
-		// TODO: Only display this for ADMIN users and the currently logged
-		// in user
+		// show the user's projects
 		List<Join<Project, User>> projectsForUser = projectService.getProjectsForUser(user);
 		int totalProjects = projectsForUser.size();
 		// Trimming down the number of projects if there are too many
@@ -125,6 +126,7 @@ public class UsersController {
 			projectsForUser = projectsForUser.subList(0, MAX_DISPLAY_PROJECTS);
 		}
 
+		// add the projects to the model list
 		List<String> projectRoles = new ArrayList<>();
 		for (Join<Project, User> join : projectsForUser) {
 			ProjectUserJoin pujoin = (ProjectUserJoin) join;
@@ -134,14 +136,11 @@ public class UsersController {
 
 			projectRoles.add(projectRole);
 		}
-
 		model.addAttribute("projects", projectsForUser);
 		model.addAttribute("projectRoles", projectRoles);
 		model.addAttribute("totalProjects", totalProjects);
 
-		page = SPECIFIC_USER_PAGE;
-
-		return page;
+		return SPECIFIC_USER_PAGE;
 	}
 
 	/**
@@ -325,6 +324,13 @@ public class UsersController {
 		return map;
 	}
 
+	/**
+	 * Handle {@link AccessDeniedException} and {@link EntityNotFoundException}
+	 * 
+	 * @param e
+	 *            THe exception to handle
+	 * @return An error page
+	 */
 	@ExceptionHandler({ AccessDeniedException.class, EntityNotFoundException.class })
 	public String handleAccessDenied(Exception e) {
 		logger.error(e.getMessage());
