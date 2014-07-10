@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.validation.ConstraintViolationException;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
@@ -47,6 +45,8 @@ import com.google.common.collect.Lists;
 public class UsersControllerTest {
 	// HTML page names
 	private static final String USERS_PAGE = "user/list";
+	private static final String USERS_DETAILS_PAGE = "user/user_details";
+	private static final String USER_EDIT_PAGE = "user/edit";
 
 	// DATATABLES position for project information
 	private static final int USER_ID_TABLE_LOCATION = 0;
@@ -121,7 +121,7 @@ public class UsersControllerTest {
 
 		String userSpecificPage = controller.getUserSpecificPage(userId, model, principal);
 
-		assertEquals("user/user_details", userSpecificPage);
+		assertEquals(USERS_DETAILS_PAGE, userSpecificPage);
 		assertEquals(user, model.get("user"));
 		assertEquals(roleString, model.get("systemRole"));
 		assertEquals(true, model.get("canEditUser"));
@@ -159,7 +159,7 @@ public class UsersControllerTest {
 
 		String userSpecificPage = controller.getUserSpecificPage(userId, model, principal);
 
-		assertEquals("user/user_details", userSpecificPage);
+		assertEquals(USERS_DETAILS_PAGE, userSpecificPage);
 		assertEquals(false, model.get("canEditUser"));
 
 		verify(userService).read(userId);
@@ -179,7 +179,7 @@ public class UsersControllerTest {
 
 		String editUserPage = controller.getEditUserPage(userId, model);
 
-		assertEquals("user/edit", editUserPage);
+		assertEquals(USER_EDIT_PAGE, editUserPage);
 		assertEquals(user, model.get("user"));
 		assertTrue(model.containsAttribute("errors"));
 
@@ -216,7 +216,7 @@ public class UsersControllerTest {
 
 		String updateUser = controller.updateUser(userId, null, null, email, null, null, null, model);
 
-		assertEquals("user/edit", updateUser);
+		assertEquals(USER_EDIT_PAGE, updateUser);
 		assertTrue(model.containsKey("errors"));
 		@SuppressWarnings("rawtypes")
 		Map modelMap = (Map) model.get("errors");
