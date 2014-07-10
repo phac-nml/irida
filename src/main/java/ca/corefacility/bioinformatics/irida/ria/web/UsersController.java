@@ -202,7 +202,7 @@ public class UsersController {
 
 		if (!Strings.isNullOrEmpty(password) || !Strings.isNullOrEmpty(confirmPassword)) {
 			if (!password.equals(confirmPassword)) {
-				
+
 				errors.put("password", messageSource.getMessage("user.edit.password.match", null, locale));
 			} else {
 				updatedValues.put("password", password);
@@ -362,7 +362,10 @@ public class UsersController {
 		String principalName = principal.getName();
 		User readPrincipal = userService.getUserByUsername(principalName);
 
-		return user.equals(readPrincipal) || readPrincipal.getAuthorities().contains(Role.ROLE_ADMIN);
+		boolean principalAdmin = readPrincipal.getAuthorities().contains(Role.ROLE_ADMIN);
+		boolean usersEqual = user.equals(readPrincipal);
+
+		return principalAdmin || usersEqual;
 	}
 
 }

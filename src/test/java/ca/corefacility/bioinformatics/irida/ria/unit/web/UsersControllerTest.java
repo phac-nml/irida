@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -13,13 +14,21 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.http.auth.BasicUserPrincipal;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
+import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.Model;
 
+import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.UsersController;
@@ -58,7 +67,7 @@ public class UsersControllerTest {
 		userService = mock(UserService.class);
 		projectService = mock(ProjectService.class);
 		messageSource = mock(MessageSource.class);
-		controller = new UsersController(userService,projectService,messageSource);
+		controller = new UsersController(userService, projectService, messageSource);
 	}
 
 	@Test
@@ -85,7 +94,72 @@ public class UsersControllerTest {
 		assertEquals("tom", list.get(USERNAME_TABLE_LOCATION));
 
 		verify(userService).searchUser("", 0, 10, Sort.Direction.ASC, "id");
-		verify(messageSource,times(2)).getMessage(any(String.class), eq(null), any(Locale.class));
+		verify(messageSource, times(2)).getMessage(any(String.class), eq(null), any(Locale.class));
+	}
+
+	@Test
+	public void testGetUserSpecificPage() {
+		Principal principal = () -> USER_NAME;
+		Long userId = 1l;
+		String roleString = "User";
+		
+		ExtendedModelMap model = new ExtendedModelMap();
+		User user = new User(userId, USER_NAME, null, null, null, null, null);
+		user.setSystemRole(Role.ROLE_USER);
+		
+		@SuppressWarnings("unchecked")
+		List<Join<Project,User>> joins = Lists.newArrayList(new ProjectUserJoin(new Project("good project"), user, ProjectRole.PROJECT_USER));
+
+		when(userService.read(userId)).thenReturn(user);
+		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
+		when(messageSource.getMessage(eq("systemrole."+ Role.ROLE_USER.getName()), eq(null), any(Locale.class))).thenReturn(roleString);
+		when(projectService.getProjectsForUser(user)).thenReturn(joins);
+
+		String userSpecificPage = controller.getUserSpecificPage(userId, model, principal);
+
+		assertEquals("user/user_details", userSpecificPage);
+		assertEquals(user,model.get("user"));
+		assertEquals(roleString, model.get("systemRole"));
+		assertEquals(true,model.get("canEditUser"));
+		assertEquals(joins, model.get("projects"));
+		
+		verify(userService).read(userId);
+		verify(userService).getUserByUsername(USER_NAME);
+		verify(messageSource).getMessage(eq("systemrole."+ Role.ROLE_USER.getName()), eq(null), any(Locale.class));
+		verify(projectService).getProjectsForUser(user);
+	}
+	
+	@Test
+	public void testGetOtherUsersSpecificPage() {
+		Principal principal = () -> USER_NAME;
+		Long userId = 1l;
+		String roleString = "User";
+		
+		ExtendedModelMap model = new ExtendedModelMap();
+		
+		User puser = new User(userId, USER_NAME, null, null, null, null, null);
+		puser.setSystemRole(Role.ROLE_USER);
+		
+		User user = new User(userId, "tom", null, null, null, null, null);
+		user.setSystemRole(Role.ROLE_USER);
+		
+		@SuppressWarnings("unchecked")
+		List<Join<Project,User>> joins = Lists.newArrayList(new ProjectUserJoin(new Project("good project"), user, ProjectRole.PROJECT_USER));
+
+		when(userService.read(userId)).thenReturn(user);
+		when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
+		when(messageSource.getMessage(eq("systemrole."+ Role.ROLE_USER.getName()), eq(null), any(Locale.class))).thenReturn(roleString);
+		when(projectService.getProjectsForUser(user)).thenReturn(joins);
+
+		String userSpecificPage = controller.getUserSpecificPage(userId, model, principal);
+
+		assertEquals("user/user_details", userSpecificPage);
+		assertEquals(false,model.get("canEditUser"));
+		
+		verify(userService).read(userId);
+		verify(userService).getUserByUsername(USER_NAME);
+		verify(messageSource).getMessage(eq("systemrole."+ Role.ROLE_USER.getName()), eq(null), any(Locale.class));
+		verify(projectService).getProjectsForUser(user);
 	}
 
 }
