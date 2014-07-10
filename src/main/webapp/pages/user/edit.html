@@ -13,8 +13,7 @@
 		<div class="row">
 			<div class="col-md-12">
 				<h1 id="wb-cont"
-					th:text="#{user.edit.header} + ': ' + ${user.label}">__USER
-					NAME__</h1>
+					th:text="#{user.edit.header} + ': ' + ${user.label}">__USER	NAME__</h1>
 			</div>
 		</div>
 
@@ -47,7 +46,10 @@
 
 							<div class="form-group">
 								<label class="control-label" th:text="#{users.role}" for="systemRole">_Role_</label>
-								<input type="text" id="systemRole" name="systemRole" class="form-control input-full" th:placeholder="${user.systemRole.name}" placeholder="Role" />
+								<select id="systemRole" name="systemRole" class="form-control input-full" >
+									<option value="" disabled="disabled" selected="selected"></option>
+									<option th:each="role : ${allowedRoles}" th:value="${role.key}" th:text="${role.value}">_Role name_</option>
+								</select>
 								<p id="role-error" th:if="${#maps.containsKey(errors, 'role')}" th:text="${errors.role}" class="help-block">_Role Error_</p>
 							</div>
 
@@ -61,8 +63,13 @@
 								<label class="control-label" th:text="#{user.confirmPassword}" for="confirmPassword">_Confirm Password_</label> 
 								<input type="password" id="confirmPassword" name="confirmPassword" class="form-control input-full" placeholder="Confirm Password" />
 							</div>
+							<div class="panel-footer text-right">
+                        		<button type="reset" class="btn btn-default" href="#">Cancel</button>
+                        		<button type="submit" class="btn btn-primary">Update User&nbsp;
+                        			<span class="glyphicon glyphicon-chevron-right"></span>
+                        		</button>
+                    		</div>
 
-							<button type="submit" class="btn ">Submit</button>
 						</div>
 					</section>
 				</form>

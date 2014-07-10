@@ -33,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
@@ -65,7 +66,10 @@ public class UsersController {
 
 	private final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "username", "email", "lastName",
 			"firstName", "systemRole", "createdDate", "modifiedDate");
-	
+
+	private final List<Role> allowedRoles = Lists.newArrayList(Role.ROLE_ADMIN, Role.ROLE_MANAGER, Role.ROLE_USER,
+			Role.ROLE_SEQUENCER);
+
 	private MessageSource messageSource;
 
 	@Autowired
@@ -149,7 +153,7 @@ public class UsersController {
 	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.POST)
 	public String updateUser(@PathVariable Long userId, @RequestParam(required = false) String firstName,
 			@RequestParam(required = false) String lastName, @RequestParam(required = false) String email,
-			@RequestParam(required = false) String role, @RequestParam(required = false) String password,
+			@RequestParam(required = false) String systemRole, @RequestParam(required = false) String password,
 			@RequestParam(required = false) String confirmPassword, Model model) {
 		logger.debug("Updating user " + userId);
 
@@ -169,8 +173,10 @@ public class UsersController {
 			updatedValues.put("email", email);
 		}
 
-		if (!Strings.isNullOrEmpty(role)) {
-			updatedValues.put("role", role);
+		if (!Strings.isNullOrEmpty(systemRole)) {
+			Role newRole = Role.valueOf(systemRole);
+			
+			updatedValues.put("systemRole", newRole);
 		}
 
 		if (!Strings.isNullOrEmpty(password) || !Strings.isNullOrEmpty(confirmPassword)) {
@@ -219,7 +225,16 @@ public class UsersController {
 		User user = userService.read(userId);
 		model.addAttribute("user", user);
 		
+		Locale locale = LocaleContextHolder.getLocale();
+
+		Map<String,String> roleNames = new HashMap<>();
+		for(Role role : allowedRoles){
+			String roleMessageName = "systemrole." + role.getName();
+			String roleName = messageSource.getMessage(roleMessageName, null, locale);
+			roleNames.put(role.getName(), roleName);
+		}
 		
+		model.addAttribute("allowedRoles", roleNames);
 
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<String, String>());
@@ -292,7 +307,8 @@ public class UsersController {
 	}
 
 	@ExceptionHandler({ AccessDeniedException.class, EntityNotFoundException.class })
-	public String handleAccessDenied() {
+	public String handleAccessDenied(Exception e) {
+		logger.error(e.getMessage());
 		return ERROR_PAGE;
 	}
 
