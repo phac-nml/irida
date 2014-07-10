@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.After;
@@ -47,14 +48,14 @@ public class ProjectDetailsPageIT {
 	public static final String PROJECT_NAME = "project";
 	public static final String PROJECT_OWNER = "Mr. Manager";
 	public static final String PROJECT_CREATED_DATE = "12 Jul 2013";
-	public static final String PROJECT_MODIFIED_DATE = "18 Jul 2013";
 	public static final String PROJECT_ORGANISM = "E. coli";
+	public static final String ASSOCIATED_PROJECT_NO_RIGHTS = "project5";
+	public static final int MODIFIED_DATE_DB_YEAR = 2013;
 
-    public static final ImmutableList<String> ASSOCIATED_PROJECTS_WITH_RIGHTS = ImmutableList
+	public static final ImmutableList<String> ASSOCIATED_PROJECTS_WITH_RIGHTS = ImmutableList
 			.of("project2", "project3");
-    public static final String ASSOCIATED_PROJECT_NO_RIGHTS = "project5";
 
-    private WebDriver driver;
+	private WebDriver driver;
 	private ProjectDetailsPage detailsPage;
 
 	@Before
@@ -80,7 +81,7 @@ public class ProjectDetailsPageIT {
 		assertEquals("Should display the project owner", PROJECT_OWNER, detailsPage.getProjectOwner());
 		assertEquals("Should have the correct date format for creation date", PROJECT_CREATED_DATE,
 				detailsPage.getCreatedDate());
-		assertEquals("Should have the correct date format for modified date", PROJECT_MODIFIED_DATE,
+		assertEquals("Should have the correct date format for modified date", getFormattedModifiedDate(),
 				detailsPage.getModifiedDate());
 	}
 
@@ -89,10 +90,29 @@ public class ProjectDetailsPageIT {
 		List<String> projectsDiv = detailsPage.getAssociatedProjects();
 		assertEquals("Has the correct number of associated projects", 3, projectsDiv.size());
 
-        assertEquals("Has project with no rights", ASSOCIATED_PROJECT_NO_RIGHTS, detailsPage.getProjectWithNoRights());
-        List<String> projectsWithRights = detailsPage.getProjectsWithRights();
-        for (String project : ASSOCIATED_PROJECTS_WITH_RIGHTS) {
-            assertTrue("Contains projects with authorization", projectsWithRights.contains(project));
-        }
-    }
+		assertEquals("Has project with no rights", ASSOCIATED_PROJECT_NO_RIGHTS, detailsPage.getProjectWithNoRights());
+		List<String> projectsWithRights = detailsPage.getProjectsWithRights();
+		for (String project : ASSOCIATED_PROJECTS_WITH_RIGHTS) {
+			assertTrue("Contains projects with authorization (" + project + ")", projectsWithRights.contains(project));
+		}
+	}
+
+	/**
+	 * The modified date for a project is expressed in time since modification.
+	 * This will return the correct format for the displayed date.
+	 * 
+	 * @return the format for the modified year
+	 */
+	private String getFormattedModifiedDate() {
+		// Need to format the expected modified date
+		LocalDateTime time = LocalDateTime.now();
+		int years = time.getYear() - MODIFIED_DATE_DB_YEAR;
+		String modifiedDate;
+		if (years == 1) {
+			modifiedDate = "a year ago";
+		} else {
+			modifiedDate = years + "years ago";
+		}
+		return modifiedDate;
+	}
 }
