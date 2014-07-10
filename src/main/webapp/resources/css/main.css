@@ -57,3 +57,12 @@ b.list-group-item {
   color: #d9534f; }
 #associated-projects .glyphicon-eye-open {
   color: #5cb85c; }
+
+.ir-callout {
+  padding: 5px;
+  margin: 20px 0;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  border-left-width: 5px; }
+  .ir-callout.ir-callout-error {
+    border-left-color: #d9534f; }

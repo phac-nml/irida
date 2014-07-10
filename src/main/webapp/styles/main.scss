@@ -93,3 +93,18 @@ b.list-group-item {
     color: $color-success;
   }
 }
+
+.ir-callout {
+  h4 {
+
+  }
+  padding: 5px;
+  margin: 20px 0;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  border-left-width: 5px;
+  &.ir-callout-error {
+    border-left-color: $color-danger;
+  }
+
+}

@@ -42,7 +42,8 @@ import com.google.common.collect.ImmutableMap;
 public class ProjectsController {
 	private static final String PROJECTS_PAGE = "projects";
 	private static final String SPECIFIC_PROJECT_PAGE = "project_details";
-    private static final String CREATE_NEW_PROJECT_PAGE = "projects/project-new";
+	private static final String CREATE_NEW_PROJECT_PAGE = "projects/project-new";
+    private static final String CREATE_NEW_PROJECT_USERS_PAGE = "projects/project-new-contacts";
 	private static final String ERROR_PAGE = "error";
 	private static final String SORT_BY_ID = "id";
 	private static final String SORT_BY_NAME = "name";
@@ -127,24 +128,42 @@ public class ProjectsController {
 		return page;
 	}
 
-    @RequestMapping("/new")
-    public String getCreateProjectPage() {
-        return CREATE_NEW_PROJECT_PAGE;
-    }
+	@RequestMapping("/new")
+	public String getCreateProjectPage() {
+		return CREATE_NEW_PROJECT_PAGE;
+	}
 
-    /**
-     * Handles AJAX request for getting a list of projects available to the
-     * logged in user. Produces JSON.
-     * 
-     * @param principal
-     * @param start
-     * @param length
-     * @param draw
-     * @param sortColumn
-     * @param direction
-     * @param searchValue
-     * @return
-     */
+	@RequestMapping("/new/create")
+	public String createNewProject(final Model model, @RequestParam String name,
+			@RequestParam(required = false, defaultValue = "") String organism,
+			@RequestParam(required = false, defaultValue = "") String description,
+			@RequestParam(required = false, defaultValue = "") String wiki) {
+		Project p = new Project(name);
+		Project project = projectService.create(p);
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("remoteURL", wiki);
+		map.put("organism", organism);
+		map.put("projectDescription", description);
+		projectService.update(project.getId(), map);
+
+        model.addAttribute("project", project);
+        return CREATE_NEW_PROJECT_USERS_PAGE;
+	}
+
+	/**
+	 * Handles AJAX request for getting a list of projects available to the
+	 * logged in user. Produces JSON.
+	 * 
+	 * @param principal
+	 * @param start
+	 * @param length
+	 * @param draw
+	 * @param sortColumn
+	 * @param direction
+	 * @param searchValue
+	 * @return
+	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody
 	Map<String, Object> getAjaxProjectList(final Principal principal,
