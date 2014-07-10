@@ -94,7 +94,7 @@
                 		<tbody>
                 			<tr th:each="project,iterStat : ${projects}">
                 				<td th:text="${project.subject.id}">_PROJECT_ID_</td>
-                				<td th:text="${project.subject.name}">_PROJECT_NAME_</td>
+                				<td><a th:href="@{/projects/{projectId}(projectId=${project.subject.id})}"><span th:text="${project.subject.name}">_PROJECT_NAME_</span></a></td>
                     			<td class="project-role" >
                     				<span class="project-role-icon"></span>&nbsp;
                     				<span class="project-role-name" th:title="${project.projectRole}" th:text="${projectRoles[iterStat.index]}">
