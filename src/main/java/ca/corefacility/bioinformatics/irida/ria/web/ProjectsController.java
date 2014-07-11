@@ -131,6 +131,13 @@ public class ProjectsController {
 		return page;
 	}
 
+	/**
+	 * Gets the name of the template for the new project page
+	 * 
+	 * @param model
+	 *            {@link Model}
+	 * @return The name of the create new project page
+	 */
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	public String getCreateProjectPage(final Model model) {
 		if (!model.containsAttribute("errors")) {
@@ -139,6 +146,24 @@ public class ProjectsController {
 		return CREATE_NEW_PROJECT_PAGE;
 	}
 
+	/**
+	 * Creates a new project and displays a list of users for the user to add to
+	 * the project
+	 * 
+	 * @param model
+	 *            {@link Model}
+	 * @param request
+	 * @{link HttpServletRequest}
+	 * @param name
+	 *            String name of the project
+	 * @param organism
+	 *            Organism name
+	 * @param projectDescription
+	 *            Brief description of the project
+	 * @param remoteURL
+	 *            URL for the project wiki
+	 * @return The name of the add users to project page
+	 */
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	public String createNewProject(final Model model, HttpServletRequest request,
 			@RequestParam(required = false, defaultValue = "") String name,
@@ -171,16 +196,25 @@ public class ProjectsController {
 		return "redirect:/projects/new/collaborators";
 	}
 
+	/**
+	 * Returns the name of a page to add users to a *new* project.
+	 * 
+	 * @param model
+	 *            {@link Model}
+	 * @param request
+	 * @{link HttpServletRequest}
+	 * @return The name of the add users to new project page.
+	 */
 	@RequestMapping("/new/collaborators")
 	public String addUsersToProjectPage(final Model model, HttpServletRequest request) {
 		Long projectId = (Long) request.getSession().getAttribute(SESSION_VAR_CREATED_PROJECT_ID);
 		request.getSession().removeAttribute(SESSION_VAR_CREATED_PROJECT_ID);
 
-        if(projectId == null) {
+		if (projectId == null) {
 			return "redirect:/projects";
 		}
-        Project p = projectService.read(projectId);
-        model.addAttribute("project", p);
+		Project p = projectService.read(projectId);
+		model.addAttribute("project", p);
 		return CREATE_NEW_PROJECT_USERS_PAGE;
 	}
 
