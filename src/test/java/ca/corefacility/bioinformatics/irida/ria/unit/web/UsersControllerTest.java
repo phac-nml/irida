@@ -194,7 +194,7 @@ public class UsersControllerTest {
 		Map<String, Object> expected = new HashMap<>();
 		expected.put("firstName", firstName);
 
-		String updateUser = controller.updateUser(userId, firstName, null, null, null, null, null, model);
+		String updateUser = controller.updateUser(userId, firstName, null, null, null, null, null, null, model);
 
 		assertEquals("redirect:/users/1", updateUser);
 
@@ -214,7 +214,7 @@ public class UsersControllerTest {
 
 		when(userService.update(userId, expected)).thenThrow(dataIntegrityViolationException);
 
-		String updateUser = controller.updateUser(userId, null, null, email, null, null, null, model);
+		String updateUser = controller.updateUser(userId, null, null, email, null, null, null, null, model);
 
 		assertEquals(USER_EDIT_PAGE, updateUser);
 		assertTrue(model.containsKey("errors"));
