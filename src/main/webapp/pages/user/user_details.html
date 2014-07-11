@@ -22,7 +22,7 @@
                 <div class="panel-heading clearfix">
                 	<h3 class="panel-title pull-left" th:text="#{user.details}">_User Details_</h3>
                 	<a th:if="${canEditUser}" th:href="@{/users/{id}/edit(id=${user.id})}" href="/users/1/edit">
-                		<span class="pull-right badge" th:text="#{user.edit}">_Edit_</span>
+                		<span id="editUser" class="pull-right badge" th:text="#{user.edit}">_Edit_</span>
                 	</a>
                 </div>
                     
@@ -96,15 +96,15 @@
                 		</thead>
                 		<tbody>
                 			<tr th:each="project,iterStat : ${projects}">
-                				<td th:text="${project.subject.id}">_PROJECT_ID_</td>
-                				<td><a th:href="@{/projects/{projectId}(projectId=${project.subject.id})}"><span th:text="${project.subject.name}">_PROJECT_NAME_</span></a></td>
-                    			<td class="project-role" >
+                				<td class="user-project-id" th:text="${project.subject.id}">_PROJECT_ID_</td>
+                				<td class="user-project-name" ><a th:href="@{/projects/{projectId}(projectId=${project.subject.id})}"><span th:text="${project.subject.name}">_PROJECT_NAME_</span></a></td>
+                    			<td class="user-project-role" >
                     				<span class="project-role-icon"></span>&nbsp;
                     				<span class="project-role-name" th:title="${project.projectRole}" th:text="${projectRoles[iterStat.index]}">
                     					_PROJECT_ROLE_
                     				</span>
                     			</td>
-                    			<td th:text="${#calendars.format(project.timestamp, 'dd MMM yyyy')}">_DATE ADDED_</td>
+                    			<td class="user-project-date" th:text="${#calendars.format(project.timestamp, 'dd MMM yyyy')}">_DATE ADDED_</td>
                 			</tr>
                 		</tbody>
             		</table>
@@ -123,7 +123,7 @@
 		roleClass["PROJECT_OWNER"] = "glyphicon glyphicon-tower";
         $(document).ready(function () {
         	//add the icon if it exists
-            $('#projectsTable').find(".project-role").each(function(index,element){
+            $('#projectsTable').find(".user-project-role").each(function(index,element){
             	var iconSpan = $(element).find(".project-role-icon");
             	var rolename = $(element).find(".project-role-name").attr("title");
             	if(roleClass[rolename]){
