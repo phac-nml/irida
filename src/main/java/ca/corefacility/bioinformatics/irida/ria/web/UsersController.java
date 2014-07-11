@@ -188,8 +188,9 @@ public class UsersController {
 	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.POST)
 	public String updateUser(@PathVariable Long userId, @RequestParam(required = false) String firstName,
 			@RequestParam(required = false) String lastName, @RequestParam(required = false) String email,
-			@RequestParam(required = false) String systemRole, @RequestParam(required = false) String password,
-			@RequestParam(required = false) String confirmPassword, Model model) {
+			@RequestParam(required = false) String phoneNumber, @RequestParam(required = false) String systemRole,
+			@RequestParam(required = false) String password, @RequestParam(required = false) String confirmPassword,
+			Model model) {
 		logger.debug("Updating user " + userId);
 
 		Locale locale = LocaleContextHolder.getLocale();
@@ -209,6 +210,11 @@ public class UsersController {
 		if (!Strings.isNullOrEmpty(email)) {
 			updatedValues.put("email", email);
 		}
+		
+		if (!Strings.isNullOrEmpty(phoneNumber)) {
+			updatedValues.put("phoneNumber", phoneNumber);
+		}
+
 
 		if (!Strings.isNullOrEmpty(systemRole)) {
 			Role newRole = Role.valueOf(systemRole);
