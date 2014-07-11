@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.integration.pages;
+package ca.corefacility.bioinformatics.irida.ria.integration.pages.user;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,6 @@ public class UserDetailsPage {
 
 	public UserDetailsPage(WebDriver driver) {
 		this.driver = driver;
-		driver.get("http://localhost:8080/users/1");
 	}
 
 	public String getCurrentUserId() {
