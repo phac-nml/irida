@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -211,11 +212,10 @@ public class UsersController {
 		if (!Strings.isNullOrEmpty(email)) {
 			updatedValues.put("email", email);
 		}
-		
+
 		if (!Strings.isNullOrEmpty(phoneNumber)) {
 			updatedValues.put("phoneNumber", phoneNumber);
 		}
-
 
 		if (!Strings.isNullOrEmpty(systemRole)) {
 			Role newRole = Role.valueOf(systemRole);
@@ -299,7 +299,7 @@ public class UsersController {
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
 	public String createUserPage(Model model) {
-		
+
 		Locale locale = LocaleContextHolder.getLocale();
 
 		Map<String, String> roleNames = new HashMap<>();
@@ -310,25 +310,59 @@ public class UsersController {
 		}
 
 		model.addAttribute("allowedRoles", roleNames);
-		
+
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<String, String>());
 		}
-		
+
 		return CREATE_USER_PAGE;
 	}
-	
+
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
-	public String submitCreateUser( @RequestParam String username, @RequestParam String firstName,
+	public String submitCreateUser(@RequestParam String username, @RequestParam String firstName,
 			@RequestParam String lastName, @RequestParam String email, @RequestParam String phoneNumber,
-			@RequestParam(defaultValue="ROLE_USER") String systemRole, @RequestParam String password,
+			@RequestParam(defaultValue = "ROLE_USER") String systemRole, @RequestParam String password,
 			@RequestParam String confirmPassword, Model model) {
-		
+
 		User user = new User(username, email, password, firstName, lastName, phoneNumber);
 		user.setSystemRole(Role.valueOf(systemRole));
+
+		Map<String, String> errors = new HashMap<>();
 		
-		return createUserPage(model);
+		Locale locale = LocaleContextHolder.getLocale();
+
+		try {
+			user = userService.create(user);
+		} catch (ConstraintViolationException ex) {
+			logger.debug("User provided data threw ConstrainViolation");
+			Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
+
+			for (ConstraintViolation<?> violation : constraintViolations) {
+				logger.debug(violation.getMessage());
+				String errorKey = violation.getPropertyPath().toString();
+				errors.put(errorKey, violation.getMessage());
+			}
+		} catch (DataIntegrityViolationException e) {
+			logger.debug(e.getMessage());
+			if (e.getMessage().contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
+				errors.put("email", messageSource.getMessage("user.edit.emailConflict", null, locale));
+			}
+		} catch (EntityExistsException e){
+			errors.put(e.getFieldName(), e.getMessage());
+		}
+
+		// if there are errors, add them and return the edit page
+		String returnView;
+		if (!errors.isEmpty()) {
+			model.addAttribute("errors", errors);
+			returnView = createUserPage(model);
+		} else {
+			Long userId = user.getId();
+			returnView = "redirect:/users/" + userId;
+		}
+
+		return returnView;
 	}
 
 	/**
