@@ -125,7 +125,8 @@ public class ProjectsControllerTest {
     @Test
     public void testGetCreateProjectPage() {
         Model model = new ExtendedModelMap();
-        String page = controller.getCreateProjectPage(model);
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        String page = controller.getCreateProjectPage(model, request);
         assertEquals("Retruns the correct New Project Page", "projects/project-new", page);
         assertTrue("Model now has and error attribute", model.containsAttribute("errors"));
     }

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
@@ -139,10 +140,11 @@ public class ProjectsController {
 	 * @return The name of the create new project page
 	 */
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
-	public String getCreateProjectPage(final Model model) {
+	public String getCreateProjectPage(final Model model, HttpServletRequest request) {
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<>());
 		}
+        model.addAttribute("referer", request.getHeader("referer"));
 		return CREATE_NEW_PROJECT_PAGE;
 	}
 
@@ -177,7 +179,7 @@ public class ProjectsController {
 			project = projectService.create(p);
 		} catch (ConstraintViolationException e) {
 			model.addAttribute("errors", getErrorsFromViolationException(e));
-			return getCreateProjectPage(model);
+			return getCreateProjectPage(model, request);
 		}
 
 		Map<String, Object> map = new HashMap<>();
@@ -189,7 +191,7 @@ public class ProjectsController {
 			projectService.update(project.getId(), map);
 		} catch (ConstraintViolationException e) {
 			model.addAttribute("errors", getErrorsFromViolationException(e));
-			return getCreateProjectPage(model);
+			return getCreateProjectPage(model, request);
 		}
 
 		request.getSession().setAttribute(SESSION_VAR_CREATED_PROJECT_ID, project.getId());
