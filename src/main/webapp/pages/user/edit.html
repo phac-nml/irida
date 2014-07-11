@@ -10,12 +10,6 @@
 		<div class="row">
 			<div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">_MENU_</div>
 		</div>
-		<div class="row">
-			<div class="col-md-12">
-				<h1 id="wb-cont"
-					th:text="#{user.edit.header} + ': ' + ${user.label}">__USER	NAME__</h1>
-			</div>
-		</div>
 
 		<div class="row">
 			<div class="col-md-8 col-md-offset-2 mrgn-tp-lg wb-frmvld">
@@ -23,7 +17,7 @@
 					th:action="@{/users/{id}/edit(id=${user.id})}" method="post">
 					<section class="panel panel-default">
 						<div class="panel-heading">
-							<h3 class="panel-title" th:text="#{user.edit.details}">_Edit User Details_</h3>
+							<h3 class="panel-title" th:text="#{user.edit.details(${user.label})}">_Edit User Details For USER_</h3>
 						</div>
 						<div class="panel-body">
 							<div class="form-group">
