@@ -33,7 +33,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 		IridaApiPropertyPlaceholderConfig.class })
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("it")
-@DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/UserDetailsPageIT.xml")
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/users/UserDetailsPageIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class UserDetailsPageIT {
 	private WebDriver driver;
