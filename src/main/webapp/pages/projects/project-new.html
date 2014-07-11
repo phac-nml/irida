@@ -15,21 +15,21 @@
             <form th:action="@{/projects/new}" method="post" role="form" novalidate="novalidate">
                 <section class="panel panel-default">
                     <div class="panel-heading">
-                        <h2 class="panel-title">Create a New Project</h2>
+                        <h2 class="panel-title" th:text="#{projects.create.heading}">Create a New Project</h2>
                     </div>
                     <div class="panel-body">
                         <div class="form-group has-feedback">
-                            <label class="control-label" for="name">Project Name</label>
+                            <label class="control-label" for="name" th:text="#{projects.create.form.name}">Project Name</label>
 
                             <div th:if="${#maps.containsKey(errors, 'name')}" class="alert alert-warning"
                                  th:text="${errors.name}"></div>
                             <input class="form-control input-full" type="text" id="name" name="name"
-                                   required="required"/>
-                            <span data-tooltip="Required"
+                                   required="required" th:placeholder="#{projects.create.form.required}" placeholder="Required"/>
+                            <span data-tooltip="Required" data:tooltip="#{projects.create.form.required}"
                                   class="glyphicon glyphicon-asterisk form-control-feedback"></span>
                         </div>
                         <div class="form-group">
-                            <label for="projectOrganism">Project Organism</label>
+                            <label for="projectOrganism" th:text="#{projects.create.form.organism}">Project Organism</label>
 
                             <div th:if="${#maps.containsKey(errors, 'organism')}" class="alert alert-warning"
                                  th:text="${errors.organism}"></div>
@@ -41,7 +41,7 @@
                             </datalist>
                         </div>
                         <div class="form-group">
-                            <label for="projectWiki">Project Wiki URL</label>
+                            <label for="projectWiki" th:text="#{projects.create.form.wiki}">Project Wiki URL</label>
 
                             <div th:if="${#maps.containsKey(errors, 'remoteURL')}" class="alert alert-warning"
                                  th:text="${errors.remoteURL}"></div>
@@ -49,7 +49,7 @@
                                    placeholder="http://google.com"/>
                         </div>
                         <div class="form-group">
-                            <label for="projectDescription">Project Description</label>
+                            <label for="projectDescription" th:text="#{projects.create.form.description}">Project Description</label>
 
                             <div th:if="${#maps.containsKey(errors, 'description')}" class="alert alert-warning"
                                  th:text="${errors.description}"></div>
@@ -58,9 +58,10 @@
                         </div>
                     </div>
                     <div class="panel-footer text-right">
-                        <a class="btn btn-default" href="#">Cancel</a>
-                        <button type="submit" class="btn btn-primary">Create Project&nbsp;<span
-                                class="glyphicon glyphicon-chevron-right"></span></button>
+                        <a class="btn btn-default" href="#" th:text="#{projects.create.form.cancel}">Cancel</a>
+                        <button type="submit" class="btn btn-primary" >
+                            <span th:text="#{projects.create.form.create}">Create Project</span>&nbsp;
+                            <span class="glyphicon glyphicon-chevron-right"></span></button>
                     </div>
                 </section>
             </form>
