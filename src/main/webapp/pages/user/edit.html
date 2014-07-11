@@ -41,7 +41,7 @@
 							<div class="form-group">
 								<label th:text="#{user.phone}" for="phoneNumber">_Email_</label>
 								<div id="email-error" th:if="${#maps.containsKey(errors, 'phoneNumber')}" th:text="${errors.phoneNumber}" class="alert alert-warning">_Phone Number Error_</div> 
-								<input type="phoneNumber" id="phoneNumber" name="phoneNumber" class="form-control input-full" th:placeholder="${user.phoneNumber}" placeholder="Phone Number" />
+								<input type="text" id="phoneNumber" name="phoneNumber" class="form-control input-full" th:placeholder="${user.phoneNumber}" placeholder="Phone Number" />
 							</div>
 
 							<div class="form-group" sec:authorize="hasRole('ROLE_ADMIN')">
