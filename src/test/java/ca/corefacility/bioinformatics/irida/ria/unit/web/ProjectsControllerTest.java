@@ -41,8 +41,8 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
  */
 public class ProjectsControllerTest {
 	// HTML page names
-	private static final String PROJECT_DETAILS_PAGE = "project_details";
-	private static final String PROJECTS_PAGE = "projects";
+	private static final String PROJECT_DETAILS_PAGE = "projects/project_details";
+	private static final String PROJECTS_PAGE = "projects/projects";
 
 	// DATATABLES position for project information
 	private static final int PROJECT_NAME_TABLE_LOCATION = 1;
@@ -143,9 +143,6 @@ public class ProjectsControllerTest {
         String page = controller.createNewProject(model, request, projectName, "","","");
         assertEquals("Returns the correct redirect to the collaborators page", "redirect:/projects/new/collaborators", page);
     }
-
-    @Test
-
 
 	private List<Join<Project, User>> getProjectsForUser() {
 		List<Join<Project, User>> projects = new ArrayList<>();
