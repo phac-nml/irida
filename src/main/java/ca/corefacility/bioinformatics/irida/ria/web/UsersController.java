@@ -57,6 +57,7 @@ public class UsersController {
 	private static final String USERS_PAGE = "user/list";
 	private static final String SPECIFIC_USER_PAGE = "user/user_details";
 	private static final String EDIT_USER_PAGE = "user/edit";
+	private static final String CREATE_USER_PAGE = "user/create";
 	private static final String ERROR_PAGE = "error";
 	private static final String SORT_BY_ID = "id";
 	private static final String SORT_ASCENDING = "asc";
@@ -287,6 +288,17 @@ public class UsersController {
 		}
 
 		return EDIT_USER_PAGE;
+	}
+
+	@RequestMapping(value = "/create", method = RequestMethod.GET)
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public String createUserPage(Model model) {
+		
+		if (!model.containsAttribute("errors")) {
+			model.addAttribute("errors", new HashMap<String, String>());
+		}
+		
+		return CREATE_USER_PAGE;
 	}
 
 	/**
