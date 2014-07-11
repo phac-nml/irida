@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.integration;
+package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
