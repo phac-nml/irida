@@ -70,7 +70,7 @@ public class UsersController {
 	private final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "username", "email", "lastName",
 			"firstName", "systemRole", "createdDate", "modifiedDate");
 
-	private final List<Role> allowedRoles = Lists.newArrayList(Role.ROLE_ADMIN, Role.ROLE_MANAGER, Role.ROLE_USER,
+	private final List<Role> adminAllowedRoles = Lists.newArrayList(Role.ROLE_ADMIN, Role.ROLE_MANAGER, Role.ROLE_USER,
 			Role.ROLE_SEQUENCER);
 
 	private final MessageSource messageSource;
@@ -275,7 +275,7 @@ public class UsersController {
 		Locale locale = LocaleContextHolder.getLocale();
 
 		Map<String, String> roleNames = new HashMap<>();
-		for (Role role : allowedRoles) {
+		for (Role role : adminAllowedRoles) {
 			String roleMessageName = "systemrole." + role.getName();
 			String roleName = messageSource.getMessage(roleMessageName, null, locale);
 			roleNames.put(role.getName(), roleName);
@@ -291,14 +291,38 @@ public class UsersController {
 	}
 
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
 	public String createUserPage(Model model) {
+		
+		Locale locale = LocaleContextHolder.getLocale();
+
+		Map<String, String> roleNames = new HashMap<>();
+		for (Role role : adminAllowedRoles) {
+			String roleMessageName = "systemrole." + role.getName();
+			String roleName = messageSource.getMessage(roleMessageName, null, locale);
+			roleNames.put(role.getName(), roleName);
+		}
+
+		model.addAttribute("allowedRoles", roleNames);
 		
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<String, String>());
 		}
 		
 		return CREATE_USER_PAGE;
+	}
+	
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
+	public String submitCreateUser( @RequestParam String username, @RequestParam String firstName,
+			@RequestParam String lastName, @RequestParam String email, @RequestParam String phoneNumber,
+			@RequestParam(defaultValue="ROLE_USER") String systemRole, @RequestParam String password,
+			@RequestParam String confirmPassword, Model model) {
+		
+		User user = new User(username, email, password, firstName, lastName, phoneNumber);
+		user.setSystemRole(Role.valueOf(systemRole));
+		
+		return createUserPage(model);
 	}
 
 	/**
