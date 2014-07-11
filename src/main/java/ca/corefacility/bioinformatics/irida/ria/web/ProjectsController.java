@@ -3,7 +3,10 @@ package ca.corefacility.bioinformatics.irida.ria.web;
 import java.security.Principal;
 import java.util.*;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +17,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
@@ -31,10 +33,6 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableMap;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.ws.rs.GET;
-
 /**
  * Controller for all project related views
  * 
@@ -43,10 +41,11 @@ import javax.ws.rs.GET;
 @Controller
 @RequestMapping(value = "/projects")
 public class ProjectsController {
-	private static final String PROJECTS_PAGE = "projects";
-	private static final String SPECIFIC_PROJECT_PAGE = "project_details";
-	private static final String CREATE_NEW_PROJECT_PAGE = "projects/project-new";
-	private static final String CREATE_NEW_PROJECT_USERS_PAGE = "projects/project-new-contacts";
+	private static final String PROJECTS_DIR = "projects/";
+	private static final String PROJECTS_PAGE = PROJECTS_DIR + "projects";
+	private static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
+	private static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project-new";
+	private static final String CREATE_NEW_PROJECT_USERS_PAGE = PROJECTS_DIR + "project-new-contacts";
 	private static final String ERROR_PAGE = "error";
 	private static final String SORT_BY_ID = "id";
 	private static final String SORT_BY_NAME = "name";
@@ -54,6 +53,7 @@ public class ProjectsController {
 	private static final String SORT_BY_MODIFIED_DATE = "modifiedDate";
 	private static final String SORT_ASCENDING = "asc";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
+	public static final String SESSION_VAR_CREATED_PROJECT_ID = "CreatedProjectID";
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final UserService userService;
@@ -133,45 +133,56 @@ public class ProjectsController {
 
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	public String getCreateProjectPage(final Model model) {
-        if(!model.containsAttribute("errors")){
-            model.addAttribute("errors", new HashMap<>());
-        }
-        return CREATE_NEW_PROJECT_PAGE;
-    }
+		if (!model.containsAttribute("errors")) {
+			model.addAttribute("errors", new HashMap<>());
+		}
+		return CREATE_NEW_PROJECT_PAGE;
+	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
-	public String createNewProject(final Model model, @RequestParam(required = false, defaultValue = "") String name,
+	public String createNewProject(final Model model, HttpServletRequest request,
+			@RequestParam(required = false, defaultValue = "") String name,
 			@RequestParam(required = false, defaultValue = "") String organism,
-			@RequestParam(required = false, defaultValue = "") String description,
-			@RequestParam(required = false, defaultValue = "") String wiki) {
+			@RequestParam(required = false, defaultValue = "") String projectDescription,
+			@RequestParam(required = false, defaultValue = "") String remoteURL) {
 
+		Project p = new Project(name);
+		Project project = null;
+		try {
+			project = projectService.create(p);
+		} catch (ConstraintViolationException e) {
+			model.addAttribute("errors", getErrorsFromViolationException(e));
+			return getCreateProjectPage(model);
+		}
 
-        Project p = new Project(name);
-        Project project = null;
-        try {
-            project = projectService.create(p);
-        } catch (EntityExistsException e) {
-            e.printStackTrace();
-        } catch (ConstraintViolationException e) {
-            Map<String, String> errors = new HashMap<>();
-            for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
-                String message = violation.getMessage();
-                String field = violation.getPropertyPath().toString();
-                errors.put(field, message);
-            }
-            model.addAttribute("errors", errors);
-            return getCreateProjectPage(model);
-        }
+		Map<String, Object> map = new HashMap<>();
+		map.put("remoteURL", remoteURL);
+		map.put("organism", organism);
+		map.put("projectDescription", projectDescription);
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("remoteURL", wiki);
-        map.put("organism", organism);
-        map.put("projectDescription", description);
-        projectService.update(project.getId(), map);
+		try {
+			projectService.update(project.getId(), map);
+		} catch (ConstraintViolationException e) {
+			model.addAttribute("errors", getErrorsFromViolationException(e));
+			return getCreateProjectPage(model);
+		}
 
-        model.addAttribute("project", project);
-        return CREATE_NEW_PROJECT_USERS_PAGE;
-    }
+		request.getSession().setAttribute(SESSION_VAR_CREATED_PROJECT_ID, project.getId());
+		return "redirect:/projects/new/collaborators";
+	}
+
+	@RequestMapping("/new/collaborators")
+	public String addUsersToProjectPage(final Model model, HttpServletRequest request) {
+		Long projectId = (Long) request.getSession().getAttribute(SESSION_VAR_CREATED_PROJECT_ID);
+		request.getSession().removeAttribute(SESSION_VAR_CREATED_PROJECT_ID);
+
+        if(projectId == null) {
+			return "redirect:/projects";
+		}
+        Project p = projectService.read(projectId);
+        model.addAttribute("project", p);
+		return CREATE_NEW_PROJECT_USERS_PAGE;
+	}
 
 	/**
 	 * Handles AJAX request for getting a list of projects available to the
@@ -262,5 +273,15 @@ public class ProjectsController {
 			projects.add(map);
 		}
 		return projects;
+	}
+
+	private Map<String, String> getErrorsFromViolationException(ConstraintViolationException e) {
+		Map<String, String> errors = new HashMap<>();
+		for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
+			String message = violation.getMessage();
+			String field = violation.getPropertyPath().toString();
+			errors.put(field, message);
+		}
+		return errors;
 	}
 }
