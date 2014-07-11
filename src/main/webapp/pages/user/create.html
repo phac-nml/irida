@@ -23,37 +23,43 @@
 							<div class="form-group">
 								<label class="control-label" th:text="#{users.username}" for="username">_Username_</label> 
 								<div th:if="${#maps.containsKey(errors, 'username')}" th:text="${errors.username}" class="alert alert-warning">_First Name Error_</div>
-								<input type="text" id="username" name="username" class="form-control input-full" required="required" th:placeholder="#{users.username}" />
+								<input type="text" id="username" name="username" class="form-control input-full" required="required" 
+									th:placeholder="#{users.username}" th:value="${given_username}"/>
 							</div>
 							
 							<div class="form-group">
 								<label class="control-label" th:text="#{user.firstName}" for="firstName">_First Name_</label> 
 								<div th:if="${#maps.containsKey(errors, 'firstName')}" th:text="${errors.firstName}" class="alert alert-warning">_First Name Error_</div>
-								<input type="text" id="firstName" name="firstName" class="form-control input-full"	required="required" th:placeholder="#{user.firstName}" />
+								<input type="text" id="firstName" name="firstName" class="form-control input-full"	required="required" 
+								th:placeholder="#{user.firstName}" th:value="${given_firstName}" />
 							</div>
 
 							<div class="form-group">
 								<label class="control-label" th:text="#{user.lastName}" for="lastName">_Last Name_</label>
 								<div id="lastName-error" th:if="${#maps.containsKey(errors, 'lastName')}" th:text="${errors.lastName}" class="alert alert-warning">_Last Name Error_</div> 
-								<input type="text" id="lastName" name="lastName" class="form-control input-full" required="required" th:placeholder="#{user.lastName}" />
+								<input type="text" id="lastName" name="lastName" class="form-control input-full" required="required" 
+									th:placeholder="#{user.lastName}" th:value="${given_lastName}"/>
 							</div>
 
 							<div class="form-group">
 								<label th:text="#{users.email}"	for="email">_Email_</label>
 								<div id="email-error" th:if="${#maps.containsKey(errors, 'email')}" th:text="${errors.email}" class="alert alert-warning">_Email Error_</div> 
-								<input type="email" id="email" name="email" class="form-control input-full" required="required"	th:placeholder="#{users.email}" />
+								<input type="email" id="email" name="email" class="form-control input-full" required="required"	
+									th:placeholder="#{users.email}" th:value="${given_email}"/>
 							</div>
 							
 							<div class="form-group">
-								<label th:text="#{user.phone}" for="phoneNumber">_Email_</label>
+								<label th:text="#{user.phone}" for="phoneNumber">_Phone Number_</label>
 								<div id="email-error" th:if="${#maps.containsKey(errors, 'phoneNumber')}" th:text="${errors.phoneNumber}" class="alert alert-warning">_Phone Number Error_</div> 
-								<input type="phoneNumber" id="phoneNumber" name="phoneNumber" class="form-control input-full" th:placeholder="#{user.phone}" placeholder="Phone Number" />
+								<input type="text" id="phoneNumber" name="phoneNumber" class="form-control input-full" 
+									th:placeholder="#{user.phone}" th:value="${given_phoneNumber}"/>
 							</div>
 
 							<div class="form-group">
 								<label class="control-label" th:text="#{users.role}" for="systemRole">_Role_</label>
 								<div id="role-error" th:if="${#maps.containsKey(errors, 'role')}" th:text="${errors.role}" class="alert alert-warning">_Role Error_</div>
 								<select sec:authorize="hasRole('ROLE_ADMIN')" id="systemRole" name="systemRole" class="form-control input-full" required="required" >
+									<option value="" th:text="#{user.edit.selectRole}" disabled="disabled">_SELECT-ROLE_</option>
 									<option th:each="role : ${allowedRoles}" th:value="${role.key}" th:text="${role.value}">_Role name_</option>
 								</select>
 								

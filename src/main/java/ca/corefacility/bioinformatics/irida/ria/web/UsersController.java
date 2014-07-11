@@ -356,6 +356,13 @@ public class UsersController {
 		String returnView;
 		if (!errors.isEmpty()) {
 			model.addAttribute("errors", errors);
+			
+			model.addAttribute("given_username",username);
+			model.addAttribute("given_firstName",firstName);
+			model.addAttribute("given_lastName",lastName);
+			model.addAttribute("given_email",email);
+			model.addAttribute("given_phoneNumber",phoneNumber);
+			
 			returnView = createUserPage(model);
 		} else {
 			Long userId = user.getId();
