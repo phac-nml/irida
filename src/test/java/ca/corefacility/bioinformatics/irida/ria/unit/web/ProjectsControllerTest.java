@@ -2,6 +2,9 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -13,6 +16,7 @@ import org.junit.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
@@ -37,8 +41,8 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
  */
 public class ProjectsControllerTest {
 	// HTML page names
-	private static final String PROJECT_DETAILS_PAGE = "project_details";
-	private static final String PROJECTS_PAGE = "projects";
+	private static final String PROJECT_DETAILS_PAGE = "projects/project_details";
+	private static final String PROJECTS_PAGE = "projects/projects";
 
 	// DATATABLES position for project information
 	private static final int PROJECT_NAME_TABLE_LOCATION = 1;
@@ -117,6 +121,28 @@ public class ProjectsControllerTest {
 				controller.getProjectSpecificPage(projectId, model, principal));
         
 	}
+
+    @Test
+    public void testGetCreateProjectPage() {
+        Model model = new ExtendedModelMap();
+        String page = controller.getCreateProjectPage(model);
+        assertEquals("Reruns the correct New Project Page", "projects/project-new", page);
+        assertTrue("Model now has and error attribute", model.containsAttribute("errors"));
+    }
+
+    @Test
+    public void testCreateNewProject() {
+        Model model = new ExtendedModelMap();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        String projectName = "Test Project";
+        Project project = new Project(projectName);
+
+        // Test creating project
+        when(projectService.create(any(Project.class))).thenReturn(project);
+        when(projectService.update(eq(project.getId()), anyMap())).thenReturn(project);
+        String page = controller.createNewProject(model, request, projectName, "","","");
+        assertEquals("Returns the correct redirect to the collaborators page", "redirect:/projects/new/collaborators", page);
+    }
 
 	private List<Join<Project, User>> getProjectsForUser() {
 		List<Join<Project, User>> projects = new ArrayList<>();

@@ -3,6 +3,10 @@ package ca.corefacility.bioinformatics.irida.ria.web;
 import java.security.Principal;
 import java.util.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
@@ -40,8 +41,11 @@ import com.google.common.collect.ImmutableMap;
 @Controller
 @RequestMapping(value = "/projects")
 public class ProjectsController {
-	private static final String PROJECTS_PAGE = "projects";
-	private static final String SPECIFIC_PROJECT_PAGE = "project_details";
+	private static final String PROJECTS_DIR = "projects/";
+	private static final String PROJECTS_PAGE = PROJECTS_DIR + "projects";
+	private static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
+	private static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project-new";
+	private static final String CREATE_NEW_PROJECT_USERS_PAGE = PROJECTS_DIR + "project-new-contacts";
 	private static final String ERROR_PAGE = "error";
 	private static final String SORT_BY_ID = "id";
 	private static final String SORT_BY_NAME = "name";
@@ -49,6 +53,7 @@ public class ProjectsController {
 	private static final String SORT_BY_MODIFIED_DATE = "modifiedDate";
 	private static final String SORT_ASCENDING = "asc";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
+	public static final String SESSION_VAR_CREATED_PROJECT_ID = "CreatedProjectID";
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final UserService userService;
@@ -127,14 +132,104 @@ public class ProjectsController {
 	}
 
 	/**
+	 * Gets the name of the template for the new project page
+	 * 
+	 * @param model
+	 *            {@link Model}
+	 * @return The name of the create new project page
+	 */
+	@RequestMapping(value = "/new", method = RequestMethod.GET)
+	public String getCreateProjectPage(final Model model) {
+		if (!model.containsAttribute("errors")) {
+			model.addAttribute("errors", new HashMap<>());
+		}
+		return CREATE_NEW_PROJECT_PAGE;
+	}
+
+	/**
+	 * Creates a new project and displays a list of users for the user to add to
+	 * the project
+	 * 
+	 * @param model
+	 *            {@link Model}
+	 * @param request
+	 * @{link HttpServletRequest}
+	 * @param name
+	 *            String name of the project
+	 * @param organism
+	 *            Organism name
+	 * @param projectDescription
+	 *            Brief description of the project
+	 * @param remoteURL
+	 *            URL for the project wiki
+	 * @return The name of the add users to project page
+	 */
+	@RequestMapping(value = "/new", method = RequestMethod.POST)
+	public String createNewProject(final Model model, HttpServletRequest request,
+			@RequestParam(required = false, defaultValue = "") String name,
+			@RequestParam(required = false, defaultValue = "") String organism,
+			@RequestParam(required = false, defaultValue = "") String projectDescription,
+			@RequestParam(required = false, defaultValue = "") String remoteURL) {
+
+		Project p = new Project(name);
+		Project project = null;
+		try {
+			project = projectService.create(p);
+		} catch (ConstraintViolationException e) {
+			model.addAttribute("errors", getErrorsFromViolationException(e));
+			return getCreateProjectPage(model);
+		}
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("remoteURL", remoteURL);
+		map.put("organism", organism);
+		map.put("projectDescription", projectDescription);
+
+		try {
+			projectService.update(project.getId(), map);
+		} catch (ConstraintViolationException e) {
+			model.addAttribute("errors", getErrorsFromViolationException(e));
+			return getCreateProjectPage(model);
+		}
+
+		request.getSession().setAttribute(SESSION_VAR_CREATED_PROJECT_ID, project.getId());
+		return "redirect:/projects/new/collaborators";
+	}
+
+	/**
+	 * Returns the name of a page to add users to a *new* project.
+	 * 
+	 * @param model
+	 *            {@link Model}
+	 * @param request
+	 * @{link HttpServletRequest}
+	 * @return The name of the add users to new project page.
+	 */
+	@RequestMapping("/new/collaborators")
+	public String addUsersToProjectPage(final Model model, HttpServletRequest request) {
+		Long projectId = (Long) request.getSession().getAttribute(SESSION_VAR_CREATED_PROJECT_ID);
+		request.getSession().removeAttribute(SESSION_VAR_CREATED_PROJECT_ID);
+
+		if (projectId == null) {
+			return "redirect:/projects";
+		}
+		Project p = projectService.read(projectId);
+		model.addAttribute("project", p);
+		return CREATE_NEW_PROJECT_USERS_PAGE;
+	}
+
+	/**
 	 * Handles AJAX request for getting a list of projects available to the
 	 * logged in user. Produces JSON.
 	 * 
 	 * @param principal
-	 *            The currently logged in user.
-	 * @param request
-	 *            Contains the parameters for the datatable.
-	 * @return JSON value of the projects.
+	 * @param start
+	 * @param length
+	 * @param draw
+	 * @param sortColumn
+	 * @param direction
+	 * @param searchValue
+	 * @return
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody
@@ -212,5 +307,15 @@ public class ProjectsController {
 			projects.add(map);
 		}
 		return projects;
+	}
+
+	private Map<String, String> getErrorsFromViolationException(ConstraintViolationException e) {
+		Map<String, String> errors = new HashMap<>();
+		for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
+			String message = violation.getMessage();
+			String field = violation.getPropertyPath().toString();
+			errors.put(field, message);
+		}
+		return errors;
 	}
 }
