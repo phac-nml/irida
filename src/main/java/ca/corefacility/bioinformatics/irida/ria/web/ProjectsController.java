@@ -194,9 +194,14 @@ public class ProjectsController {
 	 */
 	@RequestMapping("/{projectId}/metadata")
 	public String getProjectMetadataPage(final Model model, @PathVariable long projectId) {
-		Project p = projectService.read(projectId);
-		model.addAttribute("project", p);
-		return PROJECT_METADATA_PAGE;
+        String page = PROJECT_METADATA_PAGE;
+        try {
+            Project p = projectService.read(projectId);
+            model.addAttribute("project", p);
+        } catch (Exception e) {
+            page = "redirect:/projects";
+        }
+        return page;
 	}
 
 	/**
