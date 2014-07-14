@@ -135,11 +135,12 @@ public class ProjectsController {
     }
 
     @RequestMapping("/{projectId}/collaborators")
-    public String getProjectUsersPage(final Model model, @PathVariable Long projectId) {
+    public String getProjectUsersPage(final Model model, final Principal principal, @PathVariable Long projectId) {
         String page = PROJECT_USERS;
         try {
             Project project = projectService.read(projectId);
             model.addAttribute("project", project);
+            getProjectTemplateDetails(model, principal, project);
         } catch (Exception e) {
             page = "redirect:/projects";
         }
