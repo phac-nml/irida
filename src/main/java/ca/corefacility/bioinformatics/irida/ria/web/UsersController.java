@@ -220,7 +220,6 @@ public class UsersController {
 
 		if (!Strings.isNullOrEmpty(password) || !Strings.isNullOrEmpty(confirmPassword)) {
 			if (!password.equals(confirmPassword)) {
-
 				errors.put("password", messageSource.getMessage("user.edit.password.match", null, locale));
 			} else {
 				updatedValues.put("password", password);
@@ -243,14 +242,19 @@ public class UsersController {
 		}
 
 		String returnView;
-		try {
-			userService.update(userId, updatedValues);
-			returnView = "redirect:/users/" + userId;
-		} catch (ConstraintViolationException | DataIntegrityViolationException ex) {
-			errors = handleCreateUpdateException(ex, locale);
+		if (errors.isEmpty()) {
+			try {
+				userService.update(userId, updatedValues);
+				returnView = "redirect:/users/" + userId;
+			} catch (ConstraintViolationException | DataIntegrityViolationException ex) {
+				errors = handleCreateUpdateException(ex, locale);
 
+				model.addAttribute("errors", errors);
+
+				returnView = getEditUserPage(userId, model);
+			}
+		} else {
 			model.addAttribute("errors", errors);
-
 			returnView = getEditUserPage(userId, model);
 		}
 
