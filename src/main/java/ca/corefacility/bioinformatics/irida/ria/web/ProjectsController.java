@@ -274,7 +274,7 @@ public class ProjectsController {
 			l.add(String.valueOf(sampleService.getSamplesForProject(p).size()));
 			l.add(String.valueOf(userService.getUsersForProject(p).size()));
 			l.add(Formats.DATE.format(p.getTimestamp()));
-			l.add(p.getModifiedDate()..toString());
+			l.add(p.getModifiedDate().toString());
 			projectsData.add(l);
 		}
 		map.put(DataTable.RESPONSE_PARAM_DATA, projectsData);
