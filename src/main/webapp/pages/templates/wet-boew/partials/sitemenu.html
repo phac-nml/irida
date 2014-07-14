@@ -27,9 +27,14 @@
                 </li>
                 <li class="pull-right">
                     <ul class="list-inline menu">
+                    	<li sec:authorize="hasRole('ROLE_ADMIN')"><a href="#admin" class="item" th:text="#{nav.main.admin}">Admin</a>
+                            <ul class="sm list-unstyled" id="admin" role="menu">
+                                <li><a href="#" th:href="@{/users}" th:text="#{nav.main.users}"></a></li>
+                            </ul>
+                        </li>
                         <li><a href="#contribute" class="item" th:text="#{nav.main.settings}">Settings</a>
                             <ul class="sm list-unstyled" id="contribute" role="menu">
-                                <li><a href="#" th:text="#{nav.main.account}"></a></li>
+                                <li><a href="#" th:href="@{/users/current}" th:text="#{nav.main.account}">Account</a></li>
                                 <li><a th:href="@{/logout}" href="/logout" th:text="#{nav.main.logout}">Logout</a></li>
                             </ul>
                         </li>
