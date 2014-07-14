@@ -189,11 +189,13 @@ public class UsersController {
 	public String updateUser(@PathVariable Long userId, @RequestParam(required = false) String firstName,
 			@RequestParam(required = false) String lastName, @RequestParam(required = false) String email,
 			@RequestParam(required = false) String phoneNumber, @RequestParam(required = false) String systemRole,
-			@RequestParam(required = false) String password, @RequestParam(required = false) String confirmPassword,
-			Model model) {
+			@RequestParam(required = false) String password, @RequestParam(required = false) String enabled,
+			@RequestParam(required = false) String confirmPassword, Model model, Principal principal) {
 		logger.debug("Updating user " + userId);
 
 		Locale locale = LocaleContextHolder.getLocale();
+
+		boolean isAdmin = isAdmin(principal);
 
 		Map<String, String> errors = new HashMap<>();
 
@@ -210,16 +212,9 @@ public class UsersController {
 		if (!Strings.isNullOrEmpty(email)) {
 			updatedValues.put("email", email);
 		}
-		
+
 		if (!Strings.isNullOrEmpty(phoneNumber)) {
 			updatedValues.put("phoneNumber", phoneNumber);
-		}
-
-
-		if (!Strings.isNullOrEmpty(systemRole)) {
-			Role newRole = Role.valueOf(systemRole);
-
-			updatedValues.put("systemRole", newRole);
 		}
 
 		if (!Strings.isNullOrEmpty(password) || !Strings.isNullOrEmpty(confirmPassword)) {
@@ -228,6 +223,21 @@ public class UsersController {
 				errors.put("password", messageSource.getMessage("user.edit.password.match", null, locale));
 			} else {
 				updatedValues.put("password", password);
+			}
+		}
+
+		if (isAdmin) {
+			logger.debug("User is admin");
+			if (!Strings.isNullOrEmpty(enabled)) {
+				updatedValues.put("enabled", true);
+			} else {
+				updatedValues.put("enabled", false);
+			}
+
+			if (!Strings.isNullOrEmpty(systemRole)) {
+				Role newRole = Role.valueOf(systemRole);
+
+				updatedValues.put("systemRole", newRole);
 			}
 		}
 
@@ -387,13 +397,25 @@ public class UsersController {
 	 * @return boolean if the principal can edit the user
 	 */
 	private boolean canEditUser(Principal principal, User user) {
-		String principalName = principal.getName();
-		User readPrincipal = userService.getUserByUsername(principalName);
+		User readPrincipal = userService.getUserByUsername(principal.getName());
 
 		boolean principalAdmin = readPrincipal.getAuthorities().contains(Role.ROLE_ADMIN);
 		boolean usersEqual = user.equals(readPrincipal);
 
 		return principalAdmin || usersEqual;
+	}
+
+	/**
+	 * Check if the logged in user is an Admin
+	 * 
+	 * @param principal
+	 *            The logged in user to check
+	 * @return if the user is an admin
+	 */
+	private boolean isAdmin(Principal principal) {
+		logger.trace("Checking if user is admin");
+		User readPrincipal = userService.getUserByUsername(principal.getName());
+		return readPrincipal.getAuthorities().contains(Role.ROLE_ADMIN);
 	}
 
 }
