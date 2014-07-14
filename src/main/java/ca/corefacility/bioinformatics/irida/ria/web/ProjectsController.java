@@ -96,26 +96,7 @@ public class ProjectsController {
 			Project project = projectService.read(projectId);
 			model.addAttribute("project", project);
 
-			Collection<Join<Project, User>> ownerJoinList = userService.getUsersForProjectByRole(project,
-					ProjectRole.PROJECT_OWNER);
-			User owner = null;
-			if (ownerJoinList.size() > 0) {
-				owner = (ownerJoinList.iterator().next()).getObject();
-			}
-			model.addAttribute("owner", owner);
-
-			int sampleSize = sampleService.getSamplesForProject(project).size();
-			model.addAttribute("samples", sampleSize);
-
-			int userSize = userService.getUsersForProject(project).size();
-			model.addAttribute("users", userSize);
-
-			// TODO: (Josh - 14-06-23) Get list of recent activities on project.
-
-			// Add any associated projects
-			User currentUser = userService.getUserByUsername(principal.getName());
-			List<Map<String, String>> associatedProjects = getAssociatedProjects(project, currentUser);
-			model.addAttribute("associatedProjects", associatedProjects);
+            getProjectTemplateDetails(model, principal, project);
 
 			page = SPECIFIC_PROJECT_PAGE;
 		} catch (EntityNotFoundException e) {
@@ -130,7 +111,30 @@ public class ProjectsController {
 		return page;
 	}
 
-	@RequestMapping("/{projectId}/collaborators")
+    private void getProjectTemplateDetails(Model model, Principal principal, Project project) {
+        Collection<Join<Project, User>> ownerJoinList = userService.getUsersForProjectByRole(project,
+                ProjectRole.PROJECT_OWNER);
+        User owner = null;
+        if (ownerJoinList.size() > 0) {
+            owner = (ownerJoinList.iterator().next()).getObject();
+        }
+        model.addAttribute("owner", owner);
+
+        int sampleSize = sampleService.getSamplesForProject(project).size();
+        model.addAttribute("samples", sampleSize);
+
+        int userSize = userService.getUsersForProject(project).size();
+        model.addAttribute("users", userSize);
+
+        // TODO: (Josh - 14-06-23) Get list of recent activities on project.
+
+        // Add any associated projects
+        User currentUser = userService.getUserByUsername(principal.getName());
+        List<Map<String, String>> associatedProjects = getAssociatedProjects(project, currentUser);
+        model.addAttribute("associatedProjects", associatedProjects);
+    }
+
+    @RequestMapping("/{projectId}/collaborators")
     public String getProjectUsersPage(final Model model, @PathVariable Long projectId) {
         String page = PROJECT_USERS;
         try {
