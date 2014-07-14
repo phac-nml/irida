@@ -131,7 +131,7 @@ public class ProjectsControllerTest {
 	public void testGetCreateProjectPage() {
 		Model model = new ExtendedModelMap();
 		String page = controller.getCreateProjectPage(model);
-		assertEquals("Reruns the correct New Project Page", "projects/project-new", page);
+		assertEquals("Reruns the correct New Project Page", "projects/project_new", page);
 		assertTrue("Model now has and error attribute", model.containsAttribute("errors"));
 	}
 
