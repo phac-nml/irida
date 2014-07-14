@@ -333,7 +333,7 @@ public class UsersController {
 
 		Map<String, String> errors = new HashMap<>();
 
-		String returnView;
+		String returnView = null;
 
 		Locale locale = LocaleContextHolder.getLocale();
 
@@ -356,19 +356,18 @@ public class UsersController {
 				returnView = "redirect:/users/" + userId;
 			} catch (ConstraintViolationException | DataIntegrityViolationException | EntityExistsException ex) {
 				errors = handleCreateUpdateException(ex, locale);
-
-				model.addAttribute("errors", errors);
-
-				model.addAttribute("given_username", username);
-				model.addAttribute("given_firstName", firstName);
-				model.addAttribute("given_lastName", lastName);
-				model.addAttribute("given_email", email);
-				model.addAttribute("given_phoneNumber", phoneNumber);
-
-				returnView = createUserPage(model);
 			}
-		} else {
+		} 
+		
+		if(!errors.isEmpty()){
 			model.addAttribute("errors", errors);
+
+			model.addAttribute("given_username", username);
+			model.addAttribute("given_firstName", firstName);
+			model.addAttribute("given_lastName", lastName);
+			model.addAttribute("given_email", email);
+			model.addAttribute("given_phoneNumber", phoneNumber);
+			
 			returnView = createUserPage(model);
 		}
 
