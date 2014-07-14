@@ -232,31 +232,16 @@ public class UsersController {
 			}
 		}
 
+		String returnView;
 		try {
 			userService.update(userId, updatedValues);
-		} catch (ConstraintViolationException ex) {
-			logger.debug("User provided data threw ConstrainViolation");
-			Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
-
-			for (ConstraintViolation<?> violation : constraintViolations) {
-				logger.debug(violation.getMessage());
-				String errorKey = violation.getPropertyPath().toString();
-				errors.put(errorKey, violation.getMessage());
-			}
-		} catch (DataIntegrityViolationException e) {
-			logger.debug(e.getMessage());
-			if (e.getMessage().contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
-				errors.put("email", messageSource.getMessage("user.edit.emailConflict", null, locale));
-			}
-		}
-
-		// if there are errors, add them and return the edit page
-		String returnView;
-		if (!errors.isEmpty()) {
-			model.addAttribute("errors", errors);
-			returnView = getEditUserPage(userId, model);
-		} else {
 			returnView = "redirect:/users/" + userId;
+		} catch (ConstraintViolationException | DataIntegrityViolationException ex) {
+			errors = handleCreateUpdateException(ex, locale);
+
+			model.addAttribute("errors", errors);
+
+			returnView = getEditUserPage(userId, model);
 		}
 
 		return returnView;
@@ -328,45 +313,30 @@ public class UsersController {
 		User user = new User(username, email, password, firstName, lastName, phoneNumber);
 		user.setSystemRole(Role.valueOf(systemRole));
 
-		Map<String, String> errors = new HashMap<>();
-		
+		Map<String, String> errors;
+
+		// if there are errors, add them and return the edit page
+		String returnView;
+
 		Locale locale = LocaleContextHolder.getLocale();
 
 		try {
 			user = userService.create(user);
-		} catch (ConstraintViolationException ex) {
-			logger.debug("User provided data threw ConstrainViolation");
-			Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
 
-			for (ConstraintViolation<?> violation : constraintViolations) {
-				logger.debug(violation.getMessage());
-				String errorKey = violation.getPropertyPath().toString();
-				errors.put(errorKey, violation.getMessage());
-			}
-		} catch (DataIntegrityViolationException e) {
-			logger.debug(e.getMessage());
-			if (e.getMessage().contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
-				errors.put("email", messageSource.getMessage("user.edit.emailConflict", null, locale));
-			}
-		} catch (EntityExistsException e){
-			errors.put(e.getFieldName(), e.getMessage());
-		}
-
-		// if there are errors, add them and return the edit page
-		String returnView;
-		if (!errors.isEmpty()) {
-			model.addAttribute("errors", errors);
-			
-			model.addAttribute("given_username",username);
-			model.addAttribute("given_firstName",firstName);
-			model.addAttribute("given_lastName",lastName);
-			model.addAttribute("given_email",email);
-			model.addAttribute("given_phoneNumber",phoneNumber);
-			
-			returnView = createUserPage(model);
-		} else {
 			Long userId = user.getId();
 			returnView = "redirect:/users/" + userId;
+		} catch (ConstraintViolationException | DataIntegrityViolationException | EntityExistsException ex) {
+			errors = handleCreateUpdateException(ex, locale);
+
+			model.addAttribute("errors", errors);
+
+			model.addAttribute("given_username", username);
+			model.addAttribute("given_firstName", firstName);
+			model.addAttribute("given_lastName", lastName);
+			model.addAttribute("given_email", email);
+			model.addAttribute("given_phoneNumber", phoneNumber);
+
+			returnView = createUserPage(model);
 		}
 
 		return returnView;
@@ -439,6 +409,38 @@ public class UsersController {
 
 		map.put(DataTable.RESPONSE_PARAM_DATA, usersData);
 		return map;
+	}
+
+	/**
+	 * Handle exceptions for the create and update pages
+	 * @param ex an exception to handle
+	 * @param locale The locale to work with
+	 * @return A Map<String,String> of errors to render
+	 */
+	private Map<String, String> handleCreateUpdateException(Exception ex, Locale locale) {
+		Map<String, String> errors = new HashMap<>();
+		if (ex instanceof ConstraintViolationException) {
+			ConstraintViolationException cvx = (ConstraintViolationException) ex;
+			logger.debug("User provided data threw ConstrainViolation");
+			Set<ConstraintViolation<?>> constraintViolations = cvx.getConstraintViolations();
+
+			for (ConstraintViolation<?> violation : constraintViolations) {
+				logger.debug(violation.getMessage());
+				String errorKey = violation.getPropertyPath().toString();
+				errors.put(errorKey, violation.getMessage());
+			}
+		} else if (ex instanceof DataIntegrityViolationException) {
+			DataIntegrityViolationException divx = (DataIntegrityViolationException) ex;
+			logger.debug(divx.getMessage());
+			if (divx.getMessage().contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
+				errors.put("email", messageSource.getMessage("user.edit.emailConflict", null, locale));
+			}
+		} else if (ex instanceof EntityExistsException) {
+			EntityExistsException eex = (EntityExistsException) ex;
+			errors.put(eex.getFieldName(), eex.getMessage());
+		}
+
+		return errors;
 	}
 
 	/**
