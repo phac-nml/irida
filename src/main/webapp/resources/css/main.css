@@ -58,6 +58,14 @@ b.list-group-item {
 #associated-projects .glyphicon-eye-open {
   color: #5cb85c; }
 
+table.dataTable > thead i.glyphicon:before {
+  margin-left: 1em;
+  content: "\e150"; }
+table.dataTable > thead th.sorting_asc > i.glyphicon:before {
+  content: "\e155"; }
+table.dataTable > thead th.sorting_desc > i.glyphicon:before {
+  content: "\e156"; }
+
 .form-group .alert {
   padding: 3px 6px;
   font-weight: bold;
