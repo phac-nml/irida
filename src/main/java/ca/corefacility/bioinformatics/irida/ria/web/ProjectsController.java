@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.web;
 import java.security.Principal;
 import java.util.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -45,7 +44,7 @@ public class ProjectsController {
 	private static final String PROJECTS_PAGE = PROJECTS_DIR + "projects";
 	private static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
 	private static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project-new";
-	private static final String CREATE_NEW_PROJECT_USERS_PAGE = PROJECTS_DIR + "project-new-contacts";
+	private static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
 	private static final String ERROR_PAGE = "error";
 	private static final String SORT_BY_ID = "id";
 	private static final String SORT_BY_NAME = "name";
@@ -53,7 +52,6 @@ public class ProjectsController {
 	private static final String SORT_BY_MODIFIED_DATE = "modifiedDate";
 	private static final String SORT_ASCENDING = "asc";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
-	public static final String SESSION_VAR_CREATED_PROJECT_ID = "CreatedProjectID";
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final UserService userService;
@@ -165,14 +163,16 @@ public class ProjectsController {
 	 * @return The name of the add users to project page
 	 */
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
-	public String createNewProject(final Model model, HttpServletRequest request,
-			@RequestParam(required = false, defaultValue = "") String name,
+	public String createNewProject(final Model model, @RequestParam(required = false, defaultValue = "") String name,
 			@RequestParam(required = false, defaultValue = "") String organism,
 			@RequestParam(required = false, defaultValue = "") String projectDescription,
 			@RequestParam(required = false, defaultValue = "") String remoteURL) {
 
 		Project p = new Project(name);
-		Project project = null;
+		p.setOrganism(organism);
+		p.setProjectDescription(projectDescription);
+		p.setRemoteURL(remoteURL);
+		Project project;
 		try {
 			project = projectService.create(p);
 		} catch (ConstraintViolationException e) {
@@ -180,20 +180,7 @@ public class ProjectsController {
 			return getCreateProjectPage(model);
 		}
 
-		Map<String, Object> map = new HashMap<>();
-		map.put("remoteURL", remoteURL);
-		map.put("organism", organism);
-		map.put("projectDescription", projectDescription);
-
-		try {
-			projectService.update(project.getId(), map);
-		} catch (ConstraintViolationException e) {
-			model.addAttribute("errors", getErrorsFromViolationException(e));
-			return getCreateProjectPage(model);
-		}
-
-		request.getSession().setAttribute(SESSION_VAR_CREATED_PROJECT_ID, project.getId());
-		return "redirect:/projects/new/collaborators";
+		return "redirect:/projects/" + project.getId() + "/metadata";
 	}
 
 	/**
@@ -205,17 +192,16 @@ public class ProjectsController {
 	 * @{link HttpServletRequest}
 	 * @return The name of the add users to new project page.
 	 */
-	@RequestMapping("/new/collaborators")
-	public String addUsersToProjectPage(final Model model, HttpServletRequest request) {
-		Long projectId = (Long) request.getSession().getAttribute(SESSION_VAR_CREATED_PROJECT_ID);
-		request.getSession().removeAttribute(SESSION_VAR_CREATED_PROJECT_ID);
-
-		if (projectId == null) {
-			return "redirect:/projects";
-		}
-		Project p = projectService.read(projectId);
-		model.addAttribute("project", p);
-		return CREATE_NEW_PROJECT_USERS_PAGE;
+	@RequestMapping("/{projectId}/metadata")
+	public String getProjectMetadataPage(final Model model, @PathVariable long projectId) {
+        String page = PROJECT_METADATA_PAGE;
+        try {
+            Project p = projectService.read(projectId);
+            model.addAttribute("project", p);
+        } catch (Exception e) {
+            page = "redirect:/projects";
+        }
+        return page;
 	}
 
 	/**

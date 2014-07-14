@@ -15,6 +15,7 @@
             <div class="container">
                 <ul class="nav navbar-nav" th:inline="text">
                     <li class="active"><a th:href="@{__${#httpServletRequest.requestURI}__}"><span class="glyphicon glyphicon-home"></span></a></li>
+                    <li><a th:href="@{'/projects/' + ${project.getId()} + '/metadata'}">[[#{project.metadata}]]</a></li>
                     <li><a th:href="@{'/projects/' + ${project.getId()} + '/samples'}">[[#{project.samples}]]<span class="badge" th:text="${samples}"></span> </a></li>
                     <li><a th:href="@{'/projects/' + ${project.getId()} + '/collaborators'}">[[#{project.collaborators}]]<span class="badge" th:text="${users}"></span></a></li>
                     <li><a th:href="@{'/projects/' + ${project.getId()} + '/analysis'}">[[#{project.analysis}]]</a></li>
