@@ -2,9 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -16,7 +14,6 @@ import org.junit.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
@@ -115,7 +112,7 @@ public class ProjectsControllerTest {
 		when(userService.getUsersForProjectByRole(getProject(), ProjectRole.PROJECT_OWNER)).thenReturn(
 				getUsersForProjectByRole());
         when(projectService.getProjectsForUser(user)).thenReturn(projects);
-        when(projectService.getRelatedProjects(getProject())).thenReturn(getUserProjectJoin(projects));
+        when(projectService.getRelatedProjects(getProject())).thenReturn(getRelatedProjectJoin(projects));
 
 		assertEquals("Returns the correct Project Page", PROJECT_DETAILS_PAGE,
 				controller.getProjectSpecificPage(projectId, model, principal));
@@ -123,25 +120,46 @@ public class ProjectsControllerTest {
 	}
 
     @Test
-    public void testGetCreateProjectPage() {
+    public void testGetProjectUsersPage() {
         Model model = new ExtendedModelMap();
-        String page = controller.getCreateProjectPage(model);
-        assertEquals("Reruns the correct New Project Page", "projects/project-new", page);
-        assertTrue("Model now has and error attribute", model.containsAttribute("errors"));
+        Long projectId = 1L;
+        Principal principal = () -> USER_NAME;
+        assertEquals("Gets the correct project collaborators page", controller.getProjectUsersPage(model, principal, projectId), "projects/project_collaborators");
     }
 
-    @Test
-    public void testCreateNewProject() {
-        Model model = new ExtendedModelMap();
-        String projectName = "Test Project";
-        Long projectId = 1002L;
-        Project project = new Project(projectName);
+	@Test
+	public void testGetCreateProjectPage() {
+		Model model = new ExtendedModelMap();
+		String page = controller.getCreateProjectPage(model);
+		assertEquals("Reruns the correct New Project Page", "projects/project-new", page);
+		assertTrue("Model now has and error attribute", model.containsAttribute("errors"));
+	}
+
+	@Test
+	public void testCreateNewProject() {
+		Model model = new ExtendedModelMap();
+		String projectName = "Test Project";
+		Long projectId = 1002L;
+		Project project = new Project(projectName);
+		project.setId(projectId);
+		// Test creating project
+		when(projectService.create(any(Project.class))).thenReturn(project);
+		when(projectService.update(eq(project.getId()), anyMap())).thenReturn(project);
+		String page = controller.createNewProject(model, projectName, "", "", "");
+		assertEquals("Returns the correct redirect to the collaborators page", "redirect:/projects/" + projectId
+				+ "/metadata", page);
+	}
+
+	@Test
+	public void testGetAjaxUsersListForProject() {
+		Long projectId = 32L;
+        Project project = new Project("test");
         project.setId(projectId);
-        // Test creating project
-        when(projectService.create(any(Project.class))).thenReturn(project);
-        when(projectService.update(eq(project.getId()), anyMap())).thenReturn(project);
-        String page = controller.createNewProject(model, projectName, "","","");
-        assertEquals("Returns the correct redirect to the collaborators page", "redirect:/projects/" + projectId + "/metadata", page);
+        Collection<Join<Project, User>> users = getUsersForProject(project);
+        when(userService.getUsersForProject(any(Project.class))).thenReturn(users);
+        Map<String, Collection<Join<Project, User>>> usersReturned = controller.getAjaxUsersListForProject(projectId);
+        assertTrue("Has a data attribute required for data tables", usersReturned.containsKey("data"));
+        assertEquals("Has the correct number of users.", usersReturned.get("data").size(), 2);
     }
 
 	private List<Join<Project, User>> getProjectsForUser() {
@@ -154,7 +172,14 @@ public class ProjectsControllerTest {
 		return projects;
 	}
 
-	private List<RelatedProjectJoin> getUserProjectJoin(List<Join<Project, User>> projects) {
+	private Collection<Join<Project, User>> getUsersForProject(Project project) {
+        Collection<Join<Project, User>> users = new ArrayList<>();
+        users.add(new ProjectUserJoin(project, new User("tester1", "test@me.com", "", "Test", "Test2", "234234"), ProjectRole.PROJECT_USER));
+        users.add(new ProjectUserJoin(project, new User("tester2", "test@me.com", "", "Test", "Test23", "213231"), ProjectRole.PROJECT_OWNER));
+        return users;
+    }
+
+	private List<RelatedProjectJoin> getRelatedProjectJoin(List<Join<Project, User>> projects) {
 		List<RelatedProjectJoin> join = new ArrayList<>();
 		Project objectProject = getProject();
 		for (Join<Project, User> j : projects) {
