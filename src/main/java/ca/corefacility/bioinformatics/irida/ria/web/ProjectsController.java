@@ -172,21 +172,12 @@ public class ProjectsController {
 			@RequestParam(required = false, defaultValue = "") String remoteURL) {
 
 		Project p = new Project(name);
-		Project project = null;
+        p.setOrganism(organism);
+        p.setProjectDescription(projectDescription);
+        p.setRemoteURL(remoteURL);
+        Project project = null;
 		try {
 			project = projectService.create(p);
-		} catch (ConstraintViolationException e) {
-			model.addAttribute("errors", getErrorsFromViolationException(e));
-			return getCreateProjectPage(model);
-		}
-
-		Map<String, Object> map = new HashMap<>();
-		map.put("remoteURL", remoteURL);
-		map.put("organism", organism);
-		map.put("projectDescription", projectDescription);
-
-		try {
-			projectService.update(project.getId(), map);
 		} catch (ConstraintViolationException e) {
 			model.addAttribute("errors", getErrorsFromViolationException(e));
 			return getCreateProjectPage(model);
