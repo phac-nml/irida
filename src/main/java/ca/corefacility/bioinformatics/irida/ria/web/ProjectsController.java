@@ -44,7 +44,7 @@ public class ProjectsController {
 	private static final String PROJECTS_PAGE = PROJECTS_DIR + "projects";
     private static final String PROJECT_USERS = PROJECTS_DIR + "project_users";
     private static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
-	private static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project-new";
+	private static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_new";
 	private static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
 	private static final String ERROR_PAGE = "error";
 	private static final String SORT_BY_ID = "id";
