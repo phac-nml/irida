@@ -60,6 +60,7 @@ public class UsersController {
 	private static final String ERROR_PAGE = "error";
 	private static final String SORT_BY_ID = "id";
 	private static final String SORT_ASCENDING = "asc";
+	private static final String ROLE_MESSAGE_PREFIX = "systemrole.";
 	private static final int MAX_DISPLAY_PROJECTS = 10;
 	private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
 
@@ -188,11 +189,14 @@ public class UsersController {
 	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.POST)
 	public String updateUser(@PathVariable Long userId, @RequestParam(required = false) String firstName,
 			@RequestParam(required = false) String lastName, @RequestParam(required = false) String email,
-			@RequestParam(required = false) String systemRole, @RequestParam(required = false) String password,
-			@RequestParam(required = false) String confirmPassword, Model model) {
+			@RequestParam(required = false) String phoneNumber, @RequestParam(required = false) String systemRole,
+			@RequestParam(required = false) String password, @RequestParam(required = false) String enabled,
+			@RequestParam(required = false) String confirmPassword, Model model, Principal principal) {
 		logger.debug("Updating user " + userId);
 
 		Locale locale = LocaleContextHolder.getLocale();
+
+		boolean isAdmin = isAdmin(principal);
 
 		Map<String, String> errors = new HashMap<>();
 
@@ -210,10 +214,8 @@ public class UsersController {
 			updatedValues.put("email", email);
 		}
 
-		if (!Strings.isNullOrEmpty(systemRole)) {
-			Role newRole = Role.valueOf(systemRole);
-
-			updatedValues.put("systemRole", newRole);
+		if (!Strings.isNullOrEmpty(phoneNumber)) {
+			updatedValues.put("phoneNumber", phoneNumber);
 		}
 
 		if (!Strings.isNullOrEmpty(password) || !Strings.isNullOrEmpty(confirmPassword)) {
@@ -222,6 +224,21 @@ public class UsersController {
 				errors.put("password", messageSource.getMessage("user.edit.password.match", null, locale));
 			} else {
 				updatedValues.put("password", password);
+			}
+		}
+
+		if (isAdmin) {
+			logger.debug("User is admin");
+			if (!Strings.isNullOrEmpty(enabled)) {
+				updatedValues.put("enabled", true);
+			} else {
+				updatedValues.put("enabled", false);
+			}
+
+			if (!Strings.isNullOrEmpty(systemRole)) {
+				Role newRole = Role.valueOf(systemRole);
+
+				updatedValues.put("systemRole", newRole);
 			}
 		}
 
@@ -275,12 +292,19 @@ public class UsersController {
 
 		Map<String, String> roleNames = new HashMap<>();
 		for (Role role : allowedRoles) {
-			String roleMessageName = "systemrole." + role.getName();
-			String roleName = messageSource.getMessage(roleMessageName, null, locale);
-			roleNames.put(role.getName(), roleName);
+			if (!role.equals(user.getSystemRole())) {
+				String roleMessageName = ROLE_MESSAGE_PREFIX + role.getName();
+				String roleName = messageSource.getMessage(roleMessageName, null, locale);
+				roleNames.put(role.getName(), roleName);
+			}
 		}
 
 		model.addAttribute("allowedRoles", roleNames);
+
+		String currentRoleName = messageSource.getMessage(ROLE_MESSAGE_PREFIX + user.getSystemRole().getName(), null,
+				locale);
+
+		model.addAttribute("currentRole", currentRoleName);
 
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<String, String>());
@@ -381,13 +405,25 @@ public class UsersController {
 	 * @return boolean if the principal can edit the user
 	 */
 	private boolean canEditUser(Principal principal, User user) {
-		String principalName = principal.getName();
-		User readPrincipal = userService.getUserByUsername(principalName);
+		User readPrincipal = userService.getUserByUsername(principal.getName());
 
 		boolean principalAdmin = readPrincipal.getAuthorities().contains(Role.ROLE_ADMIN);
 		boolean usersEqual = user.equals(readPrincipal);
 
 		return principalAdmin || usersEqual;
+	}
+
+	/**
+	 * Check if the logged in user is an Admin
+	 * 
+	 * @param principal
+	 *            The logged in user to check
+	 * @return if the user is an admin
+	 */
+	private boolean isAdmin(Principal principal) {
+		logger.trace("Checking if user is admin");
+		User readPrincipal = userService.getUserByUsername(principal.getName());
+		return readPrincipal.getAuthorities().contains(Role.ROLE_ADMIN);
 	}
 
 }

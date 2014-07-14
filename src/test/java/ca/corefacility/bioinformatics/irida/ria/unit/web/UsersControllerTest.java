@@ -188,33 +188,43 @@ public class UsersControllerTest {
 
 	@Test
 	public void testSubmitEditUser() {
+		Principal principal = () -> USER_NAME;
 		Long userId = 1l;
 		ExtendedModelMap model = new ExtendedModelMap();
 		String firstName = "NewFirst";
 		Map<String, Object> expected = new HashMap<>();
 		expected.put("firstName", firstName);
+		User puser = new User(userId, USER_NAME, null, null, null, null, null);
+		puser.setSystemRole(Role.ROLE_USER);
 
-		String updateUser = controller.updateUser(userId, firstName, null, null, null, null, null, model);
+		when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
+		String updateUser = controller.updateUser(userId, firstName, null, null, null, null, null, "checked", null,
+				model, principal);
 
 		assertEquals("redirect:/users/1", updateUser);
 
 		verify(userService).update(userId, expected);
+		verify(userService).getUserByUsername(USER_NAME);
 	}
 
 	@Test
 	public void testSubmitEditUserError() {
+		Principal principal = () -> USER_NAME;
 		Long userId = 1l;
 		ExtendedModelMap model = new ExtendedModelMap();
 		String email = "existing@email.com";
 		Map<String, Object> expected = new HashMap<>();
 		expected.put("email", email);
+		User puser = new User(userId, USER_NAME, null, null, null, null, null);
+		puser.setSystemRole(Role.ROLE_USER);
 
 		DataIntegrityViolationException dataIntegrityViolationException = new DataIntegrityViolationException(
 				"Exception: " + User.USER_EMAIL_CONSTRAINT_NAME);
 
+		when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
 		when(userService.update(userId, expected)).thenThrow(dataIntegrityViolationException);
 
-		String updateUser = controller.updateUser(userId, null, null, email, null, null, null, model);
+		String updateUser = controller.updateUser(userId, null, null, email, null, null, null, "checked", null, model,principal);
 
 		assertEquals(USER_EDIT_PAGE, updateUser);
 		assertTrue(model.containsKey("errors"));
@@ -223,6 +233,7 @@ public class UsersControllerTest {
 		assertTrue(modelMap.containsKey("email"));
 
 		verify(userService).update(userId, expected);
+		verify(userService).getUserByUsername(USER_NAME);
 	}
 
 }

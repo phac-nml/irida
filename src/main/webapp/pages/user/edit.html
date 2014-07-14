@@ -37,12 +37,18 @@
 								<div id="email-error" th:if="${#maps.containsKey(errors, 'email')}" th:text="${errors.email}" class="alert alert-warning">_Email Error_</div> 
 								<input type="email" id="email" name="email" class="form-control input-full" th:placeholder="${user.email}"	placeholder="Email" />
 							</div>
+							
+							<div class="form-group">
+								<label th:text="#{user.phone}" for="phoneNumber">_Email_</label>
+								<div id="email-error" th:if="${#maps.containsKey(errors, 'phoneNumber')}" th:text="${errors.phoneNumber}" class="alert alert-warning">_Phone Number Error_</div> 
+								<input type="text" id="phoneNumber" name="phoneNumber" class="form-control input-full" th:placeholder="${user.phoneNumber}" placeholder="Phone Number" />
+							</div>
 
 							<div class="form-group" sec:authorize="hasRole('ROLE_ADMIN')">
 								<label class="control-label" th:text="#{users.role}" for="systemRole">_Role_</label>
 								<div id="role-error" th:if="${#maps.containsKey(errors, 'role')}" th:text="${errors.role}" class="alert alert-warning">_Role Error_</div>
 								<select id="systemRole" name="systemRole" class="form-control input-full" >
-									<option value="" disabled="disabled" selected="selected"></option>
+									<option value="" selected="selected" th:text="${currentRole}"></option>
 									<option th:each="role : ${allowedRoles}" th:value="${role.key}" th:text="${role.value}">_Role name_</option>
 								</select>
 							</div>
@@ -56,6 +62,11 @@
 							<div class="form-group">
 								<label class="control-label" th:text="#{user.confirmPassword}" for="confirmPassword">_Confirm Password_</label> 
 								<input type="password" id="confirmPassword" name="confirmPassword" class="form-control input-full" placeholder="Confirm Password" />
+							</div>
+							
+							<div class="form-group" sec:authorize="hasRole('ROLE_ADMIN')">
+								<label class="control-label" th:text="#{user.enabled}" for="enabled">_Enabled_</label> 
+								<input type="checkbox" name="enabled" th:checked="${user.enabled}"/>
 							</div>
 						</div>
 							<div class="panel-footer text-right">

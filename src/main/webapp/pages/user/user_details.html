@@ -61,6 +61,11 @@
                     		<span class="pull-right" id="user-role"
                                 th:text="${systemRole}">_ROLE_</span>
                     	</li>
+                    	<li>
+                    		<span class="glyphicon glyphicon-off"></span>&nbsp;[[#{user.enabled}]]
+                    		<span class="pull-right glyphicon glyphicon-ok" th:if="${user.enabled}"></span>
+                    		<span class="pull-right glyphicon glyphicon-remove" th:if="not ${user.enabled}"></span>
+                    	</li>
                         <li>
                         	<span class="glyphicon glyphicon-calendar"></span>&nbsp;[[#{user.created}]]
                         	<span class="pull-right" id="user-created"
