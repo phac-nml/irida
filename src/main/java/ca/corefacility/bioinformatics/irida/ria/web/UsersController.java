@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -57,6 +58,7 @@ public class UsersController {
 	private static final String USERS_PAGE = "user/list";
 	private static final String SPECIFIC_USER_PAGE = "user/user_details";
 	private static final String EDIT_USER_PAGE = "user/edit";
+	private static final String CREATE_USER_PAGE = "user/create";
 	private static final String ERROR_PAGE = "error";
 	private static final String SORT_BY_ID = "id";
 	private static final String SORT_ASCENDING = "asc";
@@ -69,7 +71,7 @@ public class UsersController {
 	private final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "username", "email", "lastName",
 			"firstName", "systemRole", "createdDate", "modifiedDate");
 
-	private final List<Role> allowedRoles = Lists.newArrayList(Role.ROLE_ADMIN, Role.ROLE_MANAGER, Role.ROLE_USER,
+	private final List<Role> adminAllowedRoles = Lists.newArrayList(Role.ROLE_ADMIN, Role.ROLE_MANAGER, Role.ROLE_USER,
 			Role.ROLE_SEQUENCER);
 
 	private final MessageSource messageSource;
@@ -188,8 +190,9 @@ public class UsersController {
 	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.POST)
 	public String updateUser(@PathVariable Long userId, @RequestParam(required = false) String firstName,
 			@RequestParam(required = false) String lastName, @RequestParam(required = false) String email,
-			@RequestParam(required = false) String systemRole, @RequestParam(required = false) String password,
-			@RequestParam(required = false) String confirmPassword, Model model) {
+			@RequestParam(required = false) String phoneNumber, @RequestParam(required = false) String systemRole,
+			@RequestParam(required = false) String password, @RequestParam(required = false) String confirmPassword,
+			Model model) {
 		logger.debug("Updating user " + userId);
 
 		Locale locale = LocaleContextHolder.getLocale();
@@ -208,6 +211,10 @@ public class UsersController {
 
 		if (!Strings.isNullOrEmpty(email)) {
 			updatedValues.put("email", email);
+		}
+
+		if (!Strings.isNullOrEmpty(phoneNumber)) {
+			updatedValues.put("phoneNumber", phoneNumber);
 		}
 
 		if (!Strings.isNullOrEmpty(systemRole)) {
@@ -274,7 +281,7 @@ public class UsersController {
 		Locale locale = LocaleContextHolder.getLocale();
 
 		Map<String, String> roleNames = new HashMap<>();
-		for (Role role : allowedRoles) {
+		for (Role role : adminAllowedRoles) {
 			String roleMessageName = "systemrole." + role.getName();
 			String roleName = messageSource.getMessage(roleMessageName, null, locale);
 			roleNames.put(role.getName(), roleName);
@@ -287,6 +294,82 @@ public class UsersController {
 		}
 
 		return EDIT_USER_PAGE;
+	}
+
+	@RequestMapping(value = "/create", method = RequestMethod.GET)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
+	public String createUserPage(Model model) {
+
+		Locale locale = LocaleContextHolder.getLocale();
+
+		Map<String, String> roleNames = new HashMap<>();
+		for (Role role : adminAllowedRoles) {
+			String roleMessageName = "systemrole." + role.getName();
+			String roleName = messageSource.getMessage(roleMessageName, null, locale);
+			roleNames.put(role.getName(), roleName);
+		}
+
+		model.addAttribute("allowedRoles", roleNames);
+
+		if (!model.containsAttribute("errors")) {
+			model.addAttribute("errors", new HashMap<String, String>());
+		}
+
+		return CREATE_USER_PAGE;
+	}
+
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
+	public String submitCreateUser(@RequestParam String username, @RequestParam String firstName,
+			@RequestParam String lastName, @RequestParam String email, @RequestParam String phoneNumber,
+			@RequestParam(defaultValue = "ROLE_USER") String systemRole, @RequestParam String password,
+			@RequestParam String confirmPassword, Model model) {
+
+		User user = new User(username, email, password, firstName, lastName, phoneNumber);
+		user.setSystemRole(Role.valueOf(systemRole));
+
+		Map<String, String> errors = new HashMap<>();
+		
+		Locale locale = LocaleContextHolder.getLocale();
+
+		try {
+			user = userService.create(user);
+		} catch (ConstraintViolationException ex) {
+			logger.debug("User provided data threw ConstrainViolation");
+			Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
+
+			for (ConstraintViolation<?> violation : constraintViolations) {
+				logger.debug(violation.getMessage());
+				String errorKey = violation.getPropertyPath().toString();
+				errors.put(errorKey, violation.getMessage());
+			}
+		} catch (DataIntegrityViolationException e) {
+			logger.debug(e.getMessage());
+			if (e.getMessage().contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
+				errors.put("email", messageSource.getMessage("user.edit.emailConflict", null, locale));
+			}
+		} catch (EntityExistsException e){
+			errors.put(e.getFieldName(), e.getMessage());
+		}
+
+		// if there are errors, add them and return the edit page
+		String returnView;
+		if (!errors.isEmpty()) {
+			model.addAttribute("errors", errors);
+			
+			model.addAttribute("given_username",username);
+			model.addAttribute("given_firstName",firstName);
+			model.addAttribute("given_lastName",lastName);
+			model.addAttribute("given_email",email);
+			model.addAttribute("given_phoneNumber",phoneNumber);
+			
+			returnView = createUserPage(model);
+		} else {
+			Long userId = user.getId();
+			returnView = "redirect:/users/" + userId;
+		}
+
+		return returnView;
 	}
 
 	/**
