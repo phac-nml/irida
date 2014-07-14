@@ -80,6 +80,6 @@ public class ProjectsNewPageIT {
 
         // Create the project
         page.submit();
-        assertEquals("Redirects to the project users page", driver.getCurrentUrl(), "http://localhost:8080/projects/new/collaborators");
+        assertTrue("Redirects to the project metadata page", driver.getCurrentUrl().contains("/metadata"));
     }
 }

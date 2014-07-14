@@ -134,13 +134,14 @@ public class ProjectsControllerTest {
     public void testCreateNewProject() {
         Model model = new ExtendedModelMap();
         String projectName = "Test Project";
+        Long projectId = 1002L;
         Project project = new Project(projectName);
-
+        project.setId(projectId);
         // Test creating project
         when(projectService.create(any(Project.class))).thenReturn(project);
         when(projectService.update(eq(project.getId()), anyMap())).thenReturn(project);
         String page = controller.createNewProject(model, projectName, "","","");
-        assertEquals("Returns the correct redirect to the collaborators page", "redirect:/projects/new/collaborators", page);
+        assertEquals("Returns the correct redirect to the collaborators page", "redirect:/projects/" + projectId + "/metadata", page);
     }
 
 	private List<Join<Project, User>> getProjectsForUser() {
