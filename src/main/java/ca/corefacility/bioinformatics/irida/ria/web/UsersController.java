@@ -213,7 +213,7 @@ public class UsersController {
 		if (!Strings.isNullOrEmpty(email)) {
 			updatedValues.put("email", email);
 		}
-		
+
 		if (!Strings.isNullOrEmpty(phoneNumber)) {
 			updatedValues.put("phoneNumber", phoneNumber);
 		}
@@ -256,7 +256,6 @@ public class UsersController {
 
 		return returnView;
 	}
-	
 
 	/**
 	 * Get the user edit page
@@ -326,34 +325,46 @@ public class UsersController {
 	public String submitCreateUser(@RequestParam String username, @RequestParam String firstName,
 			@RequestParam String lastName, @RequestParam String email, @RequestParam String phoneNumber,
 			@RequestParam(defaultValue = "ROLE_USER") String systemRole, @RequestParam String password,
-			@RequestParam String confirmPassword, Model model) {
+			@RequestParam String confirmPassword, Model model, Principal principal) {
 
-		User user = new User(username, email, password, firstName, lastName, phoneNumber);
-		user.setSystemRole(Role.valueOf(systemRole));
+		Map<String, String> errors = new HashMap<>();
 
-		Map<String, String> errors;
-
-		// if there are errors, add them and return the edit page
 		String returnView;
 
 		Locale locale = LocaleContextHolder.getLocale();
 
-		try {
-			user = userService.create(user);
+		if (!password.equals(confirmPassword)) {
+			errors.put("password", messageSource.getMessage("user.edit.password.match", null, locale));
+		}
 
-			Long userId = user.getId();
-			returnView = "redirect:/users/" + userId;
-		} catch (ConstraintViolationException | DataIntegrityViolationException | EntityExistsException ex) {
-			errors = handleCreateUpdateException(ex, locale);
+		if (errors.isEmpty()) {
+			User user = new User(username, email, password, firstName, lastName, phoneNumber);
+			if (isAdmin(principal)) {
+				user.setSystemRole(Role.valueOf(systemRole));
+			} else {
+				user.setSystemRole(Role.ROLE_USER);
+			}
 
+			try {
+				user = userService.create(user);
+
+				Long userId = user.getId();
+				returnView = "redirect:/users/" + userId;
+			} catch (ConstraintViolationException | DataIntegrityViolationException | EntityExistsException ex) {
+				errors = handleCreateUpdateException(ex, locale);
+
+				model.addAttribute("errors", errors);
+
+				model.addAttribute("given_username", username);
+				model.addAttribute("given_firstName", firstName);
+				model.addAttribute("given_lastName", lastName);
+				model.addAttribute("given_email", email);
+				model.addAttribute("given_phoneNumber", phoneNumber);
+
+				returnView = createUserPage(model);
+			}
+		} else {
 			model.addAttribute("errors", errors);
-
-			model.addAttribute("given_username", username);
-			model.addAttribute("given_firstName", firstName);
-			model.addAttribute("given_lastName", lastName);
-			model.addAttribute("given_email", email);
-			model.addAttribute("given_phoneNumber", phoneNumber);
-
 			returnView = createUserPage(model);
 		}
 
@@ -431,8 +442,11 @@ public class UsersController {
 
 	/**
 	 * Handle exceptions for the create and update pages
-	 * @param ex an exception to handle
-	 * @param locale The locale to work with
+	 * 
+	 * @param ex
+	 *            an exception to handle
+	 * @param locale
+	 *            The locale to work with
 	 * @return A Map<String,String> of errors to render
 	 */
 	private Map<String, String> handleCreateUpdateException(Exception ex, Locale locale) {
