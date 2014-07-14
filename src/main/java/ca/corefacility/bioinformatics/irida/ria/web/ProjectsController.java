@@ -42,7 +42,8 @@ import com.google.common.collect.ImmutableMap;
 public class ProjectsController {
 	private static final String PROJECTS_DIR = "projects/";
 	private static final String PROJECTS_PAGE = PROJECTS_DIR + "projects";
-	private static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
+    private static final String PROJECT_USERS = PROJECTS_DIR + "project_users";
+    private static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
 	private static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project-new";
 	private static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
 	private static final String ERROR_PAGE = "error";
@@ -128,6 +129,18 @@ public class ProjectsController {
 		}
 		return page;
 	}
+
+    @RequestMapping("/{projectId}/users")
+    public String getProjectUsersPage(final Model model, @PathVariable Long projectId) {
+        String page = PROJECT_USERS;
+        try {
+            Project project = projectService.read(projectId);
+            model.addAttribute("project", project);
+        } catch (Exception e) {
+            page = "redirect:/projects";
+        }
+        return page;
+    }
 
 	/**
 	 * Gets the name of the template for the new project page
