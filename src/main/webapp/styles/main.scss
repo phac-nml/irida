@@ -93,3 +93,16 @@ b.list-group-item {
     color: $color-success;
   }
 }
+
+table.dataTable > thead {
+  i.glyphicon:before {
+    margin-left: 1em;
+    content: "\e150";
+  }
+  th.sorting_asc > i.glyphicon:before {
+    content: "\e155";
+  }
+  th.sorting_desc > i.glyphicon:before {
+    content: "\e156";
+  }
+}
