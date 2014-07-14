@@ -42,7 +42,7 @@ import com.google.common.collect.ImmutableMap;
 public class ProjectsController {
 	private static final String PROJECTS_DIR = "projects/";
 	private static final String PROJECTS_PAGE = PROJECTS_DIR + "projects";
-    private static final String PROJECT_USERS = PROJECTS_DIR + "project_users";
+    private static final String PROJECT_USERS = PROJECTS_DIR + "project_collaborators";
     private static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
 	private static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_new";
 	private static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
@@ -130,7 +130,7 @@ public class ProjectsController {
 		return page;
 	}
 
-    @RequestMapping("/{projectId}/users")
+	@RequestMapping("/{projectId}/collaborators")
     public String getProjectUsersPage(final Model model, @PathVariable Long projectId) {
         String page = PROJECT_USERS;
         try {
