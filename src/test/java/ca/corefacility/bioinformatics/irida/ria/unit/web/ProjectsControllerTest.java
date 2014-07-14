@@ -133,14 +133,13 @@ public class ProjectsControllerTest {
     @Test
     public void testCreateNewProject() {
         Model model = new ExtendedModelMap();
-        MockHttpServletRequest request = new MockHttpServletRequest();
         String projectName = "Test Project";
         Project project = new Project(projectName);
 
         // Test creating project
         when(projectService.create(any(Project.class))).thenReturn(project);
         when(projectService.update(eq(project.getId()), anyMap())).thenReturn(project);
-        String page = controller.createNewProject(model, request, projectName, "","","");
+        String page = controller.createNewProject(model, projectName, "","","");
         assertEquals("Returns the correct redirect to the collaborators page", "redirect:/projects/new/collaborators", page);
     }
 
