@@ -227,7 +227,7 @@ public class UsersController {
 			}
 		}
 
-		if (isAdmin) {
+		if (isAdmin(principal)) {
 			logger.debug("User is admin");
 			if (!Strings.isNullOrEmpty(enabled)) {
 				updatedValues.put("enabled", true);
@@ -256,7 +256,7 @@ public class UsersController {
 
 		return returnView;
 	}
-	}
+	
 
 	/**
 	 * Get the user edit page
@@ -277,7 +277,7 @@ public class UsersController {
 		Locale locale = LocaleContextHolder.getLocale();
 
 		Map<String, String> roleNames = new HashMap<>();
-		for (Role role : allowedRoles) {
+		for (Role role : adminAllowedRoles) {
 			if (!role.equals(user.getSystemRole())) {
 				String roleMessageName = ROLE_MESSAGE_PREFIX + role.getName();
 				String roleName = messageSource.getMessage(roleMessageName, null, locale);
