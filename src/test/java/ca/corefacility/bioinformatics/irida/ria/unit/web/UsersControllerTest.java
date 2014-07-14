@@ -221,6 +221,7 @@ public class UsersControllerTest {
 		DataIntegrityViolationException dataIntegrityViolationException = new DataIntegrityViolationException(
 				"Exception: " + User.USER_EMAIL_CONSTRAINT_NAME);
 
+		when(userService.read(userId)).thenReturn(puser);
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
 		when(userService.update(userId, expected)).thenThrow(dataIntegrityViolationException);
 
