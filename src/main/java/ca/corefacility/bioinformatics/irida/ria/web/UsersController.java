@@ -416,7 +416,7 @@ public class UsersController {
 			row.add(user.getEmail());
 			row.add(systemRole);
 			row.add(Formats.DATE.format(user.getCreatedDate()));
-			row.add(Formats.DATE.format(user.getModifiedDate()));
+			row.add(user.getModifiedDate().toString());
 			usersData.add(row);
 		}
 
