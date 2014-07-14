@@ -60,6 +60,7 @@ public class UsersController {
 	private static final String ERROR_PAGE = "error";
 	private static final String SORT_BY_ID = "id";
 	private static final String SORT_ASCENDING = "asc";
+	private static final String ROLE_MESSAGE_PREFIX = "systemrole.";
 	private static final int MAX_DISPLAY_PROJECTS = 10;
 	private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
 
@@ -291,12 +292,19 @@ public class UsersController {
 
 		Map<String, String> roleNames = new HashMap<>();
 		for (Role role : allowedRoles) {
-			String roleMessageName = "systemrole." + role.getName();
-			String roleName = messageSource.getMessage(roleMessageName, null, locale);
-			roleNames.put(role.getName(), roleName);
+			if (!role.equals(user.getSystemRole())) {
+				String roleMessageName = ROLE_MESSAGE_PREFIX + role.getName();
+				String roleName = messageSource.getMessage(roleMessageName, null, locale);
+				roleNames.put(role.getName(), roleName);
+			}
 		}
 
 		model.addAttribute("allowedRoles", roleNames);
+
+		String currentRoleName = messageSource.getMessage(ROLE_MESSAGE_PREFIX + user.getSystemRole().getName(), null,
+				locale);
+
+		model.addAttribute("currentRole", currentRoleName);
 
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<String, String>());

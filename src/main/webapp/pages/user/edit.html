@@ -48,7 +48,7 @@
 								<label class="control-label" th:text="#{users.role}" for="systemRole">_Role_</label>
 								<div id="role-error" th:if="${#maps.containsKey(errors, 'role')}" th:text="${errors.role}" class="alert alert-warning">_Role Error_</div>
 								<select id="systemRole" name="systemRole" class="form-control input-full" >
-									<option value="" disabled="disabled" selected="selected"></option>
+									<option value="" selected="selected" th:text="${currentRole}"></option>
 									<option th:each="role : ${allowedRoles}" th:value="${role.key}" th:text="${role.value}">_Role name_</option>
 								</select>
 							</div>
