@@ -124,10 +124,16 @@ public class PasswordResetController {
 			return PASSWORD_RESET_SUCCESS;
 		}
 	}
-	
+
+	/**
+	 * Create a new {@link PasswordReset} for the given {@link User}
+	 * 
+	 * @param userId
+	 *            The ID of the {@link User}
+	 */
 	@RequestMapping("/ajax/create/{userId}")
 	@ResponseBody
-	public void createNewPasswordReset(@PathVariable Long userId, Model model){
+	public void createNewPasswordReset(@PathVariable Long userId) {
 		User user = userService.read(userId);
 		PasswordReset passwordReset = new PasswordReset(user);
 		passwordResetService.create(passwordReset);
