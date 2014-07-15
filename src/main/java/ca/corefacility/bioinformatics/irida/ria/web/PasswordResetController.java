@@ -123,6 +123,13 @@ public class PasswordResetController {
 			return PASSWORD_RESET_SUCCESS;
 		}
 	}
+	
+	@RequestMapping("/create/{userId}")
+	public String createNewPasswordReset(@PathVariable Long userId, Model model){
+		User user = userService.read(userId);
+		PasswordReset passwordReset = new PasswordReset(user);
+		return null;
+	}
 
 	/**
 	 * Set an anonymous authentication token

@@ -21,7 +21,11 @@
             <div class="panel panel-primary">
                 <div class="panel-heading clearfix">
                 	<h3 class="panel-title pull-left" th:text="#{user.details}">_User Details_</h3>
-                	<a id="editUser" class="btn btn-default pull-right btn-xs" th:if="${canEditUser}" th:href="@{/users/{id}/edit(id=${user.id})}" href="/users/1/edit" th:text="#{user.edit}"></a>
+                	
+					<div class="btn-group btn-group-xs pull-right">
+					<a id="passwordReset" class="btn btn-default " sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')" th:href="@{/password_reset/create/{id}/(id=${user.id})}" href="/password_reset/create/1" th:text="#{user.passwordReset}"></a>
+                	<a id="editUser" class="btn btn-default " th:if="${canEditUser}" th:href="@{/users/{id}/edit(id=${user.id})}" href="/users/1/edit" th:text="#{user.edit}"></a>                	
+                	</div>
                 </div>
                     
                 <div class="panel-body">
