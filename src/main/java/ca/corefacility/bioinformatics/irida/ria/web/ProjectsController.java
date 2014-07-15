@@ -241,8 +241,8 @@ public class ProjectsController {
 		try {
 			Project project = projectService.read(projectId);
 			Collection<Join<Project, User>> users = userService.getUsersForProject(project);
-            data.put("data", users);
-        } catch (Exception e) {
+			data.put("data", users);
+		} catch (Exception e) {
 			logger.error("Trying to access a project that does not exist.");
 		}
 		return data;
@@ -300,7 +300,7 @@ public class ProjectsController {
 			List<String> l = new ArrayList<>();
 			l.add(p.getId().toString());
 			l.add(p.getName());
-            l.add(p.getOrganism());
+			l.add(p.getOrganism());
 			l.add(role.toString());
 			l.add(String.valueOf(sampleService.getSamplesForProject(p).size()));
 			l.add(String.valueOf(userService.getUsersForProject(p).size()));
@@ -312,6 +312,16 @@ public class ProjectsController {
 		return map;
 	}
 
+	/**
+	 * Find all projects that have been associated with a project.
+	 * 
+	 * @param currentProject
+	 *            The project to find the associated projects of.
+	 * @param currentUser
+	 *            The currently logged in user.
+	 * @return List of Maps containing information about the associated
+	 *         projects.
+	 */
 	private List<Map<String, String>> getAssociatedProjects(Project currentProject, User currentUser) {
 		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(currentProject);
 
