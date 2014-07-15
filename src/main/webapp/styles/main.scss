@@ -94,6 +94,19 @@ b.list-group-item {
   }
 }
 
+table.dataTable > thead {
+  i.glyphicon:before {
+    margin-left: 1em;
+    content: "\e150";
+  }
+  th.sorting_asc > i.glyphicon:before {
+    content: "\e155";
+  }
+  th.sorting_desc > i.glyphicon:before {
+    content: "\e156";
+  }
+}
+
 .form-group .alert {
   padding: 3px 6px;
   font-weight: bold;
