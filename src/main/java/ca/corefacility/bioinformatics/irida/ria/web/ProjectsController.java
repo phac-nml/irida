@@ -350,6 +350,14 @@ public class ProjectsController {
 		return projects;
 	}
 
+	/**
+	 * Changes a {@link ConstraintViolationException} to a usable map of strings
+	 * for displaing in the UI.
+	 * 
+	 * @param e
+	 *            {@link ConstraintViolationException} for the form submitted.
+	 * @return Map of string {fieldName, error}
+	 */
 	private Map<String, String> getErrorsFromViolationException(ConstraintViolationException e) {
 		Map<String, String> errors = new HashMap<>();
 		for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
