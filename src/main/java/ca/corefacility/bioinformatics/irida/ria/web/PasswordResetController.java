@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.validation.ConstraintViolationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -110,15 +112,18 @@ public class PasswordResetController {
 					.getSystemRole()));
 			SecurityContextHolder.getContext().setAuthentication(token);
 
-			userService.changePassword(user.getId(), password);
-
-			passwordResetService.delete(resetId);
+			try {
+				userService.changePassword(user.getId(), password);
+			} catch (ConstraintViolationException ex) {
+				errors.put("password", ex.getMessage());
+			}
 		}
 
 		if (!errors.isEmpty()) {
 			model.addAttribute("errors", errors);
 			return getResetPage(resetId, model);
 		} else {
+			passwordResetService.delete(resetId);
 			model.addAttribute("user", user);
 			SecurityContextHolder.clearContext();
 			return PASSWORD_RESET_SUCCESS;
