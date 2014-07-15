@@ -12,7 +12,7 @@
         <b class="list-group-item" th:text="#{project.associated.title}"></b>
         <a th:each="project : ${projects}"
            th:class="${project.auth} == 'authorized' ? 'authorized list-group-item' : 'unauthorized list-group-item disabled'"
-           th:href="${project.auth} == 'authorized' ? @{${project.id}} : '#'" th:disabled="${project.auth} == 'authorized' ? false : true">
+           th:href="${project.auth} == 'authorized' ? @{'/projects/' + ${project.id}} : '#'" th:disabled="${project.auth} == 'authorized' ? false : true">
             <span class="pull-right"><span th:class="${project.auth} == 'authorized' ? 'glyphicon glyphicon-eye-open' : 'glyphicon glyphicon-lock'"></span></span>
             <span class="project-name" th:text="${project.name}"></span>
         </a>
