@@ -218,8 +218,8 @@ public class ProjectsController {
 	 * 
 	 * @param model
 	 *            {@link Model}
-	 * @param request
-	 * @{link HttpServletRequest}
+	 * @param projectId
+	 *            the id of the project to find the metadata for.
 	 * @return The name of the add users to new project page.
 	 */
 	@RequestMapping("/{projectId}/metadata")
@@ -241,8 +241,8 @@ public class ProjectsController {
 		try {
 			Project project = projectService.read(projectId);
 			Collection<Join<Project, User>> users = userService.getUsersForProject(project);
-            data.put("data", users);
-        } catch (Exception e) {
+			data.put("data", users);
+		} catch (Exception e) {
 			logger.error("Trying to access a project that does not exist.");
 		}
 		return data;
@@ -253,13 +253,20 @@ public class ProjectsController {
 	 * logged in user. Produces JSON.
 	 * 
 	 * @param principal
+	 *            {@link Principal} The currently authenticated users
 	 * @param start
+	 *            The start position in the list to page.
 	 * @param length
+	 *            The size of the page to display.
 	 * @param draw
+	 *            Id for the table to draw, this must be returned.
 	 * @param sortColumn
+	 *            The id for the column to sort by.
 	 * @param direction
+	 *            The direction of the sort.
 	 * @param searchValue
-	 * @return
+	 *            Any search terms.
+	 * @return JSON value of the page data.
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody
@@ -300,6 +307,7 @@ public class ProjectsController {
 			List<String> l = new ArrayList<>();
 			l.add(p.getId().toString());
 			l.add(p.getName());
+			l.add(p.getOrganism());
 			l.add(role.toString());
 			l.add(String.valueOf(sampleService.getSamplesForProject(p).size()));
 			l.add(String.valueOf(userService.getUsersForProject(p).size()));
@@ -311,6 +319,16 @@ public class ProjectsController {
 		return map;
 	}
 
+	/**
+	 * Find all projects that have been associated with a project.
+	 * 
+	 * @param currentProject
+	 *            The project to find the associated projects of.
+	 * @param currentUser
+	 *            The currently logged in user.
+	 * @return List of Maps containing information about the associated
+	 *         projects.
+	 */
 	private List<Map<String, String>> getAssociatedProjects(Project currentProject, User currentUser) {
 		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(currentProject);
 
@@ -339,6 +357,14 @@ public class ProjectsController {
 		return projects;
 	}
 
+	/**
+	 * Changes a {@link ConstraintViolationException} to a usable map of strings
+	 * for displaing in the UI.
+	 * 
+	 * @param e
+	 *            {@link ConstraintViolationException} for the form submitted.
+	 * @return Map of string {fieldName, error}
+	 */
 	private Map<String, String> getErrorsFromViolationException(ConstraintViolationException e) {
 		Map<String, String> errors = new HashMap<>();
 		for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
