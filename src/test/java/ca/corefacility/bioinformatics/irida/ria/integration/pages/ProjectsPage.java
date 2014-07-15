@@ -9,6 +9,8 @@ import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -20,8 +22,9 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 public class ProjectsPage {
 
 	private WebDriver driver;
+    private static final Logger logger = LoggerFactory.getLogger(ProjectsPage.class);
 
-	public ProjectsPage(WebDriver driver) {
+    public ProjectsPage(WebDriver driver) {
 		this.driver = driver;
 		driver.get("http://localhost:8080/projects");
 		waitForAjax();
@@ -33,11 +36,12 @@ public class ProjectsPage {
 	}
 
 	public WebElement getCollaboratorSpan() {
-		return driver.findElement(By.xpath("//table[@id='projectsTable']/tbody/tr[2]/td[3]/span"));
+		WebElement el = driver.findElement(By.xpath("//table[@id='projectsTable']/tbody/tr[2]/td[4]/span"));
+        return el;
 	}
 
 	public WebElement getOwnerSpan() {
-		return driver.findElement(By.xpath("//table[@id='projectsTable']/tbody/tr[1]/td[3]/span"));
+		return driver.findElement(By.xpath("//table[@id='projectsTable']/tbody/tr[1]/td[4]/span"));
 	}
 
 	public List<WebElement> getProjectColumn() {
