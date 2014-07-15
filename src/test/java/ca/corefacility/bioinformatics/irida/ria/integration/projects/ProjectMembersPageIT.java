@@ -3,9 +3,8 @@ package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,13 +20,13 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectCollaboratorsPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectMembersPage;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
-
-import java.util.List;
+import com.google.common.collect.ImmutableList;
 
 /**
  * <p>
@@ -43,15 +42,12 @@ import java.util.List;
 @ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class ProjectCollaboratorsPageIT {
+public class ProjectMembersPageIT {
 	public static final Long PROJECT_ID = 1L;
 	private WebDriver driver;
-	private ProjectCollaboratorsPage collaboratorsPage;
+	private ProjectMembersPage membersPage;
 
-    private static final ImmutableList<String> COLLABORATORS_NAMES = ImmutableList.of(
-            "Mr. Manager",
-            "test User"
-    );
+	private static final ImmutableList<String> COLLABORATORS_NAMES = ImmutableList.of("Mr. Manager", "test User");
 
 	@Before
 	public void setUp() {
@@ -59,7 +55,7 @@ public class ProjectCollaboratorsPageIT {
 		LoginPage loginPage = LoginPage.to(driver);
 		loginPage.doLogin();
 
-		collaboratorsPage = new ProjectCollaboratorsPage(driver, PROJECT_ID);
+		membersPage = new ProjectMembersPage(driver, PROJECT_ID);
 	}
 
 	@After
@@ -71,10 +67,10 @@ public class ProjectCollaboratorsPageIT {
 
 	@Test
 	public void testPageSetUp() {
-		assertEquals("Page h1 tag is properly set.", "project Collaborators", collaboratorsPage.getTitle());
-        List<String> names = collaboratorsPage.getProjectCollaboratorsNames();
-        for (String name : names) {
-            assertTrue("Has the correct collaborators names", COLLABORATORS_NAMES.contains(name));
-        }
-    }
+		assertEquals("Page h1 tag is properly set.", "project Members", membersPage.getTitle());
+		List<String> names = membersPage.getProjectMembersNames();
+		for (String name : names) {
+			assertTrue("Has the correct members names", COLLABORATORS_NAMES.contains(name));
+		}
+	}
 }
