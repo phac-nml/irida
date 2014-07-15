@@ -52,14 +52,13 @@
 								<label th:text="#{user.phone}" for="phoneNumber">_Phone Number_</label>
 								<div id="email-error" th:if="${#maps.containsKey(errors, 'phoneNumber')}" th:text="${errors.phoneNumber}" class="alert alert-warning">_Phone Number Error_</div> 
 								<input type="text" id="phoneNumber" name="phoneNumber" class="form-control input-full" 
-									th:placeholder="#{user.phone}" th:value="${given_phoneNumber}"/>
+									th:placeholder="#{user.phone}" th:value="${given_phoneNumber}" required="required"/>
 							</div>
 
 							<div class="form-group">
 								<label class="control-label" th:text="#{users.role}" for="systemRole">_Role_</label>
 								<div id="role-error" th:if="${#maps.containsKey(errors, 'role')}" th:text="${errors.role}" class="alert alert-warning">_Role Error_</div>
 								<select sec:authorize="hasRole('ROLE_ADMIN')" id="systemRole" name="systemRole" class="form-control input-full" required="required" >
-									<option value="" th:text="#{user.edit.selectRole}" disabled="disabled">_SELECT-ROLE_</option>
 									<option th:each="role : ${allowedRoles}" th:value="${role.key}" th:text="${role.value}">_Role name_</option>
 								</select>
 								
@@ -82,7 +81,7 @@
 							</div>
 							<div class="panel-footer text-right">
                         		<button type="reset" class="btn btn-default" href="#">Cancel</button>
-                        		<button type="submit" class="btn btn-primary submit">Update User</button>
+                        		<button type="submit" class="btn btn-primary submit">Create User</button>
                     		</div>
 
 						</div>

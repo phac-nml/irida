@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -57,6 +58,7 @@ public class UsersController {
 	private static final String USERS_PAGE = "user/list";
 	private static final String SPECIFIC_USER_PAGE = "user/user_details";
 	private static final String EDIT_USER_PAGE = "user/edit";
+	private static final String CREATE_USER_PAGE = "user/create";
 	private static final String ERROR_PAGE = "error";
 	private static final String SORT_BY_ID = "id";
 	private static final String SORT_ASCENDING = "asc";
@@ -70,7 +72,7 @@ public class UsersController {
 	private final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "username", "email", "lastName",
 			"firstName", "systemRole", "createdDate", "modifiedDate");
 
-	private final List<Role> allowedRoles = Lists.newArrayList(Role.ROLE_ADMIN, Role.ROLE_MANAGER, Role.ROLE_USER,
+	private final List<Role> adminAllowedRoles = Lists.newArrayList(Role.ROLE_ADMIN, Role.ROLE_MANAGER, Role.ROLE_USER,
 			Role.ROLE_SEQUENCER);
 
 	private final MessageSource messageSource;
@@ -196,8 +198,6 @@ public class UsersController {
 
 		Locale locale = LocaleContextHolder.getLocale();
 
-		boolean isAdmin = isAdmin(principal);
-
 		Map<String, String> errors = new HashMap<>();
 
 		Map<String, Object> updatedValues = new HashMap<>();
@@ -220,14 +220,13 @@ public class UsersController {
 
 		if (!Strings.isNullOrEmpty(password) || !Strings.isNullOrEmpty(confirmPassword)) {
 			if (!password.equals(confirmPassword)) {
-
 				errors.put("password", messageSource.getMessage("user.edit.password.match", null, locale));
 			} else {
 				updatedValues.put("password", password);
 			}
 		}
 
-		if (isAdmin) {
+		if (isAdmin(principal)) {
 			logger.debug("User is admin");
 			if (!Strings.isNullOrEmpty(enabled)) {
 				updatedValues.put("enabled", true);
@@ -242,31 +241,21 @@ public class UsersController {
 			}
 		}
 
-		try {
-			userService.update(userId, updatedValues);
-		} catch (ConstraintViolationException ex) {
-			logger.debug("User provided data threw ConstrainViolation");
-			Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
-
-			for (ConstraintViolation<?> violation : constraintViolations) {
-				logger.debug(violation.getMessage());
-				String errorKey = violation.getPropertyPath().toString();
-				errors.put(errorKey, violation.getMessage());
-			}
-		} catch (DataIntegrityViolationException e) {
-			logger.debug(e.getMessage());
-			if (e.getMessage().contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
-				errors.put("email", messageSource.getMessage("user.edit.emailConflict", null, locale));
-			}
-		}
-
-		// if there are errors, add them and return the edit page
 		String returnView;
-		if (!errors.isEmpty()) {
+		if (errors.isEmpty()) {
+			try {
+				userService.update(userId, updatedValues);
+				returnView = "redirect:/users/" + userId;
+			} catch (ConstraintViolationException | DataIntegrityViolationException ex) {
+				errors = handleCreateUpdateException(ex, locale);
+
+				model.addAttribute("errors", errors);
+
+				returnView = getEditUserPage(userId, model);
+			}
+		} else {
 			model.addAttribute("errors", errors);
 			returnView = getEditUserPage(userId, model);
-		} else {
-			returnView = "redirect:/users/" + userId;
 		}
 
 		return returnView;
@@ -291,7 +280,7 @@ public class UsersController {
 		Locale locale = LocaleContextHolder.getLocale();
 
 		Map<String, String> roleNames = new HashMap<>();
-		for (Role role : allowedRoles) {
+		for (Role role : adminAllowedRoles) {
 			if (!role.equals(user.getSystemRole())) {
 				String roleMessageName = ROLE_MESSAGE_PREFIX + role.getName();
 				String roleName = messageSource.getMessage(roleMessageName, null, locale);
@@ -311,6 +300,78 @@ public class UsersController {
 		}
 
 		return EDIT_USER_PAGE;
+	}
+
+	@RequestMapping(value = "/create", method = RequestMethod.GET)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
+	public String createUserPage(Model model) {
+
+		Locale locale = LocaleContextHolder.getLocale();
+
+		Map<String, String> roleNames = new HashMap<>();
+		for (Role role : adminAllowedRoles) {
+			String roleMessageName = "systemrole." + role.getName();
+			String roleName = messageSource.getMessage(roleMessageName, null, locale);
+			roleNames.put(role.getName(), roleName);
+		}
+
+		model.addAttribute("allowedRoles", roleNames);
+
+		if (!model.containsAttribute("errors")) {
+			model.addAttribute("errors", new HashMap<String, String>());
+		}
+
+		return CREATE_USER_PAGE;
+	}
+
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
+	public String submitCreateUser(@RequestParam String username, @RequestParam String firstName,
+			@RequestParam String lastName, @RequestParam String email, @RequestParam String phoneNumber,
+			@RequestParam(defaultValue = "ROLE_USER") String systemRole, @RequestParam String password,
+			@RequestParam String confirmPassword, Model model, Principal principal) {
+
+		Map<String, String> errors = new HashMap<>();
+
+		String returnView = null;
+
+		Locale locale = LocaleContextHolder.getLocale();
+
+		if (!password.equals(confirmPassword)) {
+			errors.put("password", messageSource.getMessage("user.edit.password.match", null, locale));
+		}
+
+		if (errors.isEmpty()) {
+			User user = new User(username, email, password, firstName, lastName, phoneNumber);
+			if (isAdmin(principal)) {
+				user.setSystemRole(Role.valueOf(systemRole));
+			} else {
+				user.setSystemRole(Role.ROLE_USER);
+			}
+
+			try {
+				user = userService.create(user);
+
+				Long userId = user.getId();
+				returnView = "redirect:/users/" + userId;
+			} catch (ConstraintViolationException | DataIntegrityViolationException | EntityExistsException ex) {
+				errors = handleCreateUpdateException(ex, locale);
+			}
+		} 
+		
+		if(!errors.isEmpty()){
+			model.addAttribute("errors", errors);
+
+			model.addAttribute("given_username", username);
+			model.addAttribute("given_firstName", firstName);
+			model.addAttribute("given_lastName", lastName);
+			model.addAttribute("given_email", email);
+			model.addAttribute("given_phoneNumber", phoneNumber);
+			
+			returnView = createUserPage(model);
+		}
+
+		return returnView;
 	}
 
 	/**
@@ -380,6 +441,41 @@ public class UsersController {
 
 		map.put(DataTable.RESPONSE_PARAM_DATA, usersData);
 		return map;
+	}
+
+	/**
+	 * Handle exceptions for the create and update pages
+	 * 
+	 * @param ex
+	 *            an exception to handle
+	 * @param locale
+	 *            The locale to work with
+	 * @return A Map<String,String> of errors to render
+	 */
+	private Map<String, String> handleCreateUpdateException(Exception ex, Locale locale) {
+		Map<String, String> errors = new HashMap<>();
+		if (ex instanceof ConstraintViolationException) {
+			ConstraintViolationException cvx = (ConstraintViolationException) ex;
+			logger.debug("User provided data threw ConstrainViolation");
+			Set<ConstraintViolation<?>> constraintViolations = cvx.getConstraintViolations();
+
+			for (ConstraintViolation<?> violation : constraintViolations) {
+				logger.debug(violation.getMessage());
+				String errorKey = violation.getPropertyPath().toString();
+				errors.put(errorKey, violation.getMessage());
+			}
+		} else if (ex instanceof DataIntegrityViolationException) {
+			DataIntegrityViolationException divx = (DataIntegrityViolationException) ex;
+			logger.debug(divx.getMessage());
+			if (divx.getMessage().contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
+				errors.put("email", messageSource.getMessage("user.edit.emailConflict", null, locale));
+			}
+		} else if (ex instanceof EntityExistsException) {
+			EntityExistsException eex = (EntityExistsException) ex;
+			errors.put(eex.getFieldName(), eex.getMessage());
+		}
+
+		return errors;
 	}
 
 	/**
