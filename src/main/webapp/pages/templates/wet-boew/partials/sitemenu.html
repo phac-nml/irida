@@ -22,6 +22,7 @@
                 <li><a href="#users" class="item" th:text="#{nav.main.users}">Users</a>
                 	<ul class="sm list-unstyled" id="users" role="menu">
                 		<li><a href="/users" th:href="@{/users}" th:text="#{nav.main.users}">Users</a></li>
+                		<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')"><a href="#" th:href="@{/users/create}" th:text="#{nav.main.add.user}"></a></li>
                 	</ul>
                 </li>
                 <li><a href="#pipelines" class="item" th:text="#{nav.main.pipelines}">Pipelines</a>
@@ -32,12 +33,6 @@
                 </li>
                 <li class="pull-right">
                     <ul class="list-inline menu">
-                    	<li sec:authorize="hasRole('ROLE_ADMIN')"><a href="#admin" class="item" th:text="#{nav.main.admin}">Admin</a>
-                            <ul class="sm list-unstyled" id="admin" role="menu">
-                                <li><a href="#" th:href="@{/users}" th:text="#{nav.main.users}"></a></li>
-                                <li><a href="#" th:href="@{/users/create}" th:text="#{nav.main.add.user}"></a></li>
-                            </ul>
-                        </li>
                         <li><a href="#contribute" class="item" th:text="#{nav.main.settings}">Settings</a>
                             <ul class="sm list-unstyled" id="contribute" role="menu">
                                 <li><a href="#" th:href="@{/users/current}" th:text="#{nav.main.account}">Account</a></li>
