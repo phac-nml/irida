@@ -24,6 +24,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.ui.ExtendedModelMap;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -225,7 +226,8 @@ public class UsersControllerTest {
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
 		when(userService.update(userId, expected)).thenThrow(dataIntegrityViolationException);
 
-		String updateUser = controller.updateUser(userId, null, null, email, null, null, null, "checked", null, model,principal);
+		String updateUser = controller.updateUser(userId, null, null, email, null, null, null, "checked", null, model,
+				principal);
 
 		assertEquals(USER_EDIT_PAGE, updateUser);
 		assertTrue(model.containsKey("errors"));
@@ -234,6 +236,93 @@ public class UsersControllerTest {
 		assertTrue(modelMap.containsKey("email"));
 
 		verify(userService).update(userId, expected);
+		verify(userService).getUserByUsername(USER_NAME);
+	}
+
+	@Test
+	public void testGetCreateUserPage() {
+		ExtendedModelMap model = new ExtendedModelMap();
+
+		String createUserPage = controller.createUserPage(model);
+		assertEquals("user/create", createUserPage);
+		assertTrue(model.containsKey("allowedRoles"));
+		assertTrue(model.containsKey("errors"));
+	}
+
+	@Test
+	public void testSubmitCreateUser() {
+		String username = "tom";
+		String email = "tom@somewhere.com";
+		String password = "PassWord1";
+		ExtendedModelMap model = new ExtendedModelMap();
+		Principal principal = () -> USER_NAME;
+		User u = new User(1l, username, email, password, null, null, null);
+		u.setSystemRole(Role.ROLE_USER);
+		User pu = new User(username, email, password, null, null, null);
+		pu.setSystemRole(Role.ROLE_ADMIN);
+
+		when(userService.create(any(User.class))).thenReturn(u);
+		when(userService.getUserByUsername(USER_NAME)).thenReturn(u);
+
+		String submitCreateUser = controller.submitCreateUser(username, null, null, email, null, "ROLE_USER", password,
+				password, model, principal);
+		assertEquals("redirect:/users/1", submitCreateUser);
+		verify(userService).create(any(User.class));
+		verify(userService).getUserByUsername(USER_NAME);
+	}
+
+	@Test
+	public void testSubmitCreateBadPasswords() {
+		String username = "tom";
+		String email = "tom@somewhere.com";
+		String password = "PassWord1";
+		ExtendedModelMap model = new ExtendedModelMap();
+		Principal principal = () -> USER_NAME;
+
+		String submitCreateUser = controller.submitCreateUser(username, null, null, email, null, "ROLE_USER", password,
+				"NotTheSamePassword", model, principal);
+		assertEquals("user/create", submitCreateUser);
+		assertTrue(model.containsKey("errors"));
+		@SuppressWarnings("unchecked")
+		Map<String, String> errors = (Map<String, String>) model.get("errors");
+		assertTrue(errors.containsKey("password"));
+	}
+
+	@Test
+	public void testSubmitEmailExists() {
+		DataIntegrityViolationException ex = new DataIntegrityViolationException("Error: "
+				+ User.USER_EMAIL_CONSTRAINT_NAME);
+		createWithException(ex, "email");
+	}
+
+	@Test
+	public void testSubmitUsernameExists() {
+		EntityExistsException ex = new EntityExistsException("username exists", "username");
+		createWithException(ex, "username");
+	}
+
+	public void createWithException(Throwable exception, String fieldname) {
+		String username = "tom";
+		String email = "tom@somewhere.com";
+		String password = "PassWord1";
+		ExtendedModelMap model = new ExtendedModelMap();
+		Principal principal = () -> USER_NAME;
+		User pu = new User(username, email, password, null, null, null);
+		pu.setSystemRole(Role.ROLE_ADMIN);
+
+		when(userService.create(any(User.class))).thenThrow(exception);
+		when(userService.getUserByUsername(USER_NAME)).thenReturn(pu);
+
+		String submitCreateUser = controller.submitCreateUser(username, null, null, email, null, "ROLE_USER", password,
+				password, model, principal);
+
+		assertEquals("user/create", submitCreateUser);
+		assertTrue(model.containsKey("errors"));
+		@SuppressWarnings("unchecked")
+		Map<String, String> errors = (Map<String, String>) model.get("errors");
+		assertTrue(errors.containsKey(fieldname));
+
+		verify(userService).create(any(User.class));
 		verify(userService).getUserByUsername(USER_NAME);
 	}
 
