@@ -42,8 +42,9 @@ import com.google.common.collect.ImmutableMap;
 public class ProjectsController {
 	private static final String PROJECTS_DIR = "projects/";
 	private static final String PROJECTS_PAGE = PROJECTS_DIR + "projects";
+	private static final String PROJECT_USERS = PROJECTS_DIR + "project_collaborators";
 	private static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
-	private static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project-new";
+	private static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_new";
 	private static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
 	private static final String ERROR_PAGE = "error";
 	private static final String SORT_BY_ID = "id";
@@ -95,26 +96,7 @@ public class ProjectsController {
 			Project project = projectService.read(projectId);
 			model.addAttribute("project", project);
 
-			Collection<Join<Project, User>> ownerJoinList = userService.getUsersForProjectByRole(project,
-					ProjectRole.PROJECT_OWNER);
-			User owner = null;
-			if (ownerJoinList.size() > 0) {
-				owner = (ownerJoinList.iterator().next()).getObject();
-			}
-			model.addAttribute("owner", owner);
-
-			int sampleSize = sampleService.getSamplesForProject(project).size();
-			model.addAttribute("samples", sampleSize);
-
-			int userSize = userService.getUsersForProject(project).size();
-			model.addAttribute("users", userSize);
-
-			// TODO: (Josh - 14-06-23) Get list of recent activities on project.
-
-			// Add any associated projects
-			User currentUser = userService.getUserByUsername(principal.getName());
-			List<Map<String, String>> associatedProjects = getAssociatedProjects(project, currentUser);
-			model.addAttribute("associatedProjects", associatedProjects);
+			getProjectTemplateDetails(model, principal, project);
 
 			page = SPECIFIC_PROJECT_PAGE;
 		} catch (EntityNotFoundException e) {
@@ -125,6 +107,54 @@ public class ProjectsController {
 			// TODO: (Josh - 2014-06-24) Format error page if user does not have
 			// access. These should probably be redirects.
 			page = ERROR_PAGE;
+		}
+		return page;
+	}
+
+	private void getProjectTemplateDetails(Model model, Principal principal, Project project) {
+		Collection<Join<Project, User>> ownerJoinList = userService.getUsersForProjectByRole(project,
+				ProjectRole.PROJECT_OWNER);
+		User owner = null;
+		if (ownerJoinList.size() > 0) {
+			owner = (ownerJoinList.iterator().next()).getObject();
+		}
+		model.addAttribute("owner", owner);
+
+		int sampleSize = sampleService.getSamplesForProject(project).size();
+		model.addAttribute("samples", sampleSize);
+
+		int userSize = userService.getUsersForProject(project).size();
+		model.addAttribute("users", userSize);
+
+		// TODO: (Josh - 14-06-23) Get list of recent activities on project.
+
+		// Add any associated projects
+		User currentUser = userService.getUserByUsername(principal.getName());
+		List<Map<String, String>> associatedProjects = getAssociatedProjects(project, currentUser);
+		model.addAttribute("associatedProjects", associatedProjects);
+	}
+
+	/**
+	 * Gets the name of the template for the project collaborators page.
+	 * Populates the template with standard info.
+	 * 
+	 * @param model
+	 *            {@link Model}
+	 * @param principal
+	 *            {@link Principal}
+	 * @param projectId
+	 *            Id for the project to show the users for
+	 * @return The name of the project collaborators page.
+	 */
+	@RequestMapping("/{projectId}/collaborators")
+	public String getProjectUsersPage(final Model model, final Principal principal, @PathVariable Long projectId) {
+		String page = PROJECT_USERS;
+		try {
+			Project project = projectService.read(projectId);
+			model.addAttribute("project", project);
+			getProjectTemplateDetails(model, principal, project);
+		} catch (Exception e) {
+			page = "redirect:/projects";
 		}
 		return page;
 	}
@@ -194,14 +224,28 @@ public class ProjectsController {
 	 */
 	@RequestMapping("/{projectId}/metadata")
 	public String getProjectMetadataPage(final Model model, @PathVariable long projectId) {
-        String page = PROJECT_METADATA_PAGE;
-        try {
-            Project p = projectService.read(projectId);
-            model.addAttribute("project", p);
+		String page = PROJECT_METADATA_PAGE;
+		try {
+			Project p = projectService.read(projectId);
+			model.addAttribute("project", p);
+		} catch (Exception e) {
+			page = "redirect:/projects";
+		}
+		return page;
+	}
+
+	@RequestMapping(value = "/ajax/{projectId}/users", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody
+	Map<String, Collection<Join<Project, User>>> getAjaxUsersListForProject(@PathVariable Long projectId) {
+		Map<String, Collection<Join<Project, User>>> data = new HashMap<>();
+		try {
+			Project project = projectService.read(projectId);
+			Collection<Join<Project, User>> users = userService.getUsersForProject(project);
+            data.put("data", users);
         } catch (Exception e) {
-            page = "redirect:/projects";
-        }
-        return page;
+			logger.error("Trying to access a project that does not exist.");
+		}
+		return data;
 	}
 
 	/**
