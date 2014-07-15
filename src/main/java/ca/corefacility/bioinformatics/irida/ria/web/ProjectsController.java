@@ -12,12 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -46,7 +44,6 @@ public class ProjectsController {
 	private static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
 	private static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_new";
 	private static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
-	private static final String ERROR_PAGE = "error";
 	private static final String SORT_BY_ID = "id";
 	private static final String SORT_BY_NAME = "name";
 	private static final String SORT_BY_CREATED_DATE = "createdDate";
@@ -91,24 +88,10 @@ public class ProjectsController {
 	@RequestMapping(value = "/{projectId}")
 	public String getProjectSpecificPage(@PathVariable Long projectId, final Model model, final Principal principal) {
 		logger.debug("Getting project information for [Project " + projectId + "]");
-		String page;
-		try {
-			Project project = projectService.read(projectId);
-			model.addAttribute("project", project);
-
-			getProjectTemplateDetails(model, principal, project);
-
-			page = SPECIFIC_PROJECT_PAGE;
-		} catch (EntityNotFoundException e) {
-			// TODO: (Josh - 2014-06-24) Format error page if project is not
-			// found. These should probably be redirects.
-			page = ERROR_PAGE;
-		} catch (AccessDeniedException e) {
-			// TODO: (Josh - 2014-06-24) Format error page if user does not have
-			// access. These should probably be redirects.
-			page = ERROR_PAGE;
-		}
-		return page;
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+		getProjectTemplateDetails(model, principal, project);
+		return SPECIFIC_PROJECT_PAGE;
 	}
 
 	private void getProjectTemplateDetails(Model model, Principal principal, Project project) {
@@ -148,15 +131,10 @@ public class ProjectsController {
 	 */
 	@RequestMapping("/{projectId}/collaborators")
 	public String getProjectUsersPage(final Model model, final Principal principal, @PathVariable Long projectId) {
-		String page = PROJECT_USERS;
-		try {
-			Project project = projectService.read(projectId);
-			model.addAttribute("project", project);
-			getProjectTemplateDetails(model, principal, project);
-		} catch (Exception e) {
-			page = "redirect:/projects";
-		}
-		return page;
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+		getProjectTemplateDetails(model, principal, project);
+		return PROJECT_USERS;
 	}
 
 	/**
@@ -224,14 +202,9 @@ public class ProjectsController {
 	 */
 	@RequestMapping("/{projectId}/metadata")
 	public String getProjectMetadataPage(final Model model, @PathVariable long projectId) {
-		String page = PROJECT_METADATA_PAGE;
-		try {
-			Project p = projectService.read(projectId);
-			model.addAttribute("project", p);
-		} catch (Exception e) {
-			page = "redirect:/projects";
-		}
-		return page;
+		Project p = projectService.read(projectId);
+		model.addAttribute("project", p);
+		return PROJECT_METADATA_PAGE;
 	}
 
 	@RequestMapping(value = "/ajax/{projectId}/users", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -241,8 +214,8 @@ public class ProjectsController {
 		try {
 			Project project = projectService.read(projectId);
 			Collection<Join<Project, User>> users = userService.getUsersForProject(project);
-            data.put("data", users);
-        } catch (Exception e) {
+			data.put("data", users);
+		} catch (Exception e) {
 			logger.error("Trying to access a project that does not exist.");
 		}
 		return data;
