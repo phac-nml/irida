@@ -158,8 +158,6 @@ public class ProjectsController {
 	 * 
 	 * @param model
 	 *            {@link Model}
-	 * @param request
-	 * @{link HttpServletRequest}
 	 * @param name
 	 *            String name of the project
 	 * @param organism
