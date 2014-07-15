@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
@@ -124,11 +125,12 @@ public class PasswordResetController {
 		}
 	}
 	
-	@RequestMapping("/create/{userId}")
-	public String createNewPasswordReset(@PathVariable Long userId, Model model){
+	@RequestMapping("/ajax/create/{userId}")
+	@ResponseBody
+	public void createNewPasswordReset(@PathVariable Long userId, Model model){
 		User user = userService.read(userId);
 		PasswordReset passwordReset = new PasswordReset(user);
-		return null;
+		passwordResetService.create(passwordReset);
 	}
 
 	/**
