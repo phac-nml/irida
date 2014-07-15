@@ -218,8 +218,8 @@ public class ProjectsController {
 	 * 
 	 * @param model
 	 *            {@link Model}
-	 * @param request
-	 * @{link HttpServletRequest}
+	 * @param projectId
+	 *            the id of the project to find the metadata for.
 	 * @return The name of the add users to new project page.
 	 */
 	@RequestMapping("/{projectId}/metadata")
