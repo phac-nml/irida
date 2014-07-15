@@ -19,8 +19,13 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-12">
-
+                <div class="form-group">
+                    <label>Project Name</label>
+                    <div th:text="${project.label}"></div>
+                </div>
+                <div class="form-group">
+                    <label>Project Description</label>
+                    <div th:text="${project.description}"></div>
                 </div>
             </div>
         </main>
