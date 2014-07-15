@@ -30,6 +30,7 @@
                     	<li sec:authorize="hasRole('ROLE_ADMIN')"><a href="#admin" class="item" th:text="#{nav.main.admin}">Admin</a>
                             <ul class="sm list-unstyled" id="admin" role="menu">
                                 <li><a href="#" th:href="@{/users}" th:text="#{nav.main.users}"></a></li>
+                                <li><a href="#" th:href="@{/users/create}" th:text="#{nav.main.add.user}"></a></li>
                             </ul>
                         </li>
                         <li><a href="#contribute" class="item" th:text="#{nav.main.settings}">Settings</a>
