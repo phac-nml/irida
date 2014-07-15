@@ -21,7 +21,7 @@
             <div class="panel panel-primary">
                 <div class="panel-heading clearfix">
                 	<h3 class="panel-title pull-left" th:text="#{user.details}">_User Details_</h3>
-                	<a class="btn btn-default pull-right btn-xs" th:if="${canEditUser}" th:href="@{/users/{id}/edit(id=${user.id})}" href="/users/1/edit" th:text="#{user.edit}"></a>
+                	<a id="editUser" class="btn btn-default pull-right btn-xs" th:if="${canEditUser}" th:href="@{/users/{id}/edit(id=${user.id})}" href="/users/1/edit" th:text="#{user.edit}"></a>
                 </div>
                     
                 <div class="panel-body">
