@@ -25,6 +25,12 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
 
+/**
+ * Controller for handling password reset flow
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @Controller
 @RequestMapping(value = "/password_reset")
 public class PasswordResetController {
@@ -42,6 +48,15 @@ public class PasswordResetController {
 		this.messageSource = messageSource;
 	}
 
+	/**
+	 * Get the password reset page
+	 * 
+	 * @param resetId
+	 *            The ID of the {@link PasswordReset}
+	 * @param model
+	 *            A model for the page
+	 * @return The string name of the page
+	 */
 	@RequestMapping(value = "/{resetId}", method = RequestMethod.GET)
 	public String getResetPage(@PathVariable String resetId, Model model) {
 		setAuthentication();
@@ -58,6 +73,22 @@ public class PasswordResetController {
 		return PASSWORD_RESET_PAGE;
 	}
 
+	/**
+	 * Send the new password for a given password reset
+	 * 
+	 * @param resetId
+	 *            The ID of the {@link PasswordReset}
+	 * @param password
+	 *            The new password to set
+	 * @param confirmPassword
+	 *            Confirm the new password
+	 * @param model
+	 *            A model for the given page
+	 * @param locale
+	 *            The locale of the request
+	 * @return The string name of the success view, or on failure the
+	 *         getResetPage view
+	 */
 	@RequestMapping(value = "/{resetId}", method = RequestMethod.POST)
 	public String sendNewPassword(@PathVariable String resetId, @RequestParam String password,
 			@RequestParam String confirmPassword, Model model, Locale locale) {
