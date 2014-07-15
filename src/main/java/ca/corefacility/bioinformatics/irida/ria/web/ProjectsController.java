@@ -256,6 +256,7 @@ public class ProjectsController {
 			List<String> l = new ArrayList<>();
 			l.add(p.getId().toString());
 			l.add(p.getName());
+            l.add(p.getOrganism());
 			l.add(role.toString());
 			l.add(String.valueOf(sampleService.getSamplesForProject(p).size()));
 			l.add(String.valueOf(userService.getUsersForProject(p).size()));
