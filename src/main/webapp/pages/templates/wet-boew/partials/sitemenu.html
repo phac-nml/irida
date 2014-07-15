@@ -19,6 +19,11 @@
                         </li>
                     </ul>
                 </li>
+                <li><a href="#users" class="item" th:text="#{nav.main.users}">Users</a>
+                	<ul class="sm list-unstyled" id="users" role="menu">
+                		<li><a href="/users" th:href="@{/users}" th:text="#{nav.main.users}">Users</a></li>
+                	</ul>
+                </li>
                 <li><a href="#pipelines" class="item" th:text="#{nav.main.pipelines}">Pipelines</a>
                     <ul class="sm list-unstyled">
                         <li><a href="#" th:text="#{nav.main.runpipeline}">Run New Pipeline</a></li>
