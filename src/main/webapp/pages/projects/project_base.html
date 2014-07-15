@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+    <meta charset="UTF-8"/>
+    <title></title>
+</head>
+<body>
+<nav class="navbar navbar-default navbar-sm" role="navigation" th:fragment="nav">
+    <ul class="nav navbar-nav" th:inline="text" th:with="baseLink=${'/projects/' + project.getId()}">
+        <li th:class="${activeNav} == 'dashboard' ? 'active'"><a th:href="@{${baseLink}}"><span
+                class="glyphicon glyphicon-home"></span></a></li>
+        <li th:class="${activeNav} == 'metadata' ? 'active'"><a th:href="@{${baseLink} + '/metadata'}">[[#{project.nav.metadata}]]</a></li>
+        <li th:class="${activeNav} == 'samples' ? 'active'"><a th:href="@{${baseLink} + '/samples'}">[[#{project.nav.samples}]]<span class="badge"
+                                                                                                       th:text="${samples}"></span>
+        </a></li>
+        <li th:class="${activeNav} == 'members' ? 'active'"><a th:href="@{${baseLink} + '/members'}">[[#{project.nav.members}]]<span class="badge"
+                                                                                                       th:text="${users}"></span></a>
+        </li>
+        <li th:class="${activeNav} == 'analysis' ? 'active'"><a th:href="@{${baseLink} + '/analysis'}">[[#{project.nav.analysis}]]</a></li>
+    </ul>
+</nav>
+</body>
+</html>
