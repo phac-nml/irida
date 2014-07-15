@@ -38,15 +38,15 @@ import com.google.common.collect.ImmutableMap;
 @Controller
 @RequestMapping(value = "/projects")
 public class ProjectsController {
-    // Sub Navigation Strings
-    private static final String ACTIVE_NAV = "activeNav";
-    private static final String ACTIVE_NAV_DASHBOARD = "dashboard";
-    private static final String ACTIVE_NAV_METADATA  = "metadata";
-    private static final String ACTIVE_NAV_SAMPLES = "samples";
-    private static final String ACTIVE_NAV_MEMBERS = "members";
-    private static final String ACTIVE_NAV_ANALYSIS = "analysis";
+	// Sub Navigation Strings
+	private static final String ACTIVE_NAV = "activeNav";
+	private static final String ACTIVE_NAV_DASHBOARD = "dashboard";
+	private static final String ACTIVE_NAV_METADATA = "metadata";
+	private static final String ACTIVE_NAV_SAMPLES = "samples";
+	private static final String ACTIVE_NAV_MEMBERS = "members";
+	private static final String ACTIVE_NAV_ANALYSIS = "analysis";
 
-    // Page Names
+	// Page Names
 	private static final String PROJECTS_DIR = "projects/";
 	private static final String PROJECTS_PAGE = PROJECTS_DIR + "projects";
 	private static final String PROJECT_MEMBERS_PAGE = PROJECTS_DIR + "project_members";
@@ -74,16 +74,16 @@ public class ProjectsController {
 		this.userService = userService;
 	}
 
-    /**
-     * Request for the page to display a list of all projects available to the
-     * currently logged in user.
-     *
-     * @return The name of the page.
-     */
-    @RequestMapping
-    public String getProjectsPage() {
-        return PROJECTS_PAGE;
-    }
+	/**
+	 * Request for the page to display a list of all projects available to the
+	 * currently logged in user.
+	 * 
+	 * @return The name of the page.
+	 */
+	@RequestMapping
+	public String getProjectsPage() {
+		return PROJECTS_PAGE;
+	}
 
 	/**
 	 * Request for a specific project details page.
@@ -100,7 +100,7 @@ public class ProjectsController {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 		getProjectTemplateDetails(model, principal, project);
-        model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_DASHBOARD);
+		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_DASHBOARD);
 		return SPECIFIC_PROJECT_PAGE;
 	}
 
@@ -128,8 +128,8 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Gets the name of the template for the project members page.
-	 * Populates the template with standard info.
+	 * Gets the name of the template for the project members page. Populates the
+	 * template with standard info.
 	 * 
 	 * @param model
 	 *            {@link Model}
@@ -144,8 +144,8 @@ public class ProjectsController {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 		getProjectTemplateDetails(model, principal, project);
-        model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_MEMBERS);
-        return PROJECT_MEMBERS_PAGE;
+		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_MEMBERS);
+		return PROJECT_MEMBERS_PAGE;
 	}
 
 	/**
@@ -213,6 +213,7 @@ public class ProjectsController {
 	public String getProjectMetadataPage(final Model model, @PathVariable long projectId) {
 		Project p = projectService.read(projectId);
 		model.addAttribute("project", p);
+		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_METADATA);
 		return PROJECT_METADATA_PAGE;
 	}
 
