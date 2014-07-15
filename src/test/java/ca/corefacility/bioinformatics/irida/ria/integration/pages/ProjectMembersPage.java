@@ -14,19 +14,19 @@ import java.util.stream.Collectors;
  * 
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
-public class ProjectCollaboratorsPage {
+public class ProjectMembersPage {
 	private WebDriver driver;
 
-	public ProjectCollaboratorsPage(WebDriver driver, Long projectId) {
+	public ProjectMembersPage(WebDriver driver, Long projectId) {
 		this.driver = driver;
-		driver.get("http://localhost:8080/projects/" + projectId + "/collaborators");
+		driver.get("http://localhost:8080/projects/" + projectId + "/members");
 	}
 
 	public String getTitle() {
         return driver.findElement(By.tagName("h1")).getText();
     }
 
-    public List<String> getProjectCollaboratorsNames() {
+    public List<String> getProjectMembersNames() {
         List<WebElement> els = driver.findElements(By.cssSelector("a.col-names"));
         return els.stream().map(WebElement::getText).collect(Collectors.toList());
     }

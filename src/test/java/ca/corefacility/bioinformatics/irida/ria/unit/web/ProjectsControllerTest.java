@@ -40,8 +40,9 @@ public class ProjectsControllerTest {
 	// HTML page names
 	private static final String PROJECT_DETAILS_PAGE = "projects/project_details";
 	private static final String PROJECTS_PAGE = "projects/projects";
+    private static final String PROJECT_MEMBERS_PAGE = "projects/project_members";
 
-	// DATATABLES position for project information
+    // DATATABLES position for project information
 	private static final int PROJECT_NAME_TABLE_LOCATION = 1;
 	private static final int PROJECT_NUM_SAMPLES_TABLE_LOCATION = 4;
 	private static final int PROJECT_NUM_USERS_TABLE_LOCATION = 5;
@@ -100,7 +101,7 @@ public class ProjectsControllerTest {
 
 		assertEquals("Has the correct project name", PROJECT_NAME, data.get(PROJECT_NAME_TABLE_LOCATION));
 		assertEquals("Has the correct number of samples", NUM_PROJECT_SAMPLES, Integer.parseInt(data.get(PROJECT_NUM_SAMPLES_TABLE_LOCATION)));
-		assertEquals("Has the correct number of collaborators", NUM_PROJECT_USERS, Integer.parseInt(data.get(PROJECT_NUM_USERS_TABLE_LOCATION)));
+		assertEquals("Has the correct number of members", NUM_PROJECT_USERS, Integer.parseInt(data.get(PROJECT_NUM_USERS_TABLE_LOCATION)));
 	}
 
 	@Test
@@ -124,7 +125,7 @@ public class ProjectsControllerTest {
         Model model = new ExtendedModelMap();
         Long projectId = 1L;
         Principal principal = () -> USER_NAME;
-        assertEquals("Gets the correct project collaborators page", controller.getProjectUsersPage(model, principal, projectId), "projects/project_collaborators");
+        assertEquals("Gets the correct project members page", controller.getProjectUsersPage(model, principal, projectId), PROJECT_MEMBERS_PAGE);
     }
 
 	@Test

@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="templates/wet-boew/wet-layout">
 <head>
-    <title th:text="#{project.collaborators.title}">THIS IS SOMETHING WRONG</title>
+    <title th:text="#{project.members.title}">THIS IS SOMETHING WRONG</title>
 </head>
 <body>
 <div class="container" layout:fragment="content">
@@ -11,24 +11,11 @@
         <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
     </div>
     <div class="row">
-        <nav class="navbar navbar-default navbar-sm" role="navigation">
-            <div class="container">
-                <ul class="nav navbar-nav" th:inline="text">
-                    <li><a th:href="@{'/projects/' + ${project.getId()}}"><span class="glyphicon glyphicon-home"></span></a>
-                    </li>
-                    <li><a th:href="@{'/projects/' + ${project.getId()} + '/metadata'}">[[#{project.metadata}]]</a></li>
-                    <li><a th:href="@{'/projects/' + ${project.getId()} + '/samples'}">[[#{project.samples}]]<span
-                            class="badge" th:text="${samples}"></span> </a></li>
-                    <li class="active"><a th:href="@{'/projects/' + ${project.getId()} + '/collaborators'}">[[#{project.collaborators}]]<span
-                            class="badge" th:text="${users}"></span></a></li>
-                    <li><a th:href="@{'/projects/' + ${project.getId()} + '/analysis'}">[[#{project.analysis}]]</a></li>
-                </ul>
-            </div>
-        </nav>
+        <nav th:replace="projects/project_base :: nav"></nav>
         <main class="col-md-9 col-md-push-3" role="main" property="mainContentOfPage">
             <div class="row">
                 <div class="col-md-12">
-                    <h1 th:inline="text">[[${project.label}]] [[#{project.collaborators.collaborators}]]</h1>
+                    <h1 th:inline="text">[[${project.label}]] [[#{project.members.members}]]</h1>
                 </div>
             </div>
             <div class="row">
@@ -92,7 +79,7 @@
         $(document).ready(function () {
             $('#usersTable').DataTable({
                 dom: "<'top'ilf>rt<'bottom'p><'clear'>",
-                ajax: '/projects/ajax/[[${project.getId()}]]/users',
+                ajax: '/projects/ajax/[[${project.getId()}]]/members',
                 deferRender: true,
                 order: [[0, "asc"]],
                 columns: [
