@@ -12,12 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -42,10 +40,10 @@ import com.google.common.collect.ImmutableMap;
 public class ProjectsController {
 	private static final String PROJECTS_DIR = "projects/";
 	private static final String PROJECTS_PAGE = PROJECTS_DIR + "projects";
+	private static final String PROJECT_USERS = PROJECTS_DIR + "project_collaborators";
 	private static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
-	private static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project-new";
+	private static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_new";
 	private static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
-	private static final String ERROR_PAGE = "error";
 	private static final String SORT_BY_ID = "id";
 	private static final String SORT_BY_NAME = "name";
 	private static final String SORT_BY_CREATED_DATE = "createdDate";
@@ -90,43 +88,53 @@ public class ProjectsController {
 	@RequestMapping(value = "/{projectId}")
 	public String getProjectSpecificPage(@PathVariable Long projectId, final Model model, final Principal principal) {
 		logger.debug("Getting project information for [Project " + projectId + "]");
-		String page;
-		try {
-			Project project = projectService.read(projectId);
-			model.addAttribute("project", project);
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+		getProjectTemplateDetails(model, principal, project);
+		return SPECIFIC_PROJECT_PAGE;
+	}
 
-			Collection<Join<Project, User>> ownerJoinList = userService.getUsersForProjectByRole(project,
-					ProjectRole.PROJECT_OWNER);
-			User owner = null;
-			if (ownerJoinList.size() > 0) {
-				owner = (ownerJoinList.iterator().next()).getObject();
-			}
-			model.addAttribute("owner", owner);
-
-			int sampleSize = sampleService.getSamplesForProject(project).size();
-			model.addAttribute("samples", sampleSize);
-
-			int userSize = userService.getUsersForProject(project).size();
-			model.addAttribute("users", userSize);
-
-			// TODO: (Josh - 14-06-23) Get list of recent activities on project.
-
-			// Add any associated projects
-			User currentUser = userService.getUserByUsername(principal.getName());
-			List<Map<String, String>> associatedProjects = getAssociatedProjects(project, currentUser);
-			model.addAttribute("associatedProjects", associatedProjects);
-
-			page = SPECIFIC_PROJECT_PAGE;
-		} catch (EntityNotFoundException e) {
-			// TODO: (Josh - 2014-06-24) Format error page if project is not
-			// found. These should probably be redirects.
-			page = ERROR_PAGE;
-		} catch (AccessDeniedException e) {
-			// TODO: (Josh - 2014-06-24) Format error page if user does not have
-			// access. These should probably be redirects.
-			page = ERROR_PAGE;
+	private void getProjectTemplateDetails(Model model, Principal principal, Project project) {
+		Collection<Join<Project, User>> ownerJoinList = userService.getUsersForProjectByRole(project,
+				ProjectRole.PROJECT_OWNER);
+		User owner = null;
+		if (ownerJoinList.size() > 0) {
+			owner = (ownerJoinList.iterator().next()).getObject();
 		}
-		return page;
+		model.addAttribute("owner", owner);
+
+		int sampleSize = sampleService.getSamplesForProject(project).size();
+		model.addAttribute("samples", sampleSize);
+
+		int userSize = userService.getUsersForProject(project).size();
+		model.addAttribute("users", userSize);
+
+		// TODO: (Josh - 14-06-23) Get list of recent activities on project.
+
+		// Add any associated projects
+		User currentUser = userService.getUserByUsername(principal.getName());
+		List<Map<String, String>> associatedProjects = getAssociatedProjects(project, currentUser);
+		model.addAttribute("associatedProjects", associatedProjects);
+	}
+
+	/**
+	 * Gets the name of the template for the project collaborators page.
+	 * Populates the template with standard info.
+	 * 
+	 * @param model
+	 *            {@link Model}
+	 * @param principal
+	 *            {@link Principal}
+	 * @param projectId
+	 *            Id for the project to show the users for
+	 * @return The name of the project collaborators page.
+	 */
+	@RequestMapping("/{projectId}/collaborators")
+	public String getProjectUsersPage(final Model model, final Principal principal, @PathVariable Long projectId) {
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+		getProjectTemplateDetails(model, principal, project);
+		return PROJECT_USERS;
 	}
 
 	/**
@@ -150,8 +158,6 @@ public class ProjectsController {
 	 * 
 	 * @param model
 	 *            {@link Model}
-	 * @param request
-	 * @{link HttpServletRequest}
 	 * @param name
 	 *            String name of the project
 	 * @param organism
@@ -188,20 +194,29 @@ public class ProjectsController {
 	 * 
 	 * @param model
 	 *            {@link Model}
-	 * @param request
-	 * @{link HttpServletRequest}
+	 * @param projectId
+	 *            the id of the project to find the metadata for.
 	 * @return The name of the add users to new project page.
 	 */
 	@RequestMapping("/{projectId}/metadata")
 	public String getProjectMetadataPage(final Model model, @PathVariable long projectId) {
-        String page = PROJECT_METADATA_PAGE;
-        try {
-            Project p = projectService.read(projectId);
-            model.addAttribute("project", p);
-        } catch (Exception e) {
-            page = "redirect:/projects";
-        }
-        return page;
+		Project p = projectService.read(projectId);
+		model.addAttribute("project", p);
+		return PROJECT_METADATA_PAGE;
+	}
+
+	@RequestMapping(value = "/ajax/{projectId}/users", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody
+	Map<String, Collection<Join<Project, User>>> getAjaxUsersListForProject(@PathVariable Long projectId) {
+		Map<String, Collection<Join<Project, User>>> data = new HashMap<>();
+		try {
+			Project project = projectService.read(projectId);
+			Collection<Join<Project, User>> users = userService.getUsersForProject(project);
+			data.put("data", users);
+		} catch (Exception e) {
+			logger.error("Trying to access a project that does not exist.");
+		}
+		return data;
 	}
 
 	/**
@@ -209,13 +224,20 @@ public class ProjectsController {
 	 * logged in user. Produces JSON.
 	 * 
 	 * @param principal
+	 *            {@link Principal} The currently authenticated users
 	 * @param start
+	 *            The start position in the list to page.
 	 * @param length
+	 *            The size of the page to display.
 	 * @param draw
+	 *            Id for the table to draw, this must be returned.
 	 * @param sortColumn
+	 *            The id for the column to sort by.
 	 * @param direction
+	 *            The direction of the sort.
 	 * @param searchValue
-	 * @return
+	 *            Any search terms.
+	 * @return JSON value of the page data.
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody
@@ -256,17 +278,28 @@ public class ProjectsController {
 			List<String> l = new ArrayList<>();
 			l.add(p.getId().toString());
 			l.add(p.getName());
+			l.add(p.getOrganism());
 			l.add(role.toString());
 			l.add(String.valueOf(sampleService.getSamplesForProject(p).size()));
 			l.add(String.valueOf(userService.getUsersForProject(p).size()));
 			l.add(Formats.DATE.format(p.getTimestamp()));
-			l.add(Formats.DATE.format(p.getModifiedDate()));
+			l.add(p.getModifiedDate().toString());
 			projectsData.add(l);
 		}
 		map.put(DataTable.RESPONSE_PARAM_DATA, projectsData);
 		return map;
 	}
 
+	/**
+	 * Find all projects that have been associated with a project.
+	 * 
+	 * @param currentProject
+	 *            The project to find the associated projects of.
+	 * @param currentUser
+	 *            The currently logged in user.
+	 * @return List of Maps containing information about the associated
+	 *         projects.
+	 */
 	private List<Map<String, String>> getAssociatedProjects(Project currentProject, User currentUser) {
 		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(currentProject);
 
@@ -295,6 +328,14 @@ public class ProjectsController {
 		return projects;
 	}
 
+	/**
+	 * Changes a {@link ConstraintViolationException} to a usable map of strings
+	 * for displaing in the UI.
+	 * 
+	 * @param e
+	 *            {@link ConstraintViolationException} for the form submitted.
+	 * @return Map of string {fieldName, error}
+	 */
 	private Map<String, String> getErrorsFromViolationException(ConstraintViolationException e) {
 		Map<String, String> errors = new HashMap<>();
 		for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
