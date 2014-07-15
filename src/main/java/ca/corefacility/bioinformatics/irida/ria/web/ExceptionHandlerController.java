@@ -15,11 +15,13 @@ public class ExceptionHandlerController {
 
     @ExceptionHandler(EntityNotFoundException.class)
     public String handleResourceNotFoundException() {
+        // TODO: (Josh - 2014-07-15) Create a page for this
         return ERROR_PAGE;
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public String handleAccessDeniedException() {
+        // TODO: (Josh - 2014-07-15) Create a page for this
         return ERROR_PAGE;
     }
 }
