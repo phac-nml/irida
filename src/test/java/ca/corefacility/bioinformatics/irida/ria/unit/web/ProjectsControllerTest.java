@@ -43,8 +43,8 @@ public class ProjectsControllerTest {
 
 	// DATATABLES position for project information
 	private static final int PROJECT_NAME_TABLE_LOCATION = 1;
-	private static final int PROJECT_NUM_SAMPLES_TABLE_LOCATION = 3;
-	private static final int PROJECT_NUM_USERS_TABLE_LOCATION = 4;
+	private static final int PROJECT_NUM_SAMPLES_TABLE_LOCATION = 4;
+	private static final int PROJECT_NUM_USERS_TABLE_LOCATION = 5;
 	private static final int NUM_PROJECT_SAMPLES = 12;
 	private static final int NUM_PROJECT_USERS = 50;
 	private static final long NUM_TOTAL_ELEMENTS = 100L;
