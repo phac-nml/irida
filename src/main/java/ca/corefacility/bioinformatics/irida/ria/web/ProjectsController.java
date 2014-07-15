@@ -253,13 +253,20 @@ public class ProjectsController {
 	 * logged in user. Produces JSON.
 	 * 
 	 * @param principal
+	 *            {@link Principal} The currently authenticated users
 	 * @param start
+	 *            The start position in the list to page.
 	 * @param length
+	 *            The size of the page to display.
 	 * @param draw
+	 *            Id for the table to draw, this must be returned.
 	 * @param sortColumn
+	 *            The id for the column to sort by.
 	 * @param direction
+	 *            The direction of the sort.
 	 * @param searchValue
-	 * @return
+	 *            Any search terms.
+	 * @return JSON value of the page data.
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody
