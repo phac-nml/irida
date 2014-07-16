@@ -174,8 +174,19 @@ public class ProjectsControllerTest {
     }
 
     @Test
-    public void testGetProjectMetadataEditPage() {
+    public void testPostProjectMetadataEditPage() {
+        Model model = new ExtendedModelMap();
+        Principal principal = () -> USER_NAME;
 
+        String newName = "My Project";
+        String newOrganism = "Bad Buggy";
+        String newDescritption = "Another new description.";
+        String newRemoteURL = "http://ghosturl.ca";
+
+        when(projectService.update(anyLong(), anyMap())).thenReturn(getProject());
+
+        String page = controller.postProjectMetadataEditPage(model, principal, PROJECT_ID, newName, newOrganism, newDescritption, newRemoteURL);
+        assertEquals("Returns the correct page.", "redirect:/projects/" + PROJECT_ID + "/metadata", page);
     }
 
     /**
@@ -319,7 +330,7 @@ public class ProjectsControllerTest {
 	}
 
 	private List<Join<Project, Sample>> getSamplesForProject() {
-		List<Join<Project, Sample>> join = new ArrayList<>();
+		List<Join<Project, Sample>> join = new ArrayList<>(NUM_PROJECT_SAMPLES);
 		for (int i = 0; i < NUM_PROJECT_SAMPLES; i++) {
 			join.add(new ProjectSampleJoin(getProject(), new Sample("sample" + i)));
 		}
