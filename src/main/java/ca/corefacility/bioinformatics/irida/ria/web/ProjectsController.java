@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -106,7 +107,7 @@ public class ProjectsController {
 		return SPECIFIC_PROJECT_PAGE;
 	}
 
-	private void getProjectTemplateDetails(Model model, Principal principal, Project project) {
+	public void getProjectTemplateDetails(Model model, Principal principal, Project project) {
 		Collection<Join<Project, User>> ownerJoinList = userService.getUsersForProjectByRole(project,
 				ProjectRole.PROJECT_OWNER);
 		User user = userService.getUserByUsername(principal.getName());
@@ -225,14 +226,21 @@ public class ProjectsController {
 
 	@RequestMapping(value = "/{projectId}/metadata/edit", method = RequestMethod.GET)
 	public String getProjectMetadataEditPage(final Model model, final Principal principal, @PathVariable long projectId) {
-		Project p = projectService.read(projectId);
-		if (!model.containsAttribute("errors")) {
-			model.addAttribute("errors", new HashMap<>());
-		}
-		model.addAttribute("project", p);
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_METADATA);
-		return PROJECT_METADATA_EDIT_PAGE;
-	}
+		Project project = projectService.read(projectId);
+        User user = userService.getUserByUsername(principal.getName());
+        if (projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER)) {
+            if (!model.containsAttribute("errors")) {
+                model.addAttribute("errors", new HashMap<>());
+            }
+            getProjectTemplateDetails(model, principal, project);
+            model.addAttribute("project", project);
+            model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_METADATA);
+            return PROJECT_METADATA_EDIT_PAGE;
+        }
+        else {
+            throw new AccessDeniedException("Do not have permissions to modify this project.");
+        }
+    }
 
 	@RequestMapping(value = "/{projectId}/metadata/edit", method = RequestMethod.POST)
 	public String postProjectMetadataEditPage(final Model model, final Principal principal,
