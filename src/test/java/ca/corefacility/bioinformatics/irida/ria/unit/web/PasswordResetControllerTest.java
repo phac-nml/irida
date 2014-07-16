@@ -52,7 +52,7 @@ public class PasswordResetControllerTest {
 		when(passwordResetService.read(resetId)).thenReturn(passwordReset);
 
 		String resetPage = controller.getResetPage(resetId, model);
-		assertEquals("password/password_reset", resetPage);
+		assertEquals(PasswordResetController.PASSWORD_RESET_PAGE, resetPage);
 		assertTrue(model.containsKey("errors"));
 		assertTrue(model.containsKey("passwordReset"));
 		assertTrue(model.containsKey("user"));
@@ -73,7 +73,7 @@ public class PasswordResetControllerTest {
 		String sendNewPassword = controller.sendNewPassword(resetId, password, password, model,
 				LocaleContextHolder.getLocale());
 
-		assertEquals("password/password_reset_success", sendNewPassword);
+		assertEquals(PasswordResetController.PASSWORD_RESET_SUCCESS, sendNewPassword);
 		assertTrue(model.containsKey("user"));
 		assertEquals("User should not be logged in after resetting password", null, SecurityContextHolder.getContext()
 				.getAuthentication());
@@ -96,7 +96,7 @@ public class PasswordResetControllerTest {
 		String sendNewPassword = controller.sendNewPassword(resetId, password, "not the same", model,
 				LocaleContextHolder.getLocale());
 
-		assertEquals("password/password_reset", sendNewPassword);
+		assertEquals(PasswordResetController.PASSWORD_RESET_PAGE, sendNewPassword);
 		assertTrue(model.containsKey("errors"));
 
 		verify(passwordResetService, times(2)).read(resetId);
@@ -119,7 +119,7 @@ public class PasswordResetControllerTest {
 		String sendNewPassword = controller.sendNewPassword(resetId, password, password, model,
 				LocaleContextHolder.getLocale());
 
-		assertEquals("password/password_reset", sendNewPassword);
+		assertEquals(PasswordResetController.PASSWORD_RESET_PAGE, sendNewPassword);
 		assertTrue(model.containsKey("errors"));
 
 		verify(passwordResetService, times(2)).read(resetId);

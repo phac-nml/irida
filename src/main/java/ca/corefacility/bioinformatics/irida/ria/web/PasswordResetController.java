@@ -38,10 +38,10 @@ import com.google.common.collect.ImmutableList;
 @Controller
 @RequestMapping(value = "/password_reset")
 public class PasswordResetController {
-	private final String PASSWORD_RESET_PAGE = "password/password_reset";
-	private final String PASSWORD_RESET_SUCCESS = "password/password_reset_success";
-	private final String CREATE_RESET_PAGE = "password/create_password_reset";
-	private final String RESET_CREATED_PAGE = "password/reset_created";
+	public static final String PASSWORD_RESET_PAGE = "password/password_reset";
+	public static final String PASSWORD_RESET_SUCCESS = "password/password_reset_success";
+	public static final String CREATE_RESET_PAGE = "password/create_password_reset";
+	public static final String RESET_CREATED_PAGE = "password/reset_created";
 	private final UserService userService;
 	private final PasswordResetService passwordResetService;
 	private final MessageSource messageSource;
