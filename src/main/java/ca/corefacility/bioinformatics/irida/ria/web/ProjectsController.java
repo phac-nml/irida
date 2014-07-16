@@ -28,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -53,6 +54,7 @@ public class ProjectsController {
 	private static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
 	private static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_new";
 	private static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
+	private static final String PROJECT_METADATA_EDIT_PAGE = PROJECTS_DIR + "project_metadata_edit";
 	private static final String SORT_BY_ID = "id";
 	private static final String SORT_BY_NAME = "name";
 	private static final String SORT_BY_CREATED_DATE = "createdDate";
@@ -107,11 +109,13 @@ public class ProjectsController {
 	private void getProjectTemplateDetails(Model model, Principal principal, Project project) {
 		Collection<Join<Project, User>> ownerJoinList = userService.getUsersForProjectByRole(project,
 				ProjectRole.PROJECT_OWNER);
+		User user = userService.getUserByUsername(principal.getName());
 		User owner = null;
 		if (ownerJoinList.size() > 0) {
 			owner = (ownerJoinList.iterator().next()).getObject();
 		}
 		model.addAttribute("owner", owner);
+		model.addAttribute("isOwner", owner.getId() == user.getId());
 
 		int sampleSize = sampleService.getSamplesForProject(project).size();
 		model.addAttribute("samples", sampleSize);
@@ -210,11 +214,55 @@ public class ProjectsController {
 	 * @return The name of the add users to new project page.
 	 */
 	@RequestMapping("/{projectId}/metadata")
-	public String getProjectMetadataPage(final Model model, @PathVariable long projectId) {
-		Project p = projectService.read(projectId);
-		model.addAttribute("project", p);
+	public String getProjectMetadataPage(final Model model, final Principal principal, @PathVariable long projectId) {
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+		getProjectTemplateDetails(model, principal, project);
+
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_METADATA);
 		return PROJECT_METADATA_PAGE;
+	}
+
+	@RequestMapping(value = "/{projectId}/metadata/edit", method = RequestMethod.GET)
+	public String getProjectMetadataEditPage(final Model model, final Principal principal, @PathVariable long projectId) {
+		Project p = projectService.read(projectId);
+		if (!model.containsAttribute("errors")) {
+			model.addAttribute("errors", new HashMap<>());
+		}
+		model.addAttribute("project", p);
+		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_METADATA);
+		return PROJECT_METADATA_EDIT_PAGE;
+	}
+
+	@RequestMapping(value = "/{projectId}/metadata/edit", method = RequestMethod.POST)
+	public String postProjectMetadataEditPage(final Model model, final Principal principal,
+			@PathVariable long projectId, @RequestParam(required = false, defaultValue = "") String name,
+			@RequestParam(required = false, defaultValue = "") String organism,
+			@RequestParam(required = false, defaultValue = "") String projectDescription,
+			@RequestParam(required = false, defaultValue = "") String remoteURL) {
+
+		Map<String, Object> updatedValues = new HashMap<>();
+		if (!Strings.isNullOrEmpty(name)) {
+			updatedValues.put("name", name);
+		}
+		if (!Strings.isNullOrEmpty(organism)) {
+			updatedValues.put("organism", organism);
+		}
+		if (!Strings.isNullOrEmpty(projectDescription)) {
+			updatedValues.put("projectDescription", projectDescription);
+		}
+		if (!Strings.isNullOrEmpty(remoteURL)) {
+			updatedValues.put("remoteURL", remoteURL);
+		}
+		if (updatedValues.size() > 0) {
+			try {
+				projectService.update(projectId, updatedValues);
+			} catch (ConstraintViolationException ex) {
+				model.addAttribute("errors", getErrorsFromViolationException(ex));
+				return getProjectMetadataEditPage(model, principal, projectId);
+			}
+		}
+		return "redirect:/projects/" + projectId + "/metadata";
 	}
 
 	@RequestMapping(value = "/ajax/{projectId}/members", produces = MediaType.APPLICATION_JSON_VALUE)
