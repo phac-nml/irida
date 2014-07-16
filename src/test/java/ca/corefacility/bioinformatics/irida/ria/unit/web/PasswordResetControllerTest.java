@@ -16,6 +16,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ExtendedModelMap;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.PasswordResetController;
@@ -123,5 +124,41 @@ public class PasswordResetControllerTest {
 		assertTrue(model.containsKey("errors"));
 
 		verify(passwordResetService, times(2)).read(resetId);
+	}
+
+	@Test
+	public void testGetNoLoginEmailPage() {
+		assertEquals(PasswordResetController.CREATE_RESET_PAGE, controller.noLoginResetPassword(null));
+	}
+
+	@Test
+	public void testSubmitEmail() {
+		String email = "tom@somewhere.com";
+		User user = new User("tom", email, null, null, null, null);
+		ExtendedModelMap model = new ExtendedModelMap();
+
+		when(userService.loadUserByEmail(email)).thenReturn(user);
+
+		String submitEmail = controller.submitEmail(email, model);
+		assertEquals(PasswordResetController.RESET_CREATED_PAGE, submitEmail);
+		assertTrue(model.containsKey("email"));
+
+		verify(userService).loadUserByEmail(email);
+	}
+
+	@Test
+	public void testSubmitEmailNotExists() {
+		String email = "tom@nowhere.com";
+		ExtendedModelMap model = new ExtendedModelMap();
+
+		when(userService.loadUserByEmail(email)).thenThrow(new EntityNotFoundException("email doesn't exist"));
+
+		String submitEmail = controller.submitEmail(email, model);
+		assertEquals(PasswordResetController.CREATE_RESET_PAGE, submitEmail);
+
+		assertTrue(model.containsKey("email"));
+		assertTrue(model.containsKey("emailError"));
+
+		verify(userService).loadUserByEmail(email);
 	}
 }
