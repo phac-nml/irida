@@ -15,10 +15,10 @@
         <main class="col-md-9 col-md-push-3" role="main" property="mainContentOfPage" th:object="${project}">
             <div class="row">
                 <div class="col-md-10">
-                    <h1 th:text="*{label} + ' ' + #{project.metadata.title}"></h1>
+                    <h1 id="wb-cont" role="heading" th:text="*{label} + ' ' + #{project.metadata.title}"></h1>
                 </div>
                 <div class="col-md-2">
-                    <a th:if="${isOwner}" class="btn btn-default btn-sm pull-right" th:href="@{'/projects/' + *{id} + '/metadata/edit'}" th:text="#{form.btn.edit}">__EDIT__</a>
+                    <a id="edit-metadata" th:if="${isOwner}" class="btn btn-default btn-sm pull-right" th:href="@{'/projects/' + *{id} + '/metadata/edit'}" th:text="#{form.btn.edit}">__EDIT__</a>
                 </div>
             </div>
             <div class="row">
@@ -27,7 +27,7 @@
                         <div class="panel-heading">
                             <h3 class="panel-title" th:text="#{projects.create.form.name}">Project Name</h3>
                         </div>
-                        <div class="panel-body" th:text="*{label}">
+                        <div class="panel-body" id="name" th:text="*{label}">
                         </div>
                     </div>
                     <div class="panel panel-info">
@@ -35,14 +35,14 @@
                             <h3 class="panel-title" th:text="#{projects.create.form.description}">Project
                                                                                                   Description</h3>
                         </div>
-                        <div class="panel-body" th:text="*{projectDescription}">
+                        <div class="panel-body" id="description" th:text="*{projectDescription}">
                         </div>
                     </div>
                     <div class="panel panel-info">
                         <div class="panel-heading">
                             <h3 class="panel-title" th:text="#{projects.create.form.organism}">Project Organism</h3>
                         </div>
-                        <div class="panel-body" th:text="*{organism}">
+                        <div class="panel-body" id="organism" th:text="*{organism}">
 
                         </div>
                     </div>
@@ -51,7 +51,7 @@
                             <h3 class="panel-title" th:text="#{projects.create.form.wiki}">Project Wiki</h3>
                         </div>
                         <div class="panel-body">
-                            <a th:href="*{remoteURL}" th:text="*{remoteURL}"></a>
+                            <a th:href="*{remoteURL}" id="remoteURL" th:text="*{remoteURL}"></a>
                         </div>
                     </div>
                 </div>
