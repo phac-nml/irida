@@ -144,7 +144,8 @@ public class PasswordResetControllerTest {
 		when(userService.loadUserByEmail(email)).thenReturn(user);
 
 		String submitEmail = controller.submitEmail(email, model);
-		assertEquals(PasswordResetController.RESET_CREATED_PAGE, submitEmail);
+		assertEquals(PasswordResetController.CREATED_REDIRECT + Base64.getEncoder().encodeToString(email.getBytes()),
+				submitEmail);
 		assertTrue(model.containsKey("email"));
 
 		verify(userService).loadUserByEmail(email);

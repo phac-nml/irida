@@ -47,6 +47,7 @@ public class PasswordResetController {
 	public static final String CREATE_RESET_PAGE = "password/create_password_reset";
 	public static final String RESET_CREATED_PAGE = "password/reset_created";
 	public static final String SUCCESS_REDIRECT = "redirect:/password_reset/success/";
+	public static final String CREATED_REDIRECT = "redirect:/password_reset/created/";
 	private final UserService userService;
 	private final PasswordResetService passwordResetService;
 	private final MessageSource messageSource;
@@ -189,7 +190,7 @@ public class PasswordResetController {
 
 		try {
 			userService.loadUserByEmail(email);
-			page = RESET_CREATED_PAGE;
+			page = CREATED_REDIRECT + Base64.getEncoder().encodeToString(email.getBytes());
 		} catch (EntityNotFoundException ex) {
 			model.addAttribute("emailError", true);
 			SecurityContextHolder.clearContext();
@@ -197,6 +198,24 @@ public class PasswordResetController {
 		}
 
 		return page;
+	}
+
+	/**
+	 * Success page for creating a password reset
+	 * 
+	 * @param encodedEmail
+	 *            Base64 encoded email of the user
+	 * @param model
+	 *            Model for the request
+	 * @return View name for the reset created page
+	 */
+	@RequestMapping("/created/{encodedEmail}")
+	public String resetCreatedSuccess(@PathVariable String encodedEmail, Model model) {
+		byte[] decode = Base64.getDecoder().decode(encodedEmail);
+		String email = new String(decode);
+		model.addAttribute("email", email);
+
+		return RESET_CREATED_PAGE;
 	}
 
 	/**
