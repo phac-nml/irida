@@ -138,11 +138,12 @@
 	<script th:src="@{/resources/wet-theme/js/deps/jquery.magnific-popup.min.js}"
             src="/resources/wet-theme/js/deps/jquery.magnific-popup.min.js"></script>
 	<script th:inline="javascript">
-		//set up an array of the role names mapping to their icons
-		var roleClass = new Array();
-		roleClass["PROJECT_USER"] = "glyphicon glyphicon-user";
-		roleClass["PROJECT_OWNER"] = "glyphicon glyphicon-tower";
         $(document).ready(function () {
+            //set up an array of the role names mapping to their icons
+            var roleClass = [];
+            roleClass["PROJECT_USER"] = "glyphicon glyphicon-user";
+            roleClass["PROJECT_OWNER"] = "glyphicon glyphicon-tower";
+
         	//add the icon if it exists
             $('#projectsTable').find(".user-project-role").each(function(index,element){
             	var iconSpan = $(element).find(".project-role-icon");
@@ -154,7 +155,7 @@
         	
         	//Set modial popup links
             $('.open-popup-link').magnificPopup({
-            	  type:'inline',
+            	  type:'inline'
             });
         	
         	//Confirm password click
