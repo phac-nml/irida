@@ -1,11 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.validation.ConstraintViolationException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -38,10 +41,12 @@ import com.google.common.collect.ImmutableList;
 @Controller
 @RequestMapping(value = "/password_reset")
 public class PasswordResetController {
+	private static final Logger logger = LoggerFactory.getLogger(PasswordResetController.class);
 	public static final String PASSWORD_RESET_PAGE = "password/password_reset";
 	public static final String PASSWORD_RESET_SUCCESS = "password/password_reset_success";
 	public static final String CREATE_RESET_PAGE = "password/create_password_reset";
 	public static final String RESET_CREATED_PAGE = "password/reset_created";
+	public static final String SUCCESS_REDIRECT = "redirect:/password_reset/success/";
 	private final UserService userService;
 	private final PasswordResetService passwordResetService;
 	private final MessageSource messageSource;
@@ -127,10 +132,31 @@ public class PasswordResetController {
 			return getResetPage(resetId, model);
 		} else {
 			passwordResetService.delete(resetId);
-			model.addAttribute("user", user);
 			SecurityContextHolder.clearContext();
-			return PASSWORD_RESET_SUCCESS;
+			String email = Base64.getEncoder().encodeToString(user.getEmail().getBytes());
+			return SUCCESS_REDIRECT + email;
 		}
+	}
+
+	/**
+	 * Success page for a password reset
+	 * 
+	 * @param encodedEmail
+	 *            A base64 encoded email address
+	 * @param model
+	 *            Model for the view
+	 * @return The password reset success view name
+	 */
+	@RequestMapping("/success/{encodedEmail}")
+	public String resetSuccess(@PathVariable String encodedEmail, Model model) {
+		byte[] decode = Base64.getDecoder().decode(encodedEmail);
+		String email = new String(decode);
+		logger.debug("Password reset submitted for " + email);
+		setAuthentication();
+		User user = userService.loadUserByEmail(email);
+		model.addAttribute("user", user);
+		SecurityContextHolder.clearContext();
+		return PASSWORD_RESET_SUCCESS;
 	}
 
 	/**

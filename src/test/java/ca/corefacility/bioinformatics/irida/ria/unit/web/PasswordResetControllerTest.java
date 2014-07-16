@@ -7,6 +7,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Base64;
+
 import javax.validation.ConstraintViolationException;
 
 import org.junit.Before;
@@ -63,7 +65,9 @@ public class PasswordResetControllerTest {
 
 	@Test
 	public void testSubmitPasswordReset() {
-		User user = new User(1l, "tom", null, null, null, null, null);
+		String username = "tom";
+		String email = "tom@somewhere.com";
+		User user = new User(1l, username, email, null, null, null, null);
 		PasswordReset passwordReset = new PasswordReset(user);
 		String resetId = passwordReset.getId();
 		String password = "Password1";
@@ -74,8 +78,8 @@ public class PasswordResetControllerTest {
 		String sendNewPassword = controller.sendNewPassword(resetId, password, password, model,
 				LocaleContextHolder.getLocale());
 
-		assertEquals(PasswordResetController.PASSWORD_RESET_SUCCESS, sendNewPassword);
-		assertTrue(model.containsKey("user"));
+		assertEquals(PasswordResetController.SUCCESS_REDIRECT + Base64.getEncoder().encodeToString(email.getBytes()),
+				sendNewPassword);
 		assertEquals("User should not be logged in after resetting password", null, SecurityContextHolder.getContext()
 				.getAuthentication());
 
