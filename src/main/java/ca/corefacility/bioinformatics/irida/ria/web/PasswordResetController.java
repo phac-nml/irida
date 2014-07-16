@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -39,6 +40,8 @@ import com.google.common.collect.ImmutableList;
 public class PasswordResetController {
 	private final String PASSWORD_RESET_PAGE = "user/password_reset";
 	private final String PASSWORD_RESET_SUCCESS = "user/password_reset_success";
+	private final String CREATE_RESET_PAGE = "password/create_password_reset";
+	private final String RESET_CREATED_PAGE = "password/reset_created";
 	private final UserService userService;
 	private final PasswordResetService passwordResetService;
 	private final MessageSource messageSource;
@@ -128,6 +131,46 @@ public class PasswordResetController {
 			SecurityContextHolder.clearContext();
 			return PASSWORD_RESET_SUCCESS;
 		}
+	}
+
+	/**
+	 * Get the reset password page
+	 * 
+	 * @param model
+	 *            Model for this view
+	 * @return The view name for the email entry page
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	public String noLoginResetPassword(Model model) {
+		return CREATE_RESET_PAGE;
+	}
+
+	/**
+	 * Create a password reset for the given email address
+	 * 
+	 * @param email
+	 *            The email address to create a password reset for
+	 * @param model
+	 *            Model for the view
+	 * @return Reset created page if the email exists in the system
+	 */
+	@RequestMapping(method = RequestMethod.POST)
+	public String submitEmail(@RequestParam String email, Model model) {
+		setAuthentication();
+		String page;
+
+		model.addAttribute("email",email);
+
+		try {
+			userService.loadUserByEmail(email);
+			page = RESET_CREATED_PAGE;
+		} catch (EntityNotFoundException ex) {
+			model.addAttribute("emailError", true);
+			SecurityContextHolder.clearContext();
+			page = noLoginResetPassword(model);
+		}
+
+		return page;
 	}
 
 	/**
