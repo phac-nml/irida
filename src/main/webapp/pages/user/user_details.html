@@ -125,11 +125,13 @@
 		</header>
 		<div class="modal-body">
 			<p th:text="#{user.passwordReset.modial(${user.label})}">_Reset user's password?_</p>
-			<button id="resetPasswordButton" class="btn btn-primary popup-modal-dismiss" th:text="#{user.passwordReset.confirm}">_Confirm_</button>
-			<button class="btn btn-primary popup-modal-dismiss" th:text="#{user.passwordReset.cancel}">_Cancel_</button>
 		</div>
+        <div class="panel-footer text-right">
+            <button class="btn btn-default popup-modal-dismiss" th:text="#{user.passwordReset.cancel}">_Cancel_</button>
+            <button id="resetPasswordButton" class="btn btn-primary popup-modal-dismiss" th:text="#{user.passwordReset.confirm}">_Confirm_</button>
+        </div>
 	</section>
-	
+
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
 	<!-- Add the project role icons to the project role names -->
