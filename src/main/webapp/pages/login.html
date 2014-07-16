@@ -26,7 +26,7 @@
                         <input type="password" class="form-control input-full" id="passwordTF"
                                name="password"
                                th:placeholder="#{global.password.placeholder}" placeholder="Password"/>
-                        <a href="/password_reset" th:href="@{/password_reset}">Reset Password</a>
+                        <a href="/password_reset" th:href="@{/password_reset}" th:text="#{user.passwordReset}">Reset Password</a>
                     </div>
                     <button type="submit" class="btn btn-primary" th:text="#{global.btn.submit}">Submit</button>
                 </form>
