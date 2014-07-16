@@ -20,7 +20,6 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderCo
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.CreatePasswordResetPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.PasswordResetPage;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
