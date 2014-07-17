@@ -37,12 +37,14 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SpringEmail;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.base.Strings;
@@ -70,6 +72,7 @@ public class UsersController {
 
 	private final UserService userService;
 	private final ProjectService projectService;
+	private final PasswordResetService passwordResetService;
 	private final SpringEmail emailController;
 
 	private final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "username", "email", "lastName",
@@ -81,10 +84,11 @@ public class UsersController {
 	private final MessageSource messageSource;
 
 	@Autowired
-	public UsersController(UserService userService, ProjectService projectService, SpringEmail emailController,
-			MessageSource messageSource) {
+	public UsersController(UserService userService, ProjectService projectService,
+			PasswordResetService passwordResetService, SpringEmail emailController, MessageSource messageSource) {
 		this.userService = userService;
 		this.projectService = projectService;
+		this.passwordResetService = passwordResetService;
 		this.emailController = emailController;
 		this.messageSource = messageSource;
 	}
@@ -341,7 +345,7 @@ public class UsersController {
 		String returnView = null;
 
 		Locale locale = LocaleContextHolder.getLocale();
-		
+
 		User creator = userService.getUserByUsername(principal.getName());
 
 		if (!password.equals(confirmPassword)) {
@@ -358,8 +362,9 @@ public class UsersController {
 
 			try {
 				user = userService.create(user);
-				
-				emailController.sendWelcomeEmail(user, creator);
+				PasswordReset passwordReset = passwordResetService.create(new PasswordReset(user));
+
+				emailController.sendWelcomeEmail(user, creator, passwordReset);
 
 				Long userId = user.getId();
 				returnView = "redirect:/users/" + userId;

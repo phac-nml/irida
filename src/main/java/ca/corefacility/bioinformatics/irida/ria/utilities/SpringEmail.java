@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
@@ -49,7 +50,7 @@ public class SpringEmail {
 
 	}
 
-	public void sendWelcomeEmail(User user, User sender)
+	public void sendWelcomeEmail(User user, User sender, PasswordReset passwordReset)
 			throws MessagingException {
 		Locale locale = LocaleContextHolder.getLocale();
 
@@ -59,6 +60,7 @@ public class SpringEmail {
 
 		ctx.setVariable("creator", sender);
 		ctx.setVariable("user", user);
+		ctx.setVariable("passwordReset", passwordReset);
 
 		final MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
 		final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, "UTF-8");

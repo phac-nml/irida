@@ -36,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.UsersController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.Lists;
@@ -64,6 +65,7 @@ public class UsersControllerTest {
 	// Services
 	private UserService userService;
 	private ProjectService projectService;
+	private PasswordResetService passwordResetService;
 	private UsersController controller;
 	private MessageSource messageSource;
 
@@ -72,7 +74,7 @@ public class UsersControllerTest {
 		userService = mock(UserService.class);
 		projectService = mock(ProjectService.class);
 		messageSource = mock(MessageSource.class);
-		controller = new UsersController(userService, projectService, null, messageSource);
+		controller = new UsersController(userService, projectService, passwordResetService, null, messageSource);
 	}
 
 	@Test
