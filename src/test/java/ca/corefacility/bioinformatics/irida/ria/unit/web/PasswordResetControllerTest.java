@@ -21,6 +21,7 @@ import org.springframework.ui.ExtendedModelMap;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.utilities.EmailController;
 import ca.corefacility.bioinformatics.irida.ria.web.PasswordResetController;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -33,6 +34,7 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 public class PasswordResetControllerTest {
 	private UserService userService;
 	private PasswordResetService passwordResetService;
+	private EmailController emailController;
 	private MessageSource messageSource;
 	private PasswordResetController controller;
 
@@ -40,9 +42,10 @@ public class PasswordResetControllerTest {
 	public void setUp() {
 		userService = mock(UserService.class);
 		passwordResetService = mock(PasswordResetService.class);
+		emailController = mock(EmailController.class);
 		messageSource = mock(MessageSource.class);
 
-		controller = new PasswordResetController(userService, passwordResetService, messageSource);
+		controller = new PasswordResetController(userService, passwordResetService, emailController, messageSource);
 	}
 
 	@Test

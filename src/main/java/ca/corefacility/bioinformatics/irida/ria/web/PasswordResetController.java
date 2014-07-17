@@ -27,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.utilities.EmailController;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -48,15 +49,18 @@ public class PasswordResetController {
 	public static final String RESET_CREATED_PAGE = "password/reset_created";
 	public static final String SUCCESS_REDIRECT = "redirect:/password_reset/success/";
 	public static final String CREATED_REDIRECT = "redirect:/password_reset/created/";
+
 	private final UserService userService;
 	private final PasswordResetService passwordResetService;
+	private final EmailController emailController;
 	private final MessageSource messageSource;
 
 	@Autowired
 	public PasswordResetController(UserService userService, PasswordResetService passwordResetService,
-			MessageSource messageSource) {
+			EmailController emailController, MessageSource messageSource) {
 		this.userService = userService;
 		this.passwordResetService = passwordResetService;
+		this.emailController = emailController;
 		this.messageSource = messageSource;
 	}
 
@@ -211,8 +215,17 @@ public class PasswordResetController {
 	 */
 	@RequestMapping("/created/{encodedEmail}")
 	public String resetCreatedSuccess(@PathVariable String encodedEmail, Model model) {
+		// decode the email
 		byte[] decode = Base64.getDecoder().decode(encodedEmail);
 		String email = new String(decode);
+
+		// get the user and password reset created
+		User user = userService.loadUserByEmail(email);
+		PasswordReset passwordReset = passwordResetService.create(new PasswordReset(user));
+
+		// email the user their info
+		emailController.sendPasswordResetLinkEmail(user, passwordReset);
+
 		model.addAttribute("email", email);
 
 		return RESET_CREATED_PAGE;
