@@ -1,14 +1,16 @@
 Kramdown with Pygments
 ========
+A Jekyll plugin that enables Pygments syntax highlighting for Kramdown-parsed fenced code blocks.
+Heavily based on [krampygs](https://github.com/navarroj/krampygs), but refactored to make it work with Jekyll 2.*.
 
 In the standard setup, Jekyll Kramdown only works with Pygments for syntax highlighting
 when you use Liquid tags. This plugin makes Kramdown also use Pygments when using 
-fenced code blocks. That way you can use more Markdown and less Liquid.
+fenced code blocks. That way you can use more Markdown and less Liquid. Yay!
 
 ## Usage
 
-* Clone this project into your _plugins directory.
-* Add the following lines to your _config.yml
+* Clone this project into your `_plugins` directory.
+* Add the following lines to your `_config.yml`
 
 ```yaml
 markdown: KramdownPygments
@@ -16,13 +18,15 @@ markdown: KramdownPygments
 
 Fenced code blocks can now be syntax highlighted using the power of Pygments.
 
-```markdown
-~~~php
-print "Hello World"
-~~~
-```    
 
-The same goes for inline code:``var foo = 'bar'`{:.language-javascript}`
+    ~~~php
+    print "Hello World"
+    ~~~
+ 
+
+The same goes for inline code:
+
+    You could also do something like this: `var foo = 'bar'`{:.language-javascript}. Amazing!
 
 ## Setting the default language
 If you don't want to set the language for inline code blocks like that every time, 
@@ -62,5 +66,5 @@ kramdown:
 
 ## Thanks
 
-This plugin is heavily based on (krampygs)[https://github.com/navarroj/krampygs].
-Thanks to (@navarroj)[https://github.com/navarroj] for developing the original plugin
+This plugin is heavily based on [krampygs](https://github.com/navarroj/krampygs).
+Thanks to [@navarroj](https://github.com/navarroj) for developing the original plugin.
