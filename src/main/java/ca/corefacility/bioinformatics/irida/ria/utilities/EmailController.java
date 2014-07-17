@@ -31,7 +31,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 @Component
 public class EmailController {
 	private static final Logger logger = LoggerFactory.getLogger(EmailController.class);
-	private static String RESET_ENDPOINT = "/password_reset/";
 
 	private @Value("${mail.server.email}") String serverEmail;
 
@@ -47,10 +46,11 @@ public class EmailController {
 		this.javaMailSender = javaMailSender;
 		this.templateEngine = templateEngine;
 		this.messageSource = messageSource;
-
 	}
 
 	public void sendWelcomeEmail(User user, User sender, PasswordReset passwordReset) {
+		logger.debug("Sending user creation email to " + user.getEmail());
+
 		Locale locale = LocaleContextHolder.getLocale();
 
 		final Context ctx = new Context(locale);
@@ -77,21 +77,22 @@ public class EmailController {
 		this.javaMailSender.send(mimeMessage);
 	}
 
-	public void sendPasswordResetLinkEmail(User user, String linkId) {
-
+	public void sendPasswordResetLinkEmail(User user, PasswordReset passwordReset) {
+		logger.debug("Sending password reset email to " + user.getEmail());
 		final Context ctx = new Context();
 		ctx.setVariable("ngsEmail", serverEmail);
+		ctx.setVariable("serverURL", serverURL);
 
 		Locale locale = LocaleContextHolder.getLocale();
 
-		// Add information about who created this user
-		String url = serverURL + RESET_ENDPOINT + linkId;
-		ctx.setVariable("resetLink", url);
+		// add the reset information
+		ctx.setVariable("passwordReset", passwordReset);
+		ctx.setVariable("user", user);
 
 		try {
 			final MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
 			final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, "UTF-8");
-			message.setSubject(messageSource.getMessage("welcome.email.subject", null, locale));
+			message.setSubject(messageSource.getMessage("email.reset.subject", null, locale));
 			message.setFrom(serverEmail);
 			message.setTo(user.getEmail());
 
