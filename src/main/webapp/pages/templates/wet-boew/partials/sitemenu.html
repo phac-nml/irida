@@ -11,8 +11,8 @@
             <ul class="list-inline menu" role="menubar">
                 <li><a href="#projects" class="item" th:text="#{nav.main.project}">Projects</a>
                     <ul class="sm list-unstyled" id="projects" role="menu">
-                        <li><a href="/projects" th:href="@{/projects}" th:text="#{nav.main.project}">List Projects</a></li>
-                        <li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')"><a href="/projects/all" th:href="@{/projects/all}" th:text="#{nav.main.project-all}">List All Projects</a></li>
+                        <li><a href="/projects" th:href="@{/projects}" th:text="#{nav.main.project-list}">List Projects</a></li>
+                        <li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')"><a href="/projects/all" th:href="@{/projects/all}" th:text="#{nav.main.project-list-all}">List All Projects</a></li>
                         <li><a th:href="@{/projects/new}" href="/projects/new" th:text="#{nav.main.project-create}">Create
                                                                                                                     New
                                                                                                                     Project</a>
