@@ -21,7 +21,10 @@
             <div class="panel panel-primary">
                 <div class="panel-heading clearfix">
                 	<h3 class="panel-title pull-left" th:text="#{user.details}">_User Details_</h3>
-                	<a id="editUser" class="btn btn-default pull-right btn-xs" th:if="${canEditUser}" th:href="@{/users/{id}/edit(id=${user.id})}" href="/users/1/edit" th:text="#{user.edit}"></a>
+					<div class="btn-group-xs pull-right">
+						<a href="#password-reset-modial" sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')" class="btn btn-default open-popup-link" th:text="#{user.passwordReset}">_Password Reset_</a>
+                		<a id="editUser" class="btn btn-default " th:if="${canEditUser}" th:href="@{/users/{id}/edit(id=${user.id})}" href="/users/1/edit" th:text="#{user.edit}"></a>                	
+                	</div>
                 </div>
                     
                 <div class="panel-body">
@@ -114,17 +117,33 @@
                 </div>
             </div>
         </div>
-        
     </div>
+    
+	<section id="password-reset-modial" class="modal-dialog modal-content overlay-def mfp-hide">
+		<header class="modal-header">
+			<h2 class="modal-title" id="lbx-title" th:text="#{user.passwordReset}">_Reset Password_</h2>
+		</header>
+		<div class="modal-body">
+			<p th:text="#{user.passwordReset.modial(${user.label})}">_Reset user's password?_</p>
+		</div>
+        <div class="panel-footer text-right">
+            <button class="btn btn-default popup-modal-dismiss" th:text="#{user.passwordReset.cancel}">_Cancel_</button>
+            <button id="resetPasswordButton" class="btn btn-primary popup-modal-dismiss" th:text="#{user.passwordReset.confirm}">_Confirm_</button>
+        </div>
+	</section>
+
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
 	<!-- Add the project role icons to the project role names -->
+	<script th:src="@{/resources/wet-theme/js/deps/jquery.magnific-popup.min.js}"
+            src="/resources/wet-theme/js/deps/jquery.magnific-popup.min.js"></script>
 	<script th:inline="javascript">
-		//set up an array of the role names mapping to their icons
-		var roleClass = new Array();
-		roleClass["PROJECT_USER"] = "glyphicon glyphicon-user";
-		roleClass["PROJECT_OWNER"] = "glyphicon glyphicon-tower";
         $(document).ready(function () {
+            //set up an array of the role names mapping to their icons
+            var roleClass = [];
+            roleClass["PROJECT_USER"] = "glyphicon glyphicon-user";
+            roleClass["PROJECT_OWNER"] = "glyphicon glyphicon-tower";
+
         	//add the icon if it exists
             $('#projectsTable').find(".user-project-role").each(function(index,element){
             	var iconSpan = $(element).find(".project-role-icon");
@@ -133,6 +152,37 @@
             		iconSpan.addClass(roleClass[rolename]);
             	}
             });
+        	
+        	//Set modial popup links
+            $('.open-popup-link').magnificPopup({
+            	  type:'inline'
+            });
+        	
+        	//Confirm password click
+        	$("#resetPasswordButton").click(function(){
+        		var id = [[${user.id}]];
+        		var url = [[@{/password_reset/ajax/create/}]] + id;
+        		$.ajax({
+        			url:url,
+        			success:function(){
+        				noty({
+        					text: [[#{user.passwordReset.success}]], 
+        					layout: "topCenter", 
+        					type: "success",
+        					timeout: 5000
+        				})
+        			},
+        			error:function(){
+        				noty({
+        					text: [[#{user.passwordReset.error}]], 
+        					layout: "topCenter", 
+        					type: "error",
+        					timeout: false
+        				})
+        			}
+        		});
+        	});
+        	
         });
     </script>
 </div>
