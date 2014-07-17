@@ -49,8 +49,7 @@ public class ProjectsController {
 
     // Page Names
     private static final String PROJECTS_DIR = "projects/";
-    private static final String PROJECTS_PAGE = PROJECTS_DIR + "projects";
-    private static final String ALL_PROJECTS_PAGE = PROJECTS_DIR + "projects_all";
+    private static final String LIST_PROJECTS_PAGE = PROJECTS_DIR + "projects";
     private static final String PROJECT_MEMBERS_PAGE = PROJECTS_DIR + "project_members";
     private static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
     private static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_new";
@@ -84,14 +83,17 @@ public class ProjectsController {
      * @return The name of the page.
      */
     @RequestMapping
-    public String getProjectsPage() {
-        return PROJECTS_PAGE;
+    public String getProjectsPage(Model model) {
+        model.addAttribute("ajaxURL", "/projects/ajax/list");
+        return LIST_PROJECTS_PAGE;
     }
 
     @RequestMapping("/all")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
-    public String getAllProjectsPage() {
-        return ALL_PROJECTS_PAGE;
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public String getAllProjectsPage(Model model) {
+        model.addAttribute("ajaxURL", "/projects/ajax/list/all");
+        model.addAttribute("isAdmin", true);
+        return LIST_PROJECTS_PAGE;
     }
 
     /**
@@ -306,6 +308,7 @@ public class ProjectsController {
             Project p = projectUserJoin.getSubject();
             ProjectRole role = projectUserJoin.getProjectRole();
             List<String> l = new ArrayList<>();
+            l.add(""); // Empty to support template
             l.add(p.getId().toString());
             l.add(p.getName());
             l.add(p.getOrganism());
@@ -376,8 +379,8 @@ public class ProjectsController {
         User user = userService.getUserByUsername(principal.getName());
 
         // Determine if the user is an owner or admin.
-        boolean isManagerOrAdmin = user.getSystemRole().equals(Role.ROLE_MANAGER) || user.getSystemRole().equals(Role.ROLE_ADMIN);
-        model.addAttribute("isManagerOrAdmin", isManagerOrAdmin);
+        boolean isAdmin = user.getSystemRole().equals(Role.ROLE_ADMIN);
+        model.addAttribute("isAdmin", isAdmin);
 
         // Find out who the owner of the project is.
         Collection<Join<Project, User>> ownerJoinList = userService.getUsersForProjectByRole(project,
@@ -399,7 +402,7 @@ public class ProjectsController {
 
         // Add any associated projects
         User currentUser = userService.getUserByUsername(principal.getName());
-        List<Map<String, String>> associatedProjects = getAssociatedProjects(project, currentUser, isManagerOrAdmin);
+        List<Map<String, String>> associatedProjects = getAssociatedProjects(project, currentUser, isAdmin);
         model.addAttribute("associatedProjects", associatedProjects);
     }
 
@@ -411,7 +414,7 @@ public class ProjectsController {
      * @return List of Maps containing information about the associated
      * projects.
      */
-    private List<Map<String, String>> getAssociatedProjects(Project currentProject, User currentUser, boolean isManagerOrAdmin) {
+    private List<Map<String, String>> getAssociatedProjects(Project currentProject, User currentUser, boolean isAdmin) {
         List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(currentProject);
 
         // Need to know if the user has rights to view the project
@@ -430,7 +433,7 @@ public class ProjectsController {
             Map<String, String> map = new HashMap<>();
             map.put("name", project.getLabel());
             map.put("id", project.getId().toString());
-            map.put("auth", isManagerOrAdmin || usersProjects.containsKey(project.getId()) ? "authorized" : "");
+            map.put("auth", isAdmin || usersProjects.containsKey(project.getId()) ? "authorized" : "");
 
             // TODO: (Josh - 2014-07-07) Will need to add remote location
             // information here.
