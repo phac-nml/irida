@@ -74,7 +74,8 @@ public class ProjectsControllerTest {
 
 	@Test
 	public void showAllProjects() {
-		assertEquals(PROJECTS_PAGE, controller.getProjectsPage());
+        Model model = new ExtendedModelMap();
+		assertEquals(PROJECTS_PAGE, controller.getProjectsPage(model));
 	}
 
 	@SuppressWarnings("unchecked")
