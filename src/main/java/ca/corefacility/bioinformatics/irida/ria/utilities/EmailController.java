@@ -29,8 +29,8 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Component
-public class SpringEmail {
-	private static final Logger logger = LoggerFactory.getLogger(SpringEmail.class);
+public class EmailController {
+	private static final Logger logger = LoggerFactory.getLogger(EmailController.class);
 	private static String RESET_ENDPOINT = "/password_reset/";
 
 	private @Value("${mail.server.email}") String serverEmail;
@@ -42,7 +42,7 @@ public class SpringEmail {
 	private MessageSource messageSource;
 
 	@Autowired
-	public SpringEmail(final JavaMailSender javaMailSender,
+	public EmailController(final JavaMailSender javaMailSender,
 			@Qualifier("emailTemplateEngine") TemplateEngine templateEngine, MessageSource messageSource) {
 		this.javaMailSender = javaMailSender;
 		this.templateEngine = templateEngine;

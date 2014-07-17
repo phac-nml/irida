@@ -45,7 +45,7 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
-import ca.corefacility.bioinformatics.irida.ria.utilities.SpringEmail;
+import ca.corefacility.bioinformatics.irida.ria.utilities.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -77,7 +77,7 @@ public class UsersController {
 	private final UserService userService;
 	private final ProjectService projectService;
 	private final PasswordResetService passwordResetService;
-	private final SpringEmail emailController;
+	private final EmailController emailController;
 
 	private final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "username", "email", "lastName",
 			"firstName", "systemRole", "createdDate", "modifiedDate");
@@ -89,7 +89,7 @@ public class UsersController {
 
 	@Autowired
 	public UsersController(UserService userService, ProjectService projectService,
-			PasswordResetService passwordResetService, SpringEmail emailController, MessageSource messageSource) {
+			PasswordResetService passwordResetService, EmailController emailController, MessageSource messageSource) {
 		this.userService = userService;
 		this.projectService = projectService;
 		this.passwordResetService = passwordResetService;

@@ -34,7 +34,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.DataTable;
-import ca.corefacility.bioinformatics.irida.ria.utilities.SpringEmail;
+import ca.corefacility.bioinformatics.irida.ria.utilities.EmailController;
 import ca.corefacility.bioinformatics.irida.ria.web.UsersController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
@@ -67,7 +67,7 @@ public class UsersControllerTest {
 	private UserService userService;
 	private ProjectService projectService;
 	private PasswordResetService passwordResetService;
-	private SpringEmail emailController;
+	private EmailController emailController;
 	private UsersController controller;
 	private MessageSource messageSource;
 
@@ -76,7 +76,7 @@ public class UsersControllerTest {
 		userService = mock(UserService.class);
 		projectService = mock(ProjectService.class);
 		messageSource = mock(MessageSource.class);
-		emailController = mock(SpringEmail.class);
+		emailController = mock(EmailController.class);
 		controller = new UsersController(userService, projectService, passwordResetService, emailController,
 				messageSource);
 	}
