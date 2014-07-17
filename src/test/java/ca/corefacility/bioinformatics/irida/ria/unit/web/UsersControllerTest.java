@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.mail.MessagingException;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
@@ -258,7 +256,7 @@ public class UsersControllerTest {
 	}
 
 	@Test
-	public void testSubmitCreateUser() throws MessagingException {
+	public void testSubmitCreateUser() {
 		String username = "tom";
 		String email = "tom@somewhere.com";
 		String password = "PassWord1";
@@ -280,7 +278,7 @@ public class UsersControllerTest {
 	}
 
 	@Test
-	public void testSubmitCreateBadPasswords() throws MessagingException {
+	public void testSubmitCreateBadPasswords() {
 		String username = "tom";
 		String email = "tom@somewhere.com";
 		String password = "PassWord1";
@@ -298,19 +296,19 @@ public class UsersControllerTest {
 	}
 
 	@Test
-	public void testSubmitEmailExists() throws MessagingException {
+	public void testSubmitEmailExists() {
 		DataIntegrityViolationException ex = new DataIntegrityViolationException("Error: "
 				+ User.USER_EMAIL_CONSTRAINT_NAME);
 		createWithException(ex, "email");
 	}
 
 	@Test
-	public void testSubmitUsernameExists() throws MessagingException {
+	public void testSubmitUsernameExists() {
 		EntityExistsException ex = new EntityExistsException("username exists", "username");
 		createWithException(ex, "username");
 	}
 
-	public void createWithException(Throwable exception, String fieldname) throws MessagingException {
+	public void createWithException(Throwable exception, String fieldname) {
 		String username = "tom";
 		String email = "tom@somewhere.com";
 		String password = "PassWord1";

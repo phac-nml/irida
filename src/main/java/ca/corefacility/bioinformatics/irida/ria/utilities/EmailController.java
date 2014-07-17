@@ -50,8 +50,7 @@ public class EmailController {
 
 	}
 
-	public void sendWelcomeEmail(User user, User sender, PasswordReset passwordReset)
-			throws MessagingException {
+	public void sendWelcomeEmail(User user, User sender, PasswordReset passwordReset) {
 		Locale locale = LocaleContextHolder.getLocale();
 
 		final Context ctx = new Context(locale);
@@ -64,12 +63,16 @@ public class EmailController {
 
 		final MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
 		final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, "UTF-8");
-		message.setSubject(messageSource.getMessage("email.welcome.subject", null, locale));
-		message.setFrom(serverEmail);
-		message.setTo(user.getEmail());
+		try {
+			message.setSubject(messageSource.getMessage("email.welcome.subject", null, locale));
+			message.setFrom(serverEmail);
+			message.setTo(user.getEmail());
 
-		final String htmlContent = templateEngine.process("welcome-email.html", ctx);
-		message.setText(htmlContent, true);
+			final String htmlContent = templateEngine.process("welcome-email.html", ctx);
+			message.setText(htmlContent, true);
+		} catch (MessagingException e) {
+			logger.error("User creation email failed to send", e);
+		}
 
 		this.javaMailSender.send(mimeMessage);
 	}
@@ -97,7 +100,7 @@ public class EmailController {
 
 			this.javaMailSender.send(mimeMessage);
 		} catch (MessagingException e) {
-			logger.error("Error trying to send a password reset link email. Stack trace to follow: ", e);
+			logger.error("Error trying to send a password reset link email.", e);
 		}
 	}
 }

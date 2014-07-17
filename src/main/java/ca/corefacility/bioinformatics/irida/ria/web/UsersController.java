@@ -10,7 +10,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.mail.MessagingException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -44,8 +43,8 @@ import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.DataTable;
-import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.ria.utilities.EmailController;
+import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -354,14 +353,12 @@ public class UsersController {
 	 * @param principal
 	 *            The user creating the object
 	 * @return A redirect to the user details view
-	 * @throws MessagingException
-	 *             If the create email failed to send
 	 */
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
 	public String submitCreateUser(@ModelAttribute User user, @RequestParam String systemRole,
 			@RequestParam String confirmPassword, @RequestParam(required = false) String setpassword, Model model,
-			Principal principal) throws MessagingException {
+			Principal principal) {
 
 		Map<String, String> errors = new HashMap<>();
 
