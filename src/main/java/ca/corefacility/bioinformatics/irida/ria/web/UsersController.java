@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.mail.MessagingException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -40,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
+import ca.corefacility.bioinformatics.irida.ria.utilities.SpringEmail;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -68,6 +70,7 @@ public class UsersController {
 
 	private final UserService userService;
 	private final ProjectService projectService;
+	private final SpringEmail emailController;
 
 	private final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "username", "email", "lastName",
 			"firstName", "systemRole", "createdDate", "modifiedDate");
@@ -78,9 +81,11 @@ public class UsersController {
 	private final MessageSource messageSource;
 
 	@Autowired
-	public UsersController(UserService userService, ProjectService projectService, MessageSource messageSource) {
+	public UsersController(UserService userService, ProjectService projectService, SpringEmail emailController,
+			MessageSource messageSource) {
 		this.userService = userService;
 		this.projectService = projectService;
+		this.emailController = emailController;
 		this.messageSource = messageSource;
 	}
 
@@ -329,13 +334,15 @@ public class UsersController {
 	public String submitCreateUser(@RequestParam String username, @RequestParam String firstName,
 			@RequestParam String lastName, @RequestParam String email, @RequestParam String phoneNumber,
 			@RequestParam(defaultValue = "ROLE_USER") String systemRole, @RequestParam String password,
-			@RequestParam String confirmPassword, Model model, Principal principal) {
+			@RequestParam String confirmPassword, Model model, Principal principal) throws MessagingException {
 
 		Map<String, String> errors = new HashMap<>();
 
 		String returnView = null;
 
 		Locale locale = LocaleContextHolder.getLocale();
+		
+		User creator = userService.getUserByUsername(principal.getName());
 
 		if (!password.equals(confirmPassword)) {
 			errors.put("password", messageSource.getMessage("user.edit.password.match", null, locale));
@@ -351,15 +358,17 @@ public class UsersController {
 
 			try {
 				user = userService.create(user);
+				
+				emailController.sendWelcomeEmail(user, creator);
 
 				Long userId = user.getId();
 				returnView = "redirect:/users/" + userId;
 			} catch (ConstraintViolationException | DataIntegrityViolationException | EntityExistsException ex) {
 				errors = handleCreateUpdateException(ex, locale);
 			}
-		} 
-		
-		if(!errors.isEmpty()){
+		}
+
+		if (!errors.isEmpty()) {
 			model.addAttribute("errors", errors);
 
 			model.addAttribute("given_username", username);
@@ -367,7 +376,7 @@ public class UsersController {
 			model.addAttribute("given_lastName", lastName);
 			model.addAttribute("given_email", email);
 			model.addAttribute("given_phoneNumber", phoneNumber);
-			
+
 			returnView = createUserPage(model);
 		}
 

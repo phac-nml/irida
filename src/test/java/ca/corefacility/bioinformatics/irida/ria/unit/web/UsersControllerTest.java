@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.mail.MessagingException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
@@ -70,7 +72,7 @@ public class UsersControllerTest {
 		userService = mock(UserService.class);
 		projectService = mock(ProjectService.class);
 		messageSource = mock(MessageSource.class);
-		controller = new UsersController(userService, projectService, messageSource);
+		controller = new UsersController(userService, projectService, null, messageSource);
 	}
 
 	@Test
@@ -250,7 +252,7 @@ public class UsersControllerTest {
 	}
 
 	@Test
-	public void testSubmitCreateUser() {
+	public void testSubmitCreateUser() throws MessagingException {
 		String username = "tom";
 		String email = "tom@somewhere.com";
 		String password = "PassWord1";
@@ -272,7 +274,7 @@ public class UsersControllerTest {
 	}
 
 	@Test
-	public void testSubmitCreateBadPasswords() {
+	public void testSubmitCreateBadPasswords() throws MessagingException {
 		String username = "tom";
 		String email = "tom@somewhere.com";
 		String password = "PassWord1";
@@ -289,19 +291,19 @@ public class UsersControllerTest {
 	}
 
 	@Test
-	public void testSubmitEmailExists() {
+	public void testSubmitEmailExists() throws MessagingException {
 		DataIntegrityViolationException ex = new DataIntegrityViolationException("Error: "
 				+ User.USER_EMAIL_CONSTRAINT_NAME);
 		createWithException(ex, "email");
 	}
 
 	@Test
-	public void testSubmitUsernameExists() {
+	public void testSubmitUsernameExists() throws MessagingException {
 		EntityExistsException ex = new EntityExistsException("username exists", "username");
 		createWithException(ex, "username");
 	}
 
-	public void createWithException(Throwable exception, String fieldname) {
+	public void createWithException(Throwable exception, String fieldname) throws MessagingException {
 		String username = "tom";
 		String email = "tom@somewhere.com";
 		String password = "PassWord1";
