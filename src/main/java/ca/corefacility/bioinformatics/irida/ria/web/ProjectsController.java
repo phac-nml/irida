@@ -118,8 +118,8 @@ public class ProjectsController {
 		}
 		model.addAttribute("owner", owner);
         model.addAttribute("isOwner", owner.getId() == user.getId());
-        boolean isAdmin = user.getSystemRole().equals(Role.ROLE_ADMIN);
-        model.addAttribute("isAdmin", isAdmin);
+        boolean isManagerOrAdmin = user.getSystemRole().equals(Role.ROLE_MANAGER) || user.getSystemRole().equals(Role.ROLE_ADMIN);
+        model.addAttribute("isManagerOrAdmin", isManagerOrAdmin);
 
 		int sampleSize = sampleService.getSamplesForProject(project).size();
 		model.addAttribute("samples", sampleSize);
@@ -131,7 +131,7 @@ public class ProjectsController {
 
 		// Add any associated projects
 		User currentUser = userService.getUserByUsername(principal.getName());
-		List<Map<String, String>> associatedProjects = getAssociatedProjects(project, currentUser, isAdmin);
+		List<Map<String, String>> associatedProjects = getAssociatedProjects(project, currentUser, isManagerOrAdmin);
 		model.addAttribute("associatedProjects", associatedProjects);
 	}
 
@@ -371,7 +371,7 @@ public class ProjectsController {
 	 * @return List of Maps containing information about the associated
 	 *         projects.
 	 */
-	private List<Map<String, String>> getAssociatedProjects(Project currentProject, User currentUser, boolean isAdmin) {
+	private List<Map<String, String>> getAssociatedProjects(Project currentProject, User currentUser, boolean isManagerOrAdmin) {
 		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(currentProject);
 
 		// Need to know if the user has rights to view the project
@@ -390,7 +390,7 @@ public class ProjectsController {
 			Map<String, String> map = new HashMap<>();
 			map.put("name", project.getLabel());
 			map.put("id", project.getId().toString());
-			map.put("auth", isAdmin || usersProjects.containsKey(project.getId()) ? "authorized" : "");
+			map.put("auth", isManagerOrAdmin || usersProjects.containsKey(project.getId()) ? "authorized" : "");
 
 			// TODO: (Josh - 2014-07-07) Will need to add remote location
 			// information here.
