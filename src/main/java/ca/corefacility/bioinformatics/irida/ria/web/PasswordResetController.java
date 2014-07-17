@@ -47,6 +47,7 @@ public class PasswordResetController {
 	public static final String PASSWORD_RESET_SUCCESS = "password/password_reset_success";
 	public static final String CREATE_RESET_PAGE = "password/create_password_reset";
 	public static final String RESET_CREATED_PAGE = "password/reset_created";
+	public static final String ACTIVATION_PAGE = "password/activate";
 	public static final String SUCCESS_REDIRECT = "redirect:/password_reset/success/";
 	public static final String CREATED_REDIRECT = "redirect:/password_reset/created/";
 
@@ -200,7 +201,7 @@ public class PasswordResetController {
 
 			// email the user their info
 			emailController.sendPasswordResetLinkEmail(user, passwordReset);
-			
+
 			page = CREATED_REDIRECT + Base64.getEncoder().encodeToString(email.getBytes());
 		} catch (EntityNotFoundException ex) {
 			model.addAttribute("emailError", true);
@@ -229,6 +230,23 @@ public class PasswordResetController {
 		model.addAttribute("email", email);
 
 		return RESET_CREATED_PAGE;
+	}
+
+	/**
+	 * Return the activation view
+	 * 
+	 * @param model
+	 *            Model for the view
+	 * @return Name of the activation view
+	 */
+	@RequestMapping(value = "/activate", method = RequestMethod.GET)
+	public String activate(Model model) {
+		return ACTIVATION_PAGE;
+	}
+
+	@RequestMapping(value = "/activate", method = RequestMethod.POST)
+	public String getPasswordReset(@RequestParam String activationId, Model model) {
+		return "redirect:/password_reset/" + activationId;
 	}
 
 	/**
