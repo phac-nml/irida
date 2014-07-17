@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.any;
 
 import java.util.Base64;
 
@@ -152,6 +153,7 @@ public class PasswordResetControllerTest {
 		assertTrue(model.containsKey("email"));
 
 		verify(userService).loadUserByEmail(email);
+		verify(passwordResetService).create(any(PasswordReset.class));
 	}
 
 	@Test

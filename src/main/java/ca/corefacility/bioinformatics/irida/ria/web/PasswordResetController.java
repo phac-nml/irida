@@ -193,7 +193,14 @@ public class PasswordResetController {
 		model.addAttribute("email", email);
 
 		try {
-			userService.loadUserByEmail(email);
+			User user = userService.loadUserByEmail(email);
+
+			// get the user and password reset created
+			PasswordReset passwordReset = passwordResetService.create(new PasswordReset(user));
+
+			// email the user their info
+			emailController.sendPasswordResetLinkEmail(user, passwordReset);
+			
 			page = CREATED_REDIRECT + Base64.getEncoder().encodeToString(email.getBytes());
 		} catch (EntityNotFoundException ex) {
 			model.addAttribute("emailError", true);
@@ -218,13 +225,6 @@ public class PasswordResetController {
 		// decode the email
 		byte[] decode = Base64.getDecoder().decode(encodedEmail);
 		String email = new String(decode);
-
-		// get the user and password reset created
-		User user = userService.loadUserByEmail(email);
-		PasswordReset passwordReset = passwordResetService.create(new PasswordReset(user));
-
-		// email the user their info
-		emailController.sendPasswordResetLinkEmail(user, passwordReset);
 
 		model.addAttribute("email", email);
 
