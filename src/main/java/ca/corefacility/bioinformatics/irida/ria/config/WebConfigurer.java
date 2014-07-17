@@ -35,7 +35,7 @@ import java.util.Set;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.ria" })
-@Import({ IridaApiServicesConfig.class, WebSecurityConfig.class })
+@Import({ IridaApiServicesConfig.class, WebSecurityConfig.class, WebEmailConfig.class })
 public class WebConfigurer extends WebMvcConfigurerAdapter {
 	private static final String SPRING_PROFILE_PRODUCTION = "prod";
 	private static final String TEMPLATE_LOCATION = "/pages/";

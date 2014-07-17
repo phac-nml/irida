@@ -25,7 +25,7 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
  */
 @Configuration
 @PropertySource(value = { "classpath:configuration.properties" }, ignoreResourceNotFound=false)
-public class WebPropertyPlaceholderConfig {
+public class WebEmailConfig {
 
 	@Value("${mail.server.host}")
 	String host;
