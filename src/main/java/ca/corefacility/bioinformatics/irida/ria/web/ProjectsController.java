@@ -1,12 +1,19 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
-import java.security.Principal;
-import java.util.*;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-
+import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.utilities.DataTable;
+import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,20 +25,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.utilities.DataTable;
-import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.security.Principal;
+import java.util.*;
 
 /**
  * Controller for all project related views
@@ -106,33 +103,6 @@ public class ProjectsController {
 		getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_DASHBOARD);
 		return SPECIFIC_PROJECT_PAGE;
-	}
-
-	public void getProjectTemplateDetails(Model model, Principal principal, Project project) {
-		Collection<Join<Project, User>> ownerJoinList = userService.getUsersForProjectByRole(project,
-				ProjectRole.PROJECT_OWNER);
-		User user = userService.getUserByUsername(principal.getName());
-		User owner = null;
-		if (ownerJoinList.size() > 0) {
-			owner = (ownerJoinList.iterator().next()).getObject();
-		}
-		model.addAttribute("owner", owner);
-        model.addAttribute("isOwner", owner.getId() == user.getId());
-        boolean isManagerOrAdmin = user.getSystemRole().equals(Role.ROLE_MANAGER) || user.getSystemRole().equals(Role.ROLE_ADMIN);
-        model.addAttribute("isManagerOrAdmin", isManagerOrAdmin);
-
-		int sampleSize = sampleService.getSamplesForProject(project).size();
-		model.addAttribute("samples", sampleSize);
-
-		int userSize = userService.getUsersForProject(project).size();
-		model.addAttribute("users", userSize);
-
-		// TODO: (Josh - 14-06-23) Get list of recent activities on project.
-
-		// Add any associated projects
-		User currentUser = userService.getUserByUsername(principal.getName());
-		List<Map<String, String>> associatedProjects = getAssociatedProjects(project, currentUser, isManagerOrAdmin);
-		model.addAttribute("associatedProjects", associatedProjects);
 	}
 
 	/**
@@ -360,6 +330,33 @@ public class ProjectsController {
 		map.put(DataTable.RESPONSE_PARAM_DATA, projectsData);
 		return map;
 	}
+
+    public void getProjectTemplateDetails(Model model, Principal principal, Project project) {
+        Collection<Join<Project, User>> ownerJoinList = userService.getUsersForProjectByRole(project,
+                ProjectRole.PROJECT_OWNER);
+        User user = userService.getUserByUsername(principal.getName());
+        User owner = null;
+        if (ownerJoinList.size() > 0) {
+            owner = (ownerJoinList.iterator().next()).getObject();
+        }
+        model.addAttribute("owner", owner);
+        model.addAttribute("isOwner", owner.getId() == user.getId());
+        boolean isManagerOrAdmin = user.getSystemRole().equals(Role.ROLE_MANAGER) || user.getSystemRole().equals(Role.ROLE_ADMIN);
+        model.addAttribute("isManagerOrAdmin", isManagerOrAdmin);
+
+        int sampleSize = sampleService.getSamplesForProject(project).size();
+        model.addAttribute("samples", sampleSize);
+
+        int userSize = userService.getUsersForProject(project).size();
+        model.addAttribute("users", userSize);
+
+        // TODO: (Josh - 14-06-23) Get list of recent activities on project.
+
+        // Add any associated projects
+        User currentUser = userService.getUserByUsername(principal.getName());
+        List<Map<String, String>> associatedProjects = getAssociatedProjects(project, currentUser, isManagerOrAdmin);
+        model.addAttribute("associatedProjects", associatedProjects);
+    }
 
 	/**
 	 * Find all projects that have been associated with a project.
