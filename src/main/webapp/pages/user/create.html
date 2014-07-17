@@ -67,17 +67,24 @@
 								<input sec:authorize="hasRole('ROLE_MANAGER')" id="systemRole" name="systemRole" th:value="${allowedRoles.ROLE_USER}"
 									class="form-control input-full" required="required" disabled="disabled" />
 							</div>
-
+							
 							<div class="form-group">
-								<label class="control-label" th:text="#{user.password}"	for="password">_Password_</label>
-								<div th:if="${#maps.containsKey(errors, 'password')}" th:text="${errors.password}" class="alert alert-warning">_Password Error_</div>
-								<input type="password" id="password" name="password" class="form-control input-full" required="required" th:placeholder="#{user.password}" />
+								<label class="control-label" th:text="#{user.setpassword}" for="setpassword">_User Created Password_</label>
+								<input type="checkbox" id="setpassword" name="setpassword" checked="checked"/>
 							</div>
-
-							<div class="form-group">
-								<label class="control-label" th:text="#{user.confirmPassword}" for="confirmPassword">_Confirm Password_</label> 
-								<input type="password" id="confirmPassword" name="confirmPassword" class="form-control input-full" 
-									required="required" th:placeholder="#{user.confirmPassword}" />
+							
+							<div class="password">
+								<div class="form-group">
+									<label class="control-label" th:text="#{user.password}"	for="password">_Password_</label>
+									<div th:if="${#maps.containsKey(errors, 'password')}" th:text="${errors.password}" class="alert alert-warning">_Password Error_</div>
+									<input type="password" id="password" name="password" class="form-control input-full" required="required" th:placeholder="#{user.password}" />
+								</div>
+	
+								<div class="form-group">
+									<label class="control-label" th:text="#{user.confirmPassword}" for="confirmPassword">_Confirm Password_</label> 
+									<input type="password" id="confirmPassword" name="confirmPassword" class="form-control input-full" 
+										required="required" th:placeholder="#{user.confirmPassword}" />
+								</div>
 							</div>
 							<div class="panel-footer text-right">
                         		<button type="reset" class="btn btn-default" href="#">Cancel</button>
@@ -92,6 +99,24 @@
 	</div>
 
 
-	<div layout:fragment="scripts" th:inline="javascript"></div>
+	<div layout:fragment="scripts" th:inline="javascript">
+		<script type="text/javascript">
+			$(document).ready(function () {
+				
+				$("#setpassword").change(function(ele){
+					showHidePasswordBoxes();
+				});
+			});
+			
+			function showHidePasswordBoxes(){
+				if($("#setpassword").prop('checked')){
+					$(".password").show(100);
+				}
+				else{
+					$(".password").hide(100);
+				}
+			}
+		</script>
+	</div>
 </body>
 </html>

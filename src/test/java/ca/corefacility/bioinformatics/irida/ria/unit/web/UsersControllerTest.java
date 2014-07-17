@@ -34,6 +34,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.DataTable;
+import ca.corefacility.bioinformatics.irida.ria.utilities.SpringEmail;
 import ca.corefacility.bioinformatics.irida.ria.web.UsersController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
@@ -66,6 +67,7 @@ public class UsersControllerTest {
 	private UserService userService;
 	private ProjectService projectService;
 	private PasswordResetService passwordResetService;
+	private SpringEmail emailController;
 	private UsersController controller;
 	private MessageSource messageSource;
 
@@ -74,7 +76,9 @@ public class UsersControllerTest {
 		userService = mock(UserService.class);
 		projectService = mock(ProjectService.class);
 		messageSource = mock(MessageSource.class);
-		controller = new UsersController(userService, projectService, passwordResetService, null, messageSource);
+		emailController = mock(SpringEmail.class);
+		controller = new UsersController(userService, projectService, passwordResetService, emailController,
+				messageSource);
 	}
 
 	@Test
@@ -268,11 +272,11 @@ public class UsersControllerTest {
 		when(userService.create(any(User.class))).thenReturn(u);
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(u);
 
-		String submitCreateUser = controller.submitCreateUser(username, null, null, email, null, "ROLE_USER", password,
-				password, model, principal);
+		String submitCreateUser = controller.submitCreateUser(u, u.getSystemRole().getName(), password, "checked",
+				model, principal);
 		assertEquals("redirect:/users/1", submitCreateUser);
 		verify(userService).create(any(User.class));
-		verify(userService).getUserByUsername(USER_NAME);
+		verify(userService, times(2)).getUserByUsername(USER_NAME);
 	}
 
 	@Test
@@ -282,9 +286,10 @@ public class UsersControllerTest {
 		String password = "PassWord1";
 		ExtendedModelMap model = new ExtendedModelMap();
 		Principal principal = () -> USER_NAME;
+		User u = new User(1l, username, email, password, null, null, null);
 
-		String submitCreateUser = controller.submitCreateUser(username, null, null, email, null, "ROLE_USER", password,
-				"NotTheSamePassword", model, principal);
+		String submitCreateUser = controller.submitCreateUser(u, null, "NotTheSamePassword", "checked", model,
+				principal);
 		assertEquals("user/create", submitCreateUser);
 		assertTrue(model.containsKey("errors"));
 		@SuppressWarnings("unchecked")
@@ -313,12 +318,12 @@ public class UsersControllerTest {
 		Principal principal = () -> USER_NAME;
 		User pu = new User(username, email, password, null, null, null);
 		pu.setSystemRole(Role.ROLE_ADMIN);
+		User u = new User(1l, username, email, password, null, null, null);
 
 		when(userService.create(any(User.class))).thenThrow(exception);
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(pu);
 
-		String submitCreateUser = controller.submitCreateUser(username, null, null, email, null, "ROLE_USER", password,
-				password, model, principal);
+		String submitCreateUser = controller.submitCreateUser(u, null, password, "checked", model, principal);
 
 		assertEquals("user/create", submitCreateUser);
 		assertTrue(model.containsKey("errors"));
@@ -327,7 +332,7 @@ public class UsersControllerTest {
 		assertTrue(errors.containsKey(fieldname));
 
 		verify(userService).create(any(User.class));
-		verify(userService).getUserByUsername(USER_NAME);
+		verify(userService, times(2)).getUserByUsername(USER_NAME);
 	}
 
 }

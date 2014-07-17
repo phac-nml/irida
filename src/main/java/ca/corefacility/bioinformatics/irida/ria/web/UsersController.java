@@ -1,7 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
 import java.security.Principal;
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -26,6 +28,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,6 +50,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
@@ -333,12 +337,31 @@ public class UsersController {
 		return CREATE_USER_PAGE;
 	}
 
+	/**
+	 * Create a new user object
+	 * 
+	 * @param user
+	 *            User to create as a motel attribute
+	 * @param systemRole
+	 *            The system role to give to the user
+	 * @param confirmPassword
+	 *            Password confirmation
+	 * @param setpassword
+	 *            Checkbox whether the password was set by the creator or if it
+	 *            should be generated
+	 * @param model
+	 *            Model for the view
+	 * @param principal
+	 *            The user creating the object
+	 * @return A redirect to the user details view
+	 * @throws MessagingException
+	 *             If the create email failed to send
+	 */
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
-	public String submitCreateUser(@RequestParam String username, @RequestParam String firstName,
-			@RequestParam String lastName, @RequestParam String email, @RequestParam String phoneNumber,
-			@RequestParam(defaultValue = "ROLE_USER") String systemRole, @RequestParam String password,
-			@RequestParam String confirmPassword, Model model, Principal principal) throws MessagingException {
+	public String submitCreateUser(@ModelAttribute User user, @RequestParam String systemRole,
+			@RequestParam String confirmPassword, @RequestParam(required = false) String setpassword, Model model,
+			Principal principal) throws MessagingException {
 
 		Map<String, String> errors = new HashMap<>();
 
@@ -348,12 +371,21 @@ public class UsersController {
 
 		User creator = userService.getUserByUsername(principal.getName());
 
-		if (!password.equals(confirmPassword)) {
+		// check if we need to generate a password
+		boolean passwordEntered = !Strings.isNullOrEmpty(setpassword);
+		if (!passwordEntered) {
+			user.setPassword(generatePassword());
+			confirmPassword = user.getPassword();
+		}
+		user.setCredentialsNonExpired(passwordEntered);
+
+		// check validity of password
+		if (!user.getPassword().equals(confirmPassword)) {
 			errors.put("password", messageSource.getMessage("user.edit.password.match", null, locale));
 		}
 
+		// Check if there are any errors for the user creation
 		if (errors.isEmpty()) {
-			User user = new User(username, email, password, firstName, lastName, phoneNumber);
 			if (isAdmin(principal)) {
 				user.setSystemRole(Role.valueOf(systemRole));
 			} else {
@@ -362,7 +394,12 @@ public class UsersController {
 
 			try {
 				user = userService.create(user);
-				PasswordReset passwordReset = passwordResetService.create(new PasswordReset(user));
+
+				// if the password isn't set, we'll generate a password reset
+				PasswordReset passwordReset = null;
+				if (!passwordEntered) {
+					passwordReset = passwordResetService.create(new PasswordReset(user));
+				}
 
 				emailController.sendWelcomeEmail(user, creator, passwordReset);
 
@@ -376,11 +413,11 @@ public class UsersController {
 		if (!errors.isEmpty()) {
 			model.addAttribute("errors", errors);
 
-			model.addAttribute("given_username", username);
-			model.addAttribute("given_firstName", firstName);
-			model.addAttribute("given_lastName", lastName);
-			model.addAttribute("given_email", email);
-			model.addAttribute("given_phoneNumber", phoneNumber);
+			model.addAttribute("given_username", user.getUsername());
+			model.addAttribute("given_firstName", user.getFirstName());
+			model.addAttribute("given_lastName", user.getLastName());
+			model.addAttribute("given_email", user.getEmail());
+			model.addAttribute("given_phoneNumber", user.getPhoneNumber());
 
 			returnView = createUserPage(model);
 		}
@@ -534,6 +571,56 @@ public class UsersController {
 		logger.trace("Checking if user is admin");
 		User readPrincipal = userService.getUserByUsername(principal.getName());
 		return readPrincipal.getAuthorities().contains(Role.ROLE_ADMIN);
+	}
+
+	/**
+	 * Generate a temporary password for a user
+	 * 
+	 * @return A temporary password
+	 */
+	private static String generatePassword() {
+		int PASSWORD_LENGTH = 32;
+		int ALPHABET_SIZE = 26;
+		int SINGLE_DIGIT_SIZE = 10;
+		int RANDOM_LENGTH = PASSWORD_LENGTH - 3;
+
+		List<Character> pwdArray = new ArrayList<>(PASSWORD_LENGTH);
+		SecureRandom random = new SecureRandom();
+
+		// 1. Create 1 random uppercase.
+		pwdArray.add((char) ('A' + random.nextInt(ALPHABET_SIZE)));
+
+		// 2. Create 1 random lowercase.
+		pwdArray.add((char) ('a' + random.nextInt(ALPHABET_SIZE)));
+
+		// 3. Create 1 random number.
+		pwdArray.add((char) ('0' + random.nextInt(SINGLE_DIGIT_SIZE)));
+
+		// 4. Create 5 random.
+		int c = 'A';
+		int rand = 0;
+		for (int i = 0; i < RANDOM_LENGTH; i++) {
+			rand = random.nextInt(3);
+			switch (rand) {
+			case 0:
+				c = '0' + random.nextInt(SINGLE_DIGIT_SIZE);
+				break;
+			case 1:
+				c = 'a' + random.nextInt(ALPHABET_SIZE);
+				break;
+			case 2:
+				c = 'A' + random.nextInt(ALPHABET_SIZE);
+				break;
+			}
+			pwdArray.add((char) c);
+		}
+
+		// 5. Shuffle.
+		Collections.shuffle(pwdArray, random);
+
+		// 6. Create string.
+		Joiner joiner = Joiner.on("");
+		return joiner.join(pwdArray);
 	}
 
 }
