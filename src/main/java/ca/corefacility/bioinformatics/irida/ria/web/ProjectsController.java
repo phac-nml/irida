@@ -57,6 +57,8 @@ public class ProjectsController {
     private static final String PROJECT_METADATA_EDIT_PAGE = PROJECTS_DIR + "project_metadata_edit";
     private static final String SORT_BY_ID = "id";
     private static final String SORT_BY_NAME = "name";
+    private static final String SORT_BY_ROLE = "role";
+    private static final String SORT_BY_ORGANISM = "organism";
     private static final String SORT_BY_CREATED_DATE = "createdDate";
     private static final String SORT_BY_MODIFIED_DATE = "modifiedDate";
     private static final String SORT_ASCENDING = "asc";
@@ -67,7 +69,13 @@ public class ProjectsController {
 
     // Key is the column number in the datatable.
     private final ImmutableMap<Integer, String> COLUMN_SORT_MAP = ImmutableMap.<Integer, String>builder()
-            .put(0, SORT_BY_ID).put(1, SORT_BY_NAME).put(5, SORT_BY_CREATED_DATE).put(6, SORT_BY_MODIFIED_DATE).build();
+            .put(1, SORT_BY_ID)
+            .put(2, SORT_BY_NAME)
+            .put(3, SORT_BY_ORGANISM)
+            .put(4, SORT_BY_ROLE)
+            .put(7, SORT_BY_CREATED_DATE)
+            .put(8, SORT_BY_MODIFIED_DATE)
+            .build();
 
     @Autowired
     public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService) {
