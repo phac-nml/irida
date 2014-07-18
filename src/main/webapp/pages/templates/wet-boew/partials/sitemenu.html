@@ -11,19 +11,26 @@
             <ul class="list-inline menu" role="menubar">
                 <li><a href="#projects" class="item" th:text="#{nav.main.project}">Projects</a>
                     <ul class="sm list-unstyled" id="projects" role="menu">
-                        <li><a href="/projects" th:href="@{/projects}" th:text="#{nav.main.project-list}">List Projects</a></li>
-                        <li sec:authorize="hasAnyRole('ROLE_ADMIN')"><a href="/projects/all" th:href="@{/projects/all}" th:text="#{nav.main.project-list-all}">List All Projects</a></li>
-                        <li><a th:href="@{/projects/new}" href="/projects/new" th:text="#{nav.main.project-create}">Create
-                                                                                                                    New
-                                                                                                                    Project</a>
+                        <li>
+                            <a href="/projects" th:href="@{/projects}" th:text="#{nav.main.project-list}">List Projects</a>
+                        </li>
+                        <li sec:authorize="hasAnyRole('ROLE_ADMIN')">
+                            <a href="/projects/all" th:href="@{/projects/all}"
+                               th:text="#{nav.main.project-list-all}">List All Projects</a>
+                        </li>
+                        <li>
+                            <a th:href="@{/projects/new}" href="/projects/new"
+                               th:text="#{nav.main.project-create}">Create New Project</a>
                         </li>
                     </ul>
                 </li>
                 <li><a href="#users" class="item" th:text="#{nav.main.users}">Users</a>
-                	<ul class="sm list-unstyled" id="users" role="menu">
-                		<li><a href="/users" th:href="@{/users}" th:text="#{nav.main.users}">Users</a></li>
-                		<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')"><a href="#" th:href="@{/users/create}" th:text="#{nav.main.add.user}"></a></li>
-                	</ul>
+                    <ul class="sm list-unstyled" id="users" role="menu">
+                        <li><a href="/users" th:href="@{/users}" th:text="#{nav.main.users}">Users</a></li>
+                        <li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')">
+                            <a href="#" th:href="@{/users/create}" th:text="#{nav.main.add.user}"></a>
+                        </li>
+                    </ul>
                 </li>
                 <li><a href="#pipelines" class="item" th:text="#{nav.main.pipelines}">Pipelines</a>
                     <ul class="sm list-unstyled">
@@ -35,7 +42,8 @@
                     <ul class="list-inline menu">
                         <li><a href="#contribute" class="item" th:text="#{nav.main.settings}">Settings</a>
                             <ul class="sm list-unstyled" id="contribute" role="menu">
-                                <li><a href="#" th:href="@{/users/current}" th:text="#{nav.main.account}">Account</a></li>
+                                <li><a href="#" th:href="@{/users/current}" th:text="#{nav.main.account}">Account</a>
+                                </li>
                                 <li><a th:href="@{/logout}" href="/logout" th:text="#{nav.main.logout}">Logout</a></li>
                             </ul>
                         </li>
