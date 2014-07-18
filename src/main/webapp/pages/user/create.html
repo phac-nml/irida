@@ -3,7 +3,7 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorator="templates/wet-boew/wet-layout">
 <head>
-<title th:text="${user.label}">_USER PAGE_</title>
+<title th:text="#{user.create.details}">_USER PAGE_</title>
 </head>
 <body>
 	<div class="container" layout:fragment="content">
@@ -87,10 +87,10 @@
 								</div>
 							</div>
 						</div>
-                            <div class="panel-footer text-right">
-                                <button type="reset" class="btn btn-default" href="#">Cancel</button>
-                                <button type="submit" class="btn btn-primary submit">Create User</button>
-                            </div>
+                        <div class="panel-footer text-right">
+                            <button type="reset" class="btn btn-default" href="#">Cancel</button>
+                            <button type="submit" class="btn btn-primary submit">Create User</button>
+                        </div>
 					</section>
 				</form>
 			</div>
