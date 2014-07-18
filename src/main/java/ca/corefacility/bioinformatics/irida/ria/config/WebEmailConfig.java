@@ -24,8 +24,12 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
  * 
  */
 @Configuration
-@PropertySource(value = { "classpath:configuration.properties" }, ignoreResourceNotFound=false)
+@PropertySource(value = { "classpath:configuration.properties" }, ignoreResourceNotFound = false)
 public class WebEmailConfig {
+
+	private static final String MAIL_TEMPLATE_PREFIX = "/mail/";
+	private static final String TEMPLATE_MODE = "VALIDXHTML";
+	private static final String CHARACER_ENCODING = "UTF-8";
 
 	@Value("${mail.server.host}")
 	String host;
@@ -49,36 +53,19 @@ public class WebEmailConfig {
 		sender.setUsername(username);
 		return sender;
 	}
-	
-	public ClassLoaderTemplateResolver classLoaderTemplateResolver(){
+
+	public ClassLoaderTemplateResolver classLoaderTemplateResolver() {
 		ClassLoaderTemplateResolver classLoaderTemplateResolver = new ClassLoaderTemplateResolver();
-		classLoaderTemplateResolver.setPrefix("/mail/");
-		classLoaderTemplateResolver.setTemplateMode("VALIDXHTML");
-		classLoaderTemplateResolver.setCharacterEncoding("UTF-8");
+		classLoaderTemplateResolver.setPrefix(MAIL_TEMPLATE_PREFIX);
+		classLoaderTemplateResolver.setTemplateMode(TEMPLATE_MODE);
+		classLoaderTemplateResolver.setCharacterEncoding(CHARACER_ENCODING);
 		return classLoaderTemplateResolver;
 	}
-	
+
 	@Bean
-	public SpringTemplateEngine emailTemplateEngine(){
+	public SpringTemplateEngine emailTemplateEngine() {
 		SpringTemplateEngine emailTemplateEngine = new SpringTemplateEngine();
 		emailTemplateEngine.addTemplateResolver(classLoaderTemplateResolver());
 		return emailTemplateEngine;
 	}
-	
-	/**
-	 *  <bean id="emailTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
-        <property name="prefix" value="mail/"/>
-        <property name="templateMode" value="VALIDXHTML"/>
-        <property name="characterEncoding" value="UTF-8"/>
-        <property name="order" value="1"/>
-    	</bean>
-	 */
-
-	/*
-	 * <bean id="mailSender"
-	 * class="org.springframework.mail.javamail.JavaMailSenderImpl"> <property
-	 * name="host" value="${mail.server.host}"/> <property name="protocol"
-	 * value="${mail.server.protocol}"/> <property name="username"
-	 * value="${mail.server.username}"/> </bean>
-	 */
 }
