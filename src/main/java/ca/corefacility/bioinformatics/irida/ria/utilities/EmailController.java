@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -29,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Component
+@Profile({ "prod", "dev" })
 public class EmailController {
 	private static final Logger logger = LoggerFactory.getLogger(EmailController.class);
 
@@ -70,11 +72,10 @@ public class EmailController {
 
 			final String htmlContent = templateEngine.process("welcome-email.html", ctx);
 			message.setText(htmlContent, true);
+			// javaMailSender.send(mimeMessage);
 		} catch (MessagingException e) {
 			logger.error("User creation email failed to send", e);
 		}
-
-		this.javaMailSender.send(mimeMessage);
 	}
 
 	public void sendPasswordResetLinkEmail(User user, PasswordReset passwordReset) {
@@ -99,7 +100,7 @@ public class EmailController {
 			final String htmlContent = this.templateEngine.process("password-reset-link.html", ctx);
 			message.setText(htmlContent, true);
 
-			this.javaMailSender.send(mimeMessage);
+			// javaMailSender.send(mimeMessage);
 		} catch (MessagingException e) {
 			logger.error("Error trying to send a password reset link email.", e);
 		}
