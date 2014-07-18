@@ -7,6 +7,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.security.Principal;
@@ -29,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.DataTable;
@@ -275,6 +277,7 @@ public class UsersControllerTest {
 		assertEquals("redirect:/users/1", submitCreateUser);
 		verify(userService).create(any(User.class));
 		verify(userService, times(2)).getUserByUsername(USER_NAME);
+		verify(emailController).sendWelcomeEmail(eq(u), eq(pu), any(PasswordReset.class));
 	}
 
 	@Test
@@ -293,6 +296,8 @@ public class UsersControllerTest {
 		@SuppressWarnings("unchecked")
 		Map<String, String> errors = (Map<String, String>) model.get("errors");
 		assertTrue(errors.containsKey("password"));
+
+		verifyZeroInteractions(emailController);
 	}
 
 	@Test
@@ -300,12 +305,14 @@ public class UsersControllerTest {
 		DataIntegrityViolationException ex = new DataIntegrityViolationException("Error: "
 				+ User.USER_EMAIL_CONSTRAINT_NAME);
 		createWithException(ex, "email");
+		verifyZeroInteractions(emailController);
 	}
 
 	@Test
 	public void testSubmitUsernameExists() {
 		EntityExistsException ex = new EntityExistsException("username exists", "username");
 		createWithException(ex, "username");
+		verifyZeroInteractions(emailController);
 	}
 
 	public void createWithException(Throwable exception, String fieldname) {

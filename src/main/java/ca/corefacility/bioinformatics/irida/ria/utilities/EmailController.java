@@ -72,7 +72,7 @@ public class EmailController {
 
 			final String htmlContent = templateEngine.process("welcome-email.html", ctx);
 			message.setText(htmlContent, true);
-			// javaMailSender.send(mimeMessage);
+			javaMailSender.send(mimeMessage);
 		} catch (MessagingException e) {
 			logger.error("User creation email failed to send", e);
 		}
@@ -100,7 +100,7 @@ public class EmailController {
 			final String htmlContent = this.templateEngine.process("password-reset-link.html", ctx);
 			message.setText(htmlContent, true);
 
-			// javaMailSender.send(mimeMessage);
+			javaMailSender.send(mimeMessage);
 		} catch (MessagingException e) {
 			logger.error("Error trying to send a password reset link email.", e);
 		}
