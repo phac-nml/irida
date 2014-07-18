@@ -42,9 +42,9 @@ public class ProjectsControllerTest {
     private static final String PROJECT_MEMBERS_PAGE = "projects/project_members";
 
     // DATATABLES position for project information
-	private static final int PROJECT_NAME_TABLE_LOCATION = 1;
-	private static final int PROJECT_NUM_SAMPLES_TABLE_LOCATION = 4;
-	private static final int PROJECT_NUM_USERS_TABLE_LOCATION = 5;
+	private static final int PROJECT_NAME_TABLE_LOCATION = 2;
+	private static final int PROJECT_NUM_SAMPLES_TABLE_LOCATION = 5;
+	private static final int PROJECT_NUM_USERS_TABLE_LOCATION = 6;
 	private static final int NUM_PROJECT_SAMPLES = 12;
 	private static final int NUM_PROJECT_USERS = 50;
 	private static final long NUM_TOTAL_ELEMENTS = 100L;
@@ -87,7 +87,7 @@ public class ProjectsControllerTest {
 		Principal principal = () -> USER_NAME;
 
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
-		when(projectService.searchProjectsByNameForUser(user, "", 0, 10, Sort.Direction.ASC, "id")).thenReturn(getProjectsPage());
+		when(projectService.searchProjectsByNameForUser(any(User.class), anyString(), anyInt(), anyInt(), any(), anyString())).thenReturn(getProjectsPage());
 		when(sampleService.getSamplesForProject(project)).thenReturn(samplesJoin);
 		when(userService.getUsersForProject(project)).thenReturn(usersJoin);
 		
