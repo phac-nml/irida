@@ -28,6 +28,7 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 public class WebEmailConfig {
 
 	private static final String MAIL_TEMPLATE_PREFIX = "/mail/";
+	private static final String TEMPLATE_SUFFIX = ".html";
 	private static final String TEMPLATE_MODE = "VALIDXHTML";
 	private static final String CHARACER_ENCODING = "UTF-8";
 
@@ -57,6 +58,7 @@ public class WebEmailConfig {
 	public ClassLoaderTemplateResolver classLoaderTemplateResolver() {
 		ClassLoaderTemplateResolver classLoaderTemplateResolver = new ClassLoaderTemplateResolver();
 		classLoaderTemplateResolver.setPrefix(MAIL_TEMPLATE_PREFIX);
+		classLoaderTemplateResolver.setSuffix(TEMPLATE_SUFFIX);
 		classLoaderTemplateResolver.setTemplateMode(TEMPLATE_MODE);
 		classLoaderTemplateResolver.setCharacterEncoding(CHARACER_ENCODING);
 		return classLoaderTemplateResolver;

@@ -4,13 +4,16 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -129,7 +132,13 @@ public class PasswordResetController {
 			try {
 				userService.changePassword(user.getId(), password);
 			} catch (ConstraintViolationException ex) {
-				errors.put("password", ex.getMessage());
+				Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
+
+				for (ConstraintViolation<?> violation : constraintViolations) {
+					logger.debug(violation.getMessage());
+					String errorKey = violation.getPropertyPath().toString();
+					errors.put(errorKey, violation.getMessage());
+				}
 			}
 		}
 
@@ -196,11 +205,7 @@ public class PasswordResetController {
 		try {
 			User user = userService.loadUserByEmail(email);
 
-			// get the user and password reset created
-			PasswordReset passwordReset = passwordResetService.create(new PasswordReset(user));
-
-			// email the user their info
-			emailController.sendPasswordResetLinkEmail(user, passwordReset);
+			createNewPasswordReset(user);
 
 			page = CREATED_REDIRECT + Base64.getEncoder().encodeToString(email.getBytes());
 		} catch (EntityNotFoundException ex) {
@@ -257,10 +262,25 @@ public class PasswordResetController {
 	 */
 	@RequestMapping("/ajax/create/{userId}")
 	@ResponseBody
-	public void createNewPasswordReset(@PathVariable Long userId) {
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void adminNewPasswordReset(@PathVariable Long userId) {
 		User user = userService.read(userId);
+		createNewPasswordReset(user);
+	}
+
+	/**
+	 * Create a new password reset for a given {@link User} and send a reset
+	 * email
+	 * 
+	 * @param user
+	 *            The user to create the reset for
+	 */
+	private void createNewPasswordReset(User user) {
 		PasswordReset passwordReset = new PasswordReset(user);
 		passwordResetService.create(passwordReset);
+
+		// email the user their info
+		emailController.sendPasswordResetLinkEmail(user, passwordReset);
 	}
 
 	/**

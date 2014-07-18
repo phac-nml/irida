@@ -34,6 +34,9 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 public class EmailController {
 	private static final Logger logger = LoggerFactory.getLogger(EmailController.class);
 
+	public static final String WELCOME_TEMPLATE = "welcome-email";
+	public static final String RESET_TEMPLATE = "password-reset-link";
+	
 	private @Value("${mail.server.email}") String serverEmail;
 
 	private @Value("${mail.server.url}") String serverURL;
@@ -50,6 +53,16 @@ public class EmailController {
 		this.messageSource = messageSource;
 	}
 
+	/**
+	 * Send welcome email to a user who joined the platform
+	 * 
+	 * @param user
+	 *            The {@link User} that was just created
+	 * @param sender
+	 *            The {@link User} that created the new user
+	 * @param passwordReset
+	 *            A {@link PasswordReset} object to send an activation link
+	 */
 	public void sendWelcomeEmail(User user, User sender, PasswordReset passwordReset) {
 		logger.debug("Sending user creation email to " + user.getEmail());
 
@@ -70,7 +83,7 @@ public class EmailController {
 			message.setFrom(serverEmail);
 			message.setTo(user.getEmail());
 
-			final String htmlContent = templateEngine.process("welcome-email.html", ctx);
+			final String htmlContent = templateEngine.process(WELCOME_TEMPLATE, ctx);
 			message.setText(htmlContent, true);
 			javaMailSender.send(mimeMessage);
 		} catch (MessagingException e) {
@@ -78,6 +91,14 @@ public class EmailController {
 		}
 	}
 
+	/**
+	 * Send a {@link PasswordReset} link to a {@link User}
+	 * 
+	 * @param user
+	 *            The user for the reset
+	 * @param passwordReset
+	 *            the reset object
+	 */
 	public void sendPasswordResetLinkEmail(User user, PasswordReset passwordReset) {
 		logger.debug("Sending password reset email to " + user.getEmail());
 		final Context ctx = new Context();
@@ -97,7 +118,7 @@ public class EmailController {
 			message.setFrom(serverEmail);
 			message.setTo(user.getEmail());
 
-			final String htmlContent = this.templateEngine.process("password-reset-link.html", ctx);
+			final String htmlContent = templateEngine.process(RESET_TEMPLATE, ctx);
 			message.setText(htmlContent, true);
 
 			javaMailSender.send(mimeMessage);
