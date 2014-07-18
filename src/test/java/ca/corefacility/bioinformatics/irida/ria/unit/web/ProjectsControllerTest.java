@@ -1,22 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.security.Principal;
-import java.util.*;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
-
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -30,6 +13,22 @@ import ca.corefacility.bioinformatics.irida.ria.web.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.Model;
+
+import java.security.Principal;
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link }
@@ -68,11 +67,15 @@ public class ProjectsControllerTest {
 		sampleService = mock(SampleService.class);
 		userService = mock(UserService.class);
 		controller = new ProjectsController(projectService, sampleService, userService);
-	}
+        user.setId(1L);
+
+        mockSidebarInfo();
+    }
 
 	@Test
 	public void showAllProjects() {
-		assertEquals(PROJECTS_PAGE, controller.getProjectsPage());
+        Model model = new ExtendedModelMap();
+		assertEquals(PROJECTS_PAGE, controller.getProjectsPage(model));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -161,6 +164,42 @@ public class ProjectsControllerTest {
         Map<String, Collection<Join<Project, User>>> usersReturned = controller.getAjaxUsersListForProject(projectId);
         assertTrue("Has a data attribute required for data tables", usersReturned.containsKey("data"));
         assertEquals("Has the correct number of users.", usersReturned.get("data").size(), 2);
+    }
+
+    @Test
+    public void testGetProjectMetadataPage() {
+        Model model = new ExtendedModelMap();
+        Principal principal = () -> USER_NAME;
+        String page = controller.getProjectMetadataPage(model, principal, PROJECT_ID);
+        assertEquals("Returns the correct edit page.", "projects/project_metadata", page);
+    }
+
+    @Test
+    public void testPostProjectMetadataEditPage() {
+        Model model = new ExtendedModelMap();
+        Principal principal = () -> USER_NAME;
+
+        String newName = "My Project";
+        String newOrganism = "Bad Buggy";
+        String newDescritption = "Another new description.";
+        String newRemoteURL = "http://ghosturl.ca";
+
+        when(projectService.update(anyLong(), anyMap())).thenReturn(getProject());
+
+        String page = controller.postProjectMetadataEditPage(model, principal, PROJECT_ID, newName, newOrganism, newDescritption, newRemoteURL);
+        assertEquals("Returns the correct page.", "redirect:/projects/" + PROJECT_ID + "/metadata", page);
+    }
+
+    /**
+     * Mocks the information found within the project sidebar.
+     */
+    private void mockSidebarInfo() {
+        Project project = getProject();
+        Collection<Join<Project, User>> ownerList = new ArrayList<>();
+        ownerList.add(new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER));
+        when(userService.getUsersForProjectByRole(any(Project.class), any(ProjectRole.class))).thenReturn(ownerList);
+        when(projectService.read(PROJECT_ID)).thenReturn(project);
+        when(userService.getUserByUsername(anyString())).thenReturn(user);
     }
 
 	private List<Join<Project, User>> getProjectsForUser() {
@@ -292,7 +331,7 @@ public class ProjectsControllerTest {
 	}
 
 	private List<Join<Project, Sample>> getSamplesForProject() {
-		List<Join<Project, Sample>> join = new ArrayList<>();
+		List<Join<Project, Sample>> join = new ArrayList<>(NUM_PROJECT_SAMPLES);
 		for (int i = 0; i < NUM_PROJECT_SAMPLES; i++) {
 			join.add(new ProjectSampleJoin(getProject(), new Sample("sample" + i)));
 		}

@@ -13,79 +13,15 @@
     <div class="row">
         <nav th:replace="projects/project_base :: nav"></nav>
         <main class="col-md-9 col-md-push-3" role="main" property="mainContentOfPage">
-            <div class="row">
-                <div class="col-md-9">
-                    <h1 id="wb-cont" property="name" th:text="${project.label}">__PROJECT_NAME__</h1>
-                </div>
-            </div>
+            <h1 id="wb-cont" role="heading" th:text="${project.label}"></h1>
+
             <h3>This is where the project recent activities will go.</h3>
         </main>
-        <div class="col-md-3 col-md-pull-9 visible-md visible-lg">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <b class="panel-title" th:text="#{project.details}">Project Details</b>
-                </div>
-                <div class="panel-body">
-                    <ul class="nav nav-pills nav-stacked details">
-                        <li><span class="glyphicon glyphicon-barcode"></span><em th:text="#{project.id}"></em><span class="pull-right" th:text="${project.getId()}"></span></li>
-                        <li th:if="${project.organism} != null"><span class="glyphicon glyphicon-leaf"></span><em th:text="#{project.organism}"></em><span
-                                class="pull-right" id="project-organism"><i th:text="${project.organism}"></i></span>
-                        </li>
-                        <li th:if="${owner} != null"><span class="glyphicon glyphicon-tower"></span><em th:text="#{project.owner}"></em><span
-                                class="pull-right" id="project-owner"
-                                th:text="${owner.label}">__DATE_CREATED__</span>
-                        </li>
-                        <li><span class="glyphicon glyphicon-calendar"></span><em th:text="#{project.created}"></em><span
-                                class="pull-right" id="project-created"
-                                th:text="${#calendars.format(project.timestamp, 'dd MMM yyyy')}">__DATE_CREATED__</span>
-                        </li>
-                        <li th:if="${project.modifiedDate} != null"><span class="glyphicon glyphicon-calendar"></span><em th:text="#{project.modified}"></em><span
-                                class="pull-right" id="project-modified" data:livestamp="${project.modifiedDate}" th:title="${#calendars.format(project.modifiedDate, 'dd MMM yyyy HH:mm')}">__DATE_CREATED__</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div layout:replace="partials/associated-projects :: list (projects=${associatedProjects})"></div>
-        </div>
+        <aside th:replace="projects/project_base :: sidebar"></aside>
     </div>
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
-    <script th:src="@{/resources/bower_components/moment/min/moment-with-langs.min.js}" src="/resources/bower_components/moment/min/moment-with-langs.min.js"></script>
-    <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}" src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
-    <script>
-        $(function() {
-            $(".authorized").qtip({
-                content: {
-                    text: /*[[#{project.associated.rights}]]*/ 'You can view this project.'
-                },
-                position: {
-                    at: 'right center',
-                    my: 'left, center',
-                    adjust: {
-                        x: -8
-                    }
-                },
-                style: {
-                    classes: "qtip-green"
-                }
-            });
-            $(".unauthorized").qtip({
-                content: {
-                    text: /*[[#{project.associated.norights}]]*/ 'You do not have authorization to view this project.'
-                },
-                position: {
-                    at: 'right center',
-                    my: 'left, center',
-                    adjust: {
-                        x: -8
-                    }
-                },
-                style: {
-                    classes: "qtip-red"
-                }
-            });
-        });
-    </script>
+    <div th:replace="projects/project_base :: scripts"></div>
 </div>
 </body>
 </html>
