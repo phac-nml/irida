@@ -30,7 +30,6 @@ import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.DataTable;
@@ -266,18 +265,18 @@ public class UsersControllerTest {
 		Principal principal = () -> USER_NAME;
 		User u = new User(1l, username, email, password, null, null, null);
 		u.setSystemRole(Role.ROLE_USER);
-		User pu = new User(username, email, password, null, null, null);
+		User pu = new User(USER_NAME, email, password, null, null, null);
 		pu.setSystemRole(Role.ROLE_ADMIN);
 
 		when(userService.create(any(User.class))).thenReturn(u);
-		when(userService.getUserByUsername(USER_NAME)).thenReturn(u);
+		when(userService.getUserByUsername(USER_NAME)).thenReturn(pu);
 
-		String submitCreateUser = controller.submitCreateUser(u, u.getSystemRole().getName(), password, "checked",
-				model, principal);
+		String submitCreateUser = controller.submitCreateUser(u, u.getSystemRole().getName(), password, null, model,
+				principal);
 		assertEquals("redirect:/users/1", submitCreateUser);
 		verify(userService).create(any(User.class));
 		verify(userService, times(2)).getUserByUsername(USER_NAME);
-		verify(emailController).sendWelcomeEmail(eq(u), eq(pu), any(PasswordReset.class));
+		verify(emailController).sendWelcomeEmail(eq(u), eq(pu), eq(null));
 	}
 
 	@Test

@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.user;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
 /**
@@ -20,8 +21,13 @@ public class CreateUserPage {
 		this.driver = driver;
 		driver.get(CREATE_PAGE);
 	}
-	
-	public void createUser(String username, String email, String password, String confirmPassword){
+
+	public void createUserWithPassword(String username, String email, String password, String confirmPassword) {
+		// unselect the set password checkbox
+		WebElement setPasswordCheckbox = driver.findElement(By.id("setpassword"));
+		if (setPasswordCheckbox.isSelected()) {
+			setPasswordCheckbox.click();
+		}
 		driver.findElement(By.id("username")).sendKeys(username);
 		driver.findElement(By.id("firstName")).sendKeys("test");
 		driver.findElement(By.id("lastName")).sendKeys("user");
@@ -31,12 +37,12 @@ public class CreateUserPage {
 		driver.findElement(By.id("confirmPassword")).sendKeys(confirmPassword);
 		Select select = new Select(driver.findElement(By.id("systemRole")));
 		select.selectByIndex(1);
-		
+
 		driver.findElement(By.className("submit")).click();
 	}
-	
-	public boolean createSuccess(){
+
+	public boolean createSuccess() {
 		return driver.getCurrentUrl().matches(SUCCESS_PAGE);
 	}
-	
+
 }

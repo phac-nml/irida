@@ -345,9 +345,8 @@ public class UsersController {
 	 *            The system role to give to the user
 	 * @param confirmPassword
 	 *            Password confirmation
-	 * @param setpassword
-	 *            Checkbox whether the password was set by the creator or if it
-	 *            should be generated
+	 * @param requireActivation
+	 *            Checkbox whether the user account needs to be activated
 	 * @param model
 	 *            Model for the view
 	 * @param principal
@@ -357,8 +356,8 @@ public class UsersController {
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
 	public String submitCreateUser(@ModelAttribute User user, @RequestParam String systemRole,
-			@RequestParam String confirmPassword, @RequestParam(required = false) String setpassword, Model model,
-			Principal principal) {
+			@RequestParam String confirmPassword, @RequestParam(required = false) String requireActivation,
+			Model model, Principal principal) {
 
 		Map<String, String> errors = new HashMap<>();
 
@@ -369,8 +368,8 @@ public class UsersController {
 		User creator = userService.getUserByUsername(principal.getName());
 
 		// check if we need to generate a password
-		boolean passwordEntered = !Strings.isNullOrEmpty(setpassword);
-		if (!passwordEntered) {
+		boolean passwordEntered = Strings.isNullOrEmpty(requireActivation);
+		if (passwordEntered) {
 			user.setPassword(generatePassword());
 			confirmPassword = user.getPassword();
 		}

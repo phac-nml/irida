@@ -70,7 +70,8 @@
 							
 							<div class="form-group">
 								<label class="control-label" th:text="#{user.setpassword}" for="setpassword">_User Created Password_</label>
-								<input type="checkbox" id="setpassword" name="setpassword" />
+								<input type="checkbox" id="setpassword" name="setpassword" checked="checked"/>
+                                <p class="help-block">User will be required to activate their account and create a password.  If password is set here activation will not be required.</p>
 							</div>
 							
 							<div class="password">
@@ -101,20 +102,18 @@
 	<div layout:fragment="scripts" th:inline="javascript">
 		<script type="text/javascript">
 			$(document).ready(function () {
-				
-				$("#setpassword").change(function(ele){
-					showHidePasswordBoxes();
+				$("#setpassword").change(function(){
+					if($(this).prop('checked')){
+						$(".password").hide(100);
+					}
+					else{
+						$(".password").show(100);
+					}
 				});
+				
+				$(".password").hide();
 			});
 			
-			function showHidePasswordBoxes(){
-				if($("#setpassword").prop('checked')){
-					$(".password").show(100);
-				}
-				else{
-					$(".password").hide(100);
-				}
-			}
 		</script>
 	</div>
 </body>
