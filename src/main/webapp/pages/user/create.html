@@ -70,7 +70,7 @@
 							
 							<div class="form-group">
 								<label class="control-label" th:text="#{user.setpassword}" for="setpassword">_User Created Password_</label>
-								<input type="checkbox" id="setpassword" name="setpassword" checked="checked"/>
+								<input type="checkbox" id="setpassword" name="setpassword" />
 							</div>
 							
 							<div class="password">
@@ -88,7 +88,7 @@
 							</div>
 						</div>
                         <div class="panel-footer text-right">
-                            <button type="reset" class="btn btn-default" href="#">Cancel</button>
+                            <a type="reset" class="btn btn-default" href="#" th:href="@{/users}">Cancel</a>
                             <button type="submit" class="btn btn-primary submit">Create User</button>
                         </div>
 					</section>
