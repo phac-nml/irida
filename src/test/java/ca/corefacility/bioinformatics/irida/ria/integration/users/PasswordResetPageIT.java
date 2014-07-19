@@ -51,6 +51,7 @@ public class PasswordResetPageIT {
 	public void destroy() {
 		if (driver != null) {
 			driver.close();
+            driver.quit();
 		}
 	}
 

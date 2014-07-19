@@ -50,6 +50,7 @@ public class CreateUserPageIT {
 	public void destroy() {
 		if (driver != null) {
 			driver.close();
+            driver.quit();
 		}
 	}
 

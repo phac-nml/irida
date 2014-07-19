@@ -60,6 +60,7 @@ public class ProjectMetadataPageIT {
     public void destroy() {
         if (driver != null) {
             driver.close();
+            driver.quit();
         }
     }
 
