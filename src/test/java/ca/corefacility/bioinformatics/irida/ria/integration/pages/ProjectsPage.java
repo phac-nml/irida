@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
 import java.util.List;
 
+import com.google.common.base.Strings;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -30,13 +31,19 @@ public class ProjectsPage {
 		waitForAjax();
 	}
 
+    public ProjectsPage(WebDriver driver, String url) {
+        this.driver = driver;
+        driver.get(url);
+        waitForAjax();
+    }
+
 	public int projectsTableSize() {
 		WebElement element = driver.findElement(By.xpath("//table[@id='projectsTable']/tbody"));
 		return element.findElements(By.tagName("tr")).size();
 	}
 
 	public WebElement getCollaboratorSpan() {
-		WebElement el = driver.findElement(By.xpath("//table[@id='projectsTable']/tbody/tr[2]/td[4]/span"));
+		WebElement el = driver.findElement(By.xpath("//table[@id='projectsTable']/tbody/tr[3]/td[4]/span"));
         return el;
 	}
 
@@ -54,6 +61,35 @@ public class ProjectsPage {
 		header.click();
 		waitForAjax();
 	}
+
+    public boolean adminShouldShowProjectsNotMembersOf() {
+        return driver.findElements(By.className("glyphicon-minus")).size() > 0;
+    }
+
+    public boolean adminShouldBeAbleToSelectViaCheckboxes() {
+        return driver.findElements(By.cssSelector("#projectsTable input[type=\"checkbox\"]")).size() > 0;
+    }
+
+    public int adminGetSelectedCheckboxCount() {
+        return driver.findElements(By.cssSelector("#projectsTable tbody input[type=\"checkbox\"]:checked")).size();
+    }
+
+    public void adminSelectHeaderCheckbox() {
+        driver.findElement(By.id("selectAll")).click();
+    }
+
+    public void adminSelectFirstCheckbox() {
+        List<WebElement> els = driver.findElements(By.cssSelector("#projectsTable tbody input[type=\"checkbox\"]"));
+        els.get(0).click();
+    }
+
+    public boolean adminIsSelectAllCheckboxIntermediateState() {
+        String exists = driver.findElement(By.id("selectAll")).getAttribute("indeterminate");
+        if (Strings.isNullOrEmpty(exists)) {
+            return false;
+        }
+        return true;
+    }
 
 	private void waitForAjax() {
 		Wait<WebDriver> wait = new WebDriverWait(driver, 60);

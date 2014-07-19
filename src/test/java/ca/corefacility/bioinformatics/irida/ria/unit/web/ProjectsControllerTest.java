@@ -1,18 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
-import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.utilities.DataTable;
-import ca.corefacility.bioinformatics.irida.ria.web.ProjectsController;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.security.Principal;
+import java.util.*;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
@@ -21,14 +17,19 @@ import org.springframework.data.domain.Sort;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
-import java.security.Principal;
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
+import ca.corefacility.bioinformatics.irida.ria.web.ProjectsController;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 /**
  * Unit test for {@link }
@@ -36,15 +37,10 @@ import static org.mockito.Mockito.when;
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectsControllerTest {
-	// HTML page names
-	private static final String PROJECT_DETAILS_PAGE = "projects/project_details";
-	private static final String PROJECTS_PAGE = "projects/projects";
-    private static final String PROJECT_MEMBERS_PAGE = "projects/project_members";
-
     // DATATABLES position for project information
-	private static final int PROJECT_NAME_TABLE_LOCATION = 2;
-	private static final int PROJECT_NUM_SAMPLES_TABLE_LOCATION = 5;
-	private static final int PROJECT_NUM_USERS_TABLE_LOCATION = 6;
+	private static final int PROJECT_NAME_TABLE_LOCATION = 1;
+	private static final int PROJECT_NUM_SAMPLES_TABLE_LOCATION = 4;
+	private static final int PROJECT_NUM_USERS_TABLE_LOCATION = 5;
 	private static final int NUM_PROJECT_SAMPLES = 12;
 	private static final int NUM_PROJECT_USERS = 50;
 	private static final long NUM_TOTAL_ELEMENTS = 100L;
@@ -53,7 +49,8 @@ public class ProjectsControllerTest {
 	private static final String PROJECT_NAME = "test_project";
 	private static final Long PROJECT_ID = 1L;
 	private static final Long PROJECT_MODIFIED_DATE = 1403723706L;
-	private static Project project = null;
+    public static final String PROJECT_ORGANISM = "E. coli";
+    private static Project project = null;
 
 	// Services
 	private ProjectService projectService;
@@ -67,69 +64,104 @@ public class ProjectsControllerTest {
 		sampleService = mock(SampleService.class);
 		userService = mock(UserService.class);
 		controller = new ProjectsController(projectService, sampleService, userService);
-        user.setId(1L);
+		user.setId(1L);
 
-        mockSidebarInfo();
-    }
+		mockSidebarInfo();
+	}
 
 	@Test
 	public void showAllProjects() {
-        Model model = new ExtendedModelMap();
-		assertEquals(PROJECTS_PAGE, controller.getProjectsPage(model));
+		Model model = new ExtendedModelMap();
+		String page = controller.getProjectsPage(model);
+		assertEquals(ProjectsController.LIST_PROJECTS_PAGE, page);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testGetAjaxProjectList() {
+	public void testGetAjaxProjectListForUser() {
 		List<Join<Project, Sample>> samplesJoin = getSamplesForProject();
 		List<Join<Project, User>> usersJoin = getUsersForProject();
 		String requestDraw = "1";
 		Principal principal = () -> USER_NAME;
 
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
-		when(projectService.searchProjectsByNameForUser(any(User.class), anyString(), anyInt(), anyInt(), any(), anyString())).thenReturn(getProjectsPage());
+		when(projectService.searchProjectsByNameForUser(any(User.class), anyString(), anyInt(), anyInt(), any(), anyString())).thenReturn(
+                getProjectsPage());
 		when(sampleService.getSamplesForProject(project)).thenReturn(samplesJoin);
 		when(userService.getUsersForProject(project)).thenReturn(usersJoin);
-		
 
-		Map<String, Object> response = controller.getAjaxProjectList(principal, 0, 10, 1, 0, "asc", "");
+		Map<String, Object> response = controller.getAjaxProjectListForUser(principal, 0, 10, 1, 0, "asc", "");
 
-		assertEquals("Has the correct draw number", Integer.parseInt(requestDraw), response.get(DataTable.RESPONSE_PARAM_DRAW));
+		assertEquals("Has the correct draw number", Integer.parseInt(requestDraw),
+				response.get(DataTable.RESPONSE_PARAM_DRAW));
 
 		Object listObject = response.get(DataTable.RESPONSE_PARAM_DATA);
-		List<List<String>> projectList;
+		List<HashMap<String, Object>> projectList;
 		assertTrue(listObject instanceof List);
-		projectList = (List<List<String>>)listObject;
-		List<String> data = projectList.get(0);
+		projectList = (List<HashMap<String, Object>>) listObject;
+		HashMap<String, Object> data = projectList.get(0);
 
-		assertEquals("Has the correct project name", PROJECT_NAME, data.get(PROJECT_NAME_TABLE_LOCATION));
-		assertEquals("Has the correct number of samples", NUM_PROJECT_SAMPLES, Integer.parseInt(data.get(PROJECT_NUM_SAMPLES_TABLE_LOCATION)));
-		assertEquals("Has the correct number of members", NUM_PROJECT_USERS, Integer.parseInt(data.get(PROJECT_NUM_USERS_TABLE_LOCATION)));
+        assertEquals("Has the correct project name", PROJECT_NAME, data.get("name"));
+        assertEquals("Has the correct project organism", PROJECT_ORGANISM, data.get("organism"));
+        assertEquals("Has the correct number of project members", NUM_PROJECT_USERS+"", data.get("members"));
+        assertEquals("Has the correct number of project samples", NUM_PROJECT_SAMPLES+"", data.get("samples"));
 	}
+
+    @Test
+    public void testGetAjaxProjectListForAdmin() {
+        List<Join<Project, Sample>> samplesJoin = getSamplesForProject();
+        List<Join<Project, User>> usersJoin = getUsersForProject();
+        List<Project> projects = getAdminProjectsList();
+        String requestDraw = "1";
+        Principal principal = () -> USER_NAME;
+
+        when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
+        when(projectService.searchProjectsByName(anyString(), anyInt(), anyInt(), any(), anyString())).thenReturn(
+                getProjectsListForAdmin(projects));
+        when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(samplesJoin);
+        when(userService.getUsersForProject(any(Project.class))).thenReturn(usersJoin);
+
+        Map<String, Object> response = controller.getAjaxProjectListForAdmin(principal, 0, 10, 1, 0, "asc", "");
+
+        assertEquals("Has the correct draw number", Integer.parseInt(requestDraw),
+                response.get(DataTable.RESPONSE_PARAM_DRAW));
+
+        Object listObject = response.get(DataTable.RESPONSE_PARAM_DATA);
+        List<HashMap<String, Object>> projectList;
+        assertTrue(listObject instanceof List);
+        projectList = (List<HashMap<String, Object>>) listObject;
+        HashMap<String, Object> data = projectList.get(0);
+
+        assertEquals("Has the correct project name", "project0", data.get("name"));
+        assertEquals("Has the correct project organism", PROJECT_ORGANISM, data.get("organism"));
+        assertEquals("Has the correct number of project members", NUM_PROJECT_USERS+"", data.get("members"));
+        assertEquals("Has the correct number of project samples", NUM_PROJECT_SAMPLES+"", data.get("samples"));
+    }
 
 	@Test
 	public void testGetSpecificProjectPage() {
 		Model model = new ExtendedModelMap();
 		Long projectId = 1L;
-        Principal principal = () -> USER_NAME;
-        List<Join<Project, User>> projects = getProjectsForUser();
+		Principal principal = () -> USER_NAME;
+		List<Join<Project, User>> projects = getProjectsForUser();
 		when(userService.getUsersForProjectByRole(getProject(), ProjectRole.PROJECT_OWNER)).thenReturn(
 				getUsersForProjectByRole());
-        when(projectService.getProjectsForUser(user)).thenReturn(projects);
-        when(projectService.getRelatedProjects(getProject())).thenReturn(getRelatedProjectJoin(projects));
+		when(projectService.getProjectsForUser(user)).thenReturn(projects);
+		when(projectService.getRelatedProjects(getProject())).thenReturn(getRelatedProjectJoin(projects));
 
-		assertEquals("Returns the correct Project Page", PROJECT_DETAILS_PAGE,
+		assertEquals("Returns the correct Project Page", ProjectsController.SPECIFIC_PROJECT_PAGE,
 				controller.getProjectSpecificPage(projectId, model, principal));
-        
+
 	}
 
-    @Test
-    public void testGetProjectUsersPage() {
-        Model model = new ExtendedModelMap();
-        Long projectId = 1L;
-        Principal principal = () -> USER_NAME;
-        assertEquals("Gets the correct project members page", controller.getProjectUsersPage(model, principal, projectId), PROJECT_MEMBERS_PAGE);
-    }
+	@Test
+	public void testGetProjectUsersPage() {
+		Model model = new ExtendedModelMap();
+		Long projectId = 1L;
+		Principal principal = () -> USER_NAME;
+		assertEquals("Gets the correct project members page",
+				controller.getProjectUsersPage(model, principal, projectId), ProjectsController.PROJECT_MEMBERS_PAGE);
+	}
 
 	@Test
 	public void testGetCreateProjectPage() {
@@ -157,50 +189,51 @@ public class ProjectsControllerTest {
 	@Test
 	public void testGetAjaxUsersListForProject() {
 		Long projectId = 32L;
-        Project project = new Project("test");
-        project.setId(projectId);
-        Collection<Join<Project, User>> users = getUsersForProject(project);
-        when(userService.getUsersForProject(any(Project.class))).thenReturn(users);
-        Map<String, Collection<Join<Project, User>>> usersReturned = controller.getAjaxUsersListForProject(projectId);
-        assertTrue("Has a data attribute required for data tables", usersReturned.containsKey("data"));
-        assertEquals("Has the correct number of users.", usersReturned.get("data").size(), 2);
-    }
+		Project project = new Project("test");
+		project.setId(projectId);
+		Collection<Join<Project, User>> users = getUsersForProject(project);
+		when(userService.getUsersForProject(any(Project.class))).thenReturn(users);
+		Map<String, Collection<Join<Project, User>>> usersReturned = controller.getAjaxProjectMemberMap(projectId);
+		assertTrue("Has a data attribute required for data tables", usersReturned.containsKey("data"));
+		assertEquals("Has the correct number of users.", usersReturned.get("data").size(), 2);
+	}
 
-    @Test
-    public void testGetProjectMetadataPage() {
-        Model model = new ExtendedModelMap();
-        Principal principal = () -> USER_NAME;
-        String page = controller.getProjectMetadataPage(model, principal, PROJECT_ID);
-        assertEquals("Returns the correct edit page.", "projects/project_metadata", page);
-    }
+	@Test
+	public void testGetProjectMetadataPage() {
+		Model model = new ExtendedModelMap();
+		Principal principal = () -> USER_NAME;
+		String page = controller.getProjectMetadataPage(model, principal, PROJECT_ID);
+		assertEquals("Returns the correct edit page.", "projects/project_metadata", page);
+	}
 
-    @Test
-    public void testPostProjectMetadataEditPage() {
-        Model model = new ExtendedModelMap();
-        Principal principal = () -> USER_NAME;
+	@Test
+	public void testPostProjectMetadataEditPage() {
+		Model model = new ExtendedModelMap();
+		Principal principal = () -> USER_NAME;
 
-        String newName = "My Project";
-        String newOrganism = "Bad Buggy";
-        String newDescritption = "Another new description.";
-        String newRemoteURL = "http://ghosturl.ca";
+		String newName = "My Project";
+		String newOrganism = "Bad Buggy";
+		String newDescritption = "Another new description.";
+		String newRemoteURL = "http://ghosturl.ca";
 
-        when(projectService.update(anyLong(), anyMap())).thenReturn(getProject());
+		when(projectService.update(anyLong(), anyMap())).thenReturn(getProject());
 
-        String page = controller.postProjectMetadataEditPage(model, principal, PROJECT_ID, newName, newOrganism, newDescritption, newRemoteURL);
-        assertEquals("Returns the correct page.", "redirect:/projects/" + PROJECT_ID + "/metadata", page);
-    }
+		String page = controller.postProjectMetadataEditPage(model, principal, PROJECT_ID, newName, newOrganism,
+				newDescritption, newRemoteURL);
+		assertEquals("Returns the correct page.", "redirect:/projects/" + PROJECT_ID + "/metadata", page);
+	}
 
-    /**
-     * Mocks the information found within the project sidebar.
-     */
-    private void mockSidebarInfo() {
-        Project project = getProject();
-        Collection<Join<Project, User>> ownerList = new ArrayList<>();
-        ownerList.add(new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER));
-        when(userService.getUsersForProjectByRole(any(Project.class), any(ProjectRole.class))).thenReturn(ownerList);
-        when(projectService.read(PROJECT_ID)).thenReturn(project);
-        when(userService.getUserByUsername(anyString())).thenReturn(user);
-    }
+	/**
+	 * Mocks the information found within the project sidebar.
+	 */
+	private void mockSidebarInfo() {
+		Project project = getProject();
+		Collection<Join<Project, User>> ownerList = new ArrayList<>();
+		ownerList.add(new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER));
+		when(userService.getUsersForProjectByRole(any(Project.class), any(ProjectRole.class))).thenReturn(ownerList);
+		when(projectService.read(PROJECT_ID)).thenReturn(project);
+		when(userService.getUserByUsername(anyString())).thenReturn(user);
+	}
 
 	private List<Join<Project, User>> getProjectsForUser() {
 		List<Join<Project, User>> projects = new ArrayList<>();
@@ -213,11 +246,13 @@ public class ProjectsControllerTest {
 	}
 
 	private Collection<Join<Project, User>> getUsersForProject(Project project) {
-        Collection<Join<Project, User>> users = new ArrayList<>();
-        users.add(new ProjectUserJoin(project, new User("tester1", "test@me.com", "", "Test", "Test2", "234234"), ProjectRole.PROJECT_USER));
-        users.add(new ProjectUserJoin(project, new User("tester2", "test@me.com", "", "Test", "Test23", "213231"), ProjectRole.PROJECT_OWNER));
-        return users;
-    }
+		Collection<Join<Project, User>> users = new ArrayList<>();
+		users.add(new ProjectUserJoin(project, new User("tester1", "test@me.com", "", "Test", "Test2", "234234"),
+				ProjectRole.PROJECT_USER));
+		users.add(new ProjectUserJoin(project, new User("tester2", "test@me.com", "", "Test", "Test23", "213231"),
+				ProjectRole.PROJECT_OWNER));
+		return users;
+	}
 
 	private List<RelatedProjectJoin> getRelatedProjectJoin(List<Join<Project, User>> projects) {
 		List<RelatedProjectJoin> join = new ArrayList<>();
@@ -234,6 +269,96 @@ public class ProjectsControllerTest {
 		}
 		return join;
 	}
+
+    private Page<Project> getProjectsListForAdmin(List<Project> projects) {
+        return new Page<Project>() {
+            @Override
+            public int getNumber() {
+                return 0;
+            }
+
+            @Override
+            public int getSize() {
+                return 0;
+            }
+
+            @Override
+            public int getTotalPages() {
+                return 0;
+            }
+
+            @Override
+            public int getNumberOfElements() {
+                return 0;
+            }
+
+            @Override
+            public long getTotalElements() {
+                return NUM_TOTAL_ELEMENTS;
+            }
+
+            @Override
+            public boolean hasPreviousPage() {
+                return false;
+            }
+
+            @Override
+            public boolean isFirstPage() {
+                return false;
+            }
+
+            @Override
+            public boolean hasNextPage() {
+                return false;
+            }
+
+            @Override
+            public boolean isLastPage() {
+                return false;
+            }
+
+            @Override
+            public Pageable nextPageable() {
+                return null;
+            }
+
+            @Override
+            public Pageable previousPageable() {
+                return null;
+            }
+
+            @Override
+            public Iterator<Project> iterator() {
+                return null;
+            }
+
+            @Override
+            public List<Project> getContent() {
+                return projects;
+            }
+
+            @Override
+            public boolean hasContent() {
+                return true;
+            }
+
+            @Override
+            public Sort getSort() {
+                return null;
+            }
+        };
+    }
+
+    private List<Project> getAdminProjectsList() {
+        List<Project> projects = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            Project p = new Project("project" + i);
+            p.setId((long) i);
+            p.setOrganism(PROJECT_ORGANISM);
+            projects.add(p);
+        }
+        return projects;
+    }
 
 	/**
 	 * Creates a Page of Projects for testing.
@@ -325,6 +450,7 @@ public class ProjectsControllerTest {
 		if (project == null) {
 			project = new Project(PROJECT_NAME);
 			project.setId(PROJECT_ID);
+            project.setOrganism(PROJECT_ORGANISM);
 			project.setModifiedDate(new Date(PROJECT_MODIFIED_DATE));
 		}
 		return project;
