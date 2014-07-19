@@ -7,6 +7,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.security.Principal;
@@ -31,9 +32,11 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
+import ca.corefacility.bioinformatics.irida.ria.utilities.DataTable;
+import ca.corefacility.bioinformatics.irida.ria.utilities.EmailController;
 import ca.corefacility.bioinformatics.irida.ria.web.UsersController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.Lists;
@@ -62,6 +65,8 @@ public class UsersControllerTest {
 	// Services
 	private UserService userService;
 	private ProjectService projectService;
+	private PasswordResetService passwordResetService;
+	private EmailController emailController;
 	private UsersController controller;
 	private MessageSource messageSource;
 
@@ -70,7 +75,9 @@ public class UsersControllerTest {
 		userService = mock(UserService.class);
 		projectService = mock(ProjectService.class);
 		messageSource = mock(MessageSource.class);
-		controller = new UsersController(userService, projectService, messageSource);
+		emailController = mock(EmailController.class);
+		controller = new UsersController(userService, projectService, passwordResetService, emailController,
+				messageSource);
 	}
 
 	@Test
@@ -258,17 +265,18 @@ public class UsersControllerTest {
 		Principal principal = () -> USER_NAME;
 		User u = new User(1l, username, email, password, null, null, null);
 		u.setSystemRole(Role.ROLE_USER);
-		User pu = new User(username, email, password, null, null, null);
+		User pu = new User(USER_NAME, email, password, null, null, null);
 		pu.setSystemRole(Role.ROLE_ADMIN);
 
 		when(userService.create(any(User.class))).thenReturn(u);
-		when(userService.getUserByUsername(USER_NAME)).thenReturn(u);
+		when(userService.getUserByUsername(USER_NAME)).thenReturn(pu);
 
-		String submitCreateUser = controller.submitCreateUser(username, null, null, email, null, "ROLE_USER", password,
-				password, model, principal);
+		String submitCreateUser = controller.submitCreateUser(u, u.getSystemRole().getName(), password, null, model,
+				principal);
 		assertEquals("redirect:/users/1", submitCreateUser);
 		verify(userService).create(any(User.class));
-		verify(userService).getUserByUsername(USER_NAME);
+		verify(userService, times(2)).getUserByUsername(USER_NAME);
+		verify(emailController).sendWelcomeEmail(eq(u), eq(pu), eq(null));
 	}
 
 	@Test
@@ -278,14 +286,17 @@ public class UsersControllerTest {
 		String password = "PassWord1";
 		ExtendedModelMap model = new ExtendedModelMap();
 		Principal principal = () -> USER_NAME;
+		User u = new User(1l, username, email, password, null, null, null);
 
-		String submitCreateUser = controller.submitCreateUser(username, null, null, email, null, "ROLE_USER", password,
-				"NotTheSamePassword", model, principal);
+		String submitCreateUser = controller.submitCreateUser(u, null, "NotTheSamePassword", "checked", model,
+				principal);
 		assertEquals("user/create", submitCreateUser);
 		assertTrue(model.containsKey("errors"));
 		@SuppressWarnings("unchecked")
 		Map<String, String> errors = (Map<String, String>) model.get("errors");
 		assertTrue(errors.containsKey("password"));
+
+		verifyZeroInteractions(emailController);
 	}
 
 	@Test
@@ -293,12 +304,14 @@ public class UsersControllerTest {
 		DataIntegrityViolationException ex = new DataIntegrityViolationException("Error: "
 				+ User.USER_EMAIL_CONSTRAINT_NAME);
 		createWithException(ex, "email");
+		verifyZeroInteractions(emailController);
 	}
 
 	@Test
 	public void testSubmitUsernameExists() {
 		EntityExistsException ex = new EntityExistsException("username exists", "username");
 		createWithException(ex, "username");
+		verifyZeroInteractions(emailController);
 	}
 
 	public void createWithException(Throwable exception, String fieldname) {
@@ -309,12 +322,12 @@ public class UsersControllerTest {
 		Principal principal = () -> USER_NAME;
 		User pu = new User(username, email, password, null, null, null);
 		pu.setSystemRole(Role.ROLE_ADMIN);
+		User u = new User(1l, username, email, password, null, null, null);
 
 		when(userService.create(any(User.class))).thenThrow(exception);
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(pu);
 
-		String submitCreateUser = controller.submitCreateUser(username, null, null, email, null, "ROLE_USER", password,
-				password, model, principal);
+		String submitCreateUser = controller.submitCreateUser(u, null, password, "checked", model, principal);
 
 		assertEquals("user/create", submitCreateUser);
 		assertTrue(model.containsKey("errors"));
@@ -323,7 +336,7 @@ public class UsersControllerTest {
 		assertTrue(errors.containsKey(fieldname));
 
 		verify(userService).create(any(User.class));
-		verify(userService).getUserByUsername(USER_NAME);
+		verify(userService, times(2)).getUserByUsername(USER_NAME);
 	}
 
 }

@@ -55,25 +55,25 @@ public class CreateUserPageIT {
 
 	@Test
 	public void createGoodUser() {
-		createPage.createUser("tom", "tom@somwehre.com", "Password1", "Password1");
+		createPage.createUserWithPassword("tom", "tom@somwehre.com", "Password1", "Password1");
 		assertTrue(createPage.createSuccess());
 	}
 
 	@Test
 	public void createExistingUsername() {
-		createPage.createUser("mrtest", "tom@somwehre.com", "Password1", "Password1");
+		createPage.createUserWithPassword("mrtest", "tom@somwehre.com", "Password1", "Password1");
 		assertFalse(createPage.createSuccess());
 	}
 
 	@Test
 	public void createExistingEmail() {
-		createPage.createUser("tom", "manager@nowhere.com", "Password1", "Password1");
+		createPage.createUserWithPassword("tom", "manager@nowhere.com", "Password1", "Password1");
 		assertFalse(createPage.createSuccess());
 	}
 
 	@Test
 	public void createNoPasswordMatch() {
-		createPage.createUser("tom", "manager@nowhere.com", "Password1", "Different1");
+		createPage.createUserWithPassword("tom", "manager@nowhere.com", "Password1", "Different1");
 		assertFalse(createPage.createSuccess());
 	}
 

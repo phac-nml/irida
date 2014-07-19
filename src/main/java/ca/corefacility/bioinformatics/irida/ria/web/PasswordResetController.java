@@ -4,13 +4,16 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.utilities.EmailController;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -46,17 +50,21 @@ public class PasswordResetController {
 	public static final String PASSWORD_RESET_SUCCESS = "password/password_reset_success";
 	public static final String CREATE_RESET_PAGE = "password/create_password_reset";
 	public static final String RESET_CREATED_PAGE = "password/reset_created";
+	public static final String ACTIVATION_PAGE = "password/activate";
 	public static final String SUCCESS_REDIRECT = "redirect:/password_reset/success/";
 	public static final String CREATED_REDIRECT = "redirect:/password_reset/created/";
+
 	private final UserService userService;
 	private final PasswordResetService passwordResetService;
+	private final EmailController emailController;
 	private final MessageSource messageSource;
 
 	@Autowired
 	public PasswordResetController(UserService userService, PasswordResetService passwordResetService,
-			MessageSource messageSource) {
+			EmailController emailController, MessageSource messageSource) {
 		this.userService = userService;
 		this.passwordResetService = passwordResetService;
+		this.emailController = emailController;
 		this.messageSource = messageSource;
 	}
 
@@ -124,7 +132,13 @@ public class PasswordResetController {
 			try {
 				userService.changePassword(user.getId(), password);
 			} catch (ConstraintViolationException ex) {
-				errors.put("password", ex.getMessage());
+				Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
+
+				for (ConstraintViolation<?> violation : constraintViolations) {
+					logger.debug(violation.getMessage());
+					String errorKey = violation.getPropertyPath().toString();
+					errors.put(errorKey, violation.getMessage());
+				}
 			}
 		}
 
@@ -189,7 +203,10 @@ public class PasswordResetController {
 		model.addAttribute("email", email);
 
 		try {
-			userService.loadUserByEmail(email);
+			User user = userService.loadUserByEmail(email);
+
+			createNewPasswordReset(user);
+
 			page = CREATED_REDIRECT + Base64.getEncoder().encodeToString(email.getBytes());
 		} catch (EntityNotFoundException ex) {
 			model.addAttribute("emailError", true);
@@ -211,11 +228,30 @@ public class PasswordResetController {
 	 */
 	@RequestMapping("/created/{encodedEmail}")
 	public String resetCreatedSuccess(@PathVariable String encodedEmail, Model model) {
+		// decode the email
 		byte[] decode = Base64.getDecoder().decode(encodedEmail);
 		String email = new String(decode);
+
 		model.addAttribute("email", email);
 
 		return RESET_CREATED_PAGE;
+	}
+
+	/**
+	 * Return the activation view
+	 * 
+	 * @param model
+	 *            Model for the view
+	 * @return Name of the activation view
+	 */
+	@RequestMapping(value = "/activate", method = RequestMethod.GET)
+	public String activate(Model model) {
+		return ACTIVATION_PAGE;
+	}
+
+	@RequestMapping(value = "/activate", method = RequestMethod.POST)
+	public String getPasswordReset(@RequestParam String activationId, Model model) {
+		return "redirect:/password_reset/" + activationId;
 	}
 
 	/**
@@ -226,10 +262,25 @@ public class PasswordResetController {
 	 */
 	@RequestMapping("/ajax/create/{userId}")
 	@ResponseBody
-	public void createNewPasswordReset(@PathVariable Long userId) {
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void adminNewPasswordReset(@PathVariable Long userId) {
 		User user = userService.read(userId);
+		createNewPasswordReset(user);
+	}
+
+	/**
+	 * Create a new password reset for a given {@link User} and send a reset
+	 * email
+	 * 
+	 * @param user
+	 *            The user to create the reset for
+	 */
+	private void createNewPasswordReset(User user) {
 		PasswordReset passwordReset = new PasswordReset(user);
 		passwordResetService.create(passwordReset);
+
+		// email the user their info
+		emailController.sendPasswordResetLinkEmail(user, passwordReset);
 	}
 
 	/**
