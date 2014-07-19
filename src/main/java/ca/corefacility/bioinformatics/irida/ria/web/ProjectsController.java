@@ -407,7 +407,7 @@ public class ProjectsController {
 	 *            The currently logged in user
 	 * @return A list of {@link ProjectUserJoin}
 	 */
-	public List<ProjectUserJoin> getAdminProjectUserJoin(Page<Project> page, User user) {
+	private List<ProjectUserJoin> getAdminProjectUserJoin(Page<Project> page, User user) {
 		List<Project> pageList = page.getContent();
 		List<Join<Project, User>> allUsersProjects = projectService.getProjectsForUser(user);
 
