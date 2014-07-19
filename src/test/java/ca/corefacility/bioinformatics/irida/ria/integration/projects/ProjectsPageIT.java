@@ -14,7 +14,6 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -58,6 +57,7 @@ public class ProjectsPageIT {
 	public void destroy() {
 		if (driver != null) {
 			driver.close();
+            driver.quit();
 		}
 	}
 

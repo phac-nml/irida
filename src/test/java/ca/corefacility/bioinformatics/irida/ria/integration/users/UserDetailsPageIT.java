@@ -52,6 +52,7 @@ public class UserDetailsPageIT {
 	public void destroy() {
 		if (driver != null) {
 			driver.close();
+            driver.quit();
 		}
 	}
 
