@@ -26,15 +26,12 @@
                     <table id="samplesTable" class="table table-striped">
                         <thead>
                         <tr role="row" th:inline="text">
-                            <th data-tooltip="Select All Files"><input type="checkbox" id="selectAll"/></th>
+                            <th data:tooltip="#{tooltip.selectall-none}"><input type="checkbox" id="selectAll"/></th>
                             <th></th>
-                            <th>[[#{project.samples.table.name}]]<i
+                            <th class="sortable">[[#{project.samples.table.name}]]<i
                                     class="glyphicon"></i></th>
-                            <th>[[#{project.samples.table.numFiles}]]<i
-                                    class="glyphicon"></i></th>
-                            <th>[[#{project.samples.table.dateCreated}]]<i
-                                    class="glyphicon"></i></th>
-                            <th>[[#{project.samples.table.dateModified}]]<i
+                            <th>[[#{project.samples.table.numFiles}]]</th>
+                            <th class="sortable">[[#{project.samples.table.dateCreated}]]<i
                                     class="glyphicon"></i></th>
                         </tr>
                         </thead>
@@ -109,7 +106,7 @@
                 deferRender: true,
                 ajax: /*[[@{/projects/ajax/{projectId}/samples(projectId=${project.getId()})}]]*/ '/projects/ajax/1/samples',
                 order: [
-                    [5, "desc"]
+                    [4, "desc"]
                 ],
                 columns: [
                     {
@@ -129,16 +126,11 @@
                         "data": "name"
                     },
                     {
-                        "data": "numFiles"
+                        "data": "numFiles",
+                        "orderable": false
                     },
                     {
-                        "data": "dateCreated"
-                    },
-                    {
-                        "data": "dateModified",
-                        "render": function (data) {
-                            return '<span title="' + data + '" data-livestamp="' + data + '"></span>';
-                        }
+                        "data": "createdDate"
                     }
                 ],
                 'createdRow': function (row, data, index) {
@@ -217,6 +209,20 @@
                 target: $('input'),
                 at: 'top center',
                 my: 'bottom center'
+            },
+            style: {
+                classes: 'qtip-dark qtip-shadow'
+            }
+        });
+
+        $(".sortable").qtip({
+            content: /*[[#{tooltip.table.click-sort}]]*/ "click to sort",
+            position: {
+                at: 'top center',
+                my: 'bottom center',
+                adjust: {
+                    y: 10
+                }
             },
             style: {
                 classes: 'qtip-dark qtip-shadow'
