@@ -149,6 +149,7 @@ public class ProjectsController {
 	 *            The user to remove
 	 * @return
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@RequestMapping("{projectId}/members/remove")
 	public String removeUser(@PathVariable Long projectId, @RequestParam Long userId) {
 		Project project = projectService.read(projectId);
