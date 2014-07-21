@@ -10,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
@@ -73,20 +74,22 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * 
 	 * @param project
 	 *            The project to read from
+	 * @param name
+	 *            The sample name to search
 	 * @param page
 	 *            The page number
 	 * @param size
 	 *            The size of the page
 	 * @param order
-	 *            THe order of the page
+	 *            The order of the page
 	 * @param sortProperties
 	 *            The properties to sort on
 	 * @return A {@link Page} of {@link Join}s between {@link Project} and
 	 *         {@link Sample}
 	 */
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
-	public Page<Join<Project, Sample>> pageSamplesForProject(Project project, int page, int size, Direction order,
-			String... sortProperties);
+	public Page<ProjectSampleJoin> getSamplesForProjectWithName(Project project, String name, int page, int size,
+			Direction order, String... sortProperties);
 
 	/**
 	 * Get the {@link Sample} for the given ID

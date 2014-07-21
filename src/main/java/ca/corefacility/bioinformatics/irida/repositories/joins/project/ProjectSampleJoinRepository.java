@@ -2,8 +2,7 @@ package ca.corefacility.bioinformatics.irida.repositories.joins.project;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -21,7 +20,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  * 
  */
-public interface ProjectSampleJoinRepository extends PagingAndSortingRepository<ProjectSampleJoin, Long> {
+public interface ProjectSampleJoinRepository extends PagingAndSortingRepository<ProjectSampleJoin, Long>,
+		JpaSpecificationExecutor<ProjectSampleJoin> {
 	/**
 	 * Get a collection of the {@link Project}s related to a {@link Sample}
 	 * 
@@ -56,16 +56,4 @@ public interface ProjectSampleJoinRepository extends PagingAndSortingRepository<
 	@Query("select j from ProjectSampleJoin j where j.project = ?1")
 	public List<Join<Project, Sample>> getSamplesForProject(Project project);
 
-	/**
-	 * Get a {@link Page} of the {@link Sample}s associated with a
-	 * {@link Project}
-	 * 
-	 * @param project
-	 *            The {@link Project} to get {@link Sample}s from
-	 * @param page
-	 *            The page request
-	 * @return A page of {@link ProjectSampleJoin}s
-	 */
-	@Query("select j from ProjectSampleJoin j where j.project = ?1")
-	public Page<Join<Project, Sample>> pageSamplesForProject(Project project, Pageable page);
 }

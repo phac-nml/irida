@@ -28,7 +28,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -201,14 +201,20 @@ public class SampleServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
-	public void testPageSamplesForProject() {
+	public void testGetSamplesForProjectWithName() {
 		int pageSize = 2;
 		Project project = projectService.read(1l);
-		Page<Join<Project, Sample>> pageSamplesForProject = sampleService.pageSamplesForProject(project, 0, pageSize,
-				Direction.ASC, "createdDate");
+		Page<ProjectSampleJoin> pageSamplesForProject = sampleService.getSamplesForProjectWithName(project, "", 0,
+				pageSize, Direction.ASC, "createdDate");
 		assertEquals(pageSize, pageSamplesForProject.getNumberOfElements());
 		assertEquals(3, pageSamplesForProject.getTotalElements());
+		
+		pageSamplesForProject = sampleService.getSamplesForProjectWithName(project, "2", 0,
+				pageSize, Direction.ASC, "createdDate");
+		assertEquals(1, pageSamplesForProject.getTotalElements());
 	}
+	
+	
 
 	private void assertSampleNotFound(Long id) {
 		try {

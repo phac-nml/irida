@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -178,11 +179,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Page<Join<Project, Sample>> pageSamplesForProject(Project project, int page, int size, Direction order,
-			String... sortProperties) {
+	public Page<ProjectSampleJoin> getSamplesForProjectWithName(Project project, String name, int page, int size,
+			Direction order, String... sortProperties) {
 		if (sortProperties.length == 0) {
 			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
 		}
-		return psjRepository.pageSamplesForProject(project, new PageRequest(page, size, order, sortProperties));
+		return psjRepository.findAll(ProjectSampleJoinSpecification.searchSampleWithNameInProject(name, project),
+				new PageRequest(page, size, order, sortProperties));
 	}
 }
