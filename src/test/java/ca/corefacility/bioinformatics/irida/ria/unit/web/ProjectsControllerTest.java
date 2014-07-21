@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import java.security.Principal;
 import java.util.*;
 
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
@@ -57,13 +58,15 @@ public class ProjectsControllerTest {
 	private ProjectsController controller;
 	private SampleService sampleService;
 	private UserService userService;
+    private SequenceFileService sequenceFileService;
 
 	@Before
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);
 		userService = mock(UserService.class);
-		controller = new ProjectsController(projectService, sampleService, userService);
+        sequenceFileService = mock(SequenceFileService.class);
+        controller = new ProjectsController(projectService, sampleService, userService, sequenceFileService);
 		user.setId(1L);
 
 		mockSidebarInfo();
