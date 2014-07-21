@@ -302,7 +302,7 @@ public class ProjectsController {
             for (Join<Project, Sample> join : samplesJoin) {
                 Map<String, String> sMap = new HashMap<>();
                 Sample s = join.getObject();
-                sMap.put("checkbox", s.getId().toString());
+                sMap.put("id", s.getId().toString());
                 sMap.put("name", s.getLabel());
                 sMap.put("numFiles", String.valueOf(sequenceFileService.getSequenceFilesForSample(s).size()));
                 sMap.put("dateCreated", Formats.DATE.format(s.getCreatedDate()));
