@@ -222,6 +222,19 @@ public class ProjectsControllerTest {
 				newDescritption, newRemoteURL);
 		assertEquals("Returns the correct page.", "redirect:/projects/" + PROJECT_ID + "/metadata", page);
 	}
+	
+	@Test
+	public void testGetEditProjectUsersPage(){
+		Long projectId = 1l;
+		Model model = new ExtendedModelMap();
+		Principal principal = () -> USER_NAME;
+		
+		String editProjectUsersPage = controller.getEditProjectUsersPage(model, principal, projectId);
+		
+		assertEquals(ProjectsController.PROJECT_MEMBER_EDIT_PAGE,editProjectUsersPage);
+		assertTrue(model.containsAttribute("isAdmin"));
+		assertTrue(model.containsAttribute("isOwner"));
+	}
 
 	/**
 	 * Mocks the information found within the project sidebar.
