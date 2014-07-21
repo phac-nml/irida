@@ -1,23 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
-import java.security.Principal;
-import java.util.*;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -34,8 +16,23 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
 import com.google.common.base.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.security.Principal;
+import java.util.*;
 
 /**
  * Controller for all project related views
@@ -280,8 +277,8 @@ public class ProjectsController {
 			@RequestParam(value = ProjectSamplesDataTable.REQUEST_PARAM_SORT_COLUMN, defaultValue = ProjectSamplesDataTable.SORT_DEFAULT_COLUMN) Integer sortColumn,
 			@RequestParam(value = ProjectSamplesDataTable.REQUEST_PARAM_SORT_DIRECTION, defaultValue = ProjectSamplesDataTable.SORT_DEFAULT_DIRECTION) String direction,
 			@RequestParam(ProjectSamplesDataTable.REQUEST_PARAM_SEARCH_VALUE) String searchValue) {
-        Map<String, Object> response = new HashMap<>();
-        Sort.Direction sortDirection = ProjectSamplesDataTable.getSortDirection(direction);
+		Map<String, Object> response = new HashMap<>();
+		Sort.Direction sortDirection = ProjectSamplesDataTable.getSortDirection(direction);
 		String sortString = ProjectSamplesDataTable.getSortStringFromColumnID(sortColumn);
 
 		int pageNum = ProjectSamplesDataTable.getPageNumber(start, length);
@@ -290,10 +287,10 @@ public class ProjectsController {
 			Page<ProjectSampleJoin> page = sampleService.getSamplesForProjectWithName(project, searchValue, pageNum,
 					length, sortDirection, sortString);
 			List<Map<String, String>> samplesList = new ArrayList<>();
-   for (Join<Project, Sample> join : page) {
+			for (Join<Project, Sample> join : page) {
 				Map<String, String> sMap = new HashMap<>();
 				Sample s = join.getObject();
-                sMap.put(ProjectSamplesDataTable.ID, s.getId().toString());
+				sMap.put(ProjectSamplesDataTable.ID, s.getId().toString());
 				sMap.put(ProjectSamplesDataTable.NAME, s.getLabel());
 				sMap.put(ProjectSamplesDataTable.NUM_FILES,
 						String.valueOf(sequenceFileService.getSequenceFilesForSample(s).size()));
@@ -301,16 +298,16 @@ public class ProjectsController {
 				samplesList.add(sMap);
 			}
 			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_DATA, samplesList);
-            response.put(ProjectSamplesDataTable.RESPONSE_PARAM_DRAW, draw);
-            response.put(ProjectSamplesDataTable.RESPONSE_PARAM_RECORDS_FILTERED, page.getTotalElements());
+			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_DRAW, draw);
+			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_RECORDS_FILTERED, page.getTotalElements());
 			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_RECORDS_TOTAL, page.getTotalElements());
 			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_SORT_COLUMN, sortColumn);
 			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_SORT_DIRECTION, sortDirection);
-        } catch (Exception e) {
-            logger.error("Error retrieving project sample information :" + e.getLocalizedMessage() );
-        }
-        return response;
-    }
+		} catch (Exception e) {
+			logger.error("Error retrieving project sample information :" + e.getLocalizedMessage());
+		}
+		return response;
+	}
 
 	@RequestMapping(value = "/ajax/{projectId}/members", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Collection<Join<Project, User>>> getAjaxProjectMemberMap(
