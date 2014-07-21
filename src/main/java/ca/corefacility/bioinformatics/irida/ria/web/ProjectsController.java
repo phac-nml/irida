@@ -130,6 +130,7 @@ public class ProjectsController {
 		return PROJECT_MEMBERS_PAGE;
 	}
 	
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@RequestMapping("/{projectId}/members/edit")
 	public String getEditProjectUsersPage(final Model model, final Principal principal, @PathVariable Long projectId) {
 		Project project = projectService.read(projectId);

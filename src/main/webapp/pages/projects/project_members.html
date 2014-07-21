@@ -16,7 +16,8 @@
             <div class="row">
                 <div class="col-md-12">
                     <h1 id="wb-cont" role="heading" th:inline="text">[[${project.label}]] [[#{project.members.members}]]</h1>
-                    <a href="#" th:text="#{project.members.edit}" th:href="@{/projects/{id}/members/edit(id=${project.getId()})}">_Edit Members_</a>
+                    
+                    <a href="#" th:if="${isAdmin} or ${isOwner}"  th:text="#{project.members.edit}" th:href="@{/projects/{id}/members/edit(id=${project.getId()})}">_Edit Members_</a>
                 </div>
             </div>
             <div class="row">
