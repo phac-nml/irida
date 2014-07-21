@@ -26,15 +26,15 @@
                     <table id="samplesTable" class="table table-striped table-hover">
                         <thead>
                         <tr role="row" th:inline="text">
-                            <th><input type="checkbox" id="selectAll"/></th>
+                            <th data-tooltip="Select All Files"><input type="checkbox" id="selectAll"/></th>
                             <th></th>
-                            <th>[[#{project.table.collaborator.name}]]<i
+                            <th>[[#{project.samples.table.name}]]<i
                                     class="glyphicon"></i></th>
-                            <th>[[#{project.table.collaborator.role}]]<i
+                            <th>[[#{project.samples.table.numFiles}]]<i
                                     class="glyphicon"></i></th>
-                            <th>[[#{project.table.collaborator.email}]]<i
+                            <th>[[#{project.samples.table.dateCreated}]]<i
                                     class="glyphicon"></i></th>
-                            <th>[[#{project.table.collaborator.since}]]<i
+                            <th>[[#{project.samples.table.dateModified}]]<i
                                     class="glyphicon"></i></th>
                         </tr>
                         </thead>
@@ -109,7 +109,7 @@
                 deferRender: true,
                 ajax: /*[[@{/projects/ajax/{projectId}/samples(projectId=${project.getId()})}]]*/ '/projects/ajax/1/samples',
                 order: [
-                    [0, "asc"]
+                    [5, "desc"]
                 ],
                 columns: [
                     {
@@ -120,19 +120,16 @@
                         }
                     },
                     {
-                        "class": "details-control",
-                        "orderable": false,
                         "data": null,
-                        "defaultContent": '<span><i class="glyphicon glyphicon-chevron-right"></i></span>'
+                        "orderable": false,
+                        "class": "details-control",
+                        "defaultContent": ""
                     },
                     {
                         "data": "name"
                     },
                     {
-                        "data": "numFiles",
-                        "render": function (data) {
-                            return '<a href="mailto:' + data + '">' + data + '</a>';
-                        }
+                        "data": "numFiles"
                     },
                     {
                         "data": "dateCreated"
@@ -140,19 +137,28 @@
                     {
                         "data": "dateModified",
                         "render": function (data) {
-                            return '<span data-livestamp="' + new Date(parseInt(data)) + '"></span>';
+                            return '<span data-livestamp="' + data + '"></span>';
                         }
                     }
-                ]
+                ],
+                'createdRow': function (row, data, index) {
+                    if(parseInt(data.numFiles) == 0) {
+                        $(row)
+                                .addClass('has-files')
+                                .find('.details-control')
+                                .html('<i class="text-muted glyphicon glyphicon-chevron-right"></i>');
+                    }
+                }
             });
 
             var open;
-            $samplesTable.find('tbody').on('click', 'tr td:nth-child(2)', function () {
+            $samplesTable.find('tbody').on('click', 'tr.has-files td:not(:first-child)', function () {
                 var $this = $(this),
                         tr = $this.closest('tr'),
                         row = dt.row(tr),
+                        icon = tr.find('i'),
                         element = {
-                            icon: $this.find('i'),
+                            icon: icon,
                             tr: tr,
                             row: row
                         };
@@ -164,14 +170,11 @@
                     if (open != null) {
                         closeFilesView(open);
                     }
-                    element.icon.removeClass('glypihcon-cheveron-right').addClass('glyphicon-chevron-down');
-                    element.tr.addClass('details');
-                    element.row.child(format(row.data())).show();
+                    showFilesView(element);
                     open = element;
                 }
             }).on('click', 'input', function () {
                 var id = $(this).val();
-                console.log(id);
                 var index = selected.indexOf(id);
                 if (index == -1) {
                     selected.push(id);
@@ -205,6 +208,17 @@
                 open = element;
             }
         });
+
+        $('[data-tooltip!=""]').qtip({ // Grab all elements with a non-blank data-tooltip attr.
+            content: {
+                attr: 'data-tooltip' // Tell qTip2 to look inside this attr for its content
+            },
+            position: {
+                container: $(this).find('input'),
+                at: 'top center',
+                my: 'bottom center'
+            }
+        })
         /*]]>*/
     </script>
 </div>
