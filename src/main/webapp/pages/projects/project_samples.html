@@ -23,7 +23,7 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <table id="samplesTable" class="table table-striped table-hover">
+                    <table id="samplesTable" class="table table-striped">
                         <thead>
                         <tr role="row" th:inline="text">
                             <th data-tooltip="Select All Files"><input type="checkbox" id="selectAll"/></th>
@@ -137,12 +137,12 @@
                     {
                         "data": "dateModified",
                         "render": function (data) {
-                            return '<span data-livestamp="' + data + '"></span>';
+                            return '<span title="' + data + '" data-livestamp="' + data + '"></span>';
                         }
                     }
                 ],
                 'createdRow': function (row, data, index) {
-                    if(parseInt(data.numFiles) == 0) {
+                    if (parseInt(data.numFiles) > 0) {
                         $(row)
                                 .addClass('has-files')
                                 .find('.details-control')
@@ -214,11 +214,14 @@
                 attr: 'data-tooltip' // Tell qTip2 to look inside this attr for its content
             },
             position: {
-                container: $(this).find('input'),
+                target: $('input'),
                 at: 'top center',
                 my: 'bottom center'
+            },
+            style: {
+                classes: 'qtip-dark qtip-shadow'
             }
-        })
+        });
         /*]]>*/
     </script>
 </div>
