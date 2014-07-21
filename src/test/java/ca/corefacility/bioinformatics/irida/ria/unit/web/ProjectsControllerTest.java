@@ -39,9 +39,9 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
  */
 public class ProjectsControllerTest {
     // DATATABLES position for project information
-	private static final int PROJECT_NAME_TABLE_LOCATION = 1;
-	private static final int PROJECT_NUM_SAMPLES_TABLE_LOCATION = 4;
-	private static final int PROJECT_NUM_USERS_TABLE_LOCATION = 5;
+	//private static final int PROJECT_NAME_TABLE_LOCATION = 1;
+	//private static final int PROJECT_NUM_SAMPLES_TABLE_LOCATION = 4;
+	//private static final int PROJECT_NUM_USERS_TABLE_LOCATION = 5;
 	private static final int NUM_PROJECT_SAMPLES = 12;
 	private static final int NUM_PROJECT_USERS = 50;
 	private static final long NUM_TOTAL_ELEMENTS = 100L;
@@ -108,7 +108,8 @@ public class ProjectsControllerTest {
         assertEquals("Has the correct number of project samples", NUM_PROJECT_SAMPLES+"", data.get("samples"));
 	}
 
-    @Test
+    @SuppressWarnings("unchecked")
+	@Test
     public void testGetAjaxProjectListForAdmin() {
         List<Join<Project, Sample>> samplesJoin = getSamplesForProject();
         List<Join<Project, User>> usersJoin = getUsersForProject();
@@ -173,6 +174,7 @@ public class ProjectsControllerTest {
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void testCreateNewProject() {
 		Model model = new ExtendedModelMap();
 		String projectName = "Test Project";
@@ -207,6 +209,7 @@ public class ProjectsControllerTest {
 		assertEquals("Returns the correct edit page.", "projects/project_metadata", page);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testPostProjectMetadataEditPage() {
 		Model model = new ExtendedModelMap();
