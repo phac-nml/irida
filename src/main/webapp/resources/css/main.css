@@ -1,17 +1,91 @@
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/components\/_datatables\.scss}line{font-family:\000031}}
+.dataTables_filter input[type='search'] {
+  background-color: #eeeeee;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  color: #555;
+  padding: 5px;
+  -webkit-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, -webkit-box-shadow ease-in-out 0.5s;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow ease-in-out 0.5s;
+  font-weight: normal;
+  outline: none; }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/components\/_datatables\.scss}line{font-family:\0000311}}
+  .dataTables_filter input[type='search']:focus {
+    background-color: white;
+    -webkit-box-shadow: none;
+            box-shadow: none; }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/components\/_datatables\.scss}line{font-family:\0000318}}
+table.dataTable > thead i {
+  float: right;
+  margin: 0 5px; }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/components\/_datatables\.scss}line{font-family:\0000321}}
+  table.dataTable > thead i:before {
+    content: "\e150"; }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/components\/_datatables\.scss}line{font-family:\0000325}}
+table.dataTable > thead th.sorting_asc > i.glyphicon:before {
+  content: "\e155"; }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/components\/_datatables\.scss}line{font-family:\0000328}}
+table.dataTable > thead th.sorting_desc > i.glyphicon:before {
+  content: "\e156"; }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/components\/_datatables\.scss}line{font-family:\0000333}}
+td.details-control {
+  cursor: pointer; }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/components\/_datatables\.scss}line{font-family:\0000334}}
+  td.details-control i {
+    display: block;
+    background-image: -webkit-radial-grandient(#f7f7f7 50%, #eaeaea 50%);
+    background-image: radial-grandient(#f7f7f7 50%, #eaeaea 50%);
+    color: #a7a7a7;
+    width: 20px;
+    height: 20px;
+    position: relative;
+    text-align: center;
+    font-size: .6em;
+    line-height: 20px;
+    border-radius: 50%;
+    -webkit-box-shadow: 0px 1px 2px #aaa, inset 0px 2px 3px #fff;
+            box-shadow: 0px 1px 2px #aaa, inset 0px 2px 3px #fff; }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/components\/_forms\.scss}line{font-family:\000032}}
 .input-full {
   width: 100%; }
 
-.menu > .pull-right ul {
-  position: absolute;
-  right: 0; }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/components\/_forms\.scss}line{font-family:\000038}}
+.form-group .alert {
+  padding: 3px 6px;
+  font-weight: bold;
+  margin-bottom: 0; }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/components\/_panels\.scss}line{font-family:\000032}}
+b.list-group-item {
+  background-color: #eeeeee; }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/components\/_panels\.scss}line{font-family:\000038}}
+.panel .details li {
+  border-bottom: 1px solid #eeeeee;
+  line-height: 2em; }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/components\/_panels\.scss}line{font-family:\0000312}}
+.panel .details .glyphicon {
+  color: #797979;
+  margin-right: .5em; }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/components\/_panels\.scss}line{font-family:\0000316}}
+.panel .details em {
+  font-style: normal; }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/components\/_subnav\.scss}line{font-family:\000031}}
 .navbar-sm {
   border-radius: 0;
   border: none;
   border-bottom: 1px solid #eeeeee;
   height: 20px; }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/components\/_subnav\.scss}line{font-family:\000036}}
   .navbar-sm.navbar {
     min-height: 2.4em; }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/components\/_subnav\.scss}line{font-family:\0000310}}
   .navbar-sm li.active::after {
     content: '';
     display: block;
@@ -23,10 +97,12 @@
     position: relative;
     left: 50%;
     bottom: 11px; }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/components\/_subnav\.scss}line{font-family:\0000323}}
   .navbar-sm .navbar-nav.nav a {
     text-decoration: none;
     line-height: 2.4em;
     padding: 0 20px; }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/components\/_subnav\.scss}line{font-family:\0000327}}
     .navbar-sm .navbar-nav.nav a .badge {
       line-height: 1.5em;
       font-size: 10px;
@@ -36,51 +112,24 @@
       top: -2px;
       right: -3px; }
 
-b.list-group-item {
-  background-color: #eeeeee; }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/_layout\.scss}line{font-family:\000032}}
+main h1 {
+  margin-top: 15px; }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/_layout\.scss}line{font-family:\000035}}
+main.col-md-9 h1 {
+  margin-top: 0; }
 
-.panel .details li {
-  border-bottom: 1px solid #eeeeee;
-  line-height: 2em; }
-.panel .details .glyphicon {
-  color: #797979;
-  margin-right: .5em; }
-.panel .details em {
-  font-style: normal; }
-
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/pages\/_project\.scss}line{font-family:\000033}}
 #associated-projects a.disabled {
   color: #333333;
   border-top: lightgray 1px solid;
   text-decoration: none;
   cursor: not-allowed; }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/pages\/_project\.scss}line{font-family:\000039}}
 #associated-projects .glyphicon-lock {
   color: #d9534f; }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/josh\/Development\/IRIDA\/irida-ui\/src\/main\/webapp\/styles\/pages\/_project\.scss}line{font-family:\0000312}}
 #associated-projects .glyphicon-eye-open {
   color: #5cb85c; }
 
-.dataTables_filter input[type='search'] {
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  color: #555;
-  padding: 5px;
-  transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-  font-weight: normal; }
-
-table.dataTable > thead i {
-  float: right;
-  margin: 0 5px; }
-  table.dataTable > thead i:before {
-    content: "\e150"; }
-table.dataTable > thead th.sorting_asc > i.glyphicon:before {
-  content: "\e155"; }
-table.dataTable > thead th.sorting_desc > i.glyphicon:before {
-  content: "\e156"; }
-
-.form-group .alert {
-  padding: 3px 6px;
-  font-weight: bold;
-  margin-bottom: 0; }
-
-.col-md-9 h1 {
-  margin-top: 0; }
+/*# sourceMappingURL=main.css.map */

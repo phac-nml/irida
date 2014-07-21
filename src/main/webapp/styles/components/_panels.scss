@@ -1,0 +1,20 @@
+// This mimics a panel by giving a list-group a heading.
+b.list-group-item {
+  background-color: $color-grey-lighter;
+}
+
+.panel {
+  .details {
+    li {
+      border-bottom: 1px solid $color-grey-lighter;
+      line-height: 2em;
+    }
+    .glyphicon {
+      color: $color-grey-light;
+      margin-right: .5em;
+    }
+    em {
+      font-style: normal;
+    }
+  }
+}
