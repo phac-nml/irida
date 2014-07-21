@@ -33,12 +33,7 @@
 
                             <div th:if="${#maps.containsKey(errors, 'organism')}" class="alert alert-warning"
                                  th:text="${errors.organism}"></div>
-                            <input class="form-control input-full" type="text" id="projectOrganism" name="organism"
-                                   list="suggestions"/>
-                            <datalist id="suggestions">
-                                <option label="E. coli" value="E. coli"></option>
-                                <option label="Salmonella" value="Salmonella"></option>
-                            </datalist>
+                            <input type="text" id="projectOrganism" name="organism" class="input-full"/>
                         </div>
                         <div class="form-group">
                             <label for="projectDescription" th:text="#{projects.create.form.description}">Project Description</label>
@@ -69,6 +64,7 @@
     </div>
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
+    <script src="/resources/bower_components/select2/select2.js"></script>
     <script>
         $('span.glyphicon-asterisk').qtip({
             content: {
@@ -86,7 +82,29 @@
             style: {
                 classes: 'qtip-dark qtip-shadow'
             }
-        })
+        });
+
+        $("#projectOrganism").select2({
+            data: [
+                {
+                    id: 0,
+                    text: "E. coli",
+                },
+                {
+                    id: 1,
+                    text: "Salmonella"
+                }
+            ],
+            "placeholder": /*[[#{projects.create.form.select-organism}]]*/ "Select an organism",
+            //Allow manually entered text in drop down.
+            createSearchChoice:function(term, data) {
+                if ( $(data).filter( function() {
+                    return this.text.localeCompare(term)===0;
+                }).length===0) {
+                    return {id:term, text:term};
+                }
+            },
+        });
     </script>
 </div>
 </body>
