@@ -8,6 +8,9 @@ import java.util.Set;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -28,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
  * Service class for managing {@link Sample}.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Service
 public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements SampleService {
@@ -168,5 +173,18 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Override
 	public Sample read(Long id) {
 		return super.read(id);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Page<ProjectSampleJoin> getSamplesForProjectWithName(Project project, String name, int page, int size,
+			Direction order, String... sortProperties) {
+		if (sortProperties.length == 0) {
+			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
+		}
+		return psjRepository.findAll(ProjectSampleJoinSpecification.searchSampleWithNameInProject(name, project),
+				new PageRequest(page, size, order, sortProperties));
 	}
 }
