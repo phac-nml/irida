@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.service.sample;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -23,7 +25,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadSample')")
 	public Sample read(Long id) throws EntityNotFoundException;
-	
+
 	/**
 	 * Add a {@link SequenceFile} to a {@link Sample}.
 	 * 
@@ -64,6 +66,26 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public List<Join<Project, Sample>> getSamplesForProject(Project project);
+
+	/**
+	 * Get the {@link Sample}s for a {@link Project} in page form
+	 * 
+	 * @param project
+	 *            The project to read from
+	 * @param page
+	 *            The page number
+	 * @param size
+	 *            The size of the page
+	 * @param order
+	 *            THe order of the page
+	 * @param sortProperties
+	 *            The properties to sort on
+	 * @return A {@link Page} of {@link Join}s between {@link Project} and
+	 *         {@link Sample}
+	 */
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	public Page<Join<Project, Sample>> pageSamplesForProject(Project project, int page, int size, Direction order,
+			String... sortProperties);
 
 	/**
 	 * Get the {@link Sample} for the given ID

@@ -11,6 +11,8 @@ import javax.validation.ConstraintViolationException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
@@ -26,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -60,7 +63,7 @@ public class SampleServiceImplIT {
 	private SequenceFileService sequenceFileService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
+
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testCreateSample() {
@@ -174,7 +177,7 @@ public class SampleServiceImplIT {
 
 		sampleService.update(sampleId, properties);
 	}
-	
+
 	@Test(expected = ConstraintViolationException.class)
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testUpdateWithInvalidRangeLatLong() {
@@ -182,7 +185,7 @@ public class SampleServiceImplIT {
 		Map<String, Object> properties = ImmutableMap.of("latitude", "-1000.00", "longitude", "1000.00");
 		sampleService.update(sampleId, properties);
 	}
-	
+
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testUpdateLatLong() {
@@ -193,6 +196,17 @@ public class SampleServiceImplIT {
 		Sample s = sampleService.update(sampleId, properties);
 		assertEquals("Wrong latitude was stored.", latitude, s.getLatitude());
 		assertEquals("Wrong longitude was stored.", longitude, s.getLongitude());
+	}
+
+	@Test
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	public void testPageSamplesForProject() {
+		int pageSize = 2;
+		Project project = projectService.read(1l);
+		Page<Join<Project, Sample>> pageSamplesForProject = sampleService.pageSamplesForProject(project, 0, pageSize,
+				Direction.ASC, "createdDate");
+		assertEquals(pageSize, pageSamplesForProject.getNumberOfElements());
+		assertEquals(3, pageSamplesForProject.getTotalElements());
 	}
 
 	private void assertSampleNotFound(Long id) {

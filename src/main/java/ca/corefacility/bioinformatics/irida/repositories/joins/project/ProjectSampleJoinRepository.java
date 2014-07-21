@@ -2,9 +2,11 @@ package ca.corefacility.bioinformatics.irida.repositories.joins.project;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -18,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
-public interface ProjectSampleJoinRepository extends CrudRepository<ProjectSampleJoin, Long> {
+public interface ProjectSampleJoinRepository extends PagingAndSortingRepository<ProjectSampleJoin, Long> {
 	/**
 	 * Get a collection of the {@link Project}s related to a {@link Sample}
 	 * 
@@ -41,7 +43,6 @@ public interface ProjectSampleJoinRepository extends CrudRepository<ProjectSampl
 	@Modifying
 	@Query("delete from ProjectSampleJoin j where j.project = ?1 and j.sample = ?2")
 	public void removeSampleFromProject(Project project, Sample sample);
-	
 
 	/**
 	 * Get the {@link Sample}s associated with a {@link Project}
@@ -53,4 +54,17 @@ public interface ProjectSampleJoinRepository extends CrudRepository<ProjectSampl
 	 */
 	@Query("select j from ProjectSampleJoin j where j.project = ?1")
 	public List<Join<Project, Sample>> getSamplesForProject(Project project);
+
+	/**
+	 * Get a {@link Page} of the {@link Sample}s associated with a
+	 * {@link Project}
+	 * 
+	 * @param project
+	 *            The {@link Project} to get {@link Sample}s from
+	 * @param page
+	 *            The page request
+	 * @return A page of {@link ProjectSampleJoin}s
+	 */
+	@Query("select j from ProjectSampleJoin j where j.project = ?1")
+	public Page<Join<Project, Sample>> pageSamplesForProject(Project project, Pageable page);
 }

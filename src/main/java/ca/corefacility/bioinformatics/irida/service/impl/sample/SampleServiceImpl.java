@@ -8,6 +8,9 @@ import java.util.Set;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -168,5 +171,17 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Override
 	public Sample read(Long id) {
 		return super.read(id);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Page<Join<Project, Sample>> pageSamplesForProject(Project project, int page, int size, Direction order,
+			String... sortProperties) {
+		if (sortProperties.length == 0) {
+			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
+		}
+		return psjRepository.pageSamplesForProject(project, new PageRequest(page, size, order, sortProperties));
 	}
 }
