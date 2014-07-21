@@ -16,7 +16,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <h1 id="wb-cont" role="heading" th:text="#{project.members.edit.title(${project.label})}">_EDIT PROJECT PROJECT1_</h1>
-                    <a href="#" th:href="@{/projects/{id}/members/edit(id=${project.getId()})}">Add Member</a>
+                    <a href="#" th:text="#{project.members.edit.add}">_Add Member_</a>
                 </div>
             </div>
             <div class="row">
@@ -72,8 +72,7 @@
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
     <div th:replace="projects/project_base :: scripts"></div>
-    <script th:src="@{/resources/wet-theme/js/deps/jquery.magnific-popup.min.js}"
-            src="/resources/wet-theme/js/deps/jquery.magnific-popup.min.js"></script>
+
     <script th:inline="javascript">
         /*<![CDATA[*/
         $(document).ready(function () {
@@ -128,7 +127,7 @@
                         "render": function (data, type, row) {
                             var pid = row.subject.id;
                             var uid = row.object.id;
-                            return '<button id="remove-user-'+uid+'" class="btn btn-danger btn-xs">Remove</button>'
+                            return '<button id="remove-user-'+uid+'" class="btn btn-danger btn-xs">'+[[#{project.members.edit.remove}]]+'</button>'
                         },
                         "visible":  true,
                         "sortable": false
@@ -141,9 +140,10 @@
         	var data = "userId="+userId;
     		noty({
     			layout: "center",
-    			text: "Remove " + userLabel + "?",
+    			type: "confirmation",
+    			text: [[#{project.members.edit.remove}]] + " " + userLabel + "?",
     			buttons: [
-    			          {addClass: 'btn btn-primary', text: 'Ok', onClick: function($noty) {
+    			          {addClass: 'btn btn-primary btn-sm', text: 'Ok', onClick: function($noty) {
     			              $noty.close();
     			              table.ajax.reload();
     			              $.ajax({
@@ -151,7 +151,7 @@
     			        			data:data,
     			        			success:function(){
     			        				noty({
-    			        					text: userLabel + " removed.", 
+    			        					text: [[#{project.members.edit.remove.success}]] ,
     			        					layout: "topCenter", 
     			        					type: "success",
     			        					timeout: 5000
@@ -161,7 +161,7 @@
     			        			},
     			        			error:function(){
     			        				noty({
-    			        					text: "An error occurred.", 
+    			        					text: [[#{project.members.edit.remove.error}]] , 
     			        					layout: "topCenter", 
     			        					type: "error",
     			        					timeout: false
@@ -170,7 +170,7 @@
     			        		});               			              
     			            }
     			          },
-    			          {addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
+    			          {addClass: 'btn btn-danger btn-sm', text: 'Cancel', onClick: function($noty) {
     			              $noty.close();
     			            }
     			          }
