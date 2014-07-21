@@ -151,13 +151,11 @@ public class ProjectsController {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@RequestMapping("{projectId}/members/remove")
-	public String removeUser(@PathVariable Long projectId, @RequestParam Long userId) {
+	public void removeUser(@PathVariable Long projectId, @RequestParam Long userId) {
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);
 
 		projectService.removeUserFromProject(project, user);
-
-		return "redirect:/projects/" + projectId + "/members";
 	}
 
 	/**
