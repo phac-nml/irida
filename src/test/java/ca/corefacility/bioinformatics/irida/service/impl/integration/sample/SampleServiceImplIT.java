@@ -43,6 +43,7 @@ import com.google.common.collect.ImmutableMap;
  * Integration tests for the sample service.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
