@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 import java.security.Principal;
 import java.util.*;
@@ -234,6 +235,24 @@ public class ProjectsControllerTest {
 		assertEquals(ProjectsController.PROJECT_MEMBER_EDIT_PAGE,editProjectUsersPage);
 		assertTrue(model.containsAttribute("isAdmin"));
 		assertTrue(model.containsAttribute("isOwner"));
+	}
+	
+	@Test
+	public void testRemoveUserFromProject() {
+		Long projectId = 1l;
+		Long userId = 2l;
+		User user = new User(userId, "tom", null, null, null, null, null);
+		Project project = new Project("test");
+		project.setId(projectId);
+
+		when(userService.read(userId)).thenReturn(user);
+		when(projectService.read(projectId)).thenReturn(project);
+
+		controller.removeUser(projectId, userId);
+
+		verify(userService).read(userId);
+		verify(projectService).read(projectId);
+		verify(projectService).removeUserFromProject(project, user);
 	}
 
 	/**
