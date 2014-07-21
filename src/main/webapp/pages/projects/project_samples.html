@@ -97,8 +97,9 @@
         }
 
         $(document).ready(function () {
-            var  allChecked = false,
+            var allChecked = false,
                     selected = [],
+                    $selectAll = $("#selectAll"),
                     $samplesTable = $('#samplesTable');
 
             var dt = $samplesTable.DataTable({
@@ -113,6 +114,7 @@
                 columns: [
                     {
                         "data": "id",
+                        "orderable": false,
                         "render": function (data) {
                             return '<input type="checkbox" value="' + data + '" />';
                         }
@@ -159,7 +161,7 @@
                     closeFilesView(element);
                 }
                 else {
-                    if(open != null) {
+                    if (open != null) {
                         closeFilesView(open);
                     }
                     element.icon.removeClass('glypihcon-cheveron-right').addClass('glyphicon-chevron-down');
@@ -167,13 +169,24 @@
                     element.row.child(format(row.data())).show();
                     open = element;
                 }
+            }).on('click', 'input', function () {
+                var id = $(this).val();
+                console.log(id);
+                var index = selected.indexOf(id);
+                if (index == -1) {
+                    selected.push(id);
+                }
+                else {
+                    selected.splice(index, 1);
+                }
+                $selectAll.prop('indeterminate', selected.length);
             });
 
             $selectAll.on("click", function () {
                 var $this = $(this);
                 selected = [];
                 allChecked = $this.prop("checked");
-                $projectsTable.find('input').prop('checked', allChecked);
+                $samplesTable.find('input').prop('checked', allChecked);
             });
 
             function closeFilesView(element) {
@@ -183,7 +196,7 @@
             }
 
             function showFilesView(element) {
-                if(open != null) {
+                if (open != null) {
                     closeFilesView(open);
                 }
                 element.icon.removeClass('glypihcon-cheveron-right').addClass('glyphicon-chevron-down');
