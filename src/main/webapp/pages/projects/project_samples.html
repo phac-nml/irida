@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="templates/wet-boew/wet-layout">
+<head>
+    <title th:text="#{project.samples.title}">THIS IS SOMETHING
+                                              WRONG</title>
+</head>
+<body>
+<div class="container" layout:fragment="content">
+    <div class="row">
+        <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
+    </div>
+    <div class="row">
+        <nav th:replace="projects/project_base :: nav"></nav>
+        <main class="col-md-9 col-md-push-3" role="main"
+              property="mainContentOfPage">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1 role="heading"
+                        th:text="#{project.samples.h1(${project.label})}">__PAGE_TITLE__</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <table id="samplesTable" class="table table-striped">
+                        <thead>
+                        <tr role="row" th:inline="text">
+                            <th data:tooltip="#{tooltip.selectall-none}"><input type="checkbox" id="selectAll"/></th>
+                            <th></th>
+                            <th class="sortable">[[#{project.samples.table.name}]]<i
+                                    class="glyphicon"></i></th>
+                            <th>[[#{project.samples.table.numFiles}]]</th>
+                            <th class="sortable">[[#{project.samples.table.dateCreated}]]<i
+                                    class="glyphicon"></i></th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+        <div class="col-md-3 col-md-pull-9 visible-md visible-lg">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <b class="panel-title" th:text="#{project.details}">Project
+                                                                        Details</b>
+                </div>
+                <div class="panel-body">
+                    <ul class="nav nav-pills nav-stacked details">
+                        <li><span class="glyphicon glyphicon-barcode"></span><em
+                                th:text="#{project.id}"></em><span class="pull-right"
+                                                                   th:text="${project.getId()}"></span></li>
+                        <li th:if="${project.organism} != null"><span
+                                class="glyphicon glyphicon-leaf"></span><em
+                                th:text="#{project.organism}"></em><span class="pull-right"
+                                                                         id="project-organism"><i
+                                th:text="${project.organism}"></i></span>
+                        </li>
+                        <li th:if="${owner} != null"><span
+                                class="glyphicon glyphicon-tower"></span><em
+                                th:text="#{project.owner}"></em><span class="pull-right"
+                                                                      id="project-owner" th:text="${owner.label}">__DATE_CREATED__</span>
+                        </li>
+                        <li><span class="glyphicon glyphicon-calendar"></span><em
+                                th:text="#{project.created}"></em><span class="pull-right"
+                                                                        id="project-created"
+                                                                        th:text="${#calendars.format(project.timestamp, 'dd MMM yyyy')}">__DATE_CREATED__</span>
+                        </li>
+                        <li th:if="${project.modifiedDate} != null"><span
+                                class="glyphicon glyphicon-calendar"></span><em
+                                th:text="#{project.modified}"></em><span class="pull-right"
+                                                                         id="project-modified"
+                                                                         data:livestamp="${project.modifiedDate}"
+                                                                         th:title="${#calendars.format(project.modifiedDate, 'dd MMM yyyy HH:mm')}">__DATE_CREATED__</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                    layout:replace="partials/associated-projects :: list (projects=${associatedProjects})"></div>
+        </div>
+    </div>
+</div>
+<div layout:fragment="scripts" th:inline="javascript">
+    <div th:replace="projects/project_base :: scripts"></div>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+
+        function format(d) {
+            // TODO: ajax to get list of files.
+            return "<p>Files will be displayed here</p>";
+        }
+
+        $(document).ready(function () {
+            var allChecked = false,
+                    selected = [],
+                    $selectAll = $("#selectAll"),
+                    $samplesTable = $('#samplesTable');
+
+            var dt = $samplesTable.DataTable({
+                dom: "<'top'ilf>rt<'bottom'p><'clear'>",
+                processing: true,
+                serverSide: true,
+                deferRender: true,
+                ajax: /*[[@{/projects/ajax/{projectId}/samples(projectId=${project.getId()})}]]*/ '/projects/ajax/1/samples',
+                order: [
+                    [4, "desc"]
+                ],
+                columns: [
+                    {
+                        "data": "id",
+                        "orderable": false,
+                        "render": function (data) {
+                            return '<input type="checkbox" value="' + data + '" />';
+                        }
+                    },
+                    {
+                        "data": null,
+                        "orderable": false,
+                        "class": "details-control",
+                        "defaultContent": ""
+                    },
+                    {
+                        "data": "name"
+                    },
+                    {
+                        "data": "numFiles",
+                        "orderable": false
+                    },
+                    {
+                        "data": "createdDate"
+                    }
+                ],
+                'createdRow': function (row, data, index) {
+                    if (parseInt(data.numFiles) > 0) {
+                        $(row)
+                                .addClass('has-files')
+                                .find('.details-control')
+                                .html('<i class="text-muted glyphicon glyphicon-chevron-right"></i>');
+                    }
+                }
+            });
+
+            var open;
+            $samplesTable.find('tbody').on('click', 'tr.has-files td:not(:first-child)', function () {
+                var $this = $(this),
+                        tr = $this.closest('tr'),
+                        row = dt.row(tr),
+                        icon = tr.find('i'),
+                        element = {
+                            icon: icon,
+                            tr: tr,
+                            row: row
+                        };
+
+                if (element.row.child.isShown()) {
+                    closeFilesView(element);
+                }
+                else {
+                    if (open != null) {
+                        closeFilesView(open);
+                    }
+                    showFilesView(element);
+                    open = element;
+                }
+            }).on('click', 'input', function () {
+                var id = $(this).val();
+                var index = selected.indexOf(id);
+                if (index == -1) {
+                    selected.push(id);
+                }
+                else {
+                    selected.splice(index, 1);
+                }
+                $selectAll.prop('indeterminate', selected.length);
+            });
+
+            $selectAll.on("click", function () {
+                var $this = $(this);
+                selected = [];
+                allChecked = $this.prop("checked");
+                $samplesTable.find('input').prop('checked', allChecked);
+            });
+
+            function closeFilesView(element) {
+                element.icon.addClass('glypihcon-cheveron-right').removeClass('glyphicon-chevron-down');
+                element.tr.removeClass('details');
+                element.row.child.hide();
+            }
+
+            function showFilesView(element) {
+                if (open != null) {
+                    closeFilesView(open);
+                }
+                element.icon.removeClass('glypihcon-cheveron-right').addClass('glyphicon-chevron-down');
+                element.tr.addClass('details');
+                element.row.child(format(element.row.data())).show();
+                open = element;
+            }
+        });
+
+        $('[data-tooltip!=""]').qtip({ // Grab all elements with a non-blank data-tooltip attr.
+            content: {
+                attr: 'data-tooltip' // Tell qTip2 to look inside this attr for its content
+            },
+            position: {
+                target: $('input'),
+                at: 'top center',
+                my: 'bottom center'
+            },
+            style: {
+                classes: 'qtip-dark qtip-shadow'
+            }
+        });
+
+        $(".sortable").qtip({
+            content: /*[[#{tooltip.table.click-sort}]]*/ "click to sort",
+            position: {
+                at: 'top center',
+                my: 'bottom center',
+                adjust: {
+                    y: 10
+                }
+            },
+            style: {
+                classes: 'qtip-dark qtip-shadow'
+            }
+        });
+        /*]]>*/
+    </script>
+</div>
+</body>
+</html>
