@@ -20,6 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -58,6 +59,8 @@ public class ProjectsNewPageIT {
 
 	@Test
 	public void testCreateNewProjectForm() {
+        assertEquals("Should have the correct page title", "IRIDA Platform - Create a New Project", driver.getTitle());
+
 		// Start with just submitting the empty form
 		page.submitForm("", "", "", "");
 		String error = page.getErrors().get(0);
