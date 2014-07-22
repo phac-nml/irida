@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -54,14 +53,14 @@ public class ProjectsNewPageIT {
 	public void destroy() {
 		if (driver != null) {
 			driver.close();
-            driver.quit();
+			driver.quit();
 		}
 	}
 
 	@Test
 	public void testCreateNewProjectForm() {
-        page.goToPage();
-        assertEquals("Should have the correct page title", "IRIDA Platform - Create a New Project", driver.getTitle());
+		page.goToPage();
+		assertEquals("Should have the correct page title", "IRIDA Platform - Create a New Project", driver.getTitle());
 
 		// Start with just submitting the empty form
 		page.submitForm("", "", "", "");
@@ -73,18 +72,18 @@ public class ProjectsNewPageIT {
 		assertTrue("Error Field should be gone", page.checkForErrors());
 
 		// Let's try adding a bad url
-        page.goToPage();
-		page.setURL("red dog");
+		page.goToPage();
+		page.setRemoteURL("red dog");
 		String urlError = page.getErrors().get(0);
 		assertTrue("Should show url error", urlError.contains("enter a valid URL"));
 
-        // Let add a good url
-        page.setURL("http://google.com");
-        assertTrue("URL Error Field should be gone", page.checkForErrors());
+		// Let add a good url
+		page.setRemoteURL("http://google.com");
+		assertTrue("URL Error Field should be gone", page.checkForErrors());
 
-        // Create the project
-        page.goToPage();
-        page.submitForm("test project name", "", "", "");
-        assertTrue("Redirects to the project metadata page", driver.getCurrentUrl().contains("/metadata"));
-    }
+		// Create the project
+		page.goToPage();
+		page.submitForm("test project name", "", "", "");
+		assertTrue("Redirects to the project metadata page", driver.getCurrentUrl().contains("/metadata"));
+	}
 }

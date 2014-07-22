@@ -54,13 +54,10 @@ public class ProjectsNewPage {
 		return driver.findElements(By.id("errors-default")).size() == 0;
 	}
 
-	public void setURL(String url) {
-        driver.findElement(By.name("remoteURL")).clear();
-        driver.findElement(By.name("remoteURL")).sendKeys(url);
-        driver.findElement(By.name("name")).click();
+	public void setRemoteURL(String url) {
+        WebElement urlField = driver.findElement(By.name("remoteURL"));
+        urlField.clear();
+        urlField.sendKeys(url);
+        urlField.sendKeys(Keys.TAB);
 	}
-
-    public void submit() {
-        driver.findElement(By.className("btn-primary")).click();
-    }
 }
