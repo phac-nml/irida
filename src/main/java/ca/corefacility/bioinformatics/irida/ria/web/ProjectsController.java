@@ -30,13 +30,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
+import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectSamplesDataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDataTable;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -67,18 +71,22 @@ public class ProjectsController {
 	public static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_new";
 	public static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
 	public static final String PROJECT_METADATA_EDIT_PAGE = PROJECTS_DIR + "project_metadata_edit";
+	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
 	// Services
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final UserService userService;
+	private final SequenceFileService sequenceFileService;
 
 	@Autowired
-	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService) {
+	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
+			SequenceFileService sequenceFileService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
+		this.sequenceFileService = sequenceFileService;
 	}
 
 	/**
@@ -290,6 +298,59 @@ public class ProjectsController {
 		return "redirect:/projects/" + projectId + "/metadata";
 	}
 
+	@RequestMapping("/{projectId}/samples")
+	public String getProjectSamplesPage(final Model model, final Principal principal, @PathVariable long projectId) {
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+
+		// Set up the template information
+		getProjectTemplateDetails(model, principal, project);
+
+		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_SAMPLES);
+		return PROJECT_SAMPLES_PAGE;
+	}
+
+	@RequestMapping(value = "/ajax/{projectId}/samples", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, Object> getAjaxProjectSamplesMap(
+			@PathVariable Long projectId,
+			@RequestParam(ProjectSamplesDataTable.REQUEST_PARAM_START) Integer start,
+			@RequestParam(ProjectSamplesDataTable.REQUEST_PARAM_LENGTH) Integer length,
+			@RequestParam(ProjectSamplesDataTable.REQUEST_PARAM_DRAW) Integer draw,
+			@RequestParam(value = ProjectSamplesDataTable.REQUEST_PARAM_SORT_COLUMN, defaultValue = ProjectSamplesDataTable.SORT_DEFAULT_COLUMN) Integer sortColumn,
+			@RequestParam(value = ProjectSamplesDataTable.REQUEST_PARAM_SORT_DIRECTION, defaultValue = ProjectSamplesDataTable.SORT_DEFAULT_DIRECTION) String direction,
+			@RequestParam(ProjectSamplesDataTable.REQUEST_PARAM_SEARCH_VALUE) String searchValue) {
+		Map<String, Object> response = new HashMap<>();
+		Sort.Direction sortDirection = ProjectSamplesDataTable.getSortDirection(direction);
+		String sortString = ProjectSamplesDataTable.getSortStringFromColumnID(sortColumn);
+
+		int pageNum = ProjectSamplesDataTable.getPageNumber(start, length);
+		try {
+			Project project = projectService.read(projectId);
+			Page<ProjectSampleJoin> page = sampleService.getSamplesForProjectWithName(project, searchValue, pageNum,
+					length, sortDirection, sortString);
+			List<Map<String, String>> samplesList = new ArrayList<>();
+			for (Join<Project, Sample> join : page.getContent()) {
+				Map<String, String> sMap = new HashMap<>();
+				Sample s = join.getObject();
+				sMap.put(ProjectSamplesDataTable.ID, s.getId().toString());
+				sMap.put(ProjectSamplesDataTable.NAME, s.getSampleName());
+				sMap.put(ProjectSamplesDataTable.NUM_FILES,
+						String.valueOf(sequenceFileService.getSequenceFilesForSample(s).size()));
+				sMap.put(ProjectSamplesDataTable.CREATED_DATE, Formats.DATE.format(join.getTimestamp()));
+				samplesList.add(sMap);
+			}
+			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_DATA, samplesList);
+			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_DRAW, draw);
+			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_RECORDS_FILTERED, page.getTotalElements());
+			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_RECORDS_TOTAL, page.getTotalElements());
+			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_SORT_COLUMN, sortColumn);
+			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_SORT_DIRECTION, sortDirection);
+		} catch (Exception e) {
+			logger.error("Error retrieving project sample information :" + e.getLocalizedMessage());
+		}
+		return response;
+	}
+
 	@RequestMapping(value = "/ajax/{projectId}/members", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Collection<Join<Project, User>>> getAjaxProjectMemberMap(
 			@PathVariable Long projectId) {
@@ -297,7 +358,7 @@ public class ProjectsController {
 		try {
 			Project project = projectService.read(projectId);
 			Collection<Join<Project, User>> users = userService.getUsersForProject(project);
-			data.put("data", users);
+			data.put(ProjectsDataTable.RESPONSE_PARAM_DATA, users);
 		} catch (Exception e) {
 			logger.error("Trying to access a project that does not exist.");
 		}
@@ -419,7 +480,6 @@ public class ProjectsController {
 			Project p = projectUserJoin.getSubject();
 			String role = projectUserJoin.getProjectRole() != null ? projectUserJoin.getProjectRole().toString() : "";
 			Map<String, String> l = new HashMap<>();
-			l.put("checkbox", p.getId().toString());
 			l.put("id", p.getId().toString());
 			l.put("name", p.getName());
 			l.put("organism", p.getOrganism());
