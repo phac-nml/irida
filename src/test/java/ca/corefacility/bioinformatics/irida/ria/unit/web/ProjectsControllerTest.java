@@ -2,13 +2,24 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,18 +30,23 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * Unit test for {@link }
@@ -50,21 +66,27 @@ public class ProjectsControllerTest {
 	private static final String PROJECT_NAME = "test_project";
 	private static final Long PROJECT_ID = 1L;
 	private static final Long PROJECT_MODIFIED_DATE = 1403723706L;
-    public static final String PROJECT_ORGANISM = "E. coli";
-    private static Project project = null;
+	public static final String PROJECT_ORGANISM = "E. coli";
+	private static Project project = null;
+
+    private static final ImmutableList<String> REQUIRED_DATATABLE_RESPONSE_PARAMS = ImmutableList.of(
+            DataTable.RESPONSE_PARAM_DATA,DataTable.RESPONSE_PARAM_DRAW,DataTable.RESPONSE_PARAM_RECORDS_FILTERED, DataTable.RESPONSE_PARAM_RECORDS_FILTERED, DataTable.RESPONSE_PARAM_SORT_COLUMN
+    );
 
 	// Services
 	private ProjectService projectService;
 	private ProjectsController controller;
 	private SampleService sampleService;
 	private UserService userService;
+	private SequenceFileService sequenceFileService;
 
 	@Before
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);
 		userService = mock(UserService.class);
-		controller = new ProjectsController(projectService, sampleService, userService);
+		sequenceFileService = mock(SequenceFileService.class);
+		controller = new ProjectsController(projectService, sampleService, userService, sequenceFileService);
 		user.setId(1L);
 
 		mockSidebarInfo();
@@ -75,6 +97,37 @@ public class ProjectsControllerTest {
 		Model model = new ExtendedModelMap();
 		String page = controller.getProjectsPage(model);
 		assertEquals(ProjectsController.LIST_PROJECTS_PAGE, page);
+	}
+
+	@Test
+	public void testGetAjaxProjectSamplesMap() {
+		Project project = getProject();
+		Page<ProjectSampleJoin> page = getSamplesForProjectPage(project);
+		when(projectService.read(anyLong())).thenReturn(project);
+		when(
+				sampleService.getSamplesForProjectWithName(any(Project.class), anyString(), anyInt(), anyInt(), any(),
+						anyString())).thenReturn(page);
+		when(sequenceFileService.getSequenceFilesForSample(any(Sample.class))).thenReturn(getSequenceFilesForSample());
+
+		Map<String, Object> response = controller.getAjaxProjectSamplesMap(1L, 0, 10, 1, 4, "asc", "");
+
+		// Make sure it has the expected keys:
+		checkAjaxDataTableResponse(response);
+
+		// Check out the samples
+		Object listObject = response.get(DataTable.RESPONSE_PARAM_DATA);
+		assertTrue("Samples list really is a list", listObject instanceof List);
+		@SuppressWarnings("unchecked")
+		List<HashMap<String, Object>> samplesList = (List<HashMap<String, Object>>) listObject;
+
+		assertEquals("Has the correct number of samples", 10, samplesList.size());
+		// Get a token sample data and make sure it is correct
+		HashMap<String, Object> sample = samplesList.get(0);
+		assertTrue("Has a key of 'id'", sample.containsKey("id"));
+		assertTrue("Has a key of 'name'", sample.containsKey("name"));
+		assertTrue("Has a key of 'numFiles'", sample.containsKey("numFiles"));
+		assertTrue("Has a key of 'createdDate'", sample.containsKey("createdDate"));
+		assertEquals("Has the first sample name", "sample0", sample.get("name"));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -92,6 +145,9 @@ public class ProjectsControllerTest {
 		when(userService.getUsersForProject(project)).thenReturn(usersJoin);
 
 		Map<String, Object> response = controller.getAjaxProjectListForUser(principal, 0, 10, 1, 0, "asc", "");
+
+        // Make sure response has the expected keys:
+        checkAjaxDataTableResponse(response);
 
 		assertEquals("Has the correct draw number", Integer.parseInt(requestDraw),
 				response.get(DataTable.RESPONSE_PARAM_DRAW));
@@ -228,19 +284,6 @@ public class ProjectsControllerTest {
 	}
 	
 	@Test
-	public void testGetEditProjectUsersPage(){
-		Long projectId = 1l;
-		Model model = new ExtendedModelMap();
-		Principal principal = () -> USER_NAME;
-		
-		String editProjectUsersPage = controller.getEditProjectUsersPage(model, principal, projectId);
-		
-		assertEquals(ProjectsController.PROJECT_MEMBER_EDIT_PAGE,editProjectUsersPage);
-		assertTrue(model.containsAttribute("isAdmin"));
-		assertTrue(model.containsAttribute("isOwner"));
-	}
-	
-	@Test
 	public void testRemoveUserFromProject() {
 		Long projectId = 1l;
 		Long userId = 2l;
@@ -269,6 +312,15 @@ public class ProjectsControllerTest {
 		when(projectService.read(PROJECT_ID)).thenReturn(project);
 		when(userService.getUserByUsername(anyString())).thenReturn(user);
 	}
+
+    /**
+     * Check the response for DataTable calls
+     */
+    private void checkAjaxDataTableResponse(Map<String, Object> response) {
+        for(String param : REQUIRED_DATATABLE_RESPONSE_PARAMS) {
+            assertTrue("Response has the key '" + param + "'", response.containsKey(param));
+        }
+    }
 
 	private List<Join<Project, User>> getProjectsForUser() {
 		List<Join<Project, User>> projects = new ArrayList<>();
@@ -305,95 +357,193 @@ public class ProjectsControllerTest {
 		return join;
 	}
 
-    private Page<Project> getProjectsListForAdmin(List<Project> projects) {
-        return new Page<Project>() {
-            @Override
-            public int getNumber() {
-                return 0;
-            }
+    private List<Join<Sample, SequenceFile>> getSequenceFilesForSample() {
+		List<Join<Sample, SequenceFile>> list = new ArrayList<>();
+		Sample sample = new Sample("TEST SAMPLE");
+		sample.setId(1L);
+		for (int i = 0; i < 20; i++) {
+			list.add(new SampleSequenceFileJoin(sample, new SequenceFile()));
+		}
+		return list;
+	}
 
-            @Override
-            public int getSize() {
-                return 0;
-            }
+	private Page<ProjectSampleJoin> getSamplesForProjectPage(Project project) {
 
-            @Override
-            public int getTotalPages() {
-                return 0;
-            }
+		return new Page<ProjectSampleJoin>() {
+			@Override
+			public int getNumber() {
+				return 0;
+			}
 
-            @Override
-            public int getNumberOfElements() {
-                return 0;
-            }
+			@Override
+			public int getSize() {
+				return 0;
+			}
 
-            @Override
-            public long getTotalElements() {
-                return NUM_TOTAL_ELEMENTS;
-            }
+			@Override
+			public int getTotalPages() {
+				return 0;
+			}
 
-            @Override
-            public boolean hasPreviousPage() {
-                return false;
-            }
+			@Override
+			public int getNumberOfElements() {
+				return 0;
+			}
 
-            @Override
-            public boolean isFirstPage() {
-                return false;
-            }
+			@Override
+			public long getTotalElements() {
+				return 0;
+			}
 
-            @Override
-            public boolean hasNextPage() {
-                return false;
-            }
+			@Override
+			public boolean hasPreviousPage() {
+				return false;
+			}
 
-            @Override
-            public boolean isLastPage() {
-                return false;
-            }
+			@Override
+			public boolean isFirstPage() {
+				return false;
+			}
 
-            @Override
-            public Pageable nextPageable() {
-                return null;
-            }
+			@Override
+			public boolean hasNextPage() {
+				return false;
+			}
 
-            @Override
-            public Pageable previousPageable() {
-                return null;
-            }
+			@Override
+			public boolean isLastPage() {
+				return false;
+			}
 
-            @Override
-            public Iterator<Project> iterator() {
-                return null;
-            }
+			@Override
+			public Pageable nextPageable() {
+				return null;
+			}
 
-            @Override
-            public List<Project> getContent() {
-                return projects;
-            }
+			@Override
+			public Pageable previousPageable() {
+				return null;
+			}
 
-            @Override
-            public boolean hasContent() {
-                return true;
-            }
+			@Override
+			public Iterator<ProjectSampleJoin> iterator() {
+				return null;
+			}
 
-            @Override
-            public Sort getSort() {
-                return null;
-            }
-        };
-    }
+			@Override
+			public List<ProjectSampleJoin> getContent() {
+				List<ProjectSampleJoin> list = new ArrayList<>();
+				for (int i = 0; i < 10; i++) {
+					Sample sample = new Sample("sample" + i);
+					sample.setId(i + 1L);
+					ProjectSampleJoin join = new ProjectSampleJoin(project, sample);
+					list.add(join);
+				}
+				return list;
+			}
 
-    private List<Project> getAdminProjectsList() {
-        List<Project> projects = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            Project p = new Project("project" + i);
-            p.setId((long) i);
-            p.setOrganism(PROJECT_ORGANISM);
-            projects.add(p);
-        }
-        return projects;
-    }
+			@Override
+			public boolean hasContent() {
+				return true;
+			}
+
+			@Override
+			public Sort getSort() {
+				return null;
+			}
+		};
+	}
+
+	private Page<Project> getProjectsListForAdmin(List<Project> projects) {
+		return new Page<Project>() {
+			@Override
+			public int getNumber() {
+				return 0;
+			}
+
+			@Override
+			public int getSize() {
+				return 0;
+			}
+
+			@Override
+			public int getTotalPages() {
+				return 0;
+			}
+
+			@Override
+			public int getNumberOfElements() {
+				return 0;
+			}
+
+			@Override
+			public long getTotalElements() {
+				return NUM_TOTAL_ELEMENTS;
+			}
+
+			@Override
+			public boolean hasPreviousPage() {
+				return false;
+			}
+
+			@Override
+			public boolean isFirstPage() {
+				return false;
+			}
+
+			@Override
+			public boolean hasNextPage() {
+				return false;
+			}
+
+			@Override
+			public boolean isLastPage() {
+				return false;
+			}
+
+			@Override
+			public Pageable nextPageable() {
+				return null;
+			}
+
+			@Override
+			public Pageable previousPageable() {
+				return null;
+			}
+
+			@Override
+			public Iterator<Project> iterator() {
+				return null;
+			}
+
+			@Override
+			public List<Project> getContent() {
+				return projects;
+			}
+
+			@Override
+			public boolean hasContent() {
+				return true;
+			}
+
+			@Override
+			public Sort getSort() {
+				return null;
+			}
+		};
+	}
+
+	private List<Project> getAdminProjectsList() {
+		List<Project> projects = new ArrayList<>();
+		for (int i = 0; i < 10; i++) {
+			Project p = new Project("project" + i);
+			p.setId((long) i);
+			p.setOrganism(PROJECT_ORGANISM);
+			projects.add(p);
+		}
+		return projects;
+	}
+
 
 	/**
 	 * Creates a Page of Projects for testing.

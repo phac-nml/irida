@@ -59,7 +59,7 @@
                 stateDuration: -1,
                 columns: [
                     {
-                        "data": "checkbox",
+                        "data": "id",
                         "render": function (data) {
                             var checked = allChecked || selected.indexOf(data) >= 0 ? "checked" : "";
                             return '<input type="checkbox" value="' + data + '" ' + checked + '/>';
@@ -137,6 +137,7 @@
             });
 
             $selectAll.on("click", function () {
+                console.log("clicked")
                 var $this = $(this);
                 selected = [];
                 allChecked = $this.prop("checked");
