@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -43,7 +44,7 @@ public class ProjectsNewPageIT {
 
 	@Before
 	public void setUp() {
-		driver = new ChromeDriver();
+		driver = new PhantomJSDriver();
 		LoginPage loginPage = LoginPage.to(driver);
 		loginPage.doLogin();
 		page = new ProjectsNewPage(driver);
@@ -59,6 +60,7 @@ public class ProjectsNewPageIT {
 
 	@Test
 	public void testCreateNewProjectForm() {
+        page.goToPage();
         assertEquals("Should have the correct page title", "IRIDA Platform - Create a New Project", driver.getTitle());
 
 		// Start with just submitting the empty form
@@ -71,6 +73,7 @@ public class ProjectsNewPageIT {
 		assertTrue("Error Field should be gone", page.checkForErrors());
 
 		// Let's try adding a bad url
+        page.goToPage();
 		page.setURL("red dog");
 		String urlError = page.getErrors().get(0);
 		assertTrue("Should show url error", urlError.contains("enter a valid URL"));
@@ -80,7 +83,8 @@ public class ProjectsNewPageIT {
         assertTrue("URL Error Field should be gone", page.checkForErrors());
 
         // Create the project
-        page.submit();
+        page.goToPage();
+        page.submitForm("test project name", "", "", "");
         assertTrue("Redirects to the project metadata page", driver.getCurrentUrl().contains("/metadata"));
     }
 }
