@@ -52,13 +52,9 @@ public class ProjectsControllerTest {
 	public static final String PROJECT_ORGANISM = "E. coli";
 	private static Project project = null;
 
-    private static final ImmutableList<String> REQUIRED_DATATABLE_RESPONSE_PARAMS = ImmutableList.<String>builder()
-            .add(DataTable.RESPONSE_PARAM_DATA)
-            .add(DataTable.RESPONSE_PARAM_DRAW)
-            .add(DataTable.RESPONSE_PARAM_RECORDS_FILTERED)
-            .add(DataTable.RESPONSE_PARAM_RECORDS_TOTAL)
-            .add(DataTable.RESPONSE_PARAM_SORT_COLUMN)
-            .build();
+    private static final ImmutableList<String> REQUIRED_DATATABLE_RESPONSE_PARAMS = ImmutableList.of(
+            DataTable.RESPONSE_PARAM_DATA,DataTable.RESPONSE_PARAM_DRAW,DataTable.RESPONSE_PARAM_RECORDS_FILTERED, DataTable.RESPONSE_PARAM_RECORDS_FILTERED, DataTable.RESPONSE_PARAM_SORT_COLUMN
+    );
 
 	// Services
 	private ProjectService projectService;
