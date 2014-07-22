@@ -1,5 +1,34 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.Model;
+
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -16,23 +45,8 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
 import com.google.common.collect.ImmutableList;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
-
-import java.security.Principal;
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link }
@@ -40,7 +54,10 @@ import static org.mockito.Mockito.when;
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectsControllerTest {
-	// DATATABLES position for project information
+    // DATATABLES position for project information
+	//private static final int PROJECT_NAME_TABLE_LOCATION = 1;
+	//private static final int PROJECT_NUM_SAMPLES_TABLE_LOCATION = 4;
+	//private static final int PROJECT_NUM_USERS_TABLE_LOCATION = 5;
 	private static final int NUM_PROJECT_SAMPLES = 12;
 	private static final int NUM_PROJECT_USERS = 50;
 	private static final long NUM_TOTAL_ELEMENTS = 100L;
@@ -100,6 +117,7 @@ public class ProjectsControllerTest {
 		// Check out the samples
 		Object listObject = response.get(DataTable.RESPONSE_PARAM_DATA);
 		assertTrue("Samples list really is a list", listObject instanceof List);
+		@SuppressWarnings("unchecked")
 		List<HashMap<String, Object>> samplesList = (List<HashMap<String, Object>>) listObject;
 
 		assertEquals("Has the correct number of samples", 10, samplesList.size());
@@ -121,9 +139,8 @@ public class ProjectsControllerTest {
 		Principal principal = () -> USER_NAME;
 
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
-		when(
-				projectService.searchProjectsByNameForUser(any(User.class), anyString(), anyInt(), anyInt(), any(),
-						anyString())).thenReturn(getProjectsPage());
+		when(projectService.searchProjectsByNameForUser(any(User.class), anyString(), anyInt(), anyInt(), any(), anyString())).thenReturn(
+                getProjectsPage());
 		when(sampleService.getSamplesForProject(project)).thenReturn(samplesJoin);
 		when(userService.getUsersForProject(project)).thenReturn(usersJoin);
 
@@ -141,42 +158,43 @@ public class ProjectsControllerTest {
 		projectList = (List<HashMap<String, Object>>) listObject;
 		HashMap<String, Object> data = projectList.get(0);
 
-		assertEquals("Has the correct project name", PROJECT_NAME, data.get("name"));
-		assertEquals("Has the correct project organism", PROJECT_ORGANISM, data.get("organism"));
-		assertEquals("Has the correct number of project members", NUM_PROJECT_USERS + "", data.get("members"));
-		assertEquals("Has the correct number of project samples", NUM_PROJECT_SAMPLES + "", data.get("samples"));
+        assertEquals("Has the correct project name", PROJECT_NAME, data.get("name"));
+        assertEquals("Has the correct project organism", PROJECT_ORGANISM, data.get("organism"));
+        assertEquals("Has the correct number of project members", NUM_PROJECT_USERS+"", data.get("members"));
+        assertEquals("Has the correct number of project samples", NUM_PROJECT_SAMPLES+"", data.get("samples"));
 	}
 
+    @SuppressWarnings("unchecked")
 	@Test
-	public void testGetAjaxProjectListForAdmin() {
-		List<Join<Project, Sample>> samplesJoin = getSamplesForProject();
-		List<Join<Project, User>> usersJoin = getUsersForProject();
-		List<Project> projects = getAdminProjectsList();
-		String requestDraw = "1";
-		Principal principal = () -> USER_NAME;
+    public void testGetAjaxProjectListForAdmin() {
+        List<Join<Project, Sample>> samplesJoin = getSamplesForProject();
+        List<Join<Project, User>> usersJoin = getUsersForProject();
+        List<Project> projects = getAdminProjectsList();
+        String requestDraw = "1";
+        Principal principal = () -> USER_NAME;
 
-		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
-		when(projectService.searchProjectsByName(anyString(), anyInt(), anyInt(), any(), anyString())).thenReturn(
-				getProjectsListForAdmin(projects));
-		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(samplesJoin);
-		when(userService.getUsersForProject(any(Project.class))).thenReturn(usersJoin);
+        when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
+        when(projectService.searchProjectsByName(anyString(), anyInt(), anyInt(), any(), anyString())).thenReturn(
+                getProjectsListForAdmin(projects));
+        when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(samplesJoin);
+        when(userService.getUsersForProject(any(Project.class))).thenReturn(usersJoin);
 
-		Map<String, Object> response = controller.getAjaxProjectListForAdmin(principal, 0, 10, 1, 0, "asc", "");
+        Map<String, Object> response = controller.getAjaxProjectListForAdmin(principal, 0, 10, 1, 0, "asc", "");
 
-		assertEquals("Has the correct draw number", Integer.parseInt(requestDraw),
-				response.get(DataTable.RESPONSE_PARAM_DRAW));
+        assertEquals("Has the correct draw number", Integer.parseInt(requestDraw),
+                response.get(DataTable.RESPONSE_PARAM_DRAW));
 
-		Object listObject = response.get(DataTable.RESPONSE_PARAM_DATA);
-		List<HashMap<String, Object>> projectList;
-		assertTrue(listObject instanceof List);
-		projectList = (List<HashMap<String, Object>>) listObject;
-		HashMap<String, Object> data = projectList.get(0);
+        Object listObject = response.get(DataTable.RESPONSE_PARAM_DATA);
+        List<HashMap<String, Object>> projectList;
+        assertTrue(listObject instanceof List);
+        projectList = (List<HashMap<String, Object>>) listObject;
+        HashMap<String, Object> data = projectList.get(0);
 
-		assertEquals("Has the correct project name", "project0", data.get("name"));
-		assertEquals("Has the correct project organism", PROJECT_ORGANISM, data.get("organism"));
-		assertEquals("Has the correct number of project members", NUM_PROJECT_USERS + "", data.get("members"));
-		assertEquals("Has the correct number of project samples", NUM_PROJECT_SAMPLES + "", data.get("samples"));
-	}
+        assertEquals("Has the correct project name", "project0", data.get("name"));
+        assertEquals("Has the correct project organism", PROJECT_ORGANISM, data.get("organism"));
+        assertEquals("Has the correct number of project members", NUM_PROJECT_USERS+"", data.get("members"));
+        assertEquals("Has the correct number of project samples", NUM_PROJECT_SAMPLES+"", data.get("samples"));
+    }
 
 	@Test
 	public void testGetSpecificProjectPage() {
@@ -212,6 +230,7 @@ public class ProjectsControllerTest {
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void testCreateNewProject() {
 		Model model = new ExtendedModelMap();
 		String projectName = "Test Project";
@@ -246,6 +265,7 @@ public class ProjectsControllerTest {
 		assertEquals("Returns the correct edit page.", "projects/project_metadata", page);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testPostProjectMetadataEditPage() {
 		Model model = new ExtendedModelMap();
@@ -261,6 +281,24 @@ public class ProjectsControllerTest {
 		String page = controller.postProjectMetadataEditPage(model, principal, PROJECT_ID, newName, newOrganism,
 				newDescritption, newRemoteURL);
 		assertEquals("Returns the correct page.", "redirect:/projects/" + PROJECT_ID + "/metadata", page);
+	}
+	
+	@Test
+	public void testRemoveUserFromProject() {
+		Long projectId = 1l;
+		Long userId = 2l;
+		User user = new User(userId, "tom", null, null, null, null, null);
+		Project project = new Project("test");
+		project.setId(projectId);
+
+		when(userService.read(userId)).thenReturn(user);
+		when(projectService.read(projectId)).thenReturn(project);
+
+		controller.removeUser(projectId, userId);
+
+		verify(userService).read(userId);
+		verify(projectService).read(projectId);
+		verify(projectService).removeUserFromProject(project, user);
 	}
 
 	/**
@@ -319,7 +357,7 @@ public class ProjectsControllerTest {
 		return join;
 	}
 
-	private List<Join<Sample, SequenceFile>> getSequenceFilesForSample() {
+    private List<Join<Sample, SequenceFile>> getSequenceFilesForSample() {
 		List<Join<Sample, SequenceFile>> list = new ArrayList<>();
 		Sample sample = new Sample("TEST SAMPLE");
 		sample.setId(1L);
@@ -506,6 +544,7 @@ public class ProjectsControllerTest {
 		return projects;
 	}
 
+
 	/**
 	 * Creates a Page of Projects for testing.
 	 * 
@@ -596,7 +635,7 @@ public class ProjectsControllerTest {
 		if (project == null) {
 			project = new Project(PROJECT_NAME);
 			project.setId(PROJECT_ID);
-			project.setOrganism(PROJECT_ORGANISM);
+            project.setOrganism(PROJECT_ORGANISM);
 			project.setModifiedDate(new Date(PROJECT_MODIFIED_DATE));
 		}
 		return project;

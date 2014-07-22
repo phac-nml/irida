@@ -1,5 +1,32 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -16,23 +43,8 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-import com.google.common.base.Strings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import java.security.Principal;
-import java.util.*;
+import com.google.common.base.Strings;
 
 /**
  * Controller for all project related views
@@ -48,7 +60,7 @@ public class ProjectsController {
 	private static final String ACTIVE_NAV_METADATA = "metadata";
 	private static final String ACTIVE_NAV_SAMPLES = "samples";
 	private static final String ACTIVE_NAV_MEMBERS = "members";
-	private static final String ACTIVE_NAV_ANALYSIS = "analysis";
+	//private static final String ACTIVE_NAV_ANALYSIS = "analysis";
 
 	// Page Names
 	private static final String PROJECTS_DIR = "projects/";
@@ -135,6 +147,25 @@ public class ProjectsController {
 		getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_MEMBERS);
 		return PROJECT_MEMBERS_PAGE;
+	}
+
+	/**
+	 * Remove a user from a project
+	 * 
+	 * @param projectId
+	 *            The project to remove from
+	 * @param userId
+	 *            The user to remove
+	 * @return
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
+	@RequestMapping("{projectId}/members/remove")
+	@ResponseBody
+	public void removeUser(@PathVariable Long projectId, @RequestParam Long userId) {
+		Project project = projectService.read(projectId);
+		User user = userService.read(userId);
+
+		projectService.removeUserFromProject(project, user);
 	}
 
 	/**
