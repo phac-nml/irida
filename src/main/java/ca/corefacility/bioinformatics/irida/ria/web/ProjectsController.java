@@ -41,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Controller for all project related views
@@ -54,9 +55,9 @@ public class ProjectsController {
 	private static final String ACTIVE_NAV = "activeNav";
 	private static final String ACTIVE_NAV_DASHBOARD = "dashboard";
 	private static final String ACTIVE_NAV_METADATA = "metadata";
-	//private static final String ACTIVE_NAV_SAMPLES = "samples";
+	// private static final String ACTIVE_NAV_SAMPLES = "samples";
 	private static final String ACTIVE_NAV_MEMBERS = "members";
-	//private static final String ACTIVE_NAV_ANALYSIS = "analysis";
+	// private static final String ACTIVE_NAV_ANALYSIS = "analysis";
 
 	// Page Names
 	private static final String PROJECTS_DIR = "projects/";
@@ -68,6 +69,9 @@ public class ProjectsController {
 	public static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
 	public static final String PROJECT_METADATA_EDIT_PAGE = PROJECTS_DIR + "project_metadata_edit";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
+
+	private static final List<ProjectRole> projectRoles = ImmutableList.of(ProjectRole.PROJECT_USER,
+			ProjectRole.PROJECT_OWNER);
 
 	// Services
 	private final ProjectService projectService;
@@ -141,7 +145,7 @@ public class ProjectsController {
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_MEMBERS);
 		return PROJECT_MEMBERS_PAGE;
 	}
-	
+
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@RequestMapping("/{projectId}/members/edit")
 	public String getEditProjectUsersPage(final Model model, final Principal principal, @PathVariable Long projectId) {
@@ -149,6 +153,7 @@ public class ProjectsController {
 		model.addAttribute("project", project);
 		getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_MEMBERS);
+		model.addAttribute("projectRoles", projectRoles);
 		return PROJECT_MEMBER_EDIT_PAGE;
 	}
 
@@ -169,6 +174,29 @@ public class ProjectsController {
 		User user = userService.read(userId);
 
 		projectService.removeUserFromProject(project, user);
+	}
+
+	/**
+	 * Update a user's role on a project
+	 * 
+	 * @param projectId
+	 *            The ID of the project
+	 * @param userId
+	 *            The ID of the user
+	 * @param projectRole
+	 *            The role to set
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
+	@RequestMapping("{projectId}/members/edit/role")
+	@ResponseBody
+	public void updateUserRole(@PathVariable Long projectId, @RequestParam Long userId,
+			@RequestParam String projectRole) {
+		Project project = projectService.read(projectId);
+		User user = userService.read(userId);
+		
+		ProjectRole role = ProjectRole.fromString(projectRole);
+		
+		projectService.updateUserProjectRole(project, user, role);
 	}
 
 	/**

@@ -68,7 +68,14 @@
             </div>
             <div layout:replace="partials/associated-projects :: list (projects=${associatedProjects})"></div>
         </div>
-    </div>    
+    </div>
+    <div class="hidden">
+        <select id="template-roles" class="role-select form-control input-sm">
+            <option th:each="role : ${projectRoles}" 
+                th:value="${role}" 
+                th:text="#{${'project.members.role.'+role}}">_Role_</option>
+        </select>
+    </div>
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
     <div th:replace="projects/project_base :: scripts"></div>
@@ -76,6 +83,7 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
         $(document).ready(function () {
+        	//create the datatable
         	var table = $('#usersTable').DataTable({
                 dom: "<'top'ilf>rt<'bottom'p><'clear'>",
                 ajax: '/projects/ajax/[[${project.getId()}]]/members',
@@ -107,13 +115,18 @@
                     },
                     {
                         "data": "projectRole",
-                        "render": function (data) {
-                            if (data === 'PROJECT_OWNER') {
-                                return '<span class="glyphicon glyphicon-tower"></span>&nbsp;&nbsp;' + [[#{project.role.owner}]];
-                            }
-                            else {
-                                return '<span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;' + [[#{project.role.collaborator}]];
-                            }
+                        "render": function (data, type, row) {
+                        	var roleSelect = $("#template-roles").clone();
+                        	var newId = row.object.id + "-role";
+                        	roleSelect.attr("id",newId);
+                        	roleSelect.attr("data-user",row.object.id);
+                        	roleSelect.find("option").each(function(){
+                        		if($(this).val() == data){
+                        			$(this).attr("selected",true);
+                        		}
+                        	});
+                        	
+                        	return roleSelect.wrap("<div/>").parent().html(); 
                         }
                     },
                     {
@@ -134,8 +147,46 @@
                     }
                 ]
             });
+        	
+        	//update the user
+        	$("#usersTable").on("change",".role-select",function(){
+        		var newRole = $(this).val();
+        		var userId = $(this).data("user");
+        		var projectId = [[${project.getId()}]];
+        		
+        		var data = "userId="+userId+"&projectRole="+newRole;
+        		var url = [[@{/projects/}]] + projectId + "/members/edit/role";
+        		
+        		console.log(url);
+        		console.log(data);
+        		
+        		$.ajax({
+        			url:url,
+        			data:data,
+        			success:function(){
+        				noty({
+        					text: [[#{project.members.edit.role.success}]] ,
+        					layout: "topCenter", 
+        					type: "success",
+        					timeout: 5000
+        				});
+        				
+        				table.ajax.reload();
+        			},
+        			error:function(){
+        				noty({
+        					text: [[#{project.members.edit.role.error}]] , 
+        					layout: "topCenter", 
+        					type: "error",
+        					timeout: false
+        				})
+        			}
+        		}); 
+        		
+        	});
         });
         
+        //Show the remove user confirmation popup
         function showRemoveUser(userLabel,removeUrl,userId,table){
         	var data = "userId="+userId;
     		noty({
@@ -143,38 +194,38 @@
     			type: "confirmation",
     			text: [[#{project.members.edit.remove}]] + " " + userLabel + "?",
     			buttons: [
-    			          {addClass: 'btn btn-primary btn-sm modial-remove-user', text: 'Ok', onClick: function($noty) {
-    			              $noty.close();
-    			              table.ajax.reload();
-    			              $.ajax({
-    			        			url:removeUrl,
-    			        			data:data,
-    			        			success:function(){
-    			        				noty({
-    			        					text: [[#{project.members.edit.remove.success}]] ,
-    			        					layout: "topCenter", 
-    			        					type: "success",
-    			        					timeout: 5000
-    			        				});
-    			        				
-    			        				table.ajax.reload();
-    			        			},
-    			        			error:function(){
-    			        				noty({
-    			        					text: [[#{project.members.edit.remove.error}]] , 
-    			        					layout: "topCenter", 
-    			        					type: "error",
-    			        					timeout: false
-    			        				})
-    			        			}
-    			        		});               			              
-    			            }
-    			          },
-    			          {addClass: 'btn btn-danger btn-sm', text: 'Cancel', onClick: function($noty) {
-    			              $noty.close();
-    			            }
-    			          }
-    			        ]
+		          {addClass: 'btn btn-primary btn-sm modial-remove-user', text: 'Ok', onClick: function($noty) {
+		              $noty.close();
+		              table.ajax.reload();
+		              $.ajax({
+		        			url:removeUrl,
+		        			data:data,
+		        			success:function(){
+		        				noty({
+		        					text: [[#{project.members.edit.remove.success}]] ,
+		        					layout: "topCenter", 
+		        					type: "success",
+		        					timeout: 5000
+		        				});
+		        				
+		        				table.ajax.reload();
+		        			},
+		        			error:function(){
+		        				noty({
+		        					text: [[#{project.members.edit.remove.error}]] , 
+		        					layout: "topCenter", 
+		        					type: "error",
+		        					timeout: false
+		        				})
+		        			}
+		        		});               			              
+		            }
+		          },
+		          {addClass: 'btn btn-danger btn-sm', text: 'Cancel', onClick: function($noty) {
+		              $noty.close();
+		            }
+		          }
+		        ]
     		});
     	}
         /*]]>*/
