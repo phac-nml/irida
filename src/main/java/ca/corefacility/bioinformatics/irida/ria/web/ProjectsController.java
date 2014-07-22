@@ -287,11 +287,11 @@ public class ProjectsController {
 			Page<ProjectSampleJoin> page = sampleService.getSamplesForProjectWithName(project, searchValue, pageNum,
 					length, sortDirection, sortString);
 			List<Map<String, String>> samplesList = new ArrayList<>();
-			for (Join<Project, Sample> join : page) {
+			for (Join<Project, Sample> join : page.getContent()) {
 				Map<String, String> sMap = new HashMap<>();
 				Sample s = join.getObject();
 				sMap.put(ProjectSamplesDataTable.ID, s.getId().toString());
-				sMap.put(ProjectSamplesDataTable.NAME, s.getLabel());
+				sMap.put(ProjectSamplesDataTable.NAME, s.getSampleName());
 				sMap.put(ProjectSamplesDataTable.NUM_FILES,
 						String.valueOf(sequenceFileService.getSequenceFilesForSample(s).size()));
 				sMap.put(ProjectSamplesDataTable.CREATED_DATE, Formats.DATE.format(join.getTimestamp()));
