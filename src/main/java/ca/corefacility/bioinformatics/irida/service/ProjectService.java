@@ -53,6 +53,20 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	public void removeUserFromProject(Project project, User user);
 
 	/**
+	 * Update a {@link User}'s {@link ProjectRole} on a {@link Project}
+	 * 
+	 * @param project
+	 *            The project to update
+	 * @param user
+	 *            The user to update
+	 * @param projectRole
+	 *            The role to set
+	 * @return The newly updated role object
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project,'isProjectOwner')")
+	public Join<Project, User> updateUserProjectRole(Project project, User user, ProjectRole projectRole);
+
+	/**
 	 * Add the specified {@link Sample} to the {@link Project}.
 	 * 
 	 * @param project
@@ -82,15 +96,23 @@ public interface ProjectService extends CRUDService<Long, Project> {
 
 	/**
 	 * Search for Projects with a given partial name
-	 * @param name The name to search
-	 * @param page The page number to read
-	 * @param size The size of the pages to read
-	 * @param order The order to sort in
-	 * @param sortProperties The properties to sort on
+	 * 
+	 * @param name
+	 *            The name to search
+	 * @param page
+	 *            The page number to read
+	 * @param size
+	 *            The size of the pages to read
+	 * @param order
+	 *            The order to sort in
+	 * @param sortProperties
+	 *            The properties to sort on
 	 * @return The matching projects
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public Page<Project> searchProjectsByName(String name, int page, int size, Direction order, String... sortProperties);
+	public Page<Project> searchProjectsByName(String name, int page, int size, Direction order,
+			String... sortProperties);
+
 	/**
 	 * Get all {@link Project}s associated with a particular {@link User}.
 	 * 
@@ -99,20 +121,27 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return the projects associated with the user.
 	 */
 	public List<Join<Project, User>> getProjectsForUser(User user);
-	
+
 	/**
 	 * Search all {@link Project}s associated with a particular {@link User}.
 	 * 
-	 * @param user the user to get projects for.
-	 * @param searchTerm The search term in the Project name
-	 * @param page The page number to read
-	 * @param size The size of the pages to read
-	 * @param order The order to sort in
-	 * @param sortProperties The properties to sort on
+	 * @param user
+	 *            the user to get projects for.
+	 * @param searchTerm
+	 *            The search term in the Project name
+	 * @param page
+	 *            The page number to read
+	 * @param size
+	 *            The size of the pages to read
+	 * @param order
+	 *            The order to sort in
+	 * @param sortProperties
+	 *            The properties to sort on
 	 * @return The matching projects
 	 */
-	public Page<ProjectUserJoin> searchProjectsByNameForUser(User user, String searchTerm, int page, int size, Direction order, String... sortProperties);
-	
+	public Page<ProjectUserJoin> searchProjectsByNameForUser(User user, String searchTerm, int page, int size,
+			Direction order, String... sortProperties);
+
 	/**
 	 * Get all {@link Project}s associated with a particular {@link User} where
 	 * that user has a {@link ProjectRole}.PROJECT_OWNER role on the project.
@@ -153,37 +182,47 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@PostFilter("hasPermission(filterObject, 'canReadProject')")
 	public Iterable<Project> findAll();
-	
+
 	/**
 	 * Add a related {@link Project} to the given {@link Project}
-	 * @param subject The parent project
-	 * @param relatedProject The project to be added to the parent
+	 * 
+	 * @param subject
+	 *            The parent project
+	 * @param relatedProject
+	 *            The project to be added to the parent
 	 * @return a {@link RelatedProjectJoin} describing the relationship
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#subject,'isProjectOwner') and hasPermission(#relatedProject,'canReadProject')")
 	public RelatedProjectJoin addRelatedProject(Project subject, Project relatedProject);
-	
+
 	/**
 	 * Get all {@link RelatedProjectJoin}s for a given {@link Project}
-	 * @param project The parent project
+	 * 
+	 * @param project
+	 *            The parent project
 	 * @return A list of {@link RelatedProjectJoin}
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public List<RelatedProjectJoin> getRelatedProjects(Project project);
-	
+
 	/**
-	 * Get all {@link RelatedProjectJoin}s where the given Project is the relatedProject property.
-	 * @param project The child project
+	 * Get all {@link RelatedProjectJoin}s where the given Project is the
+	 * relatedProject property.
+	 * 
+	 * @param project
+	 *            The child project
 	 * @return A list of {@link RelatedProjectJoin}
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public List<RelatedProjectJoin> getReverseRelatedProjects(Project project);
-	
+
 	/**
 	 * Remove a {@link RelatedProjectJoin}
-	 * @param relatedProject The {@link RelatedProjectJoin} to remove
+	 * 
+	 * @param relatedProject
+	 *            The {@link RelatedProjectJoin} to remove
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project.subject, 'isProjectOwner')")
 	public void removeRelatedProject(RelatedProjectJoin relatedProject);
-	
+
 }

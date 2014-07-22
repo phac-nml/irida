@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -119,6 +120,20 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	public void removeUserFromProject(Project project, User user) {
 		pujRepository.removeUserFromProject(project, user);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Join<Project, User> updateUserProjectRole(Project project, User user, ProjectRole projectRole) {
+		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);
+		if (projectJoinForUser == null) {
+			throw new EntityNotFoundException("Join between this project and user does not exist. User: " + user
+					+ " Project: " + project);
+		}
+		projectJoinForUser.setProjectRole(projectRole);
+		return pujRepository.save(projectJoinForUser);
 	}
 
 	/**
