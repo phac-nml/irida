@@ -39,5 +39,11 @@ table.dataTable {
     tr.has-files td:not(:first-child) {
       cursor: pointer;
     }
+
+    tr.odd.details + tr td, tr.even.details + tr td {
+      background-color: chartreuse;
+    }
   }
+
+
 }

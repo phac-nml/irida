@@ -30,6 +30,8 @@ table.dataTable > thead th.sorting_desc > i.glyphicon:before {
   content: "\e156"; }
 table.dataTable > tbody tr.has-files td:not(:first-child) {
   cursor: pointer; }
+table.dataTable > tbody tr.odd.details + tr td, table.dataTable > tbody tr.even.details + tr td {
+  background-color: chartreuse; }
 
 .input-full {
   width: 100%; }
