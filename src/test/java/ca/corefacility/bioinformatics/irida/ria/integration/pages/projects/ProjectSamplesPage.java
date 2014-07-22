@@ -28,7 +28,7 @@ public class ProjectSamplesPage {
 		this.driver = driver;
 	}
 
-    public void go() {
+    public void goToPage() {
         driver.get(URL);
         waitForAjax();
     }
