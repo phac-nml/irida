@@ -15,7 +15,9 @@
         <main class="col-md-9 col-md-push-3" role="main" property="mainContentOfPage">
             <div class="row">
                 <div class="col-md-12">
-                    <h1 id="wb-cont" role="heading" th:inline="text">[[${project.label}]] [[#{project.members.members}]]</h1>
+                    <h1 role="heading" th:text="#{project.members.members(${project.label})}">_Project Members_</h1>
+                    <button class="btn btn-default btn-xs" th:if="${isAdmin} or ${isOwner}" id="editMembersLink" 
+                        th:text="#{project.members.edit.add}">_Edit Members_</button>
                 </div>
             </div>
             <div class="row">
@@ -27,6 +29,7 @@
                             <th>[[#{project.table.collaborator.role}]]<i class="glyphicon"></i></th>
                             <th>[[#{project.table.collaborator.email}]]<i class="glyphicon"></i></th>
                             <th>[[#{project.table.collaborator.since}]]<i class="glyphicon"></i></th>
+							<th th:if="${isAdmin} or ${isOwner}"></th>
                         </tr>
                         </thead>
                         <tbody></tbody>
@@ -74,13 +77,28 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
         $(document).ready(function () {
-            $('#usersTable').DataTable({
+        	var table = $('#usersTable').DataTable({
                 dom: "<'top'ilf>rt<'bottom'p><'clear'>",
                 ajax: '/projects/ajax/[[${project.getId()}]]/members',
                 deferRender: true,
                 order: [
                     [0, "asc"]
                 ],
+                rowCallback: function(row, data){
+                	var uid = data.object.id;
+                	var pid = data.subject.id;
+                	var userLabel = data.object.label;
+                	
+                	var removeUrl = [[@{/projects/{pid}(pid=${project.getId()})}]] + "/members/remove";
+                	
+                	var id = "#remove-user-"+uid;
+                	
+                	$("#usersTable").off("click",id);
+                	
+                	$("#usersTable").on("click",id,function(){
+                		showRemoveUser(userLabel,removeUrl,uid,table);
+                	});
+                },
                 columns: [
                     {
                         "data": "object",
@@ -110,10 +128,63 @@
                         "render": function (data) {
                             return '<span data-livestamp="' + new Date(parseInt(data)) + '"></span>';
                         }
+                    },
+					{
+                        "data": "edit",
+                        "render": function (data, type, row) {
+                            var pid = row.subject.id;
+                            var uid = row.object.id;
+                            var removeButton = '<button id="remove-user-'+uid+'" class="btn btn-danger btn-xs">'+[[#{project.members.edit.remove}]]+'</button>';
+                            return removeButton;
+                        },
+                        "visible":  /*[[${isAdmin or isOwner}]]*/ false ,
+                        "sortable": false
                     }
                 ]
             });
         });
+        
+        function showRemoveUser(userLabel,removeUrl,userId,table){
+        	var data = "userId="+userId;
+    		noty({
+    			layout: "center",
+    			type: "confirmation",
+    			text: [[#{project.members.edit.remove}]] + " " + userLabel + "?",
+    			buttons: [
+    			          {addClass: 'btn btn-primary btn-sm modial-remove-user', text: 'Ok', onClick: function($noty) {
+    			              $noty.close();
+    			              table.ajax.reload();
+    			              $.ajax({
+    			        			url:removeUrl,
+    			        			data:data,
+    			        			success:function(){
+    			        				noty({
+    			        					text: [[#{project.members.edit.remove.success}]] ,
+    			        					layout: "topCenter", 
+    			        					type: "success",
+    			        					timeout: 5000
+    			        				});
+    			        				
+    			        				table.ajax.reload();
+    			        			},
+    			        			error:function(){
+    			        				noty({
+    			        					text: [[#{project.members.edit.remove.error}]] , 
+    			        					layout: "topCenter", 
+    			        					type: "error",
+    			        					timeout: false
+    			        				})
+    			        			}
+    			        		});               			              
+    			            }
+    			          },
+    			          {addClass: 'btn btn-danger btn-sm', text: 'Cancel', onClick: function($noty) {
+    			              $noty.close();
+    			            }
+    			          }
+    			        ]
+    		});
+    	}
         /*]]>*/
     </script>
 </div>

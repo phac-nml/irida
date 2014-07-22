@@ -4,10 +4,12 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderCo
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectMembersPage;
+
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -71,5 +73,13 @@ public class ProjectMembersPageIT {
 		for (String name : names) {
 			assertTrue("Has the correct members names", COLLABORATORS_NAMES.contains(name));
 		}
+	}
+	
+	@Test
+	public void testRemoveUser() {
+		membersPage.clickRemoveUserButton(2l);
+		membersPage.clickModialPopupButton();
+		List<String> userNames = membersPage.getProjectMembersNames();
+		assertEquals(1, userNames.size());
 	}
 }
