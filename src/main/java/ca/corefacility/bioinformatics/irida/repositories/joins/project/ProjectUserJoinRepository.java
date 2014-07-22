@@ -19,7 +19,8 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
-public interface ProjectUserJoinRepository extends CrudRepository<ProjectUserJoin, Long>, JpaSpecificationExecutor<ProjectUserJoin> {
+public interface ProjectUserJoinRepository extends CrudRepository<ProjectUserJoin, Long>,
+		JpaSpecificationExecutor<ProjectUserJoin> {
 	/**
 	 * Get all {@link User}s associated with a project.
 	 * 
@@ -80,4 +81,16 @@ public interface ProjectUserJoinRepository extends CrudRepository<ProjectUserJoi
 	@Modifying
 	@Query("delete from ProjectUserJoin j where j.project = ?1 and j.user = ?2")
 	public void removeUserFromProject(Project project, User user);
+
+	/**
+	 * Get the join object between a given {@link Project} and {@link User}
+	 * 
+	 * @param project
+	 *            The project of the join
+	 * @param user
+	 *            The user of the join
+	 * @return The relationship between the project and user
+	 */
+	@Query("from ProjectUserJoin j where j.project = ?1 and j.user = ?2")
+	public ProjectUserJoin getProjectJoinForUser(Project project, User user);
 }
