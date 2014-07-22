@@ -17,8 +17,8 @@ public class ProjectSamplesDataTable extends DataTable {
 	public static final String SORT_DEFAULT_DIRECTION = "desc";
 	private static final int NAME_COL = 2;
 	private static final int CREATED_DATE_COL = 4;
-	private static final ImmutableMap<Integer, String> COLUMN_MAP_SORT = ImmutableMap.<Integer, String> builder()
-			.put(NAME_COL, "sample.sampleName").put(CREATED_DATE_COL, CREATED_DATE).build();
+	private static final ImmutableMap<Integer, String> COLUMN_MAP_SORT = ImmutableMap.of(NAME_COL, "sample.sampleName",
+			CREATED_DATE_COL, CREATED_DATE);
 
 	/**
 	 * The the name of the table column based on the column id.
