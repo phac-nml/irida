@@ -143,7 +143,7 @@
     			type: "confirmation",
     			text: [[#{project.members.edit.remove}]] + " " + userLabel + "?",
     			buttons: [
-    			          {addClass: 'btn btn-primary btn-sm', text: 'Ok', onClick: function($noty) {
+    			          {addClass: 'btn btn-primary btn-sm modial-remove-user', text: 'Ok', onClick: function($noty) {
     			              $noty.close();
     			              table.ajax.reload();
     			              $.ajax({
