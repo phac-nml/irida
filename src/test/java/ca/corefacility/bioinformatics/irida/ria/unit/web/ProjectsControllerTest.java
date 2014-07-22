@@ -2,13 +2,24 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,23 +45,8 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
 import com.google.common.collect.ImmutableList;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
-
-import java.security.Principal;
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link }
@@ -59,9 +55,9 @@ import static org.mockito.Mockito.when;
  */
 public class ProjectsControllerTest {
     // DATATABLES position for project information
-	private static final int PROJECT_NAME_TABLE_LOCATION = 1;
-	private static final int PROJECT_NUM_SAMPLES_TABLE_LOCATION = 4;
-	private static final int PROJECT_NUM_USERS_TABLE_LOCATION = 5;
+	//private static final int PROJECT_NAME_TABLE_LOCATION = 1;
+	//private static final int PROJECT_NUM_SAMPLES_TABLE_LOCATION = 4;
+	//private static final int PROJECT_NUM_USERS_TABLE_LOCATION = 5;
 	private static final int NUM_PROJECT_SAMPLES = 12;
 	private static final int NUM_PROJECT_USERS = 50;
 	private static final long NUM_TOTAL_ELEMENTS = 100L;
@@ -121,6 +117,7 @@ public class ProjectsControllerTest {
 		// Check out the samples
 		Object listObject = response.get(DataTable.RESPONSE_PARAM_DATA);
 		assertTrue("Samples list really is a list", listObject instanceof List);
+		@SuppressWarnings("unchecked")
 		List<HashMap<String, Object>> samplesList = (List<HashMap<String, Object>>) listObject;
 
 		assertEquals("Has the correct number of samples", 10, samplesList.size());
@@ -284,19 +281,6 @@ public class ProjectsControllerTest {
 		String page = controller.postProjectMetadataEditPage(model, principal, PROJECT_ID, newName, newOrganism,
 				newDescritption, newRemoteURL);
 		assertEquals("Returns the correct page.", "redirect:/projects/" + PROJECT_ID + "/metadata", page);
-	}
-	
-	@Test
-	public void testGetEditProjectUsersPage(){
-		Long projectId = 1l;
-		Model model = new ExtendedModelMap();
-		Principal principal = () -> USER_NAME;
-		
-		String editProjectUsersPage = controller.getEditProjectUsersPage(model, principal, projectId);
-		
-		assertEquals(ProjectsController.PROJECT_MEMBER_EDIT_PAGE,editProjectUsersPage);
-		assertTrue(model.containsAttribute("isAdmin"));
-		assertTrue(model.containsAttribute("isOwner"));
 	}
 	
 	@Test
