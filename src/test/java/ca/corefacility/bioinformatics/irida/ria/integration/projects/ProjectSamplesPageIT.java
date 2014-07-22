@@ -1,18 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -20,8 +16,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
  * <p>
@@ -44,7 +46,7 @@ public class ProjectSamplesPageIT {
 
 	@Before
 	public void setUp() {
-		this.driver = new PhantomJSDriver();
+		this.driver = new ChromeDriver();
 		LoginPage loginPage = LoginPage.to(driver);
 		loginPage.doLogin();
 		this.page = new ProjectSamplesPage(driver);
@@ -60,7 +62,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testPageSetUp() {
-		driver.get(page.URL);
+		driver.get(ProjectSamplesPage.URL);
 		assertEquals("Project Samples has the correct title", "project Samples", page.getTitle());
 		assertEquals("Displays all the samples", 5, page.getDisplayedSampleCount());
 		assertEquals("No samples should be originally selected", 0, page.getSelectedSampleCount());
@@ -75,5 +77,23 @@ public class ProjectSamplesPageIT {
 		// Show the files area for the first checkbox
 		page.openFilesView();
 		assertTrue("Should display the files area", page.isFilesAreaDisplayed());
+	}
+
+	/**
+	 * Tests to see if clicking on the row header sorts the columns as expected.
+	 */
+	@Test
+	public void testTableSort() {
+		driver.get(ProjectSamplesPage.URL);
+		assertTrue("Dates should be sorted in descending order originally", page.isAddedOnDateColumnSortedDesc());
+		page.clickSampleNameHeader();
+		assertTrue("Sample names are sorted ascending", page.isSampleNameColumnSortedAsc());
+		page.clickSampleNameHeader();
+		assertTrue("Samples should now be sorted descending", page.isSampleNameColumnSortedDesc());
+
+		page.clickCreatedDateHeader();
+		assertTrue("Added on date should be sorted ascending", page.isAddedOnDateColumnSortedAsc());
+		page.clickCreatedDateHeader();
+		assertTrue("Added on date should be sorted descending", page.isAddedOnDateColumnSortedDesc());
 	}
 }
