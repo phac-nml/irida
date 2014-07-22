@@ -66,7 +66,6 @@ public class ProjectsController {
 	private static final String PROJECTS_DIR = "projects/";
 	public static final String LIST_PROJECTS_PAGE = PROJECTS_DIR + "projects";
 	public static final String PROJECT_MEMBERS_PAGE = PROJECTS_DIR + "project_members";
-	public static final String PROJECT_MEMBER_EDIT_PAGE = PROJECTS_DIR + "project_members_edit";
 	public static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
 	public static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_new";
 	public static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
@@ -148,16 +147,6 @@ public class ProjectsController {
 		getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_MEMBERS);
 		return PROJECT_MEMBERS_PAGE;
-	}
-	
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
-	@RequestMapping("/{projectId}/members/edit")
-	public String getEditProjectUsersPage(final Model model, final Principal principal, @PathVariable Long projectId) {
-		Project project = projectService.read(projectId);
-		model.addAttribute("project", project);
-		getProjectTemplateDetails(model, principal, project);
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_MEMBERS);
-		return PROJECT_MEMBER_EDIT_PAGE;
 	}
 
 	/**
