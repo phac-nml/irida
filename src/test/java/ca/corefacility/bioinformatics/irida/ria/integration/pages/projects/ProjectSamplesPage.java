@@ -1,18 +1,16 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.SortUtilities;
+import com.google.common.base.Strings;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.SortUtilities;
-
-import com.google.common.base.Strings;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -22,13 +20,18 @@ import com.google.common.base.Strings;
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectSamplesPage {
-	public static final String URL = "http://localhost:8080/projects/1/samples";
+	private static final String URL = "http://localhost:8080/projects/1/samples";
 	public static final String DATE_FORMAT = "dd MMM YYYY";
 	private WebDriver driver;
 
 	public ProjectSamplesPage(WebDriver driver) {
 		this.driver = driver;
 	}
+
+    public void go() {
+        driver.get(URL);
+        waitForAjax();
+    }
 
 	/**
 	 * The the h1 heading for the page
