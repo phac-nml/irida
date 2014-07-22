@@ -74,6 +74,9 @@ public class ProjectsController {
 	public static final String PROJECT_METADATA_EDIT_PAGE = PROJECTS_DIR + "project_metadata_edit";
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
+	
+	private static final List<ProjectRole> projectRoles = ImmutableList.of(ProjectRole.PROJECT_USER,
+			ProjectRole.PROJECT_OWNER);
 
 	// Services
 	private final ProjectService projectService;
@@ -148,6 +151,7 @@ public class ProjectsController {
 		model.addAttribute("project", project);
 		getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_MEMBERS);
+		model.addAttribute("projectRoles", projectRoles);
 		return PROJECT_MEMBERS_PAGE;
 	}
 
