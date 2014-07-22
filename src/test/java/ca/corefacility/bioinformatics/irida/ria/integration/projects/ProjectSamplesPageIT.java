@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -44,7 +44,7 @@ public class ProjectSamplesPageIT {
 
 	@Before
 	public void setUp() {
-		this.driver = new ChromeDriver();
+		this.driver = new PhantomJSDriver();
 		LoginPage loginPage = LoginPage.to(driver);
 		loginPage.doLogin();
 		this.page = new ProjectSamplesPage(driver);
@@ -60,7 +60,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testPageSetUp() {
-		page.go();
+		page.goToPage();
 		assertEquals("Project Samples has the correct title", "project Samples", page.getTitle());
 		assertEquals("Displays all the samples", 5, page.getDisplayedSampleCount());
 		assertEquals("No samples should be originally selected", 0, page.getSelectedSampleCount());
@@ -82,7 +82,7 @@ public class ProjectSamplesPageIT {
 	 */
 	@Test
 	public void testTableSort() {
-		page.go();
+		page.goToPage();
 		assertTrue("Dates should be sorted in descending order originally", page.isAddedOnDateColumnSortedDesc());
 		page.clickSampleNameHeader();
 		assertTrue("Sample names are sorted ascending", page.isSampleNameColumnSortedAsc());
@@ -90,12 +90,12 @@ public class ProjectSamplesPageIT {
 		assertTrue("Samples should now be sorted descending", page.isSampleNameColumnSortedDesc());
 	}
 
-    @Test
-    public void testAnotherSort() {
-        page.go();
-        page.clickCreatedDateHeader();
-        assertTrue("Added on date should be sorted ascending", page.isAddedOnDateColumnSortedAsc());
-        page.clickCreatedDateHeader();
-        assertTrue("Added on date should be sorted descending", page.isAddedOnDateColumnSortedDesc());
-    }
+	@Test
+	public void testAnotherSort() {
+		page.goToPage();
+		page.clickCreatedDateHeader();
+		assertTrue("Added on date should be sorted ascending", page.isAddedOnDateColumnSortedAsc());
+		page.clickCreatedDateHeader();
+		assertTrue("Added on date should be sorted descending", page.isAddedOnDateColumnSortedDesc());
+	}
 }
