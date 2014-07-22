@@ -58,7 +58,7 @@ public class ProjectsController {
 	private static final String ACTIVE_NAV = "activeNav";
 	private static final String ACTIVE_NAV_DASHBOARD = "dashboard";
 	private static final String ACTIVE_NAV_METADATA = "metadata";
-	//private static final String ACTIVE_NAV_SAMPLES = "samples";
+	private static final String ACTIVE_NAV_SAMPLES = "samples";
 	private static final String ACTIVE_NAV_MEMBERS = "members";
 	//private static final String ACTIVE_NAV_ANALYSIS = "analysis";
 
