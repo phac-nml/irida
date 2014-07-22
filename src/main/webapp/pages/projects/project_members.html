@@ -15,7 +15,7 @@
         <main class="col-md-9 col-md-push-3" role="main" property="mainContentOfPage">
             <div class="row">
                 <div class="col-md-12">
-                    <h1 id="wb-cont" role="heading" th:inline="text">[[${project.label}]] [[#{project.members.members}]]</h1>
+                    <h1 role="heading" th:text="#{project.members.members(${project.label})}">_Project Members_</h1>
                     <button class="btn btn-default btn-xs" th:if="${isAdmin} or ${isOwner}" id="editMembersLink" 
                         th:text="#{project.members.edit.add}">_Edit Members_</button>
                 </div>
