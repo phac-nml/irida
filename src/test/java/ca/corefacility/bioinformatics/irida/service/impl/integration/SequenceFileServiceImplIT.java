@@ -120,11 +120,13 @@ public class SequenceFileServiceImplIT {
 	public void testAddAdditionalProperties() throws IOException {
 		SequenceFile file = sequenceFileService.read(1L);
 		file.addOptionalProperty("index", "111");
-		file.setFile(Files.createTempFile(null, null));
+		Path sequenceFile = Files.createTempFile(null, null);
+		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
+		file.setFile(sequenceFile);
 		Map<String,Object> changed = new HashMap<>();
 		changed.put("optionalProperties", file.getOptionalProperties());
 		changed.put("file", file.getFile());
-		sequenceFileService.updateWithoutProcessors(file.getId(), changed);
+		sequenceFileService.update(file.getId(), changed);
 		SequenceFile reread = sequenceFileService.read(1L);
 		assertNotNull(reread.getOptionalProperty("index"));
 		assertEquals("111",reread.getOptionalProperty("index"));
