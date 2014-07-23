@@ -50,9 +50,16 @@ public class ProjectsNewPage {
         return elements.stream().map(WebElement::getText).collect(Collectors.toList());
     }
 
-	public boolean checkForErrors() {
-		return driver.findElements(By.id("errors-default")).size() == 0;
-	}
+	public boolean formHasErrors() {
+        boolean result;
+        try {
+            List<WebElement> elements = driver.findElements(By.id("errors-default"));
+            result = elements.size() == 0 ? false : true;
+        } catch (Exception e) {
+            result = false;
+        }
+        return result;
+    }
 
 	public void setRemoteURL(String url) {
         WebElement urlField = driver.findElement(By.name("remoteURL"));

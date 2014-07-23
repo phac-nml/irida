@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -21,6 +21,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -43,7 +44,7 @@ public class ProjectsNewPageIT {
 
 	@Before
 	public void setUp() {
-		driver = new PhantomJSDriver();
+		driver = new ChromeDriver();
 		LoginPage loginPage = LoginPage.to(driver);
 		loginPage.doLogin();
 		page = new ProjectsNewPage(driver);
@@ -69,7 +70,7 @@ public class ProjectsNewPageIT {
 
 		// Clear the error by adding a name
 		page.setName("Random Name");
-		assertTrue("Error Field should be gone", page.checkForErrors());
+		assertFalse("Error Field should be gone", page.formHasErrors());
 
 		// Let's try adding a bad url
 		page.goToPage();
@@ -79,7 +80,7 @@ public class ProjectsNewPageIT {
 
 		// Let add a good url
 		page.setRemoteURL("http://google.com");
-		assertTrue("URL Error Field should be gone", page.checkForErrors());
+		assertFalse("URL Error Field should be gone", page.formHasErrors());
 
 		// Create the project
 		page.goToPage();
