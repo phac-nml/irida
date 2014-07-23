@@ -4,7 +4,7 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,8 +31,8 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		basicDataSource.setUsername(environment.getProperty("jdbc.username"));
 		basicDataSource.setPassword(environment.getProperty("jdbc.password"));
 		basicDataSource.setInitialSize(Integer.valueOf(environment.getProperty("jdbc.pool.initialSize")));
-		basicDataSource.setMaxActive(Integer.valueOf(environment.getProperty("jdbc.pool.maxActive")));
-		basicDataSource.setMaxWait(Integer.valueOf(environment.getProperty("jdbc.pool.maxWait")));
+		basicDataSource.setMaxTotal(Integer.valueOf(environment.getProperty("jdbc.pool.maxActive")));
+		basicDataSource.setMaxWaitMillis(Integer.valueOf(environment.getProperty("jdbc.pool.maxWait")));
 		basicDataSource.setTestOnBorrow(Boolean.valueOf(environment.getProperty("jdbc.pool.testOnBorrow")));
 		basicDataSource.setTestOnReturn(Boolean.valueOf(environment.getProperty("jdbc.pool.testOnReturn")));
 		basicDataSource.setTestWhileIdle(Boolean.valueOf(environment.getProperty("jdbc.pool.testWhileIdle")));
