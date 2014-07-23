@@ -561,22 +561,23 @@ public class ProjectsController {
 	 *            {@link} current project viewed.
 	 */
 	public void getProjectTemplateDetails(Model model, Principal principal, Project project) {
-		User user = userService.getUserByUsername(principal.getName());
+		User loggedInUser = userService.getUserByUsername(principal.getName());
 
 		// Determine if the user is an owner or admin.
-		boolean isAdmin = user.getSystemRole().equals(Role.ROLE_ADMIN);
+		boolean isAdmin = loggedInUser.getSystemRole().equals(Role.ROLE_ADMIN);
 		model.addAttribute("isAdmin", isAdmin);
 
 		// Find out who the owner of the project is.
 		Collection<Join<Project, User>> ownerJoinList = userService.getUsersForProjectByRole(project,
 				ProjectRole.PROJECT_OWNER);
-		User owner = null;
-		if (ownerJoinList.size() > 0) {
-			owner = (ownerJoinList.iterator().next()).getObject();
+		boolean isOwner = false;
+		for(Join<Project,User> owner : ownerJoinList){
+			if(loggedInUser.equals(owner.getObject())){
+				isOwner = true;
+			}
 		}
-		model.addAttribute("owner", owner);
-		assert owner != null;
-		model.addAttribute("isOwner", Objects.equals(owner.getId(), user.getId()));
+		
+		model.addAttribute("isOwner", isOwner);
 
 		int sampleSize = sampleService.getSamplesForProject(project).size();
 		model.addAttribute("samples", sampleSize);
