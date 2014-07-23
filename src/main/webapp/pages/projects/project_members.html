@@ -83,7 +83,7 @@
         <select id="template-roles" class="role-select form-control input-sm">
             <option th:each="role : ${projectRoles}" 
                 th:value="${role}" 
-                th:text="#{${'project.members.role.'+role}}">_Role_</option>
+                th:text="#{${'projectRole.'+role}}">_Role_</option>
         </select>
     </div>
 </div>
