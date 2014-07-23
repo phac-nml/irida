@@ -25,7 +25,8 @@
                 <div class="col-md-12">
                     <div class="btn-toolbar" role="toolbar">
                         <div class="btn-group">
-                            <button id="deleteBtn" class="btn btn-default btn-sm" disabled="true">Delete Selected</button>
+                            <button id="deleteBtn" class="btn btn-default btn-sm" disabled="true">Delete Selected
+                            </button>
                         </div>
                         <div class="btn-group">...</div>
                         <div class="btn-group">...</div>
@@ -95,179 +96,232 @@
     </div>
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
-    <div th:replace="projects/project_base :: scripts"></div>
-    <script th:inline="javascript">
-        /*<![CDATA[*/
+<div th:replace="projects/project_base :: scripts"></div>
+<script th:inline="javascript">
+/*<![CDATA[*/
+var DT = {
+    isEditingRow: false,
+    isFilesViewOpen: false,
+    isAllRowsSelected: false,
+    selectedRows: [],
+    format: function () {
+        // TODO: ajax to get list of files.
+        return "<p>Files will be displayed here</p>";
+    },
+    createEditBtn: function () {
+        var frag = document.createElement("div");
+        var btn = document.createElement("button");
+        frag.appendChild(btn);
+        btn.className = "btn btn-default btn-xs pull-right edit";
+        btn.innerHTML = "Edit";
+        return frag.innerHTML;
+    },
+    createCancelBtn: function () {
+        var frag = document.createElement("div");
+        var btn = document.createElement("button");
+        frag.appendChild(btn);
+        btn.className = "btn btn-info btn-sm pull-right cancel";
+        btn.innerHTML = "Cancel";
+        return frag.innerHTML;
+    },
+    createEditForm: function (name) {
+        var form = document.createElement("form");
+        form.setAttribute("role", "form");
+        form.className = "form-inline";
 
-        function format(d) {
-            // TODO: ajax to get list of files.
-            return "<p>Files will be displayed here</p>";
+        var group = document.createElement("div");
+        group.className = "form-group";
+        form.appendChild(group);
+
+        var input = document.createElement("input");
+        input.setAttribute('type', 'text');
+        input.className = "form-control input-sm mrgn-rght-sm";
+        input.setAttribute('placeholder', name);
+        group.appendChild(input);
+
+        var btn = document.createElement("button");
+        btn.setAttribute("type", "submit");
+        btn.className = "btn btn-sm btn-primary";
+        btn.innerHTML = "Update"
+        group.appendChild(btn);
+
+        return form;
+    },
+    cancelEditRow: function () {
+        if (this.isEditingRow) {
+            var row = $("tr.editing"),
+                    tdName = row.find("td.name"),
+                    tdBtns = row.find("td.btns"),
+                    name = tdName.find("input").attr("placeholder");
+            tdName.html(name);
+            tdBtns.html(DT.createEditBtn());
+            row.removeClass("editing");
+            this.isEditingRow = false;
         }
+    }
+};
 
-        function createEditBtn() {
-            var frag = document.createElement("div");
-            var btn = document.createElement("button");
-            frag.appendChild(btn);
-            btn.className = "btn btn-default btn-xs pull-right edit";
-            btn.innerHTML = "Edit";
-            return frag.innerHTML;
+$(document).ready(function () {
+    var $deleteBtn = $("#deleteBtn"),
+            $selectAll = $("#selectAll"),
+            $samplesTable = $('#samplesTable');
+
+    var dt = $samplesTable.DataTable({
+        dom: "<'top'ilf>rt<'bottom'p><'clear'>",
+        processing: true,
+        serverSide: true,
+        deferRender: true,
+        ajax: /*[[@{/projects/ajax/{projectId}/samples(projectId=${project.getId()})}]]*/ '/projects/ajax/1/samples',
+        order: [
+            [4, "desc"]
+        ],
+        columns: [
+            {
+                "data": "id",
+                "orderable": false,
+                "render": function (data) {
+                    var checked = DT.isAllRowsSelected ? " checked='checked'" : '';
+                    return '<input type="checkbox" value="' + data + '"' + checked + ' />';
+                },
+                "width": "15px"
+            },
+            {
+                "data": null,
+                "orderable": false,
+                "class": "details-control",
+                "defaultContent": "",
+                "width": "15px"
+            },
+            {
+                "data": "name",
+                "class": "name"
+            },
+            {
+                "data": "numFiles",
+                "orderable": false,
+                "width": "15%"
+            },
+            {
+                "data": "createdDate",
+                "width": "15%"
+            },
+            {
+                "data": "id",
+                "orderable": false,
+                "render": function (data) {
+                    return DT.createEditBtn(data);
+                },
+                "class": "btns",
+                "width": "10%"
+            }
+        ],
+        'createdRow': function (row, data, index) {
+            if (parseInt(data.numFiles) == 0) { // TODO: Don't forget to change this back
+                $(row)
+                        .addClass('has-files')
+                        .find('.details-control')
+                        .html('<i class="text-muted glyphicon glyphicon-chevron-right"></i>');
+            }
         }
+    });
 
-        $(document).ready(function () {
-            var allChecked = false,
-                    selected = [],
-                    $deleteBtn = $("#deleteBtn"),
-                    $selectAll = $("#selectAll"),
-                    $samplesTable = $('#samplesTable');
+    $samplesTable.find('tbody').on('click', 'tr.has-files', function () {
+        var $this = $(this),
+                row = $this.closest('tr');
 
-            var dt = $samplesTable.DataTable({
-                dom: "<'top'ilf>rt<'bottom'p><'clear'>",
-                processing: true,
-                serverSide: true,
-                deferRender: true,
-                ajax: /*[[@{/projects/ajax/{projectId}/samples(projectId=${project.getId()})}]]*/ '/projects/ajax/1/samples',
-                order: [
-                    [4, "desc"]
-                ],
-                columns: [
-                    {
-                        "data": "id",
-                        "orderable": false,
-                        "render": function (data) {
-                            var checked = allChecked ? " checked='checked'" : '';
-                            return '<input type="checkbox" value="' + data + '"' + checked + ' />';
-                        },
-                        "width": "15px"
-                    },
-                    {
-                        "data": null,
-                        "orderable": false,
-                        "class": "details-control",
-                        "defaultContent": "",
-                        "width": "15px"
-                    },
-                    {
-                        "data": "name"
-                    },
-                    {
-                        "data": "numFiles",
-                        "orderable": false,
-                        "width": "15%"
-                    },
-                    {
-                        "data": "createdDate",
-                        "width": "15%"
-                    },
-                    {
-                        "data": "id",
-                        "orderable": false,
-                        "render": function (data) {
-                            return createEditBtn(data);
-                        },
-                        "width": "10%"
-                    }
-                ],
-                'createdRow': function (row, data, index) {
-                    if (parseInt(data.numFiles) == 0) { // TODO: Don't forget to change this back
-                        $(row)
-                                .addClass('has-files')
-                                .find('.details-control')
-                                .html('<i class="text-muted glyphicon glyphicon-chevron-right"></i>');
-                    }
-                }
-            });
+        if (DT.isFilesViewOpen) {
+            closeFilesView();
+        }
+        else {
+            showFilesView(row);
+        }
+    }).on('click', 'input[type="checkbox"]', function (e) {
+        e.stopPropagation();
+        var id = $(this).val();
+        var index = DT.selectedRows.indexOf(id);
+        if (index == -1) {
+            DT.selectedRows.push(id);
+        }
+        else {
+            DT.selectedRows.splice(index, 1);
+        }
+        $selectAll.prop('indeterminate', DT.selectedRows.length);
+    }).on('click', 'button.edit', function (e) {
+        e.stopPropagation();
+        var currEdit = $("tr.editing");
+        if (currEdit.length > 0) {
+            DT.cancelEditRow();
+        }
+        var $this = $(this),
+                row = $this.closest('tr'),
+                tdName = row.find('td.name'),
+                tdBtns = row.find('td.btns'),
+                name = tdName.html();
+        row.addClass("editing");
+        tdName.html(DT.createEditForm(name));
+        tdBtns.html(DT.createCancelBtn());
+        DT.isEditingRow = true;
+    }).on('click', 'button.cancel', function (e) {
+        e.stopPropagation();
+        DT.cancelEditRow();
+    });
 
-            var open;
-            $samplesTable.find('tbody').on('click', 'tr.has-files', function () {
-                var $this = $(this),
-                        tr = $this.closest('tr'),
-                        row = dt.row(tr),
-                        icon = tr.find('i'),
-                        element = {
-                            icon: icon,
-                            tr: tr,
-                            row: row
-                        };
 
-                if (element.row.child.isShown()) {
-                    closeFilesView(element);
-                }
-                else {
-                    if (open != null) {
-                        closeFilesView(open);
-                    }
-                    showFilesView(element);
-                    open = element;
-                }
-            }).on('click', 'input[type="checkbox"]', function (e) {
-                e.stopPropagation();
-                var id = $(this).val();
-                var index = selected.indexOf(id);
-                if (index == -1) {
-                    selected.push(id);
-                }
-                else {
-                    selected.splice(index, 1);
-                }
-                $selectAll.prop('indeterminate', selected.length);
-            }).on('click', 'button.edit', function (e) {
-                e.stopPropagation();
-            });
+    $selectAll.on("click", function () {
+        var $this = $(this);
+        DT.selectedRows = [];
+        DT.isAllRowsSelected = $this.prop("checked");
+        $samplesTable.find('input').prop('checked', DT.isAllRowsSelected);
+        $deleteBtn.prop('disabled', !DT.isAllRowsSelected);
+    });
 
-            $selectAll.on("click", function () {
-                var $this = $(this);
-                selected = [];
-                allChecked = $this.prop("checked");
-                $samplesTable.find('input').prop('checked', allChecked);
-                $deleteBtn.prop('disabled', !allChecked);
-            });
+    function closeFilesView() {
+        var row = $("tr.details");
+        row.find("i").addClass('glypihcon-cheveron-right').removeClass('glyphicon-chevron-down');
+        row.removeClass('details');
+        row.child.hide();
+    }
 
-            function closeFilesView(element) {
-                element.icon.addClass('glypihcon-cheveron-right').removeClass('glyphicon-chevron-down');
-                element.tr.removeClass('details');
-                element.row.child.hide();
-            }
+    function showFilesView(row) {
+        var icon = row.find("i"),
+                dtRow = dt.row(row);
 
-            function showFilesView(element) {
-                if (open != null) {
-                    closeFilesView(open);
-                }
-                element.icon.removeClass('glypihcon-cheveron-right').addClass('glyphicon-chevron-down');
-                element.tr.addClass('details');
-                element.row.child(format(element.row.data())).show();
-                open = element;
-            }
-        });
+        icon.removeClass('glypihcon-cheveron-right').addClass('glyphicon-chevron-down');
+        row.addClass('details');
+        dtRow.child(DT.format("FRED")).show();
+        DT.isFilesViewOpen = true;
+    }
+});
 
-        $('[data-tooltip!=""]').qtip({ // Grab all elements with a non-blank data-tooltip attr.
-            content: {
-                attr: 'data-tooltip' // Tell qTip2 to look inside this attr for its content
-            },
-            position: {
-                target: $('input'),
-                at: 'top center',
-                my: 'bottom center'
-            },
-            style: {
-                classes: 'qtip-dark qtip-shadow'
-            }
-        });
+$('[data-tooltip!=""]').qtip({ // Grab all elements with a non-blank data-tooltip attr.
+    content: {
+        attr: 'data-tooltip' // Tell qTip2 to look inside this attr for its content
+    },
+    position: {
+        target: $('input'),
+        at: 'top center',
+        my: 'bottom center'
+    },
+    style: {
+        classes: 'qtip-dark qtip-shadow'
+    }
+});
 
-        $(".sortable").qtip({
-            content: /*[[#{tooltip.table.click-sort}]]*/ "click to sort",
-            position: {
-                at: 'top center',
-                my: 'bottom center',
-                adjust: {
-                    y: 10
-                }
-            },
-            style: {
-                classes: 'qtip-dark qtip-shadow'
-            }
-        });
-        /*]]>*/
-    </script>
+$(".sortable").qtip({
+    content: /*[[#{tooltip.table.click-sort}]]*/ "click to sort",
+    position: {
+        at: 'top center',
+        my: 'bottom center',
+        adjust: {
+            y: 10
+        }
+    },
+    style: {
+        classes: 'qtip-dark qtip-shadow'
+    }
+});
+/*]]>*/
+</script>
 </div>
 </body>
 </html>
