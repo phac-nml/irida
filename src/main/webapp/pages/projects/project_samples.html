@@ -99,32 +99,33 @@
 <div th:replace="projects/project_base :: scripts"></div>
 <script th:inline="javascript">
 /*<![CDATA[*/
-var DT = {
-    isEditingRow: false,
-    isFilesViewOpen: false,
-    isAllRowsSelected: false,
-    selectedRows: [],
-    format: function () {
+function EditableDataTable() {
+    var isEditingRow = false,
+            isFilesViewOpen = false,
+            isAllRowsSelected = false,
+            selectedRows = [];
+    function format () {
         // TODO: ajax to get list of files.
         return "<p>Files will be displayed here</p>";
-    },
-    createEditBtn: function () {
-        var frag = document.createElement("div");
-        var btn = document.createElement("button");
-        frag.appendChild(btn);
-        btn.className = "btn btn-default btn-xs pull-right edit";
-        btn.innerHTML = "Edit";
-        return frag.innerHTML;
-    },
-    createCancelBtn: function () {
-        var frag = document.createElement("div");
-        var btn = document.createElement("button");
-        frag.appendChild(btn);
-        btn.className = "btn btn-info btn-sm pull-right cancel";
-        btn.innerHTML = "Cancel";
-        return frag.innerHTML;
-    },
-    createEditForm: function (name) {
+    }
+
+    function closeFilesView() {
+        var row = $("tr.details");
+        row.find("i").addClass('glypihcon-cheveron-right').removeClass('glyphicon-chevron-down');
+        row.removeClass('details');
+        row.next().remove();
+    }
+
+    function showFilesView(el) {
+        var row = $(el),
+                icon = row.find("i");
+        icon.removeClass('glypihcon-cheveron-right').addClass('glyphicon-chevron-down');
+        row.addClass('details');
+
+        row.after('<tr><td colspan="6">HELLO JELLO</td></tr>').show();
+    }
+
+    function createEditForm(name) {
         var form = document.createElement("form");
         form.setAttribute("role", "form");
         form.className = "form-inline";
@@ -146,25 +147,76 @@ var DT = {
         group.appendChild(btn);
 
         return form;
-    },
-    cancelEditRow: function () {
-        if (this.isEditingRow) {
-            var row = $("tr.editing"),
-                    tdName = row.find("td.name"),
-                    tdBtns = row.find("td.btns"),
-                    name = tdName.find("input").attr("placeholder");
-            tdName.html(name);
-            tdBtns.html(DT.createEditBtn());
-            row.removeClass("editing");
-            this.isEditingRow = false;
+    }
+
+    function createEditBtn() {
+        var btn = document.createElement("button");
+        btn.className = "btn btn-default btn-xs pull-right edit";
+        btn.innerHTML = "Edit";
+        return btn;
+    }
+
+    function createCancelBtn() {
+        var btn = document.createElement("button");
+        btn.className = "btn btn-info btn-sm pull-right cancel";
+        btn.innerHTML = "Cancel";
+        return btn;
+    }
+
+    return {
+        cancelEditRow: function () {
+            if (isEditingRow) {
+                var row = $("tr.editing"),
+                        tdName = row.find("td.name"),
+                        tdBtns = row.find("td.btns"),
+                        name = tdName.find("input").attr("placeholder");
+                tdName.html(name);
+                tdBtns.html(createEditBtn());
+                row.removeClass("editing");
+                isEditingRow = false;
+            }
+        },
+        toggleFilesView: function (el) {
+            if (isFilesViewOpen) {
+                closeFilesView();
+            }
+            else {
+                showFilesView(el);
+            }
+            isFilesViewOpen = !isFilesViewOpen;
+        },
+        checkBoxClicked: function (id) {
+            var index = selectedRows.indexOf(id);
+            if (index == -1) {
+                selectedRows.push(id);
+                return true;
+            }
+            else {
+                selectedRows.splice(index, 1);
+                return false;
+            }
+        },
+        editRow: function (row) {
+            var currEdit = $("tr.editing");
+            if (currEdit.length > 0) {
+                this.cancelEditRow();
+            }
+            var tdName = row.find('td.name'),
+                    tdBtns = row.find('td.btns'),
+                    name = tdName.html();
+            row.addClass("editing");
+            tdName.html(createEditForm(name));
+            tdBtns.html(createCancelBtn());
+            isEditingRow = true;
         }
     }
-};
+}
 
 $(document).ready(function () {
     var $deleteBtn = $("#deleteBtn"),
             $selectAll = $("#selectAll"),
-            $samplesTable = $('#samplesTable');
+            $samplesTable = $('#samplesTable'),
+            DT = new EditableDataTable();
 
     var dt = $samplesTable.DataTable({
         dom: "<'top'ilf>rt<'bottom'p><'clear'>",
@@ -209,7 +261,7 @@ $(document).ready(function () {
                 "data": "id",
                 "orderable": false,
                 "render": function (data) {
-                    return DT.createEditBtn(data);
+                    return '<button class="btn btn-default btn-xs pull-right edit">Edit</button>';
                 },
                 "class": "btns",
                 "width": "10%"
@@ -226,41 +278,15 @@ $(document).ready(function () {
     });
 
     $samplesTable.find('tbody').on('click', 'tr.has-files', function () {
-        var $this = $(this),
-                row = $this.closest('tr');
-
-        if (DT.isFilesViewOpen) {
-            closeFilesView();
-        }
-        else {
-            showFilesView(row);
-        }
+        DT.toggleFilesView(this);
     }).on('click', 'input[type="checkbox"]', function (e) {
         e.stopPropagation();
         var id = $(this).val();
-        var index = DT.selectedRows.indexOf(id);
-        if (index == -1) {
-            DT.selectedRows.push(id);
-        }
-        else {
-            DT.selectedRows.splice(index, 1);
-        }
-        $selectAll.prop('indeterminate', DT.selectedRows.length);
+        var result = DT.checkBoxClicked(id);
+        $selectAll.prop('indeterminate', result);
     }).on('click', 'button.edit', function (e) {
         e.stopPropagation();
-        var currEdit = $("tr.editing");
-        if (currEdit.length > 0) {
-            DT.cancelEditRow();
-        }
-        var $this = $(this),
-                row = $this.closest('tr'),
-                tdName = row.find('td.name'),
-                tdBtns = row.find('td.btns'),
-                name = tdName.html();
-        row.addClass("editing");
-        tdName.html(DT.createEditForm(name));
-        tdBtns.html(DT.createCancelBtn());
-        DT.isEditingRow = true;
+        DT.editRow($(this).closest('tr'));
     }).on('click', 'button.cancel', function (e) {
         e.stopPropagation();
         DT.cancelEditRow();
@@ -274,23 +300,6 @@ $(document).ready(function () {
         $samplesTable.find('input').prop('checked', DT.isAllRowsSelected);
         $deleteBtn.prop('disabled', !DT.isAllRowsSelected);
     });
-
-    function closeFilesView() {
-        var row = $("tr.details");
-        row.find("i").addClass('glypihcon-cheveron-right').removeClass('glyphicon-chevron-down');
-        row.removeClass('details');
-        row.child.hide();
-    }
-
-    function showFilesView(row) {
-        var icon = row.find("i"),
-                dtRow = dt.row(row);
-
-        icon.removeClass('glypihcon-cheveron-right').addClass('glyphicon-chevron-down');
-        row.addClass('details');
-        dtRow.child(DT.format("FRED")).show();
-        DT.isFilesViewOpen = true;
-    }
 });
 
 $('[data-tooltip!=""]').qtip({ // Grab all elements with a non-blank data-tooltip attr.
