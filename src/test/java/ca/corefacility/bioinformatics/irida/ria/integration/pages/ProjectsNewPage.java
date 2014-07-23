@@ -1,11 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -18,34 +19,30 @@ public class ProjectsNewPage {
 	public static final String PROJECT_NEW_URL = "http://localhost:8080/projects/new";
 	private WebDriver driver;
 
-	private WebElement name;
-	private WebElement organism;
-	private WebElement wiki;
-	private WebElement description;
-	private WebElement submitBtn;
-
 	public ProjectsNewPage(WebDriver driver) {
 		this.driver = driver;
-		driver.get(PROJECT_NEW_URL);
-		this.name = driver.findElement(By.name("name"));
-		this.organism = driver.findElement(By.name("organism"));
-		this.wiki = driver.findElement(By.name("remoteURL"));
-		this.description = driver.findElement(By.name("projectDescription"));
-		this.submitBtn = driver.findElement(By.className("btn-primary"));
 	}
 
+    public void goToPage(){
+        driver.get(PROJECT_NEW_URL);
+    }
+
 	public void submitForm(String name, String organism, String wiki, String description) {
-		this.name.sendKeys(name);
-		this.organism.sendKeys(organism);
-		this.wiki.sendKeys(wiki);
-		this.description.sendKeys(description);
-		this.submitBtn.click();
+        driver.findElement(By.name("name")).sendKeys(name);
+        WebElement organismField = driver.findElement(By.cssSelector("a.select2-choice"));
+        organismField.click();
+        WebElement sdf = driver.findElement(By.name("organism"));
+        sdf.sendKeys(organism);
+        sdf.sendKeys(Keys.RETURN);
+        driver.findElement(By.name("remoteURL")).sendKeys(wiki);
+        driver.findElement(By.name("projectDescription")).sendKeys(description);
+        driver.findElement(By.className("btn-primary")).click();
 	}
 
 	public void setName(String name) {
-        this.wiki.clear();
-		this.name.sendKeys(name);
-		this.organism.click();
+        WebElement nameField = driver.findElement(By.name("name"));
+        nameField.sendKeys(name);
+        nameField.sendKeys(Keys.TAB);
 	}
 
 	public List<String> getErrors() {
@@ -53,17 +50,21 @@ public class ProjectsNewPage {
         return elements.stream().map(WebElement::getText).collect(Collectors.toList());
     }
 
-	public boolean checkForErrors() {
-		return driver.findElements(By.id("errors-default")).size() == 0;
-	}
-
-	public void setURL(String url) {
-        this.wiki.clear();
-		this.wiki.sendKeys(url);
-		this.description.click();
-	}
-
-    public void submit() {
-        this.submitBtn.click();
+	public boolean formHasErrors() {
+        boolean result;
+        try {
+            List<WebElement> elements = driver.findElements(By.id("errors-default"));
+            result = elements.size() == 0 ? false : true;
+        } catch (Exception e) {
+            result = false;
+        }
+        return result;
     }
+
+	public void setRemoteURL(String url) {
+        WebElement urlField = driver.findElement(By.name("remoteURL"));
+        urlField.clear();
+        urlField.sendKeys(url);
+        urlField.sendKeys(Keys.TAB);
+	}
 }

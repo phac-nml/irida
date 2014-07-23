@@ -20,6 +20,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -52,12 +54,15 @@ public class ProjectsNewPageIT {
 	public void destroy() {
 		if (driver != null) {
 			driver.close();
-            driver.quit();
+			driver.quit();
 		}
 	}
 
 	@Test
 	public void testCreateNewProjectForm() {
+		page.goToPage();
+		assertEquals("Should have the correct page title", "IRIDA Platform - Create a New Project", driver.getTitle());
+
 		// Start with just submitting the empty form
 		page.submitForm("", "", "", "");
 		String error = page.getErrors().get(0);
@@ -65,19 +70,21 @@ public class ProjectsNewPageIT {
 
 		// Clear the error by adding a name
 		page.setName("Random Name");
-		assertTrue("Error Field should be gone", page.checkForErrors());
+		assertFalse("Error Field should be gone", page.formHasErrors());
 
 		// Let's try adding a bad url
-		page.setURL("red dog");
+		page.goToPage();
+		page.setRemoteURL("red dog");
 		String urlError = page.getErrors().get(0);
 		assertTrue("Should show url error", urlError.contains("enter a valid URL"));
 
-        // Let add a good url
-        page.setURL("http://google.com");
-        assertTrue("URL Error Field should be gone", page.checkForErrors());
+		// Let add a good url
+		page.setRemoteURL("http://google.com");
+		assertFalse("URL Error Field should be gone", page.formHasErrors());
 
-        // Create the project
-        page.submit();
-        assertTrue("Redirects to the project metadata page", driver.getCurrentUrl().contains("/metadata"));
-    }
+		// Create the project
+		page.goToPage();
+		page.submitForm("test project name", "", "", "");
+		assertTrue("Redirects to the project metadata page", driver.getCurrentUrl().contains("/metadata"));
+	}
 }
