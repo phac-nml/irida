@@ -44,6 +44,7 @@
                             <th>[[#{project.samples.table.numFiles}]]</th>
                             <th class="sortable">[[#{project.samples.table.dateCreated}]]<i
                                     class="glyphicon"></i></th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody></tbody>
@@ -98,10 +99,18 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
 
-
         function format(d) {
             // TODO: ajax to get list of files.
             return "<p>Files will be displayed here</p>";
+        }
+
+        function createEditBtn() {
+            var frag = document.createElement("div");
+            var btn = document.createElement("button");
+            frag.appendChild(btn);
+            btn.className = "btn btn-default btn-xs pull-right edit";
+            btn.innerHTML = "Edit";
+            return frag.innerHTML;
         }
 
         $(document).ready(function () {
@@ -127,27 +136,39 @@
                         "render": function (data) {
                             var checked = allChecked ? " checked='checked'" : '';
                             return '<input type="checkbox" value="' + data + '"' + checked + ' />';
-                        }
+                        },
+                        "width": "15px"
                     },
                     {
                         "data": null,
                         "orderable": false,
                         "class": "details-control",
-                        "defaultContent": ""
+                        "defaultContent": "",
+                        "width": "15px"
                     },
                     {
                         "data": "name"
                     },
                     {
                         "data": "numFiles",
-                        "orderable": false
+                        "orderable": false,
+                        "width": "15%"
                     },
                     {
-                        "data": "createdDate"
+                        "data": "createdDate",
+                        "width": "15%"
+                    },
+                    {
+                        "data": "id",
+                        "orderable": false,
+                        "render": function (data) {
+                            return createEditBtn(data);
+                        },
+                        "width": "10%"
                     }
                 ],
                 'createdRow': function (row, data, index) {
-                    if (parseInt(data.numFiles) > 0) {
+                    if (parseInt(data.numFiles) == 0) { // TODO: Don't forget to change this back
                         $(row)
                                 .addClass('has-files')
                                 .find('.details-control')
@@ -157,7 +178,7 @@
             });
 
             var open;
-            $samplesTable.find('tbody').on('click', 'tr.has-files td:not(:first-child)', function () {
+            $samplesTable.find('tbody').on('click', 'tr.has-files', function () {
                 var $this = $(this),
                         tr = $this.closest('tr'),
                         row = dt.row(tr),
@@ -178,7 +199,8 @@
                     showFilesView(element);
                     open = element;
                 }
-            }).on('click', 'input', function () {
+            }).on('click', 'input[type="checkbox"]', function (e) {
+                e.stopPropagation();
                 var id = $(this).val();
                 var index = selected.indexOf(id);
                 if (index == -1) {
@@ -188,6 +210,8 @@
                     selected.splice(index, 1);
                 }
                 $selectAll.prop('indeterminate', selected.length);
+            }).on('click', 'button.edit', function (e) {
+                e.stopPropagation();
             });
 
             $selectAll.on("click", function () {
