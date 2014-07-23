@@ -8,6 +8,7 @@ import org.springframework.data.repository.history.RevisionRepository;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileRepositoryCustom;
 
 /**
  * A repository to store information about sequence files. This repository will
@@ -18,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
  */
 
 public interface SequenceFileRepository extends PagingAndSortingRepository<SequenceFile, Long>,
-		RevisionRepository<SequenceFile, Long, Integer> {
+		RevisionRepository<SequenceFile, Long, Integer>, SequenceFileRepositoryCustom {
 	/**
 	 * Get the collection of {@link SequenceFile} created as part of a
 	 * {@link SequencingRun}.

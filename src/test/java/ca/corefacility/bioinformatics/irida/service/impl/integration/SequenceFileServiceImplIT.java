@@ -117,11 +117,13 @@ public class SequenceFileServiceImplIT {
 	
 	@Test
 	@WithMockUser(username="fbristow1",roles="USER")
-	public void testAddAdditionalProperties(){
+	public void testAddAdditionalProperties() throws IOException {
 		SequenceFile file = sequenceFileService.read(1L);
 		file.addOptionalProperty("index", "111");
+		file.setFile(Files.createTempFile(null, null));
 		Map<String,Object> changed = new HashMap<>();
 		changed.put("optionalProperties", file.getOptionalProperties());
+		changed.put("file", file.getFile());
 		sequenceFileService.updateWithoutProcessors(file.getId(), changed);
 		SequenceFile reread = sequenceFileService.read(1L);
 		assertNotNull(reread.getOptionalProperty("index"));
@@ -145,7 +147,7 @@ public class SequenceFileServiceImplIT {
 		// figure out what the version number of the sequence file is (should be
 		// 2; the file wasn't gzipped, but fastqc will have modified it.)
 		sf = asRole(Role.ROLE_ADMIN, "tom").sequenceFileService.read(sf.getId());
-		assertEquals("Wrong version number after processing.", Long.valueOf(1), sf.getFileRevisionNumber());
+		assertEquals("Wrong version number after processing.", Long.valueOf(2), sf.getFileRevisionNumber());
 		
 		Set<AnalysisFastQC> analyses = asRole(Role.ROLE_ADMIN, "tom").analysisService.getAnalysesForSequenceFile(sf, AnalysisFastQC.class);
 		assertEquals("Only one analysis should be generated automatically.", 1, analyses.size());
@@ -195,7 +197,7 @@ public class SequenceFileServiceImplIT {
 		// get the MOST RECENT version of the sequence file from the database
 		// (it will have been modified outside of the create method.)
 		sf = asRole(Role.ROLE_ADMIN, "tom").sequenceFileService.read(sf.getId());
-		assertEquals("Wrong version number after processing.", Long.valueOf(2L), sf.getFileRevisionNumber());
+		assertEquals("Wrong version number after processing.", Long.valueOf(3L), sf.getFileRevisionNumber());
 		assertFalse("File name is still gzipped.", sf.getFile().getFileName().toString().endsWith(".gz"));
 		
 		Set<AnalysisFastQC> analyses = asRole(Role.ROLE_ADMIN, "tom").analysisService.getAnalysesForSequenceFile(sf, AnalysisFastQC.class);

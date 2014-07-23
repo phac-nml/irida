@@ -23,7 +23,7 @@
 	<project_sample id="1" createdDate="2013-07-18 14:20:19.0"
 		project_id="1" sample_id="1" />
 	<sequence_file id="1" createdDate="2013-07-18 14:20:19.0"
-		filePath="/" />
+		filePath="/" fileRevisionNumber="1" />
 	<sequencefile_sample id="1" createdDate="2013-07-18 14:20:19.0"
 		sample_id="1" sequencefile_id="1" />
 

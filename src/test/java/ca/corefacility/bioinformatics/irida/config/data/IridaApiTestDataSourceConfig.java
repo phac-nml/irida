@@ -17,8 +17,6 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
-import ca.corefacility.bioinformatics.irida.repositories.SequenceFileFilesystem;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileFilesystemImpl;
 import ca.corefacility.bioinformatics.irida.utils.RecursiveDeleteVisitor;
 
 @Configuration
@@ -33,11 +31,6 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 	@PreDestroy
 	public void tearDown() throws IOException {
 		Files.walkFileTree(baseDirectory, new RecursiveDeleteVisitor());
-	}
-
-	@Bean
-	public SequenceFileFilesystem sequenceFileFilesystem() throws IOException {
-		return new SequenceFileFilesystemImpl(baseDirectory());
 	}
 
 	@Bean

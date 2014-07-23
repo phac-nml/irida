@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,13 +20,9 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.processing.annotations.ModifiesSequenceFile;
-import ca.corefacility.bioinformatics.irida.repositories.SequenceFileFilesystem;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 /**
  * Implementation for managing {@link SequenceFile}.
@@ -40,12 +34,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFileServiceImpl.class);
 
-	private static final String FILE_PROPERTY = "file";
-
-	/**
-	 * A reference to the file system repository.
-	 */
-	private SequenceFileFilesystem fileRepository;
 	/**
 	 * Reference to {@link SampleSequenceFileJoinRepository}.
 	 */
@@ -70,10 +58,9 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	@Autowired
 	public SequenceFileServiceImpl(SequenceFileRepository sequenceFileRepository,
-			SequenceFileFilesystem fileRepository, SampleSequenceFileJoinRepository ssfRepository, Validator validator) {
+			SampleSequenceFileJoinRepository ssfRepository, Validator validator) {
 		super(sequenceFileRepository, validator, SequenceFile.class);
 		this.sequenceFileRepository = sequenceFileRepository;
-		this.fileRepository = fileRepository;
 		this.ssfRepository = ssfRepository;
 	}
 
@@ -86,17 +73,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	public SequenceFile create(SequenceFile sequenceFile) {
 		// Send the file to the database repository to be stored (in super)
 		logger.trace("Calling super.create");
-		sequenceFile = super.create(sequenceFile);
-		// Then store the file in an appropriate directory
-		logger.trace("About to write file to disk.");
-		sequenceFile = fileRepository.writeSequenceFileToDisk(sequenceFile);
-		// And finally, update the database with the stored file location
-
-		Map<String, Object> changed = new HashMap<>();
-		changed.put(FILE_PROPERTY, sequenceFile.getFile());
-		logger.trace("Calling this.update");
-		final SequenceFile updatedSequenceFile = super.update(sequenceFile.getId(), changed);
-		return updatedSequenceFile;
+		return super.create(sequenceFile);
 	}
 
 	/**
@@ -123,36 +100,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Transactional
 	@ModifiesSequenceFile
 	public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
-		if (updatedFields.containsKey("fileRevisionNumber")) {
-			throw new InvalidPropertyException("File revision number cannot be updated manually.", SequenceFile.class);
-		}
-
-		ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
-
-		SequenceFile toUpdate = read(id);
-
-		if (updatedFields.containsKey(FILE_PROPERTY)) {
-			logger.trace("Sequence file [" + toUpdate.getId() + "] has file location to be updated.");
-			Path fileLocation = (Path) updatedFields.get(FILE_PROPERTY);
-			Long updatedRevision = toUpdate.getFileRevisionNumber() + 1;
-			// write the file to a new location on disk
-			Path updatedLocation = fileRepository.updateSequenceFileOnDisk(id, fileLocation, updatedRevision);
-			// put the new location into the map to be constructed
-			builder.put(FILE_PROPERTY, (Object) updatedLocation);
-			builder.put("fileRevisionNumber", (Object) updatedRevision);
-			// add all keys from the updatedFields map that are NOT equal to
-			// "file"
-			builder.putAll(Maps.filterKeys(updatedFields, input -> !input.equals(FILE_PROPERTY)));
-		} else {
-			// the file isn't to be updated, so just keep all the keys that were
-			// originally supplied to the method.
-			builder.putAll(updatedFields);
-		}
-
-		logger.trace("Calling super.update");
-		SequenceFile updated = super.update(id, builder.build());
-		logger.trace("Finished calling super.update");
-		return updated;
+		return super.update(id, updatedFields);
 	}
 
 	/**
