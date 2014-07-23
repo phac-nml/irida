@@ -16,10 +16,16 @@
             <div class="row">
                 <div class="col-md-12">
                     <h1 role="heading" th:text="#{project.members.members(${project.label})}">_Project Members_</h1>
-                    <button class="btn btn-default btn-xs" th:if="${isAdmin} or ${isOwner}" id="addMembersLink" 
-                        th:text="#{project.members.edit.add}">_Add Members_</button>
-                    <button class="btn btn-default btn-xs" th:if="${isAdmin} or ${isOwner}" id="editMembers" 
-                        >Edit</button>
+                    <div class="btn-toolbar" role="toolbar">
+                        <div class="btn-group">
+                            <button class="btn btn-default btn-sm" th:if="${isAdmin} or ${isOwner}" id="addMembersLink" 
+                                th:text="#{project.members.edit.add}">_Add Members_</button>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-default btn-sm" th:if="${isAdmin} or ${isOwner}" id="editMembers">Edit</button>
+                        </div>
+
+                    </div>
                 </div>
             </div>
             <div class="row">
