@@ -88,6 +88,7 @@ public class ProjectMembersPage {
 	}
 
 	public void setRoleForUser(Long id, String roleValue) {
+		logger.trace("Setting user " + id + " role to " + roleValue);
 		WebElement findElement = driver.findElement(By.id(id + "-role"));
 		Select roleSelect = new Select(findElement);
 		roleSelect.selectByValue(roleValue);
@@ -95,6 +96,7 @@ public class ProjectMembersPage {
 	}
 
 	public boolean notySuccessDisplayed() {
+		logger.trace("Checking if noty success");
 		boolean present;
 		try {
 			driver.findElement(By.className("noty_type_success"));
