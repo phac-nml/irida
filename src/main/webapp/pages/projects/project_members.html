@@ -16,8 +16,10 @@
             <div class="row">
                 <div class="col-md-12">
                     <h1 role="heading" th:text="#{project.members.members(${project.label})}">_Project Members_</h1>
-                    <button class="btn btn-default btn-xs" th:if="${isAdmin} or ${isOwner}" id="editMembersLink" 
-                        th:text="#{project.members.edit.add}">_Edit Members_</button>
+                    <button class="btn btn-default btn-xs" th:if="${isAdmin} or ${isOwner}" id="addMembersLink" 
+                        th:text="#{project.members.edit.add}">_Add Members_</button>
+                    <button class="btn btn-default btn-xs" th:if="${isAdmin} or ${isOwner}" id="editMembers" 
+                        >Edit</button>
                 </div>
             </div>
             <div class="row">
@@ -71,11 +73,21 @@
             <div layout:replace="partials/associated-projects :: list (projects=${associatedProjects})"></div>
         </div>
     </div>
+    <div class="hidden">
+        <select id="template-roles" class="role-select form-control input-sm">
+            <option th:each="role : ${projectRoles}" 
+                th:value="${role}" 
+                th:text="#{${'project.members.role.'+role}}">_Role_</option>
+        </select>
+    </div>
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
     <div th:replace="projects/project_base :: scripts"></div>
     <script th:inline="javascript">
         /*<![CDATA[*/
+                   
+        var showRole = true;
+        
         $(document).ready(function () {
         	var table = $('#usersTable').DataTable({
                 dom: "<'top'ilf>rt<'bottom'p><'clear'>",
@@ -108,13 +120,30 @@
                     },
                     {
                         "data": "projectRole",
-                        "render": function (data) {
-                            if (data === 'PROJECT_OWNER') {
-                                return '<span class="glyphicon glyphicon-tower"></span>&nbsp;&nbsp;' + [[#{project.role.owner}]];
+                        "render": function (data, type, row) {
+                        	var span;
+                        	if (data === 'PROJECT_OWNER') {
+                        		span = '<span class="glyphicon glyphicon-tower"></span>&nbsp;&nbsp;' + [[#{project.role.owner}]];
                             }
                             else {
-                                return '<span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;' + [[#{project.role.collaborator}]];
+                            	span = '<span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;' + [[#{project.role.collaborator}]];
                             }
+                        	
+                        	var roleSelect = $("#template-roles").clone();
+                        	var newId = row.object.id + "-role";
+                        	roleSelect.attr("id",newId);
+                        	roleSelect.attr("data-user",row.object.id);
+                        	roleSelect.find("option").each(function(){
+                        		if($(this).val() == data){
+                        			$(this).attr("selected",true);
+                        		}
+                        	});
+                        	
+                        	var select = roleSelect.wrap("<div/>").parent().html();
+                        	
+                        	var html = '<div class="display-role">'+span+'</div><div class="select-role">'+select+'</div>';
+                        	
+                        	return html;
                         }
                     },
                     {
@@ -134,15 +163,83 @@
                         "render": function (data, type, row) {
                             var pid = row.subject.id;
                             var uid = row.object.id;
-                            var removeButton = '<button id="remove-user-'+uid+'" class="btn btn-danger btn-xs">'+[[#{project.members.edit.remove}]]+'</button>';
+                            var removeButton = '<button id="remove-user-'+uid+'" class="btn btn-danger">'+[[#{project.members.edit.remove}]]+'</button>';
                             return removeButton;
                         },
                         "visible":  /*[[${isAdmin or isOwner}]]*/ false ,
                         "sortable": false
                     }
-                ]
+                ],
+                "drawCallback": function( settings, data ){
+                	showRoles();
+                }
             });
+        	
+        	$("#editMembers").click(function(){
+        		showRole = !showRole;
+        		showRoles();
+        	});
+        	
+        	
+        	// toggle edit user panel 
+        	$("#usersTable").on("click",".edit-user",function(){
+        		var row = $(this).closest("tr");
+        		var display = row.find(".display-role");
+        		var select = row.find(".select-role");
+        		
+        		display.toggle(100);
+        		select.toggle(100);
+        	});
+        	
+        	//update the user
+        	$("#usersTable").on("change",".role-select",function(){
+        		var newRole = $(this).val();
+        		var userId = $(this).data("user");
+        		var projectId = [[${project.getId()}]];
+        		
+        		var data = "userId="+userId+"&projectRole="+newRole;
+        		var url = [[@{/projects/}]] + projectId + "/members/editrole";
+        		
+        		console.log(url);
+        		console.log(data);
+        		
+        		$.ajax({
+        			url:url,
+        			data:data,
+        			success:function(){
+        				noty({
+        					text: [[#{project.members.edit.role.success}]] ,
+        					layout: "topCenter", 
+        					type: "success",
+        					timeout: 5000
+        				});
+        				
+        				table.ajax.reload();
+        			},
+        			error:function(){
+        				noty({
+        					text: [[#{project.members.edit.role.error}]] , 
+        					layout: "topCenter", 
+        					type: "error",
+        					timeout: false
+        				})
+        			}
+        		}); 
+        		
+        	});
         });
+        
+        // Whether to show the user roles, or a selector for updating the roles
+        function showRoles(){
+        	if(showRole){
+        		$(".display-role").show();
+        		$(".select-role").hide()
+        	}
+        	else{
+        		$(".display-role").hide();
+        		$(".select-role").show()
+        	}
+        }
         
         function showRemoveUser(userLabel,removeUrl,userId,table){
         	var data = "userId="+userId;

@@ -173,6 +173,29 @@ public class ProjectsController {
 
 		projectService.removeUserFromProject(project, user);
 	}
+	
+	/**
+	 * Update a user's role on a project
+	 * 
+	 * @param projectId
+	 *            The ID of the project
+	 * @param userId
+	 *            The ID of the user
+	 * @param projectRole
+	 *            The role to set
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
+	@RequestMapping("{projectId}/members/editrole")
+	@ResponseBody
+	public void updateUserRole(@PathVariable Long projectId, @RequestParam Long userId,
+			@RequestParam String projectRole) {
+		Project project = projectService.read(projectId);
+		User user = userService.read(userId);
+		
+		ProjectRole role = ProjectRole.fromString(projectRole);
+		
+		projectService.updateUserProjectRole(project, user, role);
+	}
 
 	/**
 	 * Gets the name of the template for the new project page
