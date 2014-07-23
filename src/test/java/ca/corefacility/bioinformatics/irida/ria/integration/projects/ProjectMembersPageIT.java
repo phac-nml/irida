@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectMembersPage;
 
@@ -62,7 +63,7 @@ public class ProjectMembersPageIT {
 	public void destroy() {
 		if (driver != null) {
 			driver.close();
-            driver.quit();
+			driver.quit();
 		}
 	}
 
@@ -74,12 +75,24 @@ public class ProjectMembersPageIT {
 			assertTrue("Has the correct members names", COLLABORATORS_NAMES.contains(name));
 		}
 	}
-	
+
 	@Test
 	public void testRemoveUser() {
 		membersPage.clickRemoveUserButton(2l);
 		membersPage.clickModialPopupButton();
 		List<String> userNames = membersPage.getProjectMembersNames();
 		assertEquals(1, userNames.size());
+	}
+
+	@Test
+	public void testEditRole() {
+		membersPage.clickEditButton();
+		assertTrue("Role select dropdowns should be visible", membersPage.roleSelectDisplayed());
+		membersPage.setRoleForUser(2l, ProjectRole.PROJECT_OWNER.toString());
+		assertTrue(membersPage.notySuccessDisplayed());
+		assertTrue("Role select dropdowns should be visible", membersPage.roleSelectDisplayed());
+		membersPage.clickEditButton();
+		assertTrue("Role select dropdowns should be visible", membersPage.roleSpanDisplayed());
+
 	}
 }

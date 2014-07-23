@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -20,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
  * </p>
  * 
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class ProjectMembersPage {
 	private WebDriver driver;
@@ -52,6 +55,55 @@ public class ProjectMembersPage {
 
 		myDynamicElement.click();
 		waitForAjax();
+	}
+
+	public void clickEditButton() {
+		logger.trace("clicking edit button");
+		WebElement editMembersButton = driver.findElement(By.id("editMembers"));
+		editMembersButton.click();
+	}
+
+	public boolean roleSelectDisplayed() {
+		boolean present = false;
+		try {
+			WebElement findElement = driver.findElement(By.className("select-role"));
+			present = findElement.isDisplayed();
+		} catch (NoSuchElementException e) {
+			present = false;
+		}
+
+		return present;
+	}
+	
+	public boolean roleSpanDisplayed() {
+		boolean present = false;
+		try {
+			WebElement findElement = driver.findElement(By.className("display-role"));
+			present = findElement.isDisplayed();
+		} catch (NoSuchElementException e) {
+			present = false;
+		}
+
+		return present;
+	}
+
+	public void setRoleForUser(Long id, String roleValue) {
+		WebElement findElement = driver.findElement(By.id(id + "-role"));
+		Select roleSelect = new Select(findElement);
+		roleSelect.selectByValue(roleValue);
+		waitForAjax();
+	}
+
+	public boolean notySuccessDisplayed() {
+		boolean present;
+		try {
+			driver.findElement(By.className("noty_type_success"));
+			present = true;
+		} catch (NoSuchElementException e) {
+			present = false;
+		}
+
+		return present;
 	}
 
 	private void waitForAjax() {
