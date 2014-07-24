@@ -338,6 +338,7 @@
     			layout: "center",
     			type: "confirmation",
     			text: [[#{project.members.edit.remove}]] + " " + userLabel + "?",
+    			modal: true,
     			buttons: [
     			          {addClass: 'btn btn-primary btn-sm modial-remove-user', text: 'Ok', onClick: function($noty) {
     			              $noty.close();
