@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -117,8 +119,51 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
-	public void removeUserFromProject(Project project, User user) {
+	public void removeUserFromProject(Project project, User user) throws ProjectWithoutOwnerException {
+		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);
+		if(!allowRoleChange(projectJoinForUser)){
+			throw new ProjectWithoutOwnerException("Removing this user would leave the project without an owner");
+		}
 		pujRepository.removeUserFromProject(project, user);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public Join<Project, User> updateUserProjectRole(Project project, User user, ProjectRole projectRole)
+			throws ProjectWithoutOwnerException {
+		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);
+		if (projectJoinForUser == null) {
+			throw new EntityNotFoundException("Join between this project and user does not exist. User: " + user
+					+ " Project: " + project);
+		}
+
+		if (!allowRoleChange(projectJoinForUser)) {
+			throw new ProjectWithoutOwnerException("This role change would leave the project without an owner");
+		}
+
+		projectJoinForUser.setProjectRole(projectRole);
+		return pujRepository.save(projectJoinForUser);
+	}
+
+	private boolean allowRoleChange(ProjectUserJoin originalJoin) {
+		// if they're not a project owner, no worries
+		if (!originalJoin.getProjectRole().equals(ProjectRole.PROJECT_OWNER)) {
+			return true;
+		}
+
+		List<Join<Project, User>> usersForProjectByRole = pujRepository.getUsersForProjectByRole(
+				originalJoin.getSubject(), ProjectRole.PROJECT_OWNER);
+		if (usersForProjectByRole.size() > 1) {
+			// if there's more than one owner, no worries
+			return true;
+		} else {
+			// if there's only 1 owner, they're leaving a projcet without an
+			// owner!
+			return false;
+		}
 	}
 
 	/**
