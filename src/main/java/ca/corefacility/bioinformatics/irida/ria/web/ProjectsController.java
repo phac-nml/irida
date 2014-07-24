@@ -48,7 +48,7 @@ public class ProjectsController {
 	private static final String ACTIVE_NAV_METADATA = "metadata";
 	private static final String ACTIVE_NAV_SAMPLES = "samples";
 	private static final String ACTIVE_NAV_MEMBERS = "members";
-	//private static final String ACTIVE_NAV_ANALYSIS = "analysis";
+	// private static final String ACTIVE_NAV_ANALYSIS = "analysis";
 
 	// Page Names
 	private static final String PROJECTS_DIR = "projects/";
@@ -427,10 +427,10 @@ public class ProjectsController {
 		return getProjectsDataMap(projectList, draw, page.getTotalElements(), sortColumn, sortDirection);
 	}
 
-    @RequestMapping(value = "/ajax/{projectId}/samples/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/ajax/{projectId}/samples/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public
     @ResponseBody
-    Map<String, Object> postUpdateProject(@PathVariable Long projectId, @RequestParam(required = true) Long sampleId,
+    Map<String, Object> postUpdateProjectSamples(@RequestParam(required = true) Long sampleId,
                                           @RequestParam(required = false) String name) {
         Map<String, Object> updateMap = new HashMap<>();
         if (!Strings.isNullOrEmpty(name)) {
@@ -445,9 +445,7 @@ public class ProjectsController {
             resultMap.put("error", getErrorsFromViolationException(e));
         }
         return resultMap;
-    } 
-
-	/**
+    }	/**
 	 * Generates a map of project information for the {@link ProjectsDataTable}
 	 *
 	 * @param projectList
