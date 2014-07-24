@@ -39,7 +39,6 @@
                         <thead>
                         <tr role="row" th:inline="text">
                             <th data:tooltip="#{tooltip.selectall-none}"><input type="checkbox" id="selectAll"/></th>
-                            <th></th>
                             <th class="sortable">[[#{project.samples.table.name}]]<i
                                     class="glyphicon"></i></th>
                             <th>[[#{project.samples.table.numFiles}]]</th>
@@ -116,6 +115,7 @@ function EditableDataTable() {
         row.find("i").addClass('glypihcon-cheveron-right').removeClass('glyphicon-chevron-down');
         row.removeClass('details');
         row.next().remove();
+        return row;
     }
 
     function showFilesView(el) {
@@ -175,7 +175,7 @@ function EditableDataTable() {
             if (typeof origName != 'undefined') {
                 noty({
                     layout: 'topCenter',
-                    type: 'confirmation',
+                    type: 'success',
                     text: origName + ' successfully renamed to ' + name + '  <a href="#" id="undoRename">Undo</a>',
                     timeout: 3200,
                     callback: {
@@ -220,13 +220,15 @@ function EditableDataTable() {
             }
         },
         toggleFilesView: function (el) {
+            var openRow = null;
             if (isFilesViewOpen) {
-                closeFilesView();
+                openRow = closeFilesView();
+                isFilesViewOpen = false;
             }
-            else {
+            if(openRow == null || openRow[0] != el[0]) {
                 showFilesView(el);
+                isFilesViewOpen = true;
             }
-            isFilesViewOpen = !isFilesViewOpen;
         },
         checkBoxClicked: function (id) {
             var index = selectedRows.indexOf(id);
@@ -277,7 +279,7 @@ $(document).ready(function () {
         deferRender: true,
         ajax: /*[[@{/projects/ajax/{projectId}/samples(projectId=${project.getId()})}]]*/ '/projects/ajax/1/samples',
         order: [
-            [4, "desc"]
+            [3, "desc"]
         ],
         columns: [
             {
@@ -290,19 +292,13 @@ $(document).ready(function () {
                 "width": "15px"
             },
             {
-                "data": null,
-                "orderable": false,
-                "class": "details-control",
-                "defaultContent": "",
-                "width": "15px"
-            },
-            {
                 "data": "name",
                 "class": "name"
             },
             {
                 "data": "numFiles",
                 "orderable": false,
+                "class": "details-control",
                 "width": "15%"
             },
             {
@@ -319,18 +315,17 @@ $(document).ready(function () {
                 "width": "10%"
             }
         ],
-        'createdRow': function (row, data, index) {
-            if (parseInt(data.numFiles) == 0) { // TODO: Don't forget to change this back
+        'createdRow': function (row, data) {
+            if (parseInt(data.numFiles) > 0) {
                 $(row)
-                        .addClass('has-files')
                         .find('.details-control')
-                        .html('<i class="text-muted glyphicon glyphicon-chevron-right"></i>');
+                        .html('<a href="#">' + data.numFiles + '</a>');
             }
         }
     }));
 
-    $samplesTable.find('tbody').on('click', 'tr.has-files i.glyphicon', function (e) {
-        console.log(e);
+    $samplesTable.find('tbody').on('click', 'td.details-control a', function (e) {
+        e.preventDefault();
         DT.toggleFilesView($(this).closest('tr'));
     }).on('click', 'input[type="checkbox"]', function (e) {
         e.stopPropagation();
