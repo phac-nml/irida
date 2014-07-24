@@ -4,6 +4,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.SortUtilities;
 import com.google.common.base.Strings;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Wait;
@@ -28,10 +29,10 @@ public class ProjectSamplesPage {
 		this.driver = driver;
 	}
 
-    public void goToPage() {
-        driver.get(URL);
-        waitForAjax();
-    }
+	public void goToPage() {
+		driver.get(URL);
+		waitForAjax();
+	}
 
 	/**
 	 * The the h1 heading for the page
@@ -123,7 +124,7 @@ public class ProjectSamplesPage {
 		return SortUtilities.isStringListSortedDesc(list);
 	}
 
-    /**
+	/**
 	 * Checks to see if the Sample Added On column is sorted ascending
 	 *
 	 * @return True if entire column is sorted ascending
@@ -144,6 +145,32 @@ public class ProjectSamplesPage {
 				.map(WebElement::getText).collect(Collectors.toList());
 		return SortUtilities.isDateSortedDesc(list, DATE_FORMAT);
 	}
+
+	/**
+	 * Checks to see if the is an input field named "editName" visible and that
+	 * there is only one.
+	 * 
+	 * @return true if there is 1 visisble
+	 */
+	public boolean isRenameInputVisible() {
+		return driver.findElements(By.id("editName")).size() == 1;
+	}
+
+    public String getSampleName() {
+        return driver.findElement(By.cssSelector("tbody tr:nth-child(1) td:nth-child(2)")).getText();
+    }
+
+    public boolean successMessageShown() {
+        return driver.findElements(By.cssSelector(".noty_message")).size() > 0;
+    }
+
+    public boolean hasErrorMessage() {
+        return driver.findElements(By.className("qtip-content")).size() == 1;
+    }
+
+    public boolean hasFormattingMessage() {
+        return driver.findElement(By.className("qtip-content")).getText().contains("space character");
+    }
 
 	/**************************************************************************************
 	 * EVENTS
@@ -187,6 +214,27 @@ public class ProjectSamplesPage {
 		driver.findElement(By.cssSelector("thead th:nth-child(4)")).click();
 		waitForAjax();
 	}
+
+	/**
+	 * Display the sample edit
+	 */
+	public void clickEditFirstSample() {
+		driver.findElement(By.cssSelector("tbody tr:nth-child(1) button.edit")).click();
+	}
+
+    /**
+     * Rename a sample
+     */
+    public void sendRenameSample(String name) {
+        WebElement el = driver.findElement(By.id("editName"));
+        el.sendKeys(name);
+        el.sendKeys(Keys.ENTER);
+        waitForAjax();
+    }
+
+    public void clickOnEditCancel() {
+        driver.findElement(By.cssSelector("button.cancel")).click();
+    }
 
 	private void waitForAjax() {
 		Wait<WebDriver> wait = new WebDriverWait(driver, 60);
