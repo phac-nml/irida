@@ -1,8 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -433,25 +430,19 @@ public class ProjectsController {
     @RequestMapping(value = "/ajax/{projectId}/samples/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public
     @ResponseBody
-    Map<String, String> postUpdateProject(@PathVariable Long projectId, @RequestParam(required = true) Long sampleId,
+    Map<String, Object> postUpdateProject(@PathVariable Long projectId, @RequestParam(required = true) Long sampleId,
                                           @RequestParam(required = false) String name) {
         Map<String, Object> updateMap = new HashMap<>();
         if (!Strings.isNullOrEmpty(name)) {
             updateMap.put("sampleName", name);
         }
 
-        Map<String, String> resultMap = new HashMap<>();
+        Map<String, Object> resultMap = new HashMap<>();
         try {
             sampleService.update(sampleId, updateMap);
             resultMap.put("success", "Updated name");
-        } catch (EntityExistsException e) {
-            e.printStackTrace();
-        } catch (EntityNotFoundException e) {
-            e.printStackTrace();
         } catch (ConstraintViolationException e) {
-            e.printStackTrace();
-        } catch (InvalidPropertyException e) {
-            e.printStackTrace();
+            resultMap.put("error", getErrorsFromViolationException(e));
         }
         return resultMap;
     } 
