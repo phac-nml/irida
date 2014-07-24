@@ -133,7 +133,7 @@
                 frag.appendChild(btn);
                 btn.className = "btn btn-danger btn-xs remove-button";
                 btn.innerHTML = /*[[#{project.members.edit.remove}]]*/ 'Remove';
-                $(btn).attr("id","remove-user-"+uid);
+                btn.setAttribute("id","remove-user-"+uid);
                 return frag.innerHTML;
             },
             createButtonDiv: function s(data, row){
@@ -144,13 +144,13 @@
             	//create the remove button group 
             	var group1 = document.createElement("div");
             	group1.className = "btn-group";
-            	$(group1).html(DT.createRemoveButton(row));
-            	
+                group1.innerHTML = DT.createRemoveButton(row);
+
             	//create the edit button group
             	var group2 = document.createElement("div");
             	group2.className = "btn-group edit-button-container";
-            	$(group2).html(DT.createEditBtn(row.object.id));
-            	
+                group2.innerHTML = DT.createEditBtn(row.object.id);
+
             	//add the buttons to the toolbar
             	toolbar.appendChild(group1);
             	toolbar.appendChild(group2);
