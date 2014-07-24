@@ -136,13 +136,13 @@ function EditableDataTable() {
 
         var input = document.createElement("input");
         input.setAttribute('type', 'text');
+        input.id = "editName";
         input.className = "form-control input-sm mrgn-rght-sm";
         input.setAttribute('placeholder', name);
         group.appendChild(input);
 
         var btn = document.createElement("button");
-        btn.setAttribute("type", "submit");
-        btn.className = "btn btn-sm btn-primary";
+        btn.className = "btn btn-sm btn-primary submit";
         btn.innerHTML = "Update"
         group.appendChild(btn);
 
@@ -161,6 +161,14 @@ function EditableDataTable() {
         btn.className = "btn btn-info btn-sm pull-right cancel";
         btn.innerHTML = "Cancel";
         return btn;
+    }
+
+    function sendAjaxNameUpdate(id, name) {
+        $.ajax({
+            url: /*[[@{/projects/ajax/{projectId}/update(projectId=${project.getId()})}]]*/ '/projects/ajax/update',
+            type: 'post',
+            data: {'sampleId': id, 'name':name}
+        });
     }
 
     return {
@@ -208,6 +216,16 @@ function EditableDataTable() {
             tdName.html(createEditForm(name));
             tdBtns.html(createCancelBtn());
             isEditingRow = true;
+        },
+        sendUpdatedName: function () {
+            var row = $("tr.editing"),
+                    id = row.find('input[type="checkbox"]').val(),
+                    input = row.find("#editName"),
+                    origName = input.attr("placeholder"),
+                    newName = input.val();
+            if(newName != "" && newName != origName) {
+                sendAjaxNameUpdate(id, newName);
+            }
         }
     }
 }
@@ -277,8 +295,9 @@ $(document).ready(function () {
         }
     });
 
-    $samplesTable.find('tbody').on('click', 'tr.has-files', function () {
-        DT.toggleFilesView(this);
+    $samplesTable.find('tbody').on('click', 'tr.has-files i.glyphicon', function (e) {
+        console.log(e);
+        DT.toggleFilesView($(this).closest('tr'));
     }).on('click', 'input[type="checkbox"]', function (e) {
         e.stopPropagation();
         var id = $(this).val();
@@ -290,6 +309,10 @@ $(document).ready(function () {
     }).on('click', 'button.cancel', function (e) {
         e.stopPropagation();
         DT.cancelEditRow();
+    }).on('click', 'button.submit', function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        DT.sendUpdatedName();
     });
 
 
