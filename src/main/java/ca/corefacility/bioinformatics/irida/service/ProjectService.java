@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -48,9 +49,12 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *            the {@link Project} to remove the {@link User} from.
 	 * @param user
 	 *            the {@link User} to be removed from the {@link Project}.
+	 * @throws ProjectWithoutOwnerException
+	 *             if removing this user would leave the project without an
+	 *             owner
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
-	public void removeUserFromProject(Project project, User user);
+	public void removeUserFromProject(Project project, User user) throws ProjectWithoutOwnerException;
 
 	/**
 	 * Update a {@link User}'s {@link ProjectRole} on a {@link Project}
@@ -62,9 +66,12 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @param projectRole
 	 *            The role to set
 	 * @return The newly updated role object
+	 * @throws ProjectWithoutOwnerException
+	 *             If the role change would leave the project without an owner
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project,'isProjectOwner')")
-	public Join<Project, User> updateUserProjectRole(Project project, User user, ProjectRole projectRole);
+	public Join<Project, User> updateUserProjectRole(Project project, User user, ProjectRole projectRole)
+			throws ProjectWithoutOwnerException;
 
 	/**
 	 * Add the specified {@link Sample} to the {@link Project}.
