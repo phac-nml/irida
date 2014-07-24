@@ -4,7 +4,7 @@
       layout:decorator="templates/wet-boew/wet-layout">
 <head>
     <title th:text="#{project.samples.title}">THIS IS SOMETHING
-                                              WRONG</title>
+        WRONG</title>
 </head>
 <body>
 <div class="container" layout:fragment="content">
@@ -57,7 +57,7 @@
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <b class="panel-title" th:text="#{project.details}">Project
-                                                                        Details</b>
+                        Details</b>
                 </div>
                 <div class="panel-body">
                     <ul class="nav nav-pills nav-stacked details">
@@ -102,9 +102,11 @@
 function EditableDataTable() {
     var isEditingRow = false,
             isFilesViewOpen = false,
+            dataTable = null,
             isAllRowsSelected = false,
             selectedRows = [];
-    function format () {
+
+    function format() {
         // TODO: ajax to get list of files.
         return "<p>Files will be displayed here</p>";
     }
@@ -163,15 +165,61 @@ function EditableDataTable() {
         return btn;
     }
 
-    function sendAjaxNameUpdate(id, name) {
+    function sendAjaxNameUpdate(id, name, origName) {
         $.ajax({
-            url: /*[[@{/projects/ajax/{projectId}/update(projectId=${project.getId()})}]]*/ '/projects/ajax/update',
+            url: /*[[@{/projects/ajax/{projectId}/samples/update(projectId=${project.getId()})}]]*/ '/projects/ajax/update',
             type: 'post',
-            data: {'sampleId': id, 'name':name}
+            data: {'sampleId': id, 'name': name}
+        }).done(function () {
+            dataTable.ajax.reload();
+            if (typeof origName != 'undefined') {
+                noty({
+                    layout: 'topCenter',
+                    type: 'confirmation',
+                    text: origName + ' successfully renamed to ' + name + '  <a href="#" id="undoRename">Undo</a>',
+                    timeout: 3200,
+                    callback: {
+                        onShow: function () {
+                        },
+                        afterShow: function () {
+                            $("#undoRename").on('click', function (e) {
+                                $.ajax({
+                                    url: /*[[@{/projects/ajax/{projectId}/samples/update(projectId=${project.getId()})}]]*/ '/projects/ajax/update',
+                                    type: 'post',
+                                    data: {'sampleId': id, 'name': origName}
+                                }).done(function () {
+                                    dataTable.ajax.reload();
+                                });
+                            });
+                        },
+                        onClose: function () {
+                            $("#undoRename").on('click');
+                        },
+                        afterClose: function () {
+                        }
+                    }
+//                    buttons: [
+//                        {
+//                            addClass: 'btn btn-primary', text: 'Undo', onClick: function ($noty) {
+//
+//                            // this = button element
+//                            // $noty = $noty element
+//                            sendAjaxNameUpdate(id, origName)
+//
+//                            $noty.close();
+//                            noty({text: 'You clicked "Ok" button', type: 'success'});
+//                        }
+//                        },
+//                    ]
+                });
+            }
         });
     }
 
     return {
+        setDataTable: function (table) {
+            dataTable = table;
+        },
         cancelEditRow: function () {
             if (isEditingRow) {
                 var row = $("tr.editing"),
@@ -197,12 +245,11 @@ function EditableDataTable() {
             var index = selectedRows.indexOf(id);
             if (index == -1) {
                 selectedRows.push(id);
-                return true;
             }
             else {
                 selectedRows.splice(index, 1);
-                return false;
             }
+            return selectedRows.length === 0 ? false : true;
         },
         editRow: function (row) {
             var currEdit = $("tr.editing");
@@ -213,7 +260,7 @@ function EditableDataTable() {
                     tdBtns = row.find('td.btns'),
                     name = tdName.html();
             row.addClass("editing");
-            tdName.html(createEditForm(name));
+            tdName.html(createEditForm(name)).find('input').focus();
             tdBtns.html(createCancelBtn());
             isEditingRow = true;
         },
@@ -223,8 +270,8 @@ function EditableDataTable() {
                     input = row.find("#editName"),
                     origName = input.attr("placeholder"),
                     newName = input.val();
-            if(newName != "" && newName != origName) {
-                sendAjaxNameUpdate(id, newName);
+            if (newName != "" && newName != origName) {
+                sendAjaxNameUpdate(id, newName, origName);
             }
         }
     }
@@ -236,7 +283,7 @@ $(document).ready(function () {
             $samplesTable = $('#samplesTable'),
             DT = new EditableDataTable();
 
-    var dt = $samplesTable.DataTable({
+    DT.setDataTable($samplesTable.DataTable({
         dom: "<'top'ilf>rt<'bottom'p><'clear'>",
         processing: true,
         serverSide: true,
@@ -293,7 +340,7 @@ $(document).ready(function () {
                         .html('<i class="text-muted glyphicon glyphicon-chevron-right"></i>');
             }
         }
-    });
+    }));
 
     $samplesTable.find('tbody').on('click', 'tr.has-files i.glyphicon', function (e) {
         console.log(e);
@@ -314,7 +361,6 @@ $(document).ready(function () {
         e.preventDefault();
         DT.sendUpdatedName();
     });
-
 
     $selectAll.on("click", function () {
         var $this = $(this);

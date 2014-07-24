@@ -430,12 +430,11 @@ public class ProjectsController {
 		return getProjectsDataMap(projectList, draw, page.getTotalElements(), sortColumn, sortDirection);
 	}
 
-    @RequestMapping(value = "/ajax/{projectId}/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/ajax/{projectId}/samples/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public
     @ResponseBody
     Map<String, String> postUpdateProject(@PathVariable Long projectId, @RequestParam(required = true) Long sampleId,
                                           @RequestParam(required = false) String name) {
-        Project project = projectService.read(projectId);
         Map<String, Object> updateMap = new HashMap<>();
         if (!Strings.isNullOrEmpty(name)) {
             updateMap.put("sampleName", name);
