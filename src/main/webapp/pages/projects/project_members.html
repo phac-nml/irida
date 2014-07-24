@@ -92,19 +92,24 @@
             isFilesViewOpen: false,
             isAllRowsSelected: false,
             selectedRows: [],
-            createEditBtn: function () {
+            createEditBtn: function (userId) {
                 var frag = document.createElement("div");
                 var btn = document.createElement("button");
                 frag.appendChild(btn);
                 btn.className = "btn btn-default btn-xs edit";
                 btn.innerHTML = "Edit";
+                btn.setAttribute("data-userid",userId);
+                btn.setAttribute("id","edit-button-"+userId);
+                
                 return frag.innerHTML;
             },
-            createCancelBtn: function () {
+            createCancelBtn: function (userId) {
                 var frag = document.createElement("div");
                 var btn = document.createElement("button");
                 frag.appendChild(btn);
                 btn.className = "btn btn-info btn-xs cancel";
+                btn.setAttribute("data-userid",userId);
+                btn.setAttribute("id","cancel-button-"+userId);
                 btn.innerHTML = "Cancel";
                 return frag.innerHTML;
             },
@@ -112,7 +117,7 @@
             	row.find(".display-role").hide();
         		row.find(".select-role").show();
             },
-            cancelEditRow: function () {
+            cancelEditRow: function (userid) {
                 if (this.isEditingRow) {
                     var row = $("tr.editing"),
                             tdBtns = row.find(".edit-button-container");
@@ -120,7 +125,7 @@
                     row.find(".display-role").show();
             		row.find(".select-role").hide();
             		
-                    tdBtns.html(DT.createEditBtn());
+                    tdBtns.html(DT.createEditBtn(userid));
                     row.removeClass("editing");
                     this.isEditingRow = false;
                 }
@@ -207,9 +212,10 @@
                             }
                         	
                         	var roleSelect = $("#template-roles").clone();
-                        	var newId = row.object.id + "-role-select";
+                        	var userid = row.object.id;
+                        	var newId = userid + "-role-select";
                         	roleSelect.attr("id",newId);
-                        	roleSelect.attr("data-user",row.object.id);
+                        	roleSelect.attr("data-user",userid);
                         	roleSelect.find("option").each(function(){
                         		if($(this).val() == data){
                         			$(this).attr("selected",true);
@@ -218,7 +224,7 @@
                         	
                         	var select = roleSelect.wrap("<div/>").parent().html();
                         	
-                        	var html = '<div class="display-role">'+span+'</div><div class="select-role">'+select+'</div>';
+                        	var html = '<div class="display-role" id="display-role-'+userid+'">'+span+'</div><div class="select-role">'+select+'</div>';
                         	
                         	return html;
                         }
@@ -257,20 +263,25 @@
                 e.stopPropagation();
                 var currEdit = $("tr.editing");
                 if (currEdit.length > 0) {
-                    DT.cancelEditRow();
+                	//get the userid from the cancel button
+                	var userid = currEdit.find("button.cancel").data("userid");
+                    DT.cancelEditRow(userid);
                 }
                 var $this = $(this),
                         row = $this.closest('tr'),
+                        userid = $this.data("userid"),
                         tdBtns = row.find('.edit-button-container');
                 row.addClass("editing");
         		
                 DT.createEditForm(row);
-               	tdBtns.html(DT.createCancelBtn());
+               	tdBtns.html(DT.createCancelBtn(userid));
                 DT.isEditingRow = true;
         	}).on('click', 'button.cancel', function (e) { //click the cancel button
                 e.stopPropagation();
+                var $this = $(this),
+                	userid = $this.data("userid");
 				
-                DT.cancelEditRow();
+                DT.cancelEditRow(userid);
             }).on("change",".role-select",function() { // Change the user role, update the role on the server
         		var newRole = $(this).val();
         		var userId = $(this).data("user");
@@ -278,6 +289,8 @@
         		
         		var data = "userId="+userId+"&projectRole="+newRole;
         		var url = [[@{/projects/}]] + projectId + "/members/editrole";
+        		
+        		var input = $(this);
         		
         		$.ajax({
         			url:url,
@@ -292,13 +305,26 @@
         				
         				table.ajax.reload();
         			},
+        			statusCode: {
+        				// 403 returned if changing role would leave project without owner
+        			    403: function() {
+        			    	noty({
+            					text: [[#{project.members.edit.role.403}]] , 
+            					layout: "topCenter", 
+            					type: "error",
+            					timeout: 10000
+            				});
+        			    	
+        			    }
+        			},
         			error:function(){
         				noty({
         					text: [[#{project.members.edit.role.error}]] , 
         					layout: "topCenter", 
         					type: "error",
-        					timeout: false
-        				})
+        					timeout: 10000
+        				});
+        				DT.cancelEditRow(userId);
         			}
         		}); 
         		
@@ -329,12 +355,24 @@
     			        				
     			        				table.ajax.reload();
     			        			},
+    			        			statusCode: {
+    			        				// 403 returned if changing role would leave project without owner
+    			        			    403: function() {
+    			        			    	noty({
+    			            					text: [[#{project.members.edit.remove.403}]] , 
+    			            					layout: "topCenter", 
+    			            					type: "error",
+    			            					timeout: 10000
+    			            				});
+    			        			    	
+    			        			    }
+    			        			},
     			        			error:function(){
     			        				noty({
     			        					text: [[#{project.members.edit.remove.error}]] , 
     			        					layout: "topCenter", 
     			        					type: "error",
-    			        					timeout: false
+    			        					timeout: 10000
     			        				})
     			        			}
     			        		});               			              

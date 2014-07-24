@@ -15,17 +15,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -162,11 +166,12 @@ public class ProjectsController {
 	 * @param userId
 	 *            The user to remove
 	 * @return
+	 * @throws ProjectWithoutOwnerException 
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@RequestMapping("{projectId}/members/remove")
 	@ResponseBody
-	public void removeUser(@PathVariable Long projectId, @RequestParam Long userId) {
+	public void removeUser(@PathVariable Long projectId, @RequestParam Long userId) throws ProjectWithoutOwnerException {
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);
 
@@ -182,12 +187,13 @@ public class ProjectsController {
 	 *            The ID of the user
 	 * @param projectRole
 	 *            The role to set
+	 * @throws ProjectWithoutOwnerException 
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@RequestMapping("{projectId}/members/editrole")
 	@ResponseBody
 	public void updateUserRole(@PathVariable Long projectId, @RequestParam Long userId,
-			@RequestParam String projectRole) {
+			@RequestParam String projectRole) throws ProjectWithoutOwnerException {
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);
 		
@@ -646,5 +652,11 @@ public class ProjectsController {
 			errors.put(field, message);
 		}
 		return errors;
+	}
+	
+	@ExceptionHandler(ProjectWithoutOwnerException.class)
+	@ResponseBody
+	public ResponseEntity<String> roleChangeErrorHandler(ProjectWithoutOwnerException ex){
+		return new ResponseEntity<>(ex.getMessage(),HttpStatus.FORBIDDEN);
 	}
 }
