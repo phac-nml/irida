@@ -175,7 +175,7 @@ public class GalaxyWorkflowManagerIT {
 		
 		List<String> fakeOutputIds = new LinkedList<String>();
 		fakeOutputIds.add(INVALID_HISTORY_ID);
-		workflowOutput.seOutputIds(fakeOutputIds);
+		workflowOutput.setOutputIds(fakeOutputIds);
 		
 		galaxyWorkflowManager.getWorkflowOutputDownloadURLs(workflowOutput);
 	}
