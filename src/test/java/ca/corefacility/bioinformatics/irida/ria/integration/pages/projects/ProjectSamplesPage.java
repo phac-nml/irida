@@ -57,7 +57,7 @@ public class ProjectSamplesPage {
 	 * @return integer value of samples that contain files.
 	 */
 	public int getCountOfSamplesWithFiles() {
-		return driver.findElements(By.className("glyphicon-chevron-right")).size();
+		return driver.findElements(By.cssSelector("td.details-control a")).size();
 	}
 
 	/**
@@ -107,7 +107,7 @@ public class ProjectSamplesPage {
 	 * @return True if entire column is sorted ascending
 	 */
 	public boolean isSampleNameColumnSortedAsc() {
-		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(3)")).stream()
+		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(2)")).stream()
 				.map(WebElement::getText).collect(Collectors.toList());
 		return SortUtilities.isStringListSortedAsc(list);
 	}
@@ -118,7 +118,7 @@ public class ProjectSamplesPage {
 	 * @return True if entire column is sorted descending
 	 */
 	public boolean isSampleNameColumnSortedDesc() {
-		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(3)")).stream()
+		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(2)")).stream()
 				.map(WebElement::getText).collect(Collectors.toList());
 		return SortUtilities.isStringListSortedDesc(list);
 	}
@@ -129,7 +129,7 @@ public class ProjectSamplesPage {
 	 * @return True if entire column is sorted ascending
 	 */
 	public boolean isAddedOnDateColumnSortedAsc() {
-		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(5)")).stream()
+		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(4)")).stream()
 				.map(WebElement::getText).collect(Collectors.toList());
 		return SortUtilities.isDateSortedAsc(list, DATE_FORMAT);
 	}
@@ -140,7 +140,7 @@ public class ProjectSamplesPage {
 	 * @return True if entire column is sorted descending
 	 */
 	public boolean isAddedOnDateColumnSortedDesc() {
-		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(5)")).stream()
+		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(4)")).stream()
 				.map(WebElement::getText).collect(Collectors.toList());
 		return SortUtilities.isDateSortedDesc(list, DATE_FORMAT);
 	}
@@ -167,7 +167,7 @@ public class ProjectSamplesPage {
 	 * Open the row that contains files.
 	 */
 	public void openFilesView() {
-		driver.findElement(By.cssSelector("tr.has-files a")).click();
+		driver.findElement(By.cssSelector("td.details-control a")).click();
 	}
 
 	/**
