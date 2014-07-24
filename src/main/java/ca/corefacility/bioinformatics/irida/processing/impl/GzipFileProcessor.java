@@ -42,6 +42,7 @@ public class GzipFileProcessor implements FileProcessor {
 	 */
 	@Override
 	public SequenceFile process(SequenceFile sequenceFile) throws FileProcessorException {
+		sequenceFile = sequenceFileRepository.findOne(sequenceFile.getId());
 		Path file = sequenceFile.getFile();
 		String nameWithoutExtension = file.toString();
 		String originalFilename = file.toString();
