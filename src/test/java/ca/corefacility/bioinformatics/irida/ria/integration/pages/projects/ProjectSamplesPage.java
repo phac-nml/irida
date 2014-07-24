@@ -167,7 +167,7 @@ public class ProjectSamplesPage {
 	 * Open the row that contains files.
 	 */
 	public void openFilesView() {
-		driver.findElement(By.className("glyphicon-chevron-right")).click();
+		driver.findElement(By.cssSelector("tr.has-files a")).click();
 	}
 
 	/**
@@ -175,7 +175,7 @@ public class ProjectSamplesPage {
 	 * that column.
 	 */
 	public void clickSampleNameHeader() {
-		driver.findElement(By.cssSelector("thead th:nth-child(3)")).click();
+		driver.findElement(By.cssSelector("thead th:nth-child(2)")).click();
 		waitForAjax();
 	}
 
@@ -184,7 +184,7 @@ public class ProjectSamplesPage {
 	 * sorting by that column.
 	 */
 	public void clickCreatedDateHeader() {
-		driver.findElement(By.cssSelector("thead th:nth-child(5)")).click();
+		driver.findElement(By.cssSelector("thead th:nth-child(4)")).click();
 		waitForAjax();
 	}
 
