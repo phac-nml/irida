@@ -90,7 +90,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	public SequenceFile() {
 		createdDate = new Date();
 		modifiedDate = createdDate;
-		fileRevisionNumber = 1L;
+		fileRevisionNumber = 0L;
 		optionalProperties = new HashMap<>();
 	}
 
