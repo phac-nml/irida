@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.FileProcessorTimeoutException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -172,7 +173,11 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 			}
 
 			// proceed with analysis
-			fileProcessingChain.launchChain(sequenceFile);
+			try {
+				fileProcessingChain.launchChain(sequenceFile);
+			} catch (FileProcessorTimeoutException e) {
+				logger.error("FileProcessingChain did *not* execute -- the transaction opened by SequenceFileService never closed.");
+			}
 
 			// erase the security context if we copied the context into the
 			// current thread.

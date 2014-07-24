@@ -8,6 +8,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.zip.GZIPInputStream;
 
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +43,7 @@ public class GzipFileProcessor implements FileProcessor {
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional
 	public SequenceFile process(SequenceFile sequenceFile) throws FileProcessorException {
 		sequenceFile = sequenceFileRepository.findOne(sequenceFile.getId());
 		Path file = sequenceFile.getFile();

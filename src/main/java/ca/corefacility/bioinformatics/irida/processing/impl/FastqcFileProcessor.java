@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
+import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +64,7 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional
 	public SequenceFile process(final SequenceFile sequenceFile) throws FileProcessorException {
 		Set<AnalysisFastQC> existing = analysisRepository.findAnalysesForSequenceFile(sequenceFile,
 				AnalysisFastQC.class);
