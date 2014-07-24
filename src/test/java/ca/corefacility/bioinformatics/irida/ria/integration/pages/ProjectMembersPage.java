@@ -58,12 +58,13 @@ public class ProjectMembersPage {
 	}
 
 	public void clickEditButton() {
-		logger.trace("clicking edit button");
-		WebElement editMembersButton = driver.findElement(By.id("editMembers"));
+		logger.debug("clicking edit button");
+		WebElement editMembersButton = driver.findElement(By.className("edit"));
 		editMembersButton.click();
 	}
 
 	public boolean roleSelectDisplayed() {
+		logger.debug("Checking if role select is displayed");
 		boolean present = false;
 		try {
 			WebElement findElement = driver.findElement(By.className("select-role"));
@@ -76,6 +77,7 @@ public class ProjectMembersPage {
 	}
 	
 	public boolean roleSpanDisplayed() {
+		logger.debug("Checking if role span is displayed");
 		boolean present = false;
 		try {
 			WebElement findElement = driver.findElement(By.className("display-role"));
@@ -88,15 +90,15 @@ public class ProjectMembersPage {
 	}
 
 	public void setRoleForUser(Long id, String roleValue) {
-		logger.trace("Setting user " + id + " role to " + roleValue);
-		WebElement findElement = driver.findElement(By.id(id + "-role"));
+		logger.debug("Setting user " + id + " role to " + roleValue);
+		WebElement findElement = driver.findElement(By.id(id + "-role-select"));
 		Select roleSelect = new Select(findElement);
 		roleSelect.selectByValue(roleValue);
 		waitForAjax();
 	}
 
 	public boolean notySuccessDisplayed() {
-		logger.trace("Checking if noty success");
+		logger.debug("Checking if noty success");
 		boolean present;
 		try {
 			driver.findElement(By.className("noty_type_success"));

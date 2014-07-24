@@ -21,10 +21,6 @@
                             <button class="btn btn-default btn-sm" th:if="${isAdmin} or ${isOwner}" id="addMembersLink" 
                                 th:text="#{project.members.edit.add}">_Add Members_</button>
                         </div>
-                        <div class="btn-group">
-                            <button class="btn btn-default btn-sm" th:if="${isAdmin} or ${isOwner}" id="editMembers">Edit</button>
-                        </div>
-
                     </div>
                 </div>
             </div>
@@ -91,6 +87,81 @@
     <div th:replace="projects/project_base :: scripts"></div>
     <script th:inline="javascript">
         /*<![CDATA[*/
+       	var DT = {
+            isEditingRow: false,
+            isFilesViewOpen: false,
+            isAllRowsSelected: false,
+            selectedRows: [],
+            createEditBtn: function () {
+                var frag = document.createElement("div");
+                var btn = document.createElement("button");
+                frag.appendChild(btn);
+                btn.className = "btn btn-default btn-xs edit";
+                btn.innerHTML = "Edit";
+                return frag.innerHTML;
+            },
+            createCancelBtn: function () {
+                var frag = document.createElement("div");
+                var btn = document.createElement("button");
+                frag.appendChild(btn);
+                btn.className = "btn btn-info btn-xs cancel";
+                btn.innerHTML = "Cancel";
+                return frag.innerHTML;
+            },
+            createEditForm: function (row) {
+            	row.find(".display-role").hide();
+        		row.find(".select-role").show();
+            },
+            cancelEditRow: function () {
+                if (this.isEditingRow) {
+                    var row = $("tr.editing"),
+                            tdBtns = row.find(".edit-button-container");
+            		
+                    row.find(".display-role").show();
+            		row.find(".select-role").hide();
+            		
+                    tdBtns.html(DT.createEditBtn());
+                    row.removeClass("editing");
+                    this.isEditingRow = false;
+                }
+            },
+            createRemoveButton: function (row){
+            	var pid = row.subject.id;
+            	var uid = row.object.id;
+            	var frag = document.createElement("div");
+                var btn = document.createElement("button");
+                frag.appendChild(btn);
+                btn.className = "btn btn-danger btn-xs remove-button";
+                btn.innerHTML = /*[[#{project.members.edit.remove}]]*/ 'Remove';
+                $(btn).attr("id","remove-user-"+uid);
+                return frag.innerHTML;
+            },
+            createButtonDiv: function s(data, row){
+            	//create the button toolbar
+            	var toolbar = document.createElement("div");
+            	toolbar.className = "btn-toolbar";
+            	
+            	//create the remove button group 
+            	var group1 = document.createElement("div");
+            	group1.className = "btn-group";
+            	$(group1).html(DT.createRemoveButton(row));
+            	
+            	//create the edit button group
+            	var group2 = document.createElement("div");
+            	group2.className = "btn-group edit-button-container";
+            	$(group2).html(DT.createEditBtn(row.object.id));
+            	
+            	//add the buttons to the toolbar
+            	toolbar.appendChild(group1);
+            	toolbar.appendChild(group2);
+            	
+            	//return the html
+            	var frag = document.createElement("div");
+            	frag.appendChild(toolbar);
+            	return frag.innerHTML;
+            }
+            
+        };
                    
         var showRole = true;
         
@@ -136,7 +207,7 @@
                             }
                         	
                         	var roleSelect = $("#template-roles").clone();
-                        	var newId = row.object.id + "-role";
+                        	var newId = row.object.id + "-role-select";
                         	roleSelect.attr("id",newId);
                         	roleSelect.attr("data-user",row.object.id);
                         	roleSelect.find("option").each(function(){
@@ -165,49 +236,48 @@
                         }
                     },
 					{
-                        "data": "edit",
+                    	"data": "id",
+                        "orderable": false,
                         "render": function (data, type, row) {
-                            var pid = row.subject.id;
-                            var uid = row.object.id;
-                            var removeButton = '<button id="remove-user-'+uid+'" class="btn btn-danger">'+[[#{project.members.edit.remove}]]+'</button>';
-                            return removeButton;
+                        	
+                        	
+                            return DT.createButtonDiv(data,row);
                         },
-                        "visible":  /*[[${isAdmin or isOwner}]]*/ false ,
-                        "sortable": false
+                        "class": "btns",
+                        "width": "17%"
                     }
                 ],
                 "drawCallback": function( settings, data ){
-                	showRoles();
+                	$(".select-role").hide();
                 }
             });
+
         	
-        	$("#editMembers").click(function(){
-        		showRole = !showRole;
-        		showRoles();
-        	});
-        	
-        	
-        	// toggle edit user panel 
-        	$("#usersTable").on("click",".edit-user",function(){
-        		var row = $(this).closest("tr");
-        		var display = row.find(".display-role");
-        		var select = row.find(".select-role");
+        	$("#usersTable").on('click', 'button.edit', function (e) { //click the edit button
+                e.stopPropagation();
+                var currEdit = $("tr.editing");
+                if (currEdit.length > 0) {
+                    DT.cancelEditRow();
+                }
+                var $this = $(this),
+                        row = $this.closest('tr'),
+                        tdBtns = row.find('.edit-button-container');
+                row.addClass("editing");
         		
-        		display.toggle(100);
-        		select.toggle(100);
-        	});
-        	
-        	//update the user
-        	$("#usersTable").on("change",".role-select",function(){
+                DT.createEditForm(row);
+               	tdBtns.html(DT.createCancelBtn());
+                DT.isEditingRow = true;
+        	}).on('click', 'button.cancel', function (e) { //click the cancel button
+                e.stopPropagation();
+				
+                DT.cancelEditRow();
+            }).on("change",".role-select",function() { // Change the user role, update the role on the server
         		var newRole = $(this).val();
         		var userId = $(this).data("user");
         		var projectId = [[${project.getId()}]];
         		
         		var data = "userId="+userId+"&projectRole="+newRole;
         		var url = [[@{/projects/}]] + projectId + "/members/editrole";
-        		
-        		console.log(url);
-        		console.log(data);
         		
         		$.ajax({
         			url:url,
@@ -233,19 +303,8 @@
         		}); 
         		
         	});
+        	
         });
-        
-        // Whether to show the user roles, or a selector for updating the roles
-        function showRoles(){
-        	if(showRole){
-        		$(".display-role").show();
-        		$(".select-role").hide()
-        	}
-        	else{
-        		$(".display-role").hide();
-        		$(".select-role").show()
-        	}
-        }
         
         function showRemoveUser(userLabel,removeUrl,userId,table){
         	var data = "userId="+userId;

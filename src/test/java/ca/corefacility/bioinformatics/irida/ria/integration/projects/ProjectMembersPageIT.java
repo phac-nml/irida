@@ -88,11 +88,9 @@ public class ProjectMembersPageIT {
 	public void testEditRole() {
 		membersPage.clickEditButton();
 		assertTrue("Role select dropdowns should be visible", membersPage.roleSelectDisplayed());
-		membersPage.setRoleForUser(2l, ProjectRole.PROJECT_OWNER.toString());
+		membersPage.setRoleForUser(1l, ProjectRole.PROJECT_USER.toString());
 		assertTrue(membersPage.notySuccessDisplayed());
-		assertTrue("Role select dropdowns should be visible", membersPage.roleSelectDisplayed());
-		membersPage.clickEditButton();
-		assertTrue("Role select dropdowns should be visible", membersPage.roleSpanDisplayed());
+		assertTrue("Role span display should be visible", membersPage.roleSpanDisplayed());
 
 	}
 }
