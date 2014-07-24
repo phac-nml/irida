@@ -64,6 +64,14 @@ public class FastqcFileProcessor implements FileProcessor {
 	 */
 	@Override
 	public SequenceFile process(final SequenceFile sequenceFile) throws FileProcessorException {
+		Set<AnalysisFastQC> existing = analysisRepository.findAnalysesForSequenceFile(sequenceFile,
+				AnalysisFastQC.class);
+		
+		if (!existing.isEmpty()) {
+			logger.debug("FastQC has already been run on this file, not running again.");
+			return sequenceFile;
+		}
+		
 		Path fileToProcess = sequenceFile.getFile();
 		AnalysisFastQC analysis = new AnalysisFastQC(ImmutableSet.of(sequenceFile));
 		try {
@@ -99,7 +107,7 @@ public class FastqcFileProcessor implements FileProcessor {
 			analysisRepository.save(analysis);
 		} catch (Exception e) {
 			logger.error("FastQC failed to process the sequence file. Stack trace follows.", e);
-			throw new FileProcessorException("FastQC failed to parse the sequence file.",e);
+			throw new FileProcessorException("FastQC failed to parse the sequence file.", e);
 		}
 		return sequenceFile;
 	}
