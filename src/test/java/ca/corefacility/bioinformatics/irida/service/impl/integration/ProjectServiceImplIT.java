@@ -155,6 +155,14 @@ public class ProjectServiceImplIT {
 		Collection<Join<Project, User>> usersOnProject = asRole(Role.ROLE_ADMIN).userService.getUsersForProject(p);
 		assertTrue("No users should be on the project.", usersOnProject.isEmpty());
 	}
+	
+	@Test(expected=ProjectWithoutOwnerException.class)
+	public void testRemoveUserFromProjectAbandoned() throws ProjectWithoutOwnerException {
+		User u = asRole(Role.ROLE_ADMIN).userService.read(3l);
+		Project p = asRole(Role.ROLE_ADMIN).projectService.read(2l);
+
+		asRole(Role.ROLE_ADMIN).projectService.removeUserFromProject(p, u);
+	}
 
 	@Test
 	public void testGetProjectsForUser() {
