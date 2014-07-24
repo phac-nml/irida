@@ -33,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -145,14 +146,22 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test
-	public void testRemoveUserFromProject() {
-		User u = asRole(Role.ROLE_ADMIN).userService.read(3l);
-		Project p = asRole(Role.ROLE_ADMIN).projectService.read(2l);
+	public void testRemoveUserFromProject() throws ProjectWithoutOwnerException {
+		User u = asRole(Role.ROLE_ADMIN).userService.read(4l);
+		Project p = asRole(Role.ROLE_ADMIN).projectService.read(4l);
 
 		asRole(Role.ROLE_ADMIN).projectService.removeUserFromProject(p, u);
 
 		Collection<Join<Project, User>> usersOnProject = asRole(Role.ROLE_ADMIN).userService.getUsersForProject(p);
 		assertTrue("No users should be on the project.", usersOnProject.isEmpty());
+	}
+	
+	@Test(expected=ProjectWithoutOwnerException.class)
+	public void testRemoveUserFromProjectAbandoned() throws ProjectWithoutOwnerException {
+		User u = asRole(Role.ROLE_ADMIN).userService.read(3l);
+		Project p = asRole(Role.ROLE_ADMIN).projectService.read(2l);
+
+		asRole(Role.ROLE_ADMIN).projectService.removeUserFromProject(p, u);
 	}
 
 	@Test
