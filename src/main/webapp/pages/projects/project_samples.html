@@ -25,11 +25,9 @@
                 <div class="col-md-12">
                     <div class="btn-toolbar" role="toolbar">
                         <div class="btn-group">
-                            <button id="deleteBtn" class="btn btn-default btn-sm" disabled="true">Delete Selected
+                            <button id="deleteBtn" class="btn btn-default btn-sm" disabled="true" th:text="#{project.samples.delete}">__Delete_Samples__
                             </button>
                         </div>
-                        <div class="btn-group">...</div>
-                        <div class="btn-group">...</div>
                     </div>
                 </div>
             </div>
@@ -124,7 +122,8 @@ function EditableDataTable() {
         icon.removeClass('glypihcon-cheveron-right').addClass('glyphicon-chevron-down');
         row.addClass('details');
 
-        row.after('<tr><td colspan="6">HELLO JELLO</td></tr>').show();
+        // TODO (2014-07-24) [Josh]: This is to be updated within the files view branch.
+        row.after('<tr><td colspan="6">This is going to be the files view.</td></tr>').show();
     }
 
     function createEditForm(name) {
@@ -145,7 +144,7 @@ function EditableDataTable() {
 
         var btn = document.createElement("button");
         btn.className = "btn btn-sm btn-primary submit";
-        btn.innerHTML = "Update"
+        btn.innerHTML = /*[[#{form.btn.update}]]*/ "Update"
         group.appendChild(btn);
 
         return form;
@@ -154,14 +153,14 @@ function EditableDataTable() {
     function createEditBtn() {
         var btn = document.createElement("button");
         btn.className = "btn btn-default btn-xs pull-right edit";
-        btn.innerHTML = "Edit";
+        btn.innerHTML = /*[[#{form.btn.edit}]]*/ "Edit";
         return btn;
     }
 
     function createCancelBtn() {
         var btn = document.createElement("button");
         btn.className = "btn btn-info btn-sm pull-right cancel";
-        btn.innerHTML = "Cancel";
+        btn.innerHTML = /*[[#{form.btn.cancel}]]*/ "Cancel";
         return btn;
     }
 
@@ -170,23 +169,45 @@ function EditableDataTable() {
             url: /*[[@{/projects/ajax/{projectId}/samples/update(projectId=${project.getId()})}]]*/ '/projects/ajax/update',
             type: 'post',
             data: {'sampleId': id, 'name': name}
-        }).done(function () {
-            dataTable.ajax.reload();
-            if (typeof origName != 'undefined') {
-                noty({
-                    layout: 'topCenter',
-                    type: 'success',
-                    text: origName + ' successfully renamed to ' + name + '  <a href="#" id="undoRename">Undo</a>',
-                    timeout: 3200,
-                    callback: {
-                        onShow: function () {
-                            $("#undoRename").on('click', function () {
-                                undoRename(id, origName);
-                            });
-                        },
-                        onClose: function () {
-                            $("#undoRename").on('click');
+        }).done(function (data) {
+            if (data.success) {
+                dataTable.ajax.reload();
+                if (typeof origName != 'undefined') {
+                    noty({
+                        layout: 'topCenter',
+                        type: 'success',
+                        text: origName + ' successfully renamed to ' + name + '  <a href="#" id="undoRename">' + [[#{form.btn.undo}]] + '</a>',
+                        timeout: 3200,
+                        callback: {
+                            onShow: function () {
+                                $("#undoRename").on('click', function () {
+                                    undoRename(id, origName);
+                                });
+                            },
+                            onClose: function () {
+                                $("#undoRename").off('click');
+                            }
                         }
+                    });
+                }
+            }
+            else {
+                var input = $("tr.editing").find('input[type="text"]');
+                input.focus().select();
+                input.qtip({
+                    content: data.error.sampleName,
+                    position: {
+                        at: 'top center',
+                        my: 'bottom center'
+                    },
+                    style: {
+                        classes: 'qtip-red qtip-shadow'
+                    },
+                    show: {
+                        ready: true
+                    },
+                    hide: {
+                        event: 'unfocus'
                     }
                 });
             }
@@ -261,6 +282,9 @@ function EditableDataTable() {
                     newName = input.val();
             if (newName != "" && newName != origName) {
                 sendAjaxNameUpdate(id, newName, origName);
+            }
+            if(input.data("qtip")) {
+                input.qtip('destroy');
             }
         }
     }
