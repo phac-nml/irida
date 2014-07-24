@@ -76,14 +76,10 @@ public class SequenceFileRepositoryImpl implements SequenceFileRepositoryCustom 
 				Files.createDirectory(sequenceFileDirWithRevision);
 				logger.trace("Created directory: [" + sequenceFileDirWithRevision.toString() + "]");
 			}
-			if (!Files.exists(target)) {
-				Files.createLink(target, sequenceFile.getFile());
-			}
+
+			Files.move(sequenceFile.getFile(), target);
 			logger.trace("Linked file " + sequenceFile.getFile() + " to " + target);
 		} catch (IOException e) {
-			// TODO: handle the situation where the host operating system does
-			// not support hard links by moving the file instead of making a
-			// soft link to it.
 			e.printStackTrace();
 			throw new StorageException("Failed to move file into new directory.");
 		}

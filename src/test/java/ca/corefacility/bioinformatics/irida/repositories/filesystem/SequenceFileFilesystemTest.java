@@ -124,8 +124,6 @@ public class SequenceFileFilesystemTest {
 		// now create a new temp file with the same name
 		Path newFile = getTempFile();
 		Path target = newFile.getParent().resolve(oldFile.getFileName());
-		// delete the target file; we're linking in the back end instead of moving.
-		Files.delete(target);
 		newFile = Files.move(newFile, target);
 
 		// write something new into it so that we can make sure that the files
