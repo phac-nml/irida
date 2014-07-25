@@ -1,0 +1,11 @@
+<tool id="collection_list" name="collection_list" version="0.1.0">
+  <command>
+    cat #for $f in $in# ${f} #end for# >> $out;
+  </command>
+  <inputs>
+    <param name="in" type="data_collection" collection_type="list" />
+  </inputs>
+  <outputs>
+    <data format="txt" name="out" />
+  </outputs>
+</tool>

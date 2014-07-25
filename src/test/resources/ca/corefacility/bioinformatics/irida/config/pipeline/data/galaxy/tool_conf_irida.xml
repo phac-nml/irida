@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
+<toolbox>
+  <tool file="collection/collection_list.xml" />
+</toolbox>

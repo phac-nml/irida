@@ -88,6 +88,16 @@ public class LocalGalaxy {
 		logger.debug("Deleting Galaxy directory: " + bootStrapper.getPath());
 		bootStrapper.deleteGalaxyRoot();
 	}
+	
+	/**
+	 * Gets the root directory where the local Galaxy is running.
+	 * @return  The root directory for the local Galaxy.
+	 */
+	public Path getGalaxyPath() {
+		checkNotNull(bootStrapper);
+		
+		return Paths.get(bootStrapper.getPath());
+	}
 
 	/**
 	 * @return The URL to the running Galaxy instance.
