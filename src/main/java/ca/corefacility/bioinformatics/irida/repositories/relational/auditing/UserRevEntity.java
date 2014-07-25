@@ -1,15 +1,11 @@
 package ca.corefacility.bioinformatics.irida.repositories.relational.auditing;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionEntity;
-
-import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
  * 
@@ -20,30 +16,34 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 @Table(name = "Revisions")
 public class UserRevEntity extends DefaultRevisionEntity {
 
-	private static final long serialVersionUID = 3278915140026625641L;
+	private static final long serialVersionUID = -3574490742045694417L;
 
-	@OneToOne
-	@JoinColumn(name = "user_id")
-	User user;
-	
-	@OneToOne
-	@JoinColumn(name = "client_id")
-	IridaClientDetails client;
+	// The user ID of the user to make the change.
+	// This column "refers" to the Users table, but is not a foreign key so that
+	// Users can be deleted.
+	@Column(name = "user_id")
+	private Long userId;
 
-	public User getUser() {
-		return user;
+	// The client ID of the user to make the change.
+	// This column "refers" to the Users table, but is not a foreign key so that
+	// Users can be deleted.
+	@Column(name = "client_id")
+	private Long clientId;
+
+	public Long getUserId() {
+		return userId;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
-	public IridaClientDetails getClient() {
-		return client;
+	public Long getClientId() {
+		return clientId;
 	}
 
-	public void setClient(IridaClientDetails client) {
-		this.client = client;
+	public void setClientId(Long clientId) {
+		this.clientId = clientId;
 	}
 
 }
