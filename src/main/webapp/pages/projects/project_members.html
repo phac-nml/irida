@@ -91,12 +91,12 @@
         <div class="modal-body">
             <form id="addUserForm" action="#">
                 <div class="form-group">
-                    <label class="control-label" for="username">_Username_</label> 
-                    <input type="text" id="username" name="userId" class="form-control input-full" />
+                    <label class="control-label" for="add-user-username" th:text="#{project.members.add.username}">_Username_</label> 
+                    <input type="text" id="add-user-username" name="userId" class="form-control input-full" />
                 </div>
                 <div class="form-group">
-                    <label class="control-label" for="addUserRole">_Project Role_</label> 
-                    <select id="addUserRole" class="form-control input-full" name="projectRole">
+                    <label class="control-label" for="add-user-role" th:text="#{project.members.add.role}">_Project Role_</label> 
+                    <select id="add-user-role" class="form-control input-full" name="projectRole">
                         <option th:each="role : ${projectRoles}" 
                             th:value="${role}" 
                             th:text="#{${'projectRole.'+role}}">_Role_</option>
@@ -106,7 +106,7 @@
         </div>
         <div class="panel-footer text-right">
             <button class="btn btn-default popup-modal-dismiss" th:text="#{project.members.add.cancel}">_Cancel_</button>
-            <button id="submitAddMember" class="btn btn-primary popup-modal-dismiss" th:text="#{project.members.add.submit}">_Submit_</button>
+            <button id="submitAddMember" class="btn btn-primary" th:text="#{project.members.add.submit}">_Submit_</button>
         </div>
     </section>
 </div>
@@ -311,37 +311,53 @@
             	  type:'inline',
             	  callbacks: {
             		  beforeOpen: function(){
-            			  $("#username").select2("val","");
+            			  $("#add-user-username").select2("val","");
             		  }
             	  }
             });
 			
 			$("#submitAddMember").click(function(){
-				var data = $("#addUserForm").serialize();
-				$.ajax({
-					url: [[@{/projects/{id}/members(id=${project.getId()})}]],
-					data: data,
-					type: "POST",
-					success:function(){
-        				noty({
-        					text: "Cool beans" ,
-        					layout: "topCenter", 
-        					type: "success",
-        					timeout: 5000
-        				});
-        				
-        				table.ajax.reload();
-        			},
-        			error:function(){
-        				noty({
-        					text: "Shit's broke!" , 
-        					layout: "topCenter", 
-        					type: "error",
-        					timeout: 10000
-        				});
-        				DT.cancelEditRow(userId);
-        			}
-				});
+				var form = $("#addUserForm");
+				var username = form.find("#add-user-username");
+				var role = form.find("#add-user-role");
+				var errors = false;
+				
+				if(!username.val().length == 0 && !role.val().length == 0){
+    				var data = $("#addUserForm").serialize();
+    				$.ajax({
+    					url: [[@{/projects/{id}/members(id=${project.getId()})}]],
+    					data: data,
+    					type: "POST",
+    					success:function(){
+            				noty({
+            					text: [[#{project.members.add.success}]] ,
+            					layout: "topCenter", 
+            					type: "success",
+            					timeout: 5000
+            				});
+            				
+            				$.magnificPopup.close();
+            				
+            				table.ajax.reload();
+            			},
+            			error:function(){
+            				noty({
+            					text: [[#{project.members.add.error}]] , 
+            					layout: "topCenter", 
+            					type: "error",
+            					timeout: 10000
+            				});
+            			}
+    				});
+				}
+				else{
+					noty({
+    					text: [[#{project.members.add.required}]] , 
+    					layout: "topCenter", 
+    					type: "error",
+    					timeout: 10000
+    				});
+				}
 			});
 
         	
@@ -416,7 +432,7 @@
         		
         	});
         	
-        	$("#username").select2({
+        	$("#add-user-username").select2({
         		ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
         	        url: [[@{/projects/{id}/(id=${project.getId()})}]] + 'ajax/availablemembers',
         	        dataType: 'json',
