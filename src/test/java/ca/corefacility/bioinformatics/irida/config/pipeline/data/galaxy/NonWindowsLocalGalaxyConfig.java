@@ -58,6 +58,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	private static final int largestPort = 65535;
 	
 	private static final String LATEST_REVISION_STRING = "latest";
+	private static final String DEFAULT_REPSITORY_URL = "https://bitbucket.org/galaxy/galaxy-dist";
 
 	/**
 	 * Builds a GalaxyUploader to connect to a running instance of Galaxy.
@@ -119,6 +120,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 			try {
 				localGalaxy = new LocalGalaxy();
 				
+				URL repositoryURL = getGetGalaxyRepositoryURL("test.galaxy.repository");
 				String revisionHash = getGalaxyRevision("test.galaxy.revision");
 		
 				String randomPassword = UUID.randomUUID().toString();
@@ -139,7 +141,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		
 				GalaxyData galaxyData = new GalaxyData();
 		
-				BootStrapper bootStrapper = downloadGalaxy(localGalaxy,revisionHash);
+				BootStrapper bootStrapper = downloadGalaxy(localGalaxy, repositoryURL, revisionHash);
 				localGalaxy.setBootStrapper(bootStrapper);
 		
 				GalaxyProperties galaxyProperties = setupGalaxyProperties(localGalaxy,revisionHash);
@@ -182,6 +184,23 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	}
 	
 	/**
+	 * Gets the URL to a Galaxy repository to download and test against.
+	 * @param systemProperty  The system property storing the URL.
+	 * @return  A URL to a Galaxy repository to download and test against.
+	 * @throws MalformedURLException 
+	 */
+	private URL getGetGalaxyRepositoryURL(String systemProperty) throws MalformedURLException {
+		String repsitoryURLString = System.getProperty(systemProperty);
+		URL repositoryURL = new URL(DEFAULT_REPSITORY_URL);
+		
+		if (repsitoryURLString != null && !"".equals(repsitoryURLString)) {
+			repositoryURL = new URL(repsitoryURLString);
+		}
+		
+		return repositoryURL;
+	}
+
+	/**
 	 * Given a system property string gets the revision hash for the version of Galaxy
 	 * 	from this property.  Corresponds to commit in https://bitbucket.org/galaxy/galaxy-dist.
 	 * @param systemProperty  The system property storing the revision hash.
@@ -213,14 +232,15 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	/**
 	 * Downloads the latest stable release of Galaxy.
 	 * @param localGalaxy  The LocalGalaxy object used to fill in information about Galaxy.
+	 * @param repositoryURL The URL of the repository storing the Galaxy code.
 	 * @param revisionHash  The mercurial revisionHash of Galaxy to download. 
 	 * @return  A BootStrapper object describing the downloaded Galaxy.
 	 */
-	private BootStrapper downloadGalaxy(LocalGalaxy localGalaxy, String revisionHash) {
+	private BootStrapper downloadGalaxy(LocalGalaxy localGalaxy, URL repositoryURL, String revisionHash) {
 		final File DEFAULT_DESTINATION = null;
 		
 		DownloadProperties downloadProperties
-			= DownloadProperties.forGalaxyDist(DEFAULT_DESTINATION, revisionHash);
+			= new DownloadProperties(repositoryURL.toString(), "default", revisionHash, null);
 		BootStrapper bootStrapper = new BootStrapper(downloadProperties);
 
 		bootStrapper.setupGalaxy();
