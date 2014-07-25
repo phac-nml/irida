@@ -15,17 +15,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -60,7 +64,7 @@ public class ProjectsController {
 	private static final String ACTIVE_NAV_METADATA = "metadata";
 	private static final String ACTIVE_NAV_SAMPLES = "samples";
 	private static final String ACTIVE_NAV_MEMBERS = "members";
-	//private static final String ACTIVE_NAV_ANALYSIS = "analysis";
+	// private static final String ACTIVE_NAV_ANALYSIS = "analysis";
 
 	// Page Names
 	private static final String PROJECTS_DIR = "projects/";
@@ -73,7 +77,7 @@ public class ProjectsController {
 	public static final String PROJECT_METADATA_EDIT_PAGE = PROJECTS_DIR + "project_metadata_edit";
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
-	
+
 	private static final List<ProjectRole> projectRoles = ImmutableList.of(ProjectRole.PROJECT_USER,
 			ProjectRole.PROJECT_OWNER);
 
@@ -144,14 +148,41 @@ public class ProjectsController {
 	 *            Id for the project to show the users for
 	 * @return The name of the project members page.
 	 */
-	@RequestMapping("/{projectId}/members")
+	@RequestMapping(value="/{projectId}/members", method=RequestMethod.GET)
 	public String getProjectUsersPage(final Model model, final Principal principal, @PathVariable Long projectId) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
+
 		getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_MEMBERS);
 		model.addAttribute("projectRoles", projectRoles);
 		return PROJECT_MEMBERS_PAGE;
+	}
+	
+	@RequestMapping(value="/{projectId}/members", method=RequestMethod.POST)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
+	@ResponseBody
+	public void addProjectMember(@PathVariable Long projectId, @RequestParam Long userId, @RequestParam String projectRole){
+		Project project = projectService.read(projectId);
+		User user = userService.read(userId);
+		ProjectRole role = ProjectRole.fromString(projectRole);
+		
+		projectService.addUserToProject(project, user, role);
+	}
+
+	@RequestMapping("/{projectId}/ajax/availablemembers")
+	@ResponseBody
+	public Map<Long, String> getUsersAvailableForProject(@PathVariable Long projectId, @RequestParam String term) {
+		Project project = projectService.read(projectId);
+		List<User> usersAvailableForProject = userService.getUsersAvailableForProject(project);
+		Map<Long, String> users = new HashMap<>();
+		for (User user : usersAvailableForProject) {
+			if (user.getLabel().toLowerCase().contains(term.toLowerCase())) {
+				users.put(user.getId(), user.getLabel());
+			}
+		}
+
+		return users;
 	}
 
 	/**
@@ -162,17 +193,18 @@ public class ProjectsController {
 	 * @param userId
 	 *            The user to remove
 	 * @return
+	 * @throws ProjectWithoutOwnerException
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@RequestMapping("{projectId}/members/remove")
 	@ResponseBody
-	public void removeUser(@PathVariable Long projectId, @RequestParam Long userId) {
+	public void removeUser(@PathVariable Long projectId, @RequestParam Long userId) throws ProjectWithoutOwnerException {
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);
 
 		projectService.removeUserFromProject(project, user);
 	}
-	
+
 	/**
 	 * Update a user's role on a project
 	 * 
@@ -182,17 +214,18 @@ public class ProjectsController {
 	 *            The ID of the user
 	 * @param projectRole
 	 *            The role to set
+	 * @throws ProjectWithoutOwnerException
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@RequestMapping("{projectId}/members/editrole")
 	@ResponseBody
-	public void updateUserRole(@PathVariable Long projectId, @RequestParam Long userId,
-			@RequestParam String projectRole) {
+	public void updateUserRole(@PathVariable Long projectId, @RequestParam Long userId, @RequestParam String projectRole)
+			throws ProjectWithoutOwnerException {
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);
-		
+
 		ProjectRole role = ProjectRole.fromString(projectRole);
-		
+
 		projectService.updateUserProjectRole(project, user, role);
 	}
 
@@ -570,12 +603,12 @@ public class ProjectsController {
 		Collection<Join<Project, User>> ownerJoinList = userService.getUsersForProjectByRole(project,
 				ProjectRole.PROJECT_OWNER);
 		boolean isOwner = false;
-		for(Join<Project,User> owner : ownerJoinList){
-			if(loggedInUser.equals(owner.getObject())){
+		for (Join<Project, User> owner : ownerJoinList) {
+			if (loggedInUser.equals(owner.getObject())) {
 				isOwner = true;
 			}
 		}
-		
+
 		model.addAttribute("isOwner", isOwner);
 
 		int sampleSize = sampleService.getSamplesForProject(project).size();
@@ -646,5 +679,11 @@ public class ProjectsController {
 			errors.put(field, message);
 		}
 		return errors;
+	}
+
+	@ExceptionHandler(ProjectWithoutOwnerException.class)
+	@ResponseBody
+	public ResponseEntity<String> roleChangeErrorHandler(ProjectWithoutOwnerException ex) {
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
 	}
 }

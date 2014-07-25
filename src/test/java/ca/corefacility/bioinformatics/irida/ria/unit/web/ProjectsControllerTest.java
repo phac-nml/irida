@@ -29,6 +29,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -284,7 +285,7 @@ public class ProjectsControllerTest {
 	}
 	
 	@Test
-	public void testRemoveUserFromProject() {
+	public void testRemoveUserFromProject() throws ProjectWithoutOwnerException {
 		Long projectId = 1l;
 		Long userId = 2l;
 		User user = new User(userId, "tom", null, null, null, null, null);

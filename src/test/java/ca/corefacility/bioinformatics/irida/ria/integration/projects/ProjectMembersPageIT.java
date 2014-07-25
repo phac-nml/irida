@@ -1,15 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectMembersPage;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -24,10 +18,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import java.util.List;
+import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectMembersPage;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableList;
 
 /**
  * <p>
@@ -86,13 +86,12 @@ public class ProjectMembersPageIT {
 
 	@Test
 	public void testEditRole() {
-		membersPage.clickEditButton();
-		assertTrue("Role select dropdowns should be visible", membersPage.roleSelectDisplayed());
+		Long userid = 2l;
+		membersPage.clickEditButton(userid);
+		assertTrue("Role select dropdowns should be visible", membersPage.roleSelectDisplayed(userid));
 		membersPage.setRoleForUser(2l, ProjectRole.PROJECT_OWNER.toString());
 		assertTrue(membersPage.notySuccessDisplayed());
-		assertTrue("Role select dropdowns should be visible", membersPage.roleSelectDisplayed());
-		membersPage.clickEditButton();
-		assertTrue("Role select dropdowns should be visible", membersPage.roleSpanDisplayed());
+		assertTrue("Role span display should be visible", membersPage.roleSpanDisplayed(userid));
 
 	}
 }

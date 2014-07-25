@@ -31,6 +31,7 @@ public class ProjectMembersPage {
 	public ProjectMembersPage(WebDriver driver, Long projectId) {
 		this.driver = driver;
 		driver.get("http://localhost:8080/projects/" + projectId + "/members");
+		waitForAjax();
 	}
 
 	public String getTitle() {
@@ -57,16 +58,17 @@ public class ProjectMembersPage {
 		waitForAjax();
 	}
 
-	public void clickEditButton() {
-		logger.trace("clicking edit button");
-		WebElement editMembersButton = driver.findElement(By.id("editMembers"));
+	public void clickEditButton(Long userid) {
+		logger.debug("clicking edit button for " + userid);
+		WebElement editMembersButton = driver.findElement(By.id("edit-button-" + userid));
 		editMembersButton.click();
 	}
 
-	public boolean roleSelectDisplayed() {
+	public boolean roleSelectDisplayed(Long userid) {
+		logger.debug("Checking if role select is displayed");
 		boolean present = false;
 		try {
-			WebElement findElement = driver.findElement(By.className("select-role"));
+			WebElement findElement = driver.findElement(By.id(userid + "-role-select"));
 			present = findElement.isDisplayed();
 		} catch (NoSuchElementException e) {
 			present = false;
@@ -74,11 +76,12 @@ public class ProjectMembersPage {
 
 		return present;
 	}
-	
-	public boolean roleSpanDisplayed() {
+
+	public boolean roleSpanDisplayed(Long userid) {
+		logger.debug("Checking if role span is displayed");
 		boolean present = false;
 		try {
-			WebElement findElement = driver.findElement(By.className("display-role"));
+			WebElement findElement = driver.findElement(By.id("display-role-" + userid));
 			present = findElement.isDisplayed();
 		} catch (NoSuchElementException e) {
 			present = false;
@@ -88,18 +91,19 @@ public class ProjectMembersPage {
 	}
 
 	public void setRoleForUser(Long id, String roleValue) {
-		logger.trace("Setting user " + id + " role to " + roleValue);
-		WebElement findElement = driver.findElement(By.id(id + "-role"));
+		logger.debug("Setting user " + id + " role to " + roleValue);
+		WebElement findElement = driver.findElement(By.id(id + "-role-select"));
 		Select roleSelect = new Select(findElement);
 		roleSelect.selectByValue(roleValue);
 		waitForAjax();
 	}
 
 	public boolean notySuccessDisplayed() {
-		logger.trace("Checking if noty success");
-		boolean present;
+		logger.debug("Checking if noty success");
+		boolean present = false;
 		try {
-			driver.findElement(By.className("noty_type_success"));
+			//driver.findElement(By.className("noty_type_success"));
+			(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By.className("noty_type_success")));
 			present = true;
 		} catch (NoSuchElementException e) {
 			present = false;
