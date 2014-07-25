@@ -1,32 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -43,8 +16,23 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
 import com.google.common.base.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.security.Principal;
+import java.util.*;
 
 /**
  * Controller for all project related views
@@ -60,7 +48,7 @@ public class ProjectsController {
 	private static final String ACTIVE_NAV_METADATA = "metadata";
 	private static final String ACTIVE_NAV_SAMPLES = "samples";
 	private static final String ACTIVE_NAV_MEMBERS = "members";
-	//private static final String ACTIVE_NAV_ANALYSIS = "analysis";
+	// private static final String ACTIVE_NAV_ANALYSIS = "analysis";
 
 	// Page Names
 	private static final String PROJECTS_DIR = "projects/";
@@ -439,7 +427,42 @@ public class ProjectsController {
 		return getProjectsDataMap(projectList, draw, page.getTotalElements(), sortColumn, sortDirection);
 	}
 
-	/**
+	@RequestMapping(value = "/ajax/{projectId}/samples/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public
+    @ResponseBody
+    Map<String, Object> postUpdateProjectSamples(@RequestParam(required = true) Long sampleId,
+                                          @RequestParam(required = false) String name) {
+        Map<String, Object> updateMap = new HashMap<>();
+        if (!Strings.isNullOrEmpty(name)) {
+            updateMap.put("sampleName", name);
+        }
+
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            sampleService.update(sampleId, updateMap);
+            resultMap.put("success", "Updated name");
+        } catch (ConstraintViolationException e) {
+            resultMap.put("error", getErrorsFromViolationException(e));
+        }
+        return resultMap;
+    }
+
+    @RequestMapping(value = "/ajax/{projectId}/samples/getids", produces = MediaType.APPLICATION_JSON_VALUE)
+    public
+    @ResponseBody
+    Map<String, List<String>> getAllProjectIds(@PathVariable Long projectId) {
+        Project project = projectService.read(projectId);
+        List<String> sampleIdList = new ArrayList<>();
+        List<Join<Project, Sample>> psj = sampleService.getSamplesForProject(project);
+        for (Join<Project, Sample> join : psj) {
+            sampleIdList.add(join.getObject().getId().toString());
+        }
+        Map<String, List<String>> result = new HashMap<>();
+        result.put("ids", sampleIdList);
+        return result;
+    }
+
+    /**
 	 * Generates a map of project information for the {@link ProjectsDataTable}
 	 *
 	 * @param projectList
