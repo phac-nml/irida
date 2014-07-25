@@ -98,11 +98,58 @@
 <script th:inline="javascript">
 /*<![CDATA[*/
 function EditableDataTable() {
-    var dataTable = null;
     this.selectedRowIds = [];
     this.allRowIds = [];
     this._isEditingRow = false;
     this._isDetailsViewOpen = false;
+
+    function createEditForm(name) {
+        var form = document.createElement("form");
+        form.setAttribute("role", "form");
+        form.className = "form-inline";
+
+        var group = document.createElement("div");
+        group.className = "form-group";
+        form.appendChild(group);
+
+        var input = document.createElement("input");
+        input.setAttribute('type', 'text');
+        input.id = "editName";
+        input.className = "form-control input-sm mrgn-rght-sm";
+        input.setAttribute('placeholder', name);
+        group.appendChild(input);
+
+        var btn = document.createElement("button");
+        btn.className = "btn btn-sm btn-primary submit";
+        btn.innerHTML = /*[[#{form.btn.update}]]*/ "Update"
+        group.appendChild(btn);
+
+        return form;
+    }
+
+    function createEditBtn() {
+        var btn = document.createElement("button");
+        btn.className = "btn btn-default btn-xs pull-right edit";
+        btn.innerHTML = /*[[#{form.btn.edit}]]*/ "Edit";
+        return btn;
+    }
+
+    function createCancelBtn() {
+        var btn = document.createElement("button");
+        btn.className = "btn btn-info btn-sm pull-right cancel";
+        btn.innerHTML = /*[[#{form.btn.cancel}]]*/ "Cancel";
+        return btn;
+    }
+
+    function undoRename(sampleId, origName) {
+        $.ajax({
+            url: /*[[@{/projects/ajax/{projectId}/samples/update(projectId=${project.getId()})}]]*/ '/projects/ajax/update',
+            type: 'post',
+            data: {'sampleId': sampleId, 'name': origName}
+        }).done(function () {
+            dataTable.ajax.reload();
+        });
+    }
 
     this._closeDetailsView = function () {
         $("tr.details")
@@ -187,131 +234,69 @@ function EditableDataTable() {
             }
         });
     };
-
-    function createEditForm(name) {
-        var form = document.createElement("form");
-        form.setAttribute("role", "form");
-        form.className = "form-inline";
-
-        var group = document.createElement("div");
-        group.className = "form-group";
-        form.appendChild(group);
-
-        var input = document.createElement("input");
-        input.setAttribute('type', 'text');
-        input.id = "editName";
-        input.className = "form-control input-sm mrgn-rght-sm";
-        input.setAttribute('placeholder', name);
-        group.appendChild(input);
-
-        var btn = document.createElement("button");
-        btn.className = "btn btn-sm btn-primary submit";
-        btn.innerHTML = /*[[#{form.btn.update}]]*/ "Update"
-        group.appendChild(btn);
-
-        return form;
-    }
-
-    function createEditBtn() {
-        var btn = document.createElement("button");
-        btn.className = "btn btn-default btn-xs pull-right edit";
-        btn.innerHTML = /*[[#{form.btn.edit}]]*/ "Edit";
-        return btn;
-    }
-
-    function createCancelBtn() {
-        var btn = document.createElement("button");
-        btn.className = "btn btn-info btn-sm pull-right cancel";
-        btn.innerHTML = /*[[#{form.btn.cancel}]]*/ "Cancel";
-        return btn;
-    }
-
-    function undoRename(sampleId, origName) {
-        $.ajax({
-            url: /*[[@{/projects/ajax/{projectId}/samples/update(projectId=${project.getId()})}]]*/ '/projects/ajax/update',
-            type: 'post',
-            data: {'sampleId': sampleId, 'name': origName}
-        }).done(function () {
-            dataTable.ajax.reload();
-        });
-    }
 }
 
-EditableDataTable.prototype.setDataTable = function (table) {
-    this.dataTable = table;
-};
-
-EditableDataTable.prototype.setAllRowIds = function (allIds) {
-    this.allRowIds = allIds;
-}
-
-EditableDataTable.prototype.isSelectedRow = function (id) {
-    return this.selectedRowIds.indexOf(id) >= 0;
-};
-
-EditableDataTable.prototype.areSamplesSelected = function () {
-    return this.selectedRowIds > 0;
-};
-
-EditableDataTable.prototype.updateAllSelected = function (isAllSelected) {
-    if (isAllSelected) {
-        this.selectedRowIds = this.allRowIds.slice(0);
-    } else {
-        this.selectedRowIds = [];
+EditableDataTable.prototype = {
+    setAllRowIds: function (allIds) {
+        this.allRowIds = allIds;
+    },
+    isSelectedRow: function (id) {
+        return this.selectedRowIds.indexOf(id) >= 0;
+    },
+    updateAllSelected: function (isAllSelected) {
+        if (isAllSelected) {
+            this.selectedRowIds = this.allRowIds.slice(0);
+        } else {
+            this.selectedRowIds = [];
+        }
+    },
+    cancelEditRow: function () {
+        if (this._isEditingRow) {
+            this._cancelEditRow();
+        }
+    },
+    checkBoxClickedEvent: function (id) {
+        var index = this.selectedRowIds.indexOf(id);
+        if (index === -1) {
+            this.selectedRowIds.push(id);
+        } else {
+            this.selectedRowIds.splice(index, 1);
+        }
+    },
+    toggleFilesView: function (el) {
+        if (this._isDetailsViewOpen) {
+            this._closeDetailsView();
+        } else {
+            this._openDetailsView(el);
+        }
+    },
+    editRow: function (row) {
+        if (this._isEditingRow) {
+            this._cancelEditRow();
+        }
+        this._createEditRow(row);
+    },
+    sendUpdateName: function () {
+        var row = $("tr.editing"),
+                id = row.find('input[type="checkbox"]').val(),
+                input = row.find("#editName"),
+                origName = input.attr("placeholder"),
+                newName = input.val();
+        if (input.data("qtip")) {
+            input.qtip('destroy');
+        }
+        if (newName != "" && newName != origName) {
+            this._sendAjaxNameUpdate(id, newName, origName);
+        }
+    },
+    getSelectAllState: function () {
+        if (this.selectedRowIds.length === 0) {
+            return false; // Checkbox unchecked
+        } else if (this.selectedRowIds.length === this.allRowIds.length) {
+            return true; // Checkbox checked
+        }
+        return "indeterminate"; // Checkbox indeterminant
     }
-};
-
-EditableDataTable.prototype.cancelEditRow = function () {
-    if (this._isEditingRow) {
-        this._cancelEditRow();
-    }
-};
-
-EditableDataTable.prototype.checkBoxClickedEvent = function (id) {
-    var index = this.selectedRowIds.indexOf(id);
-    if (index === -1) {
-        this.selectedRowIds.push(id);
-    } else {
-        this.selectedRowIds.splice(index, 1);
-    }
-};
-
-EditableDataTable.prototype.toggleFilesView = function (el) {
-    if (this._isDetailsViewOpen) {
-        this._closeDetailsView();
-    } else {
-        this._openDetailsView(el);
-    }
-};
-
-EditableDataTable.prototype.editRow = function (row) {
-    if (this._isEditingRow) {
-        this._cancelEditRow();
-    }
-    this._createEditRow(row);
-};
-
-EditableDataTable.prototype.sendUpdateName = function () {
-    var row = $("tr.editing"),
-            id = row.find('input[type="checkbox"]').val(),
-            input = row.find("#editName"),
-            origName = input.attr("placeholder"),
-            newName = input.val();
-    if (input.data("qtip")) {
-        input.qtip('destroy');
-    }
-    if (newName != "" && newName != origName) {
-        this._sendAjaxNameUpdate(id, newName, origName);
-    }
-};
-
-EditableDataTable.prototype.getSelectAllState = function () {
-    if (this.selectedRowIds.length === 0) {
-        return false; // Checkbox unchecked
-    } else if (this.selectedRowIds.length === this.allRowIds.length) {
-        return true; // Checkbox checked
-    }
-    return "indeterminate"; // Checkbox indeterminant
 };
 
 $(document).ready(function () {
@@ -320,7 +305,7 @@ $(document).ready(function () {
             $samplesTable = $('#samplesTable'),
             DT = new EditableDataTable();
 
-    var dataTable = $samplesTable.DataTable({
+    $samplesTable.DataTable({
         dom: "<'top'ilf>rt<'bottom'p><'clear'>",
         processing: true,
         serverSide: true,
