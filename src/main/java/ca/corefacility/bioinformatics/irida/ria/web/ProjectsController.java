@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -9,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectSamplesDataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDataTable;
@@ -17,12 +19,15 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -54,12 +59,16 @@ public class ProjectsController {
 	private static final String PROJECTS_DIR = "projects/";
 	public static final String LIST_PROJECTS_PAGE = PROJECTS_DIR + "projects";
 	public static final String PROJECT_MEMBERS_PAGE = PROJECTS_DIR + "project_members";
+	public static final String PROJECT_MEMBER_EDIT_PAGE = PROJECTS_DIR + "project_members_edit";
 	public static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
 	public static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_new";
 	public static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
 	public static final String PROJECT_METADATA_EDIT_PAGE = PROJECTS_DIR + "project_metadata_edit";
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
+
+	private static final List<ProjectRole> projectRoles = ImmutableList.of(ProjectRole.PROJECT_USER,
+			ProjectRole.PROJECT_OWNER);
 
 	// Services
 	private final ProjectService projectService;
@@ -134,6 +143,7 @@ public class ProjectsController {
 		model.addAttribute("project", project);
 		getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_MEMBERS);
+		model.addAttribute("projectRoles", projectRoles);
 		return PROJECT_MEMBERS_PAGE;
 	}
 
@@ -145,15 +155,50 @@ public class ProjectsController {
 	 * @param userId
 	 *            The user to remove
 	 * @return
+	 * @throws ProjectWithoutOwnerException 
+	 * @throws ProjectSelfEditException 
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@RequestMapping("{projectId}/members/remove")
 	@ResponseBody
-	public void removeUser(@PathVariable Long projectId, @RequestParam Long userId) {
+	public void removeUser(@PathVariable Long projectId, @RequestParam Long userId, Principal principal) throws ProjectWithoutOwnerException, ProjectSelfEditException {
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);
+		
+		if(user.getUsername().equals(principal.getName())){
+			throw new ProjectSelfEditException("You cannot remove yourself from a project.");
+		}
 
 		projectService.removeUserFromProject(project, user);
+	}
+	
+	/**
+	 * Update a user's role on a project
+	 * 
+	 * @param projectId
+	 *            The ID of the project
+	 * @param userId
+	 *            The ID of the user
+	 * @param projectRole
+	 *            The role to set
+	 * @throws ProjectWithoutOwnerException 
+	 * @throws ProjectSelfEditException 
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
+	@RequestMapping("{projectId}/members/editrole")
+	@ResponseBody
+	public void updateUserRole(@PathVariable Long projectId, @RequestParam Long userId,
+			@RequestParam String projectRole, Principal principal) throws ProjectWithoutOwnerException, ProjectSelfEditException {
+		Project project = projectService.read(projectId);
+		User user = userService.read(userId);
+		
+		if(user.getUsername().equals(principal.getName())){
+			throw new ProjectSelfEditException("You cannot edit your own role on a project.");
+	}
+
+		ProjectRole role = ProjectRole.fromString(projectRole);
+		
+		projectService.updateUserProjectRole(project, user, role);
 	}
 
 	/**
@@ -492,7 +537,8 @@ public class ProjectsController {
 			Project p = projectUserJoin.getSubject();
 			String role = projectUserJoin.getProjectRole() != null ? projectUserJoin.getProjectRole().toString() : "";
 			Map<String, String> l = new HashMap<>();
-			l.put("id", p.getId().toString());
+
+			l.put("checkbox", p.getId().toString());			l.put("id", p.getId().toString());
 			l.put("name", p.getName());
 			l.put("organism", p.getOrganism());
 			l.put("role", role);
@@ -554,22 +600,23 @@ public class ProjectsController {
 	 *            {@link} current project viewed.
 	 */
 	public void getProjectTemplateDetails(Model model, Principal principal, Project project) {
-		User user = userService.getUserByUsername(principal.getName());
+		User loggedInUser = userService.getUserByUsername(principal.getName());
 
 		// Determine if the user is an owner or admin.
-		boolean isAdmin = user.getSystemRole().equals(Role.ROLE_ADMIN);
+		boolean isAdmin = loggedInUser.getSystemRole().equals(Role.ROLE_ADMIN);
 		model.addAttribute("isAdmin", isAdmin);
 
 		// Find out who the owner of the project is.
 		Collection<Join<Project, User>> ownerJoinList = userService.getUsersForProjectByRole(project,
 				ProjectRole.PROJECT_OWNER);
-		User owner = null;
-		if (ownerJoinList.size() > 0) {
-			owner = (ownerJoinList.iterator().next()).getObject();
+		boolean isOwner = false;
+		for(Join<Project,User> owner : ownerJoinList){
+			if(loggedInUser.equals(owner.getObject())){
+				isOwner = true;
+			}
 		}
-		model.addAttribute("owner", owner);
-		assert owner != null;
-		model.addAttribute("isOwner", Objects.equals(owner.getId(), user.getId()));
+		
+		model.addAttribute("isOwner", isOwner);
 
 		int sampleSize = sampleService.getSamplesForProject(project).size();
 		model.addAttribute("samples", sampleSize);
@@ -639,5 +686,11 @@ public class ProjectsController {
 			errors.put(field, message);
 		}
 		return errors;
+	}
+	
+	@ExceptionHandler({ProjectWithoutOwnerException.class, ProjectSelfEditException.class})
+	@ResponseBody
+	public ResponseEntity<String> roleChangeErrorHandler(Exception ex){
+		return new ResponseEntity<>(ex.getMessage(),HttpStatus.FORBIDDEN);
 	}
 }

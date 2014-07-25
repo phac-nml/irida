@@ -1,14 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectMembersPage;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -23,10 +18,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import java.util.List;
+import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectMembersPage;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableList;
 
 /**
  * <p>
@@ -62,7 +63,7 @@ public class ProjectMembersPageIT {
 	public void destroy() {
 		if (driver != null) {
 			driver.close();
-            driver.quit();
+			driver.quit();
 		}
 	}
 
@@ -74,12 +75,23 @@ public class ProjectMembersPageIT {
 			assertTrue("Has the correct members names", COLLABORATORS_NAMES.contains(name));
 		}
 	}
-	
+
 	@Test
 	public void testRemoveUser() {
 		membersPage.clickRemoveUserButton(2l);
 		membersPage.clickModialPopupButton();
 		List<String> userNames = membersPage.getProjectMembersNames();
 		assertEquals(1, userNames.size());
+	}
+
+	@Test
+	public void testEditRole() {
+		Long userid = 2l;
+		membersPage.clickEditButton(userid);
+		assertTrue("Role select dropdowns should be visible", membersPage.roleSelectDisplayed(userid));
+		membersPage.setRoleForUser(2l, ProjectRole.PROJECT_OWNER.toString());
+		assertTrue(membersPage.notySuccessDisplayed());
+		assertTrue("Role span display should be visible", membersPage.roleSpanDisplayed(userid));
+
 	}
 }

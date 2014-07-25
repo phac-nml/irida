@@ -38,11 +38,13 @@ public class ProjectsPage {
     }
 
 	public int projectsTableSize() {
+		logger.trace("Getting table size");
 		WebElement element = driver.findElement(By.xpath("//table[@id='projectsTable']/tbody"));
 		return element.findElements(By.tagName("tr")).size();
 	}
 
 	public WebElement getCollaboratorSpan() {
+		logger.trace("Getting collaborator span");
 		WebElement el = driver.findElement(By.xpath("//table[@id='projectsTable']/tbody/tr[3]/td[4]/span"));
         return el;
 	}
