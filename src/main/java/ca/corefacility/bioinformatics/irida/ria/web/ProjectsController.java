@@ -20,6 +20,8 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -504,6 +506,27 @@ public class ProjectsController {
         }
         Map<String, List<String>> result = new HashMap<>();
         result.put("ids", sampleIdList);
+        return result;
+    }
+
+    @RequestMapping(value = "/ajax/{projectId}/samples/delete", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    public @ResponseBody
+    Map<String, Object> deleteProjectSamples(@PathVariable Long projectId, @RequestParam JSONArray sampleIds) {
+        Project project = projectService.read(projectId);
+        Map<String, Object> result = new HashMap<>();
+        for (int i = 0; i < sampleIds.length(); i++) {
+            Long id = null;
+            try {
+                id = sampleIds.getLong(i);
+                Sample sample = sampleService.read(id);
+                projectService.removeSampleFromProject(project, sample);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                result.put("error", "Cannot get sample");
+            }
+
+        }
+        result.put("Success", "DONE!");
         return result;
     }
 
