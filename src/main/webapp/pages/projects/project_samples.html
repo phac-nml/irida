@@ -4,7 +4,7 @@
       layout:decorator="templates/wet-boew/wet-layout">
 <head>
     <title th:text="#{project.samples.title}">THIS IS SOMETHING
-                                              WRONG</title>
+        WRONG</title>
 </head>
 <body>
 <div class="container" layout:fragment="content">
@@ -25,10 +25,10 @@
                 <div class="col-md-12">
                     <div class="btn-toolbar" role="toolbar">
                         <div class="btn-group">
-                            <button id="deleteBtn" class="btn btn-default btn-sm" disabled="true">Delete Selected</button>
+                            <button id="deleteBtn" class="btn btn-default btn-sm" disabled="true"
+                                    th:text="#{project.samples.delete}">__Delete_Samples__
+                            </button>
                         </div>
-                        <div class="btn-group">...</div>
-                        <div class="btn-group">...</div>
                     </div>
                 </div>
             </div>
@@ -38,12 +38,12 @@
                         <thead>
                         <tr role="row" th:inline="text">
                             <th data:tooltip="#{tooltip.selectall-none}"><input type="checkbox" id="selectAll"/></th>
-                            <th></th>
                             <th class="sortable">[[#{project.samples.table.name}]]<i
                                     class="glyphicon"></i></th>
                             <th>[[#{project.samples.table.numFiles}]]</th>
                             <th class="sortable">[[#{project.samples.table.dateCreated}]]<i
                                     class="glyphicon"></i></th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody></tbody>
@@ -55,7 +55,7 @@
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <b class="panel-title" th:text="#{project.details}">Project
-                                                                        Details</b>
+                        Details</b>
                 </div>
                 <div class="panel-body">
                     <ul class="nav nav-pills nav-stacked details">
@@ -94,156 +94,345 @@
     </div>
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
-    <div th:replace="projects/project_base :: scripts"></div>
-    <script th:inline="javascript">
-        /*<![CDATA[*/
+<div th:replace="projects/project_base :: scripts"></div>
+<script th:inline="javascript">
+/*<![CDATA[*/
+function EditableDataTable() {
+    this.selectedRowIds = [];
+    this.allRowIds = [];
+    this._isEditingRow = false;
+    this._isDetailsViewOpen = false;
 
+    function createEditForm(name) {
+        var form = document.createElement("form");
+        form.setAttribute("role", "form");
+        form.className = "form-inline";
 
-        function format(d) {
-            // TODO: ajax to get list of files.
-            return "<p>Files will be displayed here</p>";
-        }
+        var group = document.createElement("div");
+        group.className = "form-group";
+        form.appendChild(group);
 
-        $(document).ready(function () {
-            var allChecked = false,
-                    selected = [],
-                    $deleteBtn = $("#deleteBtn"),
-                    $selectAll = $("#selectAll"),
-                    $samplesTable = $('#samplesTable');
+        var input = document.createElement("input");
+        input.setAttribute('type', 'text');
+        input.id = "editName";
+        input.className = "form-control input-sm mrgn-rght-sm";
+        input.setAttribute('placeholder', name);
+        group.appendChild(input);
 
-            var dt = $samplesTable.DataTable({
-                dom: "<'top'ilf>rt<'bottom'p><'clear'>",
-                processing: true,
-                serverSide: true,
-                deferRender: true,
-                ajax: /*[[@{/projects/ajax/{projectId}/samples(projectId=${project.getId()})}]]*/ '/projects/ajax/1/samples',
-                order: [
-                    [4, "desc"]
-                ],
-                columns: [
-                    {
-                        "data": "id",
-                        "orderable": false,
-                        "render": function (data) {
-                            var checked = allChecked ? " checked='checked'" : '';
-                            return '<input type="checkbox" value="' + data + '"' + checked + ' />';
+        var btn = document.createElement("button");
+        btn.className = "btn btn-sm btn-primary submit";
+        btn.innerHTML = /*[[#{form.btn.update}]]*/ "Update"
+        group.appendChild(btn);
+
+        return form;
+    }
+
+    function createEditBtn() {
+        var btn = document.createElement("button");
+        btn.className = "btn btn-default btn-xs pull-right edit";
+        btn.innerHTML = /*[[#{form.btn.edit}]]*/ "Edit";
+        return btn;
+    }
+
+    function createCancelBtn() {
+        var btn = document.createElement("button");
+        btn.className = "btn btn-info btn-sm pull-right cancel";
+        btn.innerHTML = /*[[#{form.btn.cancel}]]*/ "Cancel";
+        return btn;
+    }
+
+    function undoRename(sampleId, origName) {
+        $.ajax({
+            url: /*[[@{/projects/ajax/{projectId}/samples/update(projectId=${project.getId()})}]]*/ '/projects/ajax/update',
+            type: 'post',
+            data: {'sampleId': sampleId, 'name': origName}
+        }).done(function () {
+            dataTable.ajax.reload();
+        });
+    }
+
+    this._closeDetailsView = function () {
+        $("tr.details")
+                .removeClass('details')
+                .next().remove();
+        this._isDetailsViewOpen = false;
+    };
+
+    this._openDetailsView = function (el) {
+        $(el).addClass('details')
+                .after('<tr><td colspan="6">This is going to be the files view.</td></tr>').show();
+        // TODO (2014-07-24) [Josh]: This is to be updated within the files view branch.
+    };
+
+    this._createEditRow = function (row) {
+        var tdName = row.find('td.name'),
+                tdBtns = row.find('td.btns'),
+                name = tdName.html();
+        row.addClass("editing");
+        tdName.html(createEditForm(name)).find('input').focus();
+        tdBtns.html(createCancelBtn());
+        this._isEditingRow = true;
+    };
+
+    this._cancelEditRow = function () {
+        var row = $("tr.editing"),
+                tdName = row.find("td.name"),
+                tdBtns = row.find("td.btns"),
+                name = tdName.find("input").attr("placeholder");
+        tdName.html(name);
+        tdBtns.html(createEditBtn());
+        row.removeClass("editing");
+        this._isEditingRow = false;
+    };
+
+    this._sendAjaxNameUpdate = function (id, name, origName) {
+        $.ajax({
+            url: /*[[@{/projects/ajax/{projectId}/samples/update(projectId=${project.getId()})}]]*/ '/projects/ajax/update',
+            type: 'post',
+            data: {'sampleId': id, 'name': name}
+        }).done(function (data) {
+            if (data.success) {
+                dataTable.ajax.reload();
+                if (typeof origName != 'undefined') {
+                    noty({
+                        layout: 'topCenter',
+                        type: 'success',
+                        text: /*[[#{project.samples.rename-success}]]*/ 'Successfully updated sample name'
+                                + '  <a href="#" id="undoRename">' +
+                                /*[[#{form.btn.undo}]]*/ 'Undo'
+                                * '</a>',
+                        timeout: 3200,
+                        callback: {
+                            onShow: function () {
+                                $("#undoRename").on('click', function () {
+                                    undoRename(id, origName);
+                                });
+                            },
+                            onClose: function () {
+                                $("#undoRename").off('click');
+                            }
                         }
-                    },
-                    {
-                        "data": null,
-                        "orderable": false,
-                        "class": "details-control",
-                        "defaultContent": ""
-                    },
-                    {
-                        "data": "name"
-                    },
-                    {
-                        "data": "numFiles",
-                        "orderable": false
-                    },
-                    {
-                        "data": "createdDate"
-                    }
-                ],
-                'createdRow': function (row, data, index) {
-                    if (parseInt(data.numFiles) > 0) {
-                        $(row)
-                                .addClass('has-files')
-                                .find('.details-control')
-                                .html('<i class="text-muted glyphicon glyphicon-chevron-right"></i>');
-                    }
+                    });
                 }
-            });
-
-            var open;
-            $samplesTable.find('tbody').on('click', 'tr.has-files td:not(:first-child)', function () {
-                var $this = $(this),
-                        tr = $this.closest('tr'),
-                        row = dt.row(tr),
-                        icon = tr.find('i'),
-                        element = {
-                            icon: icon,
-                            tr: tr,
-                            row: row
-                        };
-
-                if (element.row.child.isShown()) {
-                    closeFilesView(element);
-                }
-                else {
-                    if (open != null) {
-                        closeFilesView(open);
-                    }
-                    showFilesView(element);
-                    open = element;
-                }
-            }).on('click', 'input', function () {
-                var id = $(this).val();
-                var index = selected.indexOf(id);
-                if (index == -1) {
-                    selected.push(id);
-                }
-                else {
-                    selected.splice(index, 1);
-                }
-                $selectAll.prop('indeterminate', selected.length);
-            });
-
-            $selectAll.on("click", function () {
-                var $this = $(this);
-                selected = [];
-                allChecked = $this.prop("checked");
-                $samplesTable.find('input').prop('checked', allChecked);
-                $deleteBtn.prop('disabled', !allChecked);
-            });
-
-            function closeFilesView(element) {
-                element.icon.addClass('glypihcon-cheveron-right').removeClass('glyphicon-chevron-down');
-                element.tr.removeClass('details');
-                element.row.child.hide();
             }
-
-            function showFilesView(element) {
-                if (open != null) {
-                    closeFilesView(open);
-                }
-                element.icon.removeClass('glypihcon-cheveron-right').addClass('glyphicon-chevron-down');
-                element.tr.addClass('details');
-                element.row.child(format(element.row.data())).show();
-                open = element;
+            else {
+                var input = $("tr.editing").find('input[type="text"]');
+                input.focus().select();
+                input.qtip({
+                    content: data.error.sampleName,
+                    position: {
+                        at: 'top center',
+                        my: 'bottom center'
+                    },
+                    style: {
+                        classes: 'qtip-red qtip-shadow'
+                    },
+                    show: {
+                        ready: true
+                    },
+                    hide: {
+                        event: 'unfocus'
+                    }
+                });
             }
         });
+    };
+}
 
-        $('[data-tooltip!=""]').qtip({ // Grab all elements with a non-blank data-tooltip attr.
-            content: {
-                attr: 'data-tooltip' // Tell qTip2 to look inside this attr for its content
+EditableDataTable.prototype = {
+    setAllRowIds: function (allIds) {
+        this.allRowIds = allIds;
+    },
+    isSelectedRow: function (id) {
+        return this.selectedRowIds.indexOf(id) >= 0;
+    },
+    updateAllSelected: function (isAllSelected) {
+        if (isAllSelected) {
+            this.selectedRowIds = this.allRowIds.slice(0);
+        } else {
+            this.selectedRowIds = [];
+        }
+    },
+    cancelEditRow: function () {
+        if (this._isEditingRow) {
+            this._cancelEditRow();
+        }
+    },
+    checkBoxClickedEvent: function (id) {
+        var index = this.selectedRowIds.indexOf(id);
+        if (index === -1) {
+            this.selectedRowIds.push(id);
+        } else {
+            this.selectedRowIds.splice(index, 1);
+        }
+    },
+    toggleFilesView: function (el) {
+        if (this._isDetailsViewOpen) {
+            this._closeDetailsView();
+        } else {
+            this._openDetailsView(el);
+        }
+    },
+    editRow: function (row) {
+        if (this._isEditingRow) {
+            this._cancelEditRow();
+        }
+        this._createEditRow(row);
+    },
+    sendUpdateName: function () {
+        var row = $("tr.editing"),
+                id = row.find('input[type="checkbox"]').val(),
+                input = row.find("#editName"),
+                origName = input.attr("placeholder"),
+                newName = input.val();
+        if (input.data("qtip")) {
+            input.qtip('destroy');
+        }
+        if (newName != "" && newName != origName) {
+            this._sendAjaxNameUpdate(id, newName, origName);
+        }
+    },
+    getSelectAllState: function () {
+        if (this.selectedRowIds.length === 0) {
+            return false; // Checkbox unchecked
+        } else if (this.selectedRowIds.length === this.allRowIds.length) {
+            return true; // Checkbox checked
+        }
+        return "indeterminate"; // Checkbox indeterminant
+    }
+};
+
+$(document).ready(function () {
+    var $deleteBtn = $("#deleteBtn"),
+            $selectAll = $("#selectAll"),
+            $samplesTable = $('#samplesTable'),
+            DT = new EditableDataTable();
+
+    $samplesTable.DataTable({
+        dom: "<'top'ilf>rt<'bottom'p><'clear'>",
+        processing: true,
+        serverSide: true,
+        deferRender: true,
+        ajax: /*[[@{/projects/ajax/{projectId}/samples(projectId=${project.getId()})}]]*/ '/projects/ajax/1/samples',
+        order: [
+            [3, "desc"]
+        ],
+        columns: [
+            {
+                "data": "id",
+                "orderable": false,
+                "render": function (data) {
+                    var checked = DT.isSelectedRow(data) ? " checked='checked'" : '';
+                    return '<input type="checkbox" value="' + data + '"' + checked + ' />';
+                },
+                "width": "15px"
             },
-            position: {
-                target: $('input'),
-                at: 'top center',
-                my: 'bottom center'
+            {
+                "data": "name",
+                "class": "name"
             },
-            style: {
-                classes: 'qtip-dark qtip-shadow'
+            {
+                "data": "numFiles",
+                "orderable": false,
+                "class": "details-control",
+                "width": "15%"
+            },
+            {
+                "data": "createdDate",
+                "width": "15%"
+            },
+            {
+                "data": "id",
+                "orderable": false,
+                "render": function (data) {
+                    return '<button class="btn btn-default btn-xs pull-right edit">Edit</button>';
+                },
+                "class": "btns",
+                "width": "10%"
             }
-        });
-
-        $(".sortable").qtip({
-            content: /*[[#{tooltip.table.click-sort}]]*/ "click to sort",
-            position: {
-                at: 'top center',
-                my: 'bottom center',
-                adjust: {
-                    y: 10
+        ],
+        'createdRow': function (row, data) {
+            if (parseInt(data.numFiles) > 0) {
+                $(row)
+                        .find('.details-control')
+                        .html('<a href="#">' + data.numFiles + '</a>');
+            }
+        },
+        'fnInitComplete': function () {
+            $.ajax({
+                url: /*[[@{/projects/ajax/{projectId}/samples/getids(projectId=${project.getId()})}]]*/ "/ajax/1/samples/getids",
+            }).done(function (data) {
+                if (data.ids) {
+                    DT.setAllRowIds(data.ids);
                 }
-            },
-            style: {
-                classes: 'qtip-dark qtip-shadow'
-            }
-        });
-        /*]]>*/
-    </script>
+            });
+        }
+    });
+
+    $samplesTable.find('tbody').on('click', 'td.details-control a', function (e) {
+        e.preventDefault();
+        DT.toggleFilesView($(this).closest('tr'));
+    }).on('click', 'input[type="checkbox"]', function (e) {
+        var id = $(this).val();
+        DT.checkBoxClickedEvent(id);
+        var state = DT.getSelectAllState();
+        if (state == "indeterminate") {
+            $selectAll.prop('indeterminate', true);
+            $deleteBtn.prop('disabled', false);
+        } else {
+            $selectAll.prop('indeterminate', false).prop('checked', state);
+            $deleteBtn.prop('disabled', state);
+        }
+    }).on('click', 'button.edit', function (e) {
+        e.stopPropagation();
+        DT.editRow($(this).closest('tr'));
+    }).on('click', 'button.cancel', function (e) {
+        e.stopPropagation();
+        DT.cancelEditRow();
+    }).on('click', 'button.submit', function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        DT.sendUpdateName();
+    });
+
+    $selectAll.on("click", function () {
+        var $this = $(this);
+        var allSelected = $this.prop("checked");
+        $samplesTable.find('input').prop('checked', allSelected);
+        $deleteBtn.prop('disabled', !allSelected);
+        DT.updateAllSelected(allSelected);
+    });
+});
+
+$('[data-tooltip!=""]').qtip({ // Grab all elements with a non-blank data-tooltip attr.
+    content: {
+        attr: 'data-tooltip' // Tell qTip2 to look inside this attr for its content
+    },
+    position: {
+        target: $('input'),
+        at: 'top center',
+        my: 'bottom center'
+    },
+    style: {
+        classes: 'qtip-dark qtip-shadow'
+    }
+});
+
+$(".sortable").qtip({
+    content: /*[[#{tooltip.table.click-sort}]]*/ "click to sort",
+    position: {
+        at: 'top center',
+        my: 'bottom center',
+        adjust: {
+            y: 10
+        }
+    },
+    style: {
+        classes: 'qtip-dark qtip-shadow'
+    }
+});
+/*]]>*/
+</script>
 </div>
 </body>
 </html>

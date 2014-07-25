@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -15,14 +16,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -70,7 +68,6 @@ public class ProjectsController {
 	private static final String PROJECTS_DIR = "projects/";
 	public static final String LIST_PROJECTS_PAGE = PROJECTS_DIR + "projects";
 	public static final String PROJECT_MEMBERS_PAGE = PROJECTS_DIR + "project_members";
-	public static final String PROJECT_MEMBER_EDIT_PAGE = PROJECTS_DIR + "project_members_edit";
 	public static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
 	public static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_new";
 	public static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
@@ -152,7 +149,6 @@ public class ProjectsController {
 	public String getProjectUsersPage(final Model model, final Principal principal, @PathVariable Long projectId) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
-
 		getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_MEMBERS);
 		model.addAttribute("projectRoles", projectRoles);
@@ -500,7 +496,42 @@ public class ProjectsController {
 		return getProjectsDataMap(projectList, draw, page.getTotalElements(), sortColumn, sortDirection);
 	}
 
-	/**
+	@RequestMapping(value = "/ajax/{projectId}/samples/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public
+    @ResponseBody
+    Map<String, Object> postUpdateProjectSamples(@RequestParam(required = true) Long sampleId,
+                                          @RequestParam(required = false) String name) {
+        Map<String, Object> updateMap = new HashMap<>();
+        if (!Strings.isNullOrEmpty(name)) {
+            updateMap.put("sampleName", name);
+        }
+
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            sampleService.update(sampleId, updateMap);
+            resultMap.put("success", "Updated name");
+        } catch (ConstraintViolationException e) {
+            resultMap.put("error", getErrorsFromViolationException(e));
+        }
+        return resultMap;
+    }
+
+    @RequestMapping(value = "/ajax/{projectId}/samples/getids", produces = MediaType.APPLICATION_JSON_VALUE)
+    public
+    @ResponseBody
+    Map<String, List<String>> getAllProjectIds(@PathVariable Long projectId) {
+        Project project = projectService.read(projectId);
+        List<String> sampleIdList = new ArrayList<>();
+        List<Join<Project, Sample>> psj = sampleService.getSamplesForProject(project);
+        for (Join<Project, Sample> join : psj) {
+            sampleIdList.add(join.getObject().getId().toString());
+        }
+        Map<String, List<String>> result = new HashMap<>();
+        result.put("ids", sampleIdList);
+        return result;
+    }
+
+    /**
 	 * Generates a map of project information for the {@link ProjectsDataTable}
 	 *
 	 * @param projectList

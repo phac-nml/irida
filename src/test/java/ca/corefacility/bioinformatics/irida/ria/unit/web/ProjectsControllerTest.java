@@ -8,18 +8,15 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Path;
+import javax.validation.metadata.ConstraintDescriptor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -301,6 +298,17 @@ public class ProjectsControllerTest {
 		verify(projectService).read(projectId);
 		verify(projectService).removeUserFromProject(project, user);
 	}
+
+    @Test
+    public void testPostUpdateProjectSamples() {
+        Long sampleId = 1L;
+        String newName = "Barney";
+        Map<String, Object> updateMap = new HashMap<>();
+        updateMap.put("sampleName", newName);
+        when(sampleService.update(sampleId, updateMap)).thenReturn(null);
+        Map<String, Object> resultMap = controller.postUpdateProjectSamples(sampleId, newName);
+        assertTrue("Result contains the word success", resultMap.containsKey("success"));
+    }
 
 	/**
 	 * Mocks the information found within the project sidebar.

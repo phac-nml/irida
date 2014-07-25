@@ -4,6 +4,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.SortUtilities;
 import com.google.common.base.Strings;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Wait;
@@ -28,10 +29,10 @@ public class ProjectSamplesPage {
 		this.driver = driver;
 	}
 
-    public void goToPage() {
-        driver.get(URL);
-        waitForAjax();
-    }
+	public void goToPage() {
+		driver.get(URL);
+		waitForAjax();
+	}
 
 	/**
 	 * The the h1 heading for the page
@@ -57,7 +58,7 @@ public class ProjectSamplesPage {
 	 * @return integer value of samples that contain files.
 	 */
 	public int getCountOfSamplesWithFiles() {
-		return driver.findElements(By.className("glyphicon-chevron-right")).size();
+		return driver.findElements(By.cssSelector("td.details-control a")).size();
 	}
 
 	/**
@@ -107,7 +108,7 @@ public class ProjectSamplesPage {
 	 * @return True if entire column is sorted ascending
 	 */
 	public boolean isSampleNameColumnSortedAsc() {
-		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(3)")).stream()
+		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(2)")).stream()
 				.map(WebElement::getText).collect(Collectors.toList());
 		return SortUtilities.isStringListSortedAsc(list);
 	}
@@ -118,18 +119,18 @@ public class ProjectSamplesPage {
 	 * @return True if entire column is sorted descending
 	 */
 	public boolean isSampleNameColumnSortedDesc() {
-		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(3)")).stream()
+		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(2)")).stream()
 				.map(WebElement::getText).collect(Collectors.toList());
 		return SortUtilities.isStringListSortedDesc(list);
 	}
 
-    /**
+	/**
 	 * Checks to see if the Sample Added On column is sorted ascending
 	 *
 	 * @return True if entire column is sorted ascending
 	 */
 	public boolean isAddedOnDateColumnSortedAsc() {
-		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(5)")).stream()
+		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(4)")).stream()
 				.map(WebElement::getText).collect(Collectors.toList());
 		return SortUtilities.isDateSortedAsc(list, DATE_FORMAT);
 	}
@@ -140,10 +141,36 @@ public class ProjectSamplesPage {
 	 * @return True if entire column is sorted descending
 	 */
 	public boolean isAddedOnDateColumnSortedDesc() {
-		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(5)")).stream()
+		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(4)")).stream()
 				.map(WebElement::getText).collect(Collectors.toList());
 		return SortUtilities.isDateSortedDesc(list, DATE_FORMAT);
 	}
+
+	/**
+	 * Checks to see if the is an input field named "editName" visible and that
+	 * there is only one.
+	 * 
+	 * @return true if there is 1 visisble
+	 */
+	public boolean isRenameInputVisible() {
+		return driver.findElements(By.id("editName")).size() == 1;
+	}
+
+    public String getSampleName() {
+        return driver.findElement(By.cssSelector("tbody tr:nth-child(1) td:nth-child(2)")).getText();
+    }
+
+    public boolean successMessageShown() {
+        return driver.findElements(By.cssSelector(".noty_message")).size() > 0;
+    }
+
+    public boolean hasErrorMessage() {
+        return driver.findElements(By.className("qtip-content")).size() == 1;
+    }
+
+    public boolean hasFormattingMessage() {
+        return driver.findElement(By.className("qtip-content")).getText().contains("space character");
+    }
 
 	/**************************************************************************************
 	 * EVENTS
@@ -167,7 +194,7 @@ public class ProjectSamplesPage {
 	 * Open the row that contains files.
 	 */
 	public void openFilesView() {
-		driver.findElement(By.className("glyphicon-chevron-right")).click();
+		driver.findElement(By.cssSelector("td.details-control a")).click();
 	}
 
 	/**
@@ -175,7 +202,7 @@ public class ProjectSamplesPage {
 	 * that column.
 	 */
 	public void clickSampleNameHeader() {
-		driver.findElement(By.cssSelector("thead th:nth-child(3)")).click();
+		driver.findElement(By.cssSelector("thead th:nth-child(2)")).click();
 		waitForAjax();
 	}
 
@@ -184,9 +211,30 @@ public class ProjectSamplesPage {
 	 * sorting by that column.
 	 */
 	public void clickCreatedDateHeader() {
-		driver.findElement(By.cssSelector("thead th:nth-child(5)")).click();
+		driver.findElement(By.cssSelector("thead th:nth-child(4)")).click();
 		waitForAjax();
 	}
+
+	/**
+	 * Display the sample edit
+	 */
+	public void clickEditFirstSample() {
+		driver.findElement(By.cssSelector("tbody tr:nth-child(1) button.edit")).click();
+	}
+
+    /**
+     * Rename a sample
+     */
+    public void sendRenameSample(String name) {
+        WebElement el = driver.findElement(By.id("editName"));
+        el.sendKeys(name);
+        el.sendKeys(Keys.ENTER);
+        waitForAjax();
+    }
+
+    public void clickOnEditCancel() {
+        driver.findElement(By.cssSelector("button.cancel")).click();
+    }
 
 	private void waitForAjax() {
 		Wait<WebDriver> wait = new WebDriverWait(driver, 60);

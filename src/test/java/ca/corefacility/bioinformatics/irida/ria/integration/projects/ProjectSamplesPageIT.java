@@ -20,8 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * <p>
@@ -39,6 +38,7 @@ import static org.junit.Assert.assertTrue;
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectSamplesPageIT {
 
+	public static final String GOOD_SAMPLE_NAME = "GoodSampleName";
 	private WebDriver driver;
 	private ProjectSamplesPage page;
 
@@ -97,5 +97,30 @@ public class ProjectSamplesPageIT {
 		assertTrue("Added on date should be sorted ascending", page.isAddedOnDateColumnSortedAsc());
 		page.clickCreatedDateHeader();
 		assertTrue("Added on date should be sorted descending", page.isAddedOnDateColumnSortedDesc());
+	}
+
+	@Test
+	public void testEditSampleName() {
+		page.goToPage();
+		page.clickEditFirstSample();
+		assertTrue("Display a input to rename the sample", page.isRenameInputVisible());
+		// Try to rename a sample correctly
+		page.sendRenameSample(GOOD_SAMPLE_NAME);
+		assertTrue("Success message shown", page.successMessageShown());
+		assertEquals("Has renamed the sample", GOOD_SAMPLE_NAME, page.getSampleName());
+	}
+
+	@Test
+	public void testEditSampleBadly() {
+		page.goToPage();
+		page.clickEditFirstSample();
+		page.sendRenameSample("really bad name");
+		assertFalse("Success message shown", page.successMessageShown());
+		assertTrue("Has error field", page.hasErrorMessage());
+		assertTrue("Shows correct message", page.hasFormattingMessage());
+
+		// Cancel button should reset the state
+		page.clickOnEditCancel();
+		assertFalse("Error field should be gone", page.isRenameInputVisible());
 	}
 }
