@@ -54,7 +54,7 @@ public class UserRevListenerIT {
 		Revision<Integer, Project> findLastChangeRevision = projectRepository.findLastChangeRevision(read.getId());
 		UserRevEntity findRevision = auditReader.findRevision(UserRevEntity.class,
 				findLastChangeRevision.getRevisionNumber());
-		assertEquals("client id should be set in revision", "testClient", findRevision.getClient().getClientId());
+		assertEquals("client id should be set in revision", new Long(1), findRevision.getClientId());
 	}
 
 	@Test
@@ -67,6 +67,6 @@ public class UserRevListenerIT {
 		Revision<Integer, Project> findLastChangeRevision = projectRepository.findLastChangeRevision(read.getId());
 		UserRevEntity findRevision = auditReader.findRevision(UserRevEntity.class,
 				findLastChangeRevision.getRevisionNumber());
-		assertNull(findRevision.getClient());
+		assertNull(findRevision.getClientId());
 	}
 }
