@@ -355,6 +355,42 @@ public class ProjectsControllerTest {
     	verify(userService).read(userId);
     	verify(projectService).addUserToProject(project, user, projectRole);
     }
+    
+    @Test
+    public void testUdateUserRole() throws ProjectWithoutOwnerException, ProjectSelfEditException{
+    	Long projectId = 1l;
+    	Long userId = 2l;
+    	Project project = new Project();
+    	User user = new User(userId, "tom", null, null, "Tom", "Matthews", null);
+    	ProjectRole projectRole = ProjectRole.PROJECT_USER;
+    	
+    	Principal principal = () -> USER_NAME;
+    	
+    	when(projectService.read(projectId)).thenReturn(project);
+    	when(userService.read(userId)).thenReturn(user);
+    	
+    	controller.updateUserRole(projectId, userId, projectRole.toString(), principal);
+    	
+    	verify(projectService).read(projectId);
+    	verify(userService).read(userId);
+    	verify(projectService).updateUserProjectRole(project, user, projectRole);
+    }
+    
+    @Test(expected=ProjectSelfEditException.class)
+    public void testUdateUserSelfRole() throws ProjectWithoutOwnerException, ProjectSelfEditException{
+    	Long projectId = 1l;
+    	Long userId = 2l;
+    	Project project = new Project();
+    	User user = new User(userId, USER_NAME, null, null, "Tom", "Matthews", null);
+    	ProjectRole projectRole = ProjectRole.PROJECT_USER;
+    	
+    	Principal principal = () -> USER_NAME;
+    	
+    	when(projectService.read(projectId)).thenReturn(project);
+    	when(userService.read(userId)).thenReturn(user);
+    	
+    	controller.updateUserRole(projectId, userId, projectRole.toString(), principal);
+    }
 
 	/**
 	 * Mocks the information found within the project sidebar.
