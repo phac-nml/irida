@@ -144,7 +144,7 @@
             createButtonDiv: function s(data, row){
             	//create the button toolbar
             	var toolbar = document.createElement("div");
-            	toolbar.className = "btn-toolbar";
+            	toolbar.className = "btn-toolbar pull-right";
             	
             	//create the remove button group 
             	var group1 = document.createElement("div");
@@ -250,7 +250,7 @@
                         	
                         	var buttons;
                         	if(row.object.username == loggedInUserName){
-                        		buttons = '<span class="glyphicon glyphicon-question-sign self-edit-message" title="'+[[#{project.members.edit.selfmessage}]]+'"></span>';
+                        		buttons = '<span class="glyphicon glyphicon-question-sign self-edit-message pull-right" title="'+[[#{project.members.edit.selfmessage}]]+'"></span>';
                         	}
                         	else{
                         		buttons = DT.createButtonDiv(data,row);
@@ -266,8 +266,8 @@
                 	$(".select-role").hide();
                 	$(".self-edit-message").qtip({
                 		position: {
-                            my: 'left center',
-                            at: 'right center'
+                            at: 'left center',
+                            my: 'right center'
                         },
                         style: {
                             classes: 'qtip-dark qtip-shadow'
