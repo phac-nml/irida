@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
@@ -49,6 +50,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 /**
  * Unit test for {@link }
@@ -313,6 +315,45 @@ public class ProjectsControllerTest {
         when(sampleService.update(sampleId, updateMap)).thenReturn(null);
         Map<String, Object> resultMap = controller.postUpdateProjectSamples(sampleId, newName);
         assertTrue("Result contains the word success", resultMap.containsKey("success"));
+    }
+    
+    @Test
+    public void testGetUsersAvailableForProject(){
+    	String term = "tom";
+    	Long projectId = 1l;
+    	Long userId = 2l;
+    	Project project = new Project();
+    	project.setId(projectId);
+    	List<User> users = Lists.newArrayList(new User(userId, "tom", null, null, "Tom", "Matthews", null));
+    	
+    	when(projectService.read(projectId)).thenReturn(project);
+    	when(userService.getUsersAvailableForProject(project)).thenReturn(users);
+    	
+    	Map<Long, String> usersAvailableForProject = controller.getUsersAvailableForProject(projectId, term);
+    	
+    	assertFalse(usersAvailableForProject.isEmpty());
+    	assertTrue(usersAvailableForProject.containsKey(userId));
+    	
+    	verify(projectService).read(projectId);
+    	verify(userService).getUsersAvailableForProject(project);
+    }
+    
+    @Test
+    public void testAddProjectMember(){
+    	Long projectId = 1l;
+    	Long userId = 2l;
+    	Project project = new Project();
+    	User user = new User(userId, "tom", null, null, "Tom", "Matthews", null);
+    	ProjectRole projectRole = ProjectRole.PROJECT_USER;
+    	
+    	when(projectService.read(projectId)).thenReturn(project);
+    	when(userService.read(userId)).thenReturn(user);
+    	
+    	controller.addProjectMember(projectId, userId, projectRole.toString());
+    	
+    	verify(projectService).read(projectId);
+    	verify(userService).read(userId);
+    	verify(projectService).addUserToProject(project, user, projectRole);
     }
 
 	/**
