@@ -197,7 +197,10 @@ function EditableDataTable() {
                     noty({
                         layout: 'topCenter',
                         type: 'success',
-                        text: origName + ' successfully renamed to ' + name + '  <a href="#" id="undoRename">' + [[#{form.btn.undo}]] + '</a>',
+                        text: /*[[#{project.samples.rename-success}]]*/ 'Successfully updated sample name'
+                                + '  <a href="#" id="undoRename">' +
+                                /*[[#{form.btn.undo}]]*/ 'Undo'
+                                * '</a>',
                         timeout: 3200,
                         callback: {
                             onShow: function () {
