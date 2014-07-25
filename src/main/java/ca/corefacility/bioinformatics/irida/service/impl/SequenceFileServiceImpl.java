@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Executor;
 
 import javax.validation.Validator;
 
@@ -52,7 +51,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	/**
 	 * Executor for running pipelines asynchronously.
 	 */
-	private final Executor executor;
+	private final TaskExecutor executor;
 	/**
 	 * File processing chain to execute on sequence files.
 	 */
@@ -73,7 +72,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	@Autowired
 	public SequenceFileServiceImpl(SequenceFileRepository sequenceFileRepository,
-			SampleSequenceFileJoinRepository ssfRepository, Executor executor, FileProcessingChain fileProcessingChain, Validator validator) {
+			SampleSequenceFileJoinRepository ssfRepository, TaskExecutor executor, FileProcessingChain fileProcessingChain, Validator validator) {
 		super(sequenceFileRepository, validator, SequenceFile.class);
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.ssfRepository = ssfRepository;
@@ -90,7 +89,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		// Send the file to the database repository to be stored (in super)
 		logger.trace("Calling super.create");
 		SequenceFile sf = super.create(sequenceFile);
-		executor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, sf, SecurityContextHolder.getContext()));
+		executor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, sf.getId(), SecurityContextHolder.getContext()));
 		return sf;
 	}
 
@@ -109,7 +108,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Transactional
 	public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
 		SequenceFile sf = super.update(id, updatedFields);
-		executor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, sf, SecurityContextHolder.getContext()));
+		executor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, sf.getId(), SecurityContextHolder.getContext()));
 		return sf;
 	}
 
@@ -120,9 +119,8 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Transactional
 	public Join<Sample, SequenceFile> createSequenceFileInSample(SequenceFile sequenceFile, Sample sample) {
 		SequenceFile created = create(sequenceFile);
-		executor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, created, SecurityContextHolder.getContext()));
-		SampleSequenceFileJoin join = new SampleSequenceFileJoin(sample, created);
-		return ssfRepository.save(join);
+		SampleSequenceFileJoin join = ssfRepository.save(new SampleSequenceFileJoin(sample, created));
+		return join;
 	}
 
 	/**
@@ -149,13 +147,13 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	private static final class SequenceFileProcessorLauncher implements Runnable {
 		private final FileProcessingChain fileProcessingChain;
-		private final SequenceFile sequenceFile;
+		private final Long sequenceFileId;
 		private final SecurityContext securityContext;
 
-		public SequenceFileProcessorLauncher(FileProcessingChain fileProcessingChain, SequenceFile sequenceFile,
+		public SequenceFileProcessorLauncher(FileProcessingChain fileProcessingChain, Long sequenceFileId,
 				SecurityContext securityContext) {
 			this.fileProcessingChain = fileProcessingChain;
-			this.sequenceFile = sequenceFile;
+			this.sequenceFileId = sequenceFileId;
 			this.securityContext = securityContext;
 		}
 
@@ -174,9 +172,9 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 
 			// proceed with analysis
 			try {
-				fileProcessingChain.launchChain(sequenceFile);
+				fileProcessingChain.launchChain(sequenceFileId);
 			} catch (FileProcessorTimeoutException e) {
-				logger.error("FileProcessingChain did *not* execute -- the transaction opened by SequenceFileService never closed.");
+				logger.error("FileProcessingChain did *not* execute -- the transaction opened by SequenceFileService never closed.", e);
 			}
 
 			// erase the security context if we copied the context into the

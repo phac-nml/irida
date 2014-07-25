@@ -44,11 +44,10 @@ public class GzipFileProcessor implements FileProcessor {
 	 */
 	@Override
 	@Transactional
-	public SequenceFile process(SequenceFile sequenceFile) throws FileProcessorException {
-		sequenceFile = sequenceFileRepository.findOne(sequenceFile.getId());
+	public void process(Long sequenceFileId) throws FileProcessorException {
+		SequenceFile sequenceFile = sequenceFileRepository.findOne(sequenceFileId);
 		Path file = sequenceFile.getFile();
-		String nameWithoutExtension = file.toString();
-		String originalFilename = file.toString();
+		String nameWithoutExtension = file.getFileName().toString();
 
 		// strip the extension from the filename (if necessary)
 		if (nameWithoutExtension.endsWith(GZIP_EXTENSION)) {
@@ -63,25 +62,22 @@ public class GzipFileProcessor implements FileProcessor {
 				try (GZIPInputStream zippedInputStream = new GZIPInputStream(Files.newInputStream(file))) {
 					logger.trace("Handling gzip compressed file.");
 
-					Path target = Paths.get(nameWithoutExtension);
+					Path targetDirectory = Files.createTempDirectory(null);
+					Path target = targetDirectory.resolve(nameWithoutExtension);
+					logger.debug("Target directory is [" + targetDirectory + "]");
 					logger.debug("Writing uncompressed file to [" + target + "]");
 
 					Files.copy(zippedInputStream, target);
 
-					// if the new name is different from the name before, update
-					// the file name in the database.
-					if (!nameWithoutExtension.equals(originalFilename)) {
-						sequenceFile.setFile(target);
-						sequenceFile = sequenceFileRepository.save(sequenceFile);
-					}
+					sequenceFile = sequenceFileRepository.findOne(sequenceFileId);
+					sequenceFile.setFile(target);
+					sequenceFile = sequenceFileRepository.save(sequenceFile);
 				}
 			}
 		} catch (Exception e) {
 			logger.error("Failed to process the input file [" + sequenceFile + "]; stack trace follows.", e);
 			throw new FileProcessorException("Failed to process input file [" + sequenceFile + "].");
 		}
-
-		return sequenceFile;
 	}
 
 	/**

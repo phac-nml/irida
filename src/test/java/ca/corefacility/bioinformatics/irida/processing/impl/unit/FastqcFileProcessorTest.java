@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -26,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.AnalysisRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 
 /**
  * Tests for {@link FastqcFileProcessor}.
@@ -36,6 +38,7 @@ import ca.corefacility.bioinformatics.irida.repositories.AnalysisRepository;
 public class FastqcFileProcessorTest {
 	private FastqcFileProcessor fileProcessor;
 	private AnalysisRepository analysisRepository;
+	private SequenceFileRepository sequenceFileRepository;
 	private MessageSource messageSource;
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessorTest.class);
 
@@ -48,7 +51,8 @@ public class FastqcFileProcessorTest {
 	public void setUp() {
 		analysisRepository = mock(AnalysisRepository.class);
 		messageSource = mock(MessageSource.class);
-		fileProcessor = new FastqcFileProcessor(analysisRepository, messageSource);
+		sequenceFileRepository = mock(SequenceFileRepository.class);
+		fileProcessor = new FastqcFileProcessor(analysisRepository, messageSource, sequenceFileRepository);
 	}
 
 	@Test(expected = FileProcessorException.class)
@@ -58,9 +62,11 @@ public class FastqcFileProcessorTest {
 		Path fasta = Files.createTempFile(null, null);
 		Files.write(fasta, FASTA_FILE_CONTENTS.getBytes());
 		SequenceFile sf = new SequenceFile(fasta);
+		sf.setId(1L);
 		Runtime.getRuntime().addShutdownHook(new DeleteFileOnExit(fasta));
+		when(sequenceFileRepository.findOne(1L)).thenReturn(sf);
 
-		fileProcessor.process(sf);
+		fileProcessor.process(1L);
 	}
 
 	@Test
@@ -74,8 +80,9 @@ public class FastqcFileProcessorTest {
 
 		SequenceFile sf = new SequenceFile(fastq);
 		sf.setId(1L);
+		when(sequenceFileRepository.findOne(1L)).thenReturn(sf);
 		try {
-			fileProcessor.process(sf);
+			fileProcessor.process(1L);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail();

@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.exceptions.FileProcessorTimeoutException;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
@@ -31,7 +30,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 
 	private Integer timeout = 60;
 	
-	private Integer sleepDuration = 1;
+	private Integer sleepDuration = 1000;
 
 	private final SequenceFileRepository sequenceFileRepository;
 
@@ -48,7 +47,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Exception> launchChain(SequenceFile sequenceFile) throws FileProcessorTimeoutException {
+	public List<Exception> launchChain(Long sequenceFileId) throws FileProcessorTimeoutException {
 		List<Exception> ignoredExceptions = new ArrayList<>();
 		Integer waiting = 0;
 
@@ -56,7 +55,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 		// initially saved to the database, but not necessarily before the
 		// transaction has completed and closed, so we need to block until the
 		// file has been persisted in the database.
-		while (sequenceFileRepository.findOne(sequenceFile.getId()) == null) {
+		while (sequenceFileRepository.findOne(sequenceFileId) == null) {
 			if (waiting > timeout) {
 				throw new FileProcessorTimeoutException("Waiting for longer than " + sleepDuration * timeout + "ms, bailing out.");
 			}
@@ -68,10 +67,10 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 			} catch (InterruptedException e) {
 			}
 		}
-
+		
 		for (FileProcessor fileProcessor : fileProcessors) {
 			try {
-				sequenceFile = fileProcessor.process(sequenceFile);
+				fileProcessor.process(sequenceFileId);
 			} catch (FileProcessorException e) {
 				// if the file processor modifies the file, then just fast fail,
 				// we can't proceed with the remaining file processors. If the
@@ -81,7 +80,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 					throw e;
 				} else {
 					ignoredExceptions.add(e);
-					logger.error("File processor [" + fileProcessor.getClass() + "] failed to process [" + sequenceFile
+					logger.error("File processor [" + fileProcessor.getClass() + "] failed to process [" + sequenceFileId
 							+ "], but proceeding with the remaining processors because the "
 							+ "file would not be modified by the processor. Stack trace follows.", e);
 				}
@@ -114,6 +113,6 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 	 * {@inheritDoc}
 	 */
 	public void setSleepDuration(Integer sleepDuration) {
-		this.sleepDuration = sleepDuration;
+		this.sleepDuration = sleepDuration * 1000;
 	}
 }

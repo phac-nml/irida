@@ -41,7 +41,7 @@ public class DefaultFileProcessingChainTest {
 		SequenceFile sf = new SequenceFile();
 		sf.setId(1L);
 		
-		fileProcessingChain.launchChain(sf);
+		fileProcessingChain.launchChain(1L);
 	}
 
 	@Test
@@ -52,7 +52,7 @@ public class DefaultFileProcessingChainTest {
 		when(sequenceFileRepository.findOne(1L)).thenReturn(sf);
 
 		try {
-			fileProcessingChain.launchChain(sf);
+			fileProcessingChain.launchChain(1L);
 		} catch (Exception e) {
 			fail();
 		}
@@ -69,7 +69,7 @@ public class DefaultFileProcessingChainTest {
 		List<Exception> exceptions = Collections.emptyList();
 
 		try {
-			exceptions = fileProcessingChain.launchChain(sf);
+			exceptions = fileProcessingChain.launchChain(1L);
 		} catch (Exception e) {
 			fail("exceptions should be ignored in this test.");
 		}
@@ -90,7 +90,7 @@ public class DefaultFileProcessingChainTest {
 		fileProcessingChain.setFastFail(true);
 
 		try {
-			fileProcessingChain.launchChain(sf);
+			fileProcessingChain.launchChain(1L);
 			fail("should not proceed when encountering exception and fastFail is enabled.");
 		} catch (FileProcessorException e) {
 		} catch (Exception e) {
@@ -107,7 +107,7 @@ public class DefaultFileProcessingChainTest {
 		when(sequenceFileRepository.findOne(1L)).thenReturn(sf);
 
 		try {
-			fileProcessingChain.launchChain(sf);
+			fileProcessingChain.launchChain(1L);
 		} catch (FileProcessorException e) {
 		} catch (Exception e) {
 			fail("should have thrown FileProcessorException.");
@@ -116,7 +116,7 @@ public class DefaultFileProcessingChainTest {
 
 	private static class FailingFileProcessor implements FileProcessor {
 		@Override
-		public SequenceFile process(SequenceFile sequenceFile) throws FileProcessorException {
+		public void process(Long sequenceFile) throws FileProcessorException {
 			throw new FileProcessorException("I'm terrible at this.");
 		}
 
@@ -129,7 +129,7 @@ public class DefaultFileProcessingChainTest {
 	private static class FailingFileProcessorNoContinue implements FileProcessor {
 
 		@Override
-		public SequenceFile process(SequenceFile sequenceFile) throws FileProcessorException {
+		public void process(Long sequenceFile) throws FileProcessorException {
 			throw new FileProcessorException("I'm *really* terrible at this.");
 		}
 

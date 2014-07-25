@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.processing.impl.unit;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -13,6 +14,7 @@ import java.util.zip.GZIPOutputStream;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
@@ -44,9 +46,9 @@ public class GzipFileProcessorTest {
 		
 		when(sequenceFileRepository.findOne(any(Long.class))).thenReturn(sf);
 
-		SequenceFile modified = fileProcessor.process(sf);
-
-		assertEquals("no changes were expected.", modified, sf);
+		fileProcessor.process(1L);
+		
+		verify(sequenceFileRepository, times(0)).save(any(SequenceFile.class));
 
 		Files.deleteIfExists(sf.getFile());
 		Files.deleteIfExists(original);
@@ -74,7 +76,11 @@ public class GzipFileProcessorTest {
 
 		sf.setFile(compressed);
 
-		SequenceFile modified = fileProcessor.process(sf);
+		fileProcessor.process(id);
+		
+		ArgumentCaptor<SequenceFile> argument = ArgumentCaptor.forClass(SequenceFile.class);
+		verify(sequenceFileRepository).save(argument.capture());
+		SequenceFile modified = argument.getValue();
 
 		verify(sequenceFileRepository).save(sf);
 		String uncompressedFileContents = new String(Files.readAllBytes(modified.getFile()));
@@ -105,7 +111,11 @@ public class GzipFileProcessorTest {
 		
 		when(sequenceFileRepository.findOne(id)).thenReturn(sf);
 
-		SequenceFile modified = fileProcessor.process(sf);
+		fileProcessor.process(id);
+		
+		ArgumentCaptor<SequenceFile> argument = ArgumentCaptor.forClass(SequenceFile.class);
+		verify(sequenceFileRepository).save(argument.capture());
+		SequenceFile modified = argument.getValue();
 
 		String uncompressedFileContents = new String(Files.readAllBytes(modified.getFile()));
 		assertEquals("uncompressed file and file in database should be the same.", FILE_CONTENTS,

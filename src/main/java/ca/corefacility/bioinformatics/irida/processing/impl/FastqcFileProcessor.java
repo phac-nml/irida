@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
-import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.AnalysisRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -53,25 +53,27 @@ public class FastqcFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessor.class);
 
 	private final AnalysisRepository analysisRepository;
+	private final SequenceFileRepository sequenceFileRepository;
 	private final MessageSource messageSource;
 
-	public FastqcFileProcessor(AnalysisRepository analysisRepository, MessageSource messageSource) {
+	public FastqcFileProcessor(AnalysisRepository analysisRepository, MessageSource messageSource, SequenceFileRepository sequenceFileRepository) {
 		this.analysisRepository = analysisRepository;
 		this.messageSource = messageSource;
+		this.sequenceFileRepository = sequenceFileRepository;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional
-	public SequenceFile process(final SequenceFile sequenceFile) throws FileProcessorException {
+	public void process(final Long sequenceFileId) throws FileProcessorException {
+		final SequenceFile sequenceFile = sequenceFileRepository.findOne(sequenceFileId);
 		Set<AnalysisFastQC> existing = analysisRepository.findAnalysesForSequenceFile(sequenceFile,
 				AnalysisFastQC.class);
 		
 		if (!existing.isEmpty()) {
 			logger.debug("FastQC has already been run on this file, not running again.");
-			return sequenceFile;
+			return;
 		}
 		
 		Path fileToProcess = sequenceFile.getFile();
@@ -111,7 +113,6 @@ public class FastqcFileProcessor implements FileProcessor {
 			logger.error("FastQC failed to process the sequence file. Stack trace follows.", e);
 			throw new FileProcessorException("FastQC failed to parse the sequence file.", e);
 		}
-		return sequenceFile;
 	}
 
 	/**

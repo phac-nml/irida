@@ -43,7 +43,7 @@ public class IridaApiServicesConfig {
 	public FileProcessingChain fileProcessorChain(AnalysisRepository analysisRepository,
 			SequenceFileRepository sequenceFileRepository) {
 		return new DefaultFileProcessingChain(sequenceFileRepository, new GzipFileProcessor(sequenceFileRepository),
-				new FastqcFileProcessor(analysisRepository, apiMessageSource()));
+				new FastqcFileProcessor(analysisRepository, apiMessageSource(), sequenceFileRepository));
 	}
 
 	@Bean

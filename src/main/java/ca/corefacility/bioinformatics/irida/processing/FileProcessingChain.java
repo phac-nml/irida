@@ -26,7 +26,7 @@ public interface FileProcessingChain {
 	 *             when the processor chain waits too long for the specified
 	 *             {@link SequenceFile} to appear in the database.
 	 */
-	public List<Exception> launchChain(SequenceFile sequenceFile) throws FileProcessorTimeoutException;
+	public List<Exception> launchChain(Long sequenceFileId) throws FileProcessorTimeoutException;
 
 	/**
 	 * Get the collection of {@link FileProcessor} that this
