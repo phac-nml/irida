@@ -252,7 +252,7 @@ public class GalaxyWorkflowManagerTest {
 		List<String> outputIds = Arrays.asList(outputId);
 		WorkflowOutputs workflowOutputs = new WorkflowOutputs();
 		workflowOutputs.setHistoryId(VALID_WORKFLOW_ID);
-		workflowOutputs.seOutputIds(outputIds);
+		workflowOutputs.setOutputIds(outputIds);
 		
 		when(historiesClient.showDataset(VALID_WORKFLOW_ID, outputId)).thenReturn(downloadDataset);
 		when(downloadDataset.getFullDownloadUrl()).thenReturn(downloadString);
@@ -273,7 +273,7 @@ public class GalaxyWorkflowManagerTest {
 		List<String> outputIds = Arrays.asList(outputId);
 		WorkflowOutputs workflowOutputs = new WorkflowOutputs();
 		workflowOutputs.setHistoryId(INVALID_WORKFLOW_ID);
-		workflowOutputs.seOutputIds(outputIds);
+		workflowOutputs.setOutputIds(outputIds);
 		
 		when(historiesClient.showDataset(VALID_WORKFLOW_ID, outputId)).thenReturn(downloadDataset);
 		when(downloadDataset.getFullDownloadUrl()).thenReturn(downloadString);

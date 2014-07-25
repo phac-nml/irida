@@ -4,8 +4,9 @@ This project contains *only* the back-end Java API and database interaction proj
 
 Installing Dependencies
 =======================
-The IRIDA API project depends on FastQC and a custom version of Galaxy Bootstrap, but these aren't distributed as Maven artifacts. We distribute a copy of FastQC and Galaxy Bootstrap (binaries and source code) in the `lib/` directory. You can quickly install the files in the `lib/` directory by doing the following:
+The IRIDA API project depends on FastQC and a custom version of Galaxy Bootstrap, but these aren't distributed as Maven artifacts. We distribute a copy of FastQC and Galaxy Dependencies (binaries and source code) in the `lib/` directory. You can quickly install the files in the `lib/` directory by doing the following:
 
+    git submodule update --init --recursive
     cd $IRIDA_API_ROOT/lib
     ./install-libs.sh
 

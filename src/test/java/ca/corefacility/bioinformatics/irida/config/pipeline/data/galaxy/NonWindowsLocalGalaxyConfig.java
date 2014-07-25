@@ -223,10 +223,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 			= DownloadProperties.forGalaxyDist(DEFAULT_DESTINATION, revisionHash);
 		BootStrapper bootStrapper = new BootStrapper(downloadProperties);
 
-		logger.info("About to download Galaxy");
-		logger.info(downloadProperties.toString());
 		bootStrapper.setupGalaxy();
-		logger.info("Finished downloading Galaxy");
 
 		return bootStrapper;
 	}
@@ -302,20 +299,6 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	}
 
 	/**
-	 * Constructs a string containing the Galaxy user information for logging.
-	 * @param usertype  The type of user constructed (admin, etc).
-	 * @param name  The name of the user.
-	 * @param password  The password of the user.
-	 * @param apiKey  The api key of the user.
-	 * @return  A String with the proper logging message.
-	 */
-	private String generateUserString(String usertype, String name,
-			String password, String apiKey) {
-		return "Galaxy " + usertype + " user: " + name + ", password: "
-				+ password + ", apiKey: " + apiKey;
-	}
-
-	/**
 	 * Runs the downloaded and configured instance of Galaxy.
 	 * @param galaxyData  The data used to run Galaxy.
 	 * @param localGalaxy  The object containing information about the local Galaxy instance.
@@ -328,33 +311,13 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		GalaxyProperties galaxyProperties = localGalaxy.getGalaxyProperties();
 		BootStrapper bootStrapper = localGalaxy.getBootStrapper();
 
-		File galaxyLogFile = new File(bootStrapper.getPath() + File.separator
-				+ "paster.log");
-
-		logger.info("Setting up Galaxy");
-		logger.debug(generateUserString("admin", localGalaxy.getAdminName()
-				.getName(), localGalaxy.getAdminPassword(), localGalaxy
-				.getAdminAPIKey()));
-		logger.debug(generateUserString("user1", localGalaxy.getUser1Name()
-				.getName(), localGalaxy.getUser1Password(), localGalaxy
-				.getUser1APIKey()));
-		logger.debug(generateUserString("user2", localGalaxy.getUser2Name()
-				.getName(), localGalaxy.getUser2Password(), localGalaxy
-				.getUser2APIKey()));
-		logger.debug("Setup log files located within: " + bootStrapper.getBootstrapLogDir().getAbsolutePath());
-
 		galaxyDaemon = bootStrapper.run(galaxyProperties, galaxyData);
-
-		logger.info("Waiting for Galaxy to come up on url: "
-				+ localGalaxy.getGalaxyURL() + ", log: "
-				+ galaxyLogFile.getAbsolutePath());
 
 		if (!galaxyDaemon.waitForUp()) {
 			System.err.println("Could not launch Galaxy on "
 					+ localGalaxy.getGalaxyURL());
 			System.exit(1);
 		}
-		logger.info("Galaxy running on url: " + localGalaxy.getGalaxyURL());
 
 		return galaxyDaemon;
 	}
