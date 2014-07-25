@@ -25,7 +25,8 @@
                 <div class="col-md-12">
                     <div class="btn-toolbar" role="toolbar">
                         <div class="btn-group">
-                            <button id="deleteBtn" class="btn btn-default btn-sm" disabled="true" th:text="#{project.samples.delete}">__Delete_Samples__
+                            <button id="deleteBtn" class="btn btn-default btn-sm" disabled="true"
+                                    th:text="#{project.samples.delete}">__Delete_Samples__
                             </button>
                         </div>
                     </div>
@@ -97,74 +98,47 @@
 <script th:inline="javascript">
 /*<![CDATA[*/
 function EditableDataTable() {
-    var isEditingRow = false,
-            isFilesViewOpen = false,
-            dataTable = null,
-            isAllRowsSelected = false,
-            selectedRows = [];
+    var dataTable = null;
+    this.selectedRowIds = [];
+    this.allRowIds = [];
+    this._isEditingRow = false;
+    this._isDetailsViewOpen = false;
 
-    function format() {
-        // TODO: ajax to get list of files.
-        return "<p>Files will be displayed here</p>";
-    }
+    this._closeDetailsView = function () {
+        $("tr.details")
+                .removeClass('details')
+                .next().remove();
+        this._isDetailsViewOpen = false;
+    };
 
-    function closeFilesView() {
-        var row = $("tr.details");
-        row.find("i").addClass('glypihcon-cheveron-right').removeClass('glyphicon-chevron-down');
-        row.removeClass('details');
-        row.next().remove();
-        return row;
-    }
-
-    function showFilesView(el) {
-        var row = $(el),
-                icon = row.find("i");
-        icon.removeClass('glypihcon-cheveron-right').addClass('glyphicon-chevron-down');
-        row.addClass('details');
-
+    this._openDetailsView = function (el) {
+        $(el).addClass('details')
+                .after('<tr><td colspan="6">This is going to be the files view.</td></tr>').show();
         // TODO (2014-07-24) [Josh]: This is to be updated within the files view branch.
-        row.after('<tr><td colspan="6">This is going to be the files view.</td></tr>').show();
-    }
+    };
 
-    function createEditForm(name) {
-        var form = document.createElement("form");
-        form.setAttribute("role", "form");
-        form.className = "form-inline";
+    this._createEditRow = function (row) {
+        var tdName = row.find('td.name'),
+                tdBtns = row.find('td.btns'),
+                name = tdName.html();
+        row.addClass("editing");
+        tdName.html(createEditForm(name)).find('input').focus();
+        tdBtns.html(createCancelBtn());
+        this._isEditingRow = true;
+    };
 
-        var group = document.createElement("div");
-        group.className = "form-group";
-        form.appendChild(group);
+    this._cancelEditRow = function () {
+        var row = $("tr.editing"),
+                tdName = row.find("td.name"),
+                tdBtns = row.find("td.btns"),
+                name = tdName.find("input").attr("placeholder");
+        tdName.html(name);
+        tdBtns.html(createEditBtn());
+        row.removeClass("editing");
+        this._isEditingRow = false;
+    };
 
-        var input = document.createElement("input");
-        input.setAttribute('type', 'text');
-        input.id = "editName";
-        input.className = "form-control input-sm mrgn-rght-sm";
-        input.setAttribute('placeholder', name);
-        group.appendChild(input);
-
-        var btn = document.createElement("button");
-        btn.className = "btn btn-sm btn-primary submit";
-        btn.innerHTML = /*[[#{form.btn.update}]]*/ "Update"
-        group.appendChild(btn);
-
-        return form;
-    }
-
-    function createEditBtn() {
-        var btn = document.createElement("button");
-        btn.className = "btn btn-default btn-xs pull-right edit";
-        btn.innerHTML = /*[[#{form.btn.edit}]]*/ "Edit";
-        return btn;
-    }
-
-    function createCancelBtn() {
-        var btn = document.createElement("button");
-        btn.className = "btn btn-info btn-sm pull-right cancel";
-        btn.innerHTML = /*[[#{form.btn.cancel}]]*/ "Cancel";
-        return btn;
-    }
-
-    function sendAjaxNameUpdate(id, name, origName) {
+    this._sendAjaxNameUpdate = function (id, name, origName) {
         $.ajax({
             url: /*[[@{/projects/ajax/{projectId}/samples/update(projectId=${project.getId()})}]]*/ '/projects/ajax/update',
             type: 'post',
@@ -212,6 +186,44 @@ function EditableDataTable() {
                 });
             }
         });
+    };
+
+    function createEditForm(name) {
+        var form = document.createElement("form");
+        form.setAttribute("role", "form");
+        form.className = "form-inline";
+
+        var group = document.createElement("div");
+        group.className = "form-group";
+        form.appendChild(group);
+
+        var input = document.createElement("input");
+        input.setAttribute('type', 'text');
+        input.id = "editName";
+        input.className = "form-control input-sm mrgn-rght-sm";
+        input.setAttribute('placeholder', name);
+        group.appendChild(input);
+
+        var btn = document.createElement("button");
+        btn.className = "btn btn-sm btn-primary submit";
+        btn.innerHTML = /*[[#{form.btn.update}]]*/ "Update"
+        group.appendChild(btn);
+
+        return form;
+    }
+
+    function createEditBtn() {
+        var btn = document.createElement("button");
+        btn.className = "btn btn-default btn-xs pull-right edit";
+        btn.innerHTML = /*[[#{form.btn.edit}]]*/ "Edit";
+        return btn;
+    }
+
+    function createCancelBtn() {
+        var btn = document.createElement("button");
+        btn.className = "btn btn-info btn-sm pull-right cancel";
+        btn.innerHTML = /*[[#{form.btn.cancel}]]*/ "Cancel";
+        return btn;
     }
 
     function undoRename(sampleId, origName) {
@@ -223,72 +235,84 @@ function EditableDataTable() {
             dataTable.ajax.reload();
         });
     }
-
-    return {
-        setDataTable: function (table) {
-            dataTable = table;
-        },
-        cancelEditRow: function () {
-            if (isEditingRow) {
-                var row = $("tr.editing"),
-                        tdName = row.find("td.name"),
-                        tdBtns = row.find("td.btns"),
-                        name = tdName.find("input").attr("placeholder");
-                tdName.html(name);
-                tdBtns.html(createEditBtn());
-                row.removeClass("editing");
-                isEditingRow = false;
-            }
-        },
-        toggleFilesView: function (el) {
-            var openRow = null;
-            if (isFilesViewOpen) {
-                openRow = closeFilesView();
-                isFilesViewOpen = false;
-            }
-            if(openRow == null || openRow[0] != el[0]) {
-                showFilesView(el);
-                isFilesViewOpen = true;
-            }
-        },
-        checkBoxClicked: function (id) {
-            var index = selectedRows.indexOf(id);
-            if (index == -1) {
-                selectedRows.push(id);
-            }
-            else {
-                selectedRows.splice(index, 1);
-            }
-            return selectedRows.length === 0 ? false : true;
-        },
-        editRow: function (row) {
-            var currEdit = $("tr.editing");
-            if (currEdit.length > 0) {
-                this.cancelEditRow();
-            }
-            var tdName = row.find('td.name'),
-                    tdBtns = row.find('td.btns'),
-                    name = tdName.html();
-            row.addClass("editing");
-            tdName.html(createEditForm(name)).find('input').focus();
-            tdBtns.html(createCancelBtn());
-            isEditingRow = true;
-        },
-        sendUpdatedName: function () {
-            var row = $("tr.editing"),
-                    id = row.find('input[type="checkbox"]').val(),
-                    input = row.find("#editName"),
-                    origName = input.attr("placeholder"),
-                    newName = input.val();
-            if (newName != "" && newName != origName) {
-                sendAjaxNameUpdate(id, newName, origName);
-            }
-            if(input.data("qtip")) {
-                input.qtip('destroy');
-            }
-        }
-    }
 }
+
+EditableDataTable.prototype.setDataTable = function (table) {
+    this.dataTable = table;
+};
+
+EditableDataTable.prototype.setAllRowIds = function (allIds) {
+    this.allRowIds = allIds;
+}
+
+EditableDataTable.prototype.isSelectedRow = function (id) {
+    return this.selectedRowIds.indexOf(id) >= 0;
+};
+
+EditableDataTable.prototype.areSamplesSelected = function () {
+    return this.selectedRowIds > 0;
+};
+
+EditableDataTable.prototype.updateAllSelected = function (isAllSelected) {
+    if (isAllSelected) {
+        this.selectedRowIds = this.allRowIds.slice(0);
+    } else {
+        this.selectedRowIds = [];
+    }
+};
+
+EditableDataTable.prototype.cancelEditRow = function () {
+    if (this._isEditingRow) {
+        this._cancelEditRow();
+    }
+};
+
+EditableDataTable.prototype.checkBoxClickedEvent = function (id) {
+    var index = this.selectedRowIds.indexOf(id);
+    if (index === -1) {
+        this.selectedRowIds.push(id);
+    } else {
+        this.selectedRowIds.splice(index, 1);
+    }
+};
+
+EditableDataTable.prototype.toggleFilesView = function (el) {
+    if (this._isDetailsViewOpen) {
+        this._closeDetailsView();
+    } else {
+        this._openDetailsView(el);
+    }
+};
+
+EditableDataTable.prototype.editRow = function (row) {
+    if (this._isEditingRow) {
+        this._cancelEditRow();
+    }
+    this._createEditRow(row);
+};
+
+EditableDataTable.prototype.sendUpdateName = function () {
+    var row = $("tr.editing"),
+            id = row.find('input[type="checkbox"]').val(),
+            input = row.find("#editName"),
+            origName = input.attr("placeholder"),
+            newName = input.val();
+    if (input.data("qtip")) {
+        input.qtip('destroy');
+    }
+    if (newName != "" && newName != origName) {
+        this._sendAjaxNameUpdate(id, newName, origName);
+    }
+};
+
+EditableDataTable.prototype.getSelectAllState = function () {
+    if (this.selectedRowIds.length === 0) {
+        return false; // Checkbox unchecked
+    } else if (this.selectedRowIds.length === this.allRowIds.length) {
+        return true; // Checkbox checked
+    }
+    return "indeterminate"; // Checkbox indeterminant
+};
 
 $(document).ready(function () {
     var $deleteBtn = $("#deleteBtn"),
@@ -296,7 +320,7 @@ $(document).ready(function () {
             $samplesTable = $('#samplesTable'),
             DT = new EditableDataTable();
 
-    DT.setDataTable($samplesTable.DataTable({
+    var dataTable = $samplesTable.DataTable({
         dom: "<'top'ilf>rt<'bottom'p><'clear'>",
         processing: true,
         serverSide: true,
@@ -310,7 +334,7 @@ $(document).ready(function () {
                 "data": "id",
                 "orderable": false,
                 "render": function (data) {
-                    var checked = DT.isAllRowsSelected ? " checked='checked'" : '';
+                    var checked = DT.isSelectedRow(data) ? " checked='checked'" : '';
                     return '<input type="checkbox" value="' + data + '"' + checked + ' />';
                 },
                 "width": "15px"
@@ -345,17 +369,32 @@ $(document).ready(function () {
                         .find('.details-control')
                         .html('<a href="#">' + data.numFiles + '</a>');
             }
+        },
+        'fnInitComplete': function () {
+            $.ajax({
+                url: /*[[@{/projects/ajax/{projectId}/samples/getids(projectId=${project.getId()})}]]*/ "/ajax/1/samples/getids",
+            }).done(function (data) {
+                if (data.ids) {
+                    DT.setAllRowIds(data.ids);
+                }
+            });
         }
-    }));
+    });
 
     $samplesTable.find('tbody').on('click', 'td.details-control a', function (e) {
         e.preventDefault();
         DT.toggleFilesView($(this).closest('tr'));
     }).on('click', 'input[type="checkbox"]', function (e) {
-        e.stopPropagation();
         var id = $(this).val();
-        var result = DT.checkBoxClicked(id);
-        $selectAll.prop('indeterminate', result);
+        DT.checkBoxClickedEvent(id);
+        var state = DT.getSelectAllState();
+        if (state == "indeterminate") {
+            $selectAll.prop('indeterminate', true);
+            $deleteBtn.prop('disabled', false);
+        } else {
+            $selectAll.prop('indeterminate', false).prop('checked', state);
+            $deleteBtn.prop('disabled', state);
+        }
     }).on('click', 'button.edit', function (e) {
         e.stopPropagation();
         DT.editRow($(this).closest('tr'));
@@ -365,15 +404,15 @@ $(document).ready(function () {
     }).on('click', 'button.submit', function (e) {
         e.stopPropagation();
         e.preventDefault();
-        DT.sendUpdatedName();
+        DT.sendUpdateName();
     });
 
     $selectAll.on("click", function () {
         var $this = $(this);
-        DT.selectedRows = [];
-        DT.isAllRowsSelected = $this.prop("checked");
-        $samplesTable.find('input').prop('checked', DT.isAllRowsSelected);
-        $deleteBtn.prop('disabled', !DT.isAllRowsSelected);
+        var allSelected = $this.prop("checked");
+        $samplesTable.find('input').prop('checked', allSelected);
+        $deleteBtn.prop('disabled', !allSelected);
+        DT.updateAllSelected(allSelected);
     });
 });
 
