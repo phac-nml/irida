@@ -34,7 +34,7 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
             User userByUsername = urepo.loadUserByUsername(principal.getUsername());
             
             if(userByUsername != null){
-                rev.setUser(userByUsername);
+                rev.setUserId(userByUsername.getId());
             }
             else{
                 throw new IllegalStateException("User could not be read by username so revision could not be created");
@@ -80,7 +80,7 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
 				OAuth2Authentication oAuth = (OAuth2Authentication) auth;
 				String clientId = oAuth.getAuthorizationRequest().getClientId();
 				IridaClientDetails clientDetails = clientRepo.loadClientDetailsByClientId(clientId);
-				entity.setClient(clientDetails);
+				entity.setClientId(clientDetails.getId());
 			} catch (NullPointerException ex) {
 				throw new IllegalStateException(
 						"The OAuth2 client details are not in the session so it cannot be added to the revision.");
