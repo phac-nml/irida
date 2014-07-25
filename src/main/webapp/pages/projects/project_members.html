@@ -246,8 +246,17 @@
                         "orderable": false,
                         "render": function (data, type, row) {
                         	
+                        	var loggedInUserName = [[${#authentication.name}]];
                         	
-                            return DT.createButtonDiv(data,row);
+                        	var buttons;
+                        	if(row.object.username == loggedInUserName){
+                        		buttons = '<span class="glyphicon glyphicon-question-sign self-edit-message" title="'+[[#{project.members.edit.selfmessage}]]+'"></span>';
+                        	}
+                        	else{
+                        		buttons = DT.createButtonDiv(data,row);
+                        	}
+                        	
+                            return buttons;
                         },
                         "class": "btns",
                         "width": "17%"
@@ -255,6 +264,16 @@
                 ],
                 "drawCallback": function( settings, data ){
                 	$(".select-role").hide();
+                	$(".self-edit-message").qtip({
+                		position: {
+                            my: 'left center',
+                            at: 'right center'
+                        },
+                        style: {
+                            classes: 'qtip-dark qtip-shadow'
+                        }
+
+                	});
                 }
             });
 
@@ -307,9 +326,9 @@
         			},
         			statusCode: {
         				// 403 returned if changing role would leave project without owner
-        			    403: function() {
+        			    403: function(response) {
         			    	noty({
-            					text: [[#{project.members.edit.role.403}]] , 
+            					text: response.responseText , 
             					layout: "topCenter", 
             					type: "error",
             					timeout: 10000

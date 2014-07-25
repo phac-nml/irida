@@ -40,6 +40,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -285,17 +286,18 @@ public class ProjectsControllerTest {
 	}
 	
 	@Test
-	public void testRemoveUserFromProject() throws ProjectWithoutOwnerException {
+	public void testRemoveUserFromProject() throws ProjectWithoutOwnerException, ProjectSelfEditException {
 		Long projectId = 1l;
 		Long userId = 2l;
 		User user = new User(userId, "tom", null, null, null, null, null);
 		Project project = new Project("test");
 		project.setId(projectId);
+		Principal principal = () -> USER_NAME;
 
 		when(userService.read(userId)).thenReturn(user);
 		when(projectService.read(projectId)).thenReturn(project);
 
-		controller.removeUser(projectId, userId);
+		controller.removeUser(projectId, userId,principal);
 
 		verify(userService).read(userId);
 		verify(projectService).read(projectId);

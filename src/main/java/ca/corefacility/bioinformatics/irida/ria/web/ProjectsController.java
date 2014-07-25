@@ -39,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectSamplesDataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDataTable;
@@ -167,13 +168,18 @@ public class ProjectsController {
 	 *            The user to remove
 	 * @return
 	 * @throws ProjectWithoutOwnerException 
+	 * @throws ProjectSelfEditException 
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@RequestMapping("{projectId}/members/remove")
 	@ResponseBody
-	public void removeUser(@PathVariable Long projectId, @RequestParam Long userId) throws ProjectWithoutOwnerException {
+	public void removeUser(@PathVariable Long projectId, @RequestParam Long userId, Principal principal) throws ProjectWithoutOwnerException, ProjectSelfEditException {
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);
+		
+		if(user.getUsername().equals(principal.getName())){
+			throw new ProjectSelfEditException("You cannot remove yourself from a project.");
+		}
 
 		projectService.removeUserFromProject(project, user);
 	}
@@ -188,14 +194,19 @@ public class ProjectsController {
 	 * @param projectRole
 	 *            The role to set
 	 * @throws ProjectWithoutOwnerException 
+	 * @throws ProjectSelfEditException 
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@RequestMapping("{projectId}/members/editrole")
 	@ResponseBody
 	public void updateUserRole(@PathVariable Long projectId, @RequestParam Long userId,
-			@RequestParam String projectRole) throws ProjectWithoutOwnerException {
+			@RequestParam String projectRole, Principal principal) throws ProjectWithoutOwnerException, ProjectSelfEditException {
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);
+		
+		if(user.getUsername().equals(principal.getName())){
+			throw new ProjectSelfEditException("You cannot edit your own role on a project.");
+		}
 		
 		ProjectRole role = ProjectRole.fromString(projectRole);
 		
@@ -654,9 +665,9 @@ public class ProjectsController {
 		return errors;
 	}
 	
-	@ExceptionHandler(ProjectWithoutOwnerException.class)
+	@ExceptionHandler({ProjectWithoutOwnerException.class, ProjectSelfEditException.class})
 	@ResponseBody
-	public ResponseEntity<String> roleChangeErrorHandler(ProjectWithoutOwnerException ex){
+	public ResponseEntity<String> roleChangeErrorHandler(Exception ex){
 		return new ResponseEntity<>(ex.getMessage(),HttpStatus.FORBIDDEN);
 	}
 }
