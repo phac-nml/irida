@@ -18,7 +18,7 @@
                     <h1 role="heading" th:text="#{project.members.members(${project.label})}">_Project Members_</h1>
                     <div class="btn-toolbar" role="toolbar">
                         <div class="btn-group">
-                            <a class="btn btn-default btn-sm open-popup-link" th:if="${isAdmin} or ${isOwner}" href="#addMembersLink" 
+                            <a id="add-members-button" class="btn btn-default btn-sm open-popup-link" th:if="${isAdmin} or ${isOwner}" href="#addMembersLink" 
                                 th:text="#{project.members.edit.add}">_Add Members_</a>
                         </div>
                     </div>

@@ -14,6 +14,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 
 /**
@@ -102,14 +103,35 @@ public class ProjectMembersPage {
 		logger.debug("Checking if noty success");
 		boolean present = false;
 		try {
-			//driver.findElement(By.className("noty_type_success"));
-			(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By.className("noty_type_success")));
+			(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
+					.className("noty_type_success")));
 			present = true;
 		} catch (NoSuchElementException e) {
 			present = false;
 		}
 
 		return present;
+	}
+
+	public void clickAddMember() {
+		WebElement addMembers = driver.findElement(By.id("add-members-button"));
+		addMembers.click();
+		waitForAjax();
+	}
+
+	public void addUserToProject(Long id, ProjectRole role) {
+		WebElement userElement = driver.findElement(By.id("add-user-username"));
+		// we're using select2 on the user element so it ends up being made into
+		// an input box rather than a select.
+		userElement.sendKeys(id.toString());
+
+		WebElement roleElement = driver.findElement(By.id("add-user-role"));
+		Select roleSelect = new Select(roleElement);
+		roleSelect.selectByValue(role.toString());
+
+		WebElement submit = driver.findElement(By.id("submitAddMember"));
+		submit.click();
+		waitForAjax();
 	}
 
 	private void waitForAjax() {
