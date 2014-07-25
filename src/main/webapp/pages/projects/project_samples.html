@@ -102,6 +102,7 @@ function EditableDataTable() {
     this.allRowIds = [];
     this._isEditingRow = false;
     this._isDetailsViewOpen = false;
+    this._dataTable = null;
 
     function createEditForm(name) {
         var form = document.createElement("form");
@@ -142,12 +143,13 @@ function EditableDataTable() {
     }
 
     function undoRename(sampleId, origName) {
+        var that = this;
         $.ajax({
             url: /*[[@{/projects/ajax/{projectId}/samples/update(projectId=${project.getId()})}]]*/ '/projects/ajax/update',
             type: 'post',
             data: {'sampleId': sampleId, 'name': origName}
         }).done(function () {
-            dataTable.ajax.reload();
+            this.updateTable();
         });
     }
 
@@ -186,13 +188,14 @@ function EditableDataTable() {
     };
 
     this._sendAjaxNameUpdate = function (id, name, origName) {
+        var that = this;
         $.ajax({
             url: /*[[@{/projects/ajax/{projectId}/samples/update(projectId=${project.getId()})}]]*/ '/projects/ajax/update',
             type: 'post',
             data: {'sampleId': id, 'name': name}
         }).done(function (data) {
             if (data.success) {
-                dataTable.ajax.reload();
+                that.updateTable();
                 if (typeof origName != 'undefined') {
                     noty({
                         layout: 'topCenter',
@@ -200,7 +203,7 @@ function EditableDataTable() {
                         text: /*[[#{project.samples.rename-success}]]*/ 'Successfully updated sample name'
                                 + '  <a href="#" id="undoRename">' +
                                 /*[[#{form.btn.undo}]]*/ 'Undo'
-                                * '</a>',
+                                + '</a>',
                         timeout: 3200,
                         callback: {
                             onShow: function () {
@@ -240,6 +243,12 @@ function EditableDataTable() {
 }
 
 EditableDataTable.prototype = {
+    updateTable: function () {
+        this._dataTable.ajax.reload();
+    },
+    setDataTable: function (table) {
+        this._dataTable = table;
+    },
     setAllRowIds: function (allIds) {
         this.allRowIds = allIds;
     },
@@ -308,7 +317,7 @@ $(document).ready(function () {
             $samplesTable = $('#samplesTable'),
             DT = new EditableDataTable();
 
-    $samplesTable.DataTable({
+    DT.setDataTable($samplesTable.DataTable({
         dom: "<'top'ilf>rt<'bottom'p><'clear'>",
         processing: true,
         serverSide: true,
@@ -367,7 +376,8 @@ $(document).ready(function () {
                 }
             });
         }
-    });
+    }));
+
 
     $samplesTable.find('tbody').on('click', 'td.details-control a', function (e) {
         e.preventDefault();
@@ -378,10 +388,10 @@ $(document).ready(function () {
         var state = DT.getSelectAllState();
         if (state == "indeterminate") {
             $selectAll.prop('indeterminate', true);
-            $deleteBtn.prop('disabled', false);
+            $deleteBtn.removeAttr('disabled');
         } else {
             $selectAll.prop('indeterminate', false).prop('checked', state);
-            $deleteBtn.prop('disabled', state);
+            $deleteBtn.prop('disabled', !state);
         }
     }).on('click', 'button.edit', function (e) {
         e.stopPropagation();

@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -16,11 +15,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectSamplesDataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDataTable;
@@ -189,14 +192,19 @@ public class ProjectsController {
 	 * @param userId
 	 *            The user to remove
 	 * @return
-	 * @throws ProjectWithoutOwnerException
+	 * @throws ProjectWithoutOwnerException 
+	 * @throws ProjectSelfEditException 
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@RequestMapping("{projectId}/members/remove")
 	@ResponseBody
-	public void removeUser(@PathVariable Long projectId, @RequestParam Long userId) throws ProjectWithoutOwnerException {
+	public void removeUser(@PathVariable Long projectId, @RequestParam Long userId, Principal principal) throws ProjectWithoutOwnerException, ProjectSelfEditException {
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);
+		
+		if(user.getUsername().equals(principal.getName())){
+			throw new ProjectSelfEditException("You cannot remove yourself from a project.");
+		}
 
 		projectService.removeUserFromProject(project, user);
 	}
@@ -210,15 +218,20 @@ public class ProjectsController {
 	 *            The ID of the user
 	 * @param projectRole
 	 *            The role to set
-	 * @throws ProjectWithoutOwnerException
+	 * @throws ProjectWithoutOwnerException 
+	 * @throws ProjectSelfEditException 
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@RequestMapping("{projectId}/members/editrole")
 	@ResponseBody
-	public void updateUserRole(@PathVariable Long projectId, @RequestParam Long userId, @RequestParam String projectRole)
-			throws ProjectWithoutOwnerException {
+	public void updateUserRole(@PathVariable Long projectId, @RequestParam Long userId,
+			@RequestParam String projectRole, Principal principal) throws ProjectWithoutOwnerException, ProjectSelfEditException {
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);
+		
+		if(user.getUsername().equals(principal.getName())){
+			throw new ProjectSelfEditException("You cannot edit your own role on a project.");
+		}
 
 		ProjectRole role = ProjectRole.fromString(projectRole);
 
@@ -561,8 +574,8 @@ public class ProjectsController {
 			Project p = projectUserJoin.getSubject();
 			String role = projectUserJoin.getProjectRole() != null ? projectUserJoin.getProjectRole().toString() : "";
 			Map<String, String> l = new HashMap<>();
-			l.put("checkbox", p.getId().toString());
-			l.put("id", p.getId().toString());
+
+			l.put("checkbox", p.getId().toString());			l.put("id", p.getId().toString());
 			l.put("name", p.getName());
 			l.put("organism", p.getOrganism());
 			l.put("role", role);
@@ -712,9 +725,9 @@ public class ProjectsController {
 		return errors;
 	}
 
-	@ExceptionHandler(ProjectWithoutOwnerException.class)
+	@ExceptionHandler({ProjectWithoutOwnerException.class, ProjectSelfEditException.class})
 	@ResponseBody
-	public ResponseEntity<String> roleChangeErrorHandler(ProjectWithoutOwnerException ex) {
-		return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+	public ResponseEntity<String> roleChangeErrorHandler(Exception ex){
+		return new ResponseEntity<>(ex.getMessage(),HttpStatus.FORBIDDEN);
 	}
 }

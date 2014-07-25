@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -44,7 +44,7 @@ public class ProjectSamplesPageIT {
 
 	@Before
 	public void setUp() {
-		this.driver = new PhantomJSDriver();
+		this.driver = new ChromeDriver();
 		LoginPage loginPage = LoginPage.to(driver);
 		loginPage.doLogin();
 		this.page = new ProjectSamplesPage(driver);
