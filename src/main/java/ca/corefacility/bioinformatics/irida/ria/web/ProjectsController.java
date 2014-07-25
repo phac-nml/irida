@@ -445,7 +445,24 @@ public class ProjectsController {
             resultMap.put("error", getErrorsFromViolationException(e));
         }
         return resultMap;
-    }	/**
+    }
+
+    @RequestMapping(value = "/ajax/{projectId}/samples/getids", produces = MediaType.APPLICATION_JSON_VALUE)
+    public
+    @ResponseBody
+    Map<String, List<String>> getAllProjectIds(@PathVariable Long projectId) {
+        Project project = projectService.read(projectId);
+        List<String> sampleIdList = new ArrayList<>();
+        List<Join<Project, Sample>> psj = sampleService.getSamplesForProject(project);
+        for (Join<Project, Sample> join : psj) {
+            sampleIdList.add(join.getObject().getId().toString());
+        }
+        Map<String, List<String>> result = new HashMap<>();
+        result.put("ids", sampleIdList);
+        return result;
+    }
+
+    /**
 	 * Generates a map of project information for the {@link ProjectsDataTable}
 	 *
 	 * @param projectList
