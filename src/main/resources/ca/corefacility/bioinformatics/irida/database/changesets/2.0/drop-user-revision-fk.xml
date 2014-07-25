@@ -6,11 +6,8 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
 	<changeSet id="drop-user-revision-fk" author="tom">
-		<!-- Drop user FK column to revisions table -->
+		<!-- Drop user and client FK column to revisions table -->
 		<dropForeignKeyConstraint baseTableName="Revisions" constraintName="FK_REVISION_CREATED_BY"/>
 		<dropForeignKeyConstraint baseTableName="Revisions" constraintName="FK_REVISIONS_CLIENT_DETAILS"/>
-		<dropIndex tableName="Revisions" indexName="FK_REVISION_CREATED_BY"/>
-		<dropIndex tableName="Revisions" indexName="FK_REVISIONS_CLIENT_DETAILS"/>
-
 	</changeSet>
 </databaseChangeLog>
