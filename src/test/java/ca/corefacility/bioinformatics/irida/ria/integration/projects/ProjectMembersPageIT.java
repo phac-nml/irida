@@ -94,6 +94,16 @@ public class ProjectMembersPageIT {
 		membersPage.setRoleForUser(2l, ProjectRole.PROJECT_OWNER.toString());
 		assertTrue(membersPage.notySuccessDisplayed());
 		assertTrue("Role span display should be visible", membersPage.roleSpanDisplayed(userid));
-
+	}
+	
+	@Test
+	public void testAddUserToProject(){
+		String username = "third guy";
+		membersPage.clickAddMember();
+		membersPage.addUserToProject(3l, ProjectRole.PROJECT_USER);
+		assertTrue("Noty success should be displayed", membersPage.notySuccessDisplayed());
+		
+		List<String> projectMembersNames = membersPage.getProjectMembersNames();
+		assertTrue(projectMembersNames.contains(username));
 	}
 }
