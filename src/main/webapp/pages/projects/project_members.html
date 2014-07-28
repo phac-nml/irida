@@ -330,7 +330,7 @@
     					type: "POST",
     					success:function(){
             				noty({
-            					text: [[#{project.members.add.success}]] ,
+            					text: /*[[#{project.members.add.success}]]*/ "User added to project successfully." ,
             					layout: "topCenter", 
             					type: "success",
             					timeout: 5000
@@ -342,7 +342,7 @@
             			},
             			error:function(){
             				noty({
-            					text: [[#{project.members.add.error}]] , 
+            					text: /*[[#{project.members.add.error}]]*/ "An error occurred when adding the User to the Project." , 
             					layout: "topCenter", 
             					type: "error",
             					timeout: 10000
@@ -352,7 +352,7 @@
 				}
 				else{
 					noty({
-    					text: [[#{project.members.add.required}]] , 
+    					text: /*[[#{project.members.add.required}]]*/ "User and Project Role are required." , 
     					layout: "topCenter", 
     					type: "error",
     					timeout: 10000
