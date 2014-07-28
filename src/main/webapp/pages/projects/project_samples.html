@@ -25,7 +25,7 @@
                 <div class="col-md-12">
                     <div class="btn-toolbar" role="toolbar">
                         <div class="btn-group">
-                            <button id="deleteBtn" class="btn btn-default btn-sm" disabled="true"
+                            <button id="deleteBtn" class="btn btn-default btn-sm btn-action" disabled="true"
                                     th:text="#{project.samples.delete}">__Delete_Samples__
                             </button>
                         </div>
@@ -382,6 +382,7 @@ EditableDataTable.prototype = {
 
 $(document).ready(function () {
     var $deleteBtn = $("#deleteBtn"),
+            $btnAction = $(".btn-action"),
             $selectAll = $("#selectAll"),
             $samplesTable = $('#samplesTable'),
             DT = new EditableDataTable();
@@ -440,7 +441,7 @@ $(document).ready(function () {
             DT.getAllSampleIds();
             console.log(DT.selectedRowIds.length);
             if(DT.selectedRowIds.length === 0) {
-                $deleteBtn.prop('disabled', true);
+                $btnAction.prop('disabled', true);
                 $selectAll.prop('indeterminate', false).prop('checked', false);
             }
         }
@@ -456,10 +457,10 @@ $(document).ready(function () {
         var state = DT.getSelectAllState();
         if (state == "indeterminate") {
             $selectAll.prop('indeterminate', true);
-            $deleteBtn.removeAttr('disabled');
+            $btnAction.removeAttr('disabled');
         } else {
             $selectAll.prop('indeterminate', false).prop('checked', state);
-            $deleteBtn.prop('disabled', !state);
+            $btnAction.prop('disabled', !state);
         }
     }).on('click', 'button.edit', function (e) {
         e.stopPropagation();
@@ -477,7 +478,7 @@ $(document).ready(function () {
         var $this = $(this);
         var allSelected = $this.prop("checked");
         $samplesTable.find('input').prop('checked', allSelected);
-        $deleteBtn.prop('disabled', !allSelected);
+        $btnAction.prop('disabled', !allSelected);
         DT.updateAllSelected(allSelected);
     });
 
