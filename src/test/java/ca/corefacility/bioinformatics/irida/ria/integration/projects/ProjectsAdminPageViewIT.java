@@ -11,6 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
@@ -44,6 +45,7 @@ public class ProjectsAdminPageViewIT {
     @Before
     public void setup() {
         driver = new PhantomJSDriver();
+        driver.manage().window().setSize(new Dimension(1024, 900));
         LoginPage loginPage = LoginPage.to(driver);
         loginPage.doLogin();
         projectsPage = new ProjectsPage(driver, "http://localhost:8080/projects/all");
