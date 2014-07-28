@@ -6,6 +6,7 @@ import java.util.*;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.slf4j.Logger;
@@ -540,18 +541,15 @@ public class ProjectsController {
 	 */
     @RequestMapping(value = "/ajax/{projectId}/samples/delete", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
     public @ResponseBody
-    Map<String, Object> deleteProjectSamples(@PathVariable Long projectId, @RequestParam JSONArray sampleIds) {
+    Map<String, Object> deleteProjectSamples(@PathVariable Long projectId, @RequestParam List<Long> sampleIds) {
         Project project = projectService.read(projectId);
         Map<String, Object> result = new HashMap<>();
-        for (int i = 0; i < sampleIds.length(); i++) {
-            Long id = null;
+        for (Long id : sampleIds) {
             try {
-                id = sampleIds.getLong(i);
                 Sample sample = sampleService.read(id);
                 projectService.removeSampleFromProject(project, sample);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                result.put("error", "Cannot get sample");
+            } catch (EntityNotFoundException e) {
+                result.put("error", "Cannot find sample with id: " + id);
             }
 
         }

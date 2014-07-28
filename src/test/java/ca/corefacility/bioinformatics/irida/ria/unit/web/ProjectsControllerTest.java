@@ -321,10 +321,9 @@ public class ProjectsControllerTest {
         projectService.addSampleToProject(project1, sample);
         List idList = new ArrayList<>();
         idList.add("1");
-        JSONArray jsonArray = new JSONArray(idList);
         when(projectService.read(PROJECT_ID)).thenReturn(project1);
         when(sampleService.read(anyLong())).thenReturn(sample);
-        Map<String, Object> result = controller.deleteProjectSamples(PROJECT_ID, jsonArray);
+        Map<String, Object> result = controller.deleteProjectSamples(PROJECT_ID, idList);
         assertTrue("Result contains the word success", result.containsKey("success"));
         verify(projectService).removeSampleFromProject(project1, sample);
     }

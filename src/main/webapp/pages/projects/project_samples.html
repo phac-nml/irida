@@ -157,7 +157,7 @@ function EditableDataTable() {
         $.ajax({
             url: /*[[@{/projects/ajax/{projectId}/samples/delete(projectId=${project.getId()})}]]*/ "/projects/ajax/{projectId}/samples/delete",
             type: "POST",
-            data: {"sampleIds": JSON.stringify(table.selectedRowIds)}
+            data: "sampleIds=" + table.selectedRowIds
         }).done(function (data) {
             table.updateTable();
             table.getAllSampleIds();
