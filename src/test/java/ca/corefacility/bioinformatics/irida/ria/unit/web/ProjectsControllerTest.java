@@ -326,6 +326,7 @@ public class ProjectsControllerTest {
         when(sampleService.read(anyLong())).thenReturn(sample);
         Map<String, Object> result = controller.deleteProjectSamples(PROJECT_ID, jsonArray);
         assertTrue("Result contains the word success", result.containsKey("success"));
+        verify(projectService).removeSampleFromProject(project1, sample);
     }
 
 	/**
