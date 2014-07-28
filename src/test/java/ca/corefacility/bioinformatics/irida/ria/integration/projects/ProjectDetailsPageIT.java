@@ -10,8 +10,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -44,6 +47,7 @@ import com.google.common.collect.ImmutableList;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectDetailsPageIT {
+    private static final Logger logger = LoggerFactory.getLogger(ProjectDetailsPageIT.class);
 	public static final Long PROJECT_ID = 1L;
 	public static final String PROJECT_NAME = "project";
 	public static final String PROJECT_OWNER = "Mr. Manager";
@@ -60,7 +64,8 @@ public class ProjectDetailsPageIT {
 
 	@Before
 	public void setUp() {
-		driver = new ChromeDriver();
+		driver = new PhantomJSDriver();
+		driver.manage().window().setSize(new Dimension(1024, 900));
 		LoginPage loginPage = LoginPage.to(driver);
 		loginPage.doLogin();
 
@@ -77,6 +82,7 @@ public class ProjectDetailsPageIT {
 
 	@Test
 	public void hasCorrectMetaData() {
+        logger.debug("Testing: hasCorrectMetaDate");
 		assertEquals("Page should show correct title", PROJECT_NAME, detailsPage.getPageTitle());
 		assertEquals("Should have the organism displayed", PROJECT_ORGANISM, detailsPage.getOrganism());
 		assertEquals("Should have the correct date format for creation date", PROJECT_CREATED_DATE,
@@ -87,6 +93,7 @@ public class ProjectDetailsPageIT {
 
 	@Test
 	public void hasTheCorrectAssociatedProjects() {
+        logger.debug("Testing: hasTheCorrectAssociatedProjects");
 		List<String> projectsDiv = detailsPage.getAssociatedProjects();
 		assertEquals("Has the correct number of associated projects", 3, projectsDiv.size());
 

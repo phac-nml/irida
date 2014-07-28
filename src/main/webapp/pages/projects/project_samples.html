@@ -153,6 +153,30 @@ function EditableDataTable() {
         });
     }
 
+    function deleteSamples(table, noty) {
+        $.ajax({
+            url: /*[[@{/projects/ajax/{projectId}/samples/delete(projectId=${project.getId()})}]]*/ "/projects/ajax/{projectId}/samples/delete",
+            type: "POST",
+            data: "sampleIds=" + table.selectedRowIds
+        }).done(function (data) {
+            table.updateTable();
+            table.getAllSampleIds();
+            table.selectedRowIds = [];
+            noty.close();
+            var msg = /*[[#{project.samples.remove-success}]]*/ 'Samples successfully removed from project';
+            showSuccessModal(msg);
+        });
+    }
+
+    function showSuccessModal(message) {
+        noty({
+            text: message,
+            layout: "topCenter",
+            type: "success",
+            timeout: 3200
+        });
+    }
+
     this._closeDetailsView = function () {
         $("tr.details")
                 .removeClass('details')
@@ -187,6 +211,35 @@ function EditableDataTable() {
         this._isEditingRow = false;
     };
 
+    this._showDeleteSampleModal = function () {
+        var that = this;
+        var result = true;
+        noty({
+            layout: "center",
+            type: "warning",
+            text: /*[[#{project.samples.remove-warning}]]*/ "You are about to delete samples.",
+            modal: true,
+            buttons: [
+                {
+                    addClass: 'btn btn-primary btn-sm',
+                    text: /*[[#{form.btn.confim}]]*/ 'OK',
+                    onClick: function ($noty) {
+                        deleteSamples(that, $noty);
+                    }
+                },
+                {
+                    addClass: 'btn btn-default btn-sm',
+                    text: /*#{form.btn.cancel}*/ 'Cancel',
+                    onClick: function ($noty) {
+                        $noty.close();
+                        result = false;
+                    }
+                }
+            ]
+        });
+        return result;
+    };
+
     this._sendAjaxNameUpdate = function (id, name, origName) {
         var that = this;
         $.ajax({
@@ -202,7 +255,7 @@ function EditableDataTable() {
                         type: 'success',
                         text: /*[[#{project.samples.rename-success}]]*/ 'Successfully updated sample name'
                                 + '  <a href="#" id="undoRename">' +
-                                /*[[#{form.btn.undo}]]*/ 'Undo'
+                            /*[[#{form.btn.undo}]]*/ 'Undo'
                                 + '</a>',
                         timeout: 3200,
                         callback: {
@@ -245,6 +298,17 @@ function EditableDataTable() {
 EditableDataTable.prototype = {
     updateTable: function () {
         this._dataTable.ajax.reload();
+    },
+    getAllSampleIds: function () {
+        var that = this;
+        $.ajax({
+            url: /*[[@{/projects/ajax/{projectId}/samples/getids(projectId=${project.getId()})}]]*/ "/ajax/1/samples/getids",
+        }).done(function (data) {
+            if (data.ids) {
+                that.setAllRowIds(data.ids);
+                $(".navbar li.active span.badge").html(data.ids.length);
+            }
+        });
     },
     setDataTable: function (table) {
         this._dataTable = table;
@@ -308,6 +372,11 @@ EditableDataTable.prototype = {
             return true; // Checkbox checked
         }
         return "indeterminate"; // Checkbox indeterminant
+    },
+    deleteSelectedSamples: function () {
+        if (this.selectedRowIds.length > 0) {
+            this._showDeleteSampleModal();
+        }
     }
 };
 
@@ -367,14 +436,13 @@ $(document).ready(function () {
                         .html('<a href="#">' + data.numFiles + '</a>');
             }
         },
-        'fnInitComplete': function () {
-            $.ajax({
-                url: /*[[@{/projects/ajax/{projectId}/samples/getids(projectId=${project.getId()})}]]*/ "/ajax/1/samples/getids",
-            }).done(function (data) {
-                if (data.ids) {
-                    DT.setAllRowIds(data.ids);
-                }
-            });
+        'fnDrawCallback': function () {
+            DT.getAllSampleIds();
+            console.log(DT.selectedRowIds.length);
+            if(DT.selectedRowIds.length === 0) {
+                $deleteBtn.prop('disabled', true);
+                $selectAll.prop('indeterminate', false).prop('checked', false);
+            }
         }
     }));
 
@@ -411,6 +479,10 @@ $(document).ready(function () {
         $samplesTable.find('input').prop('checked', allSelected);
         $deleteBtn.prop('disabled', !allSelected);
         DT.updateAllSelected(allSelected);
+    });
+
+    $deleteBtn.on('click', function () {
+        DT.deleteSelectedSamples();
     });
 });
 

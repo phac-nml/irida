@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
@@ -390,6 +391,21 @@ public class ProjectsControllerTest {
     	when(userService.read(userId)).thenReturn(user);
     	
     	controller.updateUserRole(projectId, userId, projectRole.toString(), principal);
+    }
+
+    @Test
+    public void testDeleteProjectSamples() {
+        Project project1 = getProject();
+        Sample sample = new Sample("test");
+        sample.setId(1L);
+        projectService.addSampleToProject(project1, sample);
+        List<Long> idList = new ArrayList<>();
+        idList.add(1L);
+        when(projectService.read(PROJECT_ID)).thenReturn(project1);
+        when(sampleService.read(anyLong())).thenReturn(sample);
+        Map<String, Object> result = controller.deleteProjectSamples(PROJECT_ID, idList);
+        assertTrue("Result contains the word success", result.containsKey("success"));
+        verify(projectService).removeSampleFromProject(project1, sample);
     }
 
 	/**

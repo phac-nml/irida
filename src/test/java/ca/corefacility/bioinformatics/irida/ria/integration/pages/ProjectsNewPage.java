@@ -1,12 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * <p>
@@ -34,6 +36,8 @@ public class ProjectsNewPage {
         WebElement sdf = driver.findElement(By.name("organism"));
         sdf.sendKeys(organism);
         sdf.sendKeys(Keys.RETURN);
+        WebDriverWait wait = new WebDriverWait(driver, 500);
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.name("remoteURL")));
         driver.findElement(By.name("remoteURL")).sendKeys(wiki);
         driver.findElement(By.name("projectDescription")).sendKeys(description);
         driver.findElement(By.className("btn-primary")).click();
@@ -51,14 +55,16 @@ public class ProjectsNewPage {
     }
 
 	public boolean formHasErrors() {
-        boolean result;
-        try {
-            List<WebElement> elements = driver.findElements(By.id("errors-default"));
-            result = elements.size() == 0 ? false : true;
-        } catch (Exception e) {
-            result = false;
+		WebDriverWait wait = new WebDriverWait(driver, 500);
+        if(driver.findElements(By.className("errors-default")).size() > 0) {
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("errors-default")));
         }
-        return result;
+        try {
+            driver.findElements(By.className("errors-default"));
+            return false;
+        } catch (Exception e) {
+            return true;
+        }
     }
 
 	public void setRemoteURL(String url) {

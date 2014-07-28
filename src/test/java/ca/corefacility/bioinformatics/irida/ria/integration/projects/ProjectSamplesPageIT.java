@@ -1,18 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import static org.junit.Assert.*;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -20,7 +16,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import static org.junit.Assert.*;
+import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
  * <p>
@@ -44,7 +47,8 @@ public class ProjectSamplesPageIT {
 
 	@Before
 	public void setUp() {
-		this.driver = new ChromeDriver();
+		driver = new PhantomJSDriver();
+		driver.manage().window().setSize(new Dimension(1024, 900));
 		LoginPage loginPage = LoginPage.to(driver);
 		loginPage.doLogin();
 		this.page = new ProjectSamplesPage(driver);
@@ -86,8 +90,6 @@ public class ProjectSamplesPageIT {
 		assertTrue("Dates should be sorted in descending order originally", page.isAddedOnDateColumnSortedDesc());
 		page.clickSampleNameHeader();
 		assertTrue("Sample names are sorted ascending", page.isSampleNameColumnSortedAsc());
-		page.clickSampleNameHeader();
-		assertTrue("Samples should now be sorted descending", page.isSampleNameColumnSortedDesc());
 	}
 
 	@Test
@@ -122,5 +124,25 @@ public class ProjectSamplesPageIT {
 		// Cancel button should reset the state
 		page.clickOnEditCancel();
 		assertFalse("Error field should be gone", page.isRenameInputVisible());
+	}
+
+	@Test
+	public void testDeleteProjectSample() {
+		page.goToPage();
+		int orig = page.getDisplayedSampleCount();
+		assertTrue("Delete button should be disabled if no samples selected", page.isDeleteBtnDisabled());
+		page.selectFirstSample();
+		page.clickDeleteSamples();
+		assertEquals("There should be one less sample displayed", orig - 1, page.getDisplayedSampleCount());
+	}
+
+	@Test
+	public void testDeleteAllProjectSamples() {
+		page.goToPage();
+		assertEquals("Displays all the samples", 5, page.getDisplayedSampleCount());
+		page.clickSelectAllCheckbox();
+		page.clickDeleteSamples();
+		assertEquals("Has one row - error row", 1, page.getDisplayedSampleCount());
+		assertTrue("Shows the no samples message", page.isTableEmptyRowShown());
 	}
 }

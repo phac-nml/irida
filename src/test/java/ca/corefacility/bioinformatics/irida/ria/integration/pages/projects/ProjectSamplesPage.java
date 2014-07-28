@@ -1,17 +1,20 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.SortUtilities;
-import com.google.common.base.Strings;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.SortUtilities;
+
+import com.google.common.base.Strings;
 
 /**
  * <p>
@@ -21,8 +24,9 @@ import java.util.stream.Collectors;
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectSamplesPage {
-	private static final String URL = "http://localhost:8080/projects/1/samples";
 	public static final String DATE_FORMAT = "dd MMM YYYY";
+	private static final String URL = "http://localhost:8080/projects/1/samples";
+	private static int TIMEOUT_TIME = 100000;
 	private WebDriver driver;
 
 	public ProjectSamplesPage(WebDriver driver) {
@@ -160,17 +164,50 @@ public class ProjectSamplesPage {
         return driver.findElement(By.cssSelector("tbody tr:nth-child(1) td:nth-child(2)")).getText();
     }
 
+	/**
+	 * Test to show that the noty message was shown.
+	 * 
+	 * @return True if the message area is present.
+	 */
     public boolean successMessageShown() {
         return driver.findElements(By.cssSelector(".noty_message")).size() > 0;
     }
 
-    public boolean hasErrorMessage() {
+	/**
+	 * Test to see fi the qtip message is shown.
+	 * 
+	 * @return True if the qtip message is shown.
+	 */
+	public boolean hasErrorMessage() {
         return driver.findElements(By.className("qtip-content")).size() == 1;
     }
 
-    public boolean hasFormattingMessage() {
+    /**
+	 * Test to see if there is a formatting message displayed.
+	 * 
+	 * @return True if the words "space character" is shown.
+	 */
+	public boolean hasFormattingMessage() {
         return driver.findElement(By.className("qtip-content")).getText().contains("space character");
     }
+
+    /**
+	 * Check to see if the delete button is disabled
+	 * 
+	 * @return Return true if the button is disabled
+	 */
+	public boolean isDeleteBtnDisabled() {
+		return driver.findElement(By.id("deleteBtn")).getAttribute("disabled").equals("true");
+	}
+
+	/**
+	 * Check to see if the table empty row is displayed
+	 * 
+	 * @return True if the table empty row is displayed.
+	 */
+	public boolean isTableEmptyRowShown() {
+		return driver.findElements(By.className("dataTables_empty")).size() == 1;
+	}
 
 	/**************************************************************************************
 	 * EVENTS
@@ -222,10 +259,14 @@ public class ProjectSamplesPage {
 		driver.findElement(By.cssSelector("tbody tr:nth-child(1) button.edit")).click();
 	}
 
-    /**
-     * Rename a sample
-     */
-    public void sendRenameSample(String name) {
+	public void selectFirstSample() {
+		driver.findElement(By.cssSelector("tbody tr:nth-child(1) input[type=\"checkbox\"]")).click();
+	}
+
+	/**
+	 * Rename a sample
+	 */
+	public void sendRenameSample(String name) {
         WebElement el = driver.findElement(By.id("editName"));
         el.sendKeys(name);
         el.sendKeys(Keys.ENTER);
@@ -235,6 +276,14 @@ public class ProjectSamplesPage {
     public void clickOnEditCancel() {
         driver.findElement(By.cssSelector("button.cancel")).click();
     }
+
+	public void clickDeleteSamples() {
+		driver.findElement(By.id("deleteBtn")).click();
+		WebDriverWait wait = new WebDriverWait(driver, TIMEOUT_TIME);
+		wait.until(ExpectedConditions.elementToBeClickable(By.id("button-0")));
+		driver.findElement(By.id("button-0")).click();
+		waitForAjax();
+	}
 
 	private void waitForAjax() {
 		Wait<WebDriver> wait = new WebDriverWait(driver, 60);
