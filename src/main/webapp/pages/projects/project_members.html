@@ -18,8 +18,8 @@
                     <h1 role="heading" th:text="#{project.members.members(${project.label})}">_Project Members_</h1>
                     <div class="btn-toolbar" role="toolbar">
                         <div class="btn-group">
-                            <button class="btn btn-default btn-sm" th:if="${isAdmin} or ${isOwner}" id="addMembersLink" 
-                                th:text="#{project.members.edit.add}">_Add Members_</button>
+                            <a id="add-members-button" class="btn btn-default btn-sm open-popup-link" th:if="${isAdmin} or ${isOwner}" href="#addMembersLink" 
+                                th:text="#{project.members.edit.add}">_Add Members_</a>
                         </div>
                     </div>
                 </div>
@@ -82,9 +82,38 @@
                 th:text="#{${'projectRole.'+role}}">_Role_</option>
         </select>
     </div>
+    
+    <section id="addMembersLink" class="modal-dialog modal-content overlay-def mfp-hide">
+        <header class="modal-header">
+            <h2 class="modal-title" id="lbx-title">Add User</h2>
+        </header>
+        
+        <div class="modal-body">
+            <form id="addUserForm" action="#">
+                <div class="form-group">
+                    <label class="control-label" for="add-user-username" th:text="#{project.members.add.username}">_Username_</label> 
+                    <input type="text" id="add-user-username" name="userId" class="form-control input-full" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="add-user-role" th:text="#{project.members.add.role}">_Project Role_</label> 
+                    <select id="add-user-role" class="form-control input-full" name="projectRole">
+                        <option th:each="role : ${projectRoles}" 
+                            th:value="${role}" 
+                            th:text="#{${'projectRole.'+role}}">_Role_</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="panel-footer text-right">
+            <button class="btn btn-default popup-modal-dismiss" th:text="#{project.members.add.cancel}">_Cancel_</button>
+            <button id="submitAddMember" class="btn btn-primary" th:text="#{project.members.add.submit}">_Submit_</button>
+        </div>
+    </section>
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
     <div th:replace="projects/project_base :: scripts"></div>
+    <script th:src="@{/resources/wet-theme/js/deps/jquery.magnific-popup.min.js}"
+            src="/resources/wet-theme/js/deps/jquery.magnific-popup.min.js"></script>
     <script th:inline="javascript">
         /*<![CDATA[*/
        	var DT = {
@@ -277,6 +306,61 @@
                 }
             });
 
+			//Set modial popup links
+            $('.open-popup-link').magnificPopup({
+            	  type:'inline',
+            	  callbacks: {
+            		  beforeOpen: function(){
+            			  $("#add-user-username").select2("val","");
+            			  $("#add-user-role").select2("val","PROJECT_USER");
+            		  }
+            	  }
+            });
+			
+			$("#submitAddMember").click(function(){
+				var form = $("#addUserForm");
+				var username = form.find("#add-user-username");
+				var role = form.find("#add-user-role");
+				var errors = false;
+				
+				if(!username.val().length == 0 && !role.val().length == 0){
+    				var data = $("#addUserForm").serialize();
+    				$.ajax({
+    					url: [[@{/projects/{id}/members(id=${project.getId()})}]],
+    					data: data,
+    					type: "POST",
+    					success:function(){
+            				noty({
+            					text: /*[[#{project.members.add.success}]]*/ "User added to project successfully." ,
+            					layout: "topCenter", 
+            					type: "success",
+            					timeout: 5000
+            				});
+            				
+            				$.magnificPopup.close();
+            				
+            				table.ajax.reload();
+            			},
+            			error:function(){
+            				noty({
+            					text: /*[[#{project.members.add.error}]]*/ "An error occurred when adding the User to the Project." , 
+            					layout: "topCenter", 
+            					type: "error",
+            					timeout: 10000
+            				});
+            			}
+    				});
+				}
+				else{
+					noty({
+    					text: /*[[#{project.members.add.required}]]*/ "User and Project Role are required." , 
+    					layout: "topCenter", 
+    					type: "error",
+    					timeout: 10000
+    				});
+				}
+			});
+
         	
         	$("#usersTable").on('click', 'button.edit', function (e) { //click the edit button
                 e.stopPropagation();
@@ -348,6 +432,35 @@
         		}); 
         		
         	});
+        	
+        	$("#add-user-username").select2({
+        		ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
+        	        url: [[@{/projects/{id}/(id=${project.getId()})}]] + 'ajax/availablemembers',
+        	        dataType: 'json',
+        	        data: function (search, page) {
+        	            return {
+        	              term: search, // search term
+        	              page_limit: 10,
+        	            };
+        	        },
+        	        results: function (data, page) { // parse the results into the format expected by Select2.
+        	            // since we are using custom formatting functions we do not need to alter remote JSON data
+        	            var results = [];
+        	            
+        	            for(var id in data) {
+        	                results.push({
+        	                	"id": id,
+        	                	"text": data[id]
+        	                });
+        	            }
+        	            
+        	            return {results:results};
+        	        }
+        	    },
+                "placeholder": /*[[#{project.members.add.select-user}]]*/ "Select a User"
+            });
+        	
+        	$("#add-user-role").select2();
         	
         });
         

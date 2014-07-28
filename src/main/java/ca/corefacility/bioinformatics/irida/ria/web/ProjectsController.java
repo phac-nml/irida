@@ -1,5 +1,34 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -18,26 +47,9 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import java.security.Principal;
-import java.util.*;
 
 /**
  * Controller for all project related views
@@ -59,7 +71,6 @@ public class ProjectsController {
 	private static final String PROJECTS_DIR = "projects/";
 	public static final String LIST_PROJECTS_PAGE = PROJECTS_DIR + "projects";
 	public static final String PROJECT_MEMBERS_PAGE = PROJECTS_DIR + "project_members";
-	public static final String PROJECT_MEMBER_EDIT_PAGE = PROJECTS_DIR + "project_members_edit";
 	public static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
 	public static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_new";
 	public static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
@@ -137,7 +148,7 @@ public class ProjectsController {
 	 *            Id for the project to show the users for
 	 * @return The name of the project members page.
 	 */
-	@RequestMapping("/{projectId}/members")
+	@RequestMapping(value="/{projectId}/members", method=RequestMethod.GET)
 	public String getProjectUsersPage(final Model model, final Principal principal, @PathVariable Long projectId) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
@@ -145,6 +156,32 @@ public class ProjectsController {
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_MEMBERS);
 		model.addAttribute("projectRoles", projectRoles);
 		return PROJECT_MEMBERS_PAGE;
+	}
+	
+	@RequestMapping(value="/{projectId}/members", method=RequestMethod.POST)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
+	@ResponseBody
+	public void addProjectMember(@PathVariable Long projectId, @RequestParam Long userId, @RequestParam String projectRole){
+		Project project = projectService.read(projectId);
+		User user = userService.read(userId);
+		ProjectRole role = ProjectRole.fromString(projectRole);
+		
+		projectService.addUserToProject(project, user, role);
+	}
+
+	@RequestMapping("/{projectId}/ajax/availablemembers")
+	@ResponseBody
+	public Map<Long, String> getUsersAvailableForProject(@PathVariable Long projectId, @RequestParam String term) {
+		Project project = projectService.read(projectId);
+		List<User> usersAvailableForProject = userService.getUsersAvailableForProject(project);
+		Map<Long, String> users = new HashMap<>();
+		for (User user : usersAvailableForProject) {
+			if (user.getLabel().toLowerCase().contains(term.toLowerCase())) {
+				users.put(user.getId(), user.getLabel());
+			}
+		}
+
+		return users;
 	}
 
 	/**
@@ -171,7 +208,7 @@ public class ProjectsController {
 
 		projectService.removeUserFromProject(project, user);
 	}
-	
+
 	/**
 	 * Update a user's role on a project
 	 * 
@@ -194,10 +231,10 @@ public class ProjectsController {
 		
 		if(user.getUsername().equals(principal.getName())){
 			throw new ProjectSelfEditException("You cannot edit your own role on a project.");
-	}
+		}
 
 		ProjectRole role = ProjectRole.fromString(projectRole);
-		
+
 		projectService.updateUserProjectRole(project, user, role);
 	}
 
@@ -610,12 +647,12 @@ public class ProjectsController {
 		Collection<Join<Project, User>> ownerJoinList = userService.getUsersForProjectByRole(project,
 				ProjectRole.PROJECT_OWNER);
 		boolean isOwner = false;
-		for(Join<Project,User> owner : ownerJoinList){
-			if(loggedInUser.equals(owner.getObject())){
+		for (Join<Project, User> owner : ownerJoinList) {
+			if (loggedInUser.equals(owner.getObject())) {
 				isOwner = true;
 			}
 		}
-		
+
 		model.addAttribute("isOwner", isOwner);
 
 		int sampleSize = sampleService.getSamplesForProject(project).size();
@@ -687,7 +724,7 @@ public class ProjectsController {
 		}
 		return errors;
 	}
-	
+
 	@ExceptionHandler({ProjectWithoutOwnerException.class, ProjectSelfEditException.class})
 	@ResponseBody
 	public ResponseEntity<String> roleChangeErrorHandler(Exception ex){
