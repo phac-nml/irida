@@ -36,6 +36,8 @@ public class ProjectsNewPage {
         WebElement sdf = driver.findElement(By.name("organism"));
         sdf.sendKeys(organism);
         sdf.sendKeys(Keys.RETURN);
+        WebDriverWait wait = new WebDriverWait(driver, 500);
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.name("remoteURL")));
         driver.findElement(By.name("remoteURL")).sendKeys(wiki);
         driver.findElement(By.name("projectDescription")).sendKeys(description);
         driver.findElement(By.className("btn-primary")).click();
@@ -54,7 +56,9 @@ public class ProjectsNewPage {
 
 	public boolean formHasErrors() {
 		WebDriverWait wait = new WebDriverWait(driver, 500);
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("errors-default")));
+        if(driver.findElements(By.className("errors-default")).size() > 0) {
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("errors-default")));
+        }
         try {
             driver.findElements(By.className("errors-default"));
             return false;

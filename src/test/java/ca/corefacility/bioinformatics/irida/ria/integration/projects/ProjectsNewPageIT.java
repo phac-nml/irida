@@ -8,7 +8,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -25,6 +28,8 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * <p>
  * Integration test to ensure that the ProjectsNew Page.
@@ -40,12 +45,13 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectsNewPageIT {
+    private static final Logger logger = LoggerFactory.getLogger(ProjectsNewPageIT.class);
 	private WebDriver driver;
 	private ProjectsNewPage page;
 
 	@Before
 	public void setUp() {
-		driver = new PhantomJSDriver();
+		driver = new ChromeDriver();
 		driver.manage().window().setSize(new Dimension(1024, 900));
 		LoginPage loginPage = LoginPage.to(driver);
 		loginPage.doLogin();
@@ -62,6 +68,7 @@ public class ProjectsNewPageIT {
 
 	@Test
 	public void testCreateNewProjectForm() {
+        logger.debug("Testing: CreateNewProjectFrom");
 		page.goToPage();
 		assertEquals("Should have the correct page title", "IRIDA Platform - Create a New Project", driver.getTitle());
 
