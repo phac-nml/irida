@@ -319,8 +319,8 @@ public class ProjectsControllerTest {
         Sample sample = new Sample("test");
         sample.setId(1L);
         projectService.addSampleToProject(project1, sample);
-        List idList = new ArrayList<>();
-        idList.add("1");
+        List<Long> idList = new ArrayList<>();
+        idList.add(1L);
         when(projectService.read(PROJECT_ID)).thenReturn(project1);
         when(sampleService.read(anyLong())).thenReturn(sample);
         Map<String, Object> result = controller.deleteProjectSamples(PROJECT_ID, idList);
