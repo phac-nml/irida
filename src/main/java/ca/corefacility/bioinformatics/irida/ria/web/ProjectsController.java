@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -591,7 +592,36 @@ public class ProjectsController {
 		return map;
 	}
 
-	/**
+    /**
+     * Remove a list of samples from a a Project.
+     *
+     * @param projectId
+     *            Id of the project to remove the samples from
+     *
+     * @param sampleIds
+     *            An array of samples to remove from a project
+     * @return Map containing either success or errors.
+     */
+    @RequestMapping(value = "/ajax/{projectId}/samples/delete", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    public @ResponseBody
+    Map<String, Object> deleteProjectSamples(@PathVariable Long projectId, @RequestParam List<Long> sampleIds) {
+        Project project = projectService.read(projectId);
+        Map<String, Object> result = new HashMap<>();
+        for (Long id : sampleIds) {
+            try {
+                Sample sample = sampleService.read(id);
+                projectService.removeSampleFromProject(project, sample);
+            } catch (EntityNotFoundException e) {
+                result.put("error", "Cannot find sample with id: " + id);
+            }
+
+        }
+        result.put("success", "DONE!");
+        return result;
+    }
+
+
+    /**
 	 * Based on a page of projects for an user, returns a list that also
 	 * includes information as to whether the user is a member of the project.
 	 * 
