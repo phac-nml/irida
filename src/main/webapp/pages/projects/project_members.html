@@ -312,6 +312,7 @@
             	  callbacks: {
             		  beforeOpen: function(){
             			  $("#add-user-username").select2("val","");
+            			  $("#add-user-role").select2("val","PROJECT_USER");
             		  }
             	  }
             });
@@ -458,6 +459,8 @@
         	    },
                 "placeholder": /*[[#{project.members.add.select-user}]]*/ "Select a User"
             });
+        	
+        	$("#add-user-role").select2();
         	
         });
         
