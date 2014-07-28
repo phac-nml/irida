@@ -1,12 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * <p>
@@ -51,14 +53,14 @@ public class ProjectsNewPage {
     }
 
 	public boolean formHasErrors() {
-        boolean result;
+		WebDriverWait wait = new WebDriverWait(driver, 500);
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("errors-default")));
         try {
-            List<WebElement> elements = driver.findElements(By.id("errors-default"));
-            result = elements.size() == 0 ? false : true;
+            driver.findElements(By.className("errors-default"));
+            return false;
         } catch (Exception e) {
-            result = false;
+            return true;
         }
-        return result;
     }
 
 	public void setRemoteURL(String url) {
