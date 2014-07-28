@@ -213,6 +213,7 @@ function EditableDataTable() {
 
     this._showDeleteSampleModal = function () {
         var that = this;
+        var result = true;
         noty({
             layout: "center",
             type: "warning",
@@ -231,10 +232,12 @@ function EditableDataTable() {
                     text: /*#{form.btn.cancel}*/ 'Cancel',
                     onClick: function ($noty) {
                         $noty.close();
+                        result = false;
                     }
                 }
             ]
         });
+        return result;
     };
 
     this._sendAjaxNameUpdate = function (id, name, origName) {
@@ -371,12 +374,9 @@ EditableDataTable.prototype = {
         return "indeterminate"; // Checkbox indeterminant
     },
     deleteSelectedSamples: function () {
-        var result = false;
         if (this.selectedRowIds.length > 0) {
             this._showDeleteSampleModal();
-            result = true;
         }
-        return result;
     }
 };
 
@@ -436,8 +436,13 @@ $(document).ready(function () {
                         .html('<a href="#">' + data.numFiles + '</a>');
             }
         },
-        'fnInitComplete': function () {
+        'fnDrawCallback': function () {
             DT.getAllSampleIds();
+            console.log(DT.selectedRowIds.length);
+            if(DT.selectedRowIds.length === 0) {
+                $deleteBtn.prop('disabled', true);
+                $selectAll.prop('indeterminate', false).prop('checked', false);
+            }
         }
     }));
 
@@ -477,11 +482,7 @@ $(document).ready(function () {
     });
 
     $deleteBtn.on('click', function () {
-        var result = DT.deleteSelectedSamples();
-        if(result){
-            $selectAll.prop('indeterminate', false).prop('checked', false);
-            $deleteBtn.prop('disabled', true);
-        }
+        DT.deleteSelectedSamples();
     });
 });
 
