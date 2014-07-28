@@ -1,5 +1,27 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
+import java.security.Principal;
+import java.util.*;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -18,28 +40,9 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import java.security.Principal;
-import java.util.*;
 
 /**
  * Controller for all project related views
@@ -474,6 +477,15 @@ public class ProjectsController {
 		return getProjectsDataMap(projectList, draw, page.getTotalElements(), sortColumn, sortDirection);
 	}
 
+	/**
+	 * Updates a sample name.
+	 * 
+	 * @param sampleId
+	 *            The id of the sample to be updated
+	 * @param name
+	 *            The new name to give to the sample
+	 * @return Map containing either success or errors.
+	 */
 	@RequestMapping(value = "/ajax/{projectId}/samples/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public
     @ResponseBody
@@ -494,6 +506,13 @@ public class ProjectsController {
         return resultMap;
     }
 
+	/**
+	 * Get a list of all sample ids within a project
+	 * 
+	 * @param projectId
+	 *            The id of the project.
+	 * @return A list of sample ids.
+	 */
     @RequestMapping(value = "/ajax/{projectId}/samples/getids", produces = MediaType.APPLICATION_JSON_VALUE)
     public
     @ResponseBody
@@ -509,6 +528,16 @@ public class ProjectsController {
         return result;
     }
 
+	/**
+	 * Remove a list of samples from a a Project.
+	 * 
+	 * @param projectId
+	 *            Id of the project to remove the samples from
+	 *
+	 * @param sampleIds
+	 *            An array of samples to remove from a project
+	 * @return Map containing either success or errors.
+	 */
     @RequestMapping(value = "/ajax/{projectId}/samples/delete", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
     public @ResponseBody
     Map<String, Object> deleteProjectSamples(@PathVariable Long projectId, @RequestParam JSONArray sampleIds) {
@@ -526,7 +555,7 @@ public class ProjectsController {
             }
 
         }
-        result.put("Success", "DONE!");
+        result.put("success", "DONE!");
         return result;
     }
 

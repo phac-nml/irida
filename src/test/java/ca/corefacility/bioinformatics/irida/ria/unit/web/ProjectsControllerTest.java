@@ -18,6 +18,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Path;
 import javax.validation.metadata.ConstraintDescriptor;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
@@ -310,6 +311,21 @@ public class ProjectsControllerTest {
         when(sampleService.update(sampleId, updateMap)).thenReturn(null);
         Map<String, Object> resultMap = controller.postUpdateProjectSamples(sampleId, newName);
         assertTrue("Result contains the word success", resultMap.containsKey("success"));
+    }
+
+    @Test
+    public void testDeleteProjectSamples() {
+        Project project1 = getProject();
+        Sample sample = new Sample("test");
+        sample.setId(1L);
+        projectService.addSampleToProject(project1, sample);
+        List idList = new ArrayList<>();
+        idList.add("1");
+        JSONArray jsonArray = new JSONArray(idList);
+        when(projectService.read(PROJECT_ID)).thenReturn(project1);
+        when(sampleService.read(anyLong())).thenReturn(sample);
+        Map<String, Object> result = controller.deleteProjectSamples(PROJECT_ID, jsonArray);
+        assertTrue("Result contains the word success", result.containsKey("success"));
     }
 
 	/**
