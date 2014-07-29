@@ -101,6 +101,7 @@
             <p th:text="#{project.samples.combine-warning}"></p>
             <div class="form-group">
                 <input class="input-full" name="merge-name" type="text" id="select2-merge-input"/>
+                <span id="merge-error" class="hidden help-block bg-danger">A block of help text that breaks onto a new line and may extend beyond one line.</span>
             </div>
         </script>
     </div>
@@ -197,15 +198,16 @@ function EditableDataTable() {
             data: "sampleIds=" + table.selectedRowIds + "&nameId=" + nameId + "&newName=" + newName,
             type: "post"
         }).done(function(data) {
-            noty.close();
             if (data.success) {
+                noty.close();
                 var msg = /*[[#{project.samples.combine-success}]]*/ 'Samples successfully merged samples';
                 showSuccessModal(msg.format(table.selectedRowIds.length));
                 table.selectedRowIds = [];
                 table.updateTable();
                 table.getAllSampleIds();
+                $("#merge-error").addClass('hidden');
             } else {
-                showErrorModal(data.error);
+                $("#merge-error").html(data.error.sampleName).removeClass('hidden');
             }
         });
     }
@@ -365,14 +367,14 @@ function EditableDataTable() {
                         addClass: 'btn btn-primary btn-sm',
                         text: /*[[#{form.btn.confim}]]*/ 'OK',
                         onClick: function ($noty) {
-                            var nameId = $("#select2-merge-input").val();
+                            var mergeSampleId = $("#select2-merge-input").val();
                             var newName = "";
-                            if(isNaN(nameId)){
-                                newName = nameId;
-                                nameId = "";
+                            if(isNaN(mergeSampleId)){
+                                newName = mergeSampleId;
+                                mergeSampleId = "";
                             }
 
-                            combineSamples(that, $noty, nameId, newName);
+                            combineSamples(that, $noty, mergeSampleId, newName);
                         }
                     },
                     {
@@ -554,13 +556,12 @@ $(document).ready(function () {
         },
         'fnDrawCallback': function () {
             DT.getAllSampleIds();
-            console.log(DT.selectedRowIds.length);
             var size = DT.selectedRowIds.length;
             if(size === 0) {
                 $btnAction.prop('disabled', true);
                 $selectAll.prop('indeterminate', false).prop('checked', false);
             }
-            if(size>1) {
+            if(size<=2) {
                 $btnAction2.prop('disabled', true);
             }
 
