@@ -39,6 +39,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.security.Principal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Controller for all project related views
@@ -622,6 +623,46 @@ public class ProjectsController {
             resultList.add(results);
         }
         return resultList;
+    }
+
+    @RequestMapping(value = "/ajax/{projectId}/samples/merge", produces = MediaType.APPLICATION_JSON_VALUE)
+    public
+    @ResponseBody
+    Map<String, String> ajaxSamplesMerge(@PathVariable Long projectId, @RequestParam List<Long> sampleIds, @RequestParam(required = false) Long nameId, @RequestParam(required = false) String newName) {
+        Map<String, String> result = new HashMap<>();
+        Project project = projectService.read(projectId);
+        Sample mergeIntoSample = null;
+        // Determine if it is a new name or and existing sample
+        if(sampleIds.contains(nameId)) {
+            try {
+                mergeIntoSample = sampleService.read(nameId);
+            } catch (EntityNotFoundException e) {
+                result.put("error", e.getLocalizedMessage());
+
+            }
+            sampleIds.remove(nameId);
+        }
+        else {
+            try {
+                mergeIntoSample = sampleService.read(sampleIds.remove(0));
+                Map<String, Object> updateMap = new HashMap<>();
+                if (!Strings.isNullOrEmpty(newName)) {
+                    updateMap.put("sampleName", newName);
+                    sampleService.update(mergeIntoSample.getId(), updateMap);
+                }
+            } catch (EntityNotFoundException e) {
+                result.put("error", e.getLocalizedMessage());
+            }
+        }
+        if (!result.containsKey("error")) {
+            Sample[] mergeSamples = new Sample[sampleIds.size()];
+            for (int i = 0; i < sampleIds.size(); i++) {
+                mergeSamples[i] = sampleService.read(sampleIds.get(i));
+            }
+            sampleService.mergeSamples(project, mergeIntoSample, mergeSamples);
+            result.put("success", "success");
+        }
+        return result;
     }
 
 
