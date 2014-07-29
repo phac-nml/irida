@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -130,6 +131,25 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	public List<Join<Project, User>> getProjectsForUser(User user);
 
 	/**
+	 * Search {@link ProjectUserJoin}s with a given specification and paging
+	 * parameters
+	 * 
+	 * @param specification
+	 *            The specification to search with
+	 * @param page
+	 *            The search page number
+	 * @param size
+	 *            The search page size
+	 * @param order
+	 *            The search order
+	 * @param sortProperties
+	 *            The page sort properties
+	 * @return The matching ProjectUserJoins
+	 */
+	public Page<ProjectUserJoin> searchProjectUsers(Specification<ProjectUserJoin> specification, int page, int size,
+			Direction order, String... sortProperties);
+
+	/**
 	 * Search all {@link Project}s associated with a particular {@link User}.
 	 * 
 	 * @param user
@@ -146,6 +166,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *            The properties to sort on
 	 * @return The matching projects
 	 */
+	@Deprecated
 	public Page<ProjectUserJoin> searchProjectsByNameForUser(User user, String searchTerm, int page, int size,
 			Direction order, String... sortProperties);
 
@@ -160,7 +181,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return A collection of {@link ProjectUserJoin}s describing the projects
 	 *         associated with the user.
 	 */
-	public List<Join<Project, User>> getProjectsForUserWithRole(User user, ProjectRole role);
+	public List<ProjectUserJoin> getProjectsForUserWithRole(User user, ProjectRole role);
 
 	/**
 	 * Check if a {@link User} has a given {@link ProjectRole} on a
