@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -567,7 +565,8 @@ public class ProjectsController {
 			String role = projectUserJoin.getProjectRole() != null ? projectUserJoin.getProjectRole().toString() : "";
 			Map<String, String> l = new HashMap<>();
 
-			l.put("checkbox", p.getId().toString());			l.put("id", p.getId().toString());
+			l.put("checkbox", p.getId().toString());
+			l.put("id", p.getId().toString());
 			l.put("name", p.getName());
 			l.put("organism", p.getOrganism());
 			l.put("role", role);
