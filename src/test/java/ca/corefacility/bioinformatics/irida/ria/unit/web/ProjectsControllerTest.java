@@ -9,9 +9,7 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -406,6 +404,36 @@ public class ProjectsControllerTest {
         Map<String, Object> result = controller.deleteProjectSamples(PROJECT_ID, idList);
         assertTrue("Result contains the word success", result.containsKey("success"));
         verify(projectService).removeSampleFromProject(project1, sample);
+    }
+
+    @Test
+    public void testAjaxSamplesMerge() {
+        Project project = getProject();
+        Sample sample1 = new Sample("Wilma");
+        sample1.setId(1L);
+        Sample sample2 = new Sample("Betty");
+        sample2.setId(11L);
+        List<Long> sampleIds = new ArrayList<>();
+        sampleIds.add(1L);
+        sampleIds.add(11L);
+        String newName = "FRED";
+
+        when(sampleService.read(1L)).thenReturn(sample1);
+        when(sampleService.read(11L)).thenReturn(sample2);
+        when(projectService.read(PROJECT_ID)).thenReturn(project);
+
+        // Call the controller with a new name
+        Map<String, Object> result = controller.ajaxSamplesMerge(PROJECT_ID, sampleIds, 1L, newName);
+
+        // Ensure that the merge was requested
+        Sample[] sampleArray = {sample2};
+        verify(sampleService, times(1)).mergeSamples(any(Project.class), any(Sample.class), any());
+
+        // Ensure that the rename was not requested
+        Map<String, Object> updateMap = new HashMap<>();
+        updateMap.put("sampleName", newName);
+        verify(sampleService, times(1)).update(1L, updateMap);
+        assertTrue("Result contains the word success", result.containsKey("success"));
     }
 
 	/**
