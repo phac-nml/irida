@@ -34,6 +34,11 @@
                                     th:text="#{project.samples.copy}">__Copy Samples__
                             </button>
                         </div>
+                        <div th:if="${isOwner} or ${isAdmin}" class="btn-group">
+                            <button id="moveBtn" class="btn btn-default btn-sm btn-action" disabled="true"
+                                        th:text="#{project.samples.move}">__Move Samples__
+                            </button>
+                        </div>
 						<div class="btn-group">
                             <button id="combineBtn" class="btn btn-default btn-sm btn-action2" disabled="true"
                                     th:text="#{project.samples.combine}">__Combine_Samples__
@@ -105,15 +110,11 @@
     
     
     <script type="text/html" id="copySamplesSection">
-			<h2 th:text="#{project.samples.copy.title}">_Copy/Move Samples_</h2>
+			<h2 id="copyTitle">_Copy/Move Samples_</h2>
 
             <div class="form-group">
                 <label class="control-label" for="copy-sample-project" th:text="#{project.samples.copy.project}">_Project_</label> 
                 <input type="text" id="copy-sample-project" name="project" class="form-control input-full" />
-            </div>
-            <div th:if="${isOwner} or ${isAdmin}" class="form-group">
-                <label class="control-label" for="copy-remove-from-project" th:text="#{project.samples.copy.remove-original}" >_Remove From This Project_</label> 
-                <input type="checkbox" id="copy-remove-from-project" name="remove-from-project" />
             </div>
 			<span id="copy-samples-error" class="help-block bg-danger"></span>
     </script>
@@ -223,7 +224,13 @@ function EditableDataTable() {
             type: "post",
             success: function(data){
             	noty.close();
-            	var msg = /*[[#{project.samples.copy-success}]]*/ 'Samples successfully copied';
+            	var msg; 
+            	if(removeFromOriginal){
+            		msg = /*[[#{project.samples.move-success}]]*/ 'Samples successfully move';
+            	}
+            	else{
+            		msg = /*[[#{project.samples.copy-success}]]*/ 'Samples successfully copied';
+            	}
             	var count = data.totalCopied;
             	if(count > 0){
                 	showSuccessModal(msg.format(count));
@@ -354,7 +361,7 @@ function EditableDataTable() {
         return result;
     };
     
-    this._showCopySamplesModial = function () {
+    this._showCopySamplesModial = function (removeFromCurrentProject) {
     	var that = this;
     	var div = document.getElementById('copySamplesSection');
         var template = div.innerHTML;
@@ -370,10 +377,9 @@ function EditableDataTable() {
                     text: /*[[#{form.btn.confim}]]*/ 'OK',
                     onClick: function ($noty) {
                         var newProject = $("#copy-sample-project").val();
-                        var removeFromProject = $("#copy-remove-from-project").prop('checked');
 
                         if(newProject){
-                        	copySamples(that, $noty, newProject,removeFromProject);
+                        	copySamples(that, $noty, newProject,removeFromCurrentProject);
                         }
                         else{
                         	var noProject = /*[[#{project.samples.copy.no-project-selected}]]*/ 'No project selected';
@@ -628,9 +634,18 @@ EditableDataTable.prototype = {
             this._showCombineSamplesModal();
         }
     },
-    copySelectedSamples: function () {
+    copySelectedSamples: function (removeFromCurrentProject) {
         if (this.selectedRowIds.length > 0) {
-            this._showCopySamplesModial();
+        	var title;
+        	if(removeFromCurrentProject){
+        		title = /*[[#{project.samples.move.title}]]*/ "Move Samples";
+        	}
+        	else{
+        		title = /*[[#{project.samples.copy.title}]]*/ "Copy Samples";
+        	}
+        	
+            this._showCopySamplesModial(removeFromCurrentProject);
+            $("#copyTitle").html(title);
         }
     }
 };
@@ -641,6 +656,7 @@ $(document).ready(function () {
 			$btnAction2 = $(".btn-action2"),
             $combineBtn = $("#combineBtn"),
             $copyBtn = $("#copyBtn"),
+            $moveBtn = $("#moveBtn"),
             $selectAll = $("#selectAll"),
             $samplesTable = $('#samplesTable'),
             DT = new EditableDataTable();
@@ -760,7 +776,11 @@ $(document).ready(function () {
     });
 	
 	$copyBtn.on('click', function(){
-    	DT.copySelectedSamples();
+    	DT.copySelectedSamples(false);
+    });
+	
+	$moveBtn.on('click', function(){
+    	DT.copySelectedSamples(true);
     });
 });
 
