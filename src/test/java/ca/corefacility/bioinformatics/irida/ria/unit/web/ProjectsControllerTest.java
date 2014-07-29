@@ -408,19 +408,22 @@ public class ProjectsControllerTest {
 
     @Test
     public void testAjaxSamplesMerge() {
+	    String newName = "FRED";
         Project project = getProject();
         Sample sample1 = new Sample("Wilma");
         sample1.setId(1L);
+	    sample1.setSampleName(newName);
         Sample sample2 = new Sample("Betty");
         sample2.setId(11L);
         List<Long> sampleIds = new ArrayList<>();
         sampleIds.add(1L);
         sampleIds.add(11L);
-        String newName = "FRED";
 
         when(sampleService.read(1L)).thenReturn(sample1);
         when(sampleService.read(11L)).thenReturn(sample2);
         when(projectService.read(PROJECT_ID)).thenReturn(project);
+	    when(sampleService.update(anyLong(), anyMap())).thenReturn(sample1);
+
 
         // Call the controller with a new name
         Map<String, Object> result = controller.ajaxSamplesMerge(PROJECT_ID, sampleIds, 1L, newName);
