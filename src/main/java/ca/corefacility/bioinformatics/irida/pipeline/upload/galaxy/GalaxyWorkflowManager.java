@@ -185,7 +185,7 @@ public class GalaxyWorkflowManager {
 		inputs.setDestination(new WorkflowInputs.ExistingHistory(workflowHistory.getId()));
 		inputs.setWorkflowId(workflowDetails.getId());
 		inputs.setInput(workflowInputId, new WorkflowInputs.WorkflowInput(collection.getId(),
-				WorkflowInputs.InputSourceType.HDA));
+				WorkflowInputs.InputSourceType.HDCA));
 		
 		// execute workflow
 		WorkflowOutputs output = workflowsClient.runWorkflow(inputs);
@@ -218,7 +218,6 @@ public class GalaxyWorkflowManager {
 		try {
 			return historiesClient.createDatasetCollection(workflowHistory.getId(), collectionDescription);
 		} catch (RuntimeException e) {
-			logger.debug(e.getMessage());
 			throw new ExecutionManagerException("Could not construct dataset collection", e);
 		}
 	}

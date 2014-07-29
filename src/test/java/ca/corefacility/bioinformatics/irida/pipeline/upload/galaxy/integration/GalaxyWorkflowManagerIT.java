@@ -130,13 +130,11 @@ public class GalaxyWorkflowManagerIT {
 		
 		// outputs should exist
 		assertNotNull(workflowOutput.getOutputIds());
-		assertTrue(workflowOutput.getOutputIds().size() > 0);
+		assertEquals(1, workflowOutput.getOutputIds().size());
+		String outputId = workflowOutput.getOutputIds().get(0);
 		
-		// each datasets should exist
-		for (String outputId : workflowOutput.getOutputIds()) {
-			Dataset dataset = historiesClient.showDataset(workflowOutput.getHistoryId(), outputId);
-			assertNotNull(dataset);
-		}
+		Dataset outputDataset = historiesClient.showDataset(workflowOutput.getHistoryId(), outputId);
+		assertNotNull(outputDataset);
 	}
 	
 	/**
