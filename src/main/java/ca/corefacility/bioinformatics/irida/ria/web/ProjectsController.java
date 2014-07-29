@@ -39,7 +39,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.security.Principal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Controller for all project related views
@@ -610,6 +609,13 @@ public class ProjectsController {
         return result;
 	}
 
+	/**
+	 * For a list of sample ids, this function will generate a map of {id, name}
+	 * 
+	 * @param sampleIds
+	 *            A list of sample ids.
+	 * @return A list of map of {id, name}
+	 */
     @RequestMapping(value = "/ajax/getNamesFromIds", produces = MediaType.APPLICATION_JSON_VALUE)
     public
     @ResponseBody
@@ -623,39 +629,49 @@ public class ProjectsController {
             resultList.add(results);
         }
         return resultList;
-    }
+	}
 
-    @RequestMapping(value = "/ajax/{projectId}/samples/merge", produces = MediaType.APPLICATION_JSON_VALUE)
-    public
-    @ResponseBody
-    Map<String, String> ajaxSamplesMerge(@PathVariable Long projectId, @RequestParam List<Long> sampleIds, @RequestParam(required = false) Long nameId, @RequestParam(required = false) String newName) {
-        Map<String, String> result = new HashMap<>();
+	/**
+	 * Merges a list of samples into either the first sample in the list with a
+	 * new name if provided, or into the selected sample based on the id.
+	 * 
+	 * @param projectId
+	 *            The id for the project the samples belong to.
+	 * @param sampleIds
+	 *            A list of sample ids for samples to merge.
+	 * @param mergeSampleId
+	 *            (Optional) The id of the sample to merge the other into.
+	 * @param newName
+	 *            (Optional) The new name for the final sample.
+	 * @return
+	 */
+	@RequestMapping(value = "/ajax/{projectId}/samples/merge", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, Object> ajaxSamplesMerge(@PathVariable Long projectId,
+			@RequestParam List<Long> sampleIds, @RequestParam(required = false) Long mergeSampleId,
+			@RequestParam(required = false) String newName) {
+        Map<String, Object> result = new HashMap<>();
         Project project = projectService.read(projectId);
         Sample mergeIntoSample = null;
         // Determine if it is a new name or and existing sample
-        if(sampleIds.contains(nameId)) {
-            try {
-                mergeIntoSample = sampleService.read(nameId);
-            } catch (EntityNotFoundException e) {
-                result.put("error", e.getLocalizedMessage());
-
-            }
-            sampleIds.remove(nameId);
-        }
-        else {
-            try {
+        try {
+            if (sampleIds.contains(mergeSampleId)) {
+                mergeIntoSample = sampleService.read(mergeSampleId);
+                sampleIds.remove(mergeSampleId);
+            } else {
                 mergeIntoSample = sampleService.read(sampleIds.remove(0));
-                Map<String, Object> updateMap = new HashMap<>();
-                if (!Strings.isNullOrEmpty(newName)) {
-                    updateMap.put("sampleName", newName);
-                    sampleService.update(mergeIntoSample.getId(), updateMap);
-                }
-            } catch (EntityNotFoundException e) {
-                result.put("error", e.getLocalizedMessage());
             }
+        } catch (EntityNotFoundException e) {
+            result.put("error", e.getLocalizedMessage());
+
         }
-        if (!result.containsKey("error")) {
-            Sample[] mergeSamples = new Sample[sampleIds.size()];
+        // Rename if a new name is given
+		if (!Strings.isNullOrEmpty(newName)) {
+			Map<String, Object> updateMap = new HashMap<>();
+			updateMap.put("sampleName", newName);
+			mergeIntoSample = sampleService.update(mergeIntoSample.getId(), updateMap);
+		}
+		if (!result.containsKey("error")) {
+			Sample[] mergeSamples = new Sample[sampleIds.size()];
             for (int i = 0; i < sampleIds.size(); i++) {
                 mergeSamples[i] = sampleService.read(sampleIds.get(i));
             }
