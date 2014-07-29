@@ -10,12 +10,15 @@ import java.util.Map;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -544,6 +547,92 @@ public class ProjectsController {
         result.put("ids", sampleIdList);
         return result;
     }
+    
+    /**
+     * Search for projects available for a user to copy samples to.  If the user is an admin it will show all projects.
+     * @param projectId The current project id
+     * @param term A search term
+     * @param pageSize The size of the page requests
+     * @param page The page number (0 based)
+     * @param principal The logged in user.
+     * @return a Map<String,Object> containing:
+     * 		total: total number of elements
+     * 		results: A Map<Long,String> of project IDs and project names.
+     */
+	@RequestMapping(value = "/ajax/{projectId}/samples/available_projects")
+	@ResponseBody
+	public Map<String, Object> getProjectsToCopySamples(@PathVariable Long projectId, @RequestParam String term,
+			@RequestParam int pageSize, @RequestParam int page, Principal principal) {
+		User user = userService.getUserByUsername(principal.getName());
+
+		Map<Long, String> vals = new HashMap<>();
+		Map<String, Object> response = new HashMap<>();
+		if (user.getAuthorities().contains(Role.ROLE_ADMIN)) {
+			Page<Project> projects = projectService.searchProjectsByName(term, page, pageSize, Direction.ASC);
+			for (Project p : projects) {
+				vals.put(p.getId(), p.getName());
+			}
+			response.put("total", projects.getTotalElements());
+		} else {
+			Page<ProjectUserJoin> projects = projectService.searchProjectsByNameForUser(user, term, page, pageSize,
+					Direction.ASC);
+			for (ProjectUserJoin p : projects) {
+				vals.put(p.getSubject().getId(), p.getSubject().getName());
+			}
+			response.put("total", projects.getTotalElements());
+		}
+
+		response.put("results", vals);
+
+		return response;
+	}
+
+	/**
+	 * Copy or move samples from one project to another
+	 * @param projectId The original project id
+	 * @param sampleIds The sample ids to move
+	 * @param newProjectId The new project id
+	 * @param removeFromOriginal true/false whether to remove the samples from the original project
+	 * @return A list of warnings
+	 */
+	@RequestMapping(value = "/ajax/{projectId}/samples/copy")
+	@ResponseBody
+	public Map<String,Object> copySampleToProject(@PathVariable Long projectId, @RequestParam List<Long> sampleIds,
+			@RequestParam Long newProjectId, @RequestParam boolean removeFromOriginal) {
+		Project originalProject = projectService.read(projectId);
+		Project newProject = projectService.read(newProjectId);
+		
+		Map<String,Object> response = new HashMap<>();
+		List<String> warnings = new ArrayList<>();
+		
+		int totalCopied = 0;
+		
+		for (Long sampleId : sampleIds) {
+			Sample sample = sampleService.read(sampleId);
+			try {
+				projectService.addSampleToProject(newProject, sample);
+				logger.trace("Copied sample " + sampleId + " to project " + newProjectId);
+				totalCopied++;
+				if(removeFromOriginal){
+					projectService.removeSampleFromProject(originalProject, sample);
+				}
+			} catch (EntityExistsException ex) {
+				logger.warn("Attempted to add sample " + sampleId + " to project " + newProjectId
+						+ " where it already exists.", ex);
+				if(!response.containsKey("warnings")){
+					
+				}
+				warnings.add(sample.getLabel());
+			}
+		}
+		
+		if(!warnings.isEmpty()){
+			response.put("warnings", warnings);
+		}
+		response.put("totalCopied", totalCopied);
+
+		return response;
+	}
 
     /**
 	 * Generates a map of project information for the {@link ProjectsDataTable}

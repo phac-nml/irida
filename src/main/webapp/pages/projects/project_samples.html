@@ -29,6 +29,11 @@
                                     th:text="#{project.samples.delete}">__Delete_Samples__
                             </button>
                         </div>
+                        <div class="btn-group">
+                            <button id="copyBtn" class="btn btn-default btn-sm btn-action" disabled="true"
+                                    th:text="#{project.samples.copy}">__Copy Samples__
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -92,6 +97,21 @@
                     layout:replace="partials/associated-projects :: list (projects=${associatedProjects})"></div>
         </div>
     </div>
+    
+    
+    <script type="text/html" id="copySamplesSection">
+			<h2 th:text="#{project.samples.copy.title}">_Copy/Move Samples_</h2>
+
+            <div class="form-group">
+                <label class="control-label" for="copy-sample-project" th:text="#{project.samples.copy.project}">_Project_</label> 
+                <input type="text" id="copy-sample-project" name="project" class="form-control input-full" />
+            </div>
+            <div th:if="${isOwner} or ${isAdmin}" class="form-group">
+                <label class="control-label" for="copy-remove-from-project" th:text="#{project.samples.copy.remove-original}" >_Remove From This Project_</label> 
+                <input type="checkbox" id="copy-remove-from-project" name="remove-from-project" />
+            </div>
+			<span id="copy-samples-error" class="help-block bg-danger"></span>
+    </script>
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
 <div th:replace="projects/project_base :: scripts"></div>
@@ -167,6 +187,31 @@ function EditableDataTable() {
             showSuccessModal(msg);
         });
     }
+    
+    function copySamples(table, noty, newProject, removeFromOriginal) {
+        $.ajax({
+            url: /*[[@{/projects/ajax/{projectId}/samples/copy(projectId=${project.getId()})}]]*/ '/projects/ajax/1/samples/copy',
+            data: "sampleIds=" + table.selectedRowIds + "&newProjectId=" + newProject +"&removeFromOriginal=" + removeFromOriginal,
+            type: "post",
+            success: function(data){
+            	noty.close();
+            	var msg = /*[[#{project.samples.copy-success}]]*/ 'Samples successfully copied';
+            	var count = data.totalCopied;
+                showSuccessModal(count + " " + msg);
+                if(data.warnings){
+                	for(warning in data.warnings){
+                		showWarningModial(data.warnings[warning]);
+                	}
+                }
+                table.selectedRowIds = [];
+                table.updateTable();
+                table.getAllSampleIds();
+            },
+            error: function(){
+            	console.log(data.error);
+            }
+        });
+    }
 
     function showSuccessModal(message) {
         noty({
@@ -174,6 +219,15 @@ function EditableDataTable() {
             layout: "topCenter",
             type: "success",
             timeout: 3200
+        });
+    }
+    
+    function showWarningModial(message) {
+        noty({
+            text: message,
+            layout: "topCenter",
+            type: "warning",
+            timeout: 10000
         });
     }
 
@@ -238,6 +292,80 @@ function EditableDataTable() {
             ]
         });
         return result;
+    };
+    
+    this._showCopySamplesModial = function () {
+    	var that = this;
+    	var div = document.getElementById('copySamplesSection');
+        var template = div.innerHTML;
+        $("#copy-samples-error").hide();
+        noty({
+            layout: "center",
+            type: "default",
+            text: template,
+            modal: true,
+            buttons: [
+                {
+                    addClass: 'btn btn-primary btn-sm',
+                    text: /*[[#{form.btn.confim}]]*/ 'OK',
+                    onClick: function ($noty) {
+                        var newProject = $("#copy-sample-project").val();
+                        var removeFromProject = $("#copy-remove-from-project").prop('checked');
+
+                        if(newProject){
+                        	copySamples(that, $noty, newProject,removeFromProject);
+                        }
+                        else{
+                        	var noProject = /*[[#{project.samples.copy.no-project-selected}]]*/ 'No project selected';
+                        	
+                        	$("#copy-samples-error").html(noProject);
+                        	$("#copy-samples-error").show();
+                        }
+                    }
+                },
+                {
+                    addClass: 'btn btn-default btn-sm',
+                    text: /*#{form.btn.cancel}*/ 'Cancel',
+                    onClick: function ($noty) {
+                        $noty.close();
+                    }
+                }
+            ],
+            callback: {
+                onShow: function() {
+                	//get the available projects
+                	$("#copy-sample-project").select2({
+                		ajax: {
+                	        url: /*[[@{/projects/ajax/{id}/samples/available_projects(id=${project.getId()})}]]*/ '/projects/ajax/1/samples/available_projects',
+                	        dataType: 'json',
+                	        data: function (search, page) {
+                	            return {
+                	              term: search, // search term
+                	              page: page - 1, //zero based method
+                	              pageSize: 10,
+                	            };
+                	        },
+                	        results: function (data, page) {
+                	            var results = [];
+                	            
+                	            var more = (page * 10) < data.total;
+                	            
+                	            for(var id in data.results) {
+                	                results.push({
+                	                	"id": id,
+                	                	"text": data.results[id]
+                	                });
+                	            }
+                	            
+                	            return {results:results, more:more};
+                	        }
+                	    },
+                	    dropdownCss: {"z-index": 10000001},
+                        "placeholder": /*[[#{project.samples.copy.select-project}]]*/ "Select a Project"
+                    });
+                }
+            }
+        });
     };
 
     this._sendAjaxNameUpdate = function (id, name, origName) {
@@ -377,12 +505,18 @@ EditableDataTable.prototype = {
         if (this.selectedRowIds.length > 0) {
             this._showDeleteSampleModal();
         }
+    },
+    copySelectedSamples: function () {
+        if (this.selectedRowIds.length > 0) {
+            this._showCopySamplesModial();
+        }
     }
 };
 
 $(document).ready(function () {
     var $deleteBtn = $("#deleteBtn"),
             $btnAction = $(".btn-action"),
+            $copyBtn = $("#copyBtn"),
             $selectAll = $("#selectAll"),
             $samplesTable = $('#samplesTable'),
             DT = new EditableDataTable();
@@ -485,6 +619,12 @@ $(document).ready(function () {
     $deleteBtn.on('click', function () {
         DT.deleteSelectedSamples();
     });
+    
+    $copyBtn.on('click', function(){
+    	DT.copySelectedSamples();
+    });
+    
+    
 });
 
 $('[data-tooltip!=""]').qtip({ // Grab all elements with a non-blank data-tooltip attr.
