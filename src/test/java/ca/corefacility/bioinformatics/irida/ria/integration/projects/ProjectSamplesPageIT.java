@@ -9,7 +9,6 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -156,7 +155,7 @@ public class ProjectSamplesPageIT {
         page.clickFirstThreeCheckboxes();
         page.clickCombineSamples();
         assertTrue("Combine samples modal should be open", page.isCombineSamplesModalOpen());
-        page.selectFirstNameInCombineSamples("5");
+        page.selectTheMergedSampleName("5");
         assertEquals("Now only has 3 samples since 3 were merged", 3, page.getDisplayedSampleCount());
         assertEquals("Sample has the correct name", "sample5", page.getSampleNameForRow(1));
     }
@@ -171,7 +170,7 @@ public class ProjectSamplesPageIT {
         page.clickFirstThreeCheckboxes();
         page.clickCombineSamples();
         assertTrue("Combine samples modal should be open", page.isCombineSamplesModalOpen());
-        page.selectFirstNameInCombineSamples(newName);
+        page.selectTheMergedSampleName(newName);
         assertEquals("Now only has 3 samples since 3 were merged", 3, page.getDisplayedSampleCount());
         assertEquals("Sample has the correct name", newName, page.getSampleNameForRow(1));
     }
@@ -186,7 +185,7 @@ public class ProjectSamplesPageIT {
         page.clickFirstThreeCheckboxes();
         page.clickCombineSamples();
         assertTrue("Combine samples modal should be open", page.isCombineSamplesModalOpen());
-        page.selectFirstNameInCombineSamples(newName);
-        assertTrue("Displays merge error", page.isMergeErrorDisplayed());
+        page.selectTheMergedSampleName(newName);
+        assertTrue("Displays merge error", page.isSampleMergeErrorDisplayed());
     }
 }
