@@ -48,7 +48,7 @@ public class ProjectSamplesPageIT {
 
 	@Before
 	public void setUp() {
-		driver = new PhantomJSDriver();
+		driver = new ChromeDriver();
 		driver.manage().window().setSize(new Dimension(1024, 900));
 		LoginPage loginPage = LoginPage.to(driver);
 		loginPage.doLogin();
