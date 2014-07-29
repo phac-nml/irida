@@ -5,5 +5,9 @@ mvn install:install-file -Dfile=sam-1.32.jar -DgroupId=net.sf.samtools -Dartifac
 mvn install:install-file -Dfile=fastqc-0.10.1.jar -Dsources=fastqc-0.10.1-src.jar -DpomFile=fastqc-0.10.1.pom -DcreateChecksum=true
 
 # Galaxy Dependencies
+# git submodule needs to run from top level of git repository
+pushd `git rev-parse --show-toplevel`
 git submodule update --init --recursive
+popd
+
 sh galaxy-dependencies/install.sh
