@@ -201,7 +201,7 @@ function EditableDataTable() {
             if (data.success) {
                 noty.close();
                 var msg = /*[[#{project.samples.combine-success}]]*/ 'Samples successfully merged samples';
-                showSuccessModal(msg.format(table.selectedRowIds.length));
+                showSuccessModal(msg.format(table.selectedRowIds.length, data.success));
                 table.selectedRowIds = [];
                 table.updateTable();
                 table.getAllSampleIds();

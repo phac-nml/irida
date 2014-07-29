@@ -682,7 +682,7 @@ public class ProjectsController {
                 mergeSamples[i] = sampleService.read(sampleIds.get(i));
             }
             sampleService.mergeSamples(project, mergeIntoSample, mergeSamples);
-            result.put("success", "success");
+            result.put("success", mergeIntoSample.getSampleName());
         }
         return result;
     }
