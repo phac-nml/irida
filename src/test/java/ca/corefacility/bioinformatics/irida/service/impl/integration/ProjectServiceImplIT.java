@@ -178,7 +178,7 @@ public class ProjectServiceImplIT {
 	public void testGetProjectsManagedBy() {
 		User u = asRole(Role.ROLE_ADMIN).userService.read(3l);
 
-		Collection<Join<Project, User>> projects = asRole(Role.ROLE_ADMIN).projectService.getProjectsForUserWithRole(u,
+		Collection<ProjectUserJoin> projects = asRole(Role.ROLE_ADMIN).projectService.getProjectsForUserWithRole(u,
 				ProjectRole.PROJECT_OWNER);
 
 		assertEquals("User should have one project.", 1, projects.size());

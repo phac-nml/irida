@@ -1,9 +1,9 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -24,11 +24,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -49,6 +51,8 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.impl.ProjectServiceImpl;
+
+import com.google.common.collect.Lists;
 
 /**
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
@@ -204,15 +208,17 @@ public class ProjectServiceImplTest {
 		verify(sampleRepository).save(s);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testUserHasProjectRole() {
 		Project p = project();
 		User u = new User();
 
-		List<Join<Project, User>> joins = new ArrayList<>();
+		List<ProjectUserJoin> joins = new ArrayList<>();
 		joins.add(new ProjectUserJoin(p, u, ProjectRole.PROJECT_OWNER));
-
-		when(pujRepository.getProjectsForUserWithRole(u, ProjectRole.PROJECT_OWNER)).thenReturn(joins);
+		Page<ProjectUserJoin> page = new PageImpl<>(joins);
+		
+		when(pujRepository.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(page);
 
 		assertTrue("User has ownership of project.", projectService.userHasProjectRole(u, p, ProjectRole.PROJECT_OWNER));
 	}
