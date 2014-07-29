@@ -29,9 +29,14 @@
                                     th:text="#{project.samples.delete}">__Delete_Samples__
                             </button>
                         </div>
-                        <div class="btn-group">
+						<div class="btn-group">
                             <button id="copyBtn" class="btn btn-default btn-sm btn-action" disabled="true"
                                     th:text="#{project.samples.copy}">__Copy Samples__
+                            </button>
+                        </div>
+						<div class="btn-group">
+                            <button id="combineBtn" class="btn btn-default btn-sm btn-action2" disabled="true"
+                                    th:text="#{project.samples.combine}">__Combine_Samples__
                             </button>
                         </div>
                     </div>
@@ -112,11 +117,34 @@
             </div>
 			<span id="copy-samples-error" class="help-block bg-danger"></span>
     </script>
+	<script type="text/html" id="select2-merge">
+            <h2 th:text="#{project.samples.combine-title}">__REMOVED_TITLE__</h2>
+            <p th:text="#{project.samples.combine-warning}"></p>
+            <div class="form-group">
+                <input class="input-full" name="merge-name" type="text" id="select2-merge-input"/>
+                <span id="merge-error" class="hidden help-block bg-danger"></span>
+            </div>
+    </script>
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
 <div th:replace="projects/project_base :: scripts"></div>
 <script th:inline="javascript">
 /*<![CDATA[*/
+/*
+Add functionality to the string object to be able to template out a string.
+e.g. "fred {0}".format("flintstone") --> "fred flintstone"
+*/
+if (!String.prototype.format) {
+    String.prototype.format = function() {
+        var args = arguments;
+        return this.replace(/{(\d+)}/g, function(match, number) {
+            return typeof args[number] != 'undefined'
+                    ? args[number]
+                    : match
+                    ;
+        });
+    };
+}
 function EditableDataTable() {
     this.selectedRowIds = [];
     this.allRowIds = [];
@@ -212,6 +240,25 @@ function EditableDataTable() {
             }
         });
     }
+	function combineSamples(table, noty, nameId, newName) {
+        $.ajax({
+            url: /*[[@{/projects/ajax/{projectId}/samples/merge(projectId=${project.getId()})}]]*/ '/projects/ajax/1/samples/merge',
+            data: "sampleIds=" + table.selectedRowIds + "&nameId=" + nameId + "&newName=" + newName,
+            type: "post"
+        }).done(function(data) {
+            if (data.success) {
+                noty.close();
+                var msg = /*[[#{project.samples.combine-success}]]*/ 'Samples successfully merged samples';
+                showSuccessModal(msg.format(table.selectedRowIds.length, data.success));
+                table.selectedRowIds = [];
+                table.updateTable();
+                table.getAllSampleIds();
+                $("#merge-error").addClass('hidden');
+            } else {
+                $("#merge-error").html(data.error.sampleName).removeClass('hidden');
+            }
+        });
+    }
 
     function showSuccessModal(message) {
         noty({
@@ -221,8 +268,17 @@ function EditableDataTable() {
             timeout: 3200
         });
     }
-    
-    function showWarningModial(message) {
+
+    function showErrorModal(message) {
+        noty({
+            text: message,
+            layout: "topCenter",
+            type: "error",
+            timeout: 3200
+        });
+    }
+
+	function showWarningModial(message) {
         noty({
             text: message,
             layout: "topCenter",
@@ -421,6 +477,63 @@ function EditableDataTable() {
             }
         });
     };
+
+    this._showCombineSamplesModal = function () {
+        var that = this;
+        // TODO: get ajax list of samples names from server.
+        $.ajax({
+            url: "/projects/ajax/getNamesFromIds",
+            type: "post",
+            data: "sampleIds=" + this.selectedRowIds
+        }).done(function (data) {
+            var div = document.getElementById('select2-merge');
+            var template = div.innerHTML;
+            noty({
+                layout: "center",
+                type: "default",
+                text: template,
+                modal: true,
+                buttons: [
+                    {
+                        addClass: 'btn btn-primary btn-sm',
+                        text: /*[[#{form.btn.confim}]]*/ 'OK',
+                        onClick: function ($noty) {
+                            var mergeSampleId = $("#select2-merge-input").val();
+                            var newName = "";
+                            if(isNaN(mergeSampleId)){
+                                newName = mergeSampleId;
+                                mergeSampleId = "";
+                            }
+
+                            combineSamples(that, $noty, mergeSampleId, newName);
+                        }
+                    },
+                    {
+                        addClass: 'btn btn-default btn-sm',
+                        text: /*#{form.btn.cancel}*/ 'Cancel',
+                        onClick: function ($noty) {
+                            $noty.close();
+                        }
+                    }
+                ],
+                callback: {
+                    onShow: function() {
+                        $("#select2-merge-input").select2({
+                            data: data,
+                            dropdownCss: {"z-index": 10000001},
+                            createSearchChoice:function(term, data) {
+                                if ( $(data).filter( function() {
+                                            return 0 === this.text.localeCompare(term);
+                                        }).length===0) {
+                                    return {id:term, text:term};
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    }
 }
 
 EditableDataTable.prototype = {
@@ -506,6 +619,11 @@ EditableDataTable.prototype = {
             this._showDeleteSampleModal();
         }
     },
+	combineSelectedSamples: function () {
+        if (this.selectedRowIds.length > 0) {
+            this._showCombineSamplesModal();
+        }
+    },
     copySelectedSamples: function () {
         if (this.selectedRowIds.length > 0) {
             this._showCopySamplesModial();
@@ -516,6 +634,8 @@ EditableDataTable.prototype = {
 $(document).ready(function () {
     var $deleteBtn = $("#deleteBtn"),
             $btnAction = $(".btn-action"),
+			$btnAction2 = $(".btn-action2"),
+            $combineBtn = $("#combineBtn"),
             $copyBtn = $("#copyBtn"),
             $selectAll = $("#selectAll"),
             $samplesTable = $('#samplesTable'),
@@ -573,11 +693,15 @@ $(document).ready(function () {
         },
         'fnDrawCallback': function () {
             DT.getAllSampleIds();
-            console.log(DT.selectedRowIds.length);
-            if(DT.selectedRowIds.length === 0) {
+            var size = DT.selectedRowIds.length;
+            if(size === 0) {
                 $btnAction.prop('disabled', true);
                 $selectAll.prop('indeterminate', false).prop('checked', false);
             }
+            if(size<=2) {
+                $btnAction2.prop('disabled', true);
+            }
+
         }
     }));
 
@@ -596,6 +720,12 @@ $(document).ready(function () {
             $selectAll.prop('indeterminate', false).prop('checked', state);
             $btnAction.prop('disabled', !state);
         }
+        if(DT.selectedRowIds.length > 1) {
+            $btnAction2.prop('disabled', false);
+        }
+        else {
+            $btnAction2.prop('disabled', true);
+        }
     }).on('click', 'button.edit', function (e) {
         e.stopPropagation();
         DT.editRow($(this).closest('tr'));
@@ -613,18 +743,21 @@ $(document).ready(function () {
         var allSelected = $this.prop("checked");
         $samplesTable.find('input').prop('checked', allSelected);
         $btnAction.prop('disabled', !allSelected);
+        $btnAction2.prop('disabled', !allSelected);
         DT.updateAllSelected(allSelected);
     });
 
     $deleteBtn.on('click', function () {
         DT.deleteSelectedSamples();
     });
-    
-    $copyBtn.on('click', function(){
+
+    $combineBtn.on('click', function () {
+        DT.combineSelectedSamples();
+    });
+	
+	$copyBtn.on('click', function(){
     	DT.copySelectedSamples();
     });
-    
-    
 });
 
 $('[data-tooltip!=""]').qtip({ // Grab all elements with a non-blank data-tooltip attr.
