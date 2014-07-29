@@ -16,7 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
@@ -30,6 +32,9 @@ import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputDefinition;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
+import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
+import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
+import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.UniformInterfaceException;
 
@@ -140,6 +145,103 @@ public class GalaxyWorkflowManager {
 		logger.debug("Running workflow in history " + output.getHistoryId());
 		
 		return output;
+	}
+	
+	/**
+	 * Starts the execution of a workflow with a list of fastq files and the given workflow id.
+	 * @param inputFiles  A list of input file to start the workflow.
+	 * @param inputFileType The file type of the input files.
+	 * @param workflowId  The id of the workflow to start.
+	 * @param workflowInputLabel The label of a workflow input in Galaxy.
+	 * @throws ExecutionManagerException If there was an error executing the workflow.
+	 */
+	public WorkflowOutputs runSingleCollectionWorkflow(List<Path> inputFiles, String inputFileType,
+			String workflowId, String workflowInputLabel)
+			throws ExecutionManagerException {
+		checkNotNull(inputFiles, "inputFiles is null");
+		checkNotNull(inputFileType, "inputFileType is null");
+		checkNotNull(workflowInputLabel, "workflowInputLabel is null");
+		
+		for (Path file : inputFiles) {
+			checkArgument(Files.exists(file), "inputFile " + file + " does not exist");
+		}
+		
+		checkWorkflowIdValid(workflowId);
+				
+		History workflowHistory = galaxyHistory.newHistoryForWorkflow();
+		WorkflowDetails workflowDetails = workflowsClient.showWorkflow(workflowId);
+		
+		// upload dataset to history
+		List<Dataset> inputDatasets = 
+				uploadFilesListToHistory(inputFiles, inputFileType, workflowHistory);
+		
+		// construct list of datasets
+		CollectionResponse collection = constructFileCollection(inputDatasets, workflowHistory);
+		logger.debug("Constructed dataset collection: id=" + collection.getId() + ", " + collection.getName());
+		
+		String workflowInputId = getWorkflowInputId(workflowDetails, workflowInputLabel);
+
+		WorkflowInputs inputs = new WorkflowInputs();
+		inputs.setDestination(new WorkflowInputs.ExistingHistory(workflowHistory.getId()));
+		inputs.setWorkflowId(workflowDetails.getId());
+		inputs.setInput(workflowInputId, new WorkflowInputs.WorkflowInput(collection.getId(),
+				WorkflowInputs.InputSourceType.HDA));
+		
+		// execute workflow
+		WorkflowOutputs output = workflowsClient.runWorkflow(inputs);
+
+		logger.debug("Running workflow in history " + output.getHistoryId());
+		
+		return output;
+	}
+	
+	/**
+	 * Constructs a collection containing a list of files from the given datasets.
+	 * @param inputDatasets  The datasets to construct a collection from.
+	 * @param workflowHistory  The history of the workflow to construct the collection within.
+	 * @return  A CollectionResponse describing the workflow collection.
+	 * @throws ExecutionManagerException 
+	 */
+	private CollectionResponse constructFileCollection(List<Dataset> inputDatasets, History workflowHistory) throws ExecutionManagerException {
+		CollectionDescription collectionDescription = new CollectionDescription();
+		collectionDescription.setCollectionType("list");
+		collectionDescription.setName("collection");
+		
+		for (Dataset dataset : inputDatasets) {
+			HistoryDatasetElement element = new HistoryDatasetElement();
+			element.setId(dataset.getId());
+			element.setName(dataset.getName());
+			
+			collectionDescription.addDatasetElement(element);
+		}
+		
+		try {
+			return historiesClient.createDatasetCollection(workflowHistory.getId(), collectionDescription);
+		} catch (RuntimeException e) {
+			logger.debug(e.getMessage());
+			throw new ExecutionManagerException("Could not construct dataset collection", e);
+		}
+	}
+	
+	/**
+	 * Uploads a list of files into the given history.
+	 * @param dataFiles  The list of files to upload.
+	 * @param inputFileType  The type of files to upload.
+	 * @param workflowHistory  The history to upload the files into.
+	 * @return  A list of Datasets describing each uploaded file.
+	 * @throws UploadException  If an error occured uploading the file.
+	 * @throws GalaxyDatasetNotFoundException If a dataset could not be cpnstructed for the uploaded file.
+	 */
+	private List<Dataset> uploadFilesListToHistory(List<Path> dataFiles,
+			String inputFileType, History workflowHistory) throws UploadException, GalaxyDatasetNotFoundException {
+		List<Dataset> inputDatasets = new LinkedList<Dataset>();
+		
+		for (Path file : dataFiles) {
+			Dataset inputDataset = galaxyHistory.fileToHistory(file, inputFileType, workflowHistory);
+			inputDatasets.add(inputDataset);
+		}
+		
+		return inputDatasets;
 	}
 	
 	/**

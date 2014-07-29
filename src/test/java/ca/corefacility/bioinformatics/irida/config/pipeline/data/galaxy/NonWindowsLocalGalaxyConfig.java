@@ -156,13 +156,13 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		
 				localGalaxy.setGalaxyInstanceAdmin(GalaxyInstanceFactory.get(
 						localGalaxy.getGalaxyURL().toString(),
-						localGalaxy.getAdminAPIKey()));
+						localGalaxy.getAdminAPIKey(), true));
 				localGalaxy.setGalaxyInstanceUser1(GalaxyInstanceFactory.get(
 						localGalaxy.getGalaxyURL().toString(),
-						localGalaxy.getUser1APIKey()));
+						localGalaxy.getUser1APIKey(), true));
 				localGalaxy.setGalaxyInstanceUser2(GalaxyInstanceFactory.get(
 						localGalaxy.getGalaxyURL().toString(),
-						localGalaxy.getUser2APIKey()));
+						localGalaxy.getUser2APIKey(), true));
 				
 				localGalaxy.setupWorkflows();
 				
@@ -258,7 +258,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		final File DEFAULT_DESTINATION = null;
 		
 		DownloadProperties downloadProperties
-			= DownloadProperties.forGalaxyDist(DEFAULT_DESTINATION, revisionHash);
+			= DownloadProperties.forGalaxyCentral(DEFAULT_DESTINATION, revisionHash);
 		BootStrapper bootStrapper = new BootStrapper(downloadProperties);
 
 		bootStrapper.setupGalaxy();

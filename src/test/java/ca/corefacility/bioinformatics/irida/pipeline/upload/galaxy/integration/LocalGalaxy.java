@@ -67,6 +67,9 @@ public class LocalGalaxy {
 	private String singleInputWorkflowId;
 	private String singleInputWorkflowLabel;
 	
+	private String worklowCollectionListId;
+	private String workflowCollectionListLabel;
+	
 	private String invalidWorkflowId;
 	private String invalidWorkflowLabel = "invalid";
 
@@ -452,18 +455,29 @@ public class LocalGalaxy {
 			// build workflow
 			singleInputWorkflowId = constructTestWorkflow(workflowFile);
 			singleInputWorkflowLabel = "fastq";
-			
-			// find a workflow id that's invalid
-			int id = 1;
-			invalidWorkflowId = "" + id;
-			while (invalidWorkflowId.equals(singleInputWorkflowId)) {
-				id++;
-				invalidWorkflowId = "" + id;
-			}
 		} catch (URISyntaxException | IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	/**
+	 * Sets up a collection list workflow.
+	 */
+	private void setupWorkflowCollectionList() {
+		try {
+			Path workflowFile = Paths.get(LocalGalaxy.class.getResource(
+					"workflow_collection_list.ga").toURI());
+			
+			// build workflow
+			worklowCollectionListId = constructTestWorkflow(workflowFile);
+			workflowCollectionListLabel = "input_list";
+			
+			// find a workflow id that's invalid
+		} catch (URISyntaxException | IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 
 	/**
 	 * Gets the workflow id for a single input workflow.
@@ -480,12 +494,31 @@ public class LocalGalaxy {
 	public String getSingleInputWorkflowLabel() {
 		return singleInputWorkflowLabel;
 	}
+	
+	/**
+	 * Gets a workflow ID for a collection list workflow.
+	 * @return  The id of a collection list workflow.
+	 */
+	public String getWorklowCollectionListId() {
+		return worklowCollectionListId;
+	}
+
+	/**
+	 * Gets the workflow input label of a collection list workflow.
+	 * @return  The workflow input label of a collection list workflow.
+	 */
+	public String getWorkflowCollectionListLabel() {
+		return workflowCollectionListLabel;
+	}
 
 	/**
 	 * Sets up all workflows for this local galaxy.
 	 */
 	public void setupWorkflows() {
 		setupWorkflowSingleInput();
+		setupWorkflowCollectionList();
+		
+		invalidWorkflowId = "invalid";
 	}
 
 	/**

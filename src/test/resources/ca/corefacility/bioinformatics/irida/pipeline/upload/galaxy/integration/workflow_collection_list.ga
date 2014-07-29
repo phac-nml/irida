@@ -1,0 +1,60 @@
+{
+    "a_galaxy_workflow": "true", 
+    "annotation": "", 
+    "format-version": "0.1", 
+    "name": "TestWorkflowCollectionList", 
+    "steps": {
+        "0": {
+            "annotation": "", 
+            "id": 0, 
+            "input_connections": {}, 
+            "inputs": [
+                {
+                    "description": "", 
+                    "name": "input_list"
+                }
+            ], 
+            "name": "Input dataset collection", 
+            "outputs": [], 
+            "position": {
+                "left": 377.5, 
+                "top": 317.5
+            }, 
+            "tool_errors": null, 
+            "tool_id": null, 
+            "tool_state": "{\"collection_type\": \"list\", \"name\": \"input_list\"}", 
+            "tool_version": null, 
+            "type": "data_collection_input", 
+            "user_outputs": []
+        }, 
+        "1": {
+            "annotation": "", 
+            "id": 1, 
+            "input_connections": {
+                "in": {
+                    "id": 0, 
+                    "output_name": "output"
+                }
+            }, 
+            "inputs": [], 
+            "name": "collection_list", 
+            "outputs": [
+                {
+                    "name": "out", 
+                    "type": "txt"
+                }
+            ], 
+            "position": {
+                "left": 592.5, 
+                "top": 312.5
+            }, 
+            "post_job_actions": {}, 
+            "tool_errors": null, 
+            "tool_id": "collection_list", 
+            "tool_state": "{\"__page__\": 0, \"__rerun_remap_job_id__\": null, \"in\": \"null\"}", 
+            "tool_version": "0.1.0", 
+            "type": "tool", 
+            "user_outputs": []
+        }
+    }
+}
