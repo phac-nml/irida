@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -145,4 +146,47 @@ public class ProjectSamplesPageIT {
 		assertEquals("Has one row - error row", 1, page.getDisplayedSampleCount());
 		assertTrue("Shows the no samples message", page.isTableEmptyRowShown());
 	}
+
+    @Test
+    public void testMergeProjectSamples() {
+        page.goToPage();
+        int origCount = page.getDisplayedSampleCount();
+        assertEquals("Starts with the correct number of samples", 5, origCount);
+        assertFalse("Combine samples modal should not be open.", page.isCombineSamplesModalOpen());
+        page.clickFirstThreeCheckboxes();
+        page.clickCombineSamples();
+        assertTrue("Combine samples modal should be open", page.isCombineSamplesModalOpen());
+        page.selectFirstNameInCombineSamples("5");
+        assertEquals("Now only has 3 samples since 3 were merged", 3, page.getDisplayedSampleCount());
+        assertEquals("Sample has the correct name", "sample5", page.getSampleNameForRow(1));
+    }
+
+    @Test
+    public void testMergeProjectSamplesNewName() {
+        String newName = "FredPenner";
+        page.goToPage();
+        int origCount = page.getDisplayedSampleCount();
+        assertEquals("Starts with the correct number of samples", 5, origCount);
+        assertFalse("Combine samples modal should not be open.", page.isCombineSamplesModalOpen());
+        page.clickFirstThreeCheckboxes();
+        page.clickCombineSamples();
+        assertTrue("Combine samples modal should be open", page.isCombineSamplesModalOpen());
+        page.selectFirstNameInCombineSamples(newName);
+        assertEquals("Now only has 3 samples since 3 were merged", 3, page.getDisplayedSampleCount());
+        assertEquals("Sample has the correct name", newName, page.getSampleNameForRow(1));
+    }
+
+    @Test
+    public void testMergeProjectSamplesBadName() {
+        String newName = "Fred Penner";
+        page.goToPage();
+        int origCount = page.getDisplayedSampleCount();
+        assertEquals("Starts with the correct number of samples", 5, origCount);
+        assertFalse("Combine samples modal should not be open.", page.isCombineSamplesModalOpen());
+        page.clickFirstThreeCheckboxes();
+        page.clickCombineSamples();
+        assertTrue("Combine samples modal should be open", page.isCombineSamplesModalOpen());
+        page.selectFirstNameInCombineSamples(newName);
+        assertTrue("Displays merge error", page.isMergeErrorDisplayed());
+    }
 }
