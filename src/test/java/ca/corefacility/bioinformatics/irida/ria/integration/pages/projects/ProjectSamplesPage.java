@@ -1,12 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -209,6 +207,31 @@ public class ProjectSamplesPage {
 		return driver.findElements(By.className("dataTables_empty")).size() == 1;
 	}
 
+    /**
+     * Determine if the modal to combine samples is open
+     * @return true if the modal is open
+     */
+    public boolean isCombineSamplesModalOpen() {
+        return driver.findElements(By.cssSelector(".noty_bar h2")).size() == 1;
+    }
+
+    /**
+     * Get the name of the sample in a particular row
+     * @param rowNum The row to look for the sample name in
+     * @return The name of the sampel in the row
+     */
+    public String getSampleNameForRow(int rowNum) {
+        return driver.findElement(By.cssSelector("tbody tr:nth-child(" + rowNum + ") .name")).getText();
+    }
+
+    /**
+     * Determine if there is an error displayed for a samples merge.
+     * @return
+     */
+    public boolean isSampleMergeErrorDisplayed() {
+        return driver.findElements(By.id("merge-error")).size() == 1;
+    }
+
 	/**************************************************************************************
 	 * EVENTS
 	 **************************************************************************************/
@@ -273,10 +296,16 @@ public class ProjectSamplesPage {
         waitForAjax();
     }
 
+    /**
+     * Click on the cancel edit button
+     */
     public void clickOnEditCancel() {
         driver.findElement(By.cssSelector("button.cancel")).click();
     }
 
+    /**
+     * Delete selected samples samples
+     */
 	public void clickDeleteSamples() {
 		driver.findElement(By.id("deleteBtn")).click();
 		WebDriverWait wait = new WebDriverWait(driver, TIMEOUT_TIME);
@@ -284,6 +313,43 @@ public class ProjectSamplesPage {
 		driver.findElement(By.id("button-0")).click();
 		waitForAjax();
 	}
+
+    /**
+     * Select the first three samples in the table
+     */
+    public void clickFirstThreeCheckboxes() {
+        List<WebElement> checkboxes = driver.findElements(By.cssSelector("tbody input[type=\"checkbox\"]"));
+        for (int i = 0; i < 3; i++) {
+            checkboxes.get(i).click();
+        }
+    }
+
+    /**
+     * Click on the combine samples button
+     */
+    public void clickCombineSamples() {
+        driver.findElement(By.id("combineBtn")).click();
+        try {
+            (new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
+                    .className("noty_message")));
+        } catch (NoSuchElementException e) {
+            // Nothing to do, it will die on the next test.
+        }
+    }
+
+    /**
+     * When combining samples this will select and item in the select2 box based on the name passed.
+     * If name is not present the name will be the new name
+     * @param name The new name for the samples
+     */
+    public void selectTheMergedSampleName(String name) {
+        WebElement el = driver.findElement(By.className("select2-choice"));
+        el.click();
+        el.sendKeys(name);
+        el.sendKeys(Keys.TAB);
+        driver.findElement(By.cssSelector(".noty_buttons .btn-primary")).click();
+        waitForAjax();
+    }
 
 	private void waitForAjax() {
 		Wait<WebDriver> wait = new WebDriverWait(driver, 60);
