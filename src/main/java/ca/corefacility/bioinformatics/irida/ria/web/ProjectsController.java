@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -668,8 +670,12 @@ public class ProjectsController {
 		if (!Strings.isNullOrEmpty(newName)) {
 			Map<String, Object> updateMap = new HashMap<>();
 			updateMap.put("sampleName", newName);
-			mergeIntoSample = sampleService.update(mergeIntoSample.getId(), updateMap);
-		}
+            try {
+                mergeIntoSample = sampleService.update(mergeIntoSample.getId(), updateMap);
+            } catch (ConstraintViolationException e) {
+                result.put("error", getErrorsFromViolationException(e));
+            }
+        }
 		if (!result.containsKey("error")) {
 			Sample[] mergeSamples = new Sample[sampleIds.size()];
             for (int i = 0; i < sampleIds.size(); i++) {
