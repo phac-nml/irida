@@ -570,7 +570,7 @@ public class ProjectsController {
 	 */
 	@RequestMapping(value = "/ajax/{projectId}/samples/available_projects")
 	@ResponseBody
-	public Map<String, Object> getProjectsToCopySamples(@PathVariable Long projectId, @RequestParam String term,
+	public Map<String, Object> getProjectsAvailableToCopySamples(@PathVariable Long projectId, @RequestParam String term,
 			@RequestParam int pageSize, @RequestParam int page, Principal principal) {
 		User user = userService.getUserByUsername(principal.getName());
 
