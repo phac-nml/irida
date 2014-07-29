@@ -101,7 +101,7 @@
             <p th:text="#{project.samples.combine-warning}"></p>
             <div class="form-group">
                 <input class="input-full" name="merge-name" type="text" id="select2-merge-input"/>
-                <span id="merge-error" class="hidden help-block bg-danger">A block of help text that breaks onto a new line and may extend beyond one line.</span>
+                <span id="merge-error" class="hidden help-block bg-danger"></span>
             </div>
         </script>
     </div>
@@ -110,6 +110,10 @@
 <div th:replace="projects/project_base :: scripts"></div>
 <script th:inline="javascript">
 /*<![CDATA[*/
+/*
+Add functionality to the string object to be able to template out a string.
+e.g. "fred {0}".format("flintstone") --> "fred flintstone"
+*/
 if (!String.prototype.format) {
     String.prototype.format = function() {
         var args = arguments;
