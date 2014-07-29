@@ -29,6 +29,11 @@
                                     th:text="#{project.samples.delete}">__Delete_Samples__
                             </button>
                         </div>
+                        <div class="btn-group">
+                            <button id="combineBtn" class="btn btn-default btn-sm btn-action" disabled="true"
+                                    th:text="#{project.samples.combine}">__Combine_Samples__
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -91,6 +96,12 @@
             <div
                     layout:replace="partials/associated-projects :: list (projects=${associatedProjects})"></div>
         </div>
+        <script type="text/html"  id="select2-merge">
+            <div class="form-group">
+                <label for="select2-merge">__MERGE_SAMPLES__</label>
+                <input class="input-full" name="merge-name" type="text" id="select2-merge-input"/>
+            </div>
+        </script>
     </div>
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
@@ -166,6 +177,11 @@ function EditableDataTable() {
             var msg = /*[[#{project.samples.remove-success}]]*/ 'Samples successfully removed from project';
             showSuccessModal(msg);
         });
+    }
+
+    function combineSamples(table, noty) {
+        // TODO: Show select2 modal to name
+        // TODO: Send ajax request
     }
 
     function showSuccessModal(message) {
@@ -293,6 +309,56 @@ function EditableDataTable() {
             }
         });
     };
+
+    this._showCombineSamplesModal = function () {
+        var that = this;
+        // TODO: get ajax list of samples names from server.
+        $.ajax({
+            url: "/projects/ajax/getNamesFromIds",
+            type: "post",
+            data: "sampleIds=" + this.selectedRowIds
+        }).done(function (data) {
+            var div = document.getElementById('select2-merge');
+            var template = div.innerHTML;
+            noty({
+                layout: "center",
+                type: "warning",
+                text: template,
+                modal: true,
+                buttons: [
+                    {
+                        addClass: 'btn btn-primary btn-sm',
+                        text: /*[[#{form.btn.confim}]]*/ 'OK',
+                        onClick: function ($noty) {
+                            combineSamples(that, $noty);
+                        }
+                    },
+                    {
+                        addClass: 'btn btn-default btn-sm',
+                        text: /*#{form.btn.cancel}*/ 'Cancel',
+                        onClick: function ($noty) {
+                            $noty.close();
+                        }
+                    }
+                ],
+                callback: {
+                    onShow: function() {
+                        $("#select2-merge-input").select2({
+                            data: data,
+                            dropdownCss: {"z-index": 10000001},
+                            createSearchChoice:function(term, data) {
+                                if ( $(data).filter( function() {
+                                            return 0 === this.text.localeCompare(term);
+                                        }).length===0) {
+                                    return {id:term, text:term};
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    }
 }
 
 EditableDataTable.prototype = {
@@ -377,12 +443,18 @@ EditableDataTable.prototype = {
         if (this.selectedRowIds.length > 0) {
             this._showDeleteSampleModal();
         }
+    },
+    combineSelectedSamples: function () {
+        if (this.selectedRowIds.length > 0) {
+            this._showCombineSamplesModal();
+        }
     }
 };
 
 $(document).ready(function () {
     var $deleteBtn = $("#deleteBtn"),
             $btnAction = $(".btn-action"),
+            $combineBtn = $("#combineBtn"),
             $selectAll = $("#selectAll"),
             $samplesTable = $('#samplesTable'),
             DT = new EditableDataTable();
@@ -484,6 +556,10 @@ $(document).ready(function () {
 
     $deleteBtn.on('click', function () {
         DT.deleteSelectedSamples();
+    });
+
+    $combineBtn.on('click', function () {
+        DT.combineSelectedSamples();
     });
 });
 
