@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
+import static org.springframework.data.jpa.domain.Specifications.where;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +45,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectSamplesDataTable;
@@ -548,17 +551,23 @@ public class ProjectsController {
         return result;
     }
     
-    /**
-     * Search for projects available for a user to copy samples to.  If the user is an admin it will show all projects.
-     * @param projectId The current project id
-     * @param term A search term
-     * @param pageSize The size of the page requests
-     * @param page The page number (0 based)
-     * @param principal The logged in user.
-     * @return a Map<String,Object> containing:
-     * 		total: total number of elements
-     * 		results: A Map<Long,String> of project IDs and project names.
-     */
+	/**
+	 * Search for projects available for a user to copy samples to. If the user
+	 * is an admin it will show all projects.
+	 * 
+	 * @param projectId
+	 *            The current project id
+	 * @param term
+	 *            A search term
+	 * @param pageSize
+	 *            The size of the page requests
+	 * @param page
+	 *            The page number (0 based)
+	 * @param principal
+	 *            The logged in user.
+	 * @return a Map<String,Object> containing: total: total number of elements
+	 *         results: A Map<Long,String> of project IDs and project names.
+	 */
 	@RequestMapping(value = "/ajax/{projectId}/samples/available_projects")
 	@ResponseBody
 	public Map<String, Object> getProjectsToCopySamples(@PathVariable Long projectId, @RequestParam String term,
@@ -574,8 +583,11 @@ public class ProjectsController {
 			}
 			response.put("total", projects.getTotalElements());
 		} else {
-			Page<ProjectUserJoin> projects = projectService.searchProjectsByNameForUser(user, term, page, pageSize,
-					Direction.ASC);
+			//search for projects with a given name where the user is an owner
+			Specification<ProjectUserJoin> spec = where(
+					ProjectUserJoinSpecification.searchProjectNameWithUser(term, user)).and(
+					ProjectUserJoinSpecification.getProjectJoinsWithRole(user, ProjectRole.PROJECT_OWNER));
+			Page<ProjectUserJoin> projects = projectService.searchProjectUsers(spec, page, pageSize, Direction.ASC);
 			for (ProjectUserJoin p : projects) {
 				vals.put(p.getSubject().getId(), p.getSubject().getName());
 			}
