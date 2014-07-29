@@ -225,10 +225,14 @@ function EditableDataTable() {
             	noty.close();
             	var msg = /*[[#{project.samples.copy-success}]]*/ 'Samples successfully copied';
             	var count = data.totalCopied;
-                showSuccessModal(count + " " + msg);
+            	if(count > 0){
+                	showSuccessModal(msg.format(count));
+            	}
                 if(data.warnings){
                 	for(warning in data.warnings){
-                		showWarningModial(data.warnings[warning]);
+                		var warnmsg = /*[[#{project.samples.copy.sample-exists}]]*/ 'Sample exists in project';
+                		
+                		showWarningModial(warnmsg.format(data.warnings[warning]));
                 	}
                 }
                 table.selectedRowIds = [];

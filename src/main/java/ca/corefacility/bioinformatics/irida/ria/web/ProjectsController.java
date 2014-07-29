@@ -613,9 +613,7 @@ public class ProjectsController {
 				projectService.addSampleToProject(newProject, sample);
 				logger.trace("Copied sample " + sampleId + " to project " + newProjectId);
 				totalCopied++;
-				if(removeFromOriginal){
-					projectService.removeSampleFromProject(originalProject, sample);
-				}
+				
 			} catch (EntityExistsException ex) {
 				logger.warn("Attempted to add sample " + sampleId + " to project " + newProjectId
 						+ " where it already exists.", ex);
@@ -623,6 +621,11 @@ public class ProjectsController {
 					
 				}
 				warnings.add(sample.getLabel());
+			}
+			
+			if(removeFromOriginal){
+				projectService.removeSampleFromProject(originalProject, sample);
+				logger.trace("Removed sample " + sampleId + " from original project " + projectId);
 			}
 		}
 		
