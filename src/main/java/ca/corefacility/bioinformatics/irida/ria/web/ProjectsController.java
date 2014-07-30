@@ -806,25 +806,6 @@ public class ProjectsController {
         return result;
     }
 
-	@RequestMapping(value = "/ajax/{projectId}/samples/{sampleId}/files", produces = MediaType.APPLICATION_JSON_VALUE)
-	public
-	@ResponseBody
-	List<Map<String, Object>> getFilesForSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
-		Sample sample = sampleService.read(sampleId);
-		List<Join<Sample, SequenceFile>> joinList = sequenceFileService.getSequenceFilesForSample(sample);
-
-		List<Map<String, Object>> response = new ArrayList<>();
-		for (Join<Sample, SequenceFile> join : joinList) {
-			SequenceFile file = join.getObject();
-			Map<String, Object> map = new HashMap<>();
-			map.put("id", file.getId().toString());
-			map.put("name", file.getLabel());
-			map.put("created", Formats.DATE.format(file.getTimestamp()));
-			response.add(map);
-		}
-		return response;
-	}
-
     /**
 	 * Based on a page of projects for an user, returns a list that also
 	 * includes information as to whether the user is a member of the project.
