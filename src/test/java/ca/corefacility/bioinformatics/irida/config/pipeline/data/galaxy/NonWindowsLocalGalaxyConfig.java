@@ -156,13 +156,13 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		
 				localGalaxy.setGalaxyInstanceAdmin(GalaxyInstanceFactory.get(
 						localGalaxy.getGalaxyURL().toString(),
-						localGalaxy.getAdminAPIKey(), true));
+						localGalaxy.getAdminAPIKey()));
 				localGalaxy.setGalaxyInstanceUser1(GalaxyInstanceFactory.get(
 						localGalaxy.getGalaxyURL().toString(),
-						localGalaxy.getUser1APIKey(), true));
+						localGalaxy.getUser1APIKey()));
 				localGalaxy.setGalaxyInstanceUser2(GalaxyInstanceFactory.get(
 						localGalaxy.getGalaxyURL().toString(),
-						localGalaxy.getUser2APIKey(), true));
+						localGalaxy.getUser2APIKey()));
 				
 				localGalaxy.setupWorkflows();
 				
@@ -198,7 +198,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 				"collection_list.xml").toURI());
 		Path iridaToolConfigSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
 				"tool_conf_irida.xml").toURI());
-		
+
 		// copy over necessary files for testing custom tools
 		Path collectionExampleToolDirectory = galaxyRoot.resolve("tools").resolve("collection");
 		Files.createDirectories(collectionExampleToolDirectory);
@@ -253,7 +253,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		final File DEFAULT_DESTINATION = null;
 		
 		DownloadProperties downloadProperties
-			= DownloadProperties.forGalaxyCentral(DEFAULT_DESTINATION, revisionHash);
+			= DownloadProperties.forGalaxyDist(DEFAULT_DESTINATION, revisionHash);
 		BootStrapper bootStrapper = new BootStrapper(downloadProperties);
 
 		bootStrapper.setupGalaxy();
