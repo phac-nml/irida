@@ -330,7 +330,7 @@ function EditableDataTable() {
                 checkbox = $row.find('input[type="checkbox"]'),
                 sampleId = checkbox.val(),
                 selected = checkbox.prop('checked'),
-                url = /*[[@{/projects/ajax/{projectId}/samples/{0}/files(projectId=${project.getId()})}]]*/ '/projects/ajax/1/samples/1/files';
+                url = /*[[@{/samples/ajax/{0}/files}]]*/ '/samples/ajax/1/files';
         $.ajax({
             'url': url.format(sampleId),
             'type': 'post'
