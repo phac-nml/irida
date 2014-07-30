@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.github.jmchilton.blend4j.galaxy.GalaxyResponseException;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.sun.jersey.api.client.UniformInterfaceException;
@@ -54,7 +55,7 @@ public class GalaxyLibraryContentSearch extends GalaxySearch<LibraryContent, Lib
 				return libraryContents;
 			}
 			
-		} catch (UniformInterfaceException e) {
+		} catch (GalaxyResponseException | UniformInterfaceException e) {
 			throw new NoGalaxyContentFoundException("Could not find library content for id " + libraryId + " in Galaxy "
 					+ galaxyURL, e);
 		}
