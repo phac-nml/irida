@@ -629,9 +629,7 @@ public class ProjectsController {
 			} catch (EntityExistsException ex) {
 				logger.warn("Attempted to add sample " + sampleId + " to project " + newProjectId
 						+ " where it already exists.", ex);
-				if(!response.containsKey("warnings")){
-					
-				}
+
 				warnings.add(sample.getLabel());
 			}
 			
