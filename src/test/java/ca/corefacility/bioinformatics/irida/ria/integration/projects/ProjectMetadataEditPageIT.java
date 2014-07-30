@@ -42,9 +42,9 @@ public class ProjectMetadataEditPageIT {
     public static final String GOOD_PROJECT_DESCRIPTION = "New project description.";
     public static final String GOOD_PROJECT_REMOTEURL = "http://ghost.ca";
     public static final String BAD_PROJECT_URL = "bad_url";
-    private final String PAGE_TITLE = "IRIDA Platform - project - Metadata";
+    // private final String PAGE_TITLE = "IRIDA Platform - project - Metadata";
     private final Long PROJECT_ID_OWNER = 1L;
-    private final Long PROJECT_ID_COLLABORATOR = 6L;
+    // private final Long PROJECT_ID_COLLABORATOR = 6L;
     private final String PROJECT_NAME = "project";
     private final String PROJECT_DESCRIPTION = "This is an interesting project description.";
     private final String PROJECT_ORGANISM = "E. coli";

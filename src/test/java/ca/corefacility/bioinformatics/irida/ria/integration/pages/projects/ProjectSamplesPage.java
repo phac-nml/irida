@@ -1,10 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -317,6 +320,19 @@ public class ProjectSamplesPage {
 		wait.until(ExpectedConditions.elementToBeClickable(By.id("button-0")));
 		driver.findElement(By.id("button-0")).click();
 		waitForAjax();
+	}
+	
+	/**
+	 * Click copy samples button
+	 */
+	public void copySamples(String id) {
+		driver.findElement(By.id("copyBtn")).click();
+		(new WebDriverWait(driver, 10))
+				.until(ExpectedConditions.presenceOfElementLocated(By.className("noty_message")));
+		WebElement projectBox = driver.findElement(By.id("copy-sample-project"));
+		projectBox.sendKeys(id);
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By.id("button-0")));
+		driver.findElement(By.id("button-0")).click();
 	}
 
     /**

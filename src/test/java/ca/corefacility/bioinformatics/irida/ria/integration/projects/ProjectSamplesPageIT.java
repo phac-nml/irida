@@ -192,4 +192,12 @@ public class ProjectSamplesPageIT {
 		assertTrue("Files view should be open", page.isFilesViewOpen());
 		assertEquals("There should be three files displayed", 3, page.getDisplayedFilesCount());
 	}
+
+    @Test
+    public void testCopySamples(){
+    	page.goToPage();
+    	page.clickFirstThreeCheckboxes();
+    	page.copySamples("2");
+    	assertTrue(page.successMessageShown());
+    }
 }
