@@ -7,6 +7,7 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.data.jpa.domain.Specification;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
@@ -33,6 +34,25 @@ public class ProjectUserJoinSpecification {
 			@Override
 			public Predicate toPredicate(Root<ProjectUserJoin> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				return cb.and(cb.like(root.get("project").get("name"), "%" + name + "%"),
+						cb.equal(root.get("user"), user));
+			}
+		};
+	}
+
+	/**
+	 * Get a {@link ProjectUserJoin} where the user has a given role
+	 * 
+	 * @param name
+	 *            The name to search
+	 * @param user
+	 *            The user to search
+	 * @return
+	 */
+	public static Specification<ProjectUserJoin> getProjectJoinsWithRole(User user, ProjectRole projectRole) {
+		return new Specification<ProjectUserJoin>() {
+			@Override
+			public Predicate toPredicate(Root<ProjectUserJoin> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				return cb.and(cb.equal(root.get("projectRole"), projectRole),
 						cb.equal(root.get("user"), user));
 			}
 		};

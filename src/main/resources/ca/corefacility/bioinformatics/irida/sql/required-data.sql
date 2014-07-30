@@ -207,6 +207,10 @@ INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `sequencerSampl
 INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `sequencerSampleId`, `description`) VALUES (now(), now() , 'Sample 48', 'sample48', 'The 48th sample');
 INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `sequencerSampleId`, `description`) VALUES (now(), now() , 'Sample 49', 'sample49', 'The 49th sample');
 INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `sequencerSampleId`, `description`) VALUES (now(), now() , 'Sample 50', 'sample50', 'The 50th sample');
+INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `sequencerSampleId`, `description`) VALUES ('2014-07-30 08:24:09', '2014-07-30 08:24:09' , '01-1111', '01-1111', 'The 51th sample');
+INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `sequencerSampleId`, `description`) VALUES ('2014-07-30 08:24:10', '2014-07-30 08:24:10' , '02-2222', '02-2222', 'The 52nd sample');
+INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `sequencerSampleId`, `description`) VALUES ('2014-07-30 08:24:10', '2014-07-30 08:24:10' , '03-3333', '03-3333', 'The 53rd sample');
+
 -- sample relationship
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES (now(), 5, 1);
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES (now(), 4, 2);
@@ -258,6 +262,9 @@ INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES (no
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES (now(), 4, 48);
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES (now(), 4, 49);
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES (now(), 4, 50);
+INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES (now(), 4, 51);
+INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES (now(), 4, 52);
+INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES (now(), 4, 53);
 
 -- related projects
 insert into related_project (`subject_id`, `relatedProject_id`, `createdDate`) VALUES (1,2,now());
@@ -304,3 +311,58 @@ insert into client_details_resource_ids (client_details_id,resource_id) values (
 insert into client_details_resource_ids (client_details_id,resource_id) values (3,"NmlIrida");
 insert into client_details_resource_ids (client_details_id,resource_id) values (4,"NmlIrida");
 insert into client_details_resource_ids (client_details_id,resource_id) values (5,"NmlIrida");
+
+-- sequence files
+insert into sequence_file (createdDate, fileRevisionNumber, modifiedDate, filePath, sequencingRun_id) values ('2014-07-30 08:24:34',2,'2014-07-30 08:24:34','/tmp/sequence-files/1/2/02-2222_S1_L001_R1_001.fastq',NULL);
+insert into sequence_file (createdDate, fileRevisionNumber, modifiedDate, filePath, sequencingRun_id) values ('2014-07-30 08:24:34',2,'2014-07-30 08:24:34','/tmp/sequence-files/2/2/02-2222_S1_L001_R2_001.fastq',NULL);
+insert into sequence_file (createdDate, fileRevisionNumber, modifiedDate, filePath, sequencingRun_id) values ('2014-07-30 08:24:35',2,'2014-07-30 08:24:35','/tmp/sequence-files/3/2/01-1111_S1_L001_R1_001.fastq',NULL);
+insert into sequence_file (createdDate, fileRevisionNumber, modifiedDate, filePath, sequencingRun_id) values ('2014-07-30 08:24:35',2,'2014-07-30 08:24:35','/tmp/sequence-files/4/2/01-1111_S1_L001_R2_001.fastq',NULL);
+insert into sequence_file (createdDate, fileRevisionNumber, modifiedDate, filePath, sequencingRun_id) values ('2014-07-30 08:24:35',2,'2014-07-30 08:24:35','/tmp/sequence-files/5/2/03-3333_S1_L001_R1_001.fastq',NULL);
+insert into sequence_file (createdDate, fileRevisionNumber, modifiedDate, filePath, sequencingRun_id) values ('2014-07-30 08:24:35',2,'2014-07-30 08:24:35','/tmp/sequence-files/6/2/03-3333_S1_L001_R2_001.fastq',NULL);
+
+-- sequence file properties
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (1,'CCCCCCCC','i5Index');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (1,'GGGGGGGG','i7Index');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (1,'N02','i7IndexId');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (1,'2','samplePlate');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (2,'CCCCCCCC','i5Index');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (2,'S02','i5IndexId');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (2,'GGGGGGGG','i7Index');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (2,'N02','i7IndexId');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (2,'2','samplePlate');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (2,'02','sampleWell');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (3,'TTTTTTTT','i5Index');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (3,'S01','i5IndexId');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (3,'AAAAAAAA','i7Index');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (3,'N01','i7IndexId');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (3,'1','samplePlate');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (3,'01','sampleWell');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (4,'TTTTTTTT','i5Index');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (4,'S01','i5IndexId');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (4,'AAAAAAAA','i7Index');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (4,'N01','i7IndexId');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (4,'1','samplePlate');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (4,'01','sampleWell');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (5,'GGGGGGGG','i5Index');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (5,'S03','i5IndexId');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (5,'CCCCCCCC','i7Index');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (5,'N03','i7IndexId');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (5,'3','samplePlate');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (5,'03','sampleWell');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (6,'GGGGGGGG','i5Index');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (6,'S03','i5IndexId');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (6,'CCCCCCCC','i7Index');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (6,'N03','i7IndexId');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (6,'3','samplePlate');
+insert into sequence_file_properties (sequence_file_id, property_value, property_key) values (6,'03','sampleWell');
+
+-- sequencefile sample
+insert into sequencefile_sample (createdDate, sample_id, sequencefile_id) values ('2014-07-30 08:24:34',52,1);
+insert into sequencefile_sample (createdDate, sample_id, sequencefile_id) values ('2014-07-30 08:24:34',52,2);
+insert into sequencefile_sample (createdDate, sample_id, sequencefile_id) values ('2014-07-30 08:24:35',51,3);
+insert into sequencefile_sample (createdDate, sample_id, sequencefile_id) values ('2014-07-30 08:24:35',51,4);
+insert into sequencefile_sample (createdDate, sample_id, sequencefile_id) values ('2014-07-30 08:24:35',53,5);
+insert into sequencefile_sample (createdDate, sample_id, sequencefile_id) values ('2014-07-30 08:24:35',53,6);
+
+-- sequence run
+insert into sequencing_run (createdDate, description, modifiedDate) values ('2014-07-30 08:24:33','Superbug','2014-07-30 08:24:33');

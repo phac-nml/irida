@@ -314,9 +314,11 @@
 						</goals>
 						<configuration>
 							<!-- Uncomment below to disable Galaxy integration tests -->
-							<!-- <excludes>
-                        		<exclude>/ca/corefacility/bioinformatics/irida/pipeline/upload/galaxy/**</exclude>
-                    		</excludes> -->
+							<!-- 
+							<excludes>
+			                        		<exclude>/ca/corefacility/bioinformatics/irida/pipeline/upload/galaxy/**</exclude>
+                    					</excludes> 
+							-->
 							<argLine>${failsafeArgLine}</argLine>
 							<systemPropertyVariables>
 								<test.galaxy.revision>${test.galaxy.revision}</test.galaxy.revision>
@@ -469,6 +471,8 @@
 		<el-ri.version>1.0</el-ri.version>
 		<com.github.jmchilton.blend4j.version>0.1.0</com.github.jmchilton.blend4j.version>
 		<com.github.jmchilton.galaxybootstrap.version>0.3.0</com.github.jmchilton.galaxybootstrap.version>
+		<com.github.jmchilton.blend4j.version>0.2.0-SNAPSHOT</com.github.jmchilton.blend4j.version>
+		<com.github.jmchilton.galaxybootstrap.version>0.4.0</com.github.jmchilton.galaxybootstrap.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.17</maven.failsafe.plugin.version>

@@ -56,19 +56,6 @@ public interface ProjectUserJoinRepository extends CrudRepository<ProjectUserJoi
 	@Query("select j from ProjectUserJoin j where j.user = ?1")
 	public List<Join<Project, User>> getProjectsForUser(User user);
 
-	/**
-	 * Get all {@link Project}s associated with a particular {@link User} where
-	 * that user has a {@link ProjectRole}.PROJECT_OWNER role on the project.
-	 * 
-	 * @param user
-	 *            the user to get projects for.
-	 * @param role
-	 *            The user's role on the project
-	 * @return A collection of {@link ProjectUserJoin}s describing the projects
-	 *         associated with the user.
-	 */
-	@Query("select j from ProjectUserJoin j where j.user = ?1 and j.projectRole = ?2")
-	public List<Join<Project, User>> getProjectsForUserWithRole(User user, ProjectRole role);
 
 	/**
 	 * Remove a {@link User} from a {@link Project}.
