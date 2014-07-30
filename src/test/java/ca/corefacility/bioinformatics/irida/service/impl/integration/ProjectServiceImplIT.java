@@ -1,10 +1,10 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import java.util.Collection;
@@ -42,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -57,7 +58,8 @@ import com.google.common.collect.Sets;
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
 		IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
 @ActiveProfiles("test")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class, WithSecurityContextTestExcecutionListener.class })
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
+		WithSecurityContextTestExcecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectServiceImplIT {
@@ -155,8 +157,8 @@ public class ProjectServiceImplIT {
 		Collection<Join<Project, User>> usersOnProject = asRole(Role.ROLE_ADMIN).userService.getUsersForProject(p);
 		assertTrue("No users should be on the project.", usersOnProject.isEmpty());
 	}
-	
-	@Test(expected=ProjectWithoutOwnerException.class)
+
+	@Test(expected = ProjectWithoutOwnerException.class)
 	public void testRemoveUserFromProjectAbandoned() throws ProjectWithoutOwnerException {
 		User u = asRole(Role.ROLE_ADMIN).userService.read(3l);
 		Project p = asRole(Role.ROLE_ADMIN).projectService.read(2l);
@@ -178,7 +180,7 @@ public class ProjectServiceImplIT {
 	public void testGetProjectsManagedBy() {
 		User u = asRole(Role.ROLE_ADMIN).userService.read(3l);
 
-		Collection<Join<Project, User>> projects = asRole(Role.ROLE_ADMIN).projectService.getProjectsForUserWithRole(u,
+		Collection<ProjectUserJoin> projects = asRole(Role.ROLE_ADMIN).projectService.getProjectsForUserWithRole(u,
 				ProjectRole.PROJECT_OWNER);
 
 		assertEquals("User should have one project.", 1, projects.size());
@@ -254,110 +256,115 @@ public class ProjectServiceImplIT {
 
 		assertEquals("Wrong number of projects.", 8, projects.size());
 	}
-	
+
 	@Test
-	public void testUserHasProjectRole(){
+	public void testUserHasProjectRole() {
 		User user = asRole(Role.ROLE_ADMIN).userService.read(3l);
 		Project project = asRole(Role.ROLE_ADMIN).projectService.read(2l);
 		assertTrue(asRole(Role.ROLE_ADMIN).projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER));
 	}
-	
+
 	@Test
-	@WithMockUser(username="user1", password="password1", roles="USER")
-	public void testSearchProjectsForUser(){
+	@WithMockUser(username = "user1", password = "password1", roles = "USER")
+	public void testSearchProjectsForUser() {
 		User user = userService.read(3l);
-		//test searches
-		Page<ProjectUserJoin> searchPagedProjectsForUser = projectService.searchProjectsByNameForUser(user, "2", 0, 10, Direction.ASC);
-		assertEquals(1,searchPagedProjectsForUser.getTotalElements());
-		
-		searchPagedProjectsForUser = projectService.searchProjectsByNameForUser(user, "project", 0, 10, Direction.ASC);
-		assertEquals(2,searchPagedProjectsForUser.getTotalElements());
-		
-		//test sorting
-		searchPagedProjectsForUser = projectService.searchProjectsByNameForUser(user, "project", 0, 10, Direction.ASC,"name");
-		Page<ProjectUserJoin> searchDesc = projectService.searchProjectsByNameForUser(user, "project", 0, 10, Direction.DESC,"name");
-		assertEquals(2,searchPagedProjectsForUser.getTotalElements());
-		
+		// test searches
+
+		Page<ProjectUserJoin> searchPagedProjectsForUser = projectService.searchProjectUsers(
+				ProjectUserJoinSpecification.searchProjectNameWithUser("2", user), 0, 10, Direction.ASC);
+		assertEquals(1, searchPagedProjectsForUser.getTotalElements());
+
+		searchPagedProjectsForUser = projectService.searchProjectUsers(
+				ProjectUserJoinSpecification.searchProjectNameWithUser("project", user), 0, 10, Direction.ASC);
+		assertEquals(2, searchPagedProjectsForUser.getTotalElements());
+
+		// test sorting
+		searchPagedProjectsForUser = projectService.searchProjectUsers(
+				ProjectUserJoinSpecification.searchProjectNameWithUser("project", user), 0, 10, Direction.ASC, "name");
+		Page<ProjectUserJoin> searchDesc = projectService.searchProjectUsers(
+				ProjectUserJoinSpecification.searchProjectNameWithUser("project", user), 0, 10, Direction.DESC, "name");
+		assertEquals(2, searchPagedProjectsForUser.getTotalElements());
+
 		List<ProjectUserJoin> reversed = Lists.reverse(searchDesc.getContent());
 		List<ProjectUserJoin> forward = searchPagedProjectsForUser.getContent();
-		assertEquals(reversed.size(),forward.size());
-		for(int i=0;i<reversed.size();i++){
+		assertEquals(reversed.size(), forward.size());
+		for (int i = 0; i < reversed.size(); i++) {
 			assertEquals(forward.get(i), reversed.get(i));
 		}
 	}
-	
+
 	@Test
-	@WithMockUser(username="user1", password="password1", roles="ADMIN")
-	public void testSearchProjects(){
-		//search for a number
-		Page<Project> searchFor2 = projectService.searchProjectsByName("2", 0, 10, Direction.ASC,"name");
-		assertEquals(2,searchFor2.getTotalElements());
+	@WithMockUser(username = "user1", password = "password1", roles = "ADMIN")
+	public void testSearchProjects() {
+		// search for a number
+		Page<Project> searchFor2 = projectService.searchProjectsByName("2", 0, 10, Direction.ASC, "name");
+		assertEquals(2, searchFor2.getTotalElements());
 		Project next = searchFor2.iterator().next();
 		assertTrue(next.getName().contains("2"));
-		
-		//search descending
-		Page<Project> searchDesc = projectService.searchProjectsByName("2", 0, 10, Direction.DESC,"name");
+
+		// search descending
+		Page<Project> searchDesc = projectService.searchProjectsByName("2", 0, 10, Direction.DESC, "name");
 		List<Project> reversed = Lists.reverse(searchDesc.getContent());
 		List<Project> forward = searchFor2.getContent();
-		assertEquals(reversed.size(),forward.size());
-		for(int i=0;i<reversed.size();i++){
+		assertEquals(reversed.size(), forward.size());
+		for (int i = 0; i < reversed.size(); i++) {
 			assertEquals(forward.get(i), reversed.get(i));
 		}
 	}
-	
+
 	@Test
-	@WithMockUser(username="user2", password="password1", roles="USER")
-	public void testAddRelatedProject(){
+	@WithMockUser(username = "user2", password = "password1", roles = "USER")
+	public void testAddRelatedProject() {
 		Project p6 = projectService.read(6l);
 		Project p7 = projectService.read(7l);
-		
+
 		RelatedProjectJoin rp = projectService.addRelatedProject(p6, p7);
 		assertNotNull(rp);
 		assertEquals(rp.getSubject(), p6);
 		assertEquals(rp.getObject(), p7);
 	}
-	
-	@Test(expected=EntityExistsException.class)
-	@WithMockUser(username="user2", password="password1", roles="USER")
-	public void testAddExistingRelatedProject(){
+
+	@Test(expected = EntityExistsException.class)
+	@WithMockUser(username = "user2", password = "password1", roles = "USER")
+	public void testAddExistingRelatedProject() {
 		Project p6 = projectService.read(6l);
 		Project p8 = projectService.read(8l);
-		
+
 		projectService.addRelatedProject(p6, p8);
 	}
-	
+
 	@Test
-	@WithMockUser(username="user2", password="password1", roles="USER")
-	public void testGetRelatedProjects(){
+	@WithMockUser(username = "user2", password = "password1", roles = "USER")
+	public void testGetRelatedProjects() {
 		Project p6 = projectService.read(6l);
 		List<RelatedProjectJoin> relatedProjects = projectService.getRelatedProjects(p6);
 		assertFalse(relatedProjects.isEmpty());
-		
-		for(RelatedProjectJoin rp : relatedProjects){
+
+		for (RelatedProjectJoin rp : relatedProjects) {
 			assertEquals(p6, rp.getSubject());
-			assertNotEquals(p6,rp.getObject());
-		}	
+			assertNotEquals(p6, rp.getObject());
+		}
 	}
-	
+
 	@Test
-	@WithMockUser(username="user2", password="password1", roles="USER")
-	public void testGetProjectsRelatedTo(){
+	@WithMockUser(username = "user2", password = "password1", roles = "USER")
+	public void testGetProjectsRelatedTo() {
 		Project p8 = projectService.read(8l);
 		List<RelatedProjectJoin> relatedProjects = projectService.getReverseRelatedProjects(p8);
 		assertFalse(relatedProjects.isEmpty());
-		
-		for(RelatedProjectJoin rp : relatedProjects){
+
+		for (RelatedProjectJoin rp : relatedProjects) {
 			assertEquals(p8, rp.getObject());
-			assertNotEquals(p8,rp.getSubject());
-		}	
+			assertNotEquals(p8, rp.getSubject());
+		}
 	}
-	
-	@Test(expected=AccessDeniedException.class)
-	@WithMockUser(username="user2", password="password1", roles="USER")
-	public void testAddRelatedProjectNotAllowed(){
+
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "user2", password = "password1", roles = "USER")
+	public void testAddRelatedProjectNotAllowed() {
 		Project p6 = projectService.read(6l);
 		Project p3 = projectService.read(3l);
-		
+
 		projectService.addRelatedProject(p6, p3);
 	}
 
