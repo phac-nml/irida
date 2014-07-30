@@ -30,8 +30,19 @@ table.dataTable > thead th.sorting_desc > i.glyphicon:before {
   content: "\e156"; }
 table.dataTable > tbody tr.has-files td:not(:first-child) {
   cursor: pointer; }
-table.dataTable > tbody tr.odd.details + tr td, table.dataTable > tbody tr.even.details + tr td {
-  background-color: chartreuse; }
+table.dataTable > tbody tr.odd.details + tr > td, table.dataTable > tbody tr.even.details + tr > td {
+  background-color: white;
+  border-left: 5px solid #5bc0de;
+  padding: 5px 15px; }
+table.dataTable > tbody tr.odd.details + tr table, table.dataTable > tbody tr.even.details + tr table {
+  background-color: white;
+  width: 100%; }
+  table.dataTable > tbody tr.odd.details + tr table tr, table.dataTable > tbody tr.even.details + tr table tr {
+    background-color: transparent; }
+  table.dataTable > tbody tr.odd.details + tr table td.files-check, table.dataTable > tbody tr.even.details + tr table td.files-check {
+    padding: 0 5px; }
+  table.dataTable > tbody tr.odd.details + tr table td.files-created, table.dataTable > tbody tr.even.details + tr table td.files-created {
+    text-align: right; }
 
 .input-full {
   width: 100%; }
