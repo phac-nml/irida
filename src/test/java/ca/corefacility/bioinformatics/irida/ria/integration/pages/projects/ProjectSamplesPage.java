@@ -96,15 +96,6 @@ public class ProjectSamplesPage {
 	}
 
 	/**
-	 * Checks to see if a files detail area is displayed
-	 * 
-	 * @return True if the file details area is displayed
-	 */
-	public boolean isFilesAreaDisplayed() {
-		return driver.findElements(By.cssSelector("tbody tr.details + tr")).size() == 1;
-	}
-
-	/**
 	 * Checks to see if the Sample Name column is sorted ascending
 	 * 
 	 * @return True if entire column is sorted ascending
@@ -232,6 +223,20 @@ public class ProjectSamplesPage {
         return driver.findElements(By.id("merge-error")).size() == 1;
     }
 
+	public boolean isFilesViewOpen() {
+		try {
+			(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
+					.id("files-view")));
+			return true;
+		} catch (NoSuchElementException e) {
+			return false;
+		}
+	}
+
+	public int getDisplayedFilesCount() {
+		return driver.findElements(By.className("files-name")).size();
+	}
+
 	/**************************************************************************************
 	 * EVENTS
 	 **************************************************************************************/
@@ -253,7 +258,7 @@ public class ProjectSamplesPage {
 	/**
 	 * Open the row that contains files.
 	 */
-	public void openFilesView() {
+	public void toggleFilesView() {
 		driver.findElement(By.cssSelector("td.details-control a")).click();
 	}
 

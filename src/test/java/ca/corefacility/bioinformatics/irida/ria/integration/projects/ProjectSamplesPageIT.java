@@ -75,10 +75,6 @@ public class ProjectSamplesPageIT {
 		assertTrue("'selectAll' checkbox is in an indeterminate state", page.isSelectAllInIndeterminateState());
 		page.clickFirstSampleCheckbox();
 		assertTrue("'selectAll' should now be selected", page.isSelectAllSelected());
-
-		// Show the files area for the first checkbox
-		page.openFilesView();
-		assertTrue("Should display the files area", page.isFilesAreaDisplayed());
 	}
 
 	/**
@@ -188,4 +184,12 @@ public class ProjectSamplesPageIT {
         page.selectTheMergedSampleName(newName);
         assertTrue("Displays merge error", page.isSampleMergeErrorDisplayed());
     }
+
+	@Test
+	public void testDisplaySampleFiles() {
+		page.goToPage();
+		page.toggleFilesView();
+		assertTrue("Files view should be open", page.isFilesViewOpen());
+		assertEquals("There should be three files displayed", 3, page.getDisplayedFilesCount());
+	}
 }

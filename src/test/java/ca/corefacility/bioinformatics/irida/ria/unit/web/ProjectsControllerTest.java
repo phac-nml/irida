@@ -11,6 +11,8 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -438,6 +440,28 @@ public class ProjectsControllerTest {
         verify(sampleService, times(1)).update(1L, updateMap);
         assertTrue("Result contains the word success", result.containsKey("success"));
     }
+
+	@Test
+	public void testGetFilesForSample() {
+		Sample sample = new Sample("fred");
+		sample.setId(1L);
+		List<Join<Sample, SequenceFile>> joinList = new ArrayList<>();
+		for (int i = 0; i < 5; i++) {
+			Path path = Paths.get("/tmp/sequence-files/fake-file" + i + ".fast");
+			SequenceFile file = new SequenceFile(path);
+			file.setId(1L + i);
+			joinList.add(new SampleSequenceFileJoin(sample, file));
+		}
+		when(sampleService.read(1L)).thenReturn(sample);
+		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(joinList);
+		List<Map<String, Object>> result = controller.getFilesForSample(1L, 1L);
+		assertEquals("Should have the correct number of sequence file records.", joinList.size(), result.size());
+
+		Map<String, Object> file1 = result.get(0);
+		assertTrue("File has an id", file1.containsKey("id"));
+		assertTrue("File has an name", file1.containsKey("name"));
+		assertTrue("File has an created", file1.containsKey("created"));
+	}
 
 	/**
 	 * Mocks the information found within the project sidebar.
