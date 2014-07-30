@@ -601,45 +601,51 @@ public class ProjectsController {
 
 	/**
 	 * Copy or move samples from one project to another
-	 * @param projectId The original project id
-	 * @param sampleIds The sample ids to move
-	 * @param newProjectId The new project id
-	 * @param removeFromOriginal true/false whether to remove the samples from the original project
+	 * 
+	 * @param projectId
+	 *            The original project id
+	 * @param sampleIds
+	 *            The sample ids to move
+	 * @param newProjectId
+	 *            The new project id
+	 * @param removeFromOriginal
+	 *            true/false whether to remove the samples from the original
+	 *            project
 	 * @return A list of warnings
 	 */
 	@RequestMapping(value = "/ajax/{projectId}/samples/copy")
 	@ResponseBody
-	public Map<String,Object> copySampleToProject(@PathVariable Long projectId, @RequestParam List<Long> sampleIds,
+	public Map<String, Object> copySampleToProject(@PathVariable Long projectId, @RequestParam List<Long> sampleIds,
 			@RequestParam Long newProjectId, @RequestParam boolean removeFromOriginal) {
 		Project originalProject = projectService.read(projectId);
 		Project newProject = projectService.read(newProjectId);
-		
-		Map<String,Object> response = new HashMap<>();
+
+		Map<String, Object> response = new HashMap<>();
 		List<String> warnings = new ArrayList<>();
-		
+
 		int totalCopied = 0;
-		
+
 		for (Long sampleId : sampleIds) {
 			Sample sample = sampleService.read(sampleId);
 			try {
 				projectService.addSampleToProject(newProject, sample);
 				logger.trace("Copied sample " + sampleId + " to project " + newProjectId);
 				totalCopied++;
-				
+
 			} catch (EntityExistsException ex) {
 				logger.warn("Attempted to add sample " + sampleId + " to project " + newProjectId
 						+ " where it already exists.", ex);
 
 				warnings.add(sample.getLabel());
 			}
-			
-			if(removeFromOriginal){
+
+			if (removeFromOriginal) {
 				projectService.removeSampleFromProject(originalProject, sample);
 				logger.trace("Removed sample " + sampleId + " from original project " + projectId);
 			}
 		}
-		
-		if(!warnings.isEmpty()){
+
+		if (!warnings.isEmpty()) {
 			response.put("warnings", warnings);
 		}
 		response.put("totalCopied", totalCopied);
