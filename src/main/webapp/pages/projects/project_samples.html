@@ -127,9 +127,9 @@ if (!String.prototype.format) {
 }
 function EditableDataTable() {
     this.selectedRowIds = [];
+    this.ignoredFiles = [];
     this.allRowIds = [];
     this._isEditingRow = false;
-    this._isDetailsViewOpen = false;
     this._dataTable = null;
 
     function createEditForm(name) {
@@ -216,6 +216,40 @@ function EditableDataTable() {
         });
     }
 
+    this._createFilesContent = function(data, selected) {
+        var mainTR = document.createElement('tr'),
+                mainTD = document.createElement('td')
+        mainTD.setAttribute('colspan', 5);
+        mainTR.appendChild(mainTD);
+        var table = document.createElement('table');
+        table.className = "files-table";
+        mainTD.appendChild(table);
+        for (var i = 0; i < data.length; i++) {
+            var row = document.createElement('tr');
+            var tdCheckbox = document.createElement('td');
+            tdCheckbox.className = "files-check";
+            var checkbox = document.createElement('input');
+            checkbox.type = "checkbox";
+            if (selected && this.ignoredFiles.indexOf(data[i].id)==-1) {
+                checkbox.setAttribute("checked", "checked");
+            }
+            checkbox.className = "files-checkbox";
+            checkbox.value = data[i].id;
+            tdCheckbox.appendChild(checkbox);
+            row.appendChild(tdCheckbox);
+            var tdName = document.createElement('td');
+            tdName.className = 'files-name';
+            tdName.innerHTML = data[i].name;
+            row.appendChild(tdName);
+            var tdCreated = document.createElement('td');
+            tdCreated.className = 'files-created';
+            tdCreated.innerHTML = data[i].created;
+            row.appendChild(tdCreated);
+            table.appendChild(row);
+        }
+        return mainTR;
+    }
+
     function showSuccessModal(message) {
         noty({
             text: message,
@@ -238,13 +272,27 @@ function EditableDataTable() {
         $("tr.details")
                 .removeClass('details')
                 .next().remove();
-        this._isDetailsViewOpen = false;
     };
 
-    this._openDetailsView = function (el) {
-        $(el).addClass('details')
-                .after('<tr><td colspan="6">This is going to be the files view.</td></tr>').show();
-        // TODO (2014-07-24) [Josh]: This is to be updated within the files view branch.
+    this._openDetailsView = function (row) {
+        var that = this,
+                $row = $(row),
+                checkbox = $row.find('input[type="checkbox"]'),
+                sampleId = checkbox.val(),
+                selected = checkbox.prop('checked'),
+                url = /*[[@{/projects/ajax/{projectId}/samples/{0}/files(projectId=${project.getId()})}]]*/ '/projects/ajax/1/samples/1/files';
+        $.ajax({
+            'url': url.format(sampleId),
+            'type': 'post'
+        }).done(function (data) {
+            if (data.length > 0) {
+                var content = that._createFilesContent(data, selected);
+                $row.addClass('details').after(content);
+            } else {
+                var msg = /*[[#{project.samples.files.not-available}]]*/ 'Cannot get file information right now';
+                showErrorModal(msg);
+            }
+        });
     };
 
     this._createEditRow = function (row) {
@@ -454,9 +502,12 @@ EditableDataTable.prototype = {
         }
     },
     toggleFilesView: function (el) {
-        if (this._isDetailsViewOpen) {
+        var openRow = $("#samplesTable").find('.details'),
+                isSame = el.find('input[type="checkbox"]').val() === openRow.find('input[type="checkbox"]').val();
+        if (openRow.length === 1) {
             this._closeDetailsView();
-        } else {
+        }
+        if (!isSame) {
             this._openDetailsView(el);
         }
     },
@@ -576,6 +627,14 @@ $(document).ready(function () {
     $samplesTable.find('tbody').on('click', 'td.details-control a', function (e) {
         e.preventDefault();
         DT.toggleFilesView($(this).closest('tr'));
+    }).on('click', 'input[type="checkbox"].files-checkbox', function(e) {
+        var id = $(this).val(),
+                selected = $(this).prop('checked');
+        if(!selected) {
+            DT.ignoredFiles.push(id);
+        } else {
+            DT.ignoredFiles.splice(DT.ignoredFiles.indexOf(id), 1);
+        }
     }).on('click', 'input[type="checkbox"]', function (e) {
         var id = $(this).val();
         DT.checkBoxClickedEvent(id);
@@ -608,7 +667,7 @@ $(document).ready(function () {
     $selectAll.on("click", function () {
         var $this = $(this);
         var allSelected = $this.prop("checked");
-        $samplesTable.find('input').prop('checked', allSelected);
+        $samplesTable.find('input[type="checkbox"]').prop('checked', allSelected);
         $btnAction.prop('disabled', !allSelected);
         $btnAction2.prop('disabled', !allSelected);
         DT.updateAllSelected(allSelected);
