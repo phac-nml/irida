@@ -188,4 +188,12 @@ public class ProjectSamplesPageIT {
         page.selectTheMergedSampleName(newName);
         assertTrue("Displays merge error", page.isSampleMergeErrorDisplayed());
     }
+    
+    @Test
+    public void testCopySamples(){
+    	page.goToPage();
+    	page.clickFirstThreeCheckboxes();
+    	page.copySamples("2");
+    	assertTrue(page.successMessageShown());
+    }
 }
