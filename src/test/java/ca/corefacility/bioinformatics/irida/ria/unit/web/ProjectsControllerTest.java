@@ -410,7 +410,8 @@ public class ProjectsControllerTest {
         verify(projectService).removeSampleFromProject(project1, sample);
     }
 
-    @Test
+    @SuppressWarnings("unchecked")
+	@Test
     public void testAjaxSamplesMerge() {
 	    String newName = "FRED";
         Project project = getProject();
@@ -433,7 +434,6 @@ public class ProjectsControllerTest {
         Map<String, Object> result = controller.ajaxSamplesMerge(PROJECT_ID, sampleIds, 1L, newName);
 
         // Ensure that the merge was requested
-        Sample[] sampleArray = {sample2};
         verify(sampleService, times(1)).mergeSamples(any(Project.class), any(Sample.class), any());
 
         // Ensure that the rename was not requested
