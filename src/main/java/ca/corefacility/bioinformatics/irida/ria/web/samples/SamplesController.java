@@ -9,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -39,6 +40,27 @@ public class SamplesController {
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
 	}
+
+	/************************************************************************************************
+	 * PAGE REQUESTS
+	 ************************************************************************************************/
+
+	/**
+	 * Get the samples details page.
+	 * @param model Spring {@link Model}
+	 * @param sampleId The id for the sample
+	 * @return The name of the page.
+	 */
+	@RequestMapping("/{sampleId")
+	public String getSampleSpecificPage(final Model model, @PathVariable Long sampleId) {
+		Sample sample = sampleService.read(sampleId);
+		model.addAttribute("sample", sample);
+		return SAMPLE_PAGE;
+	}
+
+	/************************************************************************************************
+	 * AJAX REQUESTS
+	 ************************************************************************************************/
 
 	/**
 	 * Get a list of details about files associated with a specific sample
