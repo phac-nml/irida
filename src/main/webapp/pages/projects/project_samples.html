@@ -29,7 +29,17 @@
                                     th:text="#{project.samples.delete}">__Delete_Samples__
                             </button>
                         </div>
-                        <div class="btn-group">
+						<div class="btn-group">
+                            <button id="copyBtn" class="btn btn-default btn-sm btn-action" disabled="true"
+                                    th:text="#{project.samples.copy}">__Copy Samples__
+                            </button>
+                        </div>
+                        <div th:if="${isOwner} or ${isAdmin}" class="btn-group">
+                            <button id="moveBtn" class="btn btn-default btn-sm btn-action" disabled="true"
+                                        th:text="#{project.samples.move}">__Move Samples__
+                            </button>
+                        </div>
+						<div class="btn-group">
                             <button id="combineBtn" class="btn btn-default btn-sm btn-action2" disabled="true"
                                     th:text="#{project.samples.combine}">__Combine_Samples__
                             </button>
@@ -96,15 +106,23 @@
             <div
                     layout:replace="partials/associated-projects :: list (projects=${associatedProjects})"></div>
         </div>
-        <script type="text/html" id="select2-merge">
+    </div>
+    
+    
+    <script type="text/html" id="copySamplesSection">
+			<h2 id="copyTitle">_Copy/Move Samples_</h2>
+
+            <input type="text" id="copy-sample-project" name="project" class="form-control input-full" />
+			<span id="copy-samples-error" class="help-block bg-danger"></span>
+    </script>
+	<script type="text/html" id="select2-merge">
             <h2 th:text="#{project.samples.combine-title}">__REMOVED_TITLE__</h2>
             <p th:text="#{project.samples.combine-warning}"></p>
             <div class="form-group">
                 <input class="input-full" name="merge-name" type="text" id="select2-merge-input"/>
                 <span id="merge-error" class="hidden help-block bg-danger"></span>
             </div>
-        </script>
-    </div>
+    </script>
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
 <div th:replace="projects/project_base :: scripts"></div>
@@ -195,8 +213,42 @@ function EditableDataTable() {
             showSuccessModal(msg);
         });
     }
-
-    function combineSamples(table, noty, nameId, newName) {
+    
+    function copySamples(table, noty, newProject, removeFromOriginal) {
+        $.ajax({
+            url: /*[[@{/projects/ajax/{projectId}/samples/copy(projectId=${project.getId()})}]]*/ '/projects/ajax/1/samples/copy',
+            data: "sampleIds=" + table.selectedRowIds + "&newProjectId=" + newProject +"&removeFromOriginal=" + removeFromOriginal,
+            type: "post",
+            success: function(data){
+            	noty.close();
+            	var msg; 
+            	if(removeFromOriginal){
+            		msg = /*[[#{project.samples.move-success}]]*/ 'Samples successfully move';
+            	}
+            	else{
+            		msg = /*[[#{project.samples.copy-success}]]*/ 'Samples successfully copied';
+            	}
+            	var count = data.totalCopied;
+            	if(count > 0){
+                	showSuccessModal(msg.format(count));
+            	}
+                if(data.warnings){
+                	for(warning in data.warnings){
+                		var warnmsg = /*[[#{project.samples.copy.sample-exists}]]*/ 'Sample exists in project';
+                		
+                		showWarningModial(warnmsg.format(data.warnings[warning]));
+                	}
+                }
+                table.selectedRowIds = [];
+                table.updateTable();
+                table.getAllSampleIds();
+            },
+            error: function(){
+            	console.log(data.error);
+            }
+        });
+    }
+	function combineSamples(table, noty, nameId, newName) {
         $.ajax({
             url: /*[[@{/projects/ajax/{projectId}/samples/merge(projectId=${project.getId()})}]]*/ '/projects/ajax/1/samples/merge',
             data: "sampleIds=" + table.selectedRowIds + "&nameId=" + nameId + "&newName=" + newName,
@@ -231,6 +283,15 @@ function EditableDataTable() {
             layout: "topCenter",
             type: "error",
             timeout: 3200
+        });
+    }
+
+	function showWarningModial(message) {
+        noty({
+            text: message,
+            layout: "topCenter",
+            type: "warning",
+            timeout: 10000
         });
     }
 
@@ -295,6 +356,79 @@ function EditableDataTable() {
             ]
         });
         return result;
+    };
+    
+    this._showCopySamplesModial = function (removeFromCurrentProject) {
+    	var that = this;
+    	var div = document.getElementById('copySamplesSection');
+        var template = div.innerHTML;
+        $("#copy-samples-error").hide();
+        noty({
+            layout: "center",
+            type: "default",
+            text: template,
+            modal: true,
+            buttons: [
+                {
+                    addClass: 'btn btn-primary btn-sm',
+                    text: /*[[#{form.btn.confim}]]*/ 'OK',
+                    onClick: function ($noty) {
+                        var newProject = $("#copy-sample-project").val();
+
+                        if(newProject){
+                        	copySamples(that, $noty, newProject,removeFromCurrentProject);
+                        }
+                        else{
+                        	var noProject = /*[[#{project.samples.copy.no-project-selected}]]*/ 'No project selected';
+                        	
+                        	$("#copy-samples-error").html(noProject);
+                        	$("#copy-samples-error").show();
+                        }
+                    }
+                },
+                {
+                    addClass: 'btn btn-default btn-sm',
+                    text: /*#{form.btn.cancel}*/ 'Cancel',
+                    onClick: function ($noty) {
+                        $noty.close();
+                    }
+                }
+            ],
+            callback: {
+                onShow: function() {
+                	//get the available projects
+                	$("#copy-sample-project").select2({
+                		ajax: {
+                	        url: /*[[@{/projects/ajax/{id}/samples/available_projects(id=${project.getId()})}]]*/ '/projects/ajax/1/samples/available_projects',
+                	        dataType: 'json',
+                	        data: function (search, page) {
+                	            return {
+                	              term: search, // search term
+                	              page: page - 1, //zero based method
+                	              pageSize: 10,
+                	            };
+                	        },
+                	        results: function (data, page) {
+                	            var results = [];
+                	            
+                	            var more = (page * 10) < data.total;
+                	            
+                	            for(var id in data.results) {
+                	                results.push({
+                	                	"id": id,
+                	                	"text": data.results[id]
+                	                });
+                	            }
+                	            
+                	            return {results:results, more:more};
+                	        }
+                	    },
+                	    dropdownCss: {"z-index": 10000001},
+                        "placeholder": /*[[#{project.samples.copy.select-project}]]*/ "Select a Project"
+                    });
+                }
+            }
+        });
     };
 
     this._sendAjaxNameUpdate = function (id, name, origName) {
@@ -492,9 +626,23 @@ EditableDataTable.prototype = {
             this._showDeleteSampleModal();
         }
     },
-    combineSelectedSamples: function () {
+	combineSelectedSamples: function () {
         if (this.selectedRowIds.length > 0) {
             this._showCombineSamplesModal();
+        }
+    },
+    copySelectedSamples: function (removeFromCurrentProject) {
+        if (this.selectedRowIds.length > 0) {
+        	var title;
+        	if(removeFromCurrentProject){
+        		title = /*[[#{project.samples.move.title}]]*/ "Move Samples";
+        	}
+        	else{
+        		title = /*[[#{project.samples.copy.title}]]*/ "Copy Samples";
+        	}
+        	
+            this._showCopySamplesModial(removeFromCurrentProject);
+            $("#copyTitle").html(title);
         }
     }
 };
@@ -502,8 +650,10 @@ EditableDataTable.prototype = {
 $(document).ready(function () {
     var $deleteBtn = $("#deleteBtn"),
             $btnAction = $(".btn-action"),
-            $btnAction2 = $(".btn-action2"),
+			$btnAction2 = $(".btn-action2"),
             $combineBtn = $("#combineBtn"),
+            $copyBtn = $("#copyBtn"),
+            $moveBtn = $("#moveBtn"),
             $selectAll = $("#selectAll"),
             $samplesTable = $('#samplesTable'),
             DT = new EditableDataTable();
@@ -620,6 +770,14 @@ $(document).ready(function () {
 
     $combineBtn.on('click', function () {
         DT.combineSelectedSamples();
+    });
+	
+	$copyBtn.on('click', function(){
+    	DT.copySelectedSamples(false);
+    });
+	
+	$moveBtn.on('click', function(){
+    	DT.copySelectedSamples(true);
     });
 });
 

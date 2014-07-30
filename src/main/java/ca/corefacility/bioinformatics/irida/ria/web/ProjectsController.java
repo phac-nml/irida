@@ -1,6 +1,40 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
+import static org.springframework.data.jpa.domain.Specifications.where;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -11,6 +45,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectSamplesDataTable;
@@ -19,26 +54,9 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import java.security.Principal;
-import java.util.*;
 
 /**
  * Controller for all project related views
@@ -65,7 +83,6 @@ public class ProjectsController {
 	public static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
 	public static final String PROJECT_METADATA_EDIT_PAGE = PROJECTS_DIR + "project_metadata_edit";
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
-	public static final String PROJECT_SAMPLES_COMBINE_TEMPLATE = PROJECTS_DIR + "partials/combine_samples";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
 	private static final List<ProjectRole> projectRoles = ImmutableList.of(ProjectRole.PROJECT_USER,
@@ -533,6 +550,108 @@ public class ProjectsController {
         result.put("ids", sampleIdList);
         return result;
     }
+    
+	/**
+	 * Search for projects available for a user to copy samples to. If the user
+	 * is an admin it will show all projects.
+	 * 
+	 * @param projectId
+	 *            The current project id
+	 * @param term
+	 *            A search term
+	 * @param pageSize
+	 *            The size of the page requests
+	 * @param page
+	 *            The page number (0 based)
+	 * @param principal
+	 *            The logged in user.
+	 * @return a Map<String,Object> containing: total: total number of elements
+	 *         results: A Map<Long,String> of project IDs and project names.
+	 */
+	@RequestMapping(value = "/ajax/{projectId}/samples/available_projects")
+	@ResponseBody
+	public Map<String, Object> getProjectsAvailableToCopySamples(@PathVariable Long projectId, @RequestParam String term,
+			@RequestParam int pageSize, @RequestParam int page, Principal principal) {
+		User user = userService.getUserByUsername(principal.getName());
+
+		Map<Long, String> vals = new HashMap<>();
+		Map<String, Object> response = new HashMap<>();
+		if (user.getAuthorities().contains(Role.ROLE_ADMIN)) {
+			Page<Project> projects = projectService.searchProjectsByName(term, page, pageSize, Direction.ASC);
+			for (Project p : projects) {
+				vals.put(p.getId(), p.getName());
+			}
+			response.put("total", projects.getTotalElements());
+		} else {
+			//search for projects with a given name where the user is an owner
+			Specification<ProjectUserJoin> spec = where(
+					ProjectUserJoinSpecification.searchProjectNameWithUser(term, user)).and(
+					ProjectUserJoinSpecification.getProjectJoinsWithRole(user, ProjectRole.PROJECT_OWNER));
+			Page<ProjectUserJoin> projects = projectService.searchProjectUsers(spec, page, pageSize, Direction.ASC);
+			for (ProjectUserJoin p : projects) {
+				vals.put(p.getSubject().getId(), p.getSubject().getName());
+			}
+			response.put("total", projects.getTotalElements());
+		}
+
+		response.put("results", vals);
+
+		return response;
+	}
+
+	/**
+	 * Copy or move samples from one project to another
+	 * 
+	 * @param projectId
+	 *            The original project id
+	 * @param sampleIds
+	 *            The sample ids to move
+	 * @param newProjectId
+	 *            The new project id
+	 * @param removeFromOriginal
+	 *            true/false whether to remove the samples from the original
+	 *            project
+	 * @return A list of warnings
+	 */
+	@RequestMapping(value = "/ajax/{projectId}/samples/copy")
+	@ResponseBody
+	public Map<String, Object> copySampleToProject(@PathVariable Long projectId, @RequestParam List<Long> sampleIds,
+			@RequestParam Long newProjectId, @RequestParam boolean removeFromOriginal) {
+		Project originalProject = projectService.read(projectId);
+		Project newProject = projectService.read(newProjectId);
+
+		Map<String, Object> response = new HashMap<>();
+		List<String> warnings = new ArrayList<>();
+
+		int totalCopied = 0;
+
+		for (Long sampleId : sampleIds) {
+			Sample sample = sampleService.read(sampleId);
+			try {
+				projectService.addSampleToProject(newProject, sample);
+				logger.trace("Copied sample " + sampleId + " to project " + newProjectId);
+				totalCopied++;
+
+			} catch (EntityExistsException ex) {
+				logger.warn("Attempted to add sample " + sampleId + " to project " + newProjectId
+						+ " where it already exists.", ex);
+
+				warnings.add(sample.getLabel());
+			}
+
+			if (removeFromOriginal) {
+				projectService.removeSampleFromProject(originalProject, sample);
+				logger.trace("Removed sample " + sampleId + " from original project " + projectId);
+			}
+		}
+
+		if (!warnings.isEmpty()) {
+			response.put("warnings", warnings);
+		}
+		response.put("totalCopied", totalCopied);
+
+		return response;
+	}
 
     /**
 	 * Generates a map of project information for the {@link ProjectsDataTable}
