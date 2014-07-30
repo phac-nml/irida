@@ -14,6 +14,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -121,7 +122,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	public void removeUserFromProject(Project project, User user) throws ProjectWithoutOwnerException {
 		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);
-		if(!allowRoleChange(projectJoinForUser)){
+		if (!allowRoleChange(projectJoinForUser)) {
 			throw new ProjectWithoutOwnerException("Removing this user would leave the project without an owner");
 		}
 		pujRepository.removeUserFromProject(project, user);
@@ -233,7 +234,20 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional(readOnly = true)
+	@Deprecated
 	public Page<ProjectUserJoin> searchProjectsByNameForUser(User user, String term, int page, int size,
+			Direction order, String... sortProperties) {
+
+		return searchProjectUsers(ProjectUserJoinSpecification.searchProjectNameWithUser(term, user), page, size,
+				order, sortProperties);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public Page<ProjectUserJoin> searchProjectUsers(Specification<ProjectUserJoin> specification, int page, int size,
 			Direction order, String... sortProperties) {
 		if (sortProperties.length == 0) {
 			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
@@ -243,16 +257,17 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			sortProperties[i] = USER_JOIN_PROJECT_PROPERTY + "." + sortProperties[i];
 		}
 
-		return pujRepository.findAll(ProjectUserJoinSpecification.searchProjectNameWithUser(term, user),
-				new PageRequest(page, size, order, sortProperties));
+		return pujRepository.findAll(specification, new PageRequest(page, size, order, sortProperties));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Join<Project, User>> getProjectsForUserWithRole(User user, ProjectRole role) {
-		return pujRepository.getProjectsForUserWithRole(user, role);
+	public List<ProjectUserJoin> getProjectsForUserWithRole(User user, ProjectRole role) {
+		Page<ProjectUserJoin> searchProjectUsers = searchProjectUsers(
+				ProjectUserJoinSpecification.getProjectJoinsWithRole(user, role), 0, Integer.MAX_VALUE, Direction.ASC);
+		return searchProjectUsers.getContent();
 	}
 
 	/**
@@ -260,7 +275,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	public boolean userHasProjectRole(User user, Project project, ProjectRole projectRole) {
-		List<Join<Project, User>> projects = getProjectsForUserWithRole(user, projectRole);
+		List<ProjectUserJoin> projects = getProjectsForUserWithRole(user, projectRole);
 		return projects.contains(new ProjectUserJoin(project, user, projectRole));
 	}
 
