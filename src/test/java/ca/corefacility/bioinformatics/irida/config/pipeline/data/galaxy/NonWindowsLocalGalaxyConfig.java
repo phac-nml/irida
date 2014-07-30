@@ -43,6 +43,21 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.L
 public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	
 	/**
+	 * The system property name to set the URL to the Galaxy mercurial repository. 
+	 */
+	private final static String GALAXY_URL_PROPERTY = "test.galaxy.repository.url";
+	
+	/**
+	 * The system property name to set the branch of the Galaxy repository to use.
+	 */
+	private final static String GALAXY_BRANCH_PROPERTY = "test.galaxy.branch";
+	
+	/**
+	 * The system property name to set the revision of the Galaxy repository to use.
+	 */
+	private final static String GALAXY_REVISION_PROPERTY = "test.galaxy.revision";
+	
+	/**
 	 * Boolean to determine of Galaxy was successfully built the very first time.
 	 */
 	private boolean galaxyFailedToBuild = false;
@@ -59,6 +74,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	
 	private static final String LATEST_REVISION_STRING = "latest";
 	private static final String DEFAULT_REPSITORY_URL = "https://bitbucket.org/galaxy/galaxy-dist";
+	private static final String DEFAULT_BRANCH = "default";
 
 	/**
 	 * Builds a GalaxyUploader to connect to a running instance of Galaxy.
@@ -120,8 +136,9 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 			try {
 				localGalaxy = new LocalGalaxy();
 				
-				URL repositoryURL = getGetGalaxyRepositoryURL("test.galaxy.repository");
-				String revisionHash = getGalaxyRevision("test.galaxy.revision");
+				URL repositoryURL = getGalaxyRepositoryURL(GALAXY_URL_PROPERTY);
+				String branchName = getGalaxyRepositoryBranch(GALAXY_BRANCH_PROPERTY);
+				String revisionHash = getGalaxyRevision(GALAXY_REVISION_PROPERTY);
 		
 				String randomPassword = UUID.randomUUID().toString();
 		
@@ -141,7 +158,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		
 				GalaxyData galaxyData = new GalaxyData();
 		
-				BootStrapper bootStrapper = downloadGalaxy(localGalaxy, repositoryURL, revisionHash);
+				BootStrapper bootStrapper = downloadGalaxy(localGalaxy, repositoryURL, branchName, revisionHash);
 				localGalaxy.setBootStrapper(bootStrapper);
 		
 				GalaxyProperties galaxyProperties = setupGalaxyProperties(localGalaxy,revisionHash);
@@ -189,7 +206,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	 * @return  A URL to a Galaxy repository to download and test against.
 	 * @throws MalformedURLException 
 	 */
-	private URL getGetGalaxyRepositoryURL(String systemProperty) throws MalformedURLException {
+	private URL getGalaxyRepositoryURL(String systemProperty) throws MalformedURLException {
 		String repsitoryURLString = System.getProperty(systemProperty);
 		URL repositoryURL = new URL(DEFAULT_REPSITORY_URL);
 		
@@ -198,6 +215,21 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		}
 		
 		return repositoryURL;
+	}
+	
+	/**
+	 * Gets the branch within a Galaxy repository to download and test against.
+	 * @param systemProperty  The system property storing the branch name.
+	 * @return A branch name within a Galaxy repository.
+	 */
+	private String getGalaxyRepositoryBranch(String systemProperty) {
+		String repsitoryBranchString = System.getProperty(systemProperty);
+		
+		if (repsitoryBranchString != null && !"".equals(repsitoryBranchString)) {
+			return repsitoryBranchString;
+		} else {
+			return DEFAULT_BRANCH;
+		}
 	}
 
 	/**
@@ -236,11 +268,13 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	 * @param revisionHash  The mercurial revisionHash of Galaxy to download. 
 	 * @return  A BootStrapper object describing the downloaded Galaxy.
 	 */
-	private BootStrapper downloadGalaxy(LocalGalaxy localGalaxy, URL repositoryURL, String revisionHash) {
+	@SuppressWarnings("deprecation")
+	private BootStrapper downloadGalaxy(LocalGalaxy localGalaxy, URL repositoryURL,
+			String branchName, String revisionHash) {
 		final File DEFAULT_DESTINATION = null;
 		
 		DownloadProperties downloadProperties
-			= new DownloadProperties(repositoryURL.toString(), "default", revisionHash, null);
+			= new DownloadProperties(repositoryURL.toString(), branchName, revisionHash, DEFAULT_DESTINATION);
 		BootStrapper bootStrapper = new BootStrapper(downloadProperties);
 
 		bootStrapper.setupGalaxy();
