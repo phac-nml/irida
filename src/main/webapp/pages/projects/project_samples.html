@@ -127,7 +127,6 @@ if (!String.prototype.format) {
 }
 function EditableDataTable() {
     this.selectedRowIds = [];
-    this.ignoredFiles = [];
     this.allRowIds = [];
     this._isEditingRow = false;
     this._dataTable = null;
@@ -218,7 +217,8 @@ function EditableDataTable() {
 
     this._createFilesContent = function(data, selected) {
         var mainTR = document.createElement('tr'),
-                mainTD = document.createElement('td')
+                mainTD = document.createElement('td');
+        mainTR.setAttribute("id", "files-view");
         mainTD.setAttribute('colspan', 5);
         mainTR.appendChild(mainTD);
         var table = document.createElement('table');
@@ -226,17 +226,6 @@ function EditableDataTable() {
         mainTD.appendChild(table);
         for (var i = 0; i < data.length; i++) {
             var row = document.createElement('tr');
-            var tdCheckbox = document.createElement('td');
-            tdCheckbox.className = "files-check";
-            var checkbox = document.createElement('input');
-            checkbox.type = "checkbox";
-            if (selected && this.ignoredFiles.indexOf(data[i].id)==-1) {
-                checkbox.setAttribute("checked", "checked");
-            }
-            checkbox.className = "files-checkbox";
-            checkbox.value = data[i].id;
-            tdCheckbox.appendChild(checkbox);
-            row.appendChild(tdCheckbox);
             var tdName = document.createElement('td');
             tdName.className = 'files-name';
             tdName.innerHTML = data[i].name;
@@ -627,14 +616,6 @@ $(document).ready(function () {
     $samplesTable.find('tbody').on('click', 'td.details-control a', function (e) {
         e.preventDefault();
         DT.toggleFilesView($(this).closest('tr'));
-    }).on('click', 'input[type="checkbox"].files-checkbox', function(e) {
-        var id = $(this).val(),
-                selected = $(this).prop('checked');
-        if(!selected) {
-            DT.ignoredFiles.push(id);
-        } else {
-            DT.ignoredFiles.splice(DT.ignoredFiles.indexOf(id), 1);
-        }
     }).on('click', 'input[type="checkbox"]', function (e) {
         var id = $(this).val();
         DT.checkBoxClickedEvent(id);
