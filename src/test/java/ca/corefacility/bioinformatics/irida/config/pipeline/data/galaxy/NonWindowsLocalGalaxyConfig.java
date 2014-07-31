@@ -214,7 +214,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	 */
 	private void buildTestTools(Path galaxyRoot, GalaxyProperties galaxyProperties, LocalGalaxy localGalaxy) throws URISyntaxException, IOException {
 		Path collectionExampleToolSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
-				"collection_list.xml").toURI());
+				"collection_list_paired.xml").toURI());
 		Path iridaToolConfigSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
 				"tool_conf_irida.xml").toURI());
 
@@ -222,7 +222,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		Path collectionExampleToolDirectory = galaxyRoot.resolve("tools").resolve("collection");
 		Files.createDirectories(collectionExampleToolDirectory);
 		Path collectionExampleToolDestination = 
-				collectionExampleToolDirectory.resolve("collection_list.xml");
+				collectionExampleToolDirectory.resolve("collection_list_paired.xml");
 		Files.copy(collectionExampleToolSource, collectionExampleToolDestination);
 		
 		Path iridaToolConfigDestination = galaxyRoot.resolve("tool_conf_irida.xml");

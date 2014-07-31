@@ -463,10 +463,10 @@ public class LocalGalaxy {
 	/**
 	 * Sets up a collection list workflow.
 	 */
-	private void setupWorkflowCollectionList() {
+	private void setupWorkflowCollectionListPaired() {
 		try {
 			Path workflowFile = Paths.get(LocalGalaxy.class.getResource(
-					"workflow_collection_list.ga").toURI());
+					"workflow_collection_list_paired.ga").toURI());
 			
 			// build workflow
 			worklowCollectionListId = constructTestWorkflow(workflowFile);
@@ -516,7 +516,7 @@ public class LocalGalaxy {
 	 */
 	public void setupWorkflows() {
 		setupWorkflowSingleInput();
-		setupWorkflowCollectionList();
+		setupWorkflowCollectionListPaired();
 		
 		invalidWorkflowId = "invalid";
 	}

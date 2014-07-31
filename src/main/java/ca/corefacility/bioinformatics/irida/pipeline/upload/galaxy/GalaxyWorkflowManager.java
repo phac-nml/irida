@@ -33,6 +33,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputDefinition;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
+import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 import com.sun.jersey.api.client.ClientHandlerException;
@@ -149,21 +150,29 @@ public class GalaxyWorkflowManager {
 	
 	/**
 	 * Starts the execution of a workflow with a list of fastq files and the given workflow id.
-	 * @param inputFiles  A list of input file to start the workflow.
+	 * @param inputFilesForward  A list of forward read fastq files start the workflow.
+	 * @param inputFilesReverse  A list of reverse read fastq files start the workflow.
 	 * @param inputFileType The file type of the input files.
 	 * @param workflowId  The id of the workflow to start.
 	 * @param workflowInputLabel The label of a workflow input in Galaxy.
 	 * @throws ExecutionManagerException If there was an error executing the workflow.
 	 */
-	public WorkflowOutputs runSingleCollectionWorkflow(List<Path> inputFiles, String inputFileType,
-			String workflowId, String workflowInputLabel)
+	public WorkflowOutputs runSingleCollectionWorkflow(List<Path> inputFilesForward, List<Path> inputFilesReverse,
+			String inputFileType, String workflowId, String workflowInputLabel)
 			throws ExecutionManagerException {
-		checkNotNull(inputFiles, "inputFiles is null");
+		checkNotNull(inputFilesForward, "inputFilesForward is null");
+		checkNotNull(inputFilesReverse, "inputFilesForward is null");
+		checkArgument(inputFilesForward.size() == inputFilesReverse.size(),
+				"inputFiles have different number of elements");
 		checkNotNull(inputFileType, "inputFileType is null");
 		checkNotNull(workflowInputLabel, "workflowInputLabel is null");
 		
-		for (Path file : inputFiles) {
-			checkArgument(Files.exists(file), "inputFile " + file + " does not exist");
+		for (Path file : inputFilesForward) {
+			checkArgument(Files.exists(file), "inputFileForward " + file + " does not exist");
+		}
+		
+		for (Path file : inputFilesReverse) {
+			checkArgument(Files.exists(file), "inputFilesReverse " + file + " does not exist");
 		}
 		
 		checkWorkflowIdValid(workflowId);
@@ -172,11 +181,13 @@ public class GalaxyWorkflowManager {
 		WorkflowDetails workflowDetails = workflowsClient.showWorkflow(workflowId);
 		
 		// upload dataset to history
-		List<Dataset> inputDatasets = 
-				uploadFilesListToHistory(inputFiles, inputFileType, workflowHistory);
+		List<Dataset> inputDatasetsForward = 
+				uploadFilesListToHistory(inputFilesForward, inputFileType, workflowHistory);
+		List<Dataset> inputDatasetsReverse = 
+				uploadFilesListToHistory(inputFilesForward, inputFileType, workflowHistory);
 		
 		// construct list of datasets
-		CollectionResponse collection = constructFileCollection(inputDatasets, workflowHistory);
+		CollectionResponse collection = constructFileCollection(inputDatasetsForward, inputDatasetsReverse, workflowHistory);
 		logger.debug("Constructed dataset collection: id=" + collection.getId() + ", " + collection.getName());
 		
 		String workflowInputId = getWorkflowInputId(workflowDetails, workflowInputLabel);
@@ -197,20 +208,35 @@ public class GalaxyWorkflowManager {
 	
 	/**
 	 * Constructs a collection containing a list of files from the given datasets.
-	 * @param inputDatasets  The datasets to construct a collection from.
+	 * @param inputDatasetsForward  The datasets to construct a collection from.
 	 * @param workflowHistory  The history of the workflow to construct the collection within.
 	 * @return  A CollectionResponse describing the workflow collection.
 	 * @throws ExecutionManagerException 
 	 */
-	private CollectionResponse constructFileCollection(List<Dataset> inputDatasets, History workflowHistory) throws ExecutionManagerException {
+	private CollectionResponse constructFileCollection(List<Dataset> inputDatasetsForward,
+			List<Dataset> inputDatasetsReverse, History workflowHistory) throws ExecutionManagerException {
 		CollectionDescription collectionDescription = new CollectionDescription();
-		collectionDescription.setCollectionType("list");
+		collectionDescription.setCollectionType("list:paired");
 		collectionDescription.setName("collection");
 		
-		for (Dataset dataset : inputDatasets) {
-			HistoryDatasetElement element = new HistoryDatasetElement();
-			element.setId(dataset.getId());
-			element.setName(dataset.getName());
+		for (int i = 0; i < inputDatasetsForward.size(); i++) {
+			Dataset datasetForward = inputDatasetsForward.get(i);
+			Dataset datasetReverse = inputDatasetsReverse.get(i);
+			
+			HistoryDatasetElement elementForward = new HistoryDatasetElement();
+			elementForward.setId(datasetForward.getId());
+			elementForward.setName("forward");
+			
+			HistoryDatasetElement elementReverse = new HistoryDatasetElement();
+			elementReverse.setId(datasetReverse.getId());
+			elementReverse.setName("reverse");
+			
+		    // Create an object to link together the forward and reverse reads for file2
+		    CollectionElement element = new CollectionElement();
+		    element.setName("file"+i);
+		    element.setCollectionType("paired");
+		    element.addCollectionElement(elementForward);
+		    element.addCollectionElement(elementReverse);
 			
 			collectionDescription.addDatasetElement(element);
 		}

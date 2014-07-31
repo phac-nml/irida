@@ -106,21 +106,26 @@ public class GalaxyWorkflowManagerIT {
 	}
 	
 	/**
-	 * Tests executing a collections list workflow.
+	 * Tests executing a collections paired list workflow.
 	 * @throws ExecutionManagerException
 	 */
 	@Test
-	public void testExecuteCollectionsList() throws ExecutionManagerException {
+	public void testExecuteCollectionsPairedList() throws ExecutionManagerException {
 		
 		String workflowId = localGalaxy.getWorklowCollectionListId();
 		String workflowInputLabel = localGalaxy.getWorkflowCollectionListLabel();
 		
-		List<Path> dataFiles = new LinkedList<Path>();
-		dataFiles.add(dataFile1);
-		dataFiles.add(dataFile2);
+		List<Path> dataFilesForward = new LinkedList<Path>();
+		dataFilesForward.add(dataFile1);
+		dataFilesForward.add(dataFile1);
+		
+		List<Path> dataFilesReverse = new LinkedList<Path>();
+		dataFilesReverse.add(dataFile2);
+		dataFilesReverse.add(dataFile2);
 		
 		WorkflowOutputs workflowOutput = 
-				galaxyWorkflowManager.runSingleCollectionWorkflow(dataFiles, FILE_TYPE, workflowId, workflowInputLabel);
+				galaxyWorkflowManager.runSingleCollectionWorkflow(dataFilesForward,
+						dataFilesReverse, FILE_TYPE, workflowId, workflowInputLabel);
 		assertNotNull(workflowOutput);
 		assertNotNull(workflowOutput.getHistoryId());
 		
