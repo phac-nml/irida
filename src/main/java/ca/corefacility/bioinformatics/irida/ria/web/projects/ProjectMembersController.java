@@ -31,6 +31,12 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDat
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+/**
+ * Controller for handling project/members views and functions
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @Controller
 @RequestMapping("/projects")
 public class ProjectMembersController {
@@ -80,6 +86,16 @@ public class ProjectMembersController {
 		return PROJECT_MEMBERS_PAGE;
 	}
 
+	/**
+	 * Add a member to a project
+	 * 
+	 * @param projectId
+	 *            The ID of the project
+	 * @param userId
+	 *            The ID of the user
+	 * @param projectRole
+	 *            The role for the user on the project
+	 */
 	@RequestMapping(value = "/{projectId}/members", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
 	@ResponseBody
@@ -93,6 +109,15 @@ public class ProjectMembersController {
 		projectService.addUserToProject(project, user, role);
 	}
 
+	/**
+	 * Search the list of users who could be added to a project
+	 * 
+	 * @param projectId
+	 *            The ID of the project
+	 * @param term
+	 *            A search term
+	 * @return A Map<Long,String> of the userID and user label
+	 */
 	@RequestMapping("/{projectId}/ajax/availablemembers")
 	@ResponseBody
 	public Map<Long, String> getUsersAvailableForProject(@PathVariable Long projectId, @RequestParam String term) {
@@ -164,6 +189,16 @@ public class ProjectMembersController {
 		projectService.updateUserProjectRole(project, user, role);
 	}
 
+	/**
+	 * Get a map of the members on a project
+	 * 
+	 * @param projectId
+	 *            The ID of the project
+	 * @return A Map<String,Collection<ProjectUserJoin>> of the users on a
+	 *         project. The key will be the response data param, and probably
+	 *         only that. The collection will be a ProjectUserJoin collection of
+	 *         all users on the project.
+	 */
 	@RequestMapping(value = "/ajax/{projectId}/members", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Collection<Join<Project, User>>> getAjaxProjectMemberMap(
 			@PathVariable Long projectId) {
