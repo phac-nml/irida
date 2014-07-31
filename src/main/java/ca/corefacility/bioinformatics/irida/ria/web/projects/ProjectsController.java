@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web;
+package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.security.Principal;
 import java.util.ArrayList;
