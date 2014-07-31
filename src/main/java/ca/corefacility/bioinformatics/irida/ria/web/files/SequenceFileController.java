@@ -7,13 +7,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.util.Map;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Controller for all {@link SequenceFile} related views
@@ -51,10 +51,9 @@ public class SequenceFileController {
 	@RequestMapping("/download/{sequenceFileId}")
 	public void downloadSequenceFile(@PathVariable Long sequenceFileId, HttpServletResponse response) throws IOException {
 		SequenceFile sequenceFile = sequenceFileService.read(sequenceFileId);
-		File file = new File(sequenceFile.getStringPath());
-		InputStream is = new FileInputStream(file);
+		Path path = sequenceFile.getFile();
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + sequenceFile.getLabel() + "\"");
-		FileCopyUtils.copy(is, response.getOutputStream());
+		Files.copy(path, response.getOutputStream());
 		response.flushBuffer();
 	}
 }
