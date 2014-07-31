@@ -367,6 +367,17 @@ public class ProjectServiceImplIT {
 
 		projectService.addRelatedProject(p6, p3);
 	}
+	
+	@Test
+	@WithMockUser(username="user1", roles="USER")
+	public void testGetProjectForSample(){
+		Sample sample = sampleService.read(1l);
+		List<Join<Project, Sample>> projectsForSample = projectService.getProjectsForSample(sample);
+		assertFalse(projectsForSample.isEmpty());
+		for(Join<Project,Sample> join : projectsForSample){
+			assertEquals(sample,join.getObject());
+		}
+	}
 
 	private Project p() {
 		Project p = new Project();
