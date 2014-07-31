@@ -217,7 +217,7 @@ public class ProjectServiceImplTest {
 		List<ProjectUserJoin> joins = new ArrayList<>();
 		joins.add(new ProjectUserJoin(p, u, ProjectRole.PROJECT_OWNER));
 		Page<ProjectUserJoin> page = new PageImpl<>(joins);
-		
+
 		when(pujRepository.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(page);
 
 		assertTrue("User has ownership of project.", projectService.userHasProjectRole(u, p, ProjectRole.PROJECT_OWNER));
@@ -330,6 +330,21 @@ public class ProjectServiceImplTest {
 
 		projectService.updateUserProjectRole(project, user, projectRole);
 
+	}
+
+	@Test
+	public void testGetProjectsForSample() {
+		Sample sample = new Sample("my sample");
+		@SuppressWarnings("unchecked")
+		List<Join<Project, Sample>> projects = Lists.newArrayList(new ProjectSampleJoin(new Project("p1"), sample),
+				new ProjectSampleJoin(new Project("p2"), sample));
+
+		when(psjRepository.getProjectForSample(sample)).thenReturn(projects);
+
+		List<Join<Project, Sample>> projectsForSample = projectService.getProjectsForSample(sample);
+		assertEquals(2, projectsForSample.size());
+
+		verify(psjRepository).getProjectForSample(sample);
 	}
 
 	private Project project() {
