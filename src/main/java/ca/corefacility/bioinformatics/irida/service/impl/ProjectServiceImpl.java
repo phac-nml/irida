@@ -322,4 +322,12 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public void removeRelatedProject(RelatedProjectJoin relatedProject) {
 		relatedProjectRepository.delete(relatedProject);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<Join<Project, Sample>> getProjectsForSample(Sample sample) {
+		return psjRepository.getProjectForSample(sample);
+	}
 }
