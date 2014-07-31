@@ -250,17 +250,7 @@ public class ProjectsControllerTest {
 				+ "/metadata", page);
 	}
 
-	@Test
-	public void testGetAjaxUsersListForProject() {
-		Long projectId = 32L;
-		Project project = new Project("test");
-		project.setId(projectId);
-		Collection<Join<Project, User>> users = getUsersForProject(project);
-		when(userService.getUsersForProject(any(Project.class))).thenReturn(users);
-		Map<String, Collection<Join<Project, User>>> usersReturned = controller.getAjaxProjectMemberMap(projectId);
-		assertTrue("Has a data attribute required for data tables", usersReturned.containsKey("data"));
-		assertEquals("Has the correct number of users.", usersReturned.get("data").size(), 2);
-	}
+
 
 	@Test
 	public void testGetProjectMetadataPage() {
@@ -532,14 +522,7 @@ public class ProjectsControllerTest {
 		return projects;
 	}
 
-	private Collection<Join<Project, User>> getUsersForProject(Project project) {
-		Collection<Join<Project, User>> users = new ArrayList<>();
-		users.add(new ProjectUserJoin(project, new User("tester1", "test@me.com", "", "Test", "Test2", "234234"),
-				ProjectRole.PROJECT_USER));
-		users.add(new ProjectUserJoin(project, new User("tester2", "test@me.com", "", "Test", "Test23", "213231"),
-				ProjectRole.PROJECT_OWNER));
-		return users;
-	}
+
 
 	private List<RelatedProjectJoin> getRelatedProjectJoin(List<Join<Project, User>> projects) {
 		List<RelatedProjectJoin> join = new ArrayList<>();

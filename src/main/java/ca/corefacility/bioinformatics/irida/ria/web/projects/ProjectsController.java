@@ -317,19 +317,6 @@ public class ProjectsController {
 		return response;
 	}
 
-	@RequestMapping(value = "/ajax/{projectId}/members", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Collection<Join<Project, User>>> getAjaxProjectMemberMap(
-			@PathVariable Long projectId) {
-		Map<String, Collection<Join<Project, User>>> data = new HashMap<>();
-		try {
-			Project project = projectService.read(projectId);
-			Collection<Join<Project, User>> users = userService.getUsersForProject(project);
-			data.put(ProjectsDataTable.RESPONSE_PARAM_DATA, users);
-		} catch (Exception e) {
-			logger.error("Trying to access a project that does not exist.");
-		}
-		return data;
-	}
 
 	/**
 	 * Handles AJAX request for getting a list of projects available to the

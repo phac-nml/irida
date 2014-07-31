@@ -127,41 +127,52 @@ public class ProjectMembersControllerTest {
 		verify(projectService).read(projectId);
 		verify(projectService).removeUserFromProject(project, user);
 	}
-	
-    @Test
-    public void testUdateUserRole() throws ProjectWithoutOwnerException, ProjectSelfEditException{
-    	Long projectId = 1l;
-    	Long userId = 2l;
-    	Project project = new Project();
-    	User user = new User(userId, "tom", null, null, "Tom", "Matthews", null);
-    	ProjectRole projectRole = ProjectRole.PROJECT_USER;
-    	
-    	Principal principal = () -> USER_NAME;
-    	
-    	when(projectService.read(projectId)).thenReturn(project);
-    	when(userService.read(userId)).thenReturn(user);
-    	
-    	controller.updateUserRole(projectId, userId, projectRole.toString(), principal);
-    	
-    	verify(projectService).read(projectId);
-    	verify(userService).read(userId);
-    	verify(projectService).updateUserProjectRole(project, user, projectRole);
-    }
-    
-    
-    @Test(expected=ProjectSelfEditException.class)
-    public void testUdateUserSelfRole() throws ProjectWithoutOwnerException, ProjectSelfEditException{
-    	Long projectId = 1l;
-    	Long userId = 2l;
-    	Project project = new Project();
-    	User user = new User(userId, USER_NAME, null, null, "Tom", "Matthews", null);
-    	ProjectRole projectRole = ProjectRole.PROJECT_USER;
-    	
-    	Principal principal = () -> USER_NAME;
-    	
-    	when(projectService.read(projectId)).thenReturn(project);
-    	when(userService.read(userId)).thenReturn(user);
-    	
-    	controller.updateUserRole(projectId, userId, projectRole.toString(), principal);
-    }
+
+	@Test
+	public void testUdateUserRole() throws ProjectWithoutOwnerException, ProjectSelfEditException {
+		Long projectId = 1l;
+		Long userId = 2l;
+		Project project = new Project();
+		User user = new User(userId, "tom", null, null, "Tom", "Matthews", null);
+		ProjectRole projectRole = ProjectRole.PROJECT_USER;
+
+		Principal principal = () -> USER_NAME;
+
+		when(projectService.read(projectId)).thenReturn(project);
+		when(userService.read(userId)).thenReturn(user);
+
+		controller.updateUserRole(projectId, userId, projectRole.toString(), principal);
+
+		verify(projectService).read(projectId);
+		verify(userService).read(userId);
+		verify(projectService).updateUserProjectRole(project, user, projectRole);
+	}
+
+	@Test(expected = ProjectSelfEditException.class)
+	public void testUdateUserSelfRole() throws ProjectWithoutOwnerException, ProjectSelfEditException {
+		Long projectId = 1l;
+		Long userId = 2l;
+		Project project = new Project();
+		User user = new User(userId, USER_NAME, null, null, "Tom", "Matthews", null);
+		ProjectRole projectRole = ProjectRole.PROJECT_USER;
+
+		Principal principal = () -> USER_NAME;
+
+		when(projectService.read(projectId)).thenReturn(project);
+		when(userService.read(userId)).thenReturn(user);
+
+		controller.updateUserRole(projectId, userId, projectRole.toString(), principal);
+	}
+
+	@Test
+	public void testGetAjaxUsersListForProject() {
+		Long projectId = 32L;
+		Project project = new Project("test");
+		project.setId(projectId);
+		Collection<Join<Project, User>> users = projectTestUtils.getUsersForProject(project);
+		when(userService.getUsersForProject(any(Project.class))).thenReturn(users);
+		Map<String, Collection<Join<Project, User>>> usersReturned = controller.getAjaxProjectMemberMap(projectId);
+		assertTrue("Has a data attribute required for data tables", usersReturned.containsKey("data"));
+		assertEquals("Has the correct number of users.", usersReturned.get("data").size(), 2);
+	}
 }

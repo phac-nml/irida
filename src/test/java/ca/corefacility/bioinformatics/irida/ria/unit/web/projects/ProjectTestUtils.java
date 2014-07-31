@@ -66,4 +66,13 @@ public class ProjectTestUtils {
 		}
 		return project;
 	}
+
+	public Collection<Join<Project, User>> getUsersForProject(Project project) {
+		Collection<Join<Project, User>> users = new ArrayList<>();
+		users.add(new ProjectUserJoin(project, new User("tester1", "test@me.com", "", "Test", "Test2", "234234"),
+				ProjectRole.PROJECT_USER));
+		users.add(new ProjectUserJoin(project, new User("tester2", "test@me.com", "", "Test", "Test23", "213231"),
+				ProjectRole.PROJECT_OWNER));
+		return users;
+	}
 }

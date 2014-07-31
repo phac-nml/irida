@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.security.Principal;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,8 +24,10 @@ import com.google.common.collect.ImmutableList;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
+import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDataTable;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -158,5 +162,19 @@ public class ProjectMembersController {
 		ProjectRole role = ProjectRole.fromString(projectRole);
 
 		projectService.updateUserProjectRole(project, user, role);
+	}
+
+	@RequestMapping(value = "/ajax/{projectId}/members", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, Collection<Join<Project, User>>> getAjaxProjectMemberMap(
+			@PathVariable Long projectId) {
+		Map<String, Collection<Join<Project, User>>> data = new HashMap<>();
+		try {
+			Project project = projectService.read(projectId);
+			Collection<Join<Project, User>> users = userService.getUsersForProject(project);
+			data.put(ProjectsDataTable.RESPONSE_PARAM_DATA, users);
+		} catch (Exception e) {
+			logger.error("Trying to access a project that does not exist.");
+		}
+		return data;
 	}
 }
