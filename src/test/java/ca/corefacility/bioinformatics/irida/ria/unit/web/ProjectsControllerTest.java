@@ -11,6 +11,8 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -593,6 +595,8 @@ public class ProjectsControllerTest {
 		verify(projectService).removeSampleFromProject(oldProject, s2);
 		verify(projectService).removeSampleFromProject(oldProject, s3);
 	}
+
+
 
 	/**
 	 * Mocks the information found within the project sidebar.
