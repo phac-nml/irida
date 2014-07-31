@@ -67,9 +67,9 @@ Running the Tests
 
 The unit tests for the IRIDA API can be run with `mvn test`.  The full set of tests can be run with `mvn verify`.
 
-Some of the tests require downloading and setting up a version of Galaxy.  By default, this will download the Galaxy version definined in the _test.galaxy.*_ variables in the *pom.xml* file.  This can be overridden by setting these properties when running maven.  For example, to test against the very latest Galaxy code you can run:
+Some of the tests require downloading and setting up a version of Galaxy.  By default, this will download the Galaxy version definined in the _test.galaxy.*_ properties in the *pom.xml* file.  This can be overridden by setting these properties when running maven.  For example, to test against the very latest Galaxy code you can run:
 
-	mvn verify -Dtest.galaxy.repository.url=https://bitbucket.org/galaxy/galaxy-central  -Dtest.galaxy.branch=default -Dtest.galaxy.revision=latest
+	mvn verify -Dtest.galaxy.repository.url=https://bitbucket.org/galaxy/galaxy-central -Dtest.galaxy.branch=default -Dtest.galaxy.revision=latest
 
 Miscellaneous Doodads
 =====================
