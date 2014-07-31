@@ -30,8 +30,8 @@ import java.util.*;
 @RequestMapping("/samples")
 public class SamplesController {
 	// Page Names
-	private static final String SAMPlES_DIR = "samples/";
-	private static final String SAMPLE_PAGE = SAMPlES_DIR + "sample";
+	private static final String SAMPLES_DIR = "samples/";
+	private static final String SAMPLE_PAGE = SAMPLES_DIR + "sample";
 
 	// Services
 	private final SampleService sampleService;
