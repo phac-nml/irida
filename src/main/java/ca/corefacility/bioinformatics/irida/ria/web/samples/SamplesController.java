@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,6 +81,9 @@ public class SamplesController {
 			SequenceFile file = join.getObject();
 			Map<String, Object> map = new HashMap<>();
 			map.put("id", file.getId().toString());
+
+			File f = new File(file.getStringPath());
+			map.put("size", Formats.formatSequenceFileSizeInMB(f.length()));
 			map.put("name", file.getLabel());
 			map.put("created", Formats.DATE.format(file.getTimestamp()));
 			response.add(map);
