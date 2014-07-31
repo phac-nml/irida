@@ -114,6 +114,7 @@ public class ProjectsControllerTest {
 	public void testGetAjaxProjectSamplesMap() {
 		Project project = getProject();
 		Page<ProjectSampleJoin> page = getSamplesForProjectPage(project);
+
 		when(projectService.read(anyLong())).thenReturn(project);
 		when(
 				sampleService.getSamplesForProjectWithName(any(Project.class), anyString(), anyInt(), anyInt(), any(),
@@ -545,91 +546,23 @@ public class ProjectsControllerTest {
 		return list;
 	}
 
+	/**
+	 * Get a page of samples for a project
+	 * 
+	 * @param project
+	 *            The project to use
+	 * @return A Page<ProjectSampleJoin> containing 10 samples
+	 */
 	private Page<ProjectSampleJoin> getSamplesForProjectPage(Project project) {
+		List<ProjectSampleJoin> psjList = new ArrayList<>();
+		for (int i = 0; i < 10; i++) {
+			Sample sample = new Sample("sample" + i);
+			sample.setId(i + 1L);
+			ProjectSampleJoin join = new ProjectSampleJoin(project, sample);
+			psjList.add(join);
+		}
 
-		return new Page<ProjectSampleJoin>() {
-			@Override
-			public int getNumber() {
-				return 0;
-			}
-
-			@Override
-			public int getSize() {
-				return 0;
-			}
-
-			@Override
-			public int getTotalPages() {
-				return 0;
-			}
-
-			@Override
-			public int getNumberOfElements() {
-				return 0;
-			}
-
-			@Override
-			public long getTotalElements() {
-				return 0;
-			}
-
-			@Override
-			public boolean hasPreviousPage() {
-				return false;
-			}
-
-			@Override
-			public boolean isFirstPage() {
-				return false;
-			}
-
-			@Override
-			public boolean hasNextPage() {
-				return false;
-			}
-
-			@Override
-			public boolean isLastPage() {
-				return false;
-			}
-
-			@Override
-			public Pageable nextPageable() {
-				return null;
-			}
-
-			@Override
-			public Pageable previousPageable() {
-				return null;
-			}
-
-			@Override
-			public Iterator<ProjectSampleJoin> iterator() {
-				return null;
-			}
-
-			@Override
-			public List<ProjectSampleJoin> getContent() {
-				List<ProjectSampleJoin> list = new ArrayList<>();
-				for (int i = 0; i < 10; i++) {
-					Sample sample = new Sample("sample" + i);
-					sample.setId(i + 1L);
-					ProjectSampleJoin join = new ProjectSampleJoin(project, sample);
-					list.add(join);
-				}
-				return list;
-			}
-
-			@Override
-			public boolean hasContent() {
-				return true;
-			}
-
-			@Override
-			public Sort getSort() {
-				return null;
-			}
-		};
+		return new PageImpl<>(psjList);
 	}
 
 	private Page<Project> getProjectsListForAdmin(List<Project> projects) {
