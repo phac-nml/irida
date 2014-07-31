@@ -73,6 +73,13 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 		source.setBasenames(RESOURCE_LOCATIONS);
 		source.setFallbackToSystemLocale(false);
 		source.setDefaultEncoding(DEFAULT_ENCODING);
+		
+		// Set template cache timeout if in production
+		// Don't cache at all if in development
+		if (!env.acceptsProfiles(SPRING_PROFILE_PRODUCTION)) {
+			source.setCacheSeconds(0);
+		}
+				
 		return source;
 	}
 

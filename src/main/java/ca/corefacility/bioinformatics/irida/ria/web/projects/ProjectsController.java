@@ -1,17 +1,15 @@
-package ca.corefacility.bioinformatics.irida.ria.web;
+package ca.corefacility.bioinformatics.irida.ria.web.projects;
+
+import static org.springframework.data.jpa.domain.Specifications.where;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +18,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
-import static org.springframework.data.jpa.domain.Specifications.where;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,14 +32,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -57,10 +54,9 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 
 /**
- * Controller for all project related views
+ * Controller for project related views
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
@@ -72,7 +68,7 @@ public class ProjectsController {
 	private static final String ACTIVE_NAV_DASHBOARD = "dashboard";
 	private static final String ACTIVE_NAV_METADATA = "metadata";
 	private static final String ACTIVE_NAV_SAMPLES = "samples";
-	private static final String ACTIVE_NAV_MEMBERS = "members";
+
 	// private static final String ACTIVE_NAV_ANALYSIS = "analysis";
 
 	// Page Names
@@ -86,22 +82,21 @@ public class ProjectsController {
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
-	private static final List<ProjectRole> projectRoles = ImmutableList.of(ProjectRole.PROJECT_USER,
-			ProjectRole.PROJECT_OWNER);
-
 	// Services
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final UserService userService;
 	private final SequenceFileService sequenceFileService;
+	private final ProjectControllerUtils projectControllerUtils;
 
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
-			SequenceFileService sequenceFileService) {
+			SequenceFileService sequenceFileService, ProjectControllerUtils projectControllerUtils) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
 		this.sequenceFileService = sequenceFileService;
+		this.projectControllerUtils = projectControllerUtils;
 	}
 
 	/**
@@ -139,111 +134,9 @@ public class ProjectsController {
 		logger.debug("Getting project information for [Project " + projectId + "]");
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
-		getProjectTemplateDetails(model, principal, project);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_DASHBOARD);
 		return SPECIFIC_PROJECT_PAGE;
-	}
-
-	/**
-	 * Gets the name of the template for the project members page. Populates the
-	 * template with standard info.
-	 *
-	 * @param model
-	 *            {@link Model}
-	 * @param principal
-	 *            {@link Principal}
-	 * @param projectId
-	 *            Id for the project to show the users for
-	 * @return The name of the project members page.
-	 */
-	@RequestMapping(value="/{projectId}/members", method=RequestMethod.GET)
-	public String getProjectUsersPage(final Model model, final Principal principal, @PathVariable Long projectId) {
-		Project project = projectService.read(projectId);
-		model.addAttribute("project", project);
-		getProjectTemplateDetails(model, principal, project);
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_MEMBERS);
-		model.addAttribute("projectRoles", projectRoles);
-		return PROJECT_MEMBERS_PAGE;
-	}
-	
-	@RequestMapping(value="/{projectId}/members", method=RequestMethod.POST)
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
-	@ResponseBody
-	public void addProjectMember(@PathVariable Long projectId, @RequestParam Long userId, @RequestParam String projectRole){
-		Project project = projectService.read(projectId);
-		User user = userService.read(userId);
-		ProjectRole role = ProjectRole.fromString(projectRole);
-		
-		projectService.addUserToProject(project, user, role);
-	}
-
-	@RequestMapping("/{projectId}/ajax/availablemembers")
-	@ResponseBody
-	public Map<Long, String> getUsersAvailableForProject(@PathVariable Long projectId, @RequestParam String term) {
-		Project project = projectService.read(projectId);
-		List<User> usersAvailableForProject = userService.getUsersAvailableForProject(project);
-		Map<Long, String> users = new HashMap<>();
-		for (User user : usersAvailableForProject) {
-			if (user.getLabel().toLowerCase().contains(term.toLowerCase())) {
-				users.put(user.getId(), user.getLabel());
-			}
-		}
-
-		return users;
-	}
-
-	/**
-	 * Remove a user from a project
-	 * 
-	 * @param projectId
-	 *            The project to remove from
-	 * @param userId
-	 *            The user to remove
-	 * @return
-	 * @throws ProjectWithoutOwnerException 
-	 * @throws ProjectSelfEditException 
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
-	@RequestMapping("{projectId}/members/remove")
-	@ResponseBody
-	public void removeUser(@PathVariable Long projectId, @RequestParam Long userId, Principal principal) throws ProjectWithoutOwnerException, ProjectSelfEditException {
-		Project project = projectService.read(projectId);
-		User user = userService.read(userId);
-		
-		if(user.getUsername().equals(principal.getName())){
-			throw new ProjectSelfEditException("You cannot remove yourself from a project.");
-		}
-
-		projectService.removeUserFromProject(project, user);
-	}
-
-	/**
-	 * Update a user's role on a project
-	 * 
-	 * @param projectId
-	 *            The ID of the project
-	 * @param userId
-	 *            The ID of the user
-	 * @param projectRole
-	 *            The role to set
-	 * @throws ProjectWithoutOwnerException 
-	 * @throws ProjectSelfEditException 
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId,'isProjectOwner')")
-	@RequestMapping("{projectId}/members/editrole")
-	@ResponseBody
-	public void updateUserRole(@PathVariable Long projectId, @RequestParam Long userId,
-			@RequestParam String projectRole, Principal principal) throws ProjectWithoutOwnerException, ProjectSelfEditException {
-		Project project = projectService.read(projectId);
-		User user = userService.read(userId);
-		
-		if(user.getUsername().equals(principal.getName())){
-			throw new ProjectSelfEditException("You cannot edit your own role on a project.");
-		}
-
-		ProjectRole role = ProjectRole.fromString(projectRole);
-
-		projectService.updateUserProjectRole(project, user, role);
 	}
 
 	/**
@@ -311,7 +204,7 @@ public class ProjectsController {
 	public String getProjectMetadataPage(final Model model, final Principal principal, @PathVariable long projectId) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
-		getProjectTemplateDetails(model, principal, project);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_METADATA);
 		return PROJECT_METADATA_PAGE;
@@ -325,7 +218,7 @@ public class ProjectsController {
 			if (!model.containsAttribute("errors")) {
 				model.addAttribute("errors", new HashMap<>());
 			}
-			getProjectTemplateDetails(model, principal, project);
+			projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 			model.addAttribute("project", project);
 			model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_METADATA);
 			return PROJECT_METADATA_EDIT_PAGE;
@@ -371,7 +264,7 @@ public class ProjectsController {
 		model.addAttribute("project", project);
 
 		// Set up the template information
-		getProjectTemplateDetails(model, principal, project);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_SAMPLES);
 		return PROJECT_SAMPLES_PAGE;
@@ -418,20 +311,6 @@ public class ProjectsController {
 		return response;
 	}
 
-	@RequestMapping(value = "/ajax/{projectId}/members", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Collection<Join<Project, User>>> getAjaxProjectMemberMap(
-			@PathVariable Long projectId) {
-		Map<String, Collection<Join<Project, User>>> data = new HashMap<>();
-		try {
-			Project project = projectService.read(projectId);
-			Collection<Join<Project, User>> users = userService.getUsersForProject(project);
-			data.put(ProjectsDataTable.RESPONSE_PARAM_DATA, users);
-		} catch (Exception e) {
-			logger.error("Trying to access a project that does not exist.");
-		}
-		return data;
-	}
-
 	/**
 	 * Handles AJAX request for getting a list of projects available to the
 	 * logged in user. Produces JSON.
@@ -465,9 +344,11 @@ public class ProjectsController {
 		Sort.Direction sortDirection = ProjectsDataTable.getSortDirection(direction);
 		String sortString = ProjectsDataTable.getSortStringFromColumnID(sortColumn);
 
-		Page<ProjectUserJoin> page = projectService.searchProjectsByNameForUser(
-				userService.getUserByUsername(principal.getName()), searchValue, pageNumber, length, sortDirection,
-				sortString);
+		User user = userService.getUserByUsername(principal.getName());
+
+		Page<ProjectUserJoin> page = projectService.searchProjectUsers(
+				ProjectUserJoinSpecification.searchProjectNameWithUser(searchValue, user), pageNumber, length,
+				sortDirection, sortString);
 		List<ProjectUserJoin> projectList = page.getContent();
 
 		return getProjectsDataMap(projectList, draw, page.getTotalElements(), sortColumn, sortDirection);
@@ -518,40 +399,36 @@ public class ProjectsController {
 	}
 
 	@RequestMapping(value = "/ajax/{projectId}/samples/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public
-    @ResponseBody
-    Map<String, Object> postUpdateProjectSamples(@RequestParam(required = true) Long sampleId,
-                                          @RequestParam(required = false) String name) {
-        Map<String, Object> updateMap = new HashMap<>();
-        if (!Strings.isNullOrEmpty(name)) {
-            updateMap.put("sampleName", name);
-        }
+	public @ResponseBody Map<String, Object> postUpdateProjectSamples(@RequestParam(required = true) Long sampleId,
+			@RequestParam(required = false) String name) {
+		Map<String, Object> updateMap = new HashMap<>();
+		if (!Strings.isNullOrEmpty(name)) {
+			updateMap.put("sampleName", name);
+		}
 
-        Map<String, Object> resultMap = new HashMap<>();
-        try {
-            sampleService.update(sampleId, updateMap);
-            resultMap.put("success", "Updated name");
-        } catch (ConstraintViolationException e) {
-            resultMap.put("error", getErrorsFromViolationException(e));
-        }
-        return resultMap;
-    }
+		Map<String, Object> resultMap = new HashMap<>();
+		try {
+			sampleService.update(sampleId, updateMap);
+			resultMap.put("success", "Updated name");
+		} catch (ConstraintViolationException e) {
+			resultMap.put("error", getErrorsFromViolationException(e));
+		}
+		return resultMap;
+	}
 
-    @RequestMapping(value = "/ajax/{projectId}/samples/getids", produces = MediaType.APPLICATION_JSON_VALUE)
-    public
-    @ResponseBody
-    Map<String, List<String>> getAllProjectIds(@PathVariable Long projectId) {
-        Project project = projectService.read(projectId);
-        List<String> sampleIdList = new ArrayList<>();
-        List<Join<Project, Sample>> psj = sampleService.getSamplesForProject(project);
-        for (Join<Project, Sample> join : psj) {
-            sampleIdList.add(join.getObject().getId().toString());
-        }
-        Map<String, List<String>> result = new HashMap<>();
-        result.put("ids", sampleIdList);
-        return result;
-    }
-    
+	@RequestMapping(value = "/ajax/{projectId}/samples/getids", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, List<String>> getAllProjectIds(@PathVariable Long projectId) {
+		Project project = projectService.read(projectId);
+		List<String> sampleIdList = new ArrayList<>();
+		List<Join<Project, Sample>> psj = sampleService.getSamplesForProject(project);
+		for (Join<Project, Sample> join : psj) {
+			sampleIdList.add(join.getObject().getId().toString());
+		}
+		Map<String, List<String>> result = new HashMap<>();
+		result.put("ids", sampleIdList);
+		return result;
+	}
+
 	/**
 	 * Search for projects available for a user to copy samples to. If the user
 	 * is an admin it will show all projects.
@@ -571,8 +448,8 @@ public class ProjectsController {
 	 */
 	@RequestMapping(value = "/ajax/{projectId}/samples/available_projects")
 	@ResponseBody
-	public Map<String, Object> getProjectsAvailableToCopySamples(@PathVariable Long projectId, @RequestParam String term,
-			@RequestParam int pageSize, @RequestParam int page, Principal principal) {
+	public Map<String, Object> getProjectsAvailableToCopySamples(@PathVariable Long projectId,
+			@RequestParam String term, @RequestParam int pageSize, @RequestParam int page, Principal principal) {
 		User user = userService.getUserByUsername(principal.getName());
 
 		Map<Long, String> vals = new HashMap<>();
@@ -584,7 +461,7 @@ public class ProjectsController {
 			}
 			response.put("total", projects.getTotalElements());
 		} else {
-			//search for projects with a given name where the user is an owner
+			// search for projects with a given name where the user is an owner
 			Specification<ProjectUserJoin> spec = where(
 					ProjectUserJoinSpecification.searchProjectNameWithUser(term, user)).and(
 					ProjectUserJoinSpecification.getProjectJoinsWithRole(user, ProjectRole.PROJECT_OWNER));
@@ -654,7 +531,7 @@ public class ProjectsController {
 		return response;
 	}
 
-    /**
+	/**
 	 * Generates a map of project information for the {@link ProjectsDataTable}
 	 *
 	 * @param projectList
@@ -702,32 +579,32 @@ public class ProjectsController {
 		return map;
 	}
 
-    /**
-     * Remove a list of samples from a a Project.
-     *
-     * @param projectId
-     *            Id of the project to remove the samples from
-     *
-     * @param sampleIds
-     *            An array of samples to remove from a project
-     * @return Map containing either success or errors.
-     */
-    @RequestMapping(value = "/ajax/{projectId}/samples/delete", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
-    public @ResponseBody
-    Map<String, Object> deleteProjectSamples(@PathVariable Long projectId, @RequestParam List<Long> sampleIds) {
-        Project project = projectService.read(projectId);
-        Map<String, Object> result = new HashMap<>();
-        for (Long id : sampleIds) {
-            try {
-                Sample sample = sampleService.read(id);
-                projectService.removeSampleFromProject(project, sample);
-            } catch (EntityNotFoundException e) {
-                result.put("error", "Cannot find sample with id: " + id);
-            }
+	/**
+	 * Remove a list of samples from a a Project.
+	 *
+	 * @param projectId
+	 *            Id of the project to remove the samples from
+	 *
+	 * @param sampleIds
+	 *            An array of samples to remove from a project
+	 * @return Map containing either success or errors.
+	 */
+	@RequestMapping(value = "/ajax/{projectId}/samples/delete", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> deleteProjectSamples(@PathVariable Long projectId,
+			@RequestParam List<Long> sampleIds) {
+		Project project = projectService.read(projectId);
+		Map<String, Object> result = new HashMap<>();
+		for (Long id : sampleIds) {
+			try {
+				Sample sample = sampleService.read(id);
+				projectService.removeSampleFromProject(project, sample);
+			} catch (EntityNotFoundException e) {
+				result.put("error", "Cannot find sample with id: " + id);
+			}
 
-        }
-        result.put("success", "DONE!");
-        return result;
+		}
+		result.put("success", "DONE!");
+		return result;
 	}
 
 	/**
@@ -737,19 +614,17 @@ public class ProjectsController {
 	 *            A list of sample ids.
 	 * @return A list of map of {id, name}
 	 */
-    @RequestMapping(value = "/ajax/getNamesFromIds", produces = MediaType.APPLICATION_JSON_VALUE)
-    public
-    @ResponseBody
-    List<Map<String, String>> ajaxGetSampleNamesFromIds(@RequestParam List<Long> sampleIds) {
-        List<Map<String, String>> resultList = new ArrayList<>();
-        for (Long id : sampleIds) {
-            Map<String, String> results = new HashMap<>();
-            Sample sample = sampleService.read(id);
-            results.put("id", id.toString());
-            results.put("text", sample.getSampleName());
-            resultList.add(results);
-        }
-        return resultList;
+	@RequestMapping(value = "/ajax/getNamesFromIds", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<Map<String, String>> ajaxGetSampleNamesFromIds(@RequestParam List<Long> sampleIds) {
+		List<Map<String, String>> resultList = new ArrayList<>();
+		for (Long id : sampleIds) {
+			Map<String, String> results = new HashMap<>();
+			Sample sample = sampleService.read(id);
+			results.put("id", id.toString());
+			results.put("text", sample.getSampleName());
+			resultList.add(results);
+		}
+		return resultList;
 	}
 
 	/**
@@ -770,43 +645,43 @@ public class ProjectsController {
 	public @ResponseBody Map<String, Object> ajaxSamplesMerge(@PathVariable Long projectId,
 			@RequestParam List<Long> sampleIds, @RequestParam(required = false) Long mergeSampleId,
 			@RequestParam(required = false) String newName) {
-        Map<String, Object> result = new HashMap<>();
-        Project project = projectService.read(projectId);
-        Sample mergeIntoSample = null;
-        // Determine if it is a new name or and existing sample
-        try {
-            if (sampleIds.contains(mergeSampleId)) {
-                mergeIntoSample = sampleService.read(mergeSampleId);
-                sampleIds.remove(mergeSampleId);
-            } else {
-                mergeIntoSample = sampleService.read(sampleIds.remove(0));
-            }
-        } catch (EntityNotFoundException e) {
-            result.put("error", e.getLocalizedMessage());
+		Map<String, Object> result = new HashMap<>();
+		Project project = projectService.read(projectId);
+		Sample mergeIntoSample = null;
+		// Determine if it is a new name or and existing sample
+		try {
+			if (sampleIds.contains(mergeSampleId)) {
+				mergeIntoSample = sampleService.read(mergeSampleId);
+				sampleIds.remove(mergeSampleId);
+			} else {
+				mergeIntoSample = sampleService.read(sampleIds.remove(0));
+			}
+		} catch (EntityNotFoundException e) {
+			result.put("error", e.getLocalizedMessage());
 
-        }
-        // Rename if a new name is given
+		}
+		// Rename if a new name is given
 		if (!Strings.isNullOrEmpty(newName)) {
 			Map<String, Object> updateMap = new HashMap<>();
 			updateMap.put("sampleName", newName);
-            try {
-                mergeIntoSample = sampleService.update(mergeIntoSample.getId(), updateMap);
-            } catch (ConstraintViolationException e) {
-                result.put("error", getErrorsFromViolationException(e));
-            }
-        }
+			try {
+				mergeIntoSample = sampleService.update(mergeIntoSample.getId(), updateMap);
+			} catch (ConstraintViolationException e) {
+				result.put("error", getErrorsFromViolationException(e));
+			}
+		}
 		if (!result.containsKey("error")) {
 			Sample[] mergeSamples = new Sample[sampleIds.size()];
-            for (int i = 0; i < sampleIds.size(); i++) {
-                mergeSamples[i] = sampleService.read(sampleIds.get(i));
-            }
-            sampleService.mergeSamples(project, mergeIntoSample, mergeSamples);
-            result.put("success", mergeIntoSample.getSampleName());
-        }
-        return result;
-    }
+			for (int i = 0; i < sampleIds.size(); i++) {
+				mergeSamples[i] = sampleService.read(sampleIds.get(i));
+			}
+			sampleService.mergeSamples(project, mergeIntoSample, mergeSamples);
+			result.put("success", mergeIntoSample.getSampleName());
+		}
+		return result;
+	}
 
-    /**
+	/**
 	 * Based on a page of projects for an user, returns a list that also
 	 * includes information as to whether the user is a member of the project.
 	 * 
@@ -838,91 +713,6 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Adds to the current view model default template information:
-	 * <ul>
-	 * <li>Sidebar Information</li>
-	 * <li>If the current user is an admin</li>
-	 * </ul>
-	 * 
-	 * @param model
-	 *            {@link Model} for the current view.
-	 * @param principal
-	 *            {@link Principal} currently logged in user.
-	 * @param project
-	 *            {@link} current project viewed.
-	 */
-	public void getProjectTemplateDetails(Model model, Principal principal, Project project) {
-		User loggedInUser = userService.getUserByUsername(principal.getName());
-
-		// Determine if the user is an owner or admin.
-		boolean isAdmin = loggedInUser.getSystemRole().equals(Role.ROLE_ADMIN);
-		model.addAttribute("isAdmin", isAdmin);
-
-		// Find out who the owner of the project is.
-		Collection<Join<Project, User>> ownerJoinList = userService.getUsersForProjectByRole(project,
-				ProjectRole.PROJECT_OWNER);
-		boolean isOwner = false;
-		for (Join<Project, User> owner : ownerJoinList) {
-			if (loggedInUser.equals(owner.getObject())) {
-				isOwner = true;
-			}
-		}
-
-		model.addAttribute("isOwner", isOwner);
-
-		int sampleSize = sampleService.getSamplesForProject(project).size();
-		model.addAttribute("samples", sampleSize);
-
-		int userSize = userService.getUsersForProject(project).size();
-		model.addAttribute("users", userSize);
-
-		// TODO: (Josh - 14-06-23) Get list of recent activities on project.
-
-		// Add any associated projects
-		User currentUser = userService.getUserByUsername(principal.getName());
-		List<Map<String, String>> associatedProjects = getAssociatedProjects(project, currentUser, isAdmin);
-		model.addAttribute("associatedProjects", associatedProjects);
-	}
-
-	/**
-	 * Find all projects that have been associated with a project.
-	 *
-	 * @param currentProject
-	 *            The project to find the associated projects of.
-	 * @param currentUser
-	 *            The currently logged in user.
-	 * @return List of Maps containing information about the associated
-	 *         projects.
-	 */
-	private List<Map<String, String>> getAssociatedProjects(Project currentProject, User currentUser, boolean isAdmin) {
-		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(currentProject);
-
-		// Need to know if the user has rights to view the project
-		List<Join<Project, User>> userProjectJoin = projectService.getProjectsForUser(currentUser);
-
-		List<Map<String, String>> projects = new ArrayList<>();
-		// Create a quick lookup list
-		Map<Long, Boolean> usersProjects = new HashMap<>(userProjectJoin.size());
-		for (Join<Project, User> join : userProjectJoin) {
-			usersProjects.put(join.getSubject().getId(), true);
-		}
-
-		for (RelatedProjectJoin rpj : relatedProjectJoins) {
-			Project project = rpj.getObject();
-
-			Map<String, String> map = new HashMap<>();
-			map.put("name", project.getLabel());
-			map.put("id", project.getId().toString());
-			map.put("auth", isAdmin || usersProjects.containsKey(project.getId()) ? "authorized" : "");
-
-			// TODO: (Josh - 2014-07-07) Will need to add remote location
-			// information here.
-			projects.add(map);
-		}
-		return projects;
-	}
-
-	/**
 	 * Changes a {@link ConstraintViolationException} to a usable map of strings
 	 * for displaing in the UI.
 	 *
@@ -940,9 +730,9 @@ public class ProjectsController {
 		return errors;
 	}
 
-	@ExceptionHandler({ProjectWithoutOwnerException.class, ProjectSelfEditException.class})
+	@ExceptionHandler({ ProjectWithoutOwnerException.class, ProjectSelfEditException.class })
 	@ResponseBody
-	public ResponseEntity<String> roleChangeErrorHandler(Exception ex){
-		return new ResponseEntity<>(ex.getMessage(),HttpStatus.FORBIDDEN);
+	public ResponseEntity<String> roleChangeErrorHandler(Exception ex) {
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
 	}
 }
