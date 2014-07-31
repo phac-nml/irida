@@ -12,4 +12,8 @@ public interface Formats {
 	 * Default format for {@link java.util.Date} in DataTables
 	 */
 	public static final SimpleDateFormat DATE = new SimpleDateFormat("dd MMM yyyy");
+
+	public static String formatSequenceFileSizeInMB(float size) {
+		return String.format("%.2f MB", size / 1024);
+	};
 }
