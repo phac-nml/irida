@@ -3,11 +3,12 @@ package ca.corefacility.bioinformatics.irida.ria.web.samples;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
+import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
@@ -78,13 +79,14 @@ public class SamplesController {
 
 		List<Map<String, Object>> response = new ArrayList<>();
 		Formatter<Date> dateFormatter = new DateFormatter();
+		Converter<Long, String> sizeConverter = new FileSizeConverter();
 		for (Join<Sample, SequenceFile> join : joinList) {
 			SequenceFile file = join.getObject();
 			Map<String, Object> map = new HashMap<>();
 			map.put("id", file.getId().toString());
 
 			File f = new File(file.getStringPath());
-			map.put("size", Formats.formatSequenceFileSizeInMB(f.length()));
+			map.put("size", sizeConverter.convert(f.length()));
 			map.put("name", file.getLabel());
 			map.put("created", dateFormatter.print(file.getTimestamp(), LocaleContextHolder.getLocale()));
 			response.add(map);
