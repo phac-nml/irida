@@ -85,7 +85,7 @@ public class SamplesController {
 			Map<String, Object> map = new HashMap<>();
 			map.put("id", file.getId().toString());
 
-			File f = new File(file.getStringPath());
+			File f = file.getFile().toFile();
 			map.put("size", sizeConverter.convert(f.length()));
 			map.put("name", file.getLabel());
 			map.put("created", dateFormatter.print(file.getTimestamp(), LocaleContextHolder.getLocale()));
