@@ -62,10 +62,10 @@ import com.google.common.collect.Lists;
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectsControllerTest {
-    // DATATABLES position for project information
-	//private static final int PROJECT_NAME_TABLE_LOCATION = 1;
-	//private static final int PROJECT_NUM_SAMPLES_TABLE_LOCATION = 4;
-	//private static final int PROJECT_NUM_USERS_TABLE_LOCATION = 5;
+	// DATATABLES position for project information
+	// private static final int PROJECT_NAME_TABLE_LOCATION = 1;
+	// private static final int PROJECT_NUM_SAMPLES_TABLE_LOCATION = 4;
+	// private static final int PROJECT_NUM_USERS_TABLE_LOCATION = 5;
 	private static final int NUM_PROJECT_SAMPLES = 12;
 	private static final int NUM_PROJECT_USERS = 50;
 	private static final long NUM_TOTAL_ELEMENTS = 100L;
@@ -77,9 +77,9 @@ public class ProjectsControllerTest {
 	public static final String PROJECT_ORGANISM = "E. coli";
 	private static Project project = null;
 
-    private static final ImmutableList<String> REQUIRED_DATATABLE_RESPONSE_PARAMS = ImmutableList.of(
-            DataTable.RESPONSE_PARAM_DATA,DataTable.RESPONSE_PARAM_DRAW,DataTable.RESPONSE_PARAM_RECORDS_FILTERED, DataTable.RESPONSE_PARAM_RECORDS_FILTERED, DataTable.RESPONSE_PARAM_SORT_COLUMN
-    );
+	private static final ImmutableList<String> REQUIRED_DATATABLE_RESPONSE_PARAMS = ImmutableList.of(
+			DataTable.RESPONSE_PARAM_DATA, DataTable.RESPONSE_PARAM_DRAW, DataTable.RESPONSE_PARAM_RECORDS_FILTERED,
+			DataTable.RESPONSE_PARAM_RECORDS_FILTERED, DataTable.RESPONSE_PARAM_SORT_COLUMN);
 
 	// Services
 	private ProjectService projectService;
@@ -96,7 +96,8 @@ public class ProjectsControllerTest {
 		userService = mock(UserService.class);
 		sequenceFileService = mock(SequenceFileService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
-		controller = new ProjectsController(projectService, sampleService, userService, sequenceFileService, projectUtils);
+		controller = new ProjectsController(projectService, sampleService, userService, sequenceFileService,
+				projectUtils);
 		user.setId(1L);
 
 		mockSidebarInfo();
@@ -149,16 +150,16 @@ public class ProjectsControllerTest {
 		Principal principal = () -> USER_NAME;
 
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
-		when(projectService.searchProjectUsers(any(Specification.class), anyInt(), anyInt(), any(), anyString())).thenReturn(
-                getProjectsPage());
-		
+		when(projectService.searchProjectUsers(any(Specification.class), anyInt(), anyInt(), any(), anyString()))
+				.thenReturn(getProjectsPage());
+
 		when(sampleService.getSamplesForProject(project)).thenReturn(samplesJoin);
 		when(userService.getUsersForProject(project)).thenReturn(usersJoin);
 
 		Map<String, Object> response = controller.getAjaxProjectListForUser(principal, 0, 10, 1, 0, "asc", "");
 
-        // Make sure response has the expected keys:
-        checkAjaxDataTableResponse(response);
+		// Make sure response has the expected keys:
+		checkAjaxDataTableResponse(response);
 
 		assertEquals("Has the correct draw number", Integer.parseInt(requestDraw),
 				response.get(DataTable.RESPONSE_PARAM_DRAW));
@@ -169,43 +170,43 @@ public class ProjectsControllerTest {
 		projectList = (List<HashMap<String, Object>>) listObject;
 		HashMap<String, Object> data = projectList.get(0);
 
-        assertEquals("Has the correct project name", PROJECT_NAME, data.get("name"));
-        assertEquals("Has the correct project organism", PROJECT_ORGANISM, data.get("organism"));
-        assertEquals("Has the correct number of project members", NUM_PROJECT_USERS+"", data.get("members"));
-        assertEquals("Has the correct number of project samples", NUM_PROJECT_SAMPLES+"", data.get("samples"));
+		assertEquals("Has the correct project name", PROJECT_NAME, data.get("name"));
+		assertEquals("Has the correct project organism", PROJECT_ORGANISM, data.get("organism"));
+		assertEquals("Has the correct number of project members", NUM_PROJECT_USERS + "", data.get("members"));
+		assertEquals("Has the correct number of project samples", NUM_PROJECT_SAMPLES + "", data.get("samples"));
 	}
 
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	@Test
-    public void testGetAjaxProjectListForAdmin() {
-        List<Join<Project, Sample>> samplesJoin = getSamplesForProject();
-        List<Join<Project, User>> usersJoin = getUsersForProject();
-        List<Project> projects = getAdminProjectsList();
-        String requestDraw = "1";
-        Principal principal = () -> USER_NAME;
+	public void testGetAjaxProjectListForAdmin() {
+		List<Join<Project, Sample>> samplesJoin = getSamplesForProject();
+		List<Join<Project, User>> usersJoin = getUsersForProject();
+		List<Project> projects = getAdminProjectsList();
+		String requestDraw = "1";
+		Principal principal = () -> USER_NAME;
 
-        when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
-        when(projectService.searchProjectsByName(anyString(), anyInt(), anyInt(), any(), anyString())).thenReturn(
-                getProjectsListForAdmin(projects));
-        when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(samplesJoin);
-        when(userService.getUsersForProject(any(Project.class))).thenReturn(usersJoin);
+		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
+		when(projectService.searchProjectsByName(anyString(), anyInt(), anyInt(), any(), anyString())).thenReturn(
+				getProjectsListForAdmin(projects));
+		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(samplesJoin);
+		when(userService.getUsersForProject(any(Project.class))).thenReturn(usersJoin);
 
-        Map<String, Object> response = controller.getAjaxProjectListForAdmin(principal, 0, 10, 1, 0, "asc", "");
+		Map<String, Object> response = controller.getAjaxProjectListForAdmin(principal, 0, 10, 1, 0, "asc", "");
 
-        assertEquals("Has the correct draw number", Integer.parseInt(requestDraw),
-                response.get(DataTable.RESPONSE_PARAM_DRAW));
+		assertEquals("Has the correct draw number", Integer.parseInt(requestDraw),
+				response.get(DataTable.RESPONSE_PARAM_DRAW));
 
-        Object listObject = response.get(DataTable.RESPONSE_PARAM_DATA);
-        List<HashMap<String, Object>> projectList;
-        assertTrue(listObject instanceof List);
-        projectList = (List<HashMap<String, Object>>) listObject;
-        HashMap<String, Object> data = projectList.get(0);
+		Object listObject = response.get(DataTable.RESPONSE_PARAM_DATA);
+		List<HashMap<String, Object>> projectList;
+		assertTrue(listObject instanceof List);
+		projectList = (List<HashMap<String, Object>>) listObject;
+		HashMap<String, Object> data = projectList.get(0);
 
-        assertEquals("Has the correct project name", "project0", data.get("name"));
-        assertEquals("Has the correct project organism", PROJECT_ORGANISM, data.get("organism"));
-        assertEquals("Has the correct number of project members", NUM_PROJECT_USERS+"", data.get("members"));
-        assertEquals("Has the correct number of project samples", NUM_PROJECT_SAMPLES+"", data.get("samples"));
-    }
+		assertEquals("Has the correct project name", "project0", data.get("name"));
+		assertEquals("Has the correct project organism", PROJECT_ORGANISM, data.get("organism"));
+		assertEquals("Has the correct number of project members", NUM_PROJECT_USERS + "", data.get("members"));
+		assertEquals("Has the correct number of project samples", NUM_PROJECT_SAMPLES + "", data.get("samples"));
+	}
 
 	@Test
 	public void testGetSpecificProjectPage() {
@@ -247,8 +248,6 @@ public class ProjectsControllerTest {
 				+ "/metadata", page);
 	}
 
-
-
 	@Test
 	public void testGetProjectMetadataPage() {
 		Model model = new ExtendedModelMap();
@@ -275,92 +274,91 @@ public class ProjectsControllerTest {
 		assertEquals("Returns the correct page.", "redirect:/projects/" + PROJECT_ID + "/metadata", page);
 	}
 
-    @Test
-    public void testPostUpdateProjectSamples() {
-        Long sampleId = 1L;
-        String newName = "Barney";
-        Map<String, Object> updateMap = new HashMap<>();
-        updateMap.put("sampleName", newName);
-        when(sampleService.update(sampleId, updateMap)).thenReturn(null);
-        Map<String, Object> resultMap = controller.postUpdateProjectSamples(sampleId, newName);
-        assertTrue("Result contains the word success", resultMap.containsKey("success"));
-    }
-    
-
-    @Test
-    public void testDeleteProjectSamples() {
-        Project project1 = getProject();
-        Sample sample = new Sample("test");
-        sample.setId(1L);
-        projectService.addSampleToProject(project1, sample);
-        List<Long> idList = new ArrayList<>();
-        idList.add(1L);
-        when(projectService.read(PROJECT_ID)).thenReturn(project1);
-        when(sampleService.read(anyLong())).thenReturn(sample);
-        Map<String, Object> result = controller.deleteProjectSamples(PROJECT_ID, idList);
-        assertTrue("Result contains the word success", result.containsKey("success"));
-        verify(projectService).removeSampleFromProject(project1, sample);
-    }
-
-    @SuppressWarnings("unchecked")
 	@Test
-    public void testAjaxSamplesMerge() {
-	    String newName = "FRED";
-        Project project = getProject();
-        Sample sample1 = new Sample("Wilma");
-        sample1.setId(1L);
-	    sample1.setSampleName(newName);
-        Sample sample2 = new Sample("Betty");
-        sample2.setId(11L);
-        List<Long> sampleIds = new ArrayList<>();
-        sampleIds.add(1L);
-        sampleIds.add(11L);
+	public void testPostUpdateProjectSamples() {
+		Long sampleId = 1L;
+		String newName = "Barney";
+		Map<String, Object> updateMap = new HashMap<>();
+		updateMap.put("sampleName", newName);
+		when(sampleService.update(sampleId, updateMap)).thenReturn(null);
+		Map<String, Object> resultMap = controller.postUpdateProjectSamples(sampleId, newName);
+		assertTrue("Result contains the word success", resultMap.containsKey("success"));
+	}
 
-        when(sampleService.read(1L)).thenReturn(sample1);
-        when(sampleService.read(11L)).thenReturn(sample2);
-        when(projectService.read(PROJECT_ID)).thenReturn(project);
-	    when(sampleService.update(anyLong(), anyMap())).thenReturn(sample1);
+	@Test
+	public void testDeleteProjectSamples() {
+		Project project1 = getProject();
+		Sample sample = new Sample("test");
+		sample.setId(1L);
+		projectService.addSampleToProject(project1, sample);
+		List<Long> idList = new ArrayList<>();
+		idList.add(1L);
+		when(projectService.read(PROJECT_ID)).thenReturn(project1);
+		when(sampleService.read(anyLong())).thenReturn(sample);
+		Map<String, Object> result = controller.deleteProjectSamples(PROJECT_ID, idList);
+		assertTrue("Result contains the word success", result.containsKey("success"));
+		verify(projectService).removeSampleFromProject(project1, sample);
+	}
 
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testAjaxSamplesMerge() {
+		String newName = "FRED";
+		Project project = getProject();
+		Sample sample1 = new Sample("Wilma");
+		sample1.setId(1L);
+		sample1.setSampleName(newName);
+		Sample sample2 = new Sample("Betty");
+		sample2.setId(11L);
+		List<Long> sampleIds = new ArrayList<>();
+		sampleIds.add(1L);
+		sampleIds.add(11L);
 
-        // Call the controller with a new name
-        Map<String, Object> result = controller.ajaxSamplesMerge(PROJECT_ID, sampleIds, 1L, newName);
+		when(sampleService.read(1L)).thenReturn(sample1);
+		when(sampleService.read(11L)).thenReturn(sample2);
+		when(projectService.read(PROJECT_ID)).thenReturn(project);
+		when(sampleService.update(anyLong(), anyMap())).thenReturn(sample1);
 
-        // Ensure that the merge was requested
-        verify(sampleService, times(1)).mergeSamples(any(Project.class), any(Sample.class), any());
+		// Call the controller with a new name
+		Map<String, Object> result = controller.ajaxSamplesMerge(PROJECT_ID, sampleIds, 1L, newName);
 
-        // Ensure that the rename was not requested
-        Map<String, Object> updateMap = new HashMap<>();
-        updateMap.put("sampleName", newName);
-        verify(sampleService, times(1)).update(1L, updateMap);
-        assertTrue("Result contains the word success", result.containsKey("success"));
-    }
-    
-    @Test
-    public void testGetProjectsAvailableToCopySamplesAsAdmin(){
-    	Long projectId = 1l;
-    	String term = "";
-    	int page = 0;
-    	int pagesize = 10;
-    	Direction order = Direction.ASC;
-    	
-    	Principal principal = () -> USER_NAME;
-    	User puser = new User(USER_NAME, null, null, null, null, null);
-    	puser.setSystemRole(Role.ROLE_ADMIN);
-    	Page<Project> projects = new PageImpl<>(Lists.newArrayList(new Project("p1"),new Project("p2")));
-    	
-    	when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
-    	when(projectService.searchProjectsByName(term, page, pagesize, order)).thenReturn(projects);
-    	
-    	Map<String, Object> projectsAvailableToCopySamples = controller.getProjectsAvailableToCopySamples(projectId, term, pagesize, page, principal);
-    	
-    	assertTrue(projectsAvailableToCopySamples.containsKey("total"));
-    	assertEquals(2l, projectsAvailableToCopySamples.get("total"));
-    	assertTrue(projectsAvailableToCopySamples.containsKey("results"));
-    	
-    	verify(userService).getUserByUsername(USER_NAME);
-    	verify(projectService).searchProjectsByName(term, page, pagesize, order);
-    }
-    
+		// Ensure that the merge was requested
+		verify(sampleService, times(1)).mergeSamples(any(Project.class), any(Sample.class), any());
+
+		// Ensure that the rename was not requested
+		Map<String, Object> updateMap = new HashMap<>();
+		updateMap.put("sampleName", newName);
+		verify(sampleService, times(1)).update(1L, updateMap);
+		assertTrue("Result contains the word success", result.containsKey("success"));
+	}
+
+	@Test
+	public void testGetProjectsAvailableToCopySamplesAsAdmin() {
+		Long projectId = 1l;
+		String term = "";
+		int page = 0;
+		int pagesize = 10;
+		Direction order = Direction.ASC;
+
+		Principal principal = () -> USER_NAME;
+		User puser = new User(USER_NAME, null, null, null, null, null);
+		puser.setSystemRole(Role.ROLE_ADMIN);
+		Page<Project> projects = new PageImpl<>(Lists.newArrayList(new Project("p1"), new Project("p2")));
+
+		when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
+		when(projectService.searchProjectsByName(term, page, pagesize, order)).thenReturn(projects);
+
+		Map<String, Object> projectsAvailableToCopySamples = controller.getProjectsAvailableToCopySamples(projectId,
+				term, pagesize, page, principal);
+
+		assertTrue(projectsAvailableToCopySamples.containsKey("total"));
+		assertEquals(2l, projectsAvailableToCopySamples.get("total"));
+		assertTrue(projectsAvailableToCopySamples.containsKey("results"));
+
+		verify(userService).getUserByUsername(USER_NAME);
+		verify(projectService).searchProjectsByName(term, page, pagesize, order);
+	}
+
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetProjectsAvailableToCopySamplesAsUser() {
@@ -391,102 +389,104 @@ public class ProjectsControllerTest {
 		verify(userService).getUserByUsername(USER_NAME);
 		verify(projectService).searchProjectUsers(any(Specification.class), eq(page), eq(pagesize), eq(order));
 	}
-	
+
 	@Test
-	public void testCopySampleToProject(){
+	public void testCopySampleToProject() {
 		Long projectId = 1l;
-		List<Long> sampleIds = Lists.newArrayList(2l,3l);
+		List<Long> sampleIds = Lists.newArrayList(2l, 3l);
 		Long newProjectId = 4l;
 		boolean removeFromOriginal = false;
 		Project oldProject = new Project("oldProject");
 		Project newProject = new Project("newProject");
 		Sample s2 = new Sample("s2");
 		Sample s3 = new Sample("s3");
-		
+
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
 		when(sampleService.read(2l)).thenReturn(s2);
 		when(sampleService.read(3l)).thenReturn(s3);
-		
-		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, sampleIds, newProjectId, removeFromOriginal);
-		
-		assertEquals(2,copySampleToProject.get("totalCopied"));
-		
+
+		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, sampleIds, newProjectId,
+				removeFromOriginal);
+
+		assertEquals(2, copySampleToProject.get("totalCopied"));
+
 		verify(projectService).read(projectId);
 		verify(projectService).read(newProjectId);
-		for(Long x : sampleIds){
+		for (Long x : sampleIds) {
 			verify(sampleService).read(x);
 		}
 		verify(projectService).addSampleToProject(newProject, s2);
 		verify(projectService).addSampleToProject(newProject, s3);
-		verify(projectService,times(0)).removeSampleFromProject(any(Project.class), any(Sample.class));
+		verify(projectService, times(0)).removeSampleFromProject(any(Project.class), any(Sample.class));
 	}
-	
+
 	@Test
-	public void testCopySampleToProjectSampleExists(){
+	public void testCopySampleToProjectSampleExists() {
 		Long projectId = 1l;
-		List<Long> sampleIds = Lists.newArrayList(2l,3l);
+		List<Long> sampleIds = Lists.newArrayList(2l, 3l);
 		Long newProjectId = 4l;
 		boolean removeFromOriginal = false;
 		Project oldProject = new Project("oldProject");
 		Project newProject = new Project("newProject");
 		Sample s2 = new Sample("s2");
 		Sample s3 = new Sample("s3");
-		
+
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
 		when(sampleService.read(2l)).thenReturn(s2);
 		when(sampleService.read(3l)).thenReturn(s3);
-		when(projectService.addSampleToProject(newProject, s3)).thenThrow(new EntityExistsException("that sample exists in the project"));
-		
-		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, sampleIds, newProjectId, removeFromOriginal);
-		
-		assertEquals(1,copySampleToProject.get("totalCopied"));
+		when(projectService.addSampleToProject(newProject, s3)).thenThrow(
+				new EntityExistsException("that sample exists in the project"));
+
+		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, sampleIds, newProjectId,
+				removeFromOriginal);
+
+		assertEquals(1, copySampleToProject.get("totalCopied"));
 		assertTrue(copySampleToProject.containsKey("warnings"));
-		
+
 		verify(projectService).read(projectId);
 		verify(projectService).read(newProjectId);
-		for(Long x : sampleIds){
+		for (Long x : sampleIds) {
 			verify(sampleService).read(x);
 		}
 		verify(projectService).addSampleToProject(newProject, s2);
 		verify(projectService).addSampleToProject(newProject, s3);
-		verify(projectService,times(0)).removeSampleFromProject(any(Project.class), any(Sample.class));
+		verify(projectService, times(0)).removeSampleFromProject(any(Project.class), any(Sample.class));
 	}
-	
+
 	@Test
-	public void testCopySampleToProjectRemove(){
+	public void testCopySampleToProjectRemove() {
 		Long projectId = 1l;
-		List<Long> sampleIds = Lists.newArrayList(2l,3l);
+		List<Long> sampleIds = Lists.newArrayList(2l, 3l);
 		Long newProjectId = 4l;
 		boolean removeFromOriginal = true;
 		Project oldProject = new Project("oldProject");
 		Project newProject = new Project("newProject");
 		Sample s2 = new Sample("s2");
 		Sample s3 = new Sample("s3");
-		
+
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
 		when(sampleService.read(2l)).thenReturn(s2);
 		when(sampleService.read(3l)).thenReturn(s3);
-		
-		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, sampleIds, newProjectId, removeFromOriginal);
-		
-		assertEquals(2,copySampleToProject.get("totalCopied"));
-		
+
+		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, sampleIds, newProjectId,
+				removeFromOriginal);
+
+		assertEquals(2, copySampleToProject.get("totalCopied"));
+
 		verify(projectService).read(projectId);
 		verify(projectService).read(newProjectId);
-		for(Long x : sampleIds){
+		for (Long x : sampleIds) {
 			verify(sampleService).read(x);
 		}
-		
+
 		verify(projectService).addSampleToProject(newProject, s2);
 		verify(projectService).addSampleToProject(newProject, s3);
 		verify(projectService).removeSampleFromProject(oldProject, s2);
 		verify(projectService).removeSampleFromProject(oldProject, s3);
 	}
-
-
 
 	/**
 	 * Mocks the information found within the project sidebar.
@@ -500,14 +500,14 @@ public class ProjectsControllerTest {
 		when(userService.getUserByUsername(anyString())).thenReturn(user);
 	}
 
-    /**
-     * Check the response for DataTable calls
-     */
-    private void checkAjaxDataTableResponse(Map<String, Object> response) {
-        for(String param : REQUIRED_DATATABLE_RESPONSE_PARAMS) {
-            assertTrue("Response has the key '" + param + "'", response.containsKey(param));
-        }
-    }
+	/**
+	 * Check the response for DataTable calls
+	 */
+	private void checkAjaxDataTableResponse(Map<String, Object> response) {
+		for (String param : REQUIRED_DATATABLE_RESPONSE_PARAMS) {
+			assertTrue("Response has the key '" + param + "'", response.containsKey(param));
+		}
+	}
 
 	private List<Join<Project, User>> getProjectsForUser() {
 		List<Join<Project, User>> projects = new ArrayList<>();
@@ -518,8 +518,6 @@ public class ProjectsControllerTest {
 		}
 		return projects;
 	}
-
-
 
 	private List<RelatedProjectJoin> getRelatedProjectJoin(List<Join<Project, User>> projects) {
 		List<RelatedProjectJoin> join = new ArrayList<>();
