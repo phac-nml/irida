@@ -123,6 +123,7 @@
                 <span id="merge-error" class="hidden help-block bg-danger"></span>
             </div>
     </script>
+    <iframe id="invisible" style="display:none;"></iframe>
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
 <div th:replace="projects/project_base :: scripts"></div>
@@ -280,8 +281,21 @@ function EditableDataTable() {
             var row = document.createElement('tr');
             var tdName = document.createElement('td');
             tdName.className = 'files-name';
-            tdName.innerHTML = data[i].name;
+            var name_link = document.createElement("a");
+            var href = /*[[@{/sequenceFiles/}]]*/ '/sequenceFiles/';
+            name_link.setAttribute("href", href + data[i].id);
+            name_link.innerHTML = data[i].name;
+            tdName.appendChild(name_link);
+            var fileDownloadBtn = document.createElement('button');
+            var dTitle = /*[[#{form.download}]]*/ 'Download';
+            fileDownloadBtn.setAttribute('title', dTitle);
+            fileDownloadBtn.className = "filedownload pull-right btn btn-default btn-xs glyphicon glyphicon-download-alt mrgn-rght-sm";
+            fileDownloadBtn.setAttribute("id", data[i].id);
+            tdName.appendChild(fileDownloadBtn);
             row.appendChild(tdName);
+            var tdSize = document.createElement('td');
+            tdSize.innerHTML = data[i].size;
+            row.appendChild(tdSize);
             var tdCreated = document.createElement('td');
             tdCreated.className = 'files-created';
             tdCreated.innerHTML = data[i].created;
@@ -793,6 +807,10 @@ $(document).ready(function () {
         e.stopPropagation();
         e.preventDefault();
         DT.sendUpdateName();
+    }).on('click', 'button.filedownload', function (e) {
+        var id = $(this).attr("id");
+        var iframe = document.getElementById('invisible');
+        iframe.src = '/sequenceFiles/download/' + id;
     });
 
     $selectAll.on("click", function () {
