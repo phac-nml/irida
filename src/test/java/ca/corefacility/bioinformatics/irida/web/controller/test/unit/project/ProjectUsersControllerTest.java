@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -54,7 +55,7 @@ public class ProjectUsersControllerTest {
     }
 
     @Test
-    public void testGetUsersForProject() {
+    public void testGetUsersForProject() throws ProjectWithoutOwnerException {
         String username = "fbristow";
         User u = new User();
         u.setUsername(username);
@@ -115,7 +116,7 @@ public class ProjectUsersControllerTest {
     }
 
     @Test
-    public void testRemoveUserFromProject() {
+    public void testRemoveUserFromProject() throws ProjectWithoutOwnerException {
         Project p = TestDataFactory.constructProject();
         User u = TestDataFactory.constructUser();
 

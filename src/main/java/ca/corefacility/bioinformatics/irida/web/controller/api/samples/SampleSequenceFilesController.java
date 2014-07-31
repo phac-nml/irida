@@ -191,16 +191,16 @@ public class SampleSequenceFilesController {
 			sf = new SequenceFile();
 		}
 		sf.setFile(target);
+		
+		if(miseqRun != null){
+			sf.setSequencingRun(miseqRun);
+			logger.trace("Added seqfile to miseqrun");
+		}
 
 		// persist the changes by calling the sample service
 		Join<Sample, SequenceFile> sampleSequenceFileRelationship = sequenceFileService.createSequenceFileInSample(sf,
 				sample);
 		logger.trace("Created seqfile in sample " + sampleSequenceFileRelationship.getObject().getId());
-		
-		if(miseqRun != null){
-			miseqRunService.addSequenceFileToSequencingRun(miseqRun, sf);
-			logger.trace("Added seqfile to miseqrun");
-		}
 
 		// clean up the temporary files.
 		Files.deleteIfExists(target);
