@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -26,8 +25,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.ui.ExtendedModelMap;
@@ -66,9 +63,9 @@ public class ProjectsControllerTest {
 	// private static final int PROJECT_NAME_TABLE_LOCATION = 1;
 	// private static final int PROJECT_NUM_SAMPLES_TABLE_LOCATION = 4;
 	// private static final int PROJECT_NUM_USERS_TABLE_LOCATION = 5;
+	// private static final long NUM_TOTAL_ELEMENTS = 100L;
 	private static final int NUM_PROJECT_SAMPLES = 12;
 	private static final int NUM_PROJECT_USERS = 50;
-	private static final long NUM_TOTAL_ELEMENTS = 100L;
 	private static final String USER_NAME = "testme";
 	private static final User user = new User(USER_NAME, null, null, null, null, null);
 	private static final String PROJECT_NAME = "test_project";
@@ -185,10 +182,10 @@ public class ProjectsControllerTest {
 		List<Project> projects = getAdminProjectsList();
 		String requestDraw = "1";
 		Principal principal = () -> USER_NAME;
+		Page<Project> page = new PageImpl<>(projects);
 
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
-		when(projectService.searchProjectsByName(anyString(), anyInt(), anyInt(), any(), anyString())).thenReturn(
-				getProjectsListForAdmin(projects));
+		when(projectService.searchProjectsByName(anyString(), anyInt(), anyInt(), any(), anyString())).thenReturn(page);
 		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(samplesJoin);
 		when(userService.getUsersForProject(any(Project.class))).thenReturn(usersJoin);
 
@@ -565,85 +562,6 @@ public class ProjectsControllerTest {
 		return new PageImpl<>(psjList);
 	}
 
-	private Page<Project> getProjectsListForAdmin(List<Project> projects) {
-		return new Page<Project>() {
-			@Override
-			public int getNumber() {
-				return 0;
-			}
-
-			@Override
-			public int getSize() {
-				return 0;
-			}
-
-			@Override
-			public int getTotalPages() {
-				return 0;
-			}
-
-			@Override
-			public int getNumberOfElements() {
-				return 0;
-			}
-
-			@Override
-			public long getTotalElements() {
-				return NUM_TOTAL_ELEMENTS;
-			}
-
-			@Override
-			public boolean hasPreviousPage() {
-				return false;
-			}
-
-			@Override
-			public boolean isFirstPage() {
-				return false;
-			}
-
-			@Override
-			public boolean hasNextPage() {
-				return false;
-			}
-
-			@Override
-			public boolean isLastPage() {
-				return false;
-			}
-
-			@Override
-			public Pageable nextPageable() {
-				return null;
-			}
-
-			@Override
-			public Pageable previousPageable() {
-				return null;
-			}
-
-			@Override
-			public Iterator<Project> iterator() {
-				return null;
-			}
-
-			@Override
-			public List<Project> getContent() {
-				return projects;
-			}
-
-			@Override
-			public boolean hasContent() {
-				return true;
-			}
-
-			@Override
-			public Sort getSort() {
-				return null;
-			}
-		};
-	}
-
 	private List<Project> getAdminProjectsList() {
 		List<Project> projects = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
@@ -661,84 +579,7 @@ public class ProjectsControllerTest {
 	 * @return Page of Projects (1 project)
 	 */
 	private Page<ProjectUserJoin> getProjectsPage() {
-		return new Page<ProjectUserJoin>() {
-			@Override
-			public int getNumber() {
-				return 0;
-			}
-
-			@Override
-			public int getSize() {
-				return 0;
-			}
-
-			@Override
-			public int getTotalPages() {
-				return 0;
-			}
-
-			@Override
-			public int getNumberOfElements() {
-				return 0;
-			}
-
-			@Override
-			public long getTotalElements() {
-				return NUM_TOTAL_ELEMENTS;
-			}
-
-			@Override
-			public boolean hasPreviousPage() {
-				return false;
-			}
-
-			@Override
-			public boolean isFirstPage() {
-				return false;
-			}
-
-			@Override
-			public boolean hasNextPage() {
-				return false;
-			}
-
-			@Override
-			public boolean isLastPage() {
-				return false;
-			}
-
-			@Override
-			public Pageable nextPageable() {
-				return null;
-			}
-
-			@Override
-			public Pageable previousPageable() {
-				return null;
-			}
-
-			@Override
-			public Iterator<ProjectUserJoin> iterator() {
-				return null;
-			}
-
-			@Override
-			public List<ProjectUserJoin> getContent() {
-				List<ProjectUserJoin> list = new ArrayList<>();
-				list.add(new ProjectUserJoin(getProject(), user, ProjectRole.PROJECT_OWNER));
-				return list;
-			}
-
-			@Override
-			public boolean hasContent() {
-				return true;
-			}
-
-			@Override
-			public Sort getSort() {
-				return null;
-			}
-		};
+		return new PageImpl<>(Lists.newArrayList(new ProjectUserJoin(getProject(), user, ProjectRole.PROJECT_OWNER)));
 	}
 
 	private Project getProject() {
