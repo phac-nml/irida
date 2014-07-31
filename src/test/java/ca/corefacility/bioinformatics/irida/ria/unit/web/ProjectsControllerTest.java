@@ -287,25 +287,6 @@ public class ProjectsControllerTest {
 				newDescritption, newRemoteURL);
 		assertEquals("Returns the correct page.", "redirect:/projects/" + PROJECT_ID + "/metadata", page);
 	}
-	
-	@Test
-	public void testRemoveUserFromProject() throws ProjectWithoutOwnerException, ProjectSelfEditException {
-		Long projectId = 1l;
-		Long userId = 2l;
-		User user = new User(userId, "tom", null, null, null, null, null);
-		Project project = new Project("test");
-		project.setId(projectId);
-		Principal principal = () -> USER_NAME;
-
-		when(userService.read(userId)).thenReturn(user);
-		when(projectService.read(projectId)).thenReturn(project);
-
-		controller.removeUser(projectId, userId,principal);
-
-		verify(userService).read(userId);
-		verify(projectService).read(projectId);
-		verify(projectService).removeUserFromProject(project, user);
-	}
 
     @Test
     public void testPostUpdateProjectSamples() {
@@ -318,80 +299,6 @@ public class ProjectsControllerTest {
         assertTrue("Result contains the word success", resultMap.containsKey("success"));
     }
     
-    @Test
-    public void testGetUsersAvailableForProject(){
-    	String term = "tom";
-    	Long projectId = 1l;
-    	Long userId = 2l;
-    	Project project = new Project();
-    	project.setId(projectId);
-    	List<User> users = Lists.newArrayList(new User(userId, "tom", null, null, "Tom", "Matthews", null));
-    	
-    	when(projectService.read(projectId)).thenReturn(project);
-    	when(userService.getUsersAvailableForProject(project)).thenReturn(users);
-    	
-    	Map<Long, String> usersAvailableForProject = controller.getUsersAvailableForProject(projectId, term);
-    	
-    	assertFalse(usersAvailableForProject.isEmpty());
-    	assertTrue(usersAvailableForProject.containsKey(userId));
-    	
-    	verify(projectService).read(projectId);
-    	verify(userService).getUsersAvailableForProject(project);
-    }
-    
-    @Test
-    public void testAddProjectMember(){
-    	Long projectId = 1l;
-    	Long userId = 2l;
-    	Project project = new Project();
-    	User user = new User(userId, "tom", null, null, "Tom", "Matthews", null);
-    	ProjectRole projectRole = ProjectRole.PROJECT_USER;
-    	
-    	when(projectService.read(projectId)).thenReturn(project);
-    	when(userService.read(userId)).thenReturn(user);
-    	
-    	controller.addProjectMember(projectId, userId, projectRole.toString());
-    	
-    	verify(projectService).read(projectId);
-    	verify(userService).read(userId);
-    	verify(projectService).addUserToProject(project, user, projectRole);
-    }
-    
-    @Test
-    public void testUdateUserRole() throws ProjectWithoutOwnerException, ProjectSelfEditException{
-    	Long projectId = 1l;
-    	Long userId = 2l;
-    	Project project = new Project();
-    	User user = new User(userId, "tom", null, null, "Tom", "Matthews", null);
-    	ProjectRole projectRole = ProjectRole.PROJECT_USER;
-    	
-    	Principal principal = () -> USER_NAME;
-    	
-    	when(projectService.read(projectId)).thenReturn(project);
-    	when(userService.read(userId)).thenReturn(user);
-    	
-    	controller.updateUserRole(projectId, userId, projectRole.toString(), principal);
-    	
-    	verify(projectService).read(projectId);
-    	verify(userService).read(userId);
-    	verify(projectService).updateUserProjectRole(project, user, projectRole);
-    }
-    
-    @Test(expected=ProjectSelfEditException.class)
-    public void testUdateUserSelfRole() throws ProjectWithoutOwnerException, ProjectSelfEditException{
-    	Long projectId = 1l;
-    	Long userId = 2l;
-    	Project project = new Project();
-    	User user = new User(userId, USER_NAME, null, null, "Tom", "Matthews", null);
-    	ProjectRole projectRole = ProjectRole.PROJECT_USER;
-    	
-    	Principal principal = () -> USER_NAME;
-    	
-    	when(projectService.read(projectId)).thenReturn(project);
-    	when(userService.read(userId)).thenReturn(user);
-    	
-    	controller.updateUserRole(projectId, userId, projectRole.toString(), principal);
-    }
 
     @Test
     public void testDeleteProjectSamples() {
