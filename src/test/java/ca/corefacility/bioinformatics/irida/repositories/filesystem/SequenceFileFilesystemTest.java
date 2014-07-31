@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -68,7 +69,7 @@ public class SequenceFileFilesystemTest {
 		String filename = f.getFileName().toString();
 		SequenceFile s = new SequenceFile(f);
 		s.setId(lid);
-
+		when(entityManager.find(SequenceFile.class, lid)).thenReturn(s);
 		s = repository.save(s);
 
 		// the created file should reside in the base directory within a new
@@ -117,6 +118,7 @@ public class SequenceFileFilesystemTest {
 		sf.setId(lid);
 		// create the directory and put the file into it.
 		// so call create instead of rewriting the logic:
+		when(entityManager.find(SequenceFile.class, lid)).thenReturn(sf);
 		sf = repository.save(sf);
 
 		Path originalFile = sf.getFile();
@@ -156,6 +158,7 @@ public class SequenceFileFilesystemTest {
 		Path originalFile = getTempFile();
 		SequenceFile original = new SequenceFile(originalFile);
 		original.setId(lId);
+		when(entityManager.find(SequenceFile.class, lId)).thenReturn(original);
 		original = repository.save(original);
 		Path updatedFile = getTempFile();
 		original.setFile(updatedFile);

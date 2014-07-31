@@ -1,5 +1,11 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import javax.validation.Validator;
 
 import org.junit.Before;
@@ -7,14 +13,12 @@ import org.junit.Test;
 import org.springframework.core.task.TaskExecutor;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.impl.SequenceFileServiceImpl;
-import static org.mockito.Mockito.*;
 
 /**
  * Test the behaviour of {@link SequenceFileService}.
@@ -48,7 +52,7 @@ public class SequenceFileServiceTest {
 
 		when(sequenceFileRepository.save(sf)).thenReturn(sf);
 
-		Join<Sample, SequenceFile> join = sequenceFileService.createSequenceFileInSample(sf, s);
+		sequenceFileService.createSequenceFileInSample(sf, s);
 
 		// verify that we're only actually running one file processor on the new
 		// sequence file.

@@ -43,11 +43,11 @@ public class GzipFileProcessorTest {
 		// the file processor just shouldn't do *anything*.
 		SequenceFile sf = constructSequenceFile();
 		Path original = sf.getFile();
-		
+
 		when(sequenceFileRepository.findOne(any(Long.class))).thenReturn(sf);
 
 		fileProcessor.process(1L);
-		
+
 		verify(sequenceFileRepository, times(0)).save(any(SequenceFile.class));
 
 		Files.deleteIfExists(sf.getFile());
@@ -77,7 +77,7 @@ public class GzipFileProcessorTest {
 		sf.setFile(compressed);
 
 		fileProcessor.process(id);
-		
+
 		ArgumentCaptor<SequenceFile> argument = ArgumentCaptor.forClass(SequenceFile.class);
 		verify(sequenceFileRepository).save(argument.capture());
 		SequenceFile modified = argument.getValue();
@@ -108,11 +108,11 @@ public class GzipFileProcessorTest {
 		out.close();
 
 		sf.setFile(compressed);
-		
+
 		when(sequenceFileRepository.findOne(id)).thenReturn(sf);
 
 		fileProcessor.process(id);
-		
+
 		ArgumentCaptor<SequenceFile> argument = ArgumentCaptor.forClass(SequenceFile.class);
 		verify(sequenceFileRepository).save(argument.capture());
 		SequenceFile modified = argument.getValue();
@@ -121,7 +121,9 @@ public class GzipFileProcessorTest {
 		assertEquals("uncompressed file and file in database should be the same.", FILE_CONTENTS,
 				uncompressedFileContents);
 		Files.delete(uncompressed);
-		Files.delete(compressed);
+		if (Files.exists(compressed)) {
+			Files.delete(compressed);
+		}
 	}
 
 	private SequenceFile constructSequenceFile() throws IOException {
