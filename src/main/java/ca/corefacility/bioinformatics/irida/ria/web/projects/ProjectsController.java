@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
+import static org.springframework.data.jpa.domain.Specifications.where;
+
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,9 +12,6 @@ import java.util.Map;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
-import static org.springframework.data.jpa.domain.Specifications.where;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,9 +33,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -465,10 +464,9 @@ public class ProjectsController {
 		Sort.Direction sortDirection = ProjectsDataTable.getSortDirection(direction);
 		String sortString = ProjectsDataTable.getSortStringFromColumnID(sortColumn);
 
-		Page<ProjectUserJoin> page = projectService.searchProjectsByNameForUser(
-				userService.getUserByUsername(principal.getName()), searchValue, pageNumber, length, sortDirection,
-				sortString);
-		List<ProjectUserJoin> projectList = page.getContent();
+		User user = userService.getUserByUsername(principal.getName());
+
+		Page<ProjectUserJoin> page = projectService.searchProjectUsers(ProjectUserJoinSpecification.searchProjectNameWithUser(searchValue, user), pageNumber, length, sortDirection, sortString);		List<ProjectUserJoin> projectList = page.getContent();
 
 		return getProjectsDataMap(projectList, draw, page.getTotalElements(), sortColumn, sortDirection);
 	}
