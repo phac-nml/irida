@@ -18,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -28,15 +27,12 @@ public class ProjectControllerUtils {
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final UserService userService;
-	private final SequenceFileService sequenceFileService;
 
 	@Autowired
-	public ProjectControllerUtils(ProjectService projectService, SampleService sampleService, UserService userService,
-			SequenceFileService sequenceFileService) {
+	public ProjectControllerUtils(ProjectService projectService, SampleService sampleService, UserService userService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
-		this.sequenceFileService = sequenceFileService;
 	}
 
 	/**

@@ -13,22 +13,13 @@ import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 public class ProjectTestUtils {
 	private ProjectService projectService;
-	private SampleService sampleService;
 	private UserService userService;
-	private SequenceFileService sequenceFileService;
-	private ProjectControllerUtils projectUtils;
 	private static Project project = null;
-	private static final int NUM_PROJECT_SAMPLES = 12;
-	private static final int NUM_PROJECT_USERS = 50;
-	private static final long NUM_TOTAL_ELEMENTS = 100L;
 	private static final String USER_NAME = "testme";
 	private static final User user = new User(USER_NAME, null, null, null, null, null);
 	private static final String PROJECT_NAME = "test_project";
@@ -36,13 +27,9 @@ public class ProjectTestUtils {
 	private static final Long PROJECT_MODIFIED_DATE = 1403723706L;
 	public static final String PROJECT_ORGANISM = "E. coli";
 
-	public ProjectTestUtils(ProjectService projectService, SampleService sampleService, UserService userService,
-			SequenceFileService sequenceFileService, ProjectControllerUtils projectUtils) {
+	public ProjectTestUtils(ProjectService projectService, UserService userService) {
 		this.projectService = projectService;
-		this.sampleService = sampleService;
 		this.userService = userService;
-		this.sequenceFileService = sequenceFileService;
-		this.projectUtils = projectUtils;
 	}
 
 	/**
