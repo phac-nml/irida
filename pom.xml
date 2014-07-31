@@ -322,7 +322,7 @@
 							<argLine>${failsafeArgLine}</argLine>
 							<systemPropertyVariables>
 								<test.galaxy.repository.url>${test.galaxy.repository.url}</test.galaxy.repository.url>
-								<test.galaxy.branch>${test.galaxy.branch}</test.galaxy.revision>
+								<test.galaxy.branch>${test.galaxy.branch}</test.galaxy.branch>
 								<test.galaxy.revision>${test.galaxy.revision}</test.galaxy.revision>
 							</systemPropertyVariables>
 						</configuration>
