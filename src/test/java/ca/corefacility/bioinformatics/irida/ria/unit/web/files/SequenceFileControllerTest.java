@@ -16,7 +16,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -49,18 +50,13 @@ public class SequenceFileControllerTest {
 	}
 
 	@Test
-	public void testDownloadSequenceFile() {
+	public void testDownloadSequenceFile() throws IOException {
 		Path path = new File(FILE_PATH).toPath();
 		SequenceFile file = new SequenceFile(path);
 		HttpServletResponse response = new MockHttpServletResponse();
 
 		when(sequenceFileService.read(FILE_ID)).thenReturn(file);
-		try {
-			controller.downloadSequenceFile(FILE_ID, response);
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail();
-		}
+		controller.downloadSequenceFile(FILE_ID, response);
 		assertTrue("Response should contain a \"Content-Disposition\" header.",
 				response.containsHeader("Content-Disposition"));
 		assertEquals("Content-Disposition should include the file name", "attachment; filename=\"test_file.fastq\"",
