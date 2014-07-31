@@ -49,6 +49,7 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -89,6 +90,7 @@ public class ProjectsControllerTest {
 	private SampleService sampleService;
 	private UserService userService;
 	private SequenceFileService sequenceFileService;
+	private ProjectControllerUtils projectUtils;
 
 	@Before
 	public void setUp() {
@@ -96,7 +98,8 @@ public class ProjectsControllerTest {
 		sampleService = mock(SampleService.class);
 		userService = mock(UserService.class);
 		sequenceFileService = mock(SequenceFileService.class);
-		controller = new ProjectsController(projectService, sampleService, userService, sequenceFileService);
+		projectUtils = mock(ProjectControllerUtils.class);
+		controller = new ProjectsController(projectService, sampleService, userService, sequenceFileService, projectUtils);
 		user.setId(1L);
 
 		mockSidebarInfo();
@@ -221,15 +224,6 @@ public class ProjectsControllerTest {
 		assertEquals("Returns the correct Project Page", ProjectsController.SPECIFIC_PROJECT_PAGE,
 				controller.getProjectSpecificPage(projectId, model, principal));
 
-	}
-
-	@Test
-	public void testGetProjectUsersPage() {
-		Model model = new ExtendedModelMap();
-		Long projectId = 1L;
-		Principal principal = () -> USER_NAME;
-		assertEquals("Gets the correct project members page",
-				controller.getProjectUsersPage(model, principal, projectId), ProjectsController.PROJECT_MEMBERS_PAGE);
 	}
 
 	@Test
