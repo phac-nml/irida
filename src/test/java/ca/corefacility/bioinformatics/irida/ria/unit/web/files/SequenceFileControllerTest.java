@@ -12,9 +12,9 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -51,7 +51,7 @@ public class SequenceFileControllerTest {
 
 	@Test
 	public void testDownloadSequenceFile() throws IOException {
-		Path path = new File(FILE_PATH).toPath();
+		Path path = Paths.get(FILE_PATH);
 		SequenceFile file = new SequenceFile(path);
 		HttpServletResponse response = new MockHttpServletResponse();
 
