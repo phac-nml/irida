@@ -23,11 +23,11 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.utils.RecursiveDeleteVisitor;
 
 /**
- * Tests for {@link SequenceFileFilesystemImpl}.
+ * Tests for {@link SequenceFileRepositoryImpl}.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class SequenceFileFilesystemTest {
+public class SequenceFileRepositoryImplTest {
 
 	private static final String TEMP_FILE_PREFIX = UUID.randomUUID().toString().replaceAll("-", "");
 	private SequenceFileRepositoryImpl repository;
@@ -70,6 +70,7 @@ public class SequenceFileFilesystemTest {
 		SequenceFile s = new SequenceFile(f);
 		s.setId(lid);
 		when(entityManager.find(SequenceFile.class, lid)).thenReturn(s);
+		when(entityManager.merge(s)).thenReturn(s);
 		s = repository.save(s);
 
 		// the created file should reside in the base directory within a new
@@ -119,6 +120,7 @@ public class SequenceFileFilesystemTest {
 		// create the directory and put the file into it.
 		// so call create instead of rewriting the logic:
 		when(entityManager.find(SequenceFile.class, lid)).thenReturn(sf);
+		when(entityManager.merge(sf)).thenReturn(sf);
 		sf = repository.save(sf);
 
 		Path originalFile = sf.getFile();
@@ -159,6 +161,7 @@ public class SequenceFileFilesystemTest {
 		SequenceFile original = new SequenceFile(originalFile);
 		original.setId(lId);
 		when(entityManager.find(SequenceFile.class, lId)).thenReturn(original);
+		when(entityManager.merge(original)).thenReturn(original);
 		original = repository.save(original);
 		Path updatedFile = getTempFile();
 		original.setFile(updatedFile);

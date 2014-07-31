@@ -68,26 +68,23 @@ public class SequenceFileRepositoryImpl implements SequenceFileRepositoryCustom 
 		try {
 			if (!Files.exists(sequenceFileDir)) {
 				Files.createDirectory(sequenceFileDir);
-				logger.debug("Created directory: [" + sequenceFileDir.toString() + "]");
+				logger.trace("Created directory: [" + sequenceFileDir.toString() + "]");
 			}
 
 			if (!Files.exists(sequenceFileDirWithRevision)) {
 				Files.createDirectory(sequenceFileDirWithRevision);
-				logger.debug("Created directory: [" + sequenceFileDirWithRevision.toString() + "]");
+				logger.trace("Created directory: [" + sequenceFileDirWithRevision.toString() + "]");
 			}
 
-			SequenceFile inDatabase = entityManager.find(SequenceFile.class, sequenceFile.getId());
-			logger.debug("Going to move file with id [" + sequenceFile.getId() + "] from [" + sequenceFile.getFile()
-					+ "] to [" + target + "]; the current entry in the database is stored at location ["
-					+ inDatabase.getFile() + "];");
-
 			Files.move(sequenceFile.getFile(), target);
-			logger.debug("Moved file " + sequenceFile.getFile() + " to " + target);
+			logger.trace("Moved file " + sequenceFile.getFile() + " to " + target);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new StorageException("Failed to move file into new directory.");
 		}
+		
 		sequenceFile.setFile(target);
+		
 		return sequenceFile;
 	}
 
