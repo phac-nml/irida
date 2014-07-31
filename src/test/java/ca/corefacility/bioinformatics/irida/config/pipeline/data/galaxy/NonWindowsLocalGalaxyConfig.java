@@ -265,6 +265,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	 * Downloads the latest stable release of Galaxy.
 	 * @param localGalaxy  The LocalGalaxy object used to fill in information about Galaxy.
 	 * @param repositoryURL The URL of the repository storing the Galaxy code.
+	 * @param branchName  The branch name within the repository of Galaxy to download.
 	 * @param revisionHash  The mercurial revisionHash of Galaxy to download. 
 	 * @return  A BootStrapper object describing the downloaded Galaxy.
 	 */
