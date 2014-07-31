@@ -7,6 +7,9 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.format.Formatter;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,10 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Controller for all sample related views
@@ -77,6 +77,7 @@ public class SamplesController {
 		List<Join<Sample, SequenceFile>> joinList = sequenceFileService.getSequenceFilesForSample(sample);
 
 		List<Map<String, Object>> response = new ArrayList<>();
+		Formatter<Date> dateFormatter = new DateFormatter();
 		for (Join<Sample, SequenceFile> join : joinList) {
 			SequenceFile file = join.getObject();
 			Map<String, Object> map = new HashMap<>();
@@ -85,7 +86,7 @@ public class SamplesController {
 			File f = new File(file.getStringPath());
 			map.put("size", Formats.formatSequenceFileSizeInMB(f.length()));
 			map.put("name", file.getLabel());
-			map.put("created", Formats.DATE.format(file.getTimestamp()));
+			map.put("created", dateFormatter.print(file.getTimestamp(), LocaleContextHolder.getLocale()));
 			response.add(map);
 		}
 		return response;
