@@ -28,15 +28,11 @@ public class ProjectSamplesPage {
 		this.driver = driver;
 	}
 
-	public void goToPage() {
+	public void goToPage() throws NoSuchElementException {
 		driver.get(URL);
 		waitForAjax();
-		try {
-			(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
-					.id("samplesTable")));
-		} catch (NoSuchElementException e) {
-			// Nothing to do here but die;
-		}
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
+				.id("samplesTable")));
 	}
 
 	/**
@@ -53,13 +49,9 @@ public class ProjectSamplesPage {
 	 * 
 	 * @return integer value of displayed samples on the page.
 	 */
-	public int getDisplayedSampleCount() {
-		try {
-			(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
-					.id("samplesTable")));
-		} catch (NoSuchElementException e) {
-			// Nothing to do here but die;
-		}
+	public int getDisplayedSampleCount() throws NoSuchElementException {
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
+				.id("samplesTable")));
 		return driver.findElements(By.cssSelector("tbody tr")).size();
 	}
 
@@ -232,14 +224,10 @@ public class ProjectSamplesPage {
         return driver.findElements(By.id("merge-error")).size() == 1;
     }
 
-	public boolean isFilesViewOpen() {
-		try {
-			(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
-					.id("files-view")));
-			return true;
-		} catch (NoSuchElementException e) {
-			return false;
-		}
+	public boolean isFilesViewOpen() throws NoSuchElementException {
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
+				.id("files-view")));
+		return true;
 	}
 
 	public int getDisplayedFilesCount() {
@@ -331,7 +319,7 @@ public class ProjectSamplesPage {
 	/**
 	 * Click copy samples button
 	 */
-	public void copySamples(String id) {
+	public void copySamples(String id) throws NoSuchElementException {
 		driver.findElement(By.id("copyBtn")).click();
 		(new WebDriverWait(driver, 10))
 				.until(ExpectedConditions.presenceOfElementLocated(By.className("noty_message")));
@@ -356,12 +344,8 @@ public class ProjectSamplesPage {
      */
     public void clickCombineSamples() {
         driver.findElement(By.id("combineBtn")).click();
-        try {
-            (new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
-                    .className("noty_message")));
-        } catch (NoSuchElementException e) {
-            // Nothing to do, it will die on the next test.
-        }
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
+				.className("noty_message")));
     }
 
     /**
