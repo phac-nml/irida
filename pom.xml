@@ -509,6 +509,6 @@
 		<test.galaxy.branch>next-stable</test.galaxy.branch>
 
 		<!-- Galaxy Testing Revision: either 'latest' or a revision from the branch in the defined repository -->
-		<test.galaxy.revision>7a4d321c0e38fa263ea83d29a35a608c3181fcba</test.galaxy.revision>
+		<test.galaxy.revision>2559a58e62f292ae537974f8a3fc86ea32ccf8ad</test.galaxy.revision>
 	</properties>
 </project>
