@@ -41,10 +41,8 @@ public class SequenceFileRepositoryImpl implements SequenceFileRepositoryCustom 
 		}
 		sequenceFile.setFileRevisionNumber(sequenceFile.getFileRevisionNumber() + 1);
 		writeSequenceFileToDisk(sequenceFile);
-		entityManager.persist(sequenceFile);
-		// entityManager.flush();
 
-		return sequenceFile;
+		return entityManager.merge(sequenceFile);
 	}
 
 	/**
