@@ -21,6 +21,7 @@ import org.springframework.ui.Model;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileController;
+import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 /**
@@ -36,11 +37,13 @@ public class SequenceFileControllerTest {
 
 	// Services
 	private SequenceFileService sequenceFileService;
+	private AnalysisService analysisService;
 
 	@Before
 	public void setUp() {
 		sequenceFileService = mock(SequenceFileService.class);
-		controller = new SequenceFileController(sequenceFileService);
+		analysisService = mock(AnalysisService.class);
+		controller = new SequenceFileController(sequenceFileService, analysisService);
 	}
 
 	@Test

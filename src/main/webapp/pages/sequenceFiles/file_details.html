@@ -13,8 +13,17 @@
     <div class="row">
         <main class="col-md-9 col-md-push-3" role="main" property="mainContentOfPage">
             <h1 id="wb-cont" role="heading" th:text="${file.label}"></h1>
+            <p class="lead" th:text="${fastQC.description}">...</p>
 
-            <h2>File information here!</h2>
+            <h2 th:text="#{sf.img.perbase}"></h2>
+            <img width="100%" th:src="@{${perbase}}" src="/sequenceFile/img/1-perbase" th:alt="#{sf.img.perbase}"
+                 alt="Quality scores across all bases"/>
+            <h2 th:text="#{sf.img.persequence}"></h2>
+            <img width="100%" th:src="@{${persequence}}" src="/sequenceFile/img/1-persequence"
+                 th:alt="#{sf.img.persequence}" alt="Quality score distribution over all sequences"/>
+            <h2 th:text="#{sf.img.dublicationlevel}"></h2>
+            <img width="100%" th:src="@{${dublicationlevel}}" src="/sequenceFile/img/1-duplicationlevel"
+                 th:alt="#{sf.img.dublicationlevel}" alt="Sequence Duplication Level"/>
         </main>
         <aside th:replace="sequenceFiles/file_base :: sidebar"></aside>
     </div>

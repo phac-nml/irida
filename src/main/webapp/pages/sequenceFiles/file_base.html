@@ -5,17 +5,38 @@
     <title></title>
 </head>
 <body>
-<aside th:fragment="sidebar" class="col-md-3 col-md-pull-9 visible-md visible-lg mrgn-tp-md"
-       th:object="${file}">
+<aside th:fragment="sidebar" class="col-md-3 col-md-pull-9 visible-md visible-lg mrgn-tp-md" th:object="${fastQC}">
     <div class="panel panel-primary">
         <div class="panel-heading">
             <b class="panel-title" th:text="#{sf.sidebar.details}">__FILE_DETAILS__</b>
         </div>
         <div class="panel-body">
             <ul class="nav nav-pills nav-stacked details">
-                <li><span class="glyphicon glyphicon-barcode"></span><em th:text="#{sf.sidebar.file-id}"></em><span
-                        class="pull-right" th:text="*{id}"></span></li>
-
+                <li>
+                    <i class="glyphicon glyphicon-barcode"></i>
+                    <em th:text="#{sf.sidebar.file-id}"></em>
+                    <span th:text="*{id}"></span></li>
+                <li>
+                    <i class="glyphicon glyphicon-calendar"></i>
+                    <em th:text="#{sf.sidebar.created}"></em>
+                    <span th:title="*{createdDate}" th:text="${created}"></span>
+                </li>
+                <li>
+                    <i class="glyphicon glyphicon-qrcode"></i>
+                    <em th:text="#{sf.encoding}">_ENCODING_</em>
+                    <span th:text="*{encoding}"></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <b class="panel-title">__SEQUENCE_DETAILS__</b>
+        </div>
+        <div class="panel-body">
+            <ul class="nav nav-pills nav-stacked details">
+                <li><em th:text="#{sf.totalSequences}">_TOTAL_SEQUENCES_</em><span class="pull-right" th:text="*{totalSequences}"></span></li>
+                <li><em th:text="#{sf.filteredSequences}">_FILTERED_SEQUENCES_</em><span class="pull-right" th:text="*{filteredSequences}"></span></li>
             </ul>
         </div>
     </div>
