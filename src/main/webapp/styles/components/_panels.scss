@@ -1,6 +1,12 @@
 // This mimics a panel by giving a list-group a heading.
-b.list-group-item {
-  background-color: $color-grey-lighter;
+aside {
+  b.list-group-item {
+    background-color: rgba(217, 237, 247, 1.0);
+    color: rgb(49, 112, 143);
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+  }
 }
 
 .panel {
