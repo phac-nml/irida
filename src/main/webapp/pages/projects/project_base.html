@@ -32,25 +32,25 @@
         </div>
         <div class="panel-body">
             <ul class="nav nav-pills nav-stacked details">
-                <li><span class="glyphicon glyphicon-barcode"></span><em th:text="#{project.id}"></em><span
-                        class="pull-right" th:text="${project.getId()}"></span></li>
-                <li th:if="${project.organism} != null"><span class="glyphicon glyphicon-leaf"></span><em
+                <li>
+                    <i class="glyphicon glyphicon-barcode"></i>
+                    <em th:text="#{project.id}"></em>
+                    <span th:text="*{id}"></span>
+                </li>
+                <li th:if="${project.organism} != null"><i class="glyphicon glyphicon-leaf"></i><em
                         th:text="#{project.organism}"></em><span
-                        class="pull-right" id="project-organism"><i th:text="${project.organism}"></i></span>
+                        id="project-organism"><i th:text="*{organism}"></i></span>
                 </li>
-                <li th:if="${owner} != null"><span class="glyphicon glyphicon-tower"></span><em
+                <li th:if="${owner} != null"><i class="glyphicon glyphicon-tower"></i><em
                         th:text="#{project.owner}"></em><span
-                        class="pull-right" id="project-owner"
-                        th:text="${owner.label}">__DATE_CREATED__</span>
+                        id="project-owner" th:text="${owner.label}">__DATE_CREATED__</span>
                 </li>
-                <li><span class="glyphicon glyphicon-calendar"></span><em th:text="#{project.created}"></em><span
-                        class="pull-right" id="project-created"
-                        th:text="${#calendars.format(project.timestamp, 'dd MMM yyyy')}">__DATE_CREATED__</span>
+                <li><i class="glyphicon glyphicon-calendar"></i><em th:text="#{project.created}"></em><span
+                        id="project-created" th:text="${#calendars.format(project.timestamp, 'dd MMM yyyy')}">__DATE_CREATED__</span>
                 </li>
-                <li th:if="${project.modifiedDate} != null"><span class="glyphicon glyphicon-calendar"></span><em
-                        th:text="#{project.modified}"></em><span
-                        class="pull-right" id="project-modified" data:livestamp="${project.modifiedDate}"
-                        th:title="${#calendars.format(project.modifiedDate, 'dd MMM yyyy HH:mm')}">__DATE_CREATED__</span>
+                <li th:if="${project.modifiedDate} != null"><i class="glyphicon glyphicon-calendar"></i><em
+                        th:text="#{project.modified}"></em><span id="project-modified" data:livestamp="*{modifiedDate}"
+                        th:title="${#calendars.format(project.modifiedDate, 'dd MMM yyyy HH:mm')}"></span>
                 </li>
             </ul>
         </div>
