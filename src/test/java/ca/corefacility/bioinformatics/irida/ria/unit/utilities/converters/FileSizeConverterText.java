@@ -8,7 +8,9 @@ import org.springframework.core.convert.converter.Converter;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by josh on 14-07-31.
+ * Unit tests for File size conversions
+ *
+ * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class FileSizeConverterText {
 	private Converter<Long, String> converter;
