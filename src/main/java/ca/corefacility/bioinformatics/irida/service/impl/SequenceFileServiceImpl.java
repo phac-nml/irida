@@ -56,6 +56,8 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 * File processing chain to execute on sequence files.
 	 */
 	private final FileProcessingChain fileProcessingChain;
+	
+	private static final String FILE_PROPERTY = "file";
 
 	protected SequenceFileServiceImpl() {
 		super(null, null, SequenceFile.class);
@@ -108,7 +110,12 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Transactional
 	public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
 		SequenceFile sf = super.update(id, updatedFields);
-		executor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, sf.getId(), SecurityContextHolder.getContext()));
+		
+		// only launch the file processing chain if the file has been modified.
+		if (updatedFields.containsKey(FILE_PROPERTY)) {
+			executor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, sf.getId(), SecurityContextHolder.getContext()));
+		}
+		
 		return sf;
 	}
 
