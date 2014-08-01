@@ -1,8 +1,16 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.files;
 
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileController;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -11,15 +19,9 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileController;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 /**
  * Unit Tests for @{link SequenceFileController}
@@ -55,7 +57,7 @@ public class SequenceFileControllerTest {
 		logger.debug("Testing downloadSequenceFile");
 		Path path = Paths.get(FILE_PATH);
 		SequenceFile file = new SequenceFile(path);
-		HttpServletResponse response = new MockHttpServletResponse();
+		MockHttpServletResponse response = new MockHttpServletResponse();
 
 		when(sequenceFileService.read(FILE_ID)).thenReturn(file);
 		controller.downloadSequenceFile(FILE_ID, response);
@@ -63,5 +65,9 @@ public class SequenceFileControllerTest {
 				response.containsHeader("Content-Disposition"));
 		assertEquals("Content-Disposition should include the file name", "attachment; filename=\"test_file.fastq\"",
 				response.getHeader("Content-Disposition"));
+
+		byte[] origBytes = Files.readAllBytes(path);
+		byte[] responseBytes = response.getContentAsByteArray();
+		assertArrayEquals("Response contents the correct file content", origBytes, responseBytes);
 	}
 }
