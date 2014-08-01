@@ -9,12 +9,15 @@ b.list-group-item {
       border-bottom: 1px solid $color-grey-lighter;
       line-height: 2em;
     }
-    .glyphicon {
+    i.glyphicon {
       color: $color-grey-light;
       margin-right: .5em;
     }
     em {
       font-style: normal;
+    }
+    span {
+      float: right;
     }
   }
 }

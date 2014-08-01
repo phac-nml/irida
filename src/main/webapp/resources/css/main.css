@@ -66,11 +66,13 @@ b.list-group-item {
 .panel .details li {
   border-bottom: 1px solid #eeeeee;
   line-height: 2em; }
-.panel .details .glyphicon {
+.panel .details i.glyphicon {
   color: #797979;
   margin-right: .5em; }
 .panel .details em {
   font-style: normal; }
+.panel .details span {
+  float: right; }
 
 .navbar-sm {
   border-radius: 0;
