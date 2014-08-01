@@ -26,7 +26,7 @@
                 </li>
                 <li><a href="#users" class="item" th:text="#{nav.main.users}">Users</a>
                     <ul class="sm list-unstyled" id="users" role="menu">
-                        <li><a href="/users" th:href="@{/users}" th:text="#{nav.main.users}">Users</a></li>
+                        <li><a href="/users" th:href="@{/users}" th:text="#{nav.main.users-list}">List Users</a></li>
                         <li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')">
                             <a href="#" th:href="@{/users/create}" th:text="#{nav.main.add.user}"></a>
                         </li>
