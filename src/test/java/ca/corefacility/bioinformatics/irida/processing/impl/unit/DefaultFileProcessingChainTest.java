@@ -49,7 +49,7 @@ public class DefaultFileProcessingChainTest {
 		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(sequenceFileRepository);
 		SequenceFile sf = new SequenceFile();
 		sf.setId(1L);
-		when(sequenceFileRepository.findOne(1L)).thenReturn(sf);
+		when(sequenceFileRepository.exists(1L)).thenReturn(true);
 
 		try {
 			fileProcessingChain.launchChain(1L);
@@ -64,7 +64,7 @@ public class DefaultFileProcessingChainTest {
 				new FailingFileProcessor());
 		SequenceFile sf = new SequenceFile();
 		sf.setId(1L);
-		when(sequenceFileRepository.findOne(1L)).thenReturn(sf);
+		when(sequenceFileRepository.exists(1L)).thenReturn(true);
 
 		List<Exception> exceptions = Collections.emptyList();
 
@@ -85,7 +85,7 @@ public class DefaultFileProcessingChainTest {
 				new FailingFileProcessor());
 		SequenceFile sf = new SequenceFile();
 		sf.setId(1L);
-		when(sequenceFileRepository.findOne(1L)).thenReturn(sf);
+		when(sequenceFileRepository.exists(1L)).thenReturn(true);
 
 		fileProcessingChain.setFastFail(true);
 
@@ -104,7 +104,7 @@ public class DefaultFileProcessingChainTest {
 				new FailingFileProcessorNoContinue());
 		SequenceFile sf = new SequenceFile();
 		sf.setId(1L);
-		when(sequenceFileRepository.findOne(1L)).thenReturn(sf);
+		when(sequenceFileRepository.exists(1L)).thenReturn(true);
 
 		try {
 			fileProcessingChain.launchChain(1L);

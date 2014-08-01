@@ -55,7 +55,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 		// initially saved to the database, but not necessarily before the
 		// transaction has completed and closed, so we need to block until the
 		// file has been persisted in the database.
-		while (sequenceFileRepository.findOne(sequenceFileId) == null) {
+		while (!sequenceFileRepository.exists(sequenceFileId)) {
 			if (waiting > timeout) {
 				throw new FileProcessorTimeoutException("Waiting for longer than " + sleepDuration * timeout + "ms, bailing out.");
 			}
