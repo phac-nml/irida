@@ -269,8 +269,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-dbcp2</artifactId>
 			<version>${commons.dbcp.version}</version>
 			<type>jar</type>
 		</dependency>
@@ -458,25 +458,27 @@
 		<junit.version>4.11</junit.version>
 		<slf4j.version>1.7.7</slf4j.version>
 		<guava.version>17.0</guava.version>
-		<spring.version>4.0.3.RELEASE</spring.version>
+		<spring.version>4.0.6.RELEASE</spring.version>
 		<spring.security.version>4.0.0.M1</spring.security.version>
-		<spring.data.jpa.version>1.5.2.RELEASE</spring.data.jpa.version>
+		<spring.data.jpa.version>1.7.0.M1</spring.data.jpa.version>
 		<spring.security.oauth.version>1.0.5.RELEASE</spring.security.oauth.version>
-		<spring.data.envers.version>0.1.0.RELEASE</spring.data.envers.version>
-		<spring.ws.test.version>2.1.4.RELEASE</spring.ws.test.version>
+		<spring.data.envers.version>0.2.0.RELEASE</spring.data.envers.version>
+		<spring.ws.test.version>2.2.0.RELEASE</spring.ws.test.version>
 		<mockito.version>1.9.5</mockito.version>
-		<mysql.connector.version>5.1.30</mysql.connector.version>
-		<hibernate.version>4.3.5.Final</hibernate.version>
-		<h2.version>1.4.178</h2.version>
+		<mysql.connector.version>5.1.31</mysql.connector.version>
+		<hibernate.version>4.3.6.Final</hibernate.version>
+		<h2.version>1.4.180</h2.version>
 		<jsr250.api.version>1.0</jsr250.api.version>
 		<spring.test.dbunit.version>1.1.0</spring.test.dbunit.version>
 		<dbunit.version>2.4.9</dbunit.version>
-		<commons.dbcp.version>1.4</commons.dbcp.version>
+		<commons.dbcp.version>2.0.1</commons.dbcp.version>
 		<fastqc.version>0.10.1-nml-custom</fastqc.version>
-		<aspectj.version>1.8.0</aspectj.version>
-		<hibernate.validator.version>5.1.0.Final</hibernate.validator.version>
+		<aspectj.version>1.8.1</aspectj.version>
+		<hibernate.validator.version>5.1.1.Final</hibernate.validator.version>
 		<javax.el-api.version>2.2</javax.el-api.version>
 		<el-ri.version>1.0</el-ri.version>
+		<com.github.jmchilton.blend4j.version>0.1.0</com.github.jmchilton.blend4j.version>
+		<com.github.jmchilton.galaxybootstrap.version>0.3.0</com.github.jmchilton.galaxybootstrap.version>
 		<com.github.jmchilton.blend4j.version>0.2.0-SNAPSHOT</com.github.jmchilton.blend4j.version>
 		<com.github.jmchilton.galaxybootstrap.version>0.4.0</com.github.jmchilton.galaxybootstrap.version>
 
@@ -484,10 +486,10 @@
 		<maven.failsafe.plugin.version>2.17</maven.failsafe.plugin.version>
 		<maven.surefire.plugin.version>2.17</maven.surefire.plugin.version>
 		<maven.javadoc.plugin.version>2.9.1</maven.javadoc.plugin.version>
-		<maven.jacoco.plugin.version>0.7.0.201403182114</maven.jacoco.plugin.version>
+		<maven.jacoco.plugin.version>0.7.1.201405082137</maven.jacoco.plugin.version>
 		<maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
-		<maven.liquibase.plugin.version>3.1.1</maven.liquibase.plugin.version>
-		<maven.jar.plugin.version>2.4</maven.jar.plugin.version>
+		<maven.liquibase.plugin.version>3.2.1</maven.liquibase.plugin.version>
+		<maven.jar.plugin.version>2.5</maven.jar.plugin.version>
 
 		<!-- project configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

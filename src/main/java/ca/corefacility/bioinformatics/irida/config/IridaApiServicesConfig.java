@@ -18,7 +18,7 @@ import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessin
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.AnalysisRepository;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 
 /**
  * Configuration for the IRIDA platform.
@@ -41,9 +41,9 @@ public class IridaApiServicesConfig {
 
 	@Bean
 	public FileProcessingChain fileProcessorChain(AnalysisRepository analysisRepository,
-			SequenceFileService sequenceFileService) {
-		return new DefaultFileProcessingChain(new GzipFileProcessor(sequenceFileService), new FastqcFileProcessor(
-				analysisRepository, apiMessageSource()));
+			SequenceFileRepository sequenceFileRepository) {
+		return new DefaultFileProcessingChain(sequenceFileRepository, new GzipFileProcessor(sequenceFileRepository),
+				new FastqcFileProcessor(analysisRepository, apiMessageSource(), sequenceFileRepository));
 	}
 
 	@Bean
