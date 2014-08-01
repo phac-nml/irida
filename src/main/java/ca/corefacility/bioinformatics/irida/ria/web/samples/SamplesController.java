@@ -39,10 +39,16 @@ public class SamplesController {
 	private final SampleService sampleService;
 	private final SequenceFileService sequenceFileService;
 
+	// Converters
+	Formatter<Date> dateFormatter;
+	Converter<Long, String> fileSizeConverter;
+
 	@Autowired
 	public SamplesController(SampleService sampleService, SequenceFileService sequenceFileService) {
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
+		this.dateFormatter = new DateFormatter();
+		this.fileSizeConverter = new FileSizeConverter();
 	}
 
 	/************************************************************************************************
@@ -80,8 +86,6 @@ public class SamplesController {
 		List<Join<Sample, SequenceFile>> joinList = sequenceFileService.getSequenceFilesForSample(sample);
 
 		List<Map<String, Object>> response = new ArrayList<>();
-		Formatter<Date> dateFormatter = new DateFormatter();
-		Converter<Long, String> sizeConverter = new FileSizeConverter();
 		for (Join<Sample, SequenceFile> join : joinList) {
 			SequenceFile file = join.getObject();
 			Map<String, Object> map = new HashMap<>();
@@ -92,7 +96,7 @@ public class SamplesController {
 			if(Files.exists(path)) {
 				size = Files.size(path);
 			}
-			map.put("size", sizeConverter.convert(size));
+			map.put("size", fileSizeConverter.convert(size));
 			map.put("name", file.getLabel());
 			map.put("created", dateFormatter.print(file.getTimestamp(), LocaleContextHolder.getLocale()));
 			response.add(map);
