@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -73,7 +75,7 @@ public class SamplesController {
 	@RequestMapping(value = "/ajax/{sampleId}/files", produces = MediaType.APPLICATION_JSON_VALUE)
 	public
 	@ResponseBody
-	List<Map<String, Object>> getFilesForSample(@PathVariable Long sampleId) {
+	List<Map<String, Object>> getFilesForSample(@PathVariable Long sampleId) throws IOException {
 		Sample sample = sampleService.read(sampleId);
 		List<Join<Sample, SequenceFile>> joinList = sequenceFileService.getSequenceFilesForSample(sample);
 
@@ -85,8 +87,12 @@ public class SamplesController {
 			Map<String, Object> map = new HashMap<>();
 			map.put("id", file.getId().toString());
 
-			File f = file.getFile().toFile();
-			map.put("size", sizeConverter.convert(f.length()));
+			Path path = file.getFile();
+			long size = 0;
+			if(Files.exists(path)) {
+				size = Files.size(path);
+			}
+			map.put("size", sizeConverter.convert(size));
 			map.put("name", file.getLabel());
 			map.put("created", dateFormatter.print(file.getTimestamp(), LocaleContextHolder.getLocale()));
 			response.add(map);
