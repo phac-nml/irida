@@ -75,8 +75,6 @@ public class EmailController {
 		ctx.setVariable("creator", sender);
 		ctx.setVariable("user", user);
 		ctx.setVariable("passwordReset", passwordReset);
-		
-		logger.debug("Password reset is " + passwordReset);
 
 		final MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
 		final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, "UTF-8");
