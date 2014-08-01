@@ -67,15 +67,7 @@ public class FastqcFileProcessor implements FileProcessor {
 	 */
 	@Override
 	public void process(final Long sequenceFileId) throws FileProcessorException {
-		final SequenceFile sequenceFile = sequenceFileRepository.findOne(sequenceFileId);
-		Set<AnalysisFastQC> existing = analysisRepository.findAnalysesForSequenceFile(sequenceFile,
-				AnalysisFastQC.class);
-		
-		if (!existing.isEmpty()) {
-			logger.debug("FastQC has already been run on this file, not running again.");
-			return;
-		}
-		
+		final SequenceFile sequenceFile = sequenceFileRepository.findOne(sequenceFileId);		
 		Path fileToProcess = sequenceFile.getFile();
 		AnalysisFastQC analysis = new AnalysisFastQC(ImmutableSet.of(sequenceFile));
 		try {

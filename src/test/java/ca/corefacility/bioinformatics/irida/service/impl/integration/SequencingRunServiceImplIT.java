@@ -33,6 +33,8 @@ import ca.corefacility.bioinformatics.irida.model.SequencingRunEntity;
 import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -70,6 +72,9 @@ public class SequencingRunServiceImplIT {
 	private SampleService sampleService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private AnalysisService analysisService;
 
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "SEQUENCER")
@@ -112,6 +117,9 @@ public class SequencingRunServiceImplIT {
 		SequenceFile savedFile = sequenceFileService.read(1l);
 		Set<SequenceFile> sequenceFilesForMiseqRun = sequenceFileService.getSequenceFilesForSequencingRun(saved);
 		assertTrue("Saved miseq run should have seqence file", sequenceFilesForMiseqRun.contains(savedFile));
+		
+		Set<AnalysisFastQC> analyses = analysisService.getAnalysesForSequenceFile(sf, AnalysisFastQC.class);
+		assertEquals("Wrong number of analyses created for sequence file.", 1, analyses.size());
 	}
 
 	@Test
@@ -216,6 +224,8 @@ public class SequencingRunServiceImplIT {
 		sequenceFileService.createSequenceFileInSample(sf, sample);
 
 		miseqRunService.addSequenceFileToSequencingRun(run, sf);
-
+		
+		Set<AnalysisFastQC> analyses = analysisService.getAnalysesForSequenceFile(sf, AnalysisFastQC.class);
+		assertEquals("Wrong number of analyses created for sequence file.", 1, analyses.size());
 	}
 }
