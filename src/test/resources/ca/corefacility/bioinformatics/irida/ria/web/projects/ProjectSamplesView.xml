@@ -53,7 +53,7 @@
 
 
     <sequence_file id="1" createdDate="2013-07-18 14:20:19.0"
-                   filePath="/sequenceFile1" />
+                   filePath="src/test/resources/files/test_file.fastq" />
     <sequence_file id="2" createdDate="2013-07-18 14:20:19.0"
                    filePath="/sequenceFile2" />
     <sequence_file id="3" createdDate="2013-07-18 14:20:19.0"

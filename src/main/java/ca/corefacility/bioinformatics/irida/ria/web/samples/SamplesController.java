@@ -1,49 +1,87 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.format.Formatter;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
 
 /**
- * Created by josh on 14-07-30.
+ * Controller for all sample related views
+ *
+ * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Controller
 @RequestMapping("/samples")
 public class SamplesController {
+	// Page Names
+	private static final String SAMPLES_DIR = "samples/";
+	private static final String SAMPLE_PAGE = SAMPLES_DIR + "sample";
+
 	// Services
 	private final SampleService sampleService;
 	private final SequenceFileService sequenceFileService;
 
+	// Converters
+	Formatter<Date> dateFormatter;
+	Converter<Long, String> fileSizeConverter;
+
 	@Autowired
-	public SamplesController(SampleService sampleService, SequenceFileService sequenceFileService){
+	public SamplesController(SampleService sampleService, SequenceFileService sequenceFileService) {
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
+		this.dateFormatter = new DateFormatter();
+		this.fileSizeConverter = new FileSizeConverter();
 	}
+
+	/************************************************************************************************
+	 * PAGE REQUESTS
+	 ************************************************************************************************/
+
+	/**
+	 * Get the samples details page.
+	 * @param model Spring {@link Model}
+	 * @param sampleId The id for the sample
+	 * @return The name of the page.
+	 */
+	@RequestMapping("/{sampleId")
+	public String getSampleSpecificPage(final Model model, @PathVariable Long sampleId) {
+		Sample sample = sampleService.read(sampleId);
+		model.addAttribute("sample", sample);
+		return SAMPLE_PAGE;
+	}
+
+	/************************************************************************************************
+	 * AJAX REQUESTS
+	 ************************************************************************************************/
 
 	/**
 	 * Get a list of details about files associated with a specific sample
+	 *
 	 * @param sampleId The id of the sample to find the files for.
 	 * @return A list file details.
 	 */
 	@RequestMapping(value = "/ajax/{sampleId}/files", produces = MediaType.APPLICATION_JSON_VALUE)
 	public
 	@ResponseBody
-	List<Map<String, Object>> getFilesForSample(@PathVariable Long sampleId) {
+	List<Map<String, Object>> getFilesForSample(@PathVariable Long sampleId) throws IOException {
 		Sample sample = sampleService.read(sampleId);
 		List<Join<Sample, SequenceFile>> joinList = sequenceFileService.getSequenceFilesForSample(sample);
 
@@ -52,8 +90,15 @@ public class SamplesController {
 			SequenceFile file = join.getObject();
 			Map<String, Object> map = new HashMap<>();
 			map.put("id", file.getId().toString());
+
+			Path path = file.getFile();
+			long size = 0;
+			if(Files.exists(path)) {
+				size = Files.size(path);
+			}
+			map.put("size", fileSizeConverter.convert(size));
 			map.put("name", file.getLabel());
-			map.put("created", Formats.DATE.format(file.getTimestamp()));
+			map.put("created", dateFormatter.print(file.getTimestamp(), LocaleContextHolder.getLocale()));
 			response.add(map);
 		}
 		return response;

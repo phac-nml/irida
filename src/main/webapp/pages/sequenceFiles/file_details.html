@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="templates/wet-boew/wet-layout">
+<head>
+    <title th:text="${file.label}">THIS IS SOMETHING WRONG</title>
+</head>
+<body>
+<div class="container" layout:fragment="content">
+    <div class="row">
+        <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
+    </div>
+    <div class="row">
+        <main class="col-md-9 col-md-push-3" role="main" property="mainContentOfPage">
+            <h1 id="wb-cont" role="heading" th:text="${file.label}"></h1>
+
+            <h2>File information here!</h2>
+        </main>
+        <aside th:replace="sequenceFiles/file_base :: sidebar"></aside>
+    </div>
+</div>
+<div layout:fragment="scripts" th:inline="javascript">
+</div>
+</body>
+</html>

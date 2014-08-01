@@ -1,3 +1,7 @@
+.btn-xs.glyphicon {
+  font-size: 10px;
+  padding: 3px 6px; }
+
 .dataTables_filter input[type='search'] {
   background-color: #eeeeee;
   border: 1px solid #ccc;

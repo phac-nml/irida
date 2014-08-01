@@ -1,21 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.SortUtilities;
+import com.google.common.base.Strings;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.SortUtilities;
-
-import com.google.common.base.Strings;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -34,9 +28,11 @@ public class ProjectSamplesPage {
 		this.driver = driver;
 	}
 
-	public void goToPage() {
+	public void goToPage() throws NoSuchElementException {
 		driver.get(URL);
 		waitForAjax();
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
+				.id("samplesTable")));
 	}
 
 	/**
@@ -53,7 +49,9 @@ public class ProjectSamplesPage {
 	 * 
 	 * @return integer value of displayed samples on the page.
 	 */
-	public int getDisplayedSampleCount() {
+	public int getDisplayedSampleCount() throws NoSuchElementException {
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
+				.id("samplesTable")));
 		return driver.findElements(By.cssSelector("tbody tr")).size();
 	}
 
@@ -226,14 +224,10 @@ public class ProjectSamplesPage {
         return driver.findElements(By.id("merge-error")).size() == 1;
     }
 
-	public boolean isFilesViewOpen() {
-		try {
-			(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
-					.id("files-view")));
-			return true;
-		} catch (NoSuchElementException e) {
-			return false;
-		}
+	public boolean isFilesViewOpen() throws NoSuchElementException {
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
+				.id("files-view")));
+		return true;
 	}
 
 	public int getDisplayedFilesCount() {
@@ -325,7 +319,7 @@ public class ProjectSamplesPage {
 	/**
 	 * Click copy samples button
 	 */
-	public void copySamples(String id) {
+	public void copySamples(String id) throws NoSuchElementException {
 		driver.findElement(By.id("copyBtn")).click();
 		(new WebDriverWait(driver, 10))
 				.until(ExpectedConditions.presenceOfElementLocated(By.className("noty_message")));
@@ -350,12 +344,8 @@ public class ProjectSamplesPage {
      */
     public void clickCombineSamples() {
         driver.findElement(By.id("combineBtn")).click();
-        try {
-            (new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
-                    .className("noty_message")));
-        } catch (NoSuchElementException e) {
-            // Nothing to do, it will die on the next test.
-        }
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
+				.className("noty_message")));
     }
 
     /**

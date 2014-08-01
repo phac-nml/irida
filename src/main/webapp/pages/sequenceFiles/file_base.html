@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+    <meta charset="UTF-8"/>
+    <title></title>
+</head>
+<body>
+<aside th:fragment="sidebar" class="col-md-3 col-md-pull-9 visible-md visible-lg mrgn-tp-md"
+       th:object="${file}">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <b class="panel-title" th:text="#{sf.sidebar.details}">__FILE_DETAILS__</b>
+        </div>
+        <div class="panel-body">
+            <ul class="nav nav-pills nav-stacked details">
+                <li><span class="glyphicon glyphicon-barcode"></span><em th:text="#{sf.sidebar.file-id}"></em><span
+                        class="pull-right" th:text="*{id}"></span></li>
+
+            </ul>
+        </div>
+    </div>
+</aside>
+<div th:fragment="scripts">
+</div>
+</body>
+</html>
