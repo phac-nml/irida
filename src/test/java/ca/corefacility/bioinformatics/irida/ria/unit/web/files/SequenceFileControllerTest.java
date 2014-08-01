@@ -43,6 +43,7 @@ public class SequenceFileControllerTest {
 
 	@Test
 	public void testGetSequenceFilePage() {
+		logger.debug("Testing getSequenceFilePage");
 		Model model = new ExtendedModelMap();
 		String response = controller.getSequenceFilePage(model, FILE_ID);
 		assertTrue("Model should contain information about the file.", model.containsAttribute("file"));
@@ -51,6 +52,7 @@ public class SequenceFileControllerTest {
 
 	@Test
 	public void testDownloadSequenceFile() throws IOException {
+		logger.debug("Testing downloadSequenceFile");
 		Path path = Paths.get(FILE_PATH);
 		SequenceFile file = new SequenceFile(path);
 		HttpServletResponse response = new MockHttpServletResponse();
