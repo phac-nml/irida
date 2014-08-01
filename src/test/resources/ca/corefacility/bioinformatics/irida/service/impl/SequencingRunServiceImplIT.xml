@@ -23,13 +23,13 @@
 	<sequencing_run_entity id="5" data="test data 5"/>
 
 	<sequence_file id="1" sequencingRun_id="3" filePath="/FileThatMayNotExist"
-		createdDate="2013-07-18 14:20:19.0" />
+		createdDate="2013-07-18 14:20:19.0" fileRevisionNumber="1"/>
 	<sequence_file id="2" sequencingRun_id="2" filePath="/FileThatMayNotExist1"
-		createdDate="2013-07-18 14:20:19.0" />
+		createdDate="2013-07-18 14:20:19.0" fileRevisionNumber="1"/>
 	<sequence_file id="3" sequencingRun_id="3" filePath="/FileThatMayNotExist2"
-		createdDate="2013-07-18 14:20:19.0" />
+		createdDate="2013-07-18 14:20:19.0" fileRevisionNumber="1"/>
 	<sequence_file id="4" sequencingRun_id="3" filePath="/FileThatMayNotExist3"
-		createdDate="2013-07-18 14:20:19.0" />
+		createdDate="2013-07-18 14:20:19.0" fileRevisionNumber="1"/>
 
 	<sample id="1" sampleName="sample" sequencerSampleId="sample1"
 		createdDate="2013-07-18 14:20:19.0" />

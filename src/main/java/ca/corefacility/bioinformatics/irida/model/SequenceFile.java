@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -21,13 +20,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.PostLoad;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
@@ -53,8 +48,8 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
+	@Column(name = "filePath", unique = true)
 	@NotNull(message = "{sequencefile.file.notnull}")
-	@Transient
 	private Path file;
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
@@ -63,9 +58,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
-
-	@Column(name = "filePath", unique = true)
-	private String stringPath;
 
 	/* statistics computed by fastqc */
 	
@@ -90,7 +82,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	public SequenceFile() {
 		createdDate = new Date();
 		modifiedDate = createdDate;
-		fileRevisionNumber = 1L;
+		fileRevisionNumber = 0L;
 		optionalProperties = new HashMap<>();
 	}
 
@@ -103,26 +95,13 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	public SequenceFile(Path sampleFile) {
 		this();
 		this.file = sampleFile;
-		setStringPath();
-
-	}
-
-	@PostLoad
-	public void postLoad() {
-		setRealPath();
-	}
-
-	@PrePersist
-	@PreUpdate
-	public void prePersist() {
-		setStringPath();
 	}
 
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof SequenceFile) {
 			SequenceFile sampleFile = (SequenceFile) other;
-			return Objects.equals(stringPath, sampleFile.stringPath);
+			return Objects.equals(file, sampleFile.file);
 		}
 
 		return false;
@@ -130,7 +109,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(stringPath);
+		return Objects.hash(file);
 	}
 
 	@Override
@@ -142,33 +121,12 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 		return createdDate;
 	}
 
-	public String getStringPath() {
-		return stringPath;
-	}
-
-	public void setStringPath(String stringPath) {
-		this.stringPath = stringPath;
-	}
-
-	public void setStringPath() {
-		if (file != null) {
-			stringPath = file.toFile().toString();
-		}
-	}
-
-	public void setRealPath() {
-		if (stringPath != null) {
-			file = Paths.get(stringPath);
-		}
-	}
-
 	public Path getFile() {
 		return file;
 	}
 
 	public void setFile(Path file) {
 		this.file = file;
-		setStringPath();
 	}
 
 	@Override

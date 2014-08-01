@@ -3,6 +3,8 @@ package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -10,6 +12,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Scanner;
 import java.util.UUID;
+
+import javax.persistence.EntityManager;
 
 import org.junit.After;
 import org.junit.Before;
@@ -19,20 +23,22 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.utils.RecursiveDeleteVisitor;
 
 /**
- * Tests for {@link SequenceFileFilesystemImpl}.
+ * Tests for {@link SequenceFileRepositoryImpl}.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class SequenceFileFilesystemTest {
+public class SequenceFileRepositoryImplTest {
 
 	private static final String TEMP_FILE_PREFIX = UUID.randomUUID().toString().replaceAll("-", "");
-	private SequenceFileFilesystemImpl repository;
+	private SequenceFileRepositoryImpl repository;
 	private Path baseDirectory;
+	private EntityManager entityManager;
 
 	@Before
 	public void setUp() throws IOException {
 		baseDirectory = Files.createTempDirectory(TEMP_FILE_PREFIX);
-		repository = new SequenceFileFilesystemImpl(baseDirectory);
+		entityManager = mock(EntityManager.class);
+		repository = new SequenceFileRepositoryImpl(entityManager, baseDirectory);
 	}
 
 	@After
@@ -48,7 +54,7 @@ public class SequenceFileFilesystemTest {
 	public void testCreateFileMissingIdentifier() throws IOException {
 		SequenceFile s = new SequenceFile(getTempFile());
 		try {
-			repository.writeSequenceFileToDisk(s);
+			repository.save(s);
 			fail();
 		} catch (IllegalArgumentException e) {
 		} catch (Exception e) {
@@ -63,8 +69,9 @@ public class SequenceFileFilesystemTest {
 		String filename = f.getFileName().toString();
 		SequenceFile s = new SequenceFile(f);
 		s.setId(lid);
-
-		s = repository.writeSequenceFileToDisk(s);
+		when(entityManager.find(SequenceFile.class, lid)).thenReturn(s);
+		when(entityManager.merge(s)).thenReturn(s);
+		s = repository.save(s);
 
 		// the created file should reside in the base directory within a new
 		// directory using the sequence file's identifier.
@@ -79,7 +86,7 @@ public class SequenceFileFilesystemTest {
 	public void testUpdateFileMissingIdentifier() throws IOException {
 		SequenceFile s = new SequenceFile(getTempFile());
 		try {
-			repository.updateSequenceFileOnDisk(s.getId(), s.getFile(), 2L);
+			repository.save(s);
 			fail();
 		} catch (IllegalArgumentException e) {
 		} catch (Exception e) {
@@ -93,7 +100,7 @@ public class SequenceFileFilesystemTest {
 		SequenceFile s = new SequenceFile(f);
 
 		try {
-			repository.updateSequenceFileOnDisk(s.getId(), f, 2L);
+			repository.save(s);
 			fail();
 		} catch (IllegalArgumentException e) {
 		} catch (Exception e) {
@@ -112,7 +119,9 @@ public class SequenceFileFilesystemTest {
 		sf.setId(lid);
 		// create the directory and put the file into it.
 		// so call create instead of rewriting the logic:
-		sf = repository.writeSequenceFileToDisk(sf);
+		when(entityManager.find(SequenceFile.class, lid)).thenReturn(sf);
+		when(entityManager.merge(sf)).thenReturn(sf);
+		sf = repository.save(sf);
 
 		Path originalFile = sf.getFile();
 
@@ -129,18 +138,19 @@ public class SequenceFileFilesystemTest {
 		// now try updating the file:
 		// sf = repository.update(sf.getId(), ImmutableMap.of("file", (Object)
 		// newFile,"fileRevisionNumber",2L));
+		sf = repository.save(sf);
+		Path updated = sf.getFile();
 
-		Path updated = repository.updateSequenceFileOnDisk(sf.getId(), newFile, 2L);
 		sf.setFile(updated);
 		// the filename should be the same as before:
 		Path updatedFile = sf.getFile();
 		assertEquals(updatedFile.getFileName(), oldFile.getFileName());
 		// the contents of the file should be different:
 		try (Scanner sc = new Scanner(updatedFile)) {
-			assertEquals(updatedText, sc.nextLine());
+			assertEquals("The updated text is not correct.", updatedText, sc.nextLine());
 		}
 		try (Scanner sc = new Scanner(originalFile)) {
-			assertEquals(originalText, sc.nextLine());
+			assertEquals("The original file was not preserved.", originalText, sc.nextLine());
 		}
 	}
 
@@ -150,10 +160,14 @@ public class SequenceFileFilesystemTest {
 		Path originalFile = getTempFile();
 		SequenceFile original = new SequenceFile(originalFile);
 		original.setId(lId);
-		original = repository.writeSequenceFileToDisk(original);
+		when(entityManager.find(SequenceFile.class, lId)).thenReturn(original);
+		when(entityManager.merge(original)).thenReturn(original);
+		original = repository.save(original);
 		Path updatedFile = getTempFile();
+		original.setFile(updatedFile);
 
-		Path updatedPersistedFile = repository.updateSequenceFileOnDisk(lId, updatedFile, 2L);
+		SequenceFile updated = repository.save(original);
+		Path updatedPersistedFile = updated.getFile();
 		assertEquals(updatedFile.getFileName(), updatedPersistedFile.getFileName());
 		assertTrue(Files.exists(updatedPersistedFile));
 

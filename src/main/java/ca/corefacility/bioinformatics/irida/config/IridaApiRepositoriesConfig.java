@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.config;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -10,8 +11,6 @@ import javax.sql.DataSource;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.RevisionListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -27,8 +26,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import ca.corefacility.bioinformatics.irida.config.data.DataConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.repositories.SequenceFileFilesystem;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileFilesystemImpl;
 import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.UserRevListener;
 
 /**
@@ -42,14 +39,10 @@ import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.Use
 @EnableJpaRepositories(basePackages = "ca.corefacility.bioinformatics.irida.repositories", repositoryFactoryBeanClass = EnversRevisionRepositoryFactoryBean.class)
 @Import({ IridaApiPropertyPlaceholderConfig.class, IridaApiJdbcDataSourceConfig.class })
 public class IridaApiRepositoriesConfig {
-
-	private static final Logger logger = LoggerFactory.getLogger(IridaApiRepositoriesConfig.class);
-
 	@Autowired
 	private DataConfig dataConfig;
 
-	private @Value("${sequence.file.base.directory}")
-	String sequenceFileBaseDirectory;
+	private @Value("${sequence.file.base.directory}") String sequenceFileBaseDirectory;
 
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
@@ -69,23 +62,23 @@ public class IridaApiRepositoriesConfig {
 		return new JpaTransactionManager();
 	}
 
-	@Bean
-	public SequenceFileFilesystem sequenceFileFilesystem() {
+	@Bean(name = "baseDirectory")
+	public Path baseDirectory() throws IOException {
 		Path baseDirectory = Paths.get(sequenceFileBaseDirectory);
 		if (!Files.exists(baseDirectory)) {
-			logger.error("Storage directory [" + sequenceFileBaseDirectory + "] for SequenceFiles does not exist!");
-			System.exit(1);
+			throw new IllegalStateException("Cannot continue startup; base directory [" + baseDirectory
+					+ "] does not exist!");
 		}
-		return new SequenceFileFilesystemImpl(baseDirectory);
+		return baseDirectory;
 	}
 
 	@Bean(initMethod = "initialize")
 	public RevisionListener revisionListener() {
 		return new UserRevListener();
 	}
-	
+
 	@Bean
-	public AuditReader auditReader(EntityManagerFactory entityManagerFactory){
+	public AuditReader auditReader(EntityManagerFactory entityManagerFactory) {
 		return AuditReaderFactory.get(entityManagerFactory.createEntityManager());
 	}
 }

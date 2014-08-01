@@ -74,18 +74,6 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	public Set<SequenceFile> getSequenceFilesForSequencingRun(SequencingRun sequencingRun);
 
 	/**
-	 * Update a {@link SequenceFile} without calling the file processors.
-	 * 
-	 * @param id
-	 *            the id of the {@link SequenceFile}
-	 * @param updatedFields
-	 *            the fields that were update.
-	 * @return the {@link SequenceFile} that exists in the database.
-	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadSequenceFile')")
-	public SequenceFile updateWithoutProcessors(Long id, Map<String, Object> updatedFields);
-
-	/**
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadSequenceFile')")

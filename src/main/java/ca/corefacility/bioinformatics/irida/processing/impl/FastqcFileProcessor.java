@@ -36,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.AnalysisRepository;
+import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -52,18 +53,21 @@ public class FastqcFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessor.class);
 
 	private final AnalysisRepository analysisRepository;
+	private final SequenceFileRepository sequenceFileRepository;
 	private final MessageSource messageSource;
 
-	public FastqcFileProcessor(AnalysisRepository analysisRepository, MessageSource messageSource) {
+	public FastqcFileProcessor(AnalysisRepository analysisRepository, MessageSource messageSource, SequenceFileRepository sequenceFileRepository) {
 		this.analysisRepository = analysisRepository;
 		this.messageSource = messageSource;
+		this.sequenceFileRepository = sequenceFileRepository;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public SequenceFile process(final SequenceFile sequenceFile) throws FileProcessorException {
+	public void process(final Long sequenceFileId) throws FileProcessorException {
+		final SequenceFile sequenceFile = sequenceFileRepository.findOne(sequenceFileId);		
 		Path fileToProcess = sequenceFile.getFile();
 		AnalysisFastQC analysis = new AnalysisFastQC(ImmutableSet.of(sequenceFile));
 		try {
@@ -99,9 +103,8 @@ public class FastqcFileProcessor implements FileProcessor {
 			analysisRepository.save(analysis);
 		} catch (Exception e) {
 			logger.error("FastQC failed to process the sequence file. Stack trace follows.", e);
-			throw new FileProcessorException("FastQC failed to parse the sequence file.",e);
+			throw new FileProcessorException("FastQC failed to parse the sequence file.", e);
 		}
-		return sequenceFile;
 	}
 
 	/**
