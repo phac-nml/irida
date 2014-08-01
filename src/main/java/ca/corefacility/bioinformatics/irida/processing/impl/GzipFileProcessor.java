@@ -69,7 +69,6 @@ public class GzipFileProcessor implements FileProcessor {
 
 					Files.copy(zippedInputStream, target);
 
-					sequenceFile = sequenceFileRepository.findOne(sequenceFileId);
 					sequenceFile.setFile(target);
 					sequenceFile = sequenceFileRepository.save(sequenceFile);
 				}
