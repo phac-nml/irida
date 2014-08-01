@@ -10,6 +10,8 @@ import org.springframework.core.convert.converter.Converter;
 public class FileSizeConverter implements Converter<Long, String> {
 
 	public static final int BYTES_PER_KB = 1024;
+	public static final int BYTES_PER_MB = BYTES_PER_KB * BYTES_PER_KB;
+	public static final int BYTES_PER_GB = BYTES_PER_MB * BYTES_PER_KB;
 
 	/**
 	 * Converts a file length property (bytes) to kilobytes.
@@ -18,6 +20,12 @@ public class FileSizeConverter implements Converter<Long, String> {
 	 * @return String formatted size of file in kilobytes.
 	 */
 	@Override public String convert(Long size) {
-		return String.format("%.2f KB", (float) (size / BYTES_PER_KB));
+		if (size > BYTES_PER_GB) {
+			return String.format("%.2f GB", ((float) size / BYTES_PER_GB));
+		}
+		else if(size > BYTES_PER_MB) {
+			return String.format("%d MB", (int)Math.ceil(size / BYTES_PER_MB));
+		}
+		return String.format("%d KB", (int)Math.ceil(size / BYTES_PER_KB));
 	}
 }
