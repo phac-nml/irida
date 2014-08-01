@@ -313,6 +313,9 @@ public class UsersController {
 		}
 
 		model.addAttribute("allowedRoles", roleNames);
+		if (!model.containsAttribute("given_requireActivation")) {
+			model.addAttribute("given_requireActivation", true);
+		}
 
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<String, String>());
@@ -353,12 +356,12 @@ public class UsersController {
 		User creator = userService.getUserByUsername(principal.getName());
 
 		// check if we need to generate a password
-		boolean passwordEntered = Strings.isNullOrEmpty(requireActivation);
-		if (passwordEntered) {
+		boolean generateActivation = !Strings.isNullOrEmpty(requireActivation);
+		if (generateActivation) {
 			user.setPassword(generatePassword());
 			confirmPassword = user.getPassword();
+			user.setCredentialsNonExpired(false);
 		}
-		user.setCredentialsNonExpired(passwordEntered);
 
 		// check validity of password
 		if (!user.getPassword().equals(confirmPassword)) {
@@ -378,8 +381,9 @@ public class UsersController {
 
 				// if the password isn't set, we'll generate a password reset
 				PasswordReset passwordReset = null;
-				if (!passwordEntered) {
+				if (generateActivation) {
 					passwordReset = passwordResetService.create(new PasswordReset(user));
+					logger.trace("Created password reset for activation");
 				}
 
 				emailController.sendWelcomeEmail(user, creator, passwordReset);
@@ -399,6 +403,7 @@ public class UsersController {
 			model.addAttribute("given_lastName", user.getLastName());
 			model.addAttribute("given_email", user.getEmail());
 			model.addAttribute("given_phoneNumber", user.getPhoneNumber());
+			model.addAttribute("given_requireActivation", generateActivation);
 
 			returnView = createUserPage(model);
 		}
