@@ -313,6 +313,9 @@ public class UsersController {
 		}
 
 		model.addAttribute("allowedRoles", roleNames);
+		if (!model.containsAttribute("given_requireActivation")) {
+			model.addAttribute("given_requireActivation", true);
+		}
 
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<String, String>());
@@ -400,6 +403,7 @@ public class UsersController {
 			model.addAttribute("given_lastName", user.getLastName());
 			model.addAttribute("given_email", user.getEmail());
 			model.addAttribute("given_phoneNumber", user.getPhoneNumber());
+			model.addAttribute("given_requireActivation", generateActivation);
 
 			returnView = createUserPage(model);
 		}

@@ -70,7 +70,7 @@
 							
 							<div class="form-group">
 								<label class="control-label" th:text="#{user.setpassword}" for="setpassword">_User Created Password_</label>
-								<input type="checkbox" id="setpassword" name="requireActivation" checked="checked" value="requireActivation"/>
+								<input type="checkbox" id="setpassword" name="requireActivation" th:checked="${given_requireActivation}" checked="checked" value="requireActivation"/>
                                 <p class="help-block" th:text="#{user.create.setpassword.help}">_Activate User Help_</p>
 							</div>
 							
@@ -102,7 +102,9 @@
 	<div layout:fragment="scripts" th:inline="javascript">
 		<script type="text/javascript">
 			$(document).ready(function () {
-				$("#setpassword").change(function(){
+				var $setPassword = $("#setpassword");
+				
+				$setPassword.change(function(){
 					if($(this).prop('checked')){
 						$(".password").hide(100);
 					}
@@ -111,7 +113,9 @@
 					}
 				});
 				
-				$(".password").hide();
+				if($setPassword.prop('checked')){
+					$(".password").hide();
+				}
 			});
 			
 		</script>
