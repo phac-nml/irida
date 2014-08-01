@@ -10,25 +10,72 @@
     <div class="row">
         <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
     </div>
-    <div class="row">
-        <main class="col-md-9 col-md-push-3" role="main" property="mainContentOfPage">
+    <div class="row sequenceFile">
+        <main class="col-md-8 col-md-push-4" role="main" property="mainContentOfPage">
             <h1 id="wb-cont" role="heading" th:text="${file.label}"></h1>
             <p class="lead" th:text="${fastQC.description}">...</p>
 
-            <h2 th:text="#{sf.img.perbase}"></h2>
-            <img width="100%" th:src="@{${perbase}}" src="/sequenceFile/img/1-perbase" th:alt="#{sf.img.perbase}"
-                 alt="Quality scores across all bases"/>
-            <h2 th:text="#{sf.img.persequence}"></h2>
-            <img width="100%" th:src="@{${persequence}}" src="/sequenceFile/img/1-persequence"
-                 th:alt="#{sf.img.persequence}" alt="Quality score distribution over all sequences"/>
-            <h2 th:text="#{sf.img.dublicationlevel}"></h2>
-            <img width="100%" th:src="@{${dublicationlevel}}" src="/sequenceFile/img/1-duplicationlevel"
-                 th:alt="#{sf.img.dublicationlevel}" alt="Sequence Duplication Level"/>
+            <div class="row">
+                <div class="col-md-4">
+                    <a class="image-link" th:href="@{${perbase}}" href="#" title="Quality scores across all bases">
+                        <img th:src="@{${perbase}}" src="/sequenceFile/img/1-perbase" th:alt="#{sf.img.perbase}"
+                             alt="Quality scores across all bases"/></a>
+                </div>
+                <div class="col-md-8">
+                    <h2 th:text="#{sf.img.perbase}"></h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <a class="image-link" th:href="@{${persequence}}" href="#"
+                       title="Quality score distribution over all sequences">
+                        <img th:src="@{${persequence}}" src="/sequenceFile/img/1-persequence"
+                             th:alt="#{sf.img.persequence}" alt="Quality score distribution over all sequences"/></a>
+                </div>
+                <div class="col-md-8">
+                    <h2 th:text="#{sf.img.persequence}"></h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <a class="image-link" th:href="@{${dublicationlevel}}" href="#" title="Sequence Duplication Level">
+                        <img th:src="@{${dublicationlevel}}" src="/sequenceFile/img/1-duplicationlevel"
+                             th:alt="#{sf.img.dublicationlevel}" alt="Sequence Duplication Level"/></a>
+                </div>
+                <div class="col-md-8">
+                    <h2 th:text="#{sf.img.dublicationlevel}"></h2>
+                </div>
+            </div>
         </main>
         <aside th:replace="sequenceFiles/file_base :: sidebar"></aside>
     </div>
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
+    <div th:replace="sequenceFiles/file_base :: scripts"></div>
+    <script>
+        $(document).ready(function () {
+            $('.image-link').magnificPopup({
+                removalDelay: 300,
+                mainClass: 'mfp-with-zoom',
+                type: 'image',
+                closeBtnInside: true,
+                image: {
+                    verticalFit: true,
+                    titleSrc: function (item) {
+                        return item.el.attr('title');
+                    }
+                },
+                zoom: {
+                    enabled: true,
+                    duration: 300,
+                    easing: 'ease-in-out',
+                    opener: function(openerElement) {
+                        return openerElement.is('img') ? openerElement : openerElement.find('img');
+                    }
+                }
+            });
+        });
+    </script>
 </div>
 </body>
 </html>
