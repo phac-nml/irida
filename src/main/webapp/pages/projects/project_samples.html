@@ -115,6 +115,16 @@
             <input type="text" id="copy-sample-project" name="project" class="form-control input-full" />
 			<span id="copy-samples-error" class="help-block bg-danger"></span>
     </script>
+    <script type="text/html" id="file-row-template">
+        <tr>
+            <td class="files-name">
+                <a href="{0}">{1}</a>
+                <button class="filedownload pull-right btn btn-default btn-xs glyphicon glyphicon-download-alt mrgn-rght-sm" title="{2}"></button>
+            </td>
+            <td>{3}</td>
+            <td>{4}</td>
+        </tr>
+    </script>
 	<script type="text/html" id="select2-merge">
             <h2 th:text="#{project.samples.combine-title}">__REMOVED_TITLE__</h2>
             <p th:text="#{project.samples.combine-warning}"></p>
@@ -268,7 +278,7 @@ function EditableDataTable() {
         });
     }
 
-    this._createFilesContent = function(data, selected) {
+    this._createFilesContent = function (data, selected) {
         var mainTR = document.createElement('tr'),
                 mainTD = document.createElement('td');
         mainTR.setAttribute("id", "files-view");
@@ -277,33 +287,16 @@ function EditableDataTable() {
         var table = document.createElement('table');
         table.className = "files-table";
         mainTD.appendChild(table);
+        var template = document.getElementById('file-row-template').innerHTML;
         for (var i = 0; i < data.length; i++) {
-            var row = document.createElement('tr');
-            var tdName = document.createElement('td');
-            tdName.className = 'files-name';
-            var name_link = document.createElement("a");
+            var d = data[i];
             var href = /*[[@{/sequenceFiles/}]]*/ '/sequenceFiles/';
-            name_link.setAttribute("href", href + data[i].id);
-            name_link.innerHTML = data[i].name;
-            tdName.appendChild(name_link);
-            var fileDownloadBtn = document.createElement('button');
-            var dTitle = /*[[#{form.download}]]*/ 'Download';
-            fileDownloadBtn.setAttribute('title', dTitle);
-            fileDownloadBtn.className = "filedownload pull-right btn btn-default btn-xs glyphicon glyphicon-download-alt mrgn-rght-sm";
-            fileDownloadBtn.setAttribute("id", data[i].id);
-            tdName.appendChild(fileDownloadBtn);
-            row.appendChild(tdName);
-            var tdSize = document.createElement('td');
-            tdSize.innerHTML = data[i].size;
-            row.appendChild(tdSize);
-            var tdCreated = document.createElement('td');
-            tdCreated.className = 'files-created';
-            tdCreated.innerHTML = data[i].created;
-            row.appendChild(tdCreated);
-            table.appendChild(row);
+            var download = /*[[#{form.download}]]*/ 'Download';
+            var row = template.format(href + d.id, d.name, download, d.size, d.created);
+            table.innerHTML += row;
         }
         return mainTR;
-    }
+    };
 
     function showSuccessModal(message) {
         noty({
