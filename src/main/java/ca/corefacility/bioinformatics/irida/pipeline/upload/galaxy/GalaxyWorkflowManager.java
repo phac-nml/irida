@@ -170,7 +170,7 @@ public class GalaxyWorkflowManager {
 			InputFileType inputFileType, String workflowId, String workflowInputLabel)
 			throws ExecutionManagerException {
 		checkNotNull(inputFilesForward, "inputFilesForward is null");
-		checkNotNull(inputFilesReverse, "inputFilesForward is null");
+		checkNotNull(inputFilesReverse, "inputFilesReverse is null");
 		checkArgument(inputFilesForward.size() == inputFilesReverse.size(),
 				"inputFiles have different number of elements");
 		checkNotNull(inputFileType, "inputFileType is null");
@@ -193,7 +193,7 @@ public class GalaxyWorkflowManager {
 		List<Dataset> inputDatasetsForward = 
 				uploadFilesListToHistory(inputFilesForward, inputFileType, workflowHistory);
 		List<Dataset> inputDatasetsReverse = 
-				uploadFilesListToHistory(inputFilesForward, inputFileType, workflowHistory);
+				uploadFilesListToHistory(inputFilesReverse, inputFileType, workflowHistory);
 		
 		// construct list of datasets
 		CollectionResponse collection = constructFileCollection(inputDatasetsForward, inputDatasetsReverse, workflowHistory);
