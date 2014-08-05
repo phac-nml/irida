@@ -1,3 +1,7 @@
+.menu > .pull-right ul {
+  position: absolute;
+  right: 0; }
+
 .btn-xs.glyphicon {
   font-size: 10px;
   padding: 3px 6px; }
@@ -47,6 +51,9 @@ table.dataTable > tbody tr.odd.details + tr table, table.dataTable > tbody tr.ev
     padding: 0 5px; }
   table.dataTable > tbody tr.odd.details + tr table td.files-created, table.dataTable > tbody tr.even.details + tr table td.files-created {
     text-align: right; }
+table.dataTable > tbody code {
+  color: #333333;
+  background-color: transparent; }
 
 .input-full {
   width: 100%; }
