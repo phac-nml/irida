@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
+import ca.corefacility.bioinformatics.irida.model.workflow.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
@@ -217,7 +218,7 @@ public class GalaxyWorkflowManager {
 	private CollectionResponse constructFileCollection(List<Dataset> inputDatasetsForward,
 			List<Dataset> inputDatasetsReverse, History workflowHistory) throws ExecutionManagerException {
 		CollectionDescription collectionDescription = new CollectionDescription();
-		collectionDescription.setCollectionType("list:paired");
+		collectionDescription.setCollectionType(DatasetCollectionType.LIST_PAIRED.toString());
 		collectionDescription.setName("collection");
 		
 		for (int i = 0; i < inputDatasetsForward.size(); i++) {
@@ -235,7 +236,7 @@ public class GalaxyWorkflowManager {
 		    // Create an object to link together the forward and reverse reads for file2
 		    CollectionElement element = new CollectionElement();
 		    element.setName("file"+i);
-		    element.setCollectionType("paired");
+		    element.setCollectionType(DatasetCollectionType.PAIRED.toString());
 		    element.addCollectionElement(elementForward);
 		    element.addCollectionElement(elementReverse);
 			
