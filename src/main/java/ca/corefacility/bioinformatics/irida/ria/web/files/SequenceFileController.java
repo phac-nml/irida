@@ -43,7 +43,7 @@ public class SequenceFileController {
 	/*
 	 * SUB NAV
 	 */
-	private static final String ACTIVE_NAV = "activeNav";
+	public static final String ACTIVE_NAV = "activeNav";
 	private static final String ACTIVE_NAV_DASHBOARD = "dashboard";
 	private static final String ACTIVE_NAV_OVERREPRESENTED = "overrepresented";
 	/*
