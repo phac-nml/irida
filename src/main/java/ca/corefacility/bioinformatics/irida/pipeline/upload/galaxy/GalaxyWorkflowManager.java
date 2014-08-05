@@ -54,6 +54,13 @@ public class GalaxyWorkflowManager {
 	private HistoriesClient historiesClient;
 	private WorkflowsClient workflowsClient;
 	
+	private static final String FORWARD_PAIR_NAME = "forward";
+	private static final String REVERSE_PAIR_NAME = "reverse";
+	
+	private static final String BASE_NAME = "file";
+	
+	private static final String COLLECTION_NAME = "collection";
+	
 	/**
 	 * Constructs a new GalaxyWorkflowSubmitter with the given information.
 	 * @param galaxyInstance  A Galaxyinstance defining the Galaxy to submit to.
@@ -219,7 +226,7 @@ public class GalaxyWorkflowManager {
 			List<Dataset> inputDatasetsReverse, History workflowHistory) throws ExecutionManagerException {
 		CollectionDescription collectionDescription = new CollectionDescription();
 		collectionDescription.setCollectionType(DatasetCollectionType.LIST_PAIRED.toString());
-		collectionDescription.setName("collection");
+		collectionDescription.setName(COLLECTION_NAME);
 		
 		for (int i = 0; i < inputDatasetsForward.size(); i++) {
 			Dataset datasetForward = inputDatasetsForward.get(i);
@@ -227,15 +234,15 @@ public class GalaxyWorkflowManager {
 			
 			HistoryDatasetElement elementForward = new HistoryDatasetElement();
 			elementForward.setId(datasetForward.getId());
-			elementForward.setName("forward");
+			elementForward.setName(FORWARD_PAIR_NAME);
 			
 			HistoryDatasetElement elementReverse = new HistoryDatasetElement();
 			elementReverse.setId(datasetReverse.getId());
-			elementReverse.setName("reverse");
+			elementReverse.setName(REVERSE_PAIR_NAME);
 			
 		    // Create an object to link together the forward and reverse reads for file2
 		    CollectionElement element = new CollectionElement();
-		    element.setName("file"+i);
+		    element.setName(BASE_NAME + i);
 		    element.setCollectionType(DatasetCollectionType.PAIRED.toString());
 		    element.addCollectionElement(elementForward);
 		    element.addCollectionElement(elementReverse);
