@@ -9,7 +9,7 @@
     <ul class="nav navbar-nav" th:inline="text" th:with="baseLink=${'/sequenceFiles/' + file.id}">
         <li th:class="${activeNav} == 'dashboard' ? 'active'"><a th:href="@{${baseLink}}"><span
                 class="glyphicon glyphicon-home"></span></a></li>
-        <li th:class="${activeNav} == 'overrepresented' ? 'active'"><a th:href="@{${baseLink}}">Overrepresented
+        <li th:class="${activeNav} == 'overrepresented' ? 'active'"><a th:href="@{${baseLink} + '/overrepresented'}">Overrepresented
             Sequences<span class="badge" th:text="${fastQC.overrepresentedSequences.size()}"></span></a></li>
     </ul>
     <div class="navbar-form navbar-right">
@@ -21,6 +21,7 @@
         </div>
     </div>
 </nav>
+
 <aside th:fragment="sidebar" class="col-md-4 col-md-pull-8 visible-md visible-lg mrgn-tp-md" th:object="${fastQC}">
     <div class="panel panel-primary">
         <div class="panel-heading">
@@ -35,7 +36,7 @@
                 <li>
                     <i class="glyphicon glyphicon-calendar"></i>
                     <em th:text="#{sf.sidebar.created}"></em>
-                    <span th:title="${file.createdDate}" th:text="${created}"></span>
+                    <span th:title="${created}" th:text="${created}"></span>
                 </li>
                 <li>
                     <i class="glyphicon glyphicon-qrcode"></i>
@@ -67,6 +68,8 @@
 </aside>
 <div th:fragment="scripts">
     <script src="/resources/wet-theme/js/deps/jquery.magnific-popup.min.js"></script>
+    <script th:src="@{/resources/wet-theme/js/deps/jquery.dataTables.min.js}"
+            src="/resources/wet-theme/js/deps/jquery.dataTables.min.js"></script>
     <script>
         $("#fileDownload").on('click', function () {
             var iframe = document.getElementById('invisible');
