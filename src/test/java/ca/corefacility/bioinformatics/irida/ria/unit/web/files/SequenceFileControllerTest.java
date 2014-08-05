@@ -3,13 +3,14 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.files;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.Files;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -44,33 +45,62 @@ public class SequenceFileControllerTest {
 		sequenceFileService = mock(SequenceFileService.class);
 		analysisService = mock(AnalysisService.class);
 		controller = new SequenceFileController(sequenceFileService, analysisService);
+
+		Path path = Paths.get(FILE_PATH);
+		SequenceFile file = new SequenceFile(path);
+		when(sequenceFileService.read(anyLong())).thenReturn(file);
 	}
+
+	/**
+	 * ********************************************************************************************
+	 * PAGE TESTS
+	 * *********************************************************************************************
+	 */
 
 	@Test
 	public void testGetSequenceFilePage() {
 		logger.debug("Testing getSequenceFilePage");
 		Model model = new ExtendedModelMap();
+
 		String response = controller.getSequenceFilePage(model, FILE_ID);
-		assertTrue("Model should contain information about the file.", model.containsAttribute("file"));
 		assertEquals("Should return the correct page", SequenceFileController.FILE_DETAIL_PAGE, response);
+		testModel(model);
 	}
+
+	@Test
+	public void testGetSequenceFileOverrepresentedPage() {
+		logger.debug("Testing getSequenceFilePage");
+		Model model = new ExtendedModelMap();
+		String response = controller.getSequenceFileOverrepresentedPage(model, FILE_ID);
+		assertEquals("Should return the correct page", SequenceFileController.FILE_OVERREPRESENTED, response);
+		testModel(model);
+	}
+
+	/***********************************************************************************************
+	 * AJAX TESTS
+	 ***********************************************************************************************/
 
 	@Test
 	public void testDownloadSequenceFile() throws IOException {
 		logger.debug("Testing downloadSequenceFile");
-		Path path = Paths.get(FILE_PATH);
-		SequenceFile file = new SequenceFile(path);
 		MockHttpServletResponse response = new MockHttpServletResponse();
 
-		when(sequenceFileService.read(FILE_ID)).thenReturn(file);
 		controller.downloadSequenceFile(FILE_ID, response);
 		assertTrue("Response should contain a \"Content-Disposition\" header.",
 				response.containsHeader("Content-Disposition"));
 		assertEquals("Content-Disposition should include the file name", "attachment; filename=\"test_file.fastq\"",
 				response.getHeader("Content-Disposition"));
 
+		Path path = Paths.get(FILE_PATH);
 		byte[] origBytes = Files.readAllBytes(path);
 		byte[] responseBytes = response.getContentAsByteArray();
 		assertArrayEquals("Response contents the correct file content", origBytes, responseBytes);
+	}
+
+	private void testModel(Model model) {
+		assertTrue("Model should contain information about the file.", model.containsAttribute("file"));
+		assertTrue("Model should contain the created date for the file.", model.containsAttribute("created"));
+		assertTrue("Model should contain the fastQC data for the file.", model.containsAttribute("fastQC"));
+		assertTrue("Model should contain the active nav id", model.containsAttribute(SequenceFileController.ACTIVE_NAV));
 	}
 }
