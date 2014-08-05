@@ -62,5 +62,10 @@ table.dataTable {
         }
       }
     }
+
+    code {
+      color: $color-grey-dark;
+      background-color: transparent;
+    }
   }
 }
