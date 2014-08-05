@@ -10,12 +10,16 @@
     <div class="row">
         <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
     </div>
-    <div class="row sequenceFile">
+    <div class="row">
+        <nav th:replace="sequenceFiles/file_base :: nav"></nav>
         <main class="col-md-8 col-md-push-4" role="main" property="mainContentOfPage">
             <h1 id="wb-cont" role="heading" th:text="${file.label}"></h1>
             <p class="lead" th:text="${fastQC.description}">...</p>
 
-            <div class="row">
+            <section class="sequenceFile">
+                <h2 th:text="#{sf.quality-charts}">__Quality_Charts__</h2>
+
+                <div class="row">
                 <div class="col-md-4">
                     <a class="image-link" th:href="@{${perbase}}" href="#" title="Quality scores across all bases">
                         <img th:src="@{${perbase}}" src="/sequenceFile/img/1-perbase" th:alt="#{sf.img.perbase}"
@@ -46,6 +50,7 @@
                     <h2 th:text="#{sf.img.dublicationlevel}"></h2>
                 </div>
             </div>
+            </section>
         </main>
         <aside th:replace="sequenceFiles/file_base :: sidebar"></aside>
     </div>
