@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -66,14 +67,19 @@ public class ProjectUsersController {
         this.projectService = projectService;
     }
 
-    /**
-     * Get all users associated with a project.
-     *
-     * @param projectId the project id to get users for.
-     * @return a model with a collection of user resources.
-     */
+	/**
+	 * Get all users associated with a project.
+	 *
+	 * @param projectId
+	 *            the project id to get users for.
+	 * @return a model with a collection of user resources.
+	 * @throws ProjectWithoutOwnerException
+	 *             If removing a user will leave the project without an owner.
+	 *             Should NEVER be thrown in this method, but needs to be
+	 *             listed.
+	 */
     @RequestMapping(value = "/projects/{projectId}/users", method = RequestMethod.GET)
-    public ModelMap getUsersForProject(@PathVariable Long projectId) {
+    public ModelMap getUsersForProject(@PathVariable Long projectId) throws ProjectWithoutOwnerException {
         ResourceCollection<UserResource> resources = new ResourceCollection<>();
 
         // get all of the users belonging to this project
@@ -140,9 +146,10 @@ public class ProjectUsersController {
      * @param userId    the {@link User} identifier to remove from the {@link Project}.
      * @return a response including links back to the {@link Project} and the {@link User} collection for
      *         the {@link Project}.
+     * @throws ProjectWithoutOwnerException if removing this user will leave the project without an owner
      */
     @RequestMapping(value = "/projects/{projectId}/users/{userId}", method = RequestMethod.DELETE)
-    public ModelMap removeUserFromProject(@PathVariable Long projectId, @PathVariable String userId) {
+    public ModelMap removeUserFromProject(@PathVariable Long projectId, @PathVariable String userId) throws ProjectWithoutOwnerException {
         // Read the project and user from the database
         Project p = projectService.read(projectId);
         User u = userService.getUserByUsername(userId);
