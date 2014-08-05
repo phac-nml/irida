@@ -11,6 +11,9 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
  *
  */
 public class FileProcessorTimeoutException extends Exception {
+
+	private static final long serialVersionUID = -5547088975269003017L;
+
 	public FileProcessorTimeoutException(String message) {
 		super(message);
 	}
