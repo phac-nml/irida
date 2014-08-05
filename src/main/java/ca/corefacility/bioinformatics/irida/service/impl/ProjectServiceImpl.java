@@ -234,19 +234,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	@Deprecated
-	public Page<ProjectUserJoin> searchProjectsByNameForUser(User user, String term, int page, int size,
-			Direction order, String... sortProperties) {
-
-		return searchProjectUsers(ProjectUserJoinSpecification.searchProjectNameWithUser(term, user), page, size,
-				order, sortProperties);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional(readOnly = true)
 	public Page<ProjectUserJoin> searchProjectUsers(Specification<ProjectUserJoin> specification, int page, int size,
 			Direction order, String... sortProperties) {
 		if (sortProperties.length == 0) {
