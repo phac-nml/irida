@@ -30,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNot
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
+import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 
 /**
@@ -48,7 +49,7 @@ public class GalaxyHistoriesServiceTest {
 	
 	private final String libraryFileId = "1";
 	
-	private static final String FILE_TYPE = "fastqsanger";
+	private static final InputFileType FILE_TYPE = InputFileType.FASTQ_SANGER;
 	private static final String HISTORY_ID = "1";
 	private static final String INVALID_HISTORY_ID = "2";
 	
@@ -137,7 +138,7 @@ public class GalaxyHistoriesServiceTest {
 		when(historiesClient.showHistoryContents(HISTORY_ID)).thenReturn(historyContentsList);
 		when(historiesClient.showDataset(HISTORY_ID, DATA_ID)).thenReturn(dataset);
 		
-		assertEquals(dataset, galaxyHistory.fileToHistory(dataFile, "fastqsanger", createdHistory));
+		assertEquals(dataset, galaxyHistory.fileToHistory(dataFile, FILE_TYPE, createdHistory));
 	}
 	
 	/**

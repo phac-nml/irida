@@ -19,9 +19,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
+import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
@@ -66,8 +66,8 @@ public class GalaxyWorkflowManagerTest {
 	private static final String VALID_INPUT_LABEL = "fastq";
 	private static final String INVALID_INPUT_LABEL = "invalid";
 	
-	private static final String FILE_TYPE = "fastqsanger";
-	private static final String INVALID_FILE_TYPE = "invalid";
+	private static final InputFileType FILE_TYPE = InputFileType.FASTQ_SANGER;
+	private static final InputFileType INVALID_FILE_TYPE = null;
 	
 	private static final float delta = 0.00001f;
 	
@@ -226,14 +226,12 @@ public class GalaxyWorkflowManagerTest {
 	 * Tests running a workflow with an invalid input file type.
 	 * @throws ExecutionManagerException
 	 */
-	@Test(expected=UploadException.class)
+	@Test(expected=NullPointerException.class)
 	public void testRunSingleFileWorkflowInvalidFileType() throws ExecutionManagerException {
 		WorkflowOutputs workflowOutputs = new WorkflowOutputs();
 		
 		when(galaxyHistory.newHistoryForWorkflow()).thenReturn(workflowHistory);
 		when(workflowHistory.getId()).thenReturn(VALID_HISTORY_ID);
-		when(galaxyHistory.fileToHistory(dataFile, INVALID_FILE_TYPE, workflowHistory))
-			.thenThrow(new UploadException(""));
 		when(workflowsClient.runWorkflow(any(WorkflowInputs.class))).thenReturn(workflowOutputs);
 		
 		galaxyWorkflowManager.runSingleFileWorkflow(dataFile, INVALID_FILE_TYPE, VALID_WORKFLOW_ID, VALID_INPUT_LABEL);

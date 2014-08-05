@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
+import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 
@@ -117,7 +118,7 @@ public class GalaxyWorkflowManager {
 	 * @param workflowInputLabel The label of a workflow input in Galaxy.
 	 * @throws ExecutionManagerException If there was an error executing the workflow.
 	 */
-	public WorkflowOutputs runSingleFileWorkflow(Path inputFile, String inputFileType,
+	public WorkflowOutputs runSingleFileWorkflow(Path inputFile, InputFileType inputFileType,
 			String workflowId, String workflowInputLabel)
 			throws ExecutionManagerException {
 		checkNotNull(inputFile, "file is null");
@@ -158,7 +159,7 @@ public class GalaxyWorkflowManager {
 	 * @throws ExecutionManagerException If there was an error executing the workflow.
 	 */
 	public WorkflowOutputs runSingleCollectionWorkflow(List<Path> inputFilesForward, List<Path> inputFilesReverse,
-			String inputFileType, String workflowId, String workflowInputLabel)
+			InputFileType inputFileType, String workflowId, String workflowInputLabel)
 			throws ExecutionManagerException {
 		checkNotNull(inputFilesForward, "inputFilesForward is null");
 		checkNotNull(inputFilesReverse, "inputFilesForward is null");
@@ -252,13 +253,13 @@ public class GalaxyWorkflowManager {
 	 * Uploads a list of files into the given history.
 	 * @param dataFiles  The list of files to upload.
 	 * @param inputFileType  The type of files to upload.
-	 * @param workflowHistory  The history to upload the files into.
+	 * @param workflowHistory  The history to upload the files into.String
 	 * @return  A list of Datasets describing each uploaded file.
 	 * @throws UploadException  If an error occured uploading the file.
 	 * @throws GalaxyDatasetNotFoundException If a dataset could not be cpnstructed for the uploaded file.
 	 */
 	private List<Dataset> uploadFilesListToHistory(List<Path> dataFiles,
-			String inputFileType, History workflowHistory) throws UploadException, GalaxyDatasetNotFoundException {
+			InputFileType inputFileType, History workflowHistory) throws UploadException, GalaxyDatasetNotFoundException {
 		List<Dataset> inputDatasets = new LinkedList<Dataset>();
 		
 		for (Path file : dataFiles) {

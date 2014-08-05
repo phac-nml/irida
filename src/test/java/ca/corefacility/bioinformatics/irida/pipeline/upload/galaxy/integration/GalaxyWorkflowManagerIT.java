@@ -30,9 +30,9 @@ import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
+import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
@@ -76,8 +76,8 @@ public class GalaxyWorkflowManagerIT {
 	
 	private static final String INVALID_HISTORY_ID = "1";
 	
-	private static final String FILE_TYPE = "fastqsanger";
-	private static final String INVALID_FILE_TYPE = "invalid";
+	private static final InputFileType FILE_TYPE = InputFileType.FASTQ_SANGER;
+	private static final InputFileType INVALID_FILE_TYPE = null;
 
 	/**
 	 * Sets up files and objects for workflow tests.
@@ -257,7 +257,7 @@ public class GalaxyWorkflowManagerIT {
 	 * Tests attempting to run a workflow with an invalid input file type.
 	 * @throws ExecutionManagerException
 	 */
-	@Test(expected=UploadException.class)
+	@Test(expected=NullPointerException.class)
 	public void testInvalidWorkflowInputFileType() throws ExecutionManagerException {
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();

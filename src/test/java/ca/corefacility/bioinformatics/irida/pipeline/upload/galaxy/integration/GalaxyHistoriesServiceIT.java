@@ -31,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsL
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 
 /**
@@ -54,8 +55,8 @@ public class GalaxyHistoriesServiceIT {
 	
 	private Path dataFile;
 	
-	private static final String FILE_TYPE = "fastqsanger";
-	private static final String INVALID_FILE_TYPE = "invalid";
+	private static final InputFileType FILE_TYPE = InputFileType.FASTQ_SANGER;
+	private static final InputFileType INVALID_FILE_TYPE = null;
 
 	/**
 	 * Sets up files for history tests.
@@ -125,7 +126,7 @@ public class GalaxyHistoriesServiceIT {
 	 * @throws GalaxyDatasetNotFoundException 
 	 * @throws UploadException 
 	 */
-	@Test(expected=UploadException.class)
+	@Test(expected=NullPointerException.class)
 	public void testFileToHistoryInvalidType() throws UploadException, GalaxyDatasetNotFoundException {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		galaxyHistory.fileToHistory(dataFile, INVALID_FILE_TYPE, history);

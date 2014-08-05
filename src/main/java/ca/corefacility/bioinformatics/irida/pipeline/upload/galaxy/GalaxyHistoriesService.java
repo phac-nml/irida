@@ -13,6 +13,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNot
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
+import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.ExecutionManagerSearch;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
@@ -92,7 +93,7 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	 * @throws UploadException  If there was an issue uploading the file to Galaxy.
 	 * @throws GalaxyDatasetNotFoundException If a Dataset could not be found for the uploaded file to Galaxy.
 	 */
-	public Dataset fileToHistory(Path path, String fileType, History history) throws UploadException, GalaxyDatasetNotFoundException {
+	public Dataset fileToHistory(Path path, InputFileType fileType, History history) throws UploadException, GalaxyDatasetNotFoundException {
 		checkNotNull(path, "path is null");
 		checkNotNull(fileType, "fileType is null");
 		checkNotNull(history, "history is null");
@@ -102,7 +103,7 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 		File file = path.toFile();
 				
 		FileUploadRequest uploadRequest = new FileUploadRequest(history.getId(), file);
-		uploadRequest.setFileType(fileType);
+		uploadRequest.setFileType(fileType.toString());
 		
 		ClientResponse clientResponse = 
 				toolsClient.uploadRequest(uploadRequest);
