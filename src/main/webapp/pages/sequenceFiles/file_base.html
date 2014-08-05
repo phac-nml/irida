@@ -12,12 +12,14 @@
         <li th:class="${activeNav} == 'overrepresented' ? 'active'"><a th:href="@{${baseLink}}">Overrepresented
             Sequences<span class="badge" th:text="${fastQC.overrepresentedSequences.size()}"></span></a></li>
     </ul>
-    <form class="navbar-form navbar-right">
+    <div class="navbar-form navbar-right">
         <div class="form-group">
-            <button class="btn btn-default btn-xs mrgn-rght-sm"><span class="glyphicon glyphicon-download-alt"></span>&nbsp;Download
+            <button id="fileDownload" class="btn btn-default btn-xs mrgn-rght-sm"><span
+                    class="glyphicon glyphicon-download-alt"></span>&nbsp;<span
+                    th:text="#{form.download}">Download</span>
             </button>
         </div>
-    </form>
+    </div>
 </nav>
 <aside th:fragment="sidebar" class="col-md-4 col-md-pull-8 visible-md visible-lg mrgn-tp-md" th:object="${fastQC}">
     <div class="panel panel-primary">
@@ -61,9 +63,16 @@
             </ul>
         </div>
     </div>
+    <iframe id="invisible" style="display:none;"></iframe>
 </aside>
 <div th:fragment="scripts">
     <script src="/resources/wet-theme/js/deps/jquery.magnific-popup.min.js"></script>
+    <script>
+        $("#fileDownload").on('click', function () {
+            var iframe = document.getElementById('invisible');
+            iframe.src = '/sequenceFiles/download/' + /*${file.id}*/ 11;
+        });
+    </script>
 </div>
 </body>
 </html>
