@@ -5,6 +5,20 @@
     <title></title>
 </head>
 <body>
+<nav class="navbar navbar-default navbar-sm" role="navigation" th:fragment="nav">
+    <ul class="nav navbar-nav" th:inline="text" th:with="baseLink=${'/sequenceFiles/' + file.id}">
+        <li th:class="${activeNav} == 'dashboard' ? 'active'"><a th:href="@{${baseLink}}"><span
+                class="glyphicon glyphicon-home"></span></a></li>
+        <li th:class="${activeNav} == 'overrepresented' ? 'active'"><a th:href="@{${baseLink}}">Overrepresented
+            Sequences<span class="badge" th:text="${fastQC.overrepresentedSequences.size()}"></span></a></li>
+    </ul>
+    <form class="navbar-form navbar-right">
+        <div class="form-group">
+            <button class="btn btn-default btn-xs mrgn-rght-sm"><span class="glyphicon glyphicon-download-alt"></span>&nbsp;Download
+            </button>
+        </div>
+    </form>
+</nav>
 <aside th:fragment="sidebar" class="col-md-4 col-md-pull-8 visible-md visible-lg mrgn-tp-md" th:object="${fastQC}">
     <div class="panel panel-primary">
         <div class="panel-heading">
@@ -15,11 +29,11 @@
                 <li>
                     <i class="glyphicon glyphicon-barcode"></i>
                     <em th:text="#{sf.sidebar.file-id}"></em>
-                    <span th:text="*{id}"></span></li>
+                    <span th:text="${file.id}"></span></li>
                 <li>
                     <i class="glyphicon glyphicon-calendar"></i>
                     <em th:text="#{sf.sidebar.created}"></em>
-                    <span th:title="*{createdDate}" th:text="${created}"></span>
+                    <span th:title="${file.createdDate}" th:text="${created}"></span>
                 </li>
                 <li>
                     <i class="glyphicon glyphicon-qrcode"></i>
@@ -44,20 +58,6 @@
                                                                          th:text="*{maxLength}"></span></li>
                 <li><em th:text="#{sf.gcContent}">_MIN_LENGHT_</em><span class="pull-right"
                                                                          th:text="*{gcContent}"></span></li>
-            </ul>
-        </div>
-    </div>
-    <div class="panel panel-info">
-        <div class="panel-heading">
-            <b class="panel-title" th:text="#{sf.overrepresentedSequences}">__OVERREPRESENTED_SEQUENCES__</b>
-        </div>
-        <div class="panel-body">
-            <ul class="nav nav-pills nav-stacked">
-                <li th:each="over : ${fastQC.overrepresentedSequences}">
-                    <ul>
-                        <li th:text="${over.percentage}"></li>
-                    </ul>
-                </li>
             </ul>
         </div>
     </div>
