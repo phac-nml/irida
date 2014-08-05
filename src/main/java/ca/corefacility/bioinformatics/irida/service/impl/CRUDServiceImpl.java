@@ -15,6 +15,8 @@ import org.springframework.beans.TypeMismatchException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,8 +31,7 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class CRUDServiceImpl<KeyType extends Serializable, ValueType> implements
-		CRUDService<KeyType, ValueType> {
+public class CRUDServiceImpl<KeyType extends Serializable, ValueType> implements CRUDService<KeyType, ValueType> {
 	private static final String NO_SUCH_ID_EXCEPTION = "No such identifier exists in the database.";
 
 	protected static final String CREATED_DATE_SORT_PROPERTY = "createdDate";
@@ -139,7 +140,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType> implements
 				DirectFieldAccessor dfa = new DirectFieldAccessor(instance);
 				dfa.setPropertyValue(key, value);
 			} catch (IllegalArgumentException | NotWritablePropertyException | TypeMismatchException e) {
-				throw new InvalidPropertyException("Unable to access field [" + key + "]",valueType);
+				throw new InvalidPropertyException("Unable to access field [" + key + "]", valueType);
 			}
 		}
 
@@ -187,5 +188,19 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType> implements
 	@Transactional(readOnly = true)
 	public Iterable<ValueType> readMultiple(Iterable<KeyType> idents) {
 		return repository.findAll(idents);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Page<ValueType> search(Specification<ValueType> specification, int page, int size, Direction order,
+			String... sortProperties) {
+		if (!(repository instanceof JpaSpecificationExecutor<?>)) {
+			throw new UnsupportedOperationException("Specifications are not supported for this repository.");
+		}
+		@SuppressWarnings("unchecked")
+		JpaSpecificationExecutor<ValueType> searchRepo = (JpaSpecificationExecutor<ValueType>) repository;
+		return searchRepo.findAll(specification, new PageRequest(page, size, order, sortProperties));
 	}
 }
