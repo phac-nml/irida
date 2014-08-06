@@ -94,7 +94,9 @@ public class GalaxyWorkflowService {
 	 * @return  The id of the input corresponding to the passed label.
 	 * @throws WorkflowException  If no such input id could be found.
 	 */
-	private String getWorkflowInputId(WorkflowDetails workflowDetails, String workflowInputLabel) throws WorkflowException {
+	public String getWorkflowInputId(WorkflowDetails workflowDetails, String workflowInputLabel) throws WorkflowException {
+		checkNotNull(workflowDetails, "workflowDetails is null");
+		checkNotNull(workflowInputLabel, "workflowInputLabel is null");
 		
 		Map<String, WorkflowInputDefinition> workflowInputMap = workflowDetails.getInputs();
 		

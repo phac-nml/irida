@@ -126,6 +126,40 @@ public class GalaxyWorkflowServiceTest {
 	}
 	
 	/**
+	 * Tests getting a valid workflow input id from a workflow details.
+	 * @throws WorkflowException 
+	 */
+	@Test
+	public void testGetWorkflowInputIdValid() throws WorkflowException {
+		WorkflowDetails details = new WorkflowDetails();
+		WorkflowInputDefinition validDefinition = new WorkflowInputDefinition();
+		validDefinition.setLabel("valid");
+		
+		Map<String, WorkflowInputDefinition> workflowInputMap = new HashMap<>();
+		workflowInputMap.put("validInputId", validDefinition);
+		details.setInputs(workflowInputMap);
+		
+		assertEquals("validInputId", galaxyWorkflowManager.getWorkflowInputId(details, "valid"));
+	}
+	
+	/**
+	 * Tests failing to find a valid workflow input id from a workflow details.
+	 * @throws WorkflowException 
+	 */
+	@Test(expected=WorkflowException.class)
+	public void testGetWorkflowInputIdInvalid() throws WorkflowException {
+		WorkflowDetails details = new WorkflowDetails();
+		WorkflowInputDefinition validDefinition = new WorkflowInputDefinition();
+		validDefinition.setLabel("valid");
+		
+		Map<String, WorkflowInputDefinition> workflowInputMap = new HashMap<>();
+		workflowInputMap.put("validInputId", validDefinition);
+		details.setInputs(workflowInputMap);
+		
+		galaxyWorkflowManager.getWorkflowInputId(details, "invalid");
+	}
+	
+	/**
 	 * Tests getting status for a completed/ok workflow state.
 	 * @throws ExecutionManagerException 
 	 */
