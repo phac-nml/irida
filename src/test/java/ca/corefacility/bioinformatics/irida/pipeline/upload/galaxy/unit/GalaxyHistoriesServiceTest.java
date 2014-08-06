@@ -55,6 +55,7 @@ public class GalaxyHistoriesServiceTest {
 	
 	private static final String FILENAME = "filename";
 	private static final String DATA_ID = "2";
+	private static final String DATA_ID_2 = "2";
 	
 	private List<HistoryContents> datasetHistoryContents;
 	private History history;
@@ -92,6 +93,23 @@ public class GalaxyHistoriesServiceTest {
 		datasetHistoryContents.add(datasetHistoryContent);
 		
 		return Arrays.asList(datasetHistoryContent);
+	}
+	
+	private List<HistoryContents> buildHistoryContentsList(String filename, String id,
+			String filename2, String id2) {
+		
+		HistoryContents datasetHistoryContent = new HistoryContents();
+		datasetHistoryContent.setName(filename);
+		datasetHistoryContent.setId(id);
+		
+		datasetHistoryContents = new ArrayList<HistoryContents>();
+		datasetHistoryContents.add(datasetHistoryContent);
+		
+		HistoryContents datasetHistoryContent2 = new HistoryContents();
+		datasetHistoryContent2.setName(filename2);
+		datasetHistoryContent2.setId(id2);
+		
+		return Arrays.asList(datasetHistoryContent, datasetHistoryContent2);
 	}
 	
 	/**
@@ -174,6 +192,54 @@ public class GalaxyHistoriesServiceTest {
 		when(historiesClient.showHistoryContents(HISTORY_ID)).thenReturn(historyContentsList);
 		
 		galaxyHistory.fileToHistory(dataFile, FILE_TYPE, createdHistory);
+	}
+	
+	/**
+	 * Tests uploading a list of files to a history.
+	 * @throws GalaxyDatasetNotFoundException
+	 * @throws UploadException
+	 */
+	@Test
+	public void testFilesListToHistorySuccess() throws GalaxyDatasetNotFoundException, UploadException {
+		List<Path> files = new LinkedList<Path>();
+		files.add(dataFile);
+		files.add(dataFile);
+		
+		List<Dataset> datasets = new LinkedList<Dataset>();
+		
+		String filename = dataFile.toFile().getName();
+		History createdHistory = new History();
+		Dataset dataset = new Dataset();
+		createdHistory.setId(HISTORY_ID);
+		Dataset dataset2 = new Dataset();
+		List<HistoryContents> historyContentsList = buildHistoryContentsList(filename, DATA_ID,
+				filename, DATA_ID_2);
+		
+		datasets.add(dataset);
+		datasets.add(dataset2);
+		
+		when(toolsClient.uploadRequest(any(FileUploadRequest.class))).thenReturn(okayResponse);
+		when(historiesClient.showHistoryContents(HISTORY_ID)).thenReturn(historyContentsList);
+		when(historiesClient.showDataset(HISTORY_ID, DATA_ID)).thenReturn(dataset);
+		when(historiesClient.showDataset(HISTORY_ID, DATA_ID_2)).thenReturn(dataset2);
+		
+		assertEquals(datasets, galaxyHistory.uploadFilesListToHistory(files, FILE_TYPE, createdHistory));
+	}
+	
+	/**
+	 * Tests failing to upload a file list to a history.
+	 * @throws GalaxyDatasetNotFoundException
+	 * @throws UploadException
+	 */
+	@Test(expected=UploadException.class)
+	public void testFilesListToHistoryFailUpload() throws GalaxyDatasetNotFoundException, UploadException {
+		History createdHistory = new History();
+		createdHistory.setId(HISTORY_ID);
+		
+		when(toolsClient.uploadRequest(any(FileUploadRequest.class))).
+			thenReturn(invalidResponse);
+		
+		galaxyHistory.uploadFilesListToHistory(Arrays.asList(dataFile), FILE_TYPE, createdHistory);
 	}
 	
 	/**

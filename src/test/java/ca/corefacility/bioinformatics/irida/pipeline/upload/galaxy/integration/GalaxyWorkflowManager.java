@@ -16,9 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
 import ca.corefacility.bioinformatics.irida.model.workflow.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
@@ -192,9 +190,9 @@ public class GalaxyWorkflowManager {
 		
 		// upload dataset to history
 		List<Dataset> inputDatasetsForward = 
-				uploadFilesListToHistory(inputFilesForward, inputFileType, workflowHistory);
+				galaxyHistory.uploadFilesListToHistory(inputFilesForward, inputFileType, workflowHistory);
 		List<Dataset> inputDatasetsReverse = 
-				uploadFilesListToHistory(inputFilesReverse, inputFileType, workflowHistory);
+				galaxyHistory.uploadFilesListToHistory(inputFilesReverse, inputFileType, workflowHistory);
 		
 		// construct list of datasets
 		CollectionResponse collection = constructFileCollection(inputDatasetsForward, inputDatasetsReverse, workflowHistory);
@@ -256,27 +254,6 @@ public class GalaxyWorkflowManager {
 		} catch (RuntimeException e) {
 			throw new ExecutionManagerException("Could not construct dataset collection", e);
 		}
-	}
-	
-	/**
-	 * Uploads a list of files into the given history.
-	 * @param dataFiles  The list of files to upload.
-	 * @param inputFileType  The type of files to upload.
-	 * @param workflowHistory  The history to upload the files into.String
-	 * @return  A list of Datasets describing each uploaded file.
-	 * @throws UploadException  If an error occured uploading the file.
-	 * @throws GalaxyDatasetNotFoundException If a dataset could not be cpnstructed for the uploaded file.
-	 */
-	private List<Dataset> uploadFilesListToHistory(List<Path> dataFiles,
-			InputFileType inputFileType, History workflowHistory) throws UploadException, GalaxyDatasetNotFoundException {
-		List<Dataset> inputDatasets = new LinkedList<Dataset>();
-		
-		for (Path file : dataFiles) {
-			Dataset inputDataset = galaxyHistory.fileToHistory(file, inputFileType, workflowHistory);
-			inputDatasets.add(inputDataset);
-		}
-		
-		return inputDatasets;
 	}
 	
 	/**
