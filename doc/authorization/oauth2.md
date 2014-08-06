@@ -100,7 +100,6 @@ my $token = $client->get_access_token(username=>$username,password=>$password);
 my $tokenstr = $token->access_token;
 
 my $head = new HTTP::Headers;
-my $tokenstr = getToken($url, $username, $password, $client_id, $client_secret);
 $head->authorization("Bearer $tokenstr");
 my $request = HTTP::Request->new("GET",$url,$headers);
 ...
