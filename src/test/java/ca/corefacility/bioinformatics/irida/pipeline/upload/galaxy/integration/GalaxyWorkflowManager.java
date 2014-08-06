@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
+package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.DatasetCollectionType
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
