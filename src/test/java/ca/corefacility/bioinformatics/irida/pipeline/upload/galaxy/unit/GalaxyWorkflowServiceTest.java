@@ -55,7 +55,7 @@ public class GalaxyWorkflowServiceTest {
 	@Mock private UniformInterfaceException uniformInterfaceException;
 	@Mock private Dataset downloadDataset;
 	
-	private GalaxyWorkflowService galaxyWorkflowManager;
+	private GalaxyWorkflowService galaxyWorkflowService;
 		
 	private static final String VALID_HISTORY_ID = "1";
 	private static final String INVALID_HISTORY_ID = "2";
@@ -83,7 +83,7 @@ public class GalaxyWorkflowServiceTest {
 	public void setup() throws URISyntaxException {
 		MockitoAnnotations.initMocks(this);
 		
-		galaxyWorkflowManager = new GalaxyWorkflowService(historiesClient, workflowsClient, galaxyHistory);
+		galaxyWorkflowService = new GalaxyWorkflowService(historiesClient, workflowsClient, galaxyHistory);
 		
 		dataFile = Paths.get(this.getClass().getResource("testData1.fastq")
 				.toURI());
@@ -110,7 +110,7 @@ public class GalaxyWorkflowServiceTest {
 		
 		when(workflowsClient.showWorkflow(workflowId)).thenReturn(details);
 		
-		assertTrue(galaxyWorkflowManager.isWorkflowIdValid(workflowId));
+		assertTrue(galaxyWorkflowService.isWorkflowIdValid(workflowId));
 	}
 	
 	/**
@@ -122,7 +122,7 @@ public class GalaxyWorkflowServiceTest {
 		
 		when(workflowsClient.showWorkflow(workflowId)).thenThrow(new RuntimeException());
 		
-		assertFalse(galaxyWorkflowManager.isWorkflowIdValid(workflowId));
+		assertFalse(galaxyWorkflowService.isWorkflowIdValid(workflowId));
 	}
 	
 	/**
@@ -139,7 +139,7 @@ public class GalaxyWorkflowServiceTest {
 		workflowInputMap.put("validInputId", validDefinition);
 		details.setInputs(workflowInputMap);
 		
-		assertEquals("validInputId", galaxyWorkflowManager.getWorkflowInputId(details, "valid"));
+		assertEquals("validInputId", galaxyWorkflowService.getWorkflowInputId(details, "valid"));
 	}
 	
 	/**
@@ -156,7 +156,7 @@ public class GalaxyWorkflowServiceTest {
 		workflowInputMap.put("validInputId", validDefinition);
 		details.setInputs(workflowInputMap);
 		
-		galaxyWorkflowManager.getWorkflowInputId(details, "invalid");
+		galaxyWorkflowService.getWorkflowInputId(details, "invalid");
 	}
 	
 	/**
@@ -174,7 +174,7 @@ public class GalaxyWorkflowServiceTest {
 		when(historyDetails.getState()).thenReturn("ok");
 		when(historyDetails.getStateIds()).thenReturn(validStateIds);
 		
-		WorkflowStatus status = galaxyWorkflowManager.getStatusForHistory(VALID_HISTORY_ID);
+		WorkflowStatus status = galaxyWorkflowService.getStatusForHistory(VALID_HISTORY_ID);
 		
 		assertEquals(WorkflowState.OK, status.getState());
 		assertEquals(100.0f, status.getPercentComplete(), delta);
@@ -195,7 +195,7 @@ public class GalaxyWorkflowServiceTest {
 		when(historyDetails.getState()).thenReturn("running");
 		when(historyDetails.getStateIds()).thenReturn(validStateIds);
 		
-		WorkflowStatus status = galaxyWorkflowManager.getStatusForHistory(VALID_HISTORY_ID);
+		WorkflowStatus status = galaxyWorkflowService.getStatusForHistory(VALID_HISTORY_ID);
 		
 		assertEquals(WorkflowState.RUNNING, status.getState());
 		assertEquals(0.0f, status.getPercentComplete(), delta);
@@ -216,7 +216,7 @@ public class GalaxyWorkflowServiceTest {
 		when(historyDetails.getState()).thenReturn("running");
 		when(historyDetails.getStateIds()).thenReturn(validStateIds);
 		
-		WorkflowStatus status = galaxyWorkflowManager.getStatusForHistory(VALID_HISTORY_ID);
+		WorkflowStatus status = galaxyWorkflowService.getStatusForHistory(VALID_HISTORY_ID);
 		
 		assertEquals(WorkflowState.RUNNING, status.getState());
 		assertEquals(50.0f, status.getPercentComplete(), delta);
@@ -229,7 +229,7 @@ public class GalaxyWorkflowServiceTest {
 	@Test(expected=WorkflowException.class)
 	public void testGetStatusInvalidHistory() throws ExecutionManagerException {
 		when(historiesClient.showHistory(INVALID_HISTORY_ID)).thenThrow(uniformInterfaceException);
-		galaxyWorkflowManager.getStatusForHistory(INVALID_HISTORY_ID);
+		galaxyWorkflowService.getStatusForHistory(INVALID_HISTORY_ID);
 	}
 	
 	/**
@@ -246,7 +246,7 @@ public class GalaxyWorkflowServiceTest {
 		when(workflowsClient.runWorkflow(any(WorkflowInputs.class))).thenReturn(workflowOutputs);
 		
 		WorkflowOutputs expectedOutputs =
-				galaxyWorkflowManager.runSingleFileWorkflow(dataFile, FILE_TYPE, VALID_WORKFLOW_ID, VALID_INPUT_LABEL);
+				galaxyWorkflowService.runSingleFileWorkflow(dataFile, FILE_TYPE, VALID_WORKFLOW_ID, VALID_INPUT_LABEL);
 		assertNotNull(expectedOutputs);
 	}
 	
@@ -263,7 +263,7 @@ public class GalaxyWorkflowServiceTest {
 		when(galaxyHistory.fileToHistory(dataFile, FILE_TYPE, workflowHistory)).thenReturn(inputDataset);
 		when(workflowsClient.runWorkflow(any(WorkflowInputs.class))).thenReturn(workflowOutputs);
 		
-		galaxyWorkflowManager.runSingleFileWorkflow(dataFile, FILE_TYPE, VALID_WORKFLOW_ID, INVALID_INPUT_LABEL);
+		galaxyWorkflowService.runSingleFileWorkflow(dataFile, FILE_TYPE, VALID_WORKFLOW_ID, INVALID_INPUT_LABEL);
 	}
 	
 	/**
@@ -279,7 +279,7 @@ public class GalaxyWorkflowServiceTest {
 		when(galaxyHistory.fileToHistory(dataFile, FILE_TYPE, workflowHistory)).thenReturn(inputDataset);
 		when(workflowsClient.runWorkflow(any(WorkflowInputs.class))).thenReturn(workflowOutputs);
 		
-		galaxyWorkflowManager.runSingleFileWorkflow(dataFile, FILE_TYPE, INVALID_WORKFLOW_ID, VALID_INPUT_LABEL);
+		galaxyWorkflowService.runSingleFileWorkflow(dataFile, FILE_TYPE, INVALID_WORKFLOW_ID, VALID_INPUT_LABEL);
 	}
 	
 	/**
@@ -294,7 +294,7 @@ public class GalaxyWorkflowServiceTest {
 		when(workflowHistory.getId()).thenReturn(VALID_HISTORY_ID);
 		when(workflowsClient.runWorkflow(any(WorkflowInputs.class))).thenReturn(workflowOutputs);
 		
-		galaxyWorkflowManager.runSingleFileWorkflow(dataFile, INVALID_FILE_TYPE, VALID_WORKFLOW_ID, VALID_INPUT_LABEL);
+		galaxyWorkflowService.runSingleFileWorkflow(dataFile, INVALID_FILE_TYPE, VALID_WORKFLOW_ID, VALID_INPUT_LABEL);
 	}
 	
 	/**
@@ -315,7 +315,7 @@ public class GalaxyWorkflowServiceTest {
 		when(historiesClient.showDataset(VALID_WORKFLOW_ID, outputId)).thenReturn(downloadDataset);
 		when(downloadDataset.getFullDownloadUrl()).thenReturn(downloadString);
 		
-		List<URL> urls = galaxyWorkflowManager.getWorkflowOutputDownloadURLs(workflowOutputs);
+		List<URL> urls = galaxyWorkflowService.getWorkflowOutputDownloadURLs(workflowOutputs);
 		assertEquals(Arrays.asList(downloadURL), urls);
 	}
 	
@@ -336,6 +336,6 @@ public class GalaxyWorkflowServiceTest {
 		when(historiesClient.showDataset(VALID_WORKFLOW_ID, outputId)).thenReturn(downloadDataset);
 		when(downloadDataset.getFullDownloadUrl()).thenReturn(downloadString);
 		
-		galaxyWorkflowManager.getWorkflowOutputDownloadURLs(workflowOutputs);
+		galaxyWorkflowService.getWorkflowOutputDownloadURLs(workflowOutputs);
 	}
 }

@@ -72,7 +72,7 @@ public class GalaxyWorkflowsIT {
 	private HistoriesClient historiesClient;
 	private ToolsClient toolsClient;
 	private WorkflowsClient workflowsClient;
-	private GalaxyWorkflowService galaxyWorkflowManager;
+	private GalaxyWorkflowService galaxyWorkflowService;
 	
 	private static final String INVALID_HISTORY_ID = "1";
 	
@@ -101,7 +101,7 @@ public class GalaxyWorkflowsIT {
 		workflowsClient = galaxyAdminInstance.getWorkflowsClient();
 		historiesClient = galaxyAdminInstance.getHistoriesClient();
 		GalaxyHistoriesService galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient);
-		galaxyWorkflowManager 
+		galaxyWorkflowService 
 			= new GalaxyWorkflowService(historiesClient, workflowsClient, galaxyHistory);
 	}
 	
@@ -124,7 +124,7 @@ public class GalaxyWorkflowsIT {
 		dataFilesReverse.add(dataFile2);
 		
 		WorkflowOutputs workflowOutput = 
-				galaxyWorkflowManager.runSingleCollectionWorkflow(dataFilesForward,
+				galaxyWorkflowService.runSingleCollectionWorkflow(dataFilesForward,
 						dataFilesReverse, FILE_TYPE, workflowId, workflowInputLabel);
 		assertNotNull(workflowOutput);
 		assertNotNull(workflowOutput.getHistoryId());
@@ -153,7 +153,7 @@ public class GalaxyWorkflowsIT {
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
 		
 		WorkflowOutputs workflowOutput = 
-				galaxyWorkflowManager.runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, workflowInputLabel);
+				galaxyWorkflowService.runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, workflowInputLabel);
 		assertNotNull(workflowOutput);
 		assertNotNull(workflowOutput.getHistoryId());
 		
@@ -173,7 +173,7 @@ public class GalaxyWorkflowsIT {
 		
 		// test get workflow status
 		WorkflowStatus workflowStatus = 
-				galaxyWorkflowManager.getStatusForHistory(workflowOutput.getHistoryId());
+				galaxyWorkflowService.getStatusForHistory(workflowOutput.getHistoryId());
 		assertFalse(WorkflowState.UNKNOWN.equals(workflowStatus.getState()));
 		float percentComplete = workflowStatus.getPercentComplete();
 		assertTrue(0.0f <= percentComplete && percentComplete <= 100.0f);
@@ -190,9 +190,9 @@ public class GalaxyWorkflowsIT {
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
 		
 		WorkflowOutputs workflowOutput = 
-				galaxyWorkflowManager.runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, workflowInputLabel);
+				galaxyWorkflowService.runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, workflowInputLabel);
 		
-		List<URL> outputURLs = galaxyWorkflowManager.getWorkflowOutputDownloadURLs(workflowOutput);
+		List<URL> outputURLs = galaxyWorkflowService.getWorkflowOutputDownloadURLs(workflowOutput);
 		assertNotNull(outputURLs);
 		assertEquals(1, outputURLs.size());
 		
@@ -211,13 +211,13 @@ public class GalaxyWorkflowsIT {
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
 		
 		WorkflowOutputs workflowOutput = 
-				galaxyWorkflowManager.runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, workflowInputLabel);
+				galaxyWorkflowService.runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, workflowInputLabel);
 		
 		List<String> fakeOutputIds = new LinkedList<String>();
 		fakeOutputIds.add(INVALID_HISTORY_ID);
 		workflowOutput.setOutputIds(fakeOutputIds);
 		
-		galaxyWorkflowManager.getWorkflowOutputDownloadURLs(workflowOutput);
+		galaxyWorkflowService.getWorkflowOutputDownloadURLs(workflowOutput);
 	}
 	
 	/**
@@ -228,7 +228,7 @@ public class GalaxyWorkflowsIT {
 	public void testInvalidWorkflow() throws ExecutionManagerException {
 		String invalidWorkflowId = localGalaxy.getInvalidWorkflowId();
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
-		galaxyWorkflowManager.runSingleFileWorkflow(dataFile1, FILE_TYPE, invalidWorkflowId, workflowInputLabel);
+		galaxyWorkflowService.runSingleFileWorkflow(dataFile1, FILE_TYPE, invalidWorkflowId, workflowInputLabel);
 	}
 	
 	/**
@@ -239,7 +239,7 @@ public class GalaxyWorkflowsIT {
 	public void testInvalidWorkflowInput() throws ExecutionManagerException {
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		String invalidWorkflowLabel = localGalaxy.getInvalidWorkflowLabel();
-		galaxyWorkflowManager.runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, invalidWorkflowLabel);
+		galaxyWorkflowService.runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, invalidWorkflowLabel);
 	}
 	
 	/**
@@ -250,7 +250,7 @@ public class GalaxyWorkflowsIT {
 	public void testInvalidWorkflowInputFile() throws ExecutionManagerException {
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
-		galaxyWorkflowManager.runSingleFileWorkflow(dataFileNotExists, FILE_TYPE, workflowId, workflowInputLabel);
+		galaxyWorkflowService.runSingleFileWorkflow(dataFileNotExists, FILE_TYPE, workflowId, workflowInputLabel);
 	}
 	
 	/**
@@ -261,6 +261,6 @@ public class GalaxyWorkflowsIT {
 	public void testInvalidWorkflowInputFileType() throws ExecutionManagerException {
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
-		galaxyWorkflowManager.runSingleFileWorkflow(dataFile1, INVALID_FILE_TYPE, workflowId, workflowInputLabel);
+		galaxyWorkflowService.runSingleFileWorkflow(dataFile1, INVALID_FILE_TYPE, workflowId, workflowInputLabel);
 	}
 }
