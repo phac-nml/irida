@@ -24,8 +24,11 @@ import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
+import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
+import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 import com.sun.jersey.api.client.ClientResponse;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
@@ -61,6 +64,7 @@ public class GalaxyHistoriesServiceTest {
 	private History history;
 	
 	private Path dataFile;
+	private Path dataFile2;
 	
 	/**
 	 * Sets up objects for history tests.
@@ -78,6 +82,7 @@ public class GalaxyHistoriesServiceTest {
 		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient);
 		
 		dataFile = Paths.get(this.getClass().getResource("testData1.fastq").toURI());
+		dataFile2 = Paths.get(this.getClass().getResource("testData2.fastq").toURI());
 
 		history = new History();
 		history.setId(HISTORY_ID);
@@ -203,17 +208,18 @@ public class GalaxyHistoriesServiceTest {
 	public void testFilesListToHistorySuccess() throws GalaxyDatasetNotFoundException, UploadException {
 		List<Path> files = new LinkedList<Path>();
 		files.add(dataFile);
-		files.add(dataFile);
+		files.add(dataFile2);
 		
 		List<Dataset> datasets = new LinkedList<Dataset>();
 		
 		String filename = dataFile.toFile().getName();
+		String filename2 = dataFile2.toFile().getName();
 		History createdHistory = new History();
 		Dataset dataset = new Dataset();
 		createdHistory.setId(HISTORY_ID);
 		Dataset dataset2 = new Dataset();
 		List<HistoryContents> historyContentsList = buildHistoryContentsList(filename, DATA_ID,
-				filename, DATA_ID_2);
+				filename2, DATA_ID_2);
 		
 		datasets.add(dataset);
 		datasets.add(dataset2);
@@ -240,6 +246,56 @@ public class GalaxyHistoriesServiceTest {
 			thenReturn(invalidResponse);
 		
 		galaxyHistory.uploadFilesListToHistory(Arrays.asList(dataFile), FILE_TYPE, createdHistory);
+	}
+	
+	/**
+	 * Tests successfull execution of constructing a list of paired-end files dataset collection.
+	 * @throws ExecutionManagerException 
+	 */
+	@Test
+	public void testConstructPairedFileCollectionSuccess() throws ExecutionManagerException {
+		CollectionResponse collectionResponse = new CollectionResponse();
+		
+		History history = new History();
+		history.setId(HISTORY_ID);
+		
+		Dataset datasetForward = new Dataset();
+		datasetForward.setId(DATA_ID);
+		List<Dataset> inputDatasetsForward = Arrays.asList(datasetForward);
+		
+		Dataset datasetReverse = new Dataset();
+		datasetReverse.setId(DATA_ID_2);
+		List<Dataset> inputDatasetsReverse = Arrays.asList(datasetReverse);
+		
+		when(historiesClient.createDatasetCollection(eq(HISTORY_ID), any(CollectionDescription.class))).
+			thenReturn(collectionResponse);
+		
+		assertEquals(collectionResponse,galaxyHistory.constructPairedFileCollection(
+				inputDatasetsForward, inputDatasetsReverse, history));
+	}
+	
+	/**
+	 * Tests failure to construct a list of paired-end files dataset collection.
+	 * @throws ExecutionManagerException 
+	 */
+	@Test(expected=ExecutionManagerException.class)
+	public void testConstructPairedFileCollectionFail() throws ExecutionManagerException {	
+		History history = new History();
+		history.setId(HISTORY_ID);
+		
+		Dataset datasetForward = new Dataset();
+		datasetForward.setId(DATA_ID);
+		List<Dataset> inputDatasetsForward = Arrays.asList(datasetForward);
+		
+		Dataset datasetReverse = new Dataset();
+		datasetReverse.setId(DATA_ID_2);
+		List<Dataset> inputDatasetsReverse = Arrays.asList(datasetReverse);
+		
+		when(historiesClient.createDatasetCollection(eq(HISTORY_ID), any(CollectionDescription.class))).
+			thenThrow(new RuntimeException());
+		
+		galaxyHistory.constructPairedFileCollection(inputDatasetsForward,
+				inputDatasetsReverse, history);
 	}
 	
 	/**

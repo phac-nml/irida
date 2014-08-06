@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
-import ca.corefacility.bioinformatics.irida.model.workflow.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
@@ -33,9 +32,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputDefinition;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
-import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
-import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionElement;
-import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.UniformInterfaceException;
@@ -52,13 +48,6 @@ public class GalaxyWorkflowManager {
 	private GalaxyHistoriesService galaxyHistory;
 	private HistoriesClient historiesClient;
 	private WorkflowsClient workflowsClient;
-	
-	private static final String FORWARD_PAIR_NAME = "forward";
-	private static final String REVERSE_PAIR_NAME = "reverse";
-	
-	private static final String BASE_NAME = "file";
-	
-	private static final String COLLECTION_NAME = "collection";
 	
 	/**
 	 * Constructs a new GalaxyWorkflowSubmitter with the given information.
@@ -195,7 +184,8 @@ public class GalaxyWorkflowManager {
 				galaxyHistory.uploadFilesListToHistory(inputFilesReverse, inputFileType, workflowHistory);
 		
 		// construct list of datasets
-		CollectionResponse collection = constructFileCollection(inputDatasetsForward, inputDatasetsReverse, workflowHistory);
+		CollectionResponse collection = galaxyHistory.constructPairedFileCollection(inputDatasetsForward,
+				inputDatasetsReverse, workflowHistory);
 		logger.debug("Constructed dataset collection: id=" + collection.getId() + ", " + collection.getName());
 		
 		String workflowInputId = getWorkflowInputId(workflowDetails, workflowInputLabel);
@@ -212,48 +202,6 @@ public class GalaxyWorkflowManager {
 		logger.debug("Running workflow in history " + output.getHistoryId());
 		
 		return output;
-	}
-	
-	/**
-	 * Constructs a collection containing a list of files from the given datasets.
-	 * @param inputDatasetsForward  The datasets to construct a collection from.
-	 * @param workflowHistory  The history of the workflow to construct the collection within.
-	 * @return  A CollectionResponse describing the workflow collection.
-	 * @throws ExecutionManagerException 
-	 */
-	private CollectionResponse constructFileCollection(List<Dataset> inputDatasetsForward,
-			List<Dataset> inputDatasetsReverse, History workflowHistory) throws ExecutionManagerException {
-		CollectionDescription collectionDescription = new CollectionDescription();
-		collectionDescription.setCollectionType(DatasetCollectionType.LIST_PAIRED.toString());
-		collectionDescription.setName(COLLECTION_NAME);
-		
-		for (int i = 0; i < inputDatasetsForward.size(); i++) {
-			Dataset datasetForward = inputDatasetsForward.get(i);
-			Dataset datasetReverse = inputDatasetsReverse.get(i);
-			
-			HistoryDatasetElement elementForward = new HistoryDatasetElement();
-			elementForward.setId(datasetForward.getId());
-			elementForward.setName(FORWARD_PAIR_NAME);
-			
-			HistoryDatasetElement elementReverse = new HistoryDatasetElement();
-			elementReverse.setId(datasetReverse.getId());
-			elementReverse.setName(REVERSE_PAIR_NAME);
-			
-		    // Create an object to link together the forward and reverse reads for file2
-		    CollectionElement element = new CollectionElement();
-		    element.setName(BASE_NAME + i);
-		    element.setCollectionType(DatasetCollectionType.PAIRED.toString());
-		    element.addCollectionElement(elementForward);
-		    element.addCollectionElement(elementReverse);
-			
-			collectionDescription.addDatasetElement(element);
-		}
-		
-		try {
-			return historiesClient.createDatasetCollection(workflowHistory.getId(), collectionDescription);
-		} catch (RuntimeException e) {
-			throw new ExecutionManagerException("Could not construct dataset collection", e);
-		}
 	}
 	
 	/**
