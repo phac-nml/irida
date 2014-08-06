@@ -63,17 +63,30 @@ public class SequenceFileController {
 		this.dateFormatter = new DateFormatter();
 	}
 
+	/**
+	 * Gets the name of the template for the sequence file chart / main page.
+	 * Populates the template with the standard info.
+	 *
+	 * @param model          {@link Model}
+	 * @param sequenceFileId Id for the sequence file
+	 * @return The name of the template.
+	 */
 	@RequestMapping("/{sequenceFileId}")
 	public String getSequenceFilePage(final Model model, @PathVariable Long sequenceFileId) {
 		logger.debug("Loading sequence files page for id: " + sequenceFileId);
 		createDefaultPageInfo(sequenceFileId, model);
-		model.addAttribute("perbase", "/sequenceFiles/img/" + sequenceFileId + "-perbase.png");
-		model.addAttribute("persequence", "/sequenceFiles/img/" + sequenceFileId + "-persequence.png");
-		model.addAttribute("dublicationlevel", "/sequenceFiles/img/" + sequenceFileId + "-dublicationlevel.png");
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_DASHBOARD);
 		return FILE_DETAIL_PAGE;
 	}
 
+	/**
+	 * Gets the name of the template for the sequence file overrepresented sequences page.
+	 * Populates the template with the standard info.
+	 *
+	 * @param model          {@link Model}
+	 * @param sequenceFileId Id for the sequence file.
+	 * @return The name fo the template
+	 */
 	@RequestMapping("/{sequenceFileId}/overrepresented")
 	public String getSequenceFileOverrepresentedPage(final Model model, @PathVariable Long sequenceFileId) {
 		logger.debug("Loading sequence files page for id: " + sequenceFileId);
@@ -82,8 +95,16 @@ public class SequenceFileController {
 		return FILE_OVERREPRESENTED;
 	}
 
+	/**
+	 * Downloads a sequence file.
+	 *
+	 * @param sequenceFileId Id for the file to download.
+	 * @param response       {@link HttpServletResponse}
+	 * @throws IOException
+	 */
 	@RequestMapping("/download/{sequenceFileId}")
-	public void downloadSequenceFile(@PathVariable Long sequenceFileId, HttpServletResponse response) throws IOException {
+	public void downloadSequenceFile(@PathVariable Long sequenceFileId, HttpServletResponse response)
+			throws IOException {
 		SequenceFile sequenceFile = sequenceFileService.read(sequenceFileId);
 		Path path = sequenceFile.getFile();
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + sequenceFile.getLabel() + "\"");
@@ -91,8 +112,17 @@ public class SequenceFileController {
 		response.flushBuffer();
 	}
 
-	@RequestMapping(value = "/img/{sequenceFileId}-{type}", produces = MediaType.IMAGE_PNG_VALUE)
-	public void downloadSequenceFileImages(@PathVariable Long sequenceFileId, @PathVariable String type, HttpServletResponse response) throws IOException {
+	/**
+	 * Get images specific for individual sequence files.
+	 *
+	 * @param sequenceFileId Id for the sequnece file.
+	 * @param type           The type of image to get.
+	 * @param response       {@link HttpServletResponse}
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/img/{sequenceFileId}/{type}", produces = MediaType.IMAGE_PNG_VALUE)
+	public void downloadSequenceFileImages(@PathVariable Long sequenceFileId, @PathVariable String type,
+			HttpServletResponse response) throws IOException {
 		SequenceFile file = sequenceFileService.read(sequenceFileId);
 		AnalysisFastQC fastQC = getFastQCAnalysis(file);
 		if (fastQC != null) {
@@ -109,6 +139,12 @@ public class SequenceFileController {
 		response.flushBuffer();
 	}
 
+	/**
+	 * Gets the FastQC analysis for a sequence file.
+	 *
+	 * @param file {@link SequenceFile}
+	 * @return {@link AnalysisFastQC}
+	 */
 	private AnalysisFastQC getFastQCAnalysis(SequenceFile file) {
 		AnalysisFastQC analysisFastQC = null;
 		Set<AnalysisFastQC> analysis = analysisService.getAnalysesForSequenceFile(file, AnalysisFastQC.class);
@@ -118,6 +154,12 @@ public class SequenceFileController {
 		return analysisFastQC;
 	}
 
+	/**
+	 * Populates the model with the default information for a file.
+	 *
+	 * @param sequenceFileId Id for the sequence file.
+	 * @param model          {@link Model}
+	 */
 	private void createDefaultPageInfo(Long sequenceFileId, Model model) {
 		SequenceFile file = sequenceFileService.read(sequenceFileId);
 		AnalysisFastQC fastQC = getFastQCAnalysis(file);
