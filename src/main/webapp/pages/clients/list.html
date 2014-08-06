@@ -12,7 +12,7 @@
         <div class="col-md-12">
             <main role="main" property="mainContentOfPage">
                 <h1 th:text="#{clients.title}">_Clients_</h1>
-                <table id="usersTable" class="table table-striped table-hover">
+                <table id="clientsTable" class="table table-striped table-hover">
                 <thead>
                 <tr th:inline="text">
                     <th id="id-header">[[#{iridaThing.id}]]<i class="glyphicon"></i></th>
@@ -21,7 +21,7 @@
                     <th id="created-header">[[#{iridaThing.timestamp}]]<i class="glyphicon"></i></th>
                 </tr>
                 </thead>
-                <tbody id="user-table-body"></tbody>
+                <tbody id="client-table-body"></tbody>
             </table>
             </main>
         </div>
@@ -33,7 +33,7 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
         $(document).ready(function () {
-            $('#usersTable').DataTable({
+            $('#clientsTable').DataTable({
                 dom: "<'top'ilf>rt<'bottom'p><'clear'>",
                 processing: true,
                 serverSide: true,
