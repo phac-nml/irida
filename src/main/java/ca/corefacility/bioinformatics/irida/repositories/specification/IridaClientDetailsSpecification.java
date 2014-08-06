@@ -24,7 +24,7 @@ public class IridaClientDetailsSpecification {
 	 *            The string to search
 	 * @return a specification for this search
 	 */
-	public static Specification<IridaClientDetails> searchUser(String searchString) {
+	public static Specification<IridaClientDetails> searchClient(String searchString) {
 		return new Specification<IridaClientDetails>() {
 			@Override
 			public Predicate toPredicate(Root<IridaClientDetails> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
