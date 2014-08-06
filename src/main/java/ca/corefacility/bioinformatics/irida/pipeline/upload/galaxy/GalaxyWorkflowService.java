@@ -1,12 +1,9 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -18,25 +15,21 @@ import org.slf4j.LoggerFactory;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
-import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
-import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputDefinition;
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
-import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.UniformInterfaceException;
 
 /**
- * Handles submission of workflows to Galaxy.
+ * Handles operating with workflows in Galaxy.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
@@ -44,22 +37,19 @@ public class GalaxyWorkflowService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(GalaxyWorkflowService.class);
 		
-	private GalaxyHistoriesService galaxyHistory;
 	private HistoriesClient historiesClient;
 	private WorkflowsClient workflowsClient;
 	
 	/**
 	 * Constructs a new GalaxyWorkflowSubmitter with the given information.
-	 * @param galaxyInstance  A Galaxyinstance defining the Galaxy to submit to.
-	 * @param galaxyHistory  A GalaxyHistory for methods on operating with Galaxy histories.
+	 * @param historiesClient  The HistoriesClient used to connect to Galaxy histories.
+	 * @param workflowsClient  The WorkflowsClient used to connect to Galaxy workflows.
 	 */
 	public GalaxyWorkflowService(HistoriesClient historiesClient,
-			WorkflowsClient workflowsClient, GalaxyHistoriesService galaxyHistory) {
+			WorkflowsClient workflowsClient) {
 		checkNotNull(historiesClient, "historiesClient is null");
 		checkNotNull(workflowsClient, "workflowsClient is null");
-		checkNotNull(galaxyHistory, "galaxyHistory is null");
 		
-		this.galaxyHistory = galaxyHistory;
 		this.historiesClient = historiesClient;
 		this.workflowsClient = workflowsClient;
 	}
@@ -79,12 +69,6 @@ public class GalaxyWorkflowService {
 		}
 
 		return false;
-	}
-	
-	private void checkWorkflowIdValid(String workflowId) throws WorkflowException {
-		if (!isWorkflowIdValid(workflowId)) {
-			throw new WorkflowException("Workflow id " + workflowId + " is not valid");
-		}
 	}
 	
 	/**
@@ -109,104 +93,6 @@ public class GalaxyWorkflowService {
 		} else {
 			throw new WorkflowException("Cannot find workflowInputId for input label " + workflowInputLabel);
 		}
-	}
-	
-	/**
-	 * Starts the execution of a workflow with a single fastq file and the given workflow id.
-	 * @param inputFile  An input file to start the workflow.
-	 * @param inputFileType The file type of the input file.
-	 * @param workflowId  The id of the workflow to start.
-	 * @param workflowInputLabel The label of a workflow input in Galaxy.
-	 * @throws ExecutionManagerException If there was an error executing the workflow.
-	 */
-	public WorkflowOutputs runSingleFileWorkflow(Path inputFile, InputFileType inputFileType,
-			String workflowId, String workflowInputLabel)
-			throws ExecutionManagerException {
-		checkNotNull(inputFile, "file is null");
-		checkNotNull(inputFileType, "inputFileType is null");
-		checkNotNull(workflowInputLabel, "workflowInputLabel is null");
-				
-		checkArgument(Files.exists(inputFile), "inputFile " + inputFile + " does not exist");
-		checkWorkflowIdValid(workflowId);
-				
-		History workflowHistory = galaxyHistory.newHistoryForWorkflow();
-		WorkflowDetails workflowDetails = workflowsClient.showWorkflow(workflowId);
-		
-		// upload dataset to history
-		Dataset inputDataset = galaxyHistory.fileToHistory(inputFile, inputFileType, workflowHistory);
-		
-		String workflowInputId = getWorkflowInputId(workflowDetails, workflowInputLabel);
-
-		WorkflowInputs inputs = new WorkflowInputs();
-		inputs.setDestination(new WorkflowInputs.ExistingHistory(workflowHistory.getId()));
-		inputs.setWorkflowId(workflowDetails.getId());
-		inputs.setInput(workflowInputId, new WorkflowInputs.WorkflowInput(inputDataset.getId(), WorkflowInputs.InputSourceType.HDA));
-		
-		// execute workflow
-		WorkflowOutputs output = workflowsClient.runWorkflow(inputs);
-
-		logger.debug("Running workflow in history " + output.getHistoryId());
-		
-		return output;
-	}
-	
-	/**
-	 * Starts the execution of a workflow with a list of fastq files and the given workflow id.
-	 * @param inputFilesForward  A list of forward read fastq files start the workflow.
-	 * @param inputFilesReverse  A list of reverse read fastq files start the workflow.
-	 * @param inputFileType The file type of the input files.
-	 * @param workflowId  The id of the workflow to start.
-	 * @param workflowInputLabel The label of a workflow input in Galaxy.
-	 * @throws ExecutionManagerException If there was an error executing the workflow.
-	 */
-	public WorkflowOutputs runSingleCollectionWorkflow(List<Path> inputFilesForward, List<Path> inputFilesReverse,
-			InputFileType inputFileType, String workflowId, String workflowInputLabel)
-			throws ExecutionManagerException {
-		checkNotNull(inputFilesForward, "inputFilesForward is null");
-		checkNotNull(inputFilesReverse, "inputFilesReverse is null");
-		checkArgument(inputFilesForward.size() == inputFilesReverse.size(),
-				"inputFiles have different number of elements");
-		checkNotNull(inputFileType, "inputFileType is null");
-		checkNotNull(workflowInputLabel, "workflowInputLabel is null");
-		
-		for (Path file : inputFilesForward) {
-			checkArgument(Files.exists(file), "inputFileForward " + file + " does not exist");
-		}
-		
-		for (Path file : inputFilesReverse) {
-			checkArgument(Files.exists(file), "inputFilesReverse " + file + " does not exist");
-		}
-		
-		checkWorkflowIdValid(workflowId);
-				
-		History workflowHistory = galaxyHistory.newHistoryForWorkflow();
-		WorkflowDetails workflowDetails = workflowsClient.showWorkflow(workflowId);
-		
-		// upload dataset to history
-		List<Dataset> inputDatasetsForward = 
-				galaxyHistory.uploadFilesListToHistory(inputFilesForward, inputFileType, workflowHistory);
-		List<Dataset> inputDatasetsReverse = 
-				galaxyHistory.uploadFilesListToHistory(inputFilesReverse, inputFileType, workflowHistory);
-		
-		// construct list of datasets
-		CollectionResponse collection = galaxyHistory.constructPairedFileCollection(inputDatasetsForward,
-				inputDatasetsReverse, workflowHistory);
-		logger.debug("Constructed dataset collection: id=" + collection.getId() + ", " + collection.getName());
-		
-		String workflowInputId = getWorkflowInputId(workflowDetails, workflowInputLabel);
-
-		WorkflowInputs inputs = new WorkflowInputs();
-		inputs.setDestination(new WorkflowInputs.ExistingHistory(workflowHistory.getId()));
-		inputs.setWorkflowId(workflowDetails.getId());
-		inputs.setInput(workflowInputId, new WorkflowInputs.WorkflowInput(collection.getId(),
-				WorkflowInputs.InputSourceType.HDCA));
-		
-		// execute workflow
-		WorkflowOutputs output = workflowsClient.runWorkflow(inputs);
-
-		logger.debug("Running workflow in history " + output.getHistoryId());
-		
-		return output;
 	}
 	
 	/**
@@ -244,6 +130,8 @@ public class GalaxyWorkflowService {
 	 * @throws ExecutionManagerException If there was an exception when attempting to get the status for a history.
 	 */
 	public WorkflowStatus getStatusForHistory(String historyId) throws ExecutionManagerException {
+		checkNotNull(historyId, "historyId is null");
+		
 		WorkflowStatus workflowStatus;
 		
 		WorkflowState workflowState;

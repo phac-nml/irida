@@ -1,13 +1,13 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.unit;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +21,6 @@ import org.mockito.MockitoAnnotations;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
-import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
@@ -34,7 +33,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputDefinition;
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 import com.sun.jersey.api.client.UniformInterfaceException;
 
@@ -64,15 +62,9 @@ public class GalaxyWorkflowServiceTest {
 	private static final String INVALID_WORKFLOW_ID = "invalid";
 	
 	private static final String VALID_INPUT_LABEL = "fastq";
-	private static final String INVALID_INPUT_LABEL = "invalid";
-	
-	private static final InputFileType FILE_TYPE = InputFileType.FASTQ_SANGER;
-	private static final InputFileType INVALID_FILE_TYPE = null;
 	
 	private static final float delta = 0.00001f;
-	
-	private Path dataFile;
-	
+		
 	private Map<String, WorkflowInputDefinition> workflowInputs;
 	
 	/**
@@ -83,10 +75,7 @@ public class GalaxyWorkflowServiceTest {
 	public void setup() throws URISyntaxException {
 		MockitoAnnotations.initMocks(this);
 		
-		galaxyWorkflowService = new GalaxyWorkflowService(historiesClient, workflowsClient, galaxyHistory);
-		
-		dataFile = Paths.get(this.getClass().getResource("testData1.fastq")
-				.toURI());
+		galaxyWorkflowService = new GalaxyWorkflowService(historiesClient, workflowsClient);
 		
 		String workflowInputId = "1";
 		WorkflowInputDefinition worklowInput = new WorkflowInputDefinition();
@@ -230,71 +219,6 @@ public class GalaxyWorkflowServiceTest {
 	public void testGetStatusInvalidHistory() throws ExecutionManagerException {
 		when(historiesClient.showHistory(INVALID_HISTORY_ID)).thenThrow(uniformInterfaceException);
 		galaxyWorkflowService.getStatusForHistory(INVALID_HISTORY_ID);
-	}
-	
-	/**
-	 * Tests running a single file workflow.
-	 * @throws ExecutionManagerException
-	 */
-	@Test
-	public void testRunSingleFileWorkflowValid() throws ExecutionManagerException {
-		WorkflowOutputs workflowOutputs = new WorkflowOutputs();
-		
-		when(galaxyHistory.newHistoryForWorkflow()).thenReturn(workflowHistory);
-		when(workflowHistory.getId()).thenReturn(VALID_HISTORY_ID);
-		when(galaxyHistory.fileToHistory(dataFile, FILE_TYPE, workflowHistory)).thenReturn(inputDataset);
-		when(workflowsClient.runWorkflow(any(WorkflowInputs.class))).thenReturn(workflowOutputs);
-		
-		WorkflowOutputs expectedOutputs =
-				galaxyWorkflowService.runSingleFileWorkflow(dataFile, FILE_TYPE, VALID_WORKFLOW_ID, VALID_INPUT_LABEL);
-		assertNotNull(expectedOutputs);
-	}
-	
-	/**
-	 * Tests running a workflow with an invalid input label.
-	 * @throws ExecutionManagerException
-	 */
-	@Test(expected=WorkflowException.class)
-	public void testRunSingleFileWorkflowInvalidInput() throws ExecutionManagerException {
-		WorkflowOutputs workflowOutputs = new WorkflowOutputs();
-		
-		when(galaxyHistory.newHistoryForWorkflow()).thenReturn(workflowHistory);
-		when(workflowHistory.getId()).thenReturn(VALID_HISTORY_ID);
-		when(galaxyHistory.fileToHistory(dataFile, FILE_TYPE, workflowHistory)).thenReturn(inputDataset);
-		when(workflowsClient.runWorkflow(any(WorkflowInputs.class))).thenReturn(workflowOutputs);
-		
-		galaxyWorkflowService.runSingleFileWorkflow(dataFile, FILE_TYPE, VALID_WORKFLOW_ID, INVALID_INPUT_LABEL);
-	}
-	
-	/**
-	 * Tests running a workflow with an invalid workflow id.
-	 * @throws ExecutionManagerException
-	 */
-	@Test(expected=WorkflowException.class)
-	public void testRunSingleFileWorkflowInvalidWorkflowId() throws ExecutionManagerException {
-		WorkflowOutputs workflowOutputs = new WorkflowOutputs();
-		
-		when(galaxyHistory.newHistoryForWorkflow()).thenReturn(workflowHistory);
-		when(workflowHistory.getId()).thenReturn(VALID_HISTORY_ID);
-		when(galaxyHistory.fileToHistory(dataFile, FILE_TYPE, workflowHistory)).thenReturn(inputDataset);
-		when(workflowsClient.runWorkflow(any(WorkflowInputs.class))).thenReturn(workflowOutputs);
-		
-		galaxyWorkflowService.runSingleFileWorkflow(dataFile, FILE_TYPE, INVALID_WORKFLOW_ID, VALID_INPUT_LABEL);
-	}
-	
-	/**
-	 * Tests running a workflow with an invalid input file type.
-	 * @throws ExecutionManagerException
-	 */
-	@Test(expected=NullPointerException.class)
-	public void testRunSingleFileWorkflowInvalidFileType() throws ExecutionManagerException {
-		WorkflowOutputs workflowOutputs = new WorkflowOutputs();
-		
-		when(galaxyHistory.newHistoryForWorkflow()).thenReturn(workflowHistory);
-		when(workflowHistory.getId()).thenReturn(VALID_HISTORY_ID);
-		when(workflowsClient.runWorkflow(any(WorkflowInputs.class))).thenReturn(workflowOutputs);
-		
-		galaxyWorkflowService.runSingleFileWorkflow(dataFile, INVALID_FILE_TYPE, VALID_WORKFLOW_ID, VALID_INPUT_LABEL);
 	}
 	
 	/**
