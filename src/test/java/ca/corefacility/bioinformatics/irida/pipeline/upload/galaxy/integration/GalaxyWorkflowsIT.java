@@ -59,7 +59,7 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
-public class GalaxyWorkflowManagerIT {
+public class GalaxyWorkflowsIT {
 	
 	@Autowired
 	private LocalGalaxy localGalaxy;
@@ -87,9 +87,9 @@ public class GalaxyWorkflowManagerIT {
 	@Before
 	public void setup() throws URISyntaxException, IOException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
-		dataFile1 = Paths.get(GalaxyWorkflowManagerIT.class.getResource(
+		dataFile1 = Paths.get(GalaxyWorkflowsIT.class.getResource(
 				"testData1.fastq").toURI());
-		dataFile2 = Paths.get(GalaxyWorkflowManagerIT.class.getResource(
+		dataFile2 = Paths.get(GalaxyWorkflowsIT.class.getResource(
 				"testData2.fastq").toURI());
 		
 		dataFileNotExists = Files.createTempFile("temp", ".temp");

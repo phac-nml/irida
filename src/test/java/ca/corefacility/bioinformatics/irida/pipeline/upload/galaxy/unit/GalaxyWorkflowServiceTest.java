@@ -43,7 +43,7 @@ import com.sun.jersey.api.client.UniformInterfaceException;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxyWorkflowManagerTest {
+public class GalaxyWorkflowServiceTest {
 
 	@Mock private GalaxyHistoriesService galaxyHistory;
 	@Mock private HistoriesClient historiesClient;
