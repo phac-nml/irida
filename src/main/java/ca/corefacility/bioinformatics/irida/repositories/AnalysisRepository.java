@@ -3,10 +3,10 @@ package ca.corefacility.bioinformatics.irida.repositories;
 import java.util.Set;
 
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.repositories.pagingsortingspecification.PagingSortingSpecificationRepository;
 
 /**
  * A custom repository for managing {@link Analysis} objects.
@@ -14,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
-public interface AnalysisRepository extends PagingAndSortingRepository<Analysis, Long> {
+public interface AnalysisRepository extends PagingSortingSpecificationRepository<Analysis, Long> {
 
 	/**
 	 * Load the set of {@link Analysis} for a {@link SequenceFile}.

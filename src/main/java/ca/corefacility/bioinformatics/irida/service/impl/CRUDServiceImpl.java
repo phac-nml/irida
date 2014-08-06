@@ -16,13 +16,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.repositories.pagingsortingspecification.PagingSortingSpecificationRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
 /**
@@ -36,11 +35,11 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType> implements
 
 	protected static final String CREATED_DATE_SORT_PROPERTY = "createdDate";
 
-	protected final PagingAndSortingRepository<ValueType, KeyType> repository;
+	protected final PagingSortingSpecificationRepository<ValueType, KeyType> repository;
 	protected final Validator validator;
 	protected final Class<ValueType> valueType;
 
-	public CRUDServiceImpl(PagingAndSortingRepository<ValueType, KeyType> repository, Validator validator,
+	public CRUDServiceImpl(PagingSortingSpecificationRepository<ValueType, KeyType> repository, Validator validator,
 			Class<ValueType> valueType) {
 		this.repository = repository;
 		this.validator = validator;
@@ -196,11 +195,6 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType> implements
 	@Override
 	public Page<ValueType> search(Specification<ValueType> specification, int page, int size, Direction order,
 			String... sortProperties) {
-		if (!(repository instanceof JpaSpecificationExecutor<?>)) {
-			throw new UnsupportedOperationException("Specifications are not supported for this repository.");
-		}
-		@SuppressWarnings("unchecked")
-		JpaSpecificationExecutor<ValueType> searchRepo = (JpaSpecificationExecutor<ValueType>) repository;
-		return searchRepo.findAll(specification, new PageRequest(page, size, order, sortProperties));
+		return repository.findAll(specification, new PageRequest(page, size, order, sortProperties));
 	}
 }

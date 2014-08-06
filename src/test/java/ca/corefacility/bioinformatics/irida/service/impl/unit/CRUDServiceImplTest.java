@@ -21,10 +21,10 @@ import javax.validation.ValidatorFactory;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.data.repository.PagingAndSortingRepository;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.repositories.pagingsortingspecification.PagingSortingSpecificationRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.utils.model.IdentifiableTestEntity;
@@ -37,7 +37,7 @@ import ca.corefacility.bioinformatics.irida.utils.model.IdentifiableTestEntity;
 public class CRUDServiceImplTest {
 
 	private CRUDService<Long, IdentifiableTestEntity> crudService;
-	private PagingAndSortingRepository<IdentifiableTestEntity, Long> crudRepository;
+	private PagingSortingSpecificationRepository<IdentifiableTestEntity, Long> crudRepository;
 	private Validator validator;
 
 	@Before
@@ -45,7 +45,7 @@ public class CRUDServiceImplTest {
 	public void setUp() {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
-		crudRepository = mock(PagingAndSortingRepository.class);
+		crudRepository = mock(PagingSortingSpecificationRepository.class);
 		crudService = new CRUDServiceImpl<>(crudRepository, validator, IdentifiableTestEntity.class);
 	}
 
