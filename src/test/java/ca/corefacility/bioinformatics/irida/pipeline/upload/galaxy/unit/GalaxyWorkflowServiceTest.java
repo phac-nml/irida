@@ -100,6 +100,32 @@ public class GalaxyWorkflowServiceTest {
 	}
 	
 	/**
+	 * Tests checking for a valid workflow id.
+	 */
+	@Test
+	public void testCheckWorkflowIdValid() {
+		String workflowId = "valid";
+		
+		WorkflowDetails details = new WorkflowDetails();
+		
+		when(workflowsClient.showWorkflow(workflowId)).thenReturn(details);
+		
+		assertTrue(galaxyWorkflowManager.isWorkflowIdValid(workflowId));
+	}
+	
+	/**
+	 * Tests checking for an invalid workflow id.
+	 */
+	@Test
+	public void testCheckWorkflowIdInvalid() {
+		String workflowId = "invalid";
+		
+		when(workflowsClient.showWorkflow(workflowId)).thenThrow(new RuntimeException());
+		
+		assertFalse(galaxyWorkflowManager.isWorkflowIdValid(workflowId));
+	}
+	
+	/**
 	 * Tests getting status for a completed/ok workflow state.
 	 * @throws ExecutionManagerException 
 	 */

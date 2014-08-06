@@ -67,19 +67,23 @@ public class GalaxyWorkflowService {
 	/**
 	 * Checks whether or not the given workflow id is valid.
 	 * @param workflowId  A workflow id to check.
-	 * @throws WorkflowException  If the workflow id is invalid.
+	 * @return True if the workflow is valid, false otherwise.
 	 */
-	private void checkWorkflowIdValid(String workflowId) throws WorkflowException {
-		checkNotNull(workflowId, "workflow id is null");
-		boolean invalid = true;
-		
-		try {
-			invalid = workflowsClient.showWorkflow(workflowId) == null;
-		} catch (Exception e) {
+	public boolean isWorkflowIdValid(String workflowId) {
+
+		if (workflowId != null) {
+			try {
+				return workflowsClient.showWorkflow(workflowId) != null;
+			} catch (Exception e) {
+			}
 		}
-		
-		if (invalid) {
-			throw new WorkflowException("workflow with id " + workflowId + " does not exist in Galaxy instance");
+
+		return false;
+	}
+	
+	private void checkWorkflowIdValid(String workflowId) throws WorkflowException {
+		if (!isWorkflowIdValid(workflowId)) {
+			throw new WorkflowException("Workflow id " + workflowId + " is not valid");
 		}
 	}
 	
