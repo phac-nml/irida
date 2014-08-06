@@ -159,6 +159,8 @@ public class GalaxyWorkflowsIT {
 				galaxyHistory.uploadFilesListToHistory(inputFilesForward, inputFileType, workflowHistory);
 		List<Dataset> inputDatasetsReverse = 
 				galaxyHistory.uploadFilesListToHistory(inputFilesReverse, inputFileType, workflowHistory);
+		assertEquals(inputFilesForward.size(), inputDatasetsForward.size());
+		assertEquals(inputDatasetsForward.size(), inputDatasetsReverse.size());
 		
 		// construct list of datasets
 		CollectionResponse collection = galaxyHistory.constructPairedFileCollection(inputDatasetsForward,
@@ -213,8 +215,16 @@ public class GalaxyWorkflowsIT {
 		assertEquals(1, workflowOutput.getOutputIds().size());
 		String outputId = workflowOutput.getOutputIds().get(0);
 		
+		// output dataset should exist
 		Dataset outputDataset = historiesClient.showDataset(workflowOutput.getHistoryId(), outputId);
 		assertNotNull(outputDataset);
+		
+		// test get workflow status
+		WorkflowStatus workflowStatus = 
+				galaxyWorkflowService.getStatusForHistory(workflowOutput.getHistoryId());
+		assertFalse(WorkflowState.UNKNOWN.equals(workflowStatus.getState()));
+		float percentComplete = workflowStatus.getPercentComplete();
+		assertTrue(0.0f <= percentComplete && percentComplete <= 100.0f);
 	}
 	
 	/**
@@ -240,6 +250,7 @@ public class GalaxyWorkflowsIT {
 		
 		// upload dataset to history
 		Dataset inputDataset = galaxyHistory.fileToHistory(inputFile, inputFileType, workflowHistory);
+		assertNotNull(inputDataset);
 		
 		String workflowInputId = galaxyWorkflowService.
 				getWorkflowInputId(workflowDetails, workflowInputLabel);
@@ -280,7 +291,7 @@ public class GalaxyWorkflowsIT {
 		assertNotNull(workflowOutput.getOutputIds());
 		assertTrue(workflowOutput.getOutputIds().size() > 0);
 		
-		// each datasets should exist
+		// each output dataset should exist
 		for (String outputId : workflowOutput.getOutputIds()) {
 			Dataset dataset = historiesClient.showDataset(workflowOutput.getHistoryId(), outputId);
 			assertNotNull(dataset);
