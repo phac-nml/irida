@@ -10,8 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -31,9 +34,11 @@ import com.google.common.collect.Lists;
  */
 @Controller
 @RequestMapping(value = "/clients")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class ClientsController {
 
 	public static final String CLIENTS_PAGE = "clients/list";
+	public static final String CLIENT_DETAILS_PAGE = "clients/client_details";
 
 	private final IridaClientDetailsService clientDetailsService;
 
@@ -54,6 +59,16 @@ public class ClientsController {
 	@RequestMapping
 	public String getClientsPage() {
 		return CLIENTS_PAGE;
+	}
+
+	@RequestMapping("/{clientId}")
+	public String read(@PathVariable Long clientId, Model model) {
+		IridaClientDetails client = clientDetailsService.read(clientId);
+		
+		String grants = getAuthorizedGrantTypesString(client);
+		model.addAttribute("client", client);
+		model.addAttribute("grants",grants);
+		return CLIENT_DETAILS_PAGE;
 	}
 
 	/**
@@ -100,9 +115,7 @@ public class ClientsController {
 		List<List<String>> clientsData = new ArrayList<>();
 		for (IridaClientDetails client : search) {
 
-			Set<String> authorizedGrantTypes = client.getAuthorizedGrantTypes();
-
-			String grants = StringUtils.collectionToDelimitedString(authorizedGrantTypes, ", ");
+			String grants = getAuthorizedGrantTypesString(client);
 
 			List<String> row = new ArrayList<>();
 			row.add(client.getId().toString());
@@ -120,5 +133,11 @@ public class ClientsController {
 
 		map.put(DataTable.RESPONSE_PARAM_DATA, clientsData);
 		return map;
+	}
+	
+	private String getAuthorizedGrantTypesString(IridaClientDetails clientDetails){
+		Set<String> authorizedGrantTypes = clientDetails.getAuthorizedGrantTypes();
+
+		return StringUtils.collectionToDelimitedString(authorizedGrantTypes, ", ");
 	}
 }
