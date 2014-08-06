@@ -54,6 +54,10 @@
 		<!-- Update referenced column names -->
 		<renameColumn tableName="sequence_file" oldColumnName="miseqRun_id"
 			newColumnName="sequencingRun_id" columnDataType="bigint(20)" />
+		
+		<renameColumn tableName="sequence_file_AUD"
+			oldColumnName="miseqRun_id" newColumnName="sequencingRun_id"
+			columnDataType="bigint(20)" />
 
 		<addForeignKeyConstraint constraintName="FK_SEQUENCE_FILE_SEQUENCING_RUN"
 			referencedTableName="sequencing_run" baseColumnNames="sequencingRun_id"
