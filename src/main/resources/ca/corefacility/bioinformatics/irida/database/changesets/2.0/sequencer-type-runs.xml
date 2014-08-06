@@ -78,9 +78,7 @@
 		<!-- remove autoincrement from id. Need to create a new temporary column, 
 			transfer the ids, drop the old id, then rename the column -->
 		<addColumn tableName="miseq_run">
-			<column name="tmp_id" type="bigint(20)">
-				<constraints nullable="false" />
-			</column>
+			<column name="tmp_id" type="bigint(20)"/>
 		</addColumn>
 
 		<sql>
@@ -91,6 +89,8 @@
 
 		<renameColumn tableName="miseq_run" oldColumnName="tmp_id"
 			newColumnName="id" columnDataType="bigint(20)" />
+
+		<addPrimaryKey columnNames="id" tableName="miseq_run" />
 
 		<dropColumn tableName="miseq_run_AUD" columnName="REVTYPE" />
 
