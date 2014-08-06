@@ -32,16 +32,16 @@
                 <li>
                     <i class="glyphicon glyphicon-barcode"></i>
                     <em th:text="#{sf.sidebar.file-id}"></em>
-                    <span th:text="${file.id}"></span></li>
+                    <span id="file-id" th:text="${file.id}"></span></li>
                 <li>
                     <i class="glyphicon glyphicon-calendar"></i>
                     <em th:text="#{sf.sidebar.created}"></em>
-                    <span th:title="${created}" th:text="${created}"></span>
+                    <span id="file-created" th:title="${created}" th:text="${created}"></span>
                 </li>
                 <li>
                     <i class="glyphicon glyphicon-qrcode"></i>
                     <em th:text="#{sf.encoding}">_ENCODING_</em>
-                    <span th:text="*{encoding}"></span>
+                    <span id="file-encoding" th:text="*{encoding}"></span>
                 </li>
             </ul>
         </div>
@@ -52,14 +52,14 @@
         </div>
         <div class="panel-body">
             <ul class="nav nav-pills nav-stacked details">
-                <li><em th:text="#{sf.totalSequences}">_TOTAL_SEQUENCES_</em><span class="pull-right" th:text="*{totalSequences}"></span></li>
-                <li><em th:text="#{sf.totalBases}">_TOTAL_BASES+</em><span class="pull-right"
+                <li><em th:text="#{sf.totalSequences}">_TOTAL_SEQUENCES_</em><span id="totalSequences" class="pull-right" th:text="*{totalSequences}"></span></li>
+                <li><em th:text="#{sf.totalBases}">_TOTAL_BASES+</em><span id="totalBases" class="pull-right"
                                                                            th:text="*{totalBases}"></span></li>
-                <li><em th:text="#{sf.minLength}">_MIN_LENGHT_</em><span class="pull-right"
+                <li><em th:text="#{sf.minLength}">_MIN_LENGHT_</em><span id="minLength" class="pull-right"
                                                                          th:text="*{minLength}"></span></li>
-                <li><em th:text="#{sf.maxLength}">_MIN_LENGHT_</em><span class="pull-right"
+                <li><em th:text="#{sf.maxLength}">_MIN_LENGHT_</em><span id="maxLength" class="pull-right"
                                                                          th:text="*{maxLength}"></span></li>
-                <li><em th:text="#{sf.gcContent}">_MIN_LENGHT_</em><span class="pull-right"
+                <li><em th:text="#{sf.gcContent}">_MIN_LENGHT_</em><span id="gcContent" class="pull-right"
                                                                          th:text="*{gcContent}"></span></li>
             </ul>
         </div>
