@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
+package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -21,7 +21,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWo
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
@@ -41,9 +40,9 @@ import com.sun.jersey.api.client.UniformInterfaceException;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxyWorkflowManager {
+public class GalaxyWorkflowService {
 	
-	private static final Logger logger = LoggerFactory.getLogger(GalaxyWorkflowManager.class);
+	private static final Logger logger = LoggerFactory.getLogger(GalaxyWorkflowService.class);
 		
 	private GalaxyHistoriesService galaxyHistory;
 	private HistoriesClient historiesClient;
@@ -54,7 +53,7 @@ public class GalaxyWorkflowManager {
 	 * @param galaxyInstance  A Galaxyinstance defining the Galaxy to submit to.
 	 * @param galaxyHistory  A GalaxyHistory for methods on operating with Galaxy histories.
 	 */
-	public GalaxyWorkflowManager(HistoriesClient historiesClient,
+	public GalaxyWorkflowService(HistoriesClient historiesClient,
 			WorkflowsClient workflowsClient, GalaxyHistoriesService galaxyHistory) {
 		checkNotNull(historiesClient, "historiesClient is null");
 		checkNotNull(workflowsClient, "workflowsClient is null");

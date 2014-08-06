@@ -25,7 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.GalaxyWorkflowManager;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
@@ -55,7 +55,7 @@ public class GalaxyWorkflowManagerTest {
 	@Mock private UniformInterfaceException uniformInterfaceException;
 	@Mock private Dataset downloadDataset;
 	
-	private GalaxyWorkflowManager galaxyWorkflowManager;
+	private GalaxyWorkflowService galaxyWorkflowManager;
 		
 	private static final String VALID_HISTORY_ID = "1";
 	private static final String INVALID_HISTORY_ID = "2";
@@ -83,7 +83,7 @@ public class GalaxyWorkflowManagerTest {
 	public void setup() throws URISyntaxException {
 		MockitoAnnotations.initMocks(this);
 		
-		galaxyWorkflowManager = new GalaxyWorkflowManager(historiesClient, workflowsClient, galaxyHistory);
+		galaxyWorkflowManager = new GalaxyWorkflowService(historiesClient, workflowsClient, galaxyHistory);
 		
 		dataFile = Paths.get(this.getClass().getResource("testData1.fastq")
 				.toURI());

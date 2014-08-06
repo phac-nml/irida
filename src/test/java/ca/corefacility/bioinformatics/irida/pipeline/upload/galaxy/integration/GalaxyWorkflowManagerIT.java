@@ -36,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
@@ -71,7 +72,7 @@ public class GalaxyWorkflowManagerIT {
 	private HistoriesClient historiesClient;
 	private ToolsClient toolsClient;
 	private WorkflowsClient workflowsClient;
-	private GalaxyWorkflowManager galaxyWorkflowManager;
+	private GalaxyWorkflowService galaxyWorkflowManager;
 	
 	private static final String INVALID_HISTORY_ID = "1";
 	
@@ -101,7 +102,7 @@ public class GalaxyWorkflowManagerIT {
 		historiesClient = galaxyAdminInstance.getHistoriesClient();
 		GalaxyHistoriesService galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient);
 		galaxyWorkflowManager 
-			= new GalaxyWorkflowManager(historiesClient, workflowsClient, galaxyHistory);
+			= new GalaxyWorkflowService(historiesClient, workflowsClient, galaxyHistory);
 	}
 	
 	/**
