@@ -16,6 +16,7 @@
 
 		<!-- Fix the primary key on system_role_AUD -->
 		<dropPrimaryKey tableName="system_role_AUD" />
+		<dropColumn columnName="id" tableName="system_role_AUD" />
 		<addPrimaryKey columnNames="name, REV" tableName="system_role_AUD" />
 
 		<!-- Add a UK to user_group -->
