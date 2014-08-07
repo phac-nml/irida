@@ -52,7 +52,7 @@ my @client_details_resource_ids =(
 
 my $dbh = DBI->connect($dbstring,$username,$password, {RaiseError=>1,AutoCommit=>0}) or die "Cannot connect to database: $DBI::errstr";
 
-my $sql = "INSERT INTO client_details (id,clientId,clientSecret,token_validity) VALUES (?,?,?,?)";
+my $sql = "INSERT INTO client_details (id,clientId,clientSecret,token_validity,created_date) VALUES (?,?,?,?,now())";
 my $sth = $dbh->prepare($sql);
 foreach my $client(@client_details){
 	my $rv = $sth->execute($client->{id},$client->{clientId},$client->{clientSecret},$client->{token_validity});
