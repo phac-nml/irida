@@ -7,8 +7,6 @@ import java.util.Map;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -169,22 +167,4 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 */
 	public Collection<Join<User, Group>> getUsersForGroup(Group g) throws EntityNotFoundException;
 
-	/**
-	 * Search for {@link User}s with a given search string. Will search with
-	 * this string in firstName, lastName, email, and username
-	 * 
-	 * @param searchTerm
-	 *            The term to search for
-	 * @param page
-	 *            The page number to request
-	 * @param size
-	 *            The size of the pages
-	 * @param order
-	 *            The order of the search
-	 * @param sortProperties
-	 *            The properties to sort on
-	 * @return A Page of User objects with the given properties
-	 */
-	@PreAuthorize("hasRole('ROLE_USER')")
-	public Page<User> searchUser(String searchTerm, int page, int size, Direction order, String... sortProperties);
 }

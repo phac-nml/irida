@@ -16,9 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,7 +32,6 @@ import ca.corefacility.bioinformatics.irida.model.user.Group;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.user.UserGroupJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -265,20 +261,6 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	@Transactional(readOnly = true)
 	public Collection<Join<User, Group>> getUsersForGroup(Group g) throws EntityNotFoundException {
 		return userGroupRepository.getUsersForGroup(g);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	public Page<User> searchUser(String searchTerm, int page, int size, Direction order, String... sortProperties) {
-		if (sortProperties.length == 0) {
-			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
-		}
-
-		return userRepository.findAll(UserSpecification.searchUser(searchTerm), new PageRequest(page, size, order,
-				sortProperties));
 	}
 
 	/**

@@ -47,6 +47,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.user.Group;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.GroupService;
@@ -340,14 +341,14 @@ public class UserServiceImplIT {
 	@Test
 	public void testSearchUser(){
 		String search = "Mr";
-		Page<User> searchUser = userService.searchUser(search, 0, 10, Direction.ASC, "id");
+		Page<User> searchUser = userService.search(UserSpecification.searchUser(search), 0, 10, Direction.ASC, "id");
 		assertEquals(3,searchUser.getContent().size());
 		for(User u : searchUser){
 			assertTrue(u.getFirstName().contains("Mr"));
 		}
 		
 		search = "User";
-		searchUser = userService.searchUser(search, 0, 10, Direction.ASC, "id");
+		searchUser = userService.search(UserSpecification.searchUser(search), 0, 10, Direction.ASC, "id");
 		assertEquals(2,searchUser.getContent().size());
 	}
 

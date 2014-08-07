@@ -7,6 +7,7 @@ import javax.validation.Valid;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -146,4 +147,15 @@ public interface CRUDService<IdentifierType, Type> {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public long count();
+	
+	/**
+	 * Search for an entity of <code>Type</code> with a given specification
+	 * @param specification The search specification
+	 * @param page The page number
+	 * @param size the size of the page
+	 * @param order the order of the page sort
+	 * @param sortProperties The properties to sort on
+	 * @return a Page of Type
+	 */
+	public Page<Type> search(Specification<Type> specification, int page, int size, Direction order, String... sortProperties);
 }
