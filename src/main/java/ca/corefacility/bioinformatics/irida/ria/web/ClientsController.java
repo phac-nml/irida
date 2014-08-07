@@ -89,7 +89,7 @@ public class ClientsController {
 	 * @return a Map<String,Object> for the table
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Object> getAjaxUserList(
+	public @ResponseBody Map<String, Object> getAjaxClientList(
 			@RequestParam(DataTable.REQUEST_PARAM_START) Integer start,
 			@RequestParam(DataTable.REQUEST_PARAM_LENGTH) Integer length,
 			@RequestParam(DataTable.REQUEST_PARAM_DRAW) Integer draw,
