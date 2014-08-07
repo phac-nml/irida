@@ -55,8 +55,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private ProjectSampleJoinRepository psjRepository;
 	private SampleRepository sampleRepository;
 	private UserRepository userRepository;
-	@SuppressWarnings("unused")
-	private ProjectRepository projectRepository;
 	private RelatedProjectRepository relatedProjectRepository;
 
 	protected ProjectServiceImpl() {
@@ -69,7 +67,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			ProjectSampleJoinRepository psjRepository, RelatedProjectRepository relatedProjectRepository,
 			Validator validator) {
 		super(projectRepository, validator, Project.class);
-		this.projectRepository = projectRepository;
 		this.sampleRepository = sampleRepository;
 		this.userRepository = userRepository;
 		this.pujRepository = pujRepository;
