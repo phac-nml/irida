@@ -110,7 +110,7 @@ public class ClientsController {
 		int pageNum = start / length;
 
 		Page<IridaClientDetails> search = clientDetailsService.search(
-				IridaClientDetailsSpecification.searchUser(searchValue), pageNum, length, sortDirection, sortString);
+				IridaClientDetailsSpecification.searchClient(searchValue), pageNum, length, sortDirection, sortString);
 
 		List<List<String>> clientsData = new ArrayList<>();
 		for (IridaClientDetails client : search) {
