@@ -55,6 +55,10 @@
 		<renameColumn tableName="sequence_file" oldColumnName="miseqRun_id"
 			newColumnName="sequencingRun_id" columnDataType="bigint(20)" />
 
+		<renameColumn tableName="sequence_file_AUD"
+			oldColumnName="miseqRun_id" newColumnName="sequencingRun_id"
+			columnDataType="bigint(20)" />
+
 		<addForeignKeyConstraint constraintName="FK_SEQUENCE_FILE_SEQUENCING_RUN"
 			referencedTableName="sequencing_run" baseColumnNames="sequencingRun_id"
 			baseTableName="sequence_file" referencedColumnNames="id" />
@@ -74,7 +78,7 @@
 		<!-- remove autoincrement from id. Need to create a new temporary column, 
 			transfer the ids, drop the old id, then rename the column -->
 		<addColumn tableName="miseq_run">
-			<column name="tmp_id" type="bigint(20)" />
+			<column name="tmp_id" type="bigint(20)"/>
 		</addColumn>
 
 		<sql>
@@ -85,6 +89,10 @@
 
 		<renameColumn tableName="miseq_run" oldColumnName="tmp_id"
 			newColumnName="id" columnDataType="bigint(20)" />
+
+		<addPrimaryKey columnNames="id" tableName="miseq_run" />
+
+		<dropColumn tableName="miseq_run_AUD" columnName="REVTYPE" />
 
 		<!-- Add FK from miseq_run to sequencing_run -->
 		<addForeignKeyConstraint constraintName="FK_MISEQ_RUN_SEQUENCING_RUN"
