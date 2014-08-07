@@ -103,25 +103,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	public void removeSampleFromProject(Project project, Sample sample);
 
 	/**
-	 * Search for Projects with a given partial name
-	 * 
-	 * @param name
-	 *            The name to search
-	 * @param page
-	 *            The page number to read
-	 * @param size
-	 *            The size of the pages to read
-	 * @param order
-	 *            The order to sort in
-	 * @param sortProperties
-	 *            The properties to sort on
-	 * @return The matching projects
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public Page<Project> searchProjectsByName(String name, int page, int size, Direction order,
-			String... sortProperties);
-
-	/**
 	 * Get all {@link Project}s associated with a particular {@link User}.
 	 * 
 	 * @param user
@@ -147,27 +128,6 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return The matching ProjectUserJoins
 	 */
 	public Page<ProjectUserJoin> searchProjectUsers(Specification<ProjectUserJoin> specification, int page, int size,
-			Direction order, String... sortProperties);
-
-	/**
-	 * Search all {@link Project}s associated with a particular {@link User}.
-	 * 
-	 * @param user
-	 *            the user to get projects for.
-	 * @param searchTerm
-	 *            The search term in the Project name
-	 * @param page
-	 *            The page number to read
-	 * @param size
-	 *            The size of the pages to read
-	 * @param order
-	 *            The order to sort in
-	 * @param sortProperties
-	 *            The properties to sort on
-	 * @return The matching projects
-	 */
-	@Deprecated
-	public Page<ProjectUserJoin> searchProjectsByNameForUser(User user, String searchTerm, int page, int size,
 			Direction order, String... sortProperties);
 
 	/**
