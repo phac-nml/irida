@@ -18,12 +18,12 @@ public class ProjectsDataTable extends DataTable {
 	private static final int MODIFIED_DATE_COL = 8;
 
 	// Sort information
-	private static final String SORT_BY_ID = "id";
-	private static final String SORT_BY_NAME = "name";
-	private static final String SORT_BY_ROLE = "role";
-	private static final String SORT_BY_ORGANISM = "organism";
-	private static final String SORT_BY_CREATED_DATE = "createdDate";
-	private static final String SORT_BY_MODIFIED_DATE = "modifiedDate";
+	private static final String SORT_BY_ID = "project.id";
+	private static final String SORT_BY_NAME = "project.name";
+	private static final String SORT_BY_ROLE = "projectRole";
+	private static final String SORT_BY_ORGANISM = "project.organism";
+	private static final String SORT_BY_CREATED_DATE = "project.createdDate";
+	private static final String SORT_BY_MODIFIED_DATE = "project.modifiedDate";
 
 	// Table default sort information
 	public static final String SORT_DEFAULT_COLUMN = SORT_BY_MODIFIED_DATE + "";
