@@ -43,6 +43,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
@@ -390,8 +391,8 @@ public class ProjectsController {
 		String sortString = ProjectsDataTable.getSortStringFromColumnID(sortColumn);
 
 		// Get the page information
-		Page<Project> page = projectService.searchProjectsByName(searchValue, pageNumber, length, sortDirection,
-				sortString);
+		Page<Project> page = projectService.search(ProjectSpecification.searchProjectName(searchValue), pageNumber,
+				length, sortDirection, sortString);
 		List<ProjectUserJoin> projectList = getAdminProjectUserJoin(page,
 				userService.getUserByUsername(principal.getName()));
 
@@ -455,7 +456,8 @@ public class ProjectsController {
 		Map<Long, String> vals = new HashMap<>();
 		Map<String, Object> response = new HashMap<>();
 		if (user.getAuthorities().contains(Role.ROLE_ADMIN)) {
-			Page<Project> projects = projectService.searchProjectsByName(term, page, pageSize, Direction.ASC);
+			Page<Project> projects = projectService.search(ProjectSpecification.searchProjectName(term), page,
+					pageSize, Direction.ASC);
 			for (Project p : projects) {
 				vals.put(p.getId(), p.getName());
 			}
