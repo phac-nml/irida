@@ -1,8 +1,13 @@
 package ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -22,7 +27,6 @@ import com.github.jmchilton.galaxybootstrap.GalaxyProperties;
 import com.github.jmchilton.galaxybootstrap.GalaxyData.User;
 
 import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
@@ -79,12 +83,11 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	/**
 	 * Builds a GalaxyUploader to connect to a running instance of Galaxy.
 	 * @return  An Uploader connected to a running instance of Galaxy.
-	 * @throws MalformedURLException  If there was an issue when contructing a URL.
-	 * @throws GalaxyConnectException If there was an issue connecting to the running instance of Galaxy.
+	 * @throws Exception 
 	 */
 	@Lazy
 	@Bean
-	public Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader() throws MalformedURLException, GalaxyConnectException {
+	public Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader() throws Exception {
 		GalaxyUploader galaxyUploader = new GalaxyUploader();
 		galaxyUploader.connectToGalaxy(galaxyConnector());
 
@@ -94,11 +97,11 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	/**
 	 * Creates a new GalaxyConnector to connect to the local Galaxy instance.
 	 * @return  A GalaxyConnector to connect to the local Galaxy instance.
-	 * @throws MalformedURLException  If the Galaxy URL is not formed properly.
+	 * @throws Exception 
 	 */
 	@Lazy
 	@Bean
-	public GalaxyConnector galaxyConnector() throws MalformedURLException {
+	public GalaxyConnector galaxyConnector() throws Exception {
 		GalaxyConnector galaxyConnector = new GalaxyConnector(localGalaxy().getGalaxyURL(),
 				localGalaxy().getAdminName(), localGalaxy().getAdminAPIKey());
 		galaxyConnector.setDataStorage(DataStorage.REMOTE);
@@ -109,12 +112,11 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	/**
 	 * Builds a GalaxyAPI object to connect to a running instance of Galaxy.
 	 * @return  A GalaxyAPI object connected to a running instance of Galaxy.
-	 * @throws MalformedURLException  If there was an issue building some of the URLs.
-	 * @throws GalaxyConnectException If there was an issue connecting to the Galaxy instance.
+	 * @throws Exception 
 	 */
 	@Lazy
 	@Bean
-	public GalaxyAPI galaxyAPI() throws MalformedURLException, GalaxyConnectException {
+	public GalaxyAPI galaxyAPI() throws Exception {
 		return new GalaxyAPI(localGalaxy().getGalaxyURL(), localGalaxy()
 				.getAdminName(), localGalaxy().getAdminAPIKey());
 	}
@@ -122,11 +124,11 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	/**
 	 * Builds a new LocalGalaxy allowing for connecting with a running Galaxy instance.
 	 * @return  A LocalGalaxy with information about the running Galaxy instance.
-	 * @throws MalformedURLException  If there was an issue constructing the URLs.
+	 * @throws Exception 
 	 */
 	@Lazy
 	@Bean
-	public LocalGalaxy localGalaxy() throws MalformedURLException {
+	public LocalGalaxy localGalaxy() throws Exception {
 		
 		if (galaxyFailedToBuild) {
 			throw new RuntimeException("Galaxy could not be built the first time, don't attempt to try again", galaxyBuildException);
@@ -165,6 +167,8 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 				localGalaxy.setGalaxyProperties(galaxyProperties);
 		
 				buildGalaxyUsers(galaxyData, localGalaxy);
+				
+				buildTestTools(localGalaxy.getGalaxyPath(), galaxyProperties, localGalaxy);
 		
 				GalaxyDaemon galaxyDaemon = runGalaxy(galaxyData, localGalaxy);
 				localGalaxy.setGalaxyDaemon(galaxyDaemon);
@@ -198,6 +202,35 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 				throw e;
 			}
 		}
+	}
+	
+	/**
+	 * Builds configuration files for extra tools in Galaxy to test.
+	 * @param galaxyRoot  The root directory to Galaxy.
+	 * @param galaxyProperties  The properties object for Galaxy.
+	 * @param localGalaxy  The LocalGalaxy instance.
+	 * @throws URISyntaxException
+	 * @throws IOException 
+	 */
+	private void buildTestTools(Path galaxyRoot, GalaxyProperties galaxyProperties, LocalGalaxy localGalaxy) throws URISyntaxException, IOException {
+		Path collectionExampleToolSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
+				"collection_list_paired.xml").toURI());
+		Path iridaToolConfigSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
+				"tool_conf_irida.xml").toURI());
+
+		// copy over necessary files for testing custom tools
+		Path collectionExampleToolDirectory = galaxyRoot.resolve("tools").resolve("collection");
+		Files.createDirectories(collectionExampleToolDirectory);
+		Path collectionExampleToolDestination = 
+				collectionExampleToolDirectory.resolve("collection_list_paired.xml");
+		Files.copy(collectionExampleToolSource, collectionExampleToolDestination);
+		
+		Path iridaToolConfigDestination = galaxyRoot.resolve("tool_conf_irida.xml");
+		Files.copy(iridaToolConfigSource, iridaToolConfigDestination);
+		
+		// set configuration file in Galaxy for custom tools
+		galaxyProperties.setAppProperty("tool_config_file",
+				"tool_conf.xml,shed_tool_conf.xml,tool_conf_irida.xml");
 	}
 	
 	/**

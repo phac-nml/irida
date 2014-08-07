@@ -1,8 +1,5 @@
 package ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy;
 
-import java.net.MalformedURLException;
-
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
@@ -20,12 +17,11 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.L
 public interface LocalGalaxyConfig {
 
 	public Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader()
-			throws MalformedURLException, GalaxyConnectException;
+			throws Exception;
 
-	public GalaxyConnector galaxyConnector() throws MalformedURLException;
+	public GalaxyConnector galaxyConnector() throws Exception;
 
-	public GalaxyAPI galaxyAPI() throws MalformedURLException,
-			GalaxyConnectException;
+	public GalaxyAPI galaxyAPI() throws Exception;
 
-	public LocalGalaxy localGalaxy() throws MalformedURLException;
+	public LocalGalaxy localGalaxy() throws Exception;
 }

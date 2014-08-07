@@ -112,14 +112,11 @@ public class GalaxyUploaderIT {
 
 	/**
 	 * Tests the case of Galaxy being shutdown while the archive is running.
-	 * @throws ConstraintViolationException
-	 * @throws UploadException
-	 * @throws MalformedURLException
+	 * @throws Exception 
 	 */
 	@Test(expected=RuntimeException.class)
 	public void testGalaxyShutdownRandomly()
-			throws ConstraintViolationException, UploadException,
-			MalformedURLException {
+			throws Exception {
 		// I need to bring up a new version of Galaxy so I can connect to it,
 		// then shut it down
 		// without affecting other tests
