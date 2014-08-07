@@ -170,7 +170,7 @@
         $(document).ready(function () {
         	var table = $('#usersTable').DataTable({
                 dom: "<'top'ilf>rt<'bottom'p><'clear'>",
-                ajax: '/projects/ajax/[[${project.getId()}]]/members',
+                ajax: /*[[@{/projects/ajax/{id}/members(id=${project.getId()})}]]*/ '/projects/ajax/1/members',
                 deferRender: true,
                 order: [
                     [0, "asc"]
@@ -180,7 +180,7 @@
                 	var pid = data.subject.id;
                 	var userLabel = data.object.label;
                 	
-                	var removeUrl = [[@{/projects/{pid}(pid=${project.getId()})}]] + "/members/remove";
+                	var removeUrl = /*[[@{/projects/{pid}/members/remove(pid=${project.getId()})}]]*/ '/projects/1/members/remove';
                 	
                 	var id = "#remove-user-"+uid;
                 	
