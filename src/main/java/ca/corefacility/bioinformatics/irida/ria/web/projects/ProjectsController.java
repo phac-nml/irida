@@ -4,6 +4,7 @@ import static org.springframework.data.jpa.domain.Specifications.where;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,10 +15,13 @@ import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.format.Formatter;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +35,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.google.common.base.Strings;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -48,13 +54,12 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUs
 import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectSamplesDataTable;
+import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsAdminDataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDataTable;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.base.Strings;
 
 /**
  * Controller for project related views
@@ -90,6 +95,11 @@ public class ProjectsController {
 	private final SequenceFileService sequenceFileService;
 	private final ProjectControllerUtils projectControllerUtils;
 
+	/*
+	 * Converters
+	 */
+	Formatter<Date> dateFormatter;
+
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
 			SequenceFileService sequenceFileService, ProjectControllerUtils projectControllerUtils) {
@@ -98,6 +108,7 @@ public class ProjectsController {
 		this.userService = userService;
 		this.sequenceFileService = sequenceFileService;
 		this.projectControllerUtils = projectControllerUtils;
+		this.dateFormatter = new DateFormatter();
 	}
 
 	/**
@@ -124,10 +135,8 @@ public class ProjectsController {
 	/**
 	 * Request for a specific project details page.
 	 *
-	 * @param projectId
-	 *            The id for the project to show details for.
-	 * @param model
-	 *            Spring model to populate the html page.
+	 * @param projectId The id for the project to show details for.
+	 * @param model     Spring model to populate the html page.
 	 * @return The name of the project details page.
 	 */
 	@RequestMapping(value = "/{projectId}")
@@ -143,8 +152,7 @@ public class ProjectsController {
 	/**
 	 * Gets the name of the template for the new project page
 	 *
-	 * @param model
-	 *            {@link Model}
+	 * @param model {@link Model}
 	 * @return The name of the create new project page
 	 */
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
@@ -159,16 +167,11 @@ public class ProjectsController {
 	 * Creates a new project and displays a list of users for the user to add to
 	 * the project
 	 *
-	 * @param model
-	 *            {@link Model}
-	 * @param name
-	 *            String name of the project
-	 * @param organism
-	 *            Organism name
-	 * @param projectDescription
-	 *            Brief description of the project
-	 * @param remoteURL
-	 *            URL for the project wiki
+	 * @param model              {@link Model}
+	 * @param name               String name of the project
+	 * @param organism           Organism name
+	 * @param projectDescription Brief description of the project
+	 * @param remoteURL          URL for the project wiki
 	 * @return The name of the add users to project page
 	 */
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
@@ -195,10 +198,8 @@ public class ProjectsController {
 	/**
 	 * Returns the name of a page to add users to a *new* project.
 	 *
-	 * @param model
-	 *            {@link Model}
-	 * @param projectId
-	 *            the id of the project to find the metadata for.
+	 * @param model     {@link Model}
+	 * @param projectId the id of the project to find the metadata for.
 	 * @return The name of the add users to new project page.
 	 */
 	@RequestMapping("/{projectId}/metadata")
@@ -212,7 +213,8 @@ public class ProjectsController {
 	}
 
 	@RequestMapping(value = "/{projectId}/metadata/edit", method = RequestMethod.GET)
-	public String getProjectMetadataEditPage(final Model model, final Principal principal, @PathVariable long projectId) {
+	public String getProjectMetadataEditPage(final Model model, final Principal principal,
+			@PathVariable long projectId) {
 		Project project = projectService.read(projectId);
 		User user = userService.getUserByUsername(principal.getName());
 		if (projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER)) {
@@ -277,8 +279,10 @@ public class ProjectsController {
 			@RequestParam(ProjectSamplesDataTable.REQUEST_PARAM_START) Integer start,
 			@RequestParam(ProjectSamplesDataTable.REQUEST_PARAM_LENGTH) Integer length,
 			@RequestParam(ProjectSamplesDataTable.REQUEST_PARAM_DRAW) Integer draw,
-			@RequestParam(value = ProjectSamplesDataTable.REQUEST_PARAM_SORT_COLUMN, defaultValue = ProjectSamplesDataTable.SORT_DEFAULT_COLUMN) Integer sortColumn,
-			@RequestParam(value = ProjectSamplesDataTable.REQUEST_PARAM_SORT_DIRECTION, defaultValue = ProjectSamplesDataTable.SORT_DEFAULT_DIRECTION) String direction,
+			@RequestParam(value = ProjectSamplesDataTable.REQUEST_PARAM_SORT_COLUMN,
+					defaultValue = ProjectSamplesDataTable.SORT_DEFAULT_COLUMN) Integer sortColumn,
+			@RequestParam(value = ProjectSamplesDataTable.REQUEST_PARAM_SORT_DIRECTION,
+					defaultValue = ProjectSamplesDataTable.SORT_DEFAULT_DIRECTION) String direction,
 			@RequestParam(ProjectSamplesDataTable.REQUEST_PARAM_SEARCH_VALUE) String searchValue) {
 		Map<String, Object> response = new HashMap<>();
 		Sort.Direction sortDirection = ProjectSamplesDataTable.getSortDirection(direction);
@@ -316,20 +320,13 @@ public class ProjectsController {
 	 * Handles AJAX request for getting a list of projects available to the
 	 * logged in user. Produces JSON.
 	 *
-	 * @param principal
-	 *            {@link Principal} The currently authenticated users
-	 * @param start
-	 *            The start position in the list to page.
-	 * @param length
-	 *            The size of the page to display.
-	 * @param draw
-	 *            Id for the table to draw, this must be returned.
-	 * @param sortColumn
-	 *            The id for the column to sort by.
-	 * @param direction
-	 *            The direction of the sort.
-	 * @param searchValue
-	 *            Any search terms.
+	 * @param principal   {@link Principal} The currently authenticated users
+	 * @param start       The start position in the list to page.
+	 * @param length      The size of the page to display.
+	 * @param draw        Id for the table to draw, this must be returned.
+	 * @param sortColumn  The id for the column to sort by.
+	 * @param direction   The direction of the sort.
+	 * @param searchValue Any search terms.
 	 * @return JSON value of the page data.
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -338,8 +335,10 @@ public class ProjectsController {
 			@RequestParam(ProjectsDataTable.REQUEST_PARAM_START) Integer start,
 			@RequestParam(ProjectsDataTable.REQUEST_PARAM_LENGTH) Integer length,
 			@RequestParam(ProjectsDataTable.REQUEST_PARAM_DRAW) Integer draw,
-			@RequestParam(value = ProjectsDataTable.REQUEST_PARAM_SORT_COLUMN, defaultValue = ProjectsDataTable.SORT_DEFAULT_COLUMN) Integer sortColumn,
-			@RequestParam(value = ProjectsDataTable.REQUEST_PARAM_SORT_DIRECTION, defaultValue = ProjectsDataTable.SORT_DEFAULT_DIRECTION) String direction,
+			@RequestParam(value = ProjectsDataTable.REQUEST_PARAM_SORT_COLUMN,
+					defaultValue = ProjectsDataTable.SORT_DEFAULT_COLUMN) Integer sortColumn,
+			@RequestParam(value = ProjectsDataTable.REQUEST_PARAM_SORT_DIRECTION,
+					defaultValue = ProjectsDataTable.SORT_DEFAULT_DIRECTION) String direction,
 			@RequestParam(ProjectsDataTable.REQUEST_PARAM_SEARCH_VALUE) String searchValue) {
 		int pageNumber = ProjectsDataTable.getPageNumber(start, length);
 		Sort.Direction sortDirection = ProjectsDataTable.getSortDirection(direction);
@@ -359,47 +358,63 @@ public class ProjectsController {
 	 * Handles AJAX request for getting a list of projects available to the
 	 * admin user. Produces JSON.
 	 *
-	 * @param principal
-	 *            {@link Principal} The currently authenticated users
-	 * @param start
-	 *            The start position in the list to page.
-	 * @param length
-	 *            The size of the page to display.
-	 * @param draw
-	 *            Id for the table to draw, this must be returned.
-	 * @param sortColumn
-	 *            The id for the column to sort by.
-	 * @param direction
-	 *            The direction of the sort.
-	 * @param searchValue
-	 *            Any search terms.
+	 * @param principal   {@link Principal} The currently authenticated users
+	 * @param start       The start position in the list to page.
+	 * @param length      The size of the page to display.
+	 * @param draw        Id for the table to draw, this must be returned.
+	 * @param sortColumn  The id for the column to sort by.
+	 * @param direction   The direction of the sort.
+	 * @param searchValue Any search terms.
 	 * @return JSON value of the page data.
 	 */
 	@RequestMapping(value = "/ajax/list/all", produces = MediaType.APPLICATION_JSON_VALUE)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	public @ResponseBody Map<String, Object> getAjaxProjectListForAdmin(
-			final Principal principal,
-			@RequestParam(ProjectsDataTable.REQUEST_PARAM_START) Integer start,
-			@RequestParam(ProjectsDataTable.REQUEST_PARAM_LENGTH) Integer length,
-			@RequestParam(ProjectsDataTable.REQUEST_PARAM_DRAW) Integer draw,
-			@RequestParam(value = ProjectsDataTable.REQUEST_PARAM_SORT_COLUMN, defaultValue = ProjectsDataTable.SORT_DEFAULT_COLUMN) Integer sortColumn,
-			@RequestParam(value = ProjectsDataTable.REQUEST_PARAM_SORT_DIRECTION, defaultValue = ProjectsDataTable.SORT_DEFAULT_DIRECTION) String direction,
-			@RequestParam(ProjectsDataTable.REQUEST_PARAM_SEARCH_VALUE) String searchValue) {
+			@RequestParam(ProjectsAdminDataTable.REQUEST_PARAM_START) Integer start,
+			@RequestParam(ProjectsAdminDataTable.REQUEST_PARAM_LENGTH) Integer length,
+			@RequestParam(ProjectsAdminDataTable.REQUEST_PARAM_DRAW) Integer draw,
+			@RequestParam(value = ProjectsAdminDataTable.REQUEST_PARAM_SORT_COLUMN,
+					defaultValue = ProjectsAdminDataTable.SORT_DEFAULT_COLUMN) Integer sortColumn,
+			@RequestParam(value = ProjectsAdminDataTable.REQUEST_PARAM_SORT_DIRECTION,
+					defaultValue = ProjectsAdminDataTable.SORT_DEFAULT_DIRECTION) String direction,
+			@RequestParam(ProjectsAdminDataTable.REQUEST_PARAM_SEARCH_VALUE) String searchValue) {
 
-		int pageNumber = ProjectsDataTable.getPageNumber(start, length);
-		Sort.Direction sortDirection = ProjectsDataTable.getSortDirection(direction);
-		String sortString = ProjectsDataTable.getSortStringFromColumnID(sortColumn);
+		int pageNumber = ProjectsAdminDataTable.getPageNumber(start, length);
+		Sort.Direction sortDirection = ProjectsAdminDataTable.getSortDirection(direction);
+		String sortString = ProjectsAdminDataTable.getSortStringFromColumnID(sortColumn);
 
 		// Get the page information
 		Page<Project> page = projectService.search(ProjectSpecification.searchProjectName(searchValue), pageNumber,
 				length, sortDirection, sortString);
-		List<ProjectUserJoin> projectList = getAdminProjectUserJoin(page,
-				userService.getUserByUsername(principal.getName()));
 
-		return getProjectsDataMap(projectList, draw, page.getTotalElements(), sortColumn, sortDirection);
+		Map<String, Object> map = new HashMap<>();
+		map.put(ProjectsAdminDataTable.RESPONSE_PARAM_DRAW, draw);
+		map.put(ProjectsAdminDataTable.RESPONSE_PARAM_RECORDS_TOTAL, page.getTotalElements());
+		map.put(ProjectsAdminDataTable.RESPONSE_PARAM_RECORDS_FILTERED, page.getTotalElements());
+
+		// Create the format required by DataTable
+		List<Map<String, String>> projectsData = new ArrayList<>();
+		for (Project p : page.getContent()) {
+			Map<String, String> l = new HashMap<>();
+
+			l.put("id", p.getId().toString());
+			l.put("name", p.getName());
+			l.put("organism", p.getOrganism());
+			l.put("samples", String.valueOf(sampleService.getSamplesForProject(p).size()));
+			l.put("members", String.valueOf(userService.getUsersForProject(p).size()));
+			l.put("dateCreated", dateFormatter.print(p.getTimestamp(), LocaleContextHolder.getLocale()));
+			l.put("dateModified", p.getModifiedDate().toString());
+			projectsData.add(l);
+		}
+		map.put(ProjectsDataTable.RESPONSE_PARAM_DATA, projectsData);
+		map.put(ProjectsDataTable.RESPONSE_PARAM_SORT_COLUMN, sortColumn);
+		map.put(ProjectsDataTable.RESPONSE_PARAM_SORT_DIRECTION, sortDirection);
+
+		return map;
 	}
 
-	@RequestMapping(value = "/ajax/{projectId}/samples/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/ajax/{projectId}/samples/update", method = RequestMethod.POST,
+			produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> postUpdateProjectSamples(@RequestParam(required = true) Long sampleId,
 			@RequestParam(required = false) String name) {
 		Map<String, Object> updateMap = new HashMap<>();
@@ -433,19 +448,14 @@ public class ProjectsController {
 	/**
 	 * Search for projects available for a user to copy samples to. If the user
 	 * is an admin it will show all projects.
-	 * 
-	 * @param projectId
-	 *            The current project id
-	 * @param term
-	 *            A search term
-	 * @param pageSize
-	 *            The size of the page requests
-	 * @param page
-	 *            The page number (0 based)
-	 * @param principal
-	 *            The logged in user.
+	 *
+	 * @param projectId The current project id
+	 * @param term      A search term
+	 * @param pageSize  The size of the page requests
+	 * @param page      The page number (0 based)
+	 * @param principal The logged in user.
 	 * @return a Map<String,Object> containing: total: total number of elements
-	 *         results: A Map<Long,String> of project IDs and project names.
+	 * results: A Map<Long,String> of project IDs and project names.
 	 */
 	@RequestMapping(value = "/ajax/{projectId}/samples/available_projects")
 	@ResponseBody
@@ -481,16 +491,12 @@ public class ProjectsController {
 
 	/**
 	 * Copy or move samples from one project to another
-	 * 
-	 * @param projectId
-	 *            The original project id
-	 * @param sampleIds
-	 *            The sample ids to move
-	 * @param newProjectId
-	 *            The new project id
-	 * @param removeFromOriginal
-	 *            true/false whether to remove the samples from the original
-	 *            project
+	 *
+	 * @param projectId          The original project id
+	 * @param sampleIds          The sample ids to move
+	 * @param newProjectId       The new project id
+	 * @param removeFromOriginal true/false whether to remove the samples from the original
+	 *                           project
 	 * @return A list of warnings
 	 */
 	@RequestMapping(value = "/ajax/{projectId}/samples/copy")
@@ -536,19 +542,14 @@ public class ProjectsController {
 	/**
 	 * Generates a map of project information for the {@link ProjectsDataTable}
 	 *
-	 * @param projectList
-	 *            a List of {@link ProjectUserJoin} for the current user.
-	 * @param draw
-	 *            property sent from {@link ProjectsDataTable} as the table to
-	 *            render information to.
-	 * @param totalElements
-	 *            Total number of elements that could go into the table.
-	 * @param sortColumn
-	 *            Column to sort by.
-	 * @param sortDirection
-	 *            Direction to sort the column
+	 * @param projectList   a List of {@link ProjectUserJoin} for the current user.
+	 * @param draw          property sent from {@link ProjectsDataTable} as the table to
+	 *                      render information to.
+	 * @param totalElements Total number of elements that could go into the table.
+	 * @param sortColumn    Column to sort by.
+	 * @param sortDirection Direction to sort the column
 	 * @return Map containing the information to put into the
-	 *         {@link ProjectsDataTable}
+	 * {@link ProjectsDataTable}
 	 */
 	public Map<String, Object> getProjectsDataMap(List<ProjectUserJoin> projectList, int draw, long totalElements,
 			int sortColumn, Sort.Direction sortDirection) {
@@ -564,14 +565,13 @@ public class ProjectsController {
 			String role = projectUserJoin.getProjectRole() != null ? projectUserJoin.getProjectRole().toString() : "";
 			Map<String, String> l = new HashMap<>();
 
-			l.put("checkbox", p.getId().toString());
 			l.put("id", p.getId().toString());
 			l.put("name", p.getName());
 			l.put("organism", p.getOrganism());
 			l.put("role", role);
 			l.put("samples", String.valueOf(sampleService.getSamplesForProject(p).size()));
 			l.put("members", String.valueOf(userService.getUsersForProject(p).size()));
-			l.put("dateCreated", Formats.DATE.format(p.getTimestamp()));
+			l.put("dateCreated", dateFormatter.print(p.getTimestamp(), LocaleContextHolder.getLocale()));
 			l.put("dateModified", p.getModifiedDate().toString());
 			projectsData.add(l);
 		}
@@ -584,14 +584,12 @@ public class ProjectsController {
 	/**
 	 * Remove a list of samples from a a Project.
 	 *
-	 * @param projectId
-	 *            Id of the project to remove the samples from
-	 *
-	 * @param sampleIds
-	 *            An array of samples to remove from a project
+	 * @param projectId Id of the project to remove the samples from
+	 * @param sampleIds An array of samples to remove from a project
 	 * @return Map containing either success or errors.
 	 */
-	@RequestMapping(value = "/ajax/{projectId}/samples/delete", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	@RequestMapping(value = "/ajax/{projectId}/samples/delete", produces = MediaType.APPLICATION_JSON_VALUE,
+			method = RequestMethod.POST)
 	public @ResponseBody Map<String, Object> deleteProjectSamples(@PathVariable Long projectId,
 			@RequestParam List<Long> sampleIds) {
 		Project project = projectService.read(projectId);
@@ -611,9 +609,8 @@ public class ProjectsController {
 
 	/**
 	 * For a list of sample ids, this function will generate a map of {id, name}
-	 * 
-	 * @param sampleIds
-	 *            A list of sample ids.
+	 *
+	 * @param sampleIds A list of sample ids.
 	 * @return A list of map of {id, name}
 	 */
 	@RequestMapping(value = "/ajax/getNamesFromIds", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -632,15 +629,11 @@ public class ProjectsController {
 	/**
 	 * Merges a list of samples into either the first sample in the list with a
 	 * new name if provided, or into the selected sample based on the id.
-	 * 
-	 * @param projectId
-	 *            The id for the project the samples belong to.
-	 * @param sampleIds
-	 *            A list of sample ids for samples to merge.
-	 * @param mergeSampleId
-	 *            (Optional) The id of the sample to merge the other into.
-	 * @param newName
-	 *            (Optional) The new name for the final sample.
+	 *
+	 * @param projectId     The id for the project the samples belong to.
+	 * @param sampleIds     A list of sample ids for samples to merge.
+	 * @param mergeSampleId (Optional) The id of the sample to merge the other into.
+	 * @param newName       (Optional) The new name for the final sample.
 	 * @return
 	 */
 	@RequestMapping(value = "/ajax/{projectId}/samples/merge", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -684,42 +677,10 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Based on a page of projects for an user, returns a list that also
-	 * includes information as to whether the user is a member of the project.
-	 * 
-	 * @param page
-	 *            A {@link Page} of {@link Project}
-	 * @param user
-	 *            The currently logged in user
-	 * @return A list of {@link ProjectUserJoin}
-	 */
-	private List<ProjectUserJoin> getAdminProjectUserJoin(Page<Project> page, User user) {
-		List<Project> pageList = page.getContent();
-		List<Join<Project, User>> allUsersProjects = projectService.getProjectsForUser(user);
-
-		Map<Long, ProjectRole> roleMap = new HashMap<>();
-		for (Join<Project, User> join : allUsersProjects) {
-			Project p = join.getSubject();
-			roleMap.put(p.getId(), ((ProjectUserJoin) join).getProjectRole());
-		}
-
-		List<ProjectUserJoin> projects = new ArrayList<>();
-		for (Project project : pageList) {
-			if (roleMap.containsKey(project.getId())) {
-				projects.add(new ProjectUserJoin(project, user, roleMap.get(project.getId())));
-			} else {
-				projects.add(new ProjectUserJoin(project, user, null));
-			}
-		}
-		return projects;
-	}
-
-	/**
 	 * Changes a {@link ConstraintViolationException} to a usable map of strings
 	 * for displaing in the UI.
 	 *
-	 * @param e
-	 *            {@link ConstraintViolationException} for the form submitted.
+	 * @param e {@link ConstraintViolationException} for the form submitted.
 	 * @return Map of string {fieldName, error}
 	 */
 	private Map<String, String> getErrorsFromViolationException(ConstraintViolationException e) {
