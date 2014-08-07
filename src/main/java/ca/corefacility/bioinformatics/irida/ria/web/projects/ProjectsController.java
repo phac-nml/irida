@@ -4,6 +4,7 @@ import static org.springframework.data.jpa.domain.Specifications.where;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,10 +15,13 @@ import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.format.Formatter;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +35,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.google.common.base.Strings;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -48,13 +54,12 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUs
 import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectSamplesDataTable;
+import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsAdminDataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDataTable;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.base.Strings;
 
 /**
  * Controller for project related views
@@ -90,6 +95,11 @@ public class ProjectsController {
 	private final SequenceFileService sequenceFileService;
 	private final ProjectControllerUtils projectControllerUtils;
 
+	/*
+	 * Converters
+	 */
+	Formatter<Date> dateFormatter;
+
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
 			SequenceFileService sequenceFileService, ProjectControllerUtils projectControllerUtils) {
@@ -98,6 +108,7 @@ public class ProjectsController {
 		this.userService = userService;
 		this.sequenceFileService = sequenceFileService;
 		this.projectControllerUtils = projectControllerUtils;
+		this.dateFormatter = new DateFormatter();
 	}
 
 	/**
@@ -378,25 +389,46 @@ public class ProjectsController {
 	@RequestMapping(value = "/ajax/list/all", produces = MediaType.APPLICATION_JSON_VALUE)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	public @ResponseBody Map<String, Object> getAjaxProjectListForAdmin(
-			final Principal principal,
-			@RequestParam(ProjectsDataTable.REQUEST_PARAM_START) Integer start,
-			@RequestParam(ProjectsDataTable.REQUEST_PARAM_LENGTH) Integer length,
-			@RequestParam(ProjectsDataTable.REQUEST_PARAM_DRAW) Integer draw,
-			@RequestParam(value = ProjectsDataTable.REQUEST_PARAM_SORT_COLUMN, defaultValue = ProjectsDataTable.SORT_DEFAULT_COLUMN) Integer sortColumn,
-			@RequestParam(value = ProjectsDataTable.REQUEST_PARAM_SORT_DIRECTION, defaultValue = ProjectsDataTable.SORT_DEFAULT_DIRECTION) String direction,
-			@RequestParam(ProjectsDataTable.REQUEST_PARAM_SEARCH_VALUE) String searchValue) {
+			@RequestParam(ProjectsAdminDataTable.REQUEST_PARAM_START) Integer start,
+			@RequestParam(ProjectsAdminDataTable.REQUEST_PARAM_LENGTH) Integer length,
+			@RequestParam(ProjectsAdminDataTable.REQUEST_PARAM_DRAW) Integer draw,
+			@RequestParam(value = ProjectsAdminDataTable.REQUEST_PARAM_SORT_COLUMN, defaultValue = ProjectsAdminDataTable.SORT_DEFAULT_COLUMN) Integer sortColumn,
+			@RequestParam(value = ProjectsAdminDataTable.REQUEST_PARAM_SORT_DIRECTION, defaultValue = ProjectsAdminDataTable.SORT_DEFAULT_DIRECTION) String direction,
+			@RequestParam(ProjectsAdminDataTable.REQUEST_PARAM_SEARCH_VALUE) String searchValue) {
 
-		int pageNumber = ProjectsDataTable.getPageNumber(start, length);
-		Sort.Direction sortDirection = ProjectsDataTable.getSortDirection(direction);
-		String sortString = ProjectsDataTable.getSortStringFromColumnID(sortColumn);
+		int pageNumber = ProjectsAdminDataTable.getPageNumber(start, length);
+		Sort.Direction sortDirection = ProjectsAdminDataTable.getSortDirection(direction);
+		String sortString = ProjectsAdminDataTable.getSortStringFromColumnID(sortColumn);
 
 		// Get the page information
 		Page<Project> page = projectService.search(ProjectSpecification.searchProjectName(searchValue), pageNumber,
 				length, sortDirection, sortString);
-		List<ProjectUserJoin> projectList = getAdminProjectUserJoin(page,
-				userService.getUserByUsername(principal.getName()));
 
-		return getProjectsDataMap(projectList, draw, page.getTotalElements(), sortColumn, sortDirection);
+		Map<String, Object> map = new HashMap<>();
+		map.put(ProjectsAdminDataTable.RESPONSE_PARAM_DRAW, draw);
+		map.put(ProjectsAdminDataTable.RESPONSE_PARAM_RECORDS_TOTAL, page.getTotalElements());
+		map.put(ProjectsAdminDataTable.RESPONSE_PARAM_RECORDS_FILTERED, page.getTotalElements());
+
+
+		// Create the format required by DataTable
+		List<Map<String, String>> projectsData = new ArrayList<>();
+		for (Project p : page.getContent()) {
+			Map<String, String> l = new HashMap<>();
+
+			l.put("id", p.getId().toString());
+			l.put("name", p.getName());
+			l.put("organism", p.getOrganism());
+			l.put("samples", String.valueOf(sampleService.getSamplesForProject(p).size()));
+			l.put("members", String.valueOf(userService.getUsersForProject(p).size()));
+			l.put("dateCreated", dateFormatter.print(p.getTimestamp(), LocaleContextHolder.getLocale()));
+			l.put("dateModified", p.getModifiedDate().toString());
+			projectsData.add(l);
+		}
+		map.put(ProjectsDataTable.RESPONSE_PARAM_DATA, projectsData);
+		map.put(ProjectsDataTable.RESPONSE_PARAM_SORT_COLUMN, sortColumn);
+		map.put(ProjectsDataTable.RESPONSE_PARAM_SORT_DIRECTION, sortDirection);
+
+		return map;
 	}
 
 	@RequestMapping(value = "/ajax/{projectId}/samples/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -564,14 +596,13 @@ public class ProjectsController {
 			String role = projectUserJoin.getProjectRole() != null ? projectUserJoin.getProjectRole().toString() : "";
 			Map<String, String> l = new HashMap<>();
 
-			l.put("checkbox", p.getId().toString());
 			l.put("id", p.getId().toString());
 			l.put("name", p.getName());
 			l.put("organism", p.getOrganism());
 			l.put("role", role);
 			l.put("samples", String.valueOf(sampleService.getSamplesForProject(p).size()));
 			l.put("members", String.valueOf(userService.getUsersForProject(p).size()));
-			l.put("dateCreated", Formats.DATE.format(p.getTimestamp()));
+			l.put("dateCreated", dateFormatter.print(p.getTimestamp(), LocaleContextHolder.getLocale()));
 			l.put("dateModified", p.getModifiedDate().toString());
 			projectsData.add(l);
 		}
