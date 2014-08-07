@@ -17,7 +17,7 @@
                 <div class="panel-heading clearfix">
                 	<h3 class="panel-title pull-left" th:text="#{client.details.title(${client.clientId})}">_User Details_</h3>
 					<div class="btn-group-xs pull-right">
-						                	
+				        <!-- Edit buttons here -->
                 	</div>
                 </div>
                     
@@ -61,11 +61,7 @@
        </div> 
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
-	<!-- Add the project role icons to the project role names -->
 	<script th:inline="javascript">
-        $(document).ready(function () {
-        	
-        });
     </script>
 </div>
 </body>
