@@ -18,14 +18,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectsPage;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
  * <p>
@@ -64,7 +64,6 @@ public class ProjectsAdminPageViewIT {
     @Test
     public void testLayout() {
         assertEquals("Projects table should be populated by 5 projects", 5, projectsPage.projectsTableSize());
-        assertTrue("Admin should see projects they are not members of.", projectsPage.adminShouldShowProjectsNotMembersOf());
         assertTrue("Admin should have checkboxes to select projects", projectsPage.adminShouldBeAbleToSelectViaCheckboxes());
     }
 
