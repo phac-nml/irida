@@ -67,7 +67,8 @@
     <iframe id="invisible" style="display:none;"></iframe>
 </aside>
 <div th:fragment="scripts">
-    <script src="/resources/wet-theme/js/deps/jquery.magnific-popup.min.js"></script>
+    <script th:src="@{/resources/wet-theme/js/deps/jquery.magnific-popup.min.js}"
+            src="/resources/wet-theme/js/deps/jquery.magnific-popup.min.js"></script>
     <script th:src="@{/resources/wet-theme/js/deps/jquery.dataTables.min.js}"
             src="/resources/wet-theme/js/deps/jquery.dataTables.min.js"></script>
     <script>
