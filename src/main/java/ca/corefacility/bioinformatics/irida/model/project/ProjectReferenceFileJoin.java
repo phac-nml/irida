@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.project;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -13,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -26,7 +28,8 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
  *
  */
 @Entity
-@Table(name = "project_referencefile")
+@Table(name = "project_referencefile", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id",
+		"referenceFile_id" }))
 @Audited
 public class ProjectReferenceFileJoin implements Join<Project, ReferenceFile> {
 
@@ -43,7 +46,7 @@ public class ProjectReferenceFileJoin implements Join<Project, ReferenceFile> {
 	private Project project;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "referencefile_id")
+	@JoinColumn(name = "referenceFile_id")
 	private ReferenceFile referenceFile;
 
 	public ProjectReferenceFileJoin() {
@@ -57,13 +60,30 @@ public class ProjectReferenceFileJoin implements Join<Project, ReferenceFile> {
 	}
 
 	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		} else if (o instanceof ProjectReferenceFileJoin) {
+			ProjectReferenceFileJoin p = (ProjectReferenceFileJoin) o;
+			return Objects.equals(project, p.project) && Objects.equals(referenceFile, p.referenceFile);
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(project, referenceFile);
+	}
+
+	@Override
 	public String getLabel() {
-		return null;
+		return referenceFile.getLabel();
 	}
 
 	@Override
 	public Long getId() {
-		return null;
+		return id;
 	}
 
 	@Override

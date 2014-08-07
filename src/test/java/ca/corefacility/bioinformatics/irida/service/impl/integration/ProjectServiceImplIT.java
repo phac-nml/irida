@@ -7,6 +7,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -298,13 +302,15 @@ public class ProjectServiceImplIT {
 	@WithMockUser(username = "user1", password = "password1", roles = "ADMIN")
 	public void testSearchProjects() {
 		// search for a number
-		Page<Project> searchFor2 = projectService.search(ProjectSpecification.searchProjectName("2"), 0, 10, Direction.ASC, "name");
+		Page<Project> searchFor2 = projectService.search(ProjectSpecification.searchProjectName("2"), 0, 10,
+				Direction.ASC, "name");
 		assertEquals(2, searchFor2.getTotalElements());
 		Project next = searchFor2.iterator().next();
 		assertTrue(next.getName().contains("2"));
 
 		// search descending
-		Page<Project> searchDesc = projectService.search(ProjectSpecification.searchProjectName("2"), 0, 10, Direction.DESC, "name");
+		Page<Project> searchDesc = projectService.search(ProjectSpecification.searchProjectName("2"), 0, 10,
+				Direction.DESC, "name");
 		List<Project> reversed = Lists.reverse(searchDesc.getContent());
 		List<Project> forward = searchFor2.getContent();
 		assertEquals(reversed.size(), forward.size());
@@ -368,16 +374,38 @@ public class ProjectServiceImplIT {
 
 		projectService.addRelatedProject(p6, p3);
 	}
-	
+
 	@Test
-	@WithMockUser(username="user1", roles="USER")
-	public void testGetProjectForSample(){
+	@WithMockUser(username = "user1", roles = "USER")
+	public void testGetProjectForSample() {
 		Sample sample = sampleService.read(1l);
 		List<Join<Project, Sample>> projectsForSample = projectService.getProjectsForSample(sample);
 		assertFalse(projectsForSample.isEmpty());
-		for(Join<Project,Sample> join : projectsForSample){
-			assertEquals(sample,join.getObject());
+		for (Join<Project, Sample> join : projectsForSample) {
+			assertEquals(sample, join.getObject());
 		}
+	}
+
+	@Test
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	public void testAddReferenceFileToProject() throws IOException {
+		ReferenceFile f = new ReferenceFile();
+		Path temp = Files.createTempFile(null, null);
+		f.setFile(temp);
+		Project p = projectService.read(1L);
+
+		Join<Project, ReferenceFile> pr = projectService.addReferenceFileToProject(p, f);
+		assertEquals("Project was set in the join.", p, pr.getSubject());
+	}
+
+	@Test
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	public void testGetReferenceFilesForProject() {
+		Project p = projectService.read(1L);
+		List<Join<Project, ReferenceFile>> prs = projectService.getReferenceFilesForProject(p);
+		assertEquals("Wrong number of reference files for project.", 1, prs.size());
+		ReferenceFile rf = prs.iterator().next().getObject();
+		assertEquals("Wrong reference file attached to project.", Long.valueOf(1), rf.getId());
 	}
 
 	private Project p() {

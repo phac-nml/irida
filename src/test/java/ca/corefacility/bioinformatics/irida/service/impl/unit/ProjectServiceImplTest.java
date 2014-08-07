@@ -10,6 +10,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -20,7 +22,6 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
 import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -41,9 +42,13 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.ReferenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.RelatedProjectRepository;
@@ -56,6 +61,7 @@ import com.google.common.collect.Lists;
 
 /**
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ * @author Franklin Bristow <franklin.bristow@phac-apsc.gc.ca>
  */
 public class ProjectServiceImplTest {
 	private ProjectService projectService;
@@ -65,6 +71,8 @@ public class ProjectServiceImplTest {
 	private ProjectUserJoinRepository pujRepository;
 	private ProjectSampleJoinRepository psjRepository;
 	private RelatedProjectRepository relatedProjectRepository;
+	private ReferenceFileRepository referenceFileRepository;
+	private ProjectReferenceFileJoinRepository prfjRepository;
 	private Validator validator;
 
 	@Before
@@ -76,13 +84,10 @@ public class ProjectServiceImplTest {
 		pujRepository = mock(ProjectUserJoinRepository.class);
 		psjRepository = mock(ProjectSampleJoinRepository.class);
 		relatedProjectRepository = mock(RelatedProjectRepository.class);
+		referenceFileRepository = mock(ReferenceFileRepository.class);
+		prfjRepository = mock(ProjectReferenceFileJoinRepository.class);
 		projectService = new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
-				psjRepository, relatedProjectRepository, validator);
-	}
-
-	@After
-	public void tearDown() {
-		SecurityContextHolder.getContext().setAuthentication(null);
+				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository, validator);
 	}
 
 	@Test
@@ -104,6 +109,7 @@ public class ProjectServiceImplTest {
 
 		verify(projectRepository).save(p);
 		verify(userRepository).loadUserByUsername(username);
+		SecurityContextHolder.getContext().setAuthentication(null);
 	}
 
 	@Test
@@ -351,5 +357,18 @@ public class ProjectServiceImplTest {
 		Project p = new Project("project");
 		p.setId(new Long(2222));
 		return p;
+	}
+
+	@Test
+	public void testAddReferenceFileToProject() throws IOException {
+		Project p = new Project();
+		ReferenceFile f = new ReferenceFile(Files.createTempFile(null, null));
+
+		when(referenceFileRepository.save(f)).thenReturn(f);
+
+		projectService.addReferenceFileToProject(p, f);
+
+		verify(referenceFileRepository).save(f);
+		verify(prfjRepository).save(new ProjectReferenceFileJoin(p, f));
 	}
 }

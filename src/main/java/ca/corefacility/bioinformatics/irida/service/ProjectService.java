@@ -14,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -222,5 +223,30 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public List<Join<Project, Sample>> getProjectsForSample(Sample sample);
+
+	/**
+	 * Add a {@link ReferenceFile} to a {@link Project}.
+	 * 
+	 * @param project
+	 *            the {@link Project} to add the {@link ReferenceFile} to.
+	 * @param referenceFile
+	 *            the {@link ReferenceFile}.
+	 * @return a {@link Join} representing the relationship between the
+	 *         {@link Project} and {@link ReferenceFile}.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
+	public Join<Project, ReferenceFile> addReferenceFileToProject(Project project, ReferenceFile referenceFile);
+
+	/**
+	 * Get the collection of {@link ReferenceFile} attached to the specified
+	 * {@link Project}.
+	 * 
+	 * @param project
+	 *            the {@link Project} to get {@link ReferenceFile}s for.
+	 * @return the collection of {@link ReferenceFile} attached to the
+	 *         {@link Project}.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	public List<Join<Project, ReferenceFile>> getReferenceFilesForProject(Project project);
 
 }

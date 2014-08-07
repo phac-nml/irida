@@ -27,7 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
  *
  */
 @Entity
-@Table(name = "project_reference_file")
+@Table(name = "reference_file")
 @Audited
 public class ReferenceFile implements IridaThing {
 
@@ -48,10 +48,15 @@ public class ReferenceFile implements IridaThing {
 	private Date modifiedDate;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "referenceFile")
-	private ProjectReferenceFileJoin projects;
+	private ProjectReferenceFileJoin project;
 
 	public ReferenceFile() {
 		this.createdDate = new Date();
+	}
+
+	public ReferenceFile(Path file) {
+		this();
+		this.file = file;
 	}
 
 	@Override
@@ -79,4 +84,11 @@ public class ReferenceFile implements IridaThing {
 		return this.createdDate;
 	}
 
+	public Path getFile() {
+		return file;
+	}
+
+	public void setFile(Path file) {
+		this.file = file;
+	}
 }
