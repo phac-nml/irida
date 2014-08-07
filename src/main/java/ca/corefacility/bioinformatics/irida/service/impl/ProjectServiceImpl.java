@@ -36,7 +36,6 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSa
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.RelatedProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -56,7 +55,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private ProjectSampleJoinRepository psjRepository;
 	private SampleRepository sampleRepository;
 	private UserRepository userRepository;
-	private ProjectRepository projectRepository;
 	private RelatedProjectRepository relatedProjectRepository;
 
 	protected ProjectServiceImpl() {
@@ -69,7 +67,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			ProjectSampleJoinRepository psjRepository, RelatedProjectRepository relatedProjectRepository,
 			Validator validator) {
 		super(projectRepository, validator, Project.class);
-		this.projectRepository = projectRepository;
 		this.sampleRepository = sampleRepository;
 		this.userRepository = userRepository;
 		this.pujRepository = pujRepository;
@@ -213,33 +210,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional(readOnly = true)
 	public List<Join<Project, User>> getProjectsForUser(User user) {
 		return pujRepository.getProjectsForUser(user);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Page<Project> searchProjectsByName(String name, int page, int size, Direction order,
-			String... sortProperties) {
-		if (sortProperties.length == 0) {
-			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
-		}
-
-		return projectRepository.findAll(ProjectSpecification.searchProjectName(name), new PageRequest(page, size,
-				order, sortProperties));
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	@Deprecated
-	public Page<ProjectUserJoin> searchProjectsByNameForUser(User user, String term, int page, int size,
-			Direction order, String... sortProperties) {
-
-		return searchProjectUsers(ProjectUserJoinSpecification.searchProjectNameWithUser(term, user), page, size,
-				order, sortProperties);
 	}
 
 	/**

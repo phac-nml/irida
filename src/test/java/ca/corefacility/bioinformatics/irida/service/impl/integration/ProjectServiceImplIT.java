@@ -42,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -297,13 +298,13 @@ public class ProjectServiceImplIT {
 	@WithMockUser(username = "user1", password = "password1", roles = "ADMIN")
 	public void testSearchProjects() {
 		// search for a number
-		Page<Project> searchFor2 = projectService.searchProjectsByName("2", 0, 10, Direction.ASC, "name");
+		Page<Project> searchFor2 = projectService.search(ProjectSpecification.searchProjectName("2"), 0, 10, Direction.ASC, "name");
 		assertEquals(2, searchFor2.getTotalElements());
 		Project next = searchFor2.iterator().next();
 		assertTrue(next.getName().contains("2"));
 
 		// search descending
-		Page<Project> searchDesc = projectService.searchProjectsByName("2", 0, 10, Direction.DESC, "name");
+		Page<Project> searchDesc = projectService.search(ProjectSpecification.searchProjectName("2"), 0, 10, Direction.DESC, "name");
 		List<Project> reversed = Lists.reverse(searchDesc.getContent());
 		List<Project> forward = searchFor2.getContent();
 		assertEquals(reversed.size(), forward.size());
