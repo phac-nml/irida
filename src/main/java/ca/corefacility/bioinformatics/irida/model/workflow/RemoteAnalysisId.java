@@ -5,7 +5,7 @@ package ca.corefacility.bioinformatics.irida.model.workflow;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public interface RemoteWorkflowId {
+public interface RemoteAnalysisId {
 	
 	/**
 	 * Gets the String value of this id.

@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.analysis;
 
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
-import ca.corefacility.bioinformatics.irida.model.workflow.RemoteWorkflowId;
+import ca.corefacility.bioinformatics.irida.model.workflow.RemoteAnalysisId;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 
@@ -10,7 +10,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public interface WorkflowManagementService<ID extends RemoteWorkflowId> {
+public interface WorkflowManagementService<ID extends RemoteAnalysisId> {
 
 	/**
 	 * Submits the given analysis for processing on a remote workflow manager.

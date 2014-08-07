@@ -6,14 +6,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyWorkflowId;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.service.analysis.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.WorkflowManagementServiceGalaxy;
 
 public class WorkflowManagementServiceGalaxyTest {
 	
 	@Mock private AnalysisSubmission analysisSubmission;
-	@Mock private GalaxyWorkflowId id;
+	@Mock private GalaxyAnalysisId id;
 	
 	private WorkflowManagementServiceGalaxy workflowManagement;
 

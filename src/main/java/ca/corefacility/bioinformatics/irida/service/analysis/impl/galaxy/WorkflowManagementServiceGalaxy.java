@@ -4,7 +4,7 @@ import static com.google.common.base.Preconditions.*;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyWorkflowId;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.service.analysis.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.analysis.WorkflowManagementService;
 
@@ -13,7 +13,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.WorkflowManagementS
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class WorkflowManagementServiceGalaxy implements WorkflowManagementService<GalaxyWorkflowId> {
+public class WorkflowManagementServiceGalaxy implements WorkflowManagementService<GalaxyAnalysisId> {
 	
 	private boolean validateWorkflow() {
 		return false;
@@ -24,7 +24,7 @@ public class WorkflowManagementServiceGalaxy implements WorkflowManagementServic
 	}
 
 	@Override
-	public GalaxyWorkflowId executeAnalysis(
+	public GalaxyAnalysisId executeAnalysis(
 			AnalysisSubmission analysisSubmission) throws WorkflowException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		
@@ -35,19 +35,19 @@ public class WorkflowManagementServiceGalaxy implements WorkflowManagementServic
 	}
 
 	@Override
-	public Analysis getAnalysisResults(GalaxyWorkflowId workflowId)
+	public Analysis getAnalysisResults(GalaxyAnalysisId workflowId)
 			throws WorkflowException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public WorkflowStatus getWorkflowStatus(GalaxyWorkflowId workflowId)
+	public WorkflowStatus getWorkflowStatus(GalaxyAnalysisId workflowId)
 			throws WorkflowException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void cancelAnalysis(GalaxyWorkflowId workflowId)
+	public void cancelAnalysis(GalaxyAnalysisId workflowId)
 			throws WorkflowException {
 		throw new UnsupportedOperationException();
 	}
