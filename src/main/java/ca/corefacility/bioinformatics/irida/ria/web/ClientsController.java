@@ -61,13 +61,22 @@ public class ClientsController {
 		return CLIENTS_PAGE;
 	}
 
+	/**
+	 * Read an individual client
+	 * 
+	 * @param clientId
+	 *            The ID of the client to display
+	 * @param model
+	 *            The model object for this view
+	 * @return The view name of the client details page
+	 */
 	@RequestMapping("/{clientId}")
 	public String read(@PathVariable Long clientId, Model model) {
 		IridaClientDetails client = clientDetailsService.read(clientId);
-		
+
 		String grants = getAuthorizedGrantTypesString(client);
 		model.addAttribute("client", client);
-		model.addAttribute("grants",grants);
+		model.addAttribute("grants", grants);
 		return CLIENT_DETAILS_PAGE;
 	}
 
@@ -134,8 +143,15 @@ public class ClientsController {
 		map.put(DataTable.RESPONSE_PARAM_DATA, clientsData);
 		return map;
 	}
-	
-	private String getAuthorizedGrantTypesString(IridaClientDetails clientDetails){
+
+	/**
+	 * Get a string representation of the authorized grant types
+	 * 
+	 * @param clientDetails
+	 *            The client details object to get grants from
+	 * @return A joined string separated by commas of the grant types
+	 */
+	private String getAuthorizedGrantTypesString(IridaClientDetails clientDetails) {
 		Set<String> authorizedGrantTypes = clientDetails.getAuthorizedGrantTypes();
 
 		return StringUtils.collectionToDelimitedString(authorizedGrantTypes, ", ");
