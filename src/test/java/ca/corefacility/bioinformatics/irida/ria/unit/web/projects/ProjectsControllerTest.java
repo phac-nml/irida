@@ -185,7 +185,7 @@ public class ProjectsControllerTest {
 		Page<Project> page = new PageImpl<>(projects);
 
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
-		when(projectService.searchProjectsByName(anyString(), anyInt(), anyInt(), any(), anyString())).thenReturn(page);
+		when(projectService.search(any(Specification.class), anyInt(), anyInt(), any(), anyString())).thenReturn(page);
 		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(samplesJoin);
 		when(userService.getUsersForProject(any(Project.class))).thenReturn(usersJoin);
 
@@ -330,6 +330,7 @@ public class ProjectsControllerTest {
 		assertTrue("Result contains the word success", result.containsKey("success"));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetProjectsAvailableToCopySamplesAsAdmin() {
 		Long projectId = 1l;
@@ -344,7 +345,7 @@ public class ProjectsControllerTest {
 		Page<Project> projects = new PageImpl<>(Lists.newArrayList(new Project("p1"), new Project("p2")));
 
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
-		when(projectService.searchProjectsByName(term, page, pagesize, order)).thenReturn(projects);
+		when(projectService.search(any(Specification.class), eq(page), eq(pagesize), eq(order))).thenReturn(projects);
 
 		Map<String, Object> projectsAvailableToCopySamples = controller.getProjectsAvailableToCopySamples(projectId,
 				term, pagesize, page, principal);
@@ -354,7 +355,7 @@ public class ProjectsControllerTest {
 		assertTrue(projectsAvailableToCopySamples.containsKey("results"));
 
 		verify(userService).getUserByUsername(USER_NAME);
-		verify(projectService).searchProjectsByName(term, page, pagesize, order);
+		verify(projectService).search(any(Specification.class), eq(page), eq(pagesize), eq(order));
 	}
 
 	@SuppressWarnings("unchecked")
