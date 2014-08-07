@@ -30,22 +30,22 @@
                 <div class="panel-body">
                     <ul class="nav nav-pills nav-stacked details" th:inline="text">
                     	<li>
-                    		<span class="glyphicon glyphicon-barcode"></span>&nbsp;[[#{users.id}]]
+                    		<i class="glyphicon glyphicon-barcode"></i>&nbsp;[[#{users.id}]]
                     		<span class="pull-right" id="user-id"
                                 th:text="${user.id}">_USER_ID_</span>
                     	</li>
                     	<li>
-                    		<span class="glyphicon glyphicon-user"></span>&nbsp;[[#{users.username}]]
+                    		<i class="glyphicon glyphicon-user"></i>&nbsp;[[#{users.username}]]
                     		<span class="pull-right" id="user-username"
                                 th:text="${user.username}">_USERNAME_</span>
                     	</li>
                     	<li>
-                    		<span class="glyphicon glyphicon-tag"></span>&nbsp;[[#{user.name}]]
+                    		<i class="glyphicon glyphicon-tag"></i>&nbsp;[[#{user.name}]]
                     		<span class="pull-right" id="user-name"
                                 th:text="${user.label}">_NAME_</span>
                     	</li>
                     	<li>
-                    		<span class="glyphicon glyphicon-envelope"></span>&nbsp;[[#{users.email}]]
+                    		<i class="glyphicon glyphicon-envelope"></i>&nbsp;[[#{users.email}]]
                     		<span class="pull-right">
                     			<a th:href="'mailto:'+${user.email}" href="mailto:someone@nowhere.com">
                     				<span id="user-email" th:text="${user.email}">_EMAIL_</span>
@@ -53,27 +53,27 @@
                     		</span>
                     	</li>
                     	<li>
-                    		<span class="glyphicon glyphicon-earphone"></span>&nbsp;[[#{user.phone}]]
+                    		<i class="glyphicon glyphicon-earphone"></i>&nbsp;[[#{user.phone}]]
                     		<span class="pull-right" id="user-phone"
                                 th:text="${user.phoneNumber}">_123-456-7890_</span>
                     	</li>
                     	<li>
-                    		<span class="glyphicon glyphicon-stats"></span>&nbsp;[[#{users.role}]]
+                    		<i class="glyphicon glyphicon-stats"></i>&nbsp;[[#{users.role}]]
                     		<span class="pull-right" id="user-role"
                                 th:text="${systemRole}">_ROLE_</span>
                     	</li>
                     	<li>
-                    		<span class="glyphicon glyphicon-off"></span>&nbsp;[[#{user.enabled}]]
+                    		<i class="glyphicon glyphicon-off"></i>&nbsp;[[#{user.enabled}]]
                     		<span class="pull-right glyphicon glyphicon-ok" th:if="${user.enabled}"></span>
                     		<span class="pull-right glyphicon glyphicon-remove" th:if="not ${user.enabled}"></span>
                     	</li>
                         <li>
-                        	<span class="glyphicon glyphicon-calendar"></span>&nbsp;[[#{user.created}]]
+                        	<i class="glyphicon glyphicon-calendar"></i>&nbsp;[[#{user.created}]]
                         	<span class="pull-right" id="user-created"
                                 th:text="${#calendars.format(user.createdDate, 'dd MMM yyyy')}">_DATE_CREATED_</span>
                         </li>
                         <li>
-                        	<span class="glyphicon glyphicon-calendar"></span>&nbsp;[[#{user.modified}]]
+                        	<i class="glyphicon glyphicon-calendar"></i>&nbsp;[[#{user.modified}]]
                         	<span class="pull-right" id="user-modified"
                                 th:text="${#calendars.format(user.modifiedDate, 'dd MMM yyyy')}">__DATE_CREATED__</span>
                         </li>

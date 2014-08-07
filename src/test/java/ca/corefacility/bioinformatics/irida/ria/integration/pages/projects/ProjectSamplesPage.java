@@ -1,15 +1,21 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.SortUtilities;
-import com.google.common.base.Strings;
-import org.openqa.selenium.*;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.google.common.base.Strings;
+
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.SortUtilities;
 
 /**
  * <p>
@@ -221,7 +227,9 @@ public class ProjectSamplesPage {
      * @return
      */
     public boolean isSampleMergeErrorDisplayed() {
-        return driver.findElements(By.id("merge-error")).size() == 1;
+	    (new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
+			    .id("merge-error")));
+	    return true;
     }
 
 	public boolean isFilesViewOpen() throws NoSuchElementException {
