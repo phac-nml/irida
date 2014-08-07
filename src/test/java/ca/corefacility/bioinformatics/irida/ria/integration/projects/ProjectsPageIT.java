@@ -20,14 +20,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectsPage;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
  * <p>
@@ -72,11 +72,8 @@ public class ProjectsPageIT {
 
 	@Test
 	public void setsTheIconForCollaboratorsAndOwners() {
-		WebElement collaboratorSpan = projectsPage.getCollaboratorSpan();
-		assertTrue("Has the user icon", collaboratorSpan.getAttribute("class").contains("user"));
-
-		WebElement ownerSpan = projectsPage.getOwnerSpan();
-		assertTrue("Has the user icon", ownerSpan.getAttribute("class").contains("tower"));
+		assertTrue("Has the user icon", projectsPage.getCollaboratorClass().contains("user"));
+		assertTrue("Has the user icon", projectsPage.getOwnerClass().contains("tower"));
 	}
 
 	@Test

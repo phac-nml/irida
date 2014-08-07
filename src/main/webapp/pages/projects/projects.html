@@ -16,9 +16,9 @@
                     <thead>
                     <tr role="row" th:inline="text">
                         <td><input type="checkbox" id="selectAll"/></td>
-                        <th>[[#{projects.table.id}]]<i class="glyphicon"></i></th>
-                        <th>[[#{projects.table.name}]]<i class="glyphicon"></i></th>
-                        <th>[[#{projects.table.organism}]]<i class="glyphicon"></i></th>
+                        <th id="project-id">[[#{projects.table.id}]]<i class="glyphicon"></i></th>
+                        <th id="project-name">[[#{projects.table.name}]]<i class="glyphicon"></i></th>
+                        <th id="project-organism">[[#{projects.table.organism}]]<i class="glyphicon"></i></th>
                         <th>[[#{projects.table.role}]]<i class="glyphicon"></i></th>
                         <th>[[#{projects.table.samples}]]</th>
                         <th>[[#{projects.table.members}]]</th>
@@ -90,6 +90,7 @@
                     },
                     {
                         "data": "role",
+                        "visible": /*[[${not isAdmin}]]*/ true,
                         'render': function (data) {
                             if (data === 'PROJECT_OWNER') {
                                 return '<span class="glyphicon glyphicon-tower"></span>&nbsp;&nbsp;' + /*[[#{project.role.owner}]]*/ 'Owner';
