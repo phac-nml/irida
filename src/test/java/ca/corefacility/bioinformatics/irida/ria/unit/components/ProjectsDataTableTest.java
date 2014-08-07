@@ -15,17 +15,17 @@ public class ProjectsDataTableTest {
 
 	@Test
 	public void testGetSortStringFromColumnID() {
-		assertEquals("Returns the correct sort string for a project id", "id",
+		assertEquals("Returns the correct sort string for a project id", "project.id",
 				ProjectsDataTable.getSortStringFromColumnID(1));
-		assertEquals("Returns the correct sort string for a project name", "name",
+		assertEquals("Returns the correct sort string for a project name", "project.name",
 				ProjectsDataTable.getSortStringFromColumnID(2));
-		assertEquals("Returns the correct sort string for a project organism", "organism",
+		assertEquals("Returns the correct sort string for a project organism", "project.organism",
 				ProjectsDataTable.getSortStringFromColumnID(3));
-		assertEquals("Returns the correct sort string for a project role", "role",
+		assertEquals("Returns the correct sort string for a project role", "projectRole",
 				ProjectsDataTable.getSortStringFromColumnID(4));
-		assertEquals("Returns the correct sort string for a project created date", "createdDate",
+		assertEquals("Returns the correct sort string for a project created date", "project.createdDate",
 				ProjectsDataTable.getSortStringFromColumnID(7));
-		assertEquals("Returns the correct sort string for a project modified date", "modifiedDate",
+		assertEquals("Returns the correct sort string for a project modified date", "project.modifiedDate",
 				ProjectsDataTable.getSortStringFromColumnID(8));
 
 	}

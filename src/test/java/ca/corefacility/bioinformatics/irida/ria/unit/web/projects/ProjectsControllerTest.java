@@ -30,6 +30,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
@@ -49,9 +52,6 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 /**
  * Unit test for {@link }
@@ -181,7 +181,6 @@ public class ProjectsControllerTest {
 		List<Join<Project, User>> usersJoin = getUsersForProject();
 		List<Project> projects = getAdminProjectsList();
 		String requestDraw = "1";
-		Principal principal = () -> USER_NAME;
 		Page<Project> page = new PageImpl<>(projects);
 
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
@@ -189,7 +188,7 @@ public class ProjectsControllerTest {
 		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(samplesJoin);
 		when(userService.getUsersForProject(any(Project.class))).thenReturn(usersJoin);
 
-		Map<String, Object> response = controller.getAjaxProjectListForAdmin(principal, 0, 10, 1, 0, "asc", "");
+		Map<String, Object> response = controller.getAjaxProjectListForAdmin( 0, 10, 1, 0, "asc", "");
 
 		assertEquals("Has the correct draw number", Integer.parseInt(requestDraw),
 				response.get(DataTable.RESPONSE_PARAM_DRAW));

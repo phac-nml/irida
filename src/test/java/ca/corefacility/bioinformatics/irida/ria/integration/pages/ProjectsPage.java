@@ -2,16 +2,17 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
 import java.util.List;
 
-import com.google.common.base.Strings;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
+
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 
 /**
  * <p>
@@ -39,34 +40,28 @@ public class ProjectsPage {
 
 	public int projectsTableSize() {
 		logger.trace("Getting table size");
-		WebElement element = driver.findElement(By.xpath("//table[@id='projectsTable']/tbody"));
-		return element.findElements(By.tagName("tr")).size();
+		return driver.findElements(By.cssSelector("#projectsTable tbody tr")).size();
 	}
 
-	public WebElement getCollaboratorSpan() {
-		logger.trace("Getting collaborator span");
-		WebElement el = driver.findElement(By.xpath("//table[@id='projectsTable']/tbody/tr[3]/td[4]/span"));
-        return el;
+	public String getCollaboratorClass() {
+		return driver.findElement(
+				By.cssSelector("#projectsTable tbody tr:nth-child(3) td:nth-child(4) span")).getAttribute("class");
 	}
 
-	public WebElement getOwnerSpan() {
-		return driver.findElement(By.xpath("//table[@id='projectsTable']/tbody/tr[1]/td[4]/span"));
+	public String getOwnerClass() {
+		return driver.findElement(By.cssSelector("#projectsTable tbody tr:nth-child(1) td:nth-child(4) span")).getAttribute(
+				"class");
 	}
 
 	public List<WebElement> getProjectColumn() {
 		waitForAjax();
-		return driver.findElements(By.xpath("//table[@id='projectsTable']/tbody//td[2]"));
+		return driver.findElements(By.cssSelector("#projectsTable tbody td:nth-child(2)"));
 	}
 
 	public void clickProjectNameHeader(){
-		WebElement header = driver.findElement(By.xpath("//table[@id='projectsTable']/thead/tr/th[2]"));
-		header.click();
+		driver.findElement(By.id("project-name")).click();
 		waitForAjax();
 	}
-
-    public boolean adminShouldShowProjectsNotMembersOf() {
-        return driver.findElements(By.className("glyphicon-minus")).size() > 0;
-    }
 
     public boolean adminShouldBeAbleToSelectViaCheckboxes() {
         return driver.findElements(By.cssSelector("#projectsTable input[type=\"checkbox\"]")).size() > 0;
