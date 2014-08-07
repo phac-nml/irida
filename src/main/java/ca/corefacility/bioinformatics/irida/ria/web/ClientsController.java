@@ -43,7 +43,7 @@ public class ClientsController {
 	private final IridaClientDetailsService clientDetailsService;
 
 	private final String SORT_BY_ID = "id";
-	private final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "clientId", "createdDate");
+	private final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "clientId", "authorizedGrantTypes", "createdDate");
 	private static final String SORT_ASCENDING = "asc";
 
 	@Autowired
