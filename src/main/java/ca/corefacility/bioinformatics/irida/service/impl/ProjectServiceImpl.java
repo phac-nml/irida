@@ -252,11 +252,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		if (sortProperties.length == 0) {
 			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
 		}
-		// Drilling down into project for the sort properties
-		for (int i = 0; i < sortProperties.length; i++) {
-			sortProperties[i] = USER_JOIN_PROJECT_PROPERTY + "." + sortProperties[i];
-		}
-
 		return pujRepository.findAll(specification, new PageRequest(page, size, order, sortProperties));
 	}
 
