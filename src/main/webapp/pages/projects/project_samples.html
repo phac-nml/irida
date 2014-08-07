@@ -79,11 +79,11 @@
     <script type="text/html" id="file-row-template">
         <tr>
             <td class="files-name">
-                <a href="{0}">{1}</a>
-                <button class="filedownload pull-right btn btn-default btn-xs glyphicon glyphicon-download-alt mrgn-rght-sm" title="{2}"></button>
+                <a href="{1}">{2}</a>
+                <button data-file-id="{0}" class="filedownload pull-right btn btn-default btn-xs glyphicon glyphicon-download-alt mrgn-rght-sm" title="{3}"></button>
             </td>
-            <td>{3}</td>
             <td>{4}</td>
+            <td>{5}</td>
         </tr>
     </script>
 	<script type="text/html" id="select2-merge">
@@ -253,7 +253,7 @@ function EditableDataTable() {
             var d = data[i];
             var href = /*[[@{/sequenceFiles/}]]*/ '/sequenceFiles/';
             var download = /*[[#{form.download}]]*/ 'Download';
-            var row = template.format(href + d.id, d.name, download, d.size, d.created);
+            var row = template.format(d.id, href + d.id, d.name, download, d.size, d.created);
             table.innerHTML += row;
         }
         return mainTR;
@@ -761,10 +761,11 @@ $(document).ready(function () {
         e.stopPropagation();
         e.preventDefault();
         DT.sendUpdateName();
-    }).on('click', 'button.filedownload', function (e) {
-        var id = $(this).attr("id");
+    }).on('click', 'button.filedownload', function () {
+        var id = $(this).data('file-id');
         var iframe = document.getElementById('invisible');
-        iframe.src = '/sequenceFiles/download/' + id;
+        var src = /*[[@{/sequenceFiles/download/}]]*/ '/sequenceFiles/download/';
+        iframe.src =  src + id;
     });
 
     $selectAll.on("click", function () {
