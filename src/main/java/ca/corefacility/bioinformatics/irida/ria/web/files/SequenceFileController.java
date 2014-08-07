@@ -46,6 +46,9 @@ public class SequenceFileController {
 	public static final String ACTIVE_NAV = "activeNav";
 	private static final String ACTIVE_NAV_DASHBOARD = "dashboard";
 	private static final String ACTIVE_NAV_OVERREPRESENTED = "overrepresented";
+	public static final String IMG_PERBASE = "perbase";
+	public static final String IMG_PERSEQUENCE = "persequence";
+	public static final String IMG_DUPLICATION_LEVEL = "duplicationlevel";
 	/*
 	 * CONVERSIONS
 	 */
@@ -126,13 +129,16 @@ public class SequenceFileController {
 		SequenceFile file = sequenceFileService.read(sequenceFileId);
 		AnalysisFastQC fastQC = getFastQCAnalysis(file);
 		if (fastQC != null) {
-			byte[] chart;
-			if (type.equals("perbase")) {
+			byte[] chart = new byte[0];
+			if (type.equals(IMG_PERBASE)) {
 				chart = fastQC.getPerBaseQualityScoreChart();
-			} else if (type.equals("persequence")) {
+			} else if (type.equals(IMG_PERSEQUENCE)) {
 				chart = fastQC.getPerSequenceQualityScoreChart();
-			} else {
+			} else if(type.equals(IMG_DUPLICATION_LEVEL)) {
 				chart = fastQC.getDuplicationLevelChart();
+			}
+			else {
+				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			}
 			response.getOutputStream().write(chart);
 		}
