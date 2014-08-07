@@ -45,28 +45,23 @@ public class ProjectsPage {
 
 	public String getCollaboratorClass() {
 		return driver.findElement(
-				By.cssSelector("#projectsTable tbody tr:nth-child(3) td:nth=child(4) span")).getAttribute("class");
+				By.cssSelector("#projectsTable tbody tr:nth-child(3) td:nth-child(4) span")).getAttribute("class");
 	}
 
 	public String getOwnerClass() {
-		return driver.findElement(By.cssSelector("#projectsTable tbody tr:nth-child(1) td:nth=child(4) span")).getAttribute(
+		return driver.findElement(By.cssSelector("#projectsTable tbody tr:nth-child(1) td:nth-child(4) span")).getAttribute(
 				"class");
 	}
 
 	public List<WebElement> getProjectColumn() {
 		waitForAjax();
-		return driver.findElements(By.xpath("//table[@id='projectsTable']/tbody//td[2]"));
+		return driver.findElements(By.cssSelector("#projectsTable tbody td:nth-child(2)"));
 	}
 
 	public void clickProjectNameHeader(){
-		WebElement header = driver.findElement(By.xpath("//table[@id='projectsTable']/thead/tr/th[2]"));
-		header.click();
+		driver.findElement(By.id("project-name")).click();
 		waitForAjax();
 	}
-
-    public boolean adminShouldShowProjectsNotMembersOf() {
-        return driver.findElements(By.className("glyphicon-minus")).size() > 0;
-    }
 
     public boolean adminShouldBeAbleToSelectViaCheckboxes() {
         return driver.findElements(By.cssSelector("#projectsTable input[type=\"checkbox\"]")).size() > 0;
