@@ -1,10 +1,12 @@
 @import "bourbon";
 // Helpers
 @import "helpers/variables";
+@import "base/wet-overrides";
 // Components
 @import "components/buttons";
 @import "components/datatables";
 @import "components/forms";
+@import "components/magnific-popup";
 @import "components/noty";
 @import "components/panels";
 @import "components/subnav";
@@ -12,3 +14,4 @@
 @import "layout";
 // Pages
 @import "pages/project";
+@import "pages/sequenceFile";

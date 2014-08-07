@@ -1,3 +1,7 @@
+.menu > .pull-right ul {
+  position: absolute;
+  right: 0; }
+
 .btn-xs.glyphicon {
   font-size: 10px;
   padding: 3px 6px; }
@@ -47,6 +51,9 @@ table.dataTable > tbody tr.odd.details + tr table, table.dataTable > tbody tr.ev
     padding: 0 5px; }
   table.dataTable > tbody tr.odd.details + tr table td.files-created, table.dataTable > tbody tr.even.details + tr table td.files-created {
     text-align: right; }
+table.dataTable > tbody code {
+  color: #333333;
+  background-color: transparent; }
 
 .input-full {
   width: 100%; }
@@ -56,21 +63,65 @@ table.dataTable > tbody tr.odd.details + tr table, table.dataTable > tbody tr.ev
   font-weight: bold;
   margin-bottom: 0; }
 
+.image-link {
+  cursor: -webkit-zoom-in;
+  cursor: -moz-zoom-in;
+  cursor: zoom-in; }
+
+/* This block of CSS adds opacity transition to background */
+.mfp-with-zoom .mfp-container,
+.mfp-with-zoom.mfp-bg {
+  opacity: 0;
+  -webkit-backface-visibility: hidden;
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out; }
+
+.mfp-with-zoom.mfp-ready .mfp-container {
+  opacity: 1; }
+
+.mfp-with-zoom.mfp-ready.mfp-bg {
+  opacity: 0.8; }
+
+.mfp-with-zoom.mfp-removing .mfp-container,
+.mfp-with-zoom.mfp-removing.mfp-bg {
+  opacity: 0; }
+
+/* padding-bottom and top for image */
+.mfp-no-margins img.mfp-img {
+  padding: 0; }
+
+/* position of shadow behind the image */
+.mfp-no-margins .mfp-figure:after {
+  top: 0;
+  bottom: 0; }
+
+/* padding for main container */
+.mfp-no-margins .mfp-container {
+  padding: 0; }
+
 .noty_message h2 {
   margin-top: 5px;
   font-size: 1.4em; }
 
-b.list-group-item {
-  background-color: #eeeeee; }
+aside b.list-group-item {
+  background-color: #d9edf7;
+  color: #31708f;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 18px;
+  font-weight: bold; }
 
 .panel .details li {
   border-bottom: 1px solid #eeeeee;
   line-height: 2em; }
-.panel .details .glyphicon {
+.panel .details i.glyphicon {
   color: #797979;
   margin-right: .5em; }
 .panel .details em {
   font-style: normal; }
+.panel .details span {
+  float: right; }
 
 .navbar-sm {
   border-radius: 0;
@@ -117,5 +168,16 @@ main.col-md-9 h1 {
   color: #d9534f; }
 #associated-projects .glyphicon-eye-open {
   color: #5cb85c; }
+
+.sequenceFile main > div {
+  margin-top: 10px; }
+.sequenceFile .col-md-8 h2 {
+  font-size: 18px;
+  margin: 0; }
+.sequenceFile a img {
+  border: 4px solid #d9edf7;
+  border-radius: 4px; }
+.sequenceFile .col-md-4 img {
+  width: 100%; }
 
 /*# sourceMappingURL=main.css.map */
