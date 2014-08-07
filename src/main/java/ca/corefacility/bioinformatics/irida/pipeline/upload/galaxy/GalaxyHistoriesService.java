@@ -1,9 +1,14 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,10 +18,13 @@ import org.slf4j.LoggerFactory;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
 import ca.corefacility.bioinformatics.irida.model.workflow.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
+import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.ExecutionManagerSearch;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
@@ -27,14 +35,14 @@ import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset.Source;
+import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
-import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
+import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
-
-import static com.google.common.base.Preconditions.*;
+import com.sun.jersey.api.client.UniformInterfaceException;
 
 /**
  * Class for working with Galaxy Histories.
@@ -78,6 +86,66 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 		History history = new History();
 		history.setName(UUID.randomUUID().toString());
 		return historiesClient.create(history);
+	}
+	
+	
+	/**
+	 * Count the total number of history items for a given list of state ids.
+	 * @param stateIds  A list of state ids to search through.
+	 * @return  The total number of history items.
+	 */
+	private int countTotalHistoryItems(Map<String, List<String>> stateIds) {
+		return stateIds.values().stream().mapToInt(List::size).sum();
+	}
+	
+	/**
+	 * Count the total number of history items within the given workflow state.
+	 * @param stateIds  The list of history items to search through.
+	 * @param state  A state to search for.
+	 * @return  The number of history items in this state.
+	 */
+	private int countHistoryItemsInState(Map<String, List<String>> stateIds, WorkflowState state) {
+		return stateIds.get(state.toString()).size();
+	}
+	
+	/**
+	 * Gets the percentage completed running of items within the given list of history items.
+	 * @param stateIds  The list of history items.
+	 * @return  The percent of history items that are finished running.
+	 */
+	private float getPercentComplete(Map<String, List<String>> stateIds) {
+		return 100.0f*(countHistoryItemsInState(stateIds, WorkflowState.OK)/(float)countTotalHistoryItems(stateIds));
+	}
+	
+	/**
+	 * Given a history id returns the status for the given workflow.
+	 * @param historyId  The history id to use to find a workflow.
+	 * @return  The WorkflowStatus for the given workflow.
+	 * @throws ExecutionManagerException If there was an exception when attempting to get the status for a history.
+	 */
+	public WorkflowStatus getStatusForHistory(String historyId) throws ExecutionManagerException {
+		checkNotNull(historyId, "historyId is null");
+		
+		WorkflowStatus workflowStatus;
+		
+		WorkflowState workflowState;
+		float percentComplete;
+			
+		try {
+			HistoryDetails details = historiesClient.showHistory(historyId);
+			workflowState = WorkflowState.stringToState(details.getState());
+			
+			Map<String, List<String>> stateIds = details.getStateIds();
+			percentComplete = getPercentComplete(stateIds);
+			
+			workflowStatus = new WorkflowStatus(workflowState, percentComplete);
+			
+			logger.debug("Details for history " + details.getId() + ": state=" + details.getState());
+			
+			return workflowStatus;
+		} catch (ClientHandlerException | UniformInterfaceException e) {
+			throw new WorkflowException(e);
+		}
 	}
 	
 	/**

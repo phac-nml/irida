@@ -18,11 +18,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 
@@ -30,11 +27,9 @@ import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
-import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputDefinition;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
-import com.sun.jersey.api.client.UniformInterfaceException;
 
 /**
  * Unit tests for the GalaxyWorkflowManager.
@@ -45,26 +40,19 @@ public class GalaxyWorkflowServiceTest {
 
 	@Mock private GalaxyHistoriesService galaxyHistory;
 	@Mock private HistoriesClient historiesClient;
-	@Mock private HistoryDetails historyDetails;
 	@Mock private WorkflowsClient workflowsClient;
 	@Mock private WorkflowDetails workflowDetails;
 	@Mock private History workflowHistory;
 	@Mock private Dataset inputDataset;
-	@Mock private UniformInterfaceException uniformInterfaceException;
 	@Mock private Dataset downloadDataset;
 	
 	private GalaxyWorkflowService galaxyWorkflowService;
-		
-	private static final String VALID_HISTORY_ID = "1";
-	private static final String INVALID_HISTORY_ID = "2";
 	
 	private static final String VALID_WORKFLOW_ID = "1";
 	private static final String INVALID_WORKFLOW_ID = "invalid";
 	
 	private static final String VALID_INPUT_LABEL = "fastq";
-	
-	private static final float delta = 0.00001f;
-		
+			
 	private Map<String, WorkflowInputDefinition> workflowInputs;
 	
 	/**
@@ -146,79 +134,6 @@ public class GalaxyWorkflowServiceTest {
 		details.setInputs(workflowInputMap);
 		
 		galaxyWorkflowService.getWorkflowInputId(details, "invalid");
-	}
-	
-	/**
-	 * Tests getting status for a completed/ok workflow state.
-	 * @throws ExecutionManagerException 
-	 */
-	@Test
-	public void testGetStatusOkState() throws ExecutionManagerException {
-		Map<String, List<String>> validStateIds = new HashMap<String,List<String>>();
-		validStateIds.put("ok", Arrays.asList("1", "2"));
-		validStateIds.put("running", Arrays.asList());
-		validStateIds.put("queued", Arrays.asList());
-		
-		when(historiesClient.showHistory(VALID_HISTORY_ID)).thenReturn(historyDetails);
-		when(historyDetails.getState()).thenReturn("ok");
-		when(historyDetails.getStateIds()).thenReturn(validStateIds);
-		
-		WorkflowStatus status = galaxyWorkflowService.getStatusForHistory(VALID_HISTORY_ID);
-		
-		assertEquals(WorkflowState.OK, status.getState());
-		assertEquals(100.0f, status.getPercentComplete(), delta);
-	}
-	
-	/**
-	 * Tests getting status for a running workflow state.
-	 * @throws ExecutionManagerException 
-	 */
-	@Test
-	public void testGetStatusRunningState() throws ExecutionManagerException {
-		Map<String, List<String>> validStateIds = new HashMap<String,List<String>>();
-		validStateIds.put("ok", Arrays.asList());
-		validStateIds.put("running", Arrays.asList("1", "2"));
-		validStateIds.put("queued", Arrays.asList());
-		
-		when(historiesClient.showHistory(VALID_HISTORY_ID)).thenReturn(historyDetails);
-		when(historyDetails.getState()).thenReturn("running");
-		when(historyDetails.getStateIds()).thenReturn(validStateIds);
-		
-		WorkflowStatus status = galaxyWorkflowService.getStatusForHistory(VALID_HISTORY_ID);
-		
-		assertEquals(WorkflowState.RUNNING, status.getState());
-		assertEquals(0.0f, status.getPercentComplete(), delta);
-	}
-	
-	/**
-	 * Tests getting status for a running workflow state.
-	 * @throws ExecutionManagerException 
-	 */
-	@Test
-	public void testGetStatusPartialCompleteState() throws ExecutionManagerException {
-		Map<String, List<String>> validStateIds = new HashMap<String,List<String>>();
-		validStateIds.put("ok", Arrays.asList("1"));
-		validStateIds.put("running", Arrays.asList("2"));
-		validStateIds.put("queued", Arrays.asList());
-		
-		when(historiesClient.showHistory(VALID_HISTORY_ID)).thenReturn(historyDetails);
-		when(historyDetails.getState()).thenReturn("running");
-		when(historyDetails.getStateIds()).thenReturn(validStateIds);
-		
-		WorkflowStatus status = galaxyWorkflowService.getStatusForHistory(VALID_HISTORY_ID);
-		
-		assertEquals(WorkflowState.RUNNING, status.getState());
-		assertEquals(50.0f, status.getPercentComplete(), delta);
-	}
-	
-	/**
-	 * Tests getting status for an invalid history.
-	 * @throws ExecutionManagerException 
-	 */
-	@Test(expected=WorkflowException.class)
-	public void testGetStatusInvalidHistory() throws ExecutionManagerException {
-		when(historiesClient.showHistory(INVALID_HISTORY_ID)).thenThrow(uniformInterfaceException);
-		galaxyWorkflowService.getStatusForHistory(INVALID_HISTORY_ID);
 	}
 	
 	/**

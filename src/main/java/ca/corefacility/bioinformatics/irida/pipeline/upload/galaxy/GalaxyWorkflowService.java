@@ -94,65 +94,6 @@ public class GalaxyWorkflowService {
 			throw new WorkflowException("Cannot find workflowInputId for input label " + workflowInputLabel);
 		}
 	}
-	
-	/**
-	 * Count the total number of history items for a given list of state ids.
-	 * @param stateIds  A list of state ids to search through.
-	 * @return  The total number of history items.
-	 */
-	private int countTotalHistoryItems(Map<String, List<String>> stateIds) {
-		return stateIds.values().stream().mapToInt(List::size).sum();
-	}
-	
-	/**
-	 * Count the total number of history items within the given workflow state.
-	 * @param stateIds  The list of history items to search through.
-	 * @param state  A state to search for.
-	 * @return  The number of history items in this state.
-	 */
-	private int countHistoryItemsInState(Map<String, List<String>> stateIds, WorkflowState state) {
-		return stateIds.get(state.toString()).size();
-	}
-	
-	/**
-	 * Gets the percentage completed running of items within the given list of history items.
-	 * @param stateIds  The list of history items.
-	 * @return  The percent of history items that are finished running.
-	 */
-	private float getPercentComplete(Map<String, List<String>> stateIds) {
-		return 100.0f*(countHistoryItemsInState(stateIds, WorkflowState.OK)/(float)countTotalHistoryItems(stateIds));
-	}
-	
-	/**
-	 * Given a history id returns the status for the given workflow.
-	 * @param historyId  The history id to use to find a workflow.
-	 * @return  The WorkflowStatus for the given workflow.
-	 * @throws ExecutionManagerException If there was an exception when attempting to get the status for a history.
-	 */
-	public WorkflowStatus getStatusForHistory(String historyId) throws ExecutionManagerException {
-		checkNotNull(historyId, "historyId is null");
-		
-		WorkflowStatus workflowStatus;
-		
-		WorkflowState workflowState;
-		float percentComplete;
-				
-		try {
-			HistoryDetails details = historiesClient.showHistory(historyId);
-			workflowState = WorkflowState.stringToState(details.getState());
-			
-			Map<String, List<String>> stateIds = details.getStateIds();
-			percentComplete = getPercentComplete(stateIds);
-			
-			workflowStatus = new WorkflowStatus(workflowState, percentComplete);
-			
-			logger.debug("Details for history " + details.getId() + ": state=" + details.getState());
-			
-			return workflowStatus;
-		} catch (ClientHandlerException | UniformInterfaceException e) {
-			throw new WorkflowException(e);
-		}
-	}
 
 	/**
 	 * Gets a list of download URLs for the given passed WorkflowOutputs.
