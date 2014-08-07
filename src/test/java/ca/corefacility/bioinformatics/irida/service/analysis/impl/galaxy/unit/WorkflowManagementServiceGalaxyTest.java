@@ -6,14 +6,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
-import ca.corefacility.bioinformatics.irida.service.analysis.AnalysisExecution;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyWorkflowId;
 import ca.corefacility.bioinformatics.irida.service.analysis.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.WorkflowManagementServiceGalaxy;
 
 public class WorkflowManagementServiceGalaxyTest {
 	
 	@Mock private AnalysisSubmission analysisSubmission;
-	@Mock private AnalysisExecution analysisExecution;
+	@Mock private GalaxyWorkflowId id;
 	
 	private WorkflowManagementServiceGalaxy workflowManagement;
 
@@ -31,16 +31,16 @@ public class WorkflowManagementServiceGalaxyTest {
 	
 	@Test
 	public void testGetAnalysisResults() throws WorkflowException {
-		workflowManagement.getAnalysisResults(analysisExecution);
+		workflowManagement.getAnalysisResults(id);
 	}
 	
 	@Test
 	public void testGetWorkflowStatus() throws WorkflowException {
-		workflowManagement.getWorkflowStatus(analysisExecution);
+		workflowManagement.getWorkflowStatus(id);
 	}
 	
 	@Test
 	public void testCancelAnalysis() throws WorkflowException {
-		workflowManagement.cancelAnalysis(analysisExecution);
+		workflowManagement.cancelAnalysis(id);
 	}
 }
