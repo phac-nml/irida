@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.repositories.pagingsortingspecification.PagingSortingSpecificationRepository;
+import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
 /**
@@ -35,11 +35,11 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType> implements
 
 	protected static final String CREATED_DATE_SORT_PROPERTY = "createdDate";
 
-	protected final PagingSortingSpecificationRepository<ValueType, KeyType> repository;
+	protected final IridaJpaRepository<ValueType, KeyType> repository;
 	protected final Validator validator;
 	protected final Class<ValueType> valueType;
 
-	public CRUDServiceImpl(PagingSortingSpecificationRepository<ValueType, KeyType> repository, Validator validator,
+	public CRUDServiceImpl(IridaJpaRepository<ValueType, KeyType> repository, Validator validator,
 			Class<ValueType> valueType) {
 		this.repository = repository;
 		this.validator = validator;

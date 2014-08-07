@@ -3,21 +3,19 @@ package ca.corefacility.bioinformatics.irida.repositories.user;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.history.RevisionRepository;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.pagingsortingspecification.PagingSortingSpecificationRepository;
+import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 
 /**
  * Specialized repository for {@link User}.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public interface UserRepository extends PagingSortingSpecificationRepository<User, Long>, UserDetailsService,
-		RevisionRepository<User, Long, Integer> {
+public interface UserRepository extends IridaJpaRepository<User, Long>, UserDetailsService {
 
 	/**
 	 * Get a user from the database with the supplied username.
