@@ -23,6 +23,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
+import com.github.jmchilton.blend4j.galaxy.GalaxyResponseException;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
@@ -333,7 +334,7 @@ public class GalaxyHistoriesServiceIT {
 	/**
 	 * Tests moving a library dataset to a history fail.
 	 */
-	@Test
+	@Test(expected=GalaxyResponseException.class)
 	public void testLibraryDatasetToHistoryFail() {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		
