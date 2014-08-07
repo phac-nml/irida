@@ -33,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.LibraryContentId;
+import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker.UploadEventListener;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
@@ -59,7 +60,7 @@ public class GalaxyAPI {
 	/**
 	 * Sets default filetype for fastq files uploaded to Galaxy libraries.
 	 */
-	private static final String DEFAULT_FILE_TYPE = "fastqsanger";
+	private static final InputFileType DEFAULT_FILE_TYPE = InputFileType.FASTQ_SANGER;
 
 	private static final Logger logger = LoggerFactory.getLogger(GalaxyAPI.class);
 
@@ -282,7 +283,7 @@ public class GalaxyAPI {
 		upload.setContent(file.getAbsolutePath());
 		upload.setName(file.getName());
 		upload.setLinkData(DataStorage.LOCAL.equals(dataStorage));
-		upload.setFileType(DEFAULT_FILE_TYPE);
+		upload.setFileType(DEFAULT_FILE_TYPE.toString());
 
 		return librariesClient.uploadFilesystemPathsRequest(library.getId(), upload);
 	}
