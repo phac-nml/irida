@@ -23,6 +23,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -87,17 +88,17 @@ public class UsersControllerTest {
 		assertEquals(USERS_PAGE, controller.getUsersPage());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetAjaxUserList() {
 
 		Principal principal = () -> USER_NAME;
 
-		when(userService.searchUser("", 0, 10, Sort.Direction.ASC, "id")).thenReturn(userPage);
+		when(userService.search(any(Specification.class), eq(0), eq(10), eq(Sort.Direction.ASC), eq("id"))).thenReturn(userPage);
 		when(messageSource.getMessage(any(String.class), eq(null), any(Locale.class))).thenReturn("User");
 
 		Map<String, Object> response = controller.getAjaxUserList(principal, 0, 10, 1, 0, "asc", "");
 
-		@SuppressWarnings("unchecked")
 		List<List<String>> userList = (List<List<String>>) response.get(DataTable.RESPONSE_PARAM_DATA);
 
 		assertEquals(NUM_TOTAL_ELEMENTS, userList.size());
@@ -105,7 +106,7 @@ public class UsersControllerTest {
 		assertEquals("1", list.get(USER_ID_TABLE_LOCATION));
 		assertEquals("tom", list.get(USERNAME_TABLE_LOCATION));
 
-		verify(userService).searchUser("", 0, 10, Sort.Direction.ASC, "id");
+		verify(userService).search(any(Specification.class), eq(0), eq(10), eq(Sort.Direction.ASC), eq("id"));
 		verify(messageSource, times(2)).getMessage(any(String.class), eq(null), any(Locale.class));
 	}
 
