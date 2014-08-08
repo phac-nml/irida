@@ -4,11 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,18 +24,31 @@ import javax.validation.ValidatorFactory;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
+import org.springframework.data.jpa.domain.Specification;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.utils.model.IdentifiableTestEntity;
+import ca.corefacility.bioinformatics.irida.utils.model.IdentifiableTestEntitySpecification;
+
+import com.google.common.collect.Lists;
 
 /**
  * Testing the behavior of {@link CRUDServiceImpl}
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class CRUDServiceImplTest {
 
@@ -79,10 +95,10 @@ public class CRUDServiceImplTest {
 		updatedProperties.put("noSuchField", new Object());
 		when(crudRepository.findOne(1l)).thenReturn(entity);
 
-		try{
+		try {
 			crudService.update(entity.getId(), updatedProperties);
 			fail();
-		}catch(InvalidPropertyException ex){
+		} catch (InvalidPropertyException ex) {
 			assertNotNull(ex.getAffectedClass());
 		}
 	}
@@ -95,10 +111,10 @@ public class CRUDServiceImplTest {
 		updatedProperties.put("integerValue", new Object());
 		when(crudRepository.findOne(1l)).thenReturn(entity);
 
-		try{
+		try {
 			crudService.update(entity.getId(), updatedProperties);
 			fail();
-		}catch(InvalidPropertyException ex){
+		} catch (InvalidPropertyException ex) {
 			assertNotNull(ex.getAffectedClass());
 		}
 	}
@@ -199,5 +215,102 @@ public class CRUDServiceImplTest {
 		long count = 30;
 		when(crudRepository.count()).thenReturn(count);
 		assertEquals(count, crudService.count());
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void testSearch() {
+		int page = 1;
+		int size = 1;
+		Direction order = Direction.ASC;
+		Page<IdentifiableTestEntity> idPage = new PageImpl<>(Lists.newArrayList(new IdentifiableTestEntity(),
+				new IdentifiableTestEntity()));
+		when(crudRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(idPage);
+		Page<IdentifiableTestEntity> search = crudService.search(IdentifiableTestEntitySpecification.search(), page,
+				size, order);
+
+		assertEquals(2, search.getTotalElements());
+
+		ArgumentCaptor<Pageable> pageArgument = ArgumentCaptor.forClass(Pageable.class);
+
+		verify(crudRepository).findAll(any(Specification.class), pageArgument.capture());
+
+		// ensure a created date sort property is set
+		Pageable pagable = pageArgument.getValue();
+		Order sort = pagable.getSort().iterator().next();
+		assertEquals("createdDate", sort.getProperty());
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void testSearchSortEmptyArray() {
+		int page = 1;
+		int size = 1;
+		Direction order = Direction.ASC;
+		Page<IdentifiableTestEntity> idPage = new PageImpl<>(Lists.newArrayList(new IdentifiableTestEntity(),
+				new IdentifiableTestEntity()));
+		when(crudRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(idPage);
+		Page<IdentifiableTestEntity> search = crudService.search(IdentifiableTestEntitySpecification.search(), page,
+				size, order, new String[0]);
+
+		assertEquals(2, search.getTotalElements());
+
+		ArgumentCaptor<Pageable> pageArgument = ArgumentCaptor.forClass(Pageable.class);
+
+		verify(crudRepository).findAll(any(Specification.class), pageArgument.capture());
+
+		// ensure a created date sort property is set
+		Pageable pagable = pageArgument.getValue();
+		Order sort = pagable.getSort().iterator().next();
+		assertEquals("createdDate", sort.getProperty());
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void testSearchSortEmptyString() {
+		int page = 1;
+		int size = 1;
+		Direction order = Direction.ASC;
+		Page<IdentifiableTestEntity> idPage = new PageImpl<>(Lists.newArrayList(new IdentifiableTestEntity(),
+				new IdentifiableTestEntity()));
+		when(crudRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(idPage);
+		Page<IdentifiableTestEntity> search = crudService.search(IdentifiableTestEntitySpecification.search(), page,
+				size, order, "");
+
+		assertEquals(2, search.getTotalElements());
+
+		ArgumentCaptor<Pageable> pageArgument = ArgumentCaptor.forClass(Pageable.class);
+
+		verify(crudRepository).findAll(any(Specification.class), pageArgument.capture());
+
+		// ensure a created date sort property is set
+		Pageable pagable = pageArgument.getValue();
+		Order sort = pagable.getSort().iterator().next();
+		assertEquals("createdDate", sort.getProperty());
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void testSearchSortSetProperty() {
+		int page = 1;
+		int size = 1;
+		String property = "nonNull";
+		Direction order = Direction.ASC;
+		Page<IdentifiableTestEntity> idPage = new PageImpl<>(Lists.newArrayList(new IdentifiableTestEntity(),
+				new IdentifiableTestEntity()));
+		when(crudRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(idPage);
+		Page<IdentifiableTestEntity> search = crudService.search(IdentifiableTestEntitySpecification.search(), page,
+				size, order, property);
+
+		assertEquals(2, search.getTotalElements());
+
+		ArgumentCaptor<Pageable> pageArgument = ArgumentCaptor.forClass(Pageable.class);
+
+		verify(crudRepository).findAll(any(Specification.class), pageArgument.capture());
+
+		// ensure a created date sort property is set
+		Pageable pagable = pageArgument.getValue();
+		Order sort = pagable.getSort().iterator().next();
+		assertEquals(property, sort.getProperty());
 	}
 }

@@ -195,6 +195,13 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType> implements
 	@Override
 	public Page<ValueType> search(Specification<ValueType> specification, int page, int size, Direction order,
 			String... sortProperties) {
+		// if the sort properties are null, empty, or are an empty string, use
+		// CREATED_DATE
+		if (sortProperties == null || sortProperties.length == 0
+				|| (sortProperties.length == 1 && sortProperties[0].equals(""))) {
+			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
+		}
+
 		return repository.findAll(specification, new PageRequest(page, size, order, sortProperties));
 	}
 }
