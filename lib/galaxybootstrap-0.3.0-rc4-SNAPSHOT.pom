@@ -17,6 +17,28 @@
     <developerConnection>scm:git:git@github.com:jmchilton/galaxy-bootstrap.git</developerConnection>
     <url>git@github.com:jmchilton/galaxy-bootstrap.git</url>
   </scm>
+  
+	<repositories>
+		<!-- Use maven central over HTTPS instead of HTTP -->
+		<repository>
+			<id>central</id>
+			<url>https://repo1.maven.org/maven2</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<!-- Use maven central over HTTPS instead of HTTP -->
+		<pluginRepository>
+			<id>central</id>
+			<url>https://repo1.maven.org/maven2</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</pluginRepository>
+	</pluginRepositories>
   <properties>
     <skipTests>false</skipTests>
   </properties>
