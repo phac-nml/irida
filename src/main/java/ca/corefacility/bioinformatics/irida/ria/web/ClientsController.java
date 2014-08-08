@@ -1,12 +1,17 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
@@ -16,6 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -25,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 /**
@@ -39,16 +46,20 @@ public class ClientsController {
 
 	public static final String CLIENTS_PAGE = "clients/list";
 	public static final String CLIENT_DETAILS_PAGE = "clients/client_details";
+	public static final String ADD_CLIENT_PAGE = "clients/create";
 
 	private final IridaClientDetailsService clientDetailsService;
+	private final MessageSource messageSource;
 
 	private final String SORT_BY_ID = "id";
-	private final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "clientId", "authorizedGrantTypes", "createdDate");
+	private final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "clientId", "authorizedGrantTypes",
+			"createdDate");
 	private static final String SORT_ASCENDING = "asc";
 
 	@Autowired
-	public ClientsController(IridaClientDetailsService clientDetailsService) {
+	public ClientsController(IridaClientDetailsService clientDetailsService, MessageSource messageSource) {
 		this.clientDetailsService = clientDetailsService;
+		this.messageSource = messageSource;
 	}
 
 	/**
@@ -78,6 +89,43 @@ public class ClientsController {
 		model.addAttribute("client", client);
 		model.addAttribute("grants", grants);
 		return CLIENT_DETAILS_PAGE;
+	}
+
+	@RequestMapping(value = "/create", method = RequestMethod.GET)
+	public String getAddClientPage(Model model) {
+		if (!model.containsAttribute("errors")) {
+			model.addAttribute("errors", new HashMap<String, String>());
+		}
+
+		// set the default token validity
+		if (!model.containsAttribute("given_tokenValidity")) {
+			model.addAttribute("given_tokenValidity", IridaClientDetails.DEFAULT_TOKEN_VALIDITY);
+		}
+
+		return ADD_CLIENT_PAGE;
+	}
+
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	public String postCreateClient(IridaClientDetails client, Model model, Locale locale) {
+		client.setClientSecret(generateClientSecret());
+
+		Map<String, String> errors = new HashMap<>();
+		String responsePage = null;
+		try {
+			IridaClientDetails create = clientDetailsService.create(client);
+			responsePage = "redirect:/clients/" + create.getId();
+		} catch (DataIntegrityViolationException ex) {
+			if (ex.getMessage().contains(IridaClientDetails.CLIENT_ID_CONSTRAINT_NAME)) {
+				errors.put("clientId", messageSource.getMessage("user.edit.emailConflict", null, locale));
+			}
+		}
+		
+		if(!errors.isEmpty()){
+			model.addAttribute("errors",errors);
+			responsePage = getAddClientPage(model);
+		}
+
+		return responsePage;
 	}
 
 	/**
@@ -155,5 +203,55 @@ public class ClientsController {
 		Set<String> authorizedGrantTypes = clientDetails.getAuthorizedGrantTypes();
 
 		return StringUtils.collectionToDelimitedString(authorizedGrantTypes, ", ");
+	}
+
+	/**
+	 * Generate a temporary password for a user
+	 * 
+	 * @return A temporary password
+	 */
+	private static String generateClientSecret() {
+		int PASSWORD_LENGTH = 42;
+		int ALPHABET_SIZE = 26;
+		int SINGLE_DIGIT_SIZE = 10;
+		int RANDOM_LENGTH = PASSWORD_LENGTH - 3;
+
+		List<Character> pwdArray = new ArrayList<>(PASSWORD_LENGTH);
+		SecureRandom random = new SecureRandom();
+
+		// 1. Create 1 random uppercase.
+		pwdArray.add((char) ('A' + random.nextInt(ALPHABET_SIZE)));
+
+		// 2. Create 1 random lowercase.
+		pwdArray.add((char) ('a' + random.nextInt(ALPHABET_SIZE)));
+
+		// 3. Create 1 random number.
+		pwdArray.add((char) ('0' + random.nextInt(SINGLE_DIGIT_SIZE)));
+
+		// 4. Create 5 random.
+		int c = 'A';
+		int rand = 0;
+		for (int i = 0; i < RANDOM_LENGTH; i++) {
+			rand = random.nextInt(3);
+			switch (rand) {
+			case 0:
+				c = '0' + random.nextInt(SINGLE_DIGIT_SIZE);
+				break;
+			case 1:
+				c = 'a' + random.nextInt(ALPHABET_SIZE);
+				break;
+			case 2:
+				c = 'A' + random.nextInt(ALPHABET_SIZE);
+				break;
+			}
+			pwdArray.add((char) c);
+		}
+
+		// 5. Shuffle.
+		Collections.shuffle(pwdArray, random);
+
+		// 6. Create string.
+		Joiner joiner = Joiner.on("");
+		return joiner.join(pwdArray);
 	}
 }
