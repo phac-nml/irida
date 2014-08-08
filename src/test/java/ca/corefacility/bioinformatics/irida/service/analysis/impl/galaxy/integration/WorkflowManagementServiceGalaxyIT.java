@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integration;
 
+import static org.junit.Assert.*;
+
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.WorkflowManagementServiceGalaxy;
@@ -64,11 +67,44 @@ public class WorkflowManagementServiceGalaxyIT {
 		workflowManagement = new WorkflowManagementServiceGalaxy();
 	}
 	
+	private RemoteWorkflow buildRemoteWorkflow(String workflowId) {
+		RemoteWorkflow remoteWorkflow = new RemoteWorkflowGalaxy();
+		remoteWorkflow.setWorkflowId(workflowId);
+		
+		return remoteWorkflow;
+	}
+	
+	/**
+	 * Tests out successfully submitting a workflow for execution.
+	 * @throws WorkflowException
+	 */
 	@Test
 	public void testExecuteAnalysisSuccess() throws WorkflowException {
+		RemoteWorkflow remoteWorkflow = buildRemoteWorkflow(localGalaxy.getSingleInputWorkflowId());
+		
 		AnalysisSubmission analysisSubmission = new AnalysisSubmissionTestImpl();
-		analysisSubmission.setInputSequenceFiles(sequenceFiles);
-		analysisSubmission.setInputReferenceFile(referenceFile);
+		analysisSubmission.setSequenceFiles(sequenceFiles);
+		analysisSubmission.setReferenceFile(referenceFile);
+		analysisSubmission.setRemoteWorkflow(remoteWorkflow);
+		analysisSubmission.setAnalysisType(AnalysisTest.class);
+		
+		GalaxyAnalysisId analysisId = workflowManagement.executeAnalysis(analysisSubmission);
+		assertNotNull(analysisId);
+	}
+	
+	/**
+	 * Tests out successfully submitting a workflow for execution.
+	 * @throws WorkflowException
+	 */
+	@Test(expected=WorkflowException.class)
+	public void testExecuteAnalysisFailInvalidWorkflow() throws WorkflowException {
+		RemoteWorkflow remoteWorkflow = buildRemoteWorkflow(localGalaxy.getInvalidWorkflowId());
+		
+		AnalysisSubmission analysisSubmission = new AnalysisSubmissionTestImpl();
+		analysisSubmission.setSequenceFiles(sequenceFiles);
+		analysisSubmission.setReferenceFile(referenceFile);
+		analysisSubmission.setRemoteWorkflow(remoteWorkflow);
+		analysisSubmission.setAnalysisType(AnalysisTest.class);
 		
 		workflowManagement.executeAnalysis(analysisSubmission);
 	}
